@@ -350,12 +350,23 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: bool; [[Indicates if the operation succeeded.]]
          legacy: elm_widget_sub_object_del;
       }
-      @property orientation {
-         [[Widget orientation]]
-         set {
-         }
-         values {
-            rotation: int; [[Orientation]]
+      on_orientation_update @protected {
+         [[Virtual function handling canvas orientation changes.
+
+           This method will be called recursively from the top widget (the
+           window) to all the children objects whenever the window rotation
+           is changed. The given $rotation will be one of 0, 90, 180, 270 or
+           the special value -1 if @.orientation_mode_disabled is $true.
+
+           If @.orientation_mode_disabled is $false, the default implementation
+           will emit the signal "elm,state,orient,$R" will be emitted (where $R
+           is the rotation angle in degrees).
+
+           See also @Efl.Orientation.orientation.set.
+         ]]
+         params {
+            rotation: int; [[Orientation in degrees: 0, 90, 180, 270 or -1 if
+               @.orientation_mode_disabled is $true.]]
          }
       }
       disable {
