@@ -4550,7 +4550,7 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 
    ret = EINA_FALSE;
 
-   ret = elm_obj_widget_activate(obj, act);
+   ret = elm_obj_widget_on_access_activate(obj, act);
 
    if (ret) return;
 
@@ -6241,7 +6241,7 @@ _elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_activate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Elm_Activate act EINA_UNUSED)
+_elm_widget_on_access_activate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Elm_Activate act EINA_UNUSED)
 {
    WRN("The %s widget does not implement the \"activate\" functions.",
        efl_class_name_get(efl_class_get(obj)));

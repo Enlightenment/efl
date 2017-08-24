@@ -6,6 +6,7 @@
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -3994,7 +3995,7 @@ _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 /* END - ANCHOR HOVER */
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
 

@@ -78,7 +78,7 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.activate;
+      Elm.Widget.on_access_activate;
       Elm.Widget.widget_event;
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }

@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -345,7 +346,7 @@ _efl_ui_radio_selected_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_radio_elm_widget_activate(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_radio_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Elm_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;

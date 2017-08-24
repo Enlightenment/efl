@@ -8,17 +8,6 @@ function Efl.Ui.Scrollable_On_Show_Region
    }
 };
 
-enum Elm.Activate
-{
-   [[ Used in 'Virtual' function @Elm.Widget.activate. ]]
-   default = 0, [[Activate default]]
-   up, [[Activate up]]
-   down, [[Activate down]]
-   right, [[Activate right]]
-   left, [[Activate left]]
-   back, [[Activate back]]
-}
-
 struct @extern Elm.Theme; [[Elementary theme]]
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
@@ -411,10 +400,14 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
-      activate {
-         [['Virtual' function to activate widget.]]
+      on_access_activate @protected @beta {
+         [[Hook function called when widget is activated through accessibility.
+
+           This meant to be overridden by subclasses to support accessibility.
+           This is an unstable API.
+         ]]
          params {
-            @in act: Elm.Activate; [[Activate]]
+            @in act: Elm.Activate; [[Type of activation.]]
          }
          return: bool; [[$true on success, $false otherwise]]
          legacy: null; /* the legacy API has not the same number of parameter to we don't generate it. */
