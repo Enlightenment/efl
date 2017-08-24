@@ -382,8 +382,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
                }
              logical_wd->logical.child_count --;
              old = pd->logical.parent;
-             if (pd->logical.parent)
-               efl_weak_unref(&pd->logical.parent);
+             efl_weak_unref(&pd->logical.parent);
              pd->logical.parent = NULL;
           }
         if (parent)
