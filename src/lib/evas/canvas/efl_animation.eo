@@ -1,0 +1,43 @@
+import efl_animation_types;
+
+class Efl.Animation (Efl.Object)
+{
+   [[Efl animation class]]
+   data: Efl_Animation_Data;
+   methods {
+      @property target {
+         set {
+         }
+         get {
+         }
+         values {
+            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
+         }
+      }
+      @property final_state_keep {
+         set {
+         }
+         get {
+         }
+         values {
+            keep_final_state: bool; [[$true to keep final state, $false otherwise.]]
+         }
+      }
+      @property duration {
+         set {
+         }
+         get {
+         }
+         values {
+            duration: double; [[Duration value.]]
+         }
+      }
+      is_deleted @protected {
+         return: bool; [[$true if animation is deleted, $false otherwise.]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

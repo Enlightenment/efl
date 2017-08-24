@@ -3330,6 +3330,13 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
  */
 EAPI void                    evas_font_reinit(void);
 
+#ifndef _EFL_ANIMATION_EO_CLASS_TYPE
+#define _EFL_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation;
+
+#endif
+
 /**
  * @}
  */
