@@ -6349,6 +6349,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    c->width_changed = (obj->cur->geometry.w != o->last_w);
    c->obs_infos = NULL;
    c->hyphen_ti = NULL;
+   c->handle_obstacles = EINA_FALSE;
 
    /* Start of logical layout creation */
    /* setup default base style */
