@@ -10,10 +10,12 @@ static Eina_TLS _context_key = 0;
 typedef void (*glsym_func_void) ();
 glsym_func_void glsym_evas_gl_common_context_restore_set = NULL;
 
+Eina_Bool gles3_supported = EINA_FALSE;
+
 #ifdef GL_GLES
 typedef EGLContext GLContext;
 typedef EGLConfig GLConfig;
-static int gles3_supported = -1;
+static Eina_Bool gles3_probed = EINA_FALSE;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
 typedef GLXContext GLContext;
@@ -239,7 +241,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
 // EGL / GLES
 #ifdef GL_GLES
-   gw->gles3 = gles3_supported;
    gw->egl_disp = _x11_eglGetDisplay(gw->disp);
    if (!gw->egl_disp)
      {
@@ -277,7 +278,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
 try_gles2:
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = gw->gles3 ? 3 : 2;
+   context_attrs[1] = gles3_supported ? 3 : 2;
    context_attrs[2] = EGL_NONE;
 
    context = _tls_context_get();
@@ -286,11 +287,11 @@ try_gles2:
    if (gw->egl_context == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
-        if (gw->gles3)
+        if (gles3_supported)
           {
              /* Note: this shouldn't happen */
              ERR("Trying again with an Open GL ES 2 context (fallback).");
-             gw->gles3 = EINA_FALSE;
+             gles3_supported = EINA_FALSE;
              goto try_gles2;
           }
         eng_window_free(gw);
@@ -873,9 +874,9 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
      }
 
    /* detect GLES 3.x support */
-   if (gles3_supported == -1)
+   if (gles3_probed == EINA_FALSE)
      {
-        gles3_supported = EINA_FALSE;
+        gles3_probed = EINA_TRUE;
         eglexts = eglQueryString(egl_disp, EGL_EXTENSIONS);
         if (eglexts && strstr(eglexts, "EGL_KHR_create_context"))
           {
@@ -1299,7 +1300,7 @@ eng_gl_context_new(Outbuf *win)
    if (!ctx) return NULL;
 
 #if GL_GLES
-   if (win->gles3)
+   if (gles3_supported)
      context_attrs[1] = 3;
    ctx->context = eglCreateContext(win->egl_disp, win->egl_config,
                                    win->egl_context, context_attrs);
