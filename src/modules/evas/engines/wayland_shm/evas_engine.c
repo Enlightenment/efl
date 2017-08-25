@@ -103,7 +103,7 @@ _symbols(void)
 
 /* ENGINE API FUNCTIONS WE PROVIDE */
 static void *
-eng_info(Evas *eo_evas EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Wayland *einfo;
 
@@ -121,8 +121,8 @@ eng_info(Evas *eo_evas EINA_UNUSED)
    return einfo;
 }
 
-static void 
-eng_info_free(Evas *eo_evas EINA_UNUSED, void *info)
+static void
+eng_info_free(void *info)
 {
    Evas_Engine_Info_Wayland *einfo;
 

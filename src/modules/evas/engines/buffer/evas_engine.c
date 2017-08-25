@@ -22,8 +22,8 @@ typedef Render_Engine_Software_Generic Render_Engine;
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);
 
-static void *eng_info(Evas *eo_e EINA_UNUSED);
-static void eng_info_free(Evas *eo_e EINA_UNUSED, void *info);
+static void *eng_info(void);
+static void eng_info_free(void *info);
 static void eng_output_free(void *engine EINA_UNUSED, void *data);
 
 /* internal engine routines */
@@ -108,7 +108,7 @@ _output_setup(int w,
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *eo_e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Buffer *info;
    info = calloc(1, sizeof(Evas_Engine_Info_Buffer));
@@ -119,7 +119,7 @@ eng_info(Evas *eo_e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_Buffer *in;
    in = (Evas_Engine_Info_Buffer *)info;

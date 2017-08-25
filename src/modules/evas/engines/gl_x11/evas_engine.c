@@ -1550,7 +1550,7 @@ int _evas_engine_GL_X11_log_dom = -1;
 static Evas_Func func, pfunc;
 
 static void *
-eng_info(Evas *eo_e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_GL_X11 *info;
 
@@ -1564,7 +1564,7 @@ eng_info(Evas *eo_e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
 // dont free! why bother? its not worth it

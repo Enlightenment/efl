@@ -232,7 +232,7 @@ _symbols(void)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *eo_e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Software_X11 *info;
 
@@ -251,7 +251,7 @@ eng_info(Evas *eo_e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_Software_X11 *in;
 

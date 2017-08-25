@@ -62,7 +62,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *eo_e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_FB *info;
    info = calloc(1, sizeof(Evas_Engine_Info_FB));
@@ -73,7 +73,7 @@ eng_info(Evas *eo_e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *eo_e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_FB *in;
    in = (Evas_Engine_Info_FB *)info;

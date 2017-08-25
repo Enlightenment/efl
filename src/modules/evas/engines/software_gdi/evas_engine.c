@@ -73,7 +73,7 @@ _output_setup(int          width,
 /* engine api this module provides */
 
 static void *
-eng_info(Evas *e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Software_Gdi *info;
    info = calloc(1, sizeof(Evas_Engine_Info_Software_Gdi));
@@ -83,7 +83,7 @@ eng_info(Evas *e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_Software_Gdi *in;
    in = (Evas_Engine_Info_Software_Gdi *)info;

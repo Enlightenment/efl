@@ -1044,7 +1044,7 @@ evas_output_method_set(Evas *eo_e, int render_method)
         Eina_List *l;
 
         EINA_LIST_FOREACH(e->outputs, l, output)
-          output->info = e->engine.func->info(eo_e);
+          if (!output->info) output->info = e->engine.func->info();
      }
 
    // Wayland/drm already handles seats.

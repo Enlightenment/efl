@@ -40,7 +40,7 @@ efl_canvas_output_add(Evas *canvas)
    // right away to setup the info structure
    if (e->engine.func->info)
      {
-        r->info = e->engine.func->info(canvas);
+        r->info = e->engine.func->info();
      }
 
    return r;
@@ -62,7 +62,7 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
                                            output->ector);
              e->engine.func->output_free(_evas_engine_context(e),
                                          output->output);
-             e->engine.func->info_free(output->canvas, output->info);
+             e->engine.func->info_free(output->info);
           }
         e->outputs = eina_list_remove(e->outputs, output);
 
