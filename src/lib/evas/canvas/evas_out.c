@@ -50,6 +50,7 @@ efl_canvas_output_add(Evas *canvas)
    if (!r) return NULL;
 
    efl_wref_add(canvas, &r->canvas);
+   r->changed = EINA_TRUE;
 
    e = _efl_canvas_output_async_block(r);
    // Track this output in Evas
@@ -97,11 +98,18 @@ efl_canvas_output_view_set(Efl_Canvas_Output *output,
    e = _efl_canvas_output_async_block(output);
    if (!e) return ;
 
+   if (output->geometry.x != x) goto changed;
+   if (output->geometry.y != y) goto changed;
+   if (output->geometry.w != w) goto changed;
+   if (output->geometry.h != h) goto changed;
+   return;
+
+ changed:
    output->geometry.x = x;
    output->geometry.y = y;
    output->geometry.w = w;
    output->geometry.h = h;
-   // XXX: tell engine about any output size etc. changes
+   output->changed = EINA_TRUE;
    // XXX: tell evas to add damage if viewport loc/size changed
 }
 
@@ -131,7 +139,7 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
         if (e->engine.func->output_update)
           {
              e->engine.func->output_update(_evas_engine_context(e), output->output, info,
-                                           e->output.w, e->output.h);
+                                           output->geometry.w, output->geometry.h);
           }
         else
           {
@@ -152,7 +160,7 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
 
      setup:
         output->output = e->engine.func->output_setup(_evas_engine_context(e), info,
-                                                      e->output.w, e->output.h);
+                                                      output->geometry.w, output->geometry.h);
      }
 
    return !!output->output;

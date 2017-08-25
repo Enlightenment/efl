@@ -3133,6 +3133,7 @@ evas_render_updates_internal(Evas *eo_e,
    Evas_Object *eo_obj;
    Evas_Object_Protected_Data *obj;
    Evas_Public_Data *evas, *e;
+   Efl_Canvas_Output *out;
    Eina_List *ll;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool rendering = EINA_FALSE;
@@ -3250,11 +3251,6 @@ evas_render_updates_internal(Evas *eo_e,
      {
         ENFN->output_redraws_rect_add(ENC, 0, 0, e->output.w, e->output.h);
      }
-   if (e->output.changed)
-     {
-        ENFN->output_resize(ENC, ENDT, e->output.w, e->output.h);
-        ENFN->output_redraws_rect_add(ENC, 0, 0, e->output.w, e->output.h);
-     }
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
         ERR("viewport size != output size!");
@@ -3323,13 +3319,25 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 
+   /* phase 6. Initialize output */
+   out = eina_list_data_get(e->outputs);
+   if (out->changed)
+     {
+        ENFN->output_resize(ENC, out->output,
+                            out->geometry.w, out->geometry.h);
+        ENFN->output_redraws_rect_add(ENC,
+                                      out->geometry.x, out->geometry.y,
+                                      out->geometry.w, out->geometry.h);
+        out->changed = EINA_FALSE;
+     }
+
    /* Define the output for Evas_GL operation */
    if (ENFN->gl_output_set)
-     ENFN->gl_output_set(ENC, ENDT);
+     ENFN->gl_output_set(ENC, out->output);
 
-   /* phase 6. check if video surface should be inlined or stay in their hardware plane */
-   eina_evlog("+render_phase6", eo_e, 0.0, NULL);
-   alpha = ENFN->canvas_alpha_get(ENDT);
+   /* phase 7. check if video surface should be inlined or stay in their hardware plane */
+   eina_evlog("+render_phase7", eo_e, 0.0, NULL);
+   alpha = ENFN->canvas_alpha_get(out->output);
 
    EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {
@@ -3380,10 +3388,10 @@ evas_render_updates_internal(Evas *eo_e,
                _evas_object_image_plane_release(eo_obj2, obj2, output);
             }
        }
-   eina_evlog("-render_phase6", eo_e, 0.0, NULL);
+   eina_evlog("-render_phase7", eo_e, 0.0, NULL);
 
-   /* phase 7. go thru each update rect and render objects in it*/
-   eina_evlog("+render_phase7", eo_e, 0.0, NULL);
+   /* phase 8. go thru each update rect and render objects in it*/
+   eina_evlog("+render_phase8", eo_e, 0.0, NULL);
    if (do_draw)
      {
         Render_Updates *ru;
@@ -3401,7 +3409,7 @@ evas_render_updates_internal(Evas *eo_e,
         // FIXME: handle multiple output
         while ((surface =
                 ENFN->output_redraws_next_update_get
-                (ENC, ENDT,
+                (ENC, out->output,
                  &ux, &uy, &uw, &uh,
                  &cx, &cy, &cw, &ch)))
           {
@@ -3453,7 +3461,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                        RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENC);
-                       clean_them |= evas_render_updates_internal_loop(eo_e, e, ENDT, pseudo_canvas, ctx,
+                       clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, pseudo_canvas, ctx,
                                                                        snap,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
@@ -3481,7 +3489,7 @@ evas_render_updates_internal(Evas *eo_e,
                }
 
              ctx = ENFN->context_new(ENC);
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, ENDT, surface,
+             clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, surface,
                                                              ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
@@ -3495,7 +3503,7 @@ evas_render_updates_internal(Evas *eo_e,
              if (!do_async)
                {
                   eina_evlog("+render_push", eo_e, 0.0, NULL);
-                  ENFN->output_redraws_next_update_push(ENC, ENDT, surface, ux, uy, uw, uh, render_mode);
+                  ENFN->output_redraws_next_update_push(ENC, out->output, surface, ux, uy, uw, uh, render_mode);
                   eina_evlog("-render_push", eo_e, 0.0, NULL);
                }
           }
@@ -3520,7 +3528,7 @@ evas_render_updates_internal(Evas *eo_e,
                        _evas_object_image_video_overlay_do(eo_obj);
                     }
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-                  ENFN->output_flush(ENC, ENDT, EVAS_RENDER_MODE_SYNC);
+                  ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
                   eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
                }
@@ -3528,13 +3536,13 @@ evas_render_updates_internal(Evas *eo_e,
         rendering = haveup;
         eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
-   eina_evlog("-render_phase7", eo_e, 0.0, NULL);
+   eina_evlog("-render_phase8", eo_e, 0.0, NULL);
 
    eina_evlog("+render_clear", eo_e, 0.0, NULL);
    if (!do_async && rendering)
      {
         /* clear redraws */
-        ENFN->output_redraws_clear(ENC, ENDT);
+        ENFN->output_redraws_clear(ENC, out->output);
      }
    eina_evlog("-render_clear", eo_e, 0.0, NULL);
 
@@ -3614,7 +3622,6 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_end", eo_e, 0.0, NULL);
    e->changed = EINA_FALSE;
    e->viewport.changed = EINA_FALSE;
-   e->output.changed = EINA_FALSE;
    e->framespace.changed = EINA_FALSE;
    e->invalidate = EINA_FALSE;
 
