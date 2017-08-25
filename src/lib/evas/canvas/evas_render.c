@@ -1723,7 +1723,8 @@ _evas_render_mapped_context_clip_set(Evas_Public_Data *evas, Evas_Object *eo_obj
 Eina_Bool
 evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                    Evas_Object_Protected_Data *obj, void *context,
-                   void *surface, int off_x, int off_y, int mapped, int ecx,
+                   void *output, void *surface,
+                   int off_x, int off_y, int mapped, int ecx,
                    int ecy, int ecw, int ech,
                    Evas_Proxy_Render_Data *proxy_render_data, int level,
                    Eina_Bool do_async)
@@ -1943,7 +1944,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   ctx = ENFN->context_new(ENC);
                   ENFN->context_color_set(ENC, ctx, 0, 0, 0, 0);
                   ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_COPY);
-                  ENFN->rectangle_draw(ENC, ENDT, ctx, obj->map->surface,
+                  ENFN->rectangle_draw(ENC, output, ctx, obj->map->surface,
                                        0, 0, obj->map->surface_w, obj->map->surface_h,
                                        EINA_FALSE);
                   ENFN->context_free(ENC, ctx);
@@ -1958,7 +1959,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                        {
                           clean_them |= evas_render_mapped(evas, obj2->object,
                                                            obj2, ctx,
-                                                           obj->map->surface,
+                                                           output, obj->map->surface,
                                                            off_x2, off_y2, 1,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
@@ -1992,7 +1993,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 #endif
                   // FIXME: Should this really be sync render?
                   obj->func->render(eo_obj, obj, obj->private_data,
-                                    ENC, ENDT, ctx,
+                                    ENC, output, ctx,
                                     obj->map->surface, off_x2, off_y2,
                                     EINA_FALSE);
                }
@@ -2055,7 +2056,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             redraw = EINA_TRUE;
                          }
                        if (redraw)
-                         evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
+                         evas_render_mask_subrender(evas, output, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2086,7 +2087,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   RD(level, "  draw image map(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
                   evas_draw_image_map_async_check
-                    (obj, ENC, ENDT, ctx, surface,
+                    (obj, ENC, output, ctx, surface,
                      obj->map->surface, obj->map->spans,
                      obj->map->cur.map->smooth, 0, do_async);
                }
@@ -2127,7 +2128,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             redraw = EINA_TRUE;
                          }
                        if (redraw)
-                         evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
+                         evas_render_mask_subrender(evas, output, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2155,7 +2156,8 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
                           clean_them |= evas_render_mapped(evas, obj2->object,
-                                                           obj2, ctx, surface,
+                                                           obj2, ctx,
+                                                           output, surface,
                                                            off_x, off_y, mapped + 1,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
@@ -2220,7 +2222,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                  redraw = EINA_TRUE;
                               }
                             if (redraw)
-                              evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
+                              evas_render_mask_subrender(evas, output, mask, prev_mask, level + 1, do_async);
 
                             if (mask->mask->surface)
                               {
@@ -2240,7 +2242,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 #endif
 
                   obj->func->render(eo_obj, obj, obj->private_data,
-                                    ENC, ENDT, ctx, surface, off_x, off_y, EINA_FALSE);
+                                    ENC, output, ctx, surface, off_x, off_y, EINA_FALSE);
                }
           }
         else if (!obj->is_smart)
@@ -2292,7 +2294,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 #endif
 
              obj->func->render(eo_obj, obj, obj->private_data,
-                               ENC, ENDT, ctx, surface,
+                               ENC, output, ctx, surface,
                                off_x, off_y, do_async);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
@@ -2385,7 +2387,8 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
         evas_event_freeze(evas->evas);
 
         ctx = ENFN->context_new(ENC);
-        evas_render_mapped(evas, eo_source, source, ctx, proxy_write->surface,
+        evas_render_mapped(evas, eo_source, source, ctx,
+                           output, proxy_write->surface,
                            -source->cur->geometry.x,
                            -source->cur->geometry.y,
                            level + 1, 0, 0, evas->output.w, evas->output.h,
@@ -2581,7 +2584,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           else
             {
                // Unreachable code until we implement support for smart masks
-               evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
+               evas_render_mapped(evas, mask->object, mask, ctx,
+                                  output, mdata->surface,
                                   -x, -y, 2, 0, 0, evas->output.w, evas->output.h,
                                   NULL, level, do_async);
             }
@@ -3069,8 +3073,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                               obj->cur->cache.clip.h);
                   eina_evlog("-cutouts_add", obj->object, 0.0, NULL);
                   clean_them |= evas_render_mapped(evas, eo_obj, obj, context,
-                                                   surface, off_x + fx,
-                                                   off_y + fy, 0,
+                                                   ENDT, surface,
+                                                   off_x + fx, off_y + fy, 0,
                                                    cx, cy, cw, ch,
                                                    NULL, level + 3, do_async);
                   ENFN->context_cutout_clear(ENC, context);
