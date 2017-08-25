@@ -301,7 +301,7 @@ Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas
 Eina_Bool           evas_filter_interpolate(DATA8* output /* 256 values */, int *points /* 256 values */, Evas_Filter_Interpolation_Mode mode);
 int evas_filter_smallest_pow2_larger_than(int val);
 
-void _evas_filter_context_program_reuse(Evas_Filter_Context *ctx);
+void _evas_filter_context_program_reuse(void *engine, void *output, Evas_Filter_Context *ctx);
 void evas_filter_parser_shutdown(void);
 
 #define E_READ  ECTOR_BUFFER_ACCESS_FLAG_READ

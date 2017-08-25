@@ -151,7 +151,7 @@ void                    *evas_filter_context_data_get(Evas_Filter_Context *ctx);
 Eina_Bool                evas_filter_context_async_get(Evas_Filter_Context *ctx);
 void                     evas_filter_context_size_get(Evas_Filter_Context *ctx, int *w, int *H);
 void                     evas_filter_context_destroy(Evas_Filter_Context *ctx);
-Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm, Eina_Bool reuse, int object_x, int object_y);
+Eina_Bool                evas_filter_context_program_use(void *engine, void *output, Evas_Filter_Context *ctx, Evas_Filter_Program *pgm, Eina_Bool reuse, int object_x, int object_y);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
 void                     evas_filter_context_post_run_callback_set(Evas_Filter_Context *ctx, Evas_Filter_Cb cb, void *data);
 #define                  evas_filter_context_autodestroy(ctx) evas_filter_context_post_run_callback_set(ctx, ((Evas_Filter_Cb) evas_filter_context_destroy), ctx)
@@ -163,7 +163,7 @@ int                      evas_filter_buffer_proxy_new(Evas_Filter_Context *ctx, 
 void                    *evas_filter_buffer_backing_get(Evas_Filter_Context *ctx, int bufid, Eina_Bool render);
 Eina_Bool                evas_filter_buffer_backing_set(Evas_Filter_Context *ctx, int bufid, void *engine_buffer);
 
-Eina_Bool                evas_filter_context_run(Evas_Filter_Context *ctx);
+Eina_Bool                evas_filter_context_run(void *engine, void *output, Evas_Filter_Context *ctx);
 
 Eina_Bool                evas_filter_font_draw(Evas_Filter_Context *ctx, void *engine, void *output, void *draw_context, int bufid, Evas_Font_Set *font, int x, int y, Evas_Text_Props *text_props, Eina_Bool do_async);
 Eina_Bool                evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context, void *surface, int x, int y, const RGBA_Map *map);
