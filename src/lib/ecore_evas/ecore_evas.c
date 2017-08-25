@@ -555,11 +555,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return EINA_FALSE;
 #endif
      case ECORE_EVAS_ENGINE_PSL1GHT:
-#ifdef BUILD_ECORE_EVAS_PSL1GHT
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
      case ECORE_EVAS_ENGINE_WAYLAND_SHM:
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
         return EINA_TRUE;
@@ -897,17 +893,9 @@ _ecore_evas_constructor_fb(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, c
 }
 
 static Ecore_Evas *
-_ecore_evas_constructor_psl1ght(int x EINA_UNUSED, int y EINA_UNUSED, int w, int h, const char *extra_options)
+_ecore_evas_constructor_psl1ght(int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, const char *extra_options EINA_UNUSED)
 {
-   Ecore_Evas *ee;
-   char *name = NULL;
-
-   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
-   ee = ecore_evas_psl1ght_new(name, w, h);
-   free(name);
-
-   if (ee) ecore_evas_move(ee, x, y);
-   return ee;
+   return NULL;
 }
 
 static Ecore_Evas *

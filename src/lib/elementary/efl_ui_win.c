@@ -4778,12 +4778,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           }
 #endif
 
-#ifdef HAVE_ELEMENTARY_PSL1GHT
-        else if ((disp) && (!strcmp(disp, "ps3")))
-          {
-             enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
-          }
-#endif
 #ifdef HAVE_ELEMENTARY_X
         else if (!_elm_preferred_engine &&
                  getenv("DISPLAY") && !getenv("ELM_ENGINE"))
@@ -4856,9 +4850,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #ifdef HAVE_ELEMENTARY_SDL
                   enginelist[p++] = ELM_SOFTWARE_SDL;
 #endif
-#ifdef HAVE_ELEMENTARY_PSL1GHT
-                  enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
-#endif
                }
              else
                {
@@ -4905,9 +4896,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 #endif
 #ifdef HAVE_ELEMENTARY_SDL
                   enginelist[p++] = ELM_OPENGL_SDL;
-#endif
-#ifdef HAVE_ELEMENTARY_PSL1GHT
-                  enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
 #endif
                }
           }
@@ -4966,8 +4954,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
                tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_BUFFER))
                tmp_sd.ee = ecore_evas_buffer_new(1, 1);
-             else if (!strcmp(enginelist[i], ELM_SOFTWARE_PSL1GHT))
-               tmp_sd.ee = ecore_evas_psl1ght_new(NULL, 1, 1);
              else if (!strcmp(enginelist[i], ELM_DRM))
                tmp_sd.ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1);
              else if (!strncmp(enginelist[i], "shot:", 5))

@@ -168,14 +168,6 @@ supports all the transport layers Ecore Con supports.
 
 
 
-**Ecore Psl1ght:**
-
-//BSD 2-Clause license//
-
-This library acts as a helper for porting to the Playstation 3 (PS3)
-native runtime environment.
-
-
 
 **Ecore SDL:**
 

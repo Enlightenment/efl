@@ -221,10 +221,6 @@ if BUILD_ENGINE_SOFTWARE_DDRAW
 pkgconfig_DATA += pc/evas-software-ddraw.pc
 endif
 
-if BUILD_ENGINE_PSL1GHT
-pkgconfig_DATA += pc/evas-psl1ght.pc
-endif
-
 if BUILD_ENGINE_WAYLAND_SHM
 pkgconfig_DATA += pc/evas-wayland-shm.pc
 endif
@@ -247,10 +243,6 @@ endif
 
 if HAVE_ECORE_DRM
 pkgconfig_DATA += pc/ecore-drm.pc
-endif
-
-if HAVE_PS3
-pkgconfig_DATA += pc/ecore-psl1ght.pc
 endif
 
 if HAVE_ECORE_SDL

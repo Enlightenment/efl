@@ -48,7 +48,6 @@ include Makefile_Ecore_Input.am
 include Makefile_Ecore_Input_Evas.am
 include Makefile_Ecore_Cocoa.am
 include Makefile_Ecore_FB.am
-include Makefile_Ecore_Psl1ght.am
 include Makefile_Ecore_SDL.am
 include Makefile_Ecore_Wayland.am
 include Makefile_Ecore_Wl2.am
