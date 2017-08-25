@@ -128,6 +128,29 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
    // XXX: if image is a proxy, PREPEND to prerender list in evas canvas
 }
 
+static void *
+_evas_object_image_output_find(Evas_Object_Protected_Data *obj)
+{
+   Efl_Canvas_Output *output;
+   Eina_List *l;
+   const Eina_Rectangle geometry = {
+     obj->cur->geometry.x,
+     obj->cur->geometry.y,
+     obj->cur->geometry.w,
+     obj->cur->geometry.h
+   };
+
+   EINA_LIST_FOREACH(obj->layer->evas->outputs, l, output)
+     {
+        if (eina_rectangles_intersect(&output->geometry, &geometry))
+          return output->output;
+     }
+
+   // Always return an output, as evas rely on that even if the object is out of screen.
+   output = eina_list_data_get(obj->layer->evas->outputs);
+   return output->output;
+}
+
 void
 _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 {
@@ -861,14 +884,16 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
    int imagew, imageh, uvw, uvh;
    Eina_Rw_Slice slice = {};
    DATA32 *data = NULL;
-   void *pixels = NULL;
+   void *pixels;
+   void *output;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    evas_object_async_block(obj);
 
-   pixels = _evas_image_pixels_get((Eo *)eo_obj, obj, ENC, ENDT, NULL, NULL,
+   output = _evas_object_image_output_find(obj);
+   pixels = _evas_image_pixels_get((Eo *)eo_obj, obj, ENC, output, NULL, NULL,
                                    0, 0,
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_TRUE);
    if (!pixels) goto no_pixels;
@@ -3068,6 +3093,7 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
    int imagew, imageh, uvw, uvh, ix, iy, iw, ih, idw, idh, idx, idy;
    int is_inside = 0;
    void *pixels;
+   void *output;
 
    // FIXME: The below loop is incredibly dubious and probably should be simplified.
    // We're looking for one single pixel, not a random series of positions.
@@ -3075,7 +3101,8 @@ evas_object_image_is_inside(Evas_Object *eo_obj,
    /* the following code is similar to evas_object_image_render(), but doesn't
     * draw, just get the pixels so we can check the transparency.
     */
-   pixels = _evas_image_pixels_get(eo_obj, obj, ENC, ENDT, NULL, NULL, 0, 0,
+   output = _evas_object_image_output_find(obj);
+   pixels = _evas_image_pixels_get(eo_obj, obj, ENC, output, NULL, NULL, 0, 0,
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_FALSE);
    if (!pixels) return is_inside;
 
