@@ -160,6 +160,9 @@ _efl_animation_translate_efl_animation_object_create(Eo *eo_obj,
    double duration = efl_animation_duration_get(eo_obj);
    efl_animation_object_duration_set(anim_obj, duration);
 
+   double total_duration = efl_animation_total_duration_get(eo_obj);
+   efl_animation_object_total_duration_set(anim_obj, total_duration);
+
    if (pd->use_rel_move)
      {
         efl_animation_object_translate_set(anim_obj,

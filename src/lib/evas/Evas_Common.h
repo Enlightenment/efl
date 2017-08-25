@@ -3365,6 +3365,13 @@ typedef Eo Efl_Animation_Translate;
 
 #endif
 
+#ifndef _EFL_ANIMATION_GROUP_EO_CLASS_TYPE
+#define _EFL_ANIMATION_GROUP_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Group;
+
+#endif
+
 #ifndef _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
 #define _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
 
@@ -3404,6 +3411,8 @@ struct _Efl_Animation_Object_Running_Event_Info
 {
    double progress;
 };
+
+#define EFL_ANIMATION_GROUP_DURATION_NONE -1
 
 /**
  * @}

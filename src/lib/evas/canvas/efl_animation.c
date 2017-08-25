@@ -38,6 +38,8 @@ _efl_animation_duration_set(Eo *eo_obj,
 {
    EFL_ANIMATION_CHECK_OR_RETURN(eo_obj);
 
+   efl_animation_total_duration_set(eo_obj, duration);
+
    pd->duration = duration;
 }
 
@@ -47,6 +49,34 @@ _efl_animation_duration_get(Eo *eo_obj, Efl_Animation_Data *pd)
    EFL_ANIMATION_CHECK_OR_RETURN(eo_obj, 0.0);
 
    return pd->duration;
+}
+
+EOLIAN static void
+_efl_animation_duration_only_set(Eo *eo_obj,
+                                 Efl_Animation_Data *pd,
+                                 double duration)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj);
+
+   pd->duration = duration;
+}
+
+EOLIAN static void
+_efl_animation_total_duration_set(Eo *eo_obj,
+                                  Efl_Animation_Data *pd,
+                                  double total_duration)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj);
+
+   pd->total_duration = total_duration;
+}
+
+EOLIAN static double
+_efl_animation_total_duration_get(Eo *eo_obj, Efl_Animation_Data *pd)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj, 0.0);
+
+   return pd->total_duration;
 }
 
 EOLIAN static Eina_Bool
@@ -93,6 +123,9 @@ _efl_animation_object_create(Eo *eo_obj, Efl_Animation_Data *pd EINA_UNUSED)
 
    double duration = efl_animation_duration_get(eo_obj);
    efl_animation_object_duration_set(anim_obj, duration);
+
+   double total_duration = efl_animation_total_duration_get(eo_obj);
+   efl_animation_object_total_duration_set(anim_obj, total_duration);
 
    return anim_obj;
 }
