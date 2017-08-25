@@ -36,7 +36,7 @@ struct _Ector_GL_Buffer_Map
 
 struct _Evas_Ector_GL_Image_Buffer_Data
 {
-   Render_Engine_GL_Generic *re;
+   Render_Output_GL_Generic *re;
    Evas_GL_Image *glim;
    Ector_GL_Buffer_Map *maps;
 };
@@ -74,7 +74,7 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_set(Eo *obj EINA_UNUS
                                                                Evas_Ector_GL_Image_Buffer_Data *pd,
                                                                void *engine, void *image)
 {
-   Render_Engine_GL_Generic *re = engine;
+   Render_Output_GL_Generic *re = engine;
    Evas_GL_Image *im = image;
 
    EINA_SAFETY_ON_FALSE_RETURN(!pd->glim);

@@ -37,7 +37,7 @@ struct _Ector_GL_Buffer_Map
 
 struct _Evas_Ector_GL_Buffer_Data
 {
-   Render_Engine_GL_Generic *re;
+   Render_Output_GL_Generic *re;
    Evas_GL_Image *glim;
    Eina_Bool alpha_only, was_render;
    Ector_GL_Buffer_Map *maps;
@@ -109,7 +109,7 @@ _evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
                                         int w, int h, Efl_Gfx_Colorspace cspace,
                                         Ector_Buffer_Flag flags EINA_UNUSED)
 {
-   Render_Engine_GL_Generic *re = engine;
+   Render_Output_GL_Generic *re = engine;
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *im;
 

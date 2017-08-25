@@ -8,7 +8,7 @@
 #include "../gl_common/evas_gl_core.h"
 #include "../gl_common/evas_gl_core_private.h"
 
-typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
+typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;
 typedef struct _Context_3D Context_3D;
 
 typedef void (*Window_Use)(Outbuf *ob);
@@ -17,7 +17,7 @@ typedef void *(*Window_EGL_Display_Get)(Outbuf *ob);
 typedef Context_3D *(*Window_GL_Context_New)(Outbuf *ob);
 typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
 
-struct _Render_Engine_GL_Generic
+struct _Render_Output_GL_Generic
 {
    Render_Output_Software_Generic software;
 
@@ -41,7 +41,7 @@ struct _Render_Engine_GL_Generic
 };
 
 static inline Eina_Bool
-evas_render_engine_gl_generic_init(Render_Engine_GL_Generic *re,
+evas_render_engine_gl_generic_init(Render_Output_GL_Generic *re,
                                    Outbuf *ob,
                                    Outbuf_Swap_Mode_Get outbuf_swap_mode_get,
                                    Outbuf_Get_Rot outbuf_get_rot,
@@ -100,7 +100,7 @@ evas_render_engine_gl_generic_init(Render_Engine_GL_Generic *re,
 }
 
 static inline void
-evas_render_engine_software_gl_get_pixels_set(Render_Engine_GL_Generic *re,
+evas_render_engine_software_gl_get_pixels_set(Render_Output_GL_Generic *re,
                                               Evas_Object_Image_Pixels_Get_Cb get_pixels,
                                               void *get_pixels_data,
                                               Evas_Object *obj)

@@ -127,7 +127,7 @@ _output_scale_get(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd,
 }
 
 static Eina_Bool
-_gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
+_gl_filter_blur(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
 {
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *image, *surface;
@@ -267,7 +267,7 @@ _gl_filter_blur(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 }
 
 GL_Filter_Apply_Func
-gl_filter_blur_func_get(Render_Engine_GL_Generic *re EINA_UNUSED, Evas_Filter_Command *cmd)
+gl_filter_blur_func_get(Render_Output_GL_Generic *re EINA_UNUSED, Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, NULL);

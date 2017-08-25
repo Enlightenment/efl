@@ -76,7 +76,7 @@ struct _Outbuf
 
 struct _Render_Engine
 {
-   Render_Engine_GL_Generic generic;
+   Render_Output_GL_Generic generic;
 };
 
 #endif
