@@ -48,7 +48,6 @@
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
-#define ENDT _evas_default_output_get(obj->layer->evas)
 #define ENC  _evas_engine_context(obj->layer->evas)
 
 #include "canvas/evas_text.eo.h"
