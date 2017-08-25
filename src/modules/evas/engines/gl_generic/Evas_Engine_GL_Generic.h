@@ -94,6 +94,8 @@ evas_render_engine_gl_generic_init(Render_Engine_GL_Generic *re,
 
    re->evgl_initted = EINA_FALSE;
 
+   evas_render_engine_software_generic_tile_strict_set(&re->software, EINA_TRUE);
+
    return EINA_TRUE;
 }
 
