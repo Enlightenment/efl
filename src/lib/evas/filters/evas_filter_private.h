@@ -76,13 +76,10 @@ extern int _evas_filter_log_dom;
 
 // Helpers
 #undef ENFN
-#undef ENDT
 #undef ENC
 #define ENFN ctx->evas->engine.func
-#define ENDT _evas_default_output_get(ctx->evas)
 #define ENC _evas_engine_context(ctx->evas)
 
-#define CMD_ENDT _evas_default_output_get(cmd->ctx->evas)
 #define CMD_ENC _evas_engine_context(cmd->ctx->evas)
 #define FB_ENC _evas_engine_context(fb->ctx->evas)
 
