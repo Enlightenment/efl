@@ -84,14 +84,10 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *einfo, unsigned in
 static void
 eng_output_free(void *engine EINA_UNUSED, void *data)
 {
-   Render_Engine *re;
+   Render_Engine *re = data;
 
-   re = data;
-   if (re)
-     {
-        evas_render_engine_software_generic_clean(&re->generic);
-        free(re);
-     }
+   evas_render_engine_software_generic_clean(&re->generic);
+   free(re);
 }
 
 static Ecore_Drm2_Fb *
