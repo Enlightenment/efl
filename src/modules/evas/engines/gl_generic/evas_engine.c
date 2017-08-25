@@ -3024,26 +3024,6 @@ eng_image_surface_noscale_new(void *engine, int w, int h, int alpha)
    return evas_gl_common_image_surface_noscale_new(gl_context, w, h, alpha);
 }
 
-static void
-eng_image_surface_noscale_region_get(void *engine EINA_UNUSED, void *image, int *x, int *y, int *w, int *h)
-{
-   Evas_GL_Image *im = image;
-
-   if (im)
-     {
-        *x = im->tex->x;
-        *y = im->tex->y;
-        *w = im->w;
-        *h = im->h;
-        return;
-     }
-
-   *x = 0;
-   *y = 0;
-   *w = 0;
-   *h = 0;
-}
-
 //------------------------------------------------//
 
 static GL_Filter_Apply_Func
@@ -3183,7 +3163,6 @@ module_open(Evas_Module *em)
 
    ORD(image_prepare);
    ORD(image_surface_noscale_new);
-   ORD(image_surface_noscale_region_get);
 
    ORD(font_cache_flush);
    ORD(font_cache_set);
