@@ -9,7 +9,7 @@ static struct wl_display *display = NULL;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
+_orig_eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -168,7 +168,77 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
    return gw;
 }
 
-void
+typedef struct
+{
+   Outbuf *return_value;
+   Evas *evas;
+   Evas_Engine_Info_Wayland *einfo;
+   int w;
+   int h;
+   Render_Engine_Swap_Mode swap_mode;
+   int depth_bits;
+   int stencil_bits;
+   int msaa_bits;
+} Evas_Thread_Command_eng_window_new;
+
+static void
+_gl_thread_eng_window_new(void *data)
+{
+   Evas_Thread_Command_eng_window_new *thread_param =
+      (Evas_Thread_Command_eng_window_new *)data;
+
+   evas_gl_thread_begin();
+
+   thread_param->return_value = _orig_eng_window_new(thread_param->evas,
+                                                     thread_param->einfo,
+                                                     thread_param->w,
+                                                     thread_param->h,
+                                                     thread_param->swap_mode,
+                                                     thread_param->depth_bits,
+                                                     thread_param->stencil_bits,
+                                                     thread_param->msaa_bits);
+
+   evas_gl_thread_end();
+}
+
+Outbuf *
+eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode,
+               int depth_bits, int stencil_bits, int msaa_bits)
+{
+   /* eng_window_new() is moved into the worker thread that minimizes driver issue with EGL use*/
+   if (!evas_gl_thread_enabled())
+     {
+        return _orig_eng_window_new(evas,
+                                    einfo,
+                                    w,
+                                    h,
+                                    swap_mode,
+                                    depth_bits,
+                                    stencil_bits,
+                                    msaa_bits);
+     }
+
+   Evas_Thread_Command_eng_window_new thread_param_local;
+   Evas_Thread_Command_eng_window_new *thread_param = &thread_param_local;
+   thread_param->evas = evas;
+   thread_param->einfo = einfo;
+   thread_param->w = w;
+   thread_param->h = h;
+   thread_param->swap_mode = swap_mode;
+   thread_param->depth_bits = depth_bits;
+   thread_param->stencil_bits = stencil_bits;
+   thread_param->msaa_bits = msaa_bits;
+
+   evas_gl_thread_cmd_enqueue(EVAS_GL_THREAD_TYPE_GL,
+                              _gl_thread_eng_window_new,
+                              thread_param,
+                              EVAS_GL_THREAD_MODE_FINISH);
+
+   return thread_param->return_value;
+
+}
+
+void 
 eng_window_free(Outbuf *gw)
 {
    int ref = 0;

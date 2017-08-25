@@ -1709,6 +1709,72 @@ eng_gl_get_pixels_pre(void *engine)
    evgl_get_pixels_pre();
 }
 
+typedef struct
+{
+   Evas_Object_Image_Pixels_Get_Cb cb;
+   void *get_pixels_data;
+   Evas_Object *o;
+} GL_TH_ST(eng_gl_get_pixels);
+
+static void
+GL_TH_CB(eng_gl_get_pixels)(void *data)
+{
+   GL_TH_ST(eng_gl_get_pixels) *thread_data = *(void **)data;
+
+  thread_data->cb(thread_data->get_pixels_data, thread_data->o);
+}
+
+static void
+GL_TH_FN(eng_gl_get_pixels)(Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o)
+{
+   GL_TH_ST(eng_gl_get_pixels) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_EVGL)) /* XXX */
+     {
+        cb(get_pixels_data, o);
+        return;
+     }
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(eng_gl_get_pixels) *) + sizeof(GL_TH_ST(eng_gl_get_pixels)), &thcmd_ref);
+   *thread_data_ptr = (void *)(thread_data_ptr + sizeof(GL_TH_ST(eng_gl_get_pixels) *));
+
+   thread_data->cb = cb;
+   thread_data->get_pixels_data = get_pixels_data;
+   thread_data->o = o;
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(eng_gl_get_pixels),
+                              EVAS_GL_THREAD_MODE_FLUSH);
+}
+
+static void
+eng_gl_get_pixels(void *data EINA_UNUSED, Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o, void *image)
+{
+   Evas_GL_Image *im = image;
+   Evas_Native_Surface *n;
+   EVGL_Surface *sfc;
+
+   if (im)
+     {
+        n = im->native.data;
+        if (n)
+          {
+             sfc = n->data.evasgl.surface;
+             if (sfc)
+               {
+                  if (sfc->thread_rendering)
+                    {
+                       GL_TH_FN(eng_gl_get_pixels)(cb, get_pixels_data, o);
+                       return;
+                    }
+               }
+          }
+     }
+
+   cb(get_pixels_data, o);
+}
+
 static void
 eng_gl_get_pixels_post(void *engine EINA_UNUSED)
 {
@@ -3209,6 +3275,7 @@ module_open(Evas_Module *em)
    ORD(gl_surface_direct_renderable_get);
    ORD(gl_get_pixels_set);
    ORD(gl_get_pixels_pre);
+   ORD(gl_get_pixels);
    ORD(gl_get_pixels_post);
    ORD(gl_surface_lock);
    ORD(gl_surface_read_pixels);

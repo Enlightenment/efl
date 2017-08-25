@@ -1528,6 +1528,8 @@ try_again:
                     }
                }
 
+             sfc->thread_rendering = !!(cfg->options_bits & EVAS_GL_OPTIONS_THREAD);
+
              cfg_index = i;
              break;
           }
