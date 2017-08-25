@@ -27,10 +27,10 @@ struct _Render_Engine
    Render_Output_Software_Generic generic;
 };
 
-/* LOCAL FUNCTIONS */
-static Render_Engine *
-_render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland *einfo)
+static void *
+eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re;
    Outbuf *ob;
 
@@ -42,7 +42,7 @@ _render_engine_swapbuf_setup(int w, int h, Evas_Engine_Info_Wayland *einfo)
    ob = _evas_outbuf_setup(w, h, einfo);
    if (!ob) goto err;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob, 
+   if (!evas_render_engine_software_generic_init(&re->generic, ob,
                                                  _evas_outbuf_swap_mode_get,
                                                  _evas_outbuf_rotation_get,
                                                  NULL,
@@ -97,16 +97,6 @@ eng_output_info_setup(void *info)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-}
-
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Wayland *einfo = info;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   return _render_engine_swapbuf_setup(w, h, einfo);
 }
 
 static void
