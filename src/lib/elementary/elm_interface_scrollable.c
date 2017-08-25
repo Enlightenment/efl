@@ -4703,17 +4703,16 @@ EOLIAN static void
 _elm_interface_scrollable_efl_ui_focus_manager_focus(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
 {
    Eina_Rectangle geom;
-   Eina_Rectangle obj_geom;
+   int pan_x, pan_y;
 
    efl_ui_focus_manager_focus(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
 
    if (!focus) return;
 
    evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
-   evas_object_geometry_get(pd->content, &obj_geom.x, &obj_geom.y, &obj_geom.w, &obj_geom.h);
-
-   geom.x = geom.x - obj_geom.x;
-   geom.y = geom.y - obj_geom.y;
+   elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
+   geom.x = geom.x + pan_x;
+   geom.y = geom.y + pan_y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
