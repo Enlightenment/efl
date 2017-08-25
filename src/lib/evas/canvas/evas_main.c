@@ -378,6 +378,27 @@ next_zombie:
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
+   EINA_LIST_FREE(e->touch_points, touch_point)
+     free(touch_point);
+
+   _evas_device_cleanup(eo_e);
+   e->focused_by = eina_list_free(e->focused_by);
+
+   while (e->seats)
+     {
+        Evas_Pointer_Seat *pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
+
+        eina_list_free(pseat->object.in);
+        while (pseat->pointers)
+          {
+             Evas_Pointer_Data *pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
+             pseat->pointers = eina_inlist_remove(pseat->pointers, pseat->pointers);
+             free(pdata);
+          }
+        e->seats = eina_inlist_remove(e->seats, e->seats);
+        free(pseat);
+     }
+
    /* Ector surface may require an existing output to finish its job */
    e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
    /* cleanup engine backend */
@@ -423,27 +444,6 @@ next_zombie:
         free(job);
      }
    SLKU(e->post_render.lock);
-
-   EINA_LIST_FREE(e->touch_points, touch_point)
-     free(touch_point);
-
-   _evas_device_cleanup(eo_e);
-   e->focused_by = eina_list_free(e->focused_by);
-
-   while (e->seats)
-     {
-        Evas_Pointer_Seat *pseat = EINA_INLIST_CONTAINER_GET(e->seats, Evas_Pointer_Seat);
-
-        eina_list_free(pseat->object.in);
-        while (pseat->pointers)
-          {
-             Evas_Pointer_Data *pdata = EINA_INLIST_CONTAINER_GET(pseat->pointers, Evas_Pointer_Data);
-             pseat->pointers = eina_inlist_remove(pseat->pointers, pseat->pointers);
-             free(pdata);
-          }
-        e->seats = eina_inlist_remove(e->seats, e->seats);
-        free(pseat);
-     }
 
    eina_lock_free(&(e->lock_objects));
    eina_spinlock_free(&(e->render.lock));
