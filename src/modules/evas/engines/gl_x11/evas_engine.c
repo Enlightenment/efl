@@ -22,7 +22,7 @@ typedef struct _Render_Engine               Render_Engine;
 
 struct _Render_Engine
 {
-   Render_Engine_GL_Generic generic;
+   Render_Output_GL_Generic generic;
 };
 
 const char *debug_dir;
@@ -657,7 +657,7 @@ static void *
 evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
                                 const int *attrib_list)
 {
-   Render_Engine_GL_Generic *re = data;
+   Render_Output_GL_Generic *re = data;
 
    // TODO: Add support for surfaceless pbuffers (EGL_NO_TEXTURE)
    // TODO: Add support for EGL_MIPMAP_TEXTURE??? (GLX doesn't support them)
@@ -883,7 +883,7 @@ evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
 
    eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)surface);
 #else
-   Render_Engine_GL_Generic *re = data;
+   Render_Output_GL_Generic *re = data;
    GLXPbuffer pbuf = (GLXPbuffer)(intptr_t) surface;
 
    glXDestroyPbuffer(re->software.ob->disp, pbuf);

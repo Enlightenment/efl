@@ -33,7 +33,7 @@ static int gl_wins = 0;
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
-   Render_Engine_GL_Generic generic;
+   Render_Output_GL_Generic generic;
 };
 
 typedef struct _Native Native;

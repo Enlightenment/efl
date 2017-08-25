@@ -68,7 +68,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
-   Render_Engine_GL_Generic generic;
+   Render_Output_GL_Generic generic;
 
    Ecore_Drm2_Device *dev;
 };
