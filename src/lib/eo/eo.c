@@ -3182,3 +3182,98 @@ eo_objects_iterator_new(void)
 
    return (Eina_Iterator *)it;
 }
+
+static Eina_Bool
+_eo_value_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   Eo **tmem = mem;
+   *tmem = NULL;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_value_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   Eo **tmem = mem;
+   if (*tmem)
+     {
+        efl_unref(*tmem);
+        *tmem = NULL;
+     }
+   return EINA_TRUE;
+}
+
+static void
+_eo_value_replace(Eo **dst, Eo * const *src)
+{
+   if (*src == *dst) return;
+   //ref *src first, since efl_unref(*dst) may trigger *src unref()
+   efl_ref(*src);
+   efl_unref(*dst);
+   *dst = *src;
+}
+
+static Eina_Bool
+_eo_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
+{
+   Eo **dst = mem;
+   Eo **src = va_arg(args, Eo **);
+   _eo_value_replace(dst, src);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_value_pset(const Eina_Value_Type *type EINA_UNUSED,
+              void *mem, const void *ptr)
+{
+   Eo **dst = mem;
+   Eo * const *src = ptr;
+   _eo_value_replace(dst, src);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_value_pget(const Eina_Value_Type *type EINA_UNUSED,
+              const void *mem, void *ptr)
+{
+   Eo * const *src = mem;
+   Eo **dst = ptr;
+   *dst = *src;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eo_value_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   Eo * const *eo = type_mem;
+
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        const char *other_mem;
+        char buf[256];
+        snprintf(buf, sizeof(buf), "Object id: %p, class: %s, name: %s",
+                 *eo, efl_class_name_get(efl_class_get(*eo)),
+                 efl_debug_name_get(*eo));
+        other_mem = buf;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   return EINA_FALSE;
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_OBJECT = {
+  .version = EINA_VALUE_TYPE_VERSION,
+  .value_size = sizeof(Eo *),
+  .name = "Efl_Object",
+  .setup = _eo_value_setup,
+  .flush = _eo_value_flush,
+  .copy = NULL,
+  .compare = NULL,
+  .convert_to = _eo_value_convert_to,
+  .convert_from = NULL,
+  .vset = _eo_value_vset,
+  .pset = _eo_value_pset,
+  .pget = _eo_value_pget
+};
+
+EOAPI const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT = &_EINA_VALUE_TYPE_OBJECT;
