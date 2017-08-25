@@ -32,5 +32,6 @@ class Efl.Animation.Translate (Efl.Animation)
    }
    implements {
       Efl.Object.constructor;
+      Efl.Animation.object_create;
    }
 }

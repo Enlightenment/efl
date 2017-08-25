@@ -800,6 +800,7 @@ bin/elementary/test_dnd.c \
 bin/elementary/test_efl_anim_alpha.c \
 bin/elementary/test_efl_anim_rotate.c \
 bin/elementary/test_efl_anim_scale.c \
+bin/elementary/test_efl_anim_translate.c \
 bin/elementary/test_eio.c \
 bin/elementary/test_entry.c \
 bin/elementary/test_entry_anchor.c \
