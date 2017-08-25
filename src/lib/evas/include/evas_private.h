@@ -2050,7 +2050,8 @@ EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
 
 Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
-                             void *context, void *surface, int off_x, int off_y,
+                             void *context, void *output, void *surface,
+                             int off_x, int off_y,
                              int mapped, int ecx, int ecy, int ecw, int ech,
                              Evas_Proxy_Render_Data *proxy_render_data,
                              int level, Eina_Bool do_async);

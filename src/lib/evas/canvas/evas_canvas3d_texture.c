@@ -141,7 +141,9 @@ _texture_proxy_subrender(Evas_Canvas3D_Texture *obj, void *engine)
                   .source_clip = EINA_FALSE
              };
 
-             evas_render_mapped(e, pd->source, source, ctx, proxy_write->surface,
+             evas_render_mapped(e, pd->source, source, ctx,
+                                _evas_default_output_get(e),
+                                proxy_write->surface,
                                 -source->cur->geometry.x,
                                 -source->cur->geometry.y,
                                 2, 0, 0, e->output.w, e->output.h,
