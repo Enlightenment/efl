@@ -3351,6 +3351,13 @@ typedef Eo Efl_Animation_Object;
 
 #endif
 
+#ifndef _EFL_ANIMATION_OBJECT_ALPHA_EO_CLASS_TYPE
+#define _EFL_ANIMATION_OBJECT_ALPHA_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Object_Alpha;
+
+#endif
+
 struct _Efl_Animation_Object_Running_Event_Info
 {
    double progress;
