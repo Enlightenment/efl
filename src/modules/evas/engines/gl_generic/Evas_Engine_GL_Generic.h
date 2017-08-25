@@ -22,11 +22,15 @@ struct _Render_Engine_GL_Generic
 {
    Render_Engine_Software_Generic software;
 
+   Render_Output_GL_Generic *current;
+
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
       void                            *get_pixels_data;
       Evas_Object                     *obj;
    } func;
+
+   Eina_Bool evgl_initted : 1;
 };
 
 struct _Render_Output_GL_Generic
@@ -42,8 +46,6 @@ struct _Render_Output_GL_Generic
    Context_3D           *context_3d;
    E3D_Renderer         *renderer_3d;
    const EVGL_Interface *evgl_funcs;
-
-   Eina_Bool evgl_initted : 1;
 };
 
 static inline Eina_Bool
@@ -95,8 +97,6 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
    re->context_3d = NULL;
    re->renderer_3d = NULL;
    re->evgl_funcs = evgl_funcs;
-
-   re->evgl_initted = EINA_FALSE;
 
    evas_render_engine_software_generic_tile_strict_set(&re->software, EINA_TRUE);
 

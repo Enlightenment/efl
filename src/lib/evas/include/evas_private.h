@@ -1539,6 +1539,7 @@ struct _Evas_Func
    int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
+   void *(*gl_output_set)                (void *engine, void *output);
    void *(*gl_surface_create)            (void *engine, void *config, int w, int h);
    void *(*gl_pbuffer_surface_create)    (void *engine, void *config, int w, int h, int const *attrib_list);
    int  (*gl_surface_destroy)            (void *engine, void *surface);
@@ -1562,8 +1563,8 @@ struct _Evas_Func
    Eina_Bool (*gl_surface_direct_renderable_get) (void *engine, void *output, Evas_Native_Surface *ns, Eina_Bool *override, void *surface);
    void (*gl_image_direct_set)           (void *engine, void *image, Eina_Bool direct);
    int  (*gl_image_direct_get)           (void *engine, void *image);
-   void (*gl_get_pixels_pre)             (void *engine);
-   void (*gl_get_pixels_post)            (void *engine);
+   void (*gl_get_pixels_pre)             (void *engine, void *output);
+   void (*gl_get_pixels_post)            (void *engine, void *output);
 
    int  (*image_load_error_get)          (void *engine, void *image);
    int  (*font_run_end_get)              (void *engine, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);

@@ -57,6 +57,37 @@ static Eina_Bool eng_gl_surface_read_pixels(void *data, void *surface, int x, in
 
 Eina_Bool _need_context_restore = EINA_FALSE;
 
+static Render_Output_GL_Generic *
+_evgl_output_find(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output = NULL;
+   EVGL_Resource *rsc;
+   Eina_List *l;
+
+   if (engine->current)
+     {
+        output = engine->current;
+        goto picked;
+     }
+
+   rsc = _evgl_tls_resource_get();
+   if (rsc &&
+       rsc->stored.data)
+     {
+        EINA_LIST_FOREACH(engine->software.outputs, l, output)
+          if (output == rsc->stored.data) goto picked;
+     }
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        if (output->software.ob) goto picked;
+     }
+   return NULL;
+
+ picked:
+   return output;
+}
+
 static Evas_Func func, pfunc;
 
 void
@@ -1434,24 +1465,65 @@ eng_font_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface
 
 //--------------------------------//
 // Evas GL Related Code
-static int
-evgl_init(Render_Output_GL_Generic *re)
+static inline Eina_Bool
+evgl_init_do(Render_Engine_GL_Generic *engine,
+             Render_Output_GL_Generic *output)
 {
-   if (re->evgl_initted) return 1;
-   if (!evgl_engine_init(re, re->evgl_funcs)) return 0;
-   re->evgl_initted = EINA_TRUE;
-   return 1;
+   if (engine->evgl_initted) return EINA_TRUE;
+   if (!evgl_engine_init(output, output->evgl_funcs))
+     return EINA_FALSE;
+   engine->current = output;
+   engine->evgl_initted = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-#define EVGLINIT(_re, _ret) if (!evgl_init(_re)) return _ret
+static Render_Output_GL_Generic *
+evgl_init(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output = NULL;
+   Eina_List *l;
+
+   if (engine->evgl_initted)
+     {
+        if (engine->current) return engine->current;
+
+        EINA_LIST_FOREACH(engine->software.outputs, l, output)
+          if (output->software.ob) return output;
+
+        ERR("Evas_GL backend initializeod, but no window found !");
+        return NULL;
+     }
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        if (!output->software.ob) continue;
+        if (evgl_init_do(engine, output))
+          return output;
+     }
+
+   return NULL;
+}
+
+#define EVGLINIT(_ret) Render_Output_GL_Generic *re; if ((re = evgl_init(engine)) == NULL) return _ret
+
+static void *
+eng_gl_output_set(void *eng, void *output)
+{
+   Render_Engine_GL_Generic *engine = eng;
+   Render_Output_GL_Generic *previous = engine->current;
+
+   engine->current = output;
+
+   return previous;
+}
 
 static void *
 eng_gl_surface_create(void *engine, void *config, int w, int h)
 {
    Evas_GL_Config *cfg = (Evas_GL_Config *)config;
 
-   EVGLINIT(engine, NULL);
-   return evgl_surface_create(engine, cfg, w, h);
+   EVGLINIT(NULL);
+   return evgl_surface_create(re, cfg, w, h);
 }
 
 static void *
@@ -1459,18 +1531,20 @@ eng_gl_pbuffer_surface_create(void *engine, void *config, int w, int h, const in
 {
    Evas_GL_Config *cfg = (Evas_GL_Config *)config;
 
-   EVGLINIT(engine, NULL);
-   return evgl_pbuffer_surface_create(engine, cfg, w, h, attrib_list);
+   EVGLINIT(NULL);
+   return evgl_pbuffer_surface_create(re, cfg, w, h, attrib_list);
 }
 
 static int
 eng_gl_surface_destroy(void *engine, void *surface)
 {
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
+   Render_Engine_GL_Generic *e;
 
-   EVGLINIT(engine, 0);
-   CONTEXT_STORED_RESET(engine, surface);
-   return evgl_surface_destroy(engine, sfc);
+   EVGLINIT(0);
+   if (e->current == re) e->current = NULL;
+   CONTEXT_STORED_RESET(re, surface);
+   return evgl_surface_destroy(re, sfc);
 }
 
 static void *
@@ -1480,8 +1554,8 @@ eng_gl_context_create(void *engine, void *share_context, int version,
 {
    EVGL_Context  *sctx = (EVGL_Context *)share_context;
 
-   EVGLINIT(engine, NULL);
-   return evgl_context_create(engine, sctx, version, native_context_get, engine_data_get);
+   EVGLINIT(NULL);
+   return evgl_context_create(re, sctx, version, native_context_get, engine_data_get);
 }
 
 static int
@@ -1489,15 +1563,17 @@ eng_gl_context_destroy(void *engine, void *context)
 {
    EVGL_Context  *ctx = (EVGL_Context *)context;
 
-   EVGLINIT(engine, 0);
-   return evgl_context_destroy(engine, ctx);
+   EVGLINIT(0);
+   return evgl_context_destroy(re, ctx);
 }
 
 static int
-eng_gl_make_current(void *engine, void *surface, void *context)
+eng_gl_make_current(void *eng, void *surface, void *context)
 {
+   Render_Engine_GL_Generic *engine = eng;
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
    EVGL_Context  *ctx = (EVGL_Context *)context;
+   Render_Output_GL_Generic *output;
    int ret = 0;
 
    // TODO: Add check for main thread before flush
@@ -1516,8 +1592,11 @@ eng_gl_make_current(void *engine, void *surface, void *context)
           }
      }
 
-   ret = evgl_make_current(engine, sfc, ctx);
-   CONTEXT_STORE(engine, surface, context);
+   output = _evgl_output_find(engine);
+   if (!output) return ret;
+
+   ret = evgl_make_current(output, sfc, ctx);
+   CONTEXT_STORE(output, surface, context);
 
    return ret;
 }
@@ -1537,25 +1616,32 @@ eng_gl_current_surface_get(void *engine EINA_UNUSED)
 }
 
 static int
-eng_gl_rotation_angle_get(void *engine)
+eng_gl_rotation_angle_get(void *eng)
 {
+   Render_Engine_GL_Generic *engine = eng;
+   Render_Output_GL_Generic *output;
+
    if (!evgl_engine->funcs->rotation_angle_get) return 0;
    if (!_evgl_direct_enabled()) return 0;
-   return evgl_engine->funcs->rotation_angle_get(engine);
+
+   // It would be better if that this API was called Evas Output
+   output = _evgl_output_find(engine);
+   if (!output) return 0;
+
+   return evgl_engine->funcs->rotation_angle_get(output);
 }
 
 static const char *
 eng_gl_string_query(void *engine, int name)
 {
-   EVGLINIT(engine, NULL);
+   EVGLINIT(NULL);
    return evgl_string_query(name);
 }
 
 static void *
 eng_gl_proc_address_get(void *engine, const char *name)
 {
-   Render_Output_GL_Generic *re = engine;
-   EVGLINIT(engine, NULL);
+   EVGLINIT(NULL);
    void *fun = NULL;
 
    if (!evgl_safe_extension_get(name, &fun))
@@ -1586,9 +1672,10 @@ eng_gl_native_surface_get(void *engine EINA_UNUSED, void *surface, void *native_
 static void *
 eng_gl_api_get(void *engine, int version)
 {
-   void *ret;
+   Render_Output_GL_Generic *output;
    Evas_Engine_GL_Context *gl_context;
-   EVGLINIT(engine, NULL);
+   void *ret;
+   EVGLINIT(NULL);
 
    gl_context = gl_generic_context_find(engine);
    if (!gl_context)
@@ -1601,7 +1688,9 @@ eng_gl_api_get(void *engine, int version)
         ERR("Version not supported!");
         return NULL;
      }
-   ret = evgl_api_get(engine, version, EINA_TRUE);
+
+   output = _evgl_output_find(engine);
+   ret = evgl_api_get(output, version, EINA_TRUE);
 
    //Disable GLES3 support if symbols not present
    if ((!ret) && (version == EVAS_GL_GLES_3_X))
@@ -1614,20 +1703,22 @@ eng_gl_api_get(void *engine, int version)
 static void
 eng_gl_direct_override_get(void *engine, Eina_Bool *override, Eina_Bool *force_off)
 {
-   EVGLINIT(engine, );
+   EVGLINIT();
    evgl_direct_override_get(override, force_off);
 }
 
 static Eina_Bool
-eng_gl_surface_direct_renderable_get(void *engine, void *output, Evas_Native_Surface *ns, Eina_Bool *override, void *surface)
+eng_gl_surface_direct_renderable_get(void *eng, void *output, Evas_Native_Surface *ns, Eina_Bool *override, void *surface)
 {
+   Render_Engine_GL_Generic *engine = eng;
    Render_Output_GL_Generic *re = output;
    Eina_Bool direct_render, client_side_rotation;
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *sfc = surface;
 
    if (!re) return EINA_FALSE;
-   EVGLINIT(engine, EINA_FALSE);
+   if (!evgl_init_do(engine, re))
+     return EINA_FALSE;
    if (!ns) return EINA_FALSE;
    if (!evgl_native_surface_direct_opts_get(ns, &direct_render, &client_side_rotation, override))
      return EINA_FALSE;
@@ -1656,14 +1747,18 @@ eng_gl_get_pixels_set(void *eng, void *get_pixels, void *get_pixels_data, void *
 }
 
 static void
-eng_gl_get_pixels_pre(void *engine)
+eng_gl_get_pixels_pre(void *e, void *o)
 {
-   EVGLINIT(engine, );
+   Render_Engine_GL_Generic *engine = e;
+   Render_Output_GL_Generic *output = o;
+
+   if (!evgl_init_do(engine, output))
+     return ;
    evgl_get_pixels_pre();
 }
 
 static void
-eng_gl_get_pixels_post(void *engine EINA_UNUSED)
+eng_gl_get_pixels_post(void *e EINA_UNUSED, void *o EINA_UNUSED)
 {
    evgl_get_pixels_post();
 }
@@ -1759,10 +1854,14 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
 }
 
 static Eina_Bool
-eng_gl_surface_query(void *engine, void *surface, int attr, void *value)
+eng_gl_surface_query(void *eng, void *surface, int attr, void *value)
 {
-   Render_Output_GL_Generic *re  = engine;
+   Render_Engine_GL_Generic *engine = eng;
+   Render_Output_GL_Generic *re;
    EVGL_Surface  *sfc = surface;
+
+   re = _evgl_output_find(engine);
+   if (!re) return EINA_FALSE;
 
 #ifdef GL_GLES
    if (sfc->pbuffer.is_pbuffer)
@@ -3112,6 +3211,7 @@ module_open(Evas_Module *em)
    ORD(font_cache_set);
    ORD(font_cache_get);
 
+   ORD(gl_output_set);
    ORD(gl_surface_create);
    ORD(gl_pbuffer_surface_create);
    ORD(gl_surface_destroy);
