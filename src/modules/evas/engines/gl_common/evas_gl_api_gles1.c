@@ -1,5 +1,6 @@
 #define GL_ERRORS_NODEF 1
 #include "evas_gl_core_private.h"
+#include "evas_gl_api_ext.h"
 
 #ifndef _WIN32
 # include <dlfcn.h>
@@ -2995,834 +2996,723 @@ _evgld_gles1_glGenBuffers(GLsizei n, GLuint *buffers)
 }
 
 static void
-_evgld_gles1_glGenTextures(GLsizei n, GLuint *textures)
+_evgl_gles1_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
-   if (!_gles1_api.glGenTextures)
+   EVGL_Resource *rsc;
+
+   if (!_gles1_api.glClearColor)
+     return;
+
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        ERR("Can not call glGenTextures() in this context!");
+        ERR("Unable to execute GL command. Error retrieving tls");
         return;
      }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGenTextures(n, textures);
-   EVGLD_FUNC_END();
+
+   if (_evgl_direct_enabled())
+     {
+        rsc->clear_color.a = alpha;
+        rsc->clear_color.r = red;
+        rsc->clear_color.g = green;
+        rsc->clear_color.b = blue;
+     }
+   EVGL_FUNC_BEGIN();
+   EVGL_TH_CALL(glClearColor, _gles1_api.glClearColor, red, green, blue, alpha);
+}
+
+static void
+_evgl_gles1_glClear(GLbitfield mask)
+{
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+   int cc[4] = {0,0,0,0};
+
+   if (!_gles1_api.glClear)
+     return;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   EVGL_FUNC_BEGIN();
+   if (_evgl_direct_enabled())
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          //|| rsc->current_ctx->map_tex)
+          {
+             /* Skip glClear() if clearing with transparent color
+              * Note: There will be side effects if the object itself is not
+              * marked as having an alpha channel!
+              */
+             if (ctx->current_sfc->alpha && (mask & GL_COLOR_BUFFER_BIT))
+               {
+                  if ((rsc->clear_color.a == 0) &&
+                      (rsc->clear_color.r == 0) &&
+                      (rsc->clear_color.g == 0) &&
+                      (rsc->clear_color.b == 0))
+                    {
+                       // Skip clear color as we don't want to write black
+                       mask &= ~GL_COLOR_BUFFER_BIT;
+                    }
+                  else if (rsc->clear_color.a != 1.0)
+                    {
+                       // TODO: Draw a rectangle? This will never be the perfect solution though.
+                       WRN("glClear() used with a semi-transparent color and direct rendering. "
+                           "This will erase the previous contents of the evas!");
+                    }
+                  if (!mask) return;
+               }
+
+             if ((!ctx->direct_scissor))
+               {
+                  EVGL_TH_CALL(glEnable, _gles1_api.glEnable, GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 1;
+               }
+
+             if ((ctx->scissor_updated) && (ctx->scissor_enabled))
+               {
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 1,
+                                         ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                         ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+
+                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                  EVGL_TH_CALL(glScissor, _gles1_api.glScissor, nc[0], nc[1], nc[2], nc[3]);
+                  ctx->direct_scissor = 0;
+               }
+             else
+               {
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         0, 0, 0, 0,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+
+                  EVGL_TH_CALL(glScissor, _gles1_api.glScissor, cc[0], cc[1], cc[2], cc[3]);
+               }
+
+             EVGL_TH_CALL(glClear, _gles1_api.glClear, mask);
+
+             // TODO/FIXME: Restore previous client-side scissors.
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             EVGL_TH_CALL(glClear, _gles1_api.glClear, mask);
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        EVGL_TH_CALL(glClear, _gles1_api.glClear, mask);
+     }
+}
+
+static void
+_evgl_gles1_glDisable(GLenum cap)
+{
+   EVGL_Context *ctx;
+
+   if (!_gles1_api.glDisable)
+     return;
+
+   ctx = evas_gl_common_current_context_get();
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   if (cap == GL_SCISSOR_TEST)
+      ctx->scissor_enabled = 0;
+   EVGL_FUNC_BEGIN();
+   EVGL_TH_CALL(glDisable, _gles1_api.glDisable, cap);
+}
+
+static void
+_evgl_gles1_glEnable(GLenum cap)
+{
+   EVGL_Context *ctx;
+
+   if (!_gles1_api.glEnable)
+     return;
+
+   ctx = evas_gl_common_current_context_get();
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   if (cap == GL_SCISSOR_TEST)
+      ctx->scissor_enabled = 1;
+   EVGL_FUNC_BEGIN();
+   EVGL_TH_CALL(glEnable, _gles1_api.glEnable, cap);
 }
 
 static GLenum
-_evgld_gles1_glGetError(void)
+_evgl_gles1_glGetError(void)
 {
    GLenum ret;
    if (!_gles1_api.glGetError)
-     {
-        ERR("Can not call glGetError() in this context!");
-        return EVAS_GL_NOT_INITIALIZED;
-     }
-   EVGLD_FUNC_BEGIN();
-   ret = _evgl_gles1_glGetError();
-   EVGLD_FUNC_END();
+     return EVAS_GL_NOT_INITIALIZED;
+   EVGL_FUNC_BEGIN();
+   ret = EVGL_TH_CALL(glGetError, _gles1_api.glGetError);
    return ret;
 }
 
 static void
-_evgld_gles1_glGetFixedv(GLenum pname, GLfixed *params)
+_evgl_gles1_glGetIntegerv(GLenum pname, GLint *params)
 {
-   if (!_gles1_api.glGetFixedv)
-     {
-        ERR("Can not call glGetFixedv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetFixedv(pname, params);
-   EVGLD_FUNC_END();
-}
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
 
-static void
-_evgld_gles1_glGetIntegerv(GLenum pname, GLint *params)
-{
    if (!_gles1_api.glGetIntegerv)
-     {
-        ERR("Can not call glGetIntegerv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetIntegerv(pname, params);
-   EVGLD_FUNC_END();
-}
+     return;
 
-static void
-_evgld_gles1_glGetLightxv(GLenum light, GLenum pname, GLfixed *params)
-{
-   if (!_gles1_api.glGetLightxv)
+   if (_evgl_direct_enabled())
      {
-        ERR("Can not call glGetLightxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetLightxv(light, pname, params);
-   EVGLD_FUNC_END();
-}
+        if (!params)
+          {
+             ERR("Inavlid Parameter");
+             return;
+          }
 
-static void
-_evgld_gles1_glGetMaterialxv(GLenum face, GLenum pname, GLfixed *params)
-{
-   if (!_gles1_api.glGetMaterialxv)
-     {
-        ERR("Can not call glGetMaterialxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetMaterialxv(face, pname, params);
-   EVGLD_FUNC_END();
-}
+        if (!(rsc=_evgl_tls_resource_get()))
+          {
+             ERR("Unable to execute GL command. Error retrieving tls");
+             return;
+          }
 
-static void
-_evgld_gles1_glGetPointerv(GLenum pname, GLvoid **params)
-{
-   if (!_gles1_api.glGetPointerv)
-     {
-        ERR("Can not call glGetPointerv() in this context!");
-        return;
+        ctx = rsc->current_ctx;
+        if (!ctx)
+          {
+             ERR("Unable to retrive Current Context");
+             return;
+          }
+
+        if (ctx->version != EVAS_GL_GLES_1_X)
+          {
+             ERR("Invalid context version %d", (int) ctx->version);
+             return;
+          }
+
+        // Only need to handle it if it's directly rendering to the window
+        if (!(rsc->current_ctx->current_fbo))
+          //|| rsc->current_ctx->map_tex)
+          {
+             if (pname == GL_SCISSOR_BOX)
+               {
+                  if (ctx->scissor_updated)
+                    {
+                       memcpy(params, ctx->scissor_coord, sizeof(int)*4);
+                       return;
+                    }
+               }
+             /*!!! Temporary Fixes to avoid Webkit issue
+             if (pname == GL_VIEWPORT)
+               {
+                  if (ctx->viewport_updated)
+                    {
+                       memcpy(params, ctx->viewport_coord, sizeof(int)*4);
+                       return;
+                    }
+               }
+               */
+
+             // If it hasn't been initialized yet, return img object size
+             if (pname == GL_SCISSOR_BOX) //|| (pname == GL_VIEWPORT))
+               {
+                  params[0] = 0;
+                  params[1] = 0;
+                  params[2] = (GLint)rsc->direct.img.w;
+                  params[3] = (GLint)rsc->direct.img.h;
+                  return;
+               }
+          }
      }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetPointerv(pname, params);
-   EVGLD_FUNC_END();
+
+   EVGL_FUNC_BEGIN();
+   EVGL_TH_CALL(glGetIntegerv, _gles1_api.glGetIntegerv, pname, params);
 }
 
 static const GLubyte *
-_evgld_gles1_glGetString(GLenum name)
+_evgl_gles1_glGetString(GLenum name)
 {
-   const GLubyte * ret;
+   static char _version[128] = {0};
+   EVGL_Resource *rsc;
+   const GLubyte *ret;
+
    if (!_gles1_api.glGetString)
+     return NULL;
+
+   if ((!(rsc = _evgl_tls_resource_get())) || !rsc->current_ctx)
      {
-        ERR("Can not call glGetString() in this context!");
+        ERR("Current context is NULL, not calling glGetString");
+        // This sets evas_gl_error_get instead of glGetError...
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
         return NULL;
      }
-   EVGLD_FUNC_BEGIN();
-   ret = _evgl_gles1_glGetString(name);
-   EVGLD_FUNC_END();
-   return ret;
+
+   if (rsc->current_ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) rsc->current_ctx->version);
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_MATCH);
+        return NULL;
+     }
+
+   switch (name)
+     {
+      case GL_VENDOR:
+      case GL_RENDERER:
+      case GL_SHADING_LANGUAGE_VERSION:
+        break;
+      case GL_VERSION:
+        ret = EVGL_TH_CALL(glGetString, NULL, GL_VERSION);
+        if (!ret) return NULL;
+#ifdef GL_GLES
+        if (ret[13] != (GLubyte) '1')
+          {
+             // We try not to remove the vendor fluff
+             snprintf(_version, sizeof(_version), "OpenGL ES-CM 1.1 Evas GL (%s)", ((char *) ret) + 10);
+             _version[sizeof(_version) - 1] = '\0';
+             return (const GLubyte *) _version;
+          }
+        return ret;
+#else
+        // Desktop GL, we still keep the official name
+        snprintf(_version, sizeof(_version), "OpenGL ES-CM 1.1 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_version) - 1] = '\0';
+        return (const GLubyte *) _version;
+#endif
+
+      case GL_EXTENSIONS:
+        return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, EVAS_GL_GLES_1_X);
+
+      default:
+        WRN("Unknown string requested: %x", (unsigned int) name);
+        break;
+     }
+
+   EVGL_FUNC_BEGIN();
+   return EVGL_TH_CALL(glGetString, _gles1_api.glGetString, name);
 }
 
 static void
-_evgld_gles1_glGetTexEnviv(GLenum env, GLenum pname, GLint *params)
+_evgl_gles1_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels)
 {
-   if (!_gles1_api.glGetTexEnviv)
-     {
-        ERR("Can not call glGetTexEnviv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetTexEnviv(env, pname, params);
-   EVGLD_FUNC_END();
-}
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+   int cc[4] = {0,0,0,0};
 
-static void
-_evgld_gles1_glGetTexEnvxv(GLenum env, GLenum pname, GLfixed *params)
-{
-   if (!_gles1_api.glGetTexEnvxv)
-     {
-        ERR("Can not call glGetTexEnvxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetTexEnvxv(env, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glGetTexParameteriv(GLenum target, GLenum pname, GLint *params)
-{
-   if (!_gles1_api.glGetTexParameteriv)
-     {
-        ERR("Can not call glGetTexParameteriv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetTexParameteriv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glGetTexParameterxv(GLenum target, GLenum pname, GLfixed *params)
-{
-   if (!_gles1_api.glGetTexParameterxv)
-     {
-        ERR("Can not call glGetTexParameterxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glGetTexParameterxv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glHint(GLenum target, GLenum mode)
-{
-   if (!_gles1_api.glHint)
-     {
-        ERR("Can not call glHint() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glHint(target, mode);
-   EVGLD_FUNC_END();
-}
-
-static GLboolean
-_evgld_gles1_glIsBuffer(GLuint buffer)
-{
-   GLboolean ret;
-   if (!_gles1_api.glIsBuffer)
-     {
-        ERR("Can not call glIsBuffer() in this context!");
-        return EINA_FALSE;
-     }
-   EVGLD_FUNC_BEGIN();
-   ret = _evgl_gles1_glIsBuffer(buffer);
-   EVGLD_FUNC_END();
-   return ret;
-}
-
-static GLboolean
-_evgld_gles1_glIsEnabled(GLenum cap)
-{
-   GLboolean ret;
-   if (!_gles1_api.glIsEnabled)
-     {
-        ERR("Can not call glIsEnabled() in this context!");
-        return EINA_FALSE;
-     }
-   EVGLD_FUNC_BEGIN();
-   ret = _evgl_gles1_glIsEnabled(cap);
-   EVGLD_FUNC_END();
-   return ret;
-}
-
-static GLboolean
-_evgld_gles1_glIsTexture(GLuint texture)
-{
-   GLboolean ret;
-   if (!_gles1_api.glIsTexture)
-     {
-        ERR("Can not call glIsTexture() in this context!");
-        return EINA_FALSE;
-     }
-   EVGLD_FUNC_BEGIN();
-   ret = _evgl_gles1_glIsTexture(texture);
-   EVGLD_FUNC_END();
-   return ret;
-}
-
-static void
-_evgld_gles1_glLightModelx(GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glLightModelx)
-     {
-        ERR("Can not call glLightModelx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLightModelx(pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLightModelxv(GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glLightModelxv)
-     {
-        ERR("Can not call glLightModelxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLightModelxv(pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLightx(GLenum light, GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glLightx)
-     {
-        ERR("Can not call glLightx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLightx(light, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLightxv(GLenum light, GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glLightxv)
-     {
-        ERR("Can not call glLightxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLightxv(light, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLineWidthx(GLfixed width)
-{
-   if (!_gles1_api.glLineWidthx)
-     {
-        ERR("Can not call glLineWidthx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLineWidthx(width);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLoadIdentity(void)
-{
-   if (!_gles1_api.glLoadIdentity)
-     {
-        ERR("Can not call glLoadIdentity() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLoadIdentity();
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLoadMatrixx(const GLfixed *m)
-{
-   if (!_gles1_api.glLoadMatrixx)
-     {
-        ERR("Can not call glLoadMatrixx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLoadMatrixx(m);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glLogicOp(GLenum opcode)
-{
-   if (!_gles1_api.glLogicOp)
-     {
-        ERR("Can not call glLogicOp() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glLogicOp(opcode);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glMaterialx(GLenum face, GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glMaterialx)
-     {
-        ERR("Can not call glMaterialx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glMaterialx(face, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glMaterialxv(GLenum face, GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glMaterialxv)
-     {
-        ERR("Can not call glMaterialxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glMaterialxv(face, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glMatrixMode(GLenum mode)
-{
-   if (!_gles1_api.glMatrixMode)
-     {
-        ERR("Can not call glMatrixMode() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glMatrixMode(mode);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glMultMatrixx(const GLfixed *m)
-{
-   if (!_gles1_api.glMultMatrixx)
-     {
-        ERR("Can not call glMultMatrixx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glMultMatrixx(m);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glMultiTexCoord4x(GLenum target, GLfixed s, GLfixed t, GLfixed r, GLfixed q)
-{
-   if (!_gles1_api.glMultiTexCoord4x)
-     {
-        ERR("Can not call glMultiTexCoord4x() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glMultiTexCoord4x(target, s, t, r, q);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glNormal3x(GLfixed nx, GLfixed ny, GLfixed nz)
-{
-   if (!_gles1_api.glNormal3x)
-     {
-        ERR("Can not call glNormal3x() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glNormal3x(nx, ny, nz);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
-{
-   if (!_gles1_api.glNormalPointer)
-     {
-        ERR("Can not call glNormalPointer() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glNormalPointer(type, stride, pointer);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glOrthox(GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar)
-{
-   if (!_gles1_api.glOrthox)
-     {
-        ERR("Can not call glOrthox() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glOrthox(left, right, bottom, top, zNear, zFar);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPixelStorei(GLenum pname, GLint param)
-{
-   if (!_gles1_api.glPixelStorei)
-     {
-        ERR("Can not call glPixelStorei() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPixelStorei(pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPointParameterx(GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glPointParameterx)
-     {
-        ERR("Can not call glPointParameterx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPointParameterx(pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPointParameterxv(GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glPointParameterxv)
-     {
-        ERR("Can not call glPointParameterxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPointParameterxv(pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPointSizex(GLfixed size)
-{
-   if (!_gles1_api.glPointSizex)
-     {
-        ERR("Can not call glPointSizex() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPointSizex(size);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPolygonOffsetx(GLfixed factor, GLfixed units)
-{
-   if (!_gles1_api.glPolygonOffsetx)
-     {
-        ERR("Can not call glPolygonOffsetx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPolygonOffsetx(factor, units);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPopMatrix(void)
-{
-   if (!_gles1_api.glPopMatrix)
-     {
-        ERR("Can not call glPopMatrix() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPopMatrix();
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glPushMatrix(void)
-{
-   if (!_gles1_api.glPushMatrix)
-     {
-        ERR("Can not call glPushMatrix() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glPushMatrix();
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels)
-{
    if (!_gles1_api.glReadPixels)
+     return;
+
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        ERR("Can not call glReadPixels() in this context!");
+        ERR("Unable to execute GL command. Error retrieving tls");
         return;
      }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glReadPixels(x, y, width, height, format, type, pixels);
-   EVGLD_FUNC_END();
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   EVGL_FUNC_BEGIN();
+   if (_evgl_direct_enabled())
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          //|| rsc->current_ctx->map_tex)
+          {
+             compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                    rsc->direct.rot, 1,
+                                    x, y, width, height,
+                                    rsc->direct.img.x, rsc->direct.img.y,
+                                    rsc->direct.img.w, rsc->direct.img.h,
+                                    rsc->direct.clip.x, rsc->direct.clip.y,
+                                    rsc->direct.clip.w, rsc->direct.clip.h,
+                                    oc, nc, cc);
+             EVGL_TH_CALL(glReadPixels, _gles1_api.glReadPixels, nc[0], nc[1], nc[2], nc[3], format, type, pixels);
+          }
+        else
+          {
+             EVGL_TH_CALL(glReadPixels, _gles1_api.glReadPixels, x, y, width, height, format, type, pixels);
+          }
+     }
+   else
+     {
+        EVGL_TH_CALL(glReadPixels, _gles1_api.glReadPixels, x, y, width, height, format, type, pixels);
+     }
 }
 
 static void
-_evgld_gles1_glRotatex(GLfixed angle, GLfixed x, GLfixed y, GLfixed z)
+_evgl_gles1_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-   if (!_gles1_api.glRotatex)
-     {
-        ERR("Can not call glRotatex() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glRotatex(angle, x, y, z);
-   EVGLD_FUNC_END();
-}
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+   int cc[4] = {0,0,0,0};
 
-static void
-_evgld_gles1_glSampleCoverage(GLclampf value, GLboolean invert)
-{
-   if (!_gles1_api.glSampleCoverage)
-     {
-        ERR("Can not call glSampleCoverage() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glSampleCoverage(value, invert);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glSampleCoveragex(GLclampx value, GLboolean invert)
-{
-   if (!_gles1_api.glSampleCoveragex)
-     {
-        ERR("Can not call glSampleCoveragex() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glSampleCoveragex(value, invert);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glScalex(GLfixed x, GLfixed y, GLfixed z)
-{
-   if (!_gles1_api.glScalex)
-     {
-        ERR("Can not call glScalex() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glScalex(x, y, z);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
-{
    if (!_gles1_api.glScissor)
+     return;
+
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        ERR("Can not call glScissor() in this context!");
+        ERR("Unable to execute GL command. Error retrieving tls");
         return;
      }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glScissor(x, y, width, height);
-   EVGLD_FUNC_END();
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   if (_evgl_direct_enabled())
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          //|| rsc->current_ctx->map_tex)
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+               }
+
+             compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                    rsc->direct.rot, 1,
+                                    x, y, width, height,
+                                    rsc->direct.img.x, rsc->direct.img.y,
+                                    rsc->direct.img.w, rsc->direct.img.h,
+                                    rsc->direct.clip.x, rsc->direct.clip.y,
+                                    rsc->direct.clip.w, rsc->direct.clip.h,
+                                    oc, nc, cc);
+
+             // Keep a copy of the original coordinates
+             ctx->scissor_coord[0] = x;
+             ctx->scissor_coord[1] = y;
+             ctx->scissor_coord[2] = width;
+             ctx->scissor_coord[3] = height;
+
+             RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+             EVGL_TH_CALL(glScissor, _gles1_api.glScissor, nc[0], nc[1], nc[2], nc[3]);
+
+             ctx->direct_scissor = 0;
+
+             // Check....!!!!
+             ctx->scissor_updated = 1;
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             EVGL_TH_CALL(glScissor, _gles1_api.glScissor, x, y, width, height);
+
+             ctx->scissor_updated = 0;
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        EVGL_TH_CALL(glScissor, _gles1_api.glScissor, x, y, width, height);
+     }
 }
 
 static void
-_evgld_gles1_glShadeModel(GLenum mode)
+_evgl_gles1_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-   if (!_gles1_api.glShadeModel)
-     {
-        ERR("Can not call glShadeModel() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glShadeModel(mode);
-   EVGLD_FUNC_END();
-}
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+   int cc[4] = {0,0,0,0};
 
-static void
-_evgld_gles1_glStencilFunc(GLenum func, GLint ref, GLuint mask)
-{
-   if (!_gles1_api.glStencilFunc)
-     {
-        ERR("Can not call glStencilFunc() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glStencilFunc(func, ref, mask);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glStencilMask(GLuint mask)
-{
-   if (!_gles1_api.glStencilMask)
-     {
-        ERR("Can not call glStencilMask() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glStencilMask(mask);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
-{
-   if (!_gles1_api.glStencilOp)
-     {
-        ERR("Can not call glStencilOp() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glStencilOp(fail, zfail, zpass);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
-{
-   if (!_gles1_api.glTexCoordPointer)
-     {
-        ERR("Can not call glTexCoordPointer() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexCoordPointer(size, type, stride, pointer);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexEnvi(GLenum target, GLenum pname, GLint param)
-{
-   if (!_gles1_api.glTexEnvi)
-     {
-        ERR("Can not call glTexEnvi() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexEnvi(target, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexEnvx(GLenum target, GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glTexEnvx)
-     {
-        ERR("Can not call glTexEnvx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexEnvx(target, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexEnviv(GLenum target, GLenum pname, const GLint *params)
-{
-   if (!_gles1_api.glTexEnviv)
-     {
-        ERR("Can not call glTexEnviv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexEnviv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexEnvxv(GLenum target, GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glTexEnvxv)
-     {
-        ERR("Can not call glTexEnvxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexEnvxv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
-{
-   if (!_gles1_api.glTexImage2D)
-     {
-        ERR("Can not call glTexImage2D() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexParameteri(GLenum target, GLenum pname, GLint param)
-{
-   if (!_gles1_api.glTexParameteri)
-     {
-        ERR("Can not call glTexParameteri() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexParameteri(target, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexParameterx(GLenum target, GLenum pname, GLfixed param)
-{
-   if (!_gles1_api.glTexParameterx)
-     {
-        ERR("Can not call glTexParameterx() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexParameterx(target, pname, param);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexParameteriv(GLenum target, GLenum pname, const GLint *params)
-{
-   if (!_gles1_api.glTexParameteriv)
-     {
-        ERR("Can not call glTexParameteriv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexParameteriv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexParameterxv(GLenum target, GLenum pname, const GLfixed *params)
-{
-   if (!_gles1_api.glTexParameterxv)
-     {
-        ERR("Can not call glTexParameterxv() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexParameterxv(target, pname, params);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels)
-{
-   if (!_gles1_api.glTexSubImage2D)
-     {
-        ERR("Can not call glTexSubImage2D() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glTranslatex(GLfixed x, GLfixed y, GLfixed z)
-{
-   if (!_gles1_api.glTranslatex)
-     {
-        ERR("Can not call glTranslatex() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glTranslatex(x, y, z);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
-{
-   if (!_gles1_api.glVertexPointer)
-     {
-        ERR("Can not call glVertexPointer() in this context!");
-        return;
-     }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glVertexPointer(size, type, stride, pointer);
-   EVGLD_FUNC_END();
-}
-
-static void
-_evgld_gles1_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
    if (!_gles1_api.glViewport)
+     return;
+
+   if (!(rsc=_evgl_tls_resource_get()))
      {
-        ERR("Can not call glViewport() in this context!");
+        ERR("Unable to execute GL command. Error retrieving tls");
         return;
      }
-   EVGLD_FUNC_BEGIN();
-   _evgl_gles1_glViewport(x, y, width, height);
-   EVGLD_FUNC_END();
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) ctx->version);
+        return;
+     }
+
+   EVGL_FUNC_BEGIN();
+   if (_evgl_direct_enabled())
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          //|| rsc->current_ctx->map_tex)
+          {
+             if ((!ctx->direct_scissor))
+               {
+                  EVGL_TH_CALL(glEnable, _gles1_api.glEnable, GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 1;
+               }
+
+             if ((ctx->scissor_updated) && (ctx->scissor_enabled))
+               {
+                  // Recompute the scissor coordinates
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 1,
+                                         ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                         ctx->scissor_coord[2], ctx->scissor_coord[3],
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+
+                  RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
+                  EVGL_TH_CALL(glScissor, _gles1_api.glScissor, nc[0], nc[1], nc[2], nc[3]);
+
+                  ctx->direct_scissor = 0;
+
+                  // Compute the viewport coordinate
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         x, y, width, height,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+                  EVGL_TH_CALL(glViewport, _gles1_api.glViewport, nc[0], nc[1], nc[2], nc[3]);
+               }
+             else
+               {
+
+                  compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
+                                         rsc->direct.rot, 0,
+                                         x, y, width, height,
+                                         rsc->direct.img.x, rsc->direct.img.y,
+                                         rsc->direct.img.w, rsc->direct.img.h,
+                                         rsc->direct.clip.x, rsc->direct.clip.y,
+                                         rsc->direct.clip.w, rsc->direct.clip.h,
+                                         oc, nc, cc);
+                  EVGL_TH_CALL(glScissor, _gles1_api.glScissor, cc[0], cc[1], cc[2], cc[3]);
+
+                  EVGL_TH_CALL(glViewport, _gles1_api.glViewport, nc[0], nc[1], nc[2], nc[3]);
+               }
+
+             ctx->viewport_direct[0] = nc[0];
+             ctx->viewport_direct[1] = nc[1];
+             ctx->viewport_direct[2] = nc[2];
+             ctx->viewport_direct[3] = nc[3];
+
+             // Keep a copy of the original coordinates
+             ctx->viewport_coord[0] = x;
+             ctx->viewport_coord[1] = y;
+             ctx->viewport_coord[2] = width;
+             ctx->viewport_coord[3] = height;
+
+             ctx->viewport_updated   = 1;
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             EVGL_TH_CALL(glViewport, _gles1_api.glViewport, x, y, width, height);
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             EVGL_TH_CALL(glDisable, _gles1_api.glDisable, GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        EVGL_TH_CALL(glViewport, _gles1_api.glViewport, x, y, width, height);
+     }
 }
 
+//-------------------------------------------------------------//
+// Open GLES 1.0 APIs
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret evgl_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   if (!_gles1_api.name) return (ret)0; \
+   EVGL_FUNC_BEGIN(); \
+   return _gles1_api.name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
+}
+
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void evgl_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   if (!_gles1_api.name) return; \
+   EVGL_FUNC_BEGIN(); \
+   _gles1_api.name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
+}
+
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret evgl_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   if (!_gles1_api.name) return (ret)0; \
+   EVGL_FUNC_BEGIN(); \
+   return EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles1_api.name, __VA_ARGS__)); \
+}
+
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void evgl_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   if (!_gles1_api.name) return; \
+   EVGL_FUNC_BEGIN(); \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles1_api.name, __VA_ARGS__)); \
+}
+
+#include "evas_gl_api_gles1_def.h"
+
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID
+#undef _EVASGL_FUNCTION_BEGIN
+#undef _EVASGL_FUNCTION_BEGIN_VOID
+
+
+//-------------------------------------------------------------//
+// Open GLES 1.0 APIs DEBUG
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret _evgld_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   EVGLD_FUNC_BEGIN(); \
+   ret _a = _evgl_gles1_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
+   EVGLD_FUNC_END(); \
+   return _a; \
+}
+
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void _evgld_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   EVGLD_FUNC_BEGIN(); \
+   _evgl_gles1_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
+   EVGLD_FUNC_END(); \
+}
+
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret _evgld_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   EVGLD_FUNC_BEGIN(); \
+   ret _a; \
+   _a = EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles1_api.name, __VA_ARGS__)); \
+   EVGLD_FUNC_END(); \
+   return _a; \
+}
+
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void _evgld_gles1_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
+   EVGLD_FUNC_BEGIN(); \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles1_api.name, __VA_ARGS__)); \
+   EVGLD_FUNC_END(); \
+}
+
+#include "evas_gl_api_gles1_def.h"
+
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN
+#undef _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID
+#undef _EVASGL_FUNCTION_BEGIN
+#undef _EVASGL_FUNCTION_BEGIN_VOID
 
 
 static void
@@ -4179,7 +4069,7 @@ _normal_gles1_api_get(Evas_GL_API *funcs)
    if (!funcs) return;
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(name) EVAS_API_OVERRIDE(name, funcs, _evgl_gles1_)
+#define ORD(name) EVAS_API_OVERRIDE(name, funcs, evgl_gles1_)
    /* Available only in Common profile */
    ORD(glAlphaFunc);
    ORD(glClearColor);

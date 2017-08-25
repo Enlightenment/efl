@@ -378,7 +378,7 @@ _native_bind_cb(void *image)
    Evas_Native_Surface *n = im->native.data;
 
    if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-     glBindTexture(GL_TEXTURE_2D, n->data.opengl.texture_id);
+     GL_TH(glBindTexture, GL_TEXTURE_2D, n->data.opengl.texture_id);
 }
 
 static void
@@ -388,7 +388,7 @@ _native_unbind_cb(void *image)
   Evas_Native_Surface *n = im->native.data;
 
   if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL_TH(glBindTexture, GL_TEXTURE_2D, 0);
 }
 
 static void
@@ -1224,6 +1224,7 @@ eng_image_draw(void *eng, void *data, void *context, void *surface, void *image,
 
         // Reset direct rendering info
         evgl_direct_info_clear();
+        return EINA_FALSE;
      }
    else
      {
@@ -1233,6 +1234,10 @@ eng_image_draw(void *eng, void *data, void *context, void *surface, void *image,
                                   src_x, src_y, src_w, src_h,
                                   dst_x, dst_y, dst_w, dst_h,
                                   smooth);
+        if (do_async)
+           return EINA_TRUE;
+        else
+           return EINA_FALSE;
      }
 
    return EINA_FALSE;
@@ -1770,6 +1775,72 @@ eng_gl_get_pixels_pre(void *e, void *o)
    evgl_get_pixels_pre();
 }
 
+typedef struct
+{
+   Evas_Object_Image_Pixels_Get_Cb cb;
+   void *get_pixels_data;
+   Evas_Object *o;
+} GL_TH_ST(eng_gl_get_pixels);
+
+static void
+GL_TH_CB(eng_gl_get_pixels)(void *data)
+{
+   GL_TH_ST(eng_gl_get_pixels) *thread_data = *(void **)data;
+
+  thread_data->cb(thread_data->get_pixels_data, thread_data->o);
+}
+
+static void
+GL_TH_FN(eng_gl_get_pixels)(Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o)
+{
+   GL_TH_ST(eng_gl_get_pixels) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_EVGL)) /* XXX */
+     {
+        cb(get_pixels_data, o);
+        return;
+     }
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(eng_gl_get_pixels) *) + sizeof(GL_TH_ST(eng_gl_get_pixels)), &thcmd_ref);
+   *thread_data_ptr = (void *)(thread_data_ptr + sizeof(GL_TH_ST(eng_gl_get_pixels) *));
+
+   thread_data->cb = cb;
+   thread_data->get_pixels_data = get_pixels_data;
+   thread_data->o = o;
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(eng_gl_get_pixels),
+                              EVAS_GL_THREAD_MODE_FLUSH);
+}
+
+static void
+eng_gl_get_pixels(void *data EINA_UNUSED, Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o, void *image)
+{
+   Evas_GL_Image *im = image;
+   Evas_Native_Surface *n;
+   EVGL_Surface *sfc;
+
+   if (im)
+     {
+        n = im->native.data;
+        if (n)
+          {
+             sfc = n->data.evasgl.surface;
+             if (sfc)
+               {
+                  if (sfc->thread_rendering)
+                    {
+                       GL_TH_FN(eng_gl_get_pixels)(cb, get_pixels_data, o);
+                       return;
+                    }
+               }
+          }
+     }
+
+   cb(get_pixels_data, o);
+}
+
 static void
 eng_gl_get_pixels_post(void *e EINA_UNUSED, void *o EINA_UNUSED)
 {
@@ -1829,20 +1900,20 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
     * But some devices don't support GL_BGRA, so we still need to convert.
     */
 
-   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+   GL_TH(glGetIntegerv, GL_FRAMEBUFFER_BINDING, &fbo);
    if (fbo != (GLint) im->tex->pt->fb)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
-   glPixelStorei(GL_PACK_ALIGNMENT, 4);
+     GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, im->tex->pt->fb);
+   GL_TH(glPixelStorei, GL_PACK_ALIGNMENT, 4);
 
    // With GLX we will try to read BGRA even if the driver reports RGBA
 #if defined(GL_GLES) && defined(GL_IMPLEMENTATION_COLOR_READ_FORMAT)
-   glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &fmt);
+   GL_TH(glGetIntegerv, GL_IMPLEMENTATION_COLOR_READ_FORMAT, &fmt);
 #endif
 
    if ((im->tex->pt->format == GL_BGRA) && (fmt == GL_BGRA))
      {
-        glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-        done = (glGetError() == GL_NO_ERROR);
+        GL_TH(glReadPixels, x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+        done = (GL_TH(glGetError) == GL_NO_ERROR);
      }
 
    if (!done)
@@ -1850,7 +1921,7 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
         DATA32 *ptr = pixels;
         int k;
 
-        glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        GL_TH(glReadPixels, x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         for (k = w * h; k; --k)
           {
              const DATA32 v = *ptr;
@@ -1861,7 +1932,7 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
      }
 
    if (fbo != (GLint) im->tex->pt->fb)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+     GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, fbo);
 
    return EINA_TRUE;
 }
@@ -3134,6 +3205,7 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   if (!evas_threads_gl_init()) return 0;
    if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic", 0)) return 0;
@@ -3239,6 +3311,7 @@ module_open(Evas_Module *em)
    ORD(gl_surface_direct_renderable_get);
    ORD(gl_get_pixels_set);
    ORD(gl_get_pixels_pre);
+   ORD(gl_get_pixels);
    ORD(gl_get_pixels_post);
    ORD(gl_surface_lock);
    ORD(gl_surface_read_pixels);
@@ -3318,6 +3391,7 @@ module_close(Evas_Module *em EINA_UNUSED)
         _evas_engine_GL_log_dom = -1;
      }
    evas_gl_common_module_close();
+   evas_threads_gl_shutdown();
 }
 
 static Evas_Module_Api evas_modapi =
