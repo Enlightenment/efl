@@ -1043,41 +1043,6 @@ modules_evas_engines_gl_x11_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
-if BUILD_ENGINE_PSL1GHT
-PSL1GHT_SOURCES = \
-modules/evas/engines/psl1ght/evas_engine.c \
-modules/evas/engines/psl1ght/rsxutil.c \
-modules/evas/engines/psl1ght/evas_engine.h \
-modules/evas/engines/psl1ght/rsxutil.h \
-modules/evas/engines/psl1ght/Evas_Engine_PSL1GHT.h
-if EVAS_STATIC_BUILD_PSL1GHT
-lib_evas_libevas_la_SOURCES += $(PSL1GHT_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_psl1ght_cflags@
-lib_evas_libevas_la_LIBADD += @evas_engine_psl1ght_libs@
-else
-enginepsl1ghtpkgdir = $(libdir)/evas/modules/engines/psl1ght/$(MODULE_ARCH)
-enginepsl1ghtpkg_LTLIBRARIES = modules/evas/engines/psl1ght/module.la
-
-# Workaround for broken parallel install support in automake (relink issue)
-# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
-install_enginepsl1ghtpkgLTLIBRARIES = install-enginepsl1ghtpkgLTLIBRARIES
-$(install_enginepsl1ghtpkgLTLIBRARIES): install-libLTLIBRARIES
-
-modules_evas_engines_psl1ght_module_la_SOURCES = $(PSL1GHT_SOURCES)
-modules_evas_engines_psl1ght_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/evas/include \
--I$(top_srcdir)/src/lib/evas/cserve2 \
-@EVAS_CFLAGS@ \
-@evas_engine_psl1ght_cflags@
-modules_evas_engines_psl1ght_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@evas_engine_psl1ght_libs@
-modules_evas_engines_psl1ght_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
-modules_evas_engines_psl1ght_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_evas_engines_psl1ght_module_la_LIBTOOLFLAGS = --tag=disable-static
-endif
-endif
-
 if BUILD_ENGINE_SOFTWARE_DDRAW
 SOFTWARE_DDRAW_SOURCES = \
 modules/evas/engines/software_ddraw/evas_engine.c \

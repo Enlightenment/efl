@@ -2020,7 +2020,7 @@ EAPI Ecore_Evas *ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent,
  *
  * The psl1ght backend is used for the PS3 GameOS.
  */
-EAPI Ecore_Evas *ecore_evas_psl1ght_new(const char* name, int w, int h);
+EAPI Ecore_Evas *ecore_evas_psl1ght_new(const char* name, int w, int h) EINA_DEPRECATED;
 
 
 /* generic manipulation calls */

@@ -11,7 +11,6 @@
 /ecore-input-evas.pc
 /ecore-input.pc
 /ecore-ipc.pc
-/ecore-psl1ght.pc
 /ecore-sdl.pc
 /ecore-wayland.pc
 /ecore-wl2.pc
@@ -49,7 +48,6 @@
 /evas-opengl-cocoa.pc
 /evas-opengl-sdl.pc
 /evas-opengl-x11.pc
-/evas-psl1ght.pc
 /evas-software-buffer.pc
 /evas-software-ddraw.pc
 /evas-software-gdi.pc

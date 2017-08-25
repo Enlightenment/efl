@@ -55,7 +55,6 @@ const char *_elm_engines[] = {
    "buffer",
    "ews",
    "opengl_cocoa",
-   "psl1ght",
    "wayland_shm",
    "wayland_egl",
    "drm",
@@ -2259,8 +2258,6 @@ _env_get(void)
                  (!strcasecmp(s, "software-fb")) ||
                  (!strcasecmp(s, "software_fb")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_FB);
-        else if ((!strcasecmp(s, "psl1ght")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_PSL1GHT);
         else if ((!strcasecmp(s, "sdl")) ||
                  (!strcasecmp(s, "software-sdl")) ||
                  (!strcasecmp(s, "software_sdl")))

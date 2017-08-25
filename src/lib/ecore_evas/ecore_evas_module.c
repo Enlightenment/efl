@@ -290,12 +290,6 @@ _ecore_evas_available_engines_get(void)
                        ADDENG("opengl_cocoa");
 #endif
                     }
-                  else if (!strcmp(name, "psl1ght"))
-                    {
-#ifdef BUILD_ECORE_EVAS_PSL1GHT
-                       ADDENG("psl1ght");
-#endif
-                    }
                   else if (!strcmp(name, "sdl"))
                     {
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL

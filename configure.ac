@@ -2523,13 +2523,8 @@ define([EVAS_ENGINE_DEP_CHECK_FB], [
 AC_CHECK_HEADER([linux/fb.h], [:], [AC_MSG_ERROR([Missing linux/fb.h])])
 ])
 
-define([EVAS_ENGINE_DEP_CHECK_PSL1GHT], [
-AC_CHECK_HEADER([rsx/rsx.h], [:], [AC_MSG_ERROR([Missing rsx/rsx.h])])
-])
-
 EVAS_ENGINE([buffer], [static])
 EVAS_ENGINE([fb], [${want_fb}], [EVAS_ENGINE_DEP_CHECK_FB])
-EVAS_ENGINE([psl1ght], [${have_ps3}], [EVAS_ENGINE_DEP_CHECK_PSL1GHT])
 
 # XXX TODO:
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
@@ -3521,42 +3516,6 @@ EFL_LIB_END_OPTIONAL([Ecore_FB])
 #### End of Ecore_FB
 
 
-#### Ecore_Psl1ght
-EFL_LIB_START_OPTIONAL([Ecore_Psl1ght], [test "${have_ps3}" = "yes"])
-
-### Additional options to configure
-
-### Default values
-
-### Checks for programs
-
-### Checks for libraries
-EFL_PLATFORM_DEPEND([ECORE_PSL1GHT], [escape])
-
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore-input])
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [ecore])
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [eo])
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [efl])
-EFL_INTERNAL_DEPEND_PKG([ECORE_PSL1GHT], [eina])
-
-EFL_ADD_LIBS([ECORE_PSL1GHT], [-lio -lsysutil -lgem -lcamera -lspurs])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-EFL_LIB_END_OPTIONAL([Ecore_Psl1ght])
-#### End of Ecore_Psl1ght
-
-
 #### Ecore_SDL
 EFL_LIB_START_OPTIONAL([Ecore_SDL], [test "${want_sdl}" = "yes"])
 
@@ -4492,7 +4451,6 @@ ECORE_EVAS_MODULE([drm], [${want_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm2])])
 ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
   [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm2])])
-ECORE_EVAS_MODULE([psl1ght], [${have_ps3}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
 
@@ -5389,7 +5347,6 @@ EFL_INTERNAL_DEPEND_PKG([ELEMENTARY], [elocation])
 
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_x11_any}], [ecore_x])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_fb}], [ecore_fb])
-EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${have_ps3}], [ecore_psl1ght])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_sdl}], [ecore_sdl])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${want_ecore_evas_gl_cocoa}], [ecore_cocoa])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ELEMENTARY], [${build_ecore_evas_win32}], [ecore_win32])
@@ -5409,7 +5366,6 @@ EFL_ADD_LIBS([ELEMENTARY], [-lm])
 
 ELM_CHECK_BACKEND([X], [${want_x11_any}])
 ELM_CHECK_BACKEND([FB], [${want_fb}])
-ELM_CHECK_BACKEND([PSL1GHT], [${have_ps3}])
 ELM_CHECK_BACKEND([SDL], [${want_sdl}])
 ELM_CHECK_BACKEND([Cocoa], [${want_ecore_evas_gl_cocoa}])
 ELM_CHECK_BACKEND([Win32], [${build_ecore_evas_win32}])
@@ -5689,7 +5645,6 @@ pc/evas-eglfs.pc
 pc/evas-opengl-x11.pc
 pc/evas-opengl-sdl.pc
 pc/evas-opengl-cocoa.pc
-pc/evas-psl1ght.pc
 pc/evas-software-buffer.pc
 pc/evas-software-x11.pc
 pc/evas-software-gdi.pc
@@ -5710,7 +5665,6 @@ pc/ecore-input-evas.pc
 pc/ecore-cocoa.pc
 pc/ecore-drm.pc
 pc/ecore-fb.pc
-pc/ecore-psl1ght.pc
 pc/ecore-sdl.pc
 pc/ecore-wayland.pc
 pc/ecore-wl2.pc
@@ -5897,8 +5851,6 @@ echo "IVI-Shell.......: $want_wayland_ivi_shell"
 echo "Ecore_Buffer....: $want_ecore_buffer (${features_ecore_buffer})"
 if test "${have_linux}" = "yes"; then
 echo "Ecore_FB........: $want_fb (${features_ecore_fb})"
-elif test "${have_ps3}" = "yes"; then
-echo "Ecore_PSL1GHT...: $have_ps3"
 elif test "${have_darwin}" = "yes"; then
 echo "Ecore_Cocoa.....: $efl_lib_optional_ecore_cocoa"
 elif test "${have_windows}" = "yes"; then
