@@ -119,6 +119,12 @@ struct _Cutout_Margin
 
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
+static void
+evas_render_mask_subrender(Evas_Public_Data *evas,
+                           void *output,
+                           Evas_Object_Protected_Data *mask,
+                           Evas_Object_Protected_Data *prev_mask,
+                           int level, Eina_Bool do_async);
 
 static Eina_List *_rendering_evases = NULL;
 
@@ -2049,7 +2055,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             redraw = EINA_TRUE;
                          }
                        if (redraw)
-                         evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
+                         evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2121,7 +2127,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                             redraw = EINA_TRUE;
                          }
                        if (redraw)
-                         evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
+                         evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -2214,7 +2220,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                  redraw = EINA_TRUE;
                               }
                             if (redraw)
-                              evas_render_mask_subrender(evas, mask, prev_mask, level + 1, do_async);
+                              evas_render_mask_subrender(evas, ENDT, mask, prev_mask, level + 1, do_async);
 
                             if (mask->mask->surface)
                               {
@@ -2402,8 +2408,9 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
  * In GL the target surface will be RGBA for now. TODO: Find out how to
  *   render GL to alpha, if that's possible.
  */
-void
+static void
 evas_render_mask_subrender(Evas_Public_Data *evas,
+                           void *output,
                            Evas_Object_Protected_Data *mask,
                            Evas_Object_Protected_Data *prev_mask,
                            int level, Eina_Bool do_async)
@@ -2470,7 +2477,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           {
              // Note: This is preventive code. Never seen it happen.
              WRN("Mask render order may be invalid");
-             evas_render_mask_subrender(evas, prev_mask, prev_mask->clip.prev_mask, level + 1, do_async);
+             evas_render_mask_subrender(evas, output, prev_mask, prev_mask->clip.prev_mask, level + 1, do_async);
           }
      }
 
@@ -2546,7 +2553,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           ctx = ENFN->context_new(ENC);
           ENFN->context_color_set(ENC, ctx, 0, 0, 0, 0);
           ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_COPY);
-          ENFN->rectangle_draw(ENC, ENDT, ctx, mdata->surface, 0, 0, w, h, do_async);
+          ENFN->rectangle_draw(ENC, output, ctx, mdata->surface, 0, 0, w, h, do_async);
           ENFN->context_free(ENC, ctx);
           eina_evlog("-mask_rect_clear", mask->object, 0.0, NULL);
 
@@ -2569,7 +2576,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           if (EINA_LIKELY(!mask->is_smart))
             {
                mask->func->render(mask->object, mask, mask->private_data,
-                                  ENC, ENDT, ctx, mdata->surface, -x, -y, do_async);
+                                  ENC, output, ctx, mdata->surface, -x, -y, do_async);
             }
           else
             {
@@ -3010,7 +3017,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                        Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
 
                        if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(obj->layer->evas, mask, prev_mask, 4, do_async);
+                         evas_render_mask_subrender(obj->layer->evas, ENDT, mask, prev_mask, 4, do_async);
 
                        if (mask->mask->surface)
                          {
