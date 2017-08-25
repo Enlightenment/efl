@@ -1377,7 +1377,7 @@ eng_font_cache_flush(void *engine)
 {
    int tmp_size;
 
-   gl_generic_window_use(engine);
+   gl_generic_window_find(engine);
    tmp_size = evas_common_font_cache_get();
    evas_common_font_cache_set(0);
    evas_common_font_flush();
@@ -1387,14 +1387,14 @@ eng_font_cache_flush(void *engine)
 static void
 eng_font_cache_set(void *engine, int bytes)
 {
-   gl_generic_window_use(engine);
+   gl_generic_window_find(engine);
    evas_common_font_cache_set(bytes);
 }
 
 static int
 eng_font_cache_get(void *engine)
 {
-   gl_generic_window_use(engine);
+   gl_generic_window_find(engine);
    return evas_common_font_cache_get();
 }
 
