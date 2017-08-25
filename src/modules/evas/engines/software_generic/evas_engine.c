@@ -3922,6 +3922,8 @@ eng_output_tile_size_set(void *engine EINA_UNUSED, void *data, int w, int h)
    Render_Output_Software_Generic *re;
 
    re = (Render_Output_Software_Generic *)data;
+   re->tile.w = w;
+   re->tile.h = h;
    evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 

@@ -71,6 +71,10 @@ struct _Render_Output_Software_Generic
 
    unsigned int w, h;
 
+   struct {
+      unsigned int w, h;
+   } tile;
+
    Render_Engine_Swap_Mode swap_mode;
    Render_Engine_Merge_Mode merge_mode;
 
@@ -125,11 +129,13 @@ evas_render_engine_software_generic_init(Render_Output_Software_Generic *re,
    re->lost_back = 0;
    re->tile_strict = 0;
 
+   re->tile.w = TILESIZE;
+   re->tile.h = TILESIZE;
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb) return EINA_FALSE;
 
    /* in preliminary tests 16x16 gave highest framerates */
-   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   evas_common_tilebuf_set_tile_size(re->tb, re->tile.w, re->tile.h);
 
    return EINA_TRUE;
 }
@@ -175,7 +181,7 @@ evas_render_engine_software_generic_update(Render_Output_Software_Generic *re,
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb) return EINA_FALSE;
-   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   evas_common_tilebuf_set_tile_size(re->tb, re->tile.w, re->tile.h);
    evas_render_engine_software_generic_tile_strict_set(re, re->tile_strict);
    return EINA_TRUE;
 }
