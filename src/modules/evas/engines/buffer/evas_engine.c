@@ -20,32 +20,25 @@ static Evas_Func func, pfunc;
 typedef Render_Output_Software_Generic Render_Engine;
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);
-
 static void eng_output_free(void *engine EINA_UNUSED, void *data);
 
-/* internal engine routines */
+/* engine api this module provides */
 static void *
-_output_setup(int w,
-	      int h,
-	      void *dest_buffer,
-	      int dest_buffer_row_bytes,
-	      int depth_type,
-	      int use_color_key,
-	      int alpha_threshold,
-	      int color_key_r,
-	      int color_key_g,
-	      int color_key_b,
-	      void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes),
-	      void (*free_update_region) (int x, int y, int w, int h, void *data),
-              void *(*switch_buffer) (void *data, void *dest_buffer),
-              void *switch_data
-	      )
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Buffer *info = in;
    Outbuf *ob;
    Render_Engine *re;
    Outbuf_Depth dep;
    DATA32 color_key = 0;
+   void *dest_buffer = info->info.dest_buffer;
+   int dest_buffer_row_bytes = info->info.dest_buffer_row_bytes;
+   int depth_type = info->info.depth_type;
+   int use_color_key = info->info.use_color_key;
+   int alpha_threshold = info->info.alpha_threshold;
+   int color_key_r = info->info.color_key_r;
+   int color_key_g = info->info.color_key_g;
+   int color_key_b = info->info.color_key_b;
 
    re = calloc(1, sizeof(Render_Engine));
    if (!re) return NULL;
@@ -75,10 +68,10 @@ _output_setup(int w,
                                         use_color_key,
                                         color_key,
                                         alpha_threshold,
-                                        new_update_region,
-                                        free_update_region,
-                                        switch_buffer,
-                                        switch_data);
+                                        info->info.func.new_update_region,
+                                        info->info.func.free_update_region,
+                                        info->info.func.switch_buffer,
+                                        info->info.switch_data);
    if (!ob) goto on_error;
 
    if (!evas_render_engine_software_generic_init(re, ob,
@@ -104,34 +97,12 @@ _output_setup(int w,
    return NULL;
 }
 
-/* engine api this module provides */
 static void
 eng_output_info_setup(void *info)
 {
    Evas_Engine_Info_Buffer *einfo = info;
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-}
-
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Buffer *info = in;
-
-   return _output_setup(w,
-                        h,
-                        info->info.dest_buffer,
-                        info->info.dest_buffer_row_bytes,
-                        info->info.depth_type,
-                        info->info.use_color_key,
-                        info->info.alpha_threshold,
-                        info->info.color_key_r,
-                        info->info.color_key_g,
-                        info->info.color_key_b,
-                        info->info.func.new_update_region,
-                        info->info.func.free_update_region,
-                        info->info.func.switch_buffer,
-                        info->info.switch_data);
 }
 
 static void
