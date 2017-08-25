@@ -2240,9 +2240,9 @@ eng_context_dup(void *engine EINA_UNUSED, void *context)
 }
 
 static void
-eng_context_3d_use(void *engine)
+eng_context_3d_use(void *output)
 {
-   Render_Output_GL_Generic *re = engine;
+   Render_Output_GL_Generic *re = output;
 
    if (!re->context_3d)
      re->context_3d = re->window_gl_context_new(re->software.ob);
@@ -2250,9 +2250,9 @@ eng_context_3d_use(void *engine)
 }
 
 static E3D_Renderer *
-eng_renderer_3d_get(void *engine)
+eng_renderer_3d_get(void *output)
 {
-   Render_Output_GL_Generic *re = engine;
+   Render_Output_GL_Generic *re = output;
 
    if (!re->renderer_3d)
      re->renderer_3d = e3d_renderer_new();
@@ -2305,16 +2305,16 @@ eng_image_drawable_set(void *engine, void *image, void *drawable)
 }
 
 static void
-eng_drawable_scene_render(void *engine, void *data EINA_UNUSED, void *drawable, void *scene_data)
+eng_drawable_scene_render(void *engine EINA_UNUSED, void *data, void *drawable, void *scene_data)
 {
    Evas_Engine_GL_Context *gl_context;
    E3D_Renderer *renderer = NULL;
 
-   gl_context = gl_generic_context_get(engine);
+   gl_context = gl_generic_context_get(data);
    evas_gl_common_context_flush(gl_context);
 
-   eng_context_3d_use(engine);
-   renderer = eng_renderer_3d_get(engine);
+   eng_context_3d_use(data);
+   renderer = eng_renderer_3d_get(data);
    e3d_drawable_scene_render(drawable, renderer, scene_data);
 }
 
