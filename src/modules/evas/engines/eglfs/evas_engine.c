@@ -684,7 +684,6 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    Evas_Engine_Info_Eglfs *info = in;
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
-   Render_Engine_Merge_Mode merge_mode = MERGE_BOUNDING;
    Render_Engine_Swap_Mode swap_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->info.swap_mode);
@@ -725,16 +724,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
 
    gl_wins++;
 
-   s = getenv("EVAS_GL_PARTIAL_MERGE");
-   if (s)
-     {
-        if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
-          merge_mode = MERGE_BOUNDING;
-        else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
-          merge_mode = MERGE_FULL;
-     }
-
-   evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
+   evas_render_engine_software_generic_merge_mode_set(&re->generic.software);
 
    evas_outbuf_use(eng_get_ob(re));
 

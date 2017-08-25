@@ -899,26 +899,6 @@ eng_output_info_setup(void *info)
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
-static Render_Engine_Merge_Mode
-_eng_merge_mode_get(void)
-{
-   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
-   const char *s;
-
-   s = getenv("EVAS_GL_PARTIAL_MERGE");
-   if (s)
-     {
-        if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
-          merge_mode = MERGE_BOUNDING;
-        else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
-          merge_mode = MERGE_FULL;
-        else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
-          merge_mode = MERGE_SMART;
-     }
-
-   return merge_mode;
-}
-
 static void *
 eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
@@ -926,10 +906,8 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    Render_Engine *re = NULL;
    Outbuf *ob;
    Render_Engine_Swap_Mode swap_mode;
-   Render_Engine_Merge_Mode merge_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->info.swap_mode);
-   merge_mode = _eng_merge_mode_get();
 
    if (!initted)
      {
@@ -984,7 +962,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
 
    gl_wins++;
 
-   evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge_mode);
+   evas_render_engine_software_generic_merge_mode_set(&re->generic.software);
 
    if (!initted)
      {

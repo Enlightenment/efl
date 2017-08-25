@@ -545,25 +545,6 @@ _eng_swap_mode_get(void)
    return swap_mode;
 }
 
-static Render_Engine_Merge_Mode
-_eng_merge_mode_get(void)
-{
-   Render_Engine_Merge_Mode merge = MERGE_SMART;
-   const char *s;
-
-   if ((s = getenv("EVAS_GL_PARTIAL_MERGE")))
-     {
-        if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
-          merge = MERGE_BOUNDING;
-        else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
-          merge = MERGE_FULL;
-        else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
-          merge = MERGE_SMART;
-     }
-
-   return merge;
-}
-
 static void *
 eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
 {
@@ -571,10 +552,8 @@ eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned 
    Render_Engine *re;
    Outbuf *ob;
    Render_Engine_Swap_Mode swap_mode;
-   Render_Engine_Merge_Mode merge;
 
    swap_mode = _eng_swap_mode_get();
-   merge = _eng_merge_mode_get();
 
    /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
     * gets fixed. Currently it is incorrectly detecting wl_display and
@@ -624,7 +603,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned 
 
    gl_wins++;
 
-   evas_render_engine_software_generic_merge_mode_set(&re->generic.software, merge);
+   evas_render_engine_software_generic_merge_mode_set(&re->generic.software);
 
    if (!initted)
      {

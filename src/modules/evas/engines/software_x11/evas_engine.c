@@ -71,8 +71,6 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
 {
    Render_Engine *re;
    Outbuf *ob;
-   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
-   const char *s;
 
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
@@ -113,20 +111,7 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
                                                  w, h))
      goto on_error;
 
-   if ((s = getenv("EVAS_SOFTWARE_PARTIAL_MERGE")))
-     {
-        if ((!strcmp(s, "bounding")) ||
-            (!strcmp(s, "b")))
-          merge_mode = MERGE_BOUNDING;
-        else if ((!strcmp(s, "full")) ||
-                 (!strcmp(s, "f")))
-          merge_mode = MERGE_FULL;
-        else if ((!strcmp(s, "smart")) ||
-                 (!strcmp(s, "s")))
-          merge_mode = MERGE_SMART;
-     }
-
-   evas_render_engine_software_generic_merge_mode_set(&re->generic, merge_mode);
+   evas_render_engine_software_generic_merge_mode_set(&re->generic);
 
    return re;
 
