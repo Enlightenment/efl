@@ -2092,7 +2092,7 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    else
      {
         o->proxyrendering = EINA_TRUE;
-        evas_render_proxy_subrender(obj->layer->evas->evas, o->cur->source,
+        evas_render_proxy_subrender(obj->layer->evas->evas, output, o->cur->source,
                                     eo_obj, obj, o->proxy_src_clip, EINA_FALSE);
         pixels = source->proxy->surface;
         *imagew = source->proxy->w;

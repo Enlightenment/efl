@@ -118,7 +118,7 @@ _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 
 /** @hidden private render proxy objects */
 void
-evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
+evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, void *output,
                                      Eina_Bool do_async)
 {
    Evas_Object_Protected_Data *source;
@@ -148,7 +148,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                XDBG("Source needs to be rendered: '%s' of type '%s' (%s)",
                    fb->source_name, efl_class_name_get(efl_class_get(fb->source)),
                    source->proxy->redraw ? "redraw" : "no surface");
-               evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, EINA_FALSE, do_async);
+               evas_render_proxy_subrender(ctx->evas->evas, output, fb->source, eo_obj, obj, EINA_FALSE, do_async);
             }
           if (fb->buffer)
             {
