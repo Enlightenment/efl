@@ -163,7 +163,7 @@ _evas_object_text_char_coords_get(const Evas_Object *eo_obj,
               (pos < (it->text_pos + it->text_props.text_len)))
           {
              int ret;
-             ret = ENFN->font_char_coords_get(ENDT, o->font,
+             ret = ENFN->font_char_coords_get(ENC, o->font,
                    &it->text_props, pos - it->text_pos, x, y, w, h);
              if (x) *x += it->x;
              return ret;
@@ -304,7 +304,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
           {
              if ((x <= cx) && (cx < x + it->adv))
                {
-                  pos = it->text_pos + ENFN->font_last_up_to_pos(ENDT,
+                  pos = it->text_pos + ENFN->font_last_up_to_pos(ENC,
                         o->font,
                         &it->text_props,
                         cx - x,
@@ -322,7 +322,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *eo_obj,
           {
              if ((it->x <= cx) && (cx < it->x + it->adv))
                {
-                  return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
+                  return it->text_pos + ENFN->font_last_up_to_pos(ENC,
                         o->font,
                         &it->text_props,
                         cx - it->x,
@@ -345,7 +345,7 @@ _evas_object_text_char_at_coords(const Evas_Object *eo_obj,
      {
         if ((it->x <= cx) && (cx < it->x + it->adv))
           {
-             return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
+             return it->text_pos + ENFN->font_char_at_coords_get(ENC,
                    o->font,
                    &it->text_props,
                    cx - it->x,
@@ -504,11 +504,11 @@ _evas_text_efl_text_properties_font_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *
 static void
 _evas_object_text_item_update_sizes(Evas_Object_Protected_Data *obj, Evas_Text_Data *o, Evas_Object_Text_Item *it)
 {
-   ENFN->font_string_size_get(ENDT,
+   ENFN->font_string_size_get(ENC,
          o->font,
          &it->text_props,
          &it->w, &it->h);
-   it->adv = ENFN->font_h_advance_get(ENDT, o->font,
+   it->adv = ENFN->font_h_advance_get(ENC, o->font,
          &it->text_props);
 }
 
@@ -538,7 +538,7 @@ _evas_object_text_item_new(Evas_Object_Protected_Data *obj,
 
    if (fi)
      {
-        ENFN->font_text_props_info_create(ENDT,
+        ENFN->font_text_props_info_create(ENC,
               fi, str + pos, &it->text_props,
               o->bidi_par_props, it->text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
               o->cur.fdesc->lang);
@@ -619,7 +619,7 @@ _layout_ellipsis_item_new(Evas_Object_Protected_Data *obj, Evas_Text_Data *o)
 
    if (o->font)
      {
-        (void) ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi,
+        (void) ENFN->font_run_end_get(ENC, o->font, &script_fi, &cur_fi,
                                       script, _ellip_str, 1);
          ellip_ti = _evas_object_text_item_new(obj, o, cur_fi,
                                                _ellip_str, script, 0, 0, len);
@@ -780,7 +780,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                   if (o->font)
                     {
                        run_len = ENFN->font_run_end_get
-                         (ENDT, o->font, &script_fi, &cur_fi,
+                         (ENC, o->font, &script_fi, &cur_fi,
                           script, text + pos, script_len);
                     }
 #ifdef BIDI_SUPPORT
@@ -887,7 +887,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
                }
              if (itr && (itr != start_ellip_it))
                {
-                  int cut = ENFN->font_last_up_to_pos(ENDT,
+                  int cut = ENFN->font_last_up_to_pos(ENC,
                         o->font,
                         &itr->text_props,
                         ellipsis_coord - (advance + l + r),
@@ -942,7 +942,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
              int cut = -1;
              if (itr && (itr != end_ellip_it))
                {
-                  cut = ENFN->font_last_up_to_pos(ENDT,
+                  cut = ENFN->font_last_up_to_pos(ENC,
                                                   o->font,
                                                   &itr->text_props,
                                                   ellip_frame - (advance + l + r),
@@ -1177,7 +1177,7 @@ _evas_text_inset_get(Eo *eo_obj, Evas_Text_Data *o)
    Evas_Coord inset = 0;
    if (!o->font) return inset;
    if (!o->items) return inset;
-   inset = ENFN->font_inset_get(ENDT, o->font, &o->items->text_props);
+   inset = ENFN->font_inset_get(ENC, o->font, &o->items->text_props);
 
    return inset;
 }
@@ -2286,18 +2286,18 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
  */
         if (o->font)
           {
-             o->ascent = ENFN->font_ascent_get(ENDT, o->font);
-             o->descent = ENFN->font_descent_get(ENDT, o->font);
-             o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
-             o->max_descent = ENFN->font_max_descent_get(ENDT, o->font);
+             o->ascent = ENFN->font_ascent_get(ENC, o->font);
+             o->descent = ENFN->font_descent_get(ENC, o->font);
+             o->max_ascent = ENFN->font_max_ascent_get(ENC, o->font);
+             o->max_descent = ENFN->font_max_descent_get(ENC, o->font);
           }
      }
    else if (o->font)
      {
-        o->ascent = ENFN->font_ascent_get(ENDT, o->font);
-        o->descent = ENFN->font_descent_get(ENDT, o->font);
-        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
-        o->max_descent = ENFN->font_max_descent_get(ENDT, o->font);
+        o->ascent = ENFN->font_ascent_get(ENC, o->font);
+        o->descent = ENFN->font_descent_get(ENC, o->font);
+        o->max_ascent = ENFN->font_max_ascent_get(ENC, o->font);
+        o->max_descent = ENFN->font_max_descent_get(ENC, o->font);
      }
 
    if ((o->font) && (o->items))

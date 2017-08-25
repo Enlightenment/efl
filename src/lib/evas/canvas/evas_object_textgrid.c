@@ -346,11 +346,11 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
    text->bold = is_bold;
    text->italic = is_italic;
    font = _textgrid_font_get(o, is_bold, is_italic);
-   ENFN->font_run_end_get(ENDT, font, &script_fi, &cur_fi,
+   ENFN->font_run_end_get(ENC, font, &script_fi, &cur_fi,
                           script, &codepoint, 1);
    memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
    evas_common_text_props_script_set(&(text->text_props), script);
-   ENFN->font_text_props_info_create(ENDT, script_fi, &codepoint,
+   ENFN->font_text_props_info_create(ENC, script_fi, &codepoint,
                                      &(text->text_props), NULL, 0, 1,
                                      EVAS_TEXT_PROPS_MODE_NONE,
                                      o->cur.font_description_normal->lang);

@@ -2956,7 +2956,7 @@ _layout_item_max_ascent_descent_calc(Evas_Object_Protected_Data *obj,
           }
         else
           {
-             asc = ENFN->font_max_ascent_get(ENDT,
+             asc = ENFN->font_max_ascent_get(ENC,
                    it->format->font.font);
           }
 
@@ -2976,7 +2976,7 @@ _layout_item_max_ascent_descent_calc(Evas_Object_Protected_Data *obj,
           }
         else
           {
-             desc = ENFN->font_max_descent_get(ENDT,
+             desc = ENFN->font_max_descent_get(ENC,
                    it->format->font.font);
           }
 
@@ -3027,8 +3027,8 @@ _layout_item_ascent_descent_adjust(Evas_Object_Protected_Data *obj,
      {
         if (fmt)
           {
-             asc = ENFN->font_ascent_get(ENDT, fmt->font.font);
-             desc = ENFN->font_descent_get(ENDT, fmt->font.font);
+             asc = ENFN->font_ascent_get(ENC, fmt->font.font);
+             desc = ENFN->font_descent_get(ENC, fmt->font.font);
           }
      }
    if (fmt) _layout_format_ascent_descent_adjust(obj, &asc, &desc, fmt);
@@ -4005,7 +4005,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            c->marginr - from_x - ti->x_adjustment;
         if (x < 0)
           x = 0;
-        return ENFN->font_last_up_to_pos(ENDT, fmt->font.font,
+        return ENFN->font_last_up_to_pos(ENC, fmt->font.font,
               &ti->text_props, x, 0, width_offset);
      }
    return -1;
@@ -4116,9 +4116,9 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 
    if (fmt->font.font)
      {
-        ENFN->font_string_size_get(ENDT, fmt->font.font,
+        ENFN->font_string_size_get(ENC, fmt->font.font,
                                    &ti->text_props, &tw, &th);
-        advw = ENFN->font_h_advance_get(ENDT, fmt->font.font,
+        advw = ENFN->font_h_advance_get(ENC, fmt->font.font,
                                         &ti->text_props);
      }
 
@@ -4371,7 +4371,7 @@ skip:
 
              if (ti->parent.format->font.font)
                {
-                  run_len = ENFN->font_run_end_get(ENDT,
+                  run_len = ENFN->font_run_end_get(ENC,
                         ti->parent.format->font.font, &script_fi, &cur_fi,
                         script, str, script_len);
                }
@@ -4382,7 +4382,7 @@ skip:
 
              if (cur_fi)
                {
-                  ENFN->font_text_props_info_create(ENDT,
+                  ENFN->font_text_props_info_create(ENC,
                         cur_fi, str, &ti->text_props, c->par->bidi_props,
                         ti->parent.text_pos, run_len, EVAS_TEXT_PROPS_MODE_SHAPE,
                         ti->parent.format->font.fdesc->lang);
@@ -5131,11 +5131,11 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
      {
         Evas_Object_Protected_Data *obj = c->evas_o;
         /* It's only 1 char anyway, we don't need the run end. */
-        (void) ENFN->font_run_end_get(ENDT,
+        (void) ENFN->font_run_end_get(ENC,
               ellip_ti->parent.format->font.font, &script_fi, &cur_fi,
               script, _ellip_str, len);
 
-        ENFN->font_text_props_info_create(ENDT,
+        ENFN->font_text_props_info_create(ENC,
               cur_fi, _ellip_str, &ellip_ti->text_props,
               c->par->bidi_props, ellip_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
               ellip_ti->parent.format->font.fdesc->lang);
@@ -5335,7 +5335,7 @@ _item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x, Evas_Coo
    ti = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(it) : NULL;
    if (ti && ti->parent.format->font.font)
      {
-        pos = ENFN->font_last_up_to_pos(ENDT, ti->parent.format->font.font,
+        pos = ENFN->font_last_up_to_pos(ENC, ti->parent.format->font.font,
               &ti->text_props, x, 0, width_offset);
      }
    return pos;
@@ -8109,11 +8109,11 @@ _layout_hyphen_item_new(Ctxt *c, const Evas_Object_Textblock_Text_Item *cur_ti)
      {
         Evas_Object_Protected_Data *obj = c->evas_o;
         /* It's only 1 char anyway, we don't need the run end. */
-        (void) ENFN->font_run_end_get(ENDT,
+        (void) ENFN->font_run_end_get(ENC,
               hyphen_ti->parent.format->font.font, &script_fi, &cur_fi,
               script, _hyphen_str, len);
 
-        ENFN->font_text_props_info_create(ENDT,
+        ENFN->font_text_props_info_create(ENC,
               cur_fi, _hyphen_str, &hyphen_ti->text_props,
               c->par->bidi_props, hyphen_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE,
               hyphen_ti->parent.format->font.fdesc->lang);
@@ -11533,7 +11533,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
         if (ti->parent.format->font.font)
           {
              Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
-             query_func(ENDT,
+             query_func(ENC,
                    ti->parent.format->font.font,
                    &ti->text_props,
                    pos,
@@ -11749,7 +11749,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur,  Evas_Coord x, 
                                  pos = -1;
                                  if (ti->parent.format->font.font)
                                    pos = ENFN->font_char_at_coords_get(
-                                         ENDT,
+                                         ENC,
                                          ti->parent.format->font.font,
                                          &ti->text_props,
                                          x - it->x - ln->x, 0,
@@ -12025,7 +12025,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         ti = _ITEM_TEXT(it1);
         if (ti->parent.format->font.font)
           {
-             ret = ENFN->font_pen_coords_get(ENDT,
+             ret = ENFN->font_pen_coords_get(ENC,
                    ti->parent.format->font.font,
                    &ti->text_props,
                    start,
@@ -12035,7 +12035,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              return NULL;
           }
-        ret = ENFN->font_pen_coords_get(ENDT,
+        ret = ENFN->font_pen_coords_get(ENC,
               ti->parent.format->font.font,
               &ti->text_props,
               end,
@@ -12107,7 +12107,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              int ret;
              ti = _ITEM_TEXT(it1);
 
-             ret = ENFN->font_pen_coords_get(ENDT,
+             ret = ENFN->font_pen_coords_get(ENC,
                    ti->parent.format->font.font,
                    &ti->text_props,
                    start,
@@ -12165,7 +12165,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              int ret;
              ti = _ITEM_TEXT(it2);
 
-             ret = ENFN->font_pen_coords_get(ENDT,
+             ret = ENFN->font_pen_coords_get(ENC,
                    ti->parent.format->font.font,
                    &ti->text_props,
                    end,
