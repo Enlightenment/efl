@@ -322,6 +322,8 @@ void test_evas_map(void *data, Edje_Object *obj, void *event_info);
 void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
 
+void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
+
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
 Eina_List *tests;
@@ -790,6 +792,7 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Flip Page", test_flip_page);
    ADD_TEST(NULL, "Effects", "Flip Page (EO API)", test_flip_page_eo);
    ADD_TEST(NULL, "Effects", "Animation", test_anim);
+   ADD_TEST(NULL, "Effects", "Efl Animation Alpha", test_efl_anim_alpha);
 
    //------------------------------//
    ADD_TEST(NULL, "Edje External", "ExtButton", test_external_button);
