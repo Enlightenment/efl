@@ -3331,6 +3331,10 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 
+   /* Define the output for Evas_GL operation */
+   if (ENFN->gl_output_set)
+     ENFN->gl_output_set(ENC, ENDT);
+
    /* phase 6. check if video surface should be inlined or stay in their hardware plane */
    eina_evlog("+render_phase6", eo_e, 0.0, NULL);
    alpha = ENFN->canvas_alpha_get(ENDT);
@@ -3571,6 +3575,7 @@ evas_render_updates_internal(Evas *eo_e,
            else if (obj->delete_me != 0) obj->delete_me++;
          */
      }
+
    for (i = 0; i < e->snapshot_objects.count; i++)
      {
         Evas_Object_Protected_Data *snap;
@@ -3581,6 +3586,10 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_post", eo_e, 0.0, NULL);
    IFRD(e->active_objects.len, 0, "  ---]\n");
+
+   /* Set back Evas_GL output to NULL */
+   /* if (ENFN->gl_output_set) */
+   /*   ENFN->gl_output_set(ENC, NULL); */
 
    /* free our obscuring object list */
    OBJS_ARRAY_CLEAN(&e->obscuring_objects);
