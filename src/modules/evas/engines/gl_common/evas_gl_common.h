@@ -230,7 +230,6 @@ struct _Evas_GL_Shared
    int mflip;
    // persp map
    int foc, z0, px, py;
-   int ax, ay;
    int offx, offy;
    GLfloat proj[16];
    Eina_Bool needs_shaders_flush : 1;
@@ -276,7 +275,6 @@ struct _Evas_Engine_GL_Context
    int                references;
    int                w, h;
    int                rot;
-   int                foc, z0, px, py;
    RGBA_Draw_Context *dc;
 
    Evas_GL_Shared     *shared;
@@ -311,6 +309,9 @@ struct _Evas_Engine_GL_Context
    Eina_Bool             havestuff  : 1;
 
    struct {
+      struct {
+        int foc, z0, px, py;
+      } viewport;
       struct {
          int              x, y, w, h;
          Shader_Type      type;
