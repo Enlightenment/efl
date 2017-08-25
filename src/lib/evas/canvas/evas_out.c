@@ -99,10 +99,10 @@ efl_canvas_output_view_set(Efl_Canvas_Output *output,
    e = _efl_canvas_output_async_block(output);
    if (!e) return ;
 
-   output->x = x;
-   output->y = y;
-   output->w = w;
-   output->h = h;
+   output->geometry.x = x;
+   output->geometry.y = y;
+   output->geometry.w = w;
+   output->geometry.h = h;
    // XXX: tell engine about any output size etc. changes
    // XXX: tell evas to add damage if viewport loc/size changed
 }
@@ -111,10 +111,10 @@ EAPI void
 efl_canvas_output_view_get(Efl_Canvas_Output *output,
                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   if (x) *x = output->x;
-   if (y) *y = output->y;
-   if (w) *w = output->w;
-   if (h) *h = output->h;
+   if (x) *x = output->geometry.x;
+   if (y) *y = output->geometry.y;
+   if (w) *w = output->geometry.w;
+   if (h) *h = output->geometry.h;
 }
 
 EAPI Eina_Bool
