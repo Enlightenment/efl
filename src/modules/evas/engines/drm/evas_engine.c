@@ -233,12 +233,13 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* override the methods we provide */
-   EVAS_API_OVERRIDE(output_info_setup, &func, eng_);
-   EVAS_API_OVERRIDE(output_setup, &func, eng_);
-   EVAS_API_OVERRIDE(output_update, &func, eng_);
-   EVAS_API_OVERRIDE(output_free, &func, eng_);
-   EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
-   EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(output_info_setup);
+   ORD(output_setup);
+   ORD(output_update);
+   ORD(output_free);
+   ORD(image_plane_assign);
+   ORD(image_plane_release);
 
    /* advertise our engine functions */
    em->functions = (void *)(&func);

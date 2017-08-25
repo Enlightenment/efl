@@ -1473,17 +1473,18 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* now to override methods */
-   EVAS_API_OVERRIDE(output_info_setup, &func, eng_);
-   EVAS_API_OVERRIDE(output_setup, &func, eng_);
-   EVAS_API_OVERRIDE(output_update, &func, eng_);
-   EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
-   EVAS_API_OVERRIDE(output_free, &func, eng_);
-   EVAS_API_OVERRIDE(output_dump, &func, eng_);
-   EVAS_API_OVERRIDE(image_native_set, &func, eng_);
-   EVAS_API_OVERRIDE(image_native_init, &func, eng_);
-   EVAS_API_OVERRIDE(image_native_shutdown, &func, eng_);
-   EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
-   EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(output_info_setup);
+   ORD(output_setup);
+   ORD(output_update);
+   ORD(canvas_alpha_get);
+   ORD(output_free);
+   ORD(output_dump);
+   ORD(image_native_set);
+   ORD(image_native_init);
+   ORD(image_native_shutdown);
+   ORD(image_plane_assign);
+   ORD(image_plane_release);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */

@@ -1111,13 +1111,14 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* now to override methods */
-   EVAS_API_OVERRIDE(output_info, &func, eng_);
-   EVAS_API_OVERRIDE(output_setup, &func, eng_);
-   EVAS_API_OVERRIDE(output_update, &func, eng_);
-   EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
-   EVAS_API_OVERRIDE(output_free, &func, eng_);
-   EVAS_API_OVERRIDE(output_dump, &func, eng_);
-   EVAS_API_OVERRIDE(image_native_set, &func, eng_);
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(output_info);
+   ORD(output_setup);
+   ORD(output_update);
+   ORD(canvas_alpha_get);
+   ORD(output_free);
+   ORD(output_dump);
+   ORD(image_native_set);
 
    setenv("EGL_PLATFORM", "fbdev", 1);
 
