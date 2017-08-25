@@ -65,7 +65,6 @@ struct _Outbuf
    EGLSurface       egl_surface;
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
-   Eina_Bool        gles3 : 1;
 #else
    GLXContext       context;
    GLXWindow        glxwin;
@@ -226,5 +225,7 @@ EGLDisplay evas_eglGetCurrentDisplay(void);
 Eina_Bool __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin,
                                   GLXContext context);
 #endif
+
+extern Eina_Bool gles3_supported;
 
 #endif

@@ -503,7 +503,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
     * But this leads to some issues, namely that the list of extensions is
     * different, and MSAA surfaces also work differently.
     */
-   if (eng_get_ob(re)->gles3 && (version >= EVAS_GL_GLES_2_X))
+   if (gles3_supported && (version >= EVAS_GL_GLES_2_X))
      version = 3;
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
@@ -718,7 +718,7 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
      }
 
    config_attrs[i++] = EGL_RENDERABLE_TYPE;
-   if (eng_get_ob(re)->gles3)
+   if (gles3_supported)
      config_attrs[i++] = EGL_OPENGL_ES3_BIT_KHR;
    else
      config_attrs[i++] = EGL_OPENGL_ES2_BIT;
@@ -2511,7 +2511,7 @@ eng_image_native_set(void *engine, void *image, void *native)
                  config_attrs[i++] = EGL_STENCIL_SIZE;
                  config_attrs[i++] = 0;
                  config_attrs[i++] = EGL_RENDERABLE_TYPE;
-                 if (eng_get_ob(re)->gles3)
+                 if (gles3_supported)
                    config_attrs[i++] = EGL_OPENGL_ES3_BIT_KHR;
                  else
                    config_attrs[i++] = EGL_OPENGL_ES2_BIT;
