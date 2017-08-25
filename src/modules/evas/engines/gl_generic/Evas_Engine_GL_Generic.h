@@ -104,10 +104,10 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
 }
 
 static inline Evas_Engine_GL_Context *
-gl_generic_context_get(Render_Output_GL_Generic *output)
+gl_generic_context_get(Render_Output_GL_Generic *output, Eina_Bool use)
 {
    if (!output->software.ob) return NULL;
-   output->window_use(output->software.ob);
+   if (use) output->window_use(output->software.ob);
    return output->window_gl_context_get(output->software.ob);
 
 }
@@ -121,7 +121,7 @@ gl_generic_window_use(void *engine)
 }
 
 static inline Evas_Engine_GL_Context *
-gl_generic_context_find(Render_Engine_GL_Generic *engine)
+gl_generic_context_find(Render_Engine_GL_Generic *engine, Eina_Bool use)
 {
    Render_Output_GL_Generic *output;
    Evas_Engine_GL_Context *r = NULL;
@@ -129,7 +129,7 @@ gl_generic_context_find(Render_Engine_GL_Generic *engine)
 
    EINA_LIST_FOREACH(engine->software.outputs, l, output)
      {
-        r = gl_generic_context_get(output);
+        r = gl_generic_context_get(output, use);
         if (r) return r;
      }
 
