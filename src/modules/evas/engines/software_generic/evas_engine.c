@@ -4787,7 +4787,6 @@ static Evas_Func func =
      eng_image_map_clean,
      NULL, // eng_image_scaled_get - used for live scaling in GL only (fastpath)
      NULL, // eng_image_content_hint_set - software doesn't use it
-     NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
