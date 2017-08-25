@@ -134,7 +134,7 @@ _evas_ector_gl_buffer_gl_buffer_prepare(Eo *obj, Evas_Ector_GL_Buffer_Data *pd,
    return;
 
 on_fail:
-   if (pd->glim) evas_gl_common_image_free(pd->glim);
+   evas_gl_common_image_free(pd->glim);
    pd->glim = NULL;
 }
 

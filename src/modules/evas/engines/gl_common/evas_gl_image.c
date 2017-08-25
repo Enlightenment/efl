@@ -766,6 +766,8 @@ evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc)
 EAPI void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
+   if (!im) return ;
+
    im->references--;
    if (im->references > 0) return;
 
@@ -794,7 +796,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 
    if (im->cs.data)
      {
-	if (!im->cs.no_free) free(im->cs.data);
+        if (!im->cs.no_free) free(im->cs.data);
      }
    if (im->cached)
      {

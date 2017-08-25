@@ -2172,8 +2172,7 @@ eng_context_clip_image_unset(void *engine EINA_UNUSED, void *context)
    RGBA_Draw_Context *ctx = context;
    Evas_GL_Image *im = ctx->clip.mask;
 
-   if (im)
-     evas_gl_common_image_free(im);
+   evas_gl_common_image_free(im);
 
    ctx->clip.mask = NULL;
 }
@@ -2584,7 +2583,7 @@ eng_ector_free(void *engine_data)
 {
    Evas_GL_Ector *r = engine_data;
 
-   if (r->gl) evas_gl_common_image_free(r->gl);
+   evas_gl_common_image_free(r->gl);
    if (r->tofree) free(r->software);
    free(r);
 }
@@ -2610,7 +2609,7 @@ eng_ector_begin(void *engine, void *context EINA_UNUSED, Ector_Surface *ector,
           {
              int err = EVAS_LOAD_ERROR_NONE;
 
-             if (buffer->gl) evas_gl_common_image_free(buffer->gl);
+             evas_gl_common_image_free(buffer->gl);
              if (buffer->tofree) free(buffer->software);
              buffer->software = NULL;
 
@@ -2780,7 +2779,7 @@ eng_image_data_unmap(void *engine EINA_UNUSED, void *image, const Eina_Rw_Slice 
                       (map->mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE))
                     evas_gl_common_texture_update(im->tex, im->im);
                   im->maps = eina_inlist_remove(im->maps, EINA_INLIST_GET(map));
-                  if (map->glim) evas_gl_common_image_free(map->glim);
+                  evas_gl_common_image_free(map->glim);
                   free(map);
                }
              return found;
