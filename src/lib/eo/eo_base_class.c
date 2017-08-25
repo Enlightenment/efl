@@ -8,6 +8,7 @@
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
+#include "eina_promise_private.h"
 
 #define EFL_EVENT_SPECIAL_SKIP 1
 
@@ -45,6 +46,7 @@ typedef struct
 
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
+   Eina_Inlist               *pending_futures;
    unsigned int               callbacks_count;
 
    unsigned short             event_freeze_count;
@@ -78,6 +80,15 @@ typedef struct
    } d;
    Eo_Generic_Data_Node_Type  d_type;
 } Eo_Generic_Data_Node;
+
+typedef struct _Efl_Future_Pending
+{
+   EINA_INLIST;
+   Eo *o;
+   Eina_Future *future;
+   Efl_Future_Cb_Desc desc;
+} Efl_Future_Pending;
+
 
 typedef struct
 {
@@ -972,46 +983,75 @@ struct _Eo_Callback_Description
 
 static int _eo_callbacks                  = 0;
 static Eina_Mempool *_eo_callback_mempool = NULL;
+static int _efl_pending_futures = 0;
+static Eina_Mempool *_efl_pending_future_mempool = NULL;
 
 static void
-_eo_callback_free(Eo_Callback_Description *cb)
+_mempool_data_free(Eina_Mempool **mp, int *usage, void *data)
 {
-   if (!cb) return;
-   eina_mempool_free(_eo_callback_mempool, cb);
-   _eo_callbacks--;
-   if (_eo_callbacks == 0)
+   if (!data) return;
+   eina_mempool_free(*mp, data);
+   (*usage)--;
+   if (*usage == 0)
      {
-        eina_mempool_del(_eo_callback_mempool);
-        _eo_callback_mempool = NULL;
+        eina_mempool_del(*mp);
+        *mp = NULL;
      }
 }
 
-static Eo_Callback_Description *
-_eo_callback_new(void)
+static void *
+_mempool_data_alloc(Eina_Mempool **mp, int *usage, size_t size)
 {
    Eo_Callback_Description *cb;
    // very unlikely  that the mempool isnt initted, so take all the init code
    // and move it out of l1 instruction cache space so we dont pollute the
    // l1 cache with unused code 99% of the time
-   if (!_eo_callback_mempool) goto init_mempool;
+   if (!*mp) goto init_mempool;
 init_mempool_back:
 
-   cb = eina_mempool_calloc(_eo_callback_mempool,
-                            sizeof(Eo_Callback_Description));
+   cb = eina_mempool_calloc(*mp, size);
    if (cb)
      {
-        _eo_callbacks++;
+        (*usage)++;
         return cb;
      }
-   if (_eo_callbacks != 0) return NULL;
-   eina_mempool_del(_eo_callback_mempool);
-   _eo_callback_mempool = NULL;
+   if (*usage != 0) return NULL;
+   eina_mempool_del(*mp);
+   *mp = NULL;
    return NULL;
 init_mempool:
-   _eo_callback_mempool = eina_mempool_add
-   ("chained_mempool", NULL, NULL, sizeof(Eo_Callback_Description), 256);
-   if (!_eo_callback_mempool) return NULL;
+   *mp = eina_mempool_add
+   ("chained_mempool", NULL, NULL, size, 256);
+   if (!*mp) return NULL;
    goto init_mempool_back;
+}
+
+static void
+_eo_callback_free(Eo_Callback_Description *cb)
+{
+   _mempool_data_free(&_eo_callback_mempool, &_eo_callbacks, cb);
+}
+
+static Eo_Callback_Description *
+_eo_callback_new(void)
+{
+   return _mempool_data_alloc(&_eo_callback_mempool, &_eo_callbacks,
+                              sizeof(Eo_Callback_Description));
+}
+
+static void
+_efl_pending_future_free(Efl_Future_Pending *pending)
+{
+   _mempool_data_free(&_efl_pending_future_mempool,
+                      &_efl_pending_futures, pending);
+}
+
+static Efl_Future_Pending *
+_efl_pending_future_new(void)
+{
+   return _mempool_data_alloc(&_efl_pending_future_mempool,
+                              &_efl_pending_futures,
+                              sizeof(Efl_Future_Pending));
 }
 
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -1858,6 +1898,104 @@ EAPI const Eina_Value_Type *EFL_DBG_INFO_TYPE = &_EFL_DBG_INFO_TYPE;
 /* EFL_OBJECT_CLASS stuff */
 #define MY_CLASS EFL_OBJECT_CLASS
 
+static void
+_efl_pending_futures_clear(Efl_Object_Data *pd)
+{
+   while (pd->pending_futures)
+     {
+        Efl_Future_Pending *pending = EINA_INLIST_CONTAINER_GET(pd->pending_futures, Efl_Future_Pending);
+        Eina_Future *future = *pending->desc.storage;
+        assert(future);
+        eina_future_cancel(future);
+     }
+}
+
+static Eina_Value
+_efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_future)
+{
+   Efl_Future_Pending *pending = data;
+   Eina_Value ret = value;
+   Eo *o;
+   Efl_Object_Data *pd;
+
+   EINA_SAFETY_ON_NULL_GOTO(pending, err);
+   o = pending->o;
+   pd = efl_data_scope_get(o, EFL_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_GOTO(pd, err);
+
+   pd->pending_futures = eina_inlist_remove(pd->pending_futures,
+                                            EINA_INLIST_GET(pending));
+   efl_ref(o);
+   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, o);
+   efl_unref(o);
+   _efl_pending_future_free(pending);
+
+   return ret;
+
+ err:
+   eina_value_setup(&ret, EINA_VALUE_TYPE_ERROR);
+   eina_value_set(&ret, ENOMEM);
+   return ret;
+}
+
+EOAPI Eina_Future_Desc
+efl_future_cb_from_desc(Eo *o, const Efl_Future_Cb_Desc desc)
+{
+   Efl_Future_Pending *pending = NULL;
+   Eina_Future **storage = NULL;
+   Efl_Object_Data *pd;
+
+   EINA_SAFETY_ON_NULL_GOTO(o, end);
+   pd = efl_data_scope_get(o, EFL_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_GOTO(pd, end);
+   pending = _efl_pending_future_new();
+   EINA_SAFETY_ON_NULL_GOTO(pending, end);
+   memcpy(&pending->desc, &desc, sizeof(Efl_Future_Cb_Desc));
+   pending->o = o;
+   pending->future = NULL;
+   if (!pending->desc.storage) pending->desc.storage = &pending->future;
+   pd->pending_futures = eina_inlist_append(pd->pending_futures,
+                                            EINA_INLIST_GET(pending));
+   storage = pending->desc.storage;
+ end:
+   return (Eina_Future_Desc){ .cb = _efl_future_cb, .data = pending, .storage = storage };
+}
+
+EOAPI Eina_Future *
+efl_future_chain_array(Eo *obj,
+                       Eina_Future *prev,
+                       const Efl_Future_Cb_Desc descs[])
+{
+   ssize_t i = -1;
+   Eina_Future *f = prev;
+
+   for (i = 0; descs[i].success || descs[i].error || descs[i].free || descs[i].success_type; i++)
+     {
+        Eina_Future_Desc eina_desc = efl_future_cb_from_desc(obj, descs[i]);
+        f = eina_future_then_from_desc(f, eina_desc);
+        EINA_SAFETY_ON_NULL_GOTO(f, err);
+     }
+
+   return f;
+
+ err:
+   /*
+     There's no need to cancel the futures, since eina_future_then_from_desc()
+     will cancel the whole chain in case of failure.
+     All we need to do is to free the remaining descs
+   */
+   for (i = i + 1; descs[i].error || descs[i].free; i++)
+     {
+        if (descs[i].error)
+          {
+             Eina_Value r = descs[i].error(obj, ENOMEM);
+             eina_value_flush(&r);
+          }
+        if (descs[i].free) descs[i].free(obj, NULL);
+     }
+   return NULL;
+}
+
 EOLIAN static Eo *
 _efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
@@ -1905,6 +2043,7 @@ composite_obj_back:
    if (pd->parent) goto err_parent;
 err_parent_back:
 
+   _efl_pending_futures_clear(pd);
    _eo_generic_data_del_all(obj, pd);
    _wref_destruct(pd);
    _eo_callback_remove_all(pd);
