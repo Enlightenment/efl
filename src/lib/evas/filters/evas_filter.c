@@ -169,7 +169,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
 }
 
 void
-_evas_filter_context_program_reuse(Evas_Filter_Context *ctx)
+_evas_filter_context_program_reuse(void *engine, void *output, Evas_Filter_Context *ctx)
 {
    Evas_Filter_Buffer *fb;
    Eina_List *li;
@@ -189,11 +189,11 @@ _evas_filter_context_program_reuse(Evas_Filter_Context *ctx)
         surface = evas_ector_buffer_render_image_get(fb->buffer);
         if (!surface) continue;
 
-        dc = ENFN->context_new(ENC);
-        ENFN->context_color_set(ENC, dc, 0, 0, 0, 0);
-        ENFN->context_render_op_set(ENC, dc, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(ENC, ENDT, dc, surface, 0, 0, fb->w, fb->h, ctx->async);
-        ENFN->context_free(ENC, dc);
+        dc = ENFN->context_new(engine);
+        ENFN->context_color_set(engine, dc, 0, 0, 0, 0);
+        ENFN->context_render_op_set(engine, dc, EVAS_RENDER_COPY);
+        ENFN->rectangle_draw(engine, output, dc, surface, 0, 0, fb->w, fb->h, ctx->async);
+        ENFN->context_free(engine, dc);
         fb->dirty = EINA_FALSE;
 
         evas_ector_buffer_engine_image_release(fb->buffer, surface);
@@ -1578,14 +1578,14 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
 }
 
 static Eina_Bool
-_filter_target_render(Evas_Filter_Context *ctx)
+_filter_target_render(void *engine, void *output, Evas_Filter_Context *ctx)
 {
    Evas_Filter_Buffer *src;
    void *drawctx, *image = NULL, *surface;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->target.surface, EINA_FALSE);
 
-   drawctx = ENFN->context_new(ENC);
+   drawctx = ENFN->context_new(engine);
    surface = ctx->target.surface;
 
    src = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
@@ -1598,48 +1598,48 @@ _filter_target_render(Evas_Filter_Context *ctx)
 
    if (ctx->target.clip_use)
      {
-        ENFN->context_clip_set(ENC, drawctx, ctx->target.cx, ctx->target.cy,
+        ENFN->context_clip_set(engine, drawctx, ctx->target.cx, ctx->target.cy,
                                ctx->target.cw, ctx->target.ch);
      }
 
    if (ctx->target.color_use)
      {
-        ENFN->context_multiplier_set(ENC, drawctx,
+        ENFN->context_multiplier_set(engine, drawctx,
                                      ctx->target.r, ctx->target.g,
                                      ctx->target.b, ctx->target.a);
      }
 
    if (ctx->target.mask)
      {
-        ENFN->context_clip_image_set(ENC, drawctx, ctx->target.mask,
+        ENFN->context_clip_image_set(engine, drawctx, ctx->target.mask,
                                      ctx->target.mask_x, ctx->target.mask_y,
                                      ctx->evas, EINA_FALSE);
      }
 
-   ENFN->context_render_op_set(ENC, drawctx, ctx->target.rop);
+   ENFN->context_render_op_set(engine, drawctx, ctx->target.rop);
    if (ctx->target.map)
      {
-        ENFN->image_map_draw(ENC, ENDT, drawctx, surface, image,
+        ENFN->image_map_draw(engine, output, drawctx, surface, image,
                              ctx->target.map, EINA_TRUE, 0, EINA_FALSE);
      }
    else
      {
-        ENFN->image_draw(ENC, ENDT, drawctx, surface, image,
+        ENFN->image_draw(engine, output, drawctx, surface, image,
                          0, 0, src->w, src->h,
                          ctx->target.x, ctx->target.y, src->w, src->h,
                          EINA_TRUE, EINA_FALSE);
      }
 
-   ENFN->context_free(ENC, drawctx);
+   ENFN->context_free(engine, drawctx);
    evas_ector_buffer_engine_image_release(src->buffer, image);
 
-   ENFN->image_free(ENC, surface);
+   ENFN->image_free(engine, surface);
    ctx->target.surface = NULL;
 
    return EINA_TRUE;
 
 fail:
-   ENFN->image_free(ENC, surface);
+   ENFN->image_free(engine, surface);
    ctx->target.surface = NULL;
 
    ERR("Failed to render filter to target canvas!");
@@ -1797,7 +1797,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
 }
 
 static Eina_Bool
-_filter_chain_run(Evas_Filter_Context *ctx)
+_filter_chain_run(void *engine, void *output, Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Eina_Bool ok = EINA_FALSE;
@@ -1814,7 +1814,7 @@ _filter_chain_run(Evas_Filter_Context *ctx)
           }
      }
 
-   ok = _filter_target_render(ctx);
+   ok = _filter_target_render(engine, output, ctx);
 
 end:
    ctx->running = EINA_FALSE;
@@ -1826,10 +1826,21 @@ end:
    return ok;
 }
 
+typedef struct _Filter_Thread_Data Filter_Thread_Data;
+struct _Filter_Thread_Data
+{
+   void *engine;
+   void *output;
+   Evas_Filter_Context *ctx;
+};
+
 static void
 _filter_thread_run_cb(void *data)
 {
-   _filter_chain_run(data);
+   Filter_Thread_Data *ftd = data;
+
+   _filter_chain_run(ftd->engine, ftd->output, ftd->ctx);
+   free(ftd);
 }
 
 static void
@@ -1882,7 +1893,7 @@ _filter_obscured_region_calc(Evas_Filter_Context *ctx)
 }
 
 Eina_Bool
-evas_filter_context_run(Evas_Filter_Context *ctx)
+evas_filter_context_run(void *engine, void *output, Evas_Filter_Context *ctx)
 {
    _filter_obscured_region_calc(ctx);
 
@@ -1890,11 +1901,20 @@ evas_filter_context_run(Evas_Filter_Context *ctx)
    ctx->running = EINA_TRUE;
    if (ctx->async)
      {
-        evas_thread_queue_flush(_filter_thread_run_cb, ctx);
+        Filter_Thread_Data *ftd;
+
+        ftd = calloc(1, sizeof (Filter_Thread_Data));
+        if (!ftd) return EINA_FALSE;
+
+        ftd->engine = engine;
+        ftd->output = output;
+        ftd->ctx = ctx;
+
+        evas_thread_queue_flush(_filter_thread_run_cb, ftd);
         return EINA_TRUE;
      }
 
-   return _filter_chain_run(ctx);
+   return _filter_chain_run(engine, output, ctx);
 }
 
 

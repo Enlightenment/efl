@@ -3475,7 +3475,8 @@ _instruction_dump(Evas_Filter_Instruction *instr)
 #endif
 
 Eina_Bool
-evas_filter_context_program_use(Evas_Filter_Context *ctx,
+evas_filter_context_program_use(void *engine, void *output,
+                                Evas_Filter_Context *ctx,
                                 Evas_Filter_Program *pgm,
                                 Eina_Bool reuse, int object_x, int object_y)
 {
@@ -3489,7 +3490,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
    XDBG("Using program '%s' for context %p", pgm->name, ctx);
 
-   if (reuse) _evas_filter_context_program_reuse(ctx);
+   if (reuse) _evas_filter_context_program_reuse(engine, output, ctx);
 
    // Copy current state (size, edje state val, color class, etc...)
    ctx->w = pgm->state.w;
@@ -3521,8 +3522,8 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    // Compute and save padding info
    evas_filter_program_padding_get(pgm, &ctx->pad.final, &ctx->pad.calculated);
 
-   dc = ENFN->context_new(ENC);
-   ENFN->context_color_set(ENC, dc, 255, 255, 255, 255);
+   dc = ENFN->context_new(engine);
+   ENFN->context_color_set(engine, dc, 255, 255, 255, 255);
 
    // Apply all commands
    EINA_INLIST_FOREACH(pgm->instructions, instr)
@@ -3537,7 +3538,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
 end:
    if (!success) evas_filter_context_clear(ctx, EINA_FALSE);
-   if (dc) ENFN->context_free(ENC, dc);
+   if (dc) ENFN->context_free(engine, dc);
    return success;
 }
 
