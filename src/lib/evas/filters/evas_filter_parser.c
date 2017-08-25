@@ -3006,14 +3006,14 @@ evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data)
 #define CG(color) ((color >> 8) & 0xFF)
 #define CB(color) ((color) & 0xFF)
 
-#define SETCOLOR(c) do { ENFN->context_color_get(ENDT, dc, &R, &G, &B, &A); \
-   ENFN->context_color_set(ENDT, dc, CR(c), CG(c), CB(c), CA(c)); } while (0)
-#define RESETCOLOR() do { ENFN->context_color_set(ENDT, dc, R, G, B, A); } while (0)
+#define SETCOLOR(c) do { ENFN->context_color_get(ENC, dc, &R, &G, &B, &A); \
+   ENFN->context_color_set(ENC, dc, CR(c), CG(c), CB(c), CA(c)); } while (0)
+#define RESETCOLOR() do { ENFN->context_color_set(ENC, dc, R, G, B, A); } while (0)
 
 #define SETCLIP(l, r, t, b) int _l = 0, _r = 0, _t = 0, _b = 0; \
-   do { ENFN->context_clip_get(ENDT, dc, &_l, &_r, &_t, &_b); \
-   ENFN->context_clip_set(ENDT, dc, l, r, t, b); } while (0)
-#define RESETCLIP() do { ENFN->context_clip_set(ENDT, dc, _l, _r, _t, _b); } while (0)
+   do { ENFN->context_clip_get(ENC, dc, &_l, &_r, &_t, &_b); \
+   ENFN->context_clip_set(ENC, dc, l, r, t, b); } while (0)
+#define RESETCLIP() do { ENFN->context_clip_set(ENC, dc, _l, _r, _t, _b); } while (0)
 
 static Evas_Filter_Fill_Mode
 _fill_mode_get(Evas_Filter_Instruction *instr)
@@ -3521,8 +3521,8 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    // Compute and save padding info
    evas_filter_program_padding_get(pgm, &ctx->pad.final, &ctx->pad.calculated);
 
-   dc = ENFN->context_new(ENDT);
-   ENFN->context_color_set(ENDT, dc, 255, 255, 255, 255);
+   dc = ENFN->context_new(ENC);
+   ENFN->context_color_set(ENC, dc, 255, 255, 255, 255);
 
    // Apply all commands
    EINA_INLIST_FOREACH(pgm->instructions, instr)
@@ -3537,7 +3537,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
 end:
    if (!success) evas_filter_context_clear(ctx, EINA_FALSE);
-   if (dc) ENFN->context_free(ENDT, dc);
+   if (dc) ENFN->context_free(ENC, dc);
    return success;
 }
 

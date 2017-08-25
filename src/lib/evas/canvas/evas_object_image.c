@@ -140,25 +140,25 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
              prep = ENFN->image_surface_noscale_new
                  (ENC, obj->cur->geometry.w, obj->cur->geometry.h,
                  o->cur->has_alpha);
-             ctx = ENFN->context_new(ENDT);
-             ENFN->context_clip_set(ENDT, ctx, 0, 0,
+             ctx = ENFN->context_new(ENC);
+             ENFN->context_clip_set(ENC, ctx, 0, 0,
                                     obj->cur->geometry.w,
                                     obj->cur->geometry.h);
              if (o->cur->has_alpha)
                {
-                  ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
-                  ENFN->context_color_set(ENDT, ctx, 0, 0, 0, 0);
-                  ENFN->rectangle_draw(ENDT, ctx, prep, 0, 0,
+                  ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_COPY);
+                  ENFN->context_color_set(ENC, ctx, 0, 0, 0, 0);
+                  ENFN->rectangle_draw(ENC, ENDT, ctx, prep, 0, 0,
                                        obj->cur->geometry.w,
                                        obj->cur->geometry.h, do_async);
                }
-             ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_BLEND);
+             ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_BLEND);
              evas_object_image_render(eo_obj, obj, obj->private_data, ENDT,
                                       ctx, prep,
                                       -obj->cur->geometry.x,
                                       -obj->cur->geometry.y,
                                       do_async);
-             ENFN->context_free(ENDT, ctx);
+             ENFN->context_free(ENC, ctx);
              o->engine_data_prep = prep;
           }
      }
