@@ -2902,7 +2902,7 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
 
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
-                                  void *surface, void *context,
+                                  void *output, void *surface, void *context,
                                   Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
@@ -2951,7 +2951,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
         ENFN->context_color_set(ENC, context, 0, 0, 0, 0);
         ENFN->context_multiplier_unset(ENC, context);
         ENFN->context_render_op_set(ENC, context, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(ENC, ENDT, context, surface, cx, cy, cw, ch, do_async);
+        ENFN->rectangle_draw(ENC, output, context, surface, cx, cy, cw, ch, do_async);
         ENFN->context_cutout_clear(ENC, context);
         ENFN->context_clip_unset(ENC, context);
      }
@@ -3021,7 +3021,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                        Evas_Object_Protected_Data *prev_mask = obj->clip.prev_mask;
 
                        if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(obj->layer->evas, ENDT, mask, prev_mask, 4, do_async);
+                         evas_render_mask_subrender(obj->layer->evas, output, mask, prev_mask, 4, do_async);
 
                        if (mask->mask->surface)
                          {
@@ -3073,7 +3073,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                               obj->cur->cache.clip.h);
                   eina_evlog("-cutouts_add", obj->object, 0.0, NULL);
                   clean_them |= evas_render_mapped(evas, eo_obj, obj, context,
-                                                   ENDT, surface,
+                                                   output, surface,
                                                    off_x + fx, off_y + fy, 0,
                                                    cx, cy, cw, ch,
                                                    NULL, level + 3, do_async);
@@ -3458,7 +3458,7 @@ evas_render_updates_internal(Evas *eo_e,
 
                        RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
                        ctx = ENFN->context_new(ENC);
-                       clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas, ctx,
+                       clean_them |= evas_render_updates_internal_loop(eo_e, e, ENDT, pseudo_canvas, ctx,
                                                                        snap,
                                                                        ur.x, ur.y, ur.w, ur.h,
                                                                        cr.x, cr.y, cr.w, cr.h,
@@ -3486,7 +3486,7 @@ evas_render_updates_internal(Evas *eo_e,
                }
 
              ctx = ENFN->context_new(ENC);
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, surface,
+             clean_them |= evas_render_updates_internal_loop(eo_e, e, ENDT, surface,
                                                              ctx, NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
