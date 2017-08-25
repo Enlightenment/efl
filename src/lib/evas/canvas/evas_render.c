@@ -3088,11 +3088,17 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
    return clean_them;
 }
 
-static Efl_Canvas_Output *
-_evas_overlay_output_find(Evas_Public_Data *e, Evas_Object_Protected_Data *obj)
+typedef enum _Evas_3State
 {
-   Efl_Canvas_Output *output;
-   Eina_List *lo;
+  EVAS_3STATE_OUTSIDE,
+  EVAS_3STATE_INSIDE,
+  EVAS_3STATE_OVER
+} Evas_3State;
+
+static Evas_3State
+_evas_overlay_output_find(Efl_Canvas_Output *output,
+                          Evas_Object_Protected_Data *obj)
+{
    const Eina_Rectangle geometry = {
      obj->cur->geometry.x,
      obj->cur->geometry.y,
@@ -3102,23 +3108,14 @@ _evas_overlay_output_find(Evas_Public_Data *e, Evas_Object_Protected_Data *obj)
    Eina_Rectangle copy = geometry;
 
    /* A video object can only be in one output at a time, check that first */
-   EINA_LIST_FOREACH(e->outputs, lo, output)
-     {
-        if (!eina_rectangle_intersection(&copy, &output->geometry))
-          {
-             copy = geometry;
-             continue ;
-          }
-        if (memcmp(&copy, &geometry, sizeof (Eina_Rectangle)) != 0)
-          {
-             /* This means that it does intersect this output and another */
-             return NULL;
-          }
+   if (!eina_rectangle_intersection(&copy, &output->geometry))
+     return EVAS_3STATE_OUTSIDE;
 
-        return output;
-     }
+   if (memcmp(&copy, &geometry, sizeof (Eina_Rectangle)) != 0)
+     /* This means that it does intersect this output and another */
+     return EVAS_3STATE_OVER;
 
-   return NULL;
+   return EVAS_3STATE_INSIDE;
 }
 
 static Eina_Bool
@@ -3132,7 +3129,7 @@ evas_render_updates_internal(Evas *eo_e,
    Evas_Object_Protected_Data *obj;
    Evas_Public_Data *evas, *e;
    Efl_Canvas_Output *out;
-   Eina_List *ll;
+   Eina_List *ll, *l;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool rendering = EINA_FALSE;
    Eina_Bool alpha;
@@ -3144,6 +3141,7 @@ evas_render_updates_internal(Evas *eo_e,
    Evas_Render_Mode render_mode = !do_async ?
      EVAS_RENDER_MODE_SYNC :
      EVAS_RENDER_MODE_ASYNC_INIT;
+   Eina_Bool haveup = EINA_FALSE;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return EINA_FALSE;
@@ -3317,195 +3315,206 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 
-   /* phase 6. Initialize output */
-   out = eina_list_data_get(e->outputs);
-   if (out->changed)
+   EINA_LIST_FOREACH(e->outputs, l, out)
      {
-        ENFN->output_resize(ENC, out->output,
-                            out->geometry.w, out->geometry.h);
-        ENFN->output_redraws_rect_add(ENC,
-                                      out->geometry.x, out->geometry.y,
-                                      out->geometry.w, out->geometry.h);
-        out->changed = EINA_FALSE;
-     }
-
-   /* Define the output for Evas_GL operation */
-   if (ENFN->gl_output_set)
-     ENFN->gl_output_set(ENC, out->output);
-
-   /* phase 7. check if video surface should be inlined or stay in their hardware plane */
-   eina_evlog("+render_phase7", eo_e, 0.0, NULL);
-   alpha = ENFN->canvas_alpha_get(out->output);
-
-   EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
-     {
-        Efl_Canvas_Output *output;
-        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-
-        output = _evas_overlay_output_find(e, obj);
-
-        /* we need the surface to be transparent to display the underlying overlay */
-        if (output && alpha && _evas_render_can_use_overlay(e, eo_obj, output))
-          _evas_object_image_video_overlay_show(eo_obj);
-        else
-          _evas_object_image_video_overlay_hide(eo_obj);
-     }
-
-   /* check if individual image objects can be dropped into hardware planes */
-   if (ENFN->image_plane_assign)
-     EINA_INARRAY_FOREACH(&evas->active_objects, ao)
-       {
-          Evas_Object_Protected_Data *obj2;
-          Evas_Object *eo_obj2;
-          Efl_Canvas_Output *output;
-          Eina_List *lo;
-
-          obj2 = ao->obj;
-          eo_obj2 = obj2->object;
-
-          if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
-
-          if (evas_object_image_video_surface_get(eo_obj2)) continue;
-
-          /* Find the output the object was in */
-          EINA_LIST_FOREACH(e->outputs, lo, output)
-            {
-               if (!eina_list_data_find(output->planes, obj2)) continue ;
-               _evas_object_image_plane_release(eo_obj2, obj2, output);
-               break;
-            }
-
-          /* A video object can only be in one output at a time, check that first */
-          output = _evas_overlay_output_find(e, obj2);
-          if (!output) continue ;
-
-          if (!_evas_render_can_use_overlay(e, eo_obj2, output))
-            {
-               /* This may free up things temporarily allocated by
-                * _can_use_overlay() testing in the engine */
-               _evas_object_image_plane_release(eo_obj2, obj2, output);
-            }
-       }
-   eina_evlog("-render_phase7", eo_e, 0.0, NULL);
-
-   /* phase 8. go thru each update rect and render objects in it*/
-   eina_evlog("+render_phase8", eo_e, 0.0, NULL);
-   if (do_draw)
-     {
-        Render_Updates *ru;
-        void *surface;
-        int ux, uy, uw, uh;
-        int cx, cy, cw, ch;
-        unsigned int offset = 0;
-        int fx = e->framespace.x;
-        int fy = e->framespace.y;
-        int j;
-        Eina_Bool haveup = EINA_FALSE;
-
-        if (do_async) _evas_render_busy_begin();
-        eina_evlog("+render_surface", eo_e, 0.0, NULL);
-        // FIXME: handle multiple output
-        while ((surface =
-                ENFN->output_redraws_next_update_get
-                (ENC, out->output,
-                 &ux, &uy, &uw, &uh,
-                 &cx, &cy, &cw, &ch)))
+        /* phase 6. Initialize output */
+        if (out->changed)
           {
-             void *ctx;
-
-             haveup = EINA_TRUE;
-
-             /* phase 7.1 render every snapshot that needs to be updated
-                for this part of the screen */
-             eina_evlog("+render_snapshots", eo_e, 0.0, NULL);
-             for (j = e->snapshot_objects.count - 1; j >= 0; j--)
-               {
-                  Evas_Object_Protected_Data *snap;
-                  Eina_Rectangle output, cr, ur;
-
-                  snap = eina_array_data_get(&e->snapshot_objects, j);
-
-                  EINA_RECTANGLE_SET(&output,
-                                     snap->cur->geometry.x,
-                                     snap->cur->geometry.y,
-                                     snap->cur->geometry.w,
-                                     snap->cur->geometry.h);
-                  EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
-
-                  // FIXME: We should render snapshots only once per frame,
-                  // not once per update region!
-                  if (snap->snapshot_needs_redraw &&
-                      eina_rectangle_intersection(&ur, &output))
-                    {
-                       Cutout_Margin cm = {};
-                       unsigned int restore_offset = offset;
-                       Eina_Bool skip_cutouts = EINA_FALSE;
-                       void *pseudo_canvas;
-
-                       EINA_RECTANGLE_SET(&cr,
-                                          ur.x - output.x, ur.y - output.y,
-                                          ur.w, ur.h);
-
-                       pseudo_canvas = _evas_object_image_surface_get(snap, EINA_TRUE);
-
-                       // Get required margin for filters (eg. blur radius)
-                       _evas_filter_radius_get(snap, &cm.l, &cm.r, &cm.t, &cm.b);
-
-                       if (snap->map->cur.usemap || snap->proxy->proxies ||
-                           snap->snapshot_no_obscure ||
-                           ((cm.l + cm.r) >= output.w) ||
-                           ((cm.t + cm.b) >= output.h))
-                         skip_cutouts = EINA_TRUE;
-
-                       RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
-                       ctx = ENFN->context_new(ENC);
-                       clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, pseudo_canvas, ctx,
-                                                                       snap,
-                                                                       ur.x, ur.y, ur.w, ur.h,
-                                                                       cr.x, cr.y, cr.w, cr.h,
-                                                                       fx, fy, skip_cutouts, &cm,
-                                                                       alpha, do_async,
-                                                                       &offset, 1);
-                       ENFN->context_free(ENC, ctx);
-
-                       offset = restore_offset;
-                    }
-               }
-             eina_evlog("-render_snapshots", eo_e, 0.0, NULL);
-
-             eina_evlog("+render_update", eo_e, 0.0, NULL);
-             /* phase 7.2 render all the object on the target surface */
-             if ((do_async) || (make_updates))
-               {
-                  ru = malloc(sizeof(*ru));
-                  ru->surface = surface;
-                  //XXX: need a way of reffing output surfaces
-                  NEW_RECT(ru->area, ux, uy, uw, uh);
-                  eina_spinlock_take(&(e->render.lock));
-                  out->updates = eina_list_append(out->updates, ru);
-                  eina_spinlock_release(&(e->render.lock));
-               }
-
-             ctx = ENFN->context_new(ENC);
-             clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, surface,
-                                                             ctx, NULL,
-                                                             ux, uy, uw, uh,
-                                                             cx, cy, cw, ch,
-                                                             fx, fy,
-                                                             EINA_FALSE, NULL,
-                                                             alpha, do_async,
-                                                             &offset, 0);
-             ENFN->context_free(ENC, ctx);
-
-             eina_evlog("-render_update", eo_e, 0.0, NULL);
-             if (!do_async)
-               {
-                  eina_evlog("+render_push", eo_e, 0.0, NULL);
-                  ENFN->output_redraws_next_update_push(ENC, out->output, surface, ux, uy, uw, uh, render_mode);
-                  eina_evlog("-render_push", eo_e, 0.0, NULL);
-               }
+             ENFN->output_resize(ENC, out->output,
+                                 out->geometry.w, out->geometry.h);
+             ENFN->output_redraws_rect_add(ENC,
+                                           out->geometry.x, out->geometry.y,
+                                           out->geometry.w, out->geometry.h);
+             out->changed = EINA_FALSE;
           }
 
+        /* Define the output for Evas_GL operation */
+        if (ENFN->gl_output_set)
+          ENFN->gl_output_set(ENC, out->output);
+
+        /* phase 7. check if video surface should be inlined or stay in their hardware plane */
+        eina_evlog("+render_phase7", eo_e, 0.0, NULL);
+        alpha = ENFN->canvas_alpha_get(out->output);
+
+        EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+          {
+             Evas_Object_Protected_Data *obj;
+             Evas_3State state;
+
+             obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+             state = _evas_overlay_output_find(out, obj);
+             if (state == EVAS_3STATE_OUTSIDE) continue;
+
+             /* we need the surface to be transparent to display the underlying overlay */
+             if (state == EVAS_3STATE_INSIDE &&
+                 alpha &&
+                 _evas_render_can_use_overlay(e, eo_obj, out))
+               _evas_object_image_video_overlay_show(eo_obj);
+             else
+               _evas_object_image_video_overlay_hide(eo_obj);
+          }
+
+        /* check if individual image objects can be dropped into hardware planes */
+        if (ENFN->image_plane_assign)
+          EINA_INARRAY_FOREACH(&evas->active_objects, ao)
+            {
+               Evas_Object_Protected_Data *obj2;
+               Evas_Object *eo_obj2;
+               Efl_Canvas_Output *output;
+               Evas_3State state;
+               Eina_List *lo;
+
+               obj2 = ao->obj;
+               eo_obj2 = obj2->object;
+
+               if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
+
+               if (evas_object_image_video_surface_get(eo_obj2)) continue;
+
+               /* Find the output the object was in */
+               EINA_LIST_FOREACH(e->outputs, lo, output)
+                 {
+                    if (!eina_list_data_find(output->planes, obj2)) continue ;
+                    _evas_object_image_plane_release(eo_obj2, obj2, output);
+                    break;
+                 }
+
+               /* A video object can only be in one output at a time, check that first */
+               state = _evas_overlay_output_find(out, obj2);
+               if (state == EVAS_3STATE_OUTSIDE) continue ;
+
+               if (!_evas_render_can_use_overlay(e, eo_obj2, out))
+                 {
+                    /* This may free up things temporarily allocated by
+                     * _can_use_overlay() testing in the engine */
+                    _evas_object_image_plane_release(eo_obj2, obj2, out);
+                 }
+            }
+        eina_evlog("-render_phase7", eo_e, 0.0, NULL);
+
+        /* phase 8. go thru each update rect and render objects in it*/
+        eina_evlog("+render_phase8", eo_e, 0.0, NULL);
+        if (do_draw)
+          {
+             Render_Updates *ru;
+             void *surface;
+             int ux, uy, uw, uh;
+             int cx, cy, cw, ch;
+             unsigned int offset = 0;
+             int fx = e->framespace.x;
+             int fy = e->framespace.y;
+             int j;
+
+             if (do_async) _evas_render_busy_begin();
+             eina_evlog("+render_surface", eo_e, 0.0, NULL);
+             while ((surface =
+                     ENFN->output_redraws_next_update_get
+                     (ENC, out->output,
+                      &ux, &uy, &uw, &uh,
+                      &cx, &cy, &cw, &ch)))
+               {
+                  void *ctx;
+
+                  haveup = EINA_TRUE;
+
+                  /* phase 7.1 render every snapshot that needs to be updated
+                     for this part of the screen */
+                  eina_evlog("+render_snapshots", eo_e, 0.0, NULL);
+                  for (j = e->snapshot_objects.count - 1; j >= 0; j--)
+                    {
+                       Evas_Object_Protected_Data *snap;
+                       Eina_Rectangle output, cr, ur;
+
+                       snap = eina_array_data_get(&e->snapshot_objects, j);
+
+                       EINA_RECTANGLE_SET(&output,
+                                          snap->cur->geometry.x,
+                                          snap->cur->geometry.y,
+                                          snap->cur->geometry.w,
+                                          snap->cur->geometry.h);
+                       EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
+
+                       // FIXME: We should render snapshots only once per frame,
+                       // not once per update region per output !
+                       if (snap->snapshot_needs_redraw &&
+                           eina_rectangle_intersection(&ur, &output))
+                         {
+                            Cutout_Margin cm = {};
+                            unsigned int restore_offset = offset;
+                            Eina_Bool skip_cutouts = EINA_FALSE;
+                            void *pseudo_canvas;
+
+                            EINA_RECTANGLE_SET(&cr,
+                                               ur.x - output.x, ur.y - output.y,
+                                               ur.w, ur.h);
+
+                            pseudo_canvas = _evas_object_image_surface_get(snap, EINA_TRUE);
+
+                            // Get required margin for filters (eg. blur radius)
+                            _evas_filter_radius_get(snap, &cm.l, &cm.r, &cm.t, &cm.b);
+
+                            if (snap->map->cur.usemap || snap->proxy->proxies ||
+                                snap->snapshot_no_obscure ||
+                                ((cm.l + cm.r) >= output.w) ||
+                                ((cm.t + cm.b) >= output.h))
+                              skip_cutouts = EINA_TRUE;
+
+                            RD(0, "  SNAPSHOT %s [sfc:%p ur:%d,%d %dx%d]\n", RDNAME(snap), pseudo_canvas, ur.x, ur.y, ur.w, ur.h);
+                            ctx = ENFN->context_new(ENC);
+                            clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, pseudo_canvas, ctx,
+                                                                            snap,
+                                                                            ur.x, ur.y, ur.w, ur.h,
+                                                                            cr.x, cr.y, cr.w, cr.h,
+                                                                            fx, fy, skip_cutouts, &cm,
+                                                                            alpha, do_async,
+                                                                            &offset, 1);
+                            ENFN->context_free(ENC, ctx);
+
+                            offset = restore_offset;
+                         }
+                    }
+                  eina_evlog("-render_snapshots", eo_e, 0.0, NULL);
+
+                  eina_evlog("+render_update", eo_e, 0.0, NULL);
+                  /* phase 7.2 render all the object on the target surface */
+                  if ((do_async) || (make_updates))
+                    {
+                       ru = malloc(sizeof(*ru));
+                       ru->surface = surface;
+                       //XXX: need a way of reffing output surfaces
+                       NEW_RECT(ru->area, ux, uy, uw, uh);
+                       eina_spinlock_take(&(e->render.lock));
+                       out->updates = eina_list_append(out->updates, ru);
+                       eina_spinlock_release(&(e->render.lock));
+                    }
+
+                  ctx = ENFN->context_new(ENC);
+                  clean_them |= evas_render_updates_internal_loop(eo_e, e, out->output, surface,
+                                                                  ctx, NULL,
+                                                                  ux, uy, uw, uh,
+                                                                  cx, cy, cw, ch,
+                                                                  fx, fy,
+                                                                  EINA_FALSE, NULL,
+                                                                  alpha, do_async,
+                                                                  &offset, 0);
+                  ENFN->context_free(ENC, ctx);
+
+                  eina_evlog("-render_update", eo_e, 0.0, NULL);
+                  if (!do_async)
+                    {
+                       eina_evlog("+render_push", eo_e, 0.0, NULL);
+                       ENFN->output_redraws_next_update_push(ENC, out->output, surface, ux, uy, uw, uh, render_mode);
+                       eina_evlog("-render_push", eo_e, 0.0, NULL);
+                    }
+               }
+
+             eina_evlog("-render_surface", eo_e, 0.0, NULL);
+          }
+     }
+
+   /* First process all output, then flush */
+   if (do_draw)
+     {
         if (haveup)
           {
              if (do_async)
@@ -3526,13 +3535,13 @@ evas_render_updates_internal(Evas *eo_e,
                        _evas_object_image_video_overlay_do(eo_obj);
                     }
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-                  ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
+                  EINA_LIST_FOREACH(e->outputs, l, out)
+                    ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
                   eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
                }
           }
         rendering = haveup;
-        eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
    eina_evlog("-render_phase8", eo_e, 0.0, NULL);
 
@@ -3540,7 +3549,8 @@ evas_render_updates_internal(Evas *eo_e,
    if (!do_async && rendering)
      {
         /* clear redraws */
-        ENFN->output_redraws_clear(ENC, out->output);
+        EINA_LIST_FOREACH(e->outputs, l, out)
+          ENFN->output_redraws_clear(ENC, out->output);
      }
    eina_evlog("-render_clear", eo_e, 0.0, NULL);
 
