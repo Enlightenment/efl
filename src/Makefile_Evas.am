@@ -48,6 +48,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_animation_alpha.eo \
 	lib/evas/canvas/efl_animation_rotate.eo \
 	lib/evas/canvas/efl_animation_scale.eo \
+	lib/evas/canvas/efl_animation_translate.eo \
 	lib/evas/canvas/efl_animation_object.eo \
 	lib/evas/canvas/efl_animation_object_alpha.eo \
 	lib/evas/canvas/efl_animation_object_rotate.eo \
@@ -134,6 +135,7 @@ lib/evas/canvas/efl_animation_private.h \
 lib/evas/canvas/efl_animation_alpha_private.h \
 lib/evas/canvas/efl_animation_rotate_private.h \
 lib/evas/canvas/efl_animation_scale_private.h \
+lib/evas/canvas/efl_animation_translate_private.h \
 lib/evas/canvas/efl_animation_object_private.h \
 lib/evas/canvas/efl_animation_object_alpha_private.h \
 lib/evas/canvas/efl_animation_object_rotate_private.h \
@@ -227,6 +229,7 @@ lib/evas/canvas/efl_animation.c \
 lib/evas/canvas/efl_animation_alpha.c \
 lib/evas/canvas/efl_animation_rotate.c \
 lib/evas/canvas/efl_animation_scale.c \
+lib/evas/canvas/efl_animation_translate.c \
 lib/evas/canvas/efl_animation_object.c \
 lib/evas/canvas/efl_animation_object_alpha.c \
 lib/evas/canvas/efl_animation_object_rotate.c \
