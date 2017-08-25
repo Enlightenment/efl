@@ -16,21 +16,26 @@ static Evas_Func func, pfunc;
 /* engine struct data */
 typedef Render_Output_Software_Generic Render_Engine;
 
-/* internal engine routines */
+/* engine api this module provides */
 static void *
-_output_setup(int w, int h, int rot, int vt, int dev, int refresh)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_FB *info = in;
    Render_Engine *re;
    Outbuf *ob;
 
    re = calloc(1, sizeof(Render_Engine));
-   if (!re)
-     return NULL;
+   if (!re) return NULL;
 
    evas_fb_outbuf_fb_init();
 
    /* get any stored performance metrics from device */
-   ob = evas_fb_outbuf_fb_setup_fb(w, h, rot, OUTBUF_DEPTH_INHERIT, vt, dev, refresh);
+   ob = evas_fb_outbuf_fb_setup_fb(w, h,
+                                   info->info.rotation,
+                                   OUTBUF_DEPTH_INHERIT,
+                                   info->info.virtual_terminal,
+                                   info->info.device_number,
+                                   info->info.refresh);
    if (!ob) goto on_error;
 
    if (!evas_render_engine_software_generic_init(re, ob, NULL,
@@ -60,26 +65,12 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
    return NULL;
 }
 
-/* engine api this module provides */
 static void
 eng_output_info_setup(void *info)
 {
    Evas_Engine_Info_FB *einfo = info;
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-}
-
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_FB *info = in;
-
-   return _output_setup(w,
-                        h,
-                        info->info.rotation,
-                        info->info.virtual_terminal,
-                        info->info.device_number,
-                        info->info.refresh);
 }
 
 static void
