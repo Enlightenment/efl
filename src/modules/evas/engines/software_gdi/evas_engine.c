@@ -73,7 +73,7 @@ _output_setup(int          width,
 /* engine api this module provides */
 
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_Software_Gdi *info;
    info = calloc(1, sizeof(Evas_Engine_Info_Software_Gdi));
@@ -83,7 +83,7 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *info)
+eng_output_info_free(void *info)
 {
    Evas_Engine_Info_Software_Gdi *in;
    in = (Evas_Engine_Info_Software_Gdi *)info;
@@ -91,7 +91,7 @@ eng_info_free(void *info)
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info;
 
@@ -107,7 +107,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
+eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info;
    Render_Engine *re = data;
@@ -173,10 +173,10 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(info);
-   ORD(info_free);
-   ORD(setup);
-   ORD(update);
+   ORD(output_info);
+   ORD(output_info_free);
+   ORD(output_setup);
+   ORD(output_update);
    ORD(canvas_alpha_get);
    ORD(output_free);
    /* now advertise out own api */

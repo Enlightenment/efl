@@ -38,9 +38,9 @@ efl_canvas_output_add(Evas *canvas)
 
    // The engine is already initialized, use it
    // right away to setup the info structure
-   if (e->engine.func->info)
+   if (e->engine.func->output_info)
      {
-        r->info = e->engine.func->info();
+        r->info = e->engine.func->output_info();
      }
 
    return r;
@@ -62,7 +62,7 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
                                            output->ector);
              e->engine.func->output_free(_evas_engine_context(e),
                                          output->output);
-             e->engine.func->info_free(output->info);
+             e->engine.func->output_info_free(output->info);
           }
         e->outputs = eina_list_remove(e->outputs, output);
 
@@ -113,10 +113,10 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
 
    if (output->output)
      {
-        if (e->engine.func->update)
+        if (e->engine.func->output_update)
           {
-             e->engine.func->update(_evas_engine_context(e), output->output, info,
-                                    e->output.w, e->output.h);
+             e->engine.func->output_update(_evas_engine_context(e), output->output, info,
+                                           e->output.w, e->output.h);
           }
         else
           {
@@ -136,8 +136,8 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
           }
 
      setup:
-        output->output = e->engine.func->setup(_evas_engine_context(e), info,
-                                               e->output.w, e->output.h);
+        output->output = e->engine.func->output_setup(_evas_engine_context(e), info,
+                                                      e->output.w, e->output.h);
      }
 
    return !!output->output;

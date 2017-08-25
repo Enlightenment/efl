@@ -103,7 +103,7 @@ _symbols(void)
 
 /* ENGINE API FUNCTIONS WE PROVIDE */
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_Wayland *einfo;
 
@@ -122,7 +122,7 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *info)
+eng_output_info_free(void *info)
 {
    Evas_Engine_Info_Wayland *einfo;
 
@@ -134,7 +134,7 @@ eng_info_free(void *info)
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
 
@@ -171,7 +171,7 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 }
 
 static int
-eng_update(void *engine, void *data, void *info, unsigned int w, unsigned int h)
+eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = data;
@@ -360,10 +360,10 @@ module_open(Evas_Module *em)
 
    /* override engine specific functions */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(info);
-   ORD(info_free);
-   ORD(setup);
-   ORD(update);
+   ORD(output_info);
+   ORD(output_info_free);
+   ORD(output_setup);
+   ORD(output_update);
    ORD(output_free);
    ORD(output_resize);
    ORD(image_native_set);
