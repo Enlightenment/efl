@@ -1611,6 +1611,7 @@ struct _Evas_Func
    void *(*texture_image_get)            (void *engine, void *texture);
 
    Ector_Surface *(*ector_create)        (void *engine);
+   void  (*ector_output_set)             (void *engine, Ector_Surface *surface, void *output);
    void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
    Ector_Buffer *(*ector_buffer_new)     (void *engine, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
