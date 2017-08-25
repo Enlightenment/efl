@@ -722,8 +722,6 @@ eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, uns
 
              eng_window_use(ob);
 
-             evas_render_engine_software_generic_update(&re->generic.software,
-                                                        ob, w, h);
              gl_wins++;
           }
         else if ((ob->w != (int)w) || (ob->h != (int)h) ||
@@ -736,18 +734,8 @@ eng_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int w, uns
 
    if (!eng_get_ob(re)) goto ob_err;
 
-   if (re->generic.software.tb)
-     evas_common_tilebuf_free(re->generic.software.tb);
-   re->generic.software.tb = evas_common_tilebuf_new(w, h);
-
-   if (re->generic.software.tb)
-     {
-        evas_common_tilebuf_set_tile_size(re->generic.software.tb,
-                                          TILESIZE, TILESIZE);
-        evas_render_engine_software_generic_tile_strict_set
-          (&re->generic.software, EINA_TRUE);
-     }
-
+   evas_render_engine_software_generic_update(&re->generic.software,
+                                              ob, w, h);
    eng_window_use(eng_get_ob(re));
 
    return 1;

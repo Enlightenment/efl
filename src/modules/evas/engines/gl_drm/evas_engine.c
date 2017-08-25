@@ -1060,16 +1060,6 @@ eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsig
           }
      }
 
-   if (re->generic.software.tb)
-     evas_common_tilebuf_free(re->generic.software.tb);
-   re->generic.software.tb = evas_common_tilebuf_new(w, h);
-   if (re->generic.software.tb)
-     evas_common_tilebuf_set_tile_size(re->generic.software.tb,
-                                       TILESIZE, TILESIZE);
-
-   if (re->generic.software.tb)
-     evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
-
    evas_outbuf_use(eng_get_ob(re));
 
    return 1;
