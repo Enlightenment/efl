@@ -102,7 +102,7 @@ evas_gl_thread_init(void)
    EINA_LOG_ERR("eina_mempool_add() failed");
 
    char *env_thread = getenv("EVAS_GL_RENDER_THREAD");
-   int env_thread_value = 0;
+   int env_thread_value = 1;
    if (env_thread)
       env_thread_value = atoi(env_thread);
 
