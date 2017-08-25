@@ -77,8 +77,10 @@ group { name: "e/modules/notification/main";
       }
       part { name: "notification.textblock.message"; type: TEXTBLOCK; mouse_events: 0;
          clip_to: "bodyclip";
+         scale;
          description { state: "default" 0.0;
             align: 0.0 0.0;
+            min: 260 40;
             rel1.to_x: "notification.swallow.app_icon";
             rel1.to_y: "notification.text.title";
             rel1.relative: 1.0 1.0;
@@ -87,23 +89,6 @@ group { name: "e/modules/notification/main";
             text { style: "notification_style";
                min: 0 1;
             }
-            fixed: 1 1;
-         }
-      }
-      part { name: "message"; type: TEXTBLOCK; mouse_events: 0;
-         description { state: "default" 0.0;
-            align: 0.0 0.0;
-            max: 500 99999;
-            rel1.to_x: "notification.swallow.app_icon";
-            rel1.to_y: "notification.text.title";
-            rel1.relative: 1.0 1.0;
-            rel1.offset: 4 4;
-            rel2.offset: -27 -11;
-            text { style: "notification_style_nowrap";
-               text_source: "notification.textblock.message";
-               min: 0 1;
-            }
-            visible: 0;
          }
       }
       part { name: "notification.text.title"; type: TEXT; mouse_events: 0;
