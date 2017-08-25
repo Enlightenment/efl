@@ -46,6 +46,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_gfx_map.eo \
 	lib/evas/canvas/efl_animation.eo \
 	lib/evas/canvas/efl_animation_alpha.eo \
+	lib/evas/canvas/efl_animation_rotate.eo \
 	lib/evas/canvas/efl_animation_object.eo \
 	lib/evas/canvas/efl_animation_object_alpha.eo \
 	$(NULL)
@@ -128,6 +129,7 @@ lib/evas/canvas/efl_canvas_surface.h \
 lib/evas/common3d/primitives/primitive_common.h \
 lib/evas/canvas/efl_animation_private.h \
 lib/evas/canvas/efl_animation_alpha_private.h \
+lib/evas/canvas/efl_animation_rotate_private.h \
 lib/evas/canvas/efl_animation_object_private.h \
 lib/evas/canvas/efl_animation_object_alpha_private.h
 
@@ -217,6 +219,7 @@ lib/evas/canvas/efl_input_hold.c \
 lib/evas/canvas/efl_input_focus.c \
 lib/evas/canvas/efl_animation.c \
 lib/evas/canvas/efl_animation_alpha.c \
+lib/evas/canvas/efl_animation_rotate.c \
 lib/evas/canvas/efl_animation_object.c \
 lib/evas/canvas/efl_animation_object_alpha.c \
 $(NULL)
