@@ -148,7 +148,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 #endif
 
 extern unsigned int   (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c);
-extern unsigned int   (*glsym_eglSetDamageRegionKHR)  (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
+extern unsigned int   (*glsym_eglSetDamageRegion)  (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
 
 #else
 
@@ -217,13 +217,19 @@ _re_wincheck(Outbuf *ob)
    return 0;
 }
 
+typedef enum
+{
+   GL_X11_CONTEXT_TYPE_EVAS = 0,
+   GL_X11_CONTEXT_TYPE_EVGL = 1
+} GL_X11_Context_Type;
+
 #ifdef GL_GLES
-EGLBoolean evas_eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
-EGLContext evas_eglGetCurrentContext(void);
-EGLSurface evas_eglGetCurrentSurface(EGLint readdraw);
-EGLDisplay evas_eglGetCurrentDisplay(void);
+EGLBoolean evas_eglMakeCurrent(GL_X11_Context_Type type, EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
+EGLContext evas_eglGetCurrentContext(GL_X11_Context_Type type);
+EGLSurface evas_eglGetCurrentSurface(GL_X11_Context_Type type, EGLint readdraw);
+EGLDisplay evas_eglGetCurrentDisplay(GL_X11_Context_Type type);
 #else
-Eina_Bool __glXMakeContextCurrent(Display *disp, GLXDrawable glxwin,
+Eina_Bool __glXMakeContextCurrent(GL_X11_Context_Type type, Display *disp, GLXDrawable glxwin,
                                   GLXContext context);
 #endif
 

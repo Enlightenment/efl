@@ -14,26 +14,26 @@ static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
 
-typedef void       (*glsym_func_void) ();
-typedef void      *(*glsym_func_void_ptr) ();
-typedef GLboolean  (*glsym_func_boolean) ();
-typedef const char *(*glsym_func_const_char_ptr) ();
+typedef void         (*glsym_func_void) ();
+typedef void        *(*glsym_func_void_ptr) ();
+typedef GLboolean    (*glsym_func_boolean) ();
+typedef const char  *(*glsym_func_const_char_ptr) ();
 
-void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
-void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
-void       (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
-void       (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
-void       (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e) = NULL;
-void       (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d) = NULL;
-void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d) = NULL;
-void       (*glsym_glReleaseShaderCompiler)(void) = NULL;
-void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
-GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
-void       (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
-void       (*glsym_glEndTiling)            (GLuint a) = NULL;
+void       (*glsym_glGenFramebuffers)               (GLsizei a, GLuint *b) = NULL;
+void       (*glsym_glBindFramebuffer)               (GLenum a, GLuint b) = NULL;
+void       (*glsym_glFramebufferTexture2D)          (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
+void       (*glsym_glDeleteFramebuffers)            (GLsizei a, const GLuint *b) = NULL;
+void       (*glsym_glGetProgramBinary)              (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e) = NULL;
+void       (*glsym_glProgramBinary)                 (GLuint a, GLenum b, const void *c, GLint d) = NULL;
+void       (*glsym_glProgramParameteri)             (GLuint a, GLuint b, GLint d) = NULL;
+void       (*glsym_glReleaseShaderCompiler)         (void) = NULL;
+void      *(*glsym_glMapBuffer)                     (GLenum a, GLenum b) = NULL;
+GLboolean  (*glsym_glUnmapBuffer)                   (GLenum a) = NULL;
 void       (*glsym_glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = NULL;
 
-const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
+static void                  (*glsym_glStartTiling)          (GLuint a, GLuint b, GLuint c, GLuint d, GLuint e) = NULL;
+static void                  (*glsym_glEndTiling)            (GLuint a) = NULL;
+static const unsigned char  *(*glsym_glGetStringi)           (GLenum name, GLuint index) = NULL;
 
 #ifdef GL_GLES
 
@@ -42,10 +42,10 @@ const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
 # endif
 
 // just used for finding symbols :)
-typedef void (*_eng_fn) (void);
+typedef void          (*_eng_fn) (void);
 
-typedef _eng_fn (*glsym_func_eng_fn) ();
-typedef int  (*secsym_func_int) ();
+typedef _eng_fn       (*glsym_func_eng_fn) ();
+typedef int           (*secsym_func_int) ();
 typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
@@ -57,8 +57,8 @@ unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, 
 
 /* This one is now a local wrapper to avoid type mixups */
 void *        evas_gl_common_eglCreateImage           (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
-static void * (*eglsym_eglCreateImage)                (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list) = NULL;
-static void * (*eglsym_eglCreateImageKHR)             (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLint *e) = NULL;
+static void  *(*eglsym_eglCreateImage)                (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list) = NULL;
+static void  *(*eglsym_eglCreateImageKHR)             (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLint *e) = NULL;
 
 ////////////////////////////////////
 //libtbm.so.1
@@ -94,12 +94,12 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
         GLint num = *pnum, k;
         if (!num)
           {
-             glGetIntegerv(GL_NUM_EXTENSIONS, &num);
+             GL_TH(glGetIntegerv, GL_NUM_EXTENSIONS, &num);
              *pnum = num;
           }
         for (k = 0; k < num; k++)
           {
-             const char *support = glsym_glGetStringi(GL_EXTENSIONS, k);
+             const char *support = (const char *) GL_TH_CALL(glGetStringi, glsym_glGetStringi, GL_EXTENSIONS, k);
              if (support && !strcmp(support, ext))
                return EINA_TRUE;
           }
@@ -110,7 +110,7 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
         const char *exts = *pexts;
         if (!exts)
           {
-             exts = (const char *) glGetString(GL_EXTENSIONS);
+             exts = (const char *) GL_TH(glGetString, GL_EXTENSIONS);
              if (!exts) return EINA_FALSE;
              *pexts = exts;
           }
@@ -435,7 +435,7 @@ __evas_gl_err(int err, const char *file, const char *func, int line, const char 
 #ifdef GL_INVALID_FRAMEBUFFER_OPERATION
      case GL_INVALID_FRAMEBUFFER_OPERATION:
         {
-           GLenum e = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+           GLenum e = GL_TH(glCheckFramebufferStatus, GL_FRAMEBUFFER);
            switch (e)
              {
 #ifdef GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
@@ -547,7 +547,7 @@ evas_gl_common_version_check(int *minor_version)
 
    if (minor_version) *minor_version = 0;
 
-   version = (char *)glGetString(GL_VERSION);
+   version = (char *)GL_TH(glGetString, GL_VERSION);
    if (!version)
      {
         /* Something is wrong! */
@@ -673,8 +673,62 @@ evas_gl_common_version_check(int *minor_version)
    return 0;
 }
 
+static inline void
+_calculate_foc(int rot, int m, int w, int h, int px, int py,
+               int *vx_out, int *vy_out, int *vw_out, int *vh_out, int *ax_out, int *ay_out)
+{
+   int ppx = 0, ppy = 0;
+   int vx = 0, vy = 0, vw = 0, vh = 0, ax = 0, ay = 0;
+
+
+   if      ((rot == 0  ) || (rot == 90 )) ppx = px;
+   else if ((rot == 180) || (rot == 270)) ppx = w - px;
+   if      ((rot == 0  ) || (rot == 270)) ppy = py;
+   else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
+
+   vx = ((w / 2) - ppx);
+   if (vx >= 0)
+     {
+        vw = w + (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
+        else if ((rot == 180) || (rot == 270)) ax = 0;
+     }
+   else
+     {
+        vw = w - (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 0;
+        else if ((rot == 180) || (rot == 270)) ax = ppx - px;
+        vx = 0;
+     }
+
+   vy = ((h / 2) - ppy);
+   if (vy < 0)
+     {
+        vh = h - (2 * vy);
+        if      (rot == 0) ay = 0;
+        else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
+        vy = -vy;
+     }
+   else
+     {
+        vh = h + (2 * vy);
+        if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
+        else if ((rot == 90 ) || (rot == 180)) ay = 0;
+        vy = 0;
+     }
+
+   if (m == -1) ay = vy * 2;
+
+   if (vx_out) *vx_out = vx;
+   if (vy_out) *vy_out = vy;
+   if (vw_out) *vw_out = vw;
+   if (vh_out) *vh_out = vh;
+   if (ax_out) *ax_out = ax;
+   if (ay_out) *ay_out = ay;
+}
+
 static void
-_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
+_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc, int pipe)
 {
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
    int offx = 0, offy = 0;
@@ -682,7 +736,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    Eina_Iterator *it;
 
    EINA_SAFETY_ON_NULL_RETURN(gc);
-   foc = gc->foc;
+   foc = gc->pipe[pipe].viewport.foc;
    // surface in pipe 0 will be the same as all pipes
    if ((gc->pipe[0].shader.surface == gc->def_surface) ||
        (!gc->pipe[0].shader.surface))
@@ -709,8 +763,11 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
             ((!gc->change.size) ||
              (
                 (gc->shared->w == w) && (gc->shared->h == h) &&
-                (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
-                (gc->shared->mflip == m)
+                (gc->shared->rot == rot) && (gc->shared->foc == foc) &&
+                (gc->shared->mflip == m) &&
+                (gc->shared->z0 == gc->pipe[pipe].viewport.z0) &&
+                (gc->shared->px == gc->pipe[pipe].viewport.px) &&
+                (gc->shared->py == gc->pipe[pipe].viewport.py)
              )
             )
            )
@@ -725,9 +782,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    gc->shared->rot = rot;
    gc->shared->mflip = m;
    gc->shared->foc = foc;
-   gc->shared->z0 = gc->z0;
-   gc->shared->px = gc->px;
-   gc->shared->py = gc->py;
+   gc->shared->z0 = gc->pipe[pipe].viewport.z0;
+   gc->shared->px = gc->pipe[pipe].viewport.px;
+   gc->shared->py = gc->pipe[pipe].viewport.py;
    gc->change.size = 0;
    gc->shared->offx = offx;
    gc->shared->offy = offy;
@@ -735,9 +792,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    if (foc == 0)
      {
         if ((rot == 0) || (rot == 180))
-           glViewport(offx, offy, w, h);
+           GL_TH(glViewport, offx, offy, w, h);
         else
-           glViewport(offx, offy, h, w);
+           GL_TH(glViewport, offx, offy, h, w);
         // std matrix
         if (m == 1)
            matrix_ortho(gc->shared->proj,
@@ -755,53 +812,15 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
      }
    else
      {
-        int px, py, vx, vy, vw = 0, vh = 0, ax = 0, ay = 0, ppx = 0, ppy = 0;
+        int vx, vy, vw, vh, ax, ay;
 
-        px = gc->shared->px;
-        py = gc->shared->py;
-
-        if      ((rot == 0  ) || (rot == 90 )) ppx = px;
-        else if ((rot == 180) || (rot == 270)) ppx = w - px;
-        if      ((rot == 0  ) || (rot == 270)) ppy = py;
-        else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
-
-        vx = ((w / 2) - ppx);
-        if (vx >= 0)
-          {
-             vw = w + (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
-             else if ((rot == 180) || (rot == 270)) ax = 0;
-          }
-        else
-          {
-             vw = w - (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 0;
-             else if ((rot == 180) || (rot == 270)) ax = ppx - px;
-             vx = 0;
-          }
-
-        vy = ((h / 2) - ppy);
-        if (vy < 0)
-          {
-             vh = h - (2 * vy);
-             if      (rot == 0) ay = 0;
-             else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
-             vy = -vy;
-          }
-        else
-          {
-             vh = h + (2 * vy);
-             if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
-             else if ((rot == 90 ) || (rot == 180)) ay = 0;
-             vy = 0;
-          }
-
-        if (m == -1) ay = vy * 2;
+        _calculate_foc(rot, m, w, h, gc->shared->px, gc->shared->py,
+                       &vx, &vy, &vw, &vh, &ax, &ay);
 
         if ((rot == 0) || (rot == 180))
-           glViewport(offx + (-2 * vx), offy + (-2 * vy), vw, vh);
+           GL_TH(glViewport, offx + (-2 * vx), offy + (-2 * vy), vw, vh);
         else
-           glViewport(offx + (-2 * vy), offy + (-2 * vx), vh, vw);
+           GL_TH(glViewport, offx + (-2 * vy), offy + (-2 * vx), vh, vw);
         if (m == 1)
            matrix_ortho(gc->shared->proj,
                         0, vw, 0, vh,
@@ -814,8 +833,6 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
-        gc->shared->ax = ax;
-        gc->shared->ay = ay;
      }
 
    // FIXME: Is this heavy work?
@@ -827,9 +844,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    if (gc->state.current.prog != PRG_INVALID)
      {
         prog = gc->state.current.prog;
-        glUseProgram(prog->prog);
-        glUniform1i(prog->uniform.rotation_id, gc->rot / 90);
-        glUniformMatrix4fv(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
+        GL_TH(glUseProgram, prog->prog);
+        GL_TH(glUniform1i, prog->uniform.rotation_id, gc->rot / 90);
+        GL_TH(glUniformMatrix4fv, gc->state.current.prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
      }
 }
 
@@ -849,7 +866,9 @@ evas_gl_common_context_new(void)
 #endif
 
    if (!glsym_glGetStringi)
-     glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+     {
+        glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+     }
 
    gles_version = evas_gl_common_version_check(NULL);
    if (!gles_version) return NULL;
@@ -869,7 +888,7 @@ evas_gl_common_context_new(void)
         gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
-             glGenBuffers(1, &gc->pipe[i].array.buffer);
+             GL_TH(glGenBuffers, 1, &gc->pipe[i].array.buffer);
              gc->pipe[i].array.buffer_alloc = 0;
              gc->pipe[i].array.buffer_use = 0;
           }
@@ -882,7 +901,7 @@ evas_gl_common_context_new(void)
         const char *ext;
 
         shared = calloc(1, sizeof(Evas_GL_Shared));
-        ext = (const char *) glGetString(GL_EXTENSIONS);
+        ext = (const char *) GL_TH(glGetString, GL_EXTENSIONS);
         if (ext)
           {
              if (getenv("EVAS_GL_INFO"))
@@ -910,8 +929,8 @@ evas_gl_common_context_new(void)
 
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
              if ((strstr(ext, "GL_EXT_texture_filter_anisotropic")))
-               glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,
-                           &(shared->info.anisotropic));
+               GL_TH(glGetFloatv, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,
+                                  &(shared->info.anisotropic));
 #endif
 #ifdef GL_BGRA
              if ((strstr(ext, "GL_EXT_bgra")) ||
@@ -955,15 +974,15 @@ evas_gl_common_context_new(void)
                   glsym_glEndTiling = NULL;
                }
           }
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
-                      &(shared->info.max_texture_units));
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE,
-                      &(shared->info.max_texture_size));
+        GL_TH(glGetIntegerv, GL_MAX_TEXTURE_IMAGE_UNITS,
+                             &(shared->info.max_texture_units));
+        GL_TH(glGetIntegerv, GL_MAX_TEXTURE_SIZE,
+                             &(shared->info.max_texture_size));
         shared->info.max_vertex_elements = 6 * 100000;
 #ifdef GL_MAX_ELEMENTS_VERTICES
 /* only applies to glDrawRangeElements. don't really need to get it.
-        glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,
-                      &(shared->info.max_vertex_elements));
+        GL_TH(glGetIntegerv, GL_MAX_ELEMENTS_VERTICES,
+                             &(shared->info.max_vertex_elements));
  */
 #endif
         s = getenv("EVAS_GL_VERTEX_MAX");
@@ -981,7 +1000,7 @@ evas_gl_common_context_new(void)
         shared->info.tune.atlas.max_h                = DEF_ATLAS_H;
 
         // per gpu hacks. based on impirical measurement of some known gpu's
-        s = (const char *)glGetString(GL_RENDERER);
+        s = (const char *)GL_TH(glGetString, GL_RENDERER);
         if (s)
           {
              if      (strstr(s, "PowerVR SGX 540"))
@@ -994,7 +1013,7 @@ evas_gl_common_context_new(void)
         if (!getenv("EVAS_GL_MAPBUFFER"))
           {
              glsym_glMapBuffer = NULL;
-             glsym_glUnmapBuffer= NULL;
+             glsym_glUnmapBuffer = NULL;
           }
 
 #define GETENVOPT(name, tune_param, min, max) \
@@ -1025,14 +1044,14 @@ evas_gl_common_context_new(void)
         // Detect ECT2 support. We need both RGB and RGBA formats.
           {
              GLint texFormatCnt = 0;
-             glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &texFormatCnt);
+             GL_TH(glGetIntegerv, GL_NUM_COMPRESSED_TEXTURE_FORMATS, &texFormatCnt);
              if (texFormatCnt > 0)
                {
                   GLenum *texFormats = malloc(texFormatCnt * sizeof(GLenum));
                   if (texFormats)
                     {
                        int k, cnt = 0;
-                       glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS, (GLint *) texFormats);
+                       GL_TH(glGetIntegerv, GL_COMPRESSED_TEXTURE_FORMATS, (GLint *) texFormats);
                        for (k = 0; k < texFormatCnt && cnt < 2; k++)
                          {
                             if (texFormats[k] == GL_COMPRESSED_RGB8_ETC2)
@@ -1104,40 +1123,40 @@ evas_gl_common_context_new(void)
                    (int)shared->info.tune.atlas.max_w, (int)shared->info.tune.atlas.max_h
                   );
 
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_DITHER);
-        glDisable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        GL_TH(glDisable, GL_DEPTH_TEST);
+        GL_TH(glEnable, GL_DITHER);
+        GL_TH(glDisable, GL_BLEND);
+        GL_TH(glBlendFunc, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         // no dest alpha
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE); // ???
-        glDepthMask(GL_FALSE);
+//        GL_TH(glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
+//        GL_TH(glBlendFunc, GL_SRC_ALPHA, GL_ONE); // ???
+        GL_TH(glDepthMask, GL_FALSE);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
         if (shared->info.anisotropic > 0.0)
-          glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+          GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
 #endif
 
-        glEnableVertexAttribArray(SHAD_VERTEX);
-        glEnableVertexAttribArray(SHAD_COLOR);
+        GL_TH(glEnableVertexAttribArray, SHAD_VERTEX);
+        GL_TH(glEnableVertexAttribArray, SHAD_COLOR);
 
         if (!evas_gl_common_shader_program_init(shared))
           goto error;
 
         if (gc->state.current.prog)
-          glUseProgram(gc->state.current.prog->prog);
+          GL_TH(glUseProgram, gc->state.current.prog->prog);
 
         // in shader:
         // uniform sampler2D tex[8];
         //
         // in code:
         // GLuint texes[8];
-        // GLint loc = glGetUniformLocation(prog, "tex");
-        // glUniform1iv(loc, 8, texes);
+        // GLint loc = GL_TH(glGetUniformLocation, prog, "tex");
+        // GL_TH(glUniform1iv, loc, 8, texes);
 
         shared->native_pm_hash  = eina_hash_int32_new(NULL);
         shared->native_tex_hash = eina_hash_int32_new(NULL);
@@ -1147,7 +1166,7 @@ evas_gl_common_context_new(void)
      }
    gc->shared = shared;
    gc->shared->references++;
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 
    gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1, EINA_FALSE);
 
@@ -1406,7 +1425,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
    if (glsym_glMapBuffer && glsym_glUnmapBuffer)
      {
         for (i = 0; i < MAX_PIPES; i++)
-          glDeleteBuffers(1, &gc->pipe[i].array.buffer);
+          GL_TH(glDeleteBuffers, 1, &gc->pipe[i].array.buffer);
      }
 
    if (gc->shared)
@@ -1480,7 +1499,7 @@ evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
 {
    if (_evas_gl_common_context == gc) return;
    _evas_gl_common_context = gc;
-   if (gc) _evas_gl_common_viewport_set(gc);
+   if (gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1520,6 +1539,10 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
@@ -1544,36 +1567,36 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
      }
    gc->change.size = 1;
 
-   glDisable(GL_SCISSOR_TEST);
-   glScissor(0, 0, 0, 0);
+   GL_TH(glDisable, GL_SCISSOR_TEST);
+   GL_TH(glScissor, 0, 0, 0, 0);
 
-   glDisable(GL_DEPTH_TEST);
-   glEnable(GL_DITHER);
-   glDisable(GL_BLEND);
-   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+   GL_TH(glDisable, GL_DEPTH_TEST);
+   GL_TH(glEnable, GL_DITHER);
+   GL_TH(glDisable, GL_BLEND);
+   GL_TH(glBlendFunc, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
    // no dest alpha
-//   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
-//   glBlendFunc(GL_SRC_ALPHA, GL_ONE); // ???
-   glDepthMask(GL_FALSE);
+//   GL_TH(glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // dest alpha
+//   GL_TH(glBlendFunc, GL_SRC_ALPHA, GL_ONE); // ???
+   GL_TH(glDepthMask, GL_FALSE);
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
    if (shared->info.anisotropic > 0.0)
-     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+     GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
 #endif
 
-   glEnableVertexAttribArray(SHAD_VERTEX);
-   glEnableVertexAttribArray(SHAD_COLOR);
+   GL_TH(glEnableVertexAttribArray, SHAD_VERTEX);
+   GL_TH(glEnableVertexAttribArray, SHAD_COLOR);
    if (gc->state.current.prog != PRG_INVALID)
-     glUseProgram(gc->state.current.prog->prog);
+     GL_TH(glUseProgram, gc->state.current.prog->prog);
 
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(gc->pipe[0].shader.tex_target, gc->pipe[0].shader.cur_tex);
+   GL_TH(glActiveTexture, GL_TEXTURE0);
+   GL_TH(glBindTexture, gc->pipe[0].shader.tex_target, gc->pipe[0].shader.cur_tex);
 
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1585,7 +1608,7 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
    gc->rot = rot;
    gc->w = w;
    gc->h = h;
-   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);
+   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 void
@@ -1598,19 +1621,19 @@ evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc EINA_UNUSED,
    switch (rot)
      {
       case 0: // UP this way: ^
-        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cx, cy, cw, ch, bitmask);
         break;
       case 90: // UP this way: <
-        glsym_glStartTiling(gh - (cy + ch), cx, ch, cw, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, gh - (cy + ch), cx, ch, cw, bitmask);
         break;
       case 180: // UP this way: v
-        glsym_glStartTiling(gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
         break;
       case 270: // UP this way: >
-        glsym_glStartTiling(cy, gw - (cx + cw), ch, cw, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cy, gw - (cx + cw), ch, cw, bitmask);
         break;
       default: // assume up is up
-        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cx, cy, cw, ch, bitmask);
         break;
      }
    GLERRV("glsym_glStartTiling");
@@ -1621,7 +1644,7 @@ evas_gl_common_tiling_done(Evas_Engine_GL_Context *gc EINA_UNUSED)
 {
    if (glsym_glEndTiling)
      {
-        glsym_glEndTiling(GL_COLOR_BUFFER_BIT0_QCOM);
+        GL_TH_CALL(glEndTilingQCOM, glsym_glEndTiling, GL_COLOR_BUFFER_BIT0_QCOM);
         GLERRV("glsym_glEndTiling");
      }
 }
@@ -1634,7 +1657,7 @@ evas_gl_common_context_done(Evas_Engine_GL_Context *gc)
      {
         if (glsym_glEndTiling)
           {
-             glsym_glEndTiling(GL_COLOR_BUFFER_BIT0_QCOM);
+             GL_TH_CALL(glEndTilingQCOM, glsym_glEndTiling, GL_COLOR_BUFFER_BIT0_QCOM);
              GLERRV("glsym_glEndTiling");
           }
         gc->master_clip.used = EINA_FALSE;
@@ -1679,10 +1702,10 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 # endif
 #endif
    if (gc->pipe[0].shader.surface == gc->def_surface)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, 0);
    else
-      glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
-   _evas_gl_common_viewport_set(gc);
+      GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, surface->tex->pt->fb);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 static inline Eina_Bool
@@ -1830,6 +1853,7 @@ _evas_gl_common_context_push(Shader_Type rtype,
                              Evas_GL_Texture *tex,
                              Evas_GL_Texture *texm,
                              Evas_GL_Program *prog,
+                             int foc, int z0, int px, int py,
                              int x, int y, int w, int h,
                              Eina_Bool blend,
                              Eina_Bool smooth,
@@ -1860,6 +1884,10 @@ _evas_gl_common_context_push(Shader_Type rtype,
                  && (!tex || gc->pipe[i].shader.cur_tex == current_tex)
                  && (!texm || ((gc->pipe[i].shader.cur_texm == texm->pt->texture)
                                && (gc->pipe[i].shader.mask_smooth == mask_smooth)))
+                 && (gc->pipe[i].viewport.foc == foc)
+                 && (gc->pipe[i].viewport.z0 == z0)
+                 && (gc->pipe[i].viewport.px == px)
+                 && (gc->pipe[i].viewport.py == py)
                  && (gc->pipe[i].shader.prog == prog)
                  && (gc->pipe[i].shader.smooth == smooth)
                  && (gc->pipe[i].shader.blend == blend)
@@ -1903,6 +1931,10 @@ _evas_gl_common_context_push(Shader_Type rtype,
          /* && (!texa || gc->pipe[pn].shader.cur_texa == current_texa) */
          && (!texm || ((gc->pipe[i].shader.cur_texm == texm->pt->texture)
                        && (gc->pipe[i].shader.mask_smooth == mask_smooth)))
+         && (gc->pipe[i].viewport.foc == foc)
+         && (gc->pipe[i].viewport.z0 == z0)
+         && (gc->pipe[i].viewport.px == px)
+         && (gc->pipe[i].viewport.py == py)
          && (gc->pipe[pn].shader.prog == prog)
          && (gc->pipe[pn].shader.smooth == smooth)
          && (gc->pipe[pn].shader.blend == blend)
@@ -1924,6 +1956,11 @@ _evas_gl_common_context_push(Shader_Type rtype,
           }
      }
 #endif
+
+   gc->pipe[pn].viewport.foc = foc;
+   gc->pipe[pn].viewport.z0 = z0;
+   gc->pipe[pn].viewport.px = px;
+   gc->pipe[pn].viewport.py = py;
 
    return pn;
 }
@@ -1956,6 +1993,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_LINE,
                                      gc, NULL, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      EINA_FALSE,
@@ -2021,6 +2059,7 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_RECT,
                                      gc, NULL, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      EINA_FALSE,
@@ -2238,6 +2277,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_IMAGE,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2440,6 +2480,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_FONT,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      1,
                                      0,
@@ -2520,6 +2561,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUV,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2600,6 +2642,7 @@ evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUV_709,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2680,6 +2723,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUY2,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2758,6 +2802,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_NV12,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2843,6 +2888,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_RGB_A_PAIR,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      EINA_TRUE,
                                      smooth,
@@ -3023,24 +3069,27 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->foc = p[0].foc >> FP;
-        gc->z0 = p[0].z0 >> FP;
-        gc->px = p[0].px >> FP;
-        gc->py = p[0].py >> FP;
-        gc->change.size = 1;
-        _evas_gl_common_viewport_set(gc);
-     }
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       p[0].foc >> FP, p[0].z0 >> FP, p[0].px >> FP, p[0].py >> FP,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
+   else
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       0, 0, 0, 0,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
+   gc->change.size = 1;
 
-   pn = _evas_gl_common_context_push(SHD_MAP,
-                                     gc, tex, mtex,
-                                     prog,
-                                     x, y, w, h,
-                                     blend,
-                                     smooth,
-                                     clip, cx, cy, cw, ch,
-                                     mask_smooth);
    gc->pipe[pn].region.type = SHD_MAP;
    gc->pipe[pn].shader.prog = prog;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
@@ -3111,11 +3160,32 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
           }
         else
           {
+             int w, h, rot, m = 1;
+             int vx, vy, vw, vh, ax, ay;
+
+             if ((gc->pipe[0].shader.surface == gc->def_surface) ||
+                 (!gc->pipe[0].shader.surface))
+               {
+                  w = gc->w;
+                  h = gc->h;
+                  rot = gc->rot;
+               }
+             else
+               {
+                  w = gc->pipe[0].shader.surface->w;
+                  h = gc->pipe[0].shader.surface->h;
+                  rot = 0;
+                  m = -1;
+               }
+
+             _calculate_foc(rot, m, w, h, gc->pipe[pn].viewport.px, gc->pipe[pn].viewport.py,
+                            &vx, &vy, &vw, &vh, &ax, &ay);
+
              PUSH_VERTEX(pn,
-                         (p[points[i]].fx) + gc->shared->ax,
-                         (p[points[i]].fy) + gc->shared->ay,
+                         (p[points[i]].fx) + ax,
+                         (p[points[i]].fy) + ay,
                          (p[points[i]].fz)
-                         + (gc->shared->foc - gc->shared->z0));
+                         + (gc->pipe[pn].viewport.foc - gc->pipe[pn].viewport.z0));
           }
         PUSH_TEXUV(pn,
                    tx[points[i]],
@@ -3147,17 +3217,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
-
-   if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->foc = 0;
-        gc->z0 = 0;
-        gc->px = 0;
-        gc->py = 0;
-        gc->change.size = 1;
-        _evas_gl_common_viewport_set(gc);
-     }
 }
 
 // ----------------------------------------------------------------------------
@@ -3234,7 +3293,7 @@ evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc,
    _filter_data_flush(gc, prog);
 
    pn = _evas_gl_common_context_push(SHD_FILTER_DISPLACE, gc, tex, NULL, prog,
-                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = SHD_FILTER_DISPLACE;
@@ -3353,7 +3412,7 @@ evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc,
    _filter_data_flush(gc, prog);
 
    pn = _evas_gl_common_context_push(SHD_FILTER_CURVE, gc, tex, NULL, prog,
-                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = SHD_FILTER_CURVE;
@@ -3560,7 +3619,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
      }
 
    pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
-                                     sx, sy, dw, dh, blend, smooth,
+                                     0, 0, 0, 0, sx, sy, dw, dh, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = type;
@@ -3670,19 +3729,19 @@ scissor_rot(Evas_Engine_GL_Context *gc EINA_UNUSED,
    switch (rot)
      {
       case 0: // UP this way: ^
-        glScissor(cx, cy, cw, ch);
+        GL_TH(glScissor, cx, cy, cw, ch);
         break;
       case 90: // UP this way: <
-        glScissor(gh - (cy + ch), cx, ch, cw);
+        GL_TH(glScissor, gh - (cy + ch), cx, ch, cw);
         break;
       case 180: // UP this way: v
-        glScissor(gw - (cx + cw), gh - (cy + ch), cw, ch);
+        GL_TH(glScissor, gw - (cx + cw), gh - (cy + ch), cw, ch);
         break;
       case 270: // UP this way: >
-        glScissor(cy, gw - (cx + cw), ch, cw);
+        GL_TH(glScissor, cy, gw - (cx + cw), ch, cw);
         break;
       default: // assume up is up
-        glScissor(cx, cy, cw, ch);
+        GL_TH(glScissor, cx, cy, cw, ch);
         break;
      }
 }
@@ -3696,33 +3755,32 @@ start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
    switch (rot)
      {
       case 0: // UP this way: ^
-        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cx, cy, cw, ch, bitmask);
         break;
       case 90: // UP this way: <
-        glsym_glStartTiling(gh - (cy + ch), cx, ch, cw, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, gh - (cy + ch), cx, ch, cw, bitmask);
         break;
       case 180: // UP this way: v
-        glsym_glStartTiling(gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, gw - (cx + cw), gh - (cy + ch), cw, ch, bitmask);
         break;
       case 270: // UP this way: >
-        glsym_glStartTiling(cy, gw - (cx + cw), ch, cw, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cy, gw - (cx + cw), ch, cw, bitmask);
         break;
       default: // assume up is up
-        glsym_glStartTiling(cx, cy, cw, ch, bitmask);
+        GL_TH_CALL(glStartTilingQCOM, glsym_glStartTiling, cx, cy, cw, ch, bitmask);
         break;
      }
    GLERRV("glsym_glStartTiling");
 }
 
 static void
-shader_array_flush(Evas_Engine_GL_Context *gc)
+_orig_shader_array_flush(Evas_Engine_GL_Context *gc)
 {
    int i, gw, gh, offx = 0, offy = 0;
    unsigned int pipe_done = 0;  //count pipe iteration for debugging
    Eina_Bool setclip;
    Eina_Bool fbo = EINA_FALSE;
 
-   if (!gc->havestuff) return;
    gw = gc->w;
    gh = gc->h;
    if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
@@ -3740,6 +3798,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         if (gc->pipe[i].array.num <= 0) break;
 
+        gc->change.size = 1;
+        _evas_gl_common_viewport_set(gc, i);
+
         prog = gc->pipe[i].shader.prog;
         setclip = EINA_FALSE;
         pipe_done++;
@@ -3748,11 +3809,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         GLERRV("<flush err>");
         if (prog && (prog != gc->state.current.prog))
           {
-             glUseProgram(prog->prog);
+             GL_TH(glUseProgram, prog->prog);
              if (prog->reset)
                {
-                  glUniform1i(prog->uniform.rotation_id, fbo ? 0 : gc->rot / 90);
-                  glUniformMatrix4fv(prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
+                  GL_TH(glUniform1i, prog->uniform.rotation_id, fbo ? 0 : gc->rot / 90);
+                  GL_TH(glUniformMatrix4fv, prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
                   prog->reset = EINA_FALSE;
                }
           }
@@ -3762,23 +3823,23 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 #if 0
              if (gc->pipe[i].shader.cur_tex)
                {
-                  glEnable(GL_TEXTURE_2D);
+                  GL_TH(glEnable, GL_TEXTURE_2D);
                }
              else
                {
-                  glDisable(GL_TEXTURE_2D);
+                  GL_TH(glDisable, GL_TEXTURE_2D);
                }
 #endif
-             glActiveTexture(GL_TEXTURE0);
-             glBindTexture(gc->pipe[i].shader.tex_target, gc->pipe[i].shader.cur_tex);
+             GL_TH(glActiveTexture, GL_TEXTURE0);
+             GL_TH(glBindTexture, gc->pipe[i].shader.tex_target, gc->pipe[i].shader.cur_tex);
           }
         if (gc->pipe[i].array.im)
           {
 #ifdef GL_GLES
              if (gc->pipe[i].array.im->tex->pt->dyn.img)
                {
-                  secsym_glEGLImageTargetTexture2DOES
-                        (gc->pipe[i].array.im->tex->pt->dyn.target, gc->pipe[i].array.im->tex->pt->dyn.img);
+                  GL_TH_CALL(glEGLImageTargetTexture2DOES, secsym_glEGLImageTargetTexture2DOES,
+                             gc->pipe[i].array.im->tex->pt->dyn.target, gc->pipe[i].array.im->tex->pt->dyn.img);
                }
              else
 #endif
@@ -3796,49 +3857,49 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              switch (gc->pipe[i].shader.render_op)
                {
                 case EVAS_RENDER_BLEND: /**< default op: d = d*(1-sa) + s */
-                  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                  GL_TH(glBlendFunc, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                   break;
                 case EVAS_RENDER_BLEND_REL: /**< d = d*(1 - sa) + s*da */
-                  glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                  GL_TH(glBlendFunc, GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                   break;
                 case EVAS_RENDER_COPY: /**< d = s */
                   gc->pipe[i].shader.blend = 0;
                   // just disable blend mode. no need to set blend func
-                  //glBlendFunc(GL_ONE, GL_ZERO);
+                  //GL_TH(glBlendFunc, GL_ONE, GL_ZERO);
                   break;
                 case EVAS_RENDER_COPY_REL: /**< d = s*da */
-                  glBlendFunc(GL_DST_ALPHA, GL_ZERO);
+                  GL_TH(glBlendFunc, GL_DST_ALPHA, GL_ZERO);
                   break;
                 case EVAS_RENDER_ADD: /**< d = d + s */
-                  glBlendFunc(GL_ONE, GL_ONE);
+                  GL_TH(glBlendFunc, GL_ONE, GL_ONE);
                   break;
                 case EVAS_RENDER_ADD_REL: /**< d = d + s*da */
-                  glBlendFunc(GL_DST_ALPHA, GL_ONE);
+                  GL_TH(glBlendFunc, GL_DST_ALPHA, GL_ONE);
                   break;
                 case EVAS_RENDER_SUB: /**< d = d - s */
-                  glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+                  GL_TH(glBlendFunc, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
                   break;
                 case EVAS_RENDER_SUB_REL: /**< d = d - s*da */
-                  glBlendFunc(GL_ZERO, GL_ONE_MINUS_DST_ALPHA);
+                  GL_TH(glBlendFunc, GL_ZERO, GL_ONE_MINUS_DST_ALPHA);
                   break;
                 case EVAS_RENDER_MASK: /**< d = d*sa */
-                  glBlendFunc(GL_ZERO, GL_SRC_ALPHA);
+                  GL_TH(glBlendFunc, GL_ZERO, GL_SRC_ALPHA);
                   break;
                   // FIXME: fix blend funcs below!
                 case EVAS_RENDER_TINT: /**< d = d*s + d*(1 - sa) + s*(1 - da) */
                 case EVAS_RENDER_TINT_REL: /**< d = d*(1 - sa + s) */
                 case EVAS_RENDER_MUL: /**< d = d*s */
                 default:
-                  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                  GL_TH(glBlendFunc, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                   break;
                }
           }
         if (gc->pipe[i].shader.blend != gc->state.current.blend)
           {
              if (gc->pipe[i].shader.blend)
-               glEnable(GL_BLEND);
+               GL_TH(glEnable, GL_BLEND);
              else
-               glDisable(GL_BLEND);
+               GL_TH(glDisable, GL_BLEND);
           }
         if ((gc->pipe[i].shader.smooth != gc->state.current.smooth) ||
             (gc->pipe[i].shader.cur_tex != gc->state.current.cur_tex))
@@ -3847,23 +3908,23 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                    GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                }
              else
                {
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
+                    GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0);
 #endif
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                }
           }
         if (gc->pipe[i].shader.clip != gc->state.current.clip)
@@ -3917,14 +3978,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if ((gc->pipe[i].shader.clip) ||
                  ((gc->master_clip.enabled) && (!fbo)))
                {
-                  glEnable(GL_SCISSOR_TEST);
+                  GL_TH(glEnable, GL_SCISSOR_TEST);
                   if (!fbo)
                     scissor_rot(gc, gc->rot, gw, gh,
                                 cx + offx,
                                 gh - cy - offy - ch,
                                 cw, ch);
                   else
-                     glScissor(cx + offx, cy + offy, cw, ch);
+                     GL_TH(glScissor, cx + offx, cy + offy, cw, ch);
                   setclip = EINA_TRUE;
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
@@ -3933,8 +3994,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                }
              else
                {
-                  glDisable(GL_SCISSOR_TEST);
-                  glScissor(0, 0, 0, 0);
+                  GL_TH(glDisable, GL_SCISSOR_TEST);
+                  GL_TH(glScissor, 0, 0, 0, 0);
                   gc->state.current.cx = 0;
                   gc->state.current.cy = 0;
                   gc->state.current.cw = 0;
@@ -3977,7 +4038,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                                 gh - cy - offy - ch,
                                 cw, ch);
                   else
-                    glScissor(cx, cy, cw, ch);
+                    GL_TH(glScissor, cx, cy, cw, ch);
                   gc->state.current.cx = cx;
                   gc->state.current.cy = cy;
                   gc->state.current.cw = cw;
@@ -4016,17 +4077,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              masksam_ptr = mask_ptr + MASK_SIZE;
 # define END_POINTER (masksam_ptr + SAM_SIZE)
 
-             glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
+             GL_TH(glBindBuffer, GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
              if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
                  (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
                {
-                  glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
+                  GL_TH(glBufferData, GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
                   gc->pipe[i].array.buffer_alloc = (long)END_POINTER;
                   gc->pipe[i].array.buffer_use = 0;
                }
              gc->pipe[i].array.buffer_use++;
 
-             x = glsym_glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+             x = GL_TH_CALL(glMapBufferOES, glsym_glMapBuffer, GL_ARRAY_BUFFER, GL_WRITE_ONLY);
              if (x)
                {
                   if (gc->pipe[i].array.use_vertex)
@@ -4064,7 +4125,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                           gc->pipe[i].array.use_texsam,
                           gc->pipe[i].array.use_texm);
  */
-                  glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
+                  GL_TH_CALL(glUnmapBufferOES, glsym_glUnmapBuffer, GL_ARRAY_BUFFER);
                }
           }
         else
@@ -4081,238 +4142,237 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
 
         // use_vertex is always true
-        glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_SHORT, GL_FALSE, 0, vertex_ptr);
+        GL_TH(glVertexAttribPointer, SHAD_VERTEX, VERTEX_CNT, GL_SHORT, GL_FALSE, 0, vertex_ptr);
 
         if (gc->pipe[i].array.use_color)
           {
-             glEnableVertexAttribArray(SHAD_COLOR);
-             glVertexAttribPointer(SHAD_COLOR, COLOR_CNT, GL_UNSIGNED_BYTE, GL_TRUE, 0, color_ptr);
+             GL_TH(glEnableVertexAttribArray, SHAD_COLOR);
+             GL_TH(glVertexAttribPointer, SHAD_COLOR, COLOR_CNT, GL_UNSIGNED_BYTE, GL_TRUE, 0, color_ptr);
           }
         else
-          glDisableVertexAttribArray(SHAD_COLOR);
+          GL_TH(glDisableVertexAttribArray, SHAD_COLOR);
 
         if (gc->pipe[i].array.line)
           {
              if (gc->pipe[i].array.anti_alias)
                {
-                  glEnable(GL_BLEND);
-                  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                  glHint(GL_LINE_SMOOTH, GL_NICEST);
-                  glEnable(GL_LINE_SMOOTH);
+                  GL_TH(glEnable, GL_BLEND);
+                  GL_TH(glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                  GL_TH(glHint, GL_LINE_SMOOTH, GL_NICEST);
+                  GL_TH(glEnable, GL_LINE_SMOOTH);
                }
              else
                {
-                  glDisable(GL_LINE_SMOOTH);
+                  GL_TH(glDisable, GL_LINE_SMOOTH);
                }
 
-             glDisableVertexAttribArray(SHAD_TEXUV);
-             glDisableVertexAttribArray(SHAD_TEXUV2);
-             glDisableVertexAttribArray(SHAD_TEXUV3);
-             glDisableVertexAttribArray(SHAD_TEXA);
-             glDisableVertexAttribArray(SHAD_TEXSAM);
+             GL_TH(glDisableVertexAttribArray, SHAD_TEXUV);
+             GL_TH(glDisableVertexAttribArray, SHAD_TEXUV2);
+             GL_TH(glDisableVertexAttribArray, SHAD_TEXUV3);
+             GL_TH(glDisableVertexAttribArray, SHAD_TEXA);
+             GL_TH(glDisableVertexAttribArray, SHAD_TEXSAM);
 
              /* kopi pasta from below */
              if (gc->pipe[i].array.use_mask)
                {
-                  glEnableVertexAttribArray(SHAD_MASK);
-                  glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
-                  glActiveTexture(ACTIVE_TEXTURE);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
+                  GL_TH(glEnableVertexAttribArray, SHAD_MASK);
+                  GL_TH(glVertexAttribPointer, SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
+                  GL_TH(glActiveTexture, ACTIVE_TEXTURE);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                    GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
                   if (gc->pipe[i].shader.mask_smooth)
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                     }
                   else
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                     }
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                  glActiveTexture(GL_TEXTURE0);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glActiveTexture, GL_TEXTURE0);
 
                   if (gc->pipe[i].array.use_masksam)
                     {
-                       glEnableVertexAttribArray(SHAD_MASKSAM);
-                       glVertexAttribPointer(SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
+                       GL_TH(glEnableVertexAttribArray, SHAD_MASKSAM);
+                       GL_TH(glVertexAttribPointer, SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
                     }
-                  else glDisableVertexAttribArray(SHAD_MASKSAM);
+                  else GL_TH(glDisableVertexAttribArray, SHAD_MASKSAM);
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_MASK);
-                  glDisableVertexAttribArray(SHAD_MASKSAM);
+                  GL_TH(glDisableVertexAttribArray, SHAD_MASK);
+                  GL_TH(glDisableVertexAttribArray, SHAD_MASKSAM);
                }
 
-             glDrawArrays(GL_LINES, 0, gc->pipe[i].array.num);
+             GL_TH(glDrawArrays, GL_LINES, 0, gc->pipe[i].array.num);
           }
         else
           {
              if (gc->pipe[i].array.use_texuv)
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV);
-                  glVertexAttribPointer(SHAD_TEXUV, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv_ptr);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXUV);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXUV, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv_ptr);
 
                   ACTIVE_TEXTURE += 1;
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_TEXUV);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXUV);
                }
 
              /* Alpha plane */
              if (gc->pipe[i].array.use_texa)
                {
-                  glEnableVertexAttribArray(SHAD_TEXA);
-                  glVertexAttribPointer(SHAD_TEXA, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texa_ptr);
-                  glActiveTexture(GL_TEXTURE1);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texa);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXA);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXA, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texa_ptr);
+                  GL_TH(glActiveTexture, GL_TEXTURE1);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texa);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                    GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
                   if (gc->pipe[i].shader.smooth)
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                     }
                   else
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                     }
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                  glActiveTexture(GL_TEXTURE0);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glActiveTexture, GL_TEXTURE0);
 
                   ACTIVE_TEXTURE += 1;
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_TEXA);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXA);
                }
 
              if (gc->pipe[i].array.use_texsam)
                {
-                  glEnableVertexAttribArray(SHAD_TEXSAM);
-                  glVertexAttribPointer(SHAD_TEXSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, texsam_ptr);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXSAM);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, texsam_ptr);
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_TEXSAM);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXSAM);
                }
 
              if ((gc->pipe[i].array.use_texuv2) && (gc->pipe[i].array.use_texuv3))
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV2);
-                  glEnableVertexAttribArray(SHAD_TEXUV3);
-                  glVertexAttribPointer(SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
-                  glVertexAttribPointer(SHAD_TEXUV3, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv3_ptr);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXUV2);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXUV3);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXUV3, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv3_ptr);
 
-                  glActiveTexture(GL_TEXTURE1);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
+                  GL_TH(glActiveTexture, GL_TEXTURE1);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
 #ifdef GL_GLES
                   if (gc->pipe[i].shader.cur_texu_dyn)
-                    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
+                    GL_TH_CALL(glEGLImageTargetTexture2DOES, secsym_glEGLImageTargetTexture2DOES, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-                  glActiveTexture(GL_TEXTURE2);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv);
+                  GL_TH(glActiveTexture, GL_TEXTURE2);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv);
 #ifdef GL_GLES
                   if (gc->pipe[i].shader.cur_texv_dyn)
-                    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv_dyn);
+                    GL_TH_CALL(glEGLImageTargetTexture2DOES, secsym_glEGLImageTargetTexture2DOES, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv_dyn);
 #endif
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                  glActiveTexture(GL_TEXTURE0);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glActiveTexture, GL_TEXTURE0);
 
                   ACTIVE_TEXTURE += 2;
                }
              else if (gc->pipe[i].array.use_texuv2)
                {
-                  glEnableVertexAttribArray(SHAD_TEXUV2);
-                  glVertexAttribPointer(SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
+                  GL_TH(glEnableVertexAttribArray, SHAD_TEXUV2);
+                  GL_TH(glVertexAttribPointer, SHAD_TEXUV2, TEX_CNT, GL_FLOAT, GL_FALSE, 0, texuv2_ptr);
 
-                  glActiveTexture(GL_TEXTURE1);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
+                  GL_TH(glActiveTexture, GL_TEXTURE1);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
 #ifdef GL_GLES
                   if (gc->pipe[i].shader.cur_texu_dyn)
-                    secsym_glEGLImageTargetTexture2DOES
-                          (GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
+                    GL_TH_CALL(glEGLImageTargetTexture2DOES, secsym_glEGLImageTargetTexture2DOES, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
                   if (gc->pipe[i].shader.smooth)
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                     }
                   else
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
                     }
-                  glActiveTexture(GL_TEXTURE0);
+                  GL_TH(glActiveTexture, GL_TEXTURE0);
 
-                  glDisableVertexAttribArray(SHAD_TEXUV3);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXUV3);
                   ACTIVE_TEXTURE += 1;
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_TEXUV2);
-                  glDisableVertexAttribArray(SHAD_TEXUV3);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXUV2);
+                  GL_TH(glDisableVertexAttribArray, SHAD_TEXUV3);
                }
 
              /* Mask surface */
              if (gc->pipe[i].array.use_mask)
                {
-                  glEnableVertexAttribArray(SHAD_MASK);
-                  glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
-                  glActiveTexture(ACTIVE_TEXTURE);
-                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
+                  GL_TH(glEnableVertexAttribArray, SHAD_MASK);
+                  GL_TH(glVertexAttribPointer, SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
+                  GL_TH(glActiveTexture, ACTIVE_TEXTURE);
+                  GL_TH(glBindTexture, GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
                   if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                    GL_TH(glTexParameterf, GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
                   if (gc->pipe[i].shader.mask_smooth)
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                     }
                   else
                     {
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                     }
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                  glActiveTexture(GL_TEXTURE0);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  GL_TH(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  GL_TH(glActiveTexture, GL_TEXTURE0);
 
                   if (gc->pipe[i].array.use_masksam)
                     {
-                       glEnableVertexAttribArray(SHAD_MASKSAM);
-                       glVertexAttribPointer(SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
+                       GL_TH(glEnableVertexAttribArray, SHAD_MASKSAM);
+                       GL_TH(glVertexAttribPointer, SHAD_MASKSAM, SAM_CNT, GL_FLOAT, GL_FALSE, 0, masksam_ptr);
                     }
-                  else glDisableVertexAttribArray(SHAD_MASKSAM);
+                  else GL_TH(glDisableVertexAttribArray, SHAD_MASKSAM);
                   ACTIVE_TEXTURE += 1;
                }
              else
                {
-                  glDisableVertexAttribArray(SHAD_MASK);
-                  glDisableVertexAttribArray(SHAD_MASKSAM);
+                  GL_TH(glDisableVertexAttribArray, SHAD_MASK);
+                  GL_TH(glDisableVertexAttribArray, SHAD_MASKSAM);
                }
 
              /* Gfx filters: data */
@@ -4358,7 +4418,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                          types[gc->pipe[i].region.type]
                          );
                }
-             glDrawArrays(GL_TRIANGLES, 0, gc->pipe[i].array.num);
+             GL_TH(glDrawArrays, GL_TRIANGLES, 0, gc->pipe[i].array.num);
           }
         if (gc->pipe[i].array.im)
           {
@@ -4387,9 +4447,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.clip      = gc->pipe[i].shader.clip;
         gc->state.current.anti_alias = gc->pipe[i].array.anti_alias;
 
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             GL_TH(glBindBuffer, GL_ARRAY_BUFFER, 0);
+          }
+     }
+
+   for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
+     {
         if (gc->pipe[i].shader.filter.map_delete)
           {
-             glDeleteTextures(1, &gc->pipe[i].shader.filter.map_tex);
+             GL_TH(glDeleteTextures, 1, &gc->pipe[i].shader.filter.map_tex);
              gc->pipe[i].shader.filter.map_delete = EINA_FALSE;
              gc->pipe[i].shader.filter.map_tex = 0;
           }
@@ -4420,17 +4488,16 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
-
-        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
-          {
-             glBindBuffer(GL_ARRAY_BUFFER, 0);
-          }
-
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
         gc->pipe[i].region.h = 0;
         gc->pipe[i].region.type = 0;
+
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
      }
    gc->state.top_pipe = 0;
    if (dbgflushnum == 1)
@@ -4438,6 +4505,45 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (pipe_done > 0) printf("DONE (pipes): %i\n", pipe_done);
      }
    gc->havestuff = EINA_FALSE;
+}
+
+typedef struct
+{
+   Evas_Engine_GL_Context *gc;
+} GL_TH_ST(shader_array_flush);
+
+static void
+GL_TH_CB(shader_array_flush)(void *data)
+{
+   GL_TH_ST(shader_array_flush) *thread_param = *(void **)data;
+
+   _orig_shader_array_flush(thread_param->gc);
+}
+
+static void
+shader_array_flush(Evas_Engine_GL_Context *gc)
+{
+   GL_TH_ST(shader_array_flush) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   if (!gc->havestuff) return;
+
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_GL))
+     {
+        _orig_shader_array_flush(gc);
+        return;
+     }
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(shader_array_flush) *), &thcmd_ref);
+   *thread_data_ptr = thread_data;
+
+   thread_data->gc = gc;
+
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(shader_array_flush),
+                              EVAS_GL_THREAD_MODE_FINISH);
+
 }
 
 EAPI int
@@ -4459,8 +4565,8 @@ evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const 
 
    if ((!data1) || (!data2)) goto finish;
 
-   glReadPixels(0, 0, gc->w, gc->h, GL_RGBA,
-                GL_UNSIGNED_BYTE, (unsigned char*)data1);
+   GL_TH(glReadPixels, 0, 0, gc->w, gc->h, GL_RGBA,
+                       GL_UNSIGNED_BYTE, (unsigned char*)data1);
 
    // Flip the Y and change from RGBA TO BGRA
    int i, j;
@@ -4518,12 +4624,16 @@ evas_gl_common_module_open(void)
         EINA_LOG_ERR("Can not create a module log domain.");
         return EINA_FALSE;
      }
+   evas_gl_thread_init();
+
    return EINA_TRUE;
 }
 
 void
 evas_gl_common_module_close(void)
 {
+   evas_gl_thread_terminate();
+
    if (_evas_engine_GL_common_log_dom < 0) return;
    eina_log_domain_unregister(_evas_engine_GL_common_log_dom);
    _evas_engine_GL_common_log_dom = -1;
