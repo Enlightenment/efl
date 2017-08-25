@@ -19,7 +19,7 @@ typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
 
 struct _Render_Engine_GL_Generic
 {
-   Render_Engine_Software_Generic software;
+   Render_Output_Software_Generic software;
 
    Window_Use window_use;
    Window_GL_Context_Get window_gl_context_get;

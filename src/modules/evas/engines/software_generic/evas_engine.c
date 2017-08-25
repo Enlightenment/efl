@@ -3858,7 +3858,7 @@ eng_gl_api_get(void *data EINA_UNUSED, int version)
 static int
 eng_gl_error_get(void *data)
 {
-   Render_Engine_Software_Generic *re = data;
+   Render_Output_Software_Generic *re = data;
 
    // TODO: Track EGL-like errors in the software engines
 
@@ -3893,16 +3893,16 @@ eng_gl_rotation_angle_get(void *data EINA_UNUSED)
 /* The following function require that any engine
    inheriting from software generic to have at the
    top of their render engine structure a
-   Render_Engine_Software_Generic structure that is
+   Render_Output_Software_Generic structure that is
    initialized by evas_render_engine_software_generic_init().
  */
 
 static void
 eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    re->outbuf_reconfigure(re->ob, w, h, re->outbuf_get_rot(re->ob),
                           OUTBUF_DEPTH_INHERIT);
    evas_common_tilebuf_free(re->tb);
@@ -3919,36 +3919,36 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 static void
 eng_output_tile_size_set(void *engine EINA_UNUSED, void *data, int w, int h)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 static void
 eng_output_redraws_rect_add(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 static void
 eng_output_redraws_rect_del(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void
 eng_output_redraws_clear(void *engine EINA_UNUSED, void *data)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    evas_common_tilebuf_clear(re->tb);
    if (re->outbuf_redraws_clear) re->outbuf_redraws_clear(re->ob);
 }
@@ -4151,7 +4151,7 @@ _merge_rects(Render_Engine_Merge_Mode merge_mode,
 static void *
 eng_output_redraws_next_update_get(void *engine EINA_UNUSED, void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
    void *surface;
    Tilebuf_Rect *rect;
 
@@ -4162,7 +4162,7 @@ eng_output_redraws_next_update_get(void *engine EINA_UNUSED, void *data, int *x,
       re->rects_prev[x] = NULL; \
    } while (0)
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    if (re->end)
      {
         re->end = 0;
@@ -4279,11 +4279,11 @@ eng_output_redraws_next_update_get(void *engine EINA_UNUSED, void *data, int *x,
 static void
 eng_output_redraws_next_update_push(void *engine EINA_UNUSED, void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
 #if defined(BUILD_PIPE_RENDER)
    evas_common_pipe_map_begin(surface);
 #endif /* BUILD_PIPE_RENDER */
@@ -4295,11 +4295,11 @@ eng_output_redraws_next_update_push(void *engine EINA_UNUSED, void *data, void *
 static void
 eng_output_flush(void *engine EINA_UNUSED, void *data, Evas_Render_Mode render_mode)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    if (re->outbuf_flush) re->outbuf_flush(re->ob, re->rects_prev[0], re->rects, render_mode);
    if (re->rects && render_mode != EVAS_RENDER_MODE_ASYNC_INIT)
      {
@@ -4311,9 +4311,9 @@ eng_output_flush(void *engine EINA_UNUSED, void *data, Evas_Render_Mode render_m
 static void
 eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 {
-   Render_Engine_Software_Generic *re;
+   Render_Output_Software_Generic *re;
 
-   re = (Render_Engine_Software_Generic *)data;
+   re = (Render_Output_Software_Generic *)data;
    if (re->outbuf_idle_flush) re->outbuf_idle_flush(re->ob);
 }
 

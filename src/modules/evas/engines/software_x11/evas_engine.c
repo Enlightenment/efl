@@ -36,7 +36,7 @@ typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
 {
-   Render_Engine_Software_Generic generic;
+   Render_Output_Software_Generic generic;
    Eina_Bool                      (*outbuf_alpha_get)(Outbuf *ob);
 
    struct

@@ -24,7 +24,7 @@ Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_g
 typedef struct _Render_Engine Render_Engine;
 struct _Render_Engine
 {
-   Render_Engine_Software_Generic generic;
+   Render_Output_Software_Generic generic;
 };
 
 /* LOCAL FUNCTIONS */

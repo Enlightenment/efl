@@ -25,14 +25,14 @@ typedef enum _Outbuf_Depth
    OUTBUF_DEPTH_LAST
 } Outbuf_Depth;
 
-typedef enum 
+typedef enum
 {
    MERGE_BOUNDING,
    MERGE_FULL,
    MERGE_SMART
 } Render_Engine_Merge_Mode;
 
-typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;
+typedef struct _Render_Output_Software_Generic Render_Output_Software_Generic;
 typedef struct _Outbuf Outbuf;
 
 typedef Render_Engine_Swap_Mode (*Outbuf_Swap_Mode_Get)(Outbuf *ob);
@@ -48,7 +48,7 @@ typedef int (*Outbuf_Get_Rot)(Outbuf *ob);
 typedef void (*Outbuf_Flush)(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 typedef void (*Outbuf_Redraws_Clear)(Outbuf *ob);
 
-struct _Render_Engine_Software_Generic
+struct _Render_Output_Software_Generic
 {
    Outbuf *ob;
    Tilebuf *tb;
@@ -80,7 +80,7 @@ struct _Render_Engine_Software_Generic
 };
 
 static inline Eina_Bool
-evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
+evas_render_engine_software_generic_init(Render_Output_Software_Generic *re,
                                          Outbuf *ob,
                                          Outbuf_Swap_Mode_Get outbuf_swap_mode_get,
                                          Outbuf_Get_Rot outbuf_get_rot,
@@ -135,7 +135,7 @@ evas_render_engine_software_generic_init(Render_Engine_Software_Generic *re,
 }
 
 static inline void
-evas_render_engine_software_generic_clean(Render_Engine_Software_Generic *re)
+evas_render_engine_software_generic_clean(Render_Output_Software_Generic *re)
 {
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->ob) re->outbuf_free(re->ob);
@@ -146,18 +146,18 @@ evas_render_engine_software_generic_clean(Render_Engine_Software_Generic *re)
    if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
    if (re->rects_prev[3]) evas_common_tilebuf_free_render_rects(re->rects_prev[3]);
 
-   memset(re, 0, sizeof (Render_Engine_Software_Generic));
+   memset(re, 0, sizeof (Render_Output_Software_Generic));
 }
 
 static inline void
-evas_render_engine_software_generic_merge_mode_set(Render_Engine_Software_Generic *re,
+evas_render_engine_software_generic_merge_mode_set(Render_Output_Software_Generic *re,
                                                    Render_Engine_Merge_Mode merge_mode)
 {
    re->merge_mode = merge_mode;
 }
 
 static inline void
-evas_render_engine_software_generic_tile_strict_set(Render_Engine_Software_Generic *re,
+evas_render_engine_software_generic_tile_strict_set(Render_Output_Software_Generic *re,
                                                     Eina_Bool tile_strict)
 {
    re->tile_strict = !!tile_strict;
@@ -165,7 +165,7 @@ evas_render_engine_software_generic_tile_strict_set(Render_Engine_Software_Gener
 }
 
 static inline Eina_Bool
-evas_render_engine_software_generic_update(Render_Engine_Software_Generic *re,
+evas_render_engine_software_generic_update(Render_Output_Software_Generic *re,
                                            Outbuf *ob,
                                            int w, int h)
 {
