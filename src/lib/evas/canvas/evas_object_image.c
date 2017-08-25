@@ -1842,7 +1842,9 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_input_render(
 }
 
 void
-_evas_object_image_plane_release(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_evas_object_image_plane_release(Evas_Object *eo_obj EINA_UNUSED,
+                                 Evas_Object_Protected_Data *obj,
+                                 Efl_Canvas_Output *output)
 {
    Evas_Image_Data *o;
 
@@ -1854,12 +1856,14 @@ _evas_object_image_plane_release(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
 
    if (!o->plane) return;
 
-   ENFN->image_plane_release(ENDT, o->engine_data, o->plane);
+   ENFN->image_plane_release(output->output, o->engine_data, o->plane);
+   output->planes = eina_list_remove(output->planes, obj);
    o->plane = NULL;
 }
 
 Eina_Bool
-_evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj)
+_evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj,
+                                 Efl_Canvas_Output *output)
 {
    Evas_Native_Surface *ns;
    Evas_Image_Data *o = obj->private_data;
@@ -1883,13 +1887,15 @@ _evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj)
    ns = ENFN->image_native_get(ENC, o->engine_data);
    if (!ns) return EINA_FALSE;
 
-   o->plane = ENFN->image_plane_assign(ENDT, o->engine_data,
+   // FIXME: adjust position with output offset.
+   o->plane = ENFN->image_plane_assign(output->output, o->engine_data,
                                        obj->cur->geometry.x,
                                        obj->cur->geometry.y);
 
    if (!o->plane)
      return EINA_FALSE;
 
+   output->planes = eina_list_append(output->planes, obj);
    return EINA_TRUE;
 }
 

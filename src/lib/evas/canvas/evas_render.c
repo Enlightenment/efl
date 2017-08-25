@@ -1342,7 +1342,7 @@ pending_change(void *data, void *gdata EINA_UNUSED)
 }
 
 static Eina_Bool
-_evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
+_evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canvas_Output *output)
 {
    Eina_Rectangle *r;
    Evas_Object *eo_tmp;
@@ -1360,7 +1360,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Eina_Bool surface_below, stacking_check, object_above = EINA_FALSE;
    Eina_Bool ignore_window;
 
-   if (!_evas_object_image_can_use_plane(obj))
+   if (!_evas_object_image_can_use_plane(obj, output))
      return EINA_FALSE;
 
    video_parent = _evas_object_image_video_parent_get(eo_obj);
@@ -3085,6 +3085,39 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
    return clean_them;
 }
 
+static Efl_Canvas_Output *
+_evas_overlay_output_find(Evas_Public_Data *e, Evas_Object_Protected_Data *obj)
+{
+   Efl_Canvas_Output *output;
+   Eina_List *lo;
+   const Eina_Rectangle geometry = {
+     obj->cur->geometry.x,
+     obj->cur->geometry.y,
+     obj->cur->geometry.w,
+     obj->cur->geometry.h
+   };
+   Eina_Rectangle copy = geometry;
+
+   /* A video object can only be in one output at a time, check that first */
+   EINA_LIST_FOREACH(e->outputs, lo, output)
+     {
+        if (!eina_rectangle_intersection(&copy, &output->geometry))
+          {
+             copy = geometry;
+             continue ;
+          }
+        if (memcmp(&copy, &geometry, sizeof (Eina_Rectangle)) != 0)
+          {
+             /* This means that it does intersect this output and another */
+             return NULL;
+          }
+
+        return output;
+     }
+
+   return NULL;
+}
+
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
@@ -3185,8 +3218,13 @@ evas_render_updates_internal(Evas *eo_e,
 
    EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {
+        Efl_Canvas_Output *output;
+        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+        output = _evas_overlay_output_find(e, obj);
+
         /* we need the surface to be transparent to display the underlying overlay */
-       if (alpha && _evas_render_can_use_overlay(e, eo_obj))
+        if (output && alpha && _evas_render_can_use_overlay(e, eo_obj, output))
           _evas_object_image_video_overlay_show(eo_obj);
         else
           _evas_object_image_video_overlay_hide(eo_obj);
@@ -3198,6 +3236,8 @@ evas_render_updates_internal(Evas *eo_e,
        {
           Evas_Object_Protected_Data *obj2;
           Evas_Object *eo_obj2;
+          Efl_Canvas_Output *output;
+          Eina_List *lo;
 
           obj2 = ao->obj;
           eo_obj2 = obj2->object;
@@ -3206,12 +3246,23 @@ evas_render_updates_internal(Evas *eo_e,
 
           if (evas_object_image_video_surface_get(eo_obj2)) continue;
 
-          _evas_object_image_plane_release(eo_obj2, obj2);
-          if (!_evas_render_can_use_overlay(e, eo_obj2))
+          /* Find the output the object was in */
+          EINA_LIST_FOREACH(e->outputs, lo, output)
+            {
+               if (!eina_list_data_find(output->planes, obj2)) continue ;
+               _evas_object_image_plane_release(eo_obj2, obj2, output);
+               break;
+            }
+
+          /* A video object can only be in one output at a time, check that first */
+          output = _evas_overlay_output_find(e, obj2);
+          if (!output) continue ;
+
+          if (!_evas_render_can_use_overlay(e, eo_obj2, output))
             {
                /* This may free up things temporarily allocated by
                 * _can_use_overlay() testing in the engine */
-               _evas_object_image_plane_release(eo_obj2, obj2);
+               _evas_object_image_plane_release(eo_obj2, obj2, output);
             }
        }
 
