@@ -178,7 +178,7 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                       int x, int y, Eina_Bool do_async)
 {
    Evas_VG_Data *vd = type_private_data;
-   Ector_Surface *ector = evas_ector_get(obj->layer->evas, output);
+   Ector_Surface *ector = evas_ector_get(obj->layer->evas);
    // FIXME: Set context (that should affect Ector_Surface) and
    // then call Ector_Renderer render from bottom to top. Get the
    // Ector_Surface that match the output from Evas engine API.
@@ -248,7 +248,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
      }
 
    // FIXME: handle damage only on changed renderer.
-   s = evas_ector_get(obj->layer->evas, _evas_default_output_get(obj->layer->evas));
+   s = evas_ector_get(obj->layer->evas);
    if (vd->root && s)
      _evas_vg_render_pre(vd->root, s, NULL);
 

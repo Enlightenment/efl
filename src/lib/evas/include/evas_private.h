@@ -964,6 +964,7 @@ struct _Evas_Public_Data
    Eina_Array    *cur_device;
 
    void          *backend;
+   Ector_Surface *ector;
    Eina_List     *outputs;
 
    Evas_Device   *default_seat;
@@ -1333,8 +1334,6 @@ struct _Efl_Canvas_Output
 {
    Eo *canvas;
 
-   Ector_Surface *ector;
-
    Evas_Engine_Info *info;
    void *output;
 
@@ -1611,7 +1610,7 @@ struct _Evas_Func
    void  (*texture_image_set)            (void *engine, void *texture, void *image);
    void *(*texture_image_get)            (void *engine, void *texture);
 
-   Ector_Surface *(*ector_create)        (void *engine, void *output);
+   Ector_Surface *(*ector_create)        (void *engine);
    void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
    Ector_Buffer *(*ector_buffer_new)     (void *engine, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
@@ -1951,7 +1950,7 @@ void _efl_gfx_map_shutdown(void);
 void _efl_gfx_map_update(Eo *eo_obj);
 
 /* Ector */
-Ector_Surface *evas_ector_get(Evas_Public_Data *evas, void *output);
+Ector_Surface *evas_ector_get(Evas_Public_Data *evas);
 
 /* Temporary save/load functions */
 void evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file);

@@ -4316,10 +4316,11 @@ eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 static Eina_Bool use_cairo;
 
 static Ector_Surface *
-eng_ector_create(void *engine EINA_UNUSED, void *output EINA_UNUSED)
+eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
    const char *ector_backend;
+
    ector_backend = getenv("ECTOR_BACKEND");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
