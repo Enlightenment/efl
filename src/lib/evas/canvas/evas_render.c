@@ -100,7 +100,6 @@ rend_dbg(const char *txt)
 #undef ENDT
 #undef ENC
 #define ENFN evas->engine.func
-#define ENDT _evas_default_output_get(evas)
 #define ENC _evas_engine_context(evas)
 
 typedef struct _Render_Updates Render_Updates;
@@ -117,8 +116,10 @@ struct _Cutout_Margin
    int l, r, t, b;
 };
 
+static void
+evas_render_pipe_wakeup(void *data);
 static Eina_Bool
-evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Evas_Render_Done_Cb done_func, void *done_data, Eina_Bool do_async);
+evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw, Eina_Bool do_async);
 static void
 evas_render_mask_subrender(Evas_Public_Data *evas,
                            void *output,
@@ -3125,8 +3126,6 @@ static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
                              unsigned char do_draw,
-                             Evas_Render_Done_Cb done_func,
-                             void *done_data,
                              Eina_Bool do_async)
 {
    // FIXME: handle multiple output
@@ -3484,7 +3483,7 @@ evas_render_updates_internal(Evas *eo_e,
                   //XXX: need a way of reffing output surfaces
                   NEW_RECT(ru->area, ux, uy, uw, uh);
                   eina_spinlock_take(&(e->render.lock));
-                  e->render.updates = eina_list_append(e->render.updates, ru);
+                  out->updates = eina_list_append(out->updates, ru);
                   eina_spinlock_release(&(e->render.lock));
                }
 
@@ -3517,7 +3516,7 @@ evas_render_updates_internal(Evas *eo_e,
                   e->rendering = EINA_TRUE;
                   _rendering_evases = eina_list_append(_rendering_evases, e);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-                  evas_thread_queue_flush((Evas_Thread_Command_Cb)done_func, done_data);
+                  evas_thread_queue_flush((Evas_Thread_Command_Cb)evas_render_pipe_wakeup, e);
                   eina_evlog("-render_output_async_flush", eo_e, 0.0, NULL);
                }
              else
@@ -3659,16 +3658,19 @@ evas_render_updates_internal(Evas *eo_e,
    if (!do_async || !rendering)
      {
         Evas_Event_Render_Post post;
-        Eina_List *l;
+        Eina_List *l, *ll;
         Render_Updates *ru;
 
      nothing2render:
         post.updated_area = NULL;
-        EINA_LIST_FOREACH(e->render.updates, l, ru)
+        EINA_LIST_FOREACH(e->outputs, ll, out)
           {
-             post.updated_area = eina_list_append(post.updated_area, ru->area);
-             //XXX: need a way of unreffing output surfaces
-             ru->surface = NULL;
+             EINA_LIST_FOREACH(out->updates, l, ru)
+               {
+                  post.updated_area = eina_list_append(post.updated_area, ru->area);
+                  //XXX: need a way of unreffing output surfaces
+                  ru->surface = NULL;
+               }
           }
         eina_spinlock_take(&(e->render.lock));
         e->inside_post_render = EINA_TRUE;
@@ -3710,20 +3712,24 @@ evas_render_wakeup(Evas *eo_e)
    Evas_Event_Render_Post post;
    Render_Updates *ru;
    Eina_Bool haveup = EINA_FALSE;
-   Eina_List *ret_updates = NULL;
+   Eina_List *ret_updates = NULL, *l;
    Evas_Post_Render_Job *job;
    Evas_Public_Data *evas;
+   Efl_Canvas_Output *out;
    Eina_Inlist *jobs_il;
 
    evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
    eina_evlog("+render_wakeup", eo_e, 0.0, NULL);
    eina_spinlock_take(&(evas->render.lock));
-   EINA_LIST_FREE(evas->render.updates, ru)
+   EINA_LIST_FOREACH(evas->outputs, l, out)
      {
-        ret_updates = eina_list_append(ret_updates, ru->area);
-        free(ru);
-        haveup = EINA_TRUE;
+        EINA_LIST_FREE(out->updates, ru)
+          {
+             ret_updates = eina_list_append(ret_updates, ru->area);
+             free(ru);
+             haveup = EINA_TRUE;
+          }
      }
    eina_spinlock_release(&(evas->render.lock));
 
@@ -3740,7 +3746,10 @@ evas_render_wakeup(Evas *eo_e)
      }
 
    /* clear redraws */
-   ENFN->output_redraws_clear(ENC, ENDT);
+   EINA_LIST_FOREACH(evas->outputs, l, out)
+     {
+        ENFN->output_redraws_clear(ENC, out->output);
+     }
 
    /* unref queues */
    eina_array_foreach(&evas->scie_unref_queue, _drop_scie_ref, NULL);
@@ -3800,26 +3809,30 @@ evas_render_async_wakeup(void *target, Evas_Callback_Type type EINA_UNUSED, void
 static void
 evas_render_pipe_wakeup(void *data)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Render_Updates *ru;
    Evas_Public_Data *evas = data;
+   Efl_Canvas_Output *out;
 
    eina_evlog("+render_pipe_wakeup", evas->evas, 0.0, NULL);
    eina_spinlock_take(&(evas->render.lock));
-   EINA_LIST_FOREACH(evas->render.updates, l, ru)
+   EINA_LIST_FOREACH(evas->outputs, ll, out)
      {
-        eina_evlog("+render_push", evas->evas, 0.0, NULL);
-        ENFN->output_redraws_next_update_push
-          (ENC, ENDT, ru->surface, ru->area->x, ru->area->y, ru->area->w, ru->area->h,
-           EVAS_RENDER_MODE_ASYNC_END);
-        eina_evlog("-render_push", evas->evas, 0.0, NULL);
-        //XXX: need a way to unref render output surfaces
-        ru->surface = NULL;
+        EINA_LIST_FOREACH(out->updates, l, ru)
+          {
+             eina_evlog("+render_push", evas->evas, 0.0, NULL);
+             ENFN->output_redraws_next_update_push
+               (ENC, out->output, ru->surface, ru->area->x, ru->area->y, ru->area->w, ru->area->h,
+                EVAS_RENDER_MODE_ASYNC_END);
+             eina_evlog("-render_push", evas->evas, 0.0, NULL);
+             //XXX: need a way to unref render output surfaces
+             ru->surface = NULL;
+          }
+        eina_evlog("+render_output_flush", evas->evas, 0.0, NULL);
+        ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_ASYNC_END);
+        eina_evlog("-render_output_flush", evas->evas, 0.0, NULL);
      }
-   eina_evlog("+render_output_flush", evas->evas, 0.0, NULL);
    eina_spinlock_release(&(evas->render.lock));
-   ENFN->output_flush(ENC, ENDT, EVAS_RENDER_MODE_ASYNC_END);
-   eina_evlog("-render_output_flush", evas->evas, 0.0, NULL);
    evas_async_events_put(data, 0, NULL, evas_render_async_wakeup);
    eina_evlog("-render_pipe_wakeup", evas->evas, 0.0, NULL);
 }
@@ -3863,8 +3876,7 @@ _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
    evas_canvas_async_block(e);
    eina_evlog("-render_block", eo_e, 0.0, NULL);
    eina_evlog("+render", eo_e, 0.0, NULL);
-   ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
-                                      e, EINA_TRUE);
+   ret = evas_render_updates_internal(eo_e, 1, 1, EINA_TRUE);
    eina_evlog("-render", eo_e, 0.0, NULL);
    return ret;
 }
@@ -3874,19 +3886,24 @@ evas_render_updates_internal_wait(Evas *eo_e,
                                   unsigned char make_updates,
                                   unsigned char do_draw)
 {
-   Eina_List *ret = NULL;
-   Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Eina_List *ret = NULL, *l;
+   Efl_Canvas_Output *out;
+   Evas_Public_Data *e;
+
+   e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    if (e->render2) return _evas_render2_updates_wait(eo_e, e);
    else
      {
-        if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
-                                          NULL, EINA_FALSE))
+        if (!evas_render_updates_internal(eo_e, make_updates, do_draw, EINA_FALSE))
           return NULL;
      }
 
    eina_spinlock_take(&(e->render.lock));
-   ret = e->render.updates;
-   e->render.updates = NULL;
+   EINA_LIST_FOREACH(e->outputs, l, out)
+     {
+        ret = eina_list_merge(ret, out->updates);
+        out->updates = NULL;
+     }
    eina_spinlock_release(&(e->render.lock));
 
    return ret;
