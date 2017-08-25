@@ -63,6 +63,8 @@ _efl_animation_object_duration_set(Eo *eo_obj,
 {
    EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
 
+   efl_animation_object_total_duration_set(eo_obj, duration);
+
    pd->duration = duration;
 }
 
@@ -73,6 +75,34 @@ _efl_animation_object_duration_get(Eo *eo_obj,
    EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj, 0.0);
 
    return pd->duration;
+}
+
+EOLIAN static void
+_efl_animation_object_duration_only_set(Eo *eo_obj,
+                                        Efl_Animation_Object_Data *pd,
+                                        double duration)
+{
+   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
+
+   pd->duration = duration;
+}
+
+EOLIAN static void
+_efl_animation_object_total_duration_set(Eo *eo_obj,
+                                         Efl_Animation_Object_Data *pd,
+                                         double total_duration)
+{
+   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
+
+   pd->total_duration = total_duration;
+}
+
+EOLIAN static double
+_efl_animation_object_total_duration_get(Eo *eo_obj, Efl_Animation_Object_Data *pd)
+{
+   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, 0.0);
+
+   return pd->total_duration;
 }
 
 EOLIAN static Eina_Bool
@@ -181,17 +211,17 @@ _animator_cb(void *data)
 
    if (pd->is_cancelled) goto end;
 
-   double elapsed_time, duration;
+   double elapsed_time, total_duration;
 
    pd->time.current = ecore_loop_time_get();
    elapsed_time = pd->time.current - pd->time.begin;
-   duration = pd->duration;
-   if (elapsed_time > duration)
-     elapsed_time = duration;
+   total_duration = pd->total_duration;
+   if (elapsed_time > total_duration)
+     elapsed_time = total_duration;
 
-   if (duration < 0.0) goto end;
+   if (total_duration < 0.0) goto end;
 
-   if (duration == 0.0)
+   if (total_duration == 0.0)
      {
         ecore_animator_del(pd->animator);
         pd->animator = NULL;
@@ -199,7 +229,7 @@ _animator_cb(void *data)
         pd->progress = 1.0;
      }
    else
-     pd->progress = elapsed_time / duration;
+     pd->progress = elapsed_time / total_duration;
 
    //Reset previous animation effect before applying animation effect
    efl_animation_object_target_state_reset(eo_obj);
@@ -207,7 +237,7 @@ _animator_cb(void *data)
    efl_animation_object_progress_set(eo_obj, pd->progress);
 
    //Not end. Keep going.
-   if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
+   if (elapsed_time < total_duration) return ECORE_CALLBACK_RENEW;
 
 end:
    pd->animator = NULL;
@@ -226,7 +256,7 @@ end:
 static void
 _start(Eo *eo_obj, Efl_Animation_Object_Data *pd)
 {
-   if (pd->duration < 0.0) return;
+   if (pd->total_duration < 0.0) return;
 
    //Save the current state of the target
    efl_animation_object_target_state_save(eo_obj);
@@ -311,6 +341,7 @@ _efl_animation_object_efl_object_constructor(Eo *eo_obj,
    pd->progress = 0.0;
 
    pd->duration = 0.0;
+   pd->total_duration = 0.0;
 
    pd->auto_del = EINA_TRUE;
    pd->is_deleted = EINA_FALSE;
@@ -358,13 +389,21 @@ EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_final_state_keep_get, Eina_Bool, 
 EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_duration_set, EFL_FUNC_CALL(duration), double duration);
 EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_duration_get, double, 0);
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_duration_only_set, EFL_FUNC_CALL(duration), double duration);
+
+EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_total_duration_set, EFL_FUNC_CALL(total_duration), double total_duration);
+EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_total_duration_get, double, 0);
+
 #define EFL_ANIMATION_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_set, _efl_animation_object_target_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_get, _efl_animation_object_target_get), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_final_state_keep_set, _efl_animation_object_final_state_keep_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_final_state_keep_get, _efl_animation_object_final_state_keep_get), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_duration_set, _efl_animation_object_duration_set), \
-   EFL_OBJECT_OP_FUNC(efl_animation_object_duration_get, _efl_animation_object_duration_get)
+   EFL_OBJECT_OP_FUNC(efl_animation_object_duration_get, _efl_animation_object_duration_get), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_duration_only_set, _efl_animation_object_duration_only_set), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_total_duration_set, _efl_animation_object_total_duration_set), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_total_duration_get, _efl_animation_object_total_duration_get)
 
 EWAPI const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED =
    EFL_EVENT_DESCRIPTION("pre_started");

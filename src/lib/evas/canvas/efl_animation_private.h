@@ -10,6 +10,7 @@ typedef struct _Efl_Animation_Data
    Efl_Canvas_Object *target;
 
    double             duration;
+   double             total_duration;
 
    Eina_Bool          is_deleted : 1;
    Eina_Bool          keep_final_state : 1;
