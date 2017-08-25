@@ -19,6 +19,25 @@ _efl_canvas_output_async_block(Efl_Canvas_Output *output)
    return e;
 }
 
+void
+efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output)
+{
+   if (output->info) return ;
+   if (!e->engine.func->info_size)
+     {
+        CRI("Engine not up to date no info size provided.");
+        return ;
+     }
+
+   output->info = calloc(1, e->engine.func->info_size);
+   if (!output->info) return;
+   output->info->magic = rand();
+   output->info_magic = output->info->magic;
+
+   if (e->engine.func->output_info_setup)
+     e->engine.func->output_info_setup(output->info);
+}
+
 EAPI Efl_Canvas_Output *
 efl_canvas_output_add(Evas *canvas)
 {
@@ -38,22 +57,8 @@ efl_canvas_output_add(Evas *canvas)
 
    // The engine is already initialized, use it
    // right away to setup the info structure
-   if (e->engine.func->info_size)
-     {
-        r->info = calloc(1, e->engine.func->info_size);
-        if (!r->info) goto on_error;
-        r->info->magic = rand();
-        r->info_magic = r->info->magic;
+   efl_canvas_output_info_get(e, r);
 
-        if (e->engine.func->output_info_setup)
-          e->engine.func->output_info_setup(r->info);
-     }
-   else
-     {
-        CRI("Engine not up to date no info size provided.");
-     }
-
- on_error:
    return r;
 }
 

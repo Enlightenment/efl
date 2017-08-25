@@ -2090,6 +2090,8 @@ Eina_List *_evas_pointer_list_in_rect_get(Evas_Public_Data *edata,
                                          Evas_Object_Protected_Data *obj_data,
                                          int w, int h);
 
+void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
+
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
 extern Eina_Cow *evas_object_state_cow;
