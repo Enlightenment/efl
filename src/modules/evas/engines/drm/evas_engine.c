@@ -18,9 +18,10 @@ static Evas_Func func, pfunc;
 
 int _evas_engine_drm_log_dom;
 
-static Render_Engine *
-_render_engine_setup(Evas_Engine_Info_Drm *info, int w, int h)
+static void *
+eng_output_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Drm *info = einfo;
    Render_Engine *re;
    Outbuf *ob;
 
@@ -63,14 +64,6 @@ eng_output_info_setup(void *info)
    Evas_Engine_Info_Drm *einfo = info;
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-}
-
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Drm *info = einfo;
-
-   return _render_engine_setup(info, w, h);
 }
 
 static int
