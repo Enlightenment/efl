@@ -8,8 +8,8 @@ void evas_xlib_swapper_free(X_Swapper *swp);
 void *evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h);
 void evas_xlib_swapper_buffer_unmap(X_Swapper *swp);
 void evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects);
-Render_Engine_Swap_Mode evas_xlib_swapper_buffer_state_get(X_Swapper *swp);
+Render_Output_Swap_Mode evas_xlib_swapper_buffer_state_get(X_Swapper *swp);
 int evas_xlib_swapper_depth_get(X_Swapper *swp);
 int evas_xlib_swapper_byte_order_get(X_Swapper *swp);
 int evas_xlib_swapper_bit_order_get(X_Swapper *swp);
-    
+

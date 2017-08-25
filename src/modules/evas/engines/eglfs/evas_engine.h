@@ -75,7 +75,7 @@ struct _Outbuf
 
    int w, h;
    unsigned int rotation, depth;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    struct
      {
@@ -99,13 +99,13 @@ struct _Outbuf
    Eina_Bool drew : 1;
 };
 
-Outbuf *evas_outbuf_new(Evas_Engine_Info_Eglfs *info, int w, int h, Render_Engine_Swap_Mode swap_mode);
+Outbuf *evas_outbuf_new(Evas_Engine_Info_Eglfs *info, int w, int h, Render_Output_Swap_Mode swap_mode);
 void evas_outbuf_free(Outbuf *ob);
 void evas_outbuf_use(Outbuf *ob);
 void evas_outbuf_resurf(Outbuf *ob);
 void evas_outbuf_unsurf(Outbuf *ob);
 void evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
-Render_Engine_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
+Render_Output_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
 int evas_outbuf_rot_get(Outbuf *ob);
 Eina_Bool evas_outbuf_update_region_first_rect(Outbuf *ob);
 void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);

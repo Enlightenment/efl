@@ -905,7 +905,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    Evas_Engine_Info_GL_Drm *info = in;
    Render_Engine *re = NULL;
    Outbuf *ob;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->info.swap_mode);
 
@@ -987,7 +987,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
             (info->info.destination_alpha != eng_get_ob(re)->destination_alpha))
           {
              Outbuf *ob, *ob_old;
-             Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
+             Render_Output_Swap_Mode swap_mode = MODE_AUTO;
 
              ob_old = re->generic.software.ob;
              re->generic.software.ob = NULL;

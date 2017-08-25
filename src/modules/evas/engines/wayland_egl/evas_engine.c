@@ -510,10 +510,10 @@ eng_output_info_setup(void *info)
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
-static Render_Engine_Swap_Mode
+static Render_Output_Swap_Mode
 _eng_swap_mode_get(void)
 {
-   Render_Engine_Swap_Mode swap_mode = MODE_FULL;
+   Render_Output_Swap_Mode swap_mode = MODE_FULL;
    const char *s;
 
    if ((s = getenv("EVAS_GL_SWAP_MODE")))
@@ -551,7 +551,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned 
    Evas_Engine_Info_Wayland *inf = info;
    Render_Engine *re;
    Outbuf *ob;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    swap_mode = _eng_swap_mode_get();
 
@@ -631,7 +631,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int
    ob = eng_get_ob(re);
    if (!ob)
      {
-        Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
+        Render_Output_Swap_Mode swap_mode = MODE_AUTO;
 
         swap_mode = _eng_swap_mode_get();
         ob = eng_window_new(inf, w, h, swap_mode);
@@ -669,7 +669,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int
             (ob->info->info.depth != ob->depth) ||
             (ob->info->info.destination_alpha != ob->alpha))
           {
-             Render_Engine_Swap_Mode swap_mode = MODE_AUTO;
+             Render_Output_Swap_Mode swap_mode = MODE_AUTO;
 
              gl_wins--;
              if (!ob->info->info.wl_display)

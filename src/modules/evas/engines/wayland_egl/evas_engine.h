@@ -65,7 +65,7 @@ struct _Outbuf
    Evas_Engine_GL_Context *gl_context;
 
    int prev_age;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
    int vsync;
    int frame_cnt;
 
@@ -107,7 +107,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 extern unsigned int (*glsym_eglSwapBuffersWithDamage) (EGLDisplay a, void *b, const EGLint *d, EGLint c);
 extern unsigned int (*glsym_eglSetDamageRegionKHR) (EGLDisplay a, EGLSurface b, EGLint *c, EGLint d);
 
-Outbuf *eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode);
+Outbuf *eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap_Mode swap_mode);
 void eng_window_free(Outbuf *gw);
 void eng_window_use(Outbuf *gw);
 void eng_window_unsurf(Outbuf *gw);
@@ -115,7 +115,7 @@ void eng_window_resurf(Outbuf *gw);
 
 void eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 int eng_outbuf_rotation_get(Outbuf *ob);
-Render_Engine_Swap_Mode eng_outbuf_swap_mode_get(Outbuf *ob);
+Render_Output_Swap_Mode eng_outbuf_swap_mode_get(Outbuf *ob);
 Eina_Bool eng_outbuf_region_first_rect(Outbuf *ob);
 void eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage);
 void *eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);

@@ -13,10 +13,10 @@ typedef enum _Evas_Engine_Info_Gl_Swap_Mode
    EVAS_ENGINE_GL_SWAP_MODE_QUADRUPLE = 5
 } Evas_Engine_Info_Gl_Swap_Mode;
 
-static inline Render_Engine_Swap_Mode
+static inline Render_Output_Swap_Mode
 evas_render_engine_gl_swap_mode_get(Evas_Engine_Info_Gl_Swap_Mode info_swap_mode)
 {
-   Render_Engine_Swap_Mode swap_mode = MODE_FULL;
+   Render_Output_Swap_Mode swap_mode = MODE_FULL;
    const char *s;
 
    s = getenv("EVAS_GL_SWAP_MODE");

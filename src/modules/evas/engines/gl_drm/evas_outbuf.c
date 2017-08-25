@@ -358,7 +358,7 @@ err:
 }
 
 Outbuf *
-evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_Mode swap_mode)
+evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Output_Swap_Mode swap_mode)
 {
    Outbuf *ob;
 
@@ -541,7 +541,7 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
    /* check for valid output buffer */
@@ -551,7 +551,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
 
    if (ob->swap_mode == MODE_AUTO && _extn_have_buffer_age)
      {
-        Render_Engine_Swap_Mode swap_mode;
+        Render_Output_Swap_Mode swap_mode;
         EGLint age = 0;
 
         eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);

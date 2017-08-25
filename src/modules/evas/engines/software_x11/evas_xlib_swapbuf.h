@@ -49,5 +49,5 @@ int          evas_software_xlib_swapbuf_get_rot(Outbuf *buf);
 void         evas_software_xlib_swapbuf_rotation_set(Outbuf *buf,
                                                      int     rot);
 Eina_Bool    evas_software_xlib_swapbuf_alpha_get(Outbuf *buf);
-Render_Engine_Swap_Mode evas_software_xlib_swapbuf_buffer_state_get(Outbuf *buf);
+Render_Output_Swap_Mode evas_software_xlib_swapbuf_buffer_state_get(Outbuf *buf);
 #endif

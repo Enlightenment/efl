@@ -184,7 +184,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                int      indirect EINA_UNUSED,
                int      alpha,
                int      rot,
-               Render_Engine_Swap_Mode swap_mode,
+               Render_Output_Swap_Mode swap_mode,
                int depth_bits,
                int stencil_bits,
                int msaa_bits)
@@ -1381,12 +1381,12 @@ eng_outbuf_get_rot(Outbuf *ob)
    return ob->rot;
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 eng_outbuf_swap_mode(Outbuf *ob)
 {
    if (ob->swap_mode == MODE_AUTO && extn_have_buffer_age)
      {
-        Render_Engine_Swap_Mode swap_mode;
+        Render_Output_Swap_Mode swap_mode;
         eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);
 #ifdef GL_GLES
         EGLint age = 0;

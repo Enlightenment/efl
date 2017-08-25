@@ -147,7 +147,7 @@ void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);
 
-Render_Engine_Swap_Mode _evas_outbuf_swap_mode_get(Outbuf *ob);
+Render_Output_Swap_Mode _evas_outbuf_swap_mode_get(Outbuf *ob);
 int _evas_outbuf_rotation_get(Outbuf *ob);
 void _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize, Eina_Bool hidden);
 void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);

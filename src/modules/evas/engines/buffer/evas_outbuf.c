@@ -478,7 +478,7 @@ evas_buffer_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot EINA_UNUSED, Ou
                                     switch_data);
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_buffer_outbuf_buf_swap_mode_get(Outbuf *ob)
 {
    if (ob->func.switch_buffer) return MODE_DOUBLE;

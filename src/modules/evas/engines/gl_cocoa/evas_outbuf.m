@@ -199,7 +199,7 @@ evas_outbuf_rot_get(Outbuf *ob)
    return ob->rot;
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
    return ob->swap_mode;
