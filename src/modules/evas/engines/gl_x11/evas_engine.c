@@ -1736,10 +1736,8 @@ eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsig
             (info->msaa_bits != eng_get_ob(re)->msaa_bits) ||
             (info->info.destination_alpha != eng_get_ob(re)->alpha))
           {
-             Outbuf *ob, *ob_old;
+             Outbuf *ob;
 
-             ob_old = re->generic.software.ob;
-             re->generic.software.ob = NULL;
              gl_wins--;
 
              ob = eng_window_new(info,
@@ -1757,16 +1755,11 @@ eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsig
                                  info->depth_bits,
                                  info->stencil_bits,
                                  info->msaa_bits);
-             if (!ob)
-               {
-                  if (ob_old) eng_window_free(ob_old);
-                  return 0;
-               }
+             if (!ob) return 0;
 
              eng_window_use(ob);
-             if (ob_old) eng_window_free(ob_old);
-             evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                        w, h);
+             evas_render_engine_software_generic_update(&re->generic.software,
+                                                        ob, w, h);
              gl_wins++;
           }
         else if ((eng_get_ob(re)->w != w) ||
@@ -1774,12 +1767,9 @@ eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsig
                  (eng_get_ob(re)->info->info.rotation != eng_get_ob(re)->rot))
           {
              eng_outbuf_reconfigure(eng_get_ob(re), w, h, eng_get_ob(re)->info->info.rotation, 0);
-             if (re->generic.software.tb)
-               evas_common_tilebuf_free(re->generic.software.tb);
-             re->generic.software.tb = evas_common_tilebuf_new(w, h);
-             if (re->generic.software.tb)
-               evas_common_tilebuf_set_tile_size(re->generic.software.tb,
-                                                 TILESIZE, TILESIZE);
+             evas_render_engine_software_generic_update(&re->generic.software,
+                                                        re->generic.software.ob,
+                                                        w, h);
           }
      }
 
