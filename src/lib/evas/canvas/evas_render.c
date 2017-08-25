@@ -3224,59 +3224,6 @@ evas_render_updates_internal(Evas *eo_e,
         eina_evlog("-render_phase1", eo_e, 0.0, NULL);
      }
 
-   /* phase 1.5. check if the video should be inlined or stay in their overlay */
-   alpha = ENFN->canvas_alpha_get(ENDT);
-
-   EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
-     {
-        Efl_Canvas_Output *output;
-        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-
-        output = _evas_overlay_output_find(e, obj);
-
-        /* we need the surface to be transparent to display the underlying overlay */
-        if (output && alpha && _evas_render_can_use_overlay(e, eo_obj, output))
-          _evas_object_image_video_overlay_show(eo_obj);
-        else
-          _evas_object_image_video_overlay_hide(eo_obj);
-     }
-
-   /* check if individual image objects can be dropped into hardware planes */
-   if (ENFN->image_plane_assign)
-     EINA_INARRAY_FOREACH(&evas->active_objects, ao)
-       {
-          Evas_Object_Protected_Data *obj2;
-          Evas_Object *eo_obj2;
-          Efl_Canvas_Output *output;
-          Eina_List *lo;
-
-          obj2 = ao->obj;
-          eo_obj2 = obj2->object;
-
-          if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
-
-          if (evas_object_image_video_surface_get(eo_obj2)) continue;
-
-          /* Find the output the object was in */
-          EINA_LIST_FOREACH(e->outputs, lo, output)
-            {
-               if (!eina_list_data_find(output->planes, obj2)) continue ;
-               _evas_object_image_plane_release(eo_obj2, obj2, output);
-               break;
-            }
-
-          /* A video object can only be in one output at a time, check that first */
-          output = _evas_overlay_output_find(e, obj2);
-          if (!output) continue ;
-
-          if (!_evas_render_can_use_overlay(e, eo_obj2, output))
-            {
-               /* This may free up things temporarily allocated by
-                * _can_use_overlay() testing in the engine */
-               _evas_object_image_plane_release(eo_obj2, obj2, output);
-            }
-       }
-
    eina_evlog("+render_phase1_direct", eo_e, 0.0, NULL);
    /* phase 1.8. pre render for proxy */
    _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
@@ -3384,11 +3331,66 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 
+   /* phase 6. check if video surface should be inlined or stay in their hardware plane */
+   eina_evlog("+render_phase6", eo_e, 0.0, NULL);
+   alpha = ENFN->canvas_alpha_get(ENDT);
+
+   EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
+     {
+        Efl_Canvas_Output *output;
+        Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+        output = _evas_overlay_output_find(e, obj);
+
+        /* we need the surface to be transparent to display the underlying overlay */
+        if (output && alpha && _evas_render_can_use_overlay(e, eo_obj, output))
+          _evas_object_image_video_overlay_show(eo_obj);
+        else
+          _evas_object_image_video_overlay_hide(eo_obj);
+     }
+
+   /* check if individual image objects can be dropped into hardware planes */
+   if (ENFN->image_plane_assign)
+     EINA_INARRAY_FOREACH(&evas->active_objects, ao)
+       {
+          Evas_Object_Protected_Data *obj2;
+          Evas_Object *eo_obj2;
+          Efl_Canvas_Output *output;
+          Eina_List *lo;
+
+          obj2 = ao->obj;
+          eo_obj2 = obj2->object;
+
+          if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
+
+          if (evas_object_image_video_surface_get(eo_obj2)) continue;
+
+          /* Find the output the object was in */
+          EINA_LIST_FOREACH(e->outputs, lo, output)
+            {
+               if (!eina_list_data_find(output->planes, obj2)) continue ;
+               _evas_object_image_plane_release(eo_obj2, obj2, output);
+               break;
+            }
+
+          /* A video object can only be in one output at a time, check that first */
+          output = _evas_overlay_output_find(e, obj2);
+          if (!output) continue ;
+
+          if (!_evas_render_can_use_overlay(e, eo_obj2, output))
+            {
+               /* This may free up things temporarily allocated by
+                * _can_use_overlay() testing in the engine */
+               _evas_object_image_plane_release(eo_obj2, obj2, output);
+            }
+       }
+   eina_evlog("-render_phase6", eo_e, 0.0, NULL);
+
    /* save this list */
    /*    obscuring_objects_orig = obscuring_objects; */
    /*    obscuring_objects = NULL; */
-   /* phase 6. go thru each update rect and render objects in it*/
-   eina_evlog("+render_phase6", eo_e, 0.0, NULL);
+   /* phase 7. go thru each update rect and render objects in it*/
+   eina_evlog("+render_phase7", eo_e, 0.0, NULL);
    if (do_draw)
      {
         Render_Updates *ru;
@@ -3414,7 +3416,7 @@ evas_render_updates_internal(Evas *eo_e,
 
              haveup = EINA_TRUE;
 
-             /* phase 6.1 render every snapshot that needs to be updated
+             /* phase 7.1 render every snapshot that needs to be updated
                 for this part of the screen */
              eina_evlog("+render_snapshots", eo_e, 0.0, NULL);
              for (j = e->snapshot_objects.count - 1; j >= 0; j--)
@@ -3473,7 +3475,7 @@ evas_render_updates_internal(Evas *eo_e,
              eina_evlog("-render_snapshots", eo_e, 0.0, NULL);
 
              eina_evlog("+render_update", eo_e, 0.0, NULL);
-             /* phase 6.2 render all the object on the target surface */
+             /* phase 7.2 render all the object on the target surface */
              if ((do_async) || (make_updates))
                {
                   ru = malloc(sizeof(*ru));
@@ -3533,7 +3535,7 @@ evas_render_updates_internal(Evas *eo_e,
         rendering = haveup;
         eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
-   eina_evlog("-render_phase6", eo_e, 0.0, NULL);
+   eina_evlog("-render_phase7", eo_e, 0.0, NULL);
 
    eina_evlog("+render_clear", eo_e, 0.0, NULL);
    if (!do_async && rendering)
