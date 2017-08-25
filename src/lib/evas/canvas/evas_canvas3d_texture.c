@@ -220,6 +220,7 @@ _evas_canvas3d_texture_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D
      eina_hash_foreach(pd->materials, _texture_material_change_notify, obj);
 }
 
+/* FIXME: This code is problematic as it actually does rendering and rely on the output before we start rendering. */
 EOLIAN static void
 _evas_canvas3d_texture_evas_canvas3d_object_update_notify(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {
