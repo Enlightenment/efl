@@ -1344,7 +1344,7 @@ eng_image_cache_flush(void *engine)
    Evas_Engine_GL_Context *gl_context;
    int tmp_size;
 
-   gl_context = gl_generic_context_get(engine);
+   gl_context = gl_generic_context_find(engine);
    if (!gl_context) return;
 
    tmp_size = evas_common_image_get_cache();
@@ -1359,7 +1359,7 @@ eng_image_cache_set(void *engine, int bytes)
 {
    Evas_Engine_GL_Context *gl_context;
 
-   gl_context = gl_generic_context_get(engine);
+   gl_context = gl_generic_context_find(engine);
 
    evas_common_image_set_cache(bytes);
    evas_common_rgba_image_scalecache_size_set(bytes);
