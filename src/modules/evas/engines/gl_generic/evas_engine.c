@@ -66,6 +66,22 @@ gl_generic_window_use(void *engine)
    re->window_use(re->software.ob);
 }
 
+static Evas_Engine_GL_Context *
+gl_generic_context_find(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Evas_Engine_GL_Context *r = NULL;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        r = gl_generic_context_get(output);
+        if (r) return r;
+     }
+
+   return r;
+}
+
 static int eng_gl_image_direct_get(void *data, void *image);
 static int eng_gl_surface_destroy(void *data, void *surface);
 static Eina_Bool eng_gl_surface_lock(void *data, void *surface);
