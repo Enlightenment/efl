@@ -3,6 +3,7 @@
 
 #include "evas_gl_core_private.h"
 
+
 #ifdef GL_GLES
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -26,11 +27,11 @@
 #define _EVASGL_EXT_DRVNAME(name)
 #define _EVASGL_EXT_DRVNAME_PRIVATE(name)
 #define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
-#define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param1, param2) \
-   extern ret (*egl_ext_sym_##name) param1; \
-   extern ret (*gl_ext_sym_##name) param1; \
-   extern ret (*gles1_ext_sym_##name) param1; \
-   extern ret (*gles3_ext_sym_##name) param1;
+#define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, ...) \
+   extern ret (*egl_ext_sym_##name) (_EVASGL_PARAM_PROTO(__VA_ARGS__)); \
+   extern ret (*gl_ext_sym_##name) (_EVASGL_PARAM_PROTO(__VA_ARGS__)); \
+   extern ret (*gles1_ext_sym_##name) (_EVASGL_PARAM_PROTO(__VA_ARGS__)); \
+   extern ret (*gles3_ext_sym_##name) (_EVASGL_PARAM_PROTO(__VA_ARGS__));
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()
@@ -72,7 +73,7 @@
 #define _EVASGL_EXT_DRVNAME(name)
 #define _EVASGL_EXT_DRVNAME_PRIVATE(name)
 #define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
-#define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param1, param2)
+#define _EVASGL_EXT_FUNCTION_BEGIN(ret, name, ...)
 #define _EVASGL_EXT_FUNCTION_END()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
 #define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()

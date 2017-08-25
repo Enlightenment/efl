@@ -61,7 +61,7 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
         if (!getenv("EVAS_GL_LINE_OFFSET_HACK_DISABLE"))
           {
              const char *vendor_name;
-             vendor_name = (char *) glGetString(GL_VENDOR);
+             vendor_name = (char *) GL_TH(glGetString, GL_VENDOR);
              if (vendor_name && !strcmp(vendor_name, "ARM"))
                offset_hack = OFFSET_HACK_ARM;
              else
