@@ -179,12 +179,8 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
 {
    Evas_VG_Data *vd = type_private_data;
    Ector_Surface *ector = evas_ector_get(obj->layer->evas);
-   // FIXME: Set context (that should affect Ector_Surface) and
-   // then call Ector_Renderer render from bottom to top. Get the
-   // Ector_Surface that match the output from Evas engine API.
-   // It is a requirement that you can reparent an Ector_Renderer
-   // to another Ector_Surface as long as that Ector_Surface is a
-   // child of the main Ector_Surface (necessary for Evas_Map).
+
+   obj->layer->evas->engine.func->ector_output_set(engine, surface, output);
 
    if (!vd->engine_data)
      vd->engine_data = obj->layer->evas->engine.func->ector_new(engine, context, ector, surface);

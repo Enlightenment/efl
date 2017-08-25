@@ -4338,6 +4338,14 @@ eng_ector_create(void *engine EINA_UNUSED)
 }
 
 static void
+eng_ector_output_set(void *engine EINA_UNUSED,
+                     Ector_Surface *surface EINA_UNUSED,
+                     void *output EINA_UNUSED)
+{
+   // To be useful for GL backend only.
+}
+
+static void
 eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 {
    if (ector) efl_del(ector);
@@ -4848,6 +4856,7 @@ static Evas_Func func =
      NULL, // eng_texture_image_set
      NULL, // eng_texture_image_get
      eng_ector_create,
+     eng_ector_output_set,
      eng_ector_destroy,
      eng_ector_buffer_wrap,
      eng_ector_buffer_new,
