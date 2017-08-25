@@ -888,7 +888,7 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
         data->engine_data = NULL;\
      }
    CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data,
-         ENFN->image_free(ENDT, data->engine_data))
+         ENFN->image_free(ENC, data->engine_data))
    else CHECK(EVAS_VG_CLASS, Evas_VG_Data,
         obj->layer->evas->engine.func->ector_free(data->engine_data))
    else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,

@@ -21,6 +21,12 @@ typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
 struct _Render_Engine_GL_Generic
 {
    Render_Engine_Software_Generic software;
+
+   struct {
+      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
+      void                            *get_pixels_data;
+      Evas_Object                     *obj;
+   } func;
 };
 
 struct _Render_Output_GL_Generic
@@ -32,12 +38,6 @@ struct _Render_Output_GL_Generic
    Window_EGL_Display_Get window_egl_display_get;
    Window_GL_Context_New window_gl_context_new;
    Window_GL_Context_Use window_gl_context_use;
-
-   struct {
-      Evas_Object_Image_Pixels_Get_Cb  get_pixels;
-      void                            *get_pixels_data;
-      Evas_Object                     *obj;
-   } func;
 
    Context_3D           *context_3d;
    E3D_Renderer         *renderer_3d;
@@ -92,9 +92,6 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
    re->window_gl_context_new = window_gl_context_new;
    re->window_gl_context_use = window_gl_context_use;
 
-   re->func.get_pixels = NULL;
-   re->func.get_pixels_data = NULL;
-   re->func.obj = NULL;
    re->context_3d = NULL;
    re->renderer_3d = NULL;
    re->evgl_funcs = evgl_funcs;
@@ -104,17 +101,6 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
    evas_render_engine_software_generic_tile_strict_set(&re->software, EINA_TRUE);
 
    return EINA_TRUE;
-}
-
-static inline void
-evas_render_engine_software_gl_get_pixels_set(Render_Output_GL_Generic *re,
-                                              Evas_Object_Image_Pixels_Get_Cb get_pixels,
-                                              void *get_pixels_data,
-                                              Evas_Object *obj)
-{
-   re->func.get_pixels = get_pixels;
-   re->func.get_pixels_data = get_pixels_data;
-   re->func.obj = obj;
 }
 
 #endif

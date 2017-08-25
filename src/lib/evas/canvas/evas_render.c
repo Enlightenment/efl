@@ -1999,7 +1999,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                {
                   map_write->surface = ENFN->image_dirty_region
-                    (ENDT, map_write->surface,
+                    (ENC, map_write->surface,
                      0, 0, map_write->surface_w, map_write->surface_h);
 
                   map_write->cur.valid_map = EINA_TRUE;
@@ -2504,14 +2504,14 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                Eina_Bool smooth = evas_object_image_smooth_scale_get(mask->object);
                void *original = mask->func->engine_data_get(mask->object);
                void *scaled = ENFN->image_scaled_update
-                 (ENDT, mdata->surface, original, w, h, smooth, EVAS_COLORSPACE_GRY8);
+                 (ENC, mdata->surface, original, w, h, smooth, EVAS_COLORSPACE_GRY8);
                if (scaled)
                  {
                     done = EINA_TRUE;
                     mdata->surface = scaled;
                     mdata->w = w;
                     mdata->h = h;
-                    mdata->is_alpha = (ENFN->image_colorspace_get(ENDT, scaled) == EVAS_COLORSPACE_GRY8);
+                    mdata->is_alpha = (ENFN->image_colorspace_get(ENC, scaled) == EVAS_COLORSPACE_GRY8);
                     mdata->is_scaled = EINA_TRUE;
                  }
                eina_evlog("-mask_scaled_update", mask->object, 0.0, NULL);
@@ -2618,7 +2618,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           /* END OF HACK */
        }
 
-     mdata->surface = ENFN->image_dirty_region(ENDT, mdata->surface, 0, 0, w, h);
+     mdata->surface = ENFN->image_dirty_region(ENC, mdata->surface, 0, 0, w, h);
 
 end:
    EINA_COW_WRITE_END(evas_object_mask_cow, mask->mask, mdata);
