@@ -389,7 +389,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_PSL1GHT))) return 0;
    _evas_engine_psl1ght_log_dom = eina_log_domain_register
        ("evas-psl1ght", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_psl1ght_log_dom < 0)
@@ -415,8 +415,6 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
    ORD(output_idle_flush);
-
-   func.info_size = sizeof (Evas_Engine_Info_PSL1GHT);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

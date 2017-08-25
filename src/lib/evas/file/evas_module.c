@@ -765,7 +765,7 @@ evas_module_shutdown(void)
 }
 
 EAPI int
-_evas_module_engine_inherit(Evas_Func *funcs, char *name)
+_evas_module_engine_inherit(Evas_Func *funcs, char *name, size_t info)
 {
    Evas_Module *em;
 
@@ -778,6 +778,7 @@ _evas_module_engine_inherit(Evas_Func *funcs, char *name)
              evas_module_ref(em);
              evas_module_use(em);
              *funcs = *((Evas_Func *)(em->functions));
+             funcs->info_size = info;
              return 1;
           }
      }

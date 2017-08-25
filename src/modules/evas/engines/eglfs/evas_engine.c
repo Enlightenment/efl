@@ -1091,7 +1091,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic", sizeof (Evas_Engine_Info_Eglfs))) return 0;
 
    /* try to create eina logging domain */
    if (_evas_engine_eglfs_log_dom < 0)
@@ -1118,8 +1118,6 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
-
-   func.info_size = sizeof (Evas_Engine_Info_Eglfs);
 
    setenv("EGL_PLATFORM", "fbdev", 1);
 

@@ -560,7 +560,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Software_X11))) return 0;
 
    _evas_engine_soft_x11_log_dom =
      eina_log_domain_register("evas-software_x11", EVAS_DEFAULT_LOG_COLOR);
@@ -585,8 +585,6 @@ module_open(Evas_Module *em)
    ORD(image_native_shutdown);
    ORD(image_native_set);
    ORD(image_native_get);
-
-   func.info_size = sizeof (Evas_Engine_Info_Software_X11);
 
    _symbols();
    /* now advertise out own api */

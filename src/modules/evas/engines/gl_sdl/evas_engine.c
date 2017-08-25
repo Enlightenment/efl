@@ -367,7 +367,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic", sizeof (Evas_Engine_Info_GL_SDL))) return 0;
    if (_evas_engine_GL_SDL_log_dom < 0)
      _evas_engine_GL_SDL_log_dom = eina_log_domain_register
        ("evas-gl_sdl", EVAS_DEFAULT_LOG_COLOR);
@@ -384,8 +384,6 @@ module_open(Evas_Module *em)
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);
-
-   func.info_size = sizeof (Evas_Engine_Info_GL_SDL);
 
    gl_symbols();
 

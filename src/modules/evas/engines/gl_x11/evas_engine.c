@@ -3010,7 +3010,7 @@ module_open(Evas_Module *em)
      }
    if (!em) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic", sizeof (Evas_Engine_Info_GL_X11))) return 0;
    if (_evas_engine_GL_X11_log_dom < 0)
      _evas_engine_GL_X11_log_dom = eina_log_domain_register
        ("evas-gl_x11", EVAS_DEFAULT_LOG_COLOR);
@@ -3045,8 +3045,6 @@ module_open(Evas_Module *em)
    ORD(gl_error_get);
    // gl_current_surface_get is in gl generic
    ORD(gl_current_context_get);
-
-   func.info_size = sizeof (Evas_Engine_Info_GL_X11);
 
    if (!(platform_env = getenv("EGL_PLATFORM")))
       setenv("EGL_PLATFORM", "x11", 0);

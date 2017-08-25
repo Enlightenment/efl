@@ -214,10 +214,10 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* try to inherit functions from software_generic engine */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Drm))) return 0;
 
    /* try to create eina logging domain */
-   _evas_engine_drm_log_dom = 
+   _evas_engine_drm_log_dom =
      eina_log_domain_register("evas-drm", EVAS_DEFAULT_LOG_COLOR);
 
    /* if we could not create a logging domain, error out */
@@ -240,15 +240,13 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
 
-   func.info_size = sizeof (Evas_Engine_Info_Drm);
-
    /* advertise our engine functions */
    em->functions = (void *)(&func);
 
    return 1;
 }
 
-static void 
+static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
    /* unregister the eina log domain for this engine */

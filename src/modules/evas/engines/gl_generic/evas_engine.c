@@ -3107,7 +3107,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", 0)) return 0;
    if (_evas_engine_GL_log_dom < 0)
      _evas_engine_GL_log_dom = eina_log_domain_register("evas-gl_generic", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_GL_log_dom < 0)
