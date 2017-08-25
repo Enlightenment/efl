@@ -103,4 +103,66 @@ evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
    return EINA_TRUE;
 }
 
+static inline Evas_Engine_GL_Context *
+gl_generic_context_get(Render_Output_GL_Generic *output)
+{
+   if (!output->software.ob) return NULL;
+   output->window_use(output->software.ob);
+   return output->window_gl_context_get(output->software.ob);
+
+}
+
+static inline void
+gl_generic_window_use(void *engine)
+{
+   Render_Output_GL_Generic *re = engine;
+
+   re->window_use(re->software.ob);
+}
+
+static inline Evas_Engine_GL_Context *
+gl_generic_context_find(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Evas_Engine_GL_Context *r = NULL;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        r = gl_generic_context_get(output);
+        if (r) return r;
+     }
+
+   return r;
+}
+
+static inline void
+gl_generic_window_find(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        if (!output->software.ob) continue;
+        gl_generic_window_use(output);
+        break;
+     }
+}
+
+static inline void *
+gl_generic_any_output_get(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        if (!output->software.ob) continue;
+        return output->software.ob;
+     }
+
+   return NULL;
+}
+
 #endif
