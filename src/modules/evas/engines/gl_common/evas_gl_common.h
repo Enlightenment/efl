@@ -564,8 +564,8 @@ EAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_cur
 EAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn);
 
-EAPI void         evas_gl_common_error_set(void *data, int error_enum);
-EAPI int          evas_gl_common_error_get(void *data);
+EAPI void         evas_gl_common_error_set(int error_enum);
+EAPI int          evas_gl_common_error_get(void);
 EAPI void        *evas_gl_common_current_context_get(void);
 
 typedef int (*Evas_GL_Preload)(void);

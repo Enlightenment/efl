@@ -1357,7 +1357,7 @@ _evgl_glGetString(GLenum name)
      {
         ERR("Current context is NULL, not calling glGetString");
         // This sets evas_gl_error_get instead of eglGetError...
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
+        evas_gl_common_error_set(EVAS_GL_BAD_CONTEXT);
         return NULL;
      }
 
