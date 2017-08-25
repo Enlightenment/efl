@@ -963,6 +963,7 @@ struct _Evas_Public_Data
    Eina_List     *devices;
    Eina_Array    *cur_device;
 
+   void          *backend;
    Eina_List     *outputs;
 
    Evas_Device   *default_seat;
@@ -1394,14 +1395,19 @@ struct _Evas_Object_Func
 
 struct _Evas_Func
 {
+   void *(*engine_new)                     (void);
+   void (*engine_free)                     (void *engine);
+
    void (*output_info_setup)               (void *info);
    void *(*output_setup)                   (void *engine, void *info, unsigned int w, unsigned int h);
    int  (*output_update)                   (void *engine, void *data, void *info, unsigned int w, unsigned int h);
-
    void (*output_free)                     (void *engine, void *data);
    void (*output_resize)                   (void *engine, void *data, int w, int h);
-   void (*output_redraws_rect_add)         (void *engine, void *data, int x, int y, int w, int h);
-   void (*output_redraws_rect_del)         (void *engine, void *data, int x, int y, int w, int h);
+
+   /* The redraws are automatically propagated on all output */
+   void (*output_redraws_rect_add)         (void *engine, int x, int y, int w, int h);
+   void (*output_redraws_rect_del)         (void *engine, int x, int y, int w, int h);
+
    void (*output_redraws_clear)            (void *engine, void *data);
    void *(*output_redraws_next_update_get) (void *engine, void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
    void (*output_redraws_next_update_push) (void *engine, void *data, void *surface, int x, int y, int w, int h, Evas_Render_Mode render_mode);

@@ -303,12 +303,12 @@ static void
 _evas_render_prev_cur_clip_cache_add(Evas_Public_Data *evas, Evas_Object_Protected_Data *obj)
 {
    // FIXME: Iterate over each output
-   ENFN->output_redraws_rect_add(ENC, ENDT,
+   ENFN->output_redraws_rect_add(ENC,
                                  obj->prev->cache.clip.x + evas->framespace.x,
                                  obj->prev->cache.clip.y + evas->framespace.y,
                                  obj->prev->cache.clip.w,
                                  obj->prev->cache.clip.h);
-   ENFN->output_redraws_rect_add(ENC, ENDT,
+   ENFN->output_redraws_rect_add(ENC,
                                  obj->cur->cache.clip.x + evas->framespace.x,
                                  obj->cur->cache.clip.y + evas->framespace.y,
                                  obj->cur->cache.clip.w,
@@ -556,7 +556,7 @@ _evas_render_object_map_change_update(Evas_Public_Data *evas,
                                 obj->prev->clipper->prev->cache.clip.w,
                                 obj->prev->clipper->prev->cache.clip.h);
           }
-        ENFN->output_redraws_rect_add(ENC, ENDT, x + fx, y + fy, w, h);
+        ENFN->output_redraws_rect_add(ENC, x + fx, y + fy, w, h);
         x = obj->map->cur.map->normal_geometry.x;
         y = obj->map->cur.map->normal_geometry.y;
         w = obj->map->cur.map->normal_geometry.w;
@@ -569,7 +569,7 @@ _evas_render_object_map_change_update(Evas_Public_Data *evas,
                                 obj->cur->clipper->cur->cache.clip.w,
                                 obj->cur->clipper->cur->cache.clip.h);
           }
-        ENFN->output_redraws_rect_add(ENC, ENDT, x + fx, y + fy, w, h);
+        ENFN->output_redraws_rect_add(ENC, x + fx, y + fy, w, h);
      }
    else if (hmap)
      {
@@ -585,7 +585,7 @@ _evas_render_object_map_change_update(Evas_Public_Data *evas,
                                 obj->prev->clipper->prev->cache.clip.w,
                                 obj->prev->clipper->prev->cache.clip.h);
           }
-        ENFN->output_redraws_rect_add(ENC, ENDT, x + fx, y + fy, w, h);
+        ENFN->output_redraws_rect_add(ENC, x + fx, y + fy, w, h);
         x = obj->cur->cache.clip.x;
         y = obj->cur->cache.clip.y;
         w = obj->cur->cache.clip.w;
@@ -598,7 +598,7 @@ _evas_render_object_map_change_update(Evas_Public_Data *evas,
                                 obj->cur->clipper->cur->cache.clip.w,
                                 obj->cur->clipper->cur->cache.clip.h);
           }
-        ENFN->output_redraws_rect_add(ENC, ENDT, x + fx, y + fy, w, h);
+        ENFN->output_redraws_rect_add(ENC, x + fx, y + fy, w, h);
      }
 }
 
@@ -626,7 +626,7 @@ evas_render_update_del(Evas_Public_Data *evas, int x, int y, int w, int h)
    // FIXME: handle multiple output
    if (EINA_LIKELY((evas->update_del_redirect_array == NULL)))
      {
-        ENFN->output_redraws_rect_del(ENC, ENDT, x, y, w, h);
+        ENFN->output_redraws_rect_del(ENC, x, y, w, h);
      }
    else
      {
@@ -2853,7 +2853,7 @@ skip_obscures:
      {
         // FIXME: Only add necessary rects (if object itself hasn't changed)
         // FIXME: handle multiple output
-        ENFN->output_redraws_rect_add(ENC, ENDT, x, y, w, h);
+        ENFN->output_redraws_rect_add(ENC, x, y, w, h);
      }
 
 end:
@@ -3238,7 +3238,7 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_phase3", eo_e, 0.0, NULL);
    EINA_LIST_FREE(e->damages, r)
      {
-        ENFN->output_redraws_rect_add(ENC, ENDT, r->x, r->y, r->w, r->h);
+        ENFN->output_redraws_rect_add(ENC, r->x, r->y, r->w, r->h);
         eina_rectangle_free(r);
      }
    eina_evlog("-render_phase3", eo_e, 0.0, NULL);
@@ -3247,12 +3247,12 @@ evas_render_updates_internal(Evas *eo_e,
    eina_evlog("+render_phase4", eo_e, 0.0, NULL);
    if (e->viewport.changed)
      {
-        ENFN->output_redraws_rect_add(ENC, ENDT, 0, 0, e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENC, 0, 0, e->output.w, e->output.h);
      }
    if (e->output.changed)
      {
         ENFN->output_resize(ENC, ENDT, e->output.w, e->output.h);
-        ENFN->output_redraws_rect_add(ENC, ENDT, 0, 0, e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENC, 0, 0, e->output.w, e->output.h);
      }
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
@@ -3265,14 +3265,14 @@ evas_render_updates_internal(Evas *eo_e,
          * which covers the Whole viewport. This is because 'framespace' is
          * defined as "the space IN the viewport which is Occupied by the
          * window frame" */
-        ENFN->output_redraws_rect_add(ENC, ENDT,
+        ENFN->output_redraws_rect_add(ENC,
                                       e->viewport.x, e->viewport.y,
                                       e->viewport.w, e->viewport.h);
      }
 
    if (redraw_all)
      {
-        ENFN->output_redraws_rect_add(ENC, ENDT, 0, 0, e->output.w, e->output.h);
+        ENFN->output_redraws_rect_add(ENC, 0, 0, e->output.w, e->output.h);
      }
    eina_evlog("-render_phase4", eo_e, 0.0, NULL);
 

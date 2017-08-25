@@ -1576,7 +1576,7 @@ _re_winfree(Render_Engine *re)
 }
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = NULL;
@@ -1639,7 +1639,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
                        info->msaa_bits);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_gl_generic_init(&re->generic, ob,
+   if (!evas_render_engine_gl_generic_init(engine, &re->generic, ob,
                                            eng_outbuf_swap_mode,
                                            eng_outbuf_get_rot,
                                            eng_outbuf_reconfigure,
@@ -1751,7 +1751,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
@@ -1780,7 +1780,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
 
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
-        evas_render_engine_software_generic_clean(&re->generic.software);
+        evas_render_engine_software_generic_clean(engine, &re->generic.software);
 
 #ifndef GL_GLES
         if (glsym_glXReleaseBuffersMESA)
