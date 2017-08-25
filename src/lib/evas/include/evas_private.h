@@ -1536,7 +1536,6 @@ struct _Evas_Func
    void *(*image_scaled_update)            (void *engine, void *scaled, void *image, int dst_w, int dst_h, Eina_Bool smooth, Evas_Colorspace cspace);
 
    void (*image_content_hint_set)          (void *engine, void *surface, int hint);
-   int  (*image_content_hint_get)          (void *engine, void *surface);
    int  (*font_pen_coords_get)             (void *engine, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
    Eina_Bool (*font_text_props_info_create) (void *engine, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len, Evas_Text_Props_Mode mode, const char *lang);
    int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);

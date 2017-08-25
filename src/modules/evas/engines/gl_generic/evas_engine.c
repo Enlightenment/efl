@@ -1330,14 +1330,6 @@ eng_image_content_hint_set(void *engine, void *image, int hint)
    evas_gl_common_image_content_hint_set(image, hint);
 }
 
-static int
-eng_image_content_hint_get(void *engine EINA_UNUSED, void *image)
-{
-   Evas_GL_Image *gim = image;
-   if (!gim) return EVAS_IMAGE_CONTENT_HINT_NONE;
-   return gim->content_hint;
-}
-
 static void
 eng_image_cache_flush(void *engine)
 {
@@ -3150,7 +3142,6 @@ module_open(Evas_Module *em)
    ORD(image_scaled_update);
 
    ORD(image_content_hint_set);
-   ORD(image_content_hint_get);
 
    ORD(image_cache_flush);
    ORD(image_cache_set);
