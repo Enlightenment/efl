@@ -2303,7 +2303,7 @@ eng_image_native_set(void *engine, void *image, void *native)
 # endif
 #endif
 
-  gl_context = gl_generic_context_find(engine);
+  gl_context = gl_generic_context_find(engine, 1);
   ob = gl_generic_any_output_get(engine);
   if (!im)
     {
