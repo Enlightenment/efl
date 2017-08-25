@@ -127,7 +127,7 @@ static const EVGL_Interface evgl_funcs =
 
 
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_GL_Cocoa *info;
 
@@ -142,14 +142,14 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *info)
+eng_output_info_free(void *info)
 {
    Evas_Engine_Info_GL_Cocoa *const in = info;
    free(in);
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Cocoa *const info = in;
    Render_Engine *re;
@@ -217,11 +217,11 @@ err:
 }
 
 static int
-eng_update(void *engine EINA_UNUSED,
-           void         *data EINA_UNUSED,
-           void         *info EINA_UNUSED,
-           unsigned int  w    EINA_UNUSED,
-           unsigned int  h    EINA_UNUSED)
+eng_output_update(void *engine EINA_UNUSED,
+                  void         *data EINA_UNUSED,
+                  void         *info EINA_UNUSED,
+                  unsigned int  w    EINA_UNUSED,
+                  unsigned int  h    EINA_UNUSED)
 {
    //Evas_Engine_Info_GL_Cocoa *const info = info;
    //Render_Engine *re = data;
@@ -306,10 +306,10 @@ module_open(Evas_Module *em)
 
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(info);
-   ORD(info_free);
-   ORD(setup);
-   ORD(update);
+   ORD(output_info);
+   ORD(output_info_free);
+   ORD(output_setup);
+   ORD(output_update);
    ORD(canvas_alpha_get);
    ORD(output_free);
 

@@ -62,7 +62,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
 
 /* engine api this module provides */
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_FB *info;
    info = calloc(1, sizeof(Evas_Engine_Info_FB));
@@ -73,7 +73,7 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *info)
+eng_output_info_free(void *info)
 {
    Evas_Engine_Info_FB *in;
    in = (Evas_Engine_Info_FB *)info;
@@ -81,7 +81,7 @@ eng_info_free(void *info)
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_FB *info = in;
 
@@ -135,9 +135,9 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(info);
-   ORD(info_free);
-   ORD(setup);
+   ORD(output_info);
+   ORD(output_info_free);
+   ORD(output_setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
    /* now advertise out own api */

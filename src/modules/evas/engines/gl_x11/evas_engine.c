@@ -1550,7 +1550,7 @@ int _evas_engine_GL_X11_log_dom = -1;
 static Evas_Func func, pfunc;
 
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_GL_X11 *info;
 
@@ -1564,7 +1564,7 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *info)
+eng_output_info_free(void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
 // dont free! why bother? its not worth it
@@ -1589,7 +1589,7 @@ _re_winfree(Render_Engine *re)
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = NULL;
@@ -1715,7 +1715,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
+eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = data;
@@ -3044,10 +3044,10 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
    #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(info);
-   ORD(info_free);
-   ORD(setup);
-   ORD(update);
+   ORD(output_info);
+   ORD(output_info_free);
+   ORD(output_setup);
+   ORD(output_update);
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);

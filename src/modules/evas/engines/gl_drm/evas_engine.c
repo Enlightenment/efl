@@ -892,7 +892,7 @@ _native_cb_free(void *image)
 
 /* engine specific override functions */
 static void *
-eng_info(void)
+eng_output_info(void)
 {
    Evas_Engine_Info_GL_Drm *info;
 
@@ -907,7 +907,7 @@ eng_info(void)
 }
 
 static void
-eng_info_free(void *in)
+eng_output_info_free(void *in)
 {
    Evas_Engine_Info_GL_Drm *info;
 
@@ -936,7 +936,7 @@ _eng_merge_mode_get(void)
 }
 
 static void *
-eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Drm *info = in;
    Render_Engine *re = NULL;
@@ -1014,7 +1014,7 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 }
 
 static int
-eng_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
+eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Drm *info = (Evas_Engine_Info_GL_Drm *)in;
    Render_Engine *re = data;
@@ -1489,10 +1489,10 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* now to override methods */
-   EVAS_API_OVERRIDE(info, &func, eng_);
-   EVAS_API_OVERRIDE(info_free, &func, eng_);
-   EVAS_API_OVERRIDE(setup, &func, eng_);
-   EVAS_API_OVERRIDE(update, &func, eng_);
+   EVAS_API_OVERRIDE(output_info, &func, eng_);
+   EVAS_API_OVERRIDE(output_info_free, &func, eng_);
+   EVAS_API_OVERRIDE(output_setup, &func, eng_);
+   EVAS_API_OVERRIDE(output_update, &func, eng_);
    EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
