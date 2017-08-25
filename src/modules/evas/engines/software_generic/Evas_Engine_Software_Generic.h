@@ -30,7 +30,7 @@ typedef enum
    MERGE_BOUNDING = 1,
    MERGE_FULL = 2,
    MERGE_SMART = 4
-} Render_Engine_Merge_Mode;
+} Render_Output_Merge_Mode;
 
 typedef struct _Render_Output_Software_Generic Render_Output_Software_Generic;
 typedef struct _Outbuf Outbuf;
@@ -72,7 +72,7 @@ struct _Render_Output_Software_Generic
    unsigned int w, h;
 
    Render_Engine_Swap_Mode swap_mode;
-   Render_Engine_Merge_Mode merge_mode;
+   Render_Output_Merge_Mode merge_mode;
 
    unsigned char end : 1;
    unsigned char lost_back : 1;
@@ -152,7 +152,7 @@ evas_render_engine_software_generic_clean(Render_Output_Software_Generic *re)
 static inline void
 evas_render_engine_software_generic_merge_mode_set(Render_Output_Software_Generic *re)
 {
-   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
+   Render_Output_Merge_Mode merge_mode = MERGE_SMART;
    const char *s;
 
    s = getenv("EVAS_GL_PARTIAL_MERGE");
