@@ -901,7 +901,6 @@ struct _Evas_Public_Data
    } engine;
 
    struct {
-      Eina_List *updates;
       Eina_Spinlock lock;
    } render;
 
@@ -1337,6 +1336,7 @@ struct _Efl_Canvas_Output
    void *output;
 
    Eina_List *planes;
+   Eina_List *updates;
 
    Eina_Rectangle geometry;
 
