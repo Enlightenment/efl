@@ -15,34 +15,32 @@ struct _Render_Engine
    Render_Output_Software_Generic generic;
 };
 
-
+/* engine api this module provides */
 static void *
-_output_setup(int          width,
-              int          height,
-              int          rot,
-              HWND         window,
-              int          depth,
-              unsigned int borderless,
-              unsigned int fullscreen,
-              unsigned int region)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Software_Gdi *info = in;
    Render_Engine *re;
    Outbuf *ob;
 
    re = calloc(1, sizeof(Render_Engine));
-   if (!re)
-     return NULL;
+   if (!re) return NULL;
 
    evas_software_gdi_outbuf_init();
 
-   if (width <= 0)
-     width = 1;
+   if (w <= 0)
+     w = 1;
    if (height <= 0)
-     height = 1;
+     h = 1;
 
-   ob = evas_software_gdi_outbuf_setup(width, height, rot,
+   ob = evas_software_gdi_outbuf_setup(w, h,
+                                       info->info.rotation,
                                        OUTBUF_DEPTH_INHERIT,
-                                       window, depth, borderless, fullscreen, region,
+                                       info->info.window,
+                                       info->info.depth,
+                                       info->info.borderless,
+                                       info->info.fullscreen,
+                                       info->info.region,
                                        0, 0);
    if (!ob) goto on_error;
 
@@ -58,7 +56,7 @@ _output_setup(int          width,
                                                  evas_software_gdi_outbuf_flush,
                                                  NULL,
                                                  evas_software_gdi_outbuf_free,
-                                                 width, height))
+                                                 w, h))
      goto on_error;
 
    return re;
@@ -67,24 +65,6 @@ _output_setup(int          width,
    if (ob) evas_software_gdi_outbuf_free(ob);
    free(re);
    return NULL;
-}
-
-
-/* engine api this module provides */
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Software_Gdi *info;
-
-   info = (Evas_Engine_Info_Software_Gdi *)in;
-   return _output_setup(w,
-                        h,
-                        info->info.rotation,
-                        info->info.window,
-                        info->info.depth,
-                        info->info.borderless,
-                        info->info.fullscreen,
-                        info->info.region);
 }
 
 static int
