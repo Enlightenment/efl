@@ -34,6 +34,7 @@ test_actionslider.c \
 test_anim.c \
 test_efl_anim_alpha.c \
 test_efl_anim_rotate.c \
+test_efl_anim_scale.c \
 test_application_server.c \
 test_bg.c \
 test_box.c \
