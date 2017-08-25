@@ -16,7 +16,7 @@ _efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Da
    obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return NULL;
 
-   if (!ENFN->image_native_init(ENDT, EVAS_NATIVE_SURFACE_TBM))
+   if (!ENFN->image_native_init(ENC, EVAS_NATIVE_SURFACE_TBM))
      {
         ERR("TBM is not supported on this platform");
         return NULL;
@@ -34,7 +34,7 @@ _efl_canvas_surface_tbm_efl_object_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Dat
 
    obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
 
-   ENFN->image_native_shutdown(ENDT, EVAS_NATIVE_SURFACE_TBM);
+   ENFN->image_native_shutdown(ENC, EVAS_NATIVE_SURFACE_TBM);
    efl_data_unref(eo, pd->base);
    efl_destructor(eo);
 }

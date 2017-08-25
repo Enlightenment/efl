@@ -295,7 +295,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
 
    image = _proxy_image_get(o);
    if (image)
-     ENFN->image_size_get(ENDT, image, &width, &height);
+     ENFN->image_size_get(ENC, image, &width, &height);
 
    if (!image || !width || !height)
      {
@@ -315,7 +315,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (ENFN->image_data_map(ENDT, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
+   if (ENFN->image_data_map(ENC, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
      {
         DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
             eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(*slice));
@@ -338,7 +338,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
    if (!slice || !ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   if (!ENFN->image_data_unmap(ENDT, o->engine_data, slice))
+   if (!ENFN->image_data_unmap(ENC, o->engine_data, slice))
      return EINA_FALSE;
 
    return EINA_TRUE;

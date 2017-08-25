@@ -122,7 +122,7 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
    // if image data not loaded or in texture then upload
    if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
      {
-        if (o->engine_data) ENFN->image_prepare(ENDT, o->engine_data);
+        if (o->engine_data) ENFN->image_prepare(ENC, o->engine_data);
      }
 #endif
 #if 0
@@ -138,7 +138,7 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
         if (!o->engine_data_prep)
           {
              prep = ENFN->image_surface_noscale_new
-                 (ENDT, obj->cur->geometry.w, obj->cur->geometry.h,
+                 (ENC, obj->cur->geometry.w, obj->cur->geometry.h,
                  o->cur->has_alpha);
              ctx = ENFN->context_new(ENDT);
              ENFN->context_clip_set(ENDT, ctx, 0, 0,
@@ -183,7 +183,7 @@ _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_I
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
      }
    if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
    if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
@@ -242,7 +242,7 @@ _efl_canvas_image_internal_efl_object_constructor(Eo *eo_obj, Evas_Image_Data *o
    o->prev = eina_cow_alloc(evas_object_image_state_cow);
    o->proxy_src_clip = EINA_TRUE;
 
-   cspace = ENFN->image_colorspace_get(ENDT, o->engine_data);
+   cspace = ENFN->image_colorspace_get(ENC, o->engine_data);
    if (cspace != o->cur->cspace)
      {
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
@@ -311,9 +311,9 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
         if (o->preloading)
           {
              o->preloading = EINA_FALSE;
-             ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
           }
-        ENFN->image_free(ENDT, o->engine_data);
+        ENFN->image_free(ENC, o->engine_data);
      }
    if (o->file_obj)
      {
@@ -353,17 +353,17 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
         int stride;
         Evas_Image_Orient orient;
 
-        ENFN->image_size_get(ENDT, o->engine_data, &w, &h);
+        ENFN->image_size_get(ENC, o->engine_data, &w, &h);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = w * 4;
-        orient = ENFN->image_orient_get(ENDT, o->engine_data);
+        orient = ENFN->image_orient_get(ENC, o->engine_data);
 
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         {
-           state_write->has_alpha = ENFN->image_alpha_get(ENDT, o->engine_data);
-           state_write->cspace = ENFN->image_colorspace_get(ENDT, o->engine_data);
+           state_write->has_alpha = ENFN->image_alpha_get(ENC, o->engine_data);
+           state_write->cspace = ENFN->image_colorspace_get(ENC, o->engine_data);
 
            if ((o->cur->image.w != w) || (o->cur->image.h != h))
              resize_call = EINA_TRUE;
@@ -414,20 +414,20 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
      }
 
    if (o->engine_data)
      {
         int stride = 0;
 
-        o->engine_data = ENFN->image_orient_set(ENDT, o->engine_data, orient);
+        o->engine_data = ENFN->image_orient_set(ENC, o->engine_data, orient);
         if (o->engine_data)
           {
-             ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
+             ENFN->image_size_get(ENC, o->engine_data, &iw, &ih);
 
              if (ENFN->image_stride_get)
-               ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+               ENFN->image_stride_get(ENC, o->engine_data, &stride);
              else
                stride = iw * 4;
 
@@ -810,7 +810,7 @@ _efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data 
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
      }
 
    has_alpha = !!has_alpha;
@@ -828,13 +828,13 @@ _efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data 
      {
         int stride = 0;
 
-        o->engine_data = ENFN->image_alpha_set(ENDT, o->engine_data, o->cur->has_alpha);
+        o->engine_data = ENFN->image_alpha_set(ENC, o->engine_data, o->cur->has_alpha);
         if (ENFN->image_scale_hint_set)
-          ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+          ENFN->image_scale_hint_set(ENC, o->engine_data, o->scale_hint);
         if (ENFN->image_content_hint_set)
-          ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+          ENFN->image_content_hint_set(ENC, o->engine_data, o->content_hint);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = o->cur->image.w * 4;
 
@@ -911,7 +911,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
                                    &imagew, &imageh, &uvw, &uvh, EINA_TRUE, EINA_TRUE);
    if (!pixels) goto no_pixels;
 
-   cspace = ENFN->image_file_colorspace_get(ENDT, pixels);
+   cspace = ENFN->image_file_colorspace_get(ENC, pixels);
    want_cspace = cspace;
 
    if (flags)
@@ -945,7 +945,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
                     want_cspace = EVAS_COLORSPACE_ETC1;
                   else if (!strcmp(encoding, "etc2"))
                     {
-                       if (!ENFN->image_alpha_get(ENDT, pixels))
+                       if (!ENFN->image_alpha_get(ENC, pixels))
                          want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
                        else
                          want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
@@ -961,7 +961,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
         Evas_Colorspace cs;
         Eina_Slice sl;
 
-        ok = ENFN->image_data_direct_get(ENDT, pixels, 0, &sl, &cs, EINA_TRUE);
+        ok = ENFN->image_data_direct_get(ENC, pixels, 0, &sl, &cs, EINA_TRUE);
         if (ok && (cs == want_cspace))
           data = (DATA32 *)sl.mem;
      }
@@ -981,7 +981,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
         int stride;
 
         cspace = EVAS_COLORSPACE_ARGB8888;
-        ok = ENFN->image_data_map(ENDT, &pixels, &slice, &stride, 0, 0, imagew, imageh,
+        ok = ENFN->image_data_map(ENC, &pixels, &slice, &stride, 0, 0, imagew, imageh,
                                   cspace, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0);
         if (!ok || !slice.mem) goto no_pixels;
         unmap_it = EINA_TRUE;
@@ -1003,7 +1003,7 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
    else ok = EINA_FALSE;
 
    if (unmap_it)
-     ENFN->image_data_unmap(ENDT, pixels, &slice);
+     ENFN->image_data_unmap(ENC, pixels, &slice);
 
    free(encoding);
    if (!ok) ERR("Image save failed.");
@@ -1046,7 +1046,7 @@ _evas_image_native_surface_set(Eo *eo_obj, Evas_Native_Surface *surf)
    if ((surf) &&
        ((surf->version < 2) ||
         (surf->version > EVAS_NATIVE_SURFACE_VERSION))) return EINA_FALSE;
-   o->engine_data = ENFN->image_native_set(ENDT, o->engine_data, surf);
+   o->engine_data = ENFN->image_native_set(ENC, o->engine_data, surf);
 
    if (surf && surf->version > 4)
      {
@@ -1072,7 +1072,7 @@ _evas_image_native_surface_get(const Evas_Object *eo_obj)
    Evas_Native_Surface *surf = NULL;
 
    if (ENFN->image_native_get)
-     surf = ENFN->image_native_get(ENDT, o->engine_data);
+     surf = ENFN->image_native_get(ENC, o->engine_data);
 
    return surf;
 }
@@ -1089,9 +1089,9 @@ _efl_canvas_image_internal_efl_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data 
         int stride = 0;
 
         if (ENFN->image_scale_hint_set)
-          ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+          ENFN->image_scale_hint_set(ENC, o->engine_data, o->scale_hint);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = o->cur->image.w * 4;
 
@@ -1122,9 +1122,9 @@ _efl_canvas_image_internal_efl_image_content_hint_set(Eo *eo_obj, Evas_Image_Dat
         int stride = 0;
 
         if (ENFN->image_content_hint_set)
-          ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+          ENFN->image_content_hint_set(ENC, o->engine_data, o->content_hint);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = o->cur->image.w * 4;
 
@@ -1243,7 +1243,7 @@ _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
    if (dirty)
      {
         if (o->engine_data)
-          o->engine_data = ENFN->image_dirty_region(ENDT, o->engine_data,
+          o->engine_data = ENFN->image_dirty_region(ENC, o->engine_data,
                                                     0, 0,
                                                     o->cur->image.w, o->cur->image.h);
      }
@@ -1252,9 +1252,9 @@ _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
         if (o->preloading)
           {
              o->preloading = EINA_FALSE;
-             ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
           }
-        ENFN->image_free(ENDT, o->engine_data);
+        ENFN->image_free(ENC, o->engine_data);
      }
    o->engine_data = NULL;
    o->load_error = EVAS_LOAD_ERROR_NONE;
@@ -1299,7 +1299,7 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
    lo.emile.degree = 0;
    lo.skip_head = o->skip_head;
    if (o->cur->mmaped_source)
-     o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
+     o->engine_data = ENFN->image_mmap(ENC, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    else
      {
         const char *file2 = o->cur->u.file;
@@ -1314,7 +1314,7 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
              efl_vpath_file_wait(o->file_obj);
              file2 = efl_vpath_file_result_get(o->file_obj);
           }
-        o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
+        o->engine_data = ENFN->image_load(ENC, file2, o->cur->key, &o->load_error, &lo);
         if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
           {
              efl_del(o->file_obj);
@@ -1328,16 +1328,16 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
         int stride = 0;
         Eina_Bool resize_call = EINA_FALSE;
 
-        ENFN->image_size_get(ENDT, o->engine_data, &w, &h);
+        ENFN->image_size_get(ENC, o->engine_data, &w, &h);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = w * 4;
 
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         {
-           state_write->has_alpha = ENFN->image_alpha_get(ENDT, o->engine_data);
-           state_write->cspace = ENFN->image_colorspace_get(ENDT, o->engine_data);
+           state_write->has_alpha = ENFN->image_alpha_get(ENC, o->engine_data);
+           state_write->cspace = ENFN->image_colorspace_get(ENC, o->engine_data);
            if ((state_write->image.w != w) || (state_write->image.h != h))
              resize_call = EINA_TRUE;
            state_write->image.w = w;
@@ -1364,16 +1364,16 @@ _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         int stride = 0;
         Eina_Bool resize_call = EINA_FALSE;
 
-        ENFN->image_size_get(ENDT, o->engine_data, &w, &h);
+        ENFN->image_size_get(ENC, o->engine_data, &w, &h);
         if (ENFN->image_stride_get)
-          ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+          ENFN->image_stride_get(ENC, o->engine_data, &stride);
         else
           stride = w * 4;
 
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         {
-           state_write->has_alpha = ENFN->image_alpha_get(ENDT, o->engine_data);
-           state_write->cspace = ENFN->image_colorspace_get(ENDT, o->engine_data);
+           state_write->has_alpha = ENFN->image_alpha_get(ENC, o->engine_data);
+           state_write->cspace = ENFN->image_colorspace_get(ENC, o->engine_data);
            if ((state_write->image.w != w) || (state_write->image.h != h))
              resize_call = EINA_TRUE;
            state_write->image.w = w;
@@ -1495,18 +1495,18 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
    if (obj->layer && obj->layer->evas)
      {
-        if (o->engine_data && ENDT)
+        if (o->engine_data && ENC)
           {
              if (o->preloading)
                {
                   o->preloading = EINA_FALSE;
-                  ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+                  ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
                }
-             ENFN->image_free(ENDT, o->engine_data);
+             ENFN->image_free(ENC, o->engine_data);
           }
-        if (o->engine_data_prep && ENDT)
+        if (o->engine_data_prep && ENC)
           {
-             ENFN->image_free(ENDT, o->engine_data_prep);
+             ENFN->image_free(ENC, o->engine_data_prep);
           }
         if (o->video_surface)
           {
@@ -1880,7 +1880,7 @@ _evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj)
    if (!ENFN->image_native_get)
      return EINA_FALSE;
 
-   ns = ENFN->image_native_get(ENDT, o->engine_data);
+   ns = ENFN->image_native_get(ENC, o->engine_data);
    if (!ns) return EINA_FALSE;
 
    o->plane = ENFN->image_plane_assign(ENDT, o->engine_data,
@@ -1944,7 +1944,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         /* Draw a bright red rectangle where the object replaced by
          * a hardware plane would have been.
          */
-        ns = ENFN->image_native_get(ENDT, o->engine_data);
+        ns = ENFN->image_native_get(ENC, o->engine_data);
         if (ns && ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
           {
              ENFN->context_color_set(output, context, 255, 0, 0, 255);
@@ -2615,7 +2615,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                        {
                           Evas_Coord idw, idh, idx, idy;
                           int x, y, w, h;
-                          e->engine.func->image_dirty_region(ENDT, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                          e->engine.func->image_dirty_region(ENC, o->engine_data, rr->x, rr->y, rr->w, rr->h);
 
                           idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
                           idy = evas_object_image_figure_y_fill(eo_obj, obj, o->cur->fill.y, o->cur->fill.h, &idh);
@@ -2735,7 +2735,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                             {
                                Eina_Rectangle r;
 
-                               e->engine.func->image_dirty_region(ENDT, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                               e->engine.func->image_dirty_region(ENC, o->engine_data, rr->x, rr->y, rr->w, rr->h);
                                r.x = rr->x;
                                r.y = rr->y;
                                r.w = rr->w;
@@ -2761,7 +2761,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                             eina_rectangle_free(r);
                        }
                        EINA_COW_PIXEL_WRITE_END(o, pixi_write);
-                       e->engine.func->image_dirty_region(ENDT, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+                       e->engine.func->image_dirty_region(ENC, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
 
                        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj,
                                                            obj);
@@ -2816,7 +2816,7 @@ done:
      {
         if (o->engine_data_prep)
           {
-             ENFN->image_free(ENDT, o->engine_data_prep);
+             ENFN->image_free(ENC, o->engine_data_prep);
              o->engine_data_prep = NULL;
           }
      }
@@ -3555,7 +3555,7 @@ _evas_object_image_preloading_check(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    if (ENFN->image_load_error_get)
-     o->load_error = ENFN->image_load_error_get(ENDT, o->engine_data);
+     o->load_error = ENFN->image_load_error_get(ENC, o->engine_data);
 }
 
 Evas_Object *
@@ -3662,7 +3662,7 @@ _evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create
 
    if (pd->engine_data)
      {
-        ENFN->image_free(ENDT, pd->engine_data);
+        ENFN->image_free(ENC, pd->engine_data);
         pd->engine_data = NULL;
      }
 
@@ -3671,7 +3671,7 @@ _evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create
    // FIXME: alpha forced to 1 for now, need to figure out Evas alpha here
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
    {
-      pd->engine_data = ENFN->image_map_surface_new(ENDT,
+      pd->engine_data = ENFN->image_map_surface_new(ENC,
                                                     obj->cur->geometry.w,
                                                     obj->cur->geometry.h,
                                                     1);

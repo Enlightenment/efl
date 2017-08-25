@@ -20,7 +20,7 @@ _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
      }
    evas_object_async_block(obj);
    _evas_image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
    o->file_size.w = o->cur->image.w;
@@ -83,7 +83,7 @@ _evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
         efl_vpath_file_wait(o->file_obj);
         file2 = efl_vpath_file_result_get(o->file_obj);
      }
-   o->engine_data = ENFN->image_load(ENDT, file2, o->cur->key, &o->load_error, &lo);
+   o->engine_data = ENFN->image_load(ENC, file2, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
    o->file_size.w = o->cur->image.w;
@@ -156,7 +156,7 @@ _image_preload_internal(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool cancel)
         if (o->preloading)
           {
              o->preloading = EINA_FALSE;
-             ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
           }
      }
    else
@@ -164,7 +164,7 @@ _image_preload_internal(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool cancel)
         if (!o->preloading)
           {
              o->preloading = EINA_TRUE;
-             ENFN->image_data_preload_request(ENDT, o->engine_data, eo_obj);
+             ENFN->image_data_preload_request(ENC, o->engine_data, eo_obj);
           }
      }
 }
@@ -449,7 +449,7 @@ _evas_image_load_region_support_get(const Eo *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   return ENFN->image_can_region_get(ENDT, o->engine_data);
+   return ENFN->image_can_region_get(ENC, o->engine_data);
 }
 
 EOLIAN static Eina_Bool
@@ -639,7 +639,7 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
 
    if (ENFN->image_data_maps_get)
      {
-        if (ENFN->image_data_maps_get(ENDT, o->engine_data, NULL) > 0)
+        if (ENFN->image_data_maps_get(ENC, o->engine_data, NULL) > 0)
           {
              ERR("can not set pixels when there are open memory maps");
              return EINA_FALSE;
@@ -666,12 +666,12 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
         int iw = 0, ih = 0;
         Eina_Bool alpha;
 
-        ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
-        ics = ENFN->image_colorspace_get(ENDT, o->engine_data);
-        alpha = ENFN->image_alpha_get(ENDT, o->engine_data);
+        ENFN->image_size_get(ENC, o->engine_data, &iw, &ih);
+        ics = ENFN->image_colorspace_get(ENC, o->engine_data);
+        alpha = ENFN->image_alpha_get(ENC, o->engine_data);
         if ((w != iw) || (h != ih) || (ics != cspace) || (alpha != o->cur->has_alpha))
           {
-             ENFN->image_free(ENDT, o->engine_data);
+             ENFN->image_free(ENC, o->engine_data);
              o->engine_data = NULL;
           }
      }
@@ -680,13 +680,13 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
      {
         // note: we release all planes at once
         if (o->engine_data)
-          ENFN->image_free(ENDT, o->engine_data);
-        o->engine_data = ENFN->image_new_from_copied_data(ENDT, w, h, NULL, o->cur->has_alpha, cspace);
+          ENFN->image_free(ENC, o->engine_data);
+        o->engine_data = ENFN->image_new_from_copied_data(ENC, w, h, NULL, o->cur->has_alpha, cspace);
      }
    else
      {
         o->buffer_data_set = EINA_TRUE;
-        o->engine_data = ENFN->image_data_slice_add(ENDT, o->engine_data,
+        o->engine_data = ENFN->image_data_slice_add(ENC, o->engine_data,
                                                     slice, copy, w, h, stride,
                                                     cspace, plane, o->cur->has_alpha);
      }
@@ -701,13 +701,13 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
      resized = EINA_TRUE;
 
    if (ENFN->image_scale_hint_set)
-     ENFN->image_scale_hint_set(ENDT, o->engine_data, o->scale_hint);
+     ENFN->image_scale_hint_set(ENC, o->engine_data, o->scale_hint);
 
    if (ENFN->image_content_hint_set)
-     ENFN->image_content_hint_set(ENDT, o->engine_data, o->content_hint);
+     ENFN->image_content_hint_set(ENC, o->engine_data, o->content_hint);
 
    if (ENFN->image_stride_get)
-     ENFN->image_stride_get(ENDT, o->engine_data, &int_stride);
+     ENFN->image_stride_get(ENC, o->engine_data, &int_stride);
 
    if (resized || o->cur->u.file || o->cur->key ||
        (o->cur->image.stride != int_stride) || (cspace != o->cur->cspace))
@@ -775,7 +775,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_U
    if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
      return EINA_FALSE;
 
-   return ENFN->image_data_direct_get(ENDT, o->engine_data, plane, slice, &cspace, EINA_FALSE);
+   return ENFN->image_data_direct_get(ENC, o->engine_data, plane, slice, &cspace, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
@@ -800,7 +800,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
      goto end; // not implemented
 
    if (o->engine_data)
-     ENFN->image_size_get(ENDT, o->engine_data, &width, &height);
+     ENFN->image_size_get(ENC, o->engine_data, &width, &height);
 
    if (!o->engine_data || !width || !height)
      {
@@ -820,7 +820,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (ENFN->image_data_map(ENDT, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
+   if (ENFN->image_data_map(ENC, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
      {
         DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
             eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(*slice));
@@ -843,7 +843,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
    if (!slice || !ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   if (!ENFN->image_data_unmap(ENDT, o->engine_data, slice))
+   if (!ENFN->image_data_unmap(ENC, o->engine_data, slice))
      return EINA_FALSE;
 
    return EINA_TRUE;
