@@ -1553,7 +1553,7 @@ eng_gl_make_current(void *engine, void *surface, void *context)
      {
         Evas_Engine_GL_Context *gl_context;
 
-        gl_context = gl_generic_context_get(engine);
+        gl_context = gl_generic_context_find(engine);
         if ((gl_context->havestuff) ||
             (gl_context->master_clip.used))
           {
@@ -1637,7 +1637,7 @@ eng_gl_api_get(void *engine, int version)
    Evas_Engine_GL_Context *gl_context;
    EVGLINIT(engine, NULL);
 
-   gl_context = gl_generic_context_get(engine);
+   gl_context = gl_generic_context_find(engine);
    if (!gl_context)
      {
         ERR("Invalid context!");
@@ -1666,9 +1666,9 @@ eng_gl_direct_override_get(void *engine, Eina_Bool *override, Eina_Bool *force_o
 }
 
 static Eina_Bool
-eng_gl_surface_direct_renderable_get(void *engine, Evas_Native_Surface *ns, Eina_Bool *override, void *surface)
+eng_gl_surface_direct_renderable_get(void *engine, void *output, Evas_Native_Surface *ns, Eina_Bool *override, void *surface)
 {
-   Render_Output_GL_Generic *re = engine;
+   Render_Output_GL_Generic *re = output;
    Eina_Bool direct_render, client_side_rotation;
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *sfc = surface;
