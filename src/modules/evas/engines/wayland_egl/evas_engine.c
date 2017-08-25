@@ -503,7 +503,7 @@ static const EVGL_Interface evgl_funcs =
 
 /* engine functions */
 static void *
-eng_info(Evas *evas EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Wayland *info;
 

@@ -1393,8 +1393,8 @@ struct _Evas_Object_Func
 
 struct _Evas_Func
 {
-   void *(*info)                           (Evas *e);
-   void (*info_free)                       (Evas *e, void *info);
+   void *(*info)                           (void);
+   void (*info_free)                       (void *info);
    void *(*setup)                          (void *engine, void *info, unsigned int w, unsigned int h);
    int  (*update)                          (void *engine, void *data, void *info, unsigned int w, unsigned int h);
 

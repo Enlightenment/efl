@@ -99,7 +99,7 @@ _output_setup(int w, int h)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e)
+eng_info(void)
 {
    Evas_Engine_Info_PSL1GHT *info;
 
@@ -115,7 +115,7 @@ eng_info(Evas *e)
 }
 
 static void
-eng_info_free(Evas *e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_PSL1GHT *in;
 

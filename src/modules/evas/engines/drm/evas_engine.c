@@ -58,7 +58,7 @@ err:
 }
 
 static void *
-eng_info(Evas *evas EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_Drm *info;
 
@@ -74,7 +74,7 @@ eng_info(Evas *evas EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *evas EINA_UNUSED, void *einfo)
+eng_info_free(void *einfo)
 {
    Evas_Engine_Info_Drm *info;
 

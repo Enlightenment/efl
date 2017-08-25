@@ -127,7 +127,7 @@ static const EVGL_Interface evgl_funcs =
 
 
 static void *
-eng_info(Evas *e EINA_UNUSED)
+eng_info(void)
 {
    Evas_Engine_Info_GL_Cocoa *info;
 
@@ -142,7 +142,7 @@ eng_info(Evas *e EINA_UNUSED)
 }
 
 static void
-eng_info_free(Evas *e EINA_UNUSED, void *info)
+eng_info_free(void *info)
 {
    Evas_Engine_Info_GL_Cocoa *const in = info;
    free(in);
