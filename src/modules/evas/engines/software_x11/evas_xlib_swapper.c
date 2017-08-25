@@ -253,7 +253,7 @@ evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects)
    swp->buf_cur = (swp->buf_cur + 1) % swp->buf_num;
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
 {
    int i, n, count = 0;
@@ -853,7 +853,7 @@ evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects)
    sym_XFixesDestroyRegion(swp->disp, region);
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
 {
    DRI2BufferFlags *flags;
@@ -931,7 +931,7 @@ evas_xlib_swapper_swap(X_Swapper *swp EINA_UNUSED, Eina_Rectangle *rects EINA_UN
 {
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_xlib_swapper_buffer_state_get(X_Swapper *swp EINA_UNUSED)
 {
    return MODE_FULL;

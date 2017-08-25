@@ -35,7 +35,7 @@ typedef enum
 typedef struct _Render_Output_Software_Generic Render_Output_Software_Generic;
 typedef struct _Outbuf Outbuf;
 
-typedef Render_Engine_Swap_Mode (*Outbuf_Swap_Mode_Get)(Outbuf *ob);
+typedef Render_Output_Swap_Mode (*Outbuf_Swap_Mode_Get)(Outbuf *ob);
 typedef void (*Outbuf_Reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 typedef Eina_Bool (*Outbuf_Region_First_Rect)(Outbuf *ob);
 typedef void (*Outbuf_Damage_Region_Set)(Outbuf *ob, Tilebuf_Rect *rects);
@@ -71,7 +71,7 @@ struct _Render_Output_Software_Generic
 
    unsigned int w, h;
 
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
    Render_Output_Merge_Mode merge_mode;
 
    unsigned char end : 1;

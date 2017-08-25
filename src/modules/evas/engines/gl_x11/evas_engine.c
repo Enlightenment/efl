@@ -1581,7 +1581,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->swap_mode);
 
@@ -1691,7 +1691,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
 {
    Evas_Engine_Info_GL_X11 *info = in;
    Render_Engine *re = data;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->swap_mode);
 

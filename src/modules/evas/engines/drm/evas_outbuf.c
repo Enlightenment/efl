@@ -241,7 +241,7 @@ _outbuf_fb_assign(Outbuf *ob)
    return EINA_TRUE;
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 _outbuf_state_get(Outbuf *ob)
 {
    int age;

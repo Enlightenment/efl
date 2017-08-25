@@ -90,7 +90,7 @@ struct _Outbuf
    Evas_Engine_GL_Context *gl_context;
    Evas_Engine_Info_GL_X11 *info;
 
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
    Colormap         colormap;
    Window           win;
    unsigned int     w, h;
@@ -169,7 +169,7 @@ Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info,
                        Visual *vis, Colormap cmap,
                        int depth, unsigned int w, unsigned int h, int indirect,
                        int alpha, int rot,
-                       Render_Engine_Swap_Mode swap_mode,
+                       Render_Output_Swap_Mode swap_mode,
                        int depth_bits, int stencil_bits, int msaa_bits);
 void      eng_window_free(Outbuf *gw);
 void      eng_window_use(Outbuf *gw);
@@ -186,7 +186,7 @@ void      eng_gl_context_use(Context_3D *context);
 
 void eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
 int eng_outbuf_get_rot(Outbuf *ob);
-Render_Engine_Swap_Mode eng_outbuf_swap_mode(Outbuf *ob);
+Render_Output_Swap_Mode eng_outbuf_swap_mode(Outbuf *ob);
 #ifdef GL_GLES
 void eng_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage);
 #endif

@@ -377,7 +377,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 }
 
 Outbuf *
-evas_outbuf_new(Evas_Engine_Info_Eglfs *info, int w, int h, Render_Engine_Swap_Mode swap_mode)
+evas_outbuf_new(Evas_Engine_Info_Eglfs *info, int w, int h, Render_Output_Swap_Mode swap_mode)
 {
    Outbuf *ob;
    char *num;
@@ -551,7 +551,7 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 }
 
-Render_Engine_Swap_Mode
+Render_Output_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
    return MODE_FULL;

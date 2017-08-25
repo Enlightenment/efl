@@ -87,7 +87,7 @@ void        *evas_buffer_outbuf_buf_new_region_for_update  (Outbuf *buf, int x, 
 void         evas_buffer_outbuf_buf_free_region_for_update (Outbuf *buf, RGBA_Image *update);
 void         evas_buffer_outbuf_buf_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
 void         evas_buffer_outbuf_buf_switch_buffer          (Outbuf *buf, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
-Render_Engine_Swap_Mode evas_buffer_outbuf_buf_swap_mode_get(Outbuf *buf);
+Render_Output_Swap_Mode evas_buffer_outbuf_buf_swap_mode_get(Outbuf *buf);
 int          evas_buffer_outbuf_buf_rot_get                (Outbuf *buf);
 
 #endif

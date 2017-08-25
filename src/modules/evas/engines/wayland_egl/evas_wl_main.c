@@ -9,7 +9,7 @@ static struct wl_display *display = NULL;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
+eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -361,12 +361,12 @@ eng_outbuf_rotation_get(Outbuf *ob)
    return ob->rot;
 }
 
-Render_Engine_Swap_Mode 
+Render_Output_Swap_Mode
 eng_outbuf_swap_mode_get(Outbuf *ob)
 {
    if ((ob->swap_mode == MODE_AUTO) && (extn_have_buffer_age))
      {
-        Render_Engine_Swap_Mode swap_mode;
+        Render_Output_Swap_Mode swap_mode;
         EGLint age = 0;
 
         eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);

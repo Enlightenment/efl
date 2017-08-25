@@ -75,7 +75,7 @@ Outbuf *_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
 void _outbuf_free(Outbuf *ob);
 int _outbuf_rotation_get(Outbuf *ob);
 void _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth);
-Render_Engine_Swap_Mode _outbuf_state_get(Outbuf *ob);
+Render_Output_Swap_Mode _outbuf_state_get(Outbuf *ob);
 void *_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);

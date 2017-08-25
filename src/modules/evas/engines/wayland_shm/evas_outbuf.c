@@ -316,7 +316,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
      }
 }
 
-Render_Engine_Swap_Mode 
+Render_Output_Swap_Mode
 _evas_outbuf_swap_mode_get(Outbuf *ob)
 {
    int age;

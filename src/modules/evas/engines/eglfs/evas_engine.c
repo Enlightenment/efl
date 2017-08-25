@@ -684,7 +684,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    Evas_Engine_Info_Eglfs *info = in;
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    swap_mode = evas_render_engine_gl_swap_mode_get(info->info.swap_mode);
 

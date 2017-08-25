@@ -9,7 +9,7 @@ typedef enum
    MODE_TRIPLE,
    MODE_QUADRUPLE,
    MODE_AUTO
-} Render_Engine_Swap_Mode;
+} Render_Output_Swap_Mode;
 
 #endif
 

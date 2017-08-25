@@ -65,7 +65,7 @@ struct _Outbuf
    int w;
    int h;
    int rot;
-   Render_Engine_Swap_Mode swap_mode;
+   Render_Output_Swap_Mode swap_mode;
 
    Eina_Bool drew;
 };
@@ -92,7 +92,7 @@ Outbuf *evas_outbuf_new(Evas_Engine_Info_GL_Cocoa *info, int w, int h);
 void evas_outbuf_free(Outbuf *ob);
 void evas_outbuf_use(Outbuf *ob);
 int evas_outbuf_rot_get(Outbuf *ob);
-Render_Engine_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
+Render_Output_Swap_Mode evas_outbuf_buffer_state_get(Outbuf *ob);
 void evas_outbuf_gl_context_use(Context_3D *ctx);
 Eina_Bool evas_outbuf_update_region_first_rect(Outbuf *ob);
 void *evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
