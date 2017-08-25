@@ -123,6 +123,28 @@ _context_stored_reset(void *data EINA_UNUSED, void *surface)
 #define CONTEXT_STORE(data, surface, context) _context_store(data, surface, context)
 #define CONTEXT_STORED_RESET(data, surface) _context_stored_reset(data, surface)
 
+static void *
+eng_engine_new(void)
+{
+   Render_Engine_GL_Generic *engine;
+
+   engine = calloc(1, sizeof (Render_Engine_GL_Generic));
+   if (!engine) return NULL;
+
+   return engine;
+}
+
+static void
+eng_engine_free(void *engine)
+{
+   Render_Engine_GL_Generic *e = engine;
+   Render_Output_GL_Generic *output;
+
+   EINA_LIST_FREE(e->software.outputs, output)
+     ERR("Output %p not properly cleaned before engine destruction.", output);
+   free(e);
+}
+
 static void
 eng_rectangle_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
 {
@@ -3081,6 +3103,9 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(engine_new);
+   ORD(engine_free);
+
    ORD(context_clip_image_set);
    ORD(context_clip_image_unset);
    ORD(context_clip_image_get);

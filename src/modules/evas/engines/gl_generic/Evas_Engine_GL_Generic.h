@@ -8,6 +8,7 @@
 #include "../gl_common/evas_gl_core.h"
 #include "../gl_common/evas_gl_core_private.h"
 
+typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
 typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;
 typedef struct _Context_3D Context_3D;
 
@@ -16,6 +17,11 @@ typedef Evas_Engine_GL_Context *(*Window_GL_Context_Get)(Outbuf *ob);
 typedef void *(*Window_EGL_Display_Get)(Outbuf *ob);
 typedef Context_3D *(*Window_GL_Context_New)(Outbuf *ob);
 typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
+
+struct _Render_Engine_GL_Generic
+{
+   Render_Engine_Software_Generic software;
+};
 
 struct _Render_Output_GL_Generic
 {
