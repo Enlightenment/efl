@@ -1120,14 +1120,14 @@ _evgl_gles1_glGetString(GLenum name)
      {
         ERR("Current context is NULL, not calling glGetString");
         // This sets evas_gl_error_get instead of glGetError...
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
+        evas_gl_common_error_set(EVAS_GL_BAD_CONTEXT);
         return NULL;
      }
 
    if (rsc->current_ctx->version != EVAS_GL_GLES_1_X)
      {
         ERR("Invalid context version %d", (int) rsc->current_ctx->version);
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_MATCH);
+        evas_gl_common_error_set(EVAS_GL_BAD_MATCH);
         return NULL;
      }
 

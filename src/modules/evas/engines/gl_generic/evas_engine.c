@@ -1853,7 +1853,7 @@ eng_gl_surface_query(void *engine, void *surface, int attr, void *value)
              */
            default: break;
           }
-        evas_gl_common_error_set(engine, EVAS_GL_BAD_ATTRIBUTE);
+        evas_gl_common_error_set(EVAS_GL_BAD_ATTRIBUTE);
         return EINA_FALSE;
      }
 #else

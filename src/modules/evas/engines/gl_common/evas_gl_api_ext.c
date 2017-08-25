@@ -139,7 +139,7 @@ _evgl_egl_display_get(const char *function, Evas_GL *evgl)
    if (!evgl_engine || !evgl_engine->funcs || !evgl_engine->funcs->display_get)
      {
         ERR("%s: Invalid Engine... (Can't acccess EGL Display)\n", function);
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_DISPLAY);
+        evas_gl_common_error_set(EVAS_GL_BAD_DISPLAY);
         return EGL_NO_DISPLAY;
      }
 
@@ -147,7 +147,7 @@ _evgl_egl_display_get(const char *function, Evas_GL *evgl)
      {
         if (evgl) goto fallback;
         ERR("%s: Unable to execute GL command. Error retrieving tls", function);
-        evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
+        evas_gl_common_error_set(EVAS_GL_NOT_INITIALIZED);
         return EGL_NO_DISPLAY;
      }
 
@@ -155,7 +155,7 @@ _evgl_egl_display_get(const char *function, Evas_GL *evgl)
      {
         if (evgl) goto fallback;
         ERR("%s: no current engine set; ensure you've called evas_gl_make_current()", function);
-        evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
+        evas_gl_common_error_set(EVAS_GL_NOT_INITIALIZED);
         return EGL_NO_DISPLAY;
      }
 
@@ -238,7 +238,7 @@ _evgl_evasglCreateImageForContext(Evas_GL *evasgl, Evas_GL_Context *evasctx,
    if (!dpy || !evasgl)
      {
         ERR("Evas_GL can not be NULL here.");
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_DISPLAY);
+        evas_gl_common_error_set(EVAS_GL_BAD_DISPLAY);
         return NULL;
      }
 
@@ -254,7 +254,7 @@ _evgl_evasglDestroyImage(EvasGLImage image)
    if (!img)
      {
         ERR("EvasGLImage is NULL.");
-        evas_gl_common_error_set(NULL, EVAS_GL_BAD_PARAMETER);
+        evas_gl_common_error_set(EVAS_GL_BAD_PARAMETER);
         return;
      }
 
