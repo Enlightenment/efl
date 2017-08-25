@@ -340,6 +340,239 @@ EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Descript
  */
 EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 
+
+/**
+ * @struct _Efl_Future_Cb_Desc
+ *
+ * A struct with callbacks to be used by efl_future_cb_from_desc() and efl_future_chain_array()
+ *
+ * @see efl_future_cb_from_desc()
+ * @see efl_future_chain_array()
+ */
+typedef struct _Efl_Future_Cb_Desc {
+   /**
+    * Called on success (value.type is not @c EINA_VALUE_TYPE_ERROR).
+    *
+    * if @c success_type is not NULL, then the value is guaranteed to be of that type,
+    * if it's not, then it will trigger @c error with @c EINVAL.
+    *
+    * After this function returns, @c free callback is called if provided.
+    *
+    * @note This function is always called from a safe context (main loop or some platform defined safe context).
+    *
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
+    * @param value The operation result
+    * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
+    * If there is no need to convert the received value, it's @b recommended
+    * to pass-thru @p value argument. If you need to convert to a different type
+    * or generate a new value, use @c eina_value_setup() on @b another Eina_Value
+    * and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+    * whole chain will wait until the promise is resolved in
+    * order to continue its execution.
+    * Note that the value contents must survive this function scope,
+    * that is, do @b not use stack allocated blobs, arrays, structures or types that
+    * keeps references to memory you give. Values will be automatically cleaned up
+    * using @c eina_value_flush() once they are unused (no more future or futures
+    * returned a new value).
+    */
+   Eina_Value (*success)(Eo *o, const Eina_Value value);
+   /**
+    * Called on error (value.type is @c EINA_VALUE_TYPE_ERROR).
+    *
+    * This function can return another error, propagating or converting it. However it
+    * may also return a non-error, in this case the next future in chain will receive a regular
+    * value, which may call its @c success.
+    *
+    * If this function is not provided, then it will pass thru the error to the next error handler.
+    *
+    * It may be called with @c EINVAL if @c success_type is provided and doesn't
+    * match the received type.
+    *
+    * It may be called with @c ECANCELED if future was canceled.
+    *
+    * It may be called with @c ENOMEM if memory allocation failed during callback creation.
+    *
+    * After this function returns, @c free callback is called if provided.
+    *
+    * @note On future creation errors and future cancellation this function will be called
+    * from the current context with the following errors respectitally: `EINVAL`, `ENOMEM` and  `ECANCELED`.
+    * Otherwise this function is called from a safe context.
+    *
+    *
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
+    * @param error The operation error
+    * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
+    * If you need to convert to a different type or generate a new value,
+    * use @c eina_value_setup() on @b another Eina_Value
+    * and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+    * whole chain will wait until the promise is resolved in
+    * order to continue its execution.
+    * Note that the value contents must survive this function scope,
+    * that is, do @b not use stack allocated blobs, arrays, structures or types that
+    * keeps references to memory you give. Values will be automatically cleaned up
+    * using @c eina_value_flush() once they are unused (no more future or futures
+    * returned a new value).
+    */
+   Eina_Value (*error)(Eo *o, Eina_Error error);
+   /**
+    * Called on @b all situations to notify future destruction.
+    *
+    * This is called after @c success or @c error, as well as it's called if none of them are
+    * provided. Thus can be used as a "weak ref" mechanism.
+    *
+    * @note On future creation errors and future cancellation this function will be called
+    * from the current context with the following errors respectitally: `EINVAL`, `ENOMEM` and  `ECANCELED`.
+    * Otherwise this function is called from a safe context.
+    *
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
+    * @param dead_future The future that was freed.
+    */
+   void (*free)(Eo *o, const Eina_Future *dead_future);
+   /**
+    * If provided, then @c success will only be called if the value type matches the given pointer.
+    *
+    * If provided and doesn't match, then @c error will be called with @c EINVAL. If no @c error,
+    * then it will be propagated to the next future in the chain.
+    */
+   const Eina_Value_Type *success_type;
+   /**
+    * This is used by Eo to cancel a pending futures in case
+    * an Eo object is deleted. It can be @c NULL.
+    */
+   Eina_Future **storage;
+} Efl_Future_Cb_Desc;
+
+/**
+ * Creates an Eina_Future_Desc for an EO object.
+ *
+ * This function creates an Eina_Future_Desc based on an Efl_Future_Cb_Desc.
+ * The main purpose of this function is create a "link" between the future
+ * and the object. In case the object is deleted before the future is resolved/rejected,
+ * the object destructor will cancel the future.
+ *
+ * @note In case context info are needed for the #Efl_Future_Desc callbacks efl_key_data_set()
+ * can be used.
+ *
+ * The example below shows a file download using an Eo object, if the download
+ * lasts more than 30 seconds the Eo object will be deleted, causing the
+ * future to also be deleted.
+ * Usually this would be done with an eina_future_race() of the download promise and a timeout promise,
+ * however we provide the following example to illustrate efl_key_data_set() usage.
+ *
+ * @code
+ *
+ * static Eina_Bool
+ * _timeout(void *data)
+ * {
+ *    Eo *downloader = data;
+ *    //In case the download is not completed yet.
+ *    //Delete the downloader (which in cancel the file download and the future)
+ *    efl_key_data_set(downloader, "timer", NULL);
+ *    efl_unref(downloader);
+ *    return EINA_FALSE;
+ * }
+ *
+ * static Eina_Value
+ * _file_ok(Eo *o EINA_UNUSED, const Eina_Value value)
+ * {
+ *    const char *data;
+ *    //There's no need to check the value type since EO infra already did that for us
+ *    eina_value_get(&value, &data);
+ *    //Deliver the data to the user
+ *    data_deliver(data);
+ *    return v;
+ * }
+ *
+ * static Eina_Value
+ * _file_err(Eo *o EINA_UNUSED, Eina_Error error)
+ * {
+ *    //In case the downloader is deleted before the future is resolved, the future will be canceled thus this callback will be called.
+ *    fprintf(stderr, "Could not download the file. Reason: %s\n", eina_error_msg_get(error));
+ *    return EINA_VALUE_EMPTY;
+ * }
+ *
+ * static void
+ * _downlader_free(Eo *o, const Eina_Future *dead_future EINA_UNUSED)
+ * {
+ *    Ecore_Timer *t = efl_key_data_get(o, "timer");
+ *    //The download was finished before the timer expired. Cancel it...
+ *    if (t)
+ *    {
+ *      ecore_timer_del(t);
+ *      efl_unref(o); //Delete the object
+ *    } //else - In this case the future was canceled due efl_unref() in _timeout - No need to call efl_unref()
+ * }
+ *
+ * void download_file(const char *file)
+ * {
+ *   //This could be rewritten using eina_future_race()
+ *   Eo *downloader = efl_add(MY_DOWNLOADER_CLASS, NULL);
+ *   Eina_Future *f = downloader_download_file(downloader, file);
+ *   timer = ecore_timer_add(30, _timeout, downloader);
+ *   //Usually this would be done with an eina_future_race() of the download promise and a timeout promise,
+ *   //however we provide the following example to illustrate efl_key_data_set() usage.
+ *   efl_key_data_set(downloader, "timer", timer);
+ *   eina_future_then_from_desc(f, efl_future_cb(.success = _file_ok, .error = _file_err, .success_type = EINA_VALUE_TYPE_STRING, .free = downloader_free));
+ * }
+ * @endcode
+ *
+ * @param obj The object to create the link.
+ * @param desc An Efl_Future_Cb_Desc
+ * @return An Eina_Future_Desc to be used by eina_future_then(), eina_future_chain() and friends.
+ * @see efl_future_chain_array()
+ * @see efl_future_cb()
+ * @see #Efl_Future_Cb_Desc
+ * @see efl_key_data_set()
+ */
+EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc desc) EINA_ARG_NONNULL(1);
+
+/**
+ * Syntax suger over efl_future_cb_from_desc()
+ *
+ * Usage:
+ * @code
+ * eina_future_then_from_desc(future, efl_future_cb(my_object, .succes = success, .success_type = EINA_VALUE_TYPE_INT));
+ * @endcode
+ *
+ * @see efl_future_cb_from_desc()
+ */
+#define efl_future_cb(_eo, ...) efl_future_cb_from_desc(_eo, (Efl_Future_Cb_Desc){__VA_ARGS__})
+
+/**
+ * Creates an Future chain based on #Efl_Future_Cb_Desc
+ *
+ * This function is an wrapper around efl_future_cb_from_desc() and eina_future_then_from_desc()
+ *
+ * For more information about them, check their documentations.
+ *
+ *
+ * @param obj An EO object to link against the future
+ * @param prev The previous future
+ * @param descs An array of Efl_Future_Cb_Desc
+ * @return An Eina_Future or @c NULL on error.
+ * @note If an error happens the whole future chain will be CANCELED, causing
+ * desc.error to be called passing `ENOMEM` or `EINVAL` and desc.free
+ * to free the @p obj if necessary.
+ *
+ * @see efl_future_chain()
+ * @see efl_future_cb()
+ * @see eina_future_then_from_desc()
+ * @see #Efl_Future_Cb_Desc
+ */
+EOAPI Eina_Future *efl_future_chain_array(Eo *obj, Eina_Future *prev, const Efl_Future_Cb_Desc descs[]) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Syntax suger over efl_future_chain_array()
+ *
+ * Usage:
+ * @code
+ * Eina_Future *f = efl_future_chain(my_object, prev_future, {}, {});
+ * @endcode
+ *
+ * @see efl_future_chain_array()
+ */
+#define efl_future_chain(_eo, _prev, ...) efl_future_chain_array(_eo, _prev, (Efl_Future_Cb_Desc []){__VA_ARGS__, {NULL, NULL, NULL, NULL, NULL}})
+
 /**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
  * @{
@@ -1805,6 +2038,8 @@ efl_replace(Eo **storage, Eo *new_obj)
    efl_unref(*storage);
    *storage = new_obj;
 }
+
+EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
 
 /**
  * @}
