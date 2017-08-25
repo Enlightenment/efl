@@ -2086,7 +2086,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
           }
 
-        ENFN->context_free(ENDT, ctx);
+        ENFN->context_free(ENC, ctx);
 
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
@@ -2096,7 +2096,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
      }
    else // not "has map"
      {
-        ctx = ENFN->context_dup(ENDT, context);
+        ctx = ENFN->context_dup(ENC, context);
         if (mapped)
           {
              RD(level, "  child of mapped obj\n");
@@ -2125,7 +2125,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                        if (mask->mask->surface)
                          {
-                            ENFN->context_clip_image_set(ENDT, ctx,
+                            ENFN->context_clip_image_set(ENC, ctx,
                                                          mask->mask->surface,
                                                          mask->cur->geometry.x + off_x,
                                                          mask->cur->geometry.y + off_y,
@@ -2140,7 +2140,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
 #ifdef REND_DBG
                   int _c, _cx, _cy, _cw, _ch;
-                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  _c = ENFN->context_clip_get(ENC, ctx, &_cx, &_cy, &_cw, &_ch);
                   RD(level, "  draw smart children(clip: [%d] %d,%d %dx%d)\n",
                      _c, _cx, _cy, _cw, _ch);
 #endif
@@ -2166,7 +2166,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
              else
                {
                   const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
-                  ENFN->context_clip_clip(ENDT, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
+                  ENFN->context_clip_clip(ENC, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
 
                   if (obj->cur->clipper && (mapped > 1))
                     {
@@ -2218,7 +2218,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                             if (mask->mask->surface)
                               {
-                                 ENFN->context_clip_image_set(ENDT, ctx,
+                                 ENFN->context_clip_image_set(ENC, ctx,
                                                               mask->mask->surface,
                                                               mask->cur->geometry.x + off_x,
                                                               mask->cur->geometry.y + off_y,
@@ -2229,7 +2229,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
 #ifdef REND_DBG
                   int _c, _cx, _cy, _cw, _ch;
-                  _c = ENFN->context_clip_get(ENDT, ctx, &_cx, &_cy, &_cw, &_ch);
+                  _c = ENFN->context_clip_get(ENC, ctx, &_cx, &_cy, &_cw, &_ch);
                   RD(level, "  render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
 
@@ -2258,14 +2258,14 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                           clipper->cur->cache.clip.y,
                                           clipper->cur->cache.clip.w,
                                           clipper->cur->cache.clip.h);
-                       ENFN->context_clip_set(ENDT, ctx, x + off_x, y + off_y, w, h);
+                       ENFN->context_clip_set(ENC, ctx, x + off_x, y + off_y, w, h);
                        if (!_is_obj_in_framespace(obj, evas))
                          {
                             _evas_render_framespace_context_clip_clip
                                   (evas, ctx, off_x - evas->framespace.x, off_y - evas->framespace.y);
                          }
 
-                       ENFN->context_clip_clip(ENDT, ctx, ecx, ecy, ecw, ech);
+                       ENFN->context_clip_clip(ENC, ctx, ecx, ecy, ecw, ech);
                     }
                   else
                     {
@@ -2281,7 +2281,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
 #ifdef REND_DBG
              int _c, _cx, _cy, _cw, _ch;
-             _c = ENFN->context_clip_get(ENDT, context, &_cx, &_cy, &_cw, &_ch);
+             _c = ENFN->context_clip_get(ENC, context, &_cx, &_cy, &_cw, &_ch);
              RD(level, "  draw normal obj: render(clip: [%d] %d,%d %dx%d)\n", _c, _cx, _cy, _cw, _ch);
 #endif
 
@@ -2292,7 +2292,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
         if (obj->changed_map) clean_them = EINA_TRUE;
 
 on_empty_clip:
-        ENFN->context_free(ENDT, ctx);
+        ENFN->context_free(ENC, ctx);
      }
 
 end:
