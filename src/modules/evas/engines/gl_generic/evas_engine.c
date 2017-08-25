@@ -137,6 +137,21 @@ _context_stored_reset(void *data EINA_UNUSED, void *surface)
 #define CONTEXT_STORE(data, surface, context) _context_store(data, surface, context)
 #define CONTEXT_STORED_RESET(data, surface) _context_stored_reset(data, surface)
 
+#ifdef GL_GLES
+static void *
+egl_display_get(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     if (output->software.ob)
+       return output->window_egl_display_get(output->software.ob);
+
+   return NULL;
+}
+#endif
+
 static void *
 eng_engine_new(void)
 {
@@ -796,7 +811,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
           }
         else if ((im->gc->shared->info.sec_image_map) && (secsym_eglMapImageSEC))
           {
-             void *disp = re->window_egl_display_get(re->software.ob);
+             void *disp = egl_display_get(engine);
              *image_data = im->tex->pt->dyn.data = secsym_eglMapImageSEC(disp,
                                                                          im->tex->pt->dyn.img,
                                                                          EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC,
@@ -1000,7 +1015,7 @@ eng_image_data_put(void *engine, void *image, DATA32 *image_data)
                         }
                       else if (im->gc->shared->info.sec_image_map)
                         {
-                           void *disp = disp = re->window_egl_display_get(re->software.ob);
+                           void *disp = disp = egl_display_get(engine);
                            secsym_eglUnmapImageSEC(disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
                         }
                    }
@@ -1869,7 +1884,7 @@ eng_gl_surface_query(void *eng, void *surface, int attr, void *value)
         Eina_Bool ok;
         void *disp;
 
-        disp = re->window_egl_display_get(re->software.ob);
+        disp = egl_display_get(engine);
         ok = eglQuerySurface(disp, sfc->pbuffer.native_surface, attr, &val);
         if (!ok) return EINA_FALSE;
         switch (attr)
