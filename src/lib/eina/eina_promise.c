@@ -3,12 +3,19 @@
 #endif
 
 #include "eina_private.h"
-#include "eina_promise.h"
 #include "eina_mempool.h"
-#include "eina_promise_private.h"
+#include "eina_coro.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <assert.h>
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
+
+#include "eina_promise.h"
+#include "eina_promise_private.h"
+#include "eina_value_util.h"
+
 
 #define EINA_FUTURE_DISPATCHED ((Eina_Future_Cb)(0x01))
 
@@ -1270,4 +1277,41 @@ eina_promise_race_array(Eina_Future *array[])
  err_ctx:
    _future2_array_cancel(array);
    return NULL;
+}
+
+EAPI Eina_Value
+eina_future_await(Eina_Future *f, Eina_Coro *coro, const Eina_Value_Type *success_type)
+{
+   Eina_Value value = EINA_VALUE_EMPTY;
+
+   if (!eina_coro_await(coro, f, &value))
+     goto log; // value will be some EINA_VALUE_TYPE_ERROR
+
+   if ((value.type != EINA_VALUE_TYPE_ERROR) &&
+       ((success_type) && (value.type != success_type)))
+     {
+        ERR("Future %p, expected success_type %p (%s), got %p (%s)",
+            f, success_type, success_type->name,
+            value.type, value.type ? value.type->name : "EMPTY");
+
+        eina_value_flush(&value);
+        value = eina_value_error_init(EINVAL);
+     }
+
+ log:
+   if (EINA_UNLIKELY(eina_log_domain_level_check(_promise2_log_dom,
+                                                 EINA_LOG_LEVEL_DBG)))
+     {
+        if (!value.type) DBG("Awaited future %p, got empty value", f);
+        else
+          {
+             char *str = eina_value_to_string(&value);
+             DBG("Awaited future %p - Value Type: %s Contents: %s (success_type: %s)",
+                 f, value.type->name, str,
+                 success_type ? success_type->name : "ALL");
+             free(str);
+          }
+     }
+
+   return value;
 }
