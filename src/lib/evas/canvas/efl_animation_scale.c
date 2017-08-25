@@ -200,6 +200,43 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj,
      *cy = pd->abs_pivot.cy;
 }
 
+EOLIAN static Efl_Animation_Object *
+_efl_animation_scale_efl_animation_object_create(Eo *eo_obj,
+                                                 Efl_Animation_Scale_Data *pd)
+{
+   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj, NULL);
+
+   Efl_Animation_Object_Scale *anim_obj
+      = efl_add(EFL_ANIMATION_OBJECT_SCALE_CLASS, NULL);
+
+   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
+   efl_animation_object_target_set(anim_obj, target);
+
+   Eina_Bool state_keep = efl_animation_final_state_keep_get(eo_obj);
+   efl_animation_object_final_state_keep_set(anim_obj, state_keep);
+
+   double duration = efl_animation_duration_get(eo_obj);
+   efl_animation_object_duration_set(anim_obj, duration);
+
+   if (pd->use_rel_pivot)
+     {
+        efl_animation_object_scale_set(anim_obj,
+                                       pd->from.scale_x, pd->from.scale_y,
+                                       pd->to.scale_x, pd->to.scale_y,
+                                       pd->rel_pivot.obj,
+                                       pd->rel_pivot.cx, pd->rel_pivot.cy);
+     }
+   else
+     {
+        efl_animation_object_scale_absolute_set(anim_obj,
+                                                pd->from.scale_x, pd->from.scale_y,
+                                                pd->to.scale_x, pd->to.scale_y,
+                                                pd->abs_pivot.cx, pd->abs_pivot.cy);
+     }
+
+   return anim_obj;
+}
+
 EOLIAN static Efl_Object *
 _efl_animation_scale_efl_object_constructor(Eo *eo_obj,
                                             Efl_Animation_Scale_Data *pd)

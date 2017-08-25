@@ -326,6 +326,9 @@ void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_rotate(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_rotate_relative(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_rotate_absolute(void *data, Evas_Object *obj, void *event_info);
+void test_efl_anim_scale(void *data, Evas_Object *obj, void *event_info);
+void test_efl_anim_scale_relative(void *data, Evas_Object *obj, void *event_info);
+void test_efl_anim_scale_absolute(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -799,6 +802,9 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Efl Animation Rotate", test_efl_anim_rotate);
    ADD_TEST(NULL, "Effects", "Efl Animation Rotate Relative", test_efl_anim_rotate_relative);
    ADD_TEST(NULL, "Effects", "Efl Animation Rotate Absolute", test_efl_anim_rotate_absolute);
+   ADD_TEST(NULL, "Effects", "Efl Animation Scale", test_efl_anim_scale);
+   ADD_TEST(NULL, "Effects", "Efl Animation Scale Relative", test_efl_anim_scale_relative);
+   ADD_TEST(NULL, "Effects", "Efl Animation Scale Absolute", test_efl_anim_scale_absolute);
 
    //------------------------------//
    ADD_TEST(NULL, "Edje External", "ExtButton", test_external_button);
