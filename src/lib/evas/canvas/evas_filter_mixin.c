@@ -412,7 +412,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
 
    // Proxies
-   evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
+   evas_filter_context_proxy_render_all(filter, eo_obj, output, EINA_FALSE);
 
    // Draw Context
    drawctx = ENFN->context_new(engine);

@@ -2309,7 +2309,7 @@ end:
  * TODO: 3d objects subrender should probably be merged here as well.
  */
 void
-evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_proxy,
+evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Evas_Object *eo_proxy,
                             Evas_Object_Protected_Data *proxy_obj,
                             Eina_Bool source_clip, Eina_Bool do_async)
 {
@@ -2363,7 +2363,7 @@ evas_render_proxy_subrender(Evas *eo_e, Evas_Object *eo_source, Evas_Object *eo_
         ctx = ENFN->context_new(ENC);
         ENFN->context_color_set(ENC, ctx, 0, 0,0, 0);
         ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_COPY);
-        ENFN->rectangle_draw(ENC, ENDT, ctx, proxy_write->surface, 0, 0, w, h, do_async);
+        ENFN->rectangle_draw(ENC, output, ctx, proxy_write->surface, 0, 0, w, h, do_async);
         ENFN->context_free(ENC, ctx);
         eina_evlog("-proxy_fill", eo_proxy, 0.0, NULL);
 

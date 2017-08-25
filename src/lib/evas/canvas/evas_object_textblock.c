@@ -13520,7 +13520,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ENFN->context_multiplier_set(engine, context,
                                      obj->cur->cache.clip.r, obj->cur->cache.clip.g,
                                      obj->cur->cache.clip.b, obj->cur->cache.clip.a);
-        evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
+        evas_filter_context_proxy_render_all(ctx, eo_obj, output, EINA_FALSE);
         evas_filter_context_buffers_allocate_all(ctx);
         evas_filter_target_set(ctx, context, surface, target.x, target.y, NULL);
         ti->gfx_filter->ctx = ctx;
