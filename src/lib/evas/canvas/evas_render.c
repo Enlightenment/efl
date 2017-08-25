@@ -288,7 +288,6 @@ static Eina_Bool
 _evas_render_had_map(Evas_Object_Protected_Data *obj)
 {
    return ((obj->map->prev.map) && (obj->map->prev.usemap));
-   //   return ((!obj->map->cur.map) && (obj->prev->usemap));
 }
 
 static Eina_Bool
@@ -514,7 +513,6 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           {
              if (obj->is_smart)
                {
-                  //                  obj->func->render_pre(eo_obj);
                }
              else if (evas_object_is_visible(eo_obj, obj) &&
                       ((obj->rect_del) ||
@@ -1674,9 +1672,6 @@ _mask_apply_inside_proxy(Evas_Proxy_Render_Data *proxy_render_data,
 
    // FIXME: Need to implement a logic similar to _proxy_context_clip
    return EINA_FALSE;
-
-   //if (mask == proxy_render_data->src_obj->cur->clipper) return EINA_TRUE;
-   //return _mask_apply_inside_proxy(proxy_render_data, mask->cur->clipper);
 }
 
 static void
@@ -2097,9 +2092,6 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
-        //        ENFN->image_free
-        //          (ENDT, obj->map->surface);
-        //        obj->map->surface = NULL;
      }
    else // not "has map"
      {
@@ -3390,9 +3382,6 @@ evas_render_updates_internal(Evas *eo_e,
        }
    eina_evlog("-render_phase6", eo_e, 0.0, NULL);
 
-   /* save this list */
-   /*    obscuring_objects_orig = obscuring_objects; */
-   /*    obscuring_objects = NULL; */
    /* phase 7. go thru each update rect and render objects in it*/
    eina_evlog("+render_phase7", eo_e, 0.0, NULL);
    if (do_draw)
@@ -3567,13 +3556,6 @@ evas_render_updates_internal(Evas *eo_e,
              obj->restack = EINA_FALSE;
              evas_object_change_reset(obj);
           }
-        /* moved to other pre-process phase 1
-           if (obj->delete_me == 2)
-           {
-           delete_objects = eina_list_append(delete_objects, obj);
-           }
-           else if (obj->delete_me != 0) obj->delete_me++;
-         */
      }
 
    for (i = 0; i < e->snapshot_objects.count; i++)
@@ -3648,15 +3630,6 @@ evas_render_updates_internal(Evas *eo_e,
         OBJS_ARRAY_CLEAN(&e->snapshot_objects);
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
-/* we should flush here and have a mempool system for this
-        eina_inarray_flush(&e->active_objects);
-        eina_array_flush(&e->render_objects);
-        eina_array_flush(&e->restack_objects);
-        eina_array_flush(&e->delete_objects);
-        eina_array_flush(&e->obscuring_objects);
-        eina_array_flush(&e->temporary_objects);
-        eina_array_flush(&e->clip_changes);
- */
         e->invalidate = EINA_TRUE;
      }
 
