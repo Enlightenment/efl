@@ -698,10 +698,10 @@ evas_filter_command_fill_add(Evas_Filter_Context *ctx, void *draw_context,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_FILL, buf, NULL, buf);
    if (!cmd) return NULL;
 
-   ENFN->context_color_get(ENDT, draw_context, &R, &G, &B, &A);
+   ENFN->context_color_get(ENC, draw_context, &R, &G, &B, &A);
    DRAW_COLOR_SET(R, G, B, A);
 
-   ENFN->context_clip_get(ENDT, draw_context, &cx, &cy, &cw, &ch);
+   ENFN->context_clip_get(ENC, draw_context, &cx, &cy, &cw, &ch);
    DRAW_CLIP_SET(cx, cy, cw, ch);
 
    XDBG("Add fill %d with color(%d,%d,%d,%d)", buf->id, R, G, B, A);
@@ -896,7 +896,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    out = _filter_buffer_get(ctx, outbuf);
    EINA_SAFETY_ON_FALSE_GOTO(out, fail);
 
-   ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
+   ENFN->context_color_get(ENC, drawctx, &R, &G, &B, &A);
    color = ARGB_JOIN(A, R, G, B);
    if (!color)
      {
@@ -914,7 +914,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (in == out) out->dirty = EINA_FALSE;
 
-   render_op = ENFN->context_render_op_get(ENDT, drawctx);
+   render_op = ENFN->context_render_op_get(ENC, drawctx);
    override = (render_op == EVAS_RENDER_COPY);
 
    switch (type)
@@ -960,12 +960,12 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                 else
                   type = EVAS_FILTER_BLUR_BOX;
 
-                if (dy) ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
+                if (dy) ENFN->context_color_set(ENC, drawctx, 255, 255, 255, 255);
                 cmd = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_out,
                                                    type, dx, 0, tmp_ox, tmp_oy, 0);
                 if (!cmd) goto fail;
                 cmd->blur.auto_count = EINA_TRUE;
-                if (dy) ENFN->context_color_set(ENDT, drawctx, R, G, B, A);
+                if (dy) ENFN->context_color_set(ENC, drawctx, R, G, B, A);
              }
 
            // Y box blur
@@ -977,11 +977,11 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                   type = EVAS_FILTER_BLUR_BOX;
 
                 if (dx && (inbuf == outbuf))
-                  ENFN->context_render_op_set(ENDT, drawctx, EVAS_RENDER_COPY);
+                  ENFN->context_render_op_set(ENC, drawctx, EVAS_RENDER_COPY);
                 cmd = evas_filter_command_blur_add(ctx, drawctx, tmp_in, outbuf,
                                                    type, 0, dy, ox, oy, 0);
                 if (dx && (inbuf == outbuf))
-                  ENFN->context_render_op_set(ENDT, drawctx, render_op);
+                  ENFN->context_render_op_set(ENC, drawctx, render_op);
                 if (!cmd) goto fail;
                 cmd->blur.auto_count = EINA_TRUE;
              }
@@ -1137,13 +1137,13 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         Evas_Filter_Command *copycmd;
 
         XDBG("Add extra copy %d -> %d: offset: %d,%d", copybuf->id, out->id, ox, oy);
-        ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
-        ENFN->context_render_op_set(ENDT, drawctx, EVAS_RENDER_COPY);
+        ENFN->context_color_set(ENC, drawctx, 255, 255, 255, 255);
+        ENFN->context_render_op_set(ENC, drawctx, EVAS_RENDER_COPY);
         copycmd = evas_filter_command_blend_add(ctx, drawctx,
                                                 copybuf->id, out->id, ox, oy,
                                                 EVAS_FILTER_FILL_MODE_NONE);
-        ENFN->context_color_set(ENDT, drawctx, R, G, B, A);
-        ENFN->context_render_op_set(ENDT, drawctx, render_op);
+        ENFN->context_color_set(ENC, drawctx, R, G, B, A);
+        ENFN->context_render_op_set(ENC, drawctx, render_op);
         if (!copycmd) goto fail;
         ox = oy = 0;
      }
@@ -1193,19 +1193,19 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_BLEND, in, NULL, out);
    if (!cmd) return NULL;
 
-   if (ENFN->context_render_op_get(ENDT, drawctx) == EVAS_RENDER_COPY)
+   if (ENFN->context_render_op_get(ENC, drawctx) == EVAS_RENDER_COPY)
      copy = EINA_TRUE;
    else
      copy = EINA_FALSE;
 
-   ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
+   ENFN->context_color_get(ENC, drawctx, &R, &G, &B, &A);
    DRAW_COLOR_SET(R, G, B, A);
    DRAW_FILL_SET(fillmode);
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.rop = copy ? EFL_GFX_RENDER_OP_COPY : EFL_GFX_RENDER_OP_BLEND;
    cmd->draw.clip_use =
-         ENFN->context_clip_get(ENDT, drawctx,
+         ENFN->context_clip_get(ENC, drawctx,
                                 &cmd->draw.clip.x, &cmd->draw.clip.y,
                                 &cmd->draw.clip.w, &cmd->draw.clip.h);
 
@@ -1392,7 +1392,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
    DRAW_FILL_SET(fillmode);
    cmd->displacement.flags = flags & EVAS_FILTER_DISPLACE_BITMASK;
    cmd->displacement.intensity = intensity;
-   cmd->draw.rop = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENDT, draw_context));
+   cmd->draw.rop = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENC, draw_context));
 
    if (tmp)
      {
@@ -1425,8 +1425,8 @@ evas_filter_command_mask_add(Evas_Filter_Context *ctx, void *draw_context,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
 
-   render_op = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENDT, draw_context));
-   ENFN->context_color_get(ENDT, draw_context, &R, &G, &B, &A);
+   render_op = _evas_to_gfx_render_op(ENFN->context_render_op_get(ENC, draw_context));
+   ENFN->context_color_get(ENC, draw_context, &R, &G, &B, &A);
 
    in = _filter_buffer_get(ctx, inbuf);
    out = _filter_buffer_get(ctx, outbuf);
@@ -1549,15 +1549,15 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
    ctx->target.x = x;
    ctx->target.y = y;
    ctx->target.clip_use = ENFN->context_clip_get
-         (ENDT, draw_context, &ctx->target.cx, &ctx->target.cy,
+         (ENC, draw_context, &ctx->target.cx, &ctx->target.cy,
           &ctx->target.cw, &ctx->target.ch);
    ctx->target.color_use = ENFN->context_multiplier_get
-         (ENDT, draw_context, &ctx->target.r, &ctx->target.g,
+         (ENC, draw_context, &ctx->target.r, &ctx->target.g,
           &ctx->target.b, &ctx->target.a);
    if (ctx->target.r == 255 && ctx->target.g == 255 &&
        ctx->target.b == 255 && ctx->target.a == 255)
      ctx->target.color_use = EINA_FALSE;
-   ctx->target.rop = ENFN->context_render_op_get(ENDT, draw_context);
+   ctx->target.rop = ENFN->context_render_op_get(ENC, draw_context);
 
    free(ctx->target.map);
    if (!map) ctx->target.map = NULL;
@@ -1569,7 +1569,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
      }
 
    ENFN->context_clip_image_get
-      (ENDT, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
+      (ENC, draw_context, &mask, &ctx->target.mask_x, &ctx->target.mask_y);
    if (ctx->target.mask)
      ctx->evas->engine.func->image_free(_evas_engine_context(ctx->evas), ctx->target.mask);
    ctx->target.mask = mask; // FIXME: why no ref???
