@@ -17,7 +17,7 @@ static Evas_Func func, pfunc;
 
 
 /* engine struct data */
-typedef Render_Engine_Software_Generic Render_Engine;
+typedef Render_Output_Software_Generic Render_Engine;
 
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);

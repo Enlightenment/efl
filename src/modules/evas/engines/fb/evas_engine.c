@@ -14,7 +14,7 @@ static Eina_List *_outbufs = NULL;
 static Evas_Func func, pfunc;
 
 /* engine struct data */
-typedef Render_Engine_Software_Generic Render_Engine;
+typedef Render_Output_Software_Generic Render_Engine;
 
 /* internal engine routines */
 static void *

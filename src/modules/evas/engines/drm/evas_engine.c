@@ -3,7 +3,7 @@
 
 typedef struct _Render_Engine
 {
-   Render_Engine_Software_Generic generic;
+   Render_Output_Software_Generic generic;
 
    Ecore_Drm2_Device *dev;
 } Render_Engine;
