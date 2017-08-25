@@ -27,9 +27,9 @@ typedef enum _Outbuf_Depth
 
 typedef enum
 {
-   MERGE_BOUNDING,
-   MERGE_FULL,
-   MERGE_SMART
+   MERGE_BOUNDING = 1,
+   MERGE_FULL = 2,
+   MERGE_SMART = 4
 } Render_Engine_Merge_Mode;
 
 typedef struct _Render_Output_Software_Generic Render_Output_Software_Generic;
@@ -150,9 +150,22 @@ evas_render_engine_software_generic_clean(Render_Output_Software_Generic *re)
 }
 
 static inline void
-evas_render_engine_software_generic_merge_mode_set(Render_Output_Software_Generic *re,
-                                                   Render_Engine_Merge_Mode merge_mode)
+evas_render_engine_software_generic_merge_mode_set(Render_Output_Software_Generic *re)
 {
+   Render_Engine_Merge_Mode merge_mode = MERGE_SMART;
+   const char *s;
+
+   s = getenv("EVAS_GL_PARTIAL_MERGE");
+   if (s)
+     {
+        if ((!strcmp(s, "bounding")) || (!strcmp(s, "b")))
+          merge_mode = MERGE_BOUNDING;
+        else if ((!strcmp(s, "full")) || (!strcmp(s, "f")))
+          merge_mode = MERGE_FULL;
+        else if ((!strcmp(s, "smart")) || (!strcmp(s, "s")))
+          merge_mode = MERGE_SMART;
+     }
+
    re->merge_mode = merge_mode;
 }
 
