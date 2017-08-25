@@ -5,8 +5,8 @@
 // Use a better formula than R+G+B for rgba to alpha conversion (RGB to YCbCr)
 #define RGBA2ALPHA_WEIGHTED 1
 
-typedef Eina_Bool (*draw_func) (void *data, void *context, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
-static Eina_Bool _mapped_blend(void *data, void *drawctx, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, Evas_Filter_Fill_Mode fillmode, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, draw_func image_draw);
+typedef Eina_Bool (*draw_func) (void *context, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
+static Eina_Bool _mapped_blend(void *drawctx, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, Evas_Filter_Fill_Mode fillmode, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, draw_func image_draw);
 
 struct Filter_Blend_Draw_Context
 {
@@ -17,7 +17,7 @@ struct Filter_Blend_Draw_Context
 #define LINELEN(stride, ptr) (stride / (sizeof(*ptr)))
 
 static Eina_Bool
-_image_draw_cpu_alpha_alpha(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_alpha_alpha(void *context,
                             const void *src_map, unsigned int src_stride,
                             void *dst_map, unsigned int dst_stride,
                             int src_x, int src_y, int src_w, int src_h,
@@ -52,7 +52,7 @@ _image_draw_cpu_alpha_alpha(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_alpha_rgba(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_alpha_rgba(void *context,
                            const void *src_map, unsigned int src_stride,
                            void *dst_map, unsigned int dst_stride,
                            int src_x, int src_y, int src_w, int src_h,
@@ -87,7 +87,7 @@ _image_draw_cpu_alpha_rgba(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_rgba_rgba(void *data EINA_UNUSED, void *context,
+_image_draw_cpu_rgba_rgba(void *context,
                           const void *src_map, unsigned int src_stride,
                           void *dst_map, unsigned int dst_stride,
                           int src_x, int src_y, int src_w, int src_h,
@@ -125,7 +125,7 @@ _image_draw_cpu_rgba_rgba(void *data EINA_UNUSED, void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_rgba_alpha(void *data EINA_UNUSED, void *context EINA_UNUSED,
+_image_draw_cpu_rgba_alpha(void *context EINA_UNUSED,
                            const void *src_map, unsigned int src_stride,
                            void *dst_map, unsigned int dst_stride,
                            int src_x, int src_y, int src_w, int src_h,
@@ -222,8 +222,8 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
    dc.rop = cmd->draw.rop;
    dc.color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
-   ret = _mapped_blend(CMD_ENDT, &dc, src, src_stride, dst, dst_stride, cmd->draw.fillmode,
-                        sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
+   ret = _mapped_blend(&dc, src, src_stride, dst, dst_stride, cmd->draw.fillmode,
+                       sx, sy, sw, sh, dx, dy, dw, dh, image_draw);
 
 end:
    if (src) ector_buffer_unmap(src_fb->buffer, src, src_len);
@@ -256,7 +256,7 @@ _filter_blend_cpu_rgba(Evas_Filter_Command *cmd)
 }
 
 static Eina_Bool
-_mapped_blend(void *data, void *drawctx,
+_mapped_blend(void *drawctx,
               const void *src_map, unsigned int src_stride,
               void *dst_map, unsigned int dst_stride,
               Evas_Filter_Fill_Mode fillmode,
@@ -277,7 +277,7 @@ _mapped_blend(void *data, void *drawctx,
         _clip_to_target(&sx, &sy, sw, sh, dx, dy, dw, dh, &dx, &dy, &rows, &cols);
         XDBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
              0, 0, sw, sh, dx, dy, cols, rows, sw, sh, dw, dh, dx, dy);
-        image_draw(data, drawctx,
+        image_draw(drawctx,
                    src_map, src_stride, dst_map, dst_stride,
                    sx, sy, cols, rows, // src
                    dx, dy, cols, rows, // dst
@@ -416,7 +416,7 @@ _mapped_blend(void *data, void *drawctx,
                   col, row, src_x, src_y, src_w, src_h,
                   dst_x, dst_y, dst_w, dst_h,
                   sw, sh, dw, dh);
-             image_draw(data, drawctx,
+             image_draw(drawctx,
                         src_map, src_stride, dst_map, dst_stride,
                         src_x, src_y, src_w, src_h,
                         dst_x, dst_y, dst_w, dst_h,
