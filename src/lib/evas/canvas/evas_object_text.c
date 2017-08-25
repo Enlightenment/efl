@@ -1833,8 +1833,8 @@ evas_object_text_render(Evas_Object *eo_obj,
                                   obj->cur->geometry.x + x + sl + ox + it->x, \
                                   obj->cur->geometry.y + y + st + oy,   \
                                   it->w, it->h);                        \
-      evas_font_draw_async_check(obj, output,                           \
-                                 engine,                                \
+      evas_font_draw_async_check(obj, engine,                           \
+                                 output,                                \
                                  context,                               \
                                  surface,                               \
                                  o->font,                               \
