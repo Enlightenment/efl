@@ -66,6 +66,7 @@
 #include "canvas/efl_animation_object_rotate.eo.h"
 #include "canvas/efl_animation_object_scale.eo.h"
 #include "canvas/efl_animation_object_translate.eo.h"
+#include "canvas/efl_animation_object_group.eo.h"
 
 #endif /* EFL_EO_API_SUPPORT */
 

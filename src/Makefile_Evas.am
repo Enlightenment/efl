@@ -55,6 +55,7 @@ evas_eolian_pub_files = \
 	lib/evas/canvas/efl_animation_object_rotate.eo \
 	lib/evas/canvas/efl_animation_object_scale.eo \
 	lib/evas/canvas/efl_animation_object_translate.eo \
+	lib/evas/canvas/efl_animation_object_group.eo \
 	$(NULL)
 
 evas_eolian_legacy_files = \
@@ -143,7 +144,8 @@ lib/evas/canvas/efl_animation_object_private.h \
 lib/evas/canvas/efl_animation_object_alpha_private.h \
 lib/evas/canvas/efl_animation_object_rotate_private.h \
 lib/evas/canvas/efl_animation_object_scale_private.h \
-lib/evas/canvas/efl_animation_object_translate_private.h
+lib/evas/canvas/efl_animation_object_translate_private.h \
+lib/evas/canvas/efl_animation_object_group_private.h
 
 # Linebreak
 
@@ -240,6 +242,7 @@ lib/evas/canvas/efl_animation_object_alpha.c \
 lib/evas/canvas/efl_animation_object_rotate.c \
 lib/evas/canvas/efl_animation_object_scale.c \
 lib/evas/canvas/efl_animation_object_translate.c \
+lib/evas/canvas/efl_animation_object_group.c \
 $(NULL)
 
 EXTRA_DIST2 += \

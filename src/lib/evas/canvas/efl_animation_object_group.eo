@@ -1,0 +1,13 @@
+import efl_animation_types;
+
+abstract Efl.Animation.Object.Group (Efl.Animation.Object)
+{
+   [[Efl group animation object abstract class]]
+   data: Efl_Animation_Object_Group_Data;
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Animation.Object.target_state_save;
+      Efl.Animation.Object.target_state_reset;
+   }
+}
