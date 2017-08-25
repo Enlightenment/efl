@@ -97,7 +97,6 @@ rend_dbg(const char *txt)
 
 /* save typing */
 #undef ENFN
-#undef ENDT
 #undef ENC
 #define ENFN evas->engine.func
 #define ENC _evas_engine_context(evas)
