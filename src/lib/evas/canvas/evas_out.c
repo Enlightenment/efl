@@ -74,8 +74,6 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
 
         if (e->engine.func)
           {
-             e->engine.func->ector_destroy(_evas_engine_context(e),
-                                           output->ector);
              e->engine.func->output_free(_evas_engine_context(e),
                                          output->output);
              free(output->info);

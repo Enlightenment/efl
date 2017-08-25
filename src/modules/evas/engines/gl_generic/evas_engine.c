@@ -2377,7 +2377,7 @@ static Eina_Bool use_cairo = EINA_FALSE;
 static Eina_Bool use_gl = EINA_FALSE;
 
 static Ector_Surface *
-eng_ector_create(void *engine EINA_UNUSED, void *output EINA_UNUSED)
+eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
    const char *ector_backend;

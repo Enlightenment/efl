@@ -378,6 +378,8 @@ next_zombie:
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
+   /* Ector surface may require an existing output to finish its job */
+   e->engine.func->ector_destroy(_evas_engine_context(e), e->ector);
    /* cleanup engine backend */
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
    e->engine.func->engine_free(e->backend);
@@ -842,19 +844,11 @@ _evas_canvas_efl_loop_user_loop_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e EI
 }
 
 Ector_Surface *
-evas_ector_get(Evas_Public_Data *e, void *output)
+evas_ector_get(Evas_Public_Data *e)
 {
-   Efl_Canvas_Output *r;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(e->outputs, l, r)
-     if (r->output == output)
-       {
-          if (!r->ector)
-            r->ector = e->engine.func->ector_create(_evas_engine_context(e), output);
-          return r->ector;
-       }
-   return NULL;
+   if (!e->ector)
+     e->ector = e->engine.func->ector_create(_evas_engine_context(e));
+   return e->ector;
 }
 
 EAPI Evas_BiDi_Direction
