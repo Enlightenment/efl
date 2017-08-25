@@ -3917,17 +3917,6 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 }
 
 static void
-eng_output_tile_size_set(void *engine EINA_UNUSED, void *data, int w, int h)
-{
-   Render_Output_Software_Generic *re;
-
-   re = (Render_Output_Software_Generic *)data;
-   re->tile.w = w;
-   re->tile.h = h;
-   evas_common_tilebuf_set_tile_size(re->tb, w, h);
-}
-
-static void
 eng_output_redraws_rect_add(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
 {
    Render_Output_Software_Generic *re;
@@ -4676,7 +4665,6 @@ static Evas_Func func =
      NULL, // eng_update
      NULL, // eng_output_free
      eng_output_resize,
-     eng_output_tile_size_set,
      eng_output_redraws_rect_add,
      eng_output_redraws_rect_del,
      eng_output_redraws_clear,
