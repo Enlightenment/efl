@@ -125,44 +125,6 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
         if (o->engine_data) ENFN->image_prepare(ENC, o->engine_data);
      }
 #endif
-#if 0
-   // is it visible? ... rgba 0 0 0 0? not mapped and in viewport?
-   if (
-     ((o->cur->border.l != 0) || (o->cur->border.r != 0) ||
-      (o->cur->border.t != 0) || (o->cur->border.b != 0)) &&
-     ((obj->cur->geometry.w < 256) && (obj->cur->geometry.h < 256))
-     )
-     {
-        void *ctx, *prep = NULL;
-
-        if (!o->engine_data_prep)
-          {
-             prep = ENFN->image_surface_noscale_new
-                 (ENC, obj->cur->geometry.w, obj->cur->geometry.h,
-                 o->cur->has_alpha);
-             ctx = ENFN->context_new(ENC);
-             ENFN->context_clip_set(ENC, ctx, 0, 0,
-                                    obj->cur->geometry.w,
-                                    obj->cur->geometry.h);
-             if (o->cur->has_alpha)
-               {
-                  ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_COPY);
-                  ENFN->context_color_set(ENC, ctx, 0, 0, 0, 0);
-                  ENFN->rectangle_draw(ENC, ENDT, ctx, prep, 0, 0,
-                                       obj->cur->geometry.w,
-                                       obj->cur->geometry.h, do_async);
-               }
-             ENFN->context_render_op_set(ENC, ctx, EVAS_RENDER_BLEND);
-             evas_object_image_render(eo_obj, obj, obj->private_data, ENDT,
-                                      ctx, prep,
-                                      -obj->cur->geometry.x,
-                                      -obj->cur->geometry.y,
-                                      do_async);
-             ENFN->context_free(ENC, ctx);
-             o->engine_data_prep = prep;
-          }
-     }
-#endif
    // XXX: if image is a proxy, PREPEND to prerender list in evas canvas
 }
 
