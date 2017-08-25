@@ -871,7 +871,7 @@ struct _Evas_Public_Data
    struct {
       int            w, h;
       DATA32         render_method;
-      unsigned char  changed : 1;
+      Eina_Bool      legacy : 1;
    } output;
 
    struct
@@ -1341,6 +1341,8 @@ struct _Efl_Canvas_Output
    Eina_Rectangle geometry;
 
    int info_magic;
+
+   Eina_Bool changed : 1;
 };
 
 struct _Evas_Object_Func

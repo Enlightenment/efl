@@ -461,7 +461,7 @@ next_zombie:
 EAPI Evas_Engine_Info *
 evas_engine_info_get(const Evas *obj)
 {
-   const Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e = efl_data_scope_get(obj, EVAS_CANVAS_CLASS);
    Efl_Canvas_Output *output;
 
    output = eina_list_data_get(e->outputs);
@@ -470,6 +470,7 @@ evas_engine_info_get(const Evas *obj)
         output = efl_canvas_output_add((Evas*) obj);
      }
    if (!output) return NULL;
+   e->output.legacy = EINA_TRUE;
 
    return efl_canvas_output_engine_info_get(output);
 }
@@ -483,6 +484,8 @@ evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
    output = eina_list_data_get(e->outputs);
    if (!output) return EINA_FALSE;
    if (!info) return EINA_FALSE;
+   efl_canvas_output_view_set(output, 0, 0,
+                              e->output.w, e->output.h);
    return efl_canvas_output_engine_info_set(output, info);
 }
 
@@ -1106,9 +1109,17 @@ evas_output_size_set(Evas *eo_e, int w, int h)
    evas_canvas_async_block(e);
    e->output.w = w;
    e->output.h = h;
-   e->output.changed = 1;
    e->output_validity++;
    e->changed = 1;
+
+   if (e->output.legacy)
+     {
+        Efl_Canvas_Output *output;
+
+        output = eina_list_data_get(e->outputs);
+        efl_canvas_output_view_set(output, 0, 0, w, h);
+     }
+
    evas_render_invalidate(eo_e);
 }
 
