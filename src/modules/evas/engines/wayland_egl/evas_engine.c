@@ -505,9 +505,9 @@ static const EVGL_Interface evgl_funcs =
 static void
 eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Wayland *info = info;
+   Evas_Engine_Info_Wayland *in = info;
 
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
+   in->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static Render_Output_Swap_Mode
