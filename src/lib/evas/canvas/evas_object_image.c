@@ -1604,7 +1604,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                        if (ENFN->gl_direct_override_get)
                          ENFN->gl_direct_override_get(engine, &direct_override, &direct_force_off);
                        if (ENFN->gl_surface_direct_renderable_get)
-                         direct_renderable = ENFN->gl_surface_direct_renderable_get(engine, ns, &direct_override, surface);
+                         direct_renderable = ENFN->gl_surface_direct_renderable_get(engine, output, ns, &direct_override, surface);
 
                        if (((direct_override) ||
                             ((direct_renderable) &&
@@ -1677,7 +1677,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              if (ENFN->gl_direct_override_get)
                ENFN->gl_direct_override_get(engine, &direct_override, &direct_force_off);
              if (ENFN->gl_surface_direct_renderable_get)
-               ENFN->gl_surface_direct_renderable_get(engine, ns, &direct_override, surface);
+               ENFN->gl_surface_direct_renderable_get(engine, output, ns, &direct_override, surface);
 
              if (direct_override && !direct_force_off)
                {
