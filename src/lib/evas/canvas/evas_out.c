@@ -38,11 +38,22 @@ efl_canvas_output_add(Evas *canvas)
 
    // The engine is already initialized, use it
    // right away to setup the info structure
-   if (e->engine.func->output_info)
+   if (e->engine.func->info_size)
      {
-        r->info = e->engine.func->output_info();
+        r->info = calloc(1, e->engine.func->info_size);
+        if (!r->info) goto on_error;
+        r->info->magic = rand();
+        r->info_magic = r->info->magic;
+
+        if (e->engine.func->output_info_setup)
+          e->engine.func->output_info_setup(r->info);
+     }
+   else
+     {
+        CRI("Engine not up to date no info size provided.");
      }
 
+ on_error:
    return r;
 }
 
@@ -62,7 +73,8 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
                                            output->ector);
              e->engine.func->output_free(_evas_engine_context(e),
                                          output->output);
-             e->engine.func->output_info_free(output->info);
+             free(output->info);
+             output->info = NULL;
           }
         e->outputs = eina_list_remove(e->outputs, output);
 

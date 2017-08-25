@@ -1334,7 +1334,8 @@ struct _Efl_Canvas_Output
 
    Ector_Surface *ector;
 
-   void *info, *output;
+   Evas_Engine_Info *info;
+   void *output;
    Evas_Coord x, y, w, h;
 
    int info_magic;
@@ -1393,10 +1394,9 @@ struct _Evas_Object_Func
 
 struct _Evas_Func
 {
-   void *(*output_info)                           (void);
-   void (*output_info_free)                       (void *info);
-   void *(*output_setup)                          (void *engine, void *info, unsigned int w, unsigned int h);
-   int  (*output_update)                          (void *engine, void *data, void *info, unsigned int w, unsigned int h);
+   void (*output_info_setup)               (void *info);
+   void *(*output_setup)                   (void *engine, void *info, unsigned int w, unsigned int h);
+   int  (*output_update)                   (void *engine, void *data, void *info, unsigned int w, unsigned int h);
 
    void (*output_free)                     (void *engine, void *data);
    void (*output_resize)                   (void *engine, void *data, int w, int h);
@@ -1616,6 +1616,8 @@ struct _Evas_Func
 
    Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
    Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
+
+   unsigned int info_size;
 };
 
 struct _Evas_Image_Save_Func

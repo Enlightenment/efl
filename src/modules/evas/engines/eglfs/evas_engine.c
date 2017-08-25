@@ -670,28 +670,12 @@ _native_cb_free(void *image)
 }
 
 /* engine specific override functions */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_Eglfs *info;
-
-   /* try to allocate space for our engine info */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Eglfs))))
-     return NULL;
-
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   return info;
-}
-
 static void
-eng_output_info_free(void *in)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Eglfs *info;
+   Evas_Engine_Info_Eglfs *einfo = info;
 
-   if ((info = (Evas_Engine_Info_Eglfs *)in))
-     free(info);
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static void *
@@ -1128,13 +1112,14 @@ module_open(Evas_Module *em)
 
    /* now to override methods */
    EVAS_API_OVERRIDE(output_info, &func, eng_);
-   EVAS_API_OVERRIDE(output_info_free, &func, eng_);
    EVAS_API_OVERRIDE(output_setup, &func, eng_);
    EVAS_API_OVERRIDE(output_update, &func, eng_);
    EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
+
+   func.info_size = sizeof (Evas_Engine_Info_Eglfs);
 
    setenv("EGL_PLATFORM", "fbdev", 1);
 

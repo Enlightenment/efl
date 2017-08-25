@@ -102,35 +102,14 @@ _symbols(void)
 }
 
 /* ENGINE API FUNCTIONS WE PROVIDE */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_Wayland *einfo;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* try to allocate space for new engine info */
-   if (!(einfo = calloc(1, sizeof(Evas_Engine_Info_Wayland))))
-     return NULL;
-
-   /* fill in engine info */
-   einfo->magic.magic = rand();
-   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   /* return allocated engine info */
-   return einfo;
-}
-
 static void
-eng_output_info_free(void *info)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Wayland *einfo;
+   Evas_Engine_Info_Wayland *einfo = info;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to free previously allocated engine info */
-   if ((einfo = (Evas_Engine_Info_Wayland *)info))
-     free(einfo);
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static void *
@@ -360,8 +339,7 @@ module_open(Evas_Module *em)
 
    /* override engine specific functions */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(output_info);
-   ORD(output_info_free);
+   ORD(output_info_setup);
    ORD(output_setup);
    ORD(output_update);
    ORD(output_free);
@@ -370,6 +348,8 @@ module_open(Evas_Module *em)
    ORD(image_native_get);
    ORD(image_native_init);
    ORD(image_native_shutdown);
+
+   func.info_size = sizeof (Evas_Engine_Info_Wayland);
 
    _symbols();
    /* advertise our own engine functions */

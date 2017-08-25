@@ -98,30 +98,12 @@ _output_setup(int w, int h)
 }
 
 /* engine api this module provides */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_PSL1GHT *info;
-
-   printf ("eng_info called\n");
-   info = calloc(1, sizeof(Evas_Engine_Info_PSL1GHT));
-   if (!info)
-     return NULL;
-
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   return info;
-}
-
 static void
-eng_output_info_free(void *info)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_PSL1GHT *in;
+   Evas_Engine_Info_PSL1GHT *einfo = info;
 
-   printf ("eng_info_free called\n");
-   in = (Evas_Engine_Info_PSL1GHT *)info;
-   free(in);
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static void *
@@ -420,8 +402,7 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(output_info);
-   ORD(output_info_free);
+   ORD(output_info_setup);
    ORD(output_setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
@@ -434,6 +415,8 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
    ORD(output_idle_flush);
+
+   func.info_size = sizeof (Evas_Engine_Info_PSL1GHT);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

@@ -4659,8 +4659,7 @@ eng_gfx_filter_process(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
 
 static Evas_Func func =
 {
-     NULL, // eng_info
-     NULL, // eng_info_free
+     NULL, // eng_info_setup
      NULL, // eng_setup
      NULL, // eng_update
      NULL, // eng_output_free
@@ -4852,8 +4851,9 @@ static Evas_Func func =
      eng_ector_new,
      eng_ector_free,
      eng_gfx_filter_supports,
-     eng_gfx_filter_process
+     eng_gfx_filter_process,
    /* FUTURE software generic calls go here */
+     0 // sizeof (Info)
 };
 
 
