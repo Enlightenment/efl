@@ -900,7 +900,7 @@ eng_output_info_setup(void *info)
 }
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Drm *info = in;
    Render_Engine *re = NULL;
@@ -933,7 +933,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
         return NULL;
      }
 
-   if (!evas_render_engine_gl_generic_init(&re->generic, ob,
+   if (!evas_render_engine_gl_generic_init(engine, &re->generic, ob,
                                            evas_outbuf_buffer_state_get,
                                            evas_outbuf_rot_get,
                                            evas_outbuf_reconfigure,
@@ -1028,7 +1028,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
@@ -1043,7 +1043,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
 
         info = eng_get_ob(re)->info;
         /* NB: evas_render_engine_software_generic_clean() frees ob */
-        evas_render_engine_software_generic_clean(&re->generic.software);
+        evas_render_engine_software_generic_clean(engine, &re->generic.software);
 
         eng_gbm_shutdown(info);
         gl_wins--;

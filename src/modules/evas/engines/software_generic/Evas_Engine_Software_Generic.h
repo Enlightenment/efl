@@ -32,6 +32,7 @@ typedef enum
    MERGE_SMART = 4
 } Render_Output_Merge_Mode;
 
+typedef struct _Render_Engine_Software_Generic Render_Engine_Software_Generic;
 typedef struct _Render_Output_Software_Generic Render_Output_Software_Generic;
 typedef struct _Outbuf Outbuf;
 
@@ -79,8 +80,19 @@ struct _Render_Output_Software_Generic
    unsigned char tile_strict : 1;
 };
 
+struct _Render_Engine_Software_Generic
+{
+   Eina_List *outputs;
+
+   struct {
+      int w, h;
+      Eina_Bool strict;
+   } tile;
+};
+
 static inline Eina_Bool
-evas_render_engine_software_generic_init(Render_Output_Software_Generic *re,
+evas_render_engine_software_generic_init(Render_Engine_Software_Generic *engine,
+                                         Render_Output_Software_Generic *re,
                                          Outbuf *ob,
                                          Outbuf_Swap_Mode_Get outbuf_swap_mode_get,
                                          Outbuf_Get_Rot outbuf_get_rot,
@@ -131,11 +143,14 @@ evas_render_engine_software_generic_init(Render_Output_Software_Generic *re,
    /* in preliminary tests 16x16 gave highest framerates */
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
+   engine->outputs = eina_list_append(engine->outputs, re);
+
    return EINA_TRUE;
 }
 
 static inline void
-evas_render_engine_software_generic_clean(Render_Output_Software_Generic *re)
+evas_render_engine_software_generic_clean(Render_Engine_Software_Generic *engine,
+                                          Render_Output_Software_Generic *re)
 {
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->ob) re->outbuf_free(re->ob);
@@ -145,6 +160,8 @@ evas_render_engine_software_generic_clean(Render_Output_Software_Generic *re)
    if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
    if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
    if (re->rects_prev[3]) evas_common_tilebuf_free_render_rects(re->rects_prev[3]);
+
+   engine->outputs = eina_list_remove(engine->outputs, re);
 
    memset(re, 0, sizeof (Render_Output_Software_Generic));
 }

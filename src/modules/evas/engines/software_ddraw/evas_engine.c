@@ -21,7 +21,7 @@ int _evas_log_dom_module = -1;
 /* engine api this module provides */
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_DDraw *info = in;
    Render_Engine *re;
@@ -40,7 +40,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
                                          info->info.fullscreen);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
+   if (!evas_render_engine_software_generic_init(engine, &re->generic, ob, NULL,
                                                  evas_software_ddraw_outbuf_rot_get,
                                                  evas_software_ddraw_outbuf_reconfigure,
                                                  NULL,
@@ -72,14 +72,14 @@ eng_output_info_setup(void *info)
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
    if (!data) return;
 
    re = (Render_Engine *)data;
-   evas_render_engine_software_generic_clean(&re->generic);
+   evas_render_engine_software_generic_clean(engine, &re->generic);
    free(re);
 }
 

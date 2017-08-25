@@ -28,7 +28,7 @@ struct _Render_Engine
 };
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re;
@@ -42,7 +42,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned 
    ob = _evas_outbuf_setup(w, h, einfo);
    if (!ob) goto err;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob,
+   if (!evas_render_engine_software_generic_init(engine, &re->generic, ob,
                                                  _evas_outbuf_swap_mode_get,
                                                  _evas_outbuf_rotation_get,
                                                  NULL,
@@ -145,13 +145,13 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
    if ((re = (Render_Engine *)data))
      {
-        evas_render_engine_software_generic_clean(&re->generic);
+        evas_render_engine_software_generic_clean(engine, &re->generic);
         free(re);
      }
 }

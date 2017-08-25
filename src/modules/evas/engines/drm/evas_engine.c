@@ -19,7 +19,7 @@ static Evas_Func func, pfunc;
 int _evas_engine_drm_log_dom;
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Drm *info = einfo;
    Render_Engine *re;
@@ -33,7 +33,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned
 
    re->dev = info->info.dev;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob,
+   if (!evas_render_engine_software_generic_init(engine, &re->generic, ob,
                                                  _outbuf_state_get,
                                                  _outbuf_rotation_get,
                                                  _outbuf_reconfigure,
@@ -52,7 +52,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *einfo, unsigned int w, unsigned
    return re;
 
 init_err:
-   evas_render_engine_software_generic_clean(&re->generic);
+   evas_render_engine_software_generic_clean(engine, &re->generic);
 err:
    free(re);
    return NULL;
@@ -82,11 +82,11 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *einfo, unsigned in
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re = data;
 
-   evas_render_engine_software_generic_clean(&re->generic);
+   evas_render_engine_software_generic_clean(engine, &re->generic);
    free(re);
 }
 

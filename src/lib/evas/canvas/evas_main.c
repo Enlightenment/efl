@@ -378,7 +378,9 @@ next_zombie:
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
 
+   /* cleanup engine backend */
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
+   e->engine.func->engine_free(e->backend);
 
    if (e->common_init)
      {
@@ -1037,6 +1039,10 @@ evas_output_method_set(Evas *eo_e, int render_method)
    if (e->engine.module) evas_module_unref(e->engine.module);
    e->engine.module = em;
    evas_module_ref(em);
+
+   /* Initialize the engine first */
+   e->backend = e->engine.func->engine_new();
+
    /* get the engine info struct */
    if (e->engine.func->info_size)
      {

@@ -17,7 +17,7 @@ struct _Render_Engine
 
 /* engine api this module provides */
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Software_Gdi *info = in;
    Render_Engine *re;
@@ -44,7 +44,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
                                        0, 0);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
+   if (!evas_render_engine_software_generic_init(engine, &re->generic, ob, NULL,
                                                  evas_software_gdi_outbuf_rot_get,
                                                  evas_software_gdi_outbuf_reconfigure,
                                                  NULL,
@@ -97,14 +97,14 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
    if (!data) return;
 
    re = (Render_Engine *)data;
-   evas_render_engine_software_generic_clean(&re->generic);
+   evas_render_engine_software_generic_clean(engine, &re->generic);
    free(re);
 }
 

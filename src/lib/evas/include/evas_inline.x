@@ -359,13 +359,7 @@ _evas_default_output_get(Evas_Public_Data *e)
 static inline void *
 _evas_engine_context(Evas_Public_Data *e)
 {
-   // Need to split between engine context
-   // and output context, use one for now.
-   Efl_Canvas_Output *output;
-
-   if (!e->outputs) return NULL;
-   output = eina_list_data_get(e->outputs);
-   return output->output;
+   return e->backend;
 }
 
 #define _EVAS_COLOR_CLAMP(x, y) do { \

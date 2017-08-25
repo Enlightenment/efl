@@ -3897,6 +3897,29 @@ eng_gl_rotation_angle_get(void *data EINA_UNUSED)
    initialized by evas_render_engine_software_generic_init().
  */
 
+static void *
+eng_engine_new(void)
+{
+   Render_Engine_Software_Generic *engine;
+
+   engine = calloc(1, sizeof (Render_Engine_Software_Generic));
+   if (!engine) return NULL;
+
+   return engine;
+}
+
+static void
+eng_engine_free(void *engine)
+{
+   Render_Engine_Software_Generic *e = engine;
+   Render_Output_Software_Generic *output;
+
+   EINA_LIST_FREE(e->outputs, output)
+     ERR("Output %p not properly cleaned before engine destruction.", output);
+
+   free(e);
+}
+
 static void
 eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 {
@@ -3917,21 +3940,25 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 }
 
 static void
-eng_output_redraws_rect_add(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_add(void *engine, int x, int y, int w, int h)
 {
+   Render_Engine_Software_Generic *backend = engine;
    Render_Output_Software_Generic *re;
+   Eina_List *l;
 
-   re = (Render_Output_Software_Generic *)data;
-   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
+   EINA_LIST_FOREACH(backend->outputs, l, re)
+     evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 static void
-eng_output_redraws_rect_del(void *engine EINA_UNUSED, void *data, int x, int y, int w, int h)
+eng_output_redraws_rect_del(void *engine, int x, int y, int w, int h)
 {
+   Render_Engine_Software_Generic *backend = engine;
    Render_Output_Software_Generic *re;
+   Eina_List *l;
 
-   re = (Render_Output_Software_Generic *)data;
-   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
+   EINA_LIST_FOREACH(backend->outputs, l, re)
+     evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void
@@ -4659,6 +4686,8 @@ eng_gfx_filter_process(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
 
 static Evas_Func func =
 {
+     eng_engine_new,
+     eng_engine_free,
      NULL, // eng_info_setup
      NULL, // eng_setup
      NULL, // eng_update

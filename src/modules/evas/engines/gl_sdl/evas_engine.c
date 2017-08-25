@@ -267,7 +267,7 @@ static const EVGL_Interface evgl_funcs =
 };
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Render_Engine *re = NULL;
    Outbuf *ob = NULL;
@@ -282,7 +282,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
    re = calloc(1, sizeof (Render_Engine));
    if (!re) goto on_error;
 
-   if (!evas_render_engine_gl_generic_init(&re->generic, ob, NULL,
+   if (!evas_render_engine_gl_generic_init(engine, &re->generic, ob, NULL,
                                            _outbuf_get_rot,
                                            _outbuf_reconfigure,
                                            _outbuf_region_first_rect,
@@ -313,11 +313,11 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re = data;
 
-   evas_render_engine_software_generic_clean(&re->generic.software);
+   evas_render_engine_software_generic_clean(engine, &re->generic.software);
 }
 
 static void

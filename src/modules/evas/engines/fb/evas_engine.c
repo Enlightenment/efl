@@ -18,7 +18,7 @@ typedef Render_Output_Software_Generic Render_Engine;
 
 /* engine api this module provides */
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_FB *info = in;
    Render_Engine *re;
@@ -38,7 +38,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
                                    info->info.refresh);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(re, ob, NULL,
+   if (!evas_render_engine_software_generic_init(engine, re, ob, NULL,
                                                  evas_fb_outbuf_fb_get_rot,
                                                  evas_fb_outbuf_fb_reconfigure,
                                                  NULL,
@@ -74,7 +74,7 @@ eng_output_info_setup(void *info)
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
@@ -82,7 +82,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
    if (re)
      {
         _outbufs = eina_list_remove(_outbufs, re->ob);
-        evas_render_engine_software_generic_clean(re);
+        evas_render_engine_software_generic_clean(engine, re);
         free(re);
      }
 }

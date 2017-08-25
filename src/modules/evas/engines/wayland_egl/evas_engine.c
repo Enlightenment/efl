@@ -546,7 +546,7 @@ _eng_swap_mode_get(void)
 }
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Wayland *inf = info;
    Render_Engine *re;
@@ -576,7 +576,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *info, unsigned int w, unsigned 
    ob = eng_window_new(inf, w, h, swap_mode);
    if (!ob) goto ob_err;
 
-   if (!evas_render_engine_gl_generic_init(&re->generic, ob,
+   if (!evas_render_engine_gl_generic_init(engine, &re->generic, ob,
                                            eng_outbuf_swap_mode_get,
                                            eng_outbuf_rotation_get,
                                            eng_outbuf_reconfigure,
@@ -719,7 +719,7 @@ eng_canvas_alpha_get(void *engine)
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
@@ -729,7 +729,7 @@ eng_output_free(void *engine EINA_UNUSED, void *data)
 
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
-        evas_render_engine_software_generic_clean(&re->generic.software);
+        evas_render_engine_software_generic_clean(engine, &re->generic.software);
 
         gl_wins--;
 

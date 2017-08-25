@@ -24,7 +24,7 @@ static void eng_output_free(void *engine EINA_UNUSED, void *data);
 
 /* engine api this module provides */
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_Buffer *info = in;
    Outbuf *ob;
@@ -74,7 +74,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
                                         info->info.switch_data);
    if (!ob) goto on_error;
 
-   if (!evas_render_engine_software_generic_init(re, ob,
+   if (!evas_render_engine_software_generic_init(engine, re, ob,
                                                  evas_buffer_outbuf_buf_swap_mode_get,
                                                  evas_buffer_outbuf_buf_rot_get,
                                                  evas_buffer_outbuf_reconfigure,
@@ -106,13 +106,13 @@ eng_output_info_setup(void *info)
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *re;
 
    if ((re = (Render_Engine *)data))
      {
-        evas_render_engine_software_generic_clean(re);
+        evas_render_engine_software_generic_clean(engine, re);
         free(re);
      }
 }

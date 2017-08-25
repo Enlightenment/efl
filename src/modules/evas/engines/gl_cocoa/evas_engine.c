@@ -126,7 +126,7 @@ static const EVGL_Interface evgl_funcs =
 };
 
 static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
+eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
    Evas_Engine_Info_GL_Cocoa *const info = in;
    Render_Engine *re;
@@ -157,7 +157,7 @@ eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned in
 
    info->view = ob->ns_gl_view;
 
-   chk = evas_render_engine_gl_generic_init(&re->generic, ob,
+   chk = evas_render_engine_gl_generic_init(engine, &re->generic, ob,
                                             evas_outbuf_buffer_state_get,
                                             evas_outbuf_rot_get,
                                             evas_outbuf_reconfigure,

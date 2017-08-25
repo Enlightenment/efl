@@ -41,7 +41,8 @@ struct _Render_Output_GL_Generic
 };
 
 static inline Eina_Bool
-evas_render_engine_gl_generic_init(Render_Output_GL_Generic *re,
+evas_render_engine_gl_generic_init(Render_Engine_Software_Generic *engine,
+                                   Render_Output_GL_Generic *re,
                                    Outbuf *ob,
                                    Outbuf_Swap_Mode_Get outbuf_swap_mode_get,
                                    Outbuf_Get_Rot outbuf_get_rot,
@@ -63,7 +64,7 @@ evas_render_engine_gl_generic_init(Render_Output_GL_Generic *re,
                                    const EVGL_Interface *evgl_funcs,
                                    int w, int h)
 {
-   if (!evas_render_engine_software_generic_init(&re->software, ob,
+   if (!evas_render_engine_software_generic_init(engine, &re->software, ob,
                                                  outbuf_swap_mode_get,
                                                  outbuf_get_rot,
                                                  outbuf_reconfigure,
