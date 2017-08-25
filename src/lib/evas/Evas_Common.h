@@ -3393,6 +3393,13 @@ typedef Eo Efl_Animation_Object_Scale;
 
 #endif
 
+#ifndef _EFL_ANIMATION_OBJECT_TRANSLATE_EO_CLASS_TYPE
+#define _EFL_ANIMATION_OBJECT_TRANSLATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Object_Translate;
+
+#endif
+
 struct _Efl_Animation_Object_Running_Event_Info
 {
    double progress;
