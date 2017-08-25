@@ -1008,9 +1008,6 @@ eng_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
         initted = EINA_TRUE;
      }
 
-   if (re->generic.software.tb)
-     evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
-
    evas_outbuf_use(eng_get_ob(re));
 
    return re;
