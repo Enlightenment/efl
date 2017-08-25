@@ -77,5 +77,6 @@ void eina_test_freeq(TCase *tc);
 void eina_test_slstr(TCase *tc);
 void eina_test_vpath(TCase *tc);
 void eina_test_debug(TCase *tc);
+void eina_test_coro(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

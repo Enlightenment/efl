@@ -9,6 +9,8 @@ extern "C" {
 #include "eina_types.h"
 #include "eina_value.h"
 
+typedef struct _Eina_Coro Eina_Coro;
+
 /**
  * @ingroup Eina_Promise
  *
@@ -1812,6 +1814,67 @@ eina_future_race_array(Eina_Future *array[])
  * @see eina_future_cb_easy_from_desc()
  */
 #define eina_future_chain_easy(_prev, ...) eina_future_chain_easy_array(_prev, (Eina_Future_Cb_Easy_Desc[]) {__VA_ARGS__, {NULL, NULL, NULL, NULL, NULL}})
+
+/**
+ * Allows an Eina_Coro to wait for a future to be resolved in a
+ * synchronous way.
+ *
+ * This is another way to use future: instead of being called back
+ * when it resolves, one can use an Eina_Coro coroutine and that will
+ * "block" waiting for the value. Note that only the coroutine is
+ * blocked, the main routine (ie: main loop) will still run so it can
+ * resolve futures.
+ *
+ * Internally it will call eina_coro_await() and if the coroutine is
+ * canceled ECANCELED is returned.
+ *
+ * Using pure Eina_Coro callbacks, it looks like:
+ *
+ * @code
+ * const void *
+ * my_coroutine(void *data, Eina_Bool canceled, Eina_Coro *coro)
+ * {
+ *    Eina_Future *f = get_file_size_async("/MyFile.txt");
+ *    Eina_Value v = eina_future_await(f, coro, EINA_VALUE_TYPE_INT);
+ *    int size;
+ *    if (v.type == EINA_VALUE_TYPE_ERROR)
+ *    {
+ *       Eina_Error err;
+ *       eina_value_get(&v, &err);
+ *       fprintf(stderr, "Could not read the file size. Reason: %s\n", eina_error_msg_get(err));
+ *       ecore_main_loop_quit();
+ *       return NULL;
+ *    }
+ *    eina_value_get(&v, &size);
+ *    printf("File size is %d bytes\n", size);
+ *    return NULL;
+ * }
+ * @endcode
+ *
+ * However Efl_Loop offers efl_loop_coro() to create coroutines that
+ * will be scheduled in the main loop, it's more convenient and can be
+ * used as well. The only change is the function signature.
+ *
+ * @note this is a helper over eina_coro_await(), doing type checking
+ *       and returning as a value so it's easier to use.
+ *
+ * @param f A future to wait
+ * @param coro A coroutine handle. Must be called from the coroutine itself.
+ * @param success_type if non-NULL, will ensure the success value is
+ *        of the given type. Note that EINA_VALUE_TYPE_ERROR will be
+ *        returned, such as ECANCELED, EINVAL, ENOMEM and so on.
+ *
+ * @return A value. The caller owns it and must call
+ *         eina_value_flush().
+ *
+ * @see eina_future_new()
+ * @see eina_future_then()
+ * @see eina_future_chain()
+ * @see eina_coro_new()
+ * @see eina_coro_await()
+ * @see efl_loop_coro()
+ */
+EAPI Eina_Value eina_future_await(Eina_Future *f, Eina_Coro *coro, const Eina_Value_Type *success_type) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @}

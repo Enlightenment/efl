@@ -89,6 +89,7 @@ static const Efl_Test_Case etc[] = {
    { "slstr", eina_test_slstr },
    { "Vpath", eina_test_vpath },
    { "debug", eina_test_debug },
+   { "Coroutines", eina_test_coro },
    { NULL, NULL }
 };
 
