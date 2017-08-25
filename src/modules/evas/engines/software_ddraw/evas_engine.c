@@ -18,26 +18,26 @@ struct _Render_Engine
 /* log domain variable */
 int _evas_log_dom_module = -1;
 
+/* engine api this module provides */
+
 static void *
-_output_setup(int  width,
-              int  height,
-              int  rot,
-              HWND window,
-              int  depth,
-              int  fullscreen)
+eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
+   Evas_Engine_Info_Software_DDraw *info = in;
    Render_Engine *re;
    Outbuf *ob;
 
    re = calloc(1, sizeof(Render_Engine));
-   if (!re)
-     return NULL;
+   if (!re) return NULL;
 
    evas_software_ddraw_outbuf_init();
 
-   ob = evas_software_ddraw_outbuf_setup(width, height, rot,
+   ob = evas_software_ddraw_outbuf_setup(w, h,
+                                         info->info.rotation,
                                          OUTBUF_DEPTH_INHERIT,
-                                         window, depth, fullscreen);
+                                         info->info.window,
+                                         info->info.depth,
+                                         info->info.fullscreen);
    if (!ob) goto on_error;
 
    if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
@@ -52,7 +52,7 @@ _output_setup(int  width,
                                                  evas_software_ddraw_outbuf_flush,
                                                  NULL,
                                                  evas_software_ddraw_outbuf_free,
-                                                 width, height))
+                                                 w, h))
      goto on_error;
 
    return re;
@@ -63,26 +63,12 @@ _output_setup(int  width,
    return NULL;
 }
 
-
-/* engine api this module provides */
 static void
 eng_output_info_setup(void *info)
 {
    Evas_Engine_Info_Software_DDraw *einfo = info;
 
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
-}
-
-static void *
-eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
-{
-   Evas_Engine_Info_Software_DDraw *info = in;
-
-   return _output_setup(w, h,
-                        info->info.rotation,
-                        info->info.window,
-                        info->info.depth,
-                        info->info.fullscreen);
 }
 
 static void
