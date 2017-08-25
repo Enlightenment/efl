@@ -1394,7 +1394,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic", sizeof (Evas_Engine_Info_Wayland))) return 0;
 
    /* setup logging domain */
    if (_evas_engine_wl_egl_log_dom < 0)
@@ -1425,8 +1425,6 @@ module_open(Evas_Module *em)
    ORD(image_native_set);
    ORD(image_native_init);
    ORD(image_native_shutdown);
-
-   func.info_size = sizeof (Evas_Engine_Info_Wayland);
 
    symbols();
 

@@ -111,7 +111,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_FB))) return 0;
    _evas_engine_fb_log_dom = eina_log_domain_register
      ("evas-fb", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_fb_log_dom < 0)
@@ -128,8 +128,6 @@ module_open(Evas_Module *em)
    ORD(output_setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
-
-   func.info_size = sizeof (Evas_Engine_Info_FB);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

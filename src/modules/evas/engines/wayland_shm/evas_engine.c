@@ -314,7 +314,7 @@ eng_image_native_get(void *engine EINA_UNUSED, void *image)
 }
 
 /* EVAS MODULE FUNCTIONS */
-static int 
+static int
 module_open(Evas_Module *em)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -323,10 +323,10 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* try to get functions from whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Wayland))) return 0;
 
    /* try to create our logging domain */
-   _evas_engine_way_shm_log_dom = 
+   _evas_engine_way_shm_log_dom =
      eina_log_domain_register("evas-wayland_shm", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_way_shm_log_dom < 0)
      {
@@ -349,8 +349,6 @@ module_open(Evas_Module *em)
    ORD(image_native_init);
    ORD(image_native_shutdown);
 
-   func.info_size = sizeof (Evas_Engine_Info_Wayland);
-
    _symbols();
    /* advertise our own engine functions */
    em->functions = (void *)(&func);
@@ -358,7 +356,7 @@ module_open(Evas_Module *em)
    return 1;
 }
 
-static void 
+static void
 module_close(Evas_Module *em EINA_UNUSED)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

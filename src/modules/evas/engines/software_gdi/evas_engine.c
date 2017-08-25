@@ -141,7 +141,7 @@ module_open(Evas_Module *em)
 {
    if (!em) return 0;
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Software_Gdi))) return 0;
 
    _evas_engine_soft_gdi_log_dom = eina_log_domain_register
      ("evas-software_gdi", EVAS_DEFAULT_LOG_COLOR);
@@ -159,7 +159,6 @@ module_open(Evas_Module *em)
    ORD(canvas_alpha_get);
    ORD(output_free);
 
-   func.info_size = sizeof (Evas_Engine_Info_Software_Gdi);
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;

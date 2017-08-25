@@ -1451,7 +1451,7 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* get whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "gl_generic")) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "gl_generic", sizeof (Evas_Engine_Info_GL_Drm))) return 0;
 
    /* try to create eina logging domain */
    if (_evas_engine_gl_drm_log_dom < 0)
@@ -1484,8 +1484,6 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(image_native_shutdown, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
-
-   func.info_size = sizeof (Evas_Engine_Info_GL_Drm);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */

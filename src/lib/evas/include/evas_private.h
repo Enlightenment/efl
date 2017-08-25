@@ -2036,7 +2036,7 @@ EAPI void evas_module_task_register(Eina_Bool (*cancelled)(void *data), void *da
 EAPI void evas_module_task_unregister(void);
 
 // expose for use in engines
-EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
+EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name, size_t info);
 EAPI const char *_evas_module_libdir_get(void);
 const char *_evas_module_datadir_get(void);
 EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
