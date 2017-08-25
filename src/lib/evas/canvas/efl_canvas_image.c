@@ -468,7 +468,7 @@ _evas_image_animated_get(const Eo *eo_obj)
    if (!ENFN->image_animated_get)
      return EINA_FALSE;
 
-   return ENFN->image_animated_get(ENDT, o->engine_data);
+   return ENFN->image_animated_get(ENC, o->engine_data);
 }
 
 EOLIAN static Eina_Bool
@@ -488,7 +488,7 @@ _evas_image_animated_frame_count_get(const Eo *eo_obj)
      return -1;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   return ENFN->image_animated_frame_count_get(ENDT, o->engine_data);
+   return ENFN->image_animated_frame_count_get(ENC, o->engine_data);
 }
 
 EOLIAN static int
@@ -507,7 +507,7 @@ _evas_image_animated_loop_type_get(const Eo *eo_obj)
        !evas_object_image_animated_get(eo_obj))
      return EFL_IMAGE_ANIMATED_LOOP_HINT_NONE;
 
-   return (Efl_Image_Animated_Loop_Hint) ENFN->image_animated_loop_type_get(ENDT, o->engine_data);
+   return (Efl_Image_Animated_Loop_Hint) ENFN->image_animated_loop_type_get(ENC, o->engine_data);
 }
 
 EOLIAN static Efl_Image_Animated_Loop_Hint
@@ -526,7 +526,7 @@ _evas_image_animated_loop_count_get(const Eo *eo_obj)
        !evas_object_image_animated_get(eo_obj))
      return -1;
 
-   return ENFN->image_animated_loop_count_get(ENDT, o->engine_data);
+   return ENFN->image_animated_loop_count_get(ENC, o->engine_data);
 }
 
 EOLIAN static int
@@ -546,11 +546,11 @@ _evas_image_animated_frame_duration_get(const Eo *eo_obj, int start_frame, int f
        !ENFN->image_animated_frame_duration_get)
      return -1.0;
 
-   frame_count = ENFN->image_animated_frame_count_get(ENDT, o->engine_data);
+   frame_count = ENFN->image_animated_frame_count_get(ENC, o->engine_data);
    if ((start_frame + frame_num) > frame_count)
      return -1.0;
 
-   return ENFN->image_animated_frame_duration_get(ENDT, o->engine_data, start_frame, frame_num);
+   return ENFN->image_animated_frame_duration_get(ENC, o->engine_data, start_frame, frame_num);
 }
 
 EOLIAN static double
@@ -578,15 +578,15 @@ _evas_image_animated_frame_set(Eo *eo_obj, int frame_index)
      return EINA_FALSE;
 
    if (!ENFN->image_animated_frame_set) return EINA_FALSE;
-   ENFN->image_animated_frame_set(ENDT, o->engine_data, frame_index);
-   //   if (!ENFN->image_animated_frame_set(ENDT, o->engine_data, frame_index)) return;
+   ENFN->image_animated_frame_set(ENC, o->engine_data, frame_index);
+   //   if (!ENFN->image_animated_frame_set(ENC, o->engine_data, frame_index)) return;
 
    EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, prev_write)
      prev_write->frame = o->cur->frame;
    EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, prev_write);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
-         state_write->frame = frame_index;
+     state_write->frame = frame_index;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
