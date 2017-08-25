@@ -4057,7 +4057,7 @@ _smart_merge(Tilebuf *tb, Tilebuf_Rect *rects)
 }
 
 static Tilebuf_Rect *
-_merge_rects(Render_Engine_Merge_Mode merge_mode,
+_merge_rects(Render_Output_Merge_Mode merge_mode,
              Tilebuf *tb,
              Tilebuf_Rect *r1,
              Tilebuf_Rect *r2,
