@@ -266,26 +266,6 @@ static const EVGL_Interface evgl_funcs =
    NULL, // native_win_surface_config_get
 };
 
-
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_GL_SDL *info;
-
-   info = calloc(1, sizeof(Evas_Engine_Info_GL_SDL));
-   if (!info) return NULL;
-   info->magic.magic = rand();
-   return info;
-}
-
-static void
-eng_output_info_free(void *info)
-{
-   Evas_Engine_Info_GL_SDL *in;
-   in = (Evas_Engine_Info_GL_SDL *)info;
-   free(in);
-}
-
 static void *
 eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
@@ -400,12 +380,12 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
    #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(output_info);
-   ORD(output_info_free);
    ORD(output_setup);
    ORD(canvas_alpha_get);
    ORD(output_free);
    ORD(output_dump);
+
+   func.info_size = sizeof (Evas_Engine_Info_GL_SDL);
 
    gl_symbols();
 

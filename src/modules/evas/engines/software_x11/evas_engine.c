@@ -231,32 +231,18 @@ _symbols(void)
 }
 
 /* engine api this module provides */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_Software_X11 *info;
-
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Software_X11))))
-     return NULL;
-
-   info->magic.magic = rand();
-   info->info.debug = 0;
-   info->info.alloc_grayscale = 0;
-   info->info.alloc_colors_max = 216;
-   info->func.best_visual_get = _best_visual_get;
-   info->func.best_colormap_get = _best_colormap_get;
-   info->func.best_depth_get = _best_depth_get;
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-   return info;
-}
-
 static void
-eng_output_info_free(void *info)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Software_X11 *in;
+   Evas_Engine_Info_Software_X11 *einfo = info;
 
-   in = (Evas_Engine_Info_Software_X11 *)info;
-   free(in);
+   einfo->info.debug = 0;
+   einfo->info.alloc_grayscale = 0;
+   einfo->info.alloc_colors_max = 216;
+   einfo->func.best_visual_get = _best_visual_get;
+   einfo->func.best_colormap_get = _best_colormap_get;
+   einfo->func.best_depth_get = _best_depth_get;
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static void *
@@ -590,8 +576,7 @@ module_open(Evas_Module *em)
 
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(output_info);
-   ORD(output_info_free);
+   ORD(output_info_setup);
    ORD(output_setup);
    ORD(output_update);
    ORD(canvas_alpha_get);
@@ -600,6 +585,8 @@ module_open(Evas_Module *em)
    ORD(image_native_shutdown);
    ORD(image_native_set);
    ORD(image_native_get);
+
+   func.info_size = sizeof (Evas_Engine_Info_Software_X11);
 
    _symbols();
    /* now advertise out own api */

@@ -57,30 +57,12 @@ err:
    return NULL;
 }
 
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_Drm *info;
-
-   /* try to allocate space for our engine info structure */
-   info = calloc(1, sizeof(Evas_Engine_Info_Drm));
-   if (!info) return NULL;
-
-   /* set some engine default properties */
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   return info;
-}
-
 static void
-eng_output_info_free(void *einfo)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Drm *info;
+   Evas_Engine_Info_Drm *einfo = info;
 
-   /* free the engine info */
-   info = (Evas_Engine_Info_Drm *)einfo;
-   free(info);
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static void *
@@ -251,13 +233,14 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* override the methods we provide */
-   EVAS_API_OVERRIDE(output_info, &func, eng_);
-   EVAS_API_OVERRIDE(output_info_free, &func, eng_);
+   EVAS_API_OVERRIDE(output_info_setup, &func, eng_);
    EVAS_API_OVERRIDE(output_setup, &func, eng_);
    EVAS_API_OVERRIDE(output_update, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
+
+   func.info_size = sizeof (Evas_Engine_Info_Drm);
 
    /* advertise our engine functions */
    em->functions = (void *)(&func);

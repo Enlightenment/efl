@@ -502,28 +502,12 @@ static const EVGL_Interface evgl_funcs =
 };
 
 /* engine functions */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_Wayland *info;
-
-   /* try to allocate space for our engine info */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland))))
-     return NULL;
-
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   return info;
-}
-
 static void
-eng_output_info_free(Evas *evas EINA_UNUSED, void *info)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_Wayland *inf;
+   Evas_Engine_Info_Wayland *info = info;
 
-   if ((inf = (Evas_Engine_Info_Wayland *)info))
-     free(inf);
+   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static Render_Engine_Swap_Mode
@@ -1430,8 +1414,7 @@ module_open(Evas_Module *em)
 
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
 
-   ORD(output_info);
-   ORD(output_info_free);
+   ORD(output_info_setup);
    ORD(output_setup);
    ORD(output_update);
    ORD(canvas_alpha_get);
@@ -1442,6 +1425,8 @@ module_open(Evas_Module *em)
    ORD(image_native_set);
    ORD(image_native_init);
    ORD(image_native_shutdown);
+
+   func.info_size = sizeof (Evas_Engine_Info_Wayland);
 
    symbols();
 

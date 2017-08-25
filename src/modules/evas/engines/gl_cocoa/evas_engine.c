@@ -125,29 +125,6 @@ static const EVGL_Interface evgl_funcs =
    NULL, // native_win_surface_config_get
 };
 
-
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_GL_Cocoa *info;
-
-   info = calloc(1, sizeof(*info));
-   if (EINA_UNLIKELY(!info))
-     {
-        CRI("Failed to allocate memory");
-        return NULL;
-     }
-   info->magic.magic = rand();
-   return info;
-}
-
-static void
-eng_output_info_free(void *info)
-{
-   Evas_Engine_Info_GL_Cocoa *const in = info;
-   free(in);
-}
-
 static void *
 eng_output_setup(void *engine EINA_UNUSED, void *in, unsigned int w, unsigned int h)
 {
@@ -306,12 +283,12 @@ module_open(Evas_Module *em)
 
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
-   ORD(output_info);
-   ORD(output_info_free);
    ORD(output_setup);
    ORD(output_update);
    ORD(canvas_alpha_get);
    ORD(output_free);
+
+   func.info_size = sizeof (Evas_Engine_Info_GL_Cocoa);
 
    _gl_symbols();
 

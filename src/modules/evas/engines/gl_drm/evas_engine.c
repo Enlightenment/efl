@@ -891,28 +891,12 @@ _native_cb_free(void *image)
 }
 
 /* engine specific override functions */
-static void *
-eng_output_info(void)
-{
-   Evas_Engine_Info_GL_Drm *info;
-
-   /* try to allocate space for our engine info */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_GL_Drm))))
-     return NULL;
-
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
-
-   return info;
-}
-
 static void
-eng_output_info_free(void *in)
+eng_output_info_setup(void *info)
 {
-   Evas_Engine_Info_GL_Drm *info;
+   Evas_Engine_Info_GL_Drm *einfo = info;
 
-   if ((info = (Evas_Engine_Info_GL_Drm *)in))
-     free(info);
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
 static Render_Engine_Merge_Mode
@@ -1489,8 +1473,7 @@ module_open(Evas_Module *em)
    func = pfunc;
 
    /* now to override methods */
-   EVAS_API_OVERRIDE(output_info, &func, eng_);
-   EVAS_API_OVERRIDE(output_info_free, &func, eng_);
+   EVAS_API_OVERRIDE(output_info_setup, &func, eng_);
    EVAS_API_OVERRIDE(output_setup, &func, eng_);
    EVAS_API_OVERRIDE(output_update, &func, eng_);
    EVAS_API_OVERRIDE(canvas_alpha_get, &func, eng_);
@@ -1501,6 +1484,8 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(image_native_shutdown, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_assign, &func, eng_);
    EVAS_API_OVERRIDE(image_plane_release, &func, eng_);
+
+   func.info_size = sizeof (Evas_Engine_Info_GL_Drm);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
