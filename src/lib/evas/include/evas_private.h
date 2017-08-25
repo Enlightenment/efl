@@ -1400,7 +1400,6 @@ struct _Evas_Func
 
    void (*output_free)                     (void *engine, void *data);
    void (*output_resize)                   (void *engine, void *data, int w, int h);
-   void (*output_tile_size_set)            (void *engine, void *data, int w, int h);
    void (*output_redraws_rect_add)         (void *engine, void *data, int x, int y, int w, int h);
    void (*output_redraws_rect_del)         (void *engine, void *data, int x, int y, int w, int h);
    void (*output_redraws_clear)            (void *engine, void *data);
