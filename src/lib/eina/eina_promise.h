@@ -477,6 +477,10 @@ struct _Eina_Future_Desc {
  * }
  * @endcode
  *
+ * If you already have a value and want to create a future that will
+ * resolve to it directly use the eina_future_resolved(), it has the
+ * same effect as creating a promise and immediately resolving it.
+ *
  * @param cancel_cb A callback used to inform that the promise was canceled. Use
  * this callback to @c free @p data. @p cancel_cb must not be @c NULL !
  * @param data Data to @p cancel_cb.
@@ -675,6 +679,39 @@ EAPI Eina_Value eina_future_as_value(Eina_Future *f);
  * @see eina_future_cancel()
  */
 EAPI Eina_Future *eina_future_new(Eina_Promise *p);
+
+/**
+ * Creates a new future that is already resolved to a value.
+ *
+ * This function creates a new future with an already known value,
+ * that will be resolved and dispatched by the given @a scheduler as
+ * usual.
+ *
+ * This is a helper that behaves the same as eina_promise_new()
+ * followed by eina_future_new() and then eina_promise_resolve().
+ *
+ * Futures can also be canceled using eina_future_cancel(), which will
+ * cause the whole chain to be cancelled alongside with any pending
+ * promise.
+ *
+ * @param scheduler The scheduler to use.
+ * @param value The value to be delivered. Note that the value
+ * contents must survive this function scope, that is, do @b not use
+ * stack allocated blobs, arrays, structures or types that keeps
+ * references to memory you give. Values will be automatically cleaned
+ * up using @c eina_value_flush() once they are unused (no more future
+ * or futures returned a new value).
+ *
+ * @return The future or @c NULL on error.
+ *
+ * @see eina_promise_new()
+ * @see eina_future_new()
+ * @see eina_promise_reject()
+ * @see eina_promise_resolve()
+ * @see eina_future_cancel()
+ */
+EAPI Eina_Future *eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Value value);
+
 /**
  * Register an Eina_Future_Desc to be used when the future is resolve/rejected.
  *
