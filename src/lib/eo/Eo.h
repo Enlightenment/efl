@@ -535,8 +535,20 @@ EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc
  * @endcode
  *
  * @see efl_future_cb_from_desc()
+ * @see efl_future_Eina_FutureXXX_then()
  */
 #define efl_future_cb(_eo, ...) efl_future_cb_from_desc(_eo, (Efl_Future_Cb_Desc){__VA_ARGS__})
+
+/**
+ * Syntax sugar over eina_future_then_from_desc() and efl_future_cb().
+ *
+ * Usage:
+ * @code
+ * efl_future_Eina_FutureXXX_then(o, future, .success = success, .success_type = EINA_VALUE_TYPE_INT);
+ * @endcode
+ *
+ */
+#define efl_future_Eina_FutureXXX_then(_eo, _future, ...) eina_future_then_from_desc(_future, efl_future_cb(_eo, ## __VA_ARGS__))
 
 /**
  * Creates an Future chain based on #Efl_Future_Cb_Desc
