@@ -68,3 +68,5 @@ struct @extern Eina.Future; [[Eina Future handles]]
 struct @extern Eina.Future.Scheduler; [[This struct is used as a bridge between Eina and the future scheduler.
                                         By using the provided functions Eina can schedule futures resolutions,
                                         rejections and cancelations to a safe context.]]
+
+struct @extern Eina.Coro; [[Eina Coro (coroutine) handle.]]
