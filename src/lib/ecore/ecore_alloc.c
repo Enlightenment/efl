@@ -44,6 +44,7 @@ GENERIC_ALLOC_FREE(Ecore_Event, ecore_event);
 //GENERIC_ALLOC_FREE(Ecore_Poller, ecore_poller);
 GENERIC_ALLOC_FREE(Ecore_Pipe, ecore_pipe);
 GENERIC_ALLOC_FREE(Ecore_Fd_Handler, ecore_fd_handler);
+GENERIC_ALLOC_FREE(Efl_Loop_Promise_Simple_Data, efl_loop_promise_simple_data);
 #ifdef _WIN32
 GENERIC_ALLOC_FREE(Ecore_Win32_Handler, ecore_win32_handler);
 #endif
@@ -61,6 +62,7 @@ static Ecore_Mempool *mempool_array[] = {
 //  &ecore_poller_mp,
   &ecore_pipe_mp,
   &ecore_fd_handler_mp,
+  &efl_loop_promise_simple_data_mp,
 #ifdef _WIN32
   &ecore_win32_handler_mp
 #endif
@@ -87,6 +89,7 @@ ecore_mempool_init(void)
 //   MP_SIZE_INIT(Ecore_Poller, ecore_poller);
    MP_SIZE_INIT(Ecore_Pipe, ecore_pipe);
    MP_SIZE_INIT(Ecore_Fd_Handler, ecore_fd_handler);
+   MP_SIZE_INIT(Efl_Loop_Promise_Simple_Data, efl_loop_promise_simple_data);
 #ifdef _WIN32
    MP_SIZE_INIT(Ecore_Win32_Handler, ecore_win32_handler);
 #endif

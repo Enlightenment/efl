@@ -233,6 +233,15 @@ struct _Ecore_Fd_Handler
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
 
+typedef struct _Efl_Loop_Promise_Simple_Data {
+   union {
+      Ecore_Timer *timer;
+      Ecore_Idler *idler;
+   };
+   Eina_Promise *promise;
+} Efl_Loop_Promise_Simple_Data;
+GENERIC_ALLOC_SIZE_DECLARE(Efl_Loop_Promise_Simple_Data);
+
 #ifdef _WIN32
 struct _Ecore_Win32_Handler
 {
@@ -3111,6 +3120,101 @@ ecore_loop_promise_unregister(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
 EFL_CALLBACKS_ARRAY_DEFINE(timeout,
                           { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
                           { EFL_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           EINA_VALUE_EMPTY));
+}
+
+static void
+_efl_loop_Eina_FutureXXX_idle_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   ecore_idler_del(d->idler);
+   efl_loop_promise_simple_data_mp_free(d);
+}
+
+static Eina_Bool
+_efl_loop_Eina_FutureXXX_idle_done(void *data)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   efl_loop_promise_simple_data_mp_free(d);
+   return EINA_FALSE;
+}
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d;
+   Eina_Promise *p;
+
+   d = efl_loop_promise_simple_data_calloc(1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->idler = ecore_idler_add(_efl_loop_Eina_FutureXXX_idle_done, d);
+   EINA_SAFETY_ON_NULL_GOTO(d->idler, idler_error);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_Eina_FutureXXX_idle_cancel, d);
+   // d is dead if p is NULL
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
+   d->promise = p;
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+
+ idler_error:
+   efl_loop_promise_simple_data_mp_free(d);
+   return NULL;
+}
+
+static void
+_efl_loop_Eina_FutureXXX_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   ecore_timer_del(d->timer);
+   efl_loop_promise_simple_data_mp_free(d);
+}
+
+static Eina_Bool
+_efl_loop_Eina_FutureXXX_timeout_done(void *data)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   efl_loop_promise_simple_data_mp_free(d);
+   return EINA_FALSE;
+}
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
+{
+   Efl_Loop_Promise_Simple_Data *d;
+   Eina_Promise *p;
+
+   d = efl_loop_promise_simple_data_calloc(1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->timer = ecore_timer_add(time, _efl_loop_Eina_FutureXXX_timeout_done, d);
+   EINA_SAFETY_ON_NULL_GOTO(d->timer, timer_error);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_Eina_FutureXXX_timeout_cancel, d);
+   // d is dead if p is NULL
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
+   d->promise = p;
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+
+ timer_error:
+   efl_loop_promise_simple_data_mp_free(d);
+   return NULL;
+}
 
 /* This event will be triggered when the main loop is destroyed and destroy its timers along */
 static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);

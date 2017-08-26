@@ -82,6 +82,31 @@ class Efl.Loop (Efl.Object)
              scheduler: ptr(Eina.Future.Scheduler); [[The scheduler.]]
          }
       }
+      Eina_FutureXXX_job {
+         [[A future promise that will be resolved from a clean main
+           loop context as soon as possible.
+
+           This has higher priority, for low priority use
+           @.Eina_FutureXXX_idle
+         ]]
+          return: own(ptr(Eina.Future)) /* TODO: future<void> */; [[The future handle.]]
+      }
+      Eina_FutureXXX_idle {
+         [[A future promise that will be resolved from a clean main
+           loop context as soon as the main loop is idle.
+
+           This is a low priority version of @.Eina_FutureXXX_job
+         ]]
+          return: own(ptr(Eina.Future)) /* TODO: future<void> */; [[The future handle.]]
+      }
+      Eina_FutureXXX_timeout {
+         [[A future promise that will be resolved from a clean main
+           loop context after $time seconds.]]
+         params {
+            @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
+         }
+         return: own(ptr(Eina.Future)) /* future<void> */; [[The future handle.]]
+      }
       job {
          [[Will execute that promise in the near future.]]
          params {
