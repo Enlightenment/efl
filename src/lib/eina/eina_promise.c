@@ -599,7 +599,7 @@ _future_proxy(void *data, const Eina_Value v,
 }
 
 static void
-_proxy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead_ptr EINA_UNUSED)
+_dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
 }
 
@@ -619,7 +619,7 @@ eina_future_as_value(Eina_Future *f)
    Eina_Future *r_future;
 
    EINA_FUTURE_CHECK_RETURN_VAL(f, v);
-   p = eina_promise_new(_scheduler_get(f), _proxy_cancel, NULL);
+   p = eina_promise_new(_scheduler_get(f), _dummy_cancel, NULL);
    EINA_SAFETY_ON_NULL_GOTO(p, err_promise);
    r_future = eina_future_then(f, _future_proxy, p);
    //If eina_future_then() fails f will be cancelled
@@ -789,6 +789,28 @@ _eina_future_then(Eina_Future *prev, const Eina_Future_Desc desc)
  err_next:
    //_fake_future_dispatch() already called by _eina_future_new()
    _eina_future_cancel(prev, ENOMEM);
+   return NULL;
+}
+
+EAPI Eina_Future *
+eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Value value)
+{
+   Eina_Promise *p;
+   Eina_Future *f;
+
+   EINA_SAFETY_ON_NULL_GOTO(scheduler, error);
+
+   p = eina_promise_new(scheduler, _dummy_cancel, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(p, error);
+
+   f = eina_future_new(p);
+   EINA_SAFETY_ON_NULL_GOTO(f, error);
+
+   eina_promise_resolve(p, value);
+   return f;
+
+ error:
+   eina_value_flush(&value);
    return NULL;
 }
 
