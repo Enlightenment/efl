@@ -472,6 +472,67 @@ _race_end_cb(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED
    return v;
 }
 
+static Eina_Value
+_promise_empty_done(void *data, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Eina_Bool *pdone = data;
+
+   if (!value.type) *pdone = EINA_TRUE;
+
+   ecore_main_loop_quit();
+
+   return value;
+}
+
+START_TEST(efl_test_timeout)
+{
+   Eina_Future *f;
+   Eina_Bool done = EINA_FALSE;
+
+   fail_if(!ecore_init());
+   f = eina_future_then(efl_loop_Eina_FutureXXX_timeout(ecore_main_loop_get(), 0.0001),
+                        _promise_empty_done, &done);
+   fail_if(!f);
+   ecore_main_loop_begin();
+   ecore_shutdown();
+
+   fail_unless(done);
+}
+END_TEST
+
+START_TEST(efl_test_job)
+{
+   Eina_Future *f;
+   Eina_Bool done = EINA_FALSE;
+
+   fail_if(!ecore_init());
+   f = eina_future_then(efl_loop_Eina_FutureXXX_job(ecore_main_loop_get()),
+                        _promise_empty_done, &done);
+   fail_if(!f);
+   ecore_main_loop_begin();
+   ecore_shutdown();
+
+   fail_unless(done);
+}
+END_TEST
+
+START_TEST(efl_test_idle)
+{
+   Eina_Future *f;
+   Eina_Bool done = EINA_FALSE;
+
+   fail_if(!ecore_init());
+   f = eina_future_then(efl_loop_Eina_FutureXXX_idle(ecore_main_loop_get()),
+                        _promise_empty_done, &done);
+   fail_if(!f);
+   ecore_main_loop_begin();
+   ecore_shutdown();
+
+   fail_unless(done);
+}
+END_TEST
+
+
 START_TEST(efl_test_promise_future_success)
 {
    Eina_Future *f;
@@ -1258,6 +1319,9 @@ END_TEST
 
 void ecore_test_ecore_promise2(TCase *tc)
 {
+   tcase_add_test(tc, efl_test_timeout);
+   tcase_add_test(tc, efl_test_job);
+   tcase_add_test(tc, efl_test_idle);
    tcase_add_test(tc, efl_test_promise_future_success);
    tcase_add_test(tc, efl_test_promise_future_failure);
    tcase_add_test(tc, efl_test_promise_future_chain_no_error);

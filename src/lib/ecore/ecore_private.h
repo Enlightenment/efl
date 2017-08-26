@@ -81,6 +81,8 @@ extern int _ecore_log_dom;
 
 typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
 
+typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
+
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 struct _Efl_Loop_Data
 {
@@ -371,6 +373,7 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Event, ecore_event);
 //GENERIC_ALLOC_FREE_HEADER(Ecore_Poller, ecore_poller);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Pipe, ecore_pipe);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Fd_Handler, ecore_fd_handler);
+GENERIC_ALLOC_FREE_HEADER(Efl_Loop_Promise_Simple_Data, efl_loop_promise_simple_data);
 #ifdef _WIN32
 GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 #endif
