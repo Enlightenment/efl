@@ -17,6 +17,7 @@ static const Efl_Test_Case etc[] = {
   { "Eo class behaviour errors", eo_test_class_behaviour_errors },
   { "Eo call errors", eo_test_call_errors },
   { "Eo eina value", eo_test_value },
+  { "Eo eina coroutines", eo_test_coro },
   { "Eo threaded eo calls", eo_test_threaded_calls },
   { "Eo event calls", eo_test_event},
   { "Eo lifecycle", eo_test_lifecycle},

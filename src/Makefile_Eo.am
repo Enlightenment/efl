@@ -146,6 +146,7 @@ tests/eo/suite/eo_test_class_behaviour_errors.c \
 tests/eo/suite/eo_test_call_errors.c \
 tests/eo/suite/eo_test_general.c \
 tests/eo/suite/eo_test_value.c \
+tests/eo/suite/eo_test_coro.c \
 tests/eo/suite/eo_test_event.c \
 tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c \

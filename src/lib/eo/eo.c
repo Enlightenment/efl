@@ -2227,6 +2227,118 @@ _eo_table_del_cb(void *in)
  * This is used by the gdb debug helper script */
 Eo_Id_Data *_eo_gdb_main_domain = NULL;
 
+typedef struct _Eo_Coro_Hook_Data
+{
+   EINA_INLIST;
+   const Eina_Coro *coro;
+   Efl_Domain_Data *domain_data;
+   Efl_Id_Domain return_domain;
+} Eo_Coro_Hook_Data;
+
+static Eina_Inlist *_eo_coro_hook_data = NULL;
+static Eina_Lock _eo_coro_hook_data_lock;
+
+/* Flow:
+ *
+ * main_exit -> coro_enter -> coro_exit -> main_enter
+ *
+ * main_exit: efl_domain_data_get()
+ * coro_enter: efl_domain_data_adopt()
+ * coro_exit: efl_domain_data_return()
+ * main_enter: remove from list
+ */
+
+static Eo_Coro_Hook_Data *
+_eo_coro_hook_data_find_unlocked(const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d;
+
+   EINA_INLIST_FOREACH(_eo_coro_hook_data, d)
+     {
+        if (d->coro == coro)
+          {
+             if (_eo_coro_hook_data != EINA_INLIST_GET(d))
+               _eo_coro_hook_data = eina_inlist_promote(_eo_coro_hook_data,
+                                                        EINA_INLIST_GET(d));
+             return d;
+          }
+     }
+   return NULL;
+}
+
+static Eo_Coro_Hook_Data *
+_eo_coro_hook_data_find(const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d;
+
+   eina_lock_take(&_eo_coro_hook_data_lock);
+   d = _eo_coro_hook_data_find_unlocked(coro);
+   eina_lock_release(&_eo_coro_hook_data_lock);
+
+   return d;
+}
+
+static Eina_Bool
+_eo_coro_hook_main_exit(void *data EINA_UNUSED, const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d = malloc(sizeof(Eo_Coro_Hook_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, EINA_FALSE);
+
+   d->coro = coro;
+   d->domain_data = efl_domain_data_get();
+   d->return_domain = EFL_ID_DOMAIN_INVALID;
+
+   eina_lock_take(&_eo_coro_hook_data_lock);
+   _eo_coro_hook_data = eina_inlist_prepend(_eo_coro_hook_data, EINA_INLIST_GET(d));
+   eina_lock_release(&_eo_coro_hook_data_lock);
+
+   return EINA_TRUE;
+}
+
+static void
+_eo_coro_hook_main_enter(void *data EINA_UNUSED, const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d;
+
+   eina_lock_take(&_eo_coro_hook_data_lock);
+   d = _eo_coro_hook_data_find_unlocked(coro);
+   if (d)
+     _eo_coro_hook_data = eina_inlist_remove(_eo_coro_hook_data, EINA_INLIST_GET(d));
+   eina_lock_release(&_eo_coro_hook_data_lock);
+
+   EINA_SAFETY_ON_NULL_RETURN(d); // just to print-out unexpected error.
+   free(d);
+}
+
+static Eina_Bool
+_eo_coro_hook_coro_enter(void *data EINA_UNUSED, const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d = _eo_coro_hook_data_find(coro);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d->domain_data, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(d->return_domain != EFL_ID_DOMAIN_INVALID, EINA_FALSE);
+
+   d->return_domain = efl_domain_data_adopt(d->domain_data);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(d->return_domain == EFL_ID_DOMAIN_INVALID, EINA_FALSE);
+
+   return EINA_TRUE;
+}
+
+static void
+_eo_coro_hook_coro_exit(void *data EINA_UNUSED, const Eina_Coro *coro)
+{
+   Eo_Coro_Hook_Data *d = _eo_coro_hook_data_find(coro);
+
+   EINA_SAFETY_ON_NULL_RETURN(d);
+   EINA_SAFETY_ON_NULL_RETURN(d->domain_data);
+   EINA_SAFETY_ON_TRUE_RETURN(d->return_domain == EFL_ID_DOMAIN_INVALID);
+
+   efl_domain_data_return(d->return_domain);
+   d->domain_data = NULL;
+}
+
+
 EAPI Eina_Bool
 efl_object_init(void)
 {
@@ -2317,6 +2429,13 @@ efl_object_init(void)
 
    _efl_add_fallback_init();
 
+   eina_lock_new(&_eo_coro_hook_data_lock);
+   eina_coro_hook_add(_eo_coro_hook_coro_enter,
+                      _eo_coro_hook_coro_exit,
+                      _eo_coro_hook_main_enter,
+                      _eo_coro_hook_main_exit,
+                      NULL);
+
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_STOP,
                    EINA_LOG_STATE_INIT);
@@ -2357,6 +2476,13 @@ efl_object_shutdown(void)
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
+
+   eina_coro_hook_del(_eo_coro_hook_coro_enter,
+                      _eo_coro_hook_coro_exit,
+                      _eo_coro_hook_main_enter,
+                      _eo_coro_hook_main_exit,
+                      NULL);
+   eina_lock_free(&_eo_coro_hook_data_lock);
 
    _efl_add_fallback_shutdown();
 

@@ -42,6 +42,8 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
+struct @extern Eina.Inarray; [[Eina inarray data structure]]
+
 type @extern Eina.Unicode: uint32; [[Eina unicode type]]
 
 struct @extern Eina.File_Direct_Info; [[Eina file direct information data structure]]
@@ -102,3 +104,4 @@ struct @extern Eina.Stat {
 /* FIXME: This definitely shouldn't be here. */
 type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
 
+struct @extern Eina.Coro; [[Eina Coro (coroutine) handle.]]
