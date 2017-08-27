@@ -363,7 +363,11 @@ _eina_future_dispatch_internal(Eina_Future **f,
 
    assert(value.type != &EINA_VALUE_TYPE_PROMISE2);
    while ((*f) && (!(*f)->cb)) *f = _eina_future_free(*f);
-   if (!*f) return value;
+   if (!*f)
+     {
+        _eina_promise_value_dbg("No future to deliver value", NULL, value);
+        return value;
+     }
    next_value = _eina_future_cb_dispatch(*f, value);
    *f = _eina_future_free(*f);
    return next_value;
@@ -576,17 +580,15 @@ eina_promise_as_value(Eina_Promise *p)
 }
 
 static void
-_eina_promise_clean_dispatch(Eina_Promise *p, const Eina_Value v)
+_eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
 {
-   Eina_Value r;
    Eina_Future *f = p->future;
 
    if (f)
      {
         _eina_promise_value_dbg("Clean contenxt - Resolving promise", p, v);
         _eina_promise_unlink(p);
-        r = _eina_future_dispatch_internal(&f, v);
-        if (!_eina_value_is(v, r)) _eina_value_safe_flush(r);
+        _eina_future_dispatch(f, v);
      }
    eina_mempool_free(_promise_mp, p);
 }
@@ -595,8 +597,16 @@ static Eina_Value
 _future_proxy(void *data, const Eina_Value v,
               const Eina_Future *dead_future EINA_UNUSED)
 {
+   Eina_Value copy;
    //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
-   _eina_promise_clean_dispatch(data, v);
+   if (!v.type) copy = v;
+   else if (!eina_value_copy(&v, &copy))
+     {
+        ERR("Value cannot be copied - unusable with Eina_Future: %p (%s)", v.type, v.type->name);
+        eina_value_setup(&copy, EINA_VALUE_TYPE_ERROR);
+        eina_value_set(&copy, ENOTSUP);
+     }
+   _eina_promise_clean_dispatch(data, copy);
    return v;
 }
 
@@ -1110,6 +1120,7 @@ _all_then_cb(void *data, const Eina_Value v,
      {
         //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
         _eina_promise_clean_dispatch(ctx->base.promise, ctx->values);
+        ctx->values = EINA_VALUE_EMPTY; /* flushed in _eina_promise_clean_dispatch() */
         _all_promise2_ctx_free(ctx);
      }
    return v;
