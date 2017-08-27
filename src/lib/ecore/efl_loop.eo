@@ -74,6 +74,35 @@ class Efl.Loop extends Efl.Task
          ]]
          return: future<void> @owned; [[The future handle.]]
       }
+      coro {
+          [[A future promise that will be resolved using a coroutine.
+
+            A coroutine is a function that will be executed
+            cooperatively with the main loop. The main loop will
+            schedule the coroutine, explicitly giving control to it --
+            by then the main loop is paused. The coroutine must then
+            finish and return, or yield control back to the main loop
+            using $eina_coro_yield(). This allows for shared context
+            to be safely interchanged with the main loop -- it is
+            guaranteed that if the coroutine is running, the main loop
+            is pause; if the main loop is running the coroutine is
+            paused.
+
+            Coroutines are implemented with @Eina.Coro, see their API
+            and how it's exposed in your language -- it may be the
+            case that you don't need to worry and it will be managed
+            transparently by your language/binding.
+
+            Once finished the coroutine returns a value, that will be
+            used to resolve the promise, propagating thru the future
+            chain.
+          ]]
+          params {
+              @in priority: Efl.Loop.Coro.Prio; [[The priority used to schedule the coroutine.]]
+              @in func: Efl.Loop.Coro.Cb @nonull; [[The function to run as a coroutine.]]
+          }
+          return: future<void> @owned; /* future<> */; [[The future handle, it provides the value returned by $func once it exits.]]
+      }
       timeout {
          [[A future promise that will be resolved from a clean main
            loop context after $time seconds.]]

@@ -2836,3 +2836,759 @@ err:
    return res;
 }
 #endif
+
+Eo *_mainloop_singleton = NULL;
+
+EOLIAN static Efl_Loop *
+_efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
+{
+   if (!_mainloop_singleton)
+     {
+        _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
+     }
+
+   return _mainloop_singleton;
+}
+
+EAPI Eo *
+ecore_main_loop_get(void)
+{
+   return efl_loop_main_get(EFL_LOOP_CLASS);
+}
+
+EOLIAN static void
+_efl_loop_iterate(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   ecore_main_loop_iterate();
+}
+
+EOLIAN static int _efl_loop_iterate_may_block(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, int may_block)
+{
+   return ecore_main_loop_iterate_may_block(may_block);
+}
+
+EOLIAN static unsigned char
+_efl_loop_begin(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   ecore_main_loop_begin();
+   return _ecore_exit_code;
+}
+
+EOLIAN static void
+_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, unsigned char exit_code)
+{
+   ecore_main_loop_quit();
+   _ecore_exit_code = exit_code;
+}
+
+EOLIAN static Efl_Object *
+_efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
+{
+   Efl_Object *r;
+
+   if (klass == EFL_LOOP_CLASS) return obj;
+
+   r = eina_hash_find(pd->providers, &klass);
+   if (r) return r;
+
+   return efl_provider_find(efl_super(obj, EFL_LOOP_CLASS), klass);
+}
+
+static void
+_poll_trigger(void *data, const Efl_Event *event)
+{
+   Eo *parent = efl_parent_get(event->object);
+
+   efl_event_callback_call(parent, data, NULL);
+}
+
+static void
+_check_event_catcher_add(void *data, const Efl_Event *event)
+{
+   const Efl_Callback_Array_Item *array = event->info;
+   Efl_Loop_Data *pd = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_LOOP_EVENT_IDLE)
+          {
+             ++pd->idlers;
+          }
+        // XXX: all the below are kind of bad. ecore_pollers were special.
+        // they all woke up at the SAME time based on interval, (all pollers
+        // of interval 1 woke up together, those with 2 woke up when 1 and
+        // 2 woke up, 4 woke up together along with 1 and 2 etc.
+        // the below means they will just go off whenever but at a pre
+        // defined interval - 1/60th, 6 and 66 seconds. not really great
+        // pollers probably should be less frequent that 1/60th even on poll
+        // high, medium probably down to 1-2 sec and low - yes maybe 30 or 60
+        // sec... still - not timed to wake up together. :(
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_HIGH)
+          {
+             if (!pd->poll_high)
+               {
+                  // Would be better to have it in sync with normal wake up
+                  // of the main loop for better energy efficiency, I guess.
+                  pd->poll_high = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                          efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_HIGH),
+                                          efl_loop_timer_interval_set(efl_added, 1.0/60.0));
+               }
+             ++pd->pollers.high;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_MEDIUM)
+          {
+             if (!pd->poll_medium)
+               {
+                  pd->poll_medium = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_MEDIUM),
+                                            efl_loop_timer_interval_set(efl_added, 6));
+               }
+             ++pd->pollers.medium;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_LOW)
+          {
+             if (!pd->poll_low)
+               {
+                  pd->poll_low = efl_add(EFL_LOOP_TIMER_CLASS, event->object,
+                                         efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _poll_trigger, EFL_LOOP_EVENT_POLL_LOW),
+                                         efl_loop_timer_interval_set(efl_added, 66));
+               }
+             ++pd->pollers.low;
+          }
+     }
+}
+
+static void
+_check_event_catcher_del(void *data, const Efl_Event *event)
+{
+   const Efl_Callback_Array_Item *array = event->info;
+   Efl_Loop_Data *pd = data;
+   int i;
+
+   for (i = 0; array[i].desc != NULL; i++)
+     {
+        if (array[i].desc == EFL_LOOP_EVENT_IDLE)
+          {
+             --pd->idlers;
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_HIGH)
+          {
+             --pd->pollers.high;
+             if (!pd->pollers.high)
+               {
+                  ecore_timer_del(pd->poll_high);
+                  pd->poll_high = NULL;
+               }
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_MEDIUM)
+          {
+             --pd->pollers.medium;
+             if (!pd->pollers.medium)
+               {
+                  ecore_timer_del(pd->poll_medium);
+                  pd->poll_medium = NULL;
+               }
+          }
+        else if (array[i].desc == EFL_LOOP_EVENT_POLL_LOW)
+          {
+             --pd->pollers.low;
+             if (!pd->pollers.low)
+               {
+                  ecore_timer_del(pd->poll_low);
+                  pd->poll_low = NULL;
+               }
+          }
+     }
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
+                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
+                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
+
+EOLIAN static Efl_Object *
+_efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
+{
+   obj = efl_constructor(efl_super(obj, EFL_LOOP_CLASS));
+   if (!obj) return NULL;
+
+   efl_event_callback_array_add(obj, event_catcher_watch(), pd);
+
+   pd->providers = eina_hash_pointer_new((void*) efl_unref);
+
+   return obj;
+}
+
+EOLIAN static void
+_efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
+{
+   eina_hash_free(pd->providers);
+
+   efl_del(pd->poll_low);
+   efl_del(pd->poll_medium);
+   efl_del(pd->poll_high);
+
+   efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
+}
+
+typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
+struct _Efl_Internal_Promise
+{
+   union {
+      Ecore_Job *job;
+      Efl_Loop_Timer *timer;
+   } u;
+   Efl_Promise *promise;
+
+   const void *data;
+
+   Eina_Bool job_is : 1;
+};
+
+static void
+_efl_loop_job_cb(void *data)
+{
+   Efl_Internal_Promise *j = data;
+
+   efl_promise_value_set(j->promise, (void*) j->data, NULL);
+
+   free(j);
+}
+
+static void
+_efl_loop_arguments_cleanup(Eina_Array *arga)
+{
+   Eina_Stringshare *s;
+
+   while ((s = eina_array_pop(arga)))
+     eina_stringshare_del(s);
+   eina_array_free(arga);
+}
+
+static void
+_efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   static Eina_Bool initialization = EINA_TRUE;
+   Efl_Loop_Arguments arge;
+   Eina_Array *arga = data;
+
+   arge.argv = arga;
+   arge.initialization = initialization;
+   initialization = EINA_FALSE;
+
+   efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
+
+   _efl_loop_arguments_cleanup(arga);
+}
+
+static void
+_efl_loop_arguments_cancel(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   _efl_loop_arguments_cleanup(data);
+}
+
+// It doesn't make sense to send those argument to any other mainloop
+// As it also doesn't make sense to allow anyone to override this, so
+// should be internal for sure, not even protected.
+EAPI void
+ecore_loop_arguments_send(int argc, const char **argv)
+{
+   Efl_Future *job;
+   Eina_Array *arga;
+   int i = 0;
+
+   arga = eina_array_new(argc);
+   for (i = 0; i < argc; i++)
+     eina_array_push(arga, eina_stringshare_add(argv[i]));
+
+   job = efl_loop_job(ecore_main_loop_get(), NULL);
+   efl_future_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, NULL, arga);
+}
+
+static void _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED);
+static void _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED);
+
+// Only one main loop handle for now
+void
+ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
+{
+   _pending_futures = eina_list_append(_pending_futures, f);
+}
+
+void
+ecore_loop_future_unregister(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
+{
+   _pending_futures = eina_list_remove(_pending_futures, f);
+}
+
+void
+ecore_loop_promise_register(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
+{
+   _pending_promises = eina_list_append(_pending_promises, p);
+}
+
+void
+ecore_loop_promise_unregister(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
+{
+   _pending_promises = eina_list_remove(_pending_promises, p);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(timeout,
+                          { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
+                          { EFL_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           EINA_VALUE_EMPTY));
+}
+
+static void
+_efl_loop_Eina_FutureXXX_idle_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   ecore_idler_del(d->idler);
+   efl_loop_promise_simple_data_mp_free(d);
+}
+
+static Eina_Bool
+_efl_loop_Eina_FutureXXX_idle_done(void *data)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   efl_loop_promise_simple_data_mp_free(d);
+   return EINA_FALSE;
+}
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d;
+   Eina_Promise *p;
+
+   d = efl_loop_promise_simple_data_calloc(1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->idler = ecore_idler_add(_efl_loop_Eina_FutureXXX_idle_done, d);
+   EINA_SAFETY_ON_NULL_GOTO(d->idler, idler_error);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_Eina_FutureXXX_idle_cancel, d);
+   // d is dead if p is NULL
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
+   d->promise = p;
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+
+ idler_error:
+   efl_loop_promise_simple_data_mp_free(d);
+   return NULL;
+}
+
+static void
+_efl_loop_Eina_FutureXXX_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   ecore_timer_del(d->timer);
+   efl_loop_promise_simple_data_mp_free(d);
+}
+
+static Eina_Bool
+_efl_loop_Eina_FutureXXX_timeout_done(void *data)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   efl_loop_promise_simple_data_mp_free(d);
+   return EINA_FALSE;
+}
+
+static Eina_Future *
+_efl_loop_Eina_FutureXXX_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
+{
+   Efl_Loop_Promise_Simple_Data *d;
+   Eina_Promise *p;
+
+   d = efl_loop_promise_simple_data_calloc(1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
+
+   d->timer = ecore_timer_add(time, _efl_loop_Eina_FutureXXX_timeout_done, d);
+   EINA_SAFETY_ON_NULL_GOTO(d->timer, timer_error);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_Eina_FutureXXX_timeout_cancel, d);
+   // d is dead if p is NULL
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
+   d->promise = p;
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+
+ timer_error:
+   efl_loop_promise_simple_data_mp_free(d);
+   return NULL;
+}
+
+typedef struct _Efl_Loop_Coro {
+   Eina_Promise *promise;
+   Eina_Coro *coro;
+   Efl_Loop *loop;
+   Eina_Future *scheduled;
+   Efl_Loop_Coro_Cb func;
+   const void *func_data;
+   Eina_Free_Cb func_free_cb;
+   Efl_Loop_Coro_Prio prio;
+   Eina_Value value;
+} Efl_Loop_Coro;
+
+static void
+_efl_loop_coro_free(Efl_Loop_Coro *lc)
+{
+   if (lc->func_free_cb) lc->func_free_cb((void *)lc->func_data);
+   if (lc->scheduled) eina_future_cancel(lc->scheduled);
+   eina_value_flush(&lc->value);
+   efl_unref(lc->loop);
+   free(lc);
+}
+
+static void _efl_loop_coro_reschedule(Efl_Loop_Coro *lc);
+
+static Eina_Value
+_efl_loop_coro_schedule_resolved(void *data, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Loop_Coro *lc = data;
+   Eina_Future *awaiting = NULL;
+
+   if (value.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+        eina_value_get(&value, &err);
+        ERR("coro %p scheduled got error %s, try again.",
+            lc, eina_error_msg_get(err));
+     }
+   else if (!eina_coro_run(&lc->coro, NULL, &awaiting))
+     {
+        INF("coroutine %p finished with value type=%p (%s)",
+            lc, lc->value.type,
+            lc->value.type ? lc->value.type->name : "EMPTY");
+
+        eina_promise_resolve(lc->promise, lc->value);
+        lc->value = EINA_VALUE_EMPTY; // owned by promise
+        _efl_loop_coro_free(lc);
+        return value;
+     }
+   else if (awaiting)
+     {
+        DBG("coroutine %p is awaiting for future %p, do not reschedule", lc, awaiting);
+        eina_future_chain(awaiting,
+                          {
+                             .cb = _efl_loop_coro_schedule_resolved,
+                             .data = lc,
+                             .storage = &lc->scheduled,
+                               },
+                          efl_future_cb(lc->loop));
+     }
+   else _efl_loop_coro_reschedule(lc);
+
+   return value;
+}
+
+static void
+_efl_loop_coro_reschedule(Efl_Loop_Coro *lc)
+{
+   Eina_Future *f;
+
+   // high uses 0-timeout instead of job, since job
+   // is implemented using events and the Ecore implementation
+   // will never run timers or anything else, just the new jobs :-/
+   //
+   // TODO: bug report ecore_main loop bug.
+   if (lc->prio == EFL_LOOP_CORO_PRIO_HIGH)
+     f = efl_loop_Eina_FutureXXX_timeout(lc->loop, 0);
+   else
+     f = efl_loop_Eina_FutureXXX_idle(lc->loop);
+
+   DBG("coroutine %p rescheduled as future=%p", lc, f);
+
+   // NOTE: efl_future_cb() doesn't allow for extra 'data', so it matches
+   // methods more easily. However we need 'lc' and we can't store in
+   // loop since we'd not know the key for efl_key_data_get().
+   // Easy solution: use 2 futures, one to bind and another to resolve.
+   eina_future_chain(f,
+                     {
+                        .cb = _efl_loop_coro_schedule_resolved,
+                        .data = lc,
+                        .storage = &lc->scheduled,
+                     },
+                     efl_future_cb(lc->loop));
+}
+
+static void
+_efl_loop_coro_cancel(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+{
+   Efl_Loop_Coro *lc = data;
+
+   INF("canceled coroutine %p (coro=%p)", lc, lc->coro);
+
+   eina_coro_cancel(&lc->coro);
+
+   _efl_loop_coro_free(lc);
+}
+
+static const void *
+_efl_loop_coro_cb(void *data, Eina_Bool canceled, Eina_Coro *coro)
+{
+   Efl_Loop_Coro *lc = data;
+
+   if (canceled) lc->value = eina_value_error_init(ECANCELED);
+   else lc->value = lc->func((void *)lc->func_data, coro, lc->loop);
+
+   return lc;
+}
+
+static Eina_Future *
+_efl_loop_coro(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, Efl_Loop_Coro_Prio prio, void *func_data, Efl_Loop_Coro_Cb func, Eina_Free_Cb func_free_cb)
+{
+   Efl_Loop_Coro *lc;
+   Eina_Promise *p;
+   Eina_Future *f;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   lc = calloc(1, sizeof(Efl_Loop_Coro));
+   EINA_SAFETY_ON_NULL_GOTO(lc, calloc_failed);
+
+   lc->loop = efl_ref(obj);
+   lc->func = func;
+   lc->func_data = func_data;
+   lc->func_free_cb = func_free_cb;
+   lc->prio = prio;
+
+   lc->coro = eina_coro_new(_efl_loop_coro_cb, lc, EINA_CORO_STACK_SIZE_DEFAULT);
+   EINA_SAFETY_ON_NULL_GOTO(lc, coro_failed);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_loop_coro_cancel, lc);
+   // lc is dead if p is NULL
+   EINA_SAFETY_ON_NULL_GOTO(p, promise_failed);
+   lc->promise = p;
+
+   // must be done prior to reschedule, as it may resolve on errors
+   // and promises without futures are simply ignored, will remain
+   // alive.
+   f = eina_future_new(p);
+
+   _efl_loop_coro_reschedule(lc);
+
+   INF("new coroutine %p (coro=%p)", lc, lc->coro);
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj, f);
+
+ promise_failed:
+   // _efl_loop_coro_cancel() was called, func was run... just return.
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           eina_value_error_init(ENOMEM)));
+
+ coro_failed:
+   _efl_loop_coro_free(lc);
+
+ calloc_failed:
+   if (func_free_cb) func_free_cb((void *)func_data);
+
+   // NOTE: Eolian should do efl_future_then() to bind future to object.
+   return efl_future_Eina_FutureXXX_then(obj,
+      eina_future_resolved(efl_loop_future_scheduler_get(obj),
+                           eina_value_error_init(ENOMEM)));
+}
+
+
+/* This event will be triggered when the main loop is destroyed and destroy its timers along */
+static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
+
+static void
+_efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   _efl_loop_internal_cancel(data);
+}
+
+static void _efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED);
+
+static void
+_efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Internal_Promise *t = data;
+
+   efl_promise_value_set(t->promise, (void*) t->data, NULL);
+   efl_del(t->promise);
+
+   efl_event_callback_array_del(t->u.timer, timeout(), t);
+   efl_del(t->u.timer);
+}
+
+static void
+_efl_loop_internal_cancel(Efl_Internal_Promise *p)
+{
+   efl_promise_failed_set(p->promise, EINA_ERROR_FUTURE_CANCEL);
+   efl_del(p->promise);
+   free(p);
+}
+
+static void
+_efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Internal_Promise *j = data;
+
+   if (j->job_is)
+     {
+        ecore_job_del(j->u.job);
+     }
+   else
+     {
+        efl_event_callback_array_del(j->u.timer, timeout(), j);
+        efl_del(j->u.timer);
+     }
+
+   _efl_loop_internal_cancel(j);
+}
+
+static Efl_Internal_Promise *
+_efl_internal_promise_new(Efl_Promise* promise, const void *data)
+{
+   Efl_Internal_Promise *p;
+
+   p = calloc(1, sizeof (Efl_Internal_Promise));
+   if (!p) return NULL;
+
+   efl_event_callback_add(promise, EFL_PROMISE_EVENT_FUTURE_NONE, _efl_loop_job_cancel, p);
+
+   p->promise = promise;
+   p->data = data;
+
+   return p;
+}
+
+static Efl_Future *
+_efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
+{
+   Efl_Internal_Promise *j;
+   Efl_Object *promise;
+
+   promise = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!promise) return NULL;
+
+   j = _efl_internal_promise_new(promise, data);
+   if (!j) goto on_error;
+
+   j->job_is = EINA_TRUE;
+   j->u.job = ecore_job_add(_efl_loop_job_cb, j);
+   if (!j->u.job) goto on_error;
+
+   return efl_promise_future_get(promise);
+
+ on_error:
+   efl_del(promise);
+   free(j);
+
+   return NULL;
+}
+
+static Efl_Future *
+_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const void *data)
+{
+   Efl_Internal_Promise *t;
+   Efl_Object *promise;
+
+   promise = efl_add(EFL_PROMISE_CLASS, obj);
+   if (!promise) return NULL;
+
+   t = _efl_internal_promise_new(promise, data);
+   if (!t) goto on_error;
+
+   t->job_is = EINA_FALSE;
+   t->u.timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
+                        efl_loop_timer_interval_set(efl_added, time),
+                        efl_event_callback_array_add(efl_added, timeout(), t));
+
+   if (!t->u.timer) goto on_error;
+
+   return efl_promise_future_get(promise);
+
+ on_error:
+   efl_del(promise);
+   free(t);
+
+   return NULL;
+}
+
+static Eina_Bool
+_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+{
+   // The passed object does not provide that said class.
+   if (!efl_isa(provider, klass)) return EINA_FALSE;
+
+   // Note: I would prefer to use efl_xref here, but I can't figure a nice way to
+   // call efl_xunref on hash destruction.
+   return eina_hash_add(pd->providers, &klass, efl_ref(provider));
+}
+
+static Eina_Bool
+_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+{
+   return eina_hash_del(pd->providers, &klass, provider);
+}
+
+Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
+
+EWAPI void
+efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
+                      const char *flavor, const char *build_id)
+{
+   // note: EFL has not been initialized yet at this point (ie. no eina call)
+   _app_efl_version.major = vmaj;
+   _app_efl_version.minor = vmin;
+   _app_efl_version.micro = vmic;
+   _app_efl_version.revision = revision;
+   free((char *) _app_efl_version.flavor);
+   free((char *) _app_efl_version.build_id);
+   _app_efl_version.flavor = flavor ? strdup(flavor) : NULL;
+   _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
+}
+
+EOLIAN static const Efl_Version *
+_efl_loop_app_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   return &_app_efl_version;
+}
+
+EOLIAN static const Efl_Version *
+_efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   /* vanilla EFL: flavor = NULL */
+   static const Efl_Version version = {
+      .major = VMAJ,
+      .minor = VMIN,
+      .micro = VMIC,
+      .revision = VREV,
+      .build_id = EFL_BUILD_ID,
+      .flavor = NULL
+   };
+
+   return &version;
+}
+
+EOLIAN static Eina_Future_Scheduler *
+_efl_loop_future_scheduler_get(Eo *obj EINA_UNUSED,
+                               Efl_Loop_Data *pd EINA_UNUSED)
+{
+   return _ecore_event_future_scheduler_get();
+}
+
+
+#include "efl_loop.eo.c"

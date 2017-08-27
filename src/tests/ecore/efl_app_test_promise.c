@@ -1331,6 +1331,103 @@ promise_shutdown(void)
    ecore_init();
 }
 
+#define CORO_COUNT 10
+#define CORO_SLEEP 0.1
+
+static Eina_Value
+_coro(void *data, Eina_Coro *coro, Efl_Loop *loop EINA_UNUSED)
+{
+   int *pi = data;
+
+   for (; *pi < CORO_COUNT; (*pi)++)
+     {
+        usleep(CORO_SLEEP * 1000000);
+        eina_coro_yield_or_return(coro, EINA_VALUE_EMPTY);
+     }
+
+   // returned value is an EINA_VALUE_TYPE_PROMISE
+   return eina_future_as_value(_str_future_get());
+}
+
+static Eina_Bool
+_timer_test(void *data)
+{
+   int *pi = data;
+   (*pi)++;
+
+   return EINA_TRUE;
+}
+
+START_TEST(efl_test_coro)
+{
+   Eina_Future *f;
+   int coro_count = 0;
+   int timer_count = 0;
+
+   fail_if(!ecore_init());
+   f = eina_future_then(efl_loop_coro(ecore_main_loop_get(),
+                                      EFL_LOOP_CORO_PRIO_IDLE,
+                                      &coro_count, _coro, NULL),
+                        .cb = _simple_ok);
+   fail_if(!f);
+
+   // timer is 2x faster so it will always expire
+   ecore_timer_add(CORO_SLEEP / 2, _timer_test, &timer_count);
+
+   ecore_main_loop_begin();
+   ecore_shutdown();
+
+   ck_assert_int_eq(coro_count, CORO_COUNT);
+   ck_assert_int_ge(timer_count, CORO_COUNT);
+}
+END_TEST
+
+static Eina_Value
+_await(void *data, Eina_Coro *coro, Efl_Loop *loop)
+{
+   int *pi = data;
+
+   for (; *pi < CORO_COUNT; (*pi)++)
+     {
+        Eina_Future *f = eina_future_chain(efl_loop_Eina_FutureXXX_timeout(loop, CORO_SLEEP),
+                                           // convert to string so we don't get dummy EMPTY...
+                                           // happened to me during development :-)
+                                           eina_future_cb_convert_to(EINA_VALUE_TYPE_STRING));
+        // await will eina_coro_yield() internally.
+        Eina_Value v = eina_future_await(f, coro, NULL);
+        if (v.type == EINA_VALUE_TYPE_ERROR) return v;
+        ck_assert_ptr_eq(v.type, EINA_VALUE_TYPE_STRING); // job delivers EINA_VALUE_EMPTY
+     }
+
+   // returned value is an EINA_VALUE_TYPE_PROMISE
+   return eina_future_as_value(_str_future_get());
+}
+
+START_TEST(efl_test_promise_future_await)
+{
+   Eina_Future *f;
+   int coro_count = 0;
+   int timer_count = 0;
+
+   fail_if(!ecore_init());
+   f = eina_future_then(efl_loop_coro(ecore_main_loop_get(),
+                                      EFL_LOOP_CORO_PRIO_IDLE,
+                                      &coro_count, _await, NULL),
+                        .cb = _simple_ok);
+   fail_if(!f);
+
+   // timer is 2x faster so it will always expire
+   ecore_timer_add(CORO_SLEEP / 2, _timer_test, &timer_count);
+
+   ecore_main_loop_begin();
+   ecore_shutdown();
+
+   ck_assert_int_eq(coro_count, CORO_COUNT);
+   ck_assert_int_ge(timer_count, CORO_COUNT);
+}
+END_TEST
+
+
 void efl_app_test_promise(TCase *tc)
 {
    tcase_add_checked_fixture(tc, promise_init, promise_shutdown);
@@ -1376,4 +1473,10 @@ void efl_app_test_promise_safety(TCase *tc)
    tcase_add_test(tc, efl_test_future_all_null);
    tcase_add_test(tc, efl_test_future_race_null);
 #endif
+}
+
+void efl_app_test_coro(TCase *tc)
+{
+   tcase_add_test(tc, efl_test_coro);
+   tcase_add_test(tc, efl_test_promise_future_await);
 }
