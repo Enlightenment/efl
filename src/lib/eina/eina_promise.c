@@ -947,7 +947,17 @@ _eina_future_cb_convert_to(void *data, const Eina_Value src,
 {
     const Eina_Value_Type *type = data;
     Eina_Value dst = EINA_VALUE_EMPTY;
-    if (type && eina_value_setup(&dst, type)) eina_value_convert(&src, &dst);
+
+    if (!type) return src; // pass thru
+
+    if (!eina_value_setup(&dst, type))
+      {
+         eina_value_setup(&dst, EINA_VALUE_TYPE_ERROR);
+         eina_value_set(&dst, ENOMEM);
+      }
+    else if (src.type) eina_value_convert(&src, &dst);
+    // otherwise leave initial value for empty
+
     return dst;
 }
 
