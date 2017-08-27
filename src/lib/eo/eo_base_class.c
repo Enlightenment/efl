@@ -1962,11 +1962,11 @@ efl_future_cb_from_desc(Eo *o, const Efl_Future_Cb_Desc desc)
 }
 
 EOAPI Eina_Future *
-efl_future_chain_from_array(Eo *obj,
-                            Eina_Future *prev,
-                            const Efl_Future_Cb_Desc descs[])
+efl_future_chain_array(Eo *obj,
+                       Eina_Future *prev,
+                       const Efl_Future_Cb_Desc descs[])
 {
-   size_t i = -1;
+   ssize_t i = -1;
    Eina_Future *f = prev;
 
    for (i = 0; descs[i].success || descs[i].error || descs[i].free || descs[i].success_type; i++)

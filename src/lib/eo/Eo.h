@@ -344,10 +344,10 @@ EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 /**
  * @struct _Efl_Future_Cb_Desc
  *
- * A struct with callbacks to be used by efl_future_cb_from_desc() and efl_future_chain_from_array()
+ * A struct with callbacks to be used by efl_future_cb_from_desc() and efl_future_chain_array()
  *
  * @see efl_future_cb_from_desc()
- * @see efl_future_chain_from_array()
+ * @see efl_future_chain_array()
  */
 typedef struct _Efl_Future_Cb_Desc {
    /**
@@ -360,7 +360,7 @@ typedef struct _Efl_Future_Cb_Desc {
     *
     * @note This function is always called from a safe context (main loop or some platform defined safe context).
     *
-    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_from_array().
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
     * @param value The operation result
     * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
     * If there is no need to convert the received value, it's @b recommended
@@ -399,7 +399,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * Otherwise this function is called from a safe context.
     *
     *
-    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_from_array().
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
     * @param error The operation error
     * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
     * If you need to convert to a different type or generate a new value,
@@ -424,7 +424,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * from the current context with the following errors respectitally: `EINVAL`, `ENOMEM` and  `ECANCELED`.
     * Otherwise this function is called from a safe context.
     *
-    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_from_array().
+    * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
     * @param dead_future The future that was freed.
     */
    void (*free)(Eo *o, const Eina_Future *dead_future);
@@ -519,7 +519,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * @param obj The object to create the link.
  * @param desc An Efl_Future_Cb_Desc
  * @return An Eina_Future_Desc to be used by eina_future_then(), eina_future_chain() and friends.
- * @see efl_future_chain_from_array()
+ * @see efl_future_chain_array()
  * @see efl_future_cb()
  * @see #Efl_Future_Cb_Desc
  * @see efl_key_data_set()
@@ -559,19 +559,19 @@ EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc
  * @see eina_future_then_from_desc()
  * @see #Efl_Future_Cb_Desc
  */
-EOAPI Eina_Future *efl_future_chain_from_array(Eo *obj, Eina_Future *prev, const Efl_Future_Cb_Desc descs[]);
+EOAPI Eina_Future *efl_future_chain_array(Eo *obj, Eina_Future *prev, const Efl_Future_Cb_Desc descs[]);
 
 /**
- * Syntax suger over efl_future_chain_from_array()
+ * Syntax suger over efl_future_chain_array()
  *
  * Usage:
  * @code
  * Eina_Future *f = efl_future_chain(my_object, prev_future, {}, {});
  * @endcode
  *
- * @see efl_future_chain_from_array()
+ * @see efl_future_chain_array()
  */
-#define efl_future_chain(_eo, _prev, ...) efl_future_chain_from_array(_eo, _prev, (Efl_Future_Cb_Desc []){__VA_ARGS__, {NULL, NULL, NULL, NULL, NULL}})
+#define efl_future_chain(_eo, _prev, ...) efl_future_chain_array(_eo, _prev, (Efl_Future_Cb_Desc []){__VA_ARGS__, {NULL, NULL, NULL, NULL, NULL}})
 
 /**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
