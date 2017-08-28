@@ -2415,10 +2415,10 @@ tests/evas/meshes/md2/sonic.md2 \
 tests/evas/meshes/obj/man_mesh.obj \
 tests/evas/images/gray.jpg \
 tests/evas/images/bg_gray.png \
-tests/evas/images/flower.jp2k \
-tests/evas/images/flower.jp2k.png \
-tests/evas/images/train.jp2k \
-tests/evas/images/train.jp2k.png
+tests/evas/images/flower.jp2 \
+tests/evas/images/flower.jp2.png \
+tests/evas/images/train.j2k \
+tests/evas/images/train.j2k.png
 
 if HAVE_ELUA
 
