@@ -1418,16 +1418,6 @@ parse_function_pointer(Eo_Lexer *ls)
 
    for (;;) switch (ls->t.kw)
      {
-      case KW_at_protected:
-        eo_lexer_syntax_error(ls, "protected invalid for function pointer");
-        return NULL;
-      case KW_at_const:
-        CASE_LOCK(ls, const, "const qualifier");
-        meth->obj_is_const = EINA_TRUE;
-        break;
-      case KW_at_class:
-        eo_lexer_syntax_error(ls, "class invalid for function pointer");
-        return NULL;
       case KW_at_c_only:
         CASE_LOCK(ls, c_only, "c_only qualifier");
         meth->is_c_only = EINA_TRUE;
