@@ -151,6 +151,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_win_part.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
+	lib/elementary/efl_ui_focus_rectangle.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
