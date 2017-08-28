@@ -63,10 +63,13 @@ _orig_eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h,
    config_attrs[n++] = depth_bits;
    config_attrs[n++] = EGL_STENCIL_SIZE;
    config_attrs[n++] = stencil_bits;
-   config_attrs[n++] = EGL_SAMPLES;
-   config_attrs[n++] = msaa_bits;
-   config_attrs[n++] = EGL_SAMPLE_BUFFERS;
-   config_attrs[n++] = 1;
+   if (msaa_bits > 0)
+     {
+        config_attrs[n++] = EGL_SAMPLE_BUFFERS;
+        config_attrs[n++] = 1;
+        config_attrs[n++] = EGL_SAMPLES;
+        config_attrs[n++] = msaa_bits;
+     }
    config_attrs[n++] = EGL_NONE;
 
    /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
@@ -195,7 +198,7 @@ _gl_thread_eng_window_new(void *data)
 
    evas_gl_thread_begin();
 
-   thread_param->return_value = _orig_eng_window_new(thread_param->evas,
+    thread_param->return_value = _orig_eng_window_new(thread_param->evas,
                                                      thread_param->einfo,
                                                      thread_param->w,
                                                      thread_param->h,
