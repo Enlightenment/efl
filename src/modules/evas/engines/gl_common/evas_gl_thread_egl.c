@@ -246,6 +246,7 @@ GL_TH_FN(eglGetCurrentSurface)(GL_TH_DP, EGLint readdraw)
       return current_thread_read;
    if (readdraw == EGL_DRAW)
       return current_thread_draw;
+   return NULL;
 }
 
 
@@ -664,9 +665,9 @@ evas_gl_thread_egl_func_get()
 #include <dlfcn.h>
 
 #define EVAS_TH_EGL_FN(ret, name, ...) \
- ret (*GL_TH_FN(name))(GL_TH_DP, GL_TH_DP, ##__VA_ARGS__);
+ ret (*GL_TH_FN(name))(GL_TH_DP, ##__VA_ARGS__);
 #define EVAS_TH_EGL_FN_ASYNC(ret, name, ...) \
- void *(*GL_TH_FN(name##_begin))(GL_TH_DP, GL_TH_DP, ##__VA_ARGS__); \
+ void *(*GL_TH_FN(name##_begin))(GL_TH_DP, ##__VA_ARGS__); \
  ret (*GL_TH_FN(name##_end))(GL_TH_DP, void *ref);
 
    EVAS_TH_EGL_FN_LIST
