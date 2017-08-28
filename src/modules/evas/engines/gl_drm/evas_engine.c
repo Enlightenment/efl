@@ -1114,7 +1114,6 @@ eng_image_native_shutdown(void *engine EINA_UNUSED, Evas_Native_Surface_Type typ
 static void *
 eng_image_native_set(void *engine, void *image, void *native)
 {
-   Render_Engine *re;
    Outbuf *ob;
    Native *n;
    Evas_Native_Surface *ns;
@@ -1123,10 +1122,7 @@ eng_image_native_set(void *engine, void *image, void *native)
    uint32_t texid;
    void *wlid, *wl_buf = NULL;
 
-   re = (Render_Engine *)engine;
-   if (!re) return NULL;
-
-   ob = eng_get_ob(re);
+   ob = gl_generic_any_output_get(engine);
    if (!ob) return NULL;
 
    ns = native;
