@@ -312,7 +312,7 @@ typedef struct _Eina_Value Eina_Value;
  *
  * @since 1.21
  */
-#define EINA_VALUE_EMPTY ((Eina_Value){ 0 })
+#define EINA_VALUE_EMPTY ((Eina_Value){ NULL, { { 0, 0, 0, 0, 0, 0, 0, 0 } } })
 
 /**
  * @typedef Eina_Value_Type
