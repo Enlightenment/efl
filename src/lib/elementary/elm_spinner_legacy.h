@@ -194,4 +194,4 @@ EAPI void elm_spinner_value_set(Evas_Object *obj, double val);
  */
 EAPI double elm_spinner_value_get(const Evas_Object *obj);
 
-#include "elm_spinner.eo.legacy.h"
+#include "efl_ui_spinner.eo.legacy.h"

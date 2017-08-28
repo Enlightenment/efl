@@ -26,15 +26,15 @@
  * Base layout smart data extended with spinner instance data.
  */
 
-typedef enum _Elm_Spinner_Format_Type
+typedef enum _Efl_Ui_Spinner_Format_Type
 {
    SPINNER_FORMAT_FLOAT,
    SPINNER_FORMAT_INT,
    SPINNER_FORMAT_INVALID
-} Elm_Spinner_Format_Type;
+} Efl_Ui_Spinner_Format_Type;
 
-typedef struct _Elm_Spinner_Data    Elm_Spinner_Data;
-struct _Elm_Spinner_Data
+typedef struct _Efl_Ui_Spinner_Data    Efl_Ui_Spinner_Data;
+struct _Efl_Ui_Spinner_Data
 {
    Evas_Object          *ent, *inc_button, *dec_button, *text_button;
    const char           *label;
@@ -49,7 +49,7 @@ struct _Elm_Spinner_Data
    Ecore_Timer          *longpress_timer; /**< a timer to detect long press. After lonpress timeout,
                                           start continuous change of values until mouse up */
    Eina_List            *special_values;
-   Elm_Spinner_Format_Type format_type;
+   Efl_Ui_Spinner_Format_Type format_type;
 
    Eina_Bool             entry_visible : 1;
    Eina_Bool             entry_reactivate : 1;
@@ -61,8 +61,8 @@ struct _Elm_Spinner_Data
    Eina_Bool             inc_btn_activated : 1;
 };
 
-typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
-struct _Elm_Spinner_Special_Value
+typedef struct _Efl_Ui_Spinner_Special_Value Efl_Ui_Spinner_Special_Value;
+struct _Efl_Ui_Spinner_Special_Value
 {
    double      value;
    const char *label;
@@ -72,11 +72,11 @@ struct _Elm_Spinner_Special_Value
  * @}
  */
 
-#define ELM_SPINNER_DATA_GET(o, sd) \
-  Elm_Spinner_Data * sd = efl_data_scope_get(o, ELM_SPINNER_CLASS)
+#define EFL_UI_SPINNER_DATA_GET(o, sd) \
+Efl_Ui_Spinner_Data * sd = efl_data_scope_get(o, EFL_UI_SPINNER_CLASS)
 
-#define ELM_SPINNER_DATA_GET_OR_RETURN(o, ptr)       \
-  ELM_SPINNER_DATA_GET(o, ptr);                      \
+#define EFL_UI_SPINNER_DATA_GET_OR_RETURN(o, ptr)       \
+  EFL_UI_SPINNER_DATA_GET(o, ptr);                      \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("No widget data for object %p (%s)",      \
@@ -84,8 +84,8 @@ struct _Elm_Spinner_Special_Value
        return;                                       \
     }
 
-#define ELM_SPINNER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SPINNER_DATA_GET(o, ptr);                         \
+#define EFL_UI_SPINNER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  EFL_UI_SPINNER_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        CRI("No widget data for object %p (%s)",         \
@@ -93,8 +93,8 @@ struct _Elm_Spinner_Special_Value
        return val;                                      \
     }
 
-#define ELM_SPINNER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_SPINNER_CLASS))) \
+#define EFL_UI_SPINNER_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_SPINNER_CLASS))) \
     return
 
 #endif

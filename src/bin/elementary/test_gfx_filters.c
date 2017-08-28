@@ -150,7 +150,7 @@ _spinner_fill(Eo *obj)
      }
    elm_spinner_editable_set(obj, EINA_FALSE);
    elm_spinner_min_max_set(obj, 0, k - 1);
-   elm_obj_spinner_wrap_set(obj, 1);
+   elm_spinner_wrap_set(obj, 1);
 }
 
 static void
@@ -348,14 +348,14 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_text_set(o, "Filter:");
       efl_pack(box2, o);
 
-      o = spinner = efl_add(ELM_SPINNER_CLASS, win,
+      o = spinner = efl_add(EFL_UI_SPINNER_CLASS, win,
                             efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
                             efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5));
       _spinner_fill(o);
       efl_pack(box2, o);
       spinner = o;
 
-      o = efl_add(ELM_SPINNER_CLASS, win,
+      o = efl_add(EFL_UI_SPINNER_CLASS, win,
                   efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
                   elm_spinner_min_max_set(efl_added, 6, 120),

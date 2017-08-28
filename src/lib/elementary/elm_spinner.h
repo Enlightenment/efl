@@ -58,7 +58,7 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_spinner_eo.h"
+#include "efl_ui_spinner_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_spinner_legacy.h"
