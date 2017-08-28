@@ -1435,6 +1435,7 @@ body:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');
+   FILL_DOC(ls, def, doc);
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
@@ -1447,12 +1448,6 @@ body:
         meth->get_ret_val = NULL;
         meth->get_return_warn_unused = EINA_FALSE;
         break;
-      case KW_legacy: // FIXME Do legacy and eo make sense for these new function pointer stuff?
-        eo_lexer_syntax_error(ls, "legacy invalid for function pointer");
-        return NULL;
-      case KW_eo:
-        eo_lexer_syntax_error(ls, "eo name invalid for function pointer");
-        return NULL;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
         parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE);
@@ -1463,7 +1458,6 @@ body:
 end:
    check_match(ls, '}', '{', line, col);
    check_next(ls, ';');
-   FILL_DOC(ls, def, doc);
    return def;
 }
 
