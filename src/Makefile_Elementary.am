@@ -62,7 +62,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
 	lib/elementary/efl_ui_slider.eo \
-	lib/elementary/elm_spinner.eo \
+	lib/elementary/efl_ui_spinner.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
@@ -282,7 +282,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_separator.h \
 	lib/elementary/efl_ui_slider_private.h \
 	lib/elementary/elm_widget_slideshow.h \
-	lib/elementary/elm_widget_spinner.h \
+	lib/elementary/efl_ui_spinner_private.h \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
@@ -505,7 +505,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_slideshow_common.h \
 	lib/elementary/elm_slideshow_legacy.h \
 	lib/elementary/elm_spinner.h \
-	lib/elementary/elm_spinner_eo.h \
+	lib/elementary/efl_ui_spinner_eo.h \
 	lib/elementary/elm_spinner_legacy.h \
 	lib/elementary/elm_store.h \
 	lib/elementary/elm_systray.h \
@@ -649,7 +649,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_separator.c \
 	lib/elementary/efl_ui_slider.c \
 	lib/elementary/elm_slideshow.c \
-	lib/elementary/elm_spinner.c \
+	lib/elementary/efl_ui_spinner.c \
 	lib/elementary/elm_store.c \
 	lib/elementary/elm_systray.c \
 	lib/elementary/elm_systray_watcher.c \
