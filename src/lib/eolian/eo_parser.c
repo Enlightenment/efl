@@ -1002,7 +1002,7 @@ typedef struct _Eo_Ret_Def
 } Eo_Ret_Def;
 
 static void
-parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
+parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void, Eina_Bool allow_def)
 {
    eo_lexer_get(ls);
    check_next(ls, ':');
@@ -1013,7 +1013,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
-   if (ls->t.token == '(')
+   if (allow_def && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
         ls->expr_mode = EINA_TRUE;
@@ -1208,7 +1208,7 @@ parse_accessor:
       case KW_return:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, is_get);
+        parse_return(ls, &ret, is_get, EINA_TRUE);
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         if (is_get)
@@ -1440,13 +1440,8 @@ body:
       case KW_return:
         CASE_LOCK(ls, return, "return");
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, EINA_FALSE);
+        parse_return(ls, &ret, EINA_FALSE, EINA_FALSE);
         pop_type(ls);
-        if (ret.default_ret_val)
-          {
-           eo_lexer_syntax_error(ls, "default return value invalid for function pointer");
-           return NULL;
-          }
         meth->get_ret_type = ret.type;
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
@@ -1548,7 +1543,7 @@ body:
       case KW_return:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, EINA_FALSE);
+        parse_return(ls, &ret, EINA_FALSE, EINA_TRUE);
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         meth->get_ret_type = ret.type;
