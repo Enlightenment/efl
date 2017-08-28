@@ -56,6 +56,8 @@ group { name: "e/widgets/dialog/main";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel1.to_x: "base";
+            rel2.to_x: "base";
+            rel2.offset: -5 -1;
             rel2.to_y: "button.spacer";
          }
          description { state: "icon" 0.0;
