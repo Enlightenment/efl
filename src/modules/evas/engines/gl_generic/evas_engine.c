@@ -1553,7 +1553,7 @@ static int
 eng_gl_surface_destroy(void *engine, void *surface)
 {
    EVGL_Surface  *sfc = (EVGL_Surface *)surface;
-   Render_Engine_GL_Generic *e;
+   Render_Engine_GL_Generic *e = engine;
 
    EVGLINIT(0);
    if (e->current == re) e->current = NULL;
