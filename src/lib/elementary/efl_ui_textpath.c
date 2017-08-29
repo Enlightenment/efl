@@ -231,7 +231,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    double slice_unit, slice_len;
    int w, h, w1, w2;
    int remained_w;
-   int total_slice, drawn_slice;
+   int total_slice, drawn_slice = 0;
    int cur_map_point = 0, map_point_no;
 
    efl_gfx_size_get(pd->text_obj, &w, &h);
@@ -314,7 +314,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
 
         while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
           {
-             double px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
+             double px0 = 0.0, py0 = 0.0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
 
              if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                {
