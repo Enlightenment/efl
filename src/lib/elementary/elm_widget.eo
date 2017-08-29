@@ -290,18 +290,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             lock: bool; [[$true if the Y axis is locked, $false otherwise]]
          }
       }
-      @property drag_child_locked_x {
-      	 [[Drag child locked X axis]]
-         get {
-            return: int; [[FIXME]]
-         }
-      }
-      @property drag_child_locked_y {
-         [[Drag child locked Y axis property]]
-         get {
-            return: int; [[FIXME]]
-         }
-      }
 
       /* Translation & Text API. */
       translate @protected {
