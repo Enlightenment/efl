@@ -1273,7 +1273,7 @@ static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
  * @param list The list
  * @return The node's data, or @c NULL on being passed a @c NULL pointer
  *
- * This macro is a shortcut for typing eina_list_data_get(eina_list_last())
+ * This function is a shortcut for typing eina_list_data_get(eina_list_last())
  * @since 1.8
  */
 static inline void        *eina_list_last_data_get(const Eina_List *list);
