@@ -1,5 +1,20 @@
 #include "elm_interface_scrollable.eo.legacy.h"
 #include "elm_scroller.eo.legacy.h"
+
+/**
+ * Type that blocks the scroll movement in one or more direction.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Scroller
+ */
+typedef enum
+{
+  ELM_SCROLLER_MOVEMENT_NO_BLOCK = 1, /**< Do not block movements */
+  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL = 2, /**< Block vertical movements */
+  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL = 4 /**< Block horizontal movements */
+} Elm_Scroller_Movement_Block;
+
 /**
  * @brief Add a new scroller to the parent
  *

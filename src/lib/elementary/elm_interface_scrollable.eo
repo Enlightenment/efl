@@ -29,19 +29,6 @@ enum Elm.Scroller.Single_Direction
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Elm.Scroller.Movement_Block
-{
-   [[Type that blocks the scroll movement in one or more direction.
-
-     @since 1.8
-   ]]
-   legacy: elm_scroller_movement;
-   no_block = 1 << 0, [[Do not block movements]]
-   block_vertical = 1 << 1, [[Block vertical movements]]
-   block_horizontal = 1 << 2 [[Block horizontal movements]]
-}
-
-
 mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus.Manager, Elm.Widget)
 {
    [[Elm scrollable mixin]]
@@ -104,22 +91,17 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
 
            This function will block scrolling movement (by input of a user) in
            a given direction. One can disable movements in the X axis, the Y
-           axis or both. The default value is #ELM_SCROLLER_MOVEMENT_NO_BLOCK,
-           where movements are allowed in both directions.
+           axis or both. The default value is $none, where movements are
+           allowed in both directions.
 
            What makes this function different from
            freeze_push(), hold_push() and lock_x_set() (or lock_y_set())
            is that it doesn't propagate its effects to any parent or child
            widget of $obj. Only the target scrollable widget will be locked
            with regard to scrolling.
-
-           @since 1.8]]
-         set {
-         }
-         get {
-         }
+         ]]
          values {
-            block: Elm.Scroller.Movement_Block; [[Which axis (or axes) to block]]
+            block: Efl.Ui.Scroll_Block(none); [[Which axis (or axes) to block]]
          }
       }
       @property momentum_animator_disabled {
