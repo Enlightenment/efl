@@ -18,13 +18,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-typedef struct _Efl_Ui_List_Future_Data Efl_Ui_List_Future_Data;
-struct _Efl_Ui_List_Future_Data
-{
-    Efl_Ui_List  *list;
-    unsigned int index;
-};
-
 void _efl_ui_list_custom_layout(Efl_Ui_List *);
 void _efl_ui_list_item_select_set(Efl_Ui_List_Item *, Eina_Bool);
 Eina_Bool _efl_ui_list_item_select_clear(Eo *);
@@ -57,7 +50,7 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd,
 {
    Evas_Coord ox, oy, ow, oh, cw;
    Efl_Ui_List_Data *pd = psd->wpd;
-   Efl_Ui_List_Item *litem;
+   Efl_Ui_List_Item **litem;
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
    if (((x == pd->pan.x) && (y == pd->pan.y))) return;
@@ -85,7 +78,7 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd,
    else
      {
         EINA_INARRAY_FOREACH(&pd->items.array, litem)
-          evas_object_move(litem->layout, (litem->x + 0 - pd->pan.x), (litem->y + 0 - pd->pan.y));
+          evas_object_move((*litem)->layout, ((*litem)->x + 0 - pd->pan.x), ((*litem)->y + 0 - pd->pan.y));
      }
 }
 
@@ -267,8 +260,8 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
 static void
 _item_selected_then(void * data, Efl_Event const* event)
 {
-   Efl_Ui_List_Future_Data *fdata = data;
-   EINA_SAFETY_ON_NULL_RETURN(fdata);
+   Efl_Ui_List_Item *item = data;
+   EINA_SAFETY_ON_NULL_RETURN(item);
    Eina_Stringshare *selected;
    const Eina_Value_Type *vtype;
    Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
@@ -279,11 +272,7 @@ _item_selected_then(void * data, Efl_Event const* event)
      {
         eina_value_get(value, &selected);
         Eina_Bool s = (strcmp(selected, "selected") ? EINA_FALSE : EINA_TRUE);
-        EFL_UI_LIST_DATA_GET_OR_RETURN(fdata->list, pd);
-
-        Efl_Ui_List_Item* members = pd->items.array.members;
-        int idx = fdata->index - pd->realized.start;
-        Efl_Ui_List_Item* item = &members[idx];
+        EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
 
         if (item->selected == s) return;
 
@@ -295,8 +284,6 @@ _item_selected_then(void * data, Efl_Event const* event)
         else
           pd->selected_items = eina_list_remove(pd->selected_items, item);
      }
-
-   free(fdata);
 }
 
 static void
@@ -320,39 +307,27 @@ _count_error(void * data, Efl_Event const* event EINA_UNUSED)
 static void
 _item_style_property_then(void * data, Efl_Event const* event)
 {
-   Efl_Ui_List_Future_Data *fdata = data;
-   EINA_SAFETY_ON_NULL_RETURN(fdata);
-   EFL_UI_LIST_DATA_GET_OR_RETURN(fdata->list, pd);
+   Efl_Ui_List_Item *item = data;
+   EINA_SAFETY_ON_NULL_RETURN(item);
    char *style = NULL;
 
    Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
    const Eina_Value_Type *vtype = eina_value_type_get(value);
-
-   Efl_Ui_List_Item* members = pd->items.array.members;
-   int idx = fdata->index - pd->realized.start;
-   Efl_Ui_List_Item* item = &members[idx];
 
    item->future = NULL;
    if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
      eina_value_get(value, &style);
 
    elm_object_style_set(item->layout, style);
-   free(fdata);
 }
 
 static void
 _item_property_error(void * data, Efl_Event const* event EINA_UNUSED)
 {
-   Efl_Ui_List_Future_Data *fdata = data;
-   EINA_SAFETY_ON_NULL_RETURN(fdata);
-   EFL_UI_LIST_DATA_GET_OR_RETURN(fdata->list, pd);
-
-   Efl_Ui_List_Item* members = pd->items.array.members;
-   int idx = fdata->index - pd->realized.start;
-   Efl_Ui_List_Item* item = &members[idx];
+   Efl_Ui_List_Item *item = data;
+   EINA_SAFETY_ON_NULL_RETURN(item);
 
    item->future = NULL;
-   free(fdata);
 }
 
 static void
@@ -372,12 +347,8 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
      {
         if (prop == sprop)
           {
-             Efl_Ui_List_Future_Data *fdata = calloc(1, sizeof(fdata));
-             fdata->list = item->list;
-             fdata->index = item->index;
-
              item->future = efl_model_property_get(item->model, sprop);
-             efl_future_then(item->future, &_item_selected_then, &_item_property_error, NULL, fdata);
+             efl_future_then(item->future, &_item_selected_then, &_item_property_error, NULL, item);
           }
      }
 }
@@ -385,7 +356,7 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 static void
 _item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_Coord w)
 {
-   Efl_Ui_List_Item *litem;
+   Efl_Ui_List_Item *litem, **it;
 
    if(_horiz(pd->orient))
      {
@@ -396,8 +367,10 @@ _item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_
         else if (pd->realized.h < item->minh)
           {
              pd->realized.h = h;
-             EINA_INARRAY_FOREACH(&pd->items.array, litem)
+             EINA_INARRAY_FOREACH(&pd->items.array, it)
                {
+                  litem = *it;
+                  if (!litem) continue;
                   if (pd->realized.h < litem->minh)
                     pd->realized.h = litem->minh;
 
@@ -415,8 +388,10 @@ _item_min_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item, Evas_Coord h, Evas_
         else if (pd->realized.w == item->minw)
           {
              pd->realized.w = w;
-             EINA_INARRAY_FOREACH(&pd->items.array, litem)
+             EINA_INARRAY_FOREACH(&pd->items.array, it)
                {
+                  litem = *it;
+                  if (!litem) continue;
                   if (pd->realized.w < litem->minw)
                     pd->realized.w = litem->minw;
 
@@ -484,25 +459,13 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    evas_object_move(item->layout, -9999, -9999);
 }
 
-static void
-_child_transient_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item)
-{
-   efl_event_callback_add(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
-   efl_event_callback_add(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _on_item_focused, item);
-
-   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
-   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
-   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
-
-   if (item->selected)
-     pd->selected_items = eina_list_append(pd->selected_items, item);
-}
-
-static void
-_child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
+static Efl_Ui_List_Item*
+_child_setup(Efl_Ui_List_Data *pd, Efl_Model *model
              , Eina_Inarray* recycle_layouts, int idx)
 {
-   EINA_SAFETY_ON_NULL_RETURN(pd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
+
+   Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
 
    assert(model != NULL);
    assert(item->layout == NULL);
@@ -510,7 +473,7 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
 
    item->list = pd->obj;
    item->model = efl_ref(model);
-   if(recycle_layouts && eina_inarray_count(recycle_layouts))
+   if (recycle_layouts && eina_inarray_count(recycle_layouts))
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
    else
      {
@@ -533,23 +496,31 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Ui_List_Item* item, Efl_Model *model
    Eina_Stringshare *style_prop = eina_stringshare_add("style");
    if (_efl_model_properties_has(item->model, style_prop))
      {
-        Efl_Ui_List_Future_Data *fdata = calloc(1, sizeof(fdata));
-        fdata->list = item->list;
-        fdata->index = item->index;
-
         item->future = efl_model_property_get(item->model, style_prop);
-        efl_future_then(item->future, &_item_style_property_then, &_item_property_error, NULL, fdata);
+        efl_future_then(item->future, &_item_style_property_then, &_item_property_error, NULL, item);
      }
    eina_stringshare_del(style_prop);
 //
    _layout_realize(pd, item);
 
-   _child_transient_setup(pd, item);
+   efl_event_callback_add(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
+   efl_event_callback_add(item->layout, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _on_item_focused, item);
+
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
+
+   if (item->selected)
+     pd->selected_items = eina_list_append(pd->selected_items, item);
+
+   return item;
 }
 
 static void
-_child_transient_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item)
+_child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item** oitem, Eina_Inarray* recycle_layouts)
 {
+   Efl_Ui_List_Item* item = *oitem;
+
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
    efl_event_callback_del(item->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, item);
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_DOWN, _on_item_mouse_down, item);
@@ -559,35 +530,35 @@ _child_transient_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item)
 
    if (item->selected)
      pd->selected_items = eina_list_remove(pd->selected_items, item);
-}
 
-static void
-_child_release(Efl_Ui_List_Data* pd, Efl_Ui_List_Item* item, Eina_Inarray* recycle_layouts)
-{
-  _child_transient_release(pd, item);
-  item->list = NULL;
+   item->list = NULL;
 
-  _layout_unrealize(pd, item);
-  if(item->future)
-    efl_future_cancel(item->future);
-  efl_unref(item->model);
-  // discard elm_layout to thrash to be able to reuse it
-  assert(item->layout != NULL);
-  if(recycle_layouts)
-    eina_inarray_push(recycle_layouts, &item->layout);
-  else
-    efl_ui_factory_release(pd->factory, item->layout);
-  item->layout = NULL;
-  if(_horiz(pd->orient))
-    pd->realized.w -= item->w;
-  else
-    pd->realized.h -= item->h;
+   _layout_unrealize(pd, item);
+
+   efl_unref(item->model);
+   // discard elm_layout to thrash to be able to reuse it
+   assert(item->layout != NULL);
+
+   if (recycle_layouts)
+     eina_inarray_push(recycle_layouts, &item->layout);
+   else
+     efl_ui_factory_release(pd->factory, item->layout);
+
+   item->layout = NULL;
+
+   if (_horiz(pd->orient))
+     pd->realized.w -= item->w;
+   else
+     pd->realized.h -= item->h;
+
+   free(item);
+   *oitem = NULL;
 }
 
 static void
 _remove_at(Efl_Ui_List_Data* pd, int index)
 {
-   Efl_Ui_List_Item *to_first, *from_first;
+   Efl_Ui_List_Item **to_first, **from_first;
    int i, j;
 
    // fits, just move around
@@ -597,77 +568,32 @@ _remove_at(Efl_Ui_List_Data* pd, int index)
 
    _child_release(pd, to_first, NULL);
 
-   for(i = index+1, j = 0; i != (int)pd->items.array.len; ++i, ++j)
-     _child_transient_release(pd, &from_first[j]);
+   memmove(to_first, from_first, sizeof(Efl_Ui_List_Item*)*(pd->items.array.len - index - 1));
 
-   memmove(to_first, from_first, sizeof(Efl_Ui_List_Item)*(pd->items.array.len - index - 1));
-   --pd->items.array.len;
-
-   for(i = index, j = 0; i != (int)pd->items.array.len; ++i, ++j)
+   for(i = index, j = 0; i < (int)pd->items.array.len-1; ++i, ++j)
      {
-        to_first[j].index--;
-        _child_transient_setup(pd, &to_first[j]);
+        to_first[j]->index--;
      }
-   memset(&to_first[j], 0, sizeof(Efl_Ui_List_Item));
+   eina_inarray_pop(&pd->items.array);
 }
 
 static void
 _insert_at(Efl_Ui_List_Data* pd, int index, Efl_Model* child)
 {
-  Efl_Ui_List_Item *to_first, *from_first;
+  Efl_Ui_List_Item **members, *item;
   int i;
 
-  if(pd->items.array.len != pd->items.array.max)
-    {
-      // fits, just move around
-      from_first = pd->items.array.members;
-      from_first += pd->items.array.len;
-      to_first = from_first + 1;
+  item = _child_setup(pd,  child, NULL, index);
+  eina_inarray_insert_at(&pd->items.array, index, &item);
 
-      for(i = index; i != (int)pd->items.array.len; ++i)
-        {
-           _child_transient_release(pd, from_first);
-           memcpy(to_first, from_first, sizeof(Efl_Ui_List_Item));
-           to_first->index++;
-           _child_transient_setup(pd, to_first);
-           --from_first, --to_first;
-        }
-      pd->items.array.len++;
-    }
-  else
+  // fits, just move around
+  members = pd->items.array.members;
+
+  for(i = index+1; i < (int)pd->items.array.len; ++i)
     {
-      // doesn't fit, need to allocate space
-      void* members = calloc(1, (pd->items.array.max + pd->items.array.step)*sizeof(Efl_Ui_List_Item));
-      // copy before index
-      to_first = members;
-      from_first = pd->items.array.members;
-      memcpy(to_first, from_first, sizeof(Efl_Ui_List_Item)*index);
-      for(i = 0; i != index; ++i)
-        {
-           _child_transient_release(pd, from_first);
-           _child_transient_setup(pd, to_first);
-           to_first++, from_first++;
-        }
-      // copy after index
-      to_first++;
-      memcpy(to_first, from_first, sizeof(Efl_Ui_List_Item)*(pd->items.array.len-index));
-      for(i = index; i != (int)pd->items.array.len; ++i)
-        {
-           _child_transient_release(pd, from_first);
-           _child_transient_setup(pd, to_first);
-           to_first->index++;
-           to_first++, from_first++;
-        }
-      free(pd->items.array.members);
-      pd->items.array.members = members;
-      pd->items.array.max += pd->items.array.step;
-      pd->items.array.len++;
+       members[i]->index++;
     }
 
-  // init child
-  to_first = pd->items.array.members;
-  memset(&to_first[index], 0, sizeof(Efl_Ui_List_Item));
-  _child_setup(pd,  &to_first[index], child, NULL, index);
   pd->realized.slice++;
 }
 
@@ -675,7 +601,6 @@ static void
 _resize_children(Efl_Ui_List_Data* pd, int removing_before, int removing_after,
                  Eina_Accessor* acc)
 {
-   Efl_Ui_List_Item *item;
    Eina_Inarray recycle_layouts;
    unsigned to_begin, from_begin, copy_size;
    unsigned idx;
@@ -684,95 +609,71 @@ _resize_children(Efl_Ui_List_Data* pd, int removing_before, int removing_after,
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
-   pd->future = NULL;
    EINA_SAFETY_ON_NULL_RETURN(acc);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
 
-   //assert(pd->realized.slice == eina_inarray_count(&pd->items.array));
+   assert(pd->realized.slice == eina_inarray_count(&pd->items.array));
    // received slice start is after older slice start
-   if(removing_before > 0)
+   if (removing_before > 0)
      {
-       int i = 0;
-       while(i != removing_before)
-         {
-           Efl_Ui_List_Item* members = pd->items.array.members;
-           item = &members[i];
-           _child_release(pd, item, &recycle_layouts);
-           ++i;
-         }
-       to_begin = 0;
-       from_begin = removing_before;
+        int i = 0;
+        while (i != removing_before)
+          {
+             Efl_Ui_List_Item** members = pd->items.array.members;
+             _child_release(pd, &members[i], &recycle_layouts);
+             ++i;
+          }
+        to_begin = 0;
+        from_begin = removing_before;
      }
    else
      {
-       to_begin = -removing_before;
-       from_begin = 0;
+        to_begin = -removing_before;
+        from_begin = 0;
      }
 
-   if(removing_after > 0)
+   if (removing_after > 0)
      {
-       int i = pd->realized.slice - removing_after;
-       while(i != pd->realized.slice)
-         {
-           Efl_Ui_List_Item* members = pd->items.array.members;
-           item = &members[i];
-           _child_release(pd, item, &recycle_layouts);
-           ++i;
-         }
-       copy_size = eina_inarray_count(&pd->items.array)
-         - (from_begin + removing_after);
+        int i = pd->realized.slice - removing_after;
+        while (i != pd->realized.slice)
+          {
+            Efl_Ui_List_Item** members = pd->items.array.members;
+            _child_release(pd, &members[i], &recycle_layouts);
+            ++i;
+          }
+        copy_size = eina_inarray_count(&pd->items.array)
+          - (from_begin + removing_after);
      }
    else
      {
-       copy_size = eina_inarray_count(&pd->items.array) - from_begin;
+        copy_size = eina_inarray_count(&pd->items.array) - from_begin;
      }
 
-   if(removing_after + removing_before >= 0)
+   if (removing_after + removing_before >= 0)
      {
-       if(from_begin != to_begin)
-         {
-            Efl_Ui_List_Item* from_first = pd->items.array.members;
-            Efl_Ui_List_Item* to_first = pd->items.array.members;
-            from_first += from_begin;
-            to_first += to_begin;
-            Efl_Ui_List_Item* from_last = from_first + copy_size;
-            Efl_Ui_List_Item* to_last = to_first + copy_size;
-            Efl_Ui_List_Item* from_first_t = from_first;
-            for(;from_first != from_last;++from_first)
-              {
-                _child_transient_release(pd, from_first);
-              }
-            memmove(to_first, from_first_t, copy_size*sizeof(Efl_Ui_List_Item));
-            for(;to_first != to_last;++to_first)
-              {
-                _child_transient_setup(pd, to_first);
-              }
-         }
-       memset(&((Efl_Ui_List_Item*)pd->items.array.members)[copy_size+to_begin], 0, (eina_inarray_count(&pd->items.array) - (copy_size+to_begin))*sizeof(Efl_Ui_List_Item));
-       memset(&((Efl_Ui_List_Item*)pd->items.array.members)[0], 0, to_begin*sizeof(Efl_Ui_List_Item));
-       pd->items.array.len -= removing_before + removing_after;
+        if (from_begin != to_begin)
+          {
+             Efl_Ui_List_Item** from = pd->items.array.members;
+             Efl_Ui_List_Item** to = pd->items.array.members;
+             from += from_begin;
+             to += to_begin;
+             memmove(to, from, copy_size*sizeof(Efl_Ui_List_Item*));
+          }
+        memset(&((Efl_Ui_List_Item**)pd->items.array.members)[copy_size+to_begin], 0, (eina_inarray_count(&pd->items.array) - (copy_size+to_begin))*sizeof(Efl_Ui_List_Item*));
+        memset(&((Efl_Ui_List_Item**)pd->items.array.members)[0], 0, to_begin*sizeof(Efl_Ui_List_Item*));
+        pd->items.array.len -= removing_before + removing_after;
      }
    else
      {
-       Efl_Ui_List_Item* data = calloc(1, pd->outstanding_slice.slice*sizeof(Efl_Ui_List_Item));
-       Efl_Ui_List_Item* from_first = pd->items.array.members;
-       from_first += from_begin;
-       Efl_Ui_List_Item* to_first = data + to_begin;
-       Efl_Ui_List_Item* from_last = from_first + copy_size;
-       Efl_Ui_List_Item* to_last = to_first + copy_size;
-       memcpy(to_first, from_first, copy_size*sizeof(Efl_Ui_List_Item));
-       for(;from_first != from_last;++from_first)
-         {
-            _child_transient_release(pd, from_first);
-         }
-       for(;to_first != to_last;++to_first)
-         {
-            _child_transient_setup(pd, to_first);
-         }
-       free(pd->items.array.members);
-       pd->items.array.members = data;
-       pd->items.array.len = pd->items.array.max = pd->outstanding_slice.slice;
+        Efl_Ui_List_Item** data = calloc(1, pd->outstanding_slice.slice*sizeof(Efl_Ui_List_Item*));
+        Efl_Ui_List_Item** from_first = pd->items.array.members;
+        from_first += from_begin;
+        Efl_Ui_List_Item** to_first = data + to_begin;
+        memcpy(to_first, from_first, copy_size*sizeof(Efl_Ui_List_Item*));
+        free(pd->items.array.members);
+        pd->items.array.members = data;
+        pd->items.array.len = pd->items.array.max = pd->outstanding_slice.slice;
      }
 
    pd->realized.start = pd->outstanding_slice.slice_start;
@@ -781,37 +682,37 @@ _resize_children(Efl_Ui_List_Data* pd, int removing_before, int removing_after,
    idx = 0;
    while(removing_before < 0)
      {
-       Efl_Ui_List_Item* members = pd->items.array.members;
-       Efl_Ui_List_Item* item = &members[idx];
+        Efl_Ui_List_Item** members = pd->items.array.members;
+        Efl_Ui_List_Item** item = &members[idx];
 
-       // initialize item
-       void* model = NULL;
-       int r = eina_accessor_data_get(acc, idx + pd->realized.start - pd->outstanding_slice.slice_start, &model);
-       assert(r != EINA_FALSE);
-       assert(model != NULL);
+        // initialize item
+        void* model = NULL;
+        int r = eina_accessor_data_get(acc, idx + pd->realized.start - pd->outstanding_slice.slice_start, &model);
+        assert(r != EINA_FALSE);
+        assert(model != NULL);
 
-       _child_setup(pd, item, model, &recycle_layouts, idx);
+        *item = _child_setup(pd, model, &recycle_layouts, idx);
 
-       idx++;
-       removing_before++;
+        idx++;
+        removing_before++;
      }
 
    idx = copy_size + to_begin;
    while(removing_after < 0)
      {
-       Efl_Ui_List_Item* members = pd->items.array.members;
-       Efl_Ui_List_Item* item = &members[idx];
+        Efl_Ui_List_Item** members = pd->items.array.members;
+        Efl_Ui_List_Item** item = &members[idx];
 
-       // initialize item
-       void* model = NULL;
-       int r = eina_accessor_data_get(acc, idx + pd->realized.start - pd->outstanding_slice.slice_start, &model);
-       assert(r != EINA_FALSE);
-       assert(model != NULL);
+        // initialize item
+        void* model = NULL;
+        int r = eina_accessor_data_get(acc, idx + pd->realized.start - pd->outstanding_slice.slice_start, &model);
+        assert(r != EINA_FALSE);
+        assert(model != NULL);
 
-       _child_setup(pd, item, model, &recycle_layouts, idx);
+        *item = _child_setup(pd, model, &recycle_layouts, idx);
 
-       idx++;
-       removing_after++;
+        idx++;
+        removing_after++;
      }
 
    {
@@ -841,6 +742,7 @@ _children_then(void * data, Efl_Event const* event)
        removing_after = -pd->outstanding_slice.slice;
      }
 
+   pd->future = NULL;
    _resize_children(pd, removing_before, removing_after, acc);
    evas_object_smart_changed(pd->obj);
 }
@@ -850,7 +752,7 @@ _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
    Eina_Inarray recycle_layouts;
 
-   Efl_Ui_List_Item *item;
+   Efl_Ui_List_Item** item;
    Elm_Layout** layout;
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
@@ -875,10 +777,9 @@ _efl_ui_list_children_free(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 static void
 _children_error(void * data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
 {
-   /* Efl_Ui_List_Slice *sd = data; */
-   /* Efl_Ui_List_Data *pd = sd->pd; */
-   /* pd->future = NULL; */
-   /* free(data); */
+   Efl_Ui_List_Data *pd = data;
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+   pd->future = NULL;
 }
 
 static void
@@ -1132,7 +1033,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
 
-   eina_inarray_setup(&pd->items.array, sizeof(Efl_Ui_List_Item), 0);
+   eina_inarray_setup(&pd->items.array, sizeof(Efl_Ui_List_Item*), 0);
 
    manager = elm_obj_widget_focus_manager_factory(obj, obj);
    efl_composite_attach(obj, manager);
@@ -1227,11 +1128,11 @@ _efl_ui_list_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
 EOLIAN Eina_List*
 _efl_ui_list_elm_interface_atspi_accessible_children_get(Eo *obj, Efl_Ui_List_Data *pd)
 {
-   Efl_Ui_List_Item *litem;
+   Efl_Ui_List_Item **litem;
    Eina_List *ret = NULL, *ret2 = NULL;
 
    EINA_INARRAY_FOREACH(&pd->items.array, litem)
-      ret = eina_list_append(ret, litem->layout);
+      ret = eina_list_append(ret, (*litem)->layout);
 
    ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, MY_CLASS));
    return eina_list_merge(ret, ret2);
@@ -1285,21 +1186,21 @@ _efl_ui_list_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
 {
-   Efl_Ui_List_Item *item = eina_inarray_nth(&pd->items.array, child_index);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
-   return item->selected;
+   Efl_Ui_List_Item **item = eina_inarray_nth(&pd->items.array, child_index);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(*item, EINA_FALSE);
+   return (*item)->selected;
 }
 
 EOLIAN Eina_Bool
 _efl_ui_list_elm_interface_atspi_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
-   Efl_Ui_List_Item *item;
+   Efl_Ui_List_Item **item;
 
    if (pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)
      return EINA_FALSE;
 
    EINA_INARRAY_FOREACH(&pd->items.array, item)
-      _efl_ui_list_item_select_set(item, EINA_TRUE);
+      _efl_ui_list_item_select_set(*item, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -1578,7 +1479,7 @@ void
 _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
 {
    EFL_UI_LIST_DATA_GET_OR_RETURN(ui_list, pd);
-   Efl_Ui_List_Item *litem = NULL;
+   Efl_Ui_List_Item *litem, **it;
 
    Eina_Bool horiz = _horiz(pd->orient), zeroweight = EINA_FALSE;
    Evas_Coord ow, oh, want;
@@ -1681,13 +1582,13 @@ _efl_ui_list_custom_layout(Efl_Ui_List *ui_list)
 
    cur_pos += average_item_size * pd->realized.start;
    // scan all items, get their properties, calculate total weight & min size
-   EINA_INARRAY_FOREACH(&pd->items.array, litem)
+   EINA_INARRAY_FOREACH(&pd->items.array, it)
      {
+        litem = *it;
         double cx, cy, cw, ch, x, y, w, h;
         double align[2];
         int item_pad[4], max[2];
 
-        //_item_calc(pd, litem);
         assert(litem->layout != NULL);
         efl_gfx_size_hint_align_get(litem->layout, &align[0], &align[1]);
         efl_gfx_size_hint_max_get(litem->layout, &max[0], &max[1]);

@@ -144,6 +144,7 @@ static void
 _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
+//   printf("relized 2\n");
    elm_layout_theme_set(ie->layout, "list", "item", "default");
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
