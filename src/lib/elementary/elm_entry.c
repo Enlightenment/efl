@@ -1309,12 +1309,13 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_focus_region_get(Eo *obj, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_entry_elm_widget_focus_region_get(Eo *obj, Elm_Entry_Data *sd, Eina_Rectangle *r)
 {
    Evas_Coord cx, cy, cw, ch;
    Evas_Coord edx, edy;
    Evas_Coord elx, ely, elw, elh;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
@@ -1329,19 +1330,12 @@ _elm_entry_elm_widget_focus_region_get(Eo *obj, Elm_Entry_Data *sd, Evas_Coord *
      }
    evas_object_geometry_get(obj, &elx, &ely, &elw, &elh);
 
-   if (x)
-     {    
-       *x = cx + edx - elx;
-       if ((cw < elw) && (*x + cw > elw)) *x = elw - cw;
-     }
-   if (y)
-     {    
-       *y = cy + edy - ely;
-       if ((ch < elh) && (*y + ch > elh)) *y = elh - ch;
-     }
-   if (w) *w = cw;
-   if (h) *h = ch;
-
+   r->x = cx + edx - elx;
+   if ((cw < elw) && (r->x + cw > elw)) r->x = elw - cw;
+   r->y = cy + edy - ely;
+   if ((ch < elh) && (r->y + ch > elh)) r->y = elh - ch;
+   r->w = cw;
+   r->h = ch;
 
    return EINA_TRUE;
 }

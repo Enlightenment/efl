@@ -1031,13 +1031,14 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
 EOLIAN static void
 _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
-   Evas_Coord x, y, w, h, ox, oy;
+   Evas_Coord ox, oy;
+   Eina_Rectangle r;
    Evas_Object *o;
 
    o = elm_widget_parent_get(obj);
    if (!o) return;
 
-   if (!elm_widget_focus_region_get(obj, &x, &y, &w, &h))
+   if (!elm_widget_focus_region_get(obj, &r))
      return;
 
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
@@ -1054,28 +1055,28 @@ _elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNU
 
              // Get the object's on_focus_region position relative to the scroller.
              Evas_Coord rx, ry;
-             rx = ox + x - px + sx;
-             ry = oy + y - py + sy;
+             rx = ox + r.x - px + sx;
+             ry = oy + r.y - py + sy;
 
              switch (_elm_config->focus_autoscroll_mode)
                {
                 case ELM_FOCUS_AUTOSCROLL_MODE_SHOW:
-                   elm_interface_scrollable_content_region_show(o, rx, ry, w, h);
+                   elm_interface_scrollable_content_region_show(o, rx, ry, r.w, r.h);
                    break;
                 case ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN:
-                   elm_interface_scrollable_region_bring_in(o, rx, ry, w, h);
+                   elm_interface_scrollable_region_bring_in(o, rx, ry, r.w, r.h);
                    break;
                 default:
                    break;
                }
 
-             elm_widget_focus_region_get(o, &x, &y, &w, &h);
+             elm_widget_focus_region_get(o, &r);
              evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
           }
         else
           {
-             x += ox - px;
-             y += oy - py;
+             r.x += ox - px;
+             r.y += oy - py;
              ox = px;
              oy = py;
           }
@@ -3476,12 +3477,13 @@ _elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
  * @ingroup Widget
  */
 EOLIAN static Eina_Bool
-_elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Rectangle *r)
 {
-   efl_gfx_size_get(obj, w, h);
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if ((*w <= 0) || (*h <= 0)) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
+   efl_gfx_size_get(obj, &r->w, &r->h);
+   r->x = 0;
+   r->y = 0;
+   if ((r->w <= 0) || (r->h <= 0)) return EINA_FALSE;
    return EINA_TRUE;
 }
 
