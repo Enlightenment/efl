@@ -67,7 +67,7 @@ group { name: "e/modules/packagekit/icon/security";
 group { name: "e/modules/packagekit/main";
    max: 160 160;
    images.image: "packagekit_base.png" COMP;
-   images.image: "icon_border_remember.png" COMP;
+   images.image: "icon_check_flat.png" COMP;
    images.image: "glow_exclam.png" COMP;
    images.image: "glow_round_corners_small.png" COMP;
    images.image: "knob_round_small_busy.png" COMP;
@@ -94,7 +94,8 @@ group { name: "e/modules/packagekit/main";
          description { state: "updated" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            image.normal: "icon_border_remember.png";
+            image.normal: "icon_check_flat.png";
+            color: 64 64 64 255;
             max: 16 16;
          }
          description { state: "error" 0.0;

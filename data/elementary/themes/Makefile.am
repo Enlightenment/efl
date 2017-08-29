@@ -431,6 +431,7 @@ elementary/themes/img/icon_border_stack_bot.png \
 elementary/themes/img/icon_border_stack_norm.png \
 elementary/themes/img/icon_border_stack_top.png \
 elementary/themes/img/icon_chat.png \
+elementary/themes/img/icon_check_flat.png \
 elementary/themes/img/icon_clock.png \
 elementary/themes/img/icon_close.png \
 elementary/themes/img/icon_delete.png \
