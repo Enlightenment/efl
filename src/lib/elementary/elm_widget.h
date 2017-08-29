@@ -771,7 +771,7 @@ EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_highlight_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI Eina_Rectangle   elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 EAPI void             elm_widget_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 EAPI Elm_Focus_Move_Policy elm_widget_focus_move_policy_get(const Evas_Object *obj);

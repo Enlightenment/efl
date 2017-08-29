@@ -3089,12 +3089,8 @@ _elm_list_focus_on_selection_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
    return sd->focus_on_selection_enabled;
 }
 
-static void
-_elm_list_item_coordinates_adjust(Elm_List_Item_Data *it,
-                                  Evas_Coord *x,
-                                  Evas_Coord *y,
-                                  Evas_Coord *w,
-                                  Evas_Coord *h)
+static Eina_Rectangle
+_elm_list_item_coordinates_adjust(Elm_List_Item_Data *it)
 {
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
 
@@ -3113,21 +3109,22 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it,
    if ((ix + iw) > (vx + vw))
      iw = (vx + vw - ix);
 
-   *x = ix;
-   *y = iy;
-   *w = iw;
-   *h = ih;
+   return (Eina_Rectangle) { ix, iy, iw, ih };
 }
 
-EOLIAN static void
-_elm_list_elm_widget_focus_highlight_geometry_get(const Eo *obj EINA_UNUSED, Elm_List_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Rectangle
+_elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
+   Eina_Rectangle r = {};
+
    if (sd->focused_item)
      {
         ELM_LIST_ITEM_DATA_GET(sd->focused_item, focus_it);
-        _elm_list_item_coordinates_adjust(focus_it, x, y, w, h);
-        elm_widget_focus_highlight_focus_part_geometry_get(VIEW(focus_it), x, y, w, h);
+        r = _elm_list_item_coordinates_adjust(focus_it);
+        elm_widget_focus_highlight_focus_part_geometry_get(VIEW(focus_it), &r.x, &r.y, &r.w, &r.h);
      }
+
+   return r;
 }
 
 EOLIAN static Elm_Object_Item*

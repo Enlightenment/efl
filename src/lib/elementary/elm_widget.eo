@@ -532,6 +532,30 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
+      @property focus_highlight_geometry {
+         [[The rectangle region to be highlighted on focus.
+
+           This is a rectangle region where the focus highlight should be
+           displayed.
+         ]]
+         get {
+            [[This is a read-only property.]]
+         }
+         values {
+            region: Eina.Rectangle; [[The rectangle area.]]
+         }
+      }
+      @property focus_highlight_style {
+         [[Control the widget focus highlight style.]]
+         set {
+            return: bool; [[$true on success, $false otherwise.]]
+         }
+         get {
+         }
+         values {
+            style: string; [[The name of the focus highlight style.]]
+         }
+      }
 
       /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_order {
@@ -586,15 +610,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          params {
             @in child: Efl.Canvas.Object; [[The child to be added in custom chain.]]
             @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
-         }
-      }
-      focus_highlight_geometry_get @const {
-         [[Get the focus highlight geometry of widget.]]
-         params {
-            @out x: int; [[X coordinate]]
-            @out y: int; [[Y coordinate]]
-            @out w: int; [[Width]]
-            @out h: int; [[Height]]
          }
       }
       focus_cycle {
@@ -743,19 +758,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Current focused object in object tree.]]
          get {
             return: Efl.Canvas.Object; [[Current focused or $null, if there is no focused object.]]
-         }
-      }
-
-      /* Other focus APIs */
-      @property focus_highlight_style {
-         [[Control the widget focus highlight style.]]
-         set {
-            return: bool; [[$true on success, $false otherwise.]]
-         }
-         get {
-         }
-         values {
-            style: string; [[The name of the focus highlight style.]]
          }
       }
 

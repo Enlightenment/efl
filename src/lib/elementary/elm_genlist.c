@@ -8432,10 +8432,11 @@ elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
    return EO_OBJ(it);
 }
 
-EOLIAN static void
-_elm_genlist_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Genlist_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Rectangle
+_elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Genlist_Data *sd)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
+   Eina_Rectangle r = {};
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 
@@ -8447,32 +8448,34 @@ _elm_genlist_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Genlist_
      }
    else
      {
-        evas_object_geometry_get(obj, x, y, w, h);
-        return;
+        evas_object_geometry_get(obj, &r.x, &r.y, &r.w, &r.h);
+        return r;
      }
 
-   *x = item_x;
-   *y = item_y;
-   *w = item_w;
-   *h = item_h;
+   r.x = item_x;
+   r.y = item_y;
+   r.w = item_w;
+   r.h = item_h;
 
    if (item_y < oy)
      {
-        *y = oy;
+        r.y = oy;
      }
    if (item_y > (oy + oh - item_h))
      {
-        *y = oy + oh - item_h;
+        r.y = oy + oh - item_h;
      }
 
    if ((item_x + item_w) > (ox + ow))
      {
-        *w = ow;
+        r.w = ow;
      }
    if (item_x < ox)
      {
-        *x = ox;
+        r.x = ox;
      }
+
+   return r;
 }
 
 EOLIAN static Elm_Object_Item *

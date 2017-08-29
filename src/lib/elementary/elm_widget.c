@@ -1087,6 +1087,9 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *style)
 {
+   // FIXME: This does not return the proper error code! Who cares if the
+   // string was changed?? This should return false if the desired style does
+   // not exist...
    if (eina_stringshare_replace(&sd->focus_highlight_style, style)) return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -4475,17 +4478,18 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
   if (th != *h) *h = th;
 }
 
-EOLIAN static void
-_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Rectangle
+_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    Evas_Coord ox = 0, oy = 0, ow = 0, oh = 0;
    Evas_Object *scroller = (Evas_Object *)obj;
+   Eina_Rectangle r = {};
 
-   evas_object_geometry_get(obj, x, y, w, h);
-   elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, x, y, w, h);
+   evas_object_geometry_get(obj, &r.x, &r.y, &r.w, &r.h);
+   elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, &r.x, &r.y, &r.w, &r.h);
 
    if (_elm_config->focus_autoscroll_mode != ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN)
-     return;
+     return r;
 
    while (scroller)
      {
@@ -4493,19 +4497,21 @@ _elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Widget_Smart_Data *s
           {
              elm_interface_scrollable_content_viewport_geometry_get(scroller, &ox, &oy, &ow, &oh);
 
-             if (*y < oy)
-               *y = oy;
-             else if ((oy + oh) < (*y + *h))
-               *y = (oy + oh - *h);
-             else if (*x < ox)
-               *x = ox;
-             else if ((ox + ow) < (*x + *w))
-               *x = (ox + ow - *w);
+             if (r.y < oy)
+               r.y = oy;
+             else if ((oy + oh) < (r.y + r.h))
+               r.y = (oy + oh - r.h);
+             else if (r.x < ox)
+               r.x = ox;
+             else if ((ox + ow) < (r.x + r.w))
+               r.x = (ox + ow - r.w);
 
              break;
           }
         scroller = elm_widget_parent_get(scroller);
      }
+
+   return r;
 }
 
 EOLIAN static Elm_Object_Item*
