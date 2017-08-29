@@ -3008,39 +3008,36 @@ _elm_toolbar_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *
    _access_obj_process(sd, _elm_toolbar_smart_focus_next_enable);
 }
 
-static void
-_elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it,
-                                Evas_Coord *x,
-                                Evas_Coord *y,
-                                Evas_Coord *w,
-                                Evas_Coord *h)
+static Eina_Rectangle
+_elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it)
 {
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
+   Eina_Rectangle r;
 
    evas_object_geometry_get(sd->hit_rect, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
-   *x = ix;
-   *y = iy;
-   *w = iw;
-   *h = ih;
+   r = (Eina_Rectangle) { ix, iy, iw, ih };
+
    if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
      {
         //TODO: Enhance it later.
         if ((ix < vx) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
-          *y = iy - ih;
+          r.y = iy - ih;
         else if (iy < vy)
-          *y = iy + ih;
+          r.y = iy + ih;
      }
    else
      {
         //TODO: Enhance it later.
         if ((iy < vy) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
-          *x = ix - iw;
+          r.x = ix - iw;
         else if (ix < vx)
-          *x = ix + iw;
+          r.x = ix + iw;
      }
+
+   return r;
 }
 
 EOLIAN static void
@@ -3050,19 +3047,21 @@ _elm_toolbar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Toolbar_Item_Data *
    elm_wdg_item_focus_set(obj, focus);
 }
 
-EOLIAN static void
-_elm_toolbar_elm_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Toolbar_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Rectangle
+_elm_toolbar_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Toolbar_Data *sd)
 {
+   Eina_Rectangle r = {};
+
    if (sd->focused_item)
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
-        _elm_toolbar_coordinates_adjust
-           (focus_it, x, y, w, h);
-        elm_widget_focus_highlight_focus_part_geometry_get
-           (VIEW(focus_it), x, y, w, h);
+        r = _elm_toolbar_coordinates_adjust(focus_it);
+        elm_widget_focus_highlight_focus_part_geometry_get(VIEW(focus_it), &r.x, &r.y, &r.w, &r.h);
      }
    else
-     evas_object_geometry_get(obj, x, y, w, h);
+     evas_object_geometry_get(obj, &r.x, &r.y, &r.w, &r.h);
+
+   return r;
 }
 
 EAPI Evas_Object *
