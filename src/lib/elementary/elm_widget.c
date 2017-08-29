@@ -3532,9 +3532,12 @@ _elm_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
 }
 
-EOLIAN static int
-_elm_widget_scroll_hold_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI int
+elm_widget_scroll_hold_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+
+   if (!sd) return 0;
    return sd->scroll_hold;
 }
 
@@ -3586,9 +3589,12 @@ _elm_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
 }
 
-EOLIAN static int
-_elm_widget_scroll_freeze_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI int
+elm_widget_scroll_freeze_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+
+   if (!sd) return 0;
    return sd->scroll_freeze;
 }
 
@@ -3975,34 +3981,38 @@ elm_widget_cursor_del(Eo *obj, Elm_Cursor *cur)
    sd->cursors = eina_list_remove(sd->cursors, cur);
 }
 
-EOLIAN static void
-_elm_widget_scroll_lock_x_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
+EAPI void
+elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Scroll_Block block)
 {
-   if (sd->scroll_x_locked == lock) return;
-   sd->scroll_x_locked = lock;
-   if (sd->scroll_x_locked) _propagate_x_drag_lock(obj, 1);
-   else _propagate_x_drag_lock(obj, -1);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Eina_Bool lx, ly;
+
+   if (!sd) return;
+   lx = !!(block & EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+   ly = !!(block & EFL_UI_SCROLL_BLOCK_VERTICAL);
+   if (sd->scroll_x_locked != lx)
+     {
+        sd->scroll_x_locked = lx;
+        _propagate_x_drag_lock(obj, lx ? 1 : -1);
+     }
+   if (sd->scroll_y_locked != ly)
+     {
+        sd->scroll_y_locked = ly;
+        _propagate_y_drag_lock(obj, ly ? 1 : -1);
+     }
 }
 
-EOLIAN static void
-_elm_widget_scroll_lock_y_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
+EAPI Efl_Ui_Scroll_Block
+elm_widget_scroll_lock_get(const Eo *obj)
 {
-   if (sd->scroll_y_locked == lock) return;
-   sd->scroll_y_locked = lock;
-   if (sd->scroll_y_locked) _propagate_y_drag_lock(obj, 1);
-   else _propagate_y_drag_lock(obj, -1);
-}
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Efl_Ui_Scroll_Block block = EFL_UI_SCROLL_BLOCK_NONE;
 
-EOLIAN static Eina_Bool
-_elm_widget_scroll_lock_x_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return sd->scroll_x_locked;
-}
+   if (!sd) return block;
+   if (sd->scroll_x_locked) block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+   if (sd->scroll_y_locked) block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
 
-EOLIAN static Eina_Bool
-_elm_widget_scroll_lock_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return sd->scroll_y_locked;
+   return block;
 }
 
 EAPI int

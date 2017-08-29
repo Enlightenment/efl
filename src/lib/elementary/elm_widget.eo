@@ -413,18 +413,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Scroll API. */
-      @property scroll_lock_x {
-         [[Drag lock on X axis]]
-         values {
-            lock: bool; [[$true if drag is locked on X axis, $false otherwise]]
-         }
-      }
-      @property scroll_lock_y {
-         [[Lock the Y axis from being dragged]]
-         values {
-            lock: bool; [[$true if the Y axis is locked, $false otherwise]]
-         }
-      }
       @property on_show_region_hook {
          [[Region hook on show property]]
          set {}
@@ -436,18 +424,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Control item loop feature.]]
          values {
             enable: bool; [[$true if item loop is enabled, $false otherwise]]
-         }
-      }
-      @property scroll_freeze {
-         [[Scroll freeze property]]
-         get {
-            return: int; [[FIXME]]
-         }
-      }
-      @property scroll_hold {
-         [[Scroll hold property]]
-         get {
-            return: int; [[FIXME]]
          }
       }
       scroll_hold_push {

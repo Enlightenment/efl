@@ -2144,10 +2144,7 @@ _elm_scroll_post_event_up(void *data,
    if (sid->obj)
      {
         if (sid->down.dragged)
-          {
-             elm_widget_scroll_lock_x_set(sid->obj, EINA_FALSE);
-             elm_widget_scroll_lock_y_set(sid->obj, EINA_FALSE);
-          }
+          elm_widget_scroll_lock_set(sid->obj, EFL_UI_SCROLL_BLOCK_NONE);
      }
    return EINA_FALSE;
 }
@@ -2959,11 +2956,13 @@ _elm_scroll_post_event_move(void *data,
                             Evas *e EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
+   Efl_Ui_Scroll_Block block;
    Eina_Bool horiz, vert;
    int start = 0;
 
    if (!sid->down.want_dragged) return EINA_TRUE;
 
+   block = elm_widget_scroll_lock_get(sid->obj);
    _elm_widget_parents_bounce_get(sid->obj, &horiz, &vert);
    if (sid->down.hold_parent)
      {
@@ -2990,7 +2989,8 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       elm_widget_scroll_lock_x_set(sid->obj, 1);
+                       block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+                       elm_widget_scroll_lock_set(sid->obj, block);
                     }
                   start = 1;
                }
@@ -3012,8 +3012,8 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       elm_widget_scroll_lock_y_set
-                          (sid->obj, EINA_TRUE);
+                       block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
+                       elm_widget_scroll_lock_set(sid->obj, block);
                     }
                   start = 1;
                }
