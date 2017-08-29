@@ -30,6 +30,7 @@ _exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              free(tmpf);
              tmpf = NULL;
              close(tmpfd);
+             tmpfd = -1;
           }
         espeak = NULL;
         if (cb_func) cb_func(cb_data);
@@ -91,7 +92,8 @@ out_read_done(void)
      {
         // FIXME: espeak supporets -v XX for voice locale. should provide this
         // based on actual lang/locale
-        close(tmpfd);
+        if (tmpfd >= 0) close(tmpfd);
+        tmpfd = -1;
         snprintf(buf, sizeof(buf), "espeak -p 2 -s 120 -k 10 -m -f %s", tmpf);
         espeak = ecore_exe_pipe_run(buf,
                                     ECORE_EXE_NOT_LEADER,
@@ -113,6 +115,7 @@ out_cancel(void)
         free(tmpf);
         tmpf = NULL;
         close(tmpfd);
+        tmpfd = -1;
      }
 }
 
