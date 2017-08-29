@@ -100,6 +100,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
      {
       case EVAS_OBJECT_INTERCEPT_CB_VISIBLE:
         i = !!va_arg(args, int);
+        if (!obj->legacy.visible_set) obj->legacy.visible_set = 1;
         if (i == obj->cur->visible) return 1;
         if (!obj->interceptors) return 0;
         if (i) blocked = evas_object_intercept_call_show(eo_obj, obj);
