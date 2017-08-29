@@ -1926,7 +1926,8 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
-   if (obj->is_smart && obj->smart.smart->smart_class &&
+   if (obj->is_smart && obj->smart.smart &&
+       obj->smart.smart->smart_class &&
        obj->smart.smart->smart_class->color_set)
      {
         obj->smart.smart->smart_class->color_set(eo_obj, r, g, b, a);
