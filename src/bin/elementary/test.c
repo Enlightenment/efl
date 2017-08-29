@@ -316,6 +316,7 @@ void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
 void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
+void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -970,6 +971,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Wrap", test_label_wrap);
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
+   ADD_TEST(NULL, "Text", "Text Path", test_ui_textpath);
 
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
