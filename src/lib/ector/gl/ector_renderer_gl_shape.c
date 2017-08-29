@@ -120,7 +120,7 @@ _ector_renderer_gl_shape_ector_renderer_crc_get(Eo *obj, Ector_Renderer_GL_Shape
 
    crc = ector_renderer_crc_get(efl_super(obj, ECTOR_RENDERER_GL_SHAPE_CLASS));
 
-   // This code should be shared with other implementation
+   // This code should be shared with the other implementation
    crc = eina_crc((void*) &pd->shape->stroke.marker, sizeof (pd->shape->stroke.marker), crc, EINA_FALSE);
    crc = eina_crc((void*) &pd->public_shape->stroke.scale, sizeof (pd->public_shape->stroke.scale) * 3, crc, EINA_FALSE); // scale, width, centered
    crc = eina_crc((void*) &pd->public_shape->stroke.color, sizeof (pd->public_shape->stroke.color), crc, EINA_FALSE);

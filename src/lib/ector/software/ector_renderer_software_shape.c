@@ -140,14 +140,14 @@ _outline_close_path(Outline *outline)
      }
    else
      {
-        // first path
+        // First path
         index = 0;
      }
 
-   // make sure there is atleast one point in the current path
+   // Make sure there is at least one point in the current path
    if (ft_outline->n_points == index) return EINA_FALSE;
 
-   // close the path
+   // Close the path
    _grow_outline_points(outline, 1);
    ft_outline->points[ft_outline->n_points].x = ft_outline->points[index].x;
    ft_outline->points[ft_outline->n_points].y = ft_outline->points[index].y;
@@ -262,7 +262,7 @@ _line_value_set(Line *l, double x1, double y1, double x2, double y2)
 }
 
 // approximate sqrt(x*x + y*y) using alpha max plus beta min algorithm.
-// With alpha = 1, beta = 3/8, giving results with a largest error less 
+// With alpha = 1, beta = 3/8, giving results with the largest error less 
 // than 7% compared to the exact value.
 static double
 _line_length(Line *l)
@@ -575,7 +575,7 @@ static Eina_Bool
 _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
                                                                    Ector_Renderer_Software_Shape_Data *pd)
 {
-   // FIXME: shouldn't that be part of the shape generic implementation ?
+   // FIXME: shouldn't this be part of the shape generic implementation?
    if (pd->shape->fill)
      ector_renderer_prepare(pd->shape->fill);
    if (pd->shape->stroke.fill)
@@ -583,7 +583,7 @@ _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
    if (pd->shape->stroke.marker)
      ector_renderer_prepare(pd->shape->stroke.marker);
 
-   // shouldn't that be moved to the software base object
+   // FIXME: shouldn't this be moved to the software base object?
    if (!pd->surface)
      pd->surface = efl_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
 
@@ -709,8 +709,8 @@ _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_So
 static void
 _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   //FIXME, As base class  destructor can't call destructor of mixin class.
-   // call explicit API to free shape data.
+   // FIXME: As base class, destructor can't call destructor of mixin class.
+   // Call explicit API to free shape data.
    efl_gfx_path_reset(obj);
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);

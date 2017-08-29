@@ -99,7 +99,7 @@ _ector_renderer_cairo_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_Cairo
    if (pd->shape->stroke.marker)
      ector_renderer_prepare(pd->shape->stroke.marker);
 
-   // shouldn't that be moved to the cairo base object
+   // shouldn't this be moved to the cairo base object?
    if (!pd->parent)
      {
         Ector_Renderer_Data *base;
@@ -237,7 +237,7 @@ _ector_renderer_cairo_shape_ector_renderer_bounds_get(Eo *obj,
 {
    Ector_Renderer_Cairo_Data *bd;
 
-   // FIXME: It should be possible to actually ask cairo about that
+   // FIXME: It should be possible to ask cairo about this
    efl_gfx_path_bounds_get(obj, r);
 
    bd = efl_data_scope_get(obj, ECTOR_RENDERER_CAIRO_CLASS);
@@ -295,8 +295,8 @@ _ector_renderer_cairo_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Cairo_
 {
    Ector_Renderer_Data *base;
 
-   //FIXME, As base class  destructor can't call destructor of mixin class.
-   // call explicit API to free shape data.
+   // FIXME: As base class destructor can't call destructor of mixin class.
+   // Call explicit API to free shape data.
    efl_gfx_path_reset(obj);
 
    base = efl_data_scope_get(obj, ECTOR_RENDERER_CLASS);
