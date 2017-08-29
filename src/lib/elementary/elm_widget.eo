@@ -241,9 +241,16 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
 
       /* Accessibility */
       @property access_info {
-         [[Accessibility information]]
+         [[Accessibility information.
+
+           This is a replacement string to be read by the accessibility
+           text-to-speech engine, if accessibility is enabled by configuration.
+           This will take precedence over the default text for this object,
+           which means for instance that the label of a button won't be read
+           out loud, instead $txt will be read out.
+         ]]
          values {
-            txt: string @nullable; [[Accessibility text description]]
+            txt: string @nullable; [[Accessibility text description.]]
          }
       }
       on_access_activate @protected @beta {
