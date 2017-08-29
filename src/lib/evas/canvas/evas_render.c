@@ -3338,11 +3338,11 @@ evas_render_updates_internal(Evas *eo_e,
 
         EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
           {
-             Evas_Object_Protected_Data *obj;
+             Evas_Object_Protected_Data *obj2;
              Evas_3State state;
 
-             obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-             state = _evas_overlay_output_find(out, obj);
+             obj2 = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+             state = _evas_overlay_output_find(out, obj2);
              if (state == EVAS_3STATE_OUTSIDE) continue;
 
              /* we need the surface to be transparent to display the underlying overlay */
@@ -3667,14 +3667,14 @@ evas_render_updates_internal(Evas *eo_e,
    if (!do_async || !rendering)
      {
         Evas_Event_Render_Post post;
-        Eina_List *l, *ll;
+        Eina_List *l1, *l2;
         Render_Updates *ru;
 
      nothing2render:
         post.updated_area = NULL;
-        EINA_LIST_FOREACH(e->outputs, ll, out)
+        EINA_LIST_FOREACH(e->outputs, l1, out)
           {
-             EINA_LIST_FOREACH(out->updates, l, ru)
+             EINA_LIST_FOREACH(out->updates, l2, ru)
                {
                   post.updated_area = eina_list_append(post.updated_area, ru->area);
                   //XXX: need a way of unreffing output surfaces
