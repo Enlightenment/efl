@@ -1410,14 +1410,11 @@ _evas_textgrid_cellrow_set(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int y,
 EOLIAN static Evas_Textgrid_Cell*
 _evas_textgrid_cellrow_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, int y)
 {
-   Evas_Textgrid_Cell *ret;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   if ((y < 0) || (y >= o->cur.h)) ret = NULL;
+   if ((y < 0) || (y >= o->cur.h)) return NULL;
 
-   ret = o->cur.cells + (y * o->cur.w);
-
-   return ret;
+   return o->cur.cells + (y * o->cur.w);
 }
 
 EOLIAN static void
