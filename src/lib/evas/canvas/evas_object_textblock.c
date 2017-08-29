@@ -3920,7 +3920,8 @@ loop_advance:
      {
         Evas_Coord new_wmax = c->ln->w +
            c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
-        c->par->last_fw = new_wmax;
+        if (new_wmax > c->par->last_fw)
+           c->par->last_fw = new_wmax;
         if (new_wmax > c->wmax)
            c->wmax = new_wmax;
      }
