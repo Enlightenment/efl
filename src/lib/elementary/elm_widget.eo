@@ -519,6 +519,19 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             region: Eina.Rectangle; [[The relative region to show.]]
          }
       }
+      focus_region_show @protected {
+         [[Show focus region.
+
+           See also @.focus_region.
+         ]]
+      }
+      /* FIXME: This enum is in Elm namespace! */
+      @property focus_region_show_mode {
+         [[Control the focus_region_show mode.]]
+         values {
+            mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
+         }
+      }
 
       /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_order {
@@ -670,9 +683,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @out weight: double; [[Weight]]
          }
       }
-      focus_region_show @const {
-         [[Show focus region]]
-      }
       focus_disabled_handle {
          [[Handle disable widget focus]]
       }
@@ -746,12 +756,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          values {
             style: string; [[The name of the focus highlight style.]]
-         }
-      }
-      @property focus_region_show_mode {
-         [[Control the focus_region_show mode.]]
-         values {
-            mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
 

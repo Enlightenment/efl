@@ -1029,7 +1029,7 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
  * ignore region show action.
  */
 EOLIAN static void
-_elm_widget_focus_region_show(const Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Coord ox, oy;
    Eina_Rectangle r;
