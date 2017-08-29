@@ -1,0 +1,59 @@
+enum Efl.Ui.Textpath.Direction {
+     cw,
+     ccw
+}
+
+class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
+{
+   [[Efl Ui Textpath class]]
+   legacy_prefix: elm_textpath;
+   methods {
+      circle_set {
+         [[Set a circle with given center, radius, and start angle.]]
+         params {
+            @in x: double;
+            @in y: double;
+            @in radius: double;
+            @in start_angle: double;
+            @in direction: Efl.Ui.Textpath.Direction;
+         }
+      }
+      @property autofit {
+         [[The ability to fit the text within the path.
+           Set it to EINA_TRUE to let text occupy only portion
+           same as its size. Otherwise, text will occupied the whole path.
+           By default, it is EINA_TRUE.]]
+         values {
+            autofit: bool;
+         }
+      }
+      @property slice_number {
+         [[The number of slices. The larger the number of slice_num is,
+           The better the text follows the path.]]
+         values {
+            slice_no: int;
+         }
+      }
+      @property ellipsis {
+         [[Control the ellipsis behavior of the textpath.]]
+         set {
+         }
+         get {
+         }
+         values {
+            ellipsis: bool; [[To ellipsis text or not]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Text.text {get; set;}
+      Efl.Part.part;
+      Elm.Widget.theme_apply;
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+   }
+}
