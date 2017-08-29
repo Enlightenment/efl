@@ -2125,11 +2125,11 @@ _elm_scroll_wheel_event_cb(void *data,
      return;
    if (direction)
      {
-        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL) return;
+        if (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL) return;
      }
    else
      {
-        if (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) return;
+        if (sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) return;
      }
 
    evas_post_event_callback_push(e, _scroll_wheel_post_event_cb, sid);
@@ -2514,8 +2514,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
-   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
-       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
+       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
      return;
 
 #ifdef SMOOTHDBG
@@ -2700,7 +2700,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
                        if (pgx != x &&
                            !(sid->block &
-                            ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                            EFL_UI_SCROLL_BLOCK_HORIZONTAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_x
@@ -2714,7 +2714,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
                        if (pgy != y &&
                            !(sid->block &
-                            ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                            EFL_UI_SCROLL_BLOCK_VERTICAL))
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                             _elm_scroll_scroll_to_y
@@ -2801,8 +2801,8 @@ _elm_scroll_mouse_down_event_cb(void *data,
    sid = data;
    ev = event_info;
 
-   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
-       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
+       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
      return;
 
 #ifdef SMOOTHDBG
@@ -3267,8 +3267,8 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
    if (!sid->pan_obj) return;
 
-   if ((sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL) &&
-       (sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+   if ((sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
+       (sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
      return;
 
    ev = event_info;
@@ -3283,7 +3283,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
    if (!sid->down.now) return;
 
    if ((sid->scrollto.x.animator) && (!sid->hold) && (!sid->freeze) &&
-       !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+       !(sid->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
      {
         Evas_Coord px = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.x.animator, _elm_scroll_scroll_to_x_animator, sid);
@@ -3293,7 +3293,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
      }
 
    if ((sid->scrollto.y.animator) && (!sid->hold) && (!sid->freeze) &&
-       !(sid->block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+       !(sid->block & EFL_UI_SCROLL_BLOCK_VERTICAL))
      {
         Evas_Coord py = 0;
         ELM_ANIMATOR_DISCONNECT(sid->obj, sid->scrollto.y.animator, _elm_scroll_scroll_to_y_animator, sid);
@@ -3347,7 +3347,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (x > (y * 2))
                          {
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
@@ -3358,7 +3358,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                          {
                             sid->down.dir_x = EINA_FALSE;
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3367,12 +3367,12 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (!dodir)
                          {
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3384,7 +3384,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                        if (x > y)
                          {
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                                  EFL_UI_SCROLL_BLOCK_HORIZONTAL))
                               {
                                  sid->down.dir_x = EINA_TRUE;
                               }
@@ -3394,7 +3394,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                          {
                             sid->down.dir_x = EINA_FALSE;
                             if (!(sid->block &
-                                  ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                                  EFL_UI_SCROLL_BLOCK_VERTICAL))
                               {
                                  sid->down.dir_y = EINA_TRUE;
                               }
@@ -3405,12 +3405,12 @@ _elm_scroll_mouse_move_event_cb(void *data,
         else
           {
              if (!(sid->block &
-                   ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL))
+                   EFL_UI_SCROLL_BLOCK_HORIZONTAL))
                {
                   sid->down.dir_x = EINA_TRUE;
                }
              if (!(sid->block &
-                   ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL))
+                   EFL_UI_SCROLL_BLOCK_VERTICAL))
                {
                   sid->down.dir_y = EINA_TRUE;
                }
@@ -4547,12 +4547,12 @@ _elm_interface_scrollable_gravity_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_
 }
 
 EOLIAN static void
-_elm_interface_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Elm_Scroller_Movement_Block block)
+_elm_interface_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Efl_Ui_Scroll_Block block)
 {
    sid->block = block;
 }
 
-EOLIAN static Elm_Scroller_Movement_Block
+EOLIAN static Efl_Ui_Scroll_Block
 _elm_interface_scrollable_movement_block_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    return sid->block;
@@ -4614,7 +4614,7 @@ _elm_interface_scrollable_efl_canvas_group_group_add(Eo *obj, Elm_Scrollable_Sma
    sid->one_direction_at_a_time = ELM_SCROLLER_SINGLE_DIRECTION_SOFT;
    sid->momentum_animator_disabled = EINA_FALSE;
    sid->bounce_animator_disabled = EINA_FALSE;
-   sid->block = ELM_SCROLLER_MOVEMENT_NO_BLOCK;
+   sid->block = EFL_UI_SCROLL_BLOCK_NONE;
 
    _elm_scroll_scroll_bar_reset(sid);
 
