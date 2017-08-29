@@ -277,20 +277,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          legacy: null; /* FIXME: legacy API does extra work */
       }
 
-      /* Drag API */
-      @property drag_lock_x {
-         [[Drag lock on X axis]]
-         values {
-            lock: bool; [[$true if drag is locked on X axis, $false otherwise]]
-         }
-      }
-      @property drag_lock_y {
-         [[Lock the Y axis from being dragged]]
-         values {
-            lock: bool; [[$true if the Y axis is locked, $false otherwise]]
-         }
-      }
-
       /* Translation & Text API. */
       translate @protected {
          [[Virtual function handling language changes.]]
@@ -427,6 +413,18 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Scroll API. */
+      @property scroll_lock_x {
+         [[Drag lock on X axis]]
+         values {
+            lock: bool; [[$true if drag is locked on X axis, $false otherwise]]
+         }
+      }
+      @property scroll_lock_y {
+         [[Lock the Y axis from being dragged]]
+         values {
+            lock: bool; [[$true if the Y axis is locked, $false otherwise]]
+         }
+      }
       @property on_show_region_hook {
          [[Region hook on show property]]
          set {}

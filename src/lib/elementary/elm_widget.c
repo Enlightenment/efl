@@ -3976,37 +3976,37 @@ elm_widget_cursor_del(Eo *obj, Elm_Cursor *cur)
 }
 
 EOLIAN static void
-_elm_widget_drag_lock_x_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
+_elm_widget_scroll_lock_x_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
 {
-   if (sd->drag_x_locked == lock) return;
-   sd->drag_x_locked = lock;
-   if (sd->drag_x_locked) _propagate_x_drag_lock(obj, 1);
+   if (sd->scroll_x_locked == lock) return;
+   sd->scroll_x_locked = lock;
+   if (sd->scroll_x_locked) _propagate_x_drag_lock(obj, 1);
    else _propagate_x_drag_lock(obj, -1);
 }
 
 EOLIAN static void
-_elm_widget_drag_lock_y_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
+_elm_widget_scroll_lock_y_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool lock)
 {
-   if (sd->drag_y_locked == lock) return;
-   sd->drag_y_locked = lock;
-   if (sd->drag_y_locked) _propagate_y_drag_lock(obj, 1);
+   if (sd->scroll_y_locked == lock) return;
+   sd->scroll_y_locked = lock;
+   if (sd->scroll_y_locked) _propagate_y_drag_lock(obj, 1);
    else _propagate_y_drag_lock(obj, -1);
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_drag_lock_x_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_scroll_lock_x_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   return sd->drag_x_locked;
+   return sd->scroll_x_locked;
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_drag_lock_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_scroll_lock_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   return sd->drag_y_locked;
+   return sd->scroll_y_locked;
 }
 
 EAPI int
-elm_widget_drag_child_locked_x_get(const Eo *obj)
+elm_widget_scroll_child_locked_x_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
@@ -4014,7 +4014,7 @@ elm_widget_drag_child_locked_x_get(const Eo *obj)
 }
 
 EAPI int
-elm_widget_drag_child_locked_y_get(const Eo *obj)
+elm_widget_scroll_child_locked_y_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;

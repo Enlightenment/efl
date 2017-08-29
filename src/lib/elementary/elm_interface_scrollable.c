@@ -1440,7 +1440,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    b2x = px;
    b2y = py;
    if ((!sid->obj) ||
-       (!elm_widget_drag_child_locked_x_get(sid->obj)))
+       (!elm_widget_scroll_child_locked_x_get(sid->obj)))
      {
         if ((!sid->down.bounce_x_animator) && (!sid->bounce_animator_disabled))
           {
@@ -1459,7 +1459,7 @@ _elm_scroll_bounce_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           }
      }
    if ((!sid->obj) ||
-       (!elm_widget_drag_child_locked_y_get(sid->obj)))
+       (!elm_widget_scroll_child_locked_y_get(sid->obj)))
      {
         if ((!sid->down.bounce_y_animator) && (!sid->bounce_animator_disabled))
           {
@@ -2145,8 +2145,8 @@ _elm_scroll_post_event_up(void *data,
      {
         if (sid->down.dragged)
           {
-             elm_widget_drag_lock_x_set(sid->obj, EINA_FALSE);
-             elm_widget_drag_lock_y_set(sid->obj, EINA_FALSE);
+             elm_widget_scroll_lock_x_set(sid->obj, EINA_FALSE);
+             elm_widget_scroll_lock_y_set(sid->obj, EINA_FALSE);
           }
      }
    return EINA_FALSE;
@@ -2663,7 +2663,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                                  if ((!sid->down.momentum_animator) &&
                                      (!sid->momentum_animator_disabled) &&
                                      (sid->obj) &&
-                                     (!elm_widget_drag_child_locked_y_get
+                                     (!elm_widget_scroll_child_locked_y_get
                                         (sid->obj)))
                                    {
                                       ELM_ANIMATOR_CONNECT(sid->obj, sid->down.momentum_animator, _elm_scroll_momentum_animator, sid);
@@ -2694,7 +2694,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                   elm_interface_scrollable_content_pos_get
                         (sid->obj, &x, &y);
                   if ((!sid->obj) ||
-                      (!elm_widget_drag_child_locked_x_get
+                      (!elm_widget_scroll_child_locked_x_get
                          (sid->obj)))
                     {
                        pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
@@ -2708,7 +2708,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                          }
                     }
                   if ((!sid->obj) ||
-                      (!elm_widget_drag_child_locked_y_get
+                      (!elm_widget_scroll_child_locked_y_get
                          (sid->obj)))
                     {
                        pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
@@ -2734,7 +2734,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                   elm_interface_scrollable_content_pos_get
                         (sid->obj, &x, &y);
                   if ((!sid->obj) ||
-                      (!elm_widget_drag_child_locked_x_get
+                      (!elm_widget_scroll_child_locked_x_get
                          (sid->obj)))
                     {
                        pgx = _elm_scroll_page_x_get(sid, ox, EINA_TRUE);
@@ -2743,7 +2743,7 @@ _elm_scroll_mouse_up_event_cb(void *data,
                            (sid, _elm_config->page_scroll_friction, pgx);
                     }
                   if ((!sid->obj) ||
-                      (!elm_widget_drag_child_locked_y_get
+                      (!elm_widget_scroll_child_locked_y_get
                          (sid->obj)))
                     {
                        pgy = _elm_scroll_page_y_get(sid, oy, EINA_TRUE);
@@ -2982,7 +2982,7 @@ _elm_scroll_post_event_move(void *data,
    if (sid->down.dir_x)
      {
         if ((!sid->obj) ||
-            (!elm_widget_drag_child_locked_x_get(sid->obj)))
+            (!elm_widget_scroll_child_locked_x_get(sid->obj)))
           {
              if (sid->down.dragged_began)
                {
@@ -2990,7 +2990,7 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       elm_widget_drag_lock_x_set(sid->obj, 1);
+                       elm_widget_scroll_lock_x_set(sid->obj, 1);
                     }
                   start = 1;
                }
@@ -3004,7 +3004,7 @@ _elm_scroll_post_event_move(void *data,
    if (sid->down.dir_y)
      {
         if ((!sid->obj) ||
-            (!elm_widget_drag_child_locked_y_get(sid->obj)))
+            (!elm_widget_scroll_child_locked_y_get(sid->obj)))
           {
              if (sid->down.dragged_began)
                {
@@ -3012,7 +3012,7 @@ _elm_scroll_post_event_move(void *data,
                   sid->down.dragged = EINA_TRUE;
                   if (sid->obj)
                     {
-                       elm_widget_drag_lock_y_set
+                       elm_widget_scroll_lock_y_set
                           (sid->obj, EINA_TRUE);
                     }
                   start = 1;
@@ -3177,13 +3177,13 @@ _elm_scroll_hold_enterer(void *data)
    if (sid->down.dir_x)
      {
         if ((!sid->obj) ||
-            (!elm_widget_drag_child_locked_x_get(sid->obj)))
+            (!elm_widget_scroll_child_locked_x_get(sid->obj)))
           ox = fx;
      }
    if (sid->down.dir_y)
      {
         if ((!sid->obj) ||
-            (!elm_widget_drag_child_locked_y_get(sid->obj)))
+            (!elm_widget_scroll_child_locked_y_get(sid->obj)))
           oy = fy;
      }
 
@@ -3231,7 +3231,7 @@ _elm_scroll_on_hold_animator(void *data, const Efl_Event *event EINA_UNUSED)
         if (sid->down.dir_x)
           {
              if ((!sid->obj) ||
-                 (!elm_widget_drag_child_locked_x_get(sid->obj)))
+                 (!elm_widget_scroll_child_locked_x_get(sid->obj)))
                {
                   sid->down.onhold_vxe += vx;
                   x = ox + (int)sid->down.onhold_vxe;
@@ -3242,7 +3242,7 @@ _elm_scroll_on_hold_animator(void *data, const Efl_Event *event EINA_UNUSED)
         if (sid->down.dir_y)
           {
              if ((!sid->obj) ||
-                 (!elm_widget_drag_child_locked_y_get(sid->obj)))
+                 (!elm_widget_scroll_child_locked_y_get(sid->obj)))
                {
                   sid->down.onhold_vye += vy;
                   y = oy + (int)sid->down.onhold_vye;
