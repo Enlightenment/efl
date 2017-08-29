@@ -1203,7 +1203,7 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_on_focus_region(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
 

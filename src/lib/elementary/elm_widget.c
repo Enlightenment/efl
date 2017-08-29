@@ -465,15 +465,6 @@ _elm_widget_mirrored_reload(Evas_Object *obj)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_on_focus_region(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Coord *x EINA_UNUSED, Evas_Coord *y EINA_UNUSED, Evas_Coord *w EINA_UNUSED, Evas_Coord *h EINA_UNUSED)
-{
-   DBG("The %s widget does not implement the \"on_focus_region\" function.",
-       efl_class_name_get(efl_class_get(obj)));
-
-   return EINA_FALSE;
-}
-
 static void
 _parents_focus(Evas_Object *obj)
 {
@@ -3487,14 +3478,9 @@ _elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
 EOLIAN static Eina_Bool
 _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_on_focus_region((Eo *)obj, x, y, w, h);
-   if (!int_ret)
-     {
-        evas_object_geometry_get(obj, NULL, NULL, w, h);
-        if (x) *x = 0;
-        if (y) *y = 0;
-     }
+   efl_gfx_size_get(obj, w, h);
+   if (x) *x = 0;
+   if (y) *y = 0;
    if ((*w <= 0) || (*h <= 0)) return EINA_FALSE;
    return EINA_TRUE;
 }

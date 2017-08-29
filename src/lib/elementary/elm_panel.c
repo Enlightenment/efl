@@ -1107,7 +1107,7 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_on_focus_region(Eo *obj,
+_elm_panel_elm_widget_focus_region_get(Eo *obj,
                                       Elm_Panel_Data *sd,
                                       Evas_Coord *x,
                                       Evas_Coord *y,

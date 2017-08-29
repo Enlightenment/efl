@@ -1309,7 +1309,7 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *ite
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_focus_region(Eo *obj, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_entry_elm_widget_focus_region_get(Eo *obj, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Coord cx, cy, cw, ch;
    Evas_Coord edx, edy;
