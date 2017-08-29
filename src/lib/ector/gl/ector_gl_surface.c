@@ -76,8 +76,8 @@ _ector_gl_surface_push(Eo *obj,
 
    prog = ector_gl_surface_shader_get(obj, flags);
 
-   // FIXME: Not using mapp/unmap buffer yet, nor any pipe
-   // FIXME: Move some of the state change to surface drawing start ?
+   // FIXME: Not using map/unmap buffer yet, nor any pipe
+   // FIXME: Move some of the state change to start of surface drawing?
    GL.glUseProgram(prog);
    GL.glDisable(GL_TEXTURE_2D);
    GL.glDisable(GL_SCISSOR_TEST);
@@ -95,7 +95,7 @@ _ector_gl_surface_state_define(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd, E
    if (pd->op == op) return EINA_TRUE;
 
    // FIXME: no pipe yet, so we can just change the mode right away
-   // Get & apply matrix transformation to
+   // Get & apply matrix transformation too
    switch (op)
      {
       case EFL_GFX_RENDER_OP_BLEND: /**< default op: d = d*(1-sa) + s */
@@ -103,7 +103,7 @@ _ector_gl_surface_state_define(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd, E
          GL.glEnable(GL_BLEND);
          break;
       case EFL_GFX_RENDER_OP_COPY: /**< d = s */
-         // just disable blend mode. no need to set blend func
+         // Just disable blend mode. no need to set blend func
          GL.glDisable(GL_BLEND);
          break;
       case EFL_GFX_RENDER_OP_LAST:
@@ -113,7 +113,7 @@ _ector_gl_surface_state_define(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd, E
 
    pd->op = op;
 
-   //FIXME: we should not ignore clipping, but that can last for later
+   // FIXME: we should not ignore clipping, but that can last for later
    (void) clips;
 
    return EINA_TRUE;
@@ -170,7 +170,7 @@ _ector_gl_shader_textures_bind(Ector_Shader *p)
 
    if (hastex)
      {
-        GL.glUseProgram(p->prg); // is this necessary??
+        GL.glUseProgram(p->prg); // FIXME: is this necessary??
         for (i = 0; textures[i].name; i++)
           {
              if (!textures[i].enabled) continue;
@@ -221,8 +221,8 @@ _ector_gl_shader_load(uint64_t flags)
 
    prg = GL.glCreateProgram();
    // TODO: invalid rendering error occurs when attempting to use a
-   // glProgramBinary. in order to render correctly we should create a dummy
-   // vertex shader.
+   // glProgramBinary.  In order to render correctly, we should create a
+   // dummy vertex shader.
    vtx = GL.glCreateShader(GL_VERTEX_SHADER);
    GL.glAttachShader(prg, vtx);
    frg = GL.glCreateShader(GL_FRAGMENT_SHADER);
@@ -306,10 +306,10 @@ _ector_gl_surface_shader_get(Eo *obj EINA_UNUSED, Ector_GL_Surface_Data *pd EINA
    shd->prg = prg;
    shd->flags = flags;
 
-   // Saving the shader in the memory cache
+   // Save the shader in the cache file
    eina_hash_direct_add(shader_cache, &shd->flags, shd);
 
-   // Saving binary shader in the cache file.
+   // Save binary shader in the cache file
    if (GL.glGetProgramBinary)
      {
         buf = eina_strbuf_new();

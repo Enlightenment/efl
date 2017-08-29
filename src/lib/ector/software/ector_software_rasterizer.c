@@ -48,7 +48,7 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    int length, l;
    const int pix_stride = data->raster_buffer->stride / 4;
 
-   //@TODO, Get the proper composition function using ,color, ECTOR_OP etc.
+   // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
    if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
    if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
@@ -253,7 +253,7 @@ _span_fill_clipPath(int span_count, const SW_FT_Span *spans, void *user_data)
    Clip_Data clip = fill_data->clip;
    SW_FT_Span *clipped;
 
-   //TODO take clip path offset into account.
+   // FIXME: Take clip path offset into account.
    const SW_FT_Span *end = spans + span_count;
    while (spans < end)
      {
