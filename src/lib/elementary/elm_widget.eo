@@ -496,7 +496,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Pop scroller freeze]]
       }
 
-      /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_region {
          [[Region to show when focus changes within this widget.
 
@@ -517,12 +516,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             return: bool; [[If $false, @.focus_region_show will not do anything.]]
          }
          values {
-            x: int; [[X coordinate]]
-            y: int; [[Y coordinate]]
-            w: int; [[Width]]
-            h: int; [[Height]]
+            region: Eina.Rectangle; [[The relative region to show.]]
          }
       }
+
+      /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_order {
          [[Focus order property]]
          get {

@@ -1107,24 +1107,19 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_focus_region_get(Eo *obj,
-                                      Elm_Panel_Data *sd,
-                                      Evas_Coord *x,
-                                      Evas_Coord *y,
-                                      Evas_Coord *w,
-                                      Evas_Coord *h)
+_elm_panel_elm_widget_focus_region_get(Eo *obj, Elm_Panel_Data *sd, Eina_Rectangle *r)
 {
-   elm_interface_scrollable_content_pos_get(obj, x, y);
-   evas_object_geometry_get(obj, NULL, NULL, w, h);
+   elm_interface_scrollable_content_pos_get(obj, &r->x, &r->y);
+   evas_object_geometry_get(obj, NULL, NULL, &r->w, &r->h);
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
       case ELM_PANEL_ORIENT_BOTTOM:
-         *h = *h * sd->content_size_ratio;
+         r->h *= sd->content_size_ratio;
          break;
       case ELM_PANEL_ORIENT_LEFT:
       case ELM_PANEL_ORIENT_RIGHT:
-         *w = *w * sd->content_size_ratio;
+         r->w *= sd->content_size_ratio;
          break;
      }
    return EINA_TRUE;

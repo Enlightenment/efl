@@ -663,14 +663,14 @@ _show_region_job(void *data)
    focus_obj = elm_widget_focused_object_get(data);
    if (focus_obj)
      {
-        Evas_Coord x, y, w, h;
+        Eina_Rectangle r;
 
-        elm_widget_focus_region_get(focus_obj, &x, &y, &w, &h);
+        elm_widget_focus_region_get(focus_obj, &r);
 
-        if (h < _elm_config->finger_size)
-          h = _elm_config->finger_size;
+        if (r.h < _elm_config->finger_size)
+          r.h = _elm_config->finger_size;
 
-        elm_widget_show_region_set(focus_obj, x, y, w, h, EINA_TRUE);
+        elm_widget_show_region_set(focus_obj, r.x, r.y, r.w, r.h, EINA_TRUE);
      }
 
    sd->show_region_job = NULL;
