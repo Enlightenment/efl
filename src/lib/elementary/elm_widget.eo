@@ -532,7 +532,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
-      @property focus_highlight_geometry {
+      @property focus_highlight_geometry @protected {
          [[The rectangle region to be highlighted on focus.
 
            This is a rectangle region where the focus highlight should be
