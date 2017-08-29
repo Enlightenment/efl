@@ -3540,9 +3540,9 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item 
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_on_focus_region(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_gengrid_elm_widget_focus_region_get(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   if (!sd->focused_item) return EINA_FALSE;
+   if (!sd->focused_item) goto end;
    if (elm_object_focus_region_show_mode_get(obj) == ELM_FOCUS_REGION_SHOW_ITEM)
      {
         Evas_Coord vx, vy;
@@ -3555,7 +3555,9 @@ _elm_gengrid_elm_widget_on_focus_region(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coor
 
         return EINA_TRUE;
      }
-   return EINA_FALSE;
+
+end:
+   return elm_obj_widget_focus_region_get(efl_super(obj, MY_CLASS), x, y, w, h);
 }
 
 static Eina_Bool _elm_gengrid_smart_focus_next_enable = EINA_FALSE;

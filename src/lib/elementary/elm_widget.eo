@@ -437,16 +437,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
-      on_focus_region {
-         [['Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise.]]
-         params {
-            @out x: int; [[X coordinate]]
-            @out y: int; [[Y coordinate]]
-            @out w: int; [[Width]]
-            @out h: int; [[Height]]
-         }
-         return: bool; [[$true on success, $false otherwise]]
-      }
 
       /* Scroll API. */
       @property on_show_region_hook {
@@ -508,9 +498,23 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
 
       /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_region {
-         [[Focus region property]]
+         [[Region to show when focus changes within this widget.
+
+           When this widget or one of its subwidgets is given focus, this
+           region should be shown, which means any parent scroller should
+           attempt to display the given area of this widget. For instance, an
+           entry given focus should scroll to show the text cursor if that
+           cursor moves. In this example, this region defines the relative
+           geometry of the cursor within the widget.
+
+           Note: The region is relative to the top-left corner of the widget,
+           i.e. X,Y start from 0,0 to indicate the top-left corner of the
+           widget.
+
+           See also @.focus_region_show.
+         ]]
          get {
-            return: bool; [[$true on success, $false otherwise]]
+            return: bool; [[If $false, @.focus_region_show will not do anything.]]
          }
          values {
             x: int; [[X coordinate]]
