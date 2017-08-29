@@ -15,126 +15,70 @@
    @section evas_main_intro Introduction
 
    Evas is a clean display canvas API for several target display systems
-   that can draw anti-aliased text, smooth super and sub-sampled scaled
-   images, alpha-blend objects and much more.
+   that can draw anti-aliased text, smooth super- and sub-sampled scaled
+   images, alpha-blend objects and more.
 
-   It abstracts any need to know much about what the characteristics of
-   your display system are or what graphics calls are used to draw them
-   and how. It deals on an object level where all you do is create and
-   manipulate objects in a canvas, set their properties, and the rest is
-   done for you.
+   It abstracts the graphics drawing characteristics of the display
+   system by implementing a canvas where graphical objects can be
+   created, manipulated, and modified.  It then handles the rendering
+   pipeline in an optimal way for the underlying device in order to
+   minimize redraws, via a programmatically efficient API.
 
-   Evas optimises the rendering pipeline to minimise effort in redrawing
-   changes made to the canvas and so takes this work out of the
-   programmers hand, saving a lot of time and energy.
+   A design goal for the system is to run well at both small and large
+   scale, and be portable from embedded systems to multi-CPU
+   workstations.  Architecturally, this is achieved via 'backends' that
+   provide the specialized display logic for specific devices.  As well,
+   there are various compile options to exclude feature support not
+   required for a target platform to help minimize disk and memory
+   requirements.
 
-   It is small and lean, and is designed to work on embedded systems all the way
-   to large and powerful multi-CPU workstations. It can be compiled to
-   only have the features you need for your target platform if you so
-   wish, thus keeping it small and lean. It has several display
-   back-ends, letting it display on several display systems, making it
-   portable for cross-device and cross-platform development.
+   Evas can serve as a base for widget sets or toolkits
+   (e.g. Elementary, http://docs.enlightenment.org/auto/elementary/) by
+   handling pixel drawing and regional change reporting, but does not
+   manage windows itself, nor deal with input or window update event
+   propagation.  In other words, it is intended for use in drawing
+   scrollbars, sliders, and push buttons but not for high-level logic of
+   how the widget operates and behaves.  Under Enlightenment, window and
+   widget management is handled by other software components, including
+   @ref Ecore (see @ref Ecore_Evas_Group in particular); however Evas is
+   designed to not be dependent on any particular main loop
+   architecture, and also strives to be input and output system
+   agnostic.
 
-   @subsection evas_main_intro_not_evas What Evas is not?
-
-   Evas is not a widget set or widget toolkit, however it is their
-   base. See Elementary (http://docs.enlightenment.org/auto/elementary/)
-   for a toolkit based on @ref Evas, @ref Edje, @ref Ecore and other
-   Enlightenment technologies.
-
-   It is not dependent or aware of main loops, input or output
-   systems. Input should be polled from various sources and fed to
-   Evas. Similarly, it does not create windows or report windows updates
-   to your system, but just draws the pixels and report to the
-   user the areas that were changed. Of course these operations are quite
-   common and thus they are ready to use in @ref Ecore, particularly in
-   @ref Ecore_Evas_Group.
+   Evas can be seen as a display system that stands somewhere between a
+   widget set and an immediate mode display system. It retains basic
+   display logic, but does very little high-level logic such as
+   scrollbars, sliders, and push buttons.
 
 
    @section evas_main_work How does Evas work?
 
-   Evas is a canvas display library. This is markedly different from most
-   display and windowing systems as a canvas is structural and is also a
-   state engine, whereas most display and windowing systems are immediate
-   mode display targets. Evas handles the logic between a structural
-   display via its state engine, and controls the target windowing system
-   in order to produce rendered results of the current canvas' state on
-   the display.
+   The Evas canvas is a 'retained mode' renderer, which differs from the
+   more traditional 'immediate mode' display and windowing systems by
+   tracking drawing state information of its contained objects.
 
-   Immediate mode display systems retain very little, or no state. A
-   program executes a series of commands, as in the pseudo code:
+   In an immediate mode rendering system, each frame is drawn from
+   scratch by having each drawing element redraw itself.  Once the
+   commands are executed, the display system blits the frame to the
+   screen but has no idea how to reproduce the image again, so the
+   application has to run through the same sequence of drawing commands
+   again.  Very little or no state is kept from one frame draw to the
+   next; while this is simple it forces each application to manually
+   optimize their graphics code.
 
-   @verbatim
-   draw line from position (0, 0) to position (100, 200);
-
-   draw rectangle from position (10, 30) to position (50, 500);
-
-   bitmap_handle = create_bitmap();
-   scale bitmap_handle to size 100 x 100;
-   draw image bitmap_handle at position (10, 30);
-   @endverbatim
-
-   The series of commands is executed by the windowing system and the
-   results are displayed on the screen (normally). Once the commands are
-   executed the display system has little or no idea of how to reproduce
-   this image again, and so has to be instructed by the application on how
-   to redraw sections of the screen whenever needed. Each successive
-   command is executed as instructed by the application and either
-   emulated by software or sent to the graphics hardware on the device to
-   be performed.
-
-   The advantage of such a system is that it is simple, and gives a
-   program tight control over how something looks and is drawn. Given the
-   increasing complexity of displays and demands by users to have better
-   looking interfaces, more and more work is needing to be done at this
-   level by the internals of widget sets, custom display widgets and
-   other programs. This means that more and more logic and display rendering
-   code needs to be written each time the application needs to figure out
-   how to minimise redraws so that display is fast and interactive, and
-   keeps track of redraw logic. The power comes at a high-price with lots
-   of extra code and work.  Programmers not very familiar with graphics
-   programming often make mistakes at this level and produce code that
-   is sub optimal. Those familiar with this kind of programming simply
-   get bored by writing the same code again and again.
-
-   For example, if in the above scene, the windowing system requires the
-   application to redraw the area from 0, 0 to 50, 50 (also referred as
-   "expose event"), then the programmer must manually calculate the
-   updates and repaint it again:
-
-   @verbatim
-   Redraw from position (0, 0) to position (50, 50):
-
-   // what is in area (0, 0, 50, 50)?
-
-   // 1. intersection part of line (0, 0) to (100, 200)?
-      draw line from position (0, 0) to position (25, 50);
-
-   // 2. intersection part of rectangle (10, 30) to (50, 500)?
-      draw rectangle from position (10, 30) to position (50, 50)
-
-   // 3. intersection part of image at (10, 30), size 100 x 100?
-      bitmap_subimage = subregion from position (0, 0) to position (40, 20)
-      draw image bitmap_subimage at position (10, 30);
-   @endverbatim
-
-   You might have noticed that, if all elements in the
-   above scene are opaque, then the system is doing useless paints: part
-   of the line is behind the rectangle, and part of the rectangle is
-   behind the image. These useless paints tend to be very costly, as
-   pixels tend to be 4 bytes in size; thus an overlapping region of 100 x
-   100 pixels is around 40000 useless writes! You could write
-   code to calculate the overlapping areas and avoid painting then, but
-   then it should be mixed with the "expose event" handling mentioned
-   above and you quickly realize that the initially simpler method becomes
-   very complex.
+   With retained mode systems like Evas, the application does not need
+   to implement the display rendering code and associated logic, but
+   merely updates the list of objects maintained in the canvas.  Evas is
+   then able to optimize the processing and rendering of the visible
+   elements, and is better able to avoid redraws due to occlusion or
+   opacity.
 
    Evas is a structural system in which the programmer creates and
    manages display objects and their properties, and as a result of this
    higher level state management, the canvas is able to redraw the set of
    objects when needed to represent the current state of the canvas.
 
-   For example, the pseudo code:
+   For example, consider the pseudo code:
 
    @verbatim
    line_handle = create_line();
@@ -154,63 +98,39 @@
    render scene;
    @endverbatim
 
-   This may look longer, but when the display needs to be refreshed or
-   updated, you move, resize, show, or hide the objects that need to change.
-   You can simply think at the object logic level, and the canvas software
-   does the rest of the work for you, figuring out what actually changed in the
-   canvas since it had been last drawn, how to most efficiently redraw the canvas and
-   its contents to reflect the current state, and then it can go off and do
-   the actual drawing of the canvas.
+   By expressing the drawing as a set of drawable objects, Evas is able
+   to internally handle refreshing, updating, moving, resizing, showing,
+   and hiding the objects, and to determine to most efficiently redraw
+   the canvas and its contents to reflect the current state.  This
+   permits the application to focus on the higher level logic, which
+   both reduces the amount of coding and allows a more natural way of
+   dealing with the display.  Importantly, abstracting the display logic
+   like this also simplifies porting the application to different
+   display systems, since its own code is less tied into how that system
+   works.
 
-   This lets you think in a more natural way when dealing with
-   a display, and saves time and effort of working out how to load and
-   display images, render given the current display system, and so on. Since
-   Evas is also portable across different display systems, this also
-   gives you the ability to have their code ported and
-   displayed on different display systems with very little work.
+   @section evas_main_compiling How to compile the library
 
-   Evas can be seen as a display system that stands somewhere between a
-   widget set and an immediate mode display system. It retains basic
-   display logic, but does very little high-level logic such as
-   scrollbars, sliders, and push buttons.
-
-
-   @section evas_main_compiling How to compile
-
-   Evas is a library your application links to. The procedure for this is
-   very simple. You simply have to compile your application with the
-   appropriate compiler flags that the @c pkg-config script outputs. For
-   example:
-
-   Compiling C or C++ files into object files:
+   Evas compiles automatically within EFL's build system, and is
+   automatically linked with @ref Ecore and other components that need
+   it.  But it can also be built and used standalone, by compiling and
+   linking your application with the compiler flags indicated by @c
+   pkg-config.  For example:
 
    @verbatim
-   gcc -c -o main.o main.c `pkg-config --cflags evas`
-   @endverbatim
+   gcc -c -o my_main.o my_main.c `pkg-config --cflags evas`
 
-   Linking object files into a binary executable:
-
-   @verbatim
-   gcc -o my_application main.o `pkg-config --libs evas`
+   gcc -o my_application my_main.o `pkg-config --libs evas`
    @endverbatim
 
    See @ref pkgconfig
 
-   @section evas_main_next_steps Next Steps
+   @section evas_main_next_steps Recommended reading
 
-   After you understood what Evas is and installed it in your system
-   you should proceed understanding the programming interface for all
-   objects, then see the specific for the most used elements. We'd
-   recommend you to take a while to learn @ref Ecore, @ref Edje and
-   Elementary (http://docs.enlightenment.org/auto/elementary/) as they
-   will likely save you tons of work compared to using just Evas
-   directly.
-
-   Recommended reading:
-
-   @li @ref Evas_Object_Group, where you'll get how to basically
-    manipulate generic objects lying on an Evas canvas, handle canvas
-    and object events, etc.
+   @li @ref Ecore, @ref Edje, and @ref Elementary that provide higher
+   level infrastructure and components for real world usage.
+   @li @ref Evas_Object_Group for how to manipulate generic objects on
+   an Evas canvas and handle the associated events.
    @li @ref Evas_Object_Rectangle, to learn about the most basic object
     type on Evas -- the rectangle.
    @li @ref Evas_Object_Polygon, to learn how to create polygon elements
@@ -223,13 +143,13 @@
     the canvas.
    @li @ref Evas_Object_Textblock, to learn how to create multiline
     textual elements on the canvas.
+
    @li @ref Evas_Smart_Object_Group and @ref Evas_Smart_Group, to define
     new objects that provide @b custom functions to handle clipping,
-    hiding, moving, resizing, color setting and more. These could
-    be as simple as a group of objects that move together (see @ref
-    Evas_Smart_Object_Clipped) up to implementations of what
-    ends to be a widget, providing some intelligence (thus the name)
-    to Evas objects -- like a button or check box, for example.
+    hiding, moving, resizing, color setting and more. This includes
+    simple grouping of objects that move together (see @ref
+    Evas_Smart_Object_Clipped) and more complex widget-like intelligent
+    behaviors such as buttons and check boxes.
 
    @section evas_main_intro_example Introductory Example
 
