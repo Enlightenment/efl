@@ -445,8 +445,8 @@ typedef struct _Elm_Widget_Smart_Data
       Efl_Ui_Focus_User *provider;
    } manager;
 
-   Eina_Bool                     drag_x_locked : 1;
-   Eina_Bool                     drag_y_locked : 1;
+   Eina_Bool                     scroll_x_locked : 1;
+   Eina_Bool                     scroll_y_locked : 1;
 
    Eina_Bool                     can_focus : 1;
    Eina_Bool                     child_can_focus : 1;
@@ -739,12 +739,12 @@ EAPI void             elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
 EAPI void             elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
 EAPI void             elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur);
 EAPI void             elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur);
-EAPI void             elm_widget_drag_lock_x_set(Evas_Object *obj, Eina_Bool lock);
-EAPI void             elm_widget_drag_lock_y_set(Evas_Object *obj, Eina_Bool lock);
-EAPI Eina_Bool        elm_widget_drag_lock_x_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_drag_lock_y_get(const Evas_Object *obj);
-EAPI int              elm_widget_drag_child_locked_x_get(const Evas_Object *obj);
-EAPI int              elm_widget_drag_child_locked_y_get(const Evas_Object *obj);
+EAPI void             elm_widget_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
+EAPI void             elm_widget_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
+EAPI Eina_Bool        elm_widget_scroll_lock_x_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_scroll_lock_y_get(const Evas_Object *obj);
+EAPI int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
+EAPI int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
 EAPI void             elm_widget_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
 EAPI Eina_Bool        elm_widget_item_loop_enabled_get(const Evas_Object *obj);
 EAPI Efl_Ui_Theme_Apply  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
