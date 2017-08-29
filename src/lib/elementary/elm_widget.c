@@ -4005,15 +4005,19 @@ _elm_widget_drag_lock_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->drag_y_locked;
 }
 
-EOLIAN static int
-_elm_widget_drag_child_locked_x_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI int
+elm_widget_drag_child_locked_x_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
    return sd->child_drag_x_locked;
 }
 
-EOLIAN static int
-_elm_widget_drag_child_locked_y_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI int
+elm_widget_drag_child_locked_y_get(const Eo *obj)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
    return sd->child_drag_y_locked;
 }
 
