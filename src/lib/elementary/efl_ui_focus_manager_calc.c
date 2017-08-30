@@ -1309,7 +1309,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                    {
                       n = T(n).parent;
                       new_candidate = _request_move(obj, pd, direction, n);
-                      efl_ui_focus_manager_focus_set(obj, new_candidate);
+                      if (new_candidate)
+                        efl_ui_focus_manager_focus_set(obj, new_candidate);
                       candidate = new_candidate;
                    }
                }
