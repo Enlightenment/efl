@@ -61,7 +61,6 @@ struct _Shm_Leaf
 typedef struct _Shm_Surface Shm_Surface;
 struct _Shm_Surface
 {
-   struct wl_display *disp;
    struct wl_shm *shm;
    int w, h;
    int num_buff;
@@ -593,7 +592,6 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
 
    surf->w = w;
    surf->h = h;
-   surf->disp = s->info->info.wl_display;
    surf->shm = s->info->info.wl_shm;
    surf->num_buff = num_buff;
    surf->alpha = s->info->info.destination_alpha;
