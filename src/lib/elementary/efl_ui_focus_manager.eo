@@ -125,6 +125,13 @@ interface Efl.Ui.Focus.Manager {
             ]]
             return : Efl.Ui.Focus.Object; [[Last object]]
         }
+        reset_history {
+            [[Reset the history stack of this manager object.
+              This means the most upper element will be unfocused, all other elements will be removed from the remembered before.
+
+              To not break the assertion that there should be always a focused element, you should focus a other element immidiatly after calling that.
+            ]]
+        }
     }
     events {
         redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect

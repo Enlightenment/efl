@@ -1189,6 +1189,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    Node *node;
    Node *old_focus;
    Efl_Ui_Focus_Manager *redirect_manager;
+   Eo *focusable;
+   Node_Type type;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1217,11 +1219,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    if (pd->redirect)
      {
+        //reset the history of that manager
+        efl_ui_focus_manager_reset_history(pd->redirect);
+
         //first unset the redirect
         efl_ui_focus_manager_redirect_set(obj, NULL);
      }
 
    redirect_manager = node->redirect_manager;
+   type = node->type;
+   focusable = node->focusable;
 
    if (node->type == NODE_TYPE_NORMAL)
      {
@@ -1245,18 +1252,31 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, focusable);
         node = NULL;
      }
-   else if (node->redirect_manager)
-     {
-        Efl_Ui_Focus_Object *root;
-
-        root = efl_ui_focus_manager_root_get(node->redirect_manager);
-        efl_ui_focus_manager_focus_set(node->redirect_manager, root);
-     }
 
    //now check if this is also a listener object
    if (redirect_manager)
      {
+        efl_ui_focus_manager_reset_history(pd->redirect);
+
+        //first set the redirect
         efl_ui_focus_manager_redirect_set(obj, redirect_manager);
+
+        if (type == NODE_TYPE_ONLY_LOGICAL)
+          {
+             //focus the root to just get the next regular element
+             //FIXME it would be good to make that depending on the focus move directions
+             //so we can take the last regular item in the logical tree for the PREVIOUS move
+             Efl_Ui_Focus_Object *root;
+
+             root = efl_ui_focus_manager_root_get(redirect_manager);
+             efl_ui_focus_manager_focus_set(redirect_manager, root);
+          }
+        else
+          {
+             //or just focus the focusable itself in the other manager
+             efl_ui_focus_manager_focus_set(redirect_manager, focusable);
+          }
+
      }
 }
 
@@ -1456,4 +1476,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED,
 
   return child ? child->focusable : NULL;
 }
+
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+  Node *last;
+
+  if (!pd->focus_stack) return;
+
+  last = eina_list_last_data_get(pd->focus_stack);
+  efl_ui_focus_object_focus_set(last->focusable, EINA_FALSE);
+
+  pd->focus_stack = eina_list_free(pd->focus_stack);
+}
+
 #include "efl_ui_focus_manager_calc.eo.c"
