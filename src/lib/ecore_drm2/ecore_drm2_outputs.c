@@ -762,12 +762,6 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    if (!eina_list_count(dev->outputs))
      output->primary = EINA_TRUE;
-   else
-     {
-        /* temporarily disable other outputs which are not primary */
-        output->connected = EINA_FALSE;
-        output->enabled = EINA_FALSE;
-     }
 
    dev->outputs = eina_list_append(dev->outputs, output);
 
