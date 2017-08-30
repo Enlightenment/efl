@@ -101,7 +101,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
            with regard to scrolling.
          ]]
          values {
-            block: Efl.Ui.Scroll_Block(none); [[Which axis (or axes) to block]]
+            block: Efl.Ui.Scroll_Block(Efl.Ui.Scroll_Block.none); [[Which axis (or axes) to block]]
          }
       }
       @property momentum_animator_disabled {

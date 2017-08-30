@@ -28,7 +28,7 @@ interface Efl.Orientation
            instance.
          ]]
          values {
-            dir: Efl.Orient(none); [[The rotation angle (CCW), see @Efl.Orient.]]
+            dir: Efl.Orient(Efl.Orient.none); [[The rotation angle (CCW), see @Efl.Orient.]]
          }
       }
    }
