@@ -721,7 +721,7 @@ EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabl
 EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow);
 EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-EAPI Eina_Bool        elm_widget_focus_region_get(const Evas_Object *obj, Eina_Rectangle *r);
+EAPI Eina_Rectangle   elm_widget_focus_region_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_region_show(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);

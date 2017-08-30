@@ -467,6 +467,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       scroll_hold_push {
          [[Push scroll hold]]
       }
+
+      /* FIXME: property with a Eina.Rectangle */
       show_region_set {
          [[Set show region]]
          params {
@@ -508,19 +510,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
 
            Note: The region is relative to the top-left corner of the widget,
            i.e. X,Y start from 0,0 to indicate the top-left corner of the
-           widget.
+           widget. W,H must be greater or equal to 1 for this region to be
+           taken into account, otherwise it is ignored.
 
            See also @.focus_region_show.
          ]]
          get {
-            return: bool; [[If $false, @.focus_region_show will not do anything.]]
          }
          values {
-            region: Eina.Rectangle; [[The relative region to show.]]
+            region: Eina.Rectangle;
+               [[The relative region to show. If width or height is <= 0 it
+                 will be ignored, and no action will be taken.]]
          }
       }
       focus_region_show @protected {
-         [[Show focus region.
+         [[Show the region of interest inside this widget.
 
            See also @.focus_region.
          ]]
