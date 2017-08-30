@@ -88,6 +88,8 @@ evas_init(void)
    if (!evas_thread_init())
      goto shutdown_filter;
 
+   evas_common_init();
+
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -137,6 +139,8 @@ evas_shutdown(void)
    eina_log_timing(_evas_log_dom_global,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
+
+   evas_common_shutdown();
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -404,12 +408,6 @@ next_zombie:
    /* cleanup engine backend */
    EINA_LIST_FREE(e->outputs, evo) efl_canvas_output_del(evo);
    e->engine.func->engine_free(e->backend);
-
-   if (e->common_init)
-     {
-        e->common_init = 0;
-        evas_common_shutdown();
-     }
 
    for (i = 0; i < e->modifiers.mod.count; i++)
      free(e->modifiers.mod.list[i]);

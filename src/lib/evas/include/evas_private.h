@@ -976,7 +976,6 @@ struct _Evas_Public_Data
    Eina_Bool      is_frozen : 1;
    Eina_Bool      rendering : 1;
    Eina_Bool      render2 : 1;
-   Eina_Bool      common_init : 1;
    Eina_Bool      inside_post_render : 1;
    Eina_Bool      devices_modified : 1;
 };
