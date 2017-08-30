@@ -1460,21 +1460,23 @@ _efl_ui_focus_manager_calc_class_destructor(Efl_Class *c EINA_UNUSED)
    _focus_log_domain = -1;
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
+EOLIAN static Efl_Ui_Focus_Manager_Logical_End_Detail
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *child = pd->root;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(child, NULL);
+   Efl_Ui_Focus_Manager_Logical_End_Detail ret = { 0, NULL};
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, ret);
 
    //we need to return the most lower right element
 
-   while(T(child).children)
+   while(T(child).children && !child->redirect_manager)
      child = eina_list_last_data_get(T(child).children);
-   while (child->type != NODE_TYPE_NORMAL)
+   while (child->type != NODE_TYPE_NORMAL && !child->redirect_manager)
      child = _prev(child);
 
-  return child ? child->focusable : NULL;
+   ret.is_regular_end = child->type == NODE_TYPE_NORMAL;
+   ret.element = child ? child->focusable : NULL;
+   return ret;
 }
 
 EOLIAN static void

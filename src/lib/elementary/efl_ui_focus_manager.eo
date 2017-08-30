@@ -29,6 +29,11 @@ struct Efl.Ui.Focus.Relations {
     redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
 }
 
+struct Efl.Ui.Focus.Manager.Logical_End_Detail {
+    is_regular_end : bool;
+    element : Efl.Ui.Focus.Object;
+}
+
 interface Efl.Ui.Focus.Manager {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
@@ -123,7 +128,7 @@ interface Efl.Ui.Focus.Manager {
 
               The returned object is the last object that would be returned if you start at the root and move the direction into next.
             ]]
-            return : Efl.Ui.Focus.Object; [[Last object]]
+            return : Efl.Ui.Focus.Manager.Logical_End_Detail; [[Last object]]
         }
         reset_history {
             [[Reset the history stack of this manager object.
