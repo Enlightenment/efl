@@ -100,6 +100,9 @@ local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
     end
     buf[#buf + 1] = fn:name_get()
     buf[#buf + 1] = " "
+    if fn:is_beta() then
+        buf[#buf + 1] = "@beta "
+    end
     if not isprop then
         if fn:scope_get(fn.METHOD) == fn.scope.PROTECTED then
             buf[#buf + 1] = "@protected "

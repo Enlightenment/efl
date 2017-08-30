@@ -36,7 +36,8 @@ ffi.cdef [[
         EOLIAN_PROPERTY,
         EOLIAN_PROP_SET,
         EOLIAN_PROP_GET,
-        EOLIAN_METHOD
+        EOLIAN_METHOD,
+        EOLIAN_FUNCTION_POINTER
     } Eolian_Function_Type;
 
     typedef enum
@@ -69,7 +70,8 @@ ffi.cdef [[
         EOLIAN_TYPEDECL_STRUCT,
         EOLIAN_TYPEDECL_STRUCT_OPAQUE,
         EOLIAN_TYPEDECL_ENUM,
-        EOLIAN_TYPEDECL_ALIAS
+        EOLIAN_TYPEDECL_ALIAS,
+        EOLIAN_TYPEDECL_FUNCTION_POINTER
     } Eolian_Typedecl_Type;
 
     typedef enum
@@ -259,6 +261,9 @@ ffi.cdef [[
     const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
+    Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
+    Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
+    Eina_Bool eolian_function_is_function_pointer(const Eolian_Function *function_id);
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
@@ -360,6 +365,8 @@ ffi.cdef [[
 
     const char *eolian_type_free_func_get(const Eolian_Type *tp);
     const char *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
+
+    const Eolian_Function *eolian_typedecl_function_pointer_get(const Eolian_Typedecl *tp);
 
     Eolian_Value_t eolian_expression_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask m);
     Eolian_Value_t eolian_expression_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr, const Eolian_Type *type);
@@ -510,11 +517,12 @@ M.type_type = {
 }
 
 M.typedecl_type = {
-    UNKNOWN       = 0,
-    STRUCT        = 1,
-    STRUCT_OPAQUE = 2,
-    ENUM          = 3,
-    ALIAS         = 4
+    UNKNOWN          = 0,
+    STRUCT           = 1,
+    STRUCT_OPAQUE    = 2,
+    ENUM             = 3,
+    ALIAS            = 4,
+    FUNCTION_POINTER = 5
 }
 
 M.c_type_type = {
@@ -662,6 +670,12 @@ M.Typedecl = ffi.metatype("Eolian_Typedecl", {
             local v = eolian.eolian_typedecl_free_func_get(self)
             if v == nil then return nil end
             return ffi.string(v)
+        end,
+
+        function_pointer_get = function(self)
+            local v = eolian.eolian_typedecl_function_pointer_get(self)
+            if v == nil then return nil end
+            return v
         end
     }
 })
@@ -756,11 +770,12 @@ M.Type = ffi.metatype("Eolian_Type", {
 })
 
 M.function_type = {
-    UNRESOLVED = 0,
-    PROPERTY   = 1,
-    PROP_SET   = 2,
-    PROP_GET   = 3,
-    METHOD     = 4
+    UNRESOLVED       = 0,
+    PROPERTY         = 1,
+    PROP_SET         = 2,
+    PROP_GET         = 3,
+    METHOD           = 4,
+    FUNCTION_POINTER = 5
 }
 
 M.Function = ffi.metatype("Eolian_Function", {
@@ -803,6 +818,18 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         is_class = function(self)
             return eolian.eolian_function_is_class(self) ~= 0
+        end,
+
+        is_beta = function(self)
+            return eolian.eolian_function_is_beta(self) ~= 0
+        end,
+
+        is_constructor = function(self, klass)
+            return eolian.eolian_function_is_constructor(self, klass) ~= 0
+        end,
+
+        is_function_pointer = function(self)
+            return eolian.eolian_function_is_function_pointer(self) ~= 0
         end,
 
         property_keys_get = function(self, ftype)
