@@ -38,6 +38,7 @@ test_efl_anim_scale.c \
 test_efl_anim_translate.c \
 test_efl_anim_group_parallel.c \
 test_efl_anim_group_sequential.c \
+test_efl_anim_event_anim.c \
 test_application_server.c \
 test_bg.c \
 test_box.c \

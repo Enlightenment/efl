@@ -1,4 +1,5 @@
 import efl_text_types;
+import efl_animation_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
@@ -655,6 +656,22 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             @in y: int; [[The canvas-relative y coordinate.]]
          }
          return: bool @warn_unused; [[$true if the coords are inside the object, $false otherwise]]
+      }
+      event_animation_set {
+         [[Set the $animation which starts when the given $event_name happens to the object.]]
+         params {
+            @in event_type: Efl.Animation.Event_Type; [[The event type the given $animation is set for.]]
+            @in animation: Efl.Animation; [[The animation which starts when the given $event_name happens to the object.]]
+         }
+         legacy: null;
+      }
+      event_animation_get {
+         [[Get the $animation which starts when the given $event happens to the object.]]
+         params {
+            @in event_type: Efl.Animation.Event_Type; [[The event type the given $animation is set for.]]
+         }
+         legacy: null;
+         return: Efl.Animation @warn_unused;
       }
    }
    implements {

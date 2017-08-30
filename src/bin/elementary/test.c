@@ -333,6 +333,7 @@ void test_efl_anim_translate(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_translate_absolute(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_parallel(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_sequential(void *data, Evas_Object *obj, void *event_info);
+void test_efl_anim_event_anim(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -813,6 +814,7 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Efl Animation Translate Absolute", test_efl_anim_translate_absolute);
    ADD_TEST(NULL, "Effects", "Efl Animation Group Parallel", test_efl_anim_group_parallel);
    ADD_TEST(NULL, "Effects", "Efl Animation Group Sequential", test_efl_anim_group_sequential);
+   ADD_TEST(NULL, "Effects", "Efl Animation Event Animation", test_efl_anim_event_anim);
 
    //------------------------------//
    ADD_TEST(NULL, "Edje External", "ExtButton", test_external_button);
