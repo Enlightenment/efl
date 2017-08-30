@@ -35,11 +35,11 @@ generate:
 }
 
 static Eina_File *
-open_src(const char *fname, Eina_Bool *bc)
+open_src(const char *fname, Eina_Bool *bc, Eina_Bool allow_bc)
 {
    Eina_File  *f   = NULL;
    const char *ext = strstr(fname, ".lua");
-   if (ext && !ext[4])
+   if (ext && !ext[4] && allow_bc)
      {
         char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%sc", fname);
@@ -151,7 +151,7 @@ elua_io_loadfile(const Elua_State *es, const char *fname)
      {
         return elua_loadstdin(L);
      }
-   if (!(f = open_src(fname, &bcache)))
+   if (!(f = open_src(fname, &bcache, EINA_TRUE)))
      {
         lua_pushfstring(L, "cannot open %s: %s", fname, strerror(errno));
         return LUA_ERRFILE;
@@ -167,7 +167,37 @@ elua_io_loadfile(const Elua_State *es, const char *fname)
    status = lua_load(L, getf_map, &s, chname);
    eina_file_map_free(f, s.fmap);
    eina_file_close(f);
-   if (!status && bcache) write_bc(L, fname);
+   if (status)
+     {
+        /* we loaded bytecode and that failed; try loading source instead */
+        if (!bcache)
+          {
+             /* can't open real file, so return original error */
+             if (!(f = open_src(fname, &bcache, EINA_FALSE)))
+               {
+                  lua_remove(L, -2);
+                  return status;
+               }
+             s.flen = eina_file_size_get(f);
+             /* can't read real file, so return original error */
+             if (!(s.fmap = eina_file_map_all(f, EINA_FILE_RANDOM)))
+               {
+                  lua_remove(L, -2);
+                  return status;
+               }
+             /* loaded original file, pop old error and load again */
+             lua_pop(L, 1);
+             status = lua_load(L, getf_map, &s, chname);
+             eina_file_map_free(f, s.fmap);
+             eina_file_close(f);
+             /* force write new bytecode */
+             if (!status)
+               write_bc(L, fname);
+          }
+        /* whatever happened here, proceed to the end... */
+     }
+   else if (bcache)
+     write_bc(L, fname); /* success and bytecode write */
    lua_remove(L, -2);
    return status;
 }
