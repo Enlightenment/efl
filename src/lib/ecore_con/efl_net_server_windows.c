@@ -34,7 +34,7 @@ typedef struct _Efl_Net_Server_Windows_Data
    Eina_List *pending_clients;
 
    Eina_Stringshare *address; /* includes prefix: \\.\pipe\, returned without it */
-   Efl_Future *pending_announcer_job;
+   Eina_Future *pending_announcer_job;
    unsigned int clients_count;
    unsigned int clients_limit;
    Eina_Bool clients_reject_excess;
@@ -316,22 +316,20 @@ _efl_net_server_windows_efl_net_server_address_get(Eo *o EINA_UNUSED, Efl_Net_Se
    return pd->address + strlen(PIPE_NS);
 }
 
-static void
-_efl_net_server_windows_pending_announce_job(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_server_windows_pending_announce_job(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Efl_Net_Server_Windows_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eo *client;
 
-   pd->pending_announcer_job = NULL;
-
-   if (!pd->pending_clients) return;
-   if ((pd->clients_limit > 0) && (pd->clients_limit <= pd->clients_count)) return;
+   if (!pd->pending_clients) return v;
+   if ((pd->clients_limit > 0) && (pd->clients_limit <= pd->clients_count)) return v;
 
    client = pd->pending_clients->data;
    pd->pending_clients = eina_list_remove_list(pd->pending_clients, pd->pending_clients);
 
    efl_net_server_client_announce(o, client);
+   return v;
 }
 
 static void
@@ -345,9 +343,9 @@ _efl_net_server_windows_pending_announce_job_schedule(Eo *o, Efl_Net_Server_Wind
 
    loop = efl_loop_get(o);
    if (!loop) return;
-   efl_future_use(&pd->pending_announcer_job, efl_loop_job(loop, o));
-   efl_future_then(pd->pending_announcer_job, _efl_net_server_windows_pending_announce_job, NULL, NULL, o);
-   efl_future_link(o, pd->pending_announcer_job);
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(loop),
+                                  .success = _efl_net_server_windows_pending_announce_job,
+                                  .storage = &pd->pending_announcer_job);
 }
 
 EOLIAN static void

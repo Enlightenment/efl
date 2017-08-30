@@ -207,7 +207,7 @@ typedef struct
       Eina_Bool verify_peer;
       Eina_Bool verify_hostname;
    } ssl;
-   Efl_Future *pending_close;
+   Eina_Future *pending_close;
    unsigned int in_curl_callback;
    SOCKET fd;
    Eina_Error error;
@@ -796,27 +796,28 @@ _efl_net_dialer_http_curl_safe_begin(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    return pd->easy;
 }
 
-static void
-_efl_net_dialer_http_curl_cleanup(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_http_curl_cleanup(void *data, const Eina_Value v)
 {
    CURL *easy = data;
    DBG("cleanup curl=%p", easy);
    curl_easy_cleanup(easy);
+   return v;
 }
 
-static void
-_efl_net_dialer_http_curl_cleanup_error(void *data, const Efl_Event *ev)
+static Eina_Value
+_efl_net_dialer_http_curl_cleanup_error(void *data, const Eina_Error err)
 {
-   Efl_Future_Event_Failure *failure = ev->info;
    CURL *easy = data;
-   DBG("cleanup curl=%p, promise error=%d '%s'", easy, failure->error, eina_error_msg_get(failure->error));
+   DBG("cleanup curl=%p, promise error=%d '%s'", easy, err, eina_error_msg_get(err));
    curl_easy_cleanup(easy);
+   return EINA_VALUE_EMPTY;
 }
 
 static void
 _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *easy)
 {
-   Efl_Future *f;
+   Eina_Future *f;
    int refs;
 
    refs = efl_ref_get(o);
@@ -828,7 +829,7 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
      }
 
    if (pd->pending_close)
-     efl_future_cancel(pd->pending_close);
+     eina_future_cancel(pd->pending_close);
 
    if (!pd->easy)
      {
@@ -861,12 +862,10 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
    /* object deleted from CURL callback, CURL* easy was
     * dissociated and we must delete it ourselves.
     */
-   f = efl_loop_job(ecore_main_loop_get(), easy);
-   efl_future_then(f,
-                   _efl_net_dialer_http_curl_cleanup,
-                   _efl_net_dialer_http_curl_cleanup_error,
-                   NULL,
-                   easy);
+   f = efl_loop_Eina_FutureXXX_job(ecore_main_loop_get());
+   eina_future_then_from_desc(f, eina_future_cb_easy(.success = _efl_net_dialer_http_curl_cleanup,
+                                                     .error = _efl_net_dialer_http_curl_cleanup_error,
+                                                     .data = easy));
    DBG("dialer=%p deleted from CURL callback, cleanup curl from job=%p.", o, f);
 }
 
@@ -1144,7 +1143,7 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      }
    else if (pd->pending_close)
      {
-        efl_future_cancel(pd->pending_close);
+        eina_future_cancel(pd->pending_close);
         efl_event_freeze(o);
         efl_io_closer_close(o);
         efl_event_thaw(o);
@@ -1704,7 +1703,7 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
-static void _efl_net_dialer_http_pending_close(void *data, const Efl_Event *ev);
+static Eina_Value _efl_net_dialer_http_pending_close(Eo *o, Eina_Value value);
 
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
@@ -1719,8 +1718,9 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if ((!pd->pending_close) && (pd->easy))
           {
-             efl_future_use(&pd->pending_close, efl_loop_job(efl_loop_get(o), o));
-             efl_future_then(pd->pending_close, _efl_net_dialer_http_pending_close, NULL, NULL, o);
+             efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(efl_loop_get(o)),
+                                            .success = _efl_net_dialer_http_pending_close,
+                                            .storage = &pd->pending_close);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
           }
         return 0;
@@ -1751,14 +1751,13 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    return err;
 }
 
-static void
-_efl_net_dialer_http_pending_close(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_http_pending_close(Eo *o, const Eina_Value value EINA_UNUSED)
 {
-   Eo *o = data;
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
-   pd->pending_close = NULL; /* XXX TODO this should be NULL-ified by efl_promise before calling this function */
    _efl_net_dialer_http_efl_io_closer_close(o, pd);
+   return value;
 }
 
 EOLIAN static Eina_Bool

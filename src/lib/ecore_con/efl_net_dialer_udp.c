@@ -35,7 +35,7 @@ typedef struct _Efl_Net_Dialer_Udp_Data
 {
    struct {
       Ecore_Thread *thread;
-      Efl_Future *timeout;
+      Eina_Future *timeout;
    } resolver;
    Eina_Stringshare *address_dial;
    Eina_Bool connected;
@@ -75,10 +75,9 @@ _efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
    eina_stringshare_replace(&pd->address_dial, NULL);
 }
 
-static void
-_efl_net_dialer_udp_resolver_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_udp_resolver_timeout(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
 
@@ -92,6 +91,15 @@ _efl_net_dialer_udp_resolver_timeout(void *data, const Efl_Event *ev EINA_UNUSED
    efl_io_reader_eos_set(o, EINA_TRUE);
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
    efl_unref(o);
+   return v;
+}
+
+static void
+_timeout_schedule(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
+{
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), pd->timeout_dial),
+                                  .success = _efl_net_dialer_udp_resolver_timeout,
+                                  .storage = &pd->resolver.timeout);
 }
 
 static Eina_Error
@@ -267,14 +275,8 @@ _efl_net_dialer_udp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_
 
    efl_net_dialer_address_dial_set(o, address);
 
-   if (pd->resolver.timeout)
-     efl_future_cancel(pd->resolver.timeout);
-   if (pd->timeout_dial > 0.0)
-     {
-        efl_future_use(&pd->resolver.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
-        efl_future_then(pd->resolver.timeout, _efl_net_dialer_udp_resolver_timeout, NULL, NULL, o);
-        efl_future_link(o, pd->resolver.timeout);
-     }
+   if (pd->resolver.timeout) eina_future_cancel(pd->resolver.timeout);
+   if (pd->timeout_dial > 0.0) _timeout_schedule(o, pd);
 
    return 0;
 }
@@ -295,14 +297,8 @@ EOLIAN static void
 _efl_net_dialer_udp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd, double seconds)
 {
    pd->timeout_dial = seconds;
-   if (pd->resolver.timeout)
-     efl_future_cancel(pd->resolver.timeout);
-
-   if ((pd->timeout_dial > 0.0) && (pd->resolver.thread))
-     {
-        efl_future_use(&pd->resolver.timeout, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial, o));
-        efl_future_then(pd->resolver.timeout, _efl_net_dialer_udp_resolver_timeout, NULL, NULL, o);
-     }
+   if (pd->resolver.timeout) eina_future_cancel(pd->resolver.timeout);
+   if ((pd->timeout_dial > 0.0) && (pd->resolver.thread)) _timeout_schedule(o, pd);
 }
 
 EOLIAN static double
@@ -314,8 +310,7 @@ _efl_net_dialer_udp_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_D
 EOLIAN static void
 _efl_net_dialer_udp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Udp_Data *pd, Eina_Bool connected)
 {
-   if (pd->resolver.timeout)
-     efl_future_cancel(pd->resolver.timeout);
+   if (pd->resolver.timeout) eina_future_cancel(pd->resolver.timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);

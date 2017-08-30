@@ -34,7 +34,7 @@ typedef struct _Efl_Net_Dialer_Ssl_Data
 {
    Eo *sock;
    Eo *ssl_ctx;
-   Efl_Future *connect_timeout;
+   Eina_Future *connect_timeout;
    Eina_Bool connected;
 } Efl_Net_Dialer_Ssl_Data;
 
@@ -136,16 +136,24 @@ _efl_net_dialer_ssl_ssl_context_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *
    return pd->ssl_ctx;
 }
 
-static void
-_efl_net_dialer_ssl_connect_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_ssl_connect_timeout(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Eina_Error err = ETIMEDOUT;
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
    efl_unref(o);
+   return v;
+}
+
+static void
+_timeout_schedule(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, double timeout)
+{
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), timeout),
+                                  .success = _efl_net_dialer_ssl_connect_timeout,
+                                  .storage = &pd->connect_timeout);
 }
 
 EOLIAN static Eina_Error
@@ -157,16 +165,10 @@ _efl_net_dialer_ssl_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, cons
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_net_dialer_connected_get(o), EISCONN);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
 
-   if (pd->connect_timeout)
-     efl_future_cancel(pd->connect_timeout);
+   if (pd->connect_timeout) eina_future_cancel(pd->connect_timeout);
 
    timeout = efl_net_dialer_timeout_dial_get(pd->sock);
-   if (timeout > 0.0)
-     {
-        efl_future_use(&pd->connect_timeout, efl_loop_timeout(efl_loop_get(o), timeout, o));
-        efl_future_then(pd->connect_timeout, _efl_net_dialer_ssl_connect_timeout, NULL, NULL, o);
-        efl_future_link(o, pd->connect_timeout);
-     }
+   if (timeout > 0.0) _timeout_schedule(o, pd, timeout);
 
    return efl_net_dialer_dial(pd->sock, address);
 }
@@ -190,18 +192,13 @@ _efl_net_dialer_ssl_efl_net_dialer_proxy_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_S
 }
 
 EOLIAN static void
-_efl_net_dialer_ssl_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_Data *pd, double seconds)
+_efl_net_dialer_ssl_efl_net_dialer_timeout_dial_set(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, double seconds)
 {
    efl_net_dialer_timeout_dial_set(pd->sock, seconds);
 
-   if (pd->connect_timeout)
-     efl_future_cancel(pd->connect_timeout);
+   if (pd->connect_timeout) eina_future_cancel(pd->connect_timeout);
 
-   if ((seconds > 0.0) && (!pd->connected))
-     {
-        efl_future_use(&pd->connect_timeout, efl_loop_timeout(efl_loop_get(o), seconds, o));
-        efl_future_then(pd->connect_timeout, _efl_net_dialer_ssl_connect_timeout, NULL, NULL, o);
-     }
+   if ((seconds > 0.0) && (!pd->connected)) _timeout_schedule(o, pd, seconds);
 }
 
 EOLIAN static double
@@ -214,7 +211,7 @@ EOLIAN static void
 _efl_net_dialer_ssl_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, Eina_Bool connected)
 {
    if (pd->connect_timeout)
-     efl_future_cancel(pd->connect_timeout);
+     eina_future_cancel(pd->connect_timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
