@@ -1,6 +1,39 @@
 ==========
-EFL 1.20.1
+EFL 1.20.3
 ==========
+
+Changes since 1.20.2:
+---------------------
+
+Fixes:
+
+   * eo: Check refs in efl_data_scope_safe_get (T5869)
+   * efl-wl: use correct accessor method for keyboard resource hash
+   * elm_widget: do not reparent subobjs to top widget for non-elm objects
+   * efl-wl: always dismiss popups on hide
+   * efl-wl: handle case where eglBindWaylandDisplay fails
+   * ecore: always set delete_me before removing fd from poll
+   * efl-wl: initialize seat keymap fd to -1
+   * ecore_evas_extn: Fix socket & plug windows
+   * elm_test: Fail nicely if plug can't connect
+   * evas: make top object returning functions return the top object
+   * theme: handle e dialog sizing when no buttons are present
+   * wayland: fix num/caps lock handling in events (T5737)
+   * elm_box: Fix support of aspect hints (T5888)
+   * edje: Fix warning message
+   * ecore-wl2: normalize axis event values (T5427)
+   * efl-wl: match nested wl seats based on display ordering
+   * elm_win: update opaque region for fake windows
+   * elm_win: check for wayland engine during finalize by checking for wl win
+   * efl_ui_image: maintain geometry for prev image while preloading new image (T5936)
+   * theme: fix dialog sizing when no buttons are present
+   * Canvas text: fix non-dirty paragraph width calculation (T5939)
+   * eina file - use recursive locks for cache and file to avoid deadlock
+   * eina mmap safety - only map zeropages if it's an eina file that sigbuses
+   * evas: fix invalid return of evas_textgrid_cellrow_get()
+   * access: Fix crash in ecore
+   * elm init - fix init seq and quicklaunch as we shut down x before evas
+   * photocam: Fix key zoom in/out
 
 Changes since 1.20.1:
 ---------------------
