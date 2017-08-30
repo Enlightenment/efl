@@ -39,13 +39,13 @@ class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
       Efl.Object.constructor;
       Efl.Gfx.visible { set; }
       Efl.Gfx.size { set; }
-      Elm.Widget.part_text { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
       Elm.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Elm.Genlist.filter { set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      //Efl.Part.part; // TODO?
    }
    events {
       dismissed; [[Called when combobox was dismissed]]
