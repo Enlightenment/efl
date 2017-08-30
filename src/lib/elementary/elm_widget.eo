@@ -404,16 +404,17 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
-      on_focus {
-         [['Virtual' function handling focus in/out events on the widget]]
+      on_focus @protected {
+         [[Virtual function handling focus in/out events on the widget]]
          params {
+            /* FIXME: EO API is not supposed to have any widget item!!! */
             @in item: Elm.Widget.Item @nullable; [[Widget]]
          }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
 
       /* Scroll API. */
-      @property on_show_region_hook {
+      @property on_show_region_hook @protected {
          [[Hook function called when the @.show_region is changed.
 
            See also @.show_region.
@@ -466,7 +467,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
 
       /* FIXME: This is not 100% related to focus. This documentation needs
        * further fixing. */
-      @property focus_region {
+      @property focus_region @protected {
          [[Region to show when focus changes within this widget.
 
            When this widget or one of its subwidgets is given focus, this
@@ -497,10 +498,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            See also @.focus_region.
          ]]
       }
-      /* FIXME: This enum is in Elm namespace! */
       @property focus_region_show_mode {
          [[Control the focus_region_show mode.]]
          values {
+            /* FIXME: This enum is in Elm namespace! */
             mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
          }
       }
@@ -734,27 +735,30 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Focus Manager API */
-      focus_register {
-         [[Register focus with focus manager]]
+      focus_register @protected {
+         [[Register focus with the given focus manager.]]
          params {
-            manager : Efl.Ui.Focus.Manager; [[The manager to register against]]
-            logical : Efl.Ui.Focus.Object; [[The logical parent to use]]
-            @inout logical_flag : bool; [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
+            @in manager: Efl.Ui.Focus.Manager; [[The focus manager to register with.]]
+            @in logical: Efl.Ui.Focus.Object; [[The logical parent to use.]]
+            /* FIXME: The below doc needs fixing! */
+            @inout logical_flag: bool; [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
          }
-         return : bool; [[return $true or $false if the registration was successfull or not]]
+         return: bool; [[return $true or $false if the registration was successfull or not]]
       }
-      focus_manager_factory {
-         [[If the widget needs a manager, this function is called
+      focus_manager_factory @protected {
+         [[If the widget needs a focus manager, this function will be called.
 
-           It can be used and overriden to inject your own manager or set custom options on the manager
+           It can be used and overriden to inject your own manager or set
+           custom options on the focus manager.
          ]]
          params {
-            root : Efl.Ui.Focus.Object; [[the logical root to use in the manager.]]
+            @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
          }
-         return : Efl.Ui.Focus.Manager;
+         return: Efl.Ui.Focus.Manager;
       }
       focus_direction_manager_is @protected {
-         [['Virtual' function which checks if handling of passing focus to sub-objects in given direction is supported by widget.]]
+         [[Virtual function which checks if this widget can handle passing
+           focus to sub-object, in a given direction.]]
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
