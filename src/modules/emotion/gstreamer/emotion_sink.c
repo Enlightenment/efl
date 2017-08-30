@@ -191,7 +191,7 @@ evas_video_sink_get_property(GObject * object, guint prop_id,
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-       ERR("invalide property");
+       ERR("invalid property");
        break;
    }
 }
@@ -579,7 +579,7 @@ evas_video_sink_samsung_main_render(void *data)
    if (priv->func)
      priv->func(evas_data, gst_data, stride, elevation, elevation);
    else
-     WRN("No way to decode %x colorspace !", priv->eformat);
+     WRN("No way to decode colorspace '%x'!", priv->eformat);
 
    evas_object_image_data_set(priv->o, evas_data);
    evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
@@ -694,7 +694,7 @@ evas_video_sink_main_render(void *data)
    if (priv->func)
      priv->func(evas_data, GST_BUFFER_DATA(buffer), priv->width, priv->source_height, priv->height);
    else
-     WRN("No way to decode %x colorspace !", priv->eformat);
+     WRN("No way to decode colorspace '%x'!", priv->eformat);
 
    evas_object_image_data_set(priv->o, evas_data);
    evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
