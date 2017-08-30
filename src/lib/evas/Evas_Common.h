@@ -3379,6 +3379,13 @@ typedef Eo Efl_Animation_Group_Parallel;
 
 #endif
 
+#ifndef _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#define _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Group_Sequential;
+
+#endif
+
 #ifndef _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
 #define _EFL_ANIMATION_OBJECT_EO_CLASS_TYPE
 
@@ -3425,6 +3432,13 @@ typedef Eo Efl_Animation_Object_Group;
 #define _EFL_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
 
 typedef Eo Efl_Animation_Group_Parallel;
+
+#endif
+
+#ifndef _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#define _EFL_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+
+typedef Eo Efl_Animation_Group_Sequential;
 
 #endif
 
