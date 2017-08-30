@@ -159,8 +159,8 @@ typedef struct _Efl_Net_Dialer_Websocket_Pending_Read {
 
 typedef struct _Efl_Net_Dialer_Websocket_Data {
    Eo *http;
-   Efl_Future *close_timeout;
-   Efl_Future *job;
+   Eina_Future *close_timeout;
+   Eina_Future *job;
    Eina_Stringshare *address_dial; /* must rewrite ws->http, wss->https */
    Eina_Stringshare *address_remote; /* must rewrite ws->http, wss->https */
    struct {
@@ -544,7 +544,7 @@ _efl_net_dialer_websocket_job_dispatch_frame(Eo *o, Efl_Net_Dialer_Websocket_Dat
            else
              efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
            if (pd->close_timeout)
-             efl_future_cancel(pd->close_timeout);
+             eina_future_cancel(pd->close_timeout);
            break;
         }
 
@@ -734,10 +734,9 @@ _efl_net_dialer_websocket_job_receive(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
    efl_unref(o);
 }
 
-static void
-_efl_net_dialer_websocket_job(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_websocket_job(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
    efl_ref(o);
@@ -752,6 +751,7 @@ _efl_net_dialer_websocket_job(void *data, const Efl_Event *ev EINA_UNUSED)
      _efl_net_dialer_websocket_job_schedule(o, pd);
 
    efl_unref(o);
+   return v;
 }
 
 static void
@@ -763,9 +763,10 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 
    loop = efl_loop_get(o);
    if (!loop) return;
-   efl_future_use(&pd->job, efl_loop_job(loop, o));
-   efl_future_then(pd->job, _efl_net_dialer_websocket_job, NULL, NULL, o);
-   efl_future_link(o, pd->job);
+
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(loop),
+                                  .success = _efl_net_dialer_websocket_job,
+                                  .storage = &pd->job);
 }
 
 static void
@@ -1479,13 +1480,12 @@ _efl_net_dialer_websocket_binary_send(Eo *o, Efl_Net_Dialer_Websocket_Data *pd, 
                                   blob.mem, blob.len);
 }
 
-static void
-_efl_net_dialer_websocket_close_request_timeout(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_net_dialer_websocket_close_request_timeout(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
-
    DBG("server did not close the TCP socket, timeout");
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
+   return v;
 }
 
 EOLIAN static void
@@ -1497,11 +1497,11 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    EINA_SAFETY_ON_TRUE_RETURN(pd->close_requested);
 
    if (pd->close_timeout)
-     efl_future_cancel(pd->close_timeout);
+     eina_future_cancel(pd->close_timeout);
 
-   efl_future_use(&pd->close_timeout, efl_loop_timeout(efl_loop_get(o), 2.0, o));
-   efl_future_then(pd->close_timeout, _efl_net_dialer_websocket_close_request_timeout, NULL, NULL, o);
-   efl_future_link(o, pd->close_timeout);
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), 2.0),
+                                  .success = _efl_net_dialer_websocket_close_request_timeout,
+                                  .storage = &pd->close_timeout);
 
    efl_io_writer_can_write_set(o, EINA_FALSE);
 

@@ -31,7 +31,7 @@ struct _Ecore_Con_Server
    Eo *dialer;
    Eo *server;
    struct {
-      Efl_Future *job;
+      Eina_Future *job;
       Eina_Binbuf *pending_send; /* until job is fulfilled, no dialer exists,
                                   * this binbuf allows immediate
                                   * ecore_con_server_send() in that situation */
@@ -71,7 +71,7 @@ struct _Ecore_Con_Client
    const void *data;
    Eina_Stringshare *ip;
    struct {
-      Efl_Future *job;
+      Eina_Future *job;
       Eo *ctx;
       Eina_Bool upgrading;
    } ssl;
@@ -289,7 +289,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
         cl->socket = NULL;
      }
 
-   if (cl->ssl.job) efl_future_cancel(cl->ssl.job);
+   if (cl->ssl.job) eina_future_cancel(cl->ssl.job);
 
    if (cl->ssl.ctx)
      {
@@ -813,14 +813,18 @@ EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_client_socket_ssl_cbs,
                            { EFL_NET_SOCKET_SSL_EVENT_SSL_READY, _ecore_con_client_socket_ssl_ready },
                            { EFL_NET_SOCKET_SSL_EVENT_SSL_ERROR, _ecore_con_client_socket_ssl_error });
 
-static void
-_ecore_con_client_ssl_upgrade_job(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_ecore_con_client_ssl_upgrade_job(void *data, const Eina_Value v,
+                                  const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Client *cl = data;
    Eo *loop = ecore_main_loop_get();
    Eo *inner_socket;
    Eo *socket;
    Eo *tcp_socket;
+
+   //Canceled
+   if (v.type == EINA_VALUE_TYPE_ERROR) return v;
 
    tcp_socket = cl->socket;
    cl->socket = NULL; /* take it, will be wrapped */
@@ -852,7 +856,7 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Efl_Event *event EINA_UNUSED
        efl_io_buffered_stream_inner_io_get(cl->socket),
        cl->ssl.ctx,
        tcp_socket);
-   return;
+   return v;
 
  error_socket:
    efl_del(inner_socket);
@@ -860,9 +864,17 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Efl_Event *event EINA_UNUSED
    cl->socket = tcp_socket; /* put it back */
    if (_ecore_con_post_event_client_error(cl, "Couldn't finish SSL setup"))
      _ecore_con_post_event_client_del(cl);
+   return v;
 }
 
 static Eo * _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr);
+
+static void
+_ecore_con_server_job_schedule(Ecore_Con_Server *svr, Eo *loop,
+                               Eina_Future_Cb cb)
+{
+   eina_future_then(efl_loop_Eina_FutureXXX_job(loop), cb, svr, &svr->ssl.job);
+}
 
 EAPI Eina_Bool
 ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type)
@@ -905,8 +917,9 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type)
 
    cl->ssl.upgrading = EINA_TRUE;
    cl->ssl.ctx = ssl_ctx;
-   efl_future_use(&cl->ssl.job, efl_loop_job(efl_loop_get(cl->socket), cl));
-   efl_future_then(cl->ssl.job, _ecore_con_client_ssl_upgrade_job, NULL, NULL, cl);
+
+   eina_future_then(efl_loop_Eina_FutureXXX_job(efl_loop_get(cl->socket)),
+                    _ecore_con_client_ssl_upgrade_job, cl, &cl->ssl.job);
 
    DBG("cl=%p SSL upgrading from %#x to type=%#x", cl, svr->type, compl_type);
 
@@ -981,7 +994,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         svr->ssl.clients_ctx = NULL;
      }
 
-   if (svr->ssl.job) efl_future_cancel(svr->ssl.job);
+   if (svr->ssl.job) eina_future_cancel(svr->ssl.job);
 
    if (svr->ssl.pending_send)
      {
@@ -1591,14 +1604,17 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
                   efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
 }
 
-static void
-_ecore_con_server_server_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
+                                 const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
    Eo *loop = ecore_main_loop_get();
    Eo *ssl_ctx;
    Eo *inner_server;
    Eo *server;
+
+   if (v.type == EINA_VALUE_TYPE_ERROR) return v;
 
    ssl_ctx = _ecore_con_server_ssl_ctx_create(svr);
    EINA_SAFETY_ON_NULL_GOTO(ssl_ctx, error_ssl_ctx);
@@ -1624,12 +1640,12 @@ _ecore_con_server_server_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
        efl_net_server_simple_inner_server_get(svr->server),
        efl_net_server_ssl_context_get(efl_net_server_simple_inner_server_get(svr->server)));
 
-   return;
+   return v;
 
  error_serve:
    if (_ecore_con_post_event_server_error(svr, "Couldn't serve using SSL"))
      _ecore_con_post_event_server_del(svr);
-   return;
+   return v;
 
  error_server:
    efl_del(inner_server);
@@ -1638,6 +1654,7 @@ _ecore_con_server_server_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
+   return v;
 }
 
 /**
@@ -1725,8 +1742,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
          * > against loaded certificates.
          */
         svr->ssl.upgrade_type = compl_type;
-        efl_future_use(&svr->ssl.job, efl_loop_job(loop, svr));
-        efl_future_then(svr->ssl.job, _ecore_con_server_server_ssl_job, NULL, NULL, svr);
+        _ecore_con_server_job_schedule(svr, loop, _ecore_con_server_server_ssl_job);
         return svr;
      }
 
@@ -1921,8 +1937,9 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
    return EINA_TRUE;
 }
 
-static void
-_ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
+                                 const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
    Eo *loop = ecore_main_loop_get();
@@ -1993,12 +2010,12 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
         svr->ssl.pending_send = NULL;
      }
 
-   return;
+   return v;
 
  error_dial:
    if (_ecore_con_post_event_server_error(svr, "Couldn't dial using SSL"))
      _ecore_con_post_event_server_del(svr);
-   return;
+   return v;
 
  error_dialer:
    efl_del(inner_dialer);
@@ -2007,10 +2024,12 @@ _ecore_con_server_dialer_ssl_job(void *data, const Efl_Event *event EINA_UNUSED)
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
+   return v;
 }
 
-static void
-_ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
+                                         const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
    Eo *loop = ecore_main_loop_get();
@@ -2021,6 +2040,9 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA
    Efl_Net_Ssl_Cipher cipher = EFL_NET_SSL_CIPHER_AUTO;
    Efl_Net_Ssl_Verify_Mode verify_mode = EFL_NET_SSL_VERIFY_MODE_NONE; /* was the default */
    Ecore_Con_Type ssl_type = svr->ssl.upgrade_type & ECORE_CON_SSL;
+
+   //Canceled
+   if (v.type == EINA_VALUE_TYPE_ERROR) return v;
 
    if (ssl_type & ECORE_CON_USE_MIXED)
      cipher = EFL_NET_SSL_CIPHER_AUTO;
@@ -2078,7 +2100,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA
        efl_io_buffered_stream_inner_io_get(svr->dialer),
        efl_net_dialer_ssl_context_get(efl_io_buffered_stream_inner_io_get(svr->dialer)),
        tcp_dialer);
-   return;
+   return v;
 
  error_dialer:
    efl_del(inner_dialer);
@@ -2088,6 +2110,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Efl_Event *event EINA
  error_ssl_ctx:
    if (_ecore_con_post_event_server_error(svr, "Couldn't finish SSL setup"))
      _ecore_con_post_event_server_del(svr);
+   return v;
 }
 
 /**
@@ -2174,8 +2197,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
          * > has started to enable verification of certificates
          * > against loaded certificates.
          */
-        efl_future_use(&svr->ssl.job, efl_loop_job(loop, svr));
-        efl_future_then(svr->ssl.job, _ecore_con_server_dialer_ssl_job, NULL, NULL, svr);
+        _ecore_con_server_job_schedule(svr, loop, _ecore_con_server_dialer_ssl_job);
         return svr;
      }
 
@@ -2535,8 +2557,9 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type compl_type)
 
    svr->ssl.upgrading = EINA_TRUE;
    svr->ssl.upgrade_type = compl_type;
-   efl_future_use(&svr->ssl.job, efl_loop_job(efl_loop_get(svr->dialer), svr));
-   efl_future_then(svr->ssl.job, _ecore_con_server_dialer_ssl_upgrade_job, NULL, NULL, svr);
+
+   _ecore_con_server_job_schedule(svr, efl_loop_get(svr->dialer),
+                                  _ecore_con_server_dialer_ssl_upgrade_job);
 
    DBG("svr=%p SSL upgrading from %#x to type=%#x", svr, svr->type, compl_type);
 
