@@ -514,7 +514,7 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
      {
         ret = wl_display_flush(ewd->wl.display);
         code = errno;
-        if (ret == 0)
+        if (ret >= 0)
           ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
 
         if ((ret < 0) && (code != EAGAIN)) goto err;
