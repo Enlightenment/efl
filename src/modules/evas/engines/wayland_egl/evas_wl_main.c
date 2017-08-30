@@ -547,6 +547,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
 
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+   ecore_wl2_display_flush(ob->wl2_disp);
 }
 
 Evas_Engine_GL_Context *
