@@ -100,7 +100,6 @@ struct _Ecore_Wl2_Display
 
    struct xkb_context *xkb_context;
 
-   Ecore_Idle_Enterer *idle_enterer;
    Ecore_Fd_Handler *fd_hdl;
 
    Eina_Hash *globals;
