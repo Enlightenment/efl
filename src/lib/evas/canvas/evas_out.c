@@ -152,12 +152,6 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
      }
    else
      {
-        if (!e->common_init)
-          {
-             e->common_init = 1;
-             evas_common_init();
-          }
-
      setup:
         output->output = e->engine.func->output_setup(_evas_engine_context(e), info,
                                                       output->geometry.w, output->geometry.h);
