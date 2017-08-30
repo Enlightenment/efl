@@ -743,8 +743,6 @@ EAPI void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Scroll
 EAPI Efl_Ui_Scroll_Block elm_widget_scroll_lock_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
-EAPI void             elm_widget_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
-EAPI Eina_Bool        elm_widget_item_loop_enabled_get(const Evas_Object *obj);
 EAPI Efl_Ui_Theme_Apply  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
 EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);

@@ -658,6 +658,12 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Canvas.Group, Efl.Ui.Focus
             @in h: bool; [[Whether to limit the minimum vertical size]]
          }
       }
+      @property item_loop_enabled {
+         [[Whether scrolling should loop around.]]
+         values {
+            enable: bool; [[True to enable looping.]]
+         }
+      }
    }
    implements {
       class.constructor;

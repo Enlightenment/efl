@@ -448,12 +448,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             }
          }
       }
-      @property item_loop_enabled {
-         [[Control item loop feature.]]
-         values {
-            enable: bool; [[$true if item loop is enabled, $false otherwise]]
-         }
-      }
+
+      /* FIXME: Scroll API. Not sure how those APIs should be exposed with
+       * the new scrollable API. */
       scroll_hold_push {
          [[Push scroll hold]]
       }
@@ -467,6 +464,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Pop scroller freeze]]
       }
 
+      /* FIXME: This is not 100% related to focus. This documentation needs
+       * further fixing. */
       @property focus_region {
          [[Region to show when focus changes within this widget.
 
