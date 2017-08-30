@@ -225,7 +225,9 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* try to inherit functions from software_generic engine */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Drm))) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic",
+                                    sizeof(Evas_Engine_Info_Drm)))
+     return 0;
 
    /* try to create eina logging domain */
    _evas_engine_drm_log_dom =
