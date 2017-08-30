@@ -3775,13 +3775,6 @@ _elm_widget_domain_part_text_translatable_set(Eo *obj, Elm_Widget_Smart_Data *sd
    sd->on_translate = EINA_FALSE;
 }
 
-EAPI void
-elm_widget_translate(Evas_Object *obj)
-{
-   ELM_WIDGET_CHECK(obj);
-   elm_obj_widget_translate(obj);
-}
-
 static const char*
 _part_text_translate(Eina_Inlist *translate_strings,
                      const char *part,
@@ -3809,12 +3802,11 @@ _elm_widget_part_text_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, 
    return _part_text_translate(sd->translate_strings, part, text);
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+EOLIAN static void
+_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    const Eina_List *l;
    Evas_Object *child;
-   API_ENTRY return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
@@ -3836,7 +3828,6 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
      }
 #endif
    efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_LANGUAGE_CHANGED, NULL);
-   return EINA_TRUE;
 }
 
 /**

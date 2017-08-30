@@ -64,7 +64,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *it;
@@ -74,8 +74,6 @@ _elm_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Multibuttone
      elm_wdg_item_translate(it);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static char *

@@ -26,7 +26,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    Elm_Object_Item *it;
@@ -36,8 +36,6 @@ _elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Contr
      elm_wdg_item_translate(it);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

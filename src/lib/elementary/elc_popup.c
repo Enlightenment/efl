@@ -67,7 +67,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_notify_cb,
 
 static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
@@ -78,8 +78,6 @@ _elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
    elm_obj_widget_translate(sd->main_layout);
-
-   return EINA_TRUE;
 }
 
 static void

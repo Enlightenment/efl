@@ -49,7 +49,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_diskselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
@@ -57,8 +57,6 @@ _elm_diskselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Diskselector_Dat
 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
 static void

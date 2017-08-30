@@ -105,7 +105,7 @@ _prev_page_focus_recover(Elm_Naviframe_Item_Data *it)
      }
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
@@ -114,8 +114,6 @@ _elm_naviframe_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
      elm_wdg_item_translate(EO_OBJ(it));
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static void

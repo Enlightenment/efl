@@ -48,7 +48,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Eo *it;
@@ -58,8 +58,6 @@ _elm_hoversel_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
      elm_wdg_item_translate(it);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Ui_Theme_Apply

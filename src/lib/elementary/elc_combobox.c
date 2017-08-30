@@ -44,7 +44,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_combobox_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
@@ -53,8 +53,6 @@ _elm_combobox_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 
    if (sd->hover)
      elm_obj_widget_translate(sd->hover);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
