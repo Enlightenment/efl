@@ -14,8 +14,8 @@ typedef struct _Efl_Io_Copier_Data
 {
    Efl_Io_Reader *source;
    Efl_Io_Writer *destination;
-   Efl_Future *inactivity_timer;
-   Efl_Future *job;
+   Eina_Future *inactivity_timer;
+   Eina_Future *job;
    Eina_Binbuf *buf;
    Eina_Slice line_delimiter;
    size_t buffer_limit;
@@ -71,38 +71,34 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
     } \
   while (0)
 
-static void
-_efl_io_copier_timeout_inactivity_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_io_copier_timeout_inactivity_cb(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Eina_Error err = ETIMEDOUT;
    efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
+   return v;
 }
 
 static void
 _efl_io_copier_timeout_inactivity_reschedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
-   if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+   if (pd->inactivity_timer) eina_future_cancel(pd->inactivity_timer);
    if (pd->timeout_inactivity <= 0.0) return;
 
-   efl_future_use(&pd->inactivity_timer, efl_loop_timeout(efl_loop_get(o), pd->timeout_inactivity, o));
-   efl_future_then(pd->inactivity_timer, _efl_io_copier_timeout_inactivity_cb, NULL, NULL, o);
-   efl_future_link(o, pd->inactivity_timer);
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), pd->timeout_inactivity),
+                                  .success = _efl_io_copier_timeout_inactivity_cb,
+                                  .storage = &pd->inactivity_timer);
 }
 
-static void
-_efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_io_copier_job(Eo *o, const Eina_Value v)
 {
-   Eo *o = data;
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
    uint64_t old_read = pd->progress.read;
    uint64_t old_written = pd->progress.written;
    uint64_t old_total = pd->progress.total;
 
    _COPIER_DBG(o, pd);
-   /* FIXME: Remove this wref once efl_promise is able to handle recursive cases. */
-   efl_wref_del(pd->job, &pd->job);
-   pd->job = NULL; /* XXX TODO this should be NULL-ified by efl_promise before calling this function */
 
    efl_ref(o);
 
@@ -117,7 +113,7 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
        (old_total != pd->progress.total))
      {
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_PROGRESS, NULL);
-        if (pd->closed) return; /* cb may call close */
+        if (pd->closed) return v; /* cb may call close */
         _efl_io_copier_timeout_inactivity_reschedule(o, pd);
      }
 
@@ -129,6 +125,7 @@ _efl_io_copier_job(void *data, const Efl_Event *ev EINA_UNUSED)
      }
 
    efl_unref(o);
+   return v;
 }
 
 static void
@@ -136,9 +133,9 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
    if (pd->job) return;
 
-   efl_future_use(&pd->job, efl_loop_job(efl_loop_get(o), o));
-   efl_future_then(pd->job, _efl_io_copier_job, NULL, NULL, o);
-   efl_future_link(o, pd->job);
+   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(efl_loop_get(o)),
+                                  .success = _efl_io_copier_job,
+                                  .storage = &pd->job);
 }
 
 /* NOTE: the returned slice may be smaller than requested since the
@@ -473,7 +470,7 @@ _efl_io_copier_destination_closed(void *data, const Efl_Event *event EINA_UNUSED
    else
      {
         Eina_Error err = EBADF;
-        if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+        if (pd->inactivity_timer) eina_future_cancel(pd->inactivity_timer);
         WRN("copier %p destination %p closed with %zd bytes pending...",
             o, pd->destination, eina_binbuf_length_get(pd->buf));
         efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
@@ -631,10 +628,10 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
      }
 
    if (pd->job)
-     efl_future_cancel(pd->job);
+     eina_future_cancel(pd->job);
 
    if (pd->inactivity_timer)
-     efl_future_cancel(pd->inactivity_timer);
+     eina_future_cancel(pd->inactivity_timer);
 
    if (!pd->done)
      efl_io_copier_done_set(o, EINA_TRUE);
@@ -799,7 +796,7 @@ _efl_io_copier_done_set(Eo *o, Efl_Io_Copier_Data *pd, Eina_Bool value)
    if (pd->done == value) return;
    pd->done = value;
    if (!value) return;
-   if (pd->inactivity_timer) efl_future_cancel(pd->inactivity_timer);
+   if (pd->inactivity_timer) eina_future_cancel(pd->inactivity_timer);
    efl_event_callback_call(o, EFL_IO_COPIER_EVENT_DONE, NULL);
 }
 
@@ -844,10 +841,10 @@ _efl_io_copier_efl_object_destructor(Eo *o, Efl_Io_Copier_Data *pd)
    _COPIER_DBG(o, pd);
 
    if (pd->job)
-     efl_future_cancel(pd->job);
+     eina_future_cancel(pd->job);
 
    if (pd->inactivity_timer)
-     efl_future_cancel(pd->inactivity_timer);
+     eina_future_cancel(pd->inactivity_timer);
 
    if (efl_io_closer_close_on_destructor_get(o) &&
        (!efl_io_closer_closed_get(o)))
