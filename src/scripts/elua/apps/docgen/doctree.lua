@@ -349,6 +349,7 @@ M.Function = Node:clone {
     PROP_SET = eolian.function_type.PROP_SET,
     PROP_GET = eolian.function_type.PROP_GET,
     METHOD = eolian.function_type.METHOD,
+    FUNCTION_POINTER = eolian.function_type.FUNCTION_POINTER,
 
     __ctor = function(self, fn)
         self.func = fn
@@ -389,6 +390,18 @@ M.Function = Node:clone {
 
     is_class = function(self)
         return self.func:is_class()
+    end,
+
+    is_beta = function(self)
+        return self.func:is_beta()
+    end,
+
+    is_constructor = function(self, klass)
+        return self.func:is_constructor(klass.class)
+    end,
+
+    is_function_pointer = function(self)
+        return self.func:is_function_pointer()
     end,
 
     property_keys_get = function(self, ft)
@@ -808,6 +821,7 @@ M.Typedecl = Node:clone {
     STRUCT_OPAQUE = eolian.typedecl_type.STRUCT_OPAQUE,
     ENUM = eolian.typedecl_type.ENUM,
     ALIAS = eolian.typedecl_type.ALIAS,
+    FUNCTION_POINTER = eolian.typedecl_type.FUNCTION_POINTER,
 
     __ctor = function(self, tp)
         self.typedecl = tp
@@ -911,6 +925,14 @@ M.Typedecl = Node:clone {
 
     free_func_get = function(self)
         return self.typedecl:free_func_get()
+    end,
+
+    function_pointer_get = function(self)
+        local v = self.typedecl:function_pointer_get()
+        if not v then
+            return nil
+        end
+        return M.Function(v)
     end,
 
     nspaces_get = function(self, root)
@@ -1064,6 +1086,8 @@ M.Typedecl = Node:clone {
             buf[#buf + 1] = self:base_type_get():serialize()
             buf[#buf + 1] = ";"
             return table.concat(buf)
+        elseif tpt == self.FUNCTION_POINTER then
+            return "TODO"
         end
         error("unhandled typedecl type: " .. tpt)
     end,
@@ -1134,6 +1158,8 @@ M.Typedecl = Node:clone {
             keyref.add(fulln, ns, "c")
             return "typedef "
                 .. M.type_cstr_get(self:base_type_get(), fulln) .. ";"
+        elseif tpt == self.FUNCTION_POINTER then
+            return "TODO"
         end
         error("unhandled typedecl type: " .. tpt)
     end
