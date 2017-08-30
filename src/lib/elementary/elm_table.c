@@ -42,7 +42,7 @@ _elm_table_elm_widget_focus_next(Eo *obj, void *_pd EINA_UNUSED, Elm_Focus_Direc
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;
@@ -83,7 +83,7 @@ _elm_table_elm_widget_focus_direction(Eo *obj, void *_pd EINA_UNUSED, const Evas
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;

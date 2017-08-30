@@ -63,7 +63,7 @@ _elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Inwin_Data *pd EINA_UN
    /* attempt to follow focus cycle into sub-object */
    if (content)
      {
-        elm_widget_focus_next_get(content, dir, next, next_item);
+        elm_obj_widget_focus_next_get(content, dir, next, next_item);
         if (*next) return EINA_TRUE;
      }
 

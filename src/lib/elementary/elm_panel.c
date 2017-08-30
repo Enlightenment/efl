@@ -4,7 +4,6 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -296,13 +295,13 @@ _elm_panel_elm_widget_focus_next(Eo *obj, Elm_Panel_Data *sd, Elm_Focus_Directio
              return ret;
           }
 
-        return elm_widget_focus_next_get(sd->content, dir, next, next_item);
+        return elm_obj_widget_focus_next_get(sd->content, dir, next, next_item);
      }
 
    cur = sd->content;
 
    /* Try to Focus cycle in subitem */
-   if (!sd->hidden) return elm_widget_focus_next_get(cur, dir, next, next_item);
+   if (!sd->hidden) return elm_obj_widget_focus_next_get(cur, dir, next, next_item);
 
    /* access */
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -495,8 +494,8 @@ _panel_toggle(void *data EINA_UNUSED,
              evas_object_repeat_events_set(obj, EINA_TRUE);
              if (sd->content && elm_widget_focus_get(sd->content))
                {
-                  elm_widget_focused_object_clear(obj);
-                  elm_widget_focus_steal(obj, NULL);
+                  elm_obj_widget_focused_object_clear(obj);
+                  elm_obj_widget_focus_steal(obj, NULL);
                }
           }
 

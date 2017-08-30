@@ -194,11 +194,11 @@ _elm_fileselector_entry_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselec
 
    i = elm_widget_focus_get(chain[1]);
 
-   if (elm_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
+   if (elm_obj_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
 
    i = !i;
 
-   if (elm_widget_focus_next_get(chain[i], dir, &to_focus, next_item))
+   if (elm_obj_widget_focus_next_get(chain[i], dir, &to_focus, next_item))
      {
         *next = to_focus;
         return !!i;

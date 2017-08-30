@@ -666,34 +666,18 @@ EAPI void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj,
 EAPI Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_focus_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_focused_object_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
 EAPI void             elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 EAPI void            *elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
-EAPI void             elm_widget_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
-EAPI void             elm_widget_focus_custom_chain_unset(Evas_Object *obj);
-EAPI const Eina_List *elm_widget_focus_custom_chain_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
-EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
-EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
-EAPI Eina_Bool        elm_widget_focus_direction_go(Evas_Object *obj, double degree);
-EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight);
-EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
 EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
-EAPI Evas_Object     *elm_widget_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
-EAPI void             elm_widget_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
-EAPI Elm_Object_Item *elm_widget_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
-EAPI void             elm_widget_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
 EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
-EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_steal(Evas_Object *obj, Elm_Object_Item *next_item);
 EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
@@ -715,7 +699,6 @@ EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
  *
  * @ingroup Widget
  */
-EAPI void             elm_widget_focus_restore(Evas_Object *obj);
 
 EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
@@ -748,10 +731,7 @@ EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *
 EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
-EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
-EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
-EAPI unsigned int     elm_widget_focus_order_get(const Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
@@ -764,18 +744,12 @@ EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const 
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
-EAPI Elm_Object_Item *elm_widget_focused_item_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
 EAPI Eina_Rectangle   elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
-EAPI void             elm_widget_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
-EAPI Elm_Focus_Move_Policy elm_widget_focus_move_policy_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_focus_move_policy_automatic_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_reconfigure(Evas_Object *obj);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);

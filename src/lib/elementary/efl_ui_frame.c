@@ -70,7 +70,7 @@ _efl_ui_frame_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd 
    else
      {
         /* attempt to follow focus cycle into sub-object */
-        return elm_widget_focus_next_get(content, dir, next, next_item);
+        return elm_obj_widget_focus_next_get(content, dir, next, next_item);
      }
 }
 
@@ -92,7 +92,7 @@ _efl_ui_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data 
    else
      {
         /* Try to cycle focus on content */
-        return elm_widget_focus_direction_get
+        return elm_obj_widget_focus_direction_get
            (content, base, degree, direction, direction_item, weight);
      }
 }

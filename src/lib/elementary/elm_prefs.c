@@ -478,7 +478,7 @@ _elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Directio
 
    ELM_PREFS_CHECK(obj) EINA_FALSE;
 
-   items = elm_widget_focus_custom_chain_get(obj);
+   items = elm_obj_widget_focus_custom_chain_get(obj);
    if (items)
      {
         return elm_widget_focus_list_next_get
@@ -487,7 +487,7 @@ _elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Directio
 
    if (sd->root && sd->root->w_obj)
      {
-        return elm_widget_focus_next_get(sd->root->w_obj, dir, next, next_item);
+        return elm_obj_widget_focus_next_get(sd->root->w_obj, dir, next, next_item);
      }
 
    if (next) *next = NULL;

@@ -8,7 +8,6 @@
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -2884,7 +2883,7 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
      {
         Evas_Object *nextfocus;
         Elm_Object_Item *nextfocus_item;
-        if (elm_widget_focus_next_get(focused_obj, dir, &nextfocus, &nextfocus_item))
+        if (elm_obj_widget_focus_next_get(focused_obj, dir, &nextfocus, &nextfocus_item))
           {
              if (nextfocus_item)
                elm_object_item_focus_set(nextfocus_item, EINA_TRUE);

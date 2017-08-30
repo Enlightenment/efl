@@ -491,7 +491,7 @@ _efl_ui_clock_elm_widget_focus_next(Eo *obj, Efl_Ui_Clock_Data *_pd EINA_UNUSED,
 
    Eina_Bool int_ret;
 
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;

@@ -6,7 +6,6 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1477,17 +1476,17 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    _elm_widget_focus_auto_show(obj);
    if (!strcmp(dir, "previous"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
    else if (!strcmp(dir, "next"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
    else if (!strcmp(dir, "left"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
    else if (!strcmp(dir, "right"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
    else if (!strcmp(dir, "up"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_UP);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_UP);
    else if (!strcmp(dir, "down"))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
+     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
    else return EINA_FALSE;
 
    return EINA_TRUE;

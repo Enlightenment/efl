@@ -4,7 +4,6 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -100,7 +99,7 @@ _elm_bubble_elm_widget_focus_next(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Elm
         if (!content) return EINA_FALSE;
 
         /* attempt to follow focus cycle into sub-object */
-        return elm_widget_focus_next_get(content, dir, next, next_item);
+        return elm_obj_widget_focus_next_get(content, dir, next, next_item);
      }
 }
 
@@ -114,7 +113,7 @@ _elm_bubble_elm_widget_focus_direction(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED
    if (!content) return EINA_FALSE;
 
    /* Try Focus cycle in subitem */
-   return elm_widget_focus_direction_get
+   return elm_obj_widget_focus_direction_get
             (content, base, degree, direction, direction_item, weight);
 }
 

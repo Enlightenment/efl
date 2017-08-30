@@ -406,6 +406,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
+      /* FIXME: Needs better doc... maybe merge with widget_event? */
+      focus_mouse_up_handle {
+         [[Handle focus mouse up]]
+         legacy: null;
+      }
 
       /* Scroll API. */
       @property on_show_region_hook @protected {
@@ -525,13 +530,13 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Old focus API. FIXME: Needs massive clean up! */
-      @property focus_order {
+      @property focus_order @beta {
          [[Focus order property]]
          get {
             return: uint; [[FIXME]]
          }
       }
-      focus_next_object_set {
+      focus_next_object_set @beta {
          [[Set the next object with specific focus direction.
 
            @since 1.8]]
@@ -540,7 +545,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
-      focus_next_object_get @const {
+      focus_next_object_get @const @beta {
          [[Get the next object with specific focus direction.
 
            @since 1.8]]
@@ -549,7 +554,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
-      focus_next_item_set {
+      focus_next_item_set @beta {
          [[Set the next object item with specific focus direction.
 
            @since 1.16]]
@@ -558,7 +563,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
-      focus_next_item_get @const {
+      focus_next_item_get @const @beta {
          [[Get the next object item with specific focus direction.
 
            @since 1.16]]
@@ -567,7 +572,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in dir: Elm.Focus_Direction; [[Focus direction]]
          }
       }
-      focus_custom_chain_prepend {
+      focus_custom_chain_prepend @beta {
          [[Prepend object to custom focus chain.
 
            Note: If @"relative_child" equal to $null or not in custom chain,
@@ -579,14 +584,14 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
          }
       }
-      focus_cycle {
+      focus_cycle @beta {
          [[Give focus to next object with specific focus direction in
            object tree.]]
          params {
             @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
          }
       }
-      focus_direction @pure_virtual {
+      focus_direction @pure_virtual @beta {
          [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
          params {
             @in base: const(Efl.Canvas.Object); [[Base object]]
@@ -597,21 +602,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      focus_next_manager_is {
+      focus_next_manager_is @beta {
          [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
          return: bool; [[$true on success, $false otherwise]]
       }
-      focused_object_clear {
+      focused_object_clear @beta {
          [[Clear focused object]]
       }
-      focus_direction_go {
+      focus_direction_go @beta {
          [[Go in focus direction]]
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in degree: double; [[Degree]]
          }
       }
-      focus_next_get @const {
+      focus_next_get @const @beta {
          [[Get next focus item]]
          return: bool; [[$true on success, $false otherwise]]
          params {
@@ -620,28 +625,28 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @out next_item: Elm.Widget.Item; [[Next item]]
          }
       }
-      focus_restore {
+      focus_restore @beta {
          [[Restore the focus state of the sub-tree.
 
          This API will restore the focus state of the sub-tree to the latest
          state. If a sub-tree is unfocused and wants to get back to the latest
          focus state, this API will be helpful.]]
       }
-      focus_custom_chain_unset {
+      focus_custom_chain_unset @beta {
          [[Unset a custom focus chain on a given Elementary widget.
 
            Any focus chain previously set is removed entirely after this call.]]
       }
-      focus_steal {
+      focus_steal @beta {
          [[Steal focus]]
          params {
             @in item: Elm.Widget.Item @nullable; [[Widget to steal focus from]]
          }
       }
-      focus_hide_handle {
+      focus_hide_handle @beta {
          [[Handle hide focus]]
       }
-      focus_next @pure_virtual {
+      focus_next @pure_virtual @beta {
          [['Virtual' function handling passing focus to sub-objects.]]
          params {
             @in dir: Elm.Focus_Direction; [[Focus direction]]
@@ -650,11 +655,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      focus_mouse_up_handle {
-         [[Handle focus mouse up]]
-         legacy: null;
-      }
-      focus_direction_get @const {
+      focus_direction_get @const @beta {
          [[Get focus direction]]
          return: bool; [[$true on success, $false otherwise]]
          params {
@@ -665,10 +666,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @out weight: double; [[Weight]]
          }
       }
-      focus_disabled_handle {
+      focus_disabled_handle @beta {
          [[Handle disable widget focus]]
       }
-      focus_custom_chain_append {
+      focus_custom_chain_append @beta {
          [[Append object to custom focus chain.
 
            Note: If @"relative_child" equal to $null or not in custom chain,
@@ -680,13 +681,13 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
          }
       }
-      @property focus_move_policy {
+      @property focus_move_policy @beta {
          [[The widget's focus move policy.]]
          values {
             policy: Efl.Ui.Focus.Move_Policy; [[Focus move policy]]
          }
       }
-      @property focus_move_policy_automatic {
+      @property focus_move_policy_automatic @beta {
          [[Control the widget's focus_move_policy mode setting.
 
            @since 1.18]]
@@ -694,10 +695,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
          }
       }
-      focus_reconfigure {
+      focus_reconfigure @beta {
          [[@since 1.18]]
       }
-      @property focus_custom_chain {
+      @property focus_custom_chain @beta {
          [[A custom chain of objects to pass focus.
 
            Note: On focus cycle, only will be evaluated children of this container.]]
@@ -715,13 +716,13 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             }
          }
       }
-      @property focused_item {
+      @property focused_item @beta {
          get {
             [[Get the focused widget item.]]
             return: Elm.Widget.Item; [[Focused item]]
          }
       }
-      @property focused_object {
+      @property focused_object @beta {
          [[Current focused object in object tree.]]
          get {
             return: Efl.Canvas.Object; [[Current focused or $null, if there is no focused object.]]

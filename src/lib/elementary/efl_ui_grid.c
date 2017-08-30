@@ -39,7 +39,7 @@ _efl_ui_grid_elm_widget_focus_next(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED, El
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;
@@ -80,7 +80,7 @@ _efl_ui_grid_elm_widget_focus_direction(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSE
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;

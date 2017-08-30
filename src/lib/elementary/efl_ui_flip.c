@@ -121,9 +121,9 @@ _efl_ui_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, El
 
    /* attempt to cycle focus on in sub-items */
    if (sd->state)
-     return elm_widget_focus_next_get(sd->front.content, dir, next, next_item);
+     return elm_obj_widget_focus_next_get(sd->front.content, dir, next, next_item);
    else
-     return elm_widget_focus_next_get(sd->back.content, dir, next, next_item);
+     return elm_obj_widget_focus_next_get(sd->back.content, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool

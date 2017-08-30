@@ -4,7 +4,6 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -423,7 +422,7 @@ _elm_scroller_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, 
         if ((elm_widget_can_focus_get(cur)) ||
             (elm_widget_child_can_focus_get(cur)))
           {
-             return elm_widget_focus_next_get(cur, dir, next, next_item);
+             return elm_obj_widget_focus_next_get(cur, dir, next, next_item);
           }
 
         return EINA_FALSE;
@@ -435,7 +434,7 @@ _elm_scroller_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, 
      {
         Eina_Bool ret = EINA_FALSE;
 
-        ret =  elm_widget_focus_next_get(cur, dir, next, next_item);
+        ret =  elm_obj_widget_focus_next_get(cur, dir, next, next_item);
         if (*next)
           {
              Evas_Coord x = 0, y = 0;
@@ -495,7 +494,7 @@ _elm_scroller_elm_widget_focus_direction(Eo *obj, Elm_Scroller_Data *sd, const E
         if ((elm_widget_can_focus_get(cur)) ||
             (elm_widget_child_can_focus_get(cur)))
           {
-             return elm_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
+             return elm_obj_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
           }
 
         return EINA_FALSE;
@@ -513,7 +512,7 @@ _elm_scroller_elm_widget_focus_direction(Eo *obj, Elm_Scroller_Data *sd, const E
         Evas_Coord l_x = 0, l_y = 0, l_w = 0, l_h = 0;
         Evas_Coord step_x = 0, step_y = 0;
 
-        ret = elm_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
+        ret = elm_obj_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
 
         elm_interface_scrollable_content_pos_get(obj, &x, &y);
         elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
