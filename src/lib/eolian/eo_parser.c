@@ -1388,11 +1388,10 @@ parse_function_pointer(Eo_Lexer *ls)
    Eina_Strbuf *buf = push_strbuf(ls);
    Eolian_Function *meth = NULL;
 
-   Eina_Bool has_const       = EINA_FALSE,
-             has_params      = EINA_FALSE,
-             has_return      = EINA_FALSE,
-             has_c_only      = EINA_FALSE,
-             has_beta        = EINA_FALSE;
+   Eina_Bool has_params = EINA_FALSE,
+             has_return = EINA_FALSE,
+             has_c_only = EINA_FALSE,
+             has_beta   = EINA_FALSE;
 
    eo_lexer_get(ls);
    parse_name(ls, buf);
