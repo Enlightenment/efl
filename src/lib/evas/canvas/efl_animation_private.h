@@ -12,6 +12,8 @@ typedef struct _Efl_Animation_Data
    double             duration;
    double             total_duration;
 
+   int                repeat_count;
+
    Eina_Bool          is_deleted : 1;
    Eina_Bool          keep_final_state : 1;
 } Efl_Animation_Data;

@@ -98,6 +98,9 @@ EOAPI void efl_animation_object_duration_only_set(Eo *obj, double duration);
 EOAPI void efl_animation_object_total_duration_set(Eo *obj, double total_duration);
 EOAPI double efl_animation_object_total_duration_get(const Eo *obj);
 
+EOAPI void efl_animation_object_repeat_count_set(Eo *obj, int count);
+EOAPI int efl_animation_object_repeat_count_get(const Eo *obj);
+
 EWAPI extern const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED;
 #define EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED (&(_EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED))
 /* Efl.Animation.Object END */

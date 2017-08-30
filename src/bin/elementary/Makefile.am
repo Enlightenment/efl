@@ -40,6 +40,7 @@ test_efl_anim_group_parallel.c \
 test_efl_anim_group_sequential.c \
 test_efl_anim_event_anim.c \
 test_efl_anim_pause.c \
+test_efl_anim_repeat.c \
 test_application_server.c \
 test_bg.c \
 test_box.c \
