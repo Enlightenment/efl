@@ -531,6 +531,20 @@ EAPI void            eina_rectangle_pool_packing_set(Eina_Rectangle_Pool *pool,E
  */
 EAPI Eina_Rectangle_Outside eina_rectangle_outside_position(Eina_Rectangle *rect1, Eina_Rectangle *rect2);
 
+/**
+ * @brief Compares two rectangles for equality
+ *
+ * @param rect1 First rectangle. Must not be NULL.
+ * @param rect2 Second rectangle. Must not be NULL.
+ *
+ * @return EINA_TRUE if the rectangles are equal (x, y, w and h are all equal).
+ * No safety check is made on the rectangles, so they should be valid and non
+ * NULL for this function to be meaningful.
+ *
+ * @since 1.21
+ */
+static inline Eina_Bool eina_rectangle_equal(const Eina_Rectangle *rect1, const Eina_Rectangle *rect2) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
 #include "eina_inline_rectangle.x"
 
 /**
