@@ -1943,6 +1943,18 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
  */
 EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
+/**
+ * Push buffered wayland protocol to compositor
+ *
+ * Wayland protocol is only actually sent when a flush occurs,
+ * so the display should be flushed at appropriate times, such
+ * as after a commit.
+ *
+ * @param display
+ * @since 1.20
+ */
+EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
+
 # endif
 
 # undef EAPI
