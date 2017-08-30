@@ -98,6 +98,7 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         Efl.Ui.Focus.Manager.root {set; get;}
         Efl.Ui.Focus.Manager.fetch;
         Efl.Ui.Focus.Manager.logical_end;
+        Efl.Ui.Focus.Manager.reset_history;
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.provider_find;
