@@ -24,7 +24,7 @@ class Class_Simple {
             value: int (100); [[Value description]]
          }
       }
-      @property b @c_only {
+      @property b {
         set {
            eo: null;
         }
@@ -39,7 +39,7 @@ class Class_Simple {
          }
          return: ptr(char) (null); [[comment for method return]]
       }
-      bar @c_only {
+      bar {
          eo: null;
          params {
             x: int;

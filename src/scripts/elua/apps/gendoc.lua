@@ -116,9 +116,6 @@ local gen_func_namesig = function(fn, cl, buf, isprop, isget, isset)
     if fn:is_const() then
         buf[#buf + 1] = "@const "
     end
-    if fn:is_c_only() then
-        buf[#buf + 1] = "@c_only "
-    end
 end
 
 local gen_func_param = function(fp, buf, nodir)

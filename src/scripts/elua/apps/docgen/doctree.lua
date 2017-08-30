@@ -391,10 +391,6 @@ M.Function = Node:clone {
         return self.func:is_class()
     end,
 
-    is_c_only = function(self)
-        return self.func:is_c_only()
-    end,
-
     property_keys_get = function(self, ft)
         local ret = {}
         for par in self.func:property_keys_get(ft) do

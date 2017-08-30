@@ -402,13 +402,6 @@ eolian_function_class_get(const Eolian_Function *fid)
 }
 
 EAPI Eina_Bool
-eolian_function_is_c_only(const Eolian_Function *fid)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   return fid->is_c_only;
-}
-
-EAPI Eina_Bool
 eolian_function_is_beta(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
