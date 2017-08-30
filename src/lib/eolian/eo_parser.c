@@ -1383,7 +1383,9 @@ end:
 static Eolian_Typedecl*
 parse_function_pointer(Eo_Lexer *ls)
 {
-   int line, col;
+   int bline, bcol;
+   int line = ls->line_number, col = ls->column;
+
    Eolian_Typedecl *def = push_typedecl(ls);
    Eina_Strbuf *buf = push_strbuf(ls);
    Eolian_Function *meth = NULL;
@@ -1394,13 +1396,13 @@ parse_function_pointer(Eo_Lexer *ls)
              has_beta   = EINA_FALSE;
 
    eo_lexer_get(ls);
-   parse_name(ls, buf);
 
    def->type = EOLIAN_TYPEDECL_FUNCTION_POINTER;
-   def->is_extern = EINA_FALSE;
+   def->is_extern = (ls->t.kw == KW_at_extern);
+   if (def->is_extern)
+     eo_lexer_get(ls);
 
-   FILL_BASE(def->base, ls, ls->line_number, ls->column);
-
+   parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
            &def->full_name, &def->name, &def->namespaces);
 
@@ -1411,7 +1413,6 @@ parse_function_pointer(Eo_Lexer *ls)
    meth->type = EOLIAN_FUNCTION_POINTER;
    meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
    meth->name = eina_stringshare_ref(def->name);
-   FILL_BASE(meth->base, ls, ls->line_number, ls->column);
 
    def->function_pointer = meth;
 
@@ -1431,8 +1432,8 @@ parse_function_pointer(Eo_Lexer *ls)
         goto body;
      }
 body:
-   line = ls->line_number;
-   col = ls->column;
+   bline = ls->line_number;
+   bcol = ls->column;
    check_next(ls, '{');
    FILL_DOC(ls, def, doc);
    for (;;) switch (ls->t.kw)
@@ -1455,8 +1456,10 @@ body:
         goto end;
      }
 end:
-   check_match(ls, '}', '{', line, col);
+   check_match(ls, '}', '{', bline, bcol);
    check_next(ls, ';');
+   FILL_BASE(def->base, ls, line, col);
+   FILL_BASE(meth->base, ls, line, col);
    return def;
 }
 
