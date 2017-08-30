@@ -582,7 +582,6 @@ START_TEST(eolian_simple_parsing)
    fail_if(!(fid = eolian_class_function_get_by_name(class, "b", EOLIAN_PROP_SET)));
    fail_if(eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET));
-   fail_if(!eolian_function_is_c_only(fid));
    fail_if(eolian_function_is_beta(fid));
 
    /* Method */
@@ -633,7 +632,6 @@ START_TEST(eolian_simple_parsing)
    /* legacy only + c only */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
-   fail_if(!eolian_function_is_c_only(fid));
    fail_if(eolian_function_is_beta(fid));
    fail_if(!eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
 

@@ -259,7 +259,6 @@ ffi.cdef [[
     const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
-    Eina_Bool eolian_function_is_c_only(const Eolian_Function *function_id);
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
@@ -804,10 +803,6 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         is_class = function(self)
             return eolian.eolian_function_is_class(self) ~= 0
-        end,
-
-        is_c_only = function(self)
-            return eolian.eolian_function_is_c_only(self) ~= 0
         end,
 
         property_keys_get = function(self, ftype)
