@@ -48,6 +48,13 @@ eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h)
 }
 
 static inline Eina_Bool
+eina_rectangle_equal(const Eina_Rectangle *rect1, const Eina_Rectangle *rect2)
+{
+   return ((rect1->x == rect2->x) && (rect1->y == rect2->y) &&
+           (rect1->w == rect2->w) && (rect1->h == rect2->h));
+}
+
+static inline Eina_Bool
 eina_rectangles_intersect(const Eina_Rectangle *r1, const Eina_Rectangle *r2)
 {
 	return (eina_spans_intersect(r1->x, r1->w, r2->x, r2->w) && eina_spans_intersect(r1->y, r1->h, r2->y, r2->h)) ? EINA_TRUE : EINA_FALSE;
