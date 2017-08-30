@@ -68,7 +68,7 @@ _elm_box_elm_widget_focus_next(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Elm_Focus
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {
@@ -97,7 +97,7 @@ _elm_box_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Box_Data *_pd EINA_
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {

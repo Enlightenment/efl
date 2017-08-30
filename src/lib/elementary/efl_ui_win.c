@@ -1223,9 +1223,9 @@ _elm_win_focus_in(Ecore_Evas *ee)
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (sd->type != ELM_WIN_FAKE)
      {
-        if (!elm_widget_focus_order_get(obj))
+        if (!elm_obj_widget_focus_order_get(obj))
           {
-             elm_widget_focus_steal(obj, NULL);
+             elm_obj_widget_focus_steal(obj, NULL);
           }
         else
           {
@@ -1236,7 +1236,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
                 (obj, &newest_focus_order, EINA_TRUE);
              if (newest &&
                  (_elm_widget_onscreen_is(newest) || (newest == obj)))
-               elm_widget_focus_restore(obj);
+               elm_obj_widget_focus_restore(obj);
              else
                evas_object_focus_set(obj, EINA_TRUE);
           }
@@ -1653,7 +1653,7 @@ _efl_ui_win_elm_widget_focus_next(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Elm
    /* Focus chain */
    if (wd->subobjs)
      {
-        if (!(items = elm_widget_focus_custom_chain_get(obj)))
+        if (!(items = elm_obj_widget_focus_custom_chain_get(obj)))
           {
              items = wd->subobjs;
              if (!items)
@@ -1686,7 +1686,7 @@ _efl_ui_win_elm_widget_focus_direction(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED
    /* Focus chain */
    if (wd->subobjs)
      {
-        if (!(items = elm_widget_focus_custom_chain_get(obj)))
+        if (!(items = elm_obj_widget_focus_custom_chain_get(obj)))
           items = wd->subobjs;
 
         list_data_get = eina_list_data_get;
@@ -2715,7 +2715,7 @@ _win_img_hide(void *data,
               Evas_Object *obj EINA_UNUSED,
               void *event_info EINA_UNUSED)
 {
-   elm_widget_focus_hide_handle(data);
+   elm_obj_widget_focus_hide_handle(data);
 }
 
 static void
@@ -2735,7 +2735,7 @@ _win_img_focus_in(void *data,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info EINA_UNUSED)
 {
-   elm_widget_focus_steal(data, NULL);
+   elm_obj_widget_focus_steal(data, NULL);
 }
 
 static void
@@ -2744,7 +2744,7 @@ _win_img_focus_out(void *data,
                    Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   elm_widget_focused_object_clear(data);
+   elm_obj_widget_focused_object_clear(data);
 }
 
 static void
@@ -3630,7 +3630,7 @@ _elm_win_focus_reconfigure(void)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     elm_widget_focus_reconfigure(obj);
+     elm_obj_widget_focus_reconfigure(obj);
 }
 
 #ifdef HAVE_ELEMENTARY_X

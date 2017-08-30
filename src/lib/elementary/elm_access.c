@@ -4,7 +4,6 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -536,7 +535,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             ret = elm_widget_focus_next_get(obj, dir, &target, NULL);
+             ret = elm_obj_widget_focus_next_get(obj, dir, &target, NULL);
              if (ret && target)
                _elm_access_highlight_set(target);
           }
@@ -691,7 +690,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
              elm_widget_focus_region_show(comming);
           }
         else
-          elm_widget_focus_cycle(obj, dir);
+          elm_obj_widget_focus_cycle(obj, dir);
      }
 
    action_by = ELM_ACCESS_ACTION_FIRST;

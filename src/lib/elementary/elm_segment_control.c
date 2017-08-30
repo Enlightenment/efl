@@ -4,7 +4,6 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 
@@ -279,7 +278,7 @@ _elm_segment_control_elm_widget_focus_next(Eo *obj, Elm_Segment_Control_Data *sd
    void *(*list_data_get)(const Eina_List *list);
 
    /* Focus chain */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {

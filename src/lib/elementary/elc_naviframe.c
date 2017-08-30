@@ -6,7 +6,6 @@
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1596,7 +1595,7 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
    evas_object_show(VIEW(item));
 
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_top_item, top_item);
-   if (top_item) elm_widget_focused_object_clear(VIEW(top_item));
+   if (top_item) elm_obj_widget_focused_object_clear(VIEW(top_item));
    _resize_object_reset(obj, item);
    if (top_item)
      {
@@ -1737,7 +1736,7 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
 
    if (top_inserted)
      {
-        elm_widget_focused_object_clear(VIEW(after));
+        elm_obj_widget_focused_object_clear(VIEW(after));
         elm_widget_tree_unfocusable_set(VIEW(after), EINA_TRUE);
         _resize_object_reset(obj, it);
         evas_object_show(VIEW(it));

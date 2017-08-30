@@ -1604,9 +1604,9 @@ elm_object_focus_set(Evas_Object *obj,
                }
           }
         if (focus)
-          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+          elm_obj_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
         else
-          elm_widget_focused_object_clear(obj);
+          elm_obj_widget_focused_object_clear(obj);
      }
    else
      {
@@ -1634,21 +1634,21 @@ elm_object_focus_custom_chain_set(Evas_Object *obj,
                                   Eina_List   *objs)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_custom_chain_set(obj, objs);
+   elm_obj_widget_focus_custom_chain_set(obj, objs);
 }
 
 EAPI void
 elm_object_focus_custom_chain_unset(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_custom_chain_unset(obj);
+   elm_obj_widget_focus_custom_chain_unset(obj);
 }
 
 EAPI const Eina_List *
 elm_object_focus_custom_chain_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focus_custom_chain_get(obj);
+   return elm_obj_widget_focus_custom_chain_get(obj);
 }
 
 EAPI void
@@ -1657,7 +1657,7 @@ elm_object_focus_custom_chain_append(Evas_Object *obj,
                                      Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_custom_chain_append(obj, child, relative_child);
+   elm_obj_widget_focus_custom_chain_append(obj, child, relative_child);
 }
 
 EAPI void
@@ -1666,7 +1666,7 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
                                       Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_custom_chain_prepend(obj, child, relative_child);
+   elm_obj_widget_focus_custom_chain_prepend(obj, child, relative_child);
 }
 
 EINA_DEPRECATED EAPI void
@@ -1681,7 +1681,7 @@ elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_cycle(obj, dir);
+   elm_obj_widget_focus_cycle(obj, dir);
 }
 
 EAPI Evas_Object *
@@ -1689,7 +1689,7 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
                                  Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focus_next_object_get(obj, dir);
+   return elm_obj_widget_focus_next_object_get(obj, dir);
 }
 
 EAPI void
@@ -1698,7 +1698,7 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
                                  Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_next_object_set(obj, next, dir);
+   elm_obj_widget_focus_next_object_set(obj, next, dir);
 }
 
 EAPI Elm_Object_Item *
@@ -1706,7 +1706,7 @@ elm_object_focus_next_item_get(const Evas_Object  *obj,
                                Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focus_next_item_get(obj, dir);
+   return elm_obj_widget_focus_next_item_get(obj, dir);
 }
 
 EAPI void
@@ -1715,14 +1715,14 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
                                Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_next_item_set(obj, next_item, dir);
+   elm_obj_widget_focus_next_item_set(obj, next_item, dir);
 }
 
 EAPI Evas_Object *
 elm_object_focused_object_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focused_object_get(obj);
+   return elm_obj_widget_focused_object_get(obj);
 }
 
 EAPI void
@@ -1745,28 +1745,28 @@ elm_object_focus_move_policy_set(Evas_Object *obj,
                                  Elm_Focus_Move_Policy policy)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_move_policy_set(obj, policy);
+   elm_obj_widget_focus_move_policy_set(obj, policy);
 }
 
 EAPI Elm_Focus_Move_Policy
 elm_object_focus_move_policy_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_focus_move_policy_get(obj);
+   return elm_obj_widget_focus_move_policy_get(obj);
 }
 
 EAPI Eina_Bool
 elm_object_focus_move_policy_automatic_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_focus_move_policy_automatic_get(obj);
+   return elm_obj_widget_focus_move_policy_automatic_get(obj);
 }
 
 EAPI void
 elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_move_policy_automatic_set(obj, automatic);
+   elm_obj_widget_focus_move_policy_automatic_set(obj, automatic);
 }
 
 EAPI void
@@ -2015,7 +2015,7 @@ EAPI Elm_Object_Item *
 elm_object_focused_item_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focused_item_get(obj);
+   return elm_obj_widget_focused_item_get(obj);
 }
 
 EAPI void

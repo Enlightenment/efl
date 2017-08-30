@@ -3,7 +3,6 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"

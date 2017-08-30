@@ -566,27 +566,27 @@ static void
 _elm_code_widget_update_focus_directions(Elm_Code_Widget *obj)
 {
    if (_elm_code_widget_cursor_key_will_move(obj, "Up"))
-     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_UP);
+     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_UP);
    else
-     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_UP);
+     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_UP);
 
    if (_elm_code_widget_cursor_key_will_move(obj, "Down"))
-     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_DOWN);
+     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_DOWN);
    else
-     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_DOWN);
+     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_DOWN);
 
    if (_elm_code_widget_cursor_key_will_move(obj, "Left"))
-     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_LEFT);
+     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_LEFT);
    else
-     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_LEFT);
+     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_LEFT);
 
    if (_elm_code_widget_cursor_key_will_move(obj, "Right"))
-     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_RIGHT);
+     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_RIGHT);
    else
-     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_RIGHT);
+     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_RIGHT);
 
-   elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_PREVIOUS);
-   elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_NEXT);
+   elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_PREVIOUS);
+   elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_NEXT);
 }
 
 static void

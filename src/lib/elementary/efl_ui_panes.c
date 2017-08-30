@@ -105,7 +105,7 @@ _efl_ui_panes_elm_widget_focus_next(Eo *obj, Efl_Ui_Panes_Data *sd EINA_UNUSED, 
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if ((items = (Eina_List *)elm_widget_focus_custom_chain_get(obj)))
+   if ((items = (Eina_List *)elm_obj_widget_focus_custom_chain_get(obj)))
      {
         list_data_get = eina_list_data_get;
         list_free = NULL;

@@ -474,7 +474,7 @@ _efl_ui_layout_elm_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Focus_
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
 
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {
@@ -563,7 +563,7 @@ _efl_ui_layout_elm_widget_focus_direction(Eo *obj, Efl_Ui_Layout_Data *sd, const
    if (!sd->subs) return EINA_FALSE;
 
    /* Focus chain (This block is different from elm_win cycle) */
-   if ((items = elm_widget_focus_custom_chain_get(obj)))
+   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {

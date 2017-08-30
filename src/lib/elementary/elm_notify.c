@@ -374,7 +374,7 @@ _elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_
    cur = sd->content;
 
    /* Try to cycle focus on content */
-   return elm_widget_focus_next_get(cur, dir, next, next_item);
+   return elm_obj_widget_focus_next_get(cur, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool
@@ -392,7 +392,7 @@ _elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd,
 
    cur = sd->content;
 
-   return elm_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
+   return elm_obj_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
 }
 
 static Eina_Bool

@@ -76,7 +76,7 @@ _focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **
 
    if ((!wd) || (!wd->content)) return EINA_FALSE;
    cur = wd->content;
-   return elm_widget_focus_next_get(cur, dir, next);
+   return elm_obj_widget_focus_next_get(cur, dir, next);
 }
 
 static void
@@ -293,7 +293,7 @@ elm_factory_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_focus_next_hook_set(obj, _focus_next_hook);
+   elm_obj_widget_focus_next_hook_set(obj, _focus_next_hook);
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);

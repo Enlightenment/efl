@@ -6,7 +6,6 @@
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define ELM_WIDGET_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
