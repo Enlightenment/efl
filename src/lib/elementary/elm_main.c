@@ -1862,14 +1862,16 @@ elm_object_scroll_item_loop_enabled_set(Evas_Object *obj,
                                         Eina_Bool   enable)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_item_loop_enabled_set(obj, enable);
+   if (!efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN)) return;
+   elm_interface_scrollable_item_loop_enabled_set(obj, enable);
 }
 
 EAPI Eina_Bool
 elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_item_loop_enabled_get(obj);
+   if (!efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN)) return EINA_FALSE;
+   return elm_interface_scrollable_item_loop_enabled_get(obj);
 }
 
 EAPI Eina_Bool

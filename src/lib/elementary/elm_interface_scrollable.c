@@ -4741,6 +4741,18 @@ _elm_interface_scrollable_efl_ui_focus_manager_focus_set(Eo *obj, Elm_Scrollable
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
 
+EOLIAN static void
+_elm_interface_scrollable_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_elm_interface_scrollable_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_PAN_EXTRA_OPS \

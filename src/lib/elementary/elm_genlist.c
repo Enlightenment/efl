@@ -8526,13 +8526,13 @@ _elm_genlist_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *
 }
 
 EOLIAN static void
-_elm_genlist_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool enable)
+_elm_genlist_elm_interface_scrollable_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool enable)
 {
    sd->item_loop_enable = !!enable;
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+_elm_genlist_elm_interface_scrollable_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->item_loop_enable;
 }

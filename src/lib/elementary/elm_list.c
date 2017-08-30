@@ -3134,13 +3134,13 @@ _elm_list_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 }
 
 EOLIAN static void
-_elm_list_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool enable)
+_elm_list_elm_interface_scrollable_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool enable)
 {
    sd->item_loop_enable = !!enable;
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_elm_interface_scrollable_item_loop_enabled_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    return sd->item_loop_enable;
 }
