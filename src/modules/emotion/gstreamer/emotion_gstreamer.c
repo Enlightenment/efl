@@ -379,6 +379,9 @@ em_pos_set(void   *video,
      gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 }
 
+/**
+ * Returns stream duration in seconds
+ */
 static double
 em_len_get(void *video)
 {
@@ -401,7 +404,7 @@ em_len_get(void *video)
 
    if (fmt != GST_FORMAT_TIME)
      {
-        DBG("requrested duration in time, but got %s instead.",
+        DBG("requested duration in time, but got %s instead.",
             gst_format_get_name(fmt));
         goto fallback;
      }
@@ -409,7 +412,7 @@ em_len_get(void *video)
    if (val <= 0.0)
      goto fallback;
 
-   return val / 1000000000.0;
+   return GST_TIME_AS_SECONDS(val);
 
  fallback:
    if (!_emotion_gstreamer_video_pipeline_parse(ev, EINA_FALSE))
@@ -503,6 +506,9 @@ em_fps_get(void *video)
    return 0.0;
 }
 
+/**
+ * Returns stream position in seconds
+ */
 static double
 em_pos_get(void *video)
 {
@@ -522,12 +528,12 @@ em_pos_get(void *video)
 
    if (fmt != GST_FORMAT_TIME)
      {
-        ERR("requrested position in time, but got %s instead.",
+        ERR("requested position in time, but got %s instead.",
             gst_format_get_name(fmt));
         return ev->position;
      }
 
-   ev->position = val / 1000000000.0;
+   ev->position = GST_TIME_AS_SECONDS(val);
    return ev->position;
 }
 
