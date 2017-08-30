@@ -1398,7 +1398,11 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
    window->callback = wl_surface_frame(window->surface);
    wl_callback_add_listener(window->callback, &_frame_listener, window);
 
-   if (flush) wl_surface_commit(window->surface);
+   if (flush)
+     {
+        wl_surface_commit(window->surface);
+        ecore_wl2_display_flush(window->display);
+     }
 }
 
 EAPI Eina_Bool
