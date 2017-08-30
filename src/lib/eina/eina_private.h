@@ -136,7 +136,7 @@ void eina_log_threads_shutdown(void);
 
 void eina_cpu_count_internal(void);
 
-void eina_file_mmap_faulty(void *addr, long page_size);
+Eina_Bool eina_file_mmap_faulty(void *addr, long page_size);
 
 #ifndef EINA_FREEQ_H_
 typedef struct _Eina_FreeQ Eina_FreeQ;

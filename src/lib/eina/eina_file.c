@@ -418,30 +418,28 @@ _eina_file_mmap_faulty_one(void *addr, long page_size,
    return EINA_FALSE;
 }
 
-void
+Eina_Bool
 eina_file_mmap_faulty(void *addr, long page_size)
 {
    Eina_File_Map *m;
    Eina_File *f;
    Eina_Iterator *itf;
    Eina_Iterator *itm;
+   Eina_Bool faulty = EINA_FALSE;
 
-   /* NOTE: I actually don't know if other thread are running, I will try to take the lock.
-      It may be possible that if other thread are not running and they were in the middle of
-      accessing an Eina_File this lock are still taken and we will result as a deadlock. */
    eina_lock_take(&_eina_file_lock_cache);
 
    itf = eina_hash_iterator_data_new(_eina_file_cache);
    EINA_ITERATOR_FOREACH(itf, f)
      {
-        Eina_Bool faulty = EINA_FALSE;
-
         eina_lock_take(&f->lock);
 
         if (f->global_map != MAP_FAILED)
           {
-             if ((unsigned char *) addr < (((unsigned char *)f->global_map) + f->length) &&
-                 (((unsigned char *) addr) + page_size) >= (unsigned char *) f->global_map)
+             if ((unsigned char *)addr <
+                 (((unsigned char *)f->global_map) + f->length) &&
+                 (((unsigned char *)addr) + page_size) >=
+                  (unsigned char *)f->global_map)
                {
                   f->global_faulty = EINA_TRUE;
                   faulty = EINA_TRUE;
@@ -477,6 +475,7 @@ eina_file_mmap_faulty(void *addr, long page_size)
    eina_iterator_free(itf);
 
    eina_lock_release(&_eina_file_lock_cache);
+   return faulty;
 }
 
 /* ================================================================ *

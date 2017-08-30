@@ -129,26 +129,35 @@ _eina_mmap_safe_sigbus(int sig, siginfo_t *siginfo, void *ptr)
                }
           }
      }
-   /* send this to stderr - not eina_log. Specifically want this on stderr */
-   fprintf(stderr,
-           "EINA: Data at address 0x%lx is invalid. Replacing with zero page.\n",
-           (unsigned long)addr);
-   /* align address to the lower page boundary */
-   addr = (unsigned char *)((long)addr & (~(_eina_mmap_pagesize - 1)));
-   /* mmap a pzge of zero's from /dev/zero in there */
-   if (mmap(addr, _eina_mmap_pagesize,
-            PROT_READ | PROT_WRITE | PROT_EXEC,
-            MAP_PRIVATE | MAP_FIXED,
-            _eina_mmap_zero_fd, 0) == MAP_FAILED)
+   // Look into mmaped Eina_File if it was one of them, mark it as having
+   // I/O errors and then mmap a zero page in place here
+   if (eina_file_mmap_faulty(addr, _eina_mmap_pagesize))
      {
-        /* mmap of /dev/zero failed :( */
-        perror("mmap");
-        ERR("Failed to mmap() /dev/zero in place of page. SIGBUS!!!");
-        errno = perrno;
+        // Send this to stderr not eina_log. Specifically want this on stderr
+        fprintf(stderr,
+                "EINA: Data at address 0x%lx is invalid. "
+                "Replacing with zero page.\n",
+                (unsigned long)addr);
+        /* align address to the lower page boundary */
+        addr = (unsigned char *)((long)addr & (~(_eina_mmap_pagesize - 1)));
+        /* mmap a pzge of zero's from /dev/zero in there */
+        if (mmap(addr, _eina_mmap_pagesize,
+                 PROT_READ | PROT_WRITE | PROT_EXEC,
+                 MAP_PRIVATE | MAP_FIXED,
+                 _eina_mmap_zero_fd, 0) == MAP_FAILED)
+          {
+             /* mmap of /dev/zero failed :( */
+             perror("mmap");
+             ERR("Failed to mmap() /dev/zero in place of page. SIGBUS!!!");
+             errno = perrno;
+             abort();
+          }
+     }
+   else
+     {
+        ERR("Regular SIGBUS not in an eina_file mmaped file");
         abort();
      }
-   /* Look into mmaped Eina_File if it was one of them, just to remember for later request */
-   eina_file_mmap_faulty(addr, _eina_mmap_pagesize);
    /* restore previous errno */
    errno = perrno;
 }
