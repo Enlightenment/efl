@@ -18,6 +18,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    int num_config, n = 0;
    const GLubyte *vendor, *renderer, *version;
    Eina_Bool blacklist = EINA_FALSE;
+   struct wl_display *wl_disp;
 
    /* try to allocate space for our window */
    if (!(gw = calloc(1, sizeof(Outbuf))))
@@ -28,11 +29,11 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    gw->w = w;
    gw->h = h;
    gw->swap_mode = swap_mode;
-   gw->disp = einfo->info.wl_display;
+   gw->wl2_disp = einfo->info.wl2_display;
    gw->wl2_win = einfo->info.wl2_win;
-   if (display && (display != gw->disp))
+   if (display && (display != ecore_wl2_display_get(gw->wl2_disp)))
      context = EGL_NO_CONTEXT;
-   display = gw->disp;
+   display = ecore_wl2_display_get(gw->wl2_disp);
    gw->depth = einfo->info.depth;
    gw->alpha = einfo->info.destination_alpha;
    gw->rot = einfo->info.rotation;
@@ -71,8 +72,8 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
     */
 
    setenv("EGL_PLATFORM", "wayland", 1);
-
-   gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)gw->disp);
+   wl_disp = ecore_wl2_display_get(gw->wl2_disp);
+   gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)wl_disp);
    if (!gw->egl_disp)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());

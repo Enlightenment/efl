@@ -659,7 +659,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int
    if (ob)
      {
         ob->info = inf;
-        if ((ob->info->info.wl_display != ob->disp) ||
+        if ((ob->info->info.wl2_display != ob->wl2_disp) ||
             (ob->info->info.wl2_win != ob->wl2_win) ||
             /* FIXME: comment out below line.
              * since there is no place set the info->info.win for now,
@@ -672,7 +672,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *info, unsigned int
              Render_Output_Swap_Mode swap_mode = MODE_AUTO;
 
              gl_wins--;
-             if (!ob->info->info.wl_display)
+             if (!ob->info->info.wl2_display)
                {
                   eng_window_free(ob);
                   re->generic.software.ob = NULL;

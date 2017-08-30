@@ -55,7 +55,7 @@ extern int _evas_engine_wl_egl_log_dom;
 
 struct _Outbuf
 {
-   struct wl_display *disp;
+   Ecore_Wl2_Display *wl2_disp;
    struct wl_egl_window *win;
    Ecore_Wl2_Window *wl2_win;
    int w, h;
