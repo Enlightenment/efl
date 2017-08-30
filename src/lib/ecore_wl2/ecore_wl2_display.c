@@ -700,6 +700,7 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
    ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
 
    _ecore_wl2_display_event(ewd, ECORE_WL2_EVENT_CONNECT);
+   ecore_wl2_display_flush(ewd);
    return EINA_TRUE;
 }
 

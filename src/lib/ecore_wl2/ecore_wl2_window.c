@@ -24,6 +24,7 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
    window->surface_id = -1;
+   ecore_wl2_display_flush(window->display);
 }
 
 
@@ -234,7 +235,7 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
 
    win->pending.configure = EINA_TRUE;
 
-   wl_surface_commit(win->surface);
+   ecore_wl2_window_commit(win, EINA_TRUE);
 }
 
 static void
@@ -352,7 +353,7 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
                  window->aspect.w, window->aspect.h, window->aspect.aspect);
           }
 
-        wl_surface_commit(window->surface);
+        ecore_wl2_window_commit(window, EINA_TRUE);
      }
 
    if (window->display->wl.session_recovery)
@@ -541,7 +542,7 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    if (window->surface)
      {
         wl_surface_attach(window->surface, NULL, 0, 0);
-        wl_surface_commit(window->surface);
+        ecore_wl2_window_commit(window, EINA_TRUE);
         window->commit_pending = EINA_FALSE;
      }
 
