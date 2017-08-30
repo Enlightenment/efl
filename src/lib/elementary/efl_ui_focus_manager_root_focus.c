@@ -85,10 +85,15 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focu
 }
 
 
-EOLIAN static Efl_Ui_Focus_Object *
+EOLIAN static Efl_Ui_Focus_Manager_Logical_End_Detail
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_logical_end(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   return _trap(pd, efl_ui_focus_manager_logical_end(efl_super(obj, MY_CLASS)));
+   Efl_Ui_Focus_Manager_Logical_End_Detail res;
+
+   res = efl_ui_focus_manager_logical_end(efl_super(obj, MY_CLASS));
+
+   res.element = _trap(pd, res.element);
+   return res;
 }
 
 EOLIAN static Eina_Iterator *

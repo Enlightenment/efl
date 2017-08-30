@@ -1755,10 +1755,15 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (!o && focus_dir == EFL_UI_FOCUS_DIRECTION_PREV)
      {
-        Efl_Ui_Focus_Object *last;
+        Efl_Ui_Focus_Manager_Logical_End_Detail last;
+        Efl_Ui_Focus_Manager *rec_manager = obj;
 
-        last = efl_ui_focus_manager_logical_end(obj);
-        efl_ui_focus_manager_focus_set(obj, last);
+        do {
+          last = efl_ui_focus_manager_logical_end(rec_manager);
+          efl_ui_focus_manager_focus_set(obj, last.element);
+
+          rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
+        } while (!last.is_regular_end);
      }
 
    return EINA_TRUE;
