@@ -162,7 +162,7 @@ struct _Ecore_Wl2_Window
    const char *role;
 
    struct wl_surface *surface;
-   struct wl_buffer *buffer;
+   void *buffer;
    struct wl_callback *callback;
    struct www_surface *www_surface;
    struct zxdg_surface_v6 *zxdg_surface;

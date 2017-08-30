@@ -1941,7 +1941,7 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
  *
  * @since 1.20
  */
-EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, struct wl_buffer *buffer, int x, int y, Eina_Bool implicit);
+EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
 # endif
 
