@@ -1,4 +1,5 @@
 #include "main.h"
+#include "headers.h"
 #include "docs.h"
 
 static Eina_Strbuf *
@@ -157,24 +158,8 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
 
            /* Parameters */
            eina_strbuf_append(buf, "(void *data");
-           Eina_Iterator *params = eolian_function_parameters_get(fid);
-           const Eolian_Function_Parameter *param = NULL;
-           EINA_ITERATOR_FOREACH(params, param)
-             {
-                const Eolian_Typedecl *ptd = eolian_type_typedecl_get(eolian_parameter_type_get(param));
-                Eina_Stringshare *pn = eolian_parameter_name_get(param);
-                Eina_Stringshare *pt = eolian_type_c_type_get(eolian_parameter_type_get(param), EOLIAN_C_TYPE_PARAM);
-
-                if (!pn)
-                  pn = ""; // FIXME add some kind of param1/param2 control for null?
-
-                if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
-                  eina_strbuf_append_printf(buf, ", void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
-                                            pn, pt, pn, pn);
-                else
-                  eina_strbuf_append_printf(buf, ", %s %s", pt, pn);
-
-             }
+           int nidx = 1;
+           eo_gen_params(eolian_function_parameters_get(fid), buf, NULL, &nidx, EOLIAN_FUNCTION_POINTER);
            eina_strbuf_append(buf, ")");
 
            break;

@@ -11,8 +11,8 @@ _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
    return "";
 }
 
-int
-eo_gen_type_c_params_gen(Eina_Strbuf *buf, Eolian_Function_Parameter *pr, Eolian_Function_Type ftype, int *rpid)
+static int
+_gen_param(Eina_Strbuf *buf, Eolian_Function_Parameter *pr, Eolian_Function_Type ftype, int *rpid)
 {
    const Eolian_Type *prt = eolian_parameter_type_get(pr);
    const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
@@ -38,8 +38,8 @@ eo_gen_type_c_params_gen(Eina_Strbuf *buf, Eolian_Function_Parameter *pr, Eolian
    return 1;
 }
 
-static void
-_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf, Eina_Strbuf **flagbuf, int *nidx, Eolian_Function_Type ftype)
+void
+eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf, Eina_Strbuf **flagbuf, int *nidx, Eolian_Function_Type ftype)
 {
    Eolian_Function_Parameter *pr;
    EINA_ITERATOR_FOREACH(itr, pr)
@@ -47,9 +47,9 @@ _gen_params(Eina_Iterator *itr, Eina_Strbuf *buf, Eina_Strbuf **flagbuf, int *ni
         int rpid = 0;
         if (*nidx)
           eina_strbuf_append(buf, ", ");
-        *nidx += eo_gen_type_c_params_gen(buf, pr, ftype, &rpid);
+        *nidx += _gen_param(buf, pr, ftype, &rpid);
 
-        if (!eolian_parameter_is_nonull(pr))
+        if (!eolian_parameter_is_nonull(pr) || !flagbuf)
           continue;
 
         if (!*flagbuf)
@@ -139,7 +139,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
           eina_strbuf_append(buf, "Eo *obj");
      }
 
-   _gen_params(eolian_property_keys_get(fid, ftype), buf, &flagbuf, &nidx, EOLIAN_PROPERTY);
+   eo_gen_params(eolian_property_keys_get(fid, ftype), buf, &flagbuf, &nidx, EOLIAN_PROPERTY);
 
    if (!var_as_ret)
      {
@@ -148,7 +148,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
           itr = eolian_property_values_get(fid, ftype);
         else
           itr = eolian_function_parameters_get(fid);
-        _gen_params(itr, buf, &flagbuf, &nidx, ftype);
+        eo_gen_params(itr, buf, &flagbuf, &nidx, ftype);
      }
 
    if (flagbuf)
