@@ -1202,31 +1202,33 @@ _efl_ui_text_elm_widget_on_focus(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item 
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Rectangle *r)
+EOLIAN static Eina_Rectangle
+_efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
+   Eina_Rectangle r = {};
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
    efl_text_cursor_geometry_get(obj,
          efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
-         &r->x, &r->y, &r->w, &r->h,
+         &r.x, &r.y, &r.w, &r.h,
          NULL, NULL, NULL, NULL);
 
    if (sd->single_line)
      {
-        evas_object_geometry_get(sd->entry_edje, NULL, NULL, NULL, &r->h);
-        r->y = 0;
+        evas_object_geometry_get(sd->entry_edje, NULL, NULL, NULL, &r.h);
+        r.y = 0;
      }
 
    evas_object_geometry_get(sd->entry_edje, &edje_x, &edje_y, NULL, NULL);
    evas_object_geometry_get(obj, &elm_x, &elm_y, NULL, NULL);
 
-   r->x += edje_x - elm_x;
-   r->y += edje_y - elm_y;
+   r.x += edje_x - elm_x;
+   r.y += edje_y - elm_y;
+   if (r.w < 1) r.w = 1;
+   if (r.h < 1) r.h = 1;
 
-   return EINA_TRUE;
+   return r;
 }
 
 static void

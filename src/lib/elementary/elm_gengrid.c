@@ -3539,26 +3539,29 @@ _elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item 
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_focus_region_get(Eo *obj, Elm_Gengrid_Data *sd, Eina_Rectangle *r)
+EOLIAN static Eina_Rectangle
+_elm_gengrid_elm_widget_focus_region_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
+   Eina_Rectangle r = {};
+
    if (!sd->focused_item) goto end;
    if (elm_object_focus_region_show_mode_get(obj) == ELM_FOCUS_REGION_SHOW_ITEM)
      {
         Evas_Coord vx, vy;
         ELM_GENGRID_ITEM_DATA_GET(sd->focused_item, focus_it);
-        evas_object_geometry_get(VIEW(focus_it), &r->x, &r->y, &r->w, &r->h);
+        evas_object_geometry_get(VIEW(focus_it), &r.x, &r.y, &r.w, &r.h);
         evas_object_geometry_get(obj, &vx, &vy, NULL, NULL);
 
-        r->x -= vx;
-        r->y -= vy;
+        r.x -= vx;
+        r.y -= vy;
+        if (r.w < 1) r.w = 1;
+        if (r.h < 1) r.h = 1;
 
-        return EINA_TRUE;
+        return r;
      }
 
 end:
-   return elm_obj_widget_focus_region_get(efl_super(obj, MY_CLASS), r);
+   return elm_obj_widget_focus_region_get(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_gengrid_smart_focus_next_enable = EINA_FALSE;

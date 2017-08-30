@@ -663,9 +663,7 @@ _show_region_job(void *data)
    focus_obj = elm_widget_focused_object_get(data);
    if (focus_obj)
      {
-        Eina_Rectangle r;
-
-        elm_widget_focus_region_get(focus_obj, &r);
+        Eina_Rectangle r = elm_widget_focus_region_get(focus_obj);
 
         if (r.h < _elm_config->finger_size)
           r.h = _elm_config->finger_size;

@@ -1025,8 +1025,8 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
 /**
  * @internal
  *
- * If elm_widget_focus_region_get() returns EINA_FALSE, this function will
- * ignore region show action.
+ * If elm_widget_focus_region_get() returns an empty rect (w or h <= 0),
+ * this function will ignore region show action.
  */
 EOLIAN static void
 _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
@@ -1038,8 +1038,8 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    o = elm_widget_parent_get(obj);
    if (!o) return;
 
-   if (!elm_widget_focus_region_get(obj, &r))
-     return;
+   r = elm_widget_focus_region_get(obj);
+   if (eina_rectangle_is_empty(&r)) return;
 
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
 
@@ -1070,7 +1070,7 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
                    break;
                }
 
-             elm_widget_focus_region_get(o, &r);
+             r = elm_widget_focus_region_get(o);
              evas_object_geometry_get(o, &ox, &oy, NULL, NULL);
           }
         else
@@ -3463,8 +3463,7 @@ _elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
  *
  * Get the focus region of the given widget.
  *
- * @return show region or not
- * (@c EINA_TRUE = show region/@c EINA_FALSE = do not show region). Default is @c EINA_FALSE.
+ * @return The region to show. If it's not a valid rectangle it will not show.
  *
  * The focus region is the area of a widget that should brought into the
  * visible area when the widget is focused. Mostly used to show the part of
@@ -3472,22 +3471,17 @@ _elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
  * to the object @p obj.
  *
  * @param obj The widget object
- * @param x Where to store the x coordinate of the area
- * @param y Where to store the y coordinate of the area
- * @param w Where to store the width of the area
- * @param h Where to store the height of the area
+ * @return The region to show, in relative coordinates. If it's not a valid
+ *         rectangle (i.e. w or h <= 0) it will be ignored.
  *
  * @ingroup Widget
  */
-EOLIAN static Eina_Bool
-_elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Eina_Rectangle *r)
+EOLIAN static Eina_Rectangle
+_elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
-   efl_gfx_size_get(obj, &r->w, &r->h);
-   r->x = 0;
-   r->y = 0;
-   if ((r->w <= 0) || (r->h <= 0)) return EINA_FALSE;
-   return EINA_TRUE;
+   Eina_Rectangle r = {};
+   efl_gfx_size_get(obj, &r.w, &r.h);
+   return r;
 }
 
 EOLIAN static void
