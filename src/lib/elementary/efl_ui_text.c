@@ -1042,6 +1042,7 @@ _cursor_geometry_recalc(Evas_Object *obj)
    Evas_Coord x, y, w, h;
    Evas_Coord x2, y2, w2, h2;
    Evas_Coord cx, cy, cw, ch;
+   Eina_Rectangle sr;
 
    cx = cy = cw = ch = 0;
    x2 = y2 = w2 = h2 = 0;
@@ -1063,7 +1064,8 @@ _cursor_geometry_recalc(Evas_Object *obj)
          &x2, &y2, &w2, &h2);
    cx = cx + x - x2;
    cy = cy + y - y2;
-   elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
+   sr = (Eina_Rectangle) { cx, cy, cw, ch };
+   elm_widget_show_region_set(obj, sr, EINA_FALSE);
 }
 
 EOLIAN static void

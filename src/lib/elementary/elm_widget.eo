@@ -414,10 +414,38 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
 
       /* Scroll API. */
       @property on_show_region_hook {
-         [[Region hook on show property]]
+         [[Hook function called when the @.show_region is changed.
+
+           See also @.show_region.
+         ]]
          set {}
          values {
             func: Efl.Ui.Scrollable_On_Show_Region @nullable; [[Region hook function]]
+         }
+      }
+      @property show_region @protected {
+         [[Region inside the widget to show.
+
+           See also @.on_show_region_hook.
+         ]]
+         set {
+            [[Request parent scrollers to pan around so that this region
+              of the widget becomes visible.
+
+              If $force is $true this will trigger scroller changes and
+              the @.on_show_region_hook to be called even if the region is
+              unchanged.
+            ]]
+            values {
+               region: Eina.Rectangle; [[The region of interest.]]
+               force: bool; [[Set to $true to force show even if unchanged.]]
+            }
+         }
+         get {
+            [[Returns the current region of interest.]]
+            values {
+               region: Eina.Rectangle; [[The region of interest.]]
+            }
          }
       }
       @property item_loop_enabled {
@@ -428,27 +456,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       scroll_hold_push {
          [[Push scroll hold]]
-      }
-
-      /* FIXME: property with a Eina.Rectangle */
-      show_region_set {
-         [[Set show region]]
-         params {
-            @in x: int; [[X coordinate]]
-            @in y: int; [[Y coordinate]]
-            @in w: int; [[Width]]
-            @in h: int; [[Height]]
-            @in forceshow: bool; [[$true if show should be forced, $false otherwise]]
-         }
-      }
-      show_region_get @const {
-         [[Get show region]]
-         params {
-            @out x: int @optional; [[X coordinate]]
-            @out y: int @optional; [[Y coordinate]]
-            @out w: int @optional; [[Width]]
-            @out h: int @optional; [[Height]]
-         }
       }
       scroll_hold_pop {
          [[Pop scroller hold]]

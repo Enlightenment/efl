@@ -1009,14 +1009,14 @@ _cursor_geometry_recalc(Evas_Object *obj)
 
    if (!sd->deferred_recalc_job)
      {
-        Evas_Coord cx, cy, cw, ch;
-
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
         if (sd->cur_changed)
           {
+             Eina_Rectangle sr = {};
+
              sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(obj, cx, cy, cw, ch, EINA_FALSE);
+             edje_object_part_text_cursor_geometry_get
+               (sd->entry_edje, "elm.text", &sr.x, &sr.y, &sr.w, &sr.h);
+             elm_widget_show_region_set(obj, sr, EINA_FALSE);
           }
      }
    else
@@ -1083,14 +1083,14 @@ _deferred_recalc_job(void *data)
 
    if (sd->deferred_cur)
      {
-        Evas_Coord cx, cy, cw, ch;
-
-        edje_object_part_text_cursor_geometry_get
-          (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
         if (sd->cur_changed)
           {
+             Eina_Rectangle sr = {};
+
              sd->cur_changed = EINA_FALSE;
-             elm_widget_show_region_set(data, cx, cy, cw, ch, EINA_FALSE);
+             edje_object_part_text_cursor_geometry_get
+               (sd->entry_edje, "elm.text", &sr.x, &sr.y, &sr.w, &sr.h);
+             elm_widget_show_region_set(data, sr, EINA_FALSE);
           }
      }
 }

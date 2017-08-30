@@ -1067,12 +1067,14 @@ _entry_resize_cb(void *data,
                  void *event_info EINA_UNUSED)
 {
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
-   Evas_Coord en_x, en_y, en_w, en_h;
-
-   evas_object_geometry_get(sd->entry, &en_x, &en_y, &en_w, &en_h);
 
    if (elm_widget_focus_get(sd->parent))
-     elm_widget_show_region_set(sd->entry, en_x, en_y, en_w, en_h, EINA_TRUE);
+     {
+        Eina_Rectangle sr = {};
+
+        evas_object_geometry_get(sd->entry, &sr.x, &sr.y, &sr.w, &sr.h);
+        elm_widget_show_region_set(sd->entry, sr, EINA_TRUE);
+     }
 }
 
 static void
