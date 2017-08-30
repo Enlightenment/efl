@@ -320,6 +320,8 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
           _ecore_wl2_window_zxdg_popup_create(window);
         else
           {
+             struct zxdg_toplevel_v6 *ptop = NULL;
+
              window->zxdg_toplevel =
                zxdg_surface_v6_get_toplevel(window->zxdg_surface);
              zxdg_toplevel_v6_set_user_data(window->zxdg_toplevel, window);
@@ -334,15 +336,11 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
              window->zxdg_set_min_size = zxdg_toplevel_v6_set_min_size;
              window->zxdg_set_max_size = zxdg_toplevel_v6_set_max_size;
 
-             {
-                struct zxdg_toplevel_v6 *ptop = NULL;
+             if (window->parent)
+               ptop = window->parent->zxdg_toplevel;
 
-                if (window->parent)
-                  ptop = window->parent->zxdg_toplevel;
-
-                if (ptop)
-                  zxdg_toplevel_v6_set_parent(window->zxdg_toplevel, ptop);
-             }
+             if (ptop)
+               zxdg_toplevel_v6_set_parent(window->zxdg_toplevel, ptop);
 
              if (window->maximized)
                zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
@@ -615,6 +613,7 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
+
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
@@ -630,6 +629,7 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->display->inputs);
+
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
@@ -1053,7 +1053,6 @@ EAPI Eina_Bool
 ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
-
    return !!window->zxdg_surface;
 }
 
@@ -1310,6 +1309,7 @@ ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *win, int id)
    if ((win->surface) && (win->display->wl.efl_aux_hints))
      efl_aux_hints_del_aux_hint(win->display->wl.efl_aux_hints, win->surface, id);
 }
+
 EAPI void
 ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip)
 {
@@ -1351,15 +1351,18 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_TRUE_RETURN(w < 1);
    EINA_SAFETY_ON_TRUE_RETURN(h < 1);
-   if ((window->aspect.aspect == aspect) &&
-     (window->aspect.w == w) &&
-     (window->aspect.h == h)) return;
+
+   if ((window->aspect.aspect == aspect) && (window->aspect.w == w) &&
+       (window->aspect.h == h))
+     return;
+
    window->aspect.w = w;
    window->aspect.h = h;
    window->aspect.aspect = aspect;
    window->aspect.set = 1;
    if (window->display->wl.efl_hints && window->zxdg_toplevel)
-     efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel, w, h, aspect);
+     efl_hints_set_aspect(window->display->wl.efl_hints,
+                          window->zxdg_toplevel, w, h, aspect);
 }
 
 static void
@@ -1382,12 +1385,14 @@ static struct wl_callback_listener _frame_listener =
    _frame_cb
 };
 
-EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
+EAPI void
+ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->surface);
 
-   if (window->commit_pending) ERR("Commit before previous commit processed");
+   if (window->commit_pending)
+     ERR("Commit before previous commit processed");
 
    window->commit_pending = EINA_TRUE;
    window->callback = wl_surface_frame(window->surface);
@@ -1396,14 +1401,16 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
    if (flush) wl_surface_commit(window->surface);
 }
 
-EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window)
+EAPI Eina_Bool
+ecore_wl2_window_pending_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
    return window->commit_pending;
 }
 
-EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data)
+EAPI Ecore_Wl2_Frame_Cb_Handle *
+ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data)
 {
    Ecore_Wl2_Frame_Cb_Handle *callback;
 
@@ -1415,19 +1422,23 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
    callback->cb = cb;
    callback->data = data;
    callback->win = window;
-   window->frame_callbacks = eina_list_append(window->frame_callbacks, callback);
+   window->frame_callbacks =
+     eina_list_append(window->frame_callbacks, callback);
    return callback;
 }
 
-EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
+EAPI void
+ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
 {
    EINA_SAFETY_ON_NULL_RETURN(handle);
 
-   handle->win->frame_callbacks = eina_list_remove(handle->win->frame_callbacks, handle);
+   handle->win->frame_callbacks =
+     eina_list_remove(handle->win->frame_callbacks, handle);
    free(handle);
 }
 
-EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, struct wl_buffer *buffer, int x, int y, Eina_Bool implicit)
+EAPI void
+ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, struct wl_buffer *buffer, int x, int y, Eina_Bool implicit)
 {
    EINA_SAFETY_ON_NULL_RETURN(win);
    EINA_SAFETY_ON_NULL_RETURN(win->surface);
@@ -1435,6 +1446,8 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, struct wl_buffer
    /* FIXME: Haven't given any thought to x and y since we always use 0... */
    if (!implicit) wl_surface_attach(win->surface, buffer, x, y);
    win->buffer = buffer;
-   if (!implicit && !buffer) win->has_buffer = EINA_FALSE;
-   else win->has_buffer = EINA_TRUE;
+   if (!implicit && !buffer)
+     win->has_buffer = EINA_FALSE;
+   else
+     win->has_buffer = EINA_TRUE;
 }
