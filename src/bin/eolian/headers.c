@@ -11,6 +11,58 @@ _get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
    return "";
 }
 
+int
+eo_gen_type_c_params_gen(Eina_Strbuf *buf, Eolian_Function_Parameter *pr, Eolian_Function_Type ftype, int *rpid)
+{
+   const Eolian_Type *prt = eolian_parameter_type_get(pr);
+   const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
+   const char *prn = eolian_parameter_name_get(pr);
+   Eina_Stringshare *prtn = eolian_type_c_type_get(prt, EOLIAN_C_TYPE_PARAM);
+
+   if (ptd && (eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER))
+     {
+        eina_strbuf_append_printf(buf, "void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
+                                  prn, prtn, prn, prn);
+        eina_stringshare_del(prtn);
+        *rpid = 1;
+        return 3;
+     }
+
+   eina_strbuf_append(buf, prtn);
+   if (prtn[strlen(prtn) - 1] != '*')
+     eina_strbuf_append_char(buf, ' ');
+   eina_strbuf_append(buf, _get_add_star(ftype, eolian_parameter_direction_get(pr)));
+   eina_strbuf_append(buf, prn);
+   eina_stringshare_del(prtn);
+   *rpid = 0;
+   return 1;
+}
+
+static void
+_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf, Eina_Strbuf **flagbuf, int *nidx, Eolian_Function_Type ftype)
+{
+   Eolian_Function_Parameter *pr;
+   EINA_ITERATOR_FOREACH(itr, pr)
+     {
+        int rpid = 0;
+        if (*nidx)
+          eina_strbuf_append(buf, ", ");
+        *nidx += eo_gen_type_c_params_gen(buf, pr, ftype, &rpid);
+
+        if (!eolian_parameter_is_nonull(pr))
+          continue;
+
+        if (!*flagbuf)
+          {
+             *flagbuf = eina_strbuf_new();
+             eina_strbuf_append_printf(*flagbuf, " EINA_ARG_NONNULL(%d", *nidx - rpid);
+          }
+        else
+          eina_strbuf_append_printf(*flagbuf, ", %d", *nidx - rpid);
+     }
+   eina_iterator_free(itr);
+}
+
 static void
 _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf, char *cname,
@@ -70,7 +122,6 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
    eina_strbuf_append(buf, fcn);
    eina_stringshare_del(fcn);
 
-   Eina_Bool first = EINA_TRUE;
    Eina_Strbuf *flagbuf = NULL;
    int nidx = !legacy || !eolian_function_is_class(fid);
 
@@ -86,35 +137,9 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
           eina_strbuf_append_printf(buf, "%s *obj", cname);
         else
           eina_strbuf_append(buf, "Eo *obj");
-        first = EINA_FALSE;
      }
 
-   {
-      Eolian_Function_Parameter *pr = NULL;
-      Eina_Iterator *itr = eolian_property_keys_get(fid, ftype);
-      EINA_ITERATOR_FOREACH(itr, pr)
-        {
-           const Eolian_Type *prt = eolian_parameter_type_get(pr);
-           const char *prn = eolian_parameter_name_get(pr);
-           Eina_Stringshare *prtn = eolian_type_c_type_get(prt, EOLIAN_C_TYPE_PARAM);
-           ++nidx;
-           if (!first)
-             eina_strbuf_append(buf, ", ");
-           eina_strbuf_append_printf(buf, "%s %s", prtn, prn);
-           eina_stringshare_del(prtn);
-           first = EINA_FALSE;
-           if (!eolian_parameter_is_nonull(pr))
-             continue;
-           if (!flagbuf)
-             {
-                flagbuf = eina_strbuf_new();
-                eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx);
-             }
-           else
-             eina_strbuf_append_printf(flagbuf, ", %d", nidx);
-        }
-      eina_iterator_free(itr);
-   }
+   _gen_params(eolian_property_keys_get(fid, ftype), buf, &flagbuf, &nidx, EOLIAN_PROPERTY);
 
    if (!var_as_ret)
      {
@@ -123,58 +148,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Function *fid,
           itr = eolian_property_values_get(fid, ftype);
         else
           itr = eolian_function_parameters_get(fid);
-
-        Eolian_Function_Parameter *pr = NULL;
-        EINA_ITERATOR_FOREACH(itr, pr)
-          {
-             const Eolian_Type *prt = eolian_parameter_type_get(pr);
-             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
-             const char *prn = eolian_parameter_name_get(pr);
-             Eina_Stringshare *prtn = eolian_type_c_type_get(prt, EOLIAN_C_TYPE_PARAM);
-
-             if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
-               {
-                  nidx += 3;
-                  if (!first)
-                    eina_strbuf_append(buf, ", ");
-                  eina_strbuf_append_printf(buf, "void *%s_data, %s %s, Eina_Free_Cb %s_free_cb",
-                                            prn, prtn, prn, prn);
-                  eina_stringshare_del(prtn);
-                  if (!eolian_parameter_is_nonull(pr))
-                    continue;
-                  if (!flagbuf)
-                    {
-                       flagbuf = eina_strbuf_new();
-                       eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx - 1);
-                    }
-                  else
-                    eina_strbuf_append_printf(flagbuf, ", %d", nidx - 1);
-                  continue;
-               }
-
-             ++nidx;
-             if (!first)
-               eina_strbuf_append(buf, ", ");
-             eina_strbuf_append(buf, prtn);
-             if (prtn[strlen(prtn) - 1] != '*')
-               eina_strbuf_append_char(buf, ' ');
-             eina_strbuf_append(buf,
-                 _get_add_star(ftype, eolian_parameter_direction_get(pr)));
-             eina_strbuf_append(buf, prn);
-             eina_stringshare_del(prtn);
-             first = EINA_FALSE;
-             if (!eolian_parameter_is_nonull(pr))
-               continue;
-             if (!flagbuf)
-               {
-                  flagbuf = eina_strbuf_new();
-                  eina_strbuf_append_printf(flagbuf, " EINA_ARG_NONNULL(%d", nidx);
-               }
-             else
-               eina_strbuf_append_printf(flagbuf, ", %d", nidx);
-          }
-
-        eina_iterator_free(itr);
+        _gen_params(itr, buf, &flagbuf, &nidx, ftype);
      }
 
    if (flagbuf)
