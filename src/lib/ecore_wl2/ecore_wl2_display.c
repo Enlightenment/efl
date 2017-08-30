@@ -1111,3 +1111,24 @@ ecore_wl2_display_name_get(const Ecore_Wl2_Display *display)
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
    return display->name;
 }
+
+EAPI void
+ecore_wl2_display_flush(Ecore_Wl2_Display *display)
+{
+   int ret, code;
+
+   EINA_SAFETY_ON_NULL_RETURN(display);
+
+   ret = wl_display_flush(display->wl.display);
+   if (ret >= 0) return;
+
+   code = errno;
+   if (code == EAGAIN)
+     {
+        ecore_main_fd_handler_active_set(display->fd_hdl,
+                                         (ECORE_FD_READ | ECORE_FD_WRITE));
+        return;
+     }
+
+   _begin_recovery_maybe(display, code);
+}
