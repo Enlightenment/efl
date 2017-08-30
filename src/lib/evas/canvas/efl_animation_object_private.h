@@ -22,6 +22,7 @@ typedef struct _Efl_Animation_Object_Data
    struct {
         double begin;
         double current;
+        double pause_begin;
      } time;
 
    Efl_Canvas_Object *target;
@@ -31,10 +32,14 @@ typedef struct _Efl_Animation_Object_Data
 
    double             duration;
    double             total_duration;
+   double             paused_time;
 
    Eina_Bool          auto_del : 1;
    Eina_Bool          is_deleted : 1;
+   Eina_Bool          is_started : 1;
    Eina_Bool          is_cancelled : 1;
+   Eina_Bool          is_ended : 1;
+   Eina_Bool          is_paused : 1;
    Eina_Bool          keep_final_state : 1;
 } Efl_Animation_Object_Data;
 
