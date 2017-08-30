@@ -47,6 +47,15 @@ class Efl.Animation (Efl.Object)
             total_duration: double; [[Total duration value.]]
          }
       }
+      @property repeat_count {
+         set {
+         }
+         get {
+         }
+         values {
+            count: int; [[Repeat count. EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely.]]
+         }
+      }
       is_deleted @protected {
          return: bool; [[$true if animation is deleted, $false otherwise.]]
       }

@@ -52,7 +52,13 @@ _efl_animation_group_sequential_efl_animation_total_duration_get(Eo *eo_obj,
    Efl_Animation *anim;
    EINA_LIST_FOREACH(animations, l, anim)
      {
-        total_duration += efl_animation_total_duration_get(anim);
+        double child_total_duration = efl_animation_total_duration_get(anim);
+
+        int child_repeat_count = efl_animation_repeat_count_get(anim);
+        if (child_repeat_count > 0)
+          child_total_duration *= (child_repeat_count + 1);
+
+        total_duration += child_total_duration;
      }
    return total_duration;
 }
@@ -89,6 +95,9 @@ _efl_animation_group_sequential_efl_animation_object_create(Eo *eo_obj,
 
    double total_duration = efl_animation_total_duration_get(eo_obj);
    efl_animation_object_total_duration_set(group_anim_obj, total_duration);
+
+   int repeat_count = efl_animation_repeat_count_get(eo_obj);
+   efl_animation_object_repeat_count_set(group_anim_obj, repeat_count);
 
    return group_anim_obj;
 }

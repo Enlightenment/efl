@@ -20,6 +20,15 @@
 #define EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_DATA_GET(o, pd) \
    Efl_Animation_Object_Group_Sequential_Data *pd = efl_data_scope_get(o, EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_CLASS)
 
+typedef struct _Member_Object_Data
+{
+   Efl_Animation_Object *anim_obj;
+
+   int                   repeated_count; /* How many times object has been
+                                          * repeated. */
+} Member_Object_Data;
+
 typedef struct _Efl_Animation_Object_Group_Sequential_Data
 {
+   Eina_List   *member_anim_obj_data_list; //List of Member_Object_Data
 } Efl_Animation_Object_Group_Sequential_Data;

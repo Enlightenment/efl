@@ -127,7 +127,31 @@ _efl_animation_object_create(Eo *eo_obj, Efl_Animation_Data *pd EINA_UNUSED)
    double total_duration = efl_animation_total_duration_get(eo_obj);
    efl_animation_object_total_duration_set(anim_obj, total_duration);
 
+   int repeat_count = efl_animation_repeat_count_get(eo_obj);
+   efl_animation_object_repeat_count_set(anim_obj, repeat_count);
+
    return anim_obj;
+}
+
+EOLIAN static void
+_efl_animation_repeat_count_set(Eo *eo_obj,
+                                Efl_Animation_Data *pd,
+                                int count)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj);
+
+   //EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely
+   if ((count < 0) && (count != EFL_ANIMATION_REPEAT_INFINITE)) return;
+
+   pd->repeat_count = count;
+}
+
+EOLIAN static int
+_efl_animation_repeat_count_get(Eo *eo_obj, Efl_Animation_Data *pd)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj, 0);
+
+   return pd->repeat_count;
 }
 
 EOLIAN static Efl_Object *
@@ -139,6 +163,8 @@ _efl_animation_efl_object_constructor(Eo *eo_obj,
    pd->target = NULL;
 
    pd->duration = 0.0;
+
+   pd->repeat_count = 0;
 
    pd->is_deleted = EINA_FALSE;
    pd->keep_final_state = EINA_FALSE;
