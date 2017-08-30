@@ -632,7 +632,7 @@ static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params EINA_UN
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_list_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    Elm_Object_Item *it;
@@ -642,8 +642,6 @@ _elm_list_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
      elm_wdg_item_translate(it);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static void

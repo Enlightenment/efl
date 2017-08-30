@@ -406,15 +406,13 @@ _reload_format(Evas_Object *obj)
    _field_list_arrange(obj);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _efl_ui_clock_elm_widget_translate(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static Eina_List *

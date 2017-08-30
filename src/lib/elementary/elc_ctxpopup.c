@@ -47,7 +47,7 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_List *l;
@@ -59,8 +59,6 @@ _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
      elm_wdg_item_translate(it);
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool

@@ -1719,7 +1719,7 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
    return o;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_toolbar_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
@@ -1728,8 +1728,6 @@ _elm_toolbar_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
      elm_wdg_item_translate(EO_OBJ(it));
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static void

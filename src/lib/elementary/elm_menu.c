@@ -31,7 +31,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_MENU_SIGNALS
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_menu_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Elm_Menu_Item_Data *it;
@@ -39,8 +39,6 @@ _elm_menu_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(EO_OBJ(it));
-
-   return EINA_TRUE;
 }
 
 static void

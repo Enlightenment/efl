@@ -55,7 +55,7 @@ _dayselector_resize(void *data,
    elm_layout_sizing_eval(data);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static void
 _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    time_t t;
@@ -65,7 +65,7 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
    Elm_Dayselector_Item_Data *it;
 
    if (sd->weekdays_names_set)
-     return EINA_TRUE;
+     return;
 
    t = time(NULL);
    localtime_r(&t, &time_daysel);
@@ -77,8 +77,6 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
      }
 
    elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-
-   return EINA_TRUE;
 }
 
 static void
