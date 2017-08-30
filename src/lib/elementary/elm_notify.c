@@ -160,14 +160,16 @@ _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_elm_notify_elm_widget_part_text_set(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part, const char *label)
+/* Legacy compat. Note that notify has no text parts in the default theme... */
+static void
+_elm_notify_text_set(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part, const char *label)
 {
    edje_object_part_text_set(sd->notify, part, label);
 }
 
-EOLIAN static const char*
-_elm_notify_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
+/* Legacy compat. Note that notify has no text parts in the default theme... */
+static const char*
+_elm_notify_text_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
 {
    return edje_object_part_text_get(sd->notify, part);
 }
@@ -739,6 +741,8 @@ _elm_notify_class_constructor(Efl_Class *klass)
 /* Efl.Part begin */
 
 ELM_PART_IMPLEMENT(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_IMPLEMENT_TEXT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)

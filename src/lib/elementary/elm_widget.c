@@ -3632,17 +3632,23 @@ elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
    elm_obj_widget_theme_set(obj, th);
 }
 
-EOLIAN static void
-_elm_widget_part_text_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *part, const char *label)
+EAPI void
+elm_widget_part_text_set(Eo *obj, const char *part, const char *label)
 {
-   if (evas_object_smart_type_check(obj, "elm_layout"))
+   /* legacy support: combobox was special (internal entry is text object). */
+   if (efl_isa(obj, ELM_COMBOBOX_CLASS))
+     _elm_combobox_part_text_set(obj, part, label);
+   else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
      elm_layout_text_set(obj, part, label);
 }
 
-EOLIAN static const char*
-_elm_widget_part_text_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const char *part)
+EAPI const char*
+elm_widget_part_text_get(const Eo *obj, const char *part)
 {
-   if (evas_object_smart_type_check(obj, "elm_layout"))
+   /* legacy support: combobox was special (internal entry is text object). */
+   if (efl_isa(obj, ELM_COMBOBOX_CLASS))
+     return _elm_combobox_part_text_get(obj, part);
+   else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
      return elm_layout_text_get(obj, part);
 
    return NULL;
@@ -3729,7 +3735,7 @@ _elm_widget_domain_translatable_part_text_set(Eo *obj, Elm_Widget_Smart_Data *sd
      }
 
    sd->on_translate = EINA_TRUE;
-   elm_obj_widget_part_text_set(obj, part, label);
+   elm_widget_part_text_set(obj, part, label);
    sd->on_translate = EINA_FALSE;
 }
 
@@ -3755,7 +3761,7 @@ _elm_widget_domain_part_text_translatable_set(Eo *obj, Elm_Widget_Smart_Data *sd
    if (!ts->domain) ts->domain = eina_stringshare_add(domain);
    else eina_stringshare_replace(&ts->domain, domain);
 
-   text = elm_obj_widget_part_text_get(obj, part);
+   text = elm_widget_part_text_get(obj, part);
    if (!text || !text[0]) return;
 
    if (!ts->string) ts->string = eina_stringshare_add(text);
@@ -3765,7 +3771,7 @@ _elm_widget_domain_part_text_translatable_set(Eo *obj, Elm_Widget_Smart_Data *sd
    text = dgettext(domain, text);
 #endif
    sd->on_translate = EINA_TRUE;
-   elm_obj_widget_part_text_set(obj, part, text);
+   elm_widget_part_text_set(obj, part, text);
    sd->on_translate = EINA_FALSE;
 }
 
@@ -3825,7 +3831,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
         if (!ts->string) continue;
         const char *s = dgettext(ts->domain, ts->string);
         sd->on_translate = EINA_TRUE;
-        elm_obj_widget_part_text_set(obj, ts->id, s);
+        elm_widget_part_text_set(obj, ts->id, s);
         sd->on_translate = EINA_FALSE;
      }
 #endif

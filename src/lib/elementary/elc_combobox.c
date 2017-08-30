@@ -521,17 +521,21 @@ _elm_combobox_elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
    elm_obj_genlist_filter_set(pd->genlist, key);
 }
 
-EOLIAN void
-_elm_combobox_elm_widget_part_text_set(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
-                                       const char * part, const char *label)
+// FIXME: Combobox part API is badly defined. Efl.Part should be reimplemented
+// properly, but this will be tricky: how to set "guide" on the "entry" part?
+void
+_elm_combobox_part_text_set(Eo *obj, const char * part, const char *label)
 {
+   Elm_Combobox_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return;
    elm_object_part_text_set(pd->entry, part, label);
 }
 
-EOLIAN const char *
-_elm_combobox_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *pd,
-                                       const char * part)
+const char *
+_elm_combobox_part_text_get(const Eo *obj, const char *part)
 {
+   Elm_Combobox_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return NULL;
    return elm_object_part_text_get(pd->entry, part);
 }
 
