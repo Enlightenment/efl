@@ -9,5 +9,6 @@ abstract Efl.Animation.Object.Group (Efl.Animation.Object)
       Efl.Object.destructor;
       Efl.Animation.Object.target_state_save;
       Efl.Animation.Object.target_state_reset;
+      Efl.Animation.Object.target_map_reset;
    }
 }

@@ -169,6 +169,21 @@ _efl_animation_object_group_efl_animation_object_target_state_reset(Eo *eo_obj,
      }
 }
 
+EOLIAN static void
+_efl_animation_object_group_efl_animation_object_target_map_reset(Eo *eo_obj,
+                                                                  Efl_Animation_Object_Group_Data *pd)
+{
+   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
+
+   Eina_List *l;
+   Efl_Animation_Object *anim_obj;
+
+   EINA_LIST_FOREACH(pd->anim_objs, l, anim_obj)
+     {
+        efl_animation_object_target_map_reset(anim_obj);
+     }
+}
+
 /* Internal EO APIs */
 
 EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_group_object_add, EFL_FUNC_CALL(anim_obj), Efl_Animation_Object *anim_obj);

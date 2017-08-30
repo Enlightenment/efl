@@ -20,6 +20,12 @@ class Efl.Animation.Object (Efl.Object)
       cancel {
          [[Cancel animation.]]
       }
+      pause {
+         [[Pause animation.]]
+      }
+      resume {
+         [[Resume animation.]]
+      }
       is_deleted @protected {
          return: bool; [[$true if animation object is deleted, $false otherwise.]]
       }
@@ -28,6 +34,9 @@ class Efl.Animation.Object (Efl.Object)
       }
       target_state_reset @protected {
          [[Reset the state of the target to the previously saved state.]]
+      }
+      target_map_reset @protected {
+         [[Reset the map effect of the target.]]
       }
       progress_set @protected {
          [[Display the moment of animation according to the given progress.]]
