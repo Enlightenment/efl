@@ -396,7 +396,7 @@ typedef struct _Elm_Widget_Smart_Data
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
     * parenting tree */
-   Evas_Coord                    rx, ry, rw, rh;
+   Eina_Rectangle                show_region;
 
    /* scrolling hold/freeze hints. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -719,8 +719,8 @@ EAPI void             elm_widget_focus_restore(Evas_Object *obj);
 
 EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow);
-EAPI void             elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void             elm_widget_show_region_set(Evas_Object *obj, Eina_Rectangle sr, Eina_Bool forceshow);
+EAPI Eina_Rectangle   elm_widget_show_region_get(const Evas_Object *obj);
 EAPI Eina_Rectangle   elm_widget_focus_region_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_region_show(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);

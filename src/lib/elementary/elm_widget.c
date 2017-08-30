@@ -3393,32 +3393,25 @@ _elm_widget_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static void
-_elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool forceshow)
+_elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rectangle sr, Eina_Bool forceshow)
 {
-
    Evas_Object *parent_obj, *child_obj;
    Evas_Coord px, py, cx, cy, nx = 0, ny = 0;
 
-
    evas_smart_objects_calculate(evas_object_evas_get(obj));
 
-   if (!forceshow && (x == sd->rx) && (y == sd->ry) &&
-       (w == sd->rw) && (h == sd->rh)) return;
+   if (!forceshow && eina_rectangle_equal(&sr, &sd->show_region)) return;
 
-   sd->rx = x;
-   sd->ry = y;
-   sd->rw = w;
-   sd->rh = h;
+   sd->show_region = sr;
    if (sd->on_show_region)
      {
-        const Eina_Rectangle r = { x, y, w, h };
-        sd->on_show_region(sd->on_show_region_data, obj, r);
+        sd->on_show_region(sd->on_show_region_data, obj, sr);
 
         if (_elm_scrollable_is(obj))
           {
              elm_interface_scrollable_content_pos_get(obj, &nx, &ny);
-             x -= nx;
-             y -= ny;
+             sr.x -= nx;
+             sr.y -= ny;
           }
      }
 
@@ -3433,29 +3426,20 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Coord x, Ev
         evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
         evas_object_geometry_get(child_obj, &cx, &cy, NULL, NULL);
 
-        x += (cx - px);
-        y += (cy - py);
-        sd->rx = x;
-        sd->ry = y;
-        sd->rw = w;
-        sd->rh = h;
+        sr.x += (cx - px);
+        sr.y += (cy - py);
+        sd->show_region = sr;
 
         if (sd->on_show_region)
-          {
-             const Eina_Rectangle r = { x, y, w, h };
-             sd->on_show_region(sd->on_show_region_data, parent_obj, r);
-          }
+          sd->on_show_region(sd->on_show_region_data, parent_obj, sr);
      }
    while (parent_obj);
 }
 
-EOLIAN static void
-_elm_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Rectangle
+_elm_widget_show_region_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   if (x) *x = sd->rx;
-   if (y) *y = sd->ry;
-   if (w) *w = sd->rw;
-   if (h) *h = sd->rh;
+   return sd->show_region;
 }
 
 /**
