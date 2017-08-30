@@ -755,13 +755,13 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
         if (text_props->bidi_dir == EVAS_BIDI_DIRECTION_LTR)
           {
              double part;
-             part = cluster_adv / items;
+             part = (double) cluster_adv / items;
              item_pos = (int) ((x - cluster_start) / part);
           }
         else
           {
              double part;
-             part = cluster_adv / items;
+             part = (double) cluster_adv / items;
              item_pos = items - ((int) ((x - cluster_start) / part)) - 1;
           }
 
