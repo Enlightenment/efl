@@ -217,7 +217,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    e->framespace.h = 0;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
    e->current_event = EVAS_CALLBACK_LAST;
-   e->name_hash = eina_hash_string_superfast_new(NULL);
+   e->name_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
