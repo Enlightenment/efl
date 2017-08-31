@@ -407,7 +407,6 @@ typedef struct _Elm_Widget_Smart_Data
    double                        scale;
    Elm_Theme                    *theme;
    const char                   *style;
-   const char                   *focus_highlight_style;  /**< custom focus style for a widget */
    const char                   *access_info;
    const char                   *accessible_name;
    unsigned int                  focus_order;

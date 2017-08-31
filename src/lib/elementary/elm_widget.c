@@ -234,6 +234,30 @@ _elm_widget_focus_highlight_animate_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_
      elm_win_focus_highlight_animate_set(win, enable);
 }
 
+EOLIAN static Eina_Bool
+_elm_widget_focus_highlight_style_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, const char *style)
+{
+   // Forward to closest parent Window
+   Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+     return elm_obj_widget_focus_highlight_style_set(win, style);
+
+   return EINA_FALSE;
+}
+
+EOLIAN static const char *
+_elm_widget_focus_highlight_style_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+   // Forward to closest parent Window
+   Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+     return elm_win_focus_highlight_style_get(win);
+
+   return NULL;
+}
+
 static Eina_Bool
 _tree_unfocusable(Eo *obj)
 {
@@ -1115,22 +1139,6 @@ _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
           }
         o = elm_widget_parent_get(o);
      }
-}
-
-EOLIAN static Eina_Bool
-_elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *style)
-{
-   // FIXME: This does not return the proper error code! Who cares if the
-   // string was changed?? This should return false if the desired style does
-   // not exist...
-   if (eina_stringshare_replace(&sd->focus_highlight_style, style)) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-EOLIAN static const char*
-_elm_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return sd->focus_highlight_style;
 }
 
 static void
