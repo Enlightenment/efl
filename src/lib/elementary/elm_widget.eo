@@ -1,10 +1,10 @@
 import elm_general;
 
-function Efl.Ui.Scrollable_On_Show_Region
-{
+function Efl.Ui.Scrollable_On_Show_Region {
+   [[Function pointer for on show region hook]]
    params {
-      @in obj: Efl.Canvas.Object;
-      @in region: Eina.Rectangle;
+      @in obj: Efl.Canvas.Object; [[Canvas object]]
+      @in region: Eina.Rectangle; [[Showed region]]
    }
 };
 
