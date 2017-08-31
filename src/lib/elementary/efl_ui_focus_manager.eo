@@ -30,8 +30,12 @@ struct Efl.Ui.Focus.Relations {
 }
 
 struct Efl.Ui.Focus.Manager.Logical_End_Detail {
-    is_regular_end : bool;
-    element : Efl.Ui.Focus.Object;
+    [[Structure holding the focus object with extra information on logical end
+
+      @since 1.21
+    ]]
+    is_regular_end : bool; [[$true if logical end, $false otherwise]]
+    element : Efl.Ui.Focus.Object; [[Focus object element]]
 }
 
 interface Efl.Ui.Focus.Manager {
