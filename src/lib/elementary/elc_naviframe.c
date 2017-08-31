@@ -353,7 +353,15 @@ _item_style_set(Elm_Naviframe_Item_Data *it,
 
    if (!elm_layout_theme_set(VIEW(it), "naviframe", buf,
                              elm_widget_style_get(WIDGET(it))))
-     CRI("Failed to set layout!");
+     {
+        /* Naviframe item theme name is combined with item style name and widget
+         * style name.
+         * Therefore, if the item theme name is not found, then set "item/basic"
+         * item style name as a default item style name. */
+        if (!elm_layout_theme_set(VIEW(it), "naviframe", "item/basic",
+                                  elm_widget_style_get(WIDGET(it))))
+          CRI("Failed to set layout!");
+     }
 
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
