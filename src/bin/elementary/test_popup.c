@@ -1172,3 +1172,36 @@ test_efl_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
 }
+
+void
+test_efl_ui_popup_alert_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win;
+
+   win = elm_win_util_standard_add("Efl UI Popup Alert Text", "Efl UI Popup Alert Text");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+
+   Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   efl_ui_popup_alert_title_set(efl_ui_popup, "title");
+
+   evas_object_resize(efl_ui_popup, 160, 160);
+   evas_object_show(efl_ui_popup);
+
+   efl_text_set(efl_ui_popup,
+                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup"
+                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup"
+                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup");
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(100, 180));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}

@@ -277,6 +277,7 @@ void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_popup(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_popup_alert(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_popup_alert_scroll(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_popup_alert_text(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 void test_image(void *data, Evas_Object *obj, void *event_info);
 void test_image_scale_type(void *data, Evas_Object *obj, void *event_info);
@@ -1012,6 +1013,7 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Efl UI Popup", test_efl_ui_popup);
    ADD_TEST(NULL, "Popups", "Efl UI Popup Alert", test_efl_ui_popup_alert);
    ADD_TEST(NULL, "Popups", "Efl UI Popup Alert Scroll", test_efl_ui_popup_alert_scroll);
+   ADD_TEST(NULL, "Popups", "Efl UI Popup Alert Text", test_efl_ui_popup_alert_text);
 
    //------------------------------//
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
