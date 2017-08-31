@@ -1220,3 +1220,13 @@ EAPI void elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate);
  * @ingroup Efl_Ui_Win
  */
 EAPI Eina_Bool elm_win_focus_highlight_animate_get(const Elm_Win *obj);
+
+/**
+ * @brief Raise a window object.
+ *
+ * Places the window pointed by @c obj at the top of the stack, so that it's
+ * not covered by any other window.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_raise(Elm_Win *obj);

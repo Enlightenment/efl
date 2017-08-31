@@ -816,6 +816,7 @@ _elm_win_associate_get(const Ecore_Evas *ee)
 static void
 _elm_win_obj_intercept_raise(void *data, Evas_Object *obj EINA_UNUSED)
 {
+   // Note: This is probably not necessary anymore (Win implements raise)
    ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, raise);
 }
@@ -5544,9 +5545,15 @@ _efl_ui_win_activate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_gfx_stack_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
-   TRAP(sd, raise);
+   TRAP(pd, raise);
+}
+
+EAPI void
+elm_win_raise(Eo *obj)
+{
+   efl_gfx_stack_raise(obj);
 }
 
 EOLIAN static void
