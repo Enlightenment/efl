@@ -1,6 +1,6 @@
 import elm_general;
 
-type @extern Elm.Gengrid.Item.Class: __undefined_type;
+type @extern Elm.Gengrid.Item.Class: __undefined_type; [[External elm gengrid item class]]
 
 enum Elm.Gengrid.Item.Scrollto_Type
 {
