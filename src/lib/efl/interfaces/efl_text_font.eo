@@ -47,8 +47,8 @@ interface Efl.Text.Font {
       @property font {
          [[The font name and size that is used for the displayed text]]
          values {
-            font: string;
-            size: int;
+            font: string; [[Font name]]
+            size: int; [[Font size]]
          }
       }
       @property font_source {
@@ -58,7 +58,7 @@ interface Efl.Text.Font {
            "/path/to/font.ttf", or an eet file e.g. "/path/to/font.eet".
          ]]
          values {
-            font_source: string;
+            font_source: string; [[Path to font source]]
          }
       }
 
@@ -68,7 +68,7 @@ interface Efl.Text.Font {
            Will be used in case the primary font isn't available.
          ]]
          values {
-            font_fallbacks: string;
+            font_fallbacks: string; [[Font name fallbacks]]
          }
       }
 
@@ -78,7 +78,7 @@ interface Efl.Text.Font {
            Default is $Efl.Text.Font.Weight.normal\.
          ]]
          values {
-            font_weight: Efl.Text.Font.Weight;
+            font_weight: Efl.Text.Font.Weight; [[Font weight]]
          }
       }
 
@@ -88,7 +88,7 @@ interface Efl.Text.Font {
            Default is $Efl.Text.Font.Slant.normal\.
          ]]
          values {
-            style: Efl.Text.Font.Slant;
+            style: Efl.Text.Font.Slant; [[Font slant]]
          }
       }
 
@@ -98,7 +98,7 @@ interface Efl.Text.Font {
            Default is $Efl.Text.Font.Width.normal\.
          ]]
          values {
-            width: Efl.Text.Font.Width;
+            width: Efl.Text.Font.Width; [[Font width]]
          }
       }
 
@@ -111,7 +111,7 @@ interface Efl.Text.Font {
            "auto" to use the system locale, or "none".
          ]]
          values {
-            lang: string;
+            lang: string; [[Language]]
          }
       }
    }
