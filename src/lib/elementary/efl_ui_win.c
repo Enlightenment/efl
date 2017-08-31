@@ -3282,6 +3282,8 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
         if (efl_isa(sd->icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
           image = sd->icon;
+        else if (efl_isa(sd->icon, EFL_UI_IMAGE_CLASS))
+          image = elm_image_object_get(sd->icon);
 
         if (image)
           {
@@ -4535,14 +4537,11 @@ _win_inlined_image_set(Efl_Ui_Win_Data *sd)
 }
 
 static void
-_elm_win_on_icon_del(void *data,
-                     Evas *e EINA_UNUSED,
-                     Evas_Object *obj,
-                     void *event_info EINA_UNUSED)
+_elm_win_on_icon_del(void *data, const Efl_Event *ev)
 {
    ELM_WIN_DATA_GET(data, sd);
 
-   if (sd->icon == obj) sd->icon = NULL;
+   if (sd->icon == ev->object) sd->icon = NULL;
 }
 
 EOLIAN static void
@@ -5489,15 +5488,23 @@ _efl_ui_win_role_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 EOLIAN static void
 _efl_ui_win_icon_object_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *icon)
 {
+   if (icon && (!efl_isa(sd->icon, EFL_CANVAS_IMAGE_INTERNAL_CLASS) &&
+                !efl_isa(sd->icon, EFL_UI_IMAGE_CLASS)))
+     {
+        ERR("Icon object type is not supported!");
+        efl_del(icon);
+        return;
+     }
+
    if (sd->icon)
-     evas_object_event_callback_del_full(sd->icon, EVAS_CALLBACK_DEL,
-       _elm_win_on_icon_del, obj);
-   evas_object_del(sd->icon);
+     {
+        efl_event_callback_del(sd->icon, EFL_EVENT_DEL, _elm_win_on_icon_del, obj);
+        efl_del(sd->icon);
+     }
    sd->icon = icon;
    if (sd->icon)
      {
-        evas_object_event_callback_add(sd->icon, EVAS_CALLBACK_DEL,
-          _elm_win_on_icon_del, obj);
+        efl_event_callback_add(sd->icon, EFL_EVENT_DEL, _elm_win_on_icon_del, obj);
         if (sd->frame_obj)
           {
              edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);

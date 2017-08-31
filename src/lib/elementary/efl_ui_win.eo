@@ -364,20 +364,12 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               used, and the image pixels will be used as-is when this
               function is called. If the image object has been updated,
               then call this function again to source the image pixels
-              and put them on the window's icon. Note that only Evas
-              image objects are allowed.
+              and put them on the window's icon. Note that only objects of
+              type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
             ]]
-            /* FIXME-doc
-            Example of usage:
-            @code
-            icon = evas_object_image_add(evas_object_evas_get(elm_window));
-            evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
-            elm_win_icon_object_set(elm_window, icon);
-            evas_object_show(icon);
-            @endcode
-            */
             values {
-               icon: Efl.Canvas.Object @nullable; [[The Evas image object to use for an icon.]]
+               icon: own(Efl.Canvas.Object) @nullable;
+                  [[The image object to use for an icon.]]
             }
          }
          get {
@@ -387,7 +379,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               the object to use for the window icon.
             ]]
             values {
-               icon: const(Efl.Canvas.Object) @nullable; [[The Evas image object to use for an icon.]]
+               icon: const(Efl.Canvas.Object) @nullable;
+                  [[The Evas image object to use for an icon.]]
             }
          }
       }
