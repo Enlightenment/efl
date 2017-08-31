@@ -531,6 +531,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
       @property focus_highlight_enabled {
+         [[Whether focus highlight is enabled or not.]]
          set {
             [[Set the enabled status for the focus highlight in a window.
 
@@ -543,6 +544,24 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          values {
             enabled: bool; [[The enabled value for the highlight.]]
+         }
+      }
+      @property focus_highlight_animate {
+         [[Whether focus highlight should animate or not.]]
+         set {
+            [[Set the animate status for the focus highlight for this window.
+
+              This function will enable or disable the animation of focus
+              highlight only for the given window. If the widget is not a
+              window, then this call is forwarded to the window (using
+              @.widget_top).
+            ]]
+         }
+         get {
+            [[Get the animate value of the focus highlight for this window.]]
+         }
+         values {
+            animate: bool; [[The enabled value for the highlight animation.]]
          }
       }
 
