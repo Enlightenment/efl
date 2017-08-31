@@ -1,0 +1,24 @@
+class Efl.Ui.Popup.Alert.Text(Efl.Ui.Popup.Alert, Efl.Text)
+{
+   methods {
+       @property expandable {
+           set {
+             [[Set the expandable of popup.
+
+               If the contents of the popup has min size, popup will be increased by min size to the y direction.
+               If max hint is set, it will be increased to value of max hint,
+               and then scrolling will occur.
+             ]]
+           }
+           values {
+               is_expandable: bool;
+           }
+       }
+   }
+   implements {
+      class.constructor;
+      Efl.Gfx.Size.Hint.hint_max { set;}
+      Efl.Text.text { get; set; }
+      Efl.Part.part;
+   }
+}
