@@ -398,7 +398,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
-      on_focus @protected {
+      on_focus_update @protected {
          [[Virtual function handling focus in/out events on the widget]]
          params {
             /* FIXME: EO API is not supposed to have any widget item!!! */

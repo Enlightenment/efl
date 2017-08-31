@@ -896,12 +896,12 @@ _elm_diskselector_elm_widget_widget_sub_object_del(Eo *obj, Elm_Diskselector_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_on_focus(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_diskselector_elm_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))

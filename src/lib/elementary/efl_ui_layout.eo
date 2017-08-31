@@ -66,7 +66,7 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Elm.Widget.focus_next;
       Elm.Widget.on_disabled_update;
       Elm.Widget.widget_sub_object_del;
-      Elm.Widget.on_focus;
+      Elm.Widget.on_focus_update;
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;

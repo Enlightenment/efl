@@ -1477,11 +1477,11 @@ _efl_ui_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_on_focus(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_slider_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
 
    if ((sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS) && elm_widget_focus_get(obj))
      _popup_show(obj, NULL, NULL, NULL);

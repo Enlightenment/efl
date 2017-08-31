@@ -3485,12 +3485,12 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_on_focus(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item *item)
+_elm_gengrid_elm_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item *item)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&

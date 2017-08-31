@@ -205,7 +205,7 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.on_access_update;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
-      Elm.Widget.on_focus;
+      Elm.Widget.on_focus_update;
       Elm.Widget.translate;
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;

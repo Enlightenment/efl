@@ -1121,7 +1121,7 @@ _parent_focus(Evas_Object *obj, Elm_Object_Item *item)
    sd->focused = EINA_TRUE;
 
    if (sd->top_win_focused)
-     elm_obj_widget_on_focus(obj, item);
+     elm_obj_widget_on_focus_update(obj, item);
    sd->focus_order_on_calc = EINA_FALSE;
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -3161,7 +3161,7 @@ _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
         focus_order++;
         sd->focus_order = focus_order;
         sd->focused = EINA_TRUE;
-        elm_obj_widget_on_focus(obj, NULL);
+        elm_obj_widget_on_focus_update(obj, NULL);
      }
 
    if (focus)
@@ -3242,7 +3242,7 @@ _elm_widget_focused_object_clear(Eo *obj, Elm_Widget_Smart_Data *sd)
    _focused_object_clear(sd);
    sd->focused = EINA_FALSE;
    if (sd->top_win_focused)
-     elm_obj_widget_on_focus(obj, NULL);
+     elm_obj_widget_on_focus_update(obj, NULL);
 }
 
 static Eo *
@@ -3295,7 +3295,7 @@ _parents_on_focus(Evas_Object *obj)
 
    Evas_Object *o = elm_widget_parent_get(obj);
    if (o) _parents_on_focus(o);
-   elm_obj_widget_on_focus(obj, NULL);
+   elm_obj_widget_on_focus_update(obj, NULL);
 }
 
 EOLIAN static void
@@ -3333,7 +3333,7 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
    sd->top_win_focused = top_win_focused;
 
    if (sd->focused && !sd->top_win_focused)
-     elm_obj_widget_on_focus(obj, NULL);
+     elm_obj_widget_on_focus_update(obj, NULL);
 }
 
 Eina_Bool
@@ -6145,7 +6145,7 @@ _elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EI
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_widget_on_focus_update(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool focused;
    const Efl_Event_Description *desc;
@@ -6425,7 +6425,7 @@ EOLIAN static void
 _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool focus)
 {
    pd->focused = focus;
-   elm_obj_widget_on_focus(obj, NULL);
+   elm_obj_widget_on_focus_update(obj, NULL);
 
    efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
 }

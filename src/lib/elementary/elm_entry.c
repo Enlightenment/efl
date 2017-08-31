@@ -1300,7 +1300,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_entry_elm_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    _elm_entry_focus_update(obj, sd);
 
