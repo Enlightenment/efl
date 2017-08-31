@@ -56,7 +56,7 @@ struct _Node{
   struct _Tree_Node{
     Node *parent; //the parent of the tree
     Eina_List *children; //this saves the original set of elements
-    Eina_List *safed_order;
+    Eina_List *saved_order;
   }tree;
 
   struct _Graph_Node {
@@ -197,7 +197,7 @@ node_item_free(Node *item)
      }
 
    //free the safed order
-   ELM_SAFE_FREE(T(item).safed_order, eina_list_free);
+   ELM_SAFE_FREE(T(item).saved_order, eina_list_free);
 
    free(item);
 }
@@ -545,11 +545,11 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    node->redirect_manager = redirect;
 
    //set again
-   if (T(pnode).safed_order)
+   if (T(pnode).saved_order)
      {
         Eina_List *tmp;
 
-        tmp = eina_list_clone(T(pnode).safed_order);
+        tmp = eina_list_clone(T(pnode).saved_order);
         efl_ui_focus_manager_calc_update_order(obj, parent, tmp);
      }
 
@@ -587,11 +587,11 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    dirty_add(obj, pd, node);
 
    //set again
-   if (T(pnode).safed_order)
+   if (T(pnode).saved_order)
      {
         Eina_List *tmp;
 
-        tmp = eina_list_clone(T(pnode).safed_order);
+        tmp = eina_list_clone(T(pnode).saved_order);
         efl_ui_focus_manager_calc_update_order(obj, parent, tmp);
      }
 
@@ -691,8 +691,8 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
    if (!pnode)
      return;
 
-   ELM_SAFE_FREE(T(pnode).safed_order, eina_list_free);
-   T(pnode).safed_order = order;
+   ELM_SAFE_FREE(T(pnode).saved_order, eina_list_free);
+   T(pnode).saved_order = order;
 
    //get all nodes from the subset
    EINA_LIST_FOREACH(order, n, o)
