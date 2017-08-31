@@ -10,7 +10,7 @@ evas_object_name_set(Evas_Object *eo_obj, const char *name)
    if (obj->name)
      {
         if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
-          eina_hash_del(obj->layer->evas->name_hash, obj->name, eo_obj);
+          eina_hash_list_remove(obj->layer->evas->name_hash, obj->name, eo_obj);
         free(obj->name);
      }
    if (!name) obj->name = NULL;
@@ -18,7 +18,7 @@ evas_object_name_set(Evas_Object *eo_obj, const char *name)
      {
         obj->name = strdup(name);
         if (obj->layer && obj->layer->evas && obj->layer->evas->name_hash)
-          eina_hash_add(obj->layer->evas->name_hash, obj->name, eo_obj);
+          eina_hash_list_prepend(obj->layer->evas->name_hash, obj->name, eo_obj);
      }
 }
 
@@ -35,7 +35,7 @@ EOLIAN Evas_Object*
 _evas_canvas_object_name_find(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
    if (!name) return NULL;
-   else return (Evas_Object *)eina_hash_find(e->name_hash, name);
+   else return eina_list_data_get(eina_hash_find(e->name_hash, name));
 }
 
 static Evas_Object *
