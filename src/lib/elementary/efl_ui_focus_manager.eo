@@ -72,7 +72,7 @@ interface Efl.Ui.Focus.Manager {
             [[The element which is currently focused by this manager]]
 
             values {
-                focus : Efl.Ui.Focus.Object @nonull;
+                focus : Efl.Ui.Focus.Object @nonull; [[Focused element]]
             }
         }
         @property redirect {
@@ -104,7 +104,7 @@ interface Efl.Ui.Focus.Manager {
               This property can only be set once.
             ]]
             set {
-                return : bool;
+                return : bool; [[If $true, this is the root node]]
             }
 
             get {
