@@ -122,6 +122,7 @@ _child_insert(Efl_Object_Event_Grabber_Data *pd, Evas_Object_Protected_Data *obj
                   break;
                }
           }
+        if (found) break;
      }
 
    if (found)
