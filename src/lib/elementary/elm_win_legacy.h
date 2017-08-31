@@ -1199,3 +1199,24 @@ EAPI void elm_win_focus_highlight_enabled_set(Elm_Win *obj, Eina_Bool enabled);
  * @ingroup Efl_Ui_Win
  */
 EAPI Eina_Bool elm_win_focus_highlight_enabled_get(const Elm_Win *obj);
+
+/**
+ * @brief Set the animate status for the focus highlight for this window.
+ *
+ * This function will enable or disable the animation of focus highlight only
+ * for the given window, rof the global setting for it.
+ *
+ * @param[in] animate The enabled value for the highlight animation.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate);
+
+/**
+ * @brief Get the animate value of the focus highlight for this window.
+ *
+ * @return The enabled value for the highlight animation.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_focus_highlight_animate_get(const Elm_Win *obj);

@@ -268,22 +268,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
-      @property focus_highlight_animate {
-         set {
-            [[Set the animate status for the focus highlight for this window.
-
-              This function will enable or disable the animation of focus
-              highlight only for the given window, rof the
-              global setting for it.
-            ]]
-         }
-         get {
-            [[Get the animate value of the focus highlight for this window.]]
-         }
-         values {
-            animate: bool; [[The enabled value for the highlight animation.]]
-         }
-      }
       @property prop_focus_skip {
          set {
             [[Set the window to be skipped by keyboard focus.
@@ -871,6 +855,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.focus { get; }
       Elm.Widget.focus_highlight_style { get; set; }
       Elm.Widget.focus_highlight_enabled { get; set; }
+      Elm.Widget.focus_highlight_animate { get; set; }
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Widget.focus_manager_factory;

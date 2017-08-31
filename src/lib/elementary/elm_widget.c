@@ -212,6 +212,28 @@ _elm_widget_focus_highlight_enabled_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_
      elm_win_focus_highlight_enabled_set(win, enable);
 }
 
+EOLIAN static Eina_Bool
+_elm_widget_focus_highlight_animate_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+   // Forward to closest parent Window
+   const Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+     return elm_win_focus_highlight_animate_get(win);
+
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_widget_focus_highlight_animate_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool enable)
+{
+   // Forward to closest parent Window
+   Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+     elm_win_focus_highlight_animate_set(win, enable);
+}
+
 static Eina_Bool
 _tree_unfocusable(Eo *obj)
 {

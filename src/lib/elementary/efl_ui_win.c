@@ -6349,6 +6349,7 @@ _efl_ui_win_elm_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 EOLIAN static Eina_Bool
 _efl_ui_win_elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *style)
 {
+   // Do not call efl_super() here. Only Win handles this property.
    if (!eina_stringshare_replace(&sd->focus_highlight.style, style))
      return EINA_TRUE;
 
@@ -6360,12 +6361,14 @@ _efl_ui_win_elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win
 EOLIAN static const char*
 _efl_ui_win_elm_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
+   // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.style;
 }
 
 EOLIAN static void
-_efl_ui_win_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool animate)
+_efl_ui_win_elm_widget_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool animate)
 {
+   // Do not call efl_super() here. Only Win handles this property.
    animate = !!animate;
    if (sd->focus_highlight.animate == animate)
      return;
@@ -6376,8 +6379,9 @@ _efl_ui_win_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_focus_highlight_animate_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_elm_widget_focus_highlight_animate_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
+   // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.animate;
 }
 
@@ -8190,6 +8194,18 @@ EAPI void
 elm_win_focus_highlight_enabled_set(Efl_Ui_Win *obj, Eina_Bool enabled)
 {
    elm_obj_widget_focus_highlight_enabled_set(obj, enabled);
+}
+
+EAPI void
+elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate)
+{
+   elm_obj_widget_focus_highlight_animate_set(obj, animate);
+}
+
+EAPI Eina_Bool
+elm_win_focus_highlight_animate_get(const Elm_Win *obj)
+{
+   return elm_obj_widget_focus_highlight_animate_get(obj);
 }
 
 // deprecated
