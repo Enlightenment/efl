@@ -559,12 +559,10 @@ group { name: "e/gadget/luncher/preview";
          target: "e.swallow.title";
          target: "icon";
       }
-      program { name: "go_preview";
-         signal: "e,state,icon,preview"; source: "e";
-         action: STATE_SET "default" 0.0;
+      program { name: "go_alpha";
+         signal: "e,state,icon,alpha"; source: "e";
+         action: STATE_SET "menu" 0.0;
          target: "border";
-         target: "e.swallow.title";
-         target: "icon"; 
       }
    }
 }
