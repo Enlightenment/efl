@@ -1230,3 +1230,29 @@ EAPI Eina_Bool elm_win_focus_highlight_animate_get(const Elm_Win *obj);
  * @ingroup Efl_Ui_Win
  */
 EAPI void elm_win_raise(Elm_Win *obj);
+
+/**
+ * @brief Set the array of available profiles to a window.
+ *
+ * @param[in] profiles The string array of available profiles.
+ * @param[in] count The number of members in profiles.
+ *
+ * @since 1.8
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_available_profiles_set(Elm_Win *obj, const char **profiles, unsigned int count);
+
+/**
+ * @brief Get the array of available profiles of a window.
+ *
+ * @param[out] profiles The string array of available profiles.
+ * @param[out] count The number of members in profiles.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.8
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_available_profiles_get(const Elm_Win *obj, char ***profiles, unsigned int *count);
