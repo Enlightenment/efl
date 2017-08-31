@@ -575,7 +575,7 @@ _obj_mouse_up(void *data,
 
    if (sd->still_in && (ev->flags == EVAS_BUTTON_NONE) &&
        (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
-     elm_widget_focus_mouse_up_handle(obj);
+     elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(obj));
 
    sd->still_in = EINA_FALSE;
 }
@@ -588,7 +588,7 @@ _obj_mouse_in(void *data,
 {
    ELM_WIDGET_DATA_GET(data, sd);
    if (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN)
-     elm_widget_focus_mouse_up_handle(obj);
+     elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(obj));
 }
 
 EOLIAN static void
@@ -4261,24 +4261,9 @@ _elm_widget_focus_hide_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    _if_focused_revert(obj, EINA_TRUE);
 }
 
-EAPI void
-elm_widget_focus_mouse_up_handle(Evas_Object *obj)
-{
-   Evas_Object *o = obj;
-   do
-     {
-        if (_elm_widget_is(o)) break;
-        o = evas_object_smart_parent_get(o);
-     }
-   while (o);
-
-   elm_obj_widget_focus_mouse_up_handle(o);
-}
-
 EOLIAN static void
 _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
-   if (!obj) return;
    if (!_is_focusable(obj)) return;
 
    elm_obj_widget_focus_steal(obj, NULL);

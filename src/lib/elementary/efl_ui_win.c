@@ -2726,7 +2726,7 @@ _win_img_mouse_up(void *data,
 {
    Evas_Event_Mouse_Up *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-     elm_widget_focus_mouse_up_handle(data);
+     elm_widget_focus_mouse_up_handle(evas_object_widget_parent_find(data));
 }
 
 static void

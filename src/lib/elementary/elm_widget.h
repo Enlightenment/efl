@@ -826,6 +826,15 @@ elm_widget_is_legacy(const Eo *obj)
    return sd ? sd->legacy : EINA_FALSE;
 }
 
+/** Takes in any canvas object and returns the first smart parent that is a widget */
+static inline Elm_Widget *
+evas_object_widget_parent_find(Evas_Object *o)
+{
+   while (o && !efl_isa(o, ELM_WIDGET_CLASS))
+     evas_object_smart_parent_get(o);
+   return o;
+}
+
 /* to be used by INTERNAL classes on Elementary, so that the widgets
  * parsing script skips it */
 #define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW
