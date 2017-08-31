@@ -12,27 +12,27 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
       circle_set {
          [[Set a circle with given center, radius, and start angle.]]
          params {
-            @in x: double;
-            @in y: double;
-            @in radius: double;
-            @in start_angle: double;
-            @in direction: Efl.Ui.Textpath.Direction;
+            @in x: double; [[X coordinate of center]]
+            @in y: double; [[Y coordinate of center]]
+            @in radius: double; [[Radius of the circle]]
+            @in start_angle: double; [[Start angle of the circle]]
+            @in direction: Efl.Ui.Textpath.Direction; [[Textpath direction]]
          }
       }
       @property autofit {
          [[The ability to fit the text within the path.
-           Set it to EINA_TRUE to let text occupy only portion
+           Set it to $true to let text occupy only portion
            same as its size. Otherwise, text will occupied the whole path.
-           By default, it is EINA_TRUE.]]
+           By default, it is $true.]]
          values {
-            autofit: bool;
+            autofit: bool; [[Autofit enabled if $true, $false otherwise]]
          }
       }
       @property slice_number {
          [[The number of slices. The larger the number of slice_num is,
            The better the text follows the path.]]
          values {
-            slice_no: int;
+            slice_no: int; [[Number of slices]]
          }
       }
       @property ellipsis {
