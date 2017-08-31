@@ -176,9 +176,8 @@ struct _Efl_Ui_Win_Data
 
    struct
    {
-      const char  *name;
-      const char **available_list;
-      unsigned int count;
+      Eina_Stringshare *name; /* Current profile in use */
+      Eina_Array       *available; /* Never NULL, contains Eina_Stringshare */
    } profile;
    struct
    {
@@ -1299,13 +1298,14 @@ _elm_win_focus_out(Ecore_Evas *ee)
 static void
 _elm_win_available_profiles_del(Efl_Ui_Win_Data *sd)
 {
-   if (!sd->profile.available_list) return;
+   Eina_Stringshare *prof;
+   Eina_Iterator *it;
 
-   unsigned int i;
-   for (i = 0; i < sd->profile.count; i++)
-     ELM_SAFE_FREE(sd->profile.available_list[i], eina_stringshare_del);
-   sd->profile.count = 0;
-   ELM_SAFE_FREE(sd->profile.available_list, free);
+   it = eina_array_iterator_new(sd->profile.available);
+   EINA_ITERATOR_FOREACH(it, prof)
+     eina_stringshare_del(prof);
+   eina_iterator_free(it);
+   eina_array_flush(sd->profile.available);
 }
 
 static void
@@ -1318,21 +1318,12 @@ static Eina_Bool
 _internal_elm_win_profile_set(Efl_Ui_Win_Data *sd, const char *profile)
 {
    Eina_Bool changed = EINA_FALSE;
+
+   if (profile == sd->profile.name) return EINA_FALSE;
    if (profile)
      {
-        if (sd->profile.name)
-          {
-             if (strcmp(sd->profile.name, profile) != 0)
-               {
-                  eina_stringshare_replace(&(sd->profile.name), profile);
-                  changed = EINA_TRUE;
-               }
-          }
-        else
-          {
-             sd->profile.name = eina_stringshare_add(profile);
-             changed = EINA_TRUE;
-          }
+        if (eina_stringshare_replace(&sd->profile.name, profile))
+          changed = EINA_TRUE;
      }
    else
      _elm_win_profile_del(sd);
@@ -1340,33 +1331,39 @@ _internal_elm_win_profile_set(Efl_Ui_Win_Data *sd, const char *profile)
    return changed;
 }
 
+static inline Eina_Bool
+_profile_exists(Efl_Ui_Win_Data *sd, const char *profile)
+{
+   Eina_Bool found = EINA_FALSE;
+   Eina_Stringshare *prof;
+   Eina_Iterator *it;
+
+   if (!profile) return EINA_FALSE;
+   it = eina_array_iterator_new(sd->profile.available);
+   EINA_ITERATOR_FOREACH(it, prof)
+     if (!strcmp(profile, prof))
+       {
+          found = EINA_TRUE;
+          break;
+       }
+   eina_iterator_free(it);
+   return found;
+}
+
 static void
 _elm_win_profile_update(Efl_Ui_Win_Data *sd)
 {
    if (getenv("ELM_PROFILE")) return;
 
-   if (sd->profile.available_list)
+   if (eina_array_count(sd->profile.available))
      {
-        Eina_Bool found = EINA_FALSE;
-        if (sd->profile.name)
-          {
-             unsigned int i;
-             for (i = 0; i < sd->profile.count; i++)
-               {
-                  if (!strcmp(sd->profile.name,
-                              sd->profile.available_list[i]))
-                    {
-                       found = EINA_TRUE;
-                       break;
-                    }
-               }
-          }
+        Eina_Bool found = _profile_exists(sd, sd->profile.name);
 
         /* If current profile is not present in an available profiles,
          * change current profile to the 1st element of an array.
          */
         if (!found)
-          _internal_elm_win_profile_set(sd, sd->profile.available_list[0]);
+          _internal_elm_win_profile_set(sd, eina_array_data_get(sd->profile.available, 0));
      }
 
    _config_profile_lock = EINA_TRUE;
@@ -2878,6 +2875,8 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    _elm_win_profile_del(sd);
    _elm_win_available_profiles_del(sd);
+   eina_array_free(sd->profile.available);
+   sd->profile.available = NULL;
 
    free(sd->wm_rot.rots);
    sd->wm_rot.rots = NULL;
@@ -5358,7 +5357,7 @@ _efl_ui_win_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
 }
 
 EOLIAN static void
-_efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED)
+_efl_ui_win_efl_object_destructor(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->type == ELM_WIN_FAKE)
@@ -5373,16 +5372,17 @@ _efl_ui_win_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_
 EOLIAN static Eo *
 _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
 {
-   /* UGLY HACK: Do nothing. */
-   pd->obj = obj;
-
-   /* XXX: We are calling the constructor chain from the finalizer. It's
+   /* UGLY HACK: Do (almost) nothing here:
+    * We are calling the constructor chain from the finalizer. It's
     * really bad and hacky. Needs fixing. */
+
+   pd->obj = obj;
    pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
+   pd->profile.available = eina_array_new(4);
 
    efl_composite_attach(obj, pd->manager);
-
    _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
+
    return obj;
 }
 
@@ -5805,71 +5805,85 @@ _efl_ui_win_iconified_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_available_profiles_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char **profiles, unsigned int count)
+_efl_ui_win_wm_available_profiles_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eina_Array *profiles)
 {
    Eina_Bool found = EINA_FALSE;
 
    _elm_win_available_profiles_del(sd);
-   if ((profiles) && (count >= 1))
+   if (profiles && eina_array_count(profiles))
      {
-        sd->profile.available_list = calloc(count, sizeof(char *));
-        if (sd->profile.available_list)
+        Eina_Iterator *it;
+        const char *prof;
+
+        it = eina_array_iterator_new(profiles);
+        EINA_ITERATOR_FOREACH(it, prof)
           {
-             if (!sd->profile.name) found = EINA_TRUE;
+             Eina_Stringshare *str = eina_stringshare_add(prof);
+             if (!str) continue;
 
-             unsigned int i;
-             for (i = 0; i < count; i++)
-               {
-                  sd->profile.available_list[i] = eina_stringshare_add(profiles[i]);
-
-                  /* check to see if a given array has a current profile of elm_win */
-                  if ((sd->profile.name) &&
-                      (!strcmp(sd->profile.name, profiles[i])))
-                    {
-                       found = EINA_TRUE;
-                    }
-               }
-             sd->profile.count = count;
+             eina_array_push(sd->profile.available, str);
+             /* check to see if a given array has a current profile of elm_win */
+             if (str == sd->profile.name)
+               found = EINA_TRUE;
           }
+        eina_iterator_free(it);
      }
 
    if (ecore_evas_window_profile_supported_get(sd->ee))
      {
         ecore_evas_window_available_profiles_set(sd->ee,
-                                                 sd->profile.available_list,
-                                                 sd->profile.count);
+                                                 (const char **) sd->profile.available->data,
+                                                 eina_array_count(sd->profile.available));
 
         /* current profile of elm_win is wrong, change profile */
-        if ((sd->profile.available_list) && (!found))
+        if (!found && eina_array_count(sd->profile.available))
           {
              eina_stringshare_replace(&(sd->profile.name),
-                                      sd->profile.available_list[0]);
+                                      eina_array_data_get(sd->profile.available, 0));
              ecore_evas_window_profile_set(sd->ee, sd->profile.name);
           }
 
      }
    else
      {
-        if (sd->profile.available_list)
+        if (eina_array_count(sd->profile.available))
           _elm_win_profile_update(sd);
      }
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_available_profiles_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, char ***profiles, unsigned int *count)
+EOLIAN static const Eina_Array *
+_efl_ui_win_wm_available_profiles_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    if (ecore_evas_window_profile_supported_get(sd->ee))
      {
-        return ecore_evas_window_available_profiles_get(sd->ee,
-                                                       profiles,
-                                                       count);
+        char **profiles = NULL; // all const
+        unsigned int count, i;
+        Eina_Bool ok;
+
+        ok = ecore_evas_window_available_profiles_get(sd->ee, &profiles, &count);
+        if (!ok) return NULL;
+
+        if (count == eina_array_count(sd->profile.available))
+          {
+             for (i = 0; ok && (i < count); i++)
+               {
+                  if (!eina_streq(profiles[i], eina_array_data_get(sd->profile.available, i)))
+                    ok = EINA_FALSE;
+               }
+             if (ok) return sd->profile.available;
+          }
+
+        // Oops! What is going on here? Can this happen?
+        INF("Available profile list has changed in ecore evas!");
+        _elm_win_available_profiles_del(sd);
+        for (i = 0; i < count; i++)
+          {
+             Eina_Stringshare *str = eina_stringshare_add(profiles[i]);
+             if (str) eina_array_push(sd->profile.available, str);
+          }
      }
-   else
-     {
-        if (profiles) *profiles = (char **)sd->profile.available_list;
-        if (count) *count = sd->profile.count;
-        return EINA_TRUE;
-     }
+
+   return sd->profile.available;
 }
 
 EOLIAN static void
@@ -7780,20 +7794,10 @@ elm_win_profile_set(Evas_Object *obj, const char *profile)
    if (!sd) return;
 
    /* check to see if a given profile is present in an available profiles */
-   if ((profile) && (sd->profile.available_list))
+   if (profile && eina_array_count(sd->profile.available))
      {
-        Eina_Bool found = EINA_FALSE;
-        unsigned int i;
-        for (i = 0; i < sd->profile.count; i++)
-          {
-             if (!strcmp(profile,
-                         sd->profile.available_list[i]))
-               {
-                  found = EINA_TRUE;
-                  break;
-               }
-          }
-        if (!found) return;
+        if (!_profile_exists(sd, profile))
+          return;
      }
 
    if (ecore_evas_window_profile_supported_get(sd->ee))
@@ -8226,6 +8230,46 @@ EAPI Eina_Bool
 elm_win_focus_highlight_animate_get(const Elm_Win *obj)
 {
    return elm_obj_widget_focus_highlight_animate_get(obj);
+}
+
+EAPI Eina_Bool
+elm_win_available_profiles_get(const Elm_Win *obj, char ***profiles, unsigned int *count)
+{
+   const Eina_Array *ar;
+
+   if (!efl_isa(obj, MY_CLASS)) return EINA_FALSE;
+   ar = efl_ui_win_wm_available_profiles_get(obj);
+   if (!ar)
+     {
+        if (profiles) *profiles = NULL;
+        if (count) *count = 0;
+        return EINA_FALSE;
+     }
+
+   if (profiles) *profiles = (char **) ar->data;
+   if (count) *count = ar->count;
+   return EINA_TRUE;
+}
+
+EAPI void
+elm_win_available_profiles_set(Elm_Win *obj, const char **profiles, unsigned int count)
+{
+   if (!efl_isa(obj, MY_CLASS)) return;
+   if (count && profiles)
+     {
+        Eina_Array *ar;
+        unsigned int i;
+
+        ar = eina_array_new(count ?: 1);
+        for (i = 0; i < count; i++)
+          eina_array_push(ar, profiles[i]);
+        efl_ui_win_wm_available_profiles_set(obj, ar);
+        eina_array_free(ar);
+     }
+   else
+     {
+        efl_ui_win_wm_available_profiles_set(obj, NULL);
+     }
 }
 
 // deprecated

@@ -247,6 +247,18 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             return: bool; [[$true on success, $false otherwise]]
          }
       }
+      @property wm_available_profiles {
+         [[Available profiles on a window.]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            profiles: const(array<string>); [[A list of profiles.]]
+         }
+      }
       @property screen_constrain {
          set {
             [[Constrain the maximum width and height of a window to the
@@ -607,35 +619,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
               was created.]]
          }
       }
-      @property available_profiles {
-         /* FIXME: terminated_array is actually wrong here (the "count" argument
-          * provides the size, not a NULL at the end of it), but we have no way
-          * to represent this in Eolian correctly, it will work fine for C but
-          * will break for other languages; we probably want to re-do this API
-          * completely though, so that it can bind nicely
-          */
-         set {
-            [[Set the array of available profiles to a window.
-
-              @since 1.8
-            ]]
-            values {
-               profiles: terminated_array<string>; [[The string array of available profiles.]]
-               count: uint; [[The number of members in profiles.]]
-            }
-         }
-         get {
-            [[Get the array of available profiles of a window.
-
-              @since 1.8
-            ]]
-            values {
-               profiles: terminated_array<ptr(char)>; [[The string array of available profiles.]]
-               count: uint; [[The number of members in profiles.]]
-            }
-            return: bool; [[$true on success, $false otherwise]]
-         }
-      }
       @property alpha {
          set {
             [[Set the alpha channel state of a window.
@@ -737,12 +720,15 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
          ]]
       }
       center {
-         [[Center a window on its screen
+         [[Center a window on its screen.
 
            This function centers window $obj horizontally and/or vertically
            based on the values of $h and $v.
-         ]]
 
+           Note: This is just a request that a Window Manager may ignore,
+           so calling this function does not ensure in any way that the
+           window will be centered after it.
+         ]]
          params {
             @in h: bool; [[If $true, center horizontally. If $false, do not change horizontal location.]]
             @in v: bool; [[If $true, center vertically. If $false, do not change vertical location.]]
