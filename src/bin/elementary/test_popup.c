@@ -1136,3 +1136,39 @@ test_efl_ui_popup_alert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
 }
+
+void
+test_efl_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("Efl UI Popup Alert Scroll", "Efl UI Popup Alert Scroll");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+
+   Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
+
+   efl_ui_popup_alert_title_set(efl_ui_popup, "title");
+
+   evas_object_resize(efl_ui_popup, 160, 160);
+   evas_object_show(efl_ui_popup);
+
+   Evas_Object *layout = elm_layout_add(efl_ui_popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   evas_object_show(layout);
+
+   efl_content_set(efl_ui_popup, layout);
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_TRUE, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(300, 180));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
