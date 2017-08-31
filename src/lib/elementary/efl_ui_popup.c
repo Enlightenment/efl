@@ -191,7 +191,7 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
      evas_object_resize(obj, minw, h);
    else if ((minw < w) && (minh > h))
      evas_object_resize(obj, w, minh);
-   else if ((minw > w) && (minh > h))
+   else if ((minw >= w) && (minh >= h))
      evas_object_resize(obj, minw, minh);
 }
 
