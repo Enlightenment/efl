@@ -1,6 +1,6 @@
 import elm_general;
 
-type @extern Elm.Genlist.Item.Class: __undefined_type;
+type @extern Elm.Genlist.Item.Class: __undefined_type; [[External elm genlist item class]]
 
 enum Elm.Genlist.Item.Type
 {

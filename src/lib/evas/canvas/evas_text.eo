@@ -1,4 +1,4 @@
-type @extern Evas.Text_Style_Type : __undefined_type;
+type @extern Evas.Text_Style_Type : __undefined_type; [[External text style type]]
 
 class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal)
 {
