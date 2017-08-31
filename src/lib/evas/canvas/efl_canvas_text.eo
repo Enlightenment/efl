@@ -336,8 +336,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
       Efl.Text.Annotate.cursor_object_item_insert;
    }
    events {
-      cursor,changed;
-      changed;
+      cursor,changed; [[Called when cursor changed]]
+      changed; [[Called when canvas text changed ]]
       style_insets,changed; [[Called when the property @.style_insets changed.]]
    }
 }
