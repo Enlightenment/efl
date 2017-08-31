@@ -24,7 +24,6 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    if (window->surface) wl_surface_destroy(window->surface);
    window->surface = NULL;
    window->surface_id = -1;
-   ecore_wl2_display_flush(window->display);
 }
 
 
