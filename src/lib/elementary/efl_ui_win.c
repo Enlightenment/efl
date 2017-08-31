@@ -1701,9 +1701,8 @@ _efl_ui_win_elm_widget_focus_direction(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED
 EOLIAN static Eina_Bool
 _efl_ui_win_elm_widget_on_focus(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
-   if (!int_ret) return EINA_TRUE;
+   if (!elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL))
+     return EINA_TRUE;
 
    if (sd->img_obj)
      evas_object_focus_set(sd->img_obj, elm_widget_focus_get(obj));
@@ -6177,8 +6176,9 @@ _efl_ui_win_indicator_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNU
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_elm_widget_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
+   // Bypass widget implementation here.
    return ecore_evas_focus_get(sd->ee);
 }
 
@@ -8155,6 +8155,12 @@ EAPI Eina_Bool
 elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys)
 {
    return efl_ui_win_socket_listen(obj, svcname, svcnum, svcsys);
+}
+
+EAPI Eina_Bool
+elm_win_focus_get(const Efl_Ui_Win *obj)
+{
+   return elm_obj_widget_focus_get(obj);
 }
 
 // deprecated
