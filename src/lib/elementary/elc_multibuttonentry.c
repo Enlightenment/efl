@@ -350,6 +350,9 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
 {
    if (elm_widget_focus_get(obj))
      {
+        if (sd->focused) goto end;
+        sd->focused = EINA_TRUE;
+
         // ACCESS
         if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) goto end;
 
@@ -373,6 +376,9 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
      }
    else
      {
+        if (sd->focused) goto end;
+        sd->focused = EINA_FALSE;
+
         if (sd->editable)
           {
              _view_update(sd);
