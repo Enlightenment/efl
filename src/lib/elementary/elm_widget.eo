@@ -409,7 +409,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       /* FIXME: Needs better doc... maybe merge with widget_event? */
       focus_mouse_up_handle {
          [[Handle focus mouse up]]
-         legacy: null;
       }
 
       /* Scroll API. */
