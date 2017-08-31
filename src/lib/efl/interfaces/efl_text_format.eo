@@ -39,35 +39,35 @@ interface Efl.Text.Format {
          [[Ellipsis value (number from -1.0 to 1.0)]]
          values
          {
-            value: double;
+            value: double; [[Ellipsis value]]
          }
       }
 
       @property wrap {
          [[Wrap mode for use in the text]]
          values {
-            wrap: Efl.Text.Format.Wrap;
+            wrap: Efl.Text.Format.Wrap; [[Wrap mode]]
          }
       }
 
       @property multiline {
          [[Multiline is enabled or not]]
          values {
-            enabled: bool;
+            enabled: bool; [[$true if multiline is enabled, $false otherwise]]
          }
       }
 
       @property halign {
          [[Horizontal alignment of text]]
          values {
-            value: Efl.Text.Format.Horizontal_Alignment_Type;
+            value: Efl.Text.Format.Horizontal_Alignment_Type; [[Alignment type]]
          }
       }
 
       @property valign {
          [[Vertical alignment of text]]
          values {
-            value: Efl.Text.Format.Vertical_Alignment_Type;
+            value: Efl.Text.Format.Vertical_Alignment_Type; [[Allignment type]]
          }
       }
 
@@ -78,7 +78,7 @@ interface Efl.Text.Format {
          ]]
          values
          {
-            value: double;
+            value: double; [[Line gap value]]
          }
       }
 
@@ -89,7 +89,7 @@ interface Efl.Text.Format {
          ]]
          values
          {
-            value: double;
+            value: double; [[Relative line gap value]]
          }
       }
 
@@ -97,7 +97,7 @@ interface Efl.Text.Format {
          [[Tabstops value]]
          values
          {
-            value: int;
+            value: int; [[Tapstops value]]
          }
       }
 
@@ -105,7 +105,7 @@ interface Efl.Text.Format {
          [[Whether text is a password]]
          values
          {
-            enabled: bool;
+            enabled: bool; [[$true if the text is a password, $false otherwise]]
          }
       }
 
@@ -116,7 +116,7 @@ interface Efl.Text.Format {
            is enabled.
          ]]
          values {
-            repch: string;
+            repch: string; [[Replacement character]]
          }
       }
    }
