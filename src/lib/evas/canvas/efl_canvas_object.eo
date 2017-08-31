@@ -20,7 +20,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
              pointer_mode: Efl.Input.Object_Pointer_Mode; [[The pointer mode]]
          }
          set {
-	    return: bool;
+	    return: bool; [[$true if pointer mode was set, $false otherwise]]
             legacy: null;
          }
          get {
@@ -49,7 +49,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 	 get {
 	 }
 	 set {
-	    return: bool;
+	    return: bool; [[$true if pointer behaviour was set, $false otherwise]]
 	 }
          values {
             pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]

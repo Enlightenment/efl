@@ -748,7 +748,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          params {
             @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
          }
-         return: Efl.Ui.Focus.Manager;
+         return: Efl.Ui.Focus.Manager; [[Focus manager]]
       }
       focus_direction_manager_is @protected {
          [[Virtual function which checks if this widget can handle passing
