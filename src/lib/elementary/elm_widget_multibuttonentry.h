@@ -104,7 +104,7 @@ struct _Elm_Multibuttonentry_Data
 
    Eina_Bool                           last_it_select : 1;
    Eina_Bool                           editable : 1;
-   Eina_Bool                           focused : 1;
+   Eina_Bool                           focused : 1; // avoids infinite loop on focus in/out
    Eina_Bool                           label_packed : 1;
 
    Ecore_Timer                         *longpress_timer;
