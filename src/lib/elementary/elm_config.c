@@ -937,6 +937,7 @@ _elm_config_profile_dir_get(const char *prof,
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
+   // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
      return strdup(buf);
 
@@ -945,6 +946,7 @@ _elm_config_profile_dir_get(const char *prof,
 not_user:
    snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
+   // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
      return strdup(buf);
 
@@ -2793,6 +2795,7 @@ elm_config_profile_dir_get(const char *profile,
 EAPI void
 elm_config_profile_dir_free(const char *p_dir)
 {
+   // Don't change this: EO relies on free() to be used.
    free((void *)p_dir);
 }
 
