@@ -268,27 +268,12 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
-      @property focus_highlight_enabled {
-         set {
-            [[Set the enabled status for the focus highlight in a window.
-
-              This function will enable or disable the focus highlight only
-              for the given window, regardless of the global setting for it.
-            ]]
-         }
-         get {
-            [[Get the enabled value of the focus highlight for this window.]]
-         }
-         values {
-            enabled: bool; [[The enabled value for the highlight.]]
-         }
-      }
       @property focus_highlight_animate {
          set {
             [[Set the animate status for the focus highlight for this window.
 
               This function will enable or disable the animation of focus
-              highlight only for the given window, regardless of the
+              highlight only for the given window, rof the
               global setting for it.
             ]]
          }
@@ -885,6 +870,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.theme_apply;
       Elm.Widget.focus { get; }
       Elm.Widget.focus_highlight_style { get; set; }
+      Elm.Widget.focus_highlight_enabled { get; set; }
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Widget.focus_manager_factory;

@@ -530,6 +530,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             style: string @nullable; [[The name of the focus highlight style.]]
          }
       }
+      @property focus_highlight_enabled {
+         set {
+            [[Set the enabled status for the focus highlight in a window.
+
+              This function will enable or disable the focus highlight only
+              for the given window, regardless of the global setting for it.
+            ]]
+         }
+         get {
+            [[Get the enabled value of the focus highlight for this window.]]
+         }
+         values {
+            enabled: bool; [[The enabled value for the highlight.]]
+         }
+      }
 
       /* Old focus API. FIXME: Needs massive clean up! */
       @property focus_order @beta {

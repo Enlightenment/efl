@@ -1178,3 +1178,24 @@ EAPI void elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style);
  * @ingroup Efl_Ui_Win
  */
 EAPI const char *elm_win_focus_highlight_style_get(const Elm_Win *obj);
+
+/**
+ * @brief Set the enabled status for the focus highlight in a window.
+ *
+ * This function will enable or disable the focus highlight only for the given
+ * window, regardless of the global setting for it.
+ *
+ * @param[in] enabled The enabled value for the highlight.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_focus_highlight_enabled_set(Elm_Win *obj, Eina_Bool enabled);
+
+/**
+ * @brief Get the enabled value of the focus highlight for this window.
+ *
+ * @return The enabled value for the highlight.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_focus_highlight_enabled_get(const Elm_Win *obj);

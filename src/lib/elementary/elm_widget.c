@@ -190,14 +190,26 @@ _elm_widget_focus_highlight_object_get(const Evas_Object *obj)
    return NULL;
 }
 
-EAPI Eina_Bool
-elm_widget_focus_highlight_enabled_get(const Evas_Object *obj)
+EOLIAN static Eina_Bool
+_elm_widget_focus_highlight_enabled_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
+   // Forward to closest parent Window
    const Evas_Object *win = elm_widget_top_get(obj);
 
    if (win && efl_isa(win, EFL_UI_WIN_CLASS))
      return elm_win_focus_highlight_enabled_get(win);
+
    return EINA_FALSE;
+}
+
+EOLIAN static void
+_elm_widget_focus_highlight_enabled_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool enable)
+{
+   // Forward to closest parent Window
+   Evas_Object *win = elm_widget_top_get(obj);
+
+   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+     elm_win_focus_highlight_enabled_set(win, enable);
 }
 
 static Eina_Bool
