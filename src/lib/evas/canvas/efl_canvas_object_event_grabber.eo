@@ -24,7 +24,7 @@ class Efl.Canvas.Object.Event.Grabber (Efl.Canvas.Group)
       @property freeze_when_visible {
          [[Stops the grabber from updating its internal stacking order while visible]]
          values {
-            set: bool;
+            set: bool; [[If $true, stop updating]]
          }
          set {}
          get {}
