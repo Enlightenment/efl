@@ -1148,3 +1148,12 @@ EAPI Evas_Object *elm_win_get(Evas_Object *obj);
  * @ingroup Efl_Ui_Win
  */
 EAPI Eina_Bool elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
+
+/**
+ * @brief Get whether a window has focus.
+ *
+ * @return @c true if window has focus, @c false otherwise
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_focus_get(const Efl_Ui_Win *obj);

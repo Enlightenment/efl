@@ -339,12 +339,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
          }
       }
-      @property focus {
-         get {
-            [[Get whether a window has focus.]]
-            return: bool; [[$true if window has focus, $false otherwise]]
-         }
-      }
       @property autodel {
          set {
             [[Set the window's autodel state.
@@ -905,6 +899,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
+      Elm.Widget.focus { get; }
       Elm.Widget.on_focus;
       Elm.Widget.widget_event;
       Elm.Widget.focus_manager_factory;
