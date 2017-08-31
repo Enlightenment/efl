@@ -122,7 +122,7 @@ interface Efl.Text.Annotate {
             annotation: ptr(Efl.Text.Annotate.Annotation); [[Annotation]]
          }
          keys {
-            cur: ptr(Efl.Text.Cursor.Cursor);
+            cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
          }
       }
       cursor_object_item_insert {
@@ -134,7 +134,7 @@ interface Efl.Text.Annotate {
          ]]
          legacy: null;
          params {
-            cur: ptr(Efl.Text.Cursor.Cursor);
+            cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
             @in format: string; [[Format of the inserted item.
             See Format styles.]]
          }
