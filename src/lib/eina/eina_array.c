@@ -46,10 +46,13 @@ static const char EINA_MAGIC_ARRAY_STR[] = "Eina Array";
 static const char EINA_MAGIC_ARRAY_ITERATOR_STR[] = "Eina Array Iterator";
 static const char EINA_MAGIC_ARRAY_ACCESSOR_STR[] = "Eina Array Accessor";
 
-#define EINA_MAGIC_CHECK_ARRAY(d)                       \
-   do {                                                  \
-        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY)) {        \
-             EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY); }            \
+#define EINA_MAGIC_CHECK_ARRAY(d, ...) \
+   do { \
+        if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ARRAY)) \
+          { \
+             EINA_MAGIC_FAIL(d, EINA_MAGIC_ARRAY); \
+             return __VA_ARGS__; \
+          } \
      } while (0)
 
 #define EINA_MAGIC_CHECK_ARRAY_ITERATOR(d, ...)                 \
@@ -195,8 +198,7 @@ eina_array_grow(Eina_Array *array)
    unsigned int total;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
-
-   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_MAGIC_CHECK_ARRAY(array, EINA_FALSE);
 
    total = array->total + array->step;
    tmp = realloc(array->data, sizeof (void *) * total);
@@ -350,7 +352,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(keep,  EINA_FALSE);
-   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_MAGIC_CHECK_ARRAY(array, EINA_FALSE);
 
    if (array->total == 0) return EINA_TRUE;
    // 1. walk through all items and shuffle down any items on top of
@@ -394,7 +396,7 @@ eina_array_iterator_new(const Eina_Array *array)
    Eina_Iterator_Array *it;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
-   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_MAGIC_CHECK_ARRAY(array, NULL);
 
    it = calloc(1, sizeof (Eina_Iterator_Array));
    if (!it) return NULL;
@@ -419,7 +421,7 @@ eina_array_accessor_new(const Eina_Array *array)
    Eina_Accessor_Array *ac;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, NULL);
-   EINA_MAGIC_CHECK_ARRAY(array);
+   EINA_MAGIC_CHECK_ARRAY(array, NULL);
 
    ac = calloc(1, sizeof (Eina_Accessor_Array));
    if (!ac) return NULL;
