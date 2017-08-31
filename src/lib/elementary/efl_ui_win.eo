@@ -900,7 +900,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Elm.Widget.focus { get; }
-      Elm.Widget.on_focus;
+      Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Widget.focus_manager_factory;
       Elm.Interface.Atspi_Accessible.parent { get; }

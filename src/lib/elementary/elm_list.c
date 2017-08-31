@@ -1234,13 +1234,13 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_on_focus(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus(efl_super(obj, MY_CLASS), NULL);
+   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)

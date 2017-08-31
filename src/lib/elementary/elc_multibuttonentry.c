@@ -346,7 +346,7 @@ _view_update(Elm_Multibuttonentry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_multibuttonentry_elm_widget_on_focus_update(Eo *obj, Elm_Multibuttonentry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    if (elm_widget_focus_get(obj))
      {

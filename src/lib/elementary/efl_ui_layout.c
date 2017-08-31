@@ -396,7 +396,7 @@ _efl_ui_layout_list_data_get(const Eina_List *list)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_on_focus(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
