@@ -6344,16 +6344,19 @@ _efl_ui_win_elm_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_efl_ui_win_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *style)
+EOLIAN static Eina_Bool
+_efl_ui_win_elm_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *style)
 {
-   eina_stringshare_replace(&sd->focus_highlight.style, style);
+   if (!eina_stringshare_replace(&sd->focus_highlight.style, style))
+     return EINA_TRUE;
+
    sd->focus_highlight.theme_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
+   return EINA_TRUE;
 }
 
 EOLIAN static const char*
-_efl_ui_win_focus_highlight_style_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_elm_widget_focus_highlight_style_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->focus_highlight.style;
 }
@@ -8162,6 +8165,19 @@ elm_win_focus_get(const Efl_Ui_Win *obj)
 {
    return elm_obj_widget_focus_get(obj);
 }
+
+EAPI void
+elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style)
+{
+   elm_widget_focus_highlight_style_set(obj, style);
+}
+
+EAPI const char *
+elm_win_focus_highlight_style_get(const Elm_Win *obj)
+{
+   return elm_widget_focus_highlight_style_get(obj);
+}
+
 
 // deprecated
 

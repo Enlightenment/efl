@@ -8,7 +8,8 @@ glow_effect_on_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *chk = evas_object_data_get(obj, "glow_is_enable");
 
-   if (elm_check_state_get(chk)) elm_win_focus_highlight_style_set(data, "glow_effect");
+   if (elm_check_state_get(chk))
+     elm_win_focus_highlight_style_set(data, "glow_effect");
 }
 
 static void
@@ -16,7 +17,8 @@ glow_effect_off_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *chk = evas_object_data_get(obj, "glow_is_enable");
 
-   if (elm_check_state_get(chk)) elm_win_focus_highlight_style_set(data, "glow");
+   if (elm_check_state_get(chk))
+     elm_win_focus_highlight_style_set(data, "glow");
 }
 
 void

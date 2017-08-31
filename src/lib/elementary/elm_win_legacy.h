@@ -1147,7 +1147,7 @@ EAPI Evas_Object *elm_win_get(Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Win
  */
-EAPI Eina_Bool elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
+EAPI Eina_Bool elm_win_socket_listen(Elm_Win *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
  * @brief Get whether a window has focus.
@@ -1156,4 +1156,25 @@ EAPI Eina_Bool elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int s
  *
  * @ingroup Efl_Ui_Win
  */
-EAPI Eina_Bool elm_win_focus_get(const Efl_Ui_Win *obj);
+EAPI Eina_Bool elm_win_focus_get(const Elm_Win *obj);
+
+/**
+ * @brief Set the style for the focus highlight on this window.
+ *
+ * Sets the style to use for theming the highlight of focused objects on the
+ * given window. If @c style is NULL, the default will be used.
+ *
+ * @param[in] style The style or @c null if none.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style);
+
+/**
+ * @brief Get the style set for the focus highlight object.
+ *
+ * @return The style or @c null if none.
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI const char *elm_win_focus_highlight_style_get(const Elm_Win *obj);

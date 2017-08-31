@@ -517,14 +517,17 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
       }
       @property focus_highlight_style {
-         [[Control the widget focus highlight style.]]
+         [[Control the widget focus highlight style.
+
+           If $style is $null, the default will be used.
+         ]]
          set {
             return: bool; [[$true on success, $false otherwise.]]
          }
          get {
          }
          values {
-            style: string; [[The name of the focus highlight style.]]
+            style: string @nullable; [[The name of the focus highlight style.]]
          }
       }
 
