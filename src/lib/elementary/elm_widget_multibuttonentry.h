@@ -86,6 +86,7 @@ struct _Elm_Multibuttonentry_Data
    Eina_List                          *items;
    Eina_List                          *filter_list;
    Elm_Multibuttonentry_Item_Data     *selected_it; /* selected item */
+   Elm_Multibuttonentry_Item_Data     *focused_it;
 
    Elm_Multibuttonentry_Format_Cb      format_func;
    const void                         *format_func_data;

@@ -357,6 +357,8 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
           {
              if ((sd->selected_it))
                {
+                  elm_layout_signal_emit(VIEW(sd->selected_it), "elm,state,focused", "elm");
+                  elm_object_focus_set(VIEW(sd->selected_it), EINA_TRUE);
                   elm_entry_input_panel_show(sd->entry);
                }
              else if (((!sd->selected_it) || (!eina_list_count(sd->items))))
@@ -376,6 +378,10 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
              _view_update(sd);
              elm_entry_input_panel_hide(sd->entry);
           }
+
+        if (sd->selected_it)
+          elm_layout_signal_emit(VIEW(sd->selected_it), "elm,state,unfocused", "elm");
+
         efl_event_callback_legacy_call
           (obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
      }
@@ -399,6 +405,9 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
 
    if (sd->selected_it == item)
      sd->selected_it = NULL;
+
+   if (sd->focused_it == item)
+     sd->focused_it = NULL;
 
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
      _shrink_mode_set(obj, EINA_TRUE);
@@ -565,7 +574,7 @@ _on_item_focused(void *data,
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
-   sd->selected_it = it;
+   sd->focused_it = it;
 }
 
 static void
@@ -578,8 +587,7 @@ _on_item_unfocused(void *data,
 
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
 
-   sd->selected_it = NULL;
-   elm_layout_signal_emit(VIEW(it), "elm,state,unfocused", "elm");
+   sd->focused_it = NULL;
 }
 
 static Eina_Bool
@@ -1142,11 +1150,11 @@ _layout_key_down_cb(void *data,
                   elm_object_focus_set(sd->entry, EINA_TRUE);
                }
           }
-        else if (sd->selected_it &&
+        else if (sd->focused_it &&
             ((!strcmp(ev->key, "KP_Enter")) ||
              (!strcmp(ev->key, "Return"))))
           {
-             Elm_Multibuttonentry_Item_Data *item = sd->selected_it;
+             Elm_Multibuttonentry_Item_Data *item = sd->focused_it;
              if (item)
                _on_item_clicked(EO_OBJ(item), NULL, NULL, NULL);
           }
@@ -1635,6 +1643,7 @@ _elm_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Elm_Multibuttonentry_D
    sd->items = eina_list_free(sd->items);
 
    sd->selected_it = NULL;
+   sd->focused_it = NULL;
 
    eina_stringshare_del(sd->label_str);
    eina_stringshare_del(sd->guide_text_str);
