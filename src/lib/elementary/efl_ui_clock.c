@@ -66,6 +66,7 @@ static Format_Map mapping[EFL_UI_CLOCK_TYPE_COUNT] = {
 
 static const char *multifield_formats = "cxXrRTDF";
 static const char *ignore_separators = "()";
+static const char *ignore_extensions = "E0_-O^#";
 static Clock_Mod_Api *dt_mod = NULL;
 
 static const char SIG_CHANGED[] = "changed";
@@ -285,7 +286,7 @@ _parse_format(Evas_Object *obj,
      {
         if (fmt_parsing)
           {
-             if (cur == '_' || cur == '-' || cur == '0' || cur == '^' || cur == '#')
+             if (strchr(ignore_extensions, cur))
                {
                   fmt_ptr++;
                   continue;
