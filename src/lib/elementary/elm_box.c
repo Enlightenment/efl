@@ -29,7 +29,6 @@ _focus_order_flush(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
    Eina_List *order = evas_object_box_children_get(wpd->resize_obj);
 
    efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
-   eina_list_free(order);
 }
 
 static void *
