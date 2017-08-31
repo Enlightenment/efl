@@ -824,6 +824,7 @@ _elm_win_obj_intercept_raise(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _elm_win_obj_intercept_lower(void *data, Evas_Object *obj EINA_UNUSED)
 {
+   // Note: This is probably not necessary anymore (Win ignores lower)
    ELM_WIN_DATA_GET(data, sd);
    TRAP(sd, lower);
 }
@@ -5554,6 +5555,18 @@ EAPI void
 elm_win_raise(Eo *obj)
 {
    efl_gfx_stack_raise(obj);
+}
+
+EOLIAN static void
+_efl_ui_win_efl_gfx_stack_lower(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
+{
+   // Do nothing: in X we could request to stack lower but that has been abused
+   // and transformed into a kind of "iconify". As a consequence, lower is
+   // not allowed in EO land.
+   if (!elm_widget_is_legacy(obj)) return;
+
+   // Legacy support...
+   elm_win_lower(obj);
 }
 
 EOLIAN static void
