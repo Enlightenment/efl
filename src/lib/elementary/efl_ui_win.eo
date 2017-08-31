@@ -736,13 +736,6 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
            window will be the active one after it.
          ]]
       }
-      raise {
-         [[Raise a window object.
-
-           Places the window pointed by $obj at the top of the stack, so
-           that it's not covered by any other window.
-         ]]
-      }
       center {
          [[Center a window on its screen
 
@@ -847,6 +840,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
+      Efl.Gfx.Stack.raise; [[Places the window at the top of the stack, so
+                             that it's not covered by any other window.]]
       Elm.Widget.focus_direction;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
