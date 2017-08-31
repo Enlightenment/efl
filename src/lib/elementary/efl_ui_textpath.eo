@@ -1,6 +1,7 @@
 enum Efl.Ui.Textpath.Direction {
-     cw,
-     ccw
+    [[Textpath direction]]
+    cw, [[Clockwise]]
+    ccw [[Counter-clockwise]]
 }
 
 class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
