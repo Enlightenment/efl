@@ -96,24 +96,26 @@ EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
 static void
 _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 {
-   Eina_List *tmp = NULL;
+   Eo *fman = efl_ui_focus_user_manager_get(obj);
+   if (fman)
+     {
+        Eina_List *tmp = NULL;
 
 #define A(p) tmp = eina_list_append(tmp, p);
-
-   A(pd->up_button)
-   A(pd->home_button)
-   A(pd->search_entry)
-   A(pd->files_view)
-   A(pd->path_entry)
-   A(pd->name_entry)
-   A(pd->filter_hoversel)
-   A(pd->ok_button)
-   A(pd->cancel_button)
-
-
+        A(pd->up_button)
+        A(pd->home_button)
+        A(pd->search_entry)
+        A(pd->files_view)
+        A(pd->path_entry)
+        A(pd->name_entry)
+        A(pd->filter_hoversel)
+        A(pd->ok_button)
+        A(pd->cancel_button)
 #undef A
 
-   efl_ui_focus_manager_calc_update_order(efl_ui_focus_user_manager_get(obj), obj, tmp);
+        efl_ui_focus_manager_calc_update_order(efl_ui_focus_user_manager_get(obj), obj, tmp);
+        eina_list_free(tmp);
+     }
 }
 
 static void
