@@ -1234,7 +1234,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    if (node->type == NODE_TYPE_NORMAL)
      {
-        Eo *focusable;
+        Eo *node_focusable;
         //check if this is already the focused object
         old_focus = eina_list_last_data_get(pd->focus_stack);
 
@@ -1246,12 +1246,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
         //save fields we later need
-        focusable = node->focusable;
+        node_focusable = node->focusable;
 
         //populate the new change
         if (old_focus) efl_ui_focus_object_focus_set(old_focus->focusable, EINA_FALSE);
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
-        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, focusable);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, node_focusable);
         node = NULL;
      }
 
