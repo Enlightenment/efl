@@ -472,14 +472,14 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         //emit signal and focus eval old and new
         ELM_WIDGET_DATA_GET(old_parent, old_pd);
-        _focus_state_eval(old_parent, old_pd);
+        _full_eval(old_parent, old_pd);
 
      }
 
    if (pd->logical.parent)
      {
         ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
-        _focus_state_eval(pd->logical.parent, new_pd);
+        _full_eval(pd->logical.parent, new_pd);
      }
 
    old_registered_parent = pd->focus.parent;
