@@ -405,9 +405,10 @@ _evas_box_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Box_Data *priv)
 
    // make sure evas box smart data is fully initialized and set (for legacy)
    // this assumes only box and smart clipped access the smart data
-   cso = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLIPPED_CLASS);
+   cso = evas_object_smart_data_get(eo_obj);
    priv->base = *cso;
    evas_object_smart_data_set(eo_obj, priv);
+   free(cso);
 }
 
 EOLIAN static void
