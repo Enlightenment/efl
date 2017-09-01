@@ -673,8 +673,62 @@ evas_gl_common_version_check(int *minor_version)
    return 0;
 }
 
+static inline void
+_calculate_foc(int rot, int m, int w, int h, int px, int py,
+               int *vx_out, int *vy_out, int *vw_out, int *vh_out, int *ax_out, int *ay_out)
+{
+   int ppx = 0, ppy = 0;
+   int vx = 0, vy = 0, vw = 0, vh = 0, ax = 0, ay = 0;
+
+
+   if      ((rot == 0  ) || (rot == 90 )) ppx = px;
+   else if ((rot == 180) || (rot == 270)) ppx = w - px;
+   if      ((rot == 0  ) || (rot == 270)) ppy = py;
+   else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
+
+   vx = ((w / 2) - ppx);
+   if (vx >= 0)
+     {
+        vw = w + (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
+        else if ((rot == 180) || (rot == 270)) ax = 0;
+     }
+   else
+     {
+        vw = w - (2 * vx);
+        if      ((rot == 0  ) || (rot == 90 )) ax = 0;
+        else if ((rot == 180) || (rot == 270)) ax = ppx - px;
+        vx = 0;
+     }
+
+   vy = ((h / 2) - ppy);
+   if (vy < 0)
+     {
+        vh = h - (2 * vy);
+        if      (rot == 0) ay = 0;
+        else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
+        vy = -vy;
+     }
+   else
+     {
+        vh = h + (2 * vy);
+        if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
+        else if ((rot == 90 ) || (rot == 180)) ay = 0;
+        vy = 0;
+     }
+
+   if (m == -1) ay = vy * 2;
+
+   if (vx_out) *vx_out = vx;
+   if (vy_out) *vy_out = vy;
+   if (vw_out) *vw_out = vw;
+   if (vh_out) *vh_out = vh;
+   if (ax_out) *ax_out = ax;
+   if (ay_out) *ay_out = ay;
+}
+
 static void
-_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
+_evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc, int pipe)
 {
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
    int offx = 0, offy = 0;
@@ -682,7 +736,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    Eina_Iterator *it;
 
    EINA_SAFETY_ON_NULL_RETURN(gc);
-   foc = gc->foc;
+   foc = gc->pipe[pipe].viewport.foc;
    // surface in pipe 0 will be the same as all pipes
    if ((gc->pipe[0].shader.surface == gc->def_surface) ||
        (!gc->pipe[0].shader.surface))
@@ -709,8 +763,11 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
             ((!gc->change.size) ||
              (
                 (gc->shared->w == w) && (gc->shared->h == h) &&
-                (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
-                (gc->shared->mflip == m)
+                (gc->shared->rot == rot) && (gc->shared->foc == foc) &&
+                (gc->shared->mflip == m) &&
+                (gc->shared->z0 == gc->pipe[pipe].viewport.z0) &&
+                (gc->shared->px == gc->pipe[pipe].viewport.px) &&
+                (gc->shared->py == gc->pipe[pipe].viewport.py)
              )
             )
            )
@@ -725,9 +782,9 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    gc->shared->rot = rot;
    gc->shared->mflip = m;
    gc->shared->foc = foc;
-   gc->shared->z0 = gc->z0;
-   gc->shared->px = gc->px;
-   gc->shared->py = gc->py;
+   gc->shared->z0 = gc->pipe[pipe].viewport.z0;
+   gc->shared->px = gc->pipe[pipe].viewport.px;
+   gc->shared->py = gc->pipe[pipe].viewport.py;
    gc->change.size = 0;
    gc->shared->offx = offx;
    gc->shared->offy = offy;
@@ -755,48 +812,10 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
      }
    else
      {
-        int px, py, vx, vy, vw = 0, vh = 0, ax = 0, ay = 0, ppx = 0, ppy = 0;
+        int vx, vy, vw, vh, ax, ay;
 
-        px = gc->shared->px;
-        py = gc->shared->py;
-
-        if      ((rot == 0  ) || (rot == 90 )) ppx = px;
-        else if ((rot == 180) || (rot == 270)) ppx = w - px;
-        if      ((rot == 0  ) || (rot == 270)) ppy = py;
-        else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
-
-        vx = ((w / 2) - ppx);
-        if (vx >= 0)
-          {
-             vw = w + (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
-             else if ((rot == 180) || (rot == 270)) ax = 0;
-          }
-        else
-          {
-             vw = w - (2 * vx);
-             if      ((rot == 0  ) || (rot == 90 )) ax = 0;
-             else if ((rot == 180) || (rot == 270)) ax = ppx - px;
-             vx = 0;
-          }
-
-        vy = ((h / 2) - ppy);
-        if (vy < 0)
-          {
-             vh = h - (2 * vy);
-             if      (rot == 0) ay = 0;
-             else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
-             vy = -vy;
-          }
-        else
-          {
-             vh = h + (2 * vy);
-             if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
-             else if ((rot == 90 ) || (rot == 180)) ay = 0;
-             vy = 0;
-          }
-
-        if (m == -1) ay = vy * 2;
+        _calculate_foc(rot, m, w, h, gc->shared->px, gc->shared->py,
+                       &vx, &vy, &vw, &vh, &ax, &ay);
 
         if ((rot == 0) || (rot == 180))
            GL_TH(glViewport, offx + (-2 * vx), offy + (-2 * vy), vw, vh);
@@ -814,8 +833,6 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
-        gc->shared->ax = ax;
-        gc->shared->ay = ay;
      }
 
    // FIXME: Is this heavy work?
@@ -1149,7 +1166,7 @@ evas_gl_common_context_new(void)
      }
    gc->shared = shared;
    gc->shared->references++;
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 
    gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1, EINA_FALSE);
 
@@ -1482,7 +1499,7 @@ evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
 {
    if (_evas_gl_common_context == gc) return;
    _evas_gl_common_context = gc;
-   if (gc) _evas_gl_common_viewport_set(gc);
+   if (gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1522,6 +1539,10 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
@@ -1575,7 +1596,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    GL_TH(glActiveTexture, GL_TEXTURE0);
    GL_TH(glBindTexture, gc->pipe[0].shader.tex_target, gc->pipe[0].shader.cur_tex);
 
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 EAPI void
@@ -1587,7 +1608,7 @@ evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
    gc->rot = rot;
    gc->w = w;
    gc->h = h;
-   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc);
+   if (_evas_gl_common_context == gc) _evas_gl_common_viewport_set(gc, 0);
 }
 
 void
@@ -1684,7 +1705,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
       GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, 0);
    else
       GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, surface->tex->pt->fb);
-   _evas_gl_common_viewport_set(gc);
+   _evas_gl_common_viewport_set(gc, 0);
 }
 
 static inline Eina_Bool
@@ -1832,6 +1853,7 @@ _evas_gl_common_context_push(Shader_Type rtype,
                              Evas_GL_Texture *tex,
                              Evas_GL_Texture *texm,
                              Evas_GL_Program *prog,
+                             int foc, int z0, int px, int py,
                              int x, int y, int w, int h,
                              Eina_Bool blend,
                              Eina_Bool smooth,
@@ -1862,6 +1884,10 @@ _evas_gl_common_context_push(Shader_Type rtype,
                  && (!tex || gc->pipe[i].shader.cur_tex == current_tex)
                  && (!texm || ((gc->pipe[i].shader.cur_texm == texm->pt->texture)
                                && (gc->pipe[i].shader.mask_smooth == mask_smooth)))
+                 && (gc->pipe[i].viewport.foc == foc)
+                 && (gc->pipe[i].viewport.z0 == z0)
+                 && (gc->pipe[i].viewport.px == px)
+                 && (gc->pipe[i].viewport.py == py)
                  && (gc->pipe[i].shader.prog == prog)
                  && (gc->pipe[i].shader.smooth == smooth)
                  && (gc->pipe[i].shader.blend == blend)
@@ -1905,6 +1931,10 @@ _evas_gl_common_context_push(Shader_Type rtype,
          /* && (!texa || gc->pipe[pn].shader.cur_texa == current_texa) */
          && (!texm || ((gc->pipe[i].shader.cur_texm == texm->pt->texture)
                        && (gc->pipe[i].shader.mask_smooth == mask_smooth)))
+         && (gc->pipe[i].viewport.foc == foc)
+         && (gc->pipe[i].viewport.z0 == z0)
+         && (gc->pipe[i].viewport.px == px)
+         && (gc->pipe[i].viewport.py == py)
          && (gc->pipe[pn].shader.prog == prog)
          && (gc->pipe[pn].shader.smooth == smooth)
          && (gc->pipe[pn].shader.blend == blend)
@@ -1926,6 +1956,11 @@ _evas_gl_common_context_push(Shader_Type rtype,
           }
      }
 #endif
+
+   gc->pipe[pn].viewport.foc = foc;
+   gc->pipe[pn].viewport.z0 = z0;
+   gc->pipe[pn].viewport.px = px;
+   gc->pipe[pn].viewport.py = py;
 
    return pn;
 }
@@ -1958,6 +1993,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_LINE,
                                      gc, NULL, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      EINA_FALSE,
@@ -2023,6 +2059,7 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_RECT,
                                      gc, NULL, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      EINA_FALSE,
@@ -2240,6 +2277,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_IMAGE,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2442,6 +2480,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_FONT,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      1,
                                      0,
@@ -2522,6 +2561,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUV,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2602,6 +2642,7 @@ evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUV_709,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2682,6 +2723,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_YUY2,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2760,6 +2802,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_NV12,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      blend,
                                      smooth,
@@ -2845,6 +2888,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    pn = _evas_gl_common_context_push(SHD_RGB_A_PAIR,
                                      gc, tex, mtex,
                                      prog,
+                                     0, 0, 0, 0,
                                      x, y, w, h,
                                      EINA_TRUE,
                                      smooth,
@@ -3025,24 +3069,27 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->foc = p[0].foc >> FP;
-        gc->z0 = p[0].z0 >> FP;
-        gc->px = p[0].px >> FP;
-        gc->py = p[0].py >> FP;
-        gc->change.size = 1;
-        _evas_gl_common_viewport_set(gc);
-     }
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       p[0].foc >> FP, p[0].z0 >> FP, p[0].px >> FP, p[0].py >> FP,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
+   else
+     pn = _evas_gl_common_context_push(SHD_MAP,
+                                       gc, tex, mtex,
+                                       prog,
+                                       0, 0, 0, 0,
+                                       x, y, w, h,
+                                       blend,
+                                       smooth,
+                                       clip, cx, cy, cw, ch,
+                                       mask_smooth);
+   gc->change.size = 1;
 
-   pn = _evas_gl_common_context_push(SHD_MAP,
-                                     gc, tex, mtex,
-                                     prog,
-                                     x, y, w, h,
-                                     blend,
-                                     smooth,
-                                     clip, cx, cy, cw, ch,
-                                     mask_smooth);
    gc->pipe[pn].region.type = SHD_MAP;
    gc->pipe[pn].shader.prog = prog;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
@@ -3113,11 +3160,32 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
           }
         else
           {
+             int w, h, rot, m = 1;
+             int vx, vy, vw, vh, ax, ay;
+
+             if ((gc->pipe[0].shader.surface == gc->def_surface) ||
+                 (!gc->pipe[0].shader.surface))
+               {
+                  w = gc->w;
+                  h = gc->h;
+                  rot = gc->rot;
+               }
+             else
+               {
+                  w = gc->pipe[0].shader.surface->w;
+                  h = gc->pipe[0].shader.surface->h;
+                  rot = 0;
+                  m = -1;
+               }
+
+             _calculate_foc(rot, m, w, h, gc->pipe[pn].viewport.px, gc->pipe[pn].viewport.py,
+                            &vx, &vy, &vw, &vh, &ax, &ay);
+
              PUSH_VERTEX(pn,
-                         (p[points[i]].fx) + gc->shared->ax,
-                         (p[points[i]].fy) + gc->shared->ay,
+                         (p[points[i]].fx) + ax,
+                         (p[points[i]].fy) + ay,
                          (p[points[i]].fz)
-                         + (gc->shared->foc - gc->shared->z0));
+                         + (gc->pipe[pn].viewport.foc - gc->pipe[pn].viewport.z0));
           }
         PUSH_TEXUV(pn,
                    tx[points[i]],
@@ -3149,17 +3217,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh, masksam);
-
-   if (!flat)
-     {
-        shader_array_flush(gc);
-        gc->foc = 0;
-        gc->z0 = 0;
-        gc->px = 0;
-        gc->py = 0;
-        gc->change.size = 1;
-        _evas_gl_common_viewport_set(gc);
-     }
 }
 
 // ----------------------------------------------------------------------------
@@ -3236,7 +3293,7 @@ evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc,
    _filter_data_flush(gc, prog);
 
    pn = _evas_gl_common_context_push(SHD_FILTER_DISPLACE, gc, tex, NULL, prog,
-                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = SHD_FILTER_DISPLACE;
@@ -3355,7 +3412,7 @@ evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc,
    _filter_data_flush(gc, prog);
 
    pn = _evas_gl_common_context_push(SHD_FILTER_CURVE, gc, tex, NULL, prog,
-                                     x, y, w, h, blend, smooth,
+                                     0, 0, 0, 0, x, y, w, h, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = SHD_FILTER_CURVE;
@@ -3562,7 +3619,7 @@ evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc,
      }
 
    pn = _evas_gl_common_context_push(type, gc, tex, NULL, prog,
-                                     sx, sy, dw, dh, blend, smooth,
+                                     0, 0, 0, 0, sx, sy, dw, dh, blend, smooth,
                                      0, 0, 0, 0, 0, EINA_FALSE);
 
    gc->pipe[pn].region.type = type;
@@ -3740,6 +3797,9 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
         Evas_GL_Program *prog;
 
         if (gc->pipe[i].array.num <= 0) break;
+
+        gc->change.size = 1;
+        _evas_gl_common_viewport_set(gc, i);
 
         prog = gc->pipe[i].shader.prog;
         setclip = EINA_FALSE;
@@ -4387,6 +4447,14 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.clip      = gc->pipe[i].shader.clip;
         gc->state.current.anti_alias = gc->pipe[i].array.anti_alias;
 
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             GL_TH(glBindBuffer, GL_ARRAY_BUFFER, 0);
+          }
+     }
+
+   for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
+     {
         if (gc->pipe[i].shader.filter.map_delete)
           {
              GL_TH(glDeleteTextures, 1, &gc->pipe[i].shader.filter.map_tex);
@@ -4420,17 +4488,16 @@ _orig_shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
-
-        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
-          {
-             GL_TH(glBindBuffer, GL_ARRAY_BUFFER, 0);
-          }
-
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
         gc->pipe[i].region.h = 0;
         gc->pipe[i].region.type = 0;
+
+        gc->pipe[i].viewport.foc = 0;
+        gc->pipe[i].viewport.z0 = 0;
+        gc->pipe[i].viewport.px = 0;
+        gc->pipe[i].viewport.py = 0;
      }
    gc->state.top_pipe = 0;
    if (dbgflushnum == 1)

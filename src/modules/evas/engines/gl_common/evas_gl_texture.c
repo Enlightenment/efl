@@ -1211,28 +1211,28 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
    //  +-+
    //  +-+
    //
-   _tex_sub_2d(tex->gc, tex->x, tex->y,
+   _tex_sub_2d_push(tex->gc, tex->x, tex->y,
                im->cache_entry.w, im->cache_entry.h,
                fmt, tex->pt->dataformat,
                im->image.data);
    //  xxx
    //  xxx
    //  ---
-   _tex_sub_2d(tex->gc, tex->x, tex->y + im->cache_entry.h,
+   _tex_sub_2d_push(tex->gc, tex->x, tex->y + im->cache_entry.h,
                im->cache_entry.w, 1,
                fmt, tex->pt->dataformat,
                im->image.data8 + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
    //  xxx
    //  xxx
    // o
-   _tex_sub_2d(tex->gc, tex->x - 1, tex->y + im->cache_entry.h,
+   _tex_sub_2d_push(tex->gc, tex->x - 1, tex->y + im->cache_entry.h,
                1, 1,
                fmt, tex->pt->dataformat,
                im->image.data8 + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
    //  xxx
    //  xxx
    //     o
-   _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
+   _tex_sub_2d_push(tex->gc, tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
                1, 1,
                fmt, tex->pt->dataformat,
                im->image.data8 + (im->cache_entry.h * im->cache_entry.w - 1) * bytes_count);
@@ -1240,21 +1240,21 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
    // ---
    // xxx
    // xxx
-   _tex_sub_2d(tex->gc, tex->x, tex->y - 1,
+   _tex_sub_2d_push(tex->gc, tex->x, tex->y - 1,
                im->cache_entry.w, 1,
                fmt, tex->pt->dataformat,
                im->image.data);
    // o
    //  xxx
    //  xxx
-   _tex_sub_2d(tex->gc, tex->x - 1, tex->y - 1,
+   _tex_sub_2d_push(tex->gc, tex->x - 1, tex->y - 1,
                1, 1,
                fmt, tex->pt->dataformat,
                im->image.data);
    //    o
    // xxx
    // xxx
-   _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y - 1,
+   _tex_sub_2d_push(tex->gc, tex->x + im->cache_entry.w, tex->y - 1,
                1, 1,
                fmt, tex->pt->dataformat,
                im->image.data8 + (im->cache_entry.w - 1) * bytes_count);
@@ -1264,14 +1264,14 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
         // |xxx
         // |xxx
         //
-        _tex_sub_2d(tex->gc, tex->x - 1, tex->y,
+        _tex_sub_2d_push(tex->gc, tex->x - 1, tex->y,
                     1, im->cache_entry.h,
                     fmt, tex->pt->dataformat,
                     im->image.data);
         //  xxx|
         //  xxx|
         //
-        _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
+        _tex_sub_2d_push(tex->gc, tex->x + im->cache_entry.w, tex->y,
                     1, im->cache_entry.h,
                     fmt, tex->pt->dataformat,
                     im->image.data8 + (im->cache_entry.w - 1) * bytes_count);
@@ -1532,7 +1532,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
           }
         GL_TH(glPixelStorei, GL_UNPACK_ALIGNMENT, bytes_count);
 
-        _tex_sub_2d(tex->gc, u, tex->ty, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE, fmt, tex->ptt->dataformat, out);
+        _tex_sub_2d_push(tex->gc, u, tex->ty, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE, fmt, tex->ptt->dataformat, out);
 
         // Switch back to current texture
         if (tex->ptt->texture != tex->gc->state.current.cur_tex)
@@ -1856,7 +1856,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
      }
 on_error:
    GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
-   evas_gl_thread_finish();
+//   evas_gl_thread_finish();
 }
 
 Evas_GL_Texture *
@@ -2042,7 +2042,8 @@ _orig_evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
 
 finish:
-   evas_gl_thread_finish();
+;
+//   evas_gl_thread_finish();
 }
 
 typedef struct
@@ -2256,7 +2257,8 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
    if (tex->pt->texture != tex->gc->state.current.cur_tex)
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
 finish:
-   evas_gl_thread_finish();
+ ;
+//   evas_gl_thread_finish();
 }
 
 void
@@ -2313,7 +2315,8 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
    if (tex->pt->texture != tex->gc->state.current.cur_tex)
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
 finish:
-   evas_gl_thread_finish();
+;
+//   evas_gl_thread_finish();
 }
 
 void
@@ -2574,5 +2577,6 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
           _tex_sub_2d_push(tex->gc, x, ry, 64, 32, tex->ptuv->format, tex->ptuv->dataformat, rows[mb_y + base_h] + rmb_x);
      }
 finish:
-   evas_gl_thread_finish();
+;
+//   evas_gl_thread_finish();
 }

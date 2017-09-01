@@ -1197,6 +1197,7 @@ eng_image_draw(void *engine EINA_UNUSED, void *data, void *context, void *surfac
 
         // Reset direct rendering info
         evgl_direct_info_clear();
+        return EINA_FALSE;
      }
    else
      {
@@ -1206,6 +1207,10 @@ eng_image_draw(void *engine EINA_UNUSED, void *data, void *context, void *surfac
                                   src_x, src_y, src_w, src_h,
                                   dst_x, dst_y, dst_w, dst_h,
                                   smooth);
+        if (do_async)
+           return EINA_TRUE;
+        else
+           return EINA_FALSE;
      }
 
    return EINA_FALSE;
