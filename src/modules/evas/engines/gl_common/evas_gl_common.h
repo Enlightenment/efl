@@ -845,6 +845,8 @@ void pt_unref(Evas_GL_Texture_Pool *pt);
 // Enable very basic GL calls logging (requires GL_ERRORS)
 //#define GL_ERRORS_TRACE 1
 
+#include "evas_gl_thread.h"
+
 #ifdef GL_ERRORS
 
 # ifndef _WIN32
