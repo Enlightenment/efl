@@ -148,7 +148,6 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
    _edje_block_violate(ed);
    ed->delete_me = 1;
    _edje_edjes = eina_inlist_remove(_edje_edjes, EINA_INLIST_GET(ed));
-   evas_object_smart_data_set(obj, NULL);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */

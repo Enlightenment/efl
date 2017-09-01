@@ -49,6 +49,7 @@ struct _Evas_Smart_Data
    Eina_Bool         update_boundingbox_needed : 1;
    Eina_Bool         group_del_called : 1;
    Eina_Bool         unclipped : 1; /* If true, NOT a smart_clipped object */
+   Eina_Bool         data_nofree : 1; /* If true, do NOT free the data */
 };
 
 typedef struct
@@ -130,7 +131,13 @@ EAPI void
 evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
-   o->data = data;
+   if (o->data != data)
+     {
+        if (o->data && !o->data_nofree)
+          free(o->data);
+        o->data = data;
+        o->data_nofree = EINA_TRUE;
+     }
 }
 
 EAPI void *
@@ -517,17 +524,21 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
    return o->contained;
 }
 
+static void
+_efl_canvas_group_group_members_all_del_internal(Evas_Smart_Data *o)
+{;
+   Evas_Object_Protected_Data *memobj;
+   Eina_Inlist *itrn;
+   EINA_INLIST_FOREACH_SAFE(o->contained, itrn, memobj)
+     efl_del(memobj->object);
+   o->group_del_called = EINA_TRUE;
+}
+
 void
 _efl_canvas_group_group_members_all_del(Evas_Object *eo_obj)
 {
    Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Object_Protected_Data *memobj;
-   Eina_Inlist *itrn;
-   EINA_INLIST_FOREACH_SAFE(o->contained, itrn, memobj)
-     {
-        evas_object_del((Evas_Object *)((Evas_Object_Protected_Data *)memobj->object));
-     }
-   o->group_del_called = EINA_TRUE;
+   _efl_canvas_group_group_members_all_del_internal(o);
 }
 
 static void
@@ -630,6 +641,8 @@ EOLIAN static void
 _efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
 {
    efl_destructor(efl_super(eo_obj, MY_CLASS));
+   if (o->data && !o->data_nofree)
+     free(o->data);
    if (!o->group_del_called)
      {
         ERR("efl_canvas_group_del() was not called on this object: %p (%s)",
@@ -709,8 +722,21 @@ _efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUSED)
+_efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
+   if (!o->unclipped)
+     {
+        Evas_Object_Smart_Clipped_Data *cso = o->data;
+        Eo *clipper;
+
+        if (cso && cso->clipper)
+          {
+             clipper = cso->clipper;
+             cso->clipper = NULL;
+             efl_del(clipper);
+          }
+        _efl_canvas_group_group_members_all_del_internal(o);
+     }
    o->group_del_called = EINA_TRUE;
 }
 
