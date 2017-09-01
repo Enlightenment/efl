@@ -22,7 +22,7 @@ evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 }
 
 static void
-evas_object_smart_clipped_smart_add(Evas_Object *eo_obj, Evas_Object_Smart_Clipped_Data *cso)
+evas_object_smart_clipped_init(Evas_Object *eo_obj, Evas_Object_Smart_Clipped_Data *cso)
 {
    Evas_Object *clipper;
 
@@ -48,7 +48,7 @@ evas_object_smart_clipped_smart_add_legacy(Evas_Object *eo_obj)
    Evas_Object_Smart_Clipped_Data *cso;
 
    cso = calloc(1, sizeof(*cso));
-   evas_object_smart_clipped_smart_add(eo_obj, cso);
+   evas_object_smart_clipped_init(eo_obj, cso);
 }
 
 EOLIAN static void
@@ -57,11 +57,11 @@ _efl_canvas_group_clipped_efl_canvas_group_group_add(Eo *eo_obj, void *_pd EINA_
    Evas_Object_Smart_Clipped_Data *cso;
 
    cso = evas_object_smart_data_get(eo_obj);
-   evas_object_smart_clipped_smart_add(eo_obj, cso);
+   evas_object_smart_clipped_init(eo_obj, cso);
 }
 
 static void
-evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_del_legacy(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
 
@@ -73,19 +73,6 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
      }
 
    _efl_canvas_group_group_members_all_del(eo_obj);
-
-   /* If it's a legacy smart object, we should free the cso. */
-   if (!efl_isa(eo_obj, MY_CLASS))
-      free(cso);
-
-   evas_object_smart_data_set(eo_obj, NULL);
-}
-
-EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_del(Eo *eo_obj, void *_pd EINA_UNUSED)
-{
-   evas_object_smart_clipped_smart_del(eo_obj);
-   // group_del_called was already set to true, no need to call super here.
 }
 
 static void
@@ -232,7 +219,7 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
      return;
 
    sc->add = evas_object_smart_clipped_smart_add_legacy;
-   sc->del = evas_object_smart_clipped_smart_del;
+   sc->del = evas_object_smart_clipped_smart_del_legacy;
    sc->move = evas_object_smart_clipped_smart_move;
    sc->show = evas_object_smart_clipped_smart_show;
    sc->hide = evas_object_smart_clipped_smart_hide;
@@ -261,7 +248,7 @@ evas_object_smart_clipped_class_get(void)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_CANVAS_GROUP_CLIPPED_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_group_clipped)
+   EFL_CANVAS_GROUP_ADD_OPS(efl_canvas_group_clipped)
 
 #include "canvas/efl_canvas_group_clipped.eo.c"
 
