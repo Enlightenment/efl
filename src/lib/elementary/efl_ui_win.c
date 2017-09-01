@@ -1754,7 +1754,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 
         do {
           last = efl_ui_focus_manager_logical_end(rec_manager);
-          efl_ui_focus_manager_focus_set(obj, last.element);
+          efl_ui_focus_manager_focus_set(rec_manager, last.element);
 
           rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
         } while (!last.is_regular_end);
