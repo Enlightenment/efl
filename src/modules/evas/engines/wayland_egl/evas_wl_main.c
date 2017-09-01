@@ -9,7 +9,7 @@ static struct wl_display *display = NULL;
 static int win_count = 0;
 
 Outbuf *
-eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
+_orig_eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
 {
    Outbuf *gw;
    int context_attrs[3];
@@ -168,7 +168,53 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap
    return gw;
 }
 
-void
+typedef struct
+{
+   Outbuf *return_value;
+   Evas_Engine_Info_Wayland *einfo;
+   int w;
+   int h;
+   Render_Engine_Swap_Mode swap_mode;
+} GL_TH_ST(eng_window_new);
+
+static void
+GL_TH_CB(eng_window_new)(void *data)
+{
+   GL_TH_ST(eng_window_new) *thread_data = *(void **)data;
+
+   thread_data->return_value = _orig_eng_window_new(thread_data->einfo,
+                                                    thread_data->w,
+                                                    thread_data->h,
+                                                    thread_data->swap_mode);
+}
+
+Outbuf *
+eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Engine_Swap_Mode swap_mode)
+{
+   GL_TH_ST(eng_window_new) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   /* eng_window_new() is moved into the worker thread that minimizes driver issue with EGL use*/
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_GL))
+     return _orig_eng_window_new(einfo, w, h, swap_mode);
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(eng_window_new) *), &thcmd_ref);
+   *thread_data_ptr = thread_data;
+
+   thread_data->einfo = einfo;
+   thread_data->w = w;
+   thread_data->h = h;
+   thread_data->swap_mode = swap_mode;
+
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(eng_window_new),
+                              EVAS_GL_THREAD_MODE_FINISH);
+
+   return thread_data->return_value;
+}
+
+void 
 eng_window_free(Outbuf *gw)
 {
    int ref = 0;
