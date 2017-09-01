@@ -42,101 +42,6 @@ group { name: "e/gadget/luncher/grid";
 group { name: "e/gadget/luncher/icon";
    script {
       public urgent;
-      public style;
-      public current_size;
-      public Float:engage_scale(cursorpos, iconpos, size) {
-         new Float:zoom = 1.75;
-         new Float:scale = zoom - (abs(cursorpos-(iconpos+size/2)) / (size*4));
-         if (scale < 1.0) scale = 1.0;
-
-         return scale;
-      }
-      public message(Msg_Type:type, id, ...) {
-
-//Style Variable - Used to Identify Style - Name Must Match an Item in the Data List of e/gadget/luncher/bar
-//Style Setting Messages Will Always Have an ID of 1
-//Icon Messages Related To The Style Will Have an ID of 2.
-//Arguments are in the Following Order:
-//X Position of the Cursor
-//Y Position of the Cursor
-//X Position of Icon
-//Y Position of Icon
-//Width of icon
-//Height of icon
-//Location of the bar - 0 is left, 1 is top, 2 is right, 3 is bottom
-
-         if ((type == MSG_STRING) && (id == 1)) {
-            new s[32];
-
-            getsarg(2, s, sizeof(s));
-            set_str(style, s);
-         }
-         if ((type == MSG_INT_SET) && (id == 2)) {
-            new xpos = getarg(2);
-            new ypos = getarg(3);
-            new x = getarg(4);
-            new y = getarg(5);
-            new w = getarg(6);
-            new h = getarg(7);
-            new pos = getarg(8);
-            new s[32];
-
-            get_str(style, s, sizeof(s));
-
-            if (!strcmp(s, "default")) {
-               if ((ypos >= y) && (ypos <= (y+h)) && (xpos >= x) && (xpos <= (x+w))) {
-                  set_state_anim(PART:"background", "visible", 0.0, LINEAR, 1.0);
-               }
-               else {
-                  set_state_anim(PART:"background", "default", 0.0, LINEAR, 1.0);
-               }
-            }
-            else if (!strcmp(s, "engage")) {
-               new Float:scale = 1.0;
-               if (pos == 0 && (xpos >= x) && (xpos <= (x+w))) {
-                  scale = engage_scale(ypos, y, h);
-                  new Float:halfscale = scale/2.0;
-
-                  custom_state(PART:"sizer", "default", 0.0);
-                  set_state_val(PART:"sizer", STATE_REL1, 0.0, 0.5-halfscale);
-                  set_state_val(PART:"sizer", STATE_REL2, scale, 0.5+halfscale);
-                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-               }
-               else if (pos == 1 && (ypos >= y) && (ypos <= (y+h))) {
-                  scale = engage_scale(xpos, x, w);
-                  new Float:halfscale = scale/2.0;
-
-                  custom_state(PART:"sizer", "default", 0.0);
-                  set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 0.0);
-                  set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, scale);
-                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-               }
-               else if (pos == 2 && (xpos >= x) && (xpos <= (x+w))) {
-                  scale = engage_scale(ypos, y, h);
-                  new Float:halfscale = scale/2.0;
-
-                  custom_state(PART:"sizer", "default", 0.0);
-                  set_state_val(PART:"sizer", STATE_REL1, 1.0-scale, 0.5-halfscale);
-                  set_state_val(PART:"sizer", STATE_REL2, 1.0, 0.5+halfscale);
-                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-               }
-               else if (pos == 3 && (ypos >= y) && (ypos <= (y+h))) {
-                  scale = engage_scale(xpos, x, w);
-                  new Float:halfscale = scale/2.0;
-
-                  custom_state(PART:"sizer", "default", 0.0);
-                  set_state_val(PART:"sizer", STATE_REL1, 0.5-halfscale, 1.0-scale);
-                  set_state_val(PART:"sizer", STATE_REL2, 0.5+halfscale, 1.0);
-                  set_state_anim(PART:"sizer", "custom", 0.0, LINEAR, 1.0);
-               }
-               else {
-                  set_state_anim(PART:"sizer", "default", 0.0, LINEAR, 1.0);
-               }
-               send_message(MSG_STRING_FLOAT_SET, 1, "Scale", scale);
-               emit("e,state,resized", "e");
-            }
-         }
-      }
    }
    parts {
       part { name: "item_clip"; type: RECT;
@@ -183,13 +88,13 @@ group { name: "e/gadget/luncher/icon";
          mouse_events: 0;
          description { state: "default" 0.0;
             visible: 0;
-            align: 0.6 0.6;
             color: 255 255 255 0;
          }
          description { state: "on_left" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.0 0.025;
+            rel1.offset: 0 1;
             rel2.relative: 0.05 0.975;
             color: 51 153 255 255;
          }
@@ -197,6 +102,7 @@ group { name: "e/gadget/luncher/icon";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.025 0.0;
+            rel1.offset: 1 0;
             rel2.relative: 0.975 0.05;
             color: 51 153 255 255;
          }
@@ -204,6 +110,7 @@ group { name: "e/gadget/luncher/icon";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.95 0.025;
+            rel1.offset: 0 1;
             rel2.relative: 1.0 0.975;
             color: 51 153 255 255;
          }
@@ -211,6 +118,7 @@ group { name: "e/gadget/luncher/icon";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.025 0.95;
+            rel1.offset: 1 0;
             rel2.relative: 0.975 1.0;
             color: 51 153 255 255;
          }
@@ -727,7 +635,7 @@ group { name: "elm/tooltip/base/luncher";
             }
             rel2 {
                to: "elm.swallow.content";
-               offset: 3 -5;
+               offset: 3 -6;
             }
             color: 15 15 15 175;
          }
