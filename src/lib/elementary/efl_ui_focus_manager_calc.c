@@ -1193,6 +1193,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    Efl_Ui_Focus_Manager *redirect_manager;
    Eo *focusable;
    Node_Type type;
+   Eina_Bool was_redirect = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1226,6 +1227,9 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
         //first unset the redirect
         efl_ui_focus_manager_redirect_set(obj, NULL);
+
+        //we have been redirecting
+        was_redirect = EINA_TRUE;
      }
 
    redirect_manager = node->redirect_manager;
@@ -1239,7 +1243,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         old_focus = eina_list_last_data_get(pd->focus_stack);
 
         //check if this is already at the top
-        if (old_focus && old_focus->focusable == focus) return;
+        if (!was_redirect && old_focus && old_focus->focusable == focus) return;
 
         //remove the object from the list and add it again
         pd->focus_stack = eina_list_remove(pd->focus_stack, node);
