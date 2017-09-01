@@ -2,7 +2,7 @@ import efl_gfx_types;
 
 const Efl.Gfx.Size.Hint.Expand: double = 1.0;
    [[Use with $Efl.Gfx.Size.Hint.weight.]]
-const Efl.Gfx.Size.Hint.Fill: int = -1.0;
+const Efl.Gfx.Size.Hint.Fill: double = -1.0;
    [[Special value for $Efl.Gfx.Size.Hint.align.]]
 
 interface Efl.Gfx.Size.Hint
