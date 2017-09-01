@@ -997,11 +997,7 @@ _elm_win_mouse_out(Ecore_Evas *ee)
 
 #ifdef HAVE_ELEMENTARY_WL2
    if ((sd->wl.win) && (sd->pointer.ee))
-     {
-        sd->pointer.visible = EINA_FALSE;
-        sd->pointer.surf = NULL;
-        ecore_evas_hide(sd->pointer.ee);
-     }
+     sd->pointer.visible = EINA_FALSE;
 #endif
 }
 
