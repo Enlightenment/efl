@@ -198,9 +198,6 @@ evas_object_smart_smart_get(const Efl_Canvas_Group *eo_obj)
 EAPI void
 evas_object_smart_member_add(Evas_Object *eo_obj, Evas_Object *smart_obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
    efl_canvas_group_member_add(smart_obj, eo_obj);
 }
 
@@ -208,7 +205,7 @@ EOLIAN static void
 _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo_obj)
 {
 
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *smart = efl_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Smart_Data *member_o = NULL;
 
@@ -294,10 +291,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
 EAPI void
 evas_object_smart_member_del(Evas_Object *eo_obj)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
@@ -307,10 +301,10 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
 EOLIAN static void
 _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Smart_Data *member_o;
 
-   if (!obj->smart.parent) return;
+   if (!obj || !obj->smart.parent) return;
 
    evas_object_async_block(obj);
    Evas_Object_Protected_Data *smart = efl_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -657,8 +651,15 @@ _efl_canvas_group_efl_object_debug_name_override(Eo *eo_obj, Evas_Smart_Data *o,
      smart_class = obj->smart.smart->smart_class->name;
 
    sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
-   eina_strbuf_append_printf(sb, ":children=%d:smart_class=%s",
-                             eina_inlist_count(o->contained), smart_class);
+   if (smart_class)
+     {
+        eina_strbuf_append_printf(sb, ":children=%d:smart_class=%s",
+                                  eina_inlist_count(o->contained), smart_class);
+     }
+   else
+     {
+        eina_strbuf_append_printf(sb, ":children=%d", eina_inlist_count(o->contained));
+     }
    return sb;
 }
 
