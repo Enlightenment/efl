@@ -30,34 +30,15 @@ _set_a_without_b(Eina_List *a, Eina_List *b)
 }
 
 static void
-_focus_changed(void *data, const Efl_Event *event)
-{
-   Efl_Ui_Focus_Manager_Sub *m = data;
-   Efl_Ui_Focus_Manager *manager;
-
-   manager = efl_ui_focus_user_manager_get(m);
-
-   //only do this when we are getting focus
-   if (!event->info) return;
-
-   //if there is already the redirect, ignore this focus request
-   if (efl_ui_focus_manager_redirect_get(manager)) return;
-
-   efl_ui_focus_manager_focus_set(m, event->object);
-}
-
-static void
 _register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Object *logical)
 {
    efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
-   efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
 }
 
 static void
 _unregister(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
 {
    efl_ui_focus_manager_calc_unregister(par_m, node);
-   efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed, obj);
 }
 
 static void
