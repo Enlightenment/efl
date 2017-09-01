@@ -693,6 +693,7 @@ write_val_with_decpoint(Eo_Lexer *ls, Eo_Token *tok, int type)
      tok->value.d = strtod(eina_strbuf_string_get(ls->buff), &end);
    if (end && end[0])
      eo_lexer_lex_error(ls, "malformed number", TOK_NUMBER);
+   tok->kw = type;
 }
 
 static void
