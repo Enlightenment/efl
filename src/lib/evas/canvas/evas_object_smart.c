@@ -10,8 +10,7 @@
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Smart"
 
 #define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
-   Evas_Smart_Data *o = efl_isa(eo_obj, EFL_CANVAS_GROUP_CLASS) ? \
-     efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS) : NULL; \
+   Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_GROUP_CLASS); \
    do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
 
 extern Eina_Hash* signals_hash_table;
@@ -37,8 +36,7 @@ struct _Evas_Smart_Data
 
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
 
-   Evas_Coord        x, y;
-
+   int               x, y;
    int               walking_list;
    int               member_count; /** number of smart member objects */
 
@@ -1671,6 +1669,8 @@ _efl_canvas_group_group_unclipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *s
    // We must call this function BEFORE the constructor (yes, it's hacky)
    EINA_SAFETY_ON_FALSE_RETURN(!sd->object);
    sd->unclipped = !!unclipped;
+   if (!unclipped && !sd->data)
+     sd->data = calloc(1, sizeof(Evas_Object_Smart_Clipped_Data));
 }
 
 /* Internal EO APIs */

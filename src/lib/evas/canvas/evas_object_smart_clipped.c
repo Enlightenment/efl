@@ -7,9 +7,7 @@
 #define MY_CLASS EFL_CANVAS_GROUP_CLIPPED_CLASS
 
 #define CSO_DATA_GET(eo_obj, ptr)                                           \
-  Evas_Object_Smart_Clipped_Data *ptr = (efl_isa(eo_obj, MY_CLASS) ?         \
-        efl_data_scope_get(eo_obj, MY_CLASS) :                               \
-        evas_object_smart_data_get(eo_obj));
+  Evas_Object_Smart_Clipped_Data *ptr = evas_object_smart_data_get(eo_obj);
 
 #define CSO_DATA_GET_OR_RETURN(eo_obj, ptr, ...) \
   CSO_DATA_GET(eo_obj, ptr) \
@@ -24,13 +22,9 @@ evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 }
 
 static void
-evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_add(Evas_Object *eo_obj, Evas_Object_Smart_Clipped_Data *cso)
 {
    Evas_Object *clipper;
-
-   CSO_DATA_GET(eo_obj, cso)
-   if (!cso)
-     cso = calloc(1, sizeof(*cso)); /* users can provide it or realloc() later */
 
    cso->evas = evas_object_evas_get(eo_obj);
    clipper = evas_object_rectangle_add(cso->evas);
@@ -48,10 +42,22 @@ evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
    evas_object_smart_data_set(eo_obj, cso);
 }
 
-EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+static void
+evas_object_smart_clipped_smart_add_legacy(Evas_Object *eo_obj)
 {
-   evas_object_smart_clipped_smart_add(eo_obj);
+   Evas_Object_Smart_Clipped_Data *cso;
+
+   cso = calloc(1, sizeof(*cso));
+   evas_object_smart_clipped_smart_add(eo_obj, cso);
+}
+
+EOLIAN static void
+_efl_canvas_group_clipped_efl_canvas_group_group_add(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   Evas_Object_Smart_Clipped_Data *cso;
+
+   cso = evas_object_smart_data_get(eo_obj);
+   evas_object_smart_clipped_smart_add(eo_obj, cso);
 }
 
 static void
@@ -76,7 +82,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_efl_canvas_group_clipped_efl_canvas_group_group_del(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    evas_object_smart_clipped_smart_del(eo_obj);
    // group_del_called was already set to true, no need to call super here.
@@ -90,7 +96,7 @@ evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coo
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_efl_canvas_group_clipped_efl_gfx_position_set(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
      return;
@@ -115,7 +121,7 @@ evas_object_smart_clipped_smart_hide(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Eina_Bool vis)
+_efl_canvas_group_clipped_efl_gfx_visible_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -127,8 +133,9 @@ _efl_canvas_group_clipped_efl_gfx_visible_set(Eo *eo_obj, Evas_Object_Smart_Clip
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *cso, Eina_Bool enable)
+_efl_canvas_group_clipped_efl_canvas_object_no_render_set(Eo *eo_obj, void *_pd EINA_UNUSED, Eina_Bool enable)
 {
+   CSO_DATA_GET_OR_RETURN(eo_obj, cso);
    enable = !!enable;
    if (efl_canvas_object_no_render_get(eo_obj) == enable) return;
    efl_canvas_object_no_render_set(efl_super(eo_obj, MY_CLASS), enable);
@@ -143,7 +150,7 @@ evas_object_smart_clipped_smart_color_set(Evas_Object *eo_obj, int r, int g, int
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, int r, int g, int b, int a)
+_efl_canvas_group_clipped_efl_gfx_color_set(Eo *eo_obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
    evas_object_smart_clipped_smart_color_set(eo_obj, r, g, b, a);
 }
@@ -163,7 +170,7 @@ evas_object_smart_clipped_smart_clip_unset(Evas_Object *eo_obj)
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *clip)
+_efl_canvas_group_clipped_efl_canvas_object_clip_set(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Object *clip)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
@@ -185,7 +192,7 @@ evas_object_smart_clipped_smart_member_add(Evas_Object *eo_obj, Evas_Object *mem
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_member_add(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
+_efl_canvas_group_clipped_efl_canvas_group_group_member_add(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Object *member)
 {
    efl_canvas_group_member_add(efl_super(eo_obj, MY_CLASS), member);
    evas_object_smart_clipped_smart_member_add(eo_obj, member);
@@ -203,14 +210,14 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
 }
 
 EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_member_del(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED, Evas_Object *member)
+_efl_canvas_group_clipped_efl_canvas_group_group_member_del(Eo *eo_obj, void *_pd EINA_UNUSED, Evas_Object *member)
 {
    evas_object_smart_clipped_smart_member_del(eo_obj, member);
    efl_canvas_group_member_del(efl_super(eo_obj, MY_CLASS), member);
 }
 
 EOLIAN static Eo *
-_efl_canvas_group_clipped_efl_object_constructor(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+_efl_canvas_group_clipped_efl_object_constructor(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
    // Setting this flag before the parent constructor on purpose.
    efl_canvas_group_unclipped_set(eo_obj, EINA_FALSE);
@@ -224,7 +231,7 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    if (!sc)
      return;
 
-   sc->add = evas_object_smart_clipped_smart_add;
+   sc->add = evas_object_smart_clipped_smart_add_legacy;
    sc->del = evas_object_smart_clipped_smart_del;
    sc->move = evas_object_smart_clipped_smart_move;
    sc->show = evas_object_smart_clipped_smart_show;
