@@ -254,6 +254,7 @@ emotion_object_add(Evas *evas)
 EOLIAN static Eo *
 _efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd EINA_UNUSED)
 {
+   efl_canvas_group_unclipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, E_OBJ_NAME);
 
