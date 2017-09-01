@@ -1024,6 +1024,7 @@ endif
 
 if BUILD_ENGINE_GL_X11
 GL_X11_SOURCES = \
+$(GL_COMMON_THREAD_SOURCES) \
 modules/evas/engines/gl_x11/evas_engine.c \
 modules/evas/engines/gl_x11/evas_x_main.c \
 modules/evas/engines/gl_x11/evas_engine.h \

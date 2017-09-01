@@ -318,7 +318,7 @@ _native_bind_cb(void *image)
    Evas_Native_Surface *n = im->native.data;
 
    if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-     glBindTexture(GL_TEXTURE_2D, n->data.opengl.texture_id);
+     GL_TH(glBindTexture, GL_TEXTURE_2D, n->data.opengl.texture_id);
 }
 
 static void
@@ -328,7 +328,7 @@ _native_unbind_cb(void *image)
   Evas_Native_Surface *n = im->native.data;
 
   if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-    glBindTexture(GL_TEXTURE_2D, 0);
+    GL_TH(glBindTexture, GL_TEXTURE_2D, 0);
 }
 
 static void
@@ -1768,20 +1768,20 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
     * But some devices don't support GL_BGRA, so we still need to convert.
     */
 
-   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
+   GL_TH(glGetIntegerv, GL_FRAMEBUFFER_BINDING, &fbo);
    if (fbo != (GLint) im->tex->pt->fb)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
-   glPixelStorei(GL_PACK_ALIGNMENT, 4);
+     GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, im->tex->pt->fb);
+   GL_TH(glPixelStorei, GL_PACK_ALIGNMENT, 4);
 
    // With GLX we will try to read BGRA even if the driver reports RGBA
 #if defined(GL_GLES) && defined(GL_IMPLEMENTATION_COLOR_READ_FORMAT)
-   glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &fmt);
+   GL_TH(glGetIntegerv, GL_IMPLEMENTATION_COLOR_READ_FORMAT, &fmt);
 #endif
 
    if ((im->tex->pt->format == GL_BGRA) && (fmt == GL_BGRA))
      {
-        glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-        done = (glGetError() == GL_NO_ERROR);
+        GL_TH(glReadPixels, x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+        done = (GL_TH(glGetError) == GL_NO_ERROR);
      }
 
    if (!done)
@@ -1789,7 +1789,7 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
         DATA32 *ptr = pixels;
         int k;
 
-        glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        GL_TH(glReadPixels, x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         for (k = w * h; k; --k)
           {
              const DATA32 v = *ptr;
@@ -1800,7 +1800,7 @@ eng_gl_surface_read_pixels(void *engine EINA_UNUSED, void *surface,
      }
 
    if (fbo != (GLint) im->tex->pt->fb)
-     glsym_glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+     GL_TH_CALL(glBindFramebuffer, glsym_glBindFramebuffer, GL_FRAMEBUFFER, fbo);
 
    return EINA_TRUE;
 }
