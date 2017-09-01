@@ -166,6 +166,7 @@ _child_added_cb(void *data, const Efl_Event *event)
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
    int index = evt->index - pd->realized.start;
 
+   pd->item_count++;
    if(index >= 0 && index <= pd->realized.slice)
      _insert_at(pd, index, evt->child);
 
@@ -180,6 +181,7 @@ _child_removed_cb(void *data, const Efl_Event *event)
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
    int index = evt->index - pd->realized.start;
 
+   pd->item_count--;
    if(index >= 0 && index < pd->realized.slice)
      _remove_at(pd, index);
 
@@ -472,6 +474,7 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Model *model
    assert(item->list == NULL);
 
    item->list = pd->obj;
+   item->future = NULL;
    item->model = efl_ref(model);
    if (recycle_layouts && eina_inarray_count(recycle_layouts))
      item->layout = *(void**)eina_inarray_pop(recycle_layouts);
@@ -480,12 +483,11 @@ _child_setup(Efl_Ui_List_Data *pd, Efl_Model *model
         Eina_Stringshare *sselected = eina_stringshare_add("selected");
         item->layout = efl_ui_factory_create(pd->factory, item->model, pd->obj);
 
-        if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE && _efl_model_properties_has(item->model, sselected))
+//        if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE && _efl_model_properties_has(item->model, sselected))
           efl_ui_model_connect(item->layout, "signal/elm,state,%v", "selected");
 
         eina_stringshare_del(sselected);
      }
-   item->future = NULL;
    item->index = idx + pd->realized.start;
    item->minw = item->minh = 0;
 
@@ -575,26 +577,30 @@ _remove_at(Efl_Ui_List_Data* pd, int index)
         to_first[j]->index--;
      }
    eina_inarray_pop(&pd->items.array);
+
+   pd->realized.slice--;
+   evas_object_smart_changed(pd->obj);
 }
 
 static void
 _insert_at(Efl_Ui_List_Data* pd, int index, Efl_Model* child)
 {
-  Efl_Ui_List_Item **members, *item;
-  int i;
+   Efl_Ui_List_Item **members, *item;
+   int i;
 
-  item = _child_setup(pd,  child, NULL, index);
-  eina_inarray_insert_at(&pd->items.array, index, &item);
+   item = _child_setup(pd,  child, NULL, index - pd->realized.start);
+   eina_inarray_insert_at(&pd->items.array, index, &item);
 
-  // fits, just move around
-  members = pd->items.array.members;
+   // fits, just move around
+   members = pd->items.array.members;
 
-  for(i = index+1; i < (int)pd->items.array.len; ++i)
-    {
-       members[i]->index++;
-    }
+   for(i = index+1; i < (int)pd->items.array.len; ++i)
+     {
+        members[i]->index++;
+     }
 
-  pd->realized.slice++;
+   pd->realized.slice++;
+   evas_object_smart_changed(pd->obj);
 }
 
 static void
@@ -608,9 +614,7 @@ _resize_children(Efl_Ui_List_Data* pd, int removing_before, int removing_after,
    eina_inarray_setup(&recycle_layouts, sizeof(Elm_Layout*), 0);
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
-
    EINA_SAFETY_ON_NULL_RETURN(acc);
-
    ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
 
    assert(pd->realized.slice == eina_inarray_count(&pd->items.array));
@@ -734,6 +738,7 @@ _children_then(void * data, Efl_Event const* event)
    int removing_after = pd->realized.start + pd->realized.slice
      - (pd->outstanding_slice.slice_start + pd->outstanding_slice.slice);
 
+   pd->future = NULL;
    // If current slice doesn't reach new slice
    if(pd->realized.start + pd->realized.slice < pd->outstanding_slice.slice_start
       || pd->outstanding_slice.slice_start + pd->outstanding_slice.slice < pd->realized.start)
@@ -742,7 +747,6 @@ _children_then(void * data, Efl_Event const* event)
        removing_after = -pd->outstanding_slice.slice;
      }
 
-   pd->future = NULL;
    _resize_children(pd, removing_before, removing_after, acc);
    evas_object_smart_changed(pd->obj);
 }
@@ -899,7 +903,6 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord w, Evas_
      return;
 
    evas_object_geometry_get(obj, NULL, NULL, &oldw, &oldh);
-
    efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
    evas_object_resize(pd->hit_rect, w, h);
 
@@ -1074,7 +1077,11 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
    if (pd->model == model)
      return;
 
-   if (pd->future) efl_future_cancel(pd->future);
+   if (pd->future)
+     {
+        efl_future_cancel(pd->future);
+        pd->future = NULL;
+     }
 
    if (pd->model)
      {
@@ -1431,7 +1438,10 @@ _update_items(Eo *obj, Efl_Ui_List_Data *pd)
 
    /* assert(!pd->future); */
    if (pd->future)
-      efl_future_cancel(pd->future);
+     {
+        efl_future_cancel(pd->future);
+        pd->future = NULL;
+     }
 
    int average_item_size = eina_inarray_count(&pd->items.array) ? (horz ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT;
    if(!average_item_size)
