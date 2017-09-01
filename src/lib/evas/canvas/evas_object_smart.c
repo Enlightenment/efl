@@ -711,14 +711,49 @@ _evas_object_smart_clipped_smart_move_internal(Evas_Object *eo_obj, Evas_Coord x
    _evas_object_smart_move_relative_internal(o, x - orig_x, y - orig_y);
 }
 
-EOLIAN static void
-_efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
+void
+_evas_object_smart_clipped_init(Evas_Object *eo_obj)
 {
-   // If this function is reached, so we do nothing except trying to call
-   // the function of the legacy smart class.
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
+   Evas_Object_Smart_Clipped_Data *cso;
+   Evas_Object *clipper;
+
+   // user may realloc this... (legacy only!)
+   cso = o->data;
+   if (!cso)
+     {
+        cso = calloc(1, sizeof(*cso));
+        o->data_nofree = EINA_FALSE;
+     }
+
+   cso->evas = evas_object_evas_get(eo_obj);
+   clipper = evas_object_rectangle_add(cso->evas);
+   evas_object_static_clip_set(clipper, 1);
+   cso->clipper = NULL;
+   evas_object_smart_member_add(clipper, eo_obj);
+   cso->clipper = clipper;
+   evas_object_color_set(cso->clipper, 255, 255, 255, 255);
+   evas_object_move(cso->clipper, -100000, -100000);
+   evas_object_resize(cso->clipper, 200000, 200000);
+   evas_object_pass_events_set(cso->clipper, 1);
+   evas_object_hide(cso->clipper); /* show when have something clipped to it */
+   efl_canvas_object_no_render_set(cso->clipper, 1);
+
+   evas_object_smart_data_set(eo_obj, cso);
+}
+
+EOLIAN static void
+_efl_canvas_group_group_add(Eo *eo_obj, Evas_Smart_Data *o)
+{
+   // We shouldn't reach this function in case of legacy API.
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Smart *s = obj->smart.smart;
-   if (s && s->smart_class->add) s->smart_class->add(eo_obj);
+   EINA_SAFETY_ON_FALSE_RETURN(!obj->smart.smart);
+
+   if (!o->unclipped)
+     {
+        if (!o->data) o->unclipped = EINA_TRUE;
+        else _evas_object_smart_clipped_init(eo_obj);
+     }
 }
 
 EOLIAN static void
@@ -733,7 +768,7 @@ _efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
           {
              clipper = cso->clipper;
              cso->clipper = NULL;
-             efl_del(clipper);
+             evas_object_del(clipper);
           }
         _efl_canvas_group_group_members_all_del_internal(o);
      }
@@ -781,7 +816,8 @@ evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
           }
      }
 
-   efl_canvas_group_add(eo_obj);
+   //efl_canvas_group_add(eo_obj);
+   if (s->smart_class->add) s->smart_class->add(eo_obj);
 }
 
 EAPI void
