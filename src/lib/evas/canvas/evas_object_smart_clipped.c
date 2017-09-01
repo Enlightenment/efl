@@ -22,42 +22,9 @@ evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 }
 
 static void
-evas_object_smart_clipped_init(Evas_Object *eo_obj, Evas_Object_Smart_Clipped_Data *cso)
-{
-   Evas_Object *clipper;
-
-   cso->evas = evas_object_evas_get(eo_obj);
-   clipper = evas_object_rectangle_add(cso->evas);
-   evas_object_static_clip_set(clipper, 1);
-   cso->clipper = NULL;
-   evas_object_smart_member_add(clipper, eo_obj);
-   cso->clipper = clipper;
-   evas_object_color_set(cso->clipper, 255, 255, 255, 255);
-   evas_object_move(cso->clipper, -100000, -100000);
-   evas_object_resize(cso->clipper, 200000, 200000);
-   evas_object_pass_events_set(cso->clipper, 1);
-   evas_object_hide(cso->clipper); /* show when have something clipped to it */
-   efl_canvas_object_no_render_set(cso->clipper, 1);
-
-   evas_object_smart_data_set(eo_obj, cso);
-}
-
-static void
 evas_object_smart_clipped_smart_add_legacy(Evas_Object *eo_obj)
 {
-   Evas_Object_Smart_Clipped_Data *cso;
-
-   cso = calloc(1, sizeof(*cso));
-   evas_object_smart_clipped_init(eo_obj, cso);
-}
-
-EOLIAN static void
-_efl_canvas_group_clipped_efl_canvas_group_group_add(Eo *eo_obj, void *_pd EINA_UNUSED)
-{
-   Evas_Object_Smart_Clipped_Data *cso;
-
-   cso = evas_object_smart_data_get(eo_obj);
-   evas_object_smart_clipped_init(eo_obj, cso);
+   _evas_object_smart_clipped_init(eo_obj);
 }
 
 static void
@@ -245,10 +212,4 @@ evas_object_smart_clipped_class_get(void)
    return class;
 }
 
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_CANVAS_GROUP_CLIPPED_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_canvas_group_clipped)
-
 #include "canvas/efl_canvas_group_clipped.eo.c"
-
