@@ -30,7 +30,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 
    if (w <= 0)
      w = 1;
-   if (height <= 0)
+   if (h <= 0)
      h = 1;
 
    ob = evas_software_gdi_outbuf_setup(w, h,
