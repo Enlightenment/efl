@@ -269,6 +269,7 @@ _exynos_buffer_manager_setup(int fd)
 {
    Eina_Bool fail = EINA_FALSE;
    void *drm_exynos_lib;
+   struct exynos_bo *bo;
 
    drm_exynos_lib = dlopen("libdrm_exynos.so", RTLD_LAZY | RTLD_GLOBAL);
    if (!drm_exynos_lib) return EINA_FALSE;
@@ -284,6 +285,12 @@ _exynos_buffer_manager_setup(int fd)
 
    buffer_manager->priv = sym_exynos_device_create(fd);
    if (!buffer_manager->priv) goto err;
+
+   /* _device_create succeeds on any arch, test harder */
+   bo = sym_exynos_bo_create(buffer_manager->priv, 32, 0);
+   if (!bo) goto err;
+
+   sym_exynos_bo_destroy(bo);
 
    buffer_manager->alloc = _exynos_alloc;
    buffer_manager->map = _exynos_map;
