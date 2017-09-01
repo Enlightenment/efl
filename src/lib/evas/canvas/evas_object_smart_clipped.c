@@ -209,6 +209,15 @@ _efl_canvas_group_clipped_efl_canvas_group_group_member_del(Eo *eo_obj, Evas_Obj
    efl_canvas_group_member_del(efl_super(eo_obj, MY_CLASS), member);
 }
 
+EOLIAN static Eo *
+_efl_canvas_group_clipped_efl_object_constructor(Eo *eo_obj, Evas_Object_Smart_Clipped_Data *obj EINA_UNUSED)
+{
+   // Setting this flag before the parent constructor on purpose.
+   efl_canvas_group_unclipped_set(eo_obj, EINA_FALSE);
+   return efl_constructor(efl_super(eo_obj, MY_CLASS));
+}
+
+/* Legacy only */
 EAPI void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
 {

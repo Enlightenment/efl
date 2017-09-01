@@ -50,6 +50,7 @@ struct _Evas_Smart_Data
    Eina_Bool         need_recalculate : 1;
    Eina_Bool         update_boundingbox_needed : 1;
    Eina_Bool         group_del_called : 1;
+   Eina_Bool         unclipped : 1; /* If true, NOT a smart_clipped object */
 };
 
 typedef struct
@@ -613,13 +614,10 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 }
 
 EOLIAN static Eo *
-_efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
+_efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *sd)
 {
-   Evas_Smart_Data *smart;
-
-   smart = class_data;
-   smart->object = eo_obj;
-   smart->inherit_paragraph_direction = EINA_TRUE;
+   sd->object = eo_obj;
+   sd->inherit_paragraph_direction = EINA_TRUE;
 
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
    evas_object_smart_init(eo_obj);
@@ -1666,14 +1664,25 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUS
    return o->paragraph_direction;
 }
 
+/* Internal EO */
+static void
+_efl_canvas_group_group_unclipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd, Eina_Bool unclipped)
+{
+   // We must call this function BEFORE the constructor (yes, it's hacky)
+   EINA_SAFETY_ON_FALSE_RETURN(!sd->object);
+   sd->unclipped = !!unclipped;
+}
+
 /* Internal EO APIs */
 
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_add)
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_del)
+EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_unclipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
 
 #define EFL_CANVAS_GROUP_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _efl_canvas_group_group_add), \
-   EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _efl_canvas_group_group_del)
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _efl_canvas_group_group_del), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_unclipped_set, _efl_canvas_group_group_unclipped_set)
 
 
 #include "canvas/efl_canvas_group.eo.c"
