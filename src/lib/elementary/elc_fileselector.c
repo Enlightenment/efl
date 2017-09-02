@@ -3104,9 +3104,9 @@ _elm_fileselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_register(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
+_elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
-   Eina_Bool ret = elm_obj_widget_focus_register(efl_super(obj, MY_CLASS), manager, logical, logical_flag);
+   Eina_Bool ret = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    _focus_chain_update(obj, pd);
 

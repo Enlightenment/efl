@@ -10,6 +10,13 @@ function Efl.Ui.Scrollable_On_Show_Region {
 
 struct @extern Elm.Theme; [[Elementary theme]]
 
+struct Elm.Widget.Focus_State {
+   [[All relevant fields needed for the current state of focus registeration]]
+   manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
+   parent : Efl.Ui.Focus.User; [[The parent the widget is using as logical parent]]
+   logical : bool; [[$true if this is registered as logical currently]]
+}
+
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                      Elm.Interface.Atspi_Component, Efl.Ui.Focus.User,
                      Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor)
@@ -794,15 +801,21 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Focus Manager API */
-      focus_register @protected {
-         [[Register focus with the given focus manager.]]
+      focus_state_apply @protected {
+         [[Register focus with the given configuration.
+
+           The implementation can feel free to change the logical flag as it wants, but other than that it should strictly keep the configuration.
+
+           The implementation in elm.widget updates the current state into what is passed as configured state, respecting manager changes, registeration and unregistration based on if it should be registered or unregistered.
+
+           A manager field that is $null means that the widget should not or was not registered.
+         ]]
          params {
-            @in manager: Efl.Ui.Focus.Manager; [[The focus manager to register with.]]
-            @in logical: Efl.Ui.Focus.Object; [[The logical parent to use.]]
-            /* FIXME: The below doc needs fixing! */
-            @inout logical_flag: bool; [[reference to the flag indicating if the should be logical or not change this flag to the value you have it registered]]
+            @in current_state : Elm.Widget.Focus_State; [[The focus manager to register with.]]
+            @inout configured_state : Elm.Widget.Focus_State; [[The evalulated Focus state that should be used]]
+            @in redirect : Elm.Widget; [[A redirect that will be set by the elm.widget implementation]]
          }
-         return: bool; [[return $true or $false if the registration was successfull or not]]
+         return: bool; [[return $true or $false if the widget is registered or false if it is not]]
       }
       focus_manager_factory @protected {
          [[If the widget needs a focus manager, this function will be called.

@@ -60,7 +60,7 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.single_direction { get; set; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
-      Elm.Widget.focus_register;
+      Elm.Widget.focus_state_apply;
    }
    events {
       scroll,page,changed; [[Called when scroll page changed]]
