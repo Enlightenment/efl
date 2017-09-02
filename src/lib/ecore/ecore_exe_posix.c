@@ -503,7 +503,7 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    if (!ok) /* Something went wrong, so pull down everything. */
    {
       if (exe->pid) ecore_exe_terminate(obj);
-      IF_FN_DEL(ecore_exe_free, obj);
+      obj = NULL;
    }
    else
    {
