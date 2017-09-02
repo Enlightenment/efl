@@ -394,6 +394,7 @@ _evas_shm_surface_destroy(Surface *surface)
      _shm_leaf_destroy(&surface->surf.shm->leaf[i]);
 
    free(surface->surf.shm);
+   surface->surf.shm = NULL;
 }
 
 void 

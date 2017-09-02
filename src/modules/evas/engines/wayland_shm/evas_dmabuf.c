@@ -479,6 +479,7 @@ _allocation_complete(Dmabuf_Buffer *b)
     * buffer type...
     */
    _fallback(b->surface, b->w, b->h);
+   b->surface = NULL;
 }
 
 static void
@@ -591,12 +592,13 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
              _evas_dmabuf_buffer_destroy(b);
           }
         buf = _evas_dmabuf_buffer_init(surface, w, h);
-        surface->buffer[i] = buf;
         if (!buf)
            {
               _fallback(surface, w, h);
+              s->surf.dmabuf = NULL;
               return;
            }
+        surface->buffer[i] = buf;
      }
 }
 
@@ -758,6 +760,8 @@ _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
       _evas_dmabuf_buffer_destroy(surface->buffer[i]);
 
    free(surface->buffer);
+   surface->buffer = NULL;
+   surface->nbuf = 0;
    free(surface);
 }
 
