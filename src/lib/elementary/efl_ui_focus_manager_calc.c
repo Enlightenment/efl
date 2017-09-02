@@ -503,9 +503,10 @@ static Node*
 _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Node *parent)
 {
    Node *node;
-   if (!!eina_hash_find(pd->node_hash, &child))
+   node = eina_hash_find(pd->node_hash, &child);
+   if (node)
      {
-        ERR("Child %p is already registered in the graph", child);
+        ERR("Child %p is already registered in the graph (%s)", child, node->type == NODE_TYPE_ONLY_LOGICAL ? "logical" : "regular");
         return NULL;
      }
 
