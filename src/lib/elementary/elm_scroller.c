@@ -1446,11 +1446,11 @@ _elm_scroller_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_focus_register(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
+_elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    //undepended from logical or not we always reigster as full with ourself as redirect
-   *logical_flag = EINA_TRUE;
-   return efl_ui_focus_manager_calc_register_logical(manager, obj, logical, obj);
+   configured_state->logical = EINA_TRUE;
+   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 

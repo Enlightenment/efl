@@ -419,12 +419,13 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 }
 
 EOLIAN Eina_Bool
-_elm_table_elm_widget_focus_register(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
+_elm_table_elm_widget_focus_state_apply(Eo *obj, void *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
-   Eina_Bool result = elm_obj_widget_focus_register(efl_super(obj, MY_CLASS), manager, logical, logical_flag);
+   Eina_Bool result = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    //later registering children are automatically set into the order of the internal table
-   _focus_order_flush(obj);
+   if (configured_state->manager)
+     _focus_order_flush(obj);
 
    return result;
 }

@@ -430,11 +430,7 @@ typedef struct _Elm_Widget_Smart_Data
    Elm_Focus_Move_Policy         focus_move_policy;
    Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 
-   struct {
-     Efl_Ui_Focus_Manager *manager; //manager which is currently regsitered in
-     Efl_Ui_Focus_Object *parent; //the parent where it is currently registered
-     Eina_Bool logical;
-   } focus;
+   Elm_Widget_Focus_State focus;
    struct {
       int child_count;
       Efl_Ui_Focus_Object *parent;

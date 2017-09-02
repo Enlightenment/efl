@@ -332,24 +332,63 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_focus_register(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
-  Efl_Ui_Focus_Manager *manager,
-  Efl_Ui_Focus_Object *logical, Eina_Bool *logical_flag)
+_elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
+   Eina_Bool registered = EINA_TRUE;
 
-   if (!*logical_flag)
-     return efl_ui_focus_manager_calc_register(manager, obj, logical, NULL);
-   else
-     return efl_ui_focus_manager_calc_register_logical(manager, obj, logical, NULL);
+   //shortcut for having the same configurations
+   if (current_state.manager == configured_state->manager && !current_state.manager)
+     return !!current_state.manager;
+
+   if (configured_state->logical == current_state.logical &&
+       configured_state->manager == current_state.manager &&
+       configured_state->parent == current_state.parent)
+     return !!current_state.manager;
+
+   //this thing doesnt want to be registered, but it is ...
+   if (!configured_state->manager && current_state.manager)
+     {
+        efl_ui_focus_manager_calc_unregister(current_state.manager, obj);
+        return EINA_FALSE;
+     }
+   //by that point we have always a configured manager
+
+   if (!current_state.manager) registered = EINA_FALSE;
+
+   if (//check if we have changed the manager
+       (current_state.manager != configured_state->manager) ||
+       //check if we are already registered but in a different state
+       (current_state.logical != configured_state->logical))
+     {
+        //we need to unregister here
+        efl_ui_focus_manager_calc_unregister(current_state.manager, obj);
+        registered = EINA_FALSE;
+     }
+
+   if (!registered)
+     {
+        if (configured_state->logical)
+          return efl_ui_focus_manager_calc_register_logical(configured_state->manager, obj, configured_state->parent, redirect);
+        else
+          return efl_ui_focus_manager_calc_register(configured_state->manager, obj, configured_state->parent, redirect);
+     }
+   ERR("Uncaught focus state consider this as unregistered (%d) \n (%p,%p,%d) \n (%p,%p,%d) ", registered,
+     configured_state->manager, configured_state->parent, configured_state->logical,
+     current_state.manager, current_state.parent, current_state.logical
+   );
+   abort();
+   return EINA_FALSE;
 }
-
 
 static void
 _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Eina_Bool should = EINA_FALSE;
    Eina_Bool want_full = EINA_FALSE;
-   Efl_Ui_Focus_Manager *manager = pd->manager.manager;
+   Elm_Widget_Focus_State configuration;
+
+   //this would mean we are registering again the root, we dont want that
+   if (pd->manager.manager == obj) return;
 
    //there are two reasons to be registered, the child count is bigger than 0, or the widget is flagged to be able to handle focus
    if (pd->can_focus)
@@ -379,44 +418,38 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
         if (_tree_disabled(obj))
           should = EINA_FALSE;
+
+        if (!evas_object_visible_get(obj))
+          should = EINA_FALSE;
      }
 
-   if ( //check if we have changed the manager
-        (pd->focus.manager != manager && should) ||
-        //check if we are already registered but in a different state
-        (pd->focus.manager && should && want_full == pd->focus.logical)
-      )
+   if (should)
      {
-        efl_ui_focus_manager_calc_unregister(pd->focus.manager, obj);
+        configuration.parent = pd->logical.parent;
+        configuration.manager = pd->manager.manager;
+        configuration.logical = !want_full;
+     }
+   else
+     {
+        configuration.parent = NULL;
+        configuration.manager = NULL;
+        configuration.logical = EINA_FALSE;
+     }
+
+   if (!elm_obj_widget_focus_state_apply(obj, pd->focus, &configuration, NULL))
+     {
+        //things went wrong or this thing is unregistered. Purge the current configuration.
         pd->focus.manager = NULL;
         pd->focus.parent = NULL;
+        pd->focus.logical = EINA_FALSE;
      }
-
-   //now register in the manager
-   if (should && !pd->focus.manager)
+   else
      {
-        if (manager && manager != obj)
-          {
-             if (!pd->logical.parent) return;
-
-             pd->focus.manager = manager;
-             pd->focus.logical = !want_full;
-             pd->focus.parent = pd->logical.parent;
-
-             if (!elm_obj_widget_focus_register(obj, pd->focus.manager,
-                  pd->focus.parent, &pd->focus.logical))
-               {
-                  pd->focus.manager = NULL;
-                  pd->focus.parent = NULL;
-               }
-          }
+        pd->focus.parent = configuration.parent;
+        pd->focus.manager = configuration.manager;
+        pd->focus.logical = configuration.logical;
      }
-   else if (!should && pd->focus.manager)
-     {
-        efl_ui_focus_manager_calc_unregister(pd->focus.manager, obj);
-        pd->focus.manager = NULL;
-        pd->focus.parent = NULL;
-     }
+
 }
 
 static Efl_Ui_Focus_Object*
