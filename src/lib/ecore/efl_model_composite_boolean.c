@@ -151,33 +151,46 @@ static Efl_Future *
 _efl_model_composite_boolean_children_efl_model_property_get(Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Boolean_Children_Data *pd, const char *property)
 {
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
    Efl_Model_Hash_Value *hv = eina_hash_find(pd->parent_pd->values, property);
    if (hv)
      {
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
         Efl_Future *rfuture = efl_promise_future_get(promise);
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
 
         Eina_Value *eina_value = eina_value_new(EINA_VALUE_TYPE_UCHAR);
         if (hv->bits_count <= pd->index)
           {
-            unsigned char f = hv->default_value;
-            eina_value_set(eina_value, f);
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
+             unsigned char f = hv->default_value;
+             eina_value_set(eina_value, f);
           }
         else
           {
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
              eina_value_set(eina_value, _bit_get(hv->buffer, pd->index));
           }
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         efl_promise_value_set(promise, eina_value, (Eina_Free_Cb)eina_value_free);
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         return rfuture;
      }
    else if (pd->composite_child)
+     {
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
      return efl_model_property_get(pd->composite_child, property);
+     }
    else
      {
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
         Efl_Future *rfuture = efl_promise_future_get(promise);
 
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
+   fprintf(stderr, "%s %s:%d %s\n", __func__, __FILE__, __LINE__, property); fflush(stderr);
         return rfuture;
      }
 }
@@ -494,7 +507,7 @@ _efl_model_composite_boolean_efl_object_destructor(Eo *obj, Efl_Model_Composite_
 }
 
 static void
-_efl_model_composite_boolean_composite_model_set(Eo *obj EINA_UNUSED,
+_efl_model_composite_boolean_efl_ui_view_model_set(Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Boolean_Data *pd, Efl_Model *model)
 {
    if (pd->composite_model)
@@ -506,7 +519,7 @@ _efl_model_composite_boolean_composite_model_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Model *
-_efl_model_composite_boolean_composite_model_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
+_efl_model_composite_boolean_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
 {
    return pd->composite_model;
 }

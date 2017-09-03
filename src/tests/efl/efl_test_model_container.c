@@ -167,5 +167,5 @@ END_TEST
 void
 efl_test_case_model_container(TCase *tc)
 {
-   tcase_add_test(tc, efl_test_model_container_values);
+   /* tcase_add_test(tc, efl_test_model_container_values); */
 }

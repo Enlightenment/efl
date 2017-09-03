@@ -1,0 +1,16 @@
+class Efl.Model.Composite.Selection (Efl.Model.Composite.Boolean)
+{
+   [[Efl model composite selection class]]
+   methods {
+      select {
+         params {
+           idx: int;
+         }
+         return: future<eina.value>;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Model.children_slice_get;
+   }
+}
