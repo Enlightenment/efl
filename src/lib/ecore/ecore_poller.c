@@ -248,7 +248,7 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
 
    if (EINA_UNLIKELY(!eina_main_loop_is()))
      {
-        EINA_MAIN_LOOP_CHECK_RETURN;
+        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
      }
 
    if (!func)
