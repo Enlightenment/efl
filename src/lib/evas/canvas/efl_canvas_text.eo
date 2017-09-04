@@ -252,6 +252,16 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
            @since 1.18
          ]]
       }
+      async_layout {
+         [[Requests to layout the text off the mainloop.
+
+           Once layout is complete, the result is returned as @Eina.Rect,
+           with w, h fields set.
+
+           @since 1.21
+         ]]
+         return: ptr(Eina.Future) @owned; [[Future for layout result]]
+      }
    }
    implements {
       Efl.Object.constructor;
