@@ -163,10 +163,10 @@ struct _Evas_Filter_Context
       Eina_Bool color_use : 1;
    } target;
 
-   int          run_count;
+   short        run_count;
+   short        refcount;
 
    Eina_Bool running : 1;
-   Eina_Bool delete_me : 1;
    Eina_Bool async : 1;
    Eina_Bool has_proxies : 1;
    Eina_Bool gl : 1;

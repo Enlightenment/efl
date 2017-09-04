@@ -38,6 +38,9 @@ static void _filter_buffer_unlock_all(Evas_Filter_Context *ctx);
 
 /* Main functions */
 
+#define _free(ptr) free(ptr)
+//eina_freeq_ptr_main_add(ptr, NULL, sizeof(*ptr))
+
 Evas_Filter_Context *
 evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data)
 {
@@ -55,6 +58,7 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async, void *user_data
    ctx->user_data = user_data;
    ctx->buffer_scaled_get = &evas_filter_buffer_scaled_get;
    ctx->gl = (ENFN->gl_surface_read_pixels != NULL);
+   ctx->refcount = 1;
 
    return ctx;
 }
@@ -205,26 +209,39 @@ _context_destroy(void *data)
 {
    Evas_Filter_Context *ctx = data;
 
+   EINA_SAFETY_ON_FALSE_RETURN(ctx->refcount == 0);
    evas_filter_context_clear(ctx, EINA_FALSE);
-   free(ctx);
+   _free(ctx);
+}
+
+int
+evas_filter_context_ref(Evas_Filter_Context *ctx)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
+
+#ifdef FILTERS_DEBUG
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_main_loop_is(), -1);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ctx->refcount > 0, -1);
+#endif
+
+   return (++ctx->refcount);
 }
 
 void
-evas_filter_context_destroy(Evas_Filter_Context *ctx)
+evas_filter_context_unref(Evas_Filter_Context *ctx)
 {
    if (!ctx) return;
 
 #ifdef FILTERS_DEBUG
    EINA_SAFETY_ON_FALSE_RETURN(eina_main_loop_is());
+   EINA_SAFETY_ON_FALSE_RETURN(ctx->refcount > 0);
 #endif
 
-   if (ctx->delete_me) return;
-   ctx->delete_me = EINA_TRUE;
+   if ((--ctx->refcount) != 0) return;
 
-   if (ctx->running)
-     evas_post_render_job_add(ctx->evas, _context_destroy, ctx);
-   else
+   if (!ctx->running)
      _context_destroy(ctx);
+   // else: post_run_cb will be called
 }
 
 void
@@ -509,7 +526,7 @@ _buffer_alloc_new(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only,
    if (!fb->buffer)
      {
         ERR("Failed to create ector buffer!");
-        free(fb);
+        _free(fb);
         return NULL;
      }
 
@@ -523,7 +540,7 @@ _buffer_free(Evas_Filter_Buffer *fb)
    _filter_buffer_backing_free(fb);
    eina_stringshare_del(fb->source_name);
    efl_unref(fb->source);
-   free(fb);
+   _free(fb);
 }
 
 Evas_Filter_Buffer *
@@ -627,10 +644,10 @@ _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd)
    ctx->commands = eina_inlist_remove(ctx->commands, EINA_INLIST_GET(cmd));
    switch (cmd->mode)
      {
-      case EVAS_FILTER_MODE_CURVE: free(cmd->curve.data); break;
+      case EVAS_FILTER_MODE_CURVE: _free(cmd->curve.data); break;
       default: break;
      }
-   free(cmd);
+   _free(cmd);
 }
 
 Evas_Filter_Buffer *
@@ -1334,7 +1351,7 @@ evas_filter_command_curve_add(Evas_Filter_Context *ctx,
    cmd = _command_new(ctx, EVAS_FILTER_MODE_CURVE, in, NULL, out);
    if (!cmd)
      {
-        free(copy);
+        _free(copy);
         return NULL;
      }
 
@@ -1559,7 +1576,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
      ctx->target.color_use = EINA_FALSE;
    ctx->target.rop = ENFN->context_render_op_get(ENDT, draw_context);
 
-   free(ctx->target.map);
+   _free(ctx->target.map);
    if (!map) ctx->target.map = NULL;
    else
      {
@@ -1820,9 +1837,7 @@ end:
    ctx->running = EINA_FALSE;
    DEBUG_TIME_END();
 
-   if (ctx->post_run.cb)
-     ctx->post_run.cb(ctx, ctx->post_run.data, ok);
-
+   ctx->post_run.cb(ctx, ctx->post_run.data, ok);
    return ok;
 }
 
@@ -1884,6 +1899,7 @@ _filter_obscured_region_calc(Evas_Filter_Context *ctx)
 Eina_Bool
 evas_filter_context_run(Evas_Filter_Context *ctx)
 {
+   evas_filter_context_ref(ctx);
    _filter_obscured_region_calc(ctx);
 
    ctx->run_count++;

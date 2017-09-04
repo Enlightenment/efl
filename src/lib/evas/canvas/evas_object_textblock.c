@@ -1042,7 +1042,11 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
                   ti->gfx_filter = NULL;
                }
              else
-               ti->gfx_filter->ti = NULL;
+               {
+                  evas_filter_context_unref(ti->gfx_filter->ctx);
+                  ti->gfx_filter->ctx = NULL;
+                  ti->gfx_filter->ti = NULL;
+               }
           }
      }
    else
@@ -12943,6 +12947,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
    EINA_INLIST_FREE(o->gfx_filter.programs, prg)
      {
         EINA_INLIST_REMOVE(o->gfx_filter.programs, prg);
+        evas_filter_program_del(prg->pgm);
         eina_stringshare_del(prg->name);
         eina_stringshare_del(prg->code);
         free(prg);
@@ -13013,13 +13018,20 @@ _filter_sync_end(Evas_Filter_Context *ctx, Eina_Bool success)
         if (filter->ti->parent.format->gfx_filter)
           filter->ti->parent.format->gfx_filter->invalid = !success;
         // else just avoid sigsegv
-        filter->ctx = NULL;
+        if (filter->ctx == ctx)
+          {
+             // release local ref
+             evas_filter_context_unref(ctx);
+             filter->ctx = NULL;
+          }
      }
    else
      {
         free(filter);
      }
-   evas_filter_context_destroy(ctx);
+
+   // release run ref
+   evas_filter_context_unref(ctx);
 }
 
 static void
@@ -13136,7 +13148,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    Eina_List *shadows = NULL;
    Eina_List *glows = NULL;
    Eina_List *outlines = NULL;
-   Eina_List *gfx_filters = NULL, *li;
+   Eina_List *gfx_filters = NULL;
    void *context_save = context;
    int strikethrough_thickness, underline_thickness, underline_position;
    int i, j;
@@ -13426,7 +13438,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
     * in "_text_item_update_sizes" should not modify one without the other. */
 
    /* gfx filters preparation */
-   EINA_LIST_FOREACH(gfx_filters, li, itr)
+   EINA_LIST_FREE(gfx_filters, itr)
      {
         Efl_Canvas_Filter_State state = EFL_CANVAS_FILTER_STATE_DEFAULT;
         Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(itr);
@@ -13487,7 +13499,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         ok = evas_filter_context_program_use(ctx, pgm, EINA_FALSE, 0, 0);
         if (!ok)
           {
-             evas_filter_context_destroy(ctx);
+             evas_filter_context_unref(ctx);
              filter->invalid = EINA_TRUE;
              continue;
           }
@@ -13502,6 +13514,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         evas_filter_context_proxy_render_all(ctx, eo_obj, EINA_FALSE);
         evas_filter_context_buffers_allocate_all(ctx);
         evas_filter_target_set(ctx, context, surface, target.x, target.y, NULL);
+        if (ti->gfx_filter->ctx)
+          evas_filter_context_unref(ti->gfx_filter->ctx);
         ti->gfx_filter->ctx = ctx;
         ti->gfx_filter->do_async = do_async;
 

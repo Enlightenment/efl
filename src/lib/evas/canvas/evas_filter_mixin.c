@@ -120,13 +120,13 @@ _filter_end_sync(Evas_Filter_Context *ctx, Evas_Object_Protected_Data *obj,
    if (previous)
      ENFN->image_free(ENC, previous);
 
-   if (destroy)
+   if (destroy && (ctx == pd->data->context))
      {
-        evas_filter_context_destroy(ctx);
-        ctx = NULL;
+        evas_filter_context_unref(ctx); // local ref
+        FCOW_WRITE(pd, context, NULL);
      }
 
-   FCOW_WRITE(pd, context, ctx);
+   evas_filter_context_unref(ctx); // run ref
    efl_unref(eo_obj);
 }
 
@@ -379,7 +379,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if ((!pd->data->reuse) || (was_async != do_async) ||
             (prev_w != W) || (prev_h != H))
           {
-             evas_filter_context_destroy(filter);
+             evas_filter_context_unref(filter);
              FCOW_WRITE(pd, context, NULL);
              filter = NULL;
           }
@@ -390,7 +390,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         ok = evas_filter_context_program_use(filter, pd->data->chain, EINA_TRUE, X, Y);
         if (!ok)
           {
-             evas_filter_context_destroy(filter);
+             evas_filter_context_unref(filter);
              FCOW_WRITE(pd, context, NULL);
              filter = NULL;
           }
@@ -405,8 +405,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (!filter || !ok)
           {
              ERR("Parsing failed?");
-             evas_filter_context_destroy(filter);
+             evas_filter_context_unref(filter);
              FCOW_WRITE(pd, invalid, EINA_TRUE);
+             FCOW_WRITE(pd, context, NULL);
              return EINA_FALSE;
           }
      }
@@ -474,8 +475,8 @@ _efl_canvas_filter_internal_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_F
    {
       fcow->obj = obj;
 
-      if (fcow->context)
-        evas_filter_context_destroy(fcow->context);
+      evas_filter_context_unref(fcow->context);
+      fcow->context = NULL;
 
       // Parse filter program
       evas_filter_program_del(fcow->chain);
@@ -710,6 +711,7 @@ EOLIAN static void
 _efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj;
+   Evas_Object_Filter_Data *fcow;
    Evas_Filter_Data_Binding *db;
    Evas_Public_Data *e;
    Eina_Inlist *il;
@@ -721,7 +723,10 @@ _efl_canvas_filter_internal_efl_object_destructor(Eo *eo_obj, Evas_Filter_Data *
    e = obj->layer->evas;
 
    if (pd->data->context)
-     evas_filter_context_destroy(pd->data->context);
+     {
+        evas_filter_context_unref(pd->data->context);
+        FCOW_WRITE(pd, context, NULL);
+     }
 
    if (pd->data->output)
      {
