@@ -303,7 +303,7 @@ _eina_semaphore_free(Eina_Semaphore *sem)
    if (sem)
      {
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-        return (semaphore_destroy(*sem, mach_task_self()) == KERN_SUCCESS)
+        return (semaphore_destroy(mach_task_self(), *sem) == KERN_SUCCESS)
         ? EINA_TRUE : EINA_FALSE;
 #else
         return (sem_destroy(sem) == 0) ? EINA_TRUE : EINA_FALSE;
