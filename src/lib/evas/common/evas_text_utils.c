@@ -352,7 +352,7 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
    evas_common_font_ot_populate_text_props(text, text_props, len, mode, lang);
 
    gl_itr = text_props->info->glyph;
-   for (char_index = 0 ; char_index < text_props->len ; char_index++)
+   for (char_index = 0 ; char_index < text_props->len ; char_index++, gl_itr++)
      {
         FT_UInt idx;
         RGBA_Font_Glyph *fg;
@@ -406,7 +406,6 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
         gl_itr->pen_after += adjust_x;
 
         fi = text_props->font_instance;
-        gl_itr++;
      }
 }
 #else
