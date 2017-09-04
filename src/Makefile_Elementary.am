@@ -806,6 +806,7 @@ bin/elementary/test_efl_anim_group_sequential.c \
 bin/elementary/test_efl_anim_event_anim.c \
 bin/elementary/test_efl_anim_pause.c \
 bin/elementary/test_efl_anim_repeat.c \
+bin/elementary/test_efl_anim_start_delay.c \
 bin/elementary/test_eio.c \
 bin/elementary/test_entry.c \
 bin/elementary/test_entry_anchor.c \

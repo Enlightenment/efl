@@ -56,6 +56,15 @@ class Efl.Animation (Efl.Object)
             count: int; [[Repeat count. EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely.]]
          }
       }
+      @property start_delay {
+         set {
+         }
+         get {
+         }
+         values {
+            delay_time: double; [[Delay time, in seconds, from when the animation starts until the animation is animated]]
+         }
+      }
       is_deleted @protected {
          return: bool; [[$true if animation is deleted, $false otherwise.]]
       }
