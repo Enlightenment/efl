@@ -121,6 +121,10 @@ _efl_animation_object_group_sequential_efl_animation_object_total_duration_get(E
         double child_total_duration =
            efl_animation_object_total_duration_get(anim_obj);
 
+        double start_delay = efl_animation_object_start_delay_get(anim_obj);
+        if (start_delay > 0.0)
+          child_total_duration += start_delay;
+
         int child_repeat_count =
            efl_animation_object_repeat_count_get(anim_obj);
         if (child_repeat_count > 0)
@@ -183,6 +187,7 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
         //Sum the current total duration
         double total_duration =
            efl_animation_object_total_duration_get(anim_obj);
+        double start_delay = efl_animation_object_start_delay_get(anim_obj);
         double anim_obj_progress;
 
         if (total_duration == 0.0)
@@ -192,10 +197,17 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
              //If object is repeated, then recalculate progress.
              int repeated_count = _repeated_count_get(pd, anim_obj);
              if (repeated_count > 0)
-               sum_prev_total_duration += (total_duration * repeated_count);
+               sum_prev_total_duration +=
+                  ((total_duration + start_delay) * repeated_count);
 
-             anim_obj_progress =
-                (elapsed_time - sum_prev_total_duration) / total_duration;
+             double elapsed_time_without_delay =
+                elapsed_time - sum_prev_total_duration - start_delay;
+
+             //Object should not start to wait for start delay time.
+             if (elapsed_time_without_delay < 0.0) break;
+
+             anim_obj_progress = elapsed_time_without_delay / total_duration;
+
              if (anim_obj_progress > 1.0)
                anim_obj_progress = 1.0;
 
@@ -218,8 +230,9 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
                }
           }
 
-        //Update the sum of the previous objects' total durations
-        sum_prev_total_duration += total_duration;
+        /* Update the sum of the previous objects' total durations and start
+         * delays */
+        sum_prev_total_duration += (total_duration + start_delay);
 
         if ((anim_obj_progress == 1.0) &&
             !efl_animation_object_final_state_keep_get(anim_obj))

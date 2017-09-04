@@ -59,6 +59,10 @@ _efl_animation_group_parallel_efl_animation_total_duration_get(Eo *eo_obj,
      {
         double child_total_duration = efl_animation_total_duration_get(anim);
 
+        double start_delay = efl_animation_start_delay_get(anim);
+        if (start_delay > 0.0)
+          child_total_duration += start_delay;
+
         int child_repeat_count = efl_animation_repeat_count_get(anim);
         if (child_repeat_count > 0)
           child_total_duration *= (child_repeat_count + 1);
@@ -101,6 +105,9 @@ _efl_animation_group_parallel_efl_animation_object_create(Eo *eo_obj,
 
    double total_duration = efl_animation_total_duration_get(eo_obj);
    efl_animation_object_total_duration_set(group_anim_obj, total_duration);
+
+   double start_delay_time = efl_animation_start_delay_get(eo_obj);
+   efl_animation_object_start_delay_set(group_anim_obj, start_delay_time);
 
    int repeat_count = efl_animation_repeat_count_get(eo_obj);
    efl_animation_object_repeat_count_set(group_anim_obj, repeat_count);
