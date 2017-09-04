@@ -1686,8 +1686,9 @@ _transform_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
    dst = _instruction_param_getbuf(instr, "dst", NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dst, 0);
 
-   if (ox < 0) l = (-ox) * 2;
-   else r = ox * 2;
+   //if (ox < 0) l = (-ox) * 2;
+   //else r = ox * 2;
+   r = ox * 2;
 
    if (oy < 0) t = (-oy) * 2;
    else b = oy * 2;
