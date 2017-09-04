@@ -378,6 +378,9 @@ eina_chained_mempool_from(void *data, void *ptr)
    Eina_Rbtree *r;
    Chained_Pool *p;
    Eina_Trash *t;
+#ifndef NVALGRIND
+   Eina_Trash *last;
+#endif
    void *pmem;
    Eina_Bool ret = EINA_FALSE;
 
@@ -420,8 +423,19 @@ eina_chained_mempool_from(void *data, void *ptr)
      }
 
    // Check if the pointer was freed
-   for (t = p->base; t != NULL; t = t->next)
-     if (t == ptr) goto end;
+   for (t = p->base, last = NULL; t != NULL; t = t->next)
+     {
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(t, pool->item_alloc);
+        if (last) VALGRIND_MAKE_MEM_NOACCESS(last, pool->item_alloc);
+        last = t;
+#endif
+
+        if (t == ptr) goto end;
+     }
+#ifndef NVALGRIND
+     if (last) VALGRIND_MAKE_MEM_NOACCESS(last, pool->item_alloc);
+#endif
 
    // Seems like we have a valid pointer actually
    ret = EINA_TRUE;
