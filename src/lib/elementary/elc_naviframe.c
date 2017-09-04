@@ -627,11 +627,10 @@ end:
          * This case can happen when an item is deleted by elm_object_item_del()
          * right after the item is newly pushed.
          */
-        if ((nfo->self == nit) || (nfo->related == nit))
-          {
-             nfo->self = NULL;
-             nfo->related = NULL;
-          }
+        if (nit == nfo->self)
+          nfo->self = NULL;
+        else if (nit == nfo->related)
+          nfo->related = NULL;
      }
 
    _item_free(nit);
