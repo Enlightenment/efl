@@ -1596,6 +1596,7 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
 {
   drmVBlank v;
   int ret;
+  Eina_Bool success;
 
   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
   EINA_SAFETY_ON_NULL_RETURN_VAL(sec, EINA_FALSE);
@@ -1605,14 +1606,13 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
   v.request.type = DRM_VBLANK_RELATIVE;
   v.request.sequence = sequence;
   ret = sym_drmWaitVBlank(output->fd, &v);
-  if (ret)
+  success = (ret == 0) && (v.reply.tval_sec > 0 || v.reply.tval_usec > 0);
+  if (!success)
     {
        ret = _blanktime_fallback(output, sequence, sec, usec);
        if (ret) return EINA_FALSE;
        return EINA_TRUE;
     }
-  if (v.reply.tval_sec < 0) return EINA_FALSE;
-  if (v.reply.tval_usec < 0) return EINA_FALSE;
 
   *sec = v.reply.tval_sec;
   *usec = v.reply.tval_usec;
