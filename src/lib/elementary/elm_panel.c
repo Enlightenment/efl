@@ -796,6 +796,8 @@ _elm_panel_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Objec
         evas_object_show(sd->content);
         if (sd->scrollable)
           elm_widget_sub_object_add(sd->scr_ly, sd->content);
+        else
+          elm_widget_sub_object_add(obj, sd->content);
      }
 
    elm_layout_sizing_eval(obj);
@@ -1456,7 +1458,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");
         elm_layout_content_set(obj, "elm.swallow.content", sd->bx);
-        if (sd->content) elm_widget_sub_object_add(sd->bx, sd->content);
+        if (sd->content) elm_widget_sub_object_add(obj, sd->content);
      }
 }
 
