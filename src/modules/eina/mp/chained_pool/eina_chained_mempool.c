@@ -379,7 +379,7 @@ eina_chained_mempool_from(void *data, void *ptr)
    Chained_Pool *p;
    Eina_Trash *t;
 #ifndef NVALGRIND
-   Eina_Trash *last;
+   Eina_Trash *last = NULL;
 #endif
    void *pmem;
    Eina_Bool ret = EINA_FALSE;
@@ -423,7 +423,7 @@ eina_chained_mempool_from(void *data, void *ptr)
      }
 
    // Check if the pointer was freed
-   for (t = p->base, last = NULL; t != NULL; t = t->next)
+   for (t = p->base; t != NULL; t = t->next)
      {
 #ifndef NVALGRIND
         VALGRIND_MAKE_MEM_DEFINED(t, pool->item_alloc);
