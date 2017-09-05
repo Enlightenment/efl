@@ -9,10 +9,23 @@ typedef struct _App_Data
    Efl_Animation        *hide_anim;
    Efl_Animation_Object *anim_obj;
 
+   Evas_Object          *start_btn;
    Evas_Object          *repeat_count_spin;
+   Evas_Object          *repeat_mode_spin;
 
    Eina_Bool             is_btn_visible;
 } App_Data;
+
+Efl_Animation_Repeat_Mode
+_anim_repeat_mode_get(Evas_Object *spinner)
+{
+   int value = elm_spinner_value_get(spinner);
+
+   if (value == 0)
+     return EFL_ANIMATION_REPEAT_MODE_RESTART;
+   else
+     return EFL_ANIMATION_REPEAT_MODE_REVERSE;
+}
 
 static void
 _anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
@@ -27,7 +40,23 @@ _anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
 
    printf("Animation has been ended!\n");
 
+   Efl_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
+   if (repeat_mode == EFL_ANIMATION_REPEAT_MODE_REVERSE)
+     {
+        int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
+        if (repeat_count % 2 == 1)
+          {
+             ad->is_btn_visible = !(ad->is_btn_visible);
+
+             if (ad->is_btn_visible)
+               elm_object_text_set(ad->start_btn, "Start Alpha Animation from 1.0 to 0.0");
+             else
+               elm_object_text_set(ad->start_btn, "Start Alpha Animation from 0.0 to 1.0");
+          }
+     }
+
    elm_object_disabled_set(ad->repeat_count_spin, EINA_FALSE);
+   elm_object_disabled_set(ad->repeat_mode_spin, EINA_FALSE);
 
    ad->anim_obj = NULL;
 }
@@ -53,10 +82,16 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
    int repeat_count = elm_spinner_value_get(ad->repeat_count_spin);
    elm_object_disabled_set(ad->repeat_count_spin, EINA_TRUE);
 
+   Efl_Animation_Repeat_Mode repeat_mode = _anim_repeat_mode_get(ad->repeat_mode_spin);
+   elm_object_disabled_set(ad->repeat_mode_spin, EINA_TRUE);
+
    if (ad->is_btn_visible)
      {
         //Set animation repeat count
         efl_animation_repeat_count_set(ad->show_anim, repeat_count);
+
+        //Set animation repeat mode
+        efl_animation_repeat_mode_set(ad->show_anim, repeat_mode);
 
         //Create Animation Object from Animation
         ad->anim_obj = efl_animation_object_create(ad->show_anim);
@@ -66,6 +101,9 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
      {
         //Set animation repeat count
         efl_animation_repeat_count_set(ad->hide_anim, repeat_count);
+
+        //Set animation repeat mode
+        efl_animation_repeat_mode_set(ad->hide_anim, repeat_mode);
 
         //Create Animation Object from Animation
         ad->anim_obj = efl_animation_object_create(ad->hide_anim);
@@ -145,15 +183,29 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_move(repeat_count_spin, 100, 350);
    evas_object_show(repeat_count_spin);
 
+   //Spinner to set animation repeat mode
+   Evas_Object *repeat_mode_spin = elm_spinner_add(win);
+   elm_spinner_label_format_set(repeat_mode_spin, "Repeat Mode: %s");
+   elm_spinner_editable_set(repeat_mode_spin, EINA_FALSE);
+   elm_spinner_min_max_set(repeat_mode_spin, 0, 1);
+   elm_spinner_value_set(repeat_mode_spin, 0);
+   elm_spinner_special_value_add(repeat_mode_spin, 0, "Restart");
+   elm_spinner_special_value_add(repeat_mode_spin, 1, "Reverse");
+   evas_object_resize(repeat_mode_spin, 200, 50);
+   evas_object_move(repeat_mode_spin, 100, 400);
+   evas_object_show(repeat_mode_spin);
+
 
    //Initialize App Data
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
    ad->anim_obj = NULL;
+   ad->start_btn = start_btn;
    ad->repeat_count_spin = repeat_count_spin;
+   ad->repeat_mode_spin = repeat_mode_spin;
    ad->is_btn_visible = EINA_TRUE;
 
 
-   evas_object_resize(win, 400, 450);
+   evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }

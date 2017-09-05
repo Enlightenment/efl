@@ -166,6 +166,10 @@ _efl_animation_translate_efl_animation_object_create(Eo *eo_obj,
    double start_delay_time = efl_animation_start_delay_get(eo_obj);
    efl_animation_object_start_delay_set(anim_obj, start_delay_time);
 
+   Efl_Animation_Object_Repeat_Mode repeat_mode =
+      (Efl_Animation_Object_Repeat_Mode)efl_animation_repeat_mode_get(eo_obj);
+   efl_animation_object_repeat_mode_set(anim_obj, repeat_mode);
+
    int repeat_count = efl_animation_repeat_count_get(eo_obj);
    efl_animation_object_repeat_count_set(anim_obj, repeat_count);
 
