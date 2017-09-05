@@ -1227,7 +1227,6 @@ eina_promise_all_array(Eina_Future *array[])
 
    for (i = 0; i < ctx->base.futures_len; i++)
      {
-        Eina_Bool r;
         Eina_Value v;
 
         //Stub values...
