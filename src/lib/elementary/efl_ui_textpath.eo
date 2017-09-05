@@ -7,7 +7,6 @@ enum Efl.Ui.Textpath.Direction {
 class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
 {
    [[Efl Ui Textpath class]]
-   legacy_prefix: elm_textpath;
    methods {
       circle_set {
          [[Set a circle with given center, radius, and start angle.]]
@@ -47,7 +46,6 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
