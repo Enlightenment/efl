@@ -1,7 +1,7 @@
 #include "gl_engine_filter.h"
 
 static Eina_Bool
-_gl_filter_curve(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
+_gl_filter_curve(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image *image, *surface;
@@ -26,8 +26,7 @@ _gl_filter_curve(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
    DBG("curve %d @%p -> %d @%p", cmd->input->id, cmd->input->buffer,
        cmd->output->id, cmd->output->buffer);
 
-   re->window_use(re->software.ob);
-   gc = re->window_gl_context_get(re->software.ob);
+   gc = gl_generic_context_find(re, 1);
    evas_gl_common_context_target_surface_set(gc, surface);
 
    dc_save = gc->dc;
@@ -56,7 +55,7 @@ _gl_filter_curve(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
 }
 
 GL_Filter_Apply_Func
-gl_filter_curve_func_get(Render_Output_GL_Generic *re EINA_UNUSED, Evas_Filter_Command *cmd)
+gl_filter_curve_func_get(Render_Engine_GL_Generic *re EINA_UNUSED, Evas_Filter_Command *cmd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, NULL);
