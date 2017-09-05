@@ -13,9 +13,7 @@
 
 
 #define MY_CLASS EFL_UI_TEXTPATH_CLASS
-
 #define MY_CLASS_NAME "Efl.Ui.Textpath"
-#define MY_CLASS_NAME_LEGACY "elm_textpath"
 
 #define SLICE_DEFAULT_NO 99
 
@@ -498,12 +496,6 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
    elm_widget_sub_object_add(obj, priv->text_obj);
 
    efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _path_changed_cb, obj);
-}
-
-EOLIAN static void
-_efl_ui_textpath_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 EOLIAN static Efl_Object *
