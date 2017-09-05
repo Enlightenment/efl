@@ -311,11 +311,10 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
      {
         int pos = -1;
         Eina_Rectangle *rect = eina_rectangle_new(0, 0, 0, 0);
+        double px0 = 0.0, py0 = 0.0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
 
         while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
           {
-             double px0 = 0.0, py0 = 0.0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
-
              if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                {
                   pos++;
@@ -327,6 +326,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                {
                   Eina_Bezier bz;
                   double bx, by, bw, bh;
+                  Eina_Rectangle *brect;
 
                   pos++;
                   ctrl_x0 = points[pos] + x;
@@ -361,12 +361,14 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   py0 = py1;
 
                   eina_bezier_bounds_get(&bz, &bx, &by, &bw, &bh);
-                  Eina_Rectangle *brect = eina_rectangle_new(bx, by, bw, bh);
+                  brect = eina_rectangle_new(bx, by, bw, bh);
                   eina_rectangle_union(rect, brect);
                   eina_rectangle_free(brect);
                }
              else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
                {
+                  Eina_Rectangle *lrect;
+
                   pos++;
                   px1 = points[pos] + x;
                   pos++;
@@ -388,7 +390,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
                   pd->total_length += seg->length;
 
-                  Eina_Rectangle *lrect = eina_rectangle_new(px0, py0, px1 - px0, py1 - py0);
+                  lrect = eina_rectangle_new(px0, py0, px1 - px0, py1 - py0);
                   eina_rectangle_union(rect, lrect);
                   eina_rectangle_free(lrect);
                }
