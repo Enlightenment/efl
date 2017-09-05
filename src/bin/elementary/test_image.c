@@ -304,7 +304,8 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
    elm_entry_single_line_set(o, 1);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "http://41.media.tumblr.com/29f1ecd4f98aaff73fb21f479b450d4c/tumblr_mqsxdciQmB1rrju89o1_1280.jpg");
+   //elm_object_text_set(o, "http://41.media.tumblr.com/29f1ecd4f98aaff73fb21f479b450d4c/tumblr_mqsxdciQmB1rrju89o1_1280.jpg");
+   elm_object_text_set(o, "http://68.media.tumblr.com/d14765b2cc4ec25d1e7d640f3ec77a40/tumblr_ohtpjtRNlm1rrju89o1_500.jpg");
    evas_object_smart_callback_add(o, "activated", _url_activate_cb, win);
    elm_box_pack_end(box2, o);
    evas_object_show(o);
@@ -315,8 +316,8 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
    // set file now
    _url_activate_cb(win, o, NULL);
 
-   evas_object_resize(win, 320, 480);
    evas_object_show(win);
+   evas_object_resize(win, 320, 480);
 }
 
 static void
