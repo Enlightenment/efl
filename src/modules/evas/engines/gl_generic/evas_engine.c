@@ -3084,7 +3084,7 @@ eng_image_surface_noscale_new(void *engine, int w, int h, int alpha)
 //------------------------------------------------//
 
 static GL_Filter_Apply_Func
-_gfx_filter_func_get(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
+_gfx_filter_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 {
    GL_Filter_Apply_Func funcptr = NULL;
 
@@ -3107,7 +3107,7 @@ _gfx_filter_func_get(Render_Output_GL_Generic *re, Evas_Filter_Command *cmd)
 static Evas_Filter_Support
 eng_gfx_filter_supports(void *engine, Evas_Filter_Command *cmd)
 {
-   Render_Output_GL_Generic *re = engine;
+   Render_Engine_GL_Generic *re = engine;
 
    if (!_gfx_filter_func_get(re, cmd))
      return pfunc.gfx_filter_supports(&re->software, cmd);
@@ -3118,7 +3118,7 @@ eng_gfx_filter_supports(void *engine, Evas_Filter_Command *cmd)
 static Eina_Bool
 eng_gfx_filter_process(void *engine, Evas_Filter_Command *cmd)
 {
-   Render_Output_GL_Generic *re = engine;
+   Render_Engine_GL_Generic *re = engine;
    GL_Filter_Apply_Func funcptr;
 
    funcptr = _gfx_filter_func_get(re, cmd);
