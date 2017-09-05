@@ -36,7 +36,7 @@ _register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_O
 }
 
 static void
-_unregister(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
+_unregister(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focus_Object *node)
 {
    efl_ui_focus_manager_calc_unregister(par_m, node);
 }
