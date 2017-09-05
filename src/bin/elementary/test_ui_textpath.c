@@ -102,7 +102,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_set(txtpath, "This text follows the path which you defined. This is a &lt;long&gt; text designed to make it ellipsis.");
 
    efl_ui_textpath_circle_set(txtpath, CX, CY, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
-  efl_gfx_visible_set(txtpath, EINA_TRUE);
+   efl_gfx_visible_set(txtpath, EINA_TRUE);
    path_type = 0;
 
    hbox = elm_box_add(win);
