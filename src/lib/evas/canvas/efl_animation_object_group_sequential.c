@@ -190,6 +190,8 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
         double start_delay = efl_animation_object_start_delay_get(anim_obj);
         double anim_obj_progress;
 
+        Eina_Bool start_repeat = EINA_FALSE;
+
         if (total_duration == 0.0)
           anim_obj_progress = 1.0;
         else
@@ -225,6 +227,8 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
                          {
                             repeated_count++;
                             _repeated_count_set(pd, anim_obj, repeated_count);
+
+                            start_repeat = EINA_TRUE;
                          }
                     }
                }
@@ -234,9 +238,24 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
          * delays */
         sum_prev_total_duration += (total_duration + start_delay);
 
-        if ((anim_obj_progress == 1.0) &&
-            !efl_animation_object_final_state_keep_get(anim_obj))
+        if ((anim_obj_progress == 1.0) && (!start_repeat) &&
+            (!efl_animation_object_final_state_keep_get(anim_obj)))
           continue;
+
+        /* If object is repeated with reverse mode, then the progress value
+         * should be modified as (1.0 - progress). */
+        Efl_Animation_Object_Repeat_Mode repeat_mode
+           = efl_animation_object_repeat_mode_get(anim_obj);
+        if (repeat_mode == EFL_ANIMATION_OBJECT_REPEAT_MODE_REVERSE)
+          {
+             int repeated_count = _repeated_count_get(pd, anim_obj);
+             if (repeated_count > 0)
+               {
+                  if ((((repeated_count % 2) == 1) && (!start_repeat)) ||
+                      (((repeated_count % 2) == 0) && (start_repeat)))
+                    anim_obj_progress = 1.0 - anim_obj_progress;
+               }
+          }
 
         efl_animation_object_progress_set(anim_obj, anim_obj_progress);
      }

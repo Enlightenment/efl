@@ -7,17 +7,18 @@
 
 typedef struct _Efl_Animation_Data
 {
-   Efl_Canvas_Object *target;
+   Efl_Canvas_Object        *target;
 
-   double             duration;
-   double             total_duration;
+   double                    duration;
+   double                    total_duration;
 
-   double             start_delay_time;
+   double                    start_delay_time;
 
-   int                repeat_count;
+   Efl_Animation_Repeat_Mode repeat_mode;
+   int                       repeat_count;
 
-   Eina_Bool          is_deleted : 1;
-   Eina_Bool          keep_final_state : 1;
+   Eina_Bool                 is_deleted : 1;
+   Eina_Bool                 keep_final_state : 1;
 } Efl_Animation_Data;
 
 #define EFL_ANIMATION_CHECK_OR_RETURN(anim, ...) \

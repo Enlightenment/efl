@@ -184,6 +184,8 @@ _efl_animation_object_group_parallel_efl_animation_object_progress_set(Eo *eo_ob
         double start_delay = efl_animation_object_start_delay_get(anim_obj);
         double anim_obj_progress;
 
+        Eina_Bool start_repeat = EINA_FALSE;
+
         if (total_duration == 0.0)
           anim_obj_progress = 1.0;
         else
@@ -220,8 +222,25 @@ _efl_animation_object_group_parallel_efl_animation_object_progress_set(Eo *eo_ob
                          {
                             repeated_count++;
                             _repeated_count_set(pd, anim_obj, repeated_count);
+
+                            start_repeat = EINA_TRUE;
                          }
                     }
+               }
+          }
+
+        /* If object is repeated with reverse mode, then the progress value
+         * should be modified as (1.0 - progress). */
+        Efl_Animation_Object_Repeat_Mode repeat_mode
+           = efl_animation_object_repeat_mode_get(anim_obj);
+        if (repeat_mode == EFL_ANIMATION_OBJECT_REPEAT_MODE_REVERSE)
+          {
+             int repeated_count = _repeated_count_get(pd, anim_obj);
+             if (repeated_count > 0)
+               {
+                  if ((((repeated_count % 2) == 1) && (!start_repeat)) ||
+                      (((repeated_count % 2) == 0) && (start_repeat)))
+                    anim_obj_progress = 1.0 - anim_obj_progress;
                }
           }
 

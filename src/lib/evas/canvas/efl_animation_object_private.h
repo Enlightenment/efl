@@ -17,10 +17,10 @@ typedef struct _Target_State
 
 typedef struct _Efl_Animation_Object_Data
 {
-   Ecore_Animator    *animator;
+   Ecore_Animator                  *animator;
 
-   Ecore_Timer       *start_delay_timer;
-   double             start_delay_time;
+   Ecore_Timer                     *start_delay_timer;
+   double                           start_delay_time;
 
    struct {
         double begin;
@@ -28,25 +28,28 @@ typedef struct _Efl_Animation_Object_Data
         double pause_begin;
      } time;
 
-   Efl_Canvas_Object *target;
-   Target_State      *target_state;
+   Efl_Canvas_Object               *target;
+   Target_State                    *target_state;
 
-   double             progress;
+   double                           progress;
 
-   double             duration;
-   double             total_duration;
-   double             paused_time;
+   double                           duration;
+   double                           total_duration;
+   double                           paused_time;
 
-   int                repeat_count;
-   int                remaining_repeat_count;
+   Efl_Animation_Object_Repeat_Mode repeat_mode;
+   int                              repeat_count;
+   int                              remaining_repeat_count;
 
-   Eina_Bool          auto_del : 1;
-   Eina_Bool          is_deleted : 1;
-   Eina_Bool          is_started : 1;
-   Eina_Bool          is_cancelled : 1;
-   Eina_Bool          is_ended : 1;
-   Eina_Bool          is_paused : 1;
-   Eina_Bool          keep_final_state : 1;
+   Eina_Bool                        auto_del : 1;
+   Eina_Bool                        is_deleted : 1;
+   Eina_Bool                        is_started : 1;
+   Eina_Bool                        is_cancelled : 1;
+   Eina_Bool                        is_ended : 1;
+   Eina_Bool                        is_paused : 1;
+   Eina_Bool                        keep_final_state : 1;
+   Eina_Bool                        is_direction_forward : 1;
+   Eina_Bool                        is_direction_changed : 1;
 } Efl_Animation_Object_Data;
 
 #define EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(anim_obj, ...) \

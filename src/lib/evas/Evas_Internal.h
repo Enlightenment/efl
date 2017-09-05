@@ -101,6 +101,15 @@ EOAPI double efl_animation_object_total_duration_get(const Eo *obj);
 EOAPI void efl_animation_object_start_delay_set(Eo *obj, double delay_time);
 EOAPI double efl_animation_object_start_delay_get(const Eo *obj);
 
+typedef enum
+{
+  EFL_ANIMATION_OBJECT_REPEAT_MODE_RESTART = 0,
+  EFL_ANIMATION_OBJECT_REPEAT_MODE_REVERSE
+} Efl_Animation_Object_Repeat_Mode;
+
+EOAPI void efl_animation_object_repeat_mode_set(Eo *obj, Efl_Animation_Object_Repeat_Mode mode);
+EOAPI Efl_Animation_Object_Repeat_Mode efl_animation_object_repeat_mode_get(const Eo *obj);
+
 EOAPI void efl_animation_object_repeat_count_set(Eo *obj, int count);
 EOAPI int efl_animation_object_repeat_count_get(const Eo *obj);
 

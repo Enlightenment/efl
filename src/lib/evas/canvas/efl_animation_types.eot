@@ -11,3 +11,11 @@ enum Efl.Animation.Event_Type
    hide = 1,   [["hide" event type]]
    clicked = 2 [["clicked" event type]]
 }
+
+enum Efl.Animation.Repeat_Mode
+{
+   [[Animation repeat mode]]
+
+   restart = 0, [[Restart animation when the animation ends.]]
+   reverse      [[Reverse animation when the animation ends.]]
+}
