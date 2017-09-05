@@ -380,6 +380,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                        ERR("Failed to allocate segment");
                        px0 = px1;
                        py0 = py1;
+                       continue;
                     }
                   seg->type = EFL_GFX_PATH_COMMAND_TYPE_LINE_TO;
                   seg->line.start.x = px0;
