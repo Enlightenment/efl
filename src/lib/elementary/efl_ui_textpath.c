@@ -213,6 +213,7 @@ _map_point_calc(Efl_Ui_Textpath_Data *pd)
         else if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
           {
              int no = pd->slice_no * seg->length / (double)pd->total_length;
+             if (no == 0) no = 1;
              map_no += no;
           }
      }
