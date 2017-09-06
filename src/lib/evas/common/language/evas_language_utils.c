@@ -22,7 +22,12 @@
 
 #include <stdlib.h>
 #include <locale.h>
-#include <libintl.h>
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+#else
+# define dgettext(domain, x) (x)
+#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
