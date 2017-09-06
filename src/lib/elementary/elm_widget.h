@@ -751,6 +751,8 @@ EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
 EAPI Eina_Bool        _elm_widget_onscreen_is(Evas_Object *widget);
 EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
+const char*           _elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name);
+const char*           _elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \

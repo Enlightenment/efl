@@ -3997,7 +3997,7 @@ _elm_toolbar_item_elm_interface_atspi_accessible_name_get(Eo *eo_item, Elm_Toolb
    const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
    if (ret) return ret;
-   return item->label;
+   return _elm_widget_item_accessible_plain_name_get(eo_item, item->label);
 }
 
 EOLIAN static Elm_Atspi_State_Set

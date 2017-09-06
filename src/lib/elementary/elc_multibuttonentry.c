@@ -2078,14 +2078,14 @@ _elm_multibuttonentry_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_M
 }
 
 EOLIAN static const char*
-_elm_multibuttonentry_item_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Multibuttonentry_Item_Data *item)
+_elm_multibuttonentry_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Multibuttonentry_Item_Data *item)
 {
    const char *ret;
-   ret = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
+   ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_MULTIBUTTONENTRY_ITEM_CLASS));
    if (ret) return ret;
 
-   const char *txt = elm_object_part_text_get(VIEW(item), "elm.btn.text");
-   return txt;
+   ret = elm_object_part_text_get(VIEW(item), "elm.btn.text");
+   return _elm_widget_item_accessible_plain_name_get(eo_it, ret);
 }
 
 EOLIAN static Elm_Atspi_State_Set
