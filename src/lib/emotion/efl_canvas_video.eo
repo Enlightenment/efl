@@ -53,11 +53,8 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Image, Efl.I
    }
    implements {
         Efl.Object.constructor;
-        Efl.Gfx.color { set; }
-        Efl.Gfx.visible { set; }
         Efl.Gfx.position { set; }
         Efl.Gfx.size { set; }
-        Efl.Canvas.Object.clip { set; }
         Efl.File.file { get; set; }
         Efl.Player.play { get; set; }
         Efl.Player.position { get; set; }
