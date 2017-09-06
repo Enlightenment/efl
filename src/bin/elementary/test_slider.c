@@ -144,6 +144,18 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    free(data);
 }
 
+static void
+_change_cb_range_slider(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   double from, to;
+
+   elm_slider_range_get(obj, &from, &to);
+   if (from < 100)
+     elm_slider_range_set(obj, 100, to);
+   if (to > 500)
+     elm_slider_range_set(obj, from, 500);
+}
+
 void
 test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -612,6 +624,22 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_slider_range_set(sl, 0.2, 0.9);
    elm_box_pack_end(bx4, sl);
    evas_object_show(sl);
+
+   // limited interval slider
+   sl = elm_slider_add(bx);
+   elm_object_text_set(sl, "Limited(100-500)");
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f units");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   elm_slider_range_enabled_set(sl, EINA_TRUE);
+   elm_slider_min_max_set(sl, 0, 600);
+   elm_slider_range_set(sl, 100, 500);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+   evas_object_smart_callback_add(sl, "changed",
+                                  _change_cb_range_slider, NULL);
 
    evas_object_show(win);
 }
