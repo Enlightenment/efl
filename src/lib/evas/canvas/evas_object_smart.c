@@ -294,15 +294,24 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (!smart->is_frame_top && (smart->is_frame != obj->is_frame))
      efl_canvas_object_is_frame_object_set(eo_obj, smart->is_frame);
 
-   if (o->clipped && o->constructed)
+   if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         Eina_Bool had_clippees = efl_canvas_object_clipees_has(clipper);
 
-        EINA_SAFETY_ON_NULL_RETURN(clipper);
-        efl_canvas_object_clip_set(eo_obj, clipper);
-        if (!had_clippees && smart->cur->visible)
-          efl_gfx_visible_set(clipper, 1);
+        if (EINA_UNLIKELY(!clipper && !o->constructed))
+          {
+             _evas_object_smart_clipped_init(smart_obj);
+             clipper = _smart_clipper_get(o);
+          }
+
+        if (clipper != eo_obj)
+          {
+             EINA_SAFETY_ON_NULL_RETURN(clipper);
+             efl_canvas_object_clip_set(eo_obj, clipper);
+             if (!had_clippees && smart->cur->visible)
+               efl_gfx_visible_set(clipper, 1);
+          }
      }
 
    evas_object_change(eo_obj, obj);
@@ -675,7 +684,7 @@ _efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *sd)
    obj->is_smart = EINA_TRUE;
    obj->func = &object_func;
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
-   if (sd->clipped)
+   if (sd->clipped && !sd->data)
      _evas_object_smart_clipped_init(eo_obj);
 
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
@@ -771,23 +780,23 @@ _evas_object_smart_clipped_init(Evas_Object *eo_obj)
    if (!cso)
      {
         cso = calloc(1, sizeof(*cso));
+        o->data = cso;
         o->data_nofree = EINA_FALSE;
      }
 
    cso->evas = evas_object_evas_get(eo_obj);
    clipper = evas_object_rectangle_add(cso->evas);
    evas_object_static_clip_set(clipper, 1);
-   cso->clipper = NULL;
-   evas_object_smart_member_add(clipper, eo_obj);
    cso->clipper = clipper;
+   o->clipped = 0;
+   evas_object_smart_member_add(clipper, eo_obj);
+   o->clipped = 1;
    evas_object_color_set(cso->clipper, 255, 255, 255, 255);
    evas_object_move(cso->clipper, -100000, -100000);
    evas_object_resize(cso->clipper, 200000, 200000);
    evas_object_pass_events_set(cso->clipper, 1);
    evas_object_hide(cso->clipper); /* show when have something clipped to it */
    efl_canvas_object_no_render_set(cso->clipper, 1);
-
-   evas_object_smart_data_set(eo_obj, cso);
 }
 
 EOLIAN static void
