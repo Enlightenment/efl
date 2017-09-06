@@ -162,7 +162,7 @@ eina_one_big_free(void *data, void *ptr)
         pool->usage--;
 
 #ifndef NVALGRIND
-        VALGRIND_MEMPOOL_FREE(pool, ptr);
+        VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->item_size);
 #endif
      }
    else
@@ -210,6 +210,9 @@ eina_one_big_from(void *data, void *ptr)
        && ptr < (void *)(pool->base + (pool->max * pool->item_size)))
      {
         Eina_Trash *t;
+#ifndef NVALGRIND
+        Eina_Trash *last = NULL;
+#endif
         // Part of the bigger area
 
         // Check if it is a properly aligned element
@@ -224,7 +227,17 @@ eina_one_big_from(void *data, void *ptr)
 
         // Check if the pointer was freed
         for (t = pool->empty; t != NULL; t = t->next)
-          if (t == ptr) goto end;
+          {
+#ifndef NVALGRIND
+             VALGRIND_MAKE_MEM_DEFINED(t, pool->item_size);
+             if (last) VALGRIND_MAKE_MEM_NOACCESS(last, pool->item_size);
+             last = t;
+#endif
+             if (t == ptr) goto end;
+          }
+#ifndef NVALGRIND
+        if (last) VALGRIND_MAKE_MEM_NOACCESS(last, pool->item_size);
+#endif
 
         // Everything seems correct
         r = EINA_TRUE;
