@@ -4,8 +4,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EFL_CANVAS_GROUP_CLIPPED_CLASS
-
 #define CSO_DATA_GET(eo_obj, ptr)                                           \
   Evas_Object_Smart_Clipped_Data *ptr = evas_object_smart_data_get(eo_obj);
 
@@ -107,14 +105,6 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
      evas_object_hide(cso->clipper);
 }
 
-EOLIAN static Eo *
-_efl_canvas_group_clipped_efl_object_constructor(Eo *eo_obj, void *_pd EINA_UNUSED)
-{
-   // Setting this flag before the parent constructor on purpose.
-   efl_canvas_group_unclipped_set(eo_obj, EINA_FALSE);
-   return efl_constructor(efl_super(eo_obj, MY_CLASS));
-}
-
 /* Legacy only */
 EAPI void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
@@ -148,5 +138,3 @@ evas_object_smart_clipped_class_get(void)
    class = &_sc;
    return class;
 }
-
-#include "canvas/efl_canvas_group_clipped.eo.c"

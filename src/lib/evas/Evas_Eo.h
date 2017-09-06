@@ -48,12 +48,6 @@
  */
 
 /**
- * @ingroup Evas_Smart_Object_Clipped
- *
- * @{
- */
-#include "canvas/efl_canvas_group_clipped.eo.h"
-/**
  * @}
  */
 
