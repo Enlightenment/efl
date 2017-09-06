@@ -1663,13 +1663,12 @@ struct _Edje_Signal_Source_Char
 
 struct _Edje
 {
-   Evas_Object_Smart_Clipped_Data *base;
-   /* This contains (or should):
-	Evas_Object          *clipper; // a big rect to clip this Edje to
-	Evas                 *evas; // the Evas this Edje belongs to
-   */
    EINA_INLIST;
 
+   struct {
+      Evas_Object       *clipper;
+      Evas              *evas;
+   } base;
    const char           *path;
    const char           *group;
    const char           *parent;
@@ -2501,7 +2500,6 @@ void _edje_collection_free_part_description_free(int type,
 void  _edje_del(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
-void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
 
