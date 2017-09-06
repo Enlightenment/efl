@@ -6,12 +6,5 @@ abstract Efl.Canvas.Group.Clipped (Efl.Canvas.Group)
    data: null;
    implements {
       Efl.Object.constructor;
-      Efl.Gfx.color { set; }
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Canvas.Object.clip { set; }
-      Efl.Canvas.Object.no_render { set; }
-      Efl.Canvas.Group.group_member_del;
-      Efl.Canvas.Group.group_member_add;
    }
 }
