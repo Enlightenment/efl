@@ -2,7 +2,7 @@ import edje_types;
 
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
-class Edje.Object (Efl.Canvas.Group.Clipped, Efl.File, Efl.Container, Efl.Part,
+class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
                    Efl.Canvas.Layout_Signal, Efl.Canvas.Layout_Group,
                    Efl.Player)

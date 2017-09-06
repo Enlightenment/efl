@@ -988,6 +988,7 @@ evas_object_table_add(Evas *evas)
 EOLIAN static Eo *
 _evas_table_efl_object_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
+   efl_canvas_group_unclipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
