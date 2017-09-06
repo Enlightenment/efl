@@ -21,6 +21,7 @@ struct _Part_Item_Iterator
 };
 
 void _part_reuse_error(Efl_Canvas_Layout_Internal_Data *pd);
+const char * _part_type_to_string(unsigned char type);
 
 #define PROXY_CALL_BEGIN(pd) do { pd->in_call = 1; } while (0)
 #define PROXY_CALL_END(pd) do { pd->in_call = 0; } while (0)
