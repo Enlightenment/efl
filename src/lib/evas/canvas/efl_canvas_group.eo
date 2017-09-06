@@ -52,6 +52,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          ]]
          legacy: evas_object_smart_calculate;
       }
+      /* FIXME: children -> members? */
       group_children_iterate @const {
          [[Returns an iterator over the children of this object, that are
            canvas objects.
@@ -103,6 +104,10 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.debug_name_override;
+      Efl.Gfx.color { set; }
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { get; set; }
    }
