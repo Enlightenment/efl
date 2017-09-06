@@ -1818,6 +1818,13 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUS
    return o->paragraph_direction;
 }
 
+EOLIAN static const Eo *
+_efl_canvas_group_group_clipper_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+{
+   // NOTE: This may be NULL until all EO smart objects are clipped!
+   return _smart_clipper_get(o);
+}
+
 /* Internal EO */
 static void
 _efl_canvas_group_group_clipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd, Eina_Bool clipped)
