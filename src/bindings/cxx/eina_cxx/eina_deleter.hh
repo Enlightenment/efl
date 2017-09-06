@@ -15,6 +15,10 @@ struct malloc_deleter
     object->~T();
     free(object);
   }
+  void operator()(Eina_Future*) const
+  {
+    // workaround until we substitute Efl_Future with Eina_Future
+  }
   void operator()(Eina_Binbuf* /*object*/) const
   {
     // how to free binbuf?
