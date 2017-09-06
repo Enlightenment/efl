@@ -1006,7 +1006,7 @@ static void
 _position_set_cb(void *data, Evas_Object *obj EINA_UNUSED,
                 void *event_info EINA_UNUSED)
 {
-   efl_ui_popup_position_set(data, 0, 0);
+   evas_object_move(data, 0, 0);
 }
 
 void
