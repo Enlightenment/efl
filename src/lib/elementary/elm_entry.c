@@ -6038,8 +6038,14 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
    const char *name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_ENTRY_CLASS));
    if (name && strncmp("", name, 1)) return name;
+
+   if (sd->password) return NULL;
+
+   name = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
+   if (name && strncmp("", name, 1)) return name;
+
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
-   return ret;
+   return _elm_util_mkup_to_text(ret);
 }
 
 /* Efl.Part begin */
