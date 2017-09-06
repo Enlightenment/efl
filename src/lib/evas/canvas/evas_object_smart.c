@@ -48,7 +48,7 @@ struct _Evas_Smart_Data
    Eina_Bool         need_recalculate : 1;
    Eina_Bool         update_boundingbox_needed : 1;
    Eina_Bool         group_del_called : 1;
-   Eina_Bool         unclipped : 1; /* If true, NOT a smart_clipped object */
+   Eina_Bool         clipped : 1; /* If true, smart clipped */
    Eina_Bool         data_nofree : 1; /* If true, do NOT free the data */
    Eina_Bool         constructed : 1; /* constructor finished */
 };
@@ -129,7 +129,7 @@ static const Evas_Object_Func object_func =
 static inline Evas_Object *
 _smart_clipper_get(Evas_Smart_Data *o)
 {
-   Evas_Object_Smart_Clipped_Data *cso = (!o->unclipped) ? o->data : NULL;
+   Evas_Object_Smart_Clipped_Data *cso = o->clipped ? o->data : NULL;
    return cso ? cso->clipper : NULL;
 }
 
@@ -294,7 +294,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (!smart->is_frame_top && (smart->is_frame != obj->is_frame))
      efl_canvas_object_is_frame_object_set(eo_obj, smart->is_frame);
 
-   if (!o->unclipped && o->constructed)
+   if (o->clipped && o->constructed)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         Eina_Bool had_clippees = efl_canvas_object_clipees_has(clipper);
@@ -339,7 +339,7 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
 
    o = efl_data_scope_get(smart_obj, MY_CLASS);
 
-   if (!o->unclipped)
+   if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
 
@@ -675,7 +675,7 @@ _efl_canvas_group_efl_object_constructor(Eo *eo_obj, Evas_Smart_Data *sd)
    obj->is_smart = EINA_TRUE;
    obj->func = &object_func;
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
-   if (!sd->unclipped)
+   if (sd->clipped)
      _evas_object_smart_clipped_init(eo_obj);
 
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
@@ -798,7 +798,7 @@ _efl_canvas_group_group_add(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o EINA_UNUS
 EOLIAN static void
 _efl_canvas_group_group_del(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
-   if (!o->unclipped)
+   if (o->clipped)
      {
         _efl_canvas_group_group_members_all_del_internal(o);
      }
@@ -816,7 +816,7 @@ _efl_canvas_group_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Smart_Data *o
 
    efl_canvas_object_no_render_set(efl_super(eo_obj, MY_CLASS), enable);
 
-   clipper = (!o->unclipped) ? _smart_clipper_get(o) : NULL;
+   clipper = (o->clipped) ? _smart_clipper_get(o) : NULL;
    EINA_INLIST_FOREACH(o->contained, obj2)
      {
         if (obj2->object != clipper)
@@ -832,7 +832,7 @@ _efl_canvas_group_efl_gfx_color_set(Eo *eo_obj, Evas_Smart_Data *o, int r, int g
 
    efl_gfx_color_set(efl_super(eo_obj, MY_CLASS), r, g, b, a);
 
-   if (!o->unclipped)
+   if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         EINA_SAFETY_ON_NULL_RETURN(clipper);
@@ -850,7 +850,7 @@ _efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool 
 
    efl_gfx_visible_set(efl_super(eo_obj, MY_CLASS), vis);
 
-   if (!o->unclipped)
+   if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         EINA_SAFETY_ON_NULL_RETURN(clipper);
@@ -869,7 +869,7 @@ _efl_canvas_group_efl_gfx_position_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Coor
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
      return;
 
-   if (!o->unclipped)
+   if (o->clipped)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, x, y);
    efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), x, y);
 }
@@ -883,7 +883,7 @@ _efl_canvas_group_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Smart_Data *o, Eva
 
    efl_canvas_object_clip_set(efl_super(eo_obj, MY_CLASS), clip);
 
-   if (!o->unclipped)
+   if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         EINA_SAFETY_ON_NULL_RETURN(clipper);
@@ -1820,12 +1820,12 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUS
 
 /* Internal EO */
 static void
-_efl_canvas_group_group_unclipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd, Eina_Bool unclipped)
+_efl_canvas_group_group_clipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd, Eina_Bool clipped)
 {
    // We must call this function BEFORE the constructor (yes, it's hacky)
    EINA_SAFETY_ON_FALSE_RETURN(!sd->object);
-   sd->unclipped = !!unclipped;
-   if (!unclipped && !sd->data)
+   sd->clipped = !!clipped;
+   if (clipped && !sd->data)
      sd->data = calloc(1, sizeof(Evas_Object_Smart_Clipped_Data));
 }
 
@@ -1833,11 +1833,11 @@ _efl_canvas_group_group_unclipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *s
 
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_add)
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_del)
-EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_unclipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
+EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
 
 #define EFL_CANVAS_GROUP_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _efl_canvas_group_group_add), \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _efl_canvas_group_group_del), \
-   EFL_OBJECT_OP_FUNC(efl_canvas_group_unclipped_set, _efl_canvas_group_group_unclipped_set)
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_clipped_set, _efl_canvas_group_group_clipped_set)
 
 #include "canvas/efl_canvas_group.eo.c"

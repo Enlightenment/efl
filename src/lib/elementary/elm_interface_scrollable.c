@@ -198,7 +198,7 @@ _elm_pan_add(Evas *evas)
 EOLIAN static Eo *
 _elm_pan_efl_object_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   efl_canvas_group_unclipped_set(obj, EINA_FALSE);
+   efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_PAN_CLASS));
    efl_canvas_object_type_set(obj, MY_PAN_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

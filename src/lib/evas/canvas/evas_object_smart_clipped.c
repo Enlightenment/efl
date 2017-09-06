@@ -1,5 +1,4 @@
-#define EFL_CANVAS_GROUP_PROTECTED
-#define EFL_CANVAS_GROUP_BETA
+/* Legacy only */
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -20,13 +19,13 @@ evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 }
 
 static void
-evas_object_smart_clipped_smart_add_legacy(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_add(Evas_Object *eo_obj)
 {
    _evas_object_smart_clipped_init(eo_obj);
 }
 
 static void
-evas_object_smart_clipped_smart_del_legacy(Evas_Object *eo_obj)
+evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
 
@@ -105,15 +104,14 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
      evas_object_hide(cso->clipper);
 }
 
-/* Legacy only */
 EAPI void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
 {
    if (!sc)
      return;
 
-   sc->add = evas_object_smart_clipped_smart_add_legacy;
-   sc->del = evas_object_smart_clipped_smart_del_legacy;
+   sc->add = evas_object_smart_clipped_smart_add;
+   sc->del = evas_object_smart_clipped_smart_del;
    sc->move = evas_object_smart_clipped_smart_move;
    sc->show = evas_object_smart_clipped_smart_show;
    sc->hide = evas_object_smart_clipped_smart_hide;
