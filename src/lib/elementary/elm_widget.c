@@ -5095,6 +5095,35 @@ _elm_widget_item_onscreen_is(Elm_Object_Item *item)
    return EINA_TRUE;
 }
 
+const char*
+_elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name)
+{
+   char *accessible_plain_name;
+
+   API_ENTRY return NULL;
+
+   accessible_plain_name = _elm_util_mkup_to_text(name);
+   eina_stringshare_del(sd->accessible_name);
+   sd->accessible_name =  eina_stringshare_add(accessible_plain_name);
+   free(accessible_plain_name);
+   return sd->accessible_name;
+}
+
+const char*
+_elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name)
+{
+   char *accessible_plain_name;
+
+   Elm_Widget_Item_Data *id = efl_data_scope_get(item, ELM_WIDGET_ITEM_CLASS);
+   if (!id) return NULL;
+
+   accessible_plain_name = _elm_util_mkup_to_text(name);
+   eina_stringshare_del(id->accessible_name);
+   id->accessible_name =  eina_stringshare_add(accessible_plain_name);
+   free(accessible_plain_name);
+   return id->accessible_name;
+}
+
 EOLIAN static Elm_Atspi_State_Set
 _elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item,
                                                               Elm_Widget_Item_Data *item EINA_UNUSED)
@@ -6298,10 +6327,9 @@ _elm_widget_elm_interface_atspi_component_focus_grab(Eo *obj, Elm_Widget_Smart_D
 }
 
 EOLIAN static const char*
-_elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd)
+_elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    const char *ret, *name;
-   char *accessible_name;
    name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_WIDGET_CLASS));
 
    if (name) return name;
@@ -6309,11 +6337,7 @@ _elm_widget_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Wid
    ret = elm_object_text_get(obj);
    if (!ret) return NULL;
 
-   accessible_name = _elm_util_mkup_to_text(ret);
-   eina_stringshare_del(_pd->accessible_name);
-   _pd->accessible_name =  eina_stringshare_add(accessible_name);
-   free(accessible_name);
-   return _pd->accessible_name;
+   return _elm_widget_accessible_plain_name_get(obj, ret);
 }
 
 EOLIAN static Eina_List*

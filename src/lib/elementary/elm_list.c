@@ -2129,7 +2129,7 @@ _elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_List_Item_
    const char *ret;
    ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    if (ret) return ret;
-   return data->label;
+   return _elm_widget_item_accessible_plain_name_get(eo_it, data->label);
 }
 
 static char *

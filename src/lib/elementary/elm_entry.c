@@ -6041,11 +6041,11 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->password) return NULL;
 
-   name = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
+   name = _elm_widget_accessible_plain_name_get(obj, elm_entry_entry_get(obj));
    if (name && strncmp("", name, 1)) return name;
 
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
-   return _elm_util_mkup_to_text(ret);
+   return _elm_widget_accessible_plain_name_get(obj, ret);
 }
 
 /* Efl.Part begin */

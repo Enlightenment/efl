@@ -1739,7 +1739,7 @@ _elm_index_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Index_Ite
    name = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_INDEX_ITEM_CLASS));
    if (name) return name;
 
-   return data->letter;
+   return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);
 }
 
 EOLIAN static const Elm_Atspi_Action*
