@@ -97,6 +97,20 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          }
          legacy: null;
       }
+      @property group_clipper @protected {
+         [[The internal clipper object used by this group.
+
+           This is the object clipping all the children objects. Do not
+           delete or otherwise modify this clipper!
+         ]]
+         values {
+            clipper: const(Efl.Canvas.Object); [[A clipper rectangle.]]
+         }
+         get {
+            [[Get the internal clipper.]]
+            legacy: null;
+         }
+      }
    }
    implements {
       class.constructor;
