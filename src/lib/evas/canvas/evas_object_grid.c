@@ -159,19 +159,17 @@ EVAS_SMART_SUBCLASS_NEW("Evas_Object_Grid", _evas_object_grid,
 static void
 _evas_object_grid_smart_add(Evas_Object *o)
 {
+   Evas_Object_Smart_Clipped_Data *base;
    Evas_Grid_Data *priv;
 
-   priv = evas_object_smart_data_get(o);
-   if (!priv)
-     {
-        priv = efl_data_ref(o, MY_CLASS);
-        evas_object_smart_data_set(o, priv);
-     }
+   // Grid is an ugly mix of legacy & eo...
+   base = evas_object_smart_data_get(o);
+   priv = efl_data_scope_get(o, MY_CLASS);
+   priv->base = *base;
+   evas_object_smart_data_set(o, priv);
 
    priv->size.w = 100;
    priv->size.h = 100;
-   
-   _evas_object_grid_parent_sc->add(o);
 }
 
 static void
@@ -189,7 +187,6 @@ _evas_object_grid_smart_del(Evas_Object *o)
 	free(opt);
 	l = eina_list_remove_list(l, l);
      }
-   _evas_object_grid_parent_sc->del(o);
 }
 
 static void
@@ -290,7 +287,6 @@ _evas_grid_efl_object_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSE
    evas_object_smart_attach(obj, _evas_object_grid_smart_class_new());
 
    return obj;
-//   return evas_object_smart_add(evas, _evas_object_grid_smart_class_new());
 }
 
 EOLIAN static Evas_Object*
