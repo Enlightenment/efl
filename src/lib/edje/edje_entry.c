@@ -730,7 +730,7 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
                   en->sel = eina_list_append(en->sel, sel);
                   if (en->rp->part->source)
                     {
-                       ob = edje_object_add(ed->base->evas);
+                       ob = edje_object_add(ed->base.evas);
                        edje_object_file_set(ob, ed->path, en->rp->part->source);
                        evas_object_smart_member_add(ob, smart);
                        evas_object_stack_below(ob, o);
@@ -743,7 +743,7 @@ _sel_update(Edje *ed, Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entr
 
                   if (en->rp->part->source2)
                     {
-                       ob = edje_object_add(ed->base->evas);
+                       ob = edje_object_add(ed->base.evas);
                        edje_object_file_set(ob, ed->path, en->rp->part->source2);
                        evas_object_smart_member_add(ob, smart);
                        evas_object_stack_above(ob, o);
@@ -1123,7 +1123,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
    clip = evas_object_clip_get(o);
    x = y = w = h = -1;
    evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_output_viewport_get(en->ed->base->evas, &vx, &vy, &vw, &vh);
+   evas_output_viewport_get(en->ed->base.evas, &vx, &vy, &vw, &vh);
    tvw = vx + vw;
    tvh = vy + vh;
 
@@ -1234,7 +1234,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        an->sel = eina_list_append(an->sel, sel);
                        if (en->rp->part->source5)
                          {
-                            ob = edje_object_add(ed->base->evas);
+                            ob = edje_object_add(ed->base.evas);
                             edje_object_file_set(ob, ed->path, en->rp->part->source5);
                             evas_object_smart_member_add(ob, smart);
                             evas_object_stack_below(ob, o);
@@ -1246,7 +1246,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 
                        if (en->rp->part->source6)
                          {
-                            ob = edje_object_add(ed->base->evas);
+                            ob = edje_object_add(ed->base.evas);
                             edje_object_file_set(ob, ed->path, en->rp->part->source6);
                             evas_object_smart_member_add(ob, smart);
                             evas_object_stack_above(ob, o);
@@ -1256,7 +1256,7 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                             _edje_subobj_register(ed, sel->obj_fg);
                          }
 
-                       ob = evas_object_rectangle_add(ed->base->evas);
+                       ob = evas_object_rectangle_add(ed->base.evas);
                        evas_object_color_set(ob, 0, 0, 0, 0);
                        evas_object_smart_member_add(ob, smart);
                        evas_object_stack_above(ob, o);
@@ -1327,7 +1327,7 @@ _anchors_update_check(Edje *ed, Edje_Real_Part *rp)
    x = y = w = h = -1;
    vx = vy = vw = vh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
-   evas_output_viewport_get(ed->base->evas, &vx, &vy, &vw, &vh);
+   evas_output_viewport_get(ed->base.evas, &vx, &vy, &vw, &vh);
    if (((y + h) <= vy) || (y >= (vy + vh)))
      anchors_updated = EINA_TRUE;
    else if (((x + w) <= vx) || (x >= (vx + vw)))
@@ -2875,9 +2875,9 @@ _edje_entry_init(Edje *ed)
                                   _edje_key_down_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb, ed);
-   efl_event_callback_add(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_IN,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_add(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -2896,9 +2896,9 @@ _edje_entry_shutdown(Edje *ed)
                                   _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb);
-   efl_event_callback_del(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_IN,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_del(ed->base->evas, EFL_CANVAS_EVENT_FOCUS_OUT,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_EVENT_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -2928,7 +2928,7 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_DOWN, _edje_part_mouse_down_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_UP, _edje_part_mouse_up_cb, rp);
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
-   evas_event_callback_add(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
+   evas_event_callback_add(ed->base.evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
 
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
      en->select_allow = EINA_TRUE;
@@ -2948,7 +2948,7 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
    if (rp->part->source3)
      {
-        en->cursor_bg = edje_object_add(ed->base->evas);
+        en->cursor_bg = edje_object_add(ed->base.evas);
         edje_object_file_set(en->cursor_bg, ed->path, rp->part->source3);
         evas_object_smart_member_add(en->cursor_bg, ed->obj);
         evas_object_stack_below(en->cursor_bg, rp->object);
@@ -2958,7 +2958,7 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
      }
    if (rp->part->source4)
      {
-        en->cursor_fg = edje_object_add(ed->base->evas);
+        en->cursor_fg = edje_object_add(ed->base.evas);
         edje_object_file_set(en->cursor_fg, ed->path, rp->part->source4);
         evas_object_smart_member_add(en->cursor_fg, ed->obj);
         evas_object_stack_above(en->cursor_fg, rp->object);
@@ -2969,7 +2969,7 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
         /* A proxy to the main cursor. */
         if (rp->part->cursor_mode == EDJE_ENTRY_CURSOR_MODE_BEFORE)
           {
-             en->cursor_fg2 = edje_object_add(ed->base->evas);
+             en->cursor_fg2 = edje_object_add(ed->base.evas);
              edje_object_file_set(en->cursor_fg2, ed->path, rp->part->source4);
              evas_object_smart_member_add(en->cursor_fg2, ed->obj);
              evas_object_stack_above(en->cursor_fg2, rp->object);
@@ -3026,8 +3026,8 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
         ecore_imf_context_client_window_set
           (en->imf_context,
           (void *)ecore_evas_window_get
-            (ecore_evas_ecore_evas_get(ed->base->evas)));
-        ecore_imf_context_client_canvas_set(en->imf_context, ed->base->evas);
+            (ecore_evas_ecore_evas_get(ed->base.evas)));
+        ecore_imf_context_client_canvas_set(en->imf_context, ed->base.evas);
 
         ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context,
                                                             _edje_entry_imf_retrieve_surrounding_cb, ed);
@@ -3086,7 +3086,7 @@ _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp)
         en->pw_timer = NULL;
      }
 
-   evas_event_callback_del_full(ed->base->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
+   evas_event_callback_del_full(ed->base.evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, _canvas_viewport_resize_cb, rp);
 
 #ifdef HAVE_ECORE_IMF
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)

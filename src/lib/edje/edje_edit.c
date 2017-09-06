@@ -541,7 +541,7 @@ _edje_import_image_file(Edje *ed, const char *path, int id)
    int bytes;
 
    /* Try to load the file */
-   im = evas_object_image_add(ed->base->evas);
+   im = evas_object_image_add(ed->base.evas);
    if (!im) return EINA_FALSE;
 
    evas_object_image_file_set(im, path, NULL);
@@ -1015,7 +1015,7 @@ _edje_edit_group_references_update(Evas_Object *obj, const char *old_group_name,
 
 //   pc = ed->collection;
 
-   part_obj = edje_edit_object_add(ed->base->evas);
+   part_obj = edje_edit_object_add(ed->base.evas);
 
    old = eina_stringshare_add(old_group_name);
 
@@ -1144,7 +1144,7 @@ _delete_play_actions(Evas_Object *obj, const char *name, int action_type, Eet_Fi
         if (pce->group_alias)
           continue;
 
-        eeo = edje_edit_object_add(ed->base->evas);
+        eeo = edje_edit_object_add(ed->base.evas);
         if (!efl_isa(eeo, EDJE_OBJECT_CLASS))
           return EINA_FALSE;
 
@@ -3227,23 +3227,23 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    rp->part = ep;
 
    if (ep->type == EDJE_PART_TYPE_RECTANGLE)
-     rp->object = evas_object_rectangle_add(ed->base->evas);
+     rp->object = evas_object_rectangle_add(ed->base.evas);
    else if (ep->type == EDJE_PART_TYPE_VECTOR)
      {
         rp->type = EDJE_PART_TYPE_VECTOR;
         rp->typedata.vector = calloc(1, sizeof(Edje_Real_Part_Vector));
         if (rp->typedata.vector)
           rp->typedata.vector->cur.svg_id = -1;
-        rp->object = evas_object_vg_add(ed->base->evas);
+        rp->object = evas_object_vg_add(ed->base.evas);
      }
    else if (ep->type == EDJE_PART_TYPE_IMAGE || ep->type == EDJE_PART_TYPE_PROXY)
-     rp->object = evas_object_image_add(ed->base->evas);
+     rp->object = evas_object_image_add(ed->base.evas);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
      {
         rp->type = EDJE_RP_TYPE_TEXT;
         rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
         _edje_text_part_on_add(ed, rp);
-        rp->object = evas_object_text_add(ed->base->evas);
+        rp->object = evas_object_text_add(ed->base.evas);
         evas_object_text_font_source_set(rp->object, ed->path);
      }
    else if (ep->type == EDJE_PART_TYPE_SWALLOW ||
@@ -3252,7 +3252,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      {
         rp->type = EDJE_RP_TYPE_SWALLOW;
         rp->typedata.swallow = calloc(1, sizeof(Edje_Real_Part_Swallow));
-        rp->object = evas_object_rectangle_add(ed->base->evas);
+        rp->object = evas_object_rectangle_add(ed->base.evas);
         evas_object_color_set(rp->object, 0, 0, 0, 0);
         evas_object_pass_events_set(rp->object, 1);
         evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
@@ -3261,20 +3261,20 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      {
         rp->type = EDJE_RP_TYPE_TEXT;
         rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
-        rp->object = evas_object_textblock_add(ed->base->evas);
+        rp->object = evas_object_textblock_add(ed->base.evas);
      }
    else if (ep->type == EDJE_PART_TYPE_BOX)
      {
         rp->type = EDJE_RP_TYPE_CONTAINER;
         rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
-        rp->object = evas_object_box_add(ed->base->evas);
+        rp->object = evas_object_box_add(ed->base.evas);
         rp->typedata.container->anim = _edje_box_layout_anim_new(rp->object);
      }
    else if (ep->type == EDJE_PART_TYPE_TABLE)
      {
         rp->type = EDJE_RP_TYPE_CONTAINER;
         rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
-        rp->object = evas_object_table_add(ed->base->evas);
+        rp->object = evas_object_table_add(ed->base.evas);
      }
    else if (ep->type != EDJE_PART_TYPE_SPACER)
      ERR("wrong part type %i!", ep->type);
@@ -3314,8 +3314,8 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
              if (child)
                _edje_real_part_swallow(ed, rp, child, EINA_TRUE);
           }
-        evas_object_clip_set(rp->object, ed->base->clipper);
-        evas_object_show(ed->base->clipper);
+        evas_object_clip_set(rp->object, ed->base.clipper);
+        evas_object_show(ed->base.clipper);
      }
 
    /* Update table_parts */
@@ -3393,7 +3393,7 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
 
         if (real->part->clip_to_id == rp->part->id)
           {
-             evas_object_clip_set(real->object, ed->base->clipper);
+             evas_object_clip_set(real->object, ed->base.clipper);
              real->part->clip_to_id = -1;
           }
         if (real->drag && real->drag->confine_to == rp)
@@ -3461,7 +3461,7 @@ edje_edit_part_del(Evas_Object *obj, const char *part)
 
    /* if all parts are gone, hide the clipper */
    if (ed->table_parts_size == 0)
-     evas_object_hide(ed->base->clipper);
+     evas_object_hide(ed->base.clipper);
 
    edje_object_calc_force(obj);
 
@@ -3819,10 +3819,10 @@ edje_edit_part_clip_to_set(Evas_Object *obj, const char *part, const char *clip_
    /* unset clipping */
    if (!clip_to)
      {
-        evas_object_clip_set(rp->object, ed->base->clipper);
+        evas_object_clip_set(rp->object, ed->base.clipper);
         if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
             (rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
-          evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
+          evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base.clipper);
 
         rp->part->clip_to_id = -1;
 
@@ -4144,7 +4144,7 @@ _check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, 
    pce = eina_hash_find(ed->file->collection, source);
 
    /* forcing collection load into memory */
-   Evas_Object *part_obj = edje_edit_object_add(ed->base->evas);
+   Evas_Object *part_obj = edje_edit_object_add(ed->base.evas);
    edje_object_file_set(part_obj, ed->file->path, pce->entry);
    /* Go through every part to find parts with type GROUP */
    part_list = edje_edit_parts_list_get(part_obj);
@@ -4206,7 +4206,7 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
           }
         if (source)
           {
-             child_obj = edje_object_add(ed->base->evas);
+             child_obj = edje_object_add(ed->base.evas);
              edje_object_file_set(child_obj, ed->file->path, source);
              _edje_real_part_swallow(ed, rp, child_obj, EINA_TRUE);
           }
@@ -15929,7 +15929,7 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    const char *aliased;
    double base_scale;
 
-   obj = edje_edit_object_add(ed->base->evas);
+   obj = edje_edit_object_add(ed->base.evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
 
    ef = _edje_edit_eet_open(ed, EET_FILE_MODE_READ);
@@ -16661,7 +16661,7 @@ edje_edit_clean_save_as(Evas_Object *obj, const char *new_file_name)
    /* copying groups */
    Edje_Part_Collection_Directory_Entry *ce;
    Evas_Object *part_obj;
-   part_obj = edje_edit_object_add(ed->base->evas);
+   part_obj = edje_edit_object_add(ed->base.evas);
    Eina_Iterator *it = eina_hash_iterator_data_new(ed->file->collection);
    EINA_ITERATOR_FOREACH(it, ce)
      {

@@ -5645,7 +5645,7 @@ _edje_real_part_swallow(Edje *ed,
         clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
         evas_object_clip_set(rp->typedata.swallow->swallowed_object, clip_to->object);
      }
-   else evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base->clipper);
+   else evas_object_clip_set(rp->typedata.swallow->swallowed_object, ed->base.clipper);
    //FIXME: I'm not sure why Edje Nested is a parent of the rp->object here. Is it normal case?
    if (evas_object_smart_parent_get(rp->object) == ed->obj)
      evas_object_stack_above(rp->typedata.swallow->swallowed_object, rp->object);

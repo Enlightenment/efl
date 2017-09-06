@@ -33,7 +33,8 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
    efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   ed->base = evas_object_smart_data_get(obj);
+   ed->base.evas = efl_provider_find(obj, EVAS_CANVAS_CLASS);
+   ed->base.clipper = (Evas_Object *) efl_canvas_group_clipper_get(obj);
    ed->duration_scale = 1.0;
    _edje_lib_ref();
 
@@ -55,7 +56,6 @@ _edje_object_efl_object_destructor(Eo *obj, Edje *class_data)
         class_data->file_obj = NULL;
      }
    efl_destructor(efl_super(obj, MY_CLASS));
-   efl_data_unref(obj, class_data->base);
 }
 
 EOLIAN static Eina_Strbuf *
@@ -161,7 +161,6 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 #endif
    if (ed->persp) edje_object_perspective_set(obj, NULL);
    _edje_file_del(ed);
-   _edje_clean_objects(ed);
    _edje_unref(ed);
    _edje_lib_unref();
    efl_canvas_group_del(efl_super(obj, MY_CLASS));

@@ -5286,7 +5286,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   else if (ep->part->clip_to_id >= 0)
                     evas_object_clip_set(ep->object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
                   else
-                    evas_object_clip_set(ep->object, ed->base->clipper);
+                    evas_object_clip_set(ep->object, ed->base.clipper);
                }
              break;
 
@@ -5424,7 +5424,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           case EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE:
                             {
                                Eo *primitive = NULL;
-                               primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base->evas);
+                               primitive = efl_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, ed->base.evas);
                                evas_canvas3d_primitive_form_set(primitive, pd_mesh_node->mesh_node.mesh.primitive);
 
                                _edje_calc_params_need_type_node(pf);
@@ -5554,7 +5554,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   else if (ep->part->clip_to_id >= 0)
                     evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
                   else
-                    evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->base->clipper);
+                    evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->base.clipper);
                }
 
              if (pf->visible)

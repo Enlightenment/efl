@@ -1031,26 +1031,26 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                   switch (ep->type)
                     {
                      case EDJE_PART_TYPE_RECTANGLE:
-                       rp->object = evas_object_rectangle_add(ed->base->evas);
+                       rp->object = evas_object_rectangle_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_VECTOR:
-                       rp->object = evas_object_vg_add(ed->base->evas);
+                       rp->object = evas_object_vg_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_PROXY:
                      case EDJE_PART_TYPE_IMAGE:
-                       rp->object = evas_object_image_add(ed->base->evas);
+                       rp->object = evas_object_image_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_SNAPSHOT:
-                       rp->object = evas_object_image_filled_add(ed->base->evas);
+                       rp->object = evas_object_image_filled_add(ed->base.evas);
                        evas_object_image_snapshot_set(rp->object, EINA_TRUE);
                        break;
 
                      case EDJE_PART_TYPE_TEXT:
                        _edje_text_part_on_add(ed, rp);
-                       rp->object = evas_object_text_add(ed->base->evas);
+                       rp->object = evas_object_text_add(ed->base.evas);
                        evas_object_text_font_source_set(rp->object, ed->path);
                        break;
 
@@ -1064,7 +1064,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                      case EDJE_PART_TYPE_EXTERNAL:
                        if (ep->type == EDJE_PART_TYPE_EXTERNAL)
                          externals = eina_list_append(externals, rp);
-                       rp->object = evas_object_rectangle_add(ed->base->evas);
+                       rp->object = evas_object_rectangle_add(ed->base.evas);
                        evas_object_color_set(rp->object, 0, 0, 0, 0);
                        evas_object_pass_events_set(rp->object, 1);
                        evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
@@ -1074,18 +1074,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                      case EDJE_PART_TYPE_TEXTBLOCK:
                        _edje_textblock_styles_add(ed, rp);
                        textblocks = eina_list_append(textblocks, rp);
-                       rp->object = evas_object_textblock_add(ed->base->evas);
+                       rp->object = evas_object_textblock_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_BOX:
                        sources = eina_list_append(sources, rp);
-                       rp->object = evas_object_box_add(ed->base->evas);
+                       rp->object = evas_object_box_add(ed->base.evas);
                        rp->typedata.container->anim = _edje_box_layout_anim_new(rp->object);
                        break;
 
                      case EDJE_PART_TYPE_TABLE:
                        sources = eina_list_append(sources, rp);
-                       rp->object = evas_object_table_add(ed->base->evas);
+                       rp->object = evas_object_table_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_GRADIENT:
@@ -1103,9 +1103,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           Evas_Canvas3D_Material *material = NULL;
                           Edje_Part_Description_Mesh_Node *pd_mesh_node;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));
 
-                          mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, ed->base->evas);
+                          mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, ed->base.evas);
                           evas_canvas3d_node_mesh_add(rp->node, mesh);
 
                           pd_mesh_node = (Edje_Part_Description_Mesh_Node*) rp->chosen_description;
@@ -1119,13 +1119,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                evas_canvas3d_mesh_frame_add(mesh, 0);
                             }
 
-                          material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base->evas);
+                          material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, ed->base.evas);
                           evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
                           if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
                             {
                                Evas_Canvas3D_Texture *texture = NULL;
 
-                               texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base->evas);
+                               texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, ed->base.evas);
                                evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);
                             }
                           rp->object = NULL;
@@ -1136,8 +1136,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Light *light = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
-                          light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base->evas);
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_LIGHT));
+                          light = efl_add(EVAS_CANVAS3D_LIGHT_CLASS, ed->base.evas);
                           evas_canvas3d_node_light_set(rp->node, light);
 
                           rp->object = NULL;
@@ -1148,13 +1148,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        {
                           Evas_Canvas3D_Camera *camera = NULL;
 
-                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
-                          camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base->evas);
+                          rp->node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_CAMERA));
+                          camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, ed->base.evas);
                           evas_canvas3d_node_camera_set(rp->node, camera);
 
-                          rp->object = evas_object_image_filled_add(ed->base->evas);
+                          rp->object = evas_object_image_filled_add(ed->base.evas);
 
-                          Eo* viewport = efl_add(EFL_CANVAS_SCENE3D_CLASS, ed->base->evas);
+                          Eo* viewport = efl_add(EFL_CANVAS_SCENE3D_CLASS, ed->base.evas);
                           evas_object_image_source_set(rp->object, viewport);
                           evas_object_show(viewport);
                           evas_object_event_callback_add(rp->object, EVAS_CALLBACK_DEL, _evas_object_viewport_del, viewport);
@@ -1240,7 +1240,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             efl_canvas_object_precise_is_inside_set(rp->object, ep->precise_is_inside);
                          }
                        if (rp->part->clip_to_id < 0)
-                         evas_object_clip_set(rp->object, ed->base->clipper);
+                         evas_object_clip_set(rp->object, ed->base.clipper);
                     }
                }
              if (n > 0)
@@ -1365,9 +1365,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 #ifdef EDJE_CALC_CACHE
              ed->all_part_change = EINA_TRUE;
 #endif
-             if ((evas_object_clipees_has(ed->base->clipper)) &&
+             if ((evas_object_clipees_has(ed->base.clipper)) &&
                  (evas_object_visible_get(obj)))
-               evas_object_show(ed->base->clipper);
+               evas_object_show(ed->base.clipper);
 
              /* instantiate 'internal swallows' */
              EINA_LIST_FREE(externals, rp)
@@ -1465,7 +1465,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                        do
                          {
-                            child_obj = edje_object_add(ed->base->evas);
+                            child_obj = edje_object_add(ed->base.evas);
                             edje_object_mirrored_set(child_obj, edje_object_mirrored_get(ed->obj));
 
                             group_path = eina_list_append(group_path, group_path_entry);
@@ -3016,11 +3016,11 @@ edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene)
      }
 
    if (*root_node == NULL)
-     *root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base->evas,
+     *root_node = efl_add(EVAS_CANVAS3D_NODE_CLASS, ed->base.evas,
                                  evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    if (scene == NULL)
-     scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base->evas);
+     scene = efl_add(EVAS_CANVAS3D_SCENE_CLASS, ed->base.evas);
 
    if ((*root_node == NULL) || (scene == NULL))
      {
