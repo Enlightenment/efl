@@ -5,24 +5,12 @@
 PROXY_IMPLEMENTATION(other, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
 
-void
-_part_reuse_error(Efl_Canvas_Layout_Internal_Data *pd)
+const char *
+_part_type_to_string(unsigned char type)
 {
    const char *typestr = "UNKNOWN";
-   Edje *ed;
 
-   // TODO: Enable full debug only for eo_debug?
-   // Don't trust pd->ed as it may be invalid now.
-   ed = efl_data_scope_safe_get(pd->obj, EDJE_OBJECT_CLASS);
-   if (!ed)
-     {
-        ERR("A previous misuse of efl_part has been detected. Handles returned "
-            "by efl_part() are valid for a single function call. Did you call "
-            "a non implemented function? obj: %p has been deleted!", pd->obj);
-        return;
-     }
-
-   switch (pd->rp->part->type)
+   switch (type)
      {
       case EDJE_PART_TYPE_RECTANGLE: typestr = "RECTANGLE"; break;
       case EDJE_PART_TYPE_TEXT: typestr = "TEXT"; break;
@@ -44,10 +32,29 @@ _part_reuse_error(Efl_Canvas_Layout_Internal_Data *pd)
       default: break;
      }
 
+   return typestr;
+}
+
+void
+_part_reuse_error(Efl_Canvas_Layout_Internal_Data *pd)
+{
+   Edje *ed;
+
+   // TODO: Enable full debug only for eo_debug?
+   // Don't trust pd->ed as it may be invalid now.
+   ed = efl_data_scope_safe_get(pd->obj, EDJE_OBJECT_CLASS);
+   if (!ed)
+     {
+        ERR("A previous misuse of efl_part has been detected. Handles returned "
+            "by efl_part() are valid for a single function call. Did you call "
+            "a non implemented function? obj: %p has been deleted!", pd->obj);
+        return;
+     }
+
    ERR("A previous misuse of efl_part has been detected. Handles returned "
        "by efl_part() are valid for a single function call. Did you call "
        "a non implemented function? obj: %p group: '%s' part: '%s' type: %s%s",
-       pd->obj, ed->group, pd->part, typestr,
+       pd->obj, ed->group, pd->part, _part_type_to_string(pd->rp->part->type),
        ed->delete_me ? ". This object is already deleted." : "");
 }
 
@@ -205,5 +212,25 @@ _efl_canvas_layout_internal_efl_ui_drag_drag_page_move(Eo *obj, Efl_Canvas_Layou
    PROXY_CALL_BEGIN(pd);
    RETURN_VAL(_edje_object_part_drag_page(pd->ed, pd->part, dx, dy));
 }
+
+static Eo *
+_edje_invalid_part_efl_content_get(Eo *obj, Efl_Canvas_Layout_Internal_Data *pd)
+{
+   ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
+   RETURN_VAL(NULL);
+}
+
+static Eina_Bool
+_edje_invalid_part_efl_content_set(Eo *obj, Efl_Canvas_Layout_Internal_Data *pd, Eo *subobj EINA_UNUSED)
+{
+   ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
+   RETURN_VAL(EINA_FALSE);
+}
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_CANVAS_LAYOUT_INTERNAL_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_content_get, _edje_invalid_part_efl_content_get), \
+   EFL_OBJECT_OP_FUNC(efl_content_set, _edje_invalid_part_efl_content_set), \
 
 #include "efl_canvas_layout_internal.eo.c"
