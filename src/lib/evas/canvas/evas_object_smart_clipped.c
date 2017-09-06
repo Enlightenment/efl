@@ -29,14 +29,8 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso);
 
-   if (cso->clipper)
-     {
-        Evas_Object *clipper = cso->clipper;
-        cso->clipper = NULL;
-        evas_object_del(clipper);
-     }
-
    _efl_canvas_group_group_members_all_del(eo_obj);
+   cso->clipper = NULL;
 }
 
 static void

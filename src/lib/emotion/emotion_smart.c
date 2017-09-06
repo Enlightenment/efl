@@ -56,28 +56,23 @@
 #define MY_CLASS EFL_CANVAS_VIDEO_CLASS
 
 typedef struct _Efl_Canvas_Video_Data Efl_Canvas_Video_Data;
+typedef struct _Emotion_Xattr_Data Emotion_Xattr_Data;
 
 struct _Efl_Canvas_Video_Data
 {
-   EINA_REFCOUNT;
    Emotion_Engine_Instance *engine_instance;
 
    const char    *engine;
    const char    *file;
-   Evas_Object   *smartobj;
    Evas_Object   *obj;
    Evas_Object   *bg;
 
    Ecore_Job     *job;
 
    Efl_Vpath_File *file_obj;
+   Emotion_Xattr_Data *xattr;
 
    const char *title;
-
-#ifdef HAVE_EIO
-   Eio_File *load_xattr;
-   Eio_File *save_xattr;
-#endif
 
    struct {
       const char *info;
@@ -126,6 +121,16 @@ struct _Efl_Canvas_Video_Data
    Eina_Bool seeking : 1;
 };
 
+struct _Emotion_Xattr_Data
+{
+   EINA_REFCOUNT;
+   Eo       *obj_wref;
+#ifdef HAVE_EIO
+   Eio_File *load;
+   Eio_File *save;
+#endif
+};
+
 static void _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info);
 static void _mouse_down(void *data, Evas *ev, Evas_Object *obj, void *event_info);
 static void _pos_set_job(void *data);
@@ -163,48 +168,26 @@ _emotion_image_data_zero(Evas_Object *img)
 }
 
 static void
-_smart_data_free(Efl_Canvas_Video_Data *sd)
+_xattr_data_cancel(Emotion_Xattr_Data *xattr)
 {
+   (void) xattr;
 #ifdef HAVE_EIO
    /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
-   if (sd->load_xattr) eio_file_cancel(sd->load_xattr);
-   sd->load_xattr = NULL;
-   if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
-   sd->save_xattr = NULL;
+   if (xattr->load) eio_file_cancel(xattr->load);
+   xattr->load = NULL;
+   if (xattr->save) eio_file_cancel(xattr->save);
+   xattr->save = NULL;
 #endif
+}
 
-   if (sd->file_obj)
-     {
-        efl_del(sd->file_obj);
-        sd->file_obj = NULL;
-     }
-   if (sd->engine_instance)
-     {
-        emotion_engine_instance_file_close(sd->engine_instance);
-        emotion_engine_instance_del(sd->engine_instance);
-        sd->engine_instance = NULL;
-     }
-   if (sd->obj) evas_object_del(sd->obj);
-   sd->obj = NULL;
-   if (sd->crop.clipper) evas_object_del(sd->crop.clipper);
-   sd->crop.clipper = NULL;
-   if (sd->bg) evas_object_del(sd->bg);
-   sd->bg = NULL;
-   if (sd->file) eina_stringshare_del(sd->file);
-   sd->file = NULL;
-   if (sd->job) ecore_job_del(sd->job);
-   sd->job = NULL;
-   if (sd->anim) ecore_animator_del(sd->anim);
-   sd->anim = NULL;
-   eina_stringshare_del(sd->progress.info);
-   sd->progress.info = NULL;
-   eina_stringshare_del(sd->ref.file);
-   sd->ref.file = NULL;
-   if (sd->engine) eina_stringshare_del(sd->engine);
-   sd->engine = NULL;
+static void
+_xattr_data_unref(Emotion_Xattr_Data *xattr)
+{
+   EINA_REFCOUNT_UNREF(xattr) {} else return;
 
-   /* TODO: remove legacy: emotion used to have no shutdown, call automatically */
-   emotion_shutdown();
+   _xattr_data_cancel(xattr);
+   efl_wref_del_safe(&xattr->obj_wref);
+   free(xattr);
 }
 
 static void
@@ -264,9 +247,7 @@ _efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd EINA
 EAPI Evas_Object *
 emotion_object_image_get(const Evas_Object *obj)
 {
-   Efl_Canvas_Video_Data *sd;
-
-   sd = evas_object_smart_data_get(obj);
+   Efl_Canvas_Video_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return NULL;
    return sd->obj;
 }
@@ -436,13 +417,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    if (sd->anim) ecore_animator_del(sd->anim);
    sd->anim = NULL;
 
-#ifdef HAVE_EIO
-   /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
-   if (sd->load_xattr) eio_file_cancel(sd->load_xattr);
-   sd->load_xattr = NULL;
-   if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
-   sd->save_xattr = NULL;
-#endif
+   _xattr_data_cancel(sd->xattr);
 
    return EINA_TRUE;
 }
@@ -1359,37 +1334,31 @@ emotion_object_priority_get(const Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_load_xattr_cleanup(Efl_Canvas_Video_Data *sd, Eio_File *handler)
+_eio_load_xattr_cleanup(Emotion_Xattr_Data *xattr, Eio_File *handler)
 {
-   if (handler == sd->load_xattr) sd->load_xattr = NULL;
-
-   EINA_REFCOUNT_UNREF(sd)
-     {
-        if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
-        sd->smartobj = NULL;
-        _smart_data_free(sd);
-     }
+   if (handler == xattr->load) xattr->load = NULL;
+   _xattr_data_unref(xattr);
 }
 
 static void
 _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
 {
-   Efl_Canvas_Video_Data *sd = data;
+   Emotion_Xattr_Data *xattr = data;
 
-   emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
-   efl_event_callback_call(evas_object_smart_parent_get(sd->obj), EFL_CANVAS_VIDEO_EVENT_POSITION_LOAD_DONE, NULL);
-   evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), "position_load,succeed", NULL);
-   _eio_load_xattr_cleanup(sd, handler);
+   emotion_object_position_set(evas_object_smart_parent_get(xattr->obj_wref), xattr_double);
+   efl_event_callback_call(evas_object_smart_parent_get(xattr->obj_wref), EFL_CANVAS_VIDEO_EVENT_POSITION_LOAD_DONE, NULL);
+   evas_object_smart_callback_call(evas_object_smart_parent_get(xattr->obj_wref), "position_load,succeed", NULL);
+   _eio_load_xattr_cleanup(xattr, handler);
 }
 
 static void
 _eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
-   Efl_Canvas_Video_Data *sd = data;
+   Emotion_Xattr_Data *xattr = data;
 
-   efl_event_callback_call(evas_object_smart_parent_get(sd->obj), EFL_CANVAS_VIDEO_EVENT_POSITION_LOAD_FAIL, NULL);
-   evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), "position_load,failed", NULL);
-   _eio_load_xattr_cleanup(sd, handler);
+   efl_event_callback_call(evas_object_smart_parent_get(xattr->obj_wref), EFL_CANVAS_VIDEO_EVENT_POSITION_LOAD_FAIL, NULL);
+   evas_object_smart_callback_call(evas_object_smart_parent_get(xattr->obj_wref), "position_load,failed", NULL);
+   _eio_load_xattr_cleanup(xattr, handler);
 }
 #endif
 
@@ -1410,15 +1379,16 @@ emotion_object_last_position_load(Evas_Object *obj)
    else return;
 
 #ifdef HAVE_EIO
-   if (sd->load_xattr) return;
+   Emotion_Xattr_Data *xattr = sd->xattr;
 
-   EINA_REFCOUNT_REF(sd);
+   if (xattr->load) return;
+   EINA_REFCOUNT_REF(xattr);
 
-   sd->load_xattr = eio_file_xattr_double_get(tmp,
-                                              "user.e.time_seek",
-                                              _eio_load_xattr_done,
-                                              _eio_load_xattr_error,
-                                              sd);
+   xattr->load = eio_file_xattr_double_get(tmp,
+                                           "user.e.time_seek",
+                                           _eio_load_xattr_done,
+                                           _eio_load_xattr_error,
+                                           xattr);
 #else
    if (eina_xattr_double_get(tmp, "user.e.time_seek", &xattr))
      {
@@ -1436,36 +1406,30 @@ emotion_object_last_position_load(Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_save_xattr_cleanup(Efl_Canvas_Video_Data *sd, Eio_File *handler)
+_eio_save_xattr_cleanup(Emotion_Xattr_Data *xattr, Eio_File *handler)
 {
-   if (handler == sd->save_xattr) sd->save_xattr = NULL;
-
-   EINA_REFCOUNT_UNREF(sd)
-     {
-        if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
-        sd->smartobj = NULL;
-        _smart_data_free(sd);
-     }
+   if (handler == xattr->save) xattr->save = NULL;
+   _xattr_data_unref(xattr);
 }
 
 static void
 _eio_save_xattr_done(void *data, Eio_File *handler)
 {
-   Efl_Canvas_Video_Data *sd = data;
+   Emotion_Xattr_Data *xattr = data;
 
-   efl_event_callback_call(sd->obj, EFL_CANVAS_VIDEO_EVENT_POSITION_SAVE_DONE, NULL);
-   evas_object_smart_callback_call(sd->obj, "position_save,succeed", NULL);
-   _eio_save_xattr_cleanup(sd, handler);
+   efl_event_callback_call(xattr->obj_wref, EFL_CANVAS_VIDEO_EVENT_POSITION_SAVE_DONE, NULL);
+   evas_object_smart_callback_call(xattr->obj_wref, "position_save,succeed", NULL);
+   _eio_save_xattr_cleanup(xattr, handler);
 }
 
 static void
 _eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 {
-   Efl_Canvas_Video_Data *sd = data;
+   Emotion_Xattr_Data *xattr = data;
 
-   efl_event_callback_call(sd->obj, EFL_CANVAS_VIDEO_EVENT_POSITION_SAVE_FAIL, NULL);
-   evas_object_smart_callback_call(sd->obj, "position_save,failed", NULL);
-   _eio_save_xattr_cleanup(sd, handler);
+   efl_event_callback_call(xattr->obj_wref, EFL_CANVAS_VIDEO_EVENT_POSITION_SAVE_FAIL, NULL);
+   evas_object_smart_callback_call(xattr->obj_wref, "position_save,failed", NULL);
+   _eio_save_xattr_cleanup(xattr, handler);
 }
 #endif
 
@@ -1482,16 +1446,18 @@ emotion_object_last_position_save(Evas_Object *obj)
    else if (!strstr(sd->file, "://")) tmp = sd->file;
    else return;
 #ifdef HAVE_EIO
-   if (sd->save_xattr) return;
+   Emotion_Xattr_Data *xattr = sd->xattr;
 
-   EINA_REFCOUNT_REF(sd);
-   sd->save_xattr = eio_file_xattr_double_set(tmp,
-                                              "user.e.time_seek",
-                                              emotion_object_position_get(obj),
-                                              0,
-                                              _eio_save_xattr_done,
-                                              _eio_save_xattr_error,
-                                              sd);
+   if (xattr->save) return;
+   EINA_REFCOUNT_REF(xattr);
+
+   xattr->save = eio_file_xattr_double_set(tmp,
+                                           "user.e.time_seek",
+                                           emotion_object_position_get(obj),
+                                           0,
+                                           _eio_save_xattr_done,
+                                           _eio_save_xattr_error,
+                                           xattr);
 #else
    if (eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0))
      {
@@ -1933,14 +1899,13 @@ _pixels_get(void *data, Evas_Object *obj)
 EOLIAN static void
 _efl_canvas_video_efl_canvas_group_group_add(Evas_Object *obj, Efl_Canvas_Video_Data *sd)
 {
+   Emotion_Xattr_Data *xattr;
    unsigned int *pixel;
 
    /* TODO: remove legacy: emotion used to have no init, call automatically */
    emotion_init();
 
-   EINA_REFCOUNT_INIT(sd);
    sd->state = EMOTION_WAKEUP;
-   sd->smartobj = obj;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    sd->bg = evas_object_rectangle_add(evas_object_evas_get(obj));
    sd->engine = eina_stringshare_add("gstreamer1");
@@ -1962,7 +1927,11 @@ _efl_canvas_video_efl_canvas_group_group_add(Evas_Object *obj, Efl_Canvas_Video_
         *pixel = 0xff000000;
         evas_object_image_data_set(obj, pixel);
      }
-   evas_object_smart_data_set(obj, sd);
+
+   xattr = calloc(1, sizeof(*xattr));
+   EINA_REFCOUNT_INIT(xattr);
+   efl_wref_add(obj, &xattr->obj_wref);
+   sd->xattr = xattr;
 }
 
 EOLIAN static void
@@ -1990,9 +1959,7 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
    sd->progress.info = NULL;
    eina_stringshare_del(sd->ref.file);
    sd->ref.file = NULL;
-   if (sd->smartobj) evas_object_smart_data_set(sd->smartobj, NULL);
-   sd->smartobj = NULL;
-   EINA_REFCOUNT_UNREF(sd) _smart_data_free(sd);
+   _xattr_data_unref(sd->xattr);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
