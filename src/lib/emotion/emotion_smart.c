@@ -237,7 +237,7 @@ emotion_object_add(Evas *evas)
 EOLIAN static Eo *
 _efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd EINA_UNUSED)
 {
-   efl_canvas_group_clipped_set(obj, EINA_FALSE);
+   efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, E_OBJ_NAME);
 
@@ -465,13 +465,11 @@ _emotion_aspect_borders_apply(Evas_Object *obj, Efl_Canvas_Video_Data *sd, int w
              Evas_Object *old_clipper;
              sd->crop.clipper = evas_object_rectangle_add
                (evas_object_evas_get(obj));
-             evas_object_color_set(sd->crop.clipper, 255, 255, 255, 255);
              evas_object_smart_member_add(sd->crop.clipper, obj);
              old_clipper = evas_object_clip_get(sd->obj);
              evas_object_clip_set(sd->obj, sd->crop.clipper);
              evas_object_clip_set(sd->crop.clipper, old_clipper);
-             if (evas_object_visible_get(sd->obj))
-               evas_object_show(sd->crop.clipper);
+             evas_object_show(sd->crop.clipper);
           }
      }
    _clipper_position_size_update(obj, x, y, w, h, iw, ih);
@@ -603,13 +601,7 @@ emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
    Efl_Canvas_Video_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-
    evas_object_color_set(sd->bg, r, g, b, a);
-
-   if (!evas_object_visible_get(obj)) return;
-
-   if (a > 0) evas_object_show(sd->bg);
-   else evas_object_hide(sd->bg);
 }
 
 EAPI void
@@ -1905,6 +1897,8 @@ _efl_canvas_video_efl_canvas_group_group_add(Evas_Object *obj, Efl_Canvas_Video_
    /* TODO: remove legacy: emotion used to have no init, call automatically */
    emotion_init();
 
+   efl_canvas_group_add(efl_super(obj, MY_CLASS));
+
    sd->state = EMOTION_WAKEUP;
    sd->obj = evas_object_image_add(evas_object_evas_get(obj));
    sd->bg = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -1927,6 +1921,8 @@ _efl_canvas_video_efl_canvas_group_group_add(Evas_Object *obj, Efl_Canvas_Video_
         *pixel = 0xff000000;
         evas_object_image_data_set(obj, pixel);
      }
+   evas_object_show(sd->obj);
+   evas_object_show(sd->bg);
 
    xattr = calloc(1, sizeof(*xattr));
    EINA_REFCOUNT_INIT(xattr);
@@ -1943,21 +1939,15 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
         emotion_engine_instance_del(sd->engine_instance);
      }
    sd->engine_instance = NULL;
-   if (sd->obj) evas_object_del(sd->obj);
-   sd->obj = NULL;
-   if (sd->crop.clipper) evas_object_del(sd->crop.clipper);
-   sd->crop.clipper = NULL;
-   if (sd->bg) evas_object_del(sd->bg);
-   sd->bg = NULL;
-   if (sd->file) eina_stringshare_del(sd->file);
-   sd->file = NULL;
    if (sd->job) ecore_job_del(sd->job);
    sd->job = NULL;
    if (sd->anim) ecore_animator_del(sd->anim);
    sd->anim = NULL;
+   eina_stringshare_del(sd->file);
    eina_stringshare_del(sd->progress.info);
-   sd->progress.info = NULL;
    eina_stringshare_del(sd->ref.file);
+   sd->file = NULL;
+   sd->progress.info = NULL;
    sd->ref.file = NULL;
    _xattr_data_unref(sd->xattr);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -1975,7 +1965,6 @@ _efl_canvas_video_efl_gfx_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *
    efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
 
    _clipper_position_size_update(obj, x, y, w, h, sd->video.w, sd->video.h);
-   evas_object_move(sd->bg, x, y);
 }
 
 EOLIAN static void
@@ -1988,51 +1977,6 @@ _efl_canvas_video_efl_gfx_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, 
 
    _efl_canvas_video_aspect_border_apply(obj, sd, w, h);
    evas_object_resize(sd->bg, w, h);
-}
-
-EOLIAN static void
-_efl_canvas_video_efl_gfx_visible_set(Evas_Object *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool vis)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
-     return;
-
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
-   efl_gfx_visible_set(sd->obj, vis);
-   efl_gfx_visible_set(sd->crop.clipper, vis);
-
-   if (vis)
-     {
-        int a;
-
-        evas_object_color_get(sd->bg, NULL, NULL, NULL, &a);
-        if (a > 0) efl_gfx_visible_set(sd->bg, EINA_TRUE);
-     }
-   else
-      efl_gfx_visible_set(sd->bg, EINA_FALSE);
-}
-
-EOLIAN static void
-_efl_canvas_video_efl_gfx_color_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, int r, int g, int b, int a)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
-     return;
-
-   efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
-   evas_object_color_set(sd->obj, r, g, b, a);
-   evas_object_color_set(sd->crop.clipper, r, g, b, a);
-}
-
-EOLIAN static void
-_efl_canvas_video_efl_canvas_object_clip_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Object *clip)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
-     return;
-
-   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
-
-   if (sd->crop.clipper) evas_object_clip_set(sd->crop.clipper, clip);
-   else evas_object_clip_set(sd->obj, clip);
-   evas_object_clip_set(sd->bg, clip);
 }
 
 /* Internal EO APIs and hidden overrides */
