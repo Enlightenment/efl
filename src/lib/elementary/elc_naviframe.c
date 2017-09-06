@@ -622,15 +622,22 @@ end:
    // make sure there is no more reference to this item.
    EINA_LIST_FOREACH(sd->ops, l, nfo)
      {
-        /* If an transition is cancelled by deleting an item, then the pair
-         * transition also should be cancelled.
-         * This case can happen when an item is deleted by elm_object_item_del()
-         * right after the item is newly pushed.
-         */
-        if ((nfo->self == nit) || (nfo->related == nit))
+        /* If an item is newly pushed and then deleted by elm_object_item_del()
+         * before item push transition is not started, then the item push
+         * transitions for both new item and current item should be cancelled.
+         * Otherwise, the current item becomes invisible due to the item push
+         * transition. */
+        if ((nit->pushing) && (nfo->self == nit))
           {
              nfo->self = NULL;
              nfo->related = NULL;
+          }
+        else
+          {
+             if (nfo->self == nit)
+               nfo->self = NULL;
+             if (nfo->related == nit)
+               nfo->related = NULL;
           }
      }
 
