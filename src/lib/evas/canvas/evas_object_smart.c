@@ -1832,8 +1832,6 @@ _efl_canvas_group_group_clipped_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *sd,
    // We must call this function BEFORE the constructor (yes, it's hacky)
    EINA_SAFETY_ON_FALSE_RETURN(!sd->object);
    sd->clipped = !!clipped;
-   if (clipped && !sd->data)
-     sd->data = calloc(1, sizeof(Evas_Object_Smart_Clipped_Data));
 }
 
 /* Internal EO APIs */
