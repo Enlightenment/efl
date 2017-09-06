@@ -3,8 +3,6 @@
 
 #include "edje_private.h"
 
-#include <Eo.h>
-
 #ifdef MY_CLASS
 # undef MY_CLASS
 #endif
@@ -32,6 +30,7 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
    Evas *e;
    void *tmp;
 
+   efl_canvas_group_unclipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    ed->base = evas_object_smart_data_get(obj);
