@@ -26,6 +26,7 @@ _bg_clicked_cb(void *data,
 EOLIAN static void
 _efl_ui_popup_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
 {
+   pd->align = EFL_UI_POPUP_ALIGN_NONE;
    efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
@@ -52,19 +53,19 @@ _calc_align(Evas_Object *obj)
    switch (align)
      {
         case EFL_UI_POPUP_ALIGN_CENTER:
-           evas_object_move(obj, x + ((w - pw ) / 2), y + ((h - ph) / 2));
+           efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x + ((w - pw ) / 2), y + ((h - ph) / 2)));
         break;
         case EFL_UI_POPUP_ALIGN_LEFT:
-           evas_object_move(obj, x, y + ((h - ph) / 2));
+           efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x, y + ((h - ph) / 2)));
         break;
         case EFL_UI_POPUP_ALIGN_RIGHT:
-           evas_object_move(obj, x + (w - pw), ((h - ph) / 2));
+           efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x + (w - pw), ((h - ph) / 2)));
         break;
         case EFL_UI_POPUP_ALIGN_TOP:
-           evas_object_move(obj, x + ((w - pw) / 2), y);
+           efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x + ((w - pw) / 2), y));
         break;
         case EFL_UI_POPUP_ALIGN_BOTTOM:
-           evas_object_move(obj, x + ((w - pw) / 2), y + (h - ph));
+           efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x + ((w - pw) / 2), y + (h - ph)));
         break;
         default:
         break;
@@ -118,13 +119,6 @@ EOLIAN static Efl_Canvas_Object *
 _efl_ui_popup_parent_window_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->win_parent;
-}
-
-EOLIAN void
-_efl_ui_popup_position_set(Eo *obj, Efl_Ui_Popup_Data *pd, int x, int y)
-{
-   evas_object_move(obj, x, y);
-   pd->align = EFL_UI_POPUP_ALIGN_NONE;
 }
 
 EOLIAN static void
