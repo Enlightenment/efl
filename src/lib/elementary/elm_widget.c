@@ -6183,7 +6183,7 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
-   efl_canvas_group_unclipped_set(obj, EINA_TRUE);
+   efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

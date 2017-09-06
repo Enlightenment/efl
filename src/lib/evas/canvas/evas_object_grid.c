@@ -285,7 +285,7 @@ evas_object_grid_add(Evas *evas)
 EOLIAN static Eo *
 _evas_grid_efl_object_constructor(Eo *obj, Evas_Grid_Data *class_data EINA_UNUSED)
 {
-   efl_canvas_group_unclipped_set(obj, EINA_FALSE);
+   efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_attach(obj, _evas_object_grid_smart_class_new());
 

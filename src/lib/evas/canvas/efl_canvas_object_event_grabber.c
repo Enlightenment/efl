@@ -320,7 +320,7 @@ _efl_canvas_object_event_grabber_efl_object_constructor(Eo *eo_obj, Efl_Object_E
 {
    Evas_Object_Protected_Data *obj;
 
-   efl_canvas_group_unclipped_set(eo_obj, EINA_TRUE);
+   efl_canvas_group_clipped_set(eo_obj, EINA_FALSE);
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

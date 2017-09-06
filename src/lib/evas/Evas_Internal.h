@@ -53,7 +53,7 @@ EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
 EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
 EOAPI void efl_canvas_group_add(Eo *obj);
 EOAPI void efl_canvas_group_del(Eo *obj);
-EOAPI void efl_canvas_group_unclipped_set(Eo *obj, Eina_Bool unclipped);
+EOAPI void efl_canvas_group_clipped_set(Eo *obj, Eina_Bool unclipped);
 
 EOAPI void *efl_input_legacy_info_get(const Eo *obj);
 EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);
