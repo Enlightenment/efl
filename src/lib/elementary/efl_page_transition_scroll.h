@@ -6,6 +6,7 @@ typedef struct _Efl_Page_Transition_Scroll_Data Efl_Page_Transition_Scroll_Data;
 
 struct _Efl_Page_Transition_Scroll_Data
 {
+   Efl_Object     *pager;
 };
 
 #endif

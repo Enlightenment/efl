@@ -51,8 +51,8 @@ _efl_ui_pagescroller_update(Eo *obj,
      }
 
    // Transition effect
-   efl_page_transition_update(pd->transition, o1, (-1 * pd->ratio));
-   efl_page_transition_update(pd->transition, o2, pd->ratio);
+   //efl_page_transition_update(pd->transition, o1, (-1 * pd->ratio));
+   //efl_page_transition_update(pd->transition, o2, pd->ratio);
 
    efl_event_callback_call(obj, EFL_UI_PAGESCROLLER_EVENT_UPDATED, NULL);
 }

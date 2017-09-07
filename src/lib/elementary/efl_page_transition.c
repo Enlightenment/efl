@@ -9,26 +9,25 @@
 
 #define MY_CLASS EFL_PAGE_TRANSITION_CLASS
 
+
 EOLIAN static void
-_efl_page_transition_target_set(Eo *obj EINA_UNUSED,
-                                Efl_Page_Transition_Data *_pd,
-                                Efl_Canvas_Object *target)
+_efl_page_transition_bind(Eo *obj EINA_UNUSED,
+                          Efl_Page_Transition_Data *_pd EINA_UNUSED,
+                          Eo *pager)
 {
-   _pd->target = target;
 }
 
-EOLIAN static Efl_Canvas_Object *
-_efl_page_transition_target_get(Eo *obj EINA_UNUSED,
-                                Efl_Page_Transition_Data *_pd)
+EOLIAN static void
+_efl_page_transition_init(Eo *obj EINA_UNUSED,
+                          Efl_Page_Transition_Data *_pd EINA_UNUSED)
 {
-   return _pd->target;
 }
 
 EOLIAN static void
 _efl_page_transition_update(Eo *obj EINA_UNUSED,
-                            Efl_Page_Transition_Data *_pd EINA_UNUSED,
-                            Efl_Canvas_Object *target EINA_UNUSED,
-                            double position EINA_UNUSED)
+                            Efl_Page_Transition_Data *_pd EINA_UNUSED)
+                            //Efl_Canvas_Object *target EINA_UNUSED,
+                            //double position EINA_UNUSED)
 {
 }
 

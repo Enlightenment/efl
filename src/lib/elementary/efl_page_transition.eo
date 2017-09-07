@@ -2,12 +2,17 @@ class Efl.Page.Transition (Efl.Object)
 {
    [[Efl ui pagescroller transition effect class]]
    methods {
+      bind {
+         [[set object]]
+         params {
+            @in pager: Efl.Object; [[pager object]]
+         }
+      }
+      init {
+         [[set up initial variables]]
+      }
       update {
          [[transition effect update]]
-         params {
-            @in target: Efl.Canvas.Object; [[Target object]]
-            @in position: double; [[double value in (-1, 1) range]]
-         }
       }
    }
    implements {
