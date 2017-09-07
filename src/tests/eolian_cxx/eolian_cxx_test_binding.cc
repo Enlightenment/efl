@@ -16,7 +16,7 @@ START_TEST(eolian_cxx_test_binding_constructor_only_required)
   efl::eo::eo_init init;
 
   nonamespace::Generic g
-    (
+    (efl::eo::instantiate,
      [&]
      {
        g.required_ctor_a(1);
@@ -34,7 +34,7 @@ START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
   efl::eo::eo_init i;
 
   nonamespace::Generic g
-    (
+    (efl::eo::instantiate,
     [&]
     {
       g.required_ctor_a(2);
@@ -55,7 +55,7 @@ START_TEST(eolian_cxx_test_type_generation)
 {
   efl::eo::eo_init eo_init;
 
-  name1::name2::Type_Generation g;
+  name1::name2::Type_Generation g(efl::eo::instantiate);
 }
 END_TEST
 
@@ -63,7 +63,7 @@ START_TEST(eolian_cxx_test_type_generation_in)
 {
   efl::eo::eo_init i;
 
-  name1::name2::Type_Generation g;
+  name1::name2::Type_Generation g(efl::eo::instantiate);
 
   int v = 42;
   g.inrefint(v);
@@ -83,7 +83,7 @@ START_TEST(eolian_cxx_test_type_generation_return)
 {
   efl::eo::eo_init i;
 
-  name1::name2::Type_Generation g;
+  name1::name2::Type_Generation g(efl::eo::instantiate);
 
   {
     int&i = g.returnrefint();
@@ -122,7 +122,7 @@ START_TEST(eolian_cxx_test_type_generation_optional)
 
   using efl::eina::optional;
 
-  name1::name2::Type_Generation g;
+  name1::name2::Type_Generation g(efl::eo::instantiate);
 
   g.optionalinvoidptr(NULL);
   g.optionalinvoidptr(&g);
@@ -169,7 +169,7 @@ START_TEST(eolian_cxx_test_type_callback)
   bool event1 = false, event2 = false, event3 = false, event4 = false
     , event5 = false;
   
-  nonamespace::Generic g;
+  nonamespace::Generic g(efl::eo::instantiate);
   efl::eolian::event_add(g.prefix_event1_event, g, [&] (nonamespace::Generic)
                          {
                            event1 = true;

@@ -29,7 +29,7 @@ struct class_definition_generator
 
      if(!as_generator
         (
-         "struct " << string << " : ::efl::eo::concrete"
+         "struct " << string << " : private ::efl::eo::concrete"
          )
         .generate(sink, cls.cxx_name, context))
        return false;
@@ -46,25 +46,34 @@ struct class_definition_generator
         (
             scope_tab << "explicit " << string << "( ::Eo* eo)\n"
          << scope_tab << scope_tab << ": ::efl::eo::concrete(eo) {}\n"
-         << scope_tab << "explicit " << string << "(std::nullptr_t)\n"
+         << scope_tab << string << "(std::nullptr_t)\n"
          << scope_tab << scope_tab << ": ::efl::eo::concrete(nullptr) {}\n"
+         << scope_tab << "explicit " << string << "() = default;\n"
          << scope_tab << string << "(" << string << " const& other) = default;\n"
          << scope_tab << string << "(" << string << "&& other) = default;\n"
          << scope_tab << string << "& operator=(" << string << " const& other) = default;\n"
          << scope_tab << string << "& operator=(" << string << "&& other) = default;\n"
-         << scope_tab << string << "()\n"
+         << scope_tab << "template <typename Derived>\n"
+         << scope_tab << string << "(Derived&& derived\n"
+         << scope_tab << scope_tab << ", typename std::enable_if<\n"
+         << scope_tab << scope_tab << scope_tab << "::efl::eo::is_eolian_object<Derived>::value\n"
+         << scope_tab << scope_tab << scope_tab << " && std::is_base_of< " << string << ", Derived>::value"
+         << scope_tab << scope_tab << scope_tab << ">::type* = 0) : ::efl::eo::concrete(derived._eo_ptr())\n"
+         << scope_tab << "{}\n"
+         << scope_tab << string << "( ::efl::eo::instantiate_t)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, ::efl::eo::concrete{nullptr}, _eo_class());\n"
          << scope_tab << "}\n"
-         << scope_tab << string << "( ::efl::eo::concrete parent)\n"
+         << scope_tab << "template <typename T>\n"
+         << scope_tab << "explicit " << string << "( ::efl::eo::instantiate_t, T&& parent, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value>::type* = 0)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, parent, _eo_class());\n"
          << scope_tab << "}\n"
-         << scope_tab << "template <typename F> " << string << "(F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value>::type* = 0)\n"
+         << scope_tab << "template <typename F> " << string << "( ::efl::eo::instantiate_t, F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value>::type* = 0)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, ::efl::eo::concrete{nullptr}, _eo_class(), f);\n"
          << scope_tab << "}\n"
-         << scope_tab << "template <typename F> " << string << "( ::efl::eo::concrete parent, F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value>::type* = 0)\n"
+         << scope_tab << "template <typename F> " << string << "(  ::efl::eo::instantiate_t, ::efl::eo::concrete parent, F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value>::type* = 0)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, parent, _eo_class(), f);\n"
          << scope_tab << "}\n"
@@ -161,8 +170,22 @@ struct class_definition_generator
      // /// @endcond
      if(!as_generator(scope_tab << "/// @endcond\n").generate(sink, attributes::unused, context)) return false;
 
-     if(!as_generator("};\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
+                      << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"
+                     ).generate(sink, attributes::unused, context)) return false;
+     
+     if(!as_generator(   scope_tab << "using ::efl::eo::concrete::_eo_ptr;\n"
+                      << scope_tab << "using ::efl::eo::concrete::_release;\n"
+                      << scope_tab << "using ::efl::eo::concrete::_reset;\n"
+                      << scope_tab << "using ::efl::eo::concrete::operator bool;\n"
+                      ).generate(sink, attributes::unused, context)) return false;
 
+     if(!as_generator(   scope_tab << "friend bool operator==(" << string << " const& lhs, " << string << " const& rhs)\n"
+                      << scope_tab << "{ return lhs._get_concrete() == rhs._get_concrete(); }\n"
+                      << scope_tab << "friend bool operator!=(" << string << " const& lhs, " << string << " const& rhs)\n"
+                      << scope_tab << "{ return !(lhs == rhs); }\n"
+                     << "};\n").generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
+     
      // static asserts
      if(!as_generator("static_assert(sizeof(" << string << ") == sizeof(Eo*), \"\");\n")
         .generate(sink, cls.cxx_name, context)) return false;

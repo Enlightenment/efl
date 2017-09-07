@@ -31,6 +31,8 @@ namespace efl { namespace eo {
 /// @addtogroup Efl_Cxx_API
 /// @{
 
+struct instantiate_t {} const instantiate = {};
+    
 /// @brief Creates concrete versions for <em>Eo</em> wrappers.
 ///
 /// This class creates the concrete version of all C++ <em>Eo</em> wrappers.
@@ -77,7 +79,6 @@ struct concrete
 
    concrete(concrete&& other)
    {
-     if(_eo_raw) detail::unref(_eo_raw);
      _eo_raw = other._eo_raw;
      other._eo_raw = nullptr;
    }

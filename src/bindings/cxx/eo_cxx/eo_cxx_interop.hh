@@ -652,7 +652,8 @@ T& convert_to_return(T* value, tag<T*, T&>)
 template <typename T>
 T convert_to_return(Eo* value, tag<Eo*, T>, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return T{value};
+  T v{value};
+  return v;
 }
 template <typename T>
 T convert_to_return(Eo const* value, tag<Eo const*, T>, typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
@@ -799,14 +800,17 @@ struct is_callable : std::false_type {};
 template <typename T>
 struct is_callable<T, decltype(std::declval<T>() ())> : std::true_type {};
 
-inline void do_eo_add(Eo*& object, efl::eo::concrete const& parent
-                      , Efl_Class const* klass)
+template <typename P>
+inline void do_eo_add(Eo*& object, P const& parent
+                      , Efl_Class const* klass
+                      , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
 }
-template <typename F>
-void do_eo_add(Eo*& object, efl::eo::concrete const& parent, Efl_Class const* klass, F f)
+template <typename P, typename F>
+void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass, F f
+               , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   f();
