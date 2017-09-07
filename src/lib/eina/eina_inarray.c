@@ -107,8 +107,8 @@ static int _eina_inarray_log_dom = -1;
     }                                                           \
   while(0)
 
-static void
-_eina_inarray_setup(Eina_Inarray *array, unsigned int member_size, unsigned int step)
+void
+eina_inarray_setup(Eina_Inarray *array, unsigned int member_size, unsigned int step)
 {
    EINA_MAGIC_SET(array, EINA_MAGIC_INARRAY);
    array->version = EINA_ARRAY_VERSION;
@@ -347,7 +347,7 @@ eina_inarray_new(unsigned int member_size, unsigned int step)
 
    ret = malloc(sizeof(*ret));
    if (!ret) return NULL;
-   _eina_inarray_setup(ret, member_size, step);
+   eina_inarray_setup(ret, member_size, step);
    return ret;
 }
 
@@ -381,7 +381,7 @@ eina_inarray_step_set(Eina_Inarray *array,
         return;
      }
 
-   _eina_inarray_setup(array, member_size, step);
+   eina_inarray_setup(array, member_size, step);
 }
 
 EAPI void

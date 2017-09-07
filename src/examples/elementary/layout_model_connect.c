@@ -127,7 +127,6 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_object_part_content_set(panes, "right", bxr);
 
    /*Label widget */
-
     _label_init(win, bxr, "FILENAME:");
    priv->label = _label_init(win, bxr, "");
    efl_ui_model_connect(priv->label, "default", "path"); //connect "default" to "filename" property
