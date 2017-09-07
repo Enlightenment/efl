@@ -1,0 +1,22 @@
+class Efl.Ui.Layout_Factory (Efl.Object, Efl.Ui.Factory)
+{
+   [[Efl Ui Layout Factory class]]
+   methods {
+      theme_config {
+         [[]]
+         params {
+            klass: string; [[The class of the group.]]
+            group: string; [[The group.]]
+            style: string; [[The style to used.]]
+         }
+      }
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Factory.create;
+      Efl.Ui.Factory.release;
+      Efl.Ui.Model.Connect.connect;
+   }
+}

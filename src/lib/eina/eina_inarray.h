@@ -235,6 +235,26 @@ struct _Eina_Inarray
 };
 
 /**
+ * @brief Initializes a  inline array in-place.
+ * @details This initializes an array where members are inlined in a sequence. Each
+ *          member has @a member_size bytes.
+ *
+ * @param[in] array Pointer to uninitialized array
+ * @param[in] member_size The size of each member in the array
+ * @param[in] step The step size by which to resize the array, do this using the following
+ *             extra amount
+ * @return The new inline array table, otherwise @c NULL on failure
+ *
+ * @note If the @a step is @c 0, then a safe default is chosen.
+ *
+ * @see eina_inarray_free()
+ *
+ * @since 1.2
+ */
+EAPI void eina_inarray_setup(Eina_Inarray* array, unsigned int member_size,
+                             unsigned int step);
+
+/**
  * @brief Creates a new inline array.
  * @details This creates a new array where members are inlined in a sequence. Each
  *          member has @a member_size bytes.

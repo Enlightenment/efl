@@ -1,0 +1,15 @@
+class Efl.Ui.List.Pan (Elm.Pan)
+{
+   [[Elementary Efl_Ui_List pan class]]
+   implements {
+      Efl.Object.destructor;
+      Elm.Pan.content_size { get; }
+      Elm.Pan.pos { get; set; }
+      Elm.Pan.pos_min { get; }
+      Elm.Pan.pos_max { get; }
+   }
+   events {
+      item,focused; [[Called when item got focus]]
+      item,unfocused; [[Called when item lost focus]]
+   }
+}

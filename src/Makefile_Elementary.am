@@ -170,6 +170,39 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
+	lib/elementary/elm_multibuttonentry_part.eo \
+	lib/elementary/elm_code_widget.eo \
+	lib/elementary/efl_ui_text_interactive.eo \
+	lib/elementary/efl_ui_text.eo \
+	lib/elementary/efl_ui_text_editable.eo \
+	lib/elementary/efl_ui_text_async.eo \
+	lib/elementary/efl_config_global.eo \
+	lib/elementary/efl_ui_clock.eo \
+	lib/elementary/efl_ui_cursor.eo \
+	lib/elementary/efl_ui_image_factory.eo \
+	lib/elementary/efl_ui_focus_manager.eo \
+	lib/elementary/efl_ui_focus_manager_calc.eo \
+	lib/elementary/efl_ui_focus_manager_sub.eo \
+	lib/elementary/efl_ui_focus_manager_root_focus.eo \
+	lib/elementary/efl_ui_focus_object.eo \
+	lib/elementary/efl_ui_focus_user.eo \
+	lib/elementary/efl_ui_textpath.eo \
+	lib/elementary/efl_ui_textpath_part.eo \
+	lib/elementary/efl_ui_list.eo \
+	lib/elementary/efl_ui_list_pan.eo \
+	lib/elementary/efl_ui_layout_factory.eo \
+	$(NULL)
+
+# Private classes (not exposed or shipped)
+elm_private_eolian_files = \
+	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_ui_win_part.eo \
+	tests/elementary/focus_test.eo \
+	tests/elementary/focus_test_sub_main.eo \
+	$(NULL)
+
+# Legacy classes - not part of public EO API
+elm_legacy_eolian_files = \
 	lib/elementary/elm_access.eo \
 	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_box.eo \
@@ -312,6 +345,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
 	lib/elementary/efl_ui_video_private.h \
+	lib/elementary/efl_ui_list_private.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -704,6 +738,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_parent_provider_standard.c \
 	lib/elementary/efl_ui_focus_parent_provider_gen.c \
 	lib/elementary/elm_widget_item_static_focus.c \
+	lib/elementary/efl_ui_list.c \
+	lib/elementary/efl_ui_layout_factory.c \
 	$(NULL)
 
 
