@@ -53,7 +53,7 @@ START_TEST(efl_destructor_unref)
    Eo *obj = efl_add(klass, NULL);
    fail_if(!obj);
 
-   TEST_EO_ERROR("efl_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
+   TEST_EO_ERROR("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
    efl_unref(obj);
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
@@ -84,7 +84,7 @@ START_TEST(efl_destructor_double_del)
    efl_manual_free_set(obj, EINA_TRUE);
    fail_if(!obj);
 
-   TEST_EO_ERROR("efl_unref", "Obj:%p. User refcount (%d) < 0. Too many unrefs.");
+   TEST_EO_ERROR("efl_unref", "Obj:%s@%p. User refcount (%d) < 0. Too many unrefs.");
    efl_del(obj);
    efl_del(obj);
 
