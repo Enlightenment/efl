@@ -71,19 +71,19 @@ interface Efl.Model ()
                [[Get children slice OR full range.
 
                  children_slice_get behaves in two different ways, it may
-                 provide the slice if both $start AND $count are non-zero
+                 provide the slice if $count is non-zero
                  OR full range otherwise.
 
                  Since 'slice' is a range, for example if we have 20 childs a
-                 slice could be the range from 3(start) to 4(count), see:
+                 slice could be the range from 3(start) with 4(count), see:
 
                  child 0  [no]
                  child 1  [no]
-                 child 2  [yes]
+                 child 2  [no]
                  child 3  [yes]
                  child 4  [yes]
                  child 5  [yes]
-                 child 6  [no]
+                 child 6  [yes]
                  child 7  [no]
 
                  Optionally the user can call children_count_get to know the
@@ -94,9 +94,8 @@ interface Efl.Model ()
                  @since 1.14
                ]]
             params {
-                @in start: uint; [[Range begin - start from here. If start and
-                               count are 0 slice is ignored.]]
-                @in count: uint; [[Range size. If count and start are 0 slice is
+                @in start: uint; [[Range begin - start from here.]]
+                @in count: uint; [[Range size. If count is 0, start is
                                ignored.]]
             }
             return: future<accessor<Efl.Object> >; [[Future of the children]]
