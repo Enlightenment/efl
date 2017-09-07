@@ -407,6 +407,7 @@ calendar_cxx_example_04 \
 calendar_cxx_example_05 \
 clock_cxx_example \
 icon_cxx_example_01 \
+toolbar_cxx_example_01 \
 button_cxx_example_00
 # examples_PROGRAMS += \
 # table_cxx_example_02 \
@@ -449,6 +450,7 @@ calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
 bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
 button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+toolbar_cxx_example_01_SOURCES = toolbar_cxx_example_01.cc
 # table_cxx_example_02_SOURCES = table_cxx_example_02.cc
 # table_cxx_example_01_SOURCES = table_cxx_example_01.cc
 # spinner_cxx_example_SOURCES = spinner_cxx_example.cc

@@ -39,10 +39,10 @@ START_TEST(eina_cxx_eo_iterator_equal)
 
   efl::eina::list<nonamespace::Simple> list;
 
-  nonamespace::Simple const w1;
-  nonamespace::Simple const w2;
-  nonamespace::Simple const w3;
-  nonamespace::Simple const w4;
+  nonamespace::Simple const w1(efl::eo::instantiate);
+  nonamespace::Simple const w2(efl::eo::instantiate);
+  nonamespace::Simple const w3(efl::eo::instantiate);
+  nonamespace::Simple const w4(efl::eo::instantiate);
 
   list.push_back(w1);
   list.push_back(w2);

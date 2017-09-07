@@ -37,7 +37,17 @@ struct class_declaration_generator
           (
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
            "::" << *(lower_case[string] << "::") << string << "> : ::std::true_type {}; } }\n"
-           ).generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name), context)) return false;
+           "namespace efl { namespace eo { template<> struct is_eolian_object< "
+           "::" << *(lower_case[string] << "::") << string << "&> : ::std::true_type {}; } }\n"
+           "namespace efl { namespace eo { template<> struct is_eolian_object< "
+           "::" << *(lower_case[string] << "::") << string << " const> : ::std::true_type {}; } }\n"
+           "namespace efl { namespace eo { template<> struct is_eolian_object< "
+           "::" << *(lower_case[string] << "::") << string << " const&> : ::std::true_type {}; } }\n"
+           ).generate(sink, std::make_tuple
+                      (
+                       cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name
+                       , cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name
+                      ), context)) return false;
 
      
      return true;
