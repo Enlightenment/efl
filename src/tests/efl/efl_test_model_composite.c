@@ -39,6 +39,7 @@ typedef struct _Test_Child_Data
 
 const int child_number = 3;
 const int base_ints[] = { 41, 42, 43 };
+const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
 
 static void
 _future_error_then(void *data EINA_UNUSED, Efl_Event const* event EINA_UNUSED)
@@ -79,6 +80,45 @@ _property_get_then(void *data, Efl_Event const *event)
 }
 
 static void
+_selection_property_get_then(void *data, Efl_Event const *event)
+{
+   Test_Child_Data *t = data;
+   Eina_Accessor *value_itt = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
+   int v_int = 0;
+   Eina_Bool v_bool = EINA_FALSE;
+
+
+#define EFL_TEST_value_get_and_compare(it, i, var, cmp)  \
+   do { \
+      Eina_Value *vvv = NULL; \
+      if (!eina_accessor_data_get(it, i, (void **)&vvv) || !vvv || \
+          !eina_value_get(vvv, &var)) \
+        { \
+           fprintf(stderr, "Could not get value!\n"); fflush(stderr); \
+           ck_abort_msg("Could not get value"); \
+           return; \
+        } \
+      else if(var != cmp)                       \
+        { \
+           fprintf(stderr, "Value did not match!\n"); fflush(stderr); \
+           ck_abort_msg("Value did not match"); \
+           return;                              \
+        }               \
+      else              \
+        fprintf(stderr, "Value matched\n"); fflush(stderr);    \
+   } while(0)
+
+   EFL_TEST_value_get_and_compare(value_itt, 0, v_bool, base_selections[t->idx]);
+   EFL_TEST_value_get_and_compare(value_itt, 1, v_int, base_ints[t->idx]);
+
+   t->tdata->child_count++;
+   if (t->tdata->child_count == 3)
+     t->tdata->success_flag = EINA_TRUE;
+
+#undef EFL_TEST_value_get_and_compare
+}
+
+static void
 _children_slice_get_then(void *data, Efl_Event const* event)
 {
    Eina_Accessor *children = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
@@ -86,7 +126,6 @@ _children_slice_get_then(void *data, Efl_Event const* event)
    Test_Child_Data *t;
    unsigned int i = 0;
 
-   fprintf(stderr, "OPAAAAAAa\n");
    EINA_ACCESSOR_FOREACH(children, i, child)
      {
         Efl_Future *futures[3] = {NULL,};
@@ -102,6 +141,31 @@ _children_slice_get_then(void *data, Efl_Event const* event)
         t->tdata = data;
         t->idx = i;
         efl_future_then(future_all, _property_get_then, _future_error_then, NULL, t);
+     }
+}
+
+static void
+_selection_children_slice_get_then(void *data, Efl_Event const* event)
+{
+   Eina_Accessor *children = (Eina_Accessor *)((Efl_Future_Event_Success*)event->info)->value;
+   Efl_Model *child;
+   Test_Child_Data *t;
+   unsigned int i = 0;
+
+   EINA_ACCESSOR_FOREACH(children, i, child)
+     {
+        Efl_Future *futures[2] = {NULL,};
+        Efl_Future *future_all = NULL;
+
+        futures[0] = efl_model_property_get(child, "selected");
+        futures[1] = efl_model_property_get(child, "test_p_int");
+
+        future_all = efl_future_all(futures[0], futures[1]);
+
+        t = calloc(1, sizeof(Test_Child_Data));
+        t->tdata = data;
+        t->idx = i;
+        efl_future_then(future_all, _selection_property_get_then, _future_error_then, NULL, t);
      }
 }
 
@@ -131,7 +195,7 @@ START_TEST(efl_test_model_composite_boolean)
      }
 
    model = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CLASS, NULL,
-                  efl_model_composite_boolean_composite_model_set(efl_added, base_model),
+                  efl_ui_view_model_set(efl_added, base_model),
                   efl_model_composite_boolean_property_add(efl_added, "test_p_true", EINA_TRUE),
                   efl_model_composite_boolean_property_add(efl_added, "test_p_false", EINA_FALSE));
    ck_assert(!!model);
@@ -148,8 +212,51 @@ START_TEST(efl_test_model_composite_boolean)
 }
 END_TEST
 
+START_TEST(efl_test_model_composite_selection)
+{
+   Efl_Model_Item *base_model, *child;
+   int i;
+   Eina_Value v;
+   Efl_Model_Composite_Selection *model;
+   Test_Data *tdata;
+   Efl_Future *future;
+
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+
+   base_model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
+   ck_assert(!!base_model);
+
+   for (i = 0; i < child_number; ++i)
+     {
+        child = efl_model_child_add(base_model);
+        ck_assert(!!child);
+        ck_assert(eina_value_set(&v, base_ints[i]));
+        efl_model_property_set(child, "test_p_int", &v);
+     }
+
+   model = efl_add(EFL_MODEL_COMPOSITE_SELECTION_CLASS, NULL,
+                   efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   efl_model_composite_selection_select(model, 2);
+
+   tdata = calloc(1, sizeof(Test_Data));
+   future = efl_model_children_slice_get(model, 0, 0);
+   efl_future_then(future, _selection_children_slice_get_then, _future_error_then, NULL, tdata);
+
+   ecore_main_loop_iterate();
+
+   ck_assert(tdata->success_flag);
+
+   ecore_shutdown();
+}
+END_TEST
+
 void
 efl_test_case_model_composite_boolean(TCase *tc)
 {
    tcase_add_test(tc, efl_test_model_composite_boolean);
+   tcase_add_test(tc, efl_test_model_composite_selection);
 }

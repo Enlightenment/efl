@@ -30,6 +30,8 @@ ecore_eolian_files = \
 	lib/ecore/efl_model_container_item.eo \
 	lib/ecore/efl_model_composite_boolean.eo \
 	lib/ecore/efl_model_composite_boolean_children.eo \
+	lib/ecore/efl_model_composite_selection.eo \
+	lib/ecore/efl_model_composite_selection_children.eo \
 	$(ecore_eolian_files_legacy)
 
 ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
@@ -90,6 +92,8 @@ lib/ecore/efl_model_container.c \
 lib/ecore/efl_model_container_item.c \
 lib/ecore/efl_model_container_private.h \
 lib/ecore/efl_model_composite_boolean.c \
+lib/ecore/efl_model_composite_selection.c \
+lib/ecore/efl_model_accessor_view.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \

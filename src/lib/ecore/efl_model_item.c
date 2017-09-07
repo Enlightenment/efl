@@ -169,9 +169,9 @@ _efl_model_item_efl_model_child_add(Eo *obj, Efl_Model_Item_Data *sd)
         eina_error_set(EFL_MODEL_ERROR_UNKNOWN);
         return NULL;
      }
+   cevt.index = eina_list_count(sd->children);
    sd->children = eina_list_append(sd->children, child);
    cevt.child = child;
-   cevt.index = eina_list_count(sd->children);
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, &cevt.index);
    return child;

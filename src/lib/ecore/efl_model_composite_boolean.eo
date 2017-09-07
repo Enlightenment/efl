@@ -1,17 +1,7 @@
-class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model)
+class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model, Efl.Ui.View)
 {
    [[Efl model composite boolean class]]
    methods {
-      @property composite_model {
-         [[Composite model]]
-         set {
-         }
-         get {
-         }
-         values {
-           model: Efl.Model; [[Efl model]]
-         }
-      }
       property_add {
          [[Adds property]]
          params {
@@ -29,9 +19,10 @@ class Efl.Model.Composite.Boolean (Efl.Object, Efl.Model)
       Efl.Model.children_count_get;
       Efl.Model.child_add;
       Efl.Model.child_del;
+      Efl.Ui.View.model { set; get; }
    }
    constructors {
-      .composite_model;
+      Efl.Ui.View.model;
       .property_add @optional;
    }
 }

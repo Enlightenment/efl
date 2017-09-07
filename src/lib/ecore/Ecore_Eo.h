@@ -115,6 +115,8 @@ EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
 #include "efl_model_container_item.eo.h"
 #include "efl_model_composite_boolean.eo.h"
 #include "efl_model_composite_boolean_children.eo.h"
+#include "efl_model_composite_selection.eo.h"
+#include "efl_model_composite_selection_children.eo.h"
 
 /**
  * @}
