@@ -20,8 +20,12 @@
 #define MY_CLASS_NAME "Eio_Model"
 
 static void _eio_prop_set_error_cb(void *, Eio_File *, int);
-static void _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *stat);
-static void _eio_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error);
+static void _eio_stat_done_cb(void *, Eio_File *, const Eina_Stat *);
+static void _eio_error_cb(void *, Eio_File *, int error);
+static void _eio_done_children_load_cb(void *, Eio_File *);
+static void _eio_error_children_load_cb(void *, Eio_File *, int);
+static void _eio_main_children_load_cb(void *, Eio_File *, const Eina_File_Direct_Info *);
+static Eina_Bool _eio_filter_children_load_cb(void *, Eio_File *, const Eina_File_Direct_Info *);
 
 static void
 _eio_stat_do(Eio_Model_Data *priv)
@@ -465,9 +469,32 @@ _eio_model_efl_model_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *pri
    Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, loop);
    Efl_Future* future = efl_promise_future_get(promise);
-   unsigned int *c = calloc(sizeof(unsigned int), 1);
-   *c = eina_list_count(priv->children_list);
-   efl_promise_value_set(promise, c, free);
+
+   if (!priv->path)
+     {
+        efl_promise_failed_set(promise, EFL_MODEL_ERROR_INIT_FAILED);
+        return future;
+     }
+
+   if (!(priv->is_listed))
+     {
+        priv->count_promises = eina_list_prepend(priv->count_promises, promise);
+
+        if (priv->is_listing == EINA_FALSE)
+          {
+             priv->is_listing = EINA_TRUE;
+             eio_file_direct_ls(priv->path, _eio_filter_children_load_cb,
+                             _eio_main_children_load_cb, _eio_done_children_load_cb,
+                             _eio_error_children_load_cb, priv);
+          }
+     }
+   else
+     {
+        unsigned int *c = calloc(1, sizeof(unsigned int));
+        *c = eina_list_count(priv->children_list);
+        efl_promise_value_set(promise, c, free);
+     }
+
    return future;
 }
 
@@ -549,6 +576,10 @@ static void
 _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Eio_Model_Data *priv = data;
+   _Eio_Children_Slice_Promise* p;
+   Efl_Promise *promise;
+   Eina_List* li;
+
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
    eio_file_cancel(priv->listing_file);
@@ -558,9 +589,16 @@ _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
 
    _eio_model_efl_model_monitor_add(priv);
 
-   Eina_List* i;
-   _Eio_Children_Slice_Promise* p;
-   EINA_LIST_FOREACH(priv->children_promises, i, p)
+   EINA_LIST_FOREACH(priv->count_promises, li, promise)
+     {
+        unsigned int *c = calloc(1, sizeof(unsigned int));
+        *c = eina_list_count(priv->children_list);
+        efl_promise_value_set(promise, c, free);
+     }
+   eina_list_free(priv->count_promises);
+   priv->count_promises = NULL;
+
+   EINA_LIST_FOREACH(priv->children_promises, li, p)
      {
        Eina_Accessor* accessor = efl_model_list_slice(priv->children_list, p->start, p->count);
        efl_promise_value_set(p->promise, accessor, (Eina_Free_Cb)&eina_accessor_free);
@@ -575,12 +613,26 @@ static void
 _eio_error_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_Model_Data *priv = data;
+   _Eio_Children_Slice_Promise* p;
+   Efl_Promise *promise;
    Eo *child;
 
    WRN("%d: %s.", error, strerror(error));
 
    EINA_LIST_FREE(priv->children_list, child)
      efl_unref(child);
+   priv->children_list = NULL;
+
+   EINA_LIST_FREE(priv->count_promises, promise)
+     efl_promise_failed_set(promise, EFL_MODEL_ERROR_UNKNOWN);
+   priv->count_promises = NULL;
+
+   EINA_LIST_FREE(priv->children_promises, p)
+     {
+       efl_promise_failed_set(p->promise, EFL_MODEL_ERROR_UNKNOWN);
+       free(p);
+     }
+   priv->children_promises = NULL;
 }
 
 static void
