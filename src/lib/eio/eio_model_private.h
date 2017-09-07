@@ -62,6 +62,7 @@ struct _Eio_Model_Data
    Eina_List *children_list;
    Eina_List *property_promises;
    Eina_List *children_promises;
+   Eina_List *count_promises;
    /**< EIO data */
    Eio_File *stat_file;
    Eio_File *listing_file;
@@ -71,6 +72,7 @@ struct _Eio_Model_Data
    Eio_Model_Monitor_Data mon;
    int cb_count_child_add; /**< monitor reference counter for child add event */
    int cb_count_child_del; /**< monitor reference counter for child del event*/
+   unsigned int count;
    Eio_Filter_Direct_Cb filter_cb;
    void *filter_userdata;
    Eina_Spinlock filter_lock; /**< filter callback is called from another thread */
