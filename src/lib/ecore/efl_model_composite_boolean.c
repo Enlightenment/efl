@@ -18,7 +18,6 @@ typedef struct _Efl_Model_Hash_Value
 typedef struct _Efl_Model_Composite_Boolean_Data
 {
    Efl_Model  *composite_model;
-   Eina_Array *bool_children_cache;
    Eina_Array *empty_properties;
    Eina_Hash  *values; // [property_name, Efl_Model_Hash_Value*]
 } Efl_Model_Composite_Boolean_Data;
@@ -39,7 +38,13 @@ typedef struct _Efl_Model_Accessor_Slice
    Efl_Model_Composite_Boolean_Data *parent_pd;
    Efl_Promise                      *promise;
    unsigned int                      index;
+   Eina_Array *bool_children_cache;
 } Efl_Model_Accessor_Slice;
+
+static void
+efl_model_accessor_slice_setup(Efl_Model_Accessor_Slice *acc,
+  Efl_Model *parent, Efl_Model_Composite_Boolean_Data *parent_pd, Efl_Promise *promise, int start);
+
 
 static Eina_Value *
 _value_clone(const Eina_Value *value)
@@ -66,7 +71,8 @@ _future_error_forward_cb(void *data, Efl_Event const *event)
 static Eina_Bool
 _bit_get(const unsigned char *bitstream, unsigned int idx)
 {
-   return (bitstream[idx / 8] >> (idx % 8)) & 1u;
+   Eina_Bool b = (bitstream[idx / 8] >> (idx % 8)) & 1u;
+   return b;
 }
 
 static void
@@ -160,8 +166,8 @@ _efl_model_composite_boolean_children_efl_model_property_get(Eo *obj EINA_UNUSED
         Eina_Value *eina_value = eina_value_new(EINA_VALUE_TYPE_UCHAR);
         if (hv->bits_count <= pd->index)
           {
-            unsigned char f = hv->default_value;
-            eina_value_set(eina_value, f);
+             unsigned char f = hv->default_value;
+             eina_value_set(eina_value, f);
           }
         else
           {
@@ -194,7 +200,7 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj EINA_UNUSED
      {
         Eina_Bool flag = EINA_FALSE;
 
-        if (eina_value_type_get(value) == EINA_VALUE_TYPE_UCHAR)
+        if (eina_value_type_get(value) != EINA_VALUE_TYPE_UCHAR)
           {
              efl_promise_failed_set(promise, EFL_MODEL_ERROR_INCORRECT_VALUE);
              return rfuture;
@@ -285,7 +291,7 @@ static Eina_Bool
 efl_model_acessor_slice_get_at(Efl_Model_Accessor_Slice *acc, unsigned int idx, void **data)
 {
    Efl_Model *child_bool;
-   Eina_Array *children_cache = acc->parent_pd->bool_children_cache;
+   Eina_Array *children_cache = acc->bool_children_cache;
 
    /* NOTE: Efl.Model.Composite.Boolean must alloc the cache with the correct size
       and NULL initialized. */
@@ -295,7 +301,7 @@ efl_model_acessor_slice_get_at(Efl_Model_Accessor_Slice *acc, unsigned int idx, 
         return EINA_FALSE;
      }
 
-   child_bool = eina_array_data_get(children_cache, idx);
+   child_bool = eina_array_data_get(children_cache, acc->index + idx);
 
    if (!child_bool)
      {
@@ -306,13 +312,13 @@ efl_model_acessor_slice_get_at(Efl_Model_Accessor_Slice *acc, unsigned int idx, 
 
         if (child)
           {
-             Efl_Model_Composite_Boolean_Children_Data *pd;
+             Efl_Model_Composite_Boolean_Children_Data *cpd;
              child_bool = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS, NULL);
-             pd = efl_data_scope_get(child_bool, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS);
+             cpd = efl_data_scope_get(child_bool, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS);
 
-             pd->parent_pd = acc->parent_pd;
-             pd->composite_child = efl_ref(child);
-             pd->index = acc->index++;
+             cpd->parent_pd = acc->parent_pd;
+             cpd->composite_child = efl_ref(child);
+             cpd->index = acc->index + idx;
 
              eina_array_data_set(children_cache, idx, child_bool);
           }
@@ -331,9 +337,15 @@ efl_model_acessor_slice_get_container(Efl_Model_Accessor_Slice *acc)
 static void
 efl_model_acessor_slice_free(Efl_Model_Accessor_Slice *acc)
 {
-   if (acc->real_accessor)
+    if (acc->bool_children_cache)
      {
-        eina_accessor_free(acc->real_accessor);
+        _bool_children_cache_array_free(acc->bool_children_cache);
+        acc->bool_children_cache = NULL;
+     }
+
+    if (acc->real_accessor)
+     {
+        /* eina_accessor_free(acc->real_accessor); */
         acc->real_accessor = NULL;
      }
 
@@ -364,12 +376,31 @@ efl_model_acessor_slice_unlock(Efl_Model_Accessor_Slice *acc)
 static Efl_Model_Accessor_Slice *
 efl_model_acessor_slice_clone(Efl_Model_Accessor_Slice *acc EINA_UNUSED)
 {
-   return NULL;
+   Efl_Model_Accessor_Slice* new_accessor = calloc(1, sizeof(Efl_Model_Accessor_Slice));
+   Eina_Array* children_cache;
+   unsigned i;
+   unsigned children_count = eina_array_count(acc->bool_children_cache);
+   
+   efl_model_accessor_slice_setup(new_accessor, acc->parent, acc->parent_pd, NULL
+                                  , acc->index);
+   new_accessor->real_accessor = eina_accessor_clone(acc->real_accessor);
+
+   children_cache = eina_array_new(children_count);
+   for (i = 0 ; i < children_count; ++i)
+     {
+        // NOTE: eina_array_push do not accept NULL
+        eina_array_push(children_cache, (void*)0x01);
+        eina_array_data_set(children_cache, i, NULL);
+     }
+
+   new_accessor->bool_children_cache = children_cache;
+   
+   return new_accessor;
 }
 
 static void
 efl_model_accessor_slice_setup(Efl_Model_Accessor_Slice *acc,
-   Efl_Model *parent, Efl_Model_Composite_Boolean_Data *parent_pd, Efl_Promise *promise)
+  Efl_Model *parent, Efl_Model_Composite_Boolean_Data *parent_pd, Efl_Promise *promise, int start)
 {
    acc->vtable.version = EINA_ACCESSOR_VERSION;
    acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(efl_model_acessor_slice_get_at);
@@ -386,6 +417,7 @@ efl_model_accessor_slice_setup(Efl_Model_Accessor_Slice *acc,
    acc->parent = efl_ref(parent);
    acc->parent_pd = parent_pd;
    acc->promise = promise;
+   acc->index = start;
 }
 
 static void
@@ -413,8 +445,8 @@ _efl_model_composite_boolean_slice_then_cb(void *data, Efl_Event const *event)
         Eina_Array *children_cache;
         unsigned int i;
 
-        if (slice_acc->parent_pd->bool_children_cache)
-          _bool_children_cache_array_free(slice_acc->parent_pd->bool_children_cache);
+        if (slice_acc->bool_children_cache)
+          _bool_children_cache_array_free(slice_acc->bool_children_cache);
 
         children_cache = eina_array_new(*children_count);
         for (i = 0 ; i < *children_count; ++i)
@@ -424,7 +456,7 @@ _efl_model_composite_boolean_slice_then_cb(void *data, Efl_Event const *event)
              eina_array_data_set(children_cache, i, NULL);
           }
 
-        slice_acc->parent_pd->bool_children_cache = children_cache;
+        slice_acc->bool_children_cache = children_cache;
 
         efl_promise_value_set(slice_acc->promise, slice_acc, (Eina_Free_Cb)&eina_accessor_free);
      }
@@ -460,11 +492,6 @@ efl_model_hash_value_free(void *p)
 static void
 _composite_model_data_reset(Efl_Model_Composite_Boolean_Data *pd)
 {
-   if (pd->bool_children_cache)
-     {
-        _bool_children_cache_array_free(pd->bool_children_cache);
-        pd->bool_children_cache = NULL;
-     }
 
    if (pd->composite_model)
      {
@@ -494,7 +521,7 @@ _efl_model_composite_boolean_efl_object_destructor(Eo *obj, Efl_Model_Composite_
 }
 
 static void
-_efl_model_composite_boolean_composite_model_set(Eo *obj EINA_UNUSED,
+_efl_model_composite_boolean_efl_ui_view_model_set(Eo *obj EINA_UNUSED,
   Efl_Model_Composite_Boolean_Data *pd, Efl_Model *model)
 {
    if (pd->composite_model)
@@ -506,7 +533,7 @@ _efl_model_composite_boolean_composite_model_set(Eo *obj EINA_UNUSED,
 }
 
 static Efl_Model *
-_efl_model_composite_boolean_composite_model_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
+_efl_model_composite_boolean_efl_ui_view_model_get(Eo *obj EINA_UNUSED, Efl_Model_Composite_Boolean_Data *pd)
 {
    return pd->composite_model;
 }
@@ -586,7 +613,7 @@ _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj, Efl_Model_Com
         composite_future = efl_future_all(futures[0], futures[1]);
 
         accessor = calloc(1, sizeof(Efl_Model_Accessor_Slice));
-        efl_model_accessor_slice_setup(accessor, obj, pd, promise);
+        efl_model_accessor_slice_setup(accessor, obj, pd, promise, start);
 
         efl_future_then(composite_future, &_efl_model_composite_boolean_slice_then_cb,
                           &_efl_model_composite_boolean_slice_error_cb, NULL, accessor);
