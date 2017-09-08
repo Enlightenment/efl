@@ -684,20 +684,6 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
      }
 }
 
-static Eina_Bool
-_type_is_terminatable(Eolian_Type *tp)
-{
-   if (database_type_is_ownable(tp))
-     return EINA_TRUE;
-   if (tp->type == EOLIAN_TYPE_REGULAR)
-     {
-        int kwid = eo_lexer_keyword_str_to_id(tp->name);
-        /* don't include bool, it only has 2 values so it's useless */
-        return (kwid >= KW_byte && kwid < KW_bool);
-     }
-   return EINA_FALSE;
-}
-
 static Eolian_Type *
 parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
 {
@@ -814,14 +800,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
         def->type = EOLIAN_TYPE_TERMINATED_ARRAY;
         eo_lexer_get(ls);
         check_next(ls, '<');
-        eo_lexer_context_push(ls);
         def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
-        if (!_type_is_terminatable(def->base_type))
-          {
-             eo_lexer_context_restore(ls);
-             eo_lexer_syntax_error(ls, "terminatable type expected");
-          }
-        eo_lexer_context_pop(ls);
         pop_type(ls);
         check_next(ls, '>');
      }
