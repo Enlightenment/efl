@@ -130,6 +130,14 @@ _validate_typedecl(const Eolian_Typedecl *tp)
 static Eina_Bool
 _validate_type(const Eolian_Type *tp)
 {
+   char buf[256];
+
+   if ((tp->is_own || tp->freefunc) && !database_type_is_ownable(tp))
+     {
+        snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
+        return _type_error(tp, buf);
+     }
+
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
@@ -147,7 +155,6 @@ _validate_type(const Eolian_Type *tp)
            tpp = eolian_type_typedecl_get(tp);
            if (!tpp)
              {
-                char buf[256];
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
                 return _type_error(tp, buf);
              }
@@ -161,7 +168,6 @@ _validate_type(const Eolian_Type *tp)
            /* FIXME: pass unit properly */
            if (!eolian_type_class_get(NULL, tp))
              {
-                char buf[256];
                 snprintf(buf, sizeof(buf), "undefined class %s "
                          "(likely wrong namespacing)", tp->full_name);
                 return _type_error(tp, buf);
