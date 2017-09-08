@@ -739,14 +739,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            pline = ls->line_number;
            pcolumn = ls->column;
            check_next(ls, '(');
-           eo_lexer_context_push(ls);
            def = parse_type_void(ls, allow_ref, EINA_FALSE);
-           if (!database_type_is_ownable(def))
-             {
-                eo_lexer_context_restore(ls);
-                eo_lexer_syntax_error(ls, "ownable type expected");
-             }
-           eo_lexer_context_pop(ls);
            FILL_BASE(def->base, ls, line, col);
            def->is_own = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcolumn);
@@ -759,14 +752,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            pline = ls->line_number;
            pcolumn = ls->column;
            check_next(ls, '(');
-           eo_lexer_context_push(ls);
            def = parse_type_void(ls, allow_ref, EINA_FALSE);
-           if (!database_type_is_ownable(def))
-             {
-                eo_lexer_context_restore(ls);
-                eo_lexer_syntax_error(ls, "freeable type expected");
-             }
-           eo_lexer_context_pop(ls);
            check_next(ls, ',');
            check(ls, TOK_VALUE);
            def->freefunc = eina_stringshare_ref(ls->t.value.s);
