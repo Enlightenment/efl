@@ -711,6 +711,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    int old_cur_pos;
    char *string = (char *)ev->string;
    Eina_Bool free_string = EINA_FALSE;
+   Eina_Bool changed_user = EINA_FALSE;
+   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
+
    if (!ev->key) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -1031,7 +1034,6 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           }
         if (string)
           {
-             Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
              if (en->have_selection)
                {
                   _sel_range_del_emit(obj, en);
@@ -1042,9 +1044,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              info.position = efl_text_cursor_position_get(obj, cur);
              info.length = eina_unicode_utf8_get_len(string);
 
+             efl_event_freeze(obj);
              efl_text_cursor_text_insert(obj, cur, string);
-             efl_event_callback_legacy_call(obj,
-                   EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+             efl_event_thaw(obj);
+             changed_user = EINA_TRUE;
 
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
@@ -1052,6 +1055,11 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           }
      }
 end:
+   if (changed_user)
+     {
+        efl_event_callback_legacy_call(obj,
+              EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+     }
    (void) 0;
 }
 

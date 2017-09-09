@@ -1124,7 +1124,11 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   _cursor_geometry_recalc(obj);
+   if (!sd->deferred_decoration_cursor)
+     {
+        sd->deferred_decoration_cursor = EINA_TRUE;
+        _decoration_defer(obj);
+     }
 }
 
 static void
@@ -2208,7 +2212,13 @@ _entry_cursor_changed_signal_cb(void *data,
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,hide,cursor", "elm");
      }
-   _cursor_geometry_recalc(data);
+
+   if (!sd->deferred_decoration_cursor)
+     {
+        sd->deferred_decoration_cursor = EINA_TRUE;
+        _decoration_defer(obj);
+     }
+
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
@@ -4657,12 +4667,14 @@ _update_text_cursors(Eo *obj)
    Evas_Coord x, y, w, h, xx, yy, ww, hh;
    Evas_Coord xx2, yy2;
    Eina_Bool bidi_cursor;
+   Eo *text_obj;
+
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
    if (!sd->deferred_decoration_cursor) return;
    sd->deferred_decoration_cursor = EINA_FALSE;
 
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
 
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
@@ -5055,16 +5067,20 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
    Efl_Ui_Text_Rectangle *rect;
    Anchor *an;
    const char *file;
+   Eo *sw;
+
+   sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
 
    efl_file_get(sd->entry_edje, &file, NULL);
 
    if (!sd->deferred_decoration_anchor) return;
    sd->deferred_decoration_anchor = EINA_FALSE;
 
-   _anchors_create(o, sd);
-
    /* Better not to update anchors outside the view port. */
    if (sd->anchors_updated) return;
+
+   efl_event_freeze(sw);
+   _anchors_create(o, sd);
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(
@@ -5225,6 +5241,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
      }
 
    _unused_item_objs_free(sd);
+   efl_event_thaw(sw);
 }
 
 static void
@@ -5279,8 +5296,11 @@ _efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->cur_changed = EINA_TRUE;
-   sd->deferred_decoration_cursor = EINA_TRUE;
-   _decoration_defer(data);
+   if (!sd->deferred_decoration_cursor)
+     {
+        sd->deferred_decoration_cursor = EINA_TRUE;
+        _decoration_defer(data);
+     }
 }
 
 static void
