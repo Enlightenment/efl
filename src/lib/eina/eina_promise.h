@@ -1206,9 +1206,9 @@ EAPI Eina_Future_Desc eina_future_cb_easy_from_desc(const Eina_Future_Cb_Easy_De
  * _all_cb(const void *data EINA_UNUSED, const Eina_Value array, const Eina_Future *dead EINA_UNUSED)
  * {
  *    Eina_Error err;
- *    unsined int i, len;
+ *    unsigned int i, len;
  *
- *    if (v.type == EINA_VALUE_TYPE_ERROR)
+ *    if (array.type == EINA_VALUE_TYPE_ERROR)
  *     {
  *       eina_value_get(&array, &err);
  *       fprintf(stderr, "Could not complete all operations. Reason: %s\n", eina_error_msg_get(err));
@@ -1221,7 +1221,7 @@ EAPI Eina_Future_Desc eina_future_cb_easy_from_desc(const Eina_Future_Cb_Easy_De
  *       eina_value_array_get(&array, i, &v);
  *       if (v.type == EINA_VALUE_TYPE_ERROR)
  *        {
- *          eina_value_get(&array, &err);
+ *          eina_value_get(&v, &err);
  *          fprintf(stderr, "Could not complete operation '%s'. Reason: %s\n", _get_operation_name_by_index(i), eina_error_msg_get(err));
  *          continue;
  *        }
