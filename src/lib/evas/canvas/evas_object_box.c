@@ -678,7 +678,7 @@ EOLIAN static void
 _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Data *boxdata EINA_UNUSED, void *data EINA_UNUSED)
 {
    int pad_inc = 0, sub_pixel = 0;
-   int req_w, global_pad, remaining, top_h = 0;
+   int req_w, global_pad, remaining, top_h = 0, totalminw = 0;
    double weight_total = 0.0;
    int weight_use = 0;
    int x, y, w, h;
@@ -704,11 +704,13 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.h;
    req_w = global_pad * (n_children - 1);
+   totalminw = req_w;
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         int padding_l, padding_r;
         double weight_x;
+        int minw;
 
         _sizing_eval(opt->obj);
         evas_object_size_hint_weight_get(opt->obj, &weight_x, NULL);
@@ -716,12 +718,11 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
            (opt->obj, &padding_l, &padding_r, NULL, NULL);
         req_w += padding_l + padding_r;
 
+        efl_gfx_size_hint_combined_min_get(opt->obj, &minw, NULL);
+        if (minw > 0) totalminw += minw + padding_l + padding_r;
         if (EINA_DBL_EQ(weight_x, 0.0))
           {
-             int child_w;
-
-             evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, NULL);
-             req_w += child_w;
+             if (minw > 0) req_w += minw;
           }
         else
           {
@@ -750,7 +751,7 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-        int child_w, child_h, max_h, new_h, off_x, off_y;
+        int child_w, child_h, max_h, new_h, off_x, off_y, minw, minh;
         int padding_l, padding_r, padding_t, padding_b;
         double align_y;
 
@@ -759,10 +760,11 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, NULL, &max_h);
 
+        efl_gfx_size_hint_combined_min_get(opt->obj, &minw, &minh);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         off_x = padding_l;
-        new_h = child_h;
+        new_h = minh;
         if (new_h > top_h) top_h = new_h;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
@@ -781,7 +783,7 @@ _evas_box_layout_horizontal(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_D
           }
      }
 
-   evas_object_size_hint_min_set(o, req_w, top_h);
+   evas_object_size_hint_min_set(o, totalminw, top_h);
 }
 
 static int
@@ -842,7 +844,7 @@ EOLIAN static void
 _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Data *boxdata EINA_UNUSED, void *data EINA_UNUSED)
 {
    int pad_inc = 0, sub_pixel = 0;
-   int req_h, global_pad, remaining, top_w = 0;
+   int req_h, global_pad, remaining, top_w = 0, totalminh = 0;
    double weight_total = 0.0;
    int weight_use = 0;
    int x, y, w, h;
@@ -868,11 +870,13 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
    evas_object_geometry_get(o, &x, &y, &w, &h);
    global_pad = priv->pad.v;
    req_h = global_pad * (n_children - 1);
+   totalminh = req_h;
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         int padding_t, padding_b;
         double weight_y;
+        int minh;
 
         _sizing_eval(opt->obj);
         evas_object_size_hint_weight_get(opt->obj, NULL, &weight_y);
@@ -880,12 +884,11 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
            (opt->obj, NULL, NULL, &padding_t, &padding_b);
         req_h += padding_t + padding_b;
 
+        efl_gfx_size_hint_combined_min_get(opt->obj, NULL, &minh);
+        if (minh > 0) totalminh += minh + padding_t + padding_b;
         if (EINA_DBL_EQ(weight_y, 0.0))
           {
-             int child_h;
-
-             evas_object_geometry_get(opt->obj, NULL, NULL, NULL, &child_h);
-             req_h += child_h;
+             if (minh > 0) req_h += minh;
           }
         else
           {
@@ -914,7 +917,7 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-        int child_w, child_h, max_w, new_w, off_x, off_y;
+        int child_w, child_h, max_w, new_w, off_x, off_y, minw, minh;
         int padding_l, padding_r, padding_t, padding_b;
         double align_x;
 
@@ -923,10 +926,11 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
            (opt->obj, &padding_l, &padding_r, &padding_t, &padding_b);
         evas_object_size_hint_max_get(opt->obj, &max_w, NULL);
 
+        efl_gfx_size_hint_combined_min_get(opt->obj, &minw, &minh);
         evas_object_geometry_get(opt->obj, NULL, NULL, &child_w, &child_h);
 
         off_y = padding_t;
-        new_w = child_w;
+        new_w = minw;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
            (child_w, &new_w, w, max_w, &off_x, align_x, padding_l, padding_r);
@@ -946,7 +950,7 @@ _evas_box_layout_vertical(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Dat
           }
      }
 
-   evas_object_size_hint_min_set(o, top_w, req_h);
+   evas_object_size_hint_min_set(o, top_w, totalminh);
 }
 
 EOLIAN static void
