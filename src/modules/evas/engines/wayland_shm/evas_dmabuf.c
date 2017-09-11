@@ -724,6 +724,7 @@ static Dmabuf_Buffer *
 _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 {
    Dmabuf_Buffer *out;
+   struct zwp_linux_dmabuf_v1 *dmabuf;
    struct zwp_linux_buffer_params_v1 *dp;
    uint32_t flags = 0;
 
@@ -743,7 +744,8 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->h = h;
 
    out->pending = EINA_TRUE;
-   dp = zwp_linux_dmabuf_v1_create_params(out->surface->dmabuf);
+   dmabuf = ecore_wl2_display_dmabuf_get(s->surface->ob->ewd);
+   dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
    zwp_linux_buffer_params_v1_add(dp, out->fd, 0, 0, out->stride, 0, 0);
    zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, out);
    zwp_linux_buffer_params_v1_create(dp, out->w, out->h,
