@@ -63,7 +63,7 @@ class Efl.Io.Manager (Efl.Loop_User)
             data: ptr(Eina.Binbuf); [[Data to set as information]]
             flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
-         return: future<uint64>; [[Future for asynchronous set operation]]
+         return: own(ptr(Eina.Future)); [[Future for asynchronous set operation]]
       }
       get {
          return: future<Eina.Binbuf>; [[Information]]

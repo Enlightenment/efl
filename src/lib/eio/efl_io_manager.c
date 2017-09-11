@@ -434,7 +434,37 @@ _efl_io_manager_xattr_ls(Eo *obj,
    return NULL;
 }
 
-static Efl_Future *
+static void
+_future_file_done_cb(void *data, Eio_File *handler)
+{
+   Eina_Promise *p = data;
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_UINT64);
+   eina_value_set(&v, handler->length);
+   eina_promise_resolve(p, v);
+}
+
+static void
+_future_file_error_cb(void *data,
+                      Eio_File *handler EINA_UNUSED,
+                      int error)
+{
+   Eina_Promise *p = data;
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_ERROR);
+   eina_value_set(&v, error);
+   eina_promise_resolve(p, v);
+}
+
+static void
+_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   eio_file_cancel(data);
+}
+
+static Eina_Future *
 _efl_io_manager_xattr_set(Eo *obj,
                           Efl_Io_Manager_Data *pd EINA_UNUSED,
                           const char *path,
@@ -442,28 +472,29 @@ _efl_io_manager_xattr_set(Eo *obj,
                           Eina_Binbuf *data,
                           Eina_Xattr_Flags flags)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = eio_file_xattr_set(path, attribute,
                           (const char *) eina_binbuf_string_get(data),
                           eina_binbuf_length_get(data),
                           flags,
-                          _file_done_cb,
-                          _file_error_cb,
+                          _future_file_done_cb,
+                          _future_file_error_cb,
                           p);
    if (!h) goto end;
+   eina_promise_data_set(p, h);
 
-   efl_event_callback_array_add(p, promise_handling(), h);
-   return efl_promise_future_get(p);
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 static Efl_Future *
