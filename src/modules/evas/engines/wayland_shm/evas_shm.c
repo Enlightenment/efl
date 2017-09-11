@@ -260,6 +260,7 @@ _shm_data_create(Shm_Pool *alt_pool, Shm_Data **ret, Surface *s, int w, int h)
    Shm_Surface *surface;
    Shm_Pool *pool;
    Shm_Data *data;
+   struct wl_shm *shm;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -273,7 +274,8 @@ _shm_data_create(Shm_Pool *alt_pool, Shm_Data **ret, Surface *s, int w, int h)
           goto out;
      }
 
-   if (!(pool = _shm_pool_create(surface->shm, ((w * sizeof(int)) * h))))
+   shm = ecore_wl2_display_shm_get(s->ob->ewd);
+   if (!(pool = _shm_pool_create(shm, ((w * sizeof(int)) * h))))
      {
         ERR("Could not create shm pool");
         return;
@@ -441,8 +443,11 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags, Eina_Boo
 
         if ((resize) && (!surface->leaf[i].resize_pool))
           {
+             struct wl_shm *shm;
+
+             shm = ecore_wl2_display_shm_get(s->ob->ewd);
              surface->leaf[i].resize_pool = 
-               _shm_pool_create(surface->shm, 6 * 1024 * 1024);
+               _shm_pool_create(shm, 6 * 1024 * 1024);
           }
 
         if (!_shm_leaf_create(s, &surface->leaf[i], w, h))
