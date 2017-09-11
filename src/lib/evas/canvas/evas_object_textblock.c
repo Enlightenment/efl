@@ -1241,6 +1241,10 @@ static const char escape_strings[] =
 "&dagger;\0"   "\xe2\x80\xa0\0"
 "&Dagger;\0"   "\xe2\x80\xa1\0"
 "&bull;\0"     "\xe2\x80\xa2\0"
+"&zwnj;\0"     "\xe2\x80\x8c\0"
+"&zwj;\0"      "\xe2\x80\x8d\0"
+"&lrm;\0"      "\xe2\x80\x8e\0"
+"&rlm;\0"      "\xe2\x80\x8f\0"
 ;
 
 /**
