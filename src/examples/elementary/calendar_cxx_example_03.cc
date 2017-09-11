@@ -12,11 +12,13 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Calendar Min/Max Year Example");
    win.autohide_set(true);
 
-   elm::Calendar cal(win);
+   elm::Calendar cal(instantiate, win);
 
    min.tm_year = 2020 - 1900;
    max.tm_year = 2022 - 1900;

@@ -10,7 +10,9 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
 //    //win.title_set("Hello, World!");
 //    win.autohide_set(true);
 
@@ -23,7 +25,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    // win.title_set("Hello, World!");
    win.autohide_set(true);
 
-   efl::ui::Button btn(win);
+   efl::ui::Button btn(instantiate, win);
    btn.text_set("Good-Bye, World!");
    btn.eo_cxx::efl::Gfx::size_set(120, 30);
    btn.eo_cxx::efl::Gfx::position_set(60, 15);

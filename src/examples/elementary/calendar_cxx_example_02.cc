@@ -19,11 +19,13 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Calendar Layout Formatting Example");
    win.autohide_set(true);
 
-   ::elm::Calendar cal(win);
+   ::elm::Calendar cal(instantiate, win);
    //cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //win.resize_object_add(cal);
 

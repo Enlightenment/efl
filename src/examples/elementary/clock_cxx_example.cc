@@ -10,32 +10,34 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Clock Example");
    win.autohide_set(true);
 
-   efl::ui::Box bx(win);
+   efl::ui::Box bx(instantiate, win);
    //bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //win.resize_object_add(bx);
    bx.eo_cxx::efl::Gfx::size_set(300,300);
    bx.visible_set(true);
 
-   ::elm::Clock ck(win);
+   ::elm::Clock ck(instantiate, win);
    bx.pack_end(ck);
    ck.visible_set(true);
 
-   ::elm::Clock ck2(win);
+   ::elm::Clock ck2(instantiate, win);
    ck2.show_am_pm_set(true);
    bx.pack_end(ck2);
    ck2.visible_set(true);
 
-   ::elm::Clock ck3(win);
+   ::elm::Clock ck3(instantiate, win);
    ck3.show_seconds_set(true);
    ck3.time_set(10, 11, 12);
    bx.pack_end(ck3);
    ck3.visible_set(true);
 
-   ::elm::Clock ck4(win);
+   ::elm::Clock ck4(instantiate, win);
    ck4.edit_set(true);
    ck4.show_seconds_set(true);
    ck4.show_am_pm_set(true);
@@ -43,7 +45,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bx.pack_end(ck4);
    ck4.visible_set(true);
 
-   ::elm::Clock ck5(win);
+   ::elm::Clock ck5(instantiate, win);
    ck5.show_seconds_set(true);
    ck5.edit_set(true);
    int digedit = ELM_CLOCK_EDIT_HOUR_UNIT | ELM_CLOCK_EDIT_MIN_UNIT | ELM_CLOCK_EDIT_SEC_UNIT;

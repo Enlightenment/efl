@@ -14,7 +14,7 @@ elm_main(int argc, char* argv[])
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
    using efl::eo::instantiate;
-  
+
    efl::ui::Win win_1
      (instantiate,
       [&]
