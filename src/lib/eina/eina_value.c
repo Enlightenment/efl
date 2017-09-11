@@ -36,6 +36,7 @@
 #include "eina_mempool.h"
 #include "eina_lock.h"
 #include "eina_file.h"
+#include "eina_rectangle.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -4782,6 +4783,122 @@ EAPI const Eina_Value_Type _EINA_VALUE_TYPE_FILE = {
   _eina_value_type_file_pget
 };
 
+static Eina_Bool
+_eina_value_type_rectangle_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   memset(mem, 0, sizeof(Eina_Rectangle));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_flush(const Eina_Value_Type *type EINA_UNUSED,
+                                 void *mem EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void *dst)
+{
+   memcpy(dst, src, sizeof (Eina_Rectangle));
+
+   return EINA_TRUE;
+}
+
+static int
+_eina_value_type_rectangle_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
+{
+   const Eina_Rectangle *ra = a;
+   const Eina_Rectangle *rb = b;
+
+   if (eina_rectangle_equal(ra, rb)) return 0;
+   return -1;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_Rectangle *tr = type_mem;
+   Eina_Bool ret = EINA_FALSE;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        Eina_Strbuf *buf;
+        const char *str;
+
+        buf = eina_strbuf_new();
+        eina_strbuf_append_printf(buf, "[ %i, %i, %i, %i ]",
+                                  tr->x, tr->y, tr->w, tr->h);
+        str = eina_strbuf_string_get(buf);
+        ret = eina_value_type_pset(convert, convert_mem, &str);
+     }
+
+   return ret;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_convert_from(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
+{
+   Eina_Rectangle *r = type_mem;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        const char *buf = *(const char **)convert_mem;
+        int ret;
+
+        ret = sscanf(buf, "[ %i, %i, %i, %i ]",
+                     &r->x, &r->y, &r->w, &r->h);
+
+        if (ret <= 0) return EINA_FALSE;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   const Eina_Rectangle *r = ptr;
+   Eina_Rectangle *tr = mem;
+
+   *tr = *r;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const Eina_Rectangle *r = va_arg(args, Eina_Rectangle *);
+   return _eina_value_type_rectangle_pset(type, mem, r);
+}
+
+static Eina_Bool
+_eina_value_type_rectangle_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   const Eina_Rectangle *tr = mem;
+
+   memcpy(ptr, &tr, sizeof (void*));
+   return EINA_TRUE;
+}
+
+EAPI const Eina_Value_Type _EINA_VALUE_TYPE_RECTANGLE = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof (Eina_Rectangle),
+  "Eina_Value_Rectangle",
+  _eina_value_type_rectangle_setup,
+  _eina_value_type_rectangle_flush,
+  _eina_value_type_rectangle_copy,
+  _eina_value_type_rectangle_compare,
+  _eina_value_type_rectangle_convert_to,
+  _eina_value_type_rectangle_convert_from,
+  _eina_value_type_rectangle_vset,
+  _eina_value_type_rectangle_pset,
+  _eina_value_type_rectangle_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -5236,6 +5353,7 @@ eina_value_init(void)
 
    EINA_VALUE_TYPE_OPTIONAL = &_EINA_VALUE_TYPE_OPTIONAL;
    EINA_VALUE_TYPE_FILE = &_EINA_VALUE_TYPE_FILE;
+   EINA_VALUE_TYPE_RECTANGLE = &_EINA_VALUE_TYPE_RECTANGLE;
 
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
@@ -5325,6 +5443,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_FILE = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_RECTANGLE = NULL;
 
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;

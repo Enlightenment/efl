@@ -26,6 +26,7 @@
 #include "eina_inarray.h"
 #include "eina_list.h"
 #include "eina_hash.h"
+#include "eina_rectangle.h"
 
 /**
  * @page eina_value_example_01_page Eina_Value usage
@@ -3675,6 +3676,14 @@ static inline const Eina_Value_Type *eina_value_optional_type_get(Eina_Value *va
  * @since 1.21
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_FILE;
+
+/**
+ * @var EINA_VALUE_TYPE_RECTANGLE
+ * manages optional type.
+ *
+ * @since 1.21
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_RECTANGLE;
 
 /**
  * @}
