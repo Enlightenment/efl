@@ -131,8 +131,14 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = data;
+   Outbuf *ob;
 
-   _evas_outbuf_surface_set(re->generic.ob,
+   ob = re->generic.ob;
+   if (ob->ewd != einfo->info.wl2_display)
+     {
+        re->generic.ob->ewd = einfo->info.wl2_display;
+     }
+   _evas_outbuf_surface_set(ob,
                             einfo->info.wl_shm,
                             einfo->info.wl_dmabuf);
 

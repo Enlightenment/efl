@@ -112,6 +112,7 @@ struct _Outbuf
    int num_buff;
    Outbuf_Depth depth;
 
+   Ecore_Wl2_Display *ewd;
    Evas_Engine_Info_Wayland *info;
 
    Surface *surface;
