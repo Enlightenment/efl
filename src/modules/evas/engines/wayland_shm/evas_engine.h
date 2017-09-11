@@ -87,6 +87,7 @@ typedef struct _Surface Surface;
 struct _Surface
 {
    Surface_Type type;
+   Outbuf *ob;
    union
      {
         Shm_Surface *shm;
