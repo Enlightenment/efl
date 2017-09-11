@@ -576,20 +576,6 @@ _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Ei
 }
 
 Eina_Bool
-_evas_shm_surface_surface_set(Surface *s, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf EINA_UNUSED)
-{
-   Shm_Surface *surf;
-
-   surf = s->surf.shm;
-
-   if ((surf->shm == wl_shm))
-     return EINA_FALSE;
-
-   surf->shm = wl_shm;
-   return EINA_TRUE;
-}
-
-Eina_Bool
 _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
 {
    Shm_Surface *surf;
@@ -626,7 +612,6 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
    s->funcs.data_get = _evas_shm_surface_data_get;
    s->funcs.assign = _evas_shm_surface_assign;
    s->funcs.post = _evas_shm_surface_post;
-   s->funcs.surface_set = _evas_shm_surface_surface_set;
 
    return EINA_TRUE;
 
