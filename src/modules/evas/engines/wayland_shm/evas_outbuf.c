@@ -653,6 +653,5 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
 void
 _evas_outbuf_surface_set(Outbuf *ob, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf)
 {
-   if (ob->surface->funcs.surface_set(ob->surface, wl_shm, wl_dmabuf))
-     ob->dirty = EINA_TRUE;
+   ob->surface->funcs.surface_set(ob->surface, wl_shm, wl_dmabuf);
 }
