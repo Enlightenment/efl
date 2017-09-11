@@ -72,7 +72,7 @@ struct _Shm_Surface
    Eina_Bool alpha : 1;
 };
 
-static Eina_Bool _shm_leaf_create(Shm_Surface *surface, Shm_Leaf *leaf, int w, int h);
+static Eina_Bool _shm_leaf_create(Surface *s, Shm_Leaf *leaf, int w, int h);
 static void _shm_leaf_release(Shm_Leaf *leaf);
 static void _shm_leaf_destroy(Shm_Leaf *leaf);
 
@@ -255,13 +255,15 @@ err:
 }
 
 static void 
-_shm_data_create(Shm_Pool *alt_pool, Shm_Data **ret, Shm_Surface *surface, int w, int h)
+_shm_data_create(Shm_Pool *alt_pool, Shm_Data **ret, Surface *s, int w, int h)
 {
+   Shm_Surface *surface;
    Shm_Pool *pool;
    Shm_Data *data;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   surface = s->surf.shm;
    if (ret) *ret = NULL;
 
    if (alt_pool)
@@ -303,13 +305,15 @@ _shm_data_destroy(Shm_Data *data)
 static void 
 _shm_buffer_release(void *data, struct wl_buffer *buffer)
 {
+   Surface *s;
    Shm_Surface *surf;
    Shm_Leaf *leaf;
    int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   surf = data;
+   s = data;
+   surf = s->surf.shm;
    for (; i < surf->num_buff; i++)
      {
         leaf = &surf->leaf[i];
@@ -321,7 +325,7 @@ _shm_buffer_release(void *data, struct wl_buffer *buffer)
              if (leaf->reconfigure)
                {
                   _shm_leaf_release(leaf);
-                  _shm_leaf_create(surf, leaf, surf->w, surf->h);
+                  _shm_leaf_create(s, leaf, surf->w, surf->h);
                }
 
              break;
@@ -335,11 +339,11 @@ static const struct wl_buffer_listener _shm_buffer_listener =
 };
 
 static Eina_Bool 
-_shm_leaf_create(Shm_Surface *surface, Shm_Leaf *leaf, int w, int h)
+_shm_leaf_create(Surface *s, Shm_Leaf *leaf, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _shm_data_create(leaf->resize_pool, &leaf->data, surface, w, h);
+   _shm_data_create(leaf->resize_pool, &leaf->data, s, w, h);
    if (!leaf->data)
      {
         CRI("Failed to create leaf data");
@@ -351,7 +355,7 @@ _shm_leaf_create(Shm_Surface *surface, Shm_Leaf *leaf, int w, int h)
    leaf->valid = EINA_TRUE;
    leaf->drawn = EINA_FALSE;
    leaf->age = 0;
-   wl_buffer_add_listener(leaf->data->buffer, &_shm_buffer_listener, surface);
+   wl_buffer_add_listener(leaf->data->buffer, &_shm_buffer_listener, s);
 
    return EINA_TRUE;
 }
@@ -441,7 +445,7 @@ _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags, Eina_Boo
                _shm_pool_create(surface->shm, 6 * 1024 * 1024);
           }
 
-        if (!_shm_leaf_create(surface, &surface->leaf[i], w, h))
+        if (!_shm_leaf_create(s, &surface->leaf[i], w, h))
           {
              CRI("Failed to create leaf data");
              abort();
@@ -603,7 +607,7 @@ _evas_shm_surface_create(Surface *s, int w, int h, int num_buff)
         /* create surface buffers */
         for (; i < surf->num_buff; i++)
           {
-             if (!_shm_leaf_create(surf, &(surf->leaf[i]), w, h))
+             if (!_shm_leaf_create(s, &(surf->leaf[i]), w, h))
                {
                   ERR("Could not create surface leaf");
                   goto err;
