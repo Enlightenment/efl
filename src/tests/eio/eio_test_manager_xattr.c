@@ -117,6 +117,39 @@ _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
    ecore_main_loop_quit();
 }
 
+static Eina_Value
+_future_all_cb(const void *data,
+               const Eina_Value array,
+               const Eina_Future *dead EINA_UNUSED)
+{
+   Eina_Error err;
+   unsigned int i, len;
+   int *num_of_attr = (int *)data;
+
+   if (array.type == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_get(&array, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+   len = eina_value_array_count(&array);
+   for (i = 0; i < len; i++)
+     {
+        Eina_Value v;
+
+        eina_value_array_get(&array, i, &v);
+        if (v.type == EINA_VALUE_TYPE_ERROR)
+          {
+             eina_value_get(&v, &err);
+             fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+             abort();
+          }
+     }
+
+   fail_if(*num_of_attr != len);
+   return array;
+}
+
 START_TEST(eio_test_job_xattr_set)
 {
    char *filename = "eio-tmpfile";
@@ -125,7 +158,7 @@ START_TEST(eio_test_job_xattr_set)
    unsigned int i;
    Eo *job;
    Efl_Future *ls = NULL;
-   Efl_Future **futures = NULL;
+   Eina_Future **futures = NULL;
 
    ecore_init();
    eina_init();
@@ -139,8 +172,8 @@ START_TEST(eio_test_job_xattr_set)
              S_IRWXU | S_IRWXG | S_IRWXO);
    fail_if(fd == 0);
 
-   futures = calloc(total_attributes + 1, sizeof(Efl_Future*));
-   futures[total_attributes] = NULL;
+   futures = calloc(total_attributes + 1, sizeof(Eina_Future*));
+   futures[total_attributes] = EINA_FUTURE_SENTINEL;
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
      {
@@ -152,8 +185,8 @@ START_TEST(eio_test_job_xattr_set)
 
         fail_if(num_of_attr != 0); // test asynchronous
      }
-   efl_future_then(efl_future_iterator_all(eina_carray_iterator_new((void**) futures)),
-                   _done_set_cb, _error_cb, NULL, &num_of_attr);
+   eina_future_then(eina_future_all_array(futures),
+                    _future_all_cb, &num_of_attr);
 
    ecore_main_loop_begin();
 
