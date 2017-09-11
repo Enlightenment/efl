@@ -3317,6 +3317,9 @@ evas_render_updates_internal(Evas *eo_e,
 
    EINA_LIST_FOREACH(e->outputs, l, out)
      {
+        // Avoid processing not ready output until they are
+        if (!out->output) continue ;
+
         /* phase 6. Initialize output */
         if (out->changed)
           {
@@ -3374,6 +3377,7 @@ evas_render_updates_internal(Evas *eo_e,
                /* Find the output the object was in */
                EINA_LIST_FOREACH(e->outputs, lo, output)
                  {
+                    if (!output->output) continue ;
                     if (!eina_list_data_find(output->planes, obj2)) continue ;
                     _evas_object_image_plane_release(eo_obj2, obj2, output);
                     break;
@@ -3536,7 +3540,8 @@ evas_render_updates_internal(Evas *eo_e,
                     }
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
                   EINA_LIST_FOREACH(e->outputs, l, out)
-                    ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
+                    if (out->output)
+                      ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
                   eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
                }
@@ -3550,7 +3555,8 @@ evas_render_updates_internal(Evas *eo_e,
      {
         /* clear redraws */
         EINA_LIST_FOREACH(e->outputs, l, out)
-          ENFN->output_redraws_clear(ENC, out->output);
+          if (out->output)
+            ENFN->output_redraws_clear(ENC, out->output);
      }
    eina_evlog("-render_clear", eo_e, 0.0, NULL);
 
@@ -3674,6 +3680,7 @@ evas_render_updates_internal(Evas *eo_e,
         post.updated_area = NULL;
         EINA_LIST_FOREACH(e->outputs, l1, out)
           {
+             if (!out->output) continue ;
              EINA_LIST_FOREACH(out->updates, l2, ru)
                {
                   post.updated_area = eina_list_append(post.updated_area, ru->area);
@@ -3733,6 +3740,7 @@ evas_render_wakeup(Evas *eo_e)
    eina_spinlock_take(&(evas->render.lock));
    EINA_LIST_FOREACH(evas->outputs, l, out)
      {
+        if (!out->output) continue ;
         EINA_LIST_FREE(out->updates, ru)
           {
              ret_updates = eina_list_append(ret_updates, ru->area);
@@ -3757,6 +3765,7 @@ evas_render_wakeup(Evas *eo_e)
    /* clear redraws */
    EINA_LIST_FOREACH(evas->outputs, l, out)
      {
+        if (!out->output) continue ;
         ENFN->output_redraws_clear(ENC, out->output);
      }
 
@@ -3827,6 +3836,7 @@ evas_render_pipe_wakeup(void *data)
    eina_spinlock_take(&(evas->render.lock));
    EINA_LIST_FOREACH(evas->outputs, ll, out)
      {
+        if (!out->output) continue ;
         EINA_LIST_FOREACH(out->updates, l, ru)
           {
              eina_evlog("+render_push", evas->evas, 0.0, NULL);
@@ -3910,6 +3920,7 @@ evas_render_updates_internal_wait(Evas *eo_e,
    eina_spinlock_take(&(e->render.lock));
    EINA_LIST_FOREACH(e->outputs, l, out)
      {
+        if (!out->output) continue ;
         ret = eina_list_merge(ret, out->updates);
         out->updates = NULL;
      }
