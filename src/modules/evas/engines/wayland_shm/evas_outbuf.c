@@ -56,6 +56,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->depth = info->info.depth;
    ob->priv.destination_alpha = info->info.destination_alpha;
    ob->hidden = info->info.hidden;
+   ob->ewd = info->info.wl2_display;
 
    /* default to triple buffer */
    ob->num_buff = 3;
