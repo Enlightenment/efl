@@ -969,6 +969,7 @@ case "$host_os" in
          [
           have_socket="yes"
           requirement_socket="-lsocket"
+          requirement_nsl="-lnsl"
          ],
          [have_socket="no"])
       ;;
@@ -3119,7 +3120,7 @@ fi
 AM_CONDITIONAL([EFL_NET_CONTROL_BACKEND_CONNMAN], [test "${EFL_NET_CONTROL_BACKEND}" = "connman"])
 AM_CONDITIONAL([EFL_NET_CONTROL_BACKEND_NONE], [test "${EFL_NET_CONTROL_BACKEND}" = "none"])
 
-EFL_ADD_LIBS([ECORE_CON], [-lm])
+EFL_ADD_LIBS([ECORE_CON], [${requirement_nsl} -lm])
 
 EFL_OPTIONAL_DEPEND_PKG([ECORE_CON], [${want_systemd}], [SYSTEMD], [libsystemd])
 
