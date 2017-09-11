@@ -140,9 +140,6 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
           ob->dirty = EINA_TRUE;
         re->generic.ob->ewd = einfo->info.wl2_display;
      }
-   _evas_outbuf_surface_set(ob,
-                            einfo->info.wl_shm,
-                            einfo->info.wl_dmabuf);
 
    eng_output_resize(engine, data, w, h);
 

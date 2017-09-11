@@ -101,7 +101,6 @@ struct _Surface
         void *(*data_get)(Surface *surface, int *w, int *h);
         int  (*assign)(Surface *surface);
         void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden);
-        Eina_Bool (*surface_set)(Surface *surface, struct wl_shm *wl_shm, struct zwp_linux_dmabuf_v1 *wl_dmabuf);
      } funcs;
 };
 
@@ -157,7 +156,6 @@ void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int 
 void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
-void _evas_outbuf_surface_set(Outbuf *ob, struct wl_shm *shm, struct zwp_linux_dmabuf_v1 *dmabuf);
 
 Eina_Bool _evas_surface_init(Surface *s, int w, int h, int num_buf);
 
