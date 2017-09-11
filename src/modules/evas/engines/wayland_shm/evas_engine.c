@@ -136,6 +136,8 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
    ob = re->generic.ob;
    if (ob->ewd != einfo->info.wl2_display)
      {
+        if (einfo->info.wl2_display)
+          ob->dirty = EINA_TRUE;
         re->generic.ob->ewd = einfo->info.wl2_display;
      }
    _evas_outbuf_surface_set(ob,
