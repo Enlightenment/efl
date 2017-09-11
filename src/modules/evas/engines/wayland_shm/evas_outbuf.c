@@ -21,7 +21,7 @@ _evas_surface_init(Surface *s, int w, int h, int num_buf)
 }
 
 static Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, int num_buf)
+_evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
 {
    Surface *out;
 
@@ -29,8 +29,9 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, int num_buf)
    if (!out) return NULL;
    out->type = SURFACE_EMPTY;
    out->info = info;
+   out->ob = ob;
 
-   if (_evas_surface_init(out, w, h, num_buf)) return out;
+   if (_evas_surface_init(out, w, h, ob->num_buff)) return out;
 
    free(out);
    return NULL;
@@ -87,7 +88,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    else
      goto unhandled_rotation;
 
-   ob->surface = _evas_surface_create(info, sw, sh, ob->num_buff);
+   ob->surface = _evas_surface_create(info, sw, sh, ob);
    if (!ob->surface) goto surf_err;
 
 unhandled_rotation:
