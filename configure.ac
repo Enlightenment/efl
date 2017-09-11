@@ -957,9 +957,32 @@ AC_DEFINE_UNQUOTED([EVAS_DICTS_HYPHEN_DIR],["$evas_dicts_hyphen_dir"], [Hunspell
 ### Checks for programs
 
 ### Checks for libraries
+
+# sockets
+
+case "$host_os" in
+   mingw*)
+      have_socket="no"
+      ;;
+   *solaris*)
+      AC_CHECK_LIB([socket], [connect],
+         [
+          have_socket="yes"
+          requirement_socket="-lsocket"
+         ],
+         [have_socket="no"])
+      ;;
+   darwin*)
+      have_socket="yes"
+      ;;
+   *)
+      have_socket="yes"
+      ;;
+esac
+
 EFL_PLATFORM_DEPEND([EINA], [all])
 
-EFL_ADD_LIBS([EINA], [-lm])
+EFL_ADD_LIBS([EINA], [${requirement_socket} -lm])
 
 ## Options
 
@@ -5409,27 +5432,7 @@ esac
 
 ### Checks for linker characteristics
 
-# sockets
-
-case "$host_os" in
-   mingw*)
-      have_socket="no"
-      ;;
-   *solaris*)
-      AC_CHECK_LIB([socket], [connect],
-         [
-          have_socket="yes"
-          requirements_libs_elm="-lsocket ${requirements_libs_elm}"
-         ],
-         [have_socket="no"])
-      ;;
-   darwin*)
-      have_socket="yes"
-      ;;
-   *)
-      have_socket="yes"
-      ;;
-esac
+requirements_libs_elm="${requirement_socket} ${requirements_libs_elm}"
 
 AC_SUBST([requirements_libs_elm])
 
