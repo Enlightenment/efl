@@ -7,14 +7,16 @@ elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Bg Image");
    win.autohide_set(true);
 
    //elm_app_compile_data_dir_set("/usr/share/elementary");
   //elm_app_info_set(reinterpret_cast<void*>(elm_main), "elementary", "images/plant_01.jpg");
 
-   elm::Bg bg(win);
+   elm::Bg bg(instantiate, win);
    //bg.load_size_set(320,320);
    //bg.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    bg.option_set(ELM_BG_OPTION_SCALE);

@@ -15,17 +15,19 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Calendar Day Selection Example");
    win.autohide_set(true);
 
-   ::efl::ui::Box bx(win);
+   ::efl::ui::Box bx(instantiate, win);
    //bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //win.resize_object_add(bx);
    bx.eo_cxx::efl::Gfx::size_set(700,700);
    bx.visible_set(true);
 
-   ::elm::Calendar cal(win);
+   ::elm::Calendar cal(instantiate, win);
    // cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    // cal.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
    cal.select_mode_set(ELM_CALENDAR_SELECT_MODE_NONE);
@@ -35,7 +37,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    //candidate: bool eo_cxx::efl::pack::Linear::pack_end(Efl_Gfx*) const 
    //  inline bool eo_cxx::efl::pack::Linear::pack_end(Efl_Gfx * subobj_) const
 
-   ::elm::Calendar cal2(win);
+   ::elm::Calendar cal2(instantiate, win);
    //cal2.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //cal2.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
    current_time = time(NULL) +2 * SECS_DAY;

@@ -10,11 +10,13 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   efl::ui::Win win;
+   using efl::eo::instantiate;
+
+   efl::ui::Win win(instantiate);
    //win.title_set("Icon");
    win.autohide_set(true);
 
-   efl::ui::Image icon(win);
+   efl::ui::Image icon(instantiate, win);
    icon.icon_set("home");
 
    efl::eina::string_view path, group;
