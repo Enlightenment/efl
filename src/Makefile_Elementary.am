@@ -62,6 +62,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
 	lib/elementary/efl_ui_slider.eo \
+   lib/elementary/efl_ui_slider_interval.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
@@ -500,6 +501,7 @@ includesub_HEADERS = \
 	lib/elementary/elm_slider.h \
 	lib/elementary/elm_slider_common.h \
 	lib/elementary/efl_ui_slider_eo.h \
+	lib/elementary/efl_ui_slider_interval.eo.h \
 	lib/elementary/elm_slider_legacy.h \
 	lib/elementary/elm_slideshow.h \
 	lib/elementary/elm_slideshow_common.h \
@@ -648,6 +650,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_segment_control.c \
 	lib/elementary/elm_separator.c \
 	lib/elementary/efl_ui_slider.c \
+	lib/elementary/efl_ui_slider_interval.c \
 	lib/elementary/elm_slideshow.c \
 	lib/elementary/elm_spinner.c \
 	lib/elementary/elm_store.c \
@@ -849,6 +852,7 @@ bin/elementary/test_scroller.c \
 bin/elementary/test_segment_control.c \
 bin/elementary/test_separator.c \
 bin/elementary/test_slider.c \
+bin/elementary/test_slider_interval.c \
 bin/elementary/test_slideshow.c \
 bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \

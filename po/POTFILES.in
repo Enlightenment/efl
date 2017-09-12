@@ -54,6 +54,7 @@ src/bin/elementary/test_scaling.c
 src/bin/elementary/test_scroller.c
 src/bin/elementary/test_separator.c
 src/bin/elementary/test_slider.c
+src/bin/elementary/test_slider_interval.c
 src/bin/elementary/test_slideshow.c
 src/bin/elementary/test_spinner.c
 src/bin/elementary/test_store.c
@@ -157,6 +158,7 @@ src/lib/elementary/elm_scroller.c
 src/lib/elementary/elm_segment_control.c
 src/lib/elementary/elm_separator.c
 src/lib/elementary/efl_ui_slider.c
+src/lib/elementary/efl_ui_slider_interval.c
 src/lib/elementary/elm_slideshow.c
 src/lib/elementary/elm_spinner.c
 src/lib/elementary/elm_store.c
