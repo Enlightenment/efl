@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
@@ -6313,7 +6313,7 @@ _elm_widget_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_elm_interface_atspi_component_focus_grab(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_elm_widget_efl_access_component_focus_grab(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    if (elm_object_focus_allow_get(obj))
      {
@@ -6424,7 +6424,7 @@ _elm_widget_elm_interface_atspi_accessible_attributes_get(Eo *obj, Elm_Widget_Sm
 }
 
 EOLIAN static void
-_elm_widget_item_elm_interface_atspi_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+_elm_widget_item_efl_access_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
 {
    int ee_x, ee_y;
 
@@ -6449,13 +6449,13 @@ _elm_widget_item_elm_interface_atspi_component_extents_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_item_elm_interface_atspi_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+_elm_widget_item_efl_access_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static int
-_elm_widget_item_elm_interface_atspi_component_layer_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED)
+_elm_widget_item_efl_access_component_layer_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED)
 {
    if (!sd->view)
      return -1;
@@ -6463,14 +6463,14 @@ _elm_widget_item_elm_interface_atspi_component_layer_get(Eo *obj EINA_UNUSED, El
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_item_elm_interface_atspi_component_focus_grab(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *_pd EINA_UNUSED)
+_elm_widget_item_efl_access_component_focus_grab(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *_pd EINA_UNUSED)
 {
    elm_object_item_focus_set(obj, EINA_TRUE);
    return elm_object_item_focus_get(obj);
 }
 
 EOLIAN static double
-_elm_widget_item_elm_interface_atspi_component_alpha_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED)
+_elm_widget_item_efl_access_component_alpha_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED)
 {
    int alpha;
 

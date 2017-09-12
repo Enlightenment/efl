@@ -1,7 +1,6 @@
-mixin Elm.Interface.Atspi_Component ()
+mixin Efl.Access.Component ()
 {
    [[AT-SPI component mixin]]
-   eo_prefix: elm_interface_atspi_component;
    data: null;
    methods {
       @property size @protected {
