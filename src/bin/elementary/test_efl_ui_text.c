@@ -255,3 +255,52 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_resize(win, 480, 320);
    evas_object_show(win);
 }
+
+void
+test_efl_ui_text_async(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *bx2, *bx3, *en;
+
+   win = elm_win_util_standard_add("entry", "Entry");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en = efl_add(EFL_UI_TEXT_ASYNC_CLASS, win,
+         efl_text_wrap_set(efl_added, EFL_TEXT_FORMAT_WRAP_WORD),
+         efl_text_multiline_set(efl_added, EINA_TRUE)
+         );
+
+   printf("Added Efl.Ui.Text object\n");
+   efl_key_data_set(en, "wrap_idx", 0);
+   efl_text_set(en, "Hello world! Goodbye world! This is a test text for the"
+         " new UI Text widget.\xE2\x80\xA9This is the next paragraph.\nThis"
+         " is the next line.\nThis is Yet another line! Line and paragraph"
+         " separators are actually different!");
+   efl_text_font_set(en, "Sans", 10);
+   efl_text_normal_color_set(en, 255, 255, 255, 255);
+
+   elm_box_pack_end(bx, en);
+   elm_object_focus_set(en, EINA_TRUE);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bx3 = elm_box_add(win);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   elm_box_pack_end(bx, bx3);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx3);
+   evas_object_show(bx2);
+
+   evas_object_resize(win, 480, 320);
+   evas_object_show(win);
+}
