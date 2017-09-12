@@ -14,9 +14,6 @@ struct _Evas_Engine_Info_Wayland
    /* engine specific data & parameters it needs to set up */
    struct
      {
-        /* the wayland shm object used to create new shm pool */
-        struct wl_shm *wl_shm;
-        struct zwp_linux_dmabuf_v1 *wl_dmabuf;
         Ecore_Wl2_Display *wl2_display;
         Ecore_Wl2_Window *wl2_win;
         int depth, rotation, edges;
