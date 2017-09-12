@@ -70,7 +70,6 @@ struct _Dmabuf_Buffer
 struct _Dmabuf_Surface
 {
    Surface *surface;
-   struct wl_display *wl_display;
    int compositor_version;
 
    Dmabuf_Buffer *current;
@@ -632,6 +631,9 @@ static Dmabuf_Buffer *
 _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
 {
    int iterations = 0, i;
+   struct wl_display *disp;
+
+   disp = ecore_wl2_display_get(s->surface->info->info.wl2_display);
 
    while (iterations++ < 10)
      {
@@ -641,7 +643,7 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
               !s->buffer[i]->pending)
             return s->buffer[i];
 
-        wl_display_dispatch_pending(s->wl_display);
+        wl_display_dispatch_pending(disp);
      }
 
    /* May be we have a possible render target that just hasn't been
@@ -787,7 +789,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf = s->surf.dmabuf;
 
    surf->surface = s;
-   surf->wl_display = ecore_wl2_display_get(s->info->info.wl2_display);
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;
 
