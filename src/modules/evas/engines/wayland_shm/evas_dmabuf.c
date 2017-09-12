@@ -71,7 +71,6 @@ struct _Dmabuf_Surface
 {
    Surface *surface;
    struct wl_display *wl_display;
-   struct zwp_linux_dmabuf_v1 *dmabuf;
    int compositor_version;
 
    Dmabuf_Buffer *current;
@@ -782,15 +781,13 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    int i = 0;
 
    if (dmabuf_totally_hosed) return EINA_FALSE;
-
-   if (!s->info->info.wl_dmabuf) return EINA_FALSE;
+   if (!ecore_wl2_display_dmabuf_get(s->info->info.wl2_display)) return EINA_FALSE;
 
    if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
    surf = s->surf.dmabuf;
 
    surf->surface = s;
    surf->wl_display = ecore_wl2_display_get(s->info->info.wl2_display);
-   surf->dmabuf = s->info->info.wl_dmabuf;
    surf->alpha = s->info->info.destination_alpha;
    surf->compositor_version = s->info->info.compositor_version;
 
