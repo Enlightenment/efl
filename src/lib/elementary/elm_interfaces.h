@@ -11,7 +11,7 @@
 #include "elm_interface_atspi_text_editable.eo.h"
 #include "elm_interface_atspi_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
-#include "elm_interface_atspi_value.eo.h"
+#include "efl_access_value.eo.h"
 #endif
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
@@ -21,6 +21,6 @@
 #include "elm_interface_atspi_text_editable.eo.legacy.h"
 #include "elm_interface_atspi_image.eo.legacy.h"
 #include "elm_interface_atspi_selection.eo.legacy.h"
-#include "elm_interface_atspi_value.eo.legacy.h"
+#include "efl_access_value.eo.legacy.h"
 #endif
 #endif

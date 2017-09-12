@@ -5,7 +5,7 @@
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
-#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
@@ -2164,7 +2164,7 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE, request_msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_VALUE_INTERFACE, request_msg);
 
    if (!eldbus_message_iter_arguments_get(iter, "d", &value))
      {
@@ -2173,7 +2173,7 @@ _value_properties_set(const Eldbus_Service_Interface *interface, const char *pro
 
    if (!strcmp(property, "CurrentValue"))
      {
-        ret = elm_interface_atspi_value_and_text_set(obj, value, NULL);
+        ret = efl_access_value_and_text_set(obj, value, NULL);
         Eldbus_Message *answer = eldbus_message_method_return_new(request_msg);
         eldbus_message_arguments_append(answer, "b", ret);
         return answer;
@@ -2192,29 +2192,29 @@ _value_properties_get(const Eldbus_Service_Interface *interface, const char *pro
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE, request_msg, error);
+   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_VALUE_INTERFACE, request_msg, error);
 
    if (!strcmp(property, "CurrentValue"))
      {
-        elm_interface_atspi_value_and_text_get(obj, &value, NULL);
+        efl_access_value_and_text_get(obj, &value, NULL);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MinimumValue"))
      {
-        elm_interface_atspi_value_range_get(obj, &value, NULL, NULL);
+        efl_access_value_range_get(obj, &value, NULL, NULL);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MaximumValue"))
      {
-        elm_interface_atspi_value_range_get(obj, NULL, &value, NULL);
+        efl_access_value_range_get(obj, NULL, &value, NULL);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
    if (!strcmp(property, "MinimumIncrement"))
      {
-        value = elm_interface_atspi_value_increment_get(obj);
+        value = efl_access_value_increment_get(obj);
         eldbus_message_iter_basic_append(iter, 'd', value);
         return EINA_TRUE;
      }
@@ -2510,7 +2510,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         else if (!strcmp(ifc_name, "image"))
           class = ELM_INTERFACE_ATSPI_SELECTION_INTERFACE;
         else if (!strcmp(ifc_name, "value"))
-          class = ELM_INTERFACE_ATSPI_VALUE_INTERFACE;
+          class = EFL_ACCESS_VALUE_INTERFACE;
 
         if (class)
           rule->ifaces = eina_list_append(rule->ifaces, class);
@@ -3134,7 +3134,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
   if (efl_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
-  if (efl_isa(obj, ELM_INTERFACE_ATSPI_VALUE_INTERFACE))
+  if (efl_isa(obj, EFL_ACCESS_VALUE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_VALUE);
 
   eldbus_message_iter_container_close(iter, iter_array);

@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
+#define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -1719,14 +1719,14 @@ _elm_spinner_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
 // A11Y Accessibility
 
 EOLIAN static void
-_elm_spinner_elm_interface_atspi_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
+_elm_spinner_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
 {
    if (value) *value = sd->val;
    if (text) *text = NULL;
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Spinner_Data *sd, double value, const char *text EINA_UNUSED)
+_elm_spinner_efl_access_value_value_and_text_set(Eo *obj, Elm_Spinner_Data *sd, double value, const char *text EINA_UNUSED)
 {
    if (sd->val_min > value) return EINA_FALSE;
    if (sd->val_max < value) return EINA_FALSE;
@@ -1738,7 +1738,7 @@ _elm_spinner_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Spinner_D
 }
 
 EOLIAN static void
-_elm_spinner_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
+_elm_spinner_efl_access_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
 {
    if (lower) *lower = sd->val_min;
    if (upper) *upper = sd->val_max;
@@ -1746,7 +1746,7 @@ _elm_spinner_elm_interface_atspi_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinne
 }
 
 EOLIAN static double
-_elm_spinner_elm_interface_atspi_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }

@@ -1,5 +1,5 @@
 class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin,
-                   Elm.Interface.Atspi.Value, Elm.Interface.Atspi_Widget_Action)
+                   Efl.Access.Value, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary spinner class]]
    legacy_prefix: elm_spinner;
@@ -159,9 +159,9 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin,
       Efl.Ui.Spin.value { get; set; }
       Efl.Ui.Spin.interval { get; set; }
       Elm.Interface.Atspi_Accessible.name { get; }
-      Elm.Interface.Atspi.Value.value_and_text { get; set; }
-      Elm.Interface.Atspi.Value.range { get; }
-      Elm.Interface.Atspi.Value.increment { get; }
+      Efl.Access.Value.value_and_text { get; set; }
+      Efl.Access.Value.range { get; }
+      Efl.Access.Value.increment { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
