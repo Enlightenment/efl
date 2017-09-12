@@ -9,7 +9,7 @@
 #include "elm_interface_atspi_action.eo.h"
 #include "elm_interface_atspi_component.eo.h"
 #include "elm_interface_atspi_text_editable.eo.h"
-#include "elm_interface_atspi_image.eo.h"
+#include "efl_access_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
 #include "efl_access_value.eo.h"
 #endif
@@ -19,7 +19,7 @@
 #include "elm_interface_atspi_action.eo.legacy.h"
 #include "elm_interface_atspi_component.eo.legacy.h"
 #include "elm_interface_atspi_text_editable.eo.legacy.h"
-#include "elm_interface_atspi_image.eo.legacy.h"
+#include "efl_access_image.eo.legacy.h"
 #include "elm_interface_atspi_selection.eo.legacy.h"
 #include "efl_access_value.eo.legacy.h"
 #endif

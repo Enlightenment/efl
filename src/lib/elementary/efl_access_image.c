@@ -2,7 +2,7 @@
   #include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+#define EFL_ACCESS_IMAGE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_widget.h"
@@ -15,7 +15,7 @@ _free_desc_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_interface_atspi_image_description_get(Eo *obj, void *sd EINA_UNUSED)
+_efl_access_image_description_get(Eo *obj, void *sd EINA_UNUSED)
 {
    const char *descr = NULL;
 
@@ -24,7 +24,7 @@ _elm_interface_atspi_image_description_get(Eo *obj, void *sd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const char *description)
+_efl_access_image_description_set(Eo *obj, void *sd EINA_UNUSED, const char *description)
 {
    const char *key = "atspi_image_description";
    const char *descr = eina_stringshare_add(description);
@@ -43,11 +43,11 @@ _elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const 
 }
 
 EOLIAN static const char*
-_elm_interface_atspi_image_locale_get(Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
+_efl_access_image_locale_get(Eo *obj EINA_UNUSED, void *sd EINA_UNUSED)
 {
    // by default assume that descriptions are given in language of current
    // locale.
    return getenv("LANG");
 }
 
-#include "elm_interface_atspi_image.eo.c"
+#include "efl_access_image.eo.c"

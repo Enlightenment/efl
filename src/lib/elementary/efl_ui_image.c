@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_IMAGE_PROTECTED
+#define EFL_ACCESS_IMAGE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_CANVAS_LAYOUT_CALC_PROTECTED
@@ -1584,7 +1584,7 @@ _efl_ui_image_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *alig
 // A11Y
 
 EOLIAN static void
-_efl_ui_image_elm_interface_atspi_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+_efl_ui_image_efl_access_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
 {
    int ee_x, ee_y;
    Evas_Object *image = elm_image_object_get(obj);
