@@ -438,11 +438,8 @@ static void
 _future_file_done_cb(void *data, Eio_File *handler)
 {
    Eina_Promise *p = data;
-   Eina_Value v = EINA_VALUE_EMPTY;
 
-   eina_value_setup(&v, EINA_VALUE_TYPE_UINT64);
-   eina_value_set(&v, handler->length);
-   eina_promise_resolve(p, v);
+   eina_promise_resolve(p, eina_value_uint64_init(handler->length));
 }
 
 static void
@@ -451,11 +448,8 @@ _future_file_error_cb(void *data,
                       int error)
 {
    Eina_Promise *p = data;
-   Eina_Value v = EINA_VALUE_EMPTY;
 
-   eina_value_setup(&v, EINA_VALUE_TYPE_ERROR);
-   eina_value_set(&v, error);
-   eina_promise_resolve(p, v);
+   eina_promise_reject(p, error);
 }
 
 static void
