@@ -113,6 +113,7 @@ test_scroller.c \
 test_segment_control.c \
 test_separator.c \
 test_slider.c \
+test_slider_interval.c \
 test_slideshow.c \
 test_spinner.c \
 test_store.c \
