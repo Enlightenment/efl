@@ -49,36 +49,27 @@ extern "C" {
  *
  * @section ector_main_intro Introduction
  *
- * Ector is a retained mode drawing library that is designed to work
- * for and with an scenegraph like Evas.
+ * Ector is a retained mode drawing library designed to work
+ * for and with a scenegraph such as Evas, which supports several
+ * types of rendering surface including software, cairo, and gl.
  *
- * @section ector_main_compiling How to compile
+ * @section ector_main_compiling How to compile the library
  *
- * Ector is a library your application links to. The procedure for this is
- * very simple. You simply have to compile your application with the
- * appropriate compiler flags that the @c pkg-config script outputs. For
+ * Ector compiles automatically within EFL's build system, and is
+ * automatically linked with other components that need it.  But it can
+ * also be built and used standalone, by compiling and linking your
+ * application with the compiler flags indicated by @c pkg-config.  For
  * example:
  *
- * Compiling C or C++ files into object files:
- *
  * @verbatim
- gcc -c -o main.o main.c `pkg-config --cflags ector`
- @endverbatim
+ * gcc -c -o my_main.o my_main.c `pkg-config --cflags ector`
  *
- * Linking object files into a binary executable:
- *
- * @verbatim
- gcc -o my_application main.o `pkg-config --libs ector`
- @endverbatim
+ * gcc -o my_application my_main.o `pkg-config --libs ector`
+ * @endverbatim
  *
  * See @ref pkgconfig
  *
- * @section ector_main_next_steps Next Steps
- *
- * After you understood what Ector is and installed it in your system
- * you should proceed understanding the programming interface.
- *
- * Recommended reading:
+ * @section ector_main_next_steps Recommended reading:
  *
  * @li @ref Ector_Surface
  * @li @ref Ector_Renderer
@@ -110,7 +101,7 @@ typedef Eo Ector_Renderer;
  * @typedef Ector_Colorspace
  * The definiton of colorspace.
  */
-  // FIXME: Enable that when we have merged Emile
+  // FIXME: Enable this when we have merged Emile
 /* typedef Evas_Colorspace Ector_Colorspace; */
 
 /**
@@ -131,8 +122,8 @@ typedef enum _Ector_Update_Type
 {
   ECTOR_UPDATE_BACKGROUND = 1, /* All the previous state in that area is reset to the new updated profile */
   ECTOR_UPDATE_EMPTY = 2, /* Pushing empty area (no visible pixels at all, no need to read this surface to render it) */
-  ECTOR_UPDATE_ALPHA = 4, /* Pushing some transparent pixels (this impact the under layer and will require to read back the surface where this surface is blitted) */
-  ECTOR_UPDATE_OPAQUE = 8 /* Pushing some opaque pixels (this means that their is no need to read the under layer when blitting this surface) */
+  ECTOR_UPDATE_ALPHA = 4, /* Pushing some transparent pixels (this impacts the under layer and will require reading back the surface where this surface is blitted) */
+  ECTOR_UPDATE_OPAQUE = 8 /* Pushing some opaque pixels (this means that there is no need to read the under layer when blitting this surface) */
 } Ector_Update_Type;
 
 /**
@@ -159,7 +150,7 @@ EAPI int ector_shutdown(void);
  * @return EINA_TRUE if call succeeded, EINA_FALSE if glsym was undefined or an error occurred
  *
  * The RTLD_DEFAULT and RTLD_NEXT pseudo-handles can be passed as lib to
- * look up the first or next occurance of the desired symbol in the dynamic
+ * look up the first or next occurrence of the desired symbol in the dynamic
  * library search order.
  *
  * @see dlsym()
