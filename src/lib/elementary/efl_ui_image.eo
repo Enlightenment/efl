@@ -44,7 +44,7 @@ struct Efl.Ui.Image.Error
 
 class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
-                 Elm.Interface.Atspi_Image, Elm.Interface.Atspi_Widget_Action,
+                 Efl.Access.Image, Elm.Interface.Atspi_Widget_Action,
                  Efl.Orientation, Efl.Flipable,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Canvas.Layout_Calc,
                  Efl.Canvas.Layout_Group, Efl.Canvas.Layout_Signal)
@@ -149,7 +149,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Ui.View.model { get; set; }
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Image.extents { get; }
+      Efl.Access.Image.extents { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {

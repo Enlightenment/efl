@@ -1,7 +1,6 @@
-mixin Elm.Interface.Atspi_Image ()
+mixin Efl.Access.Image ()
 {
-   [[AT-SPI image mixin]]
-   eo_prefix: elm_interface_atspi_image;
+   [[Accessible image mixin]]
    data: null;
    methods {
       @property extents @protected {
