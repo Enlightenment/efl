@@ -3693,6 +3693,8 @@ _elm_genlist_item_del_not_serious(Elm_Gen_Item *it)
      sd->focused_item = NULL;
    if (sd->last_selected_item == eo_it)
      sd->last_selected_item = NULL;
+   if (sd->mode_item == it)
+     sd-> mode_item = NULL;
 
    if (it->itc->func.del)
      it->itc->func.del((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it));
