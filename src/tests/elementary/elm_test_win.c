@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define EFL_ACCESS_COMPONENT_PROTECTED
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
 # include <Ecore_X.h>
@@ -86,7 +86,7 @@ START_TEST (elm_atspi_component_position)
 
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   ret = elm_interface_atspi_component_position_set(win, EINA_TRUE, 45, 45);
+   ret = efl_access_component_position_set(win, EINA_TRUE, 45, 45);
    ck_assert(ret == EINA_TRUE);
 
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
@@ -109,7 +109,7 @@ START_TEST (elm_atspi_component_size)
    Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    evas_object_resize(win, 50, 50);
 
-   ret = elm_interface_atspi_component_size_set(win, 100, 100);
+   ret = efl_access_component_size_set(win, 100, 100);
    ck_assert(ret == EINA_TRUE);
 
    evas_object_geometry_get(win, NULL, NULL, &w, &h);
