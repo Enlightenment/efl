@@ -1,0 +1,23 @@
+class Efl.Interpolator.Decelerate (Efl.Interpolator)
+{
+   [[Efl decelerate interpolator class
+
+     output = sin(input * Pi / 2);
+   ]]
+   data: Efl_Interpolator_Decelerate_Data;
+   methods {
+      @property factor {
+         set {
+         }
+         get {
+         }
+         values {
+            factor: double; [[Factor of the interpolation function.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Interpolator.interpolate;
+   }
+}

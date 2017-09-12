@@ -1,0 +1,23 @@
+class Efl.Interpolator.Sinusoidal (Efl.Interpolator)
+{
+   [[Efl sinusoidal interpolator class
+
+     output = (1 - cos(input * Pi)) / 2;
+   ]]
+   data: Efl_Interpolator_Sinusoidal_Data;
+   methods {
+      @property factor {
+         set {
+         }
+         get {
+         }
+         values {
+            factor: double; [[Factor of the interpolation function.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Interpolator.interpolate;
+   }
+}

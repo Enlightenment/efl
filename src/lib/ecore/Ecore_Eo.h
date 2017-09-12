@@ -46,6 +46,16 @@ EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);
 
 #include "efl_promise.eo.h"
 
+#include "efl_interpolator.eo.h"
+#include "efl_interpolator_linear.eo.h"
+#include "efl_interpolator_accelerate.eo.h"
+#include "efl_interpolator_decelerate.eo.h"
+#include "efl_interpolator_sinusoidal.eo.h"
+#include "efl_interpolator_divisor.eo.h"
+#include "efl_interpolator_bounce.eo.h"
+#include "efl_interpolator_spring.eo.h"
+#include "efl_interpolator_cubic_bezier.eo.h"
+
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *ecore_main_loop_get(void);
 
