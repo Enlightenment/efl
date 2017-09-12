@@ -124,6 +124,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_text_editable.eo \
+	lib/elementary/efl_ui_text_async.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_cursor.eo \

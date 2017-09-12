@@ -1,0 +1,11 @@
+class Efl.Ui.Text_Async (Efl.Ui.Text)
+{
+   [[Efl UI text async class
+
+     @since 1.21
+   ]]
+   data: null;
+   implements {
+      Efl.Object.constructor;
+   }
+}
