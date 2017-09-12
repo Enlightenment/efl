@@ -547,9 +547,7 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  *
  * @return The data passed to eina_promise_new() or @c NULL on error.
  * @see eina_promise_new()
- * @see eina_promise_resolve()
- * @see eina_promise_reject()
- * @see eina_promise_as_value()
+ * @see eina_promise_data_set()
  */
 EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
 
@@ -558,9 +556,7 @@ EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
  *
  * Set the data passed to eina_promise_new().
  * @see eina_promise_new()
- * @see eina_promise_resolve()
- * @see eina_promise_reject()
- * @see eina_promise_as_value()
+ * @see eina_promise_data_get()
  */
 EAPI void eina_promise_data_set(Eina_Promise *p, void *data) EINA_ARG_NONNULL(1);
 
