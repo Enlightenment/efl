@@ -35,6 +35,7 @@
 #include "eina_strbuf.h"
 #include "eina_mempool.h"
 #include "eina_lock.h"
+#include "eina_file.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -4668,6 +4669,119 @@ EAPI const Eina_Value_Type _EINA_VALUE_TYPE_OPTIONAL = {
   _eina_value_type_optional_pget
 };
 
+static Eina_Bool
+_eina_value_type_file_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   memset(mem, 0, sizeof(Eina_File *));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_file_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   Eina_File *f = *(Eina_File **)mem;
+
+   eina_file_close(f);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_file_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void *dst)
+{
+   const Eina_File *f = *(const Eina_File **)src;
+   Eina_File **d = dst;
+
+   *d = eina_file_dup(f);
+   return !!(*d);
+}
+
+static int
+_eina_value_type_file_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
+{
+   const Eina_File *ta = *(const Eina_File **)a;
+   const Eina_File *tb = *(const Eina_File **)b;
+
+   if (ta == tb) return 0;
+   if (!ta) return -1;
+   if (!tb) return 1;
+   return -1;
+}
+
+static Eina_Bool
+_eina_value_type_file_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_File *f = *(const Eina_File **) type_mem;
+   Eina_Bool ret = EINA_FALSE;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        const char *filename;
+
+        filename = eina_file_filename_get(f);
+        ret = eina_value_type_pset(convert, convert_mem, &filename);
+     }
+
+   return ret;
+}
+
+static Eina_Bool
+_eina_value_type_file_convert_from(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
+{
+   Eina_File **f = type_mem;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        const char *filename = *(const char **)convert_mem;
+
+        if (!filename) return EINA_FALSE;
+        *f = eina_file_open(filename, EINA_FALSE);
+        return !!(*f);
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_eina_value_type_file_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   Eina_File **d = mem;
+   const Eina_File *s = ptr;
+
+   *d = eina_file_dup(s);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_file_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const Eina_File *f = va_arg(args, Eina_File *);
+   return _eina_value_type_file_pset(type, mem, f);
+}
+
+static Eina_Bool
+_eina_value_type_file_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof (Eina_File*));
+   return EINA_TRUE;
+}
+
+EAPI const Eina_Value_Type _EINA_VALUE_TYPE_FILE = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof (Eina_File *),
+  "Eina_Value_File",
+  _eina_value_type_file_setup,
+  _eina_value_type_file_flush,
+  _eina_value_type_file_copy,
+  _eina_value_type_file_compare,
+  _eina_value_type_file_convert_to,
+  _eina_value_type_file_convert_from,
+  _eina_value_type_file_vset,
+  _eina_value_type_file_pset,
+  _eina_value_type_file_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -5120,7 +5234,8 @@ eina_value_init(void)
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
    EINA_VALUE_TYPE_STRUCT = &_EINA_VALUE_TYPE_STRUCT;
 
-   EINA_VALUE_TYPE_OPTIONAL       = &_EINA_VALUE_TYPE_OPTIONAL;
+   EINA_VALUE_TYPE_OPTIONAL = &_EINA_VALUE_TYPE_OPTIONAL;
+   EINA_VALUE_TYPE_FILE = &_EINA_VALUE_TYPE_FILE;
 
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
@@ -5209,6 +5324,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_FILE = NULL;
 
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;

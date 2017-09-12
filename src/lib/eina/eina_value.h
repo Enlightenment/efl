@@ -3669,6 +3669,14 @@ EAPI Eina_Bool eina_value_optional_reset(Eina_Value *value) EINA_ARG_NONNULL(1);
 static inline const Eina_Value_Type *eina_value_optional_type_get(Eina_Value *value) EINA_ARG_NONNULL(1);
 
 /**
+ * @var EINA_VALUE_TYPE_FILE
+ * manages optional type.
+ *
+ * @since 1.21
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_FILE;
+
+/**
  * @}
  */
 
