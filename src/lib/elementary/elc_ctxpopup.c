@@ -1094,7 +1094,10 @@ _elm_ctxpopup_elm_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina
    if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
-   elm_object_disabled_set(sd->list ?: sd->content, disabled);
+   if (sd->list)
+     elm_object_disabled_set(sd->list, disabled);
+   else if (sd->content)
+     elm_object_disabled_set(sd->content, disabled);
 
    return EINA_TRUE;
 }
