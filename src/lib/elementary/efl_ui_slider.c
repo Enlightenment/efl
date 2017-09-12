@@ -253,7 +253,7 @@ _units_set(Evas_Object *obj)
           {
              double v1, v2;
 
-             efl_ui_range_interval_get(obj, &v1, &v2);
+             elm_slider_range_get(obj, &v1, &v2);
              snprintf(buf, sizeof(buf), sd->units, v2 - v1);
           }
 
@@ -1208,54 +1208,6 @@ _efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_slider_efl_ui_range_range_interval_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd)
-{
-   return pd->intvl_enable;
-}
-
-EOLIAN static void
-_efl_ui_slider_efl_ui_range_range_interval_enabled_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool enable)
-{
-   if (sd->intvl_enable == enable) return;
-
-   sd->intvl_enable = enable;
-
-   elm_obj_widget_theme_apply(obj);
-   if (sd->intvl_enable)
-     {
-        elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
-        if (sd->indicator_show)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
-     }
-   else
-     {
-        elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
-        ELM_SAFE_FREE(sd->popup2, evas_object_del);
-     }
-}
-
-EOLIAN static void
-_efl_ui_slider_efl_ui_range_range_interval_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd, double *from, double *to)
-{
-   if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
-   if (to) *to = fmax(pd->intvl_from, pd->intvl_to);
-}
-
-EOLIAN static void
-_efl_ui_slider_efl_ui_range_range_interval_set(Eo *obj, Efl_Ui_Slider_Data *pd, double from, double to)
-{
-   pd->intvl_from = from;
-   //TODO: remove val later
-   pd->val = from;
-   pd->intvl_to = to;
-
-   if (pd->intvl_from < pd->val_min) pd->intvl_from = pd->val_min;
-   if (pd->intvl_to > pd->val_max) pd->intvl_to = pd->val_max;
-
-   _visuals_refresh(obj);
-}
-
 EOLIAN static Eo *
 _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
 {
@@ -1737,25 +1689,53 @@ elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, sl
 EAPI void
 elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
 {
-   efl_ui_range_interval_enabled_set(obj, enable);
+   EFL_UI_SLIDER_DATA_GET(obj, sd);
+
+   if (sd->intvl_enable == enable) return;
+
+   sd->intvl_enable = enable;
+   elm_obj_widget_theme_apply(obj);
+   if (sd->intvl_enable)
+     {
+        elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");
+        if (sd->indicator_show)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+     }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
+        ELM_SAFE_FREE(sd->popup2, evas_object_del);
+     }
+
 }
 
 EAPI Eina_Bool
 elm_slider_range_enabled_get(const Evas_Object *obj)
 {
-   return efl_ui_range_interval_enabled_get(obj);
+   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   return pd->intvl_enable;
 }
 
 EAPI void
 elm_slider_range_set(Evas_Object *obj, double from, double to)
 {
-   efl_ui_range_interval_set(obj, from, to);
+   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   pd->intvl_from = from;
+   pd->val = from;
+   pd->intvl_to = to;
+
+   if (pd->intvl_from < pd->val_min) pd->intvl_from = pd->val_min;
+   if (pd->intvl_to > pd->val_max) pd->intvl_to = pd->val_max;
+
+   _visuals_refresh(obj);
 }
 
 EAPI void
 elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
 {
-   efl_ui_range_interval_get(obj, from, to);
+   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
+   if (to) *to = fmax(pd->intvl_from, pd->intvl_to);
 }
 
 EAPI void
