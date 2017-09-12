@@ -44,7 +44,7 @@ EAPI void register_elm_interface_atspi_selection(v8::Handle<v8::Object> global, 
 EAPI void register_elm_interface_atspi_text(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_value(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_widget_action(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_interface_atspi_window(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_efl_access_window(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_fileselector(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_scrollable(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_pan(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -209,7 +209,7 @@ void init(v8::Handle<v8::Object> exports)
       ::register_elm_interface_atspi_text(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_value(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_widget_action(exports, v8::Isolate::GetCurrent());
-      ::register_elm_interface_atspi_window(exports, v8::Isolate::GetCurrent());
+      ::register_efl_access_window(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_fileselector(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_scrollable(exports, v8::Isolate::GetCurrent());
       elm::register_inwin(exports, v8::Isolate::GetCurrent());

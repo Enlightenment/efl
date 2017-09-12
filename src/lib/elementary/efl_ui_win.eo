@@ -157,7 +157,7 @@ enum Efl.Ui.Win.Move_Resize_Mode
    right = (1 << 4)    [[Start resizing window to the right]]
 }
 
-class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Elm.Interface.Atspi.Window,
+class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
                Elm.Interface.Atspi_Component, Elm.Interface.Atspi_Widget_Action,
                Efl.Container, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part, Efl.Ui.Focus.Manager )

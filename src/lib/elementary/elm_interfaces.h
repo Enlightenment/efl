@@ -1,7 +1,7 @@
 #include "elm_interface_atspi_accessible.h"
 #include "elm_interface_atspi_text.h"
 #include "elm_interface_atspi_widget_action.h"
-#include "elm_interface_atspi_window.h"
+#include "efl_access_window.h"
 
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_interface_scrollable.h"

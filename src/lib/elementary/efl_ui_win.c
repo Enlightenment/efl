@@ -1247,7 +1247,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
    if (_elm_config->atspi_mode)
      {
-        elm_interface_atspi_window_activated_signal_emit(obj);
+        efl_access_window_activated_signal_emit(obj);
         elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
      }
 
@@ -1281,7 +1281,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    if (_elm_config->atspi_mode)
      {
-        elm_interface_atspi_window_deactivated_signal_emit(obj);
+        efl_access_window_deactivated_signal_emit(obj);
         elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
      }
 
@@ -1553,13 +1553,13 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_ICONIFIED, NULL);
              if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_minimized_signal_emit(obj);
+               efl_access_window_minimized_signal_emit(obj);
           }
         else
           {
              efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_NORMAL, NULL);
              if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_restored_signal_emit(obj);
+               efl_access_window_restored_signal_emit(obj);
           }
      }
    if (ch_sticky)
@@ -1600,13 +1600,13 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED, NULL);
              if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_maximized_signal_emit(obj);
+               efl_access_window_maximized_signal_emit(obj);
           }
         else
           {
              efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNMAXIMIZED, NULL);
              if (_elm_config->atspi_mode)
-               elm_interface_atspi_window_restored_signal_emit(obj);
+               efl_access_window_restored_signal_emit(obj);
           }
      }
    if (ch_profile)
@@ -2287,7 +2287,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
    if (_elm_config->atspi_mode)
      {
         Eo *root;
-        elm_interface_atspi_window_created_signal_emit(obj);
+        efl_access_window_created_signal_emit(obj);
         root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
         if (root)
            elm_interface_atspi_accessible_children_changed_added_signal_emit(root, obj);
@@ -2350,7 +2350,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         Eo *root;
         root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
-        elm_interface_atspi_window_destroyed_signal_emit(obj);
+        efl_access_window_destroyed_signal_emit(obj);
         if (root)
            elm_interface_atspi_accessible_children_changed_del_signal_emit(root, obj);
      }
@@ -2805,7 +2805,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    if (sd->autodel_clear) *(sd->autodel_clear) = -1;
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_window_destroyed_signal_emit(obj);
+     efl_access_window_destroyed_signal_emit(obj);
 
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
    _elm_win_count--;
@@ -3038,7 +3038,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
      evas_object_hide(obj);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_window_destroyed_signal_emit(obj);
+     efl_access_window_destroyed_signal_emit(obj);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
@@ -5289,7 +5289,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_window_created_signal_emit(obj);
+     efl_access_window_created_signal_emit(obj);
 
    // attach config API
    efl_composite_attach(obj, efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
@@ -6632,10 +6632,10 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
          * receive all org.a11y.window events and could keep track of active
          * windows whithin system.
          */
-        elm_interface_atspi_window_created_signal_emit(win);
+        efl_access_window_created_signal_emit(win);
         if (elm_win_focus_get(win))
           {
-             elm_interface_atspi_window_activated_signal_emit(win);
+             efl_access_window_activated_signal_emit(win);
              /** Reemit focused event to inform atspi clients about currently
               * focused object **/
              unsigned int order = 0;
@@ -6645,7 +6645,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
                elm_interface_atspi_accessible_state_changed_signal_emit(target, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }
         else
-          elm_interface_atspi_window_deactivated_signal_emit(win);
+          efl_access_window_deactivated_signal_emit(win);
      }
 }
 
