@@ -1505,6 +1505,10 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 
 // A11Y Accessibility - END
 
+/* Standard widget overrides */
+
+EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
+
 /* Efl.Part begin */
 ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, EFL_UI_LAYOUT, Efl_Ui_Slider_Data, Elm_Part_Data)
 
