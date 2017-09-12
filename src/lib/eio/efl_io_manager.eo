@@ -91,7 +91,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in file: ptr(Eina.File); [[Eina file handle]]
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
-      return: future<int>; [[Close return code]]
+      return: own(ptr(Eina.Future)); [[Close return code]]
     }
   }
 }
