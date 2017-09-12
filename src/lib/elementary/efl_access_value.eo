@@ -1,7 +1,6 @@
-interface Elm.Interface.Atspi.Value ()
+interface Efl.Access.Value ()
 {
-   [[Elementary AT-SPI value interface]]
-   eo_prefix: elm_interface_atspi_value;
+   [[Elementary Access value interface]]
    methods {
       @property value_and_text @protected {
       	 [[Value and text property]]
