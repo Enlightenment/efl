@@ -5989,9 +5989,34 @@ _edje_real_part_mask_flags_set(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Evas_Ev
 
 /* Legacy APIs */
 
+static inline Eina_Bool
+_edje_part_fetch(const Edje_Object *obj, const char *part, Edje **ped, Edje_Real_Part **prp)
+{
+   if (!part) return EINA_FALSE;
+
+   *ped = _edje_fetch(obj);
+   if (!*ped) return EINA_FALSE;
+
+   *prp = _edje_real_part_recursive_get(ped, part);
+   if (!*prp) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 EAPI Eina_Bool
 edje_object_part_swallow(Edje_Object *obj, const char *part, Evas_Object *obj_swallow)
 {
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   if (!_edje_part_fetch(obj, part, &ed, &rp)) return EINA_FALSE;
+
+   if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
+     {
+        ERR("Invalid call on a non-swallow part: '%s' in group '%s'", part, ed->group);
+        return EINA_FALSE;
+     }
+
    return efl_content_set(efl_part(obj, part), obj_swallow);
 }
 
@@ -6004,6 +6029,24 @@ edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow)
 EAPI Evas_Object *
 edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 {
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   if (!_edje_part_fetch(obj, part, &ed, &rp)) return NULL;
+
+   if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
+     {
+        // Legacy compatibility: return swallowed_object on non-swallow parts
+        if ((rp->type == EDJE_RP_TYPE_SWALLOW) && rp->typedata.swallow)
+          {
+             INF("Part is not a swallow: '%s' in group '%s'", part, ed->group);
+             return rp->typedata.swallow->swallowed_object;
+          }
+
+        ERR("Invalid call on a non-swallow part: '%s' in group '%s'", part, ed->group);
+        return NULL;
+     }
+
    return efl_content_get(efl_part(obj, part));
 }
 
