@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
@@ -2502,7 +2502,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         if (!strcmp(ifc_name, "action"))
           class = ELM_INTERFACE_ATSPI_ACTION_MIXIN;
         else if (!strcmp(ifc_name, "component"))
-          class = ELM_INTERFACE_ATSPI_COMPONENT_MIXIN;
+          class = EFL_ACCESS_COMPONENT_MIXIN;
         else if (!strcmp(ifc_name, "editabletext"))
           class = ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE;
         else if (!strcmp(ifc_name, "text"))
@@ -3124,7 +3124,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACTION);
   if (efl_isa(obj, ELM_ATSPI_APP_OBJECT_CLASS))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_APPLICATION);
-  if (efl_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
+  if (efl_isa(obj, EFL_ACCESS_COMPONENT_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COMPONENT);
   if (efl_isa(obj, ELM_INTERFACE_ATSPI_TEXT_EDITABLE_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
@@ -3297,13 +3297,13 @@ _component_contains(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   contains = elm_interface_atspi_component_contains(obj, type, x, y);
+   contains = efl_access_component_contains(obj, type, x, y);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3325,7 +3325,7 @@ _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UN
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -3335,7 +3335,7 @@ _component_get_accessible_at_point(const Eldbus_Service_Interface *iface EINA_UN
 
    iter = eldbus_message_iter_get(ret);
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   accessible = elm_interface_atspi_component_accessible_at_point_get(obj, type, x, y);
+   accessible = efl_access_component_accessible_at_point_get(obj, type, x, y);
    _bridge_iter_object_reference_append(bridge, iter, accessible);
    _bridge_object_register(bridge, accessible);
 
@@ -3353,7 +3353,7 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_struct;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "u", &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -3364,7 +3364,7 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    iter = eldbus_message_iter_get(ret);
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   elm_interface_atspi_component_extents_get(obj, type, &x, &y, &w, &h);
+   efl_access_component_extents_get(obj, type, &x, &y, &w, &h);
    iter_struct = eldbus_message_iter_container_new(iter, 'r', NULL);
    EINA_SAFETY_ON_NULL_GOTO(iter_struct, fail);
 
@@ -3391,13 +3391,13 @@ _component_get_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "u", &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   elm_interface_atspi_component_position_get(obj, type, &x, &y);
+   efl_access_component_position_get(obj, type, &x, &y);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3417,9 +3417,9 @@ _component_get_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
    int x, y;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
-   elm_interface_atspi_component_size_get(obj, &x, &y);
+   efl_access_component_size_get(obj, &x, &y);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3450,9 +3450,9 @@ _component_get_layer(const Eldbus_Service_Interface *iface EINA_UNUSED, const El
    Eldbus_Message *ret;
    AtspiComponentLayer atspi_layer;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
-   layer = elm_interface_atspi_component_layer_get(obj);
+   layer = efl_access_component_layer_get(obj);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3475,7 +3475,7 @@ _component_grab_focus(const Eldbus_Service_Interface *iface EINA_UNUSED, const E
    if (!obj)
      return _dbus_invalid_ref_error_new(msg);
 
-   focus = elm_interface_atspi_component_focus_grab(obj);
+   focus = efl_access_component_focus_grab(obj);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3497,7 +3497,7 @@ _component_get_alpha(const Eldbus_Service_Interface *iface EINA_UNUSED, const El
    if (!obj)
      return _dbus_invalid_ref_error_new(msg);
 
-   alpha = elm_interface_atspi_component_alpha_get(obj);
+   alpha = efl_access_component_alpha_get(obj);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3518,13 +3518,13 @@ _component_set_extends(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    Eldbus_Message *ret;
    Eina_Bool result = EINA_FALSE;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiiiu", &x, &y, &w, &h, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   result = elm_interface_atspi_component_extents_set(obj, type, x, y, w, h);
+   result = efl_access_component_extents_set(obj, type, x, y, w, h);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3545,13 +3545,13 @@ _component_set_position(const Eldbus_Service_Interface *iface EINA_UNUSED, const
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "iiu", &x, &y, &coord_type))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   result = elm_interface_atspi_component_position_set(obj, type, x, y);
+   result = efl_access_component_position_set(obj, type, x, y);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -3571,12 +3571,12 @@ _component_set_size(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eld
    Eina_Bool result;
    Eldbus_Message *ret;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "ii", &w, &h))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
-   result = elm_interface_atspi_component_size_set(obj, w, h);
+   result = efl_access_component_size_set(obj, w, h);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);

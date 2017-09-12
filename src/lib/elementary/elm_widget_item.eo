@@ -1,7 +1,7 @@
 import elm_general;
 
 class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
-                      Elm.Interface.Atspi_Component)
+                      Efl.Access.Component)
 {
       [[Elementary widget item class]]
       eo_prefix: elm_wdg_item;
@@ -537,9 +537,9 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
            Efl.Object.constructor;
            Efl.Object.destructor;
            Elm.Interface.Atspi_Accessible.state_set { get; }
-           Elm.Interface.Atspi_Component.extents { get; set; }
-           Elm.Interface.Atspi_Component.alpha { get; }
-           Elm.Interface.Atspi_Component.layer { get; }
-           Elm.Interface.Atspi_Component.focus_grab;
+           Efl.Access.Component.extents { get; set; }
+           Efl.Access.Component.alpha { get; }
+           Efl.Access.Component.layer { get; }
+           Efl.Access.Component.focus_grab;
       }
 }

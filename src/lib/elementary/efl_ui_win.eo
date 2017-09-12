@@ -158,7 +158,7 @@ enum Efl.Ui.Win.Move_Resize_Mode
 }
 
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
-               Elm.Interface.Atspi_Component, Elm.Interface.Atspi_Widget_Action,
+               Efl.Access.Component, Elm.Interface.Atspi_Widget_Action,
                Efl.Container, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part, Efl.Ui.Focus.Manager )
 {
@@ -837,7 +837,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Elm.Interface.Atspi_Accessible.parent { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Accessible.name { get; }
-      Elm.Interface.Atspi_Component.extents { get; }
+      Efl.Access.Component.extents { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }
       Efl.Input.State.lock_enabled { get; }

@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
@@ -6717,7 +6717,7 @@ _efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd
 }
 
 EOLIAN static void
-_efl_ui_win_elm_interface_atspi_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+_efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
 {
    int ee_x, ee_y;
 

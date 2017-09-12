@@ -7,7 +7,7 @@
 #include "elm_interface_scrollable.h"
 #ifdef EFL_BETA_API_SUPPORT
 #include "elm_interface_atspi_action.eo.h"
-#include "elm_interface_atspi_component.eo.h"
+#include "efl_access_component.eo.h"
 #include "elm_interface_atspi_text_editable.eo.h"
 #include "efl_access_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
@@ -17,7 +17,7 @@
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #ifdef EFL_BETA_API_SUPPORT
 #include "elm_interface_atspi_action.eo.legacy.h"
-#include "elm_interface_atspi_component.eo.legacy.h"
+#include "efl_access_component.eo.legacy.h"
 #include "elm_interface_atspi_text_editable.eo.legacy.h"
 #include "efl_access_image.eo.legacy.h"
 #include "elm_interface_atspi_selection.eo.legacy.h"

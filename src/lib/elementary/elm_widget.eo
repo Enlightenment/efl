@@ -18,7 +18,7 @@ struct Elm.Widget.Focus_State {
 }
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
-                     Elm.Interface.Atspi_Component, Efl.Ui.Focus.User,
+                     Efl.Access.Component, Efl.Ui.Focus.User,
                      Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor)
 {
    [[Elementary widget abstract class]]
@@ -857,7 +857,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Accessible.parent { get; }
       Elm.Interface.Atspi_Accessible.attributes { get; }
-      Elm.Interface.Atspi_Component.focus_grab;
+      Efl.Access.Component.focus_grab;
       Efl.Ui.Focus.User.manager { get; }
       Efl.Ui.Focus.User.parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
