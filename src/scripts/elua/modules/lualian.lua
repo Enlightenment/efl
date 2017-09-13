@@ -703,9 +703,6 @@ M.generate = function(fname, fstream)
         error("Failed parsing file: " .. fname)
     end
     gen_unit = unit
-    if not eolian.database_validate() then
-        error("Failed validating database.")
-    end
     local sfn = fname:match(".*[\\/](.+)$") or fname
     local klass = eolian.class_get_by_file(unit, sfn)
     File(fname, klass, { gen_class(klass) }):generate(fstream or io.stdout)
