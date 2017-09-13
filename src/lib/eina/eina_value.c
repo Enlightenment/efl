@@ -4722,7 +4722,25 @@ _eina_value_type_file_convert_to(const Eina_Value_Type *type EINA_UNUSED, const 
         filename = eina_file_filename_get(f);
         ret = eina_value_type_pset(convert, convert_mem, &filename);
      }
+   else if (convert == EINA_VALUE_TYPE_BLOB)
+     {
+        Eina_Value_Blob *c = convert_mem;
+        const void *m;
 
+        m = eina_file_map_all((Eina_File*) f, EINA_FILE_WILLNEED);
+        if (!m) goto end;
+
+        c->ops = EINA_VALUE_BLOB_OPERATIONS_MALLOC;
+        c->memory = malloc(eina_file_size_get(f));
+        memcpy((void*)c->memory, m, eina_file_size_get(f));
+        c->size = eina_file_size_get(f);
+
+        eina_file_map_free((Eina_File*)f, (void*)m);
+
+        ret = EINA_TRUE;
+     }
+
+ end:
    return ret;
 }
 
