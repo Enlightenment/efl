@@ -80,13 +80,16 @@ static const Eina_Bool _ownable_types[] = {
 };
 
 Eina_Bool
-database_type_is_ownable(const Eolian_Type *tp)
+database_type_is_ownable(const Eolian_Type *tp, Eina_Bool term)
 {
    if (tp->is_ptr)
      return EINA_TRUE;
    if (tp->type == EOLIAN_TYPE_REGULAR)
      {
         int kwid = eo_lexer_keyword_str_to_id(tp->name);
+        /* don't include bool, it only has 2 values so it's useless */
+        if (term && (kwid >= KW_byte && kwid < KW_bool))
+          return EINA_TRUE;
         const char *ct = eo_lexer_get_c_type(kwid);
         if (!ct)
           return EINA_FALSE;
@@ -117,7 +120,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
    if ((tp->type == EOLIAN_TYPE_REGULAR
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
-     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp)))
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp, EINA_FALSE)))
      {
         eina_strbuf_append(buf, "const ");
      }

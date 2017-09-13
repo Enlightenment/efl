@@ -132,25 +132,11 @@ _validate_typedecl(Eolian_Typedecl *tp)
 }
 
 static Eina_Bool
-_type_is_terminatable(const Eolian_Type *tp)
-{
-   if (database_type_is_ownable(tp))
-     return EINA_TRUE;
-   if (tp->type == EOLIAN_TYPE_REGULAR)
-     {
-        int kwid = eo_lexer_keyword_str_to_id(tp->name);
-        /* don't include bool, it only has 2 values so it's useless */
-        return (kwid >= KW_byte && kwid < KW_bool);
-     }
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _validate_type(Eolian_Type *tp)
 {
    char buf[256];
 
-   if ((tp->is_own || tp->freefunc) && !database_type_is_ownable(tp))
+   if ((tp->is_own || tp->freefunc) && !database_type_is_ownable(tp, EINA_FALSE))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
         return _type_error(tp, buf);
@@ -183,7 +169,7 @@ _validate_type(Eolian_Type *tp)
            return EINA_TRUE;
         }
       case EOLIAN_TYPE_TERMINATED_ARRAY:
-        if (!_type_is_terminatable(tp->base_type))
+        if (!database_type_is_ownable(tp->base_type, EINA_TRUE))
           {
              snprintf(buf, sizeof(buf),
                       "invalid base type '%s' for terminated array",
