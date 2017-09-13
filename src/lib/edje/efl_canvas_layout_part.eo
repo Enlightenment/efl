@@ -6,7 +6,7 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
      As an @Efl.Part implementation class, all objects of this class are meant
      to be used for one and only one function call. In pseudo-code, the use
      of object of this type looks like the following:
-       layout.part("somepart").geometry_get(&x, &y, &w, &h);
+       rect = layout.part("somepart").geometry_get();
 
      @since 1.20
    ]]
