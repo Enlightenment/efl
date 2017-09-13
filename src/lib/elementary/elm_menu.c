@@ -800,7 +800,7 @@ elm_menu_add(Evas_Object *parent)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_menu_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_menu_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -817,7 +817,7 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
    Eo *parent = NULL;
    Efl_Ui_Focus_Manager *manager;
 
-   manager = elm_obj_widget_focus_manager_factory(obj, obj);
+   manager = elm_obj_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, manager);
    _efl_ui_focus_manager_redirect_events_add(manager, obj);
 

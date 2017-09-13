@@ -4679,7 +4679,7 @@ _focused_element(void *data, const Efl_Event *event)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_interface_scrollable_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_interface_scrollable_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -4693,7 +4693,7 @@ _elm_interface_scrollable_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, 
 EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
-   pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
+   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 
