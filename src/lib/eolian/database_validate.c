@@ -50,7 +50,7 @@ _validate_doc(const Eolian_Documentation *doc)
    return EINA_TRUE;
 }
 
-static Eina_Bool _validate_type(const Eolian_Type *tp);
+static Eina_Bool _validate_type(Eolian_Type *tp);
 static Eina_Bool _validate_expr(const Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
@@ -95,7 +95,7 @@ _type_error(const Eolian_Type *tp, const char *msg)
 }
 
 static Eina_Bool
-_validate_typedecl(const Eolian_Typedecl *tp)
+_validate_typedecl(Eolian_Typedecl *tp)
 {
    if (!_validate_doc(tp->doc))
      return EINA_FALSE;
@@ -103,7 +103,11 @@ _validate_typedecl(const Eolian_Typedecl *tp)
    switch (tp->type)
      {
       case EOLIAN_TYPEDECL_ALIAS:
-        return _validate_type(tp->base_type);
+        if (!_validate_type(tp->base_type))
+          return EINA_FALSE;
+        if (!tp->freefunc && tp->base_type->freefunc)
+          tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
+        return EINA_TRUE;
       case EOLIAN_TYPEDECL_STRUCT:
         {
            Eina_Bool succ = EINA_TRUE;
@@ -142,7 +146,7 @@ _type_is_terminatable(const Eolian_Type *tp)
 }
 
 static Eina_Bool
-_validate_type(const Eolian_Type *tp)
+_validate_type(Eolian_Type *tp)
 {
    char buf[256];
 
@@ -160,19 +164,23 @@ _validate_type(const Eolian_Type *tp)
         return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
         {
-           const Eolian_Typedecl *tpp;
+           Eolian_Typedecl *tpp;
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->full_name);
            if (id)
              return eo_lexer_is_type_keyword(id);
            /* user defined */
-           tpp = eolian_type_typedecl_get(tp);
+           tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(tp);
            if (!tpp)
              {
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
                 return _type_error(tp, buf);
              }
-           return _validate_typedecl(tpp);
+           if (!_validate_typedecl(tpp))
+             return EINA_FALSE;
+           if (tpp->freefunc && !tp->freefunc)
+             tp->freefunc = eina_stringshare_ref(tpp->freefunc);
+           return EINA_TRUE;
         }
       case EOLIAN_TYPE_TERMINATED_ARRAY:
         if (!_type_is_terminatable(tp->base_type))
@@ -194,6 +202,8 @@ _validate_type(const Eolian_Type *tp)
                          "(likely wrong namespacing)", tp->full_name);
                 return _type_error(tp, buf);
              }
+           if (!tp->freefunc)
+             tp->freefunc = eina_stringshare_add("efl_del");
            return EINA_TRUE;
         }
       default:
@@ -341,7 +351,7 @@ _validate_variable(const Eolian_Variable *var)
 
 static Eina_Bool
 _typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-                 const Eolian_Typedecl *tp, Eina_Bool *sc)
+                 Eolian_Typedecl *tp, Eina_Bool *sc)
 {
    return (*sc = _validate_typedecl(tp));
 }
