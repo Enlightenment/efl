@@ -4842,14 +4842,11 @@ _eina_value_type_rectangle_convert_to(const Eina_Value_Type *type EINA_UNUSED, c
    if ((convert == EINA_VALUE_TYPE_STRING) ||
        (convert == EINA_VALUE_TYPE_STRINGSHARE))
      {
-        Eina_Strbuf *buf;
-        const char *str;
+        char str[1024];
 
-        buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "[ %i, %i, %i, %i ]",
-                                  tr->x, tr->y, tr->w, tr->h);
-        str = eina_strbuf_string_get(buf);
-        ret = eina_value_type_pset(convert, convert_mem, &str);
+        snprintf(str, 1024, "[ %i, %i, %i, %i ]",
+                 tr->x, tr->y, tr->w, tr->h);
+        ret = eina_value_type_pset(convert, convert_mem, str);
      }
 
    return ret;
@@ -4889,23 +4886,24 @@ _eina_value_type_rectangle_pset(const Eina_Value_Type *type EINA_UNUSED, void *m
 static Eina_Bool
 _eina_value_type_rectangle_vset(const Eina_Value_Type *type, void *mem, va_list args)
 {
-   const Eina_Rectangle *r = va_arg(args, Eina_Rectangle *);
-   return _eina_value_type_rectangle_pset(type, mem, r);
+   const Eina_Rectangle r = va_arg(args, Eina_Rectangle);
+   return _eina_value_type_rectangle_pset(type, mem, &r);
 }
 
 static Eina_Bool
 _eina_value_type_rectangle_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
 {
    const Eina_Rectangle *tr = mem;
+   Eina_Rectangle *r = ptr;
 
-   memcpy(ptr, &tr, sizeof (void*));
+   *r = *tr;
    return EINA_TRUE;
 }
 
 EAPI const Eina_Value_Type _EINA_VALUE_TYPE_RECTANGLE = {
   EINA_VALUE_TYPE_VERSION,
   sizeof (Eina_Rectangle),
-  "Eina_Value_Rectangle",
+  "Eina_Rectangle",
   _eina_value_type_rectangle_setup,
   _eina_value_type_rectangle_flush,
   _eina_value_type_rectangle_copy,
