@@ -69,7 +69,7 @@ struct _Evas_Object_Image_Pixels
 
 struct _Evas_Object_Image_State
 {
-   Evas_Coord_Rectangle fill;
+   Eina_Rectangle   fill;
    struct {
       short         w, h, stride;
    } image;

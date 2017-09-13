@@ -10,7 +10,7 @@ struct _Efl_Canvas_Polygon_Data
    struct {
       int x, y;
    } offset;
-   Evas_Coord_Rectangle geometry;
+   Eina_Rectangle       geometry;
    Eina_Bool            changed : 1;
 };
 #endif

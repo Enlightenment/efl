@@ -146,7 +146,7 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 static void
 _x_pos_adjust(Evas_Coord_Point *pos,
               Evas_Coord_Point *base_size,
-              Evas_Coord_Rectangle *hover_area)
+              Eina_Rectangle *hover_area)
 {
    pos->x -= (base_size->x / 2);
 
@@ -165,7 +165,7 @@ _x_pos_adjust(Evas_Coord_Point *pos,
 static void
 _y_pos_adjust(Evas_Coord_Point *pos,
               Evas_Coord_Point *base_size,
-              Evas_Coord_Rectangle *hover_area)
+              Eina_Rectangle *hover_area)
 {
    pos->y -= (base_size->y / 2);
 
@@ -183,10 +183,10 @@ _y_pos_adjust(Evas_Coord_Point *pos,
 
 static Elm_Ctxpopup_Direction
 _base_geometry_calc(Evas_Object *obj,
-                    Evas_Coord_Rectangle *rect)
+                    Eina_Rectangle *rect)
 {
    Elm_Ctxpopup_Direction dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-   Evas_Coord_Rectangle hover_area;
+   Eina_Rectangle hover_area;
    Evas_Coord_Point pos = {0, 0};
    Evas_Coord_Point arrow_size;
    Evas_Coord_Point base_size;
@@ -364,9 +364,9 @@ _base_geometry_calc(Evas_Object *obj,
 static void
 _arrow_update(Evas_Object *obj,
               Elm_Ctxpopup_Direction dir,
-              Evas_Coord_Rectangle base_size)
+              Eina_Rectangle base_size)
 {
-   Evas_Coord_Rectangle arrow_size;
+   Eina_Rectangle arrow_size;
    Evas_Coord x, y;
    double drag;
 
@@ -568,7 +568,7 @@ _hide_signals_emit(Evas_Object *obj,
 static void
 _base_shift_by_arrow(Evas_Object *arrow,
                      Elm_Ctxpopup_Direction dir,
-                     Evas_Coord_Rectangle *rect)
+                     Eina_Rectangle *rect)
 {
    Evas_Coord arrow_w, arrow_h;
 
@@ -608,7 +608,7 @@ _elm_ctxpopup_elm_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd E
 EOLIAN static void
 _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
-   Evas_Coord_Rectangle rect = { 0, 0, 1, 1 };
+   Eina_Rectangle rect = { 0, 0, 1, 1 };
    Evas_Coord_Point list_size = { 0, 0 }, parent_size = {0, 0};
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);

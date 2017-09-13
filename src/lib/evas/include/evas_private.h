@@ -818,7 +818,7 @@ struct _Evas_Post_Callback
 typedef struct
 {
 #ifdef INLINE_ACTIVE_GEOM
-   Evas_Coord_Rectangle        rect;
+   Eina_Rectangle        rect;
 #endif
    Evas_Object_Protected_Data *obj;
 } Evas_Active_Entry;
@@ -1037,7 +1037,7 @@ struct _Evas_Map
 {
    DATA32                magic;
    int                   count; // num of points
-   Evas_Coord_Rectangle  normal_geometry; // bounding box of map geom actually
+   Eina_Rectangle        normal_geometry; // bounding box of map geom actually
 //   void                 *surface; // surface holding map if needed
 //   int                   surface_w, surface_h; // current surface w & h alloc
    double                mx, my; // mouse x, y after conversion to map space
@@ -1119,7 +1119,7 @@ struct _Evas_Object_Protected_State
 {
    Evas_Object_Protected_Data *clipper;
 
-   Evas_Coord_Rectangle  geometry;
+   Eina_Rectangle        geometry;
    struct {
       struct {
          Evas_Coord      x, y, w, h;
@@ -1715,9 +1715,7 @@ void _evas_object_image_video_overlay_do(Evas_Object *obj);
 Eina_Bool _evas_object_image_can_use_plane(Evas_Object_Protected_Data *obj, Efl_Canvas_Output *output);
 void _evas_object_image_plane_release(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Efl_Canvas_Output *output);
 void _evas_object_image_free(Evas_Object *obj);
-void evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj,
-                                        Evas_Coord_Rectangle *cur_bounding_box,
-                                        Evas_Coord_Rectangle *prev_bounding_box);
+void evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj, Eina_Rectangle *cur_bounding_box, Eina_Rectangle *prev_bounding_box);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void evas_object_smart_member_raise(Evas_Object *member);

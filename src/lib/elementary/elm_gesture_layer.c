@@ -1613,7 +1613,7 @@ _pointer_event_record(Taps_Type *st,
  * @ingroup Elm_Gesture_Layer
  */
 static Eina_Bool
-_taps_rect_get(Eina_List *taps, int idx, Evas_Coord_Rectangle *r)
+_taps_rect_get(Eina_List *taps, int idx, Eina_Rectangle *r)
 {  /* Build a rect bounding all taps at index idx */
    Eina_List *l;
    Evas_Coord bx = 0, by = 0;
@@ -1665,8 +1665,8 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
    Taps_Type *st = gesture->data;
    Eina_List *l;
    Eina_List *pe_list;
-   Evas_Coord_Rectangle base = {0, 0, 0, 0};
-   Evas_Coord_Rectangle tmp = {0, 0, 0, 0};
+   Eina_Rectangle base = {0, 0, 0, 0};
+   Eina_Rectangle tmp = {0, 0, 0, 0};
    if (!tap_finger_size)  /* Use system default if not set by user */
      tap_finger_size = elm_config_finger_size_get();
 

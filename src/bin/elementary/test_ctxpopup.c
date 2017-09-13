@@ -77,7 +77,7 @@ _ctxpopup_item_new(Evas_Object *obj, const char *label, const char *icon)
 static void
 _geometry_update(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
-   Evas_Coord_Rectangle *geom = event_info;
+   Eina_Rectangle *geom = event_info;
    printf("ctxpopup geometry(%d %d %d %d)\n", geom->x, geom->y, geom->w, geom->h);
 }
 

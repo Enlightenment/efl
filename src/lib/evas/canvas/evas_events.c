@@ -106,7 +106,7 @@ walk_clippers_print(int spaces, Evas_Object_Protected_Data *obj)
 #endif
 
 static void
-clip_calc(Evas_Object_Protected_Data *obj, Evas_Coord_Rectangle *c)
+clip_calc(Evas_Object_Protected_Data *obj, Eina_Rectangle *c)
 {
    if (!obj) return;
    RECTS_CLIP_TO_RECT(c->x, c->y, c->w, c->h,
@@ -119,7 +119,7 @@ static Eina_List *
 _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data *obj, Eina_List *in, Evas_Object *stop,
                                           int x, int y, int *no_rep, Eina_Bool source, int spaces EINA_UNUSED)
 {
-   Evas_Coord_Rectangle c;
+   Eina_Rectangle c;
    int inside;
    Evas_Object *eo_obj = obj->object;
    if (eo_obj == stop)
@@ -147,7 +147,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
      {
         if (obj->is_smart)
           {
-             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+             Eina_Rectangle bounding_box = { 0, };
 
              evas_object_smart_bounding_box_update(obj);
              evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
@@ -166,7 +166,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
 #ifdef DDD_DO
         if (obj->is_smart)
           {
-             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+             Eina_Rectangle bounding_box = { 0, 0, 0, 0 };
 
              evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
              DDD("___  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
@@ -202,7 +202,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
      {
         if (obj->is_smart)
           {
-             Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+             Eina_Rectangle bounding_box = { 0, 0, 0, 0 };
 
              evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
              DDD("OBJ  %p g[%6i %6i %6ix%6i] c[%6i %6i %6ix%6i] b[%6i %6i %6ix%6i] %s\n",
@@ -279,7 +279,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                }
              else
                {
-                  Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+                  Eina_Rectangle bounding_box = { 0, };
 
                   if (!obj->child_has_map)
                     evas_object_smart_bounding_box_update(obj);
