@@ -189,53 +189,56 @@ _efl_canvas_object_event_grabber_child_del(void *data, const Efl_Event *event)
 }
 
 EOLIAN static void
-_efl_canvas_object_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eo *member)
+_efl_canvas_object_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eo *eo_sub)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(member, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Object_Protected_Data *smart = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *sub = efl_data_scope_safe_get(eo_sub, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
+   EINA_SAFETY_ON_NULL_RETURN(sub);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   EINA_SAFETY_ON_NULL_RETURN(smart);
 
-   if (member != pd->rect)
+   if (eo_sub != pd->rect)
      {
+        if (sub->delete_me)
+          {
+             CRI("Can not add deleted member %p to event grabber %p", eo_sub, eo_obj);
+             return;
+          }
         if (obj->delete_me)
           {
-             CRI("Adding deleted object %p to smart obj %p", member, eo_obj);
-             return;
-          }
-        if (smart->delete_me)
-          {
-             CRI("Adding object %p to deleted smart obj %p", member, eo_obj);
-             return;
-          }
-        if (!smart->layer)
-          {
-             CRI("No evas surface associated with smart object (%p)", eo_obj);
+             CRI("Can not add object %p to deleted event grabber %p", eo_sub, eo_obj);
              return;
           }
         if (!obj->layer)
           {
-             CRI("No evas surface associated with member object (%p)", member);
+             CRI("Can not add object %p to event grabber %p: event grabber has "
+                 "no associated canvas.", eo_sub, eo_obj);
              return;
           }
-        if ((obj->layer && smart->layer) &&
-            (obj->layer->evas != smart->layer->evas))
+        if (!sub->layer)
           {
-             CRI("Adding object %p from Evas (%p) from another Evas (%p)", member, obj->layer->evas, smart->layer->evas);
+             CRI("Can not add object %p to event grabber %p: member has "
+                 "no associated canvas.", eo_sub, eo_obj);
+             return;
+          }
+        if ((sub->layer && obj->layer) &&
+            (sub->layer->evas != obj->layer->evas))
+          {
+             CRI("Can not add object %p to event grabber %p: objects belong to "
+                 "different canvases.", eo_sub, eo_obj);
              return;
           }
      }
-   if (obj->events->parent == eo_obj) return;
+   if (sub->events->parent == eo_obj) return;
 
-   if (obj->smart.parent || obj->events->parent) evas_object_smart_member_del(member);
-   EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
+   if (sub->smart.parent || sub->events->parent) evas_object_smart_member_del(eo_sub);
+   EINA_COW_WRITE_BEGIN(evas_object_events_cow, sub->events, Evas_Object_Events_Data, events)
      events->parent = eo_obj;
-   EINA_COW_WRITE_END(evas_object_events_cow, obj->events, events);
-   _child_insert(pd, obj);
-   efl_event_callback_add(member, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
-   if (member != pd->rect)
-     efl_event_callback_add(member, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
+   EINA_COW_WRITE_END(evas_object_events_cow, sub->events, events);
+   _child_insert(pd, sub);
+   efl_event_callback_add(eo_sub, EFL_EVENT_DEL, _efl_canvas_object_event_grabber_child_del, pd);
+   if (eo_sub != pd->rect)
+     efl_event_callback_add(eo_sub, EFL_GFX_EVENT_RESTACK, _efl_canvas_object_event_grabber_child_restack, pd);
 }
 
 EOLIAN static void
