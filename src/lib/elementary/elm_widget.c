@@ -3867,11 +3867,12 @@ _part_text_translate(Eina_Inlist *translate_strings,
    return text;
 }
 
-EOLIAN static const char*
-_elm_widget_part_text_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *part, const char *text)
+EAPI const char*
+elm_widget_part_text_translate(Eo *obj, const char *part, const char *text)
 {
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
 
-
+   if (!sd) return text;
    if (!sd->translate_strings || sd->on_translate) return text;
    return _part_text_translate(sd->translate_strings, part, text);
 }

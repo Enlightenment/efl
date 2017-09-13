@@ -320,14 +320,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             label: string; [[Label]]
          }
       }
-      part_text_translate {
-         [[Translate part text]]
-         return: string; [[Translated text]]
-         params {
-            @in part: string; [[Part name]]
-            @in text: string; [[Text]]
-         }
-      }
 
       /* Internal hooks. */
       widget_sub_object_add @protected {
