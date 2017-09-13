@@ -19,7 +19,7 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 
-#include "elm_fileselector_internal_part.eo.h"
+#include "elm_fileselector_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_FILESELECTOR_CLASS
@@ -3225,7 +3225,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_fileselector, Elm_Fileselector_Data)
 
 ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
-#include "elm_fileselector_internal_part.eo.c"
+#include "elm_fileselector_part.eo.c"
 
 /* Efl.Part end */
 

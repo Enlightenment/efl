@@ -1,0 +1,42 @@
+/* FIXME: Rename to Efl.Canvas.Layout.Part */
+class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
+{
+   [[Common class for part proxy objects for $Efl.Canvas.Layout.
+
+     As an @Efl.Part implementation class, all objects of this class are meant
+     to be used for one and only one function call. In pseudo-code, the use
+     of object of this type looks like the following:
+       layout.part("somepart").geometry_get(&x, &y, &w, &h);
+
+     @since 1.20
+   ]]
+   methods {
+      @property state {
+         [[The name and value of the current state of this part (read-only).
+
+           This is the state name as it appears in EDC description blocks. A
+           state has both a name and a value (double). The default state is
+           "default" 0.0.
+         ]]
+         get {}
+         values {
+            state: string("default"); [[The name of the state.]]
+            val: double; [[The value of the state.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.finalize;
+      Efl.Gfx.geometry { get; }
+      Efl.Ui.Drag.drag_value { set; get; }
+      Efl.Ui.Drag.drag_size { set; get; }
+      Efl.Ui.Drag.drag_dir { get; }
+      Efl.Ui.Drag.drag_step { set; get; }
+      Efl.Ui.Drag.drag_step_move;
+      Efl.Ui.Drag.drag_page { set; get; }
+      Efl.Ui.Drag.drag_page_move;
+   }
+   events {
+      /* FIXME: Are there really no events? */
+   }
+}

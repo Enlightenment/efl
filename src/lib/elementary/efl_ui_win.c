@@ -27,7 +27,7 @@
 #include "interfaces/efl_common_internal.h"
 
 #include "elm_part_helper.h"
-#include "efl_ui_win_internal_part.eo.h"
+#include "efl_ui_win_part.eo.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
@@ -6991,7 +6991,7 @@ _efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
 /* Efl.Part begin */
 
 static void
-_efl_ui_win_internal_part_efl_gfx_color_set(Eo *obj, Elm_Part_Data *pd, int r, int g, int b, int a)
+_efl_ui_win_part_efl_gfx_color_set(Eo *obj, Elm_Part_Data *pd, int r, int g, int b, int a)
 {
    if (EVAS_COLOR_SANITIZE(r, g, b, a))
      ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
@@ -7001,20 +7001,20 @@ _efl_ui_win_internal_part_efl_gfx_color_set(Eo *obj, Elm_Part_Data *pd, int r, i
 }
 
 static void
-_efl_ui_win_internal_part_efl_gfx_color_get(Eo *obj, Elm_Part_Data *pd, int *r, int *g, int *b, int *a)
+_efl_ui_win_part_efl_gfx_color_get(Eo *obj, Elm_Part_Data *pd, int *r, int *g, int *b, int *a)
 {
    _efl_ui_win_part_color_get(pd->obj, pd->sd, pd->part, r, g, b, a);
    ELM_PART_RETURN_VOID;
 }
 
 static Eina_Bool
-_efl_ui_win_internal_part_efl_file_file_set(Eo *obj, Elm_Part_Data *pd, const char *file, const char *key)
+_efl_ui_win_part_efl_file_file_set(Eo *obj, Elm_Part_Data *pd, const char *file, const char *key)
 {
    ELM_PART_RETURN_VAL(_efl_ui_win_part_file_set(pd->obj, pd->sd, pd->part, file, key));
 }
 
 static void
-_efl_ui_win_internal_part_efl_file_file_get(Eo *obj, Elm_Part_Data *pd, const char **file, const char **key)
+_efl_ui_win_part_efl_file_file_get(Eo *obj, Elm_Part_Data *pd, const char **file, const char **key)
 {
    _efl_ui_win_part_file_get(pd->obj, pd->sd, pd->part, file, key);
    ELM_PART_RETURN_VOID;
@@ -7043,7 +7043,7 @@ ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part
 ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(efl_ui_win, "content")
-#include "efl_ui_win_internal_part.eo.c"
+#include "efl_ui_win_part.eo.c"
 
 /* Efl.Part end */
 

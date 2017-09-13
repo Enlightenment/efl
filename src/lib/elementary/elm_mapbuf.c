@@ -11,7 +11,7 @@
 #include "elm_widget_container.h"
 #include "elm_mapbuf.eo.h"
 
-#include "elm_mapbuf_internal_part.eo.h"
+#include "elm_mapbuf_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_MAPBUF_CLASS
@@ -445,7 +445,7 @@ ELM_PART_IMPLEMENT_CONTENT_SET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_mapbuf, "default")
-#include "elm_mapbuf_internal_part.eo.c"
+#include "elm_mapbuf_part.eo.c"
 
 /* Efl.Part end */
 

@@ -1,0 +1,8 @@
+class Efl.Ui.Button.Part (Efl.Ui.Layout.Part)
+{
+   [[Elementary button internal part class]]
+   data: null;
+   implements {
+      Efl.Container.content { set; }
+   }
+}

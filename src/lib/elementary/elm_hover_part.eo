@@ -1,0 +1,9 @@
+class Elm.Hover.Part (Efl.Ui.Layout.Part)
+{
+   [[elementary hover internal part class]]
+   data: null;
+   implements {
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
+   }
+}

@@ -1,13 +1,13 @@
 #include "edje_private.h"
 #include "edje_part_helper.h"
-#include "efl_canvas_layout_internal_text.eo.h"
-#define MY_CLASS EFL_CANVAS_LAYOUT_INTERNAL_TEXT_CLASS
+#include "efl_canvas_layout_part_text.eo.h"
+#define MY_CLASS EFL_CANVAS_LAYOUT_PART_TEXT_CLASS
 
 PROXY_IMPLEMENTATION(text, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_text_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_text_set(Eo *obj,
       void *_pd EINA_UNUSED, const char *text)
 {
    PROXY_DATA_GET(obj, pd);
@@ -16,7 +16,7 @@ _efl_canvas_layout_internal_text_efl_text_text_set(Eo *obj,
 }
 
 EOLIAN static const char *
-_efl_canvas_layout_internal_text_efl_text_text_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_text_get(Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
@@ -24,7 +24,7 @@ _efl_canvas_layout_internal_text_efl_text_text_get(Eo *obj,
 }
 
 EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_get(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor_Get_Type get_type)
 {
    PROXY_DATA_GET(obj, pd);
@@ -32,7 +32,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_get(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_paragraph_first(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_paragraph_first(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -41,7 +41,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_paragraph_first(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_paragraph_last(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_paragraph_last(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -50,7 +50,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_paragraph_last(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_position_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_position_set(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur, int pos)
 {
    PROXY_DATA_GET(obj, pd);
@@ -59,7 +59,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_position_set(Eo *obj,
 }
 
 EOLIAN static int
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_position_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_position_get(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -67,7 +67,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_position_get(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_coord_set(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_coord_set(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur,
       int x, int y)
 {
@@ -77,7 +77,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_coord_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_char_first(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_line_char_first(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -86,7 +86,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_char_first(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_char_last(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_line_char_last(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -95,7 +95,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_char_last(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_char_prev(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_char_prev(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -104,7 +104,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_char_prev(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_char_next(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_char_next(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
@@ -113,7 +113,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_char_next(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_jump_by(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_line_jump_by(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur, int by)
 {
    PROXY_DATA_GET(obj, pd);
@@ -129,7 +129,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_line_jump_by(Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_copy(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_copy(Eo *obj,
       void *_pd EINA_UNUSED,
       Efl_Text_Cursor_Cursor *dst,
       const Efl_Text_Cursor_Cursor *cur)
@@ -140,7 +140,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_copy(Eo *obj,
 }
 
 EOLIAN static Eina_Unicode
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_content_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_content_get(Eo *obj,
       void *_pd EINA_UNUSED,
       const Efl_Text_Cursor_Cursor *cur)
 {
@@ -162,7 +162,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_content_get(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
       void *_pd EINA_UNUSED,
       const Efl_Text_Cursor_Cursor *cur EINA_UNUSED,
       Efl_Text_Cursor_Cursor_Type ctype EINA_UNUSED,
@@ -181,7 +181,7 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
 }
 
 EOLIAN static int
-_efl_canvas_layout_internal_text_efl_text_cursor_cursor_text_insert(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_cursor_cursor_text_insert(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur EINA_UNUSED,
       const char *text)
 {
@@ -192,5 +192,5 @@ _efl_canvas_layout_internal_text_efl_text_cursor_cursor_text_insert(Eo *obj,
    RETURN_VAL(0);
 }
 
-#include "efl_canvas_layout_internal_text.eo.c"
+#include "efl_canvas_layout_part_text.eo.c"
 

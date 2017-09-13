@@ -1,9 +1,0 @@
-class Elm.Fileselector.Internal.Part (Efl.Ui.Layout.Internal.Part, Efl.Text)
-{
-   [[Elementary fileselector entry internal part class]]
-   data: null;
-   implements {
-      Efl.Text.text { set; }
-   }
-}
-

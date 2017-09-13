@@ -13,7 +13,7 @@
 
 #include "elm_popup_item.eo.h"
 
-#include "elm_popup_internal_part.eo.h"
+#include "elm_popup_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_POPUP_CLASS
@@ -1924,7 +1924,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_D
 ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, EFL_UI_LAYOUT, Elm_Popup_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_popup, "default")
-#include "elm_popup_internal_part.eo.c"
+#include "elm_popup_part.eo.c"
 
 /* Efl.Part end */
 

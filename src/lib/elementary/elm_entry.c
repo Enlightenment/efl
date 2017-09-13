@@ -12,7 +12,7 @@
 #include "elm_priv.h"
 #include "elm_widget_entry.h"
 
-#include "elm_entry_internal_part.eo.h"
+#include "elm_entry_part.eo.h"
 #include "elm_part_helper.h"
 #include "elm_hoversel.eo.h"
 
@@ -6056,7 +6056,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_D
 ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
-#include "elm_entry_internal_part.eo.c"
+#include "elm_entry_part.eo.c"
 
 /* Efl.Part end */
 

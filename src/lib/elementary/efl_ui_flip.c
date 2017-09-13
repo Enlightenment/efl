@@ -9,7 +9,7 @@
 #include "efl_ui_widget_flip.h"
 #include "elm_widget_container.h"
 
-#include "efl_ui_flip_internal_part.eo.h"
+#include "efl_ui_flip_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_FLIP_CLASS
@@ -2403,7 +2403,7 @@ ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_P
 ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(efl_ui_flip, "front")
-#include "efl_ui_flip_internal_part.eo.c"
+#include "efl_ui_flip_part.eo.c"
 
 /* Efl.Part end */
 

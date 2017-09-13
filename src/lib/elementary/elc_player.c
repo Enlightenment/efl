@@ -12,7 +12,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_player.h"
 
-#include "elm_player_internal_part.eo.h"
+#include "elm_player_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_PLAYER_CLASS
@@ -699,7 +699,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_player, Elm_Player_Data)
 ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, EFL_UI_LAYOUT, Elm_Player_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, EFL_UI_LAYOUT, Elm_Player_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_player, "video")
-#include "elm_player_internal_part.eo.c"
+#include "elm_player_part.eo.c"
 
 /* End of Efl.Part */
 

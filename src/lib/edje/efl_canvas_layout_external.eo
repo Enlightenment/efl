@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout.External (Efl.Canvas.Layout_Internal, Efl.Container,
+class Efl.Canvas.Layout.External (Efl.Canvas.Layout.Part, Efl.Container,
                                   Efl.Canvas.Object)
 {
    [[Class representing an external part in Edje layouts.
