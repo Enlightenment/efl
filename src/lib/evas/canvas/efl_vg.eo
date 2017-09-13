@@ -116,7 +116,6 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
       Efl.Object.destructor;
       Efl.Gfx.visible { get; set; }
       Efl.Gfx.color { get; set; }
-      Efl.Gfx.color_part { get; set; }
       Efl.Gfx.size { get; }
       Efl.Gfx.position { get; set; }
       Efl.Gfx.geometry { get; }

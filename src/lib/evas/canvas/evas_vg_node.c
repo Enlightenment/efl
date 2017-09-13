@@ -159,17 +159,6 @@ _efl_vg_efl_gfx_color_set(Eo *obj EINA_UNUSED,
    _efl_vg_changed(obj);
 }
 
-static Eina_Bool
-_efl_vg_efl_gfx_color_part_set(Eo *obj, Efl_VG_Data *pd,
-                                         const char *part,
-                                         int r, int g, int b, int a)
-{
-   if (part) return EINA_FALSE;
-
-   _efl_vg_efl_gfx_color_set(obj, pd, r, g, b, a);
-   return EINA_TRUE;
-}
-
 static void
 _efl_vg_efl_gfx_color_get(Eo *obj EINA_UNUSED,
                                     Efl_VG_Data *pd,
@@ -179,17 +168,6 @@ _efl_vg_efl_gfx_color_get(Eo *obj EINA_UNUSED,
    if (g) *g = pd->g;
    if (b) *b = pd->b;
    if (a) *a = pd->a;
-}
-
-static Eina_Bool
-_efl_vg_efl_gfx_color_part_get(Eo *obj, Efl_VG_Data *pd,
-                                         const char *part,
-                                         int *r, int *g, int *b, int *a)
-{
-   if (part) return EINA_FALSE;
-
-   _efl_vg_efl_gfx_color_get(obj, pd, r, g, b, a);
-   return EINA_TRUE;
 }
 
 static void

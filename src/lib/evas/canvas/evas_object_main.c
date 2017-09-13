@@ -1934,17 +1934,6 @@ _efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_object_efl_gfx_color_part_set(Eo *obj, Evas_Object_Protected_Data *pd,
-                                          const char *part,
-                                          int r, int g, int b, int a)
-{
-   if (part) return EINA_FALSE;
-
-   _efl_canvas_object_efl_gfx_color_set(obj, pd, r, g, b, a);
-   return EINA_TRUE;
-}
-
 EAPI void
 evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -1968,18 +1957,6 @@ _efl_canvas_object_efl_gfx_color_get(Eo *eo_obj EINA_UNUSED,
    if (g) *g = obj->cur->color.g;
    if (b) *b = obj->cur->color.b;
    if (a) *a = obj->cur->color.a;
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_object_efl_gfx_color_part_get(Eo *obj,
-                                          Evas_Object_Protected_Data *pd,
-                                          const char *part,
-                                          int *r, int *g, int *b, int *a)
-{
-   if (part) return EINA_FALSE;
-
-   _efl_canvas_object_efl_gfx_color_get(obj, pd, r, g, b, a);
-   return EINA_TRUE;
 }
 
 EOLIAN static void
