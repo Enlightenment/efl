@@ -131,15 +131,8 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
 
            Minute: default value range is from 0 to 59.
          ]]
-         set {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-
-         keys {
-            mintime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
+         values {
+            mintime: Efl.Time; [[Time structure containing the minimum time value.]]
          }
       }
       @property value_max {
@@ -158,15 +151,8 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
 
            Minute: default value range is from 0 to 59.
          ]]
-         set {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-
-         keys {
-            maxtime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
+         values {
+            maxtime: Efl.Time; [[Time structure containing the maximum time value.]]
          }
       }
       @property value {
@@ -185,14 +171,8 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
 
            Minute: default value range is from 0 to 59.
          ]]
-         set {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         keys {
-            curtime: ptr(Efl.Time); [[Time structure containing the minimum time value.]]
+         values {
+            curtime: Efl.Time; [[Time structure containing the time value.]]
          }
       }
       @property field_visible {
