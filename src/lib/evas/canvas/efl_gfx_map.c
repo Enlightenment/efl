@@ -269,9 +269,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
         pivot->changed = EINA_FALSE;
         if (!pivot->is_canvas)
           {
-             efl_gfx_geometry_get(pivot->eo_obj,
-                                  &pivot->geometry.x, &pivot->geometry.y,
-                                  &pivot->geometry.w, &pivot->geometry.h);
+             pivot->geometry = efl_gfx_geometry_get(pivot->eo_obj);
           }
         else
           {

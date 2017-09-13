@@ -163,8 +163,8 @@ static void
 _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *map, Efl_Ui_Textpath_Line line)
 {
    double x1, x2, y1, y2;
-   Evas_Coord x, y, w, h;
    double line_len, len, sina, cosa;
+   Eina_Rectangle r;
 
    x1 = line.start.x;
    y1 = line.start.y;
@@ -179,23 +179,22 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
         y2 = y1 + len * (y2 - y1) / line_len;
      }
 
-   efl_gfx_geometry_get(pd->text_obj, &x, &y, &w, &h);
-
    len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
    sina = (y2 - y1) / len;
    cosa = (x2 - x1) / len;
 
-   h = h / 2;
-   evas_map_point_coord_set(map, cmp + 3, x1 - h * sina, y1 + h * cosa, 0);
-   evas_map_point_coord_set(map, cmp + 2, x2 - h * sina, y2 + h * cosa, 0);
-   evas_map_point_coord_set(map, cmp + 1, x2 + h * sina, y2 - h * cosa, 0);
-   evas_map_point_coord_set(map, cmp + 0, x1 + h * sina, y1 - h * cosa, 0);
+   r = efl_gfx_geometry_get(pd->text_obj);
+   r.h /= 2;
+   evas_map_point_coord_set(map, cmp + 3, x1 - r.h * sina, y1 + r.h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 2, x2 - r.h * sina, y2 + r.h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 1, x2 + r.h * sina, y2 - r.h * cosa, 0);
+   evas_map_point_coord_set(map, cmp + 0, x1 + r.h * sina, y1 - r.h * cosa, 0);
 
-   h *= 2;
+   r.h *= 2;
    evas_map_point_image_uv_set(map, cmp + 0, w1, 0);
    evas_map_point_image_uv_set(map, cmp + 1, w2, 0);
-   evas_map_point_image_uv_set(map, cmp + 2, w2, h);
-   evas_map_point_image_uv_set(map, cmp + 3, w1, h);
+   evas_map_point_image_uv_set(map, cmp + 2, w2, r.h);
+   evas_map_point_image_uv_set(map, cmp + 3, w1, r.h);
 }
 
 static int

@@ -170,7 +170,7 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 {
    Eina_Iterator *it = efl_content_iterate(pack);
    int count = efl_content_count(pack), i = 0;
-   int px, py, pw, ph;
+   Eina_Rectangle rp;
    Eo *sobj;
 
    // Note: This is a TERRIBLE layout. Just an example of the API, not showing
@@ -178,16 +178,18 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 
    if (!count) return;
 
-   efl_gfx_geometry_get(pack, &px, &py, &pw, &ph);
+   rp = efl_gfx_geometry_get(pack);
    EINA_ITERATOR_FOREACH(it, sobj)
      {
-        int x, y, h, w, mw, mh;
+        Eina_Rectangle r;
+        int mw, mh;
+
         efl_gfx_size_hint_combined_min_get(sobj, &mw, &mh);
-        x = (pw / count) * i;
-        y = (ph / count) * i;
-        w = mw;
-        h = mh;
-        efl_gfx_geometry_set(sobj, x + px, y + py, w, h);
+        r.x = (rp.w / count) * i;
+        r.y = (rp.h / count) * i;
+        r.w = mw;
+        r.h = mh;
+        efl_gfx_geometry_set(sobj, r);
         i++;
      }
    eina_iterator_free(it);

@@ -2034,7 +2034,12 @@ struct _Edje_Real_Part
    } typedata; // 4
    FLOAT_T                   description_pos; // 8
    Edje_Rectangle            req; // 16
-   int                       x, y, w, h; // 16
+   union {
+      struct {
+         int                 x, y, w, h; // 16
+      };
+      Eina_Rectangle         rect;
+   };
    Evas_Object_Pointer_Mode  pointer_mode;
 #ifdef EDJE_CALC_CACHE
    unsigned short            state; // 2

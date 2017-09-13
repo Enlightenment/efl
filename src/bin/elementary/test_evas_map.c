@@ -41,7 +41,7 @@ _image_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, 
 {
    Evas_Coord w, h;
 
-   efl_gfx_geometry_get(obj, NULL, NULL, &w, &h);
+   efl_gfx_size_get(obj, &w, &h);
    _map_set(obj, w, h);
 }
 
