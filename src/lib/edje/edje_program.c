@@ -1373,6 +1373,9 @@ _edje_focused_part_set(Edje *ed, Eina_Stringshare *seat_name, Edje_Real_Part *rp
    Edje_Seat *seat;
    Eina_List *l;
 
+   //defaulting seat NULL to seat1
+   if (!seat_name) seat_name = eina_stringshare_add("seat1");
+
    EINA_LIST_FOREACH(ed->seats, l, seat)
      {
         if (seat_name == seat->name)
@@ -1398,6 +1401,9 @@ _edje_focused_part_get(Edje *ed, Eina_Stringshare *seat_name)
 {
    Edje_Seat *seat;
    Eina_List *l;
+
+   //defaulting seat NULL to seat1
+   if (!seat_name) seat_name = eina_stringshare_add("seat1");
 
    EINA_LIST_FOREACH(ed->seats, l, seat)
      {
