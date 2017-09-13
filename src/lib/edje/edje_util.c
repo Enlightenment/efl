@@ -2841,7 +2841,7 @@ _edje_box_layout_builtin_find(const char *name)
 }
 
 static Eina_Rbtree_Direction
-_edje_box_layout_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, EINA_UNUSED void *data)
+_edje_box_layout_part_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, EINA_UNUSED void *data)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)left;
    Edje_Box_Layout *r = (Edje_Box_Layout *)right;
@@ -2853,17 +2853,17 @@ _edje_box_layout_external_node_cmp(const Eina_Rbtree *left, const Eina_Rbtree *r
 }
 
 static int
-_edje_box_layout_external_find_cmp(const Eina_Rbtree *node, const void *key, EINA_UNUSED int length, EINA_UNUSED void *data)
+_edje_box_layout_part_external_find_cmp(const Eina_Rbtree *node, const void *key, EINA_UNUSED int length, EINA_UNUSED void *data)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)node;
    return strcmp(key, l->name);
 }
 
 static Edje_Box_Layout *
-_edje_box_layout_external_find(const char *name)
+_edje_box_layout_part_external_find(const char *name)
 {
    return (Edje_Box_Layout *)eina_rbtree_inline_lookup
-            (_edje_box_layout_registry, name, 0, _edje_box_layout_external_find_cmp,
+            (_edje_box_layout_registry, name, 0, _edje_box_layout_part_external_find_cmp,
             NULL);
 }
 
@@ -2882,7 +2882,7 @@ _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data,
         return EINA_TRUE;
      }
 
-   l = _edje_box_layout_external_find(name);
+   l = _edje_box_layout_part_external_find(name);
    if (!l) return EINA_FALSE;
 
    *cb = l->func;
@@ -2896,7 +2896,7 @@ _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data,
 }
 
 static void
-_edje_box_layout_external_free(Eina_Rbtree *node, EINA_UNUSED void *data)
+_edje_box_layout_part_external_free(Eina_Rbtree *node, EINA_UNUSED void *data)
 {
    Edje_Box_Layout *l = (Edje_Box_Layout *)node;
 
@@ -2906,7 +2906,7 @@ _edje_box_layout_external_free(Eina_Rbtree *node, EINA_UNUSED void *data)
 }
 
 static Edje_Box_Layout *
-_edje_box_layout_external_new(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data)
+_edje_box_layout_part_external_new(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data)
 {
    Edje_Box_Layout *l;
    size_t name_len;
@@ -2942,7 +2942,7 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
         return;
      }
 
-   l = _edje_box_layout_external_find(name);
+   l = _edje_box_layout_part_external_find(name);
    if (!l)
      {
         if (!func)
@@ -2951,14 +2951,14 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
              return;
           }
 
-        l = _edje_box_layout_external_new
+        l = _edje_box_layout_part_external_new
             (name, func, layout_data_get, layout_data_free, free_data, data);
         if (!l)
           return;
 
         _edje_box_layout_registry = eina_rbtree_inline_insert
             (_edje_box_layout_registry, (Eina_Rbtree *)l,
-            _edje_box_layout_external_node_cmp, NULL);
+            _edje_box_layout_part_external_node_cmp, NULL);
      }
    else
      {
@@ -2978,8 +2978,8 @@ edje_box_layout_register(const char *name, Evas_Object_Box_Layout func, void *(*
 
              _edje_box_layout_registry = eina_rbtree_inline_remove
                  (_edje_box_layout_registry, (Eina_Rbtree *)l,
-                 _edje_box_layout_external_node_cmp, NULL);
-             _edje_box_layout_external_free((Eina_Rbtree *)l, NULL);
+                 _edje_box_layout_part_external_node_cmp, NULL);
+             _edje_box_layout_part_external_free((Eina_Rbtree *)l, NULL);
           }
      }
 }
@@ -3926,7 +3926,7 @@ _edje_box_shutdown(void)
      return;
 
    eina_rbtree_delete
-     (_edje_box_layout_registry, _edje_box_layout_external_free, NULL);
+     (_edje_box_layout_registry, _edje_box_layout_part_external_free, NULL);
    _edje_box_layout_registry = NULL;
 }
 

@@ -8,9 +8,9 @@ edje_eolian_files = \
 	lib/edje/edje_object.eo \
 	lib/edje/efl_canvas_layout_part.eo \
 	lib/edje/efl_canvas_layout_part_box.eo \
-	lib/edje/efl_canvas_layout_part_table.eo \
+	lib/edje/efl_canvas_layout_part_external.eo \
 	lib/edje/efl_canvas_layout_part_swallow.eo \
-	lib/edje/efl_canvas_layout_external.eo \
+	lib/edje/efl_canvas_layout_part_table.eo \
 	lib/edje/efl_canvas_layout_part_text.eo \
 	lib/edje/edje_edit.eo
 
