@@ -3671,7 +3671,7 @@ static inline const Eina_Value_Type *eina_value_optional_type_get(Eina_Value *va
 
 /**
  * @var EINA_VALUE_TYPE_FILE
- * manages optional type.
+ * manages Eina_File type.
  *
  * @since 1.21
  */
