@@ -4682,7 +4682,7 @@ _eina_value_type_file_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
 {
    Eina_File *f = *(Eina_File **)mem;
 
-   eina_file_close(f);
+   if (f) eina_file_close(f);
    return EINA_TRUE;
 }
 
@@ -4771,7 +4771,7 @@ _eina_value_type_file_pget(const Eina_Value_Type *type EINA_UNUSED, const void *
 EAPI const Eina_Value_Type _EINA_VALUE_TYPE_FILE = {
   EINA_VALUE_TYPE_VERSION,
   sizeof (Eina_File *),
-  "Eina_Value_File",
+  "Eina_File",
   _eina_value_type_file_setup,
   _eina_value_type_file_flush,
   _eina_value_type_file_copy,
