@@ -42,6 +42,7 @@ test_efl_anim_event_anim.c \
 test_efl_anim_pause.c \
 test_efl_anim_repeat.c \
 test_efl_anim_start_delay.c \
+test_efl_anim_interpolator.c \
 test_application_server.c \
 test_bg.c \
 test_box.c \

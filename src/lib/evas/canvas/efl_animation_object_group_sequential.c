@@ -257,6 +257,24 @@ _efl_animation_object_group_sequential_efl_animation_object_progress_set(Eo *eo_
                }
           }
 
+        //Apply interpolator
+        Efl_Interpolator *group_interp =
+           efl_animation_object_interpolator_get(eo_obj);
+
+        /* If group interpolator exists, then the group interpolator has been
+         * already applied. So it is not needed to apply interpolator again. */
+        if (!group_interp)
+          {
+             Efl_Interpolator *interpolator =
+                efl_animation_object_interpolator_get(anim_obj);
+             if (interpolator)
+               {
+                  anim_obj_progress =
+                     efl_interpolator_interpolate(interpolator,
+                                                  anim_obj_progress);
+               }
+          }
+
         efl_animation_object_progress_set(anim_obj, anim_obj_progress);
      }
 
