@@ -699,7 +699,7 @@ elm_hover_add(Evas_Object *parent)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_hover_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_hover_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -718,7 +718,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_POPUP_MENU);
 
-   pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
+   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 

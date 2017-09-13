@@ -70,7 +70,7 @@ class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Act
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.widget_sub_object_del;
-      Elm.Widget.focus_manager_factory;
+      Elm.Widget.focus_manager_create;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }

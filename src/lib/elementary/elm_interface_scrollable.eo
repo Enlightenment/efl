@@ -670,7 +670,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
       Efl.Object.constructor;
       Efl.Ui.Focus.Manager.border_elements { get; }
       Efl.Ui.Focus.Manager.focus {set; }
-      Elm.Widget.focus_manager_factory;
+      Elm.Widget.focus_manager_create;
    }
    events {
       changed; [[Called when content changed]]

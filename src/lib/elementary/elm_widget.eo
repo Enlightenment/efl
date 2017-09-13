@@ -817,7 +817,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[return $true or $false if the widget is registered or false if it is not]]
       }
-      focus_manager_factory @protected {
+      focus_manager_create @protected {
          [[If the widget needs a focus manager, this function will be called.
 
            It can be used and overriden to inject your own manager or set

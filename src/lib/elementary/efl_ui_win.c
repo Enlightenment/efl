@@ -5340,7 +5340,7 @@ _efl_ui_win_efl_canvas_object_legacy_ctor(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_win_elm_widget_focus_manager_factory(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_win_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -5372,7 +5372,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
-   pd->manager = elm_obj_widget_focus_manager_factory(obj, obj);
+   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
    pd->profile.available = eina_array_new(4);
 
    efl_composite_attach(obj, pd->manager);
