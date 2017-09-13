@@ -29,4 +29,10 @@ _efl_loop_user_efl_object_parent_set(Eo *obj, Efl_Loop_User_Data *pd EINA_UNUSED
    efl_parent_set(efl_super(obj, EFL_LOOP_USER_CLASS), parent);
 }
 
+static Eina_Future_Scheduler *
+_efl_loop_user_future_scheduler_get(Eo *obj, Efl_Loop_User_Data *pd EINA_UNUSED)
+{
+   return efl_loop_future_scheduler_get(efl_loop_get(obj));
+}
+
 #include "efl_loop_user.eo.c"
