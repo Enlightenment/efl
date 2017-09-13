@@ -91,14 +91,10 @@ _focus_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rectangle rect)
    pd->rect = rect;
 }
 
-
-EOLIAN static void
-_focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rectangle
+_focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
-   *x = pd->rect.x;
-   *y = pd->rect.y;
-   *w = pd->rect.w;
-   *h = pd->rect.h;
+   return pd->rect;
 }
 
 

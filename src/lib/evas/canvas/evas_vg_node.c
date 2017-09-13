@@ -223,12 +223,13 @@ _efl_vg_efl_gfx_size_get(Eo *obj,
    if (h) *h = r.h;
 }
 
-EOLIAN static void
-_efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED,
-                             int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rectangle
+_efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
-   efl_gfx_position_get(obj, x, y);
-   efl_gfx_size_get(obj, w, h);
+   Eina_Rectangle r = { 0, };
+   efl_gfx_position_get(obj, &r.x, &r.y);
+   efl_gfx_size_get(obj, &r.w, &r.h);
+   return r;
 }
 
 // Parent should be a container otherwise dismissing the stacking operation

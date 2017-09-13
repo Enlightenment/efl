@@ -763,12 +763,11 @@ _zoomable_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _zoomable_move_resize_cb(void *data, const Efl_Event *ev)
 {
-   int x, y, w, h;
+   Eina_Rectangle r;
 
-   efl_gfx_geometry_get(ev->object, &x, &y, &w, &h);
-
-   efl_gfx_size_set(data, w, h);
-   efl_gfx_position_set(data, x, y);
+   r = efl_gfx_geometry_get(ev->object);
+   efl_gfx_size_set(data, r.w, r.h);
+   efl_gfx_position_set(data, r.x, r.y);
 }
 
 static void

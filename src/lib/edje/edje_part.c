@@ -100,27 +100,17 @@ _efl_canvas_layout_part_efl_object_finalize(Eo *obj, Efl_Canvas_Layout_Part_Data
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN void
-_efl_canvas_layout_part_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, int *x, int *y, int *w, int *h)
+EOLIAN Eina_Rectangle
+_efl_canvas_layout_part_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp = pd->rp;
+   Eina_Rectangle r = { 0, };
+
    PROXY_CALL_BEGIN(pd);
-
    _edje_recalc_do(pd->ed);
-   if (!rp)
-     {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (w) *w = 0;
-        if (h) *h = 0;
-        RETURN_VOID;
-     }
+   if (!rp) RETURN_VAL(r);
 
-   if (x) *x = rp->x;
-   if (y) *y = rp->y;
-   if (w) *w = rp->w;
-   if (h) *h = rp->h;
-   RETURN_VOID;
+   RETURN_VAL(rp->rect);
 }
 
 EOLIAN static void

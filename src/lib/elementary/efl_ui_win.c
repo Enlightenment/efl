@@ -1037,26 +1037,25 @@ static void
 _elm_win_focus_highlight_anim_setup(Efl_Ui_Win_Data *sd,
                                     Evas_Object *obj)
 {
-   Eina_Rectangle rt;
-   Evas_Coord px, py, pw, ph;
+   Eina_Rectangle rt, rp;
    Edje_Message_Int_Set *m;
    Evas_Object *target = sd->focus_highlight.cur.target;
 
-   evas_object_geometry_get(obj, &px, &py, &pw, &ph);
+   rp = efl_gfx_geometry_get(obj);
    rt = elm_widget_focus_highlight_geometry_get(target);
-   efl_gfx_geometry_set(obj, rt.x, rt.y, rt.w, rt.h);
+   efl_gfx_geometry_set(obj, rt);
 
-   if ((px == rt.x) && (py == rt.y) && (pw == rt.w) && (ph == rt.h)) return;
+   if (eina_rectangle_equal(&rp, &rt)) return;
 
    if (!_elm_config->focus_highlight_clip_disable)
      evas_object_clip_unset(obj);
 
    m = alloca(sizeof(*m) + (sizeof(int) * 8));
    m->count = 8;
-   m->val[0] = px - rt.x;
-   m->val[1] = py - rt.y;
-   m->val[2] = pw;
-   m->val[3] = ph;
+   m->val[0] = rp.x - rt.x;
+   m->val[1] = rp.y - rt.y;
+   m->val[2] = rp.w;
+   m->val[3] = rp.h;
    m->val[4] = 0;
    m->val[5] = 0;
    m->val[6] = rt.w;
@@ -1069,10 +1068,8 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
                                       Evas_Object *obj)
 {
    Evas_Object *clip, *target = sd->focus_highlight.cur.target;
-   Eina_Rectangle r;
 
-   r = elm_widget_focus_highlight_geometry_get(target);
-   efl_gfx_geometry_set(obj, r.x, r.y, r.w, r.h);
+   efl_gfx_geometry_set(obj, elm_widget_focus_highlight_geometry_get(target));
 
    if (!_elm_config->focus_highlight_clip_disable)
      {

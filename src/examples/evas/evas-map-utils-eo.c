@@ -70,7 +70,8 @@ _anim_cb(void *data)
 {
    App_Data *ad = data;
    Evas_Object *o;
-   int r, g, b, a, x, y, w, h, f;
+   Eina_Rectangle r;
+   int r, g, b, a, f;
    int win_w, win_h, mx, my;
 
    f = ad->frame;
@@ -127,12 +128,12 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj4");
-   efl_gfx_geometry_get(o, &x, &y, &w, &h);
+   r = efl_gfx_geometry_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_coord_absolute_set(o, 0, x, y + h, 0);
-   efl_gfx_map_coord_absolute_set(o, 1, x + w, y + h, 0);
+   efl_gfx_map_coord_absolute_set(o, 0, r.x, r.y + r.h, 0);
+   efl_gfx_map_coord_absolute_set(o, 1, r.x + r.w, r.y + r.h, 0);
    efl_gfx_map_coord_absolute_set(o, 2, win_w - 10, win_h - 30, 0);
    efl_gfx_map_coord_absolute_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
    efl_gfx_map_uv_set(o, 0, 0, 1);

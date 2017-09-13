@@ -1156,11 +1156,10 @@ end:
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED,
-                                        int x, int y, int w, int h)
+_efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rectangle r)
 {
-   efl_gfx_position_set(obj, x, y);
-   efl_gfx_size_set(obj, w, h);
+   efl_gfx_position_set(obj, r.x, r.y);
+   efl_gfx_size_set(obj, r.w, r.h);
 }
 
 EAPI void
@@ -1169,7 +1168,7 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   efl_gfx_geometry_set(eo_obj, x, y, w, h);
+   efl_gfx_geometry_set(eo_obj, (Eina_Rectangle) { x, y, w, h });
 }
 
 EAPI void
@@ -1317,25 +1316,20 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    evas_object_inform_call_resize(eo_obj);
 }
 
-EOLIAN void
-_efl_canvas_object_efl_gfx_geometry_get(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED,
-                                        int *x, int *y, int *w, int *h)
+EOLIAN Eina_Rectangle
+_efl_canvas_object_efl_gfx_geometry_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   efl_gfx_position_get(obj, x, y);
-   efl_gfx_size_get(obj, w, h);
+   return obj->cur->geometry;
 }
 
 EAPI void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (w) *w = 0;
-   if (h) *h = 0;
-   return;
-   MAGIC_CHECK_END();
-   efl_gfx_geometry_get(eo_obj, x, y, w, h);
+   Eina_Rectangle r = efl_gfx_geometry_get(eo_obj);
+   if (x) *x = r.x;
+   if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 EOLIAN static void

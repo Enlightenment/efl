@@ -1,3 +1,4 @@
+import eina_types;
 import efl_gfx_types;
 
 interface Efl.Gfx {
@@ -45,10 +46,7 @@ interface Efl.Gfx {
       @property geometry {
          [[Rectangular geometry that combines both position and size.]]
          values {
-            x: int; [[X coordinate]]
-            y: int; [[Y coordinate]]
-            w: int; [[Width]]
-            h: int; [[Height]]
+            rect: Eina.Rectangle; [[The X,Y position and W,H size, in pixels.]]
          }
       }
       @property color {

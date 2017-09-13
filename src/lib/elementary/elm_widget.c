@@ -6515,11 +6515,7 @@ _elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_
 EOLIAN static Eina_Rectangle
 _elm_widget_efl_ui_focus_object_focus_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   Eina_Rectangle rect;
-
-   efl_gfx_geometry_get(obj, &rect.x , &rect.y, &rect.w, &rect.h);
-
-   return rect;
+   return efl_gfx_geometry_get(obj);
 }
 
 EOLIAN static void
