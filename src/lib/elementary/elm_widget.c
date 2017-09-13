@@ -6425,33 +6425,30 @@ _elm_widget_elm_interface_atspi_accessible_attributes_get(Eo *obj, Elm_Widget_Sm
    return ret;
 }
 
-EOLIAN static void
-_elm_widget_item_efl_access_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rectangle
+_elm_widget_item_efl_access_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
+   Eina_Rectangle r = { -1, -1, -1, -1 };
    int ee_x, ee_y;
 
-   if (!sd->view)
-     {
-        if (x) *x = -1;
-        if (y) *y = -1;
-        if (w) *w = -1;
-        if (h) *h = -1;
-        return;
-     }
+   if (!sd->view) return r;
 
-   evas_object_geometry_get(sd->view, x, y, w, h);
+   r = efl_gfx_geometry_get(sd->view);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(sd->view));
-        if (!ee) return;
-        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        if (x) *x += ee_x;
-        if (y) *y += ee_y;
+        if (ee)
+          {
+             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+             r.x += ee_x;
+             r.y += ee_y;
+          }
      }
+   return r;
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_item_efl_access_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
+_elm_widget_item_efl_access_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, Eina_Rectangle r EINA_UNUSED)
 {
    return EINA_FALSE;
 }

@@ -13,48 +13,52 @@
 EOLIAN static void
 _efl_access_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int *x, int *y)
 {
-   efl_access_component_extents_get(obj, type, x, y, NULL, NULL);
+   Eina_Rectangle r;
+
+   r = efl_access_component_extents_get(obj, type);
+   if (x) *x = r.x;
+   if (y) *y = r.y;
 }
 
 EOLIAN static Eina_Bool
 _efl_access_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int x, int y)
 {
-   Eina_Bool ret = EINA_FALSE;
-   int c_w, c_h;
+   Eina_Rectangle r;
 
-   efl_access_component_extents_get(obj, type, NULL, NULL, &c_w, &c_h);
-   ret = efl_access_component_extents_set(obj, type, x, y, c_w, c_h);
-
-   return ret;
+   r = efl_access_component_extents_get(obj, type);
+   r.x = x;
+   r.y = y;
+   return efl_access_component_extents_set(obj, type, r);
 }
 
 EOLIAN static Eina_Bool
 _efl_access_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w, int h)
 {
-   Eina_Bool ret;
-   int c_x = 0, c_y = 0;
+   Eina_Rectangle r;
 
-   efl_access_component_extents_get(obj, EINA_FALSE, &c_x, &c_y, NULL, NULL);
-   ret = efl_access_component_extents_set(obj, EINA_FALSE, c_x, c_y, w, h);
-   return ret;
+   r = efl_access_component_extents_get(obj, EINA_FALSE);
+   r.w = w;
+   r.h = h;
+   return efl_access_component_extents_set(obj, EINA_FALSE, r);
 }
 
 EOLIAN static void
 _efl_access_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *w, int *h)
 {
-   efl_access_component_extents_get(obj, EINA_FALSE, NULL, NULL, w, h);
+   Eina_Rectangle r;
+
+   r = efl_access_component_extents_get(obj, EINA_FALSE);
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 EOLIAN static Eina_Bool
 _efl_access_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int x, int y)
 {
-   int w_x = 0, w_y = 0, w_w = 0, w_h = 0;
+   Eina_Rectangle r;
 
-   efl_access_component_extents_get(obj, type, &w_x, &w_y, &w_w, &w_h);
-
-   if ((x >= w_x) && (x <= w_x + w_w) && (y >= w_y) && (y <= w_y + w_h))
-     return EINA_TRUE;
-   return EINA_FALSE;
+   r = efl_access_component_extents_get(obj, type);
+   return eina_rectangle_coords_inside(&r, x, y);
 }
 
 EOLIAN static double
@@ -92,40 +96,45 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
    return ret;
 }
 
-EOLIAN static void
-_efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rectangle
+_efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
-   int ee_x, ee_y;
+   Eina_Rectangle r;
 
-   evas_object_geometry_get(obj, x, y, w, h);
+   r = efl_gfx_geometry_get(obj);
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (!ee) return;
-        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        if (x) *x += ee_x;
-        if (y) *y += ee_y;
+        if (!ee)
+          {
+             int ee_x = 0, ee_y = 0;
+             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+             r.x += ee_x;
+             r.y += ee_y;
+          }
      }
+   return r;
 }
 
 EOLIAN static Eina_Bool
-_efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y, int w, int h)
+_efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, Eina_Rectangle r)
 {
    int wx, wy;
 
-   if ((x < 0) || (y < 0) || (w < 0) || (h < 0)) return EINA_FALSE;
+   //if (!eina_rectangle_is_valid(&r)) return EINA_FALSE;
+   if ((r.x < 0) || (r.y < 0) || (r.w < 0) || (r.h < 0)) return EINA_FALSE;
 
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
         if (!ee) return EINA_FALSE;
         evas_object_geometry_get(obj, &wx, &wy, NULL, NULL);
-        ecore_evas_move(ee, x - wx, y - wy);
+        ecore_evas_move(ee, r.x - wx, r.y - wy);
      }
    else
-     evas_object_move(obj, x, y);
+     evas_object_move(obj, r.x, r.y);
 
-   evas_object_resize(obj, w, h);
+   evas_object_resize(obj, r.w, r.h);
    return EINA_TRUE;
 }
 

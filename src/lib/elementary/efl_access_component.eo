@@ -1,3 +1,5 @@
+import eina_types;
+
 mixin Efl.Access.Component ()
 {
    [[AT-SPI component mixin]]
@@ -52,10 +54,7 @@ mixin Efl.Access.Component ()
                                    screen origin, otherwise relative to canvas]]
          }
          values {
-            x: int; [[X coordinate]]
-            y: int; [[Y coordinate]]
-            w: int; [[Width]]
-            h: int; [[Height]]
+            rect: Eina.Rectangle; [[The geometry.]]
          }
       }
       @property position @protected {
