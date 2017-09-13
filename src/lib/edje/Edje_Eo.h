@@ -11,4 +11,4 @@
 #include "efl_canvas_layout_part_table.eo.h"
 #include "efl_canvas_layout_part_swallow.eo.h"
 #include "efl_canvas_layout_part_text.eo.h"
-#include "efl_canvas_layout_external.eo.h"
+#include "efl_canvas_layout_part_external.eo.h"
