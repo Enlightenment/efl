@@ -3679,7 +3679,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_FILE;
 
 /**
  * @var EINA_VALUE_TYPE_RECTANGLE
- * manages optional type.
+ * manages Eina_Rectangle type.
  *
  * @since 1.21
  */
