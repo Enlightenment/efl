@@ -263,7 +263,7 @@ evas_object_clip_recalc_do(Evas_Object_Protected_Data *obj, Evas_Object_Protecte
      {
         if (obj->is_smart)
           {
-             Evas_Coord_Rectangle bounding_box;
+             Eina_Rectangle bounding_box;
 
              evas_object_smart_bounding_box_update(obj);
              evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);
@@ -2476,11 +2476,11 @@ _efl_canvas_object_pointer_inside_by_device_get(Eo *eo_obj EINA_UNUSED, Evas_Obj
 EOLIAN static Eina_Bool
 _efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord_Rectangle c;
+   Eina_Rectangle c;
 
    if (obj->is_smart)
      {
-        Evas_Coord_Rectangle bounding_box = { 0, 0, 0, 0 };
+        Eina_Rectangle bounding_box = { 0, };
 
         evas_object_smart_bounding_box_update(obj);
         evas_object_smart_bounding_box_get(obj, &bounding_box, NULL);

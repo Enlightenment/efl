@@ -95,7 +95,8 @@ typedef Efl_Callback_Priority Evas_Callback_Priority;
 typedef short Evas_Callback_Priority;
 #endif
 
-typedef struct _Evas_Coord_Rectangle       Evas_Coord_Rectangle; /**< A generic rectangle handle */
+// TODO: Mark as EINA_DEPRECATED
+typedef struct _Evas_Coord_Rectangle       Evas_Coord_Rectangle; /**< A generic rectangle handle. @deprecated Use Eina_Rectangle instead */
 typedef struct _Evas_Point                 Evas_Point;   /**< integer point */
 
 typedef struct _Evas_Coord_Point           Evas_Coord_Point;    /**< Evas_Coord point */
@@ -185,6 +186,7 @@ typedef void                        Evas_Performance; /**< An Evas Performance h
 typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
 typedef int                        Evas_Angle; /**< A type for angle */
 
+// FIXME: This can be a simple alias to Eina_Rectangle instead.
 struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */
 {
    Evas_Coord x; /**< top-left x co-ordinate of rectangle */

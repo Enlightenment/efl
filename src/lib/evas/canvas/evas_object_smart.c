@@ -20,7 +20,7 @@ static Eina_Hash *_evas_smart_class_names_hash_table = NULL;
 struct _Evas_Smart_Data
 {
    struct {
-      Evas_Coord_Rectangle bounding_box;
+      Eina_Rectangle bounding_box;
    } cur, prev;
    Evas_Object      *object;
    void             *engine_data;
@@ -1455,8 +1455,8 @@ evas_object_update_bounding_box(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 
 void
 evas_object_smart_bounding_box_get(Evas_Object_Protected_Data *obj,
-                                   Evas_Coord_Rectangle *cur_bounding_box,
-                                   Evas_Coord_Rectangle *prev_bounding_box)
+                                   Eina_Rectangle *cur_bounding_box,
+                                   Eina_Rectangle *prev_bounding_box)
 {
    Evas_Smart_Data *s = obj->private_data;
 

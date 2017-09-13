@@ -1622,7 +1622,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canva
 static Eina_Bool
 _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *proxy_render_data, Evas_Object_Protected_Data *obj, int off_x, int off_y)
 {
-   const Evas_Coord_Rectangle *clip;
+   const Eina_Rectangle *clip;
    Evas_Object_Protected_Data *clipper;
    int cw, ch;
 
@@ -2165,7 +2165,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                }
              else
                {
-                  const Evas_Coord_Rectangle *clip = &obj->cur->geometry;
+                  const Eina_Rectangle *clip = &obj->cur->geometry;
                   ENFN->context_clip_clip(ENC, ctx, clip->x + off_x, clip->y + off_y, clip->w, clip->h);
 
                   if (obj->cur->clipper && (mapped > 1))
@@ -2757,7 +2757,7 @@ _is_obj_in_rect(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 {
    if (obj->is_smart && !_evas_render_has_map(obj))
      {
-        Evas_Coord_Rectangle rect;
+        Eina_Rectangle rect;
 
         evas_object_smart_bounding_box_get(obj, &rect, NULL);
         if (RECTS_INTERSECT(x, y, w, h, rect.x, rect.y, rect.w, rect.h))
