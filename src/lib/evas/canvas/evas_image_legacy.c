@@ -90,8 +90,14 @@ evas_object_image_fill_get(const Evas_Object *obj,
                            Evas_Coord *x, Evas_Coord *y,
                            Evas_Coord *w, Evas_Coord *h)
 {
+   Eina_Rectangle r;
+
    EVAS_IMAGE_API(obj);
-   efl_gfx_fill_get(obj, x, y, w, h);
+   r = efl_gfx_fill_get(obj);
+   if (x) *x = r.x;
+   if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 EAPI void

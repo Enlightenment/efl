@@ -418,23 +418,15 @@ _evas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
 }
 
 void
-_evas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                               int x, int y, int w, int h)
+_evas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd, Eina_Rectangle fill)
 {
-   pd->fill.x = x;
-   pd->fill.y = y;
-   pd->fill.w = w;
-   pd->fill.h = h;
+   pd->fill = fill;
 }
 
-void
-_evas_vg_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                               int *x, int *y, int *w, int *h)
+Eina_Rectangle
+_evas_vg_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 {
-   if (x) *x = pd->fill.x;
-   if (y) *y = pd->fill.y;
-   if (w) *w = pd->fill.w;
-   if (h) *h = pd->fill.h;
+   return pd->fill;
 }
 
 #include "evas_vg.eo.c"

@@ -1844,9 +1844,7 @@ typedef struct _Edje_Calc_Params_Type_Node Edje_Calc_Params_Type_Node;
 
 struct _Edje_Calc_Params_Type_Common
 {
-   struct {
-      int           x, y, w, h; // 16
-   } fill; // 16
+   Eina_Rectangle fill; // 16
    union {
       struct {
          unsigned short l, r, t, b; // 8
