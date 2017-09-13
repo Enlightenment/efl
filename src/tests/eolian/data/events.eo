@@ -1,3 +1,7 @@
+struct Evas_Event_Clicked_Double_Info {
+   pants: int;
+}
+
 class Events {
    event_prefix: totally_not_events;
    events {
