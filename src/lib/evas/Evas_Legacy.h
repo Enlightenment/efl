@@ -6506,17 +6506,6 @@ EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord 
  */
 
 /**
- * @ingroup Evas_Smart_Object_Clipped
- *
- * @{
- */
-#include "canvas/efl_canvas_group_clipped.eo.legacy.h"
-
-/**
- * @}
- */
-
-/**
  * @ingroup Evas_Object_Box
  *
  * @{
