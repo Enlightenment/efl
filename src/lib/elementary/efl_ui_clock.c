@@ -1105,25 +1105,19 @@ _efl_ui_clock_field_limit_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type 
 
    if (!_field_cmp(fieldtype, &old_time, &sd->curr_time))
      efl_event_callback_legacy_call(obj, EFL_UI_CLOCK_EVENT_CHANGED, NULL);
-
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, struct tm *currtime)
+EOLIAN static Efl_Time
+_efl_ui_clock_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(currtime, EINA_FALSE);
-
-   *currtime = sd->curr_time;
-   return EINA_TRUE;
+   return sd->curr_time;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_set(Eo *obj, Efl_Ui_Clock_Data *sd, struct tm *newtime)
+EOLIAN static void
+_efl_ui_clock_value_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time newtime)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(newtime, EINA_FALSE);
-
-   if (_date_cmp(&sd->curr_time, newtime)) return EINA_TRUE;
-   sd->curr_time = *newtime;
+   if (_date_cmp(&sd->curr_time, &newtime)) return;
+   sd->curr_time = newtime;
    // apply default field restrictions for curr_time
    _apply_range_restrictions(&sd->curr_time);
    // validate the curr_time according to the min_limt and max_limt
@@ -1132,28 +1126,21 @@ _efl_ui_clock_value_set(Eo *obj, Efl_Ui_Clock_Data *sd, struct tm *newtime)
    _apply_field_limits(obj);
 
    efl_event_callback_legacy_call(obj, EFL_UI_CLOCK_EVENT_CHANGED, NULL);
-
-   return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, Efl_Time *mintime)
+EOLIAN static Efl_Time
+_efl_ui_clock_value_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mintime, EINA_FALSE);
-
-   *mintime = sd->min_limit;
-   return EINA_TRUE;
+   return sd->min_limit;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time *mintime)
+EOLIAN static void
+_efl_ui_clock_value_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time mintime)
 {
    struct tm old_time;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mintime, EINA_FALSE);
-
-   if (_date_cmp(&sd->min_limit, mintime)) return EINA_TRUE;
-   sd->min_limit = *mintime;
+   if (_date_cmp(&sd->min_limit, &mintime)) return;
+   sd->min_limit = mintime;
    old_time = sd->curr_time;
    // apply default field restrictions for min_limit
    _apply_range_restrictions(&sd->min_limit);
@@ -1164,28 +1151,21 @@ _efl_ui_clock_value_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time *mintime)
 
    if (!_date_cmp(&old_time, &sd->curr_time))
      efl_event_callback_legacy_call(obj, EFL_UI_CLOCK_EVENT_CHANGED, NULL);
-
-   return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd, struct tm *maxtime)
+EOLIAN static Efl_Time
+_efl_ui_clock_value_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(maxtime, EINA_FALSE);
-
-   *maxtime = sd->max_limit;
-   return EINA_TRUE;
+   return sd->max_limit;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_value_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, struct tm *maxtime)
+EOLIAN static void
+_efl_ui_clock_value_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
 {
    struct tm old_time;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(maxtime, EINA_FALSE);
-
-   if (_date_cmp(&sd->max_limit, maxtime)) return EINA_TRUE;
-   sd->max_limit = *maxtime;
+   if (_date_cmp(&sd->max_limit, &maxtime)) return;
+   sd->max_limit = maxtime;
    old_time = sd->curr_time;
    // apply default field restrictions for max_limit
    _apply_range_restrictions(&sd->max_limit);
@@ -1196,8 +1176,6 @@ _efl_ui_clock_value_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, struct tm *maxtime)
 
    if (!_date_cmp(&old_time, &sd->curr_time))
      efl_event_callback_legacy_call(obj, EFL_UI_CLOCK_EVENT_CHANGED, NULL);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

@@ -33,7 +33,7 @@ _bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUS
    efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_SECOND, EINA_TRUE);
    efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_DAY, EINA_TRUE);
 
-   efl_ui_clock_value_set(dt1, &new_time);
+   efl_ui_clock_value_set(dt1, new_time);
    elm_object_disabled_set(dt1, EINA_TRUE);
 
    elm_object_disabled_set(obj, EINA_TRUE);

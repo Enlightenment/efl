@@ -82,24 +82,29 @@ elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fie
 EAPI Eina_Bool
 elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mintime)
 {
-   return efl_ui_clock_value_min_set(obj, (Efl_Time *)mintime);
+   if (mintime) efl_ui_clock_value_min_set(obj, *mintime);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mintime)
 {
-   return efl_ui_clock_value_min_get(obj, mintime);
+   if (mintime) *mintime = efl_ui_clock_value_min_get(obj);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime)
 {
-   return efl_ui_clock_value_set(obj, (Efl_Time *)newtime);
+   if (newtime) efl_ui_clock_value_set(obj, *newtime);
+   return EINA_TRUE;
 }
 
-EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime)
+EAPI Eina_Bool
+elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime)
 {
-   return efl_ui_clock_value_get(obj, currtime);
+   if (currtime) *currtime = efl_ui_clock_value_get(obj);
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -116,11 +121,13 @@ EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Dateti
 EAPI Eina_Bool
 elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxtime)
 {
-   return efl_ui_clock_value_max_set(obj, (Efl_Time *)maxtime);
+   if (maxtime) efl_ui_clock_value_max_set(obj, *maxtime);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime)
 {
-   return efl_ui_clock_value_max_get(obj, maxtime);
+   if (maxtime) *maxtime = efl_ui_clock_value_max_get(obj);
+   return EINA_TRUE;
 }

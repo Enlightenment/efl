@@ -97,13 +97,13 @@ _diskselector_cb(void *data EINA_UNUSED, const Efl_Event *event)
    disk_data = (DiskItem_Data *)elm_object_item_data_get(event->info);
    if (!disk_data || !(disk_data->ctx_mod)) return;
 
-   efl_ui_clock_value_get(disk_data->ctx_mod->mod_data.base, &curr_time);
+   curr_time = efl_ui_clock_value_get(disk_data->ctx_mod->mod_data.base);
    fmt = disk_data->ctx_mod->mod_data.field_format_get(disk_data->ctx_mod->mod_data.base, disk_data->sel_field_type);
    if ((disk_data->sel_field_type == EFL_UI_CLOCK_TYPE_HOUR) && ((!strncmp(fmt, "%I", FIELD_FORMAT_LEN)) ||
         (!strncmp(fmt, "%l", FIELD_FORMAT_LEN))) && (curr_time.tm_hour >= 12))
      disk_data->sel_field_value += 12;
    _field_value_set(&curr_time, disk_data->sel_field_type, disk_data->sel_field_value);
-   efl_ui_clock_value_set(disk_data->ctx_mod->mod_data.base, &curr_time);
+   efl_ui_clock_value_set(disk_data->ctx_mod->mod_data.base, curr_time);
    evas_object_hide(disk_data->ctx_mod->ctxpopup);
 }
 
@@ -116,10 +116,10 @@ _ampm_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
    ctx_mod = (Ctxpopup_Module_Data *)data;
    if (!ctx_mod) return;
 
-   efl_ui_clock_value_get(ctx_mod->mod_data.base, &curr_time);
+   curr_time = efl_ui_clock_value_get(ctx_mod->mod_data.base);
    if (curr_time.tm_hour >= 12) curr_time.tm_hour -= 12;
    else curr_time.tm_hour += 12;
-   efl_ui_clock_value_set(ctx_mod->mod_data.base, &curr_time);
+   efl_ui_clock_value_set(ctx_mod->mod_data.base, curr_time);
 }
 
 static void
@@ -169,7 +169,7 @@ _field_clicked_cb(void *data, const Efl_Event *event)
 
    field_type = (Efl_Ui_Clock_Type )evas_object_data_get(event->object, "_field_type");
    fmt = ctx_mod->mod_data.field_format_get(ctx_mod->mod_data.base, field_type);
-   efl_ui_clock_value_get(ctx_mod->mod_data.base, &time1);
+   time1 = efl_ui_clock_value_get(ctx_mod->mod_data.base);
    val = _field_value_get(&time1, field_type);
    ctx_mod->mod_data.field_limit_get(ctx_mod->mod_data.base, field_type, &min, &max);
 
@@ -283,7 +283,7 @@ field_value_display(Efl_Ui_Clock_Module_Data *module_data, Evas_Object *obj)
    ctx_mod = (Ctxpopup_Module_Data *)module_data;
    if (!ctx_mod || !obj) return;
 
-   efl_ui_clock_value_get(ctx_mod->mod_data.base, &tim);
+   tim = efl_ui_clock_value_get(ctx_mod->mod_data.base);
    field_type = (Efl_Ui_Clock_Type )evas_object_data_get(obj, "_field_type");
    fmt = ctx_mod->mod_data.field_format_get(ctx_mod->mod_data.base, field_type);
    buf[0] = 0;
