@@ -1,0 +1,9 @@
+class Elm.Multibuttonentry.Part (Efl.Ui.Layout.Part, Efl.Text)
+{
+   [[Elementary multibuttonentry internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; get; }
+   }
+}
+

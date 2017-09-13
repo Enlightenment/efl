@@ -14,7 +14,7 @@
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
-#include "elm_naviframe_internal_part.eo.h"
+#include "elm_naviframe_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_NAVIFRAME_CLASS
@@ -2105,7 +2105,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_N
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-#include "elm_naviframe_internal_part.eo.c"
+#include "elm_naviframe_part.eo.c"
 
 /* Efl.Part end */
 

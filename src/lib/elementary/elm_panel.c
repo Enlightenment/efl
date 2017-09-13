@@ -12,7 +12,7 @@
 
 #include "els_box.h"
 
-#include "elm_panel_internal_part.eo.h"
+#include "elm_panel_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_PANEL_CLASS
@@ -1484,7 +1484,7 @@ ELM_PART_IMPLEMENT(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_SET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_GET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
 ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
-#include "elm_panel_internal_part.eo.c"
+#include "elm_panel_part.eo.c"
 
 /* Efl.Part end */
 

@@ -13,7 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
 
-#include "elm_ctxpopup_internal_part.eo.h"
+#include "elm_ctxpopup_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_CTXPOPUP_CLASS
@@ -1641,7 +1641,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctx
 ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, EFL_UI_LAYOUT, Elm_Ctxpopup_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_ctxpopup, "default")
-#include "elm_ctxpopup_internal_part.eo.c"
+#include "elm_ctxpopup_part.eo.c"
 
 /* Efl.Part end */
 

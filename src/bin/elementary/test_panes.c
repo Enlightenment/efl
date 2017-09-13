@@ -135,7 +135,7 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_gfx_size_hint_min_set(efl_added, 10, 0),
            efl_content_set(efl_part(panes_h, "first"), efl_added)
           );
-   efl_ui_panes_internal_part_hint_min_allow_set(efl_part(panes_h, "first"), EINA_TRUE);
+   efl_ui_panes_part_hint_min_allow_set(efl_part(panes_h, "first"), EINA_TRUE);
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Down - min size 50 40"),

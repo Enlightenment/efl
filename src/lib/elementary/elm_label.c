@@ -10,7 +10,7 @@
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_label.h"
-#include "elm_label_internal_part.eo.h"
+#include "elm_label_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_LABEL_CLASS
@@ -637,7 +637,7 @@ _elm_label_class_constructor(Efl_Class *klass)
 ELM_PART_OVERRIDE(elm_label, ELM_LABEL, EFL_UI_LAYOUT, Elm_Label_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, EFL_UI_LAYOUT, Elm_Label_Data, Elm_Part_Data)
 
-#include "elm_label_internal_part.eo.c"
+#include "elm_label_part.eo.c"
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */

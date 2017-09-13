@@ -12,7 +12,7 @@
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
 
-#include "elm_fileselector_entry_internal_part.eo.h"
+#include "elm_fileselector_entry_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_FILESELECTOR_ENTRY_CLASS
@@ -677,7 +677,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, 
 ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_fileselector_entry, "button icon")
-#include "elm_fileselector_entry_internal_part.eo.c"
+#include "elm_fileselector_entry_part.eo.c"
 
 /* Efl.Part end */
 

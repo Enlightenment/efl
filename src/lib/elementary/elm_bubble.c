@@ -11,7 +11,7 @@
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
-#include "elm_bubble_internal_part.eo.h"
+#include "elm_bubble_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_BUBBLE_CLASS
@@ -284,7 +284,7 @@ _elm_bubble_class_constructor(Efl_Class *klass)
 ELM_PART_OVERRIDE(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
 
-#include "elm_bubble_internal_part.eo.c"
+#include "elm_bubble_part.eo.c"
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */

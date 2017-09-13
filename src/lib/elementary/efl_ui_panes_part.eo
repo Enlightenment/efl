@@ -1,0 +1,28 @@
+class Efl.Ui.Panes.Part (Efl.Ui.Layout.Part)
+{
+   [[Elementary Panes internal part class]]
+   data: Elm_Part_Data;
+   methods {
+      @property hint_min_allow {
+          [[Allow user to set size hints to be respected and ignore combined min size.
+            If this flag is set, the minimum size set by @Efl.Gfx.Size.Hint.hint_min.set is respected forcefully. 
+          ]]
+          values {
+             allow: bool; [[If $true minimum size is forced]]
+          }
+      }
+      @property split_ratio_min {
+        [[Controls the relative minimum size of panes widget's part.
+
+          If @Efl.Gfx.Size.Hint.hint_min.set is also used along with @.split_ratio_min.set, maximum value is set as
+          minimum size to part.
+          ]]
+        values {
+           size: double; [[Value between 0.0 and 1.0 representing size proportion of first part's minimum size.]]
+        }
+      }
+   }
+   implements {
+   }
+}
+

@@ -11,7 +11,7 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
-//#include "elm_entry_internal_part.eo.h"
+//#include "elm_entry_part.eo.h"
 //#include "elm_part_helper.h"
 //
 #include "elm_interface_scrollable.h"
@@ -5346,7 +5346,7 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
 ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
-#include "elm_entry_internal_part.eo.c"
+#include "elm_entry_part.eo.c"
 
 /* Efl.Part end */
 #endif

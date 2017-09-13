@@ -1,0 +1,10 @@
+class Elm.Entry.Part (Efl.Ui.Layout.Part, Efl.Text)
+{
+   [[Elementary entry internal part class]]
+   data: null;
+   implements {
+      Efl.Container.content { set; }
+      Efl.Container.content_unset;
+      Efl.Text.text { set; get; }
+   }
+}

@@ -13,7 +13,7 @@
 
 #include "elm_actionslider.eo.h"
 
-#include "elm_actionslider_internal_part.eo.h"
+#include "elm_actionslider_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_ACTIONSLIDER_CLASS
@@ -663,7 +663,7 @@ ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actions
 ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
 
-#include "elm_actionslider_internal_part.eo.c"
+#include "elm_actionslider_part.eo.c"
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */

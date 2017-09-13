@@ -12,7 +12,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
-#include "elm_scroller_internal_part.eo.h"
+#include "elm_scroller_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_SCROLLER_CLASS
@@ -1483,7 +1483,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scr
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, EFL_UI_LAYOUT, Elm_Scroller_Data, Elm_Part_Data)
 // FIXME: should be "content" but "default" was legacy API
 ELM_PART_CONTENT_DEFAULT_SET(elm_scroller, "default")
-#include "elm_scroller_internal_part.eo.c"
+#include "elm_scroller_part.eo.c"
 
 /* Efl.Part end */
 

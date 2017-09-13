@@ -1,9 +1,9 @@
 #include "edje_private.h"
-#include "efl_canvas_layout_internal.eo.h"
+#include "efl_canvas_layout_part.eo.h"
 
-typedef struct _Efl_Canvas_Layout_Internal_Data Efl_Canvas_Layout_Internal_Data;
+typedef struct _Efl_Canvas_Layout_Part_Data Efl_Canvas_Layout_Part_Data;
 
-struct _Efl_Canvas_Layout_Internal_Data
+struct _Efl_Canvas_Layout_Part_Data
 {
    Edje           *ed;
    Edje_Real_Part *rp;
@@ -20,7 +20,7 @@ struct _Part_Item_Iterator
    Eo            *object;
 };
 
-void _part_reuse_error(Efl_Canvas_Layout_Internal_Data *pd);
+void _part_reuse_error(Efl_Canvas_Layout_Part_Data *pd);
 const char * _part_type_to_string(unsigned char type);
 
 #define PROXY_CALL_BEGIN(pd) do { pd->in_call = 1; } while (0)
@@ -41,11 +41,11 @@ void _edje_real_part_set(Eo *obj, Edje *ed, Edje_Real_Part *rp, const char *part
 static inline void
 _part_proxy_del_cb(Eo *proxy, Eo **static_var)
 {
-   Efl_Canvas_Layout_Internal_Data *pd;
+   Efl_Canvas_Layout_Part_Data *pd;
    if (*static_var)
      {
         // FIXME: Enable debug checks only in debug mode
-        pd = efl_data_scope_get(*static_var, EFL_CANVAS_LAYOUT_INTERNAL_CLASS);
+        pd = efl_data_scope_get(*static_var, EFL_CANVAS_LAYOUT_PART_CLASS);
         if (pd && pd->temp && !pd->in_call)
           _part_reuse_error(pd);
         if (*static_var != proxy)
@@ -57,7 +57,7 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
         efl_parent_set(proxy, NULL);
      }
    efl_reuse(proxy);
-   pd = efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_INTERNAL_CLASS);
+   pd = efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_PART_CLASS);
    pd->in_use = EINA_FALSE;
    *static_var = proxy;
 }
@@ -77,7 +77,7 @@ void \
 _ ## type ## _shutdown(void); \
 
 #define PROXY_DATA_GET(obj, pd) \
-   Efl_Canvas_Layout_Internal_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_INTERNAL_CLASS); \
+   Efl_Canvas_Layout_Part_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_PART_CLASS); \
    PROXY_CALL_BEGIN(pd)
 
 #define PROXY_IMPLEMENTATION(type, KLASS, no_del_cb, ...) \
@@ -98,10 +98,10 @@ _ ## type ## _shutdown(void) \
 Eo * \
 _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp) \
 { \
-   Efl_Canvas_Layout_Internal_Data *pd; \
+   Efl_Canvas_Layout_Part_Data *pd; \
    Eo *proxy; \
    \
-   pd = PROXY_STATIC_VAR(type) ? efl_data_scope_get(PROXY_STATIC_VAR(type), EFL_CANVAS_LAYOUT_INTERNAL_CLASS) : NULL; \
+   pd = PROXY_STATIC_VAR(type) ? efl_data_scope_get(PROXY_STATIC_VAR(type), EFL_CANVAS_LAYOUT_PART_CLASS) : NULL; \
    if (!pd) \
      { \
         if (PROXY_STATIC_VAR(type)) \
@@ -130,7 +130,7 @@ end: \
 #ifdef DEBUG
 #define PART_TABLE_GET(obj, part, ...) ({ \
    Eo *__table = efl_part(obj, part); \
-   if (!__table || !efl_isa(__table, EFL_CANVAS_LAYOUT_INTERNAL_TABLE_CLASS)) \
+   if (!__table || !efl_isa(__table, EFL_CANVAS_LAYOUT_PART_TABLE_CLASS)) \
      { \
         ERR("No such table part '%s' in layout %p", part, obj); \
         return __VA_ARGS__; \

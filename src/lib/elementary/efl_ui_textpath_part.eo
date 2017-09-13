@@ -1,0 +1,8 @@
+class Efl.Ui.Textpath.Part (Efl.Ui.Layout.Part, Efl.Text)
+{
+   [[Efl UI Textpath internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; get; }
+   }
+}

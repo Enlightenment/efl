@@ -1,7 +1,7 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
-#include "efl_ui_layout_internal_part.eo.h"
+#include "efl_ui_layout_part.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%p:%s [%d]", pd->obj, pd->part, (int) pd->temp); } while(0)
 #define ELM_PART_HOOK do {} while(0)
@@ -26,12 +26,12 @@ struct _Elm_Part_Data
 
 #define ELM_PART_IMPLEMENT_DESTRUCTOR(type, TYPE, typedata, partdata) \
 static EOLIAN void \
-_ ## type ## _internal_part_efl_object_destructor(Eo *obj, partdata *pd) \
+_ ## type ## _part_efl_object_destructor(Eo *obj, partdata *pd) \
 { \
    ELM_PART_HOOK; \
    free(pd->part); \
    efl_data_xunref(pd->obj, pd->sd, obj); \
-   efl_destructor(efl_super(obj, TYPE ## _INTERNAL_PART_CLASS)); \
+   efl_destructor(efl_super(obj, TYPE ## _PART_CLASS)); \
 } \
 
 // Main part proxy implementation
@@ -44,8 +44,8 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    Eo *proxy; \
 \
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
-   proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
-   pd = efl_data_scope_get(proxy, TYPE ## _INTERNAL_PART_CLASS); \
+   proxy = efl_add(TYPE ## _PART_CLASS, (Eo *) obj); \
+   pd = efl_data_scope_get(proxy, TYPE ## _PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
@@ -59,35 +59,35 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
 
 #define ELM_PART_IMPLEMENT_CONTENT_SET(type, TYPE, typedata, partdata) \
 static EOLIAN Eina_Bool \
-_ ## type ## _internal_part_efl_container_content_set(Eo *obj, partdata *pd, Efl_Gfx *content) \
+_ ## type ## _part_efl_container_content_set(Eo *obj, partdata *pd, Efl_Gfx *content) \
 { \
    ELM_PART_RETURN_VAL(_ ## type ## _content_set(pd->obj, pd->sd, pd->part, content)); \
 }
 
 #define ELM_PART_IMPLEMENT_CONTENT_GET(type, TYPE, typedata, partdata) \
 static EOLIAN Efl_Gfx * \
-_ ## type ## _internal_part_efl_container_content_get(Eo *obj, partdata *pd) \
+_ ## type ## _part_efl_container_content_get(Eo *obj, partdata *pd) \
 { \
    ELM_PART_RETURN_VAL(_ ## type ## _content_get(pd->obj, pd->sd, pd->part)); \
 }
 
 #define ELM_PART_IMPLEMENT_CONTENT_UNSET(type, TYPE, typedata, partdata) \
 static EOLIAN Efl_Gfx * \
-_ ## type ## _internal_part_efl_container_content_unset(Eo *obj, partdata *pd) \
+_ ## type ## _part_efl_container_content_unset(Eo *obj, partdata *pd) \
 { \
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, pd->sd, pd->part)); \
 }
 
 #define ELM_PART_IMPLEMENT_TEXT_SET(type, TYPE, typedata, partdata) \
 static EOLIAN void \
-_ ## type ## _internal_part_efl_text_text_set(Eo *obj EINA_UNUSED, partdata *pd, const char *text) \
+_ ## type ## _part_efl_text_text_set(Eo *obj EINA_UNUSED, partdata *pd, const char *text) \
 { \
   _ ## type ## _text_set(pd->obj, pd->sd, pd->part, text); \
 }
 
 #define ELM_PART_IMPLEMENT_TEXT_GET(type, TYPE, typedata, partdata) \
 static EOLIAN const char * \
-_ ## type ## _internal_part_efl_text_text_get(Eo *obj, partdata *pd) \
+_ ## type ## _part_efl_text_text_get(Eo *obj, partdata *pd) \
 { \
    ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, pd->sd, pd->part)); \
 }
@@ -113,8 +113,8 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
    Eo *proxy; \
 \
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
-   proxy = efl_add(TYPE ## _INTERNAL_PART_CLASS, (Eo *) obj); \
-   pd = efl_data_scope_get(proxy, SUPER ## _INTERNAL_PART_CLASS); \
+   proxy = efl_add(TYPE ## _PART_CLASS, (Eo *) obj); \
+   pd = efl_data_scope_get(proxy, SUPER ## _PART_CLASS); \
    if (pd) \
      { \
         pd->obj = (Eo *) obj; \
@@ -128,45 +128,45 @@ _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const cha
 
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Eina_Bool \
-_ ## type ## _internal_part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
+_ ## type ## _part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
 { \
-   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_set(pd->obj, sd, pd->part, content)); \
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_GET(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Efl_Gfx * \
-_ ## type ## _internal_part_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## type ## _part_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_get(pd->obj, sd, pd->part)); \
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_UNSET(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN Efl_Gfx * \
-_ ## type ## _internal_part_efl_container_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## type ## _part_efl_container_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, sd, pd->part)); \
 }
 
 #define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN void \
-_ ## type ## _internal_part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
+_ ## type ## _part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
 { \
-   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_CALL(_ ## type ## _text_set(pd->obj, sd, pd->part, text)); \
 }
 
 #define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, SUPER, typedata, partdata) \
 static EOLIAN const char *\
-_ ## type ## _internal_part_efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
+_ ## type ## _part_efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
 { \
-   partdata *pd = efl_data_scope_get(obj, SUPER ## _INTERNAL_PART_CLASS); \
+   partdata *pd = efl_data_scope_get(obj, SUPER ## _PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, sd, pd->part)); \
 }

@@ -10,7 +10,7 @@
 #include "elm_priv.h"
 #include "efl_ui_button_private.h"
 #include "elm_widget_layout.h"
-#include "efl_ui_button_internal_part.eo.h"
+#include "efl_ui_button_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_BUTTON_CLASS
@@ -426,7 +426,7 @@ EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
-#include "efl_ui_button_internal_part.eo.c"
+#include "efl_ui_button_part.eo.c"
 
 /* Efl.Part end */
 

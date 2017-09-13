@@ -8,7 +8,7 @@
 #include "elm_priv.h"
 
 #include "elm_widget_layout.h"
-#include "efl_ui_textpath_internal_part.eo.h"
+#include "efl_ui_textpath_part.eo.h"
 #include "elm_part_helper.h"
 
 
@@ -660,7 +660,7 @@ _efl_ui_textpath_ellipsis_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 ELM_PART_OVERRIDE(efl_ui_textpath, EFL_UI_TEXTPATH, EFL_UI_LAYOUT, Efl_Ui_Textpath_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textpath, EFL_UI_TEXTPATH, EFL_UI_LAYOUT, Efl_Ui_Textpath_Data, Elm_Part_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, EFL_UI_LAYOUT, Efl_Ui_Textpath_Data, Elm_Part_Data)
-#include "efl_ui_textpath_internal_part.eo.c"
+#include "efl_ui_textpath_part.eo.c"
 /* Efl.Part end */
 
 #define EFL_UI_TEXTPATH_EXTRA_OPS \

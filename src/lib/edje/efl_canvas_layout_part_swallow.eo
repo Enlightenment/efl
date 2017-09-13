@@ -1,0 +1,13 @@
+class Efl.Canvas.Layout.Part_Swallow (Efl.Canvas.Layout.Part, Efl.Container)
+{
+   [[Represents a SWALLOW part of an Edje object.
+
+     Its lifetime is limited to one function call only, unless an extra
+     reference is explicitely held.
+   ]]
+   data: null;
+   implements {
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
+   }
+}

@@ -17,7 +17,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_entry.eo \
 	lib/elementary/elm_fileselector.eo \
 	lib/elementary/efl_ui_flip.eo \
-	lib/elementary/efl_ui_flip_internal_part.eo \
+	lib/elementary/efl_ui_flip_part.eo \
 	lib/elementary/efl_ui_frame.eo \
 	lib/elementary/elm_gengrid.eo \
 	lib/elementary/elm_gengrid_pan.eo \
@@ -62,7 +62,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
 	lib/elementary/efl_ui_slider.eo \
-   lib/elementary/efl_ui_slider_interval.eo \
+	lib/elementary/efl_ui_slider_interval.eo \
 	lib/elementary/elm_spinner.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
@@ -95,31 +95,31 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_box_stack.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_grid_static.eo \
-	lib/elementary/efl_ui_layout_internal_part.eo \
-	lib/elementary/efl_ui_layout_internal_box.eo \
-	lib/elementary/efl_ui_layout_internal_table.eo \
-	lib/elementary/efl_ui_button_internal_part.eo \
-	lib/elementary/elm_ctxpopup_internal_part.eo \
-	lib/elementary/efl_ui_panes_internal_part.eo \
-	lib/elementary/elm_dayselector_internal_part.eo \
-	lib/elementary/elm_entry_internal_part.eo \
-	lib/elementary/elm_fileselector_entry_internal_part.eo \
-	lib/elementary/elm_flip_internal_part.eo \
-	lib/elementary/elm_hover_internal_part.eo \
-	lib/elementary/elm_mapbuf_internal_part.eo \
-	lib/elementary/elm_naviframe_internal_part.eo \
-	lib/elementary/elm_notify_internal_part.eo \
-	lib/elementary/elm_panel_internal_part.eo \
-	lib/elementary/elm_player_internal_part.eo \
-	lib/elementary/efl_ui_progressbar_internal_part.eo \
-	lib/elementary/elm_popup_internal_part.eo \
-	lib/elementary/elm_scroller_internal_part.eo \
-	lib/elementary/efl_ui_slider_internal_part.eo \
-	lib/elementary/elm_label_internal_part.eo \
-	lib/elementary/elm_actionslider_internal_part.eo \
-	lib/elementary/elm_bubble_internal_part.eo \
-	lib/elementary/elm_fileselector_internal_part.eo \
-	lib/elementary/elm_multibuttonentry_internal_part.eo \
+	lib/elementary/efl_ui_layout_part.eo \
+	lib/elementary/efl_ui_layout_part_box.eo \
+	lib/elementary/efl_ui_layout_part_table.eo \
+	lib/elementary/efl_ui_button_part.eo \
+	lib/elementary/elm_ctxpopup_part.eo \
+	lib/elementary/efl_ui_panes_part.eo \
+	lib/elementary/elm_dayselector_part.eo \
+	lib/elementary/elm_entry_part.eo \
+	lib/elementary/elm_fileselector_entry_part.eo \
+	lib/elementary/elm_flip_part.eo \
+	lib/elementary/elm_hover_part.eo \
+	lib/elementary/elm_mapbuf_part.eo \
+	lib/elementary/elm_naviframe_part.eo \
+	lib/elementary/elm_notify_part.eo \
+	lib/elementary/elm_panel_part.eo \
+	lib/elementary/elm_player_part.eo \
+	lib/elementary/efl_ui_progressbar_part.eo \
+	lib/elementary/elm_popup_part.eo \
+	lib/elementary/elm_scroller_part.eo \
+	lib/elementary/efl_ui_slider_part.eo \
+	lib/elementary/elm_label_part.eo \
+	lib/elementary/elm_actionslider_part.eo \
+	lib/elementary/elm_bubble_part.eo \
+	lib/elementary/elm_fileselector_part.eo \
+	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_code_widget.eo \
 	lib/elementary/efl_ui_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
@@ -129,19 +129,19 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
 	lib/elementary/efl_ui_focus_manager.eo \
-   lib/elementary/efl_ui_focus_manager_calc.eo \
+	lib/elementary/efl_ui_focus_manager_calc.eo \
 	lib/elementary/efl_ui_focus_manager_sub.eo \
 	lib/elementary/efl_ui_focus_manager_root_focus.eo \
 	lib/elementary/efl_ui_focus_object.eo \
 	lib/elementary/efl_ui_focus_user.eo \
 	lib/elementary/efl_ui_textpath.eo \
-	lib/elementary/efl_ui_textpath_internal_part.eo \
+	lib/elementary/efl_ui_textpath_part.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
-	lib/elementary/efl_ui_win_internal_part.eo \
+	lib/elementary/efl_ui_win_part.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	$(NULL)
