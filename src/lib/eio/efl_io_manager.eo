@@ -83,7 +83,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in path: string; [[Path to file]]
         @in shared: bool; [[$true if the file can be accessed by others, $false otherwise]]
       }
-      return: future<Eina.File>; [[Eina file handle]]
+      return: own(ptr(Eina.Future)); [[Eina file handle]]
     }
     close {
       [[Closes an open Eina.File.]]
