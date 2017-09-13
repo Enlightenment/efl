@@ -6713,22 +6713,25 @@ _efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd
    return name;
 }
 
-EOLIAN static void
-_efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rectangle
+_efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
+   Eina_Rectangle r;
    int ee_x, ee_y;
 
-   if (x) *x = 0;
-   if (y) *y = 0;
-   evas_object_geometry_get(obj, NULL, NULL, w, h);
+   r = efl_gfx_geometry_get(obj);
+   r.x = r.y = 0;
    if (screen_coords)
      {
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (!ee) return;
-        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        if (x) *x += ee_x;
-        if (y) *y += ee_y;
+        if (ee)
+          {
+             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+             r.x += ee_x;
+             r.y += ee_y;
+          }
      }
+   return r;
 }
 
 EOLIAN static Eina_Bool
