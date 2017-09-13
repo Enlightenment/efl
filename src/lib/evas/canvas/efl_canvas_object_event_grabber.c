@@ -46,7 +46,7 @@ _efl_canvas_group_group_iterator_free(Efl_Object_Event_Grabber_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator*
-_efl_canvas_object_event_grabber_efl_canvas_group_group_children_iterate(const Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd)
+_efl_canvas_object_event_grabber_efl_canvas_group_group_members_iterate(const Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd)
 {
    Efl_Object_Event_Grabber_Iterator *it;
 
@@ -64,6 +64,18 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_children_iterate(const E
    it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_group_group_iterator_free);
 
    return &it->iterator;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_event_grabber_efl_canvas_group_group_member_is(const Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd EINA_UNUSED, const Eo *sub_obj)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *sub = efl_data_scope_safe_get(sub_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   evas_object_async_block(obj);
+
+   if (!sub) return EINA_FALSE;
+   return (sub->events->parent == eo_obj);
 }
 
 static void
