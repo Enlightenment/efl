@@ -494,8 +494,9 @@ _efl_canvas_group_group_iterator_free(Evas_Object_Smart_Iterator *it)
 }
 
 // Should we have an efl_children_iterator_new API and just inherit from it ?
+// No, because each hierarchy is different (Eo, Smart, Widget) -- jpeg
 EOLIAN static Eina_Iterator*
-_efl_canvas_group_group_children_iterate(const Eo *eo_obj, Evas_Smart_Data *priv)
+_efl_canvas_group_group_members_iterate(const Eo *eo_obj, Evas_Smart_Data *priv)
 {
    Evas_Object_Smart_Iterator *it;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -515,6 +516,18 @@ _efl_canvas_group_group_children_iterate(const Eo *eo_obj, Evas_Smart_Data *priv
    it->iterator.free = FUNC_ITERATOR_FREE(_efl_canvas_group_group_iterator_free);
 
    return &it->iterator;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_group_group_member_is(const Eo *eo_obj, Evas_Smart_Data *pd EINA_UNUSED, const Eo *sub_obj)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *sub = efl_data_scope_safe_get(sub_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   evas_object_async_block(obj);
+
+   if (!sub) return EINA_FALSE;
+   return (sub->smart.parent == eo_obj);
 }
 
 EAPI Eina_List*

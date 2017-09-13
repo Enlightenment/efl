@@ -52,8 +52,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          ]]
          legacy: evas_object_smart_calculate;
       }
-      /* FIXME: children -> members? */
-      group_children_iterate @const {
+      group_members_iterate @const {
          [[Returns an iterator over the children of this object, that are
            canvas objects.
 
@@ -61,25 +60,28 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            from both the $Efl.Object children list as well as the $Efl.Container
            content list.
          ]]
-         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free); [[Iterator to object children]]
+         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free);
+            [[Iterator to object children]]
          legacy: evas_object_smart_iterator_new;
       }
       group_member_add {
-         [[Set an Evas object as a member of a given smart object.
+         [[Set a canvas object as a member of a given group (or smart object).
 
            Members will automatically be stacked and layered together with the
            smart object. The various stacking functions will operate on
            members relative to the other members instead of the entire canvas,
            since they now live on an exclusive layer (see
-           evas_object_stack_above(), for more details).
+           @Efl.Gfx.Stack.stack_above(), for more details).
 
-           Any $smart_obj object's specific implementation of the
-           $member_add() smart function will take place too, naturally.
+           Subclasses inheriting from this one may override this function
+           to ensure the proper stacking of special objects, such as clippers,
+           event rectangles, etc...
 
            See also @.group_member_del.
+           See also @.group_member_is.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
+            @in sub_obj: own(Efl.Canvas.Object) @nonull; [[The member object.]]
          }
          legacy: null;
       }
@@ -90,18 +92,27 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            to any. The object will still be on the canvas, but no longer
            associated with whichever smart object it was associated with.
 
-           See also @.group_member_add for more details.
+           See also @.group_member_add.
+           See also @.group_member_is.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object; [[The member object.]]
+            @in sub_obj: Efl.Canvas.Object; [[The member object to remove.]]
          }
+         legacy: null;
+      }
+      group_member_is @const {
+         [[Finds out if a given object is a member of this group.]]
+         params {
+            @in sub_obj: const(Efl.Canvas.Object); [[A potential sub object.]]
+         }
+         return: bool; [[$true if $sub_obj is a member of this group.]]
          legacy: null;
       }
       @property group_clipper @protected {
          [[The internal clipper object used by this group.
 
-           This is the object clipping all the children objects. Do not
-           delete or otherwise modify this clipper!
+           This is the object clipping all the child objects. Do not delete
+           or otherwise modify this clipper!
          ]]
          values {
             clipper: const(Efl.Canvas.Object); [[A clipper rectangle.]]
