@@ -1,3 +1,5 @@
+import eina_types;
+
 interface Efl.Gfx.Fill {
    [[Efl graphics fill interface]]
    methods {
@@ -36,12 +38,8 @@ interface Efl.Gfx.Fill {
          set {}
          get {}
          values {
-            x: int; [[The x coordinate (from the top left corner of the bound
-                      image) to start drawing from.]]
-            y: int; [[The y coordinate (from the top left corner of the bound
-                      image) to start drawing from.]]
-            w: int; [[The width the bound image will be displayed at.]]
-            h: int; [[The height the bound image will be displayed at.]]
+            fill: Eina.Rectangle; [[The top-left corner to start drawing from
+               as well as the size at which the bound image will be displayed.]]
          }
       }
    }

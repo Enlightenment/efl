@@ -480,7 +480,6 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
    //Need to handle uvs only for image objects
    int iw, ih;
    int x, y, w, h;
-   int fill_x, fill_y, fill_w, fill_h;
 
    const char *type = evas_object_type_get(obj);
    if ((!type) || (strcmp(type, "image"))) return EINA_FALSE;
@@ -507,16 +506,19 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
         //Zooming image fill area.
         else
           {
-             efl_gfx_fill_get(obj, &fill_x, &fill_y, &fill_w, &fill_h);
+             Eina_Rectangle fill;
+
+             fill = efl_gfx_fill_get(obj);
              efl_gfx_size_get(obj, &w, &h);
 
-             double rate_x = (double) w / (double) fill_w;
-             double rate_y = (double) h / (double) fill_h;
-             double rate_x2 = (double) iw / (double) fill_w;
-             double rate_y2 = (double) ih / (double) fill_h;
+             EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_rectangle_is_valid(&fill), EINA_FALSE);
+             double rate_x = (double) w / (double) fill.w;
+             double rate_y = (double) h / (double) fill.h;
+             double rate_x2 = (double) iw / (double) fill.w;
+             double rate_y2 = (double) ih / (double) fill.h;
 
-             x = -(int)((double) fill_x * rate_x2);
-             y = -(int)((double) fill_y * rate_y2);
+             x = -(int)((double) fill.x * rate_x2);
+             y = -(int)((double) fill.y * rate_y2);
              w = (int)(((double) iw) * rate_x) + x;
              h = (int)(((double) ih) * rate_y) + y;
           }
