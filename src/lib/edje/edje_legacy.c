@@ -1101,7 +1101,16 @@ edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int
 EAPI Eina_Bool
 edje_object_parts_extends_calc(Edje_Object *obj, int *x, int *y, int *w, int *h)
 {
-   return efl_canvas_layout_calc_parts_extends(obj, x, y, w, h);
+   Eina_Rectangle r = { 0, };
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (ed) r = efl_canvas_layout_calc_parts_extends(obj);
+   if (x) *x = r.x;
+   if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
+   return (ed != NULL);
 }
 
 EAPI int

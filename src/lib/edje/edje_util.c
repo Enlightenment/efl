@@ -3171,21 +3171,12 @@ _edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj, Edje *_pd EINA_UNUSED
    edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
 }
 
-EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+EOLIAN Eina_Rectangle
+_edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0;
    unsigned short i;
-
-   if (!ed)
-     {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return EINA_FALSE;
-     }
 
    ed->calc_only = EINA_TRUE;
 
@@ -3214,12 +3205,7 @@ _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje
 
    ed->calc_only = EINA_FALSE;
 
-   if (x) *x = xx1;
-   if (y) *y = yy1;
-   if (w) *w = xx2 - xx1;
-   if (h) *h = yy2 - yy1;
-
-   return EINA_TRUE;
+   return (Eina_Rectangle) { xx1, yy1, xx2 - xx1, yy2 - yy1 };
 }
 
 EOLIAN void
