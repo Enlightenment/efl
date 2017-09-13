@@ -14,6 +14,18 @@ class Efl.Loop_User (Efl.Object)
             loop: Efl.Loop; [[Efl loop]]
          }
       }
+      @property future_scheduler {
+         [[Gets the Eina_Future_Scheduler for a given mainloop.
+
+           The Eina_Future_Scheduler returned by this function
+           should be used for creating promises (eina_promise_new())
+           so then can properly schedule resolve/reject events.
+         ]]
+         get {}
+         values {
+            scheduler: ptr(Eina.Future.Scheduler); [[The scheduler.]]
+         }
+      }
    }
    implements {
       Efl.Object.parent { set; }
