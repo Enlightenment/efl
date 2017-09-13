@@ -106,6 +106,23 @@ _efl_animation_group_efl_animation_final_state_keep_set(Eo *eo_obj,
    efl_animation_final_state_keep_set(efl_super(eo_obj, MY_CLASS), keep_final_state);
 }
 
+EOLIAN static void
+_efl_animation_group_efl_animation_interpolator_set(Eo *eo_obj,
+                                                    Efl_Animation_Group_Data *pd,
+                                                    Efl_Interpolator *interpolator)
+{
+   EFL_ANIMATION_GROUP_CHECK_OR_RETURN(eo_obj);
+
+   Eina_List *l;
+   Efl_Animation *anim;
+   EINA_LIST_FOREACH(pd->animations, l, anim)
+     {
+        efl_animation_interpolator_set(anim, interpolator);
+     }
+
+   efl_animation_interpolator_set(efl_super(eo_obj, MY_CLASS), interpolator);
+}
+
 EOLIAN static Efl_Object *
 _efl_animation_group_efl_object_constructor(Eo *eo_obj,
                                             Efl_Animation_Group_Data *pd)

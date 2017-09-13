@@ -74,6 +74,15 @@ class Efl.Animation (Efl.Object)
             delay_time: double; [[Delay time, in seconds, from when the animation starts until the animation is animated]]
          }
       }
+      @property interpolator {
+         set {
+         }
+         get {
+         }
+         values {
+            interpolator: Efl.Object; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
+         }
+      }
       is_deleted @protected {
          return: bool; [[$true if animation is deleted, $false otherwise.]]
       }

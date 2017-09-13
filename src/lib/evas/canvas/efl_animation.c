@@ -196,6 +196,25 @@ _efl_animation_start_delay_get(Eo *eo_obj,
    return pd->start_delay_time;
 }
 
+EOLIAN static void
+_efl_animation_interpolator_set(Eo *eo_obj,
+                                Efl_Animation_Data *pd,
+                                Efl_Interpolator *interpolator)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj);
+
+   pd->interpolator = interpolator;
+}
+
+EOLIAN static Efl_Interpolator *
+_efl_animation_interpolator_get(Eo *eo_obj,
+                                Efl_Animation_Data *pd)
+{
+   EFL_ANIMATION_CHECK_OR_RETURN(eo_obj, NULL);
+
+   return pd->interpolator;
+}
+
 EOLIAN static Efl_Object *
 _efl_animation_efl_object_constructor(Eo *eo_obj,
                                       Efl_Animation_Data *pd)
@@ -209,6 +228,8 @@ _efl_animation_efl_object_constructor(Eo *eo_obj,
    pd->start_delay_time = 0.0;
 
    pd->repeat_count = 0;
+
+   pd->interpolator = NULL;
 
    pd->is_deleted = EINA_FALSE;
    pd->keep_final_state = EINA_FALSE;

@@ -205,6 +205,9 @@ _efl_animation_rotate_efl_animation_object_create(Eo *eo_obj,
    int repeat_count = efl_animation_repeat_count_get(eo_obj);
    efl_animation_object_repeat_count_set(anim_obj, repeat_count);
 
+   Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
+   efl_animation_object_interpolator_set(anim_obj, interpolator);
+
    if (pd->use_rel_pivot)
      {
         efl_animation_object_rotate_set(anim_obj,

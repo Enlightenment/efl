@@ -170,6 +170,24 @@ _efl_animation_object_start_delay_get(Eo *eo_obj,
    return pd->start_delay_time;
 }
 
+EOLIAN static void
+_efl_animation_object_interpolator_set(Eo *eo_obj,
+                                       Efl_Animation_Object_Data *pd,
+                                       Efl_Interpolator *interpolator)
+{
+   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
+
+   pd->interpolator = interpolator;
+}
+
+EOLIAN static Efl_Interpolator *
+_efl_animation_object_interpolator_get(Eo *eo_obj,
+                                       Efl_Animation_Object_Data *pd)
+{
+   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, NULL);
+
+   return pd->interpolator;
+}
 
 EOLIAN static Eina_Bool
 _efl_animation_object_is_deleted(Eo *eo_obj,
@@ -327,6 +345,13 @@ _animator_cb(void *data)
         efl_animation_object_target_state_reset(eo_obj);
      }
 
+   //Apply interpolator
+   if (pd->interpolator)
+     {
+        pd->progress = efl_interpolator_interpolate(pd->interpolator,
+                                                    pd->progress);
+     }
+
    //Reset previous animation effect before applying animation effect
    /* FIXME: When the target state is saved, it may not be finished to calculate
     * target geometry.
@@ -479,6 +504,13 @@ _efl_animation_object_progress_set(Eo *eo_obj,
    if (!pd->is_direction_forward)
      pd->progress = 1.0 - pd->progress;
 
+   //Apply interpolator
+   if (pd->interpolator)
+     {
+        pd->progress = efl_interpolator_interpolate(pd->interpolator,
+                                                    pd->progress);
+     }
+
    Efl_Animation_Object_Running_Event_Info event_info;
    event_info.progress = progress;
 
@@ -607,6 +639,9 @@ EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_repeat_mode_get, Efl_Animation_Ob
 EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_repeat_count_set, EFL_FUNC_CALL(count), int count);
 EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_repeat_count_get, int, 0);
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_interpolator_set, EFL_FUNC_CALL(interpolator), Efl_Interpolator *interpolator);
+EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_interpolator_get, Efl_Interpolator *, NULL);
+
 #define EFL_ANIMATION_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_set, _efl_animation_object_target_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_get, _efl_animation_object_target_get), \
@@ -622,7 +657,9 @@ EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_repeat_count_get, int, 0);
    EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_mode_set, _efl_animation_object_repeat_mode_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_mode_get, _efl_animation_object_repeat_mode_get), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_count_set, _efl_animation_object_repeat_count_set), \
-   EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_count_get, _efl_animation_object_repeat_count_get)
+   EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_count_get, _efl_animation_object_repeat_count_get), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_set, _efl_animation_object_interpolator_set), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_get, _efl_animation_object_interpolator_get)
 
 EWAPI const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED =
    EFL_EVENT_DESCRIPTION("pre_started");

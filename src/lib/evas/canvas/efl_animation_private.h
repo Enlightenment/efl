@@ -1,6 +1,7 @@
 #define EFL_ANIMATION_PROTECTED
 
 #include "evas_common_private.h"
+#include <Ecore.h>
 
 #define MY_CLASS EFL_ANIMATION_CLASS
 #define MY_CLASS_NAME efl_class_name_get(MY_CLASS)
@@ -16,6 +17,8 @@ typedef struct _Efl_Animation_Data
 
    Efl_Animation_Repeat_Mode repeat_mode;
    int                       repeat_count;
+
+   Efl_Interpolator         *interpolator;
 
    Eina_Bool                 is_deleted : 1;
    Eina_Bool                 keep_final_state : 1;
