@@ -92,7 +92,16 @@ database_type_is_ownable(const Eolian_Type *tp, Eina_Bool term)
           return EINA_TRUE;
         const char *ct = eo_lexer_get_c_type(kwid);
         if (!ct)
-          return EINA_FALSE;
+          {
+             const Eolian_Typedecl *tpp = eolian_type_typedecl_get(tp);
+             if (!tpp)
+               return EINA_FALSE;
+             if (tpp->type == EOLIAN_TYPEDECL_FUNCTION_POINTER)
+               return EINA_TRUE;
+             if (tpp->type == EOLIAN_TYPEDECL_ALIAS)
+               return database_type_is_ownable(tpp->base_type, term);
+             return EINA_FALSE;
+          }
         return (ct[strlen(ct) - 1] == '*');
      }
    return _ownable_types[tp->type];
