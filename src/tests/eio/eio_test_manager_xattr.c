@@ -118,7 +118,7 @@ _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static Eina_Value
-_future_all_cb(const void *data,
+_future_all_cb(void *data,
                const Eina_Value array,
                const Eina_Future *dead EINA_UNUSED)
 {

@@ -51,16 +51,28 @@ _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
    ecore_main_loop_quit();
 }
 
-static void
-_open_done_cb(void *data, const Efl_Event *ev)
+static Eina_Value
+_open_done_cb(void *data,
+              const Eina_Value file,
+              const Eina_Future *dead EINA_UNUSED)
 {
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_Bool *opened = (Eina_Bool *)data;
-   Eina_File* file = eina_file_dup(success->value);
-   eina_file_close(file);
+   if (file.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
 
-   *opened = EINA_TRUE;
+        eina_value_get(&file, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+   if (file.type == EINA_VALUE_TYPE_FILE)
+     {
+        Eina_Bool *opened = (Eina_Bool *)data;
+
+        *opened = EINA_TRUE;
+     }
    ecore_main_loop_quit();
+
+   return file;
 }
 
 static void
@@ -221,7 +233,7 @@ START_TEST(efl_io_manager_test_open)
    Eina_Tmpstr *nested_dirname;
    Eina_Tmpstr *nested_filename;
    Efl_Io_Manager *job;
-   Efl_Future *f;
+   Eina_Future *f;
    Eina_Bool opened_file = EINA_FALSE;
    int ret;
 
@@ -241,7 +253,7 @@ START_TEST(efl_io_manager_test_open)
    job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
 
    f = efl_io_manager_open(job, nested_filename, EINA_FALSE);
-   efl_future_then(f, &_open_done_cb, &_error_cb, NULL, &opened_file);
+   eina_future_then(f, _open_done_cb, &opened_file);
    ecore_main_loop_begin();
 
    fail_if(!opened_file);

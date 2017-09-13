@@ -519,43 +519,43 @@ _efl_io_manager_xattr_get(Eo *obj,
 }
 
 static void
-_file_open_cb(void *data, Eio_File *handler, Eina_File *file)
+_future_file_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
 {
-   Efl_Promise *p = data;
+   Eina_Promise *p = data;
+   Eina_Value v = EINA_VALUE_EMPTY;
 
-   efl_event_callback_array_del(p, promise_handling(), handler);
-
-   efl_promise_value_set(p, eina_file_dup(file), EINA_FREE_CB(eina_file_close));
-
-   efl_del(p);
+   eina_value_setup(&v, EINA_VALUE_TYPE_FILE);
+   eina_value_set(&v, file);
+   eina_promise_resolve(p, v);
+   eina_value_flush(&v);
 }
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_open(Eo *obj,
                      Efl_Io_Manager_Data *pd EINA_UNUSED,
                      const char *path,
                      Eina_Bool shared)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = eio_file_open(path, shared,
-                     _file_open_cb,
-                     _file_error_cb,
+                     _future_file_open_cb,
+                     _future_file_error_cb,
                      p);
-
    if (!h) goto end;
+   eina_promise_data_set(p, h);
 
-   efl_event_callback_array_add(p, promise_handling(), h);
-   return efl_promise_future_get(p);
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 static Eina_Future *
