@@ -513,17 +513,6 @@ EAPI Eina_Bool eolian_all_eo_files_parse(void);
 EAPI Eina_Bool eolian_all_eot_files_parse(void);
 
 /*
- * @brief Validates the database, printing errors and warnings.
- *
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- *
- * Useful to catch type errors etc. early on.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_database_validate();
-
-/*
  * @brief Gets a class by its name
  *
  * @param[in] unit the unit to look in
@@ -2444,7 +2433,7 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  * @brief Get the thing that a reference token references.
  *
  * Returns EOLIAN_DOC_REF_INVALID on failure (when not ref token or
- * invalid ref, but invalid refs don't happen when database is validated).
+ * invalid ref, but invalid refs don't happen when database is valid).
  *
  * When the reference is a class, alias, struct, enum or var, the first data arg
  * is filled. When it's a func, the first data is class and second data is

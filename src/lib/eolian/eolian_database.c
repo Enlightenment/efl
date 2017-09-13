@@ -723,6 +723,8 @@ eolian_file_parse(const char *filepath)
      return NULL;
    if (!_parse_deferred())
      return NULL;
+   if (!database_validate())
+     return NULL;
    return &unit_tmp;
 }
 
@@ -743,6 +745,10 @@ eolian_all_eot_files_parse()
      return EINA_FALSE;
 
    eina_hash_foreach(_tfilenames, _tfile_parse, &ret);
+
+   if (ret && !database_validate())
+     return EINA_FALSE;
+
    return ret;
 }
 
@@ -763,16 +769,11 @@ eolian_all_eo_files_parse()
      return EINA_FALSE;
 
    eina_hash_foreach(_filenames, _file_parse, &ret);
-   return ret;
-}
 
-EAPI Eina_Bool
-eolian_database_validate()
-{
-   if (_database_init_count <= 0)
+   if (ret && !database_validate())
      return EINA_FALSE;
 
-   return database_validate();
+   return ret;
 }
 
 EAPI Eina_Iterator *

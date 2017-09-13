@@ -495,12 +495,6 @@ main(int argc, char **argv)
         goto end;
      }
 
-   if (!eolian_database_validate())
-     {
-        fprintf(stderr, "eolian: failed validating database\n");
-        goto end;
-     }
-
    _fill_all_outs(outs, input);
 
    const char *eobn = _get_filename(input);
