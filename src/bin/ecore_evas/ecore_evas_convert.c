@@ -14,6 +14,8 @@
 
 #if defined(_WIN32) || defined(EXOTIC_NO_SIGNAL)
 # define NO_SIGNAL
+#else
+# include <signal.h>
 #endif
 
 #undef EINA_LOG_DOMAIN_DEFAULT

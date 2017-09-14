@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <signal.h>
 
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>

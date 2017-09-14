@@ -59,6 +59,7 @@
 # include <Evil.h>
 #endif
 
+#include "eina_alloca.h"
 #include "eina_debug.h"
 #include "eina_cpu.h"
 #include "eina_types.h"
