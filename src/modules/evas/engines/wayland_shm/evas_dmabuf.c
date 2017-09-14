@@ -85,19 +85,19 @@ static void _evas_dmabuf_surface_destroy(Surface *s);
 static Dmabuf_Buffer *_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h);
 static void _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b);
 
-drm_intel_bufmgr *(*sym_drm_intel_bufmgr_gem_init)(int fd, int batch_size) = NULL;
-int (*sym_drm_intel_bo_unmap)(drm_intel_bo *bo) = NULL;
-int (*sym_drm_intel_bo_map)(drm_intel_bo *bo) = NULL;
-drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
-void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
-int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd) = NULL;
-void (*sym_drm_intel_bufmgr_destroy)(drm_intel_bufmgr *) = NULL;
+static drm_intel_bufmgr *(*sym_drm_intel_bufmgr_gem_init)(int fd, int batch_size) = NULL;
+static int (*sym_drm_intel_bo_unmap)(drm_intel_bo *bo) = NULL;
+static int (*sym_drm_intel_bo_map)(drm_intel_bo *bo) = NULL;
+static drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, const char *name, int x, int y, int cpp, uint32_t *tile, unsigned long *pitch, unsigned long flags) = NULL;
+static void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
+static int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd) = NULL;
+static void (*sym_drm_intel_bufmgr_destroy)(drm_intel_bufmgr *) = NULL;
 
-struct exynos_device *(*sym_exynos_device_create)(int fd) = NULL;
-struct exynos_bo *(*sym_exynos_bo_create)(struct exynos_device *dev, size_t size, uint32_t flags) = NULL;
-void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
-void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
-void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
+static struct exynos_device *(*sym_exynos_device_create)(int fd) = NULL;
+static struct exynos_bo *(*sym_exynos_bo_create)(struct exynos_device *dev, size_t size, uint32_t flags) = NULL;
+static void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
+static void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
+static void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
