@@ -729,6 +729,7 @@ struct _Ecore_IMF_Context_Class
    Ecore_IMF_Input_Panel_Keyboard_Mode (*keyboard_mode_get) (Ecore_IMF_Context *ctx); /**< Return the current keyboard mode of the input panel */
    void (*prediction_hint_set) (Ecore_IMF_Context *ctx, const char *prediction_hint); /**< Set the prediction hint to the input panel */
    void (*mime_type_accept_set) (Ecore_IMF_Context *ctx, const char *mime_type); /**< Set the MIME type to the input panel */
+   void (*input_panel_position_set) (Ecore_IMF_Context *ctx, int x, int y); /**< Set the position of the input panel */
 };
 
 /**
@@ -1933,6 +1934,19 @@ EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_I
  * @endcode
  */
 EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type);
+
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Sets the x,y coordinates of the input panel.
+ * This API can be used in floating mode.
+ *
+ * @since 1.21.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param x top-left x coordinate of the input panel
+ * @param y top-left y coordinate of the input panel
+ */
+EAPI void                         ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y);
 
 /* The following entry points must be exported by each input method module
  */
