@@ -664,23 +664,27 @@ _impl_ecore_exe_event_data_get(Ecore_Exe      *obj,
                   if (count != 0) e->size = last;
                   if (flags & ECORE_EXE_PIPE_READ)
                     {
+                       exe->pipe_read.data_size = i - last;
                        exe->pipe_read.data_buf = malloc(exe->pipe_read.data_size);
                        if (exe->pipe_read.data_buf)
+                         memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
+                       else
                          {
-                            exe->pipe_read.data_size = i - last;
-                            memcpy(exe->pipe_read.data_buf, c, exe->pipe_read.data_size);
+                            exe->pipe_read.data_size = 0;
+                            ERR("Out of memory in allocating exe pipe data");
                          }
-                       else ERR("Out of memory in allocating exe pipe data");
                     }
                   else
                     {
+                       exe->pipe_error.data_size = i - last;
                        exe->pipe_error.data_buf = malloc(exe->pipe_error.data_size);
                        if (exe->pipe_error.data_buf)
+                         memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
+                       else
                          {
-                            exe->pipe_error.data_size = i - last;
-                            memcpy(exe->pipe_error.data_buf, c, exe->pipe_error.data_size);
+                            exe->pipe_error.data_size = 0;
+                            ERR("Out of memory in allocating exe pipe data");
                          }
-                       else ERR("Out of memory in allocating exe pipe data");
                     }
                }
              if (count == 0) /* No lines to send, cancel the event. */
