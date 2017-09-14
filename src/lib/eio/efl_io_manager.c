@@ -89,22 +89,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(promise_handling,
                            { EFL_EVENT_DEL, _forced_shutdown });
 
 static void
-_file_done_data_cb(void *data, Eio_File *handler, const char *attr_data, unsigned int size)
-{
-   Efl_Promise *p = data;
-   Eina_Binbuf *buf;
-
-   efl_event_callback_array_del(p, promise_handling(), handler);
-
-   buf = eina_binbuf_new();
-   eina_binbuf_append_length(buf, (const unsigned char*) attr_data, size);
-
-   efl_promise_value_set(p, buf, EINA_FREE_CB(eina_binbuf_free));
-
-   efl_del(p);
-}
-
-static void
 _file_error_cb(void *data, Eio_File *handler, int error)
 {
    Efl_Promise *p = data;
@@ -443,6 +427,23 @@ _future_file_done_cb(void *data, Eio_File *handler)
 }
 
 static void
+_future_file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char *attr_data, unsigned int size)
+{
+   Eina_Promise *p = data;
+   Eina_Value_Blob blob = { EINA_VALUE_BLOB_OPERATIONS_MALLOC, NULL, size };
+   Eina_Value v = EINA_VALUE_EMPTY;
+   char *tmp;
+
+   tmp = malloc(size);
+   memcpy(tmp, attr_data, size);
+   blob.memory = tmp;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_BLOB);
+   eina_value_set(&v, &blob);
+   eina_promise_resolve(p, v);
+}
+
+static void
 _future_file_error_cb(void *data,
                       Eio_File *handler EINA_UNUSED,
                       int error)
@@ -491,31 +492,32 @@ _efl_io_manager_xattr_set(Eo *obj,
    return future;
 }
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_xattr_get(Eo *obj,
                           Efl_Io_Manager_Data *pd EINA_UNUSED,
                           const char *path,
                           const char *attribute)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = eio_file_xattr_get(path, attribute,
-                          _file_done_data_cb,
-                          _file_error_cb,
+                          _future_file_done_data_cb,
+                          _future_file_error_cb,
                           p);
    if (!h) goto end;
+   eina_promise_data_set(p, h);
 
-   efl_event_callback_array_add(p, promise_handling(), h);
-   return efl_promise_future_get(p);
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 static void

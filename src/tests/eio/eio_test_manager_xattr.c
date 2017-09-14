@@ -90,23 +90,6 @@ _done_get_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static void
-_done_set_cb(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_Accessor *ac = success->value;
-   int *placeholder;
-   int *num_of_attr = data;
-   int i = 0;
-
-   EINA_ACCESSOR_FOREACH(ac, i, placeholder)
-     *num_of_attr += 1;
-
-   fail_if(*num_of_attr != total_attributes);
-
-   ecore_main_loop_quit();
-}
-
-static void
 _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Future_Event_Failure *failure = ev->info;
@@ -146,7 +129,7 @@ _future_all_cb(void *data,
           }
      }
 
-   fail_if(*num_of_attr != len);
+   fail_if(*num_of_attr != (int) len);
    return array;
 }
 
