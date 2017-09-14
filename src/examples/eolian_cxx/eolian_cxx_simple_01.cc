@@ -19,14 +19,16 @@ main()
    eina_log_domain_level_set("colourable", EINA_LOG_LEVEL_DBG);
    eina_log_domain_level_set("colourablesquare", EINA_LOG_LEVEL_DBG);
 
+   using efl::eo::instantiate;
+
    int r, g, b;
    ::ns::Colourable obj1
-       ([&] { obj1.rgb_24bits_constructor(0x123456); });
+       (instantiate, [&] { obj1.rgb_24bits_constructor(0x123456); });
    obj1.colour_set(0xc0ffee);
    obj1.composite_colour_get(r, g, b);
 
    ::ns::ColourableSquare obj2
-       ([&] { obj2.size_constructor(10); });
+       (instantiate, [&] { obj2.size_constructor(10); });
    obj2.composite_colour_set(r, g, b);
    obj2.size_set(11);
    assert(obj1.colour_get() == obj2.colour_get());
