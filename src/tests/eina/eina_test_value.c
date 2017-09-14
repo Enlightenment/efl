@@ -799,6 +799,70 @@ START_TEST(eina_value_test_to_string)
 }
 END_TEST
 
+START_TEST(eina_value_test_to_binbuf)
+{
+   Eina_Value *value;
+   char c, in_c;
+   const char *str, *in_str;
+   Eina_Binbuf *bin;
+   const char *out;
+   char buf[256];
+
+   eina_init();
+
+   value = eina_value_new(EINA_VALUE_TYPE_CHAR);
+   fail_unless(value != NULL);
+   in_c = 'x';
+   fail_unless(eina_value_pset(value, &in_c));
+   fail_unless(eina_value_pget(value, &c));
+   fail_unless(c == 'x');
+   snprintf(buf, sizeof(buf), "%c", in_c);
+   bin = eina_value_to_binbuf(value);
+   out = (char *) eina_binbuf_string_get(bin);
+   fail_unless(out != NULL);
+   ck_assert_str_eq(buf, out);
+   eina_binbuf_free(bin);
+   eina_value_flush(value);
+
+   fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_STRING));
+   in_str = "hello world!";
+   fail_unless(eina_value_pset(value, &in_str));
+   fail_unless(eina_value_pget(value, &str));
+   ck_assert_str_eq(str, "hello world!");
+   bin = eina_value_to_binbuf(value);
+   out = (char *) eina_binbuf_string_get(bin);
+   fail_unless(out != NULL);
+   ck_assert_str_eq(in_str, out);
+   eina_binbuf_free(bin);
+
+   in_str = "eina-value";
+   fail_unless(eina_value_pset(value, &in_str));
+   fail_unless(eina_value_pget(value, &str));
+   ck_assert_str_eq(str, "eina-value");
+   bin = eina_value_to_binbuf(value);
+   out = (char *) eina_binbuf_string_get(bin);
+   fail_unless(out != NULL);
+   ck_assert_str_eq(in_str, out);
+   eina_binbuf_free(bin);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_STRING));
+
+   in_str = "profusion";
+   fail_unless(eina_value_pset(value, &in_str));
+   fail_unless(eina_value_pget(value, &str));
+   ck_assert_str_eq(str, "profusion");
+   bin = eina_value_to_binbuf(value);
+   out = (char *) eina_binbuf_string_get(bin);
+   fail_unless(out != NULL);
+   ck_assert_str_eq(in_str, out);
+   eina_binbuf_free(bin);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_value_test_convert_char)
 {
    Eina_Value *value, conv;
@@ -2948,6 +3012,7 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_pvariant);
    tcase_add_test(tc, eina_value_test_compare);
    tcase_add_test(tc, eina_value_test_to_string);
+   tcase_add_test(tc, eina_value_test_to_binbuf);
    tcase_add_test(tc, eina_value_test_convert_char);
    tcase_add_test(tc, eina_value_test_convert_uchar);
    tcase_add_test(tc, eina_value_test_convert_short);
