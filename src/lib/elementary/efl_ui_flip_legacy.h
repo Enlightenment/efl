@@ -86,7 +86,7 @@ EAPI double elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Fli
  *
  * @ingroup Efl_Ui_Flip
  */
-EOAPI void elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
+EAPI void elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
 
 /**
  * @brief Get the enabled state of that flip direction.
@@ -97,7 +97,7 @@ EOAPI void elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip
  *
  * @ingroup Efl_Ui_Flip
  */
-EOAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir);
+EAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Add a new flip to the parent
