@@ -3538,10 +3538,10 @@ _elm_gengrid_elm_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Objec
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_gengrid_elm_widget_focus_region_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    if (!sd->focused_item) goto end;
    if (elm_object_focus_region_show_mode_get(obj) == ELM_FOCUS_REGION_SHOW_ITEM)
@@ -5482,11 +5482,11 @@ elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth)
    return EO_OBJ(it);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_gengrid_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 

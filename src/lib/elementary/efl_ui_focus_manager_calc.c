@@ -206,7 +206,7 @@ node_item_free(Node *item)
 //CALCULATING STUFF
 
 static inline int
-_distance(Eina_Rectangle node, Eina_Rectangle op, Dimension dim)
+_distance(Eina_Rect node, Eina_Rect op, Dimension dim)
 {
     int min, max, point;
     int v1, v2;
@@ -214,13 +214,13 @@ _distance(Eina_Rectangle node, Eina_Rectangle op, Dimension dim)
     if (dim == DIMENSION_X)
       {
          min = op.x;
-         max = eina_rectangle_max_x(&op);
+         max = eina_rectangle_max_x(&op.rect);
          point = node.x + node.w/2;
       }
     else
       {
          min = op.y;
-         max = eina_rectangle_max_y(&op);
+         max = eina_rectangle_max_y(&op.rect);
          point = node.y + node.h/2;
       }
 
@@ -236,7 +236,7 @@ _distance(Eina_Rectangle node, Eina_Rectangle op, Dimension dim)
 static inline void
 _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
-   Eina_Rectangle rect = EINA_RECTANGLE_INIT;
+   Eina_Rect rect;
    Efl_Ui_Focus_Object *op;
    int dim_min, dim_max;
    Eina_Iterator *nodes;
@@ -262,7 +262,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
 
    EINA_ITERATOR_FOREACH(nodes, n)
      {
-        Eina_Rectangle op_rect = EINA_RECTANGLE_INIT;
+        Eina_Rect op_rect;
         int min, max;
 
         op = n->focusable;
@@ -275,12 +275,12 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
         if (dim == DIMENSION_X)
           {
              min = op_rect.y;
-             max = eina_rectangle_max_y(&op_rect);
+             max = eina_rectangle_max_y(&op_rect.rect);
           }
         else
           {
              min = op_rect.x;
-             max = eina_rectangle_max_x(&op_rect);
+             max = eina_rectangle_max_x(&op_rect.rect);
           }
 
 
@@ -290,7 +290,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
          */
         if (!((min <= max && max <= dim_min && dim_min <= dim_max) ||
               (dim_min <= dim_max && dim_max <= min && min <= max)) &&
-              !eina_rectangle_intersection(&op_rect, &rect))
+              !eina_rectangle_intersection(&op_rect.rect, &rect.rect))
           {
              //this thing hits horizontal
              int tmp_dis;
@@ -959,7 +959,7 @@ _no_history_element(Eina_Hash *node_hash)
 static void
 _get_middle(Evas_Object *obj, Eina_Vector2 *elem)
 {
-   Eina_Rectangle geom;
+   Eina_Rect geom;
 
    geom = efl_ui_focus_object_focus_geometry_get(obj);
    elem->x = geom.x + geom.w/2;

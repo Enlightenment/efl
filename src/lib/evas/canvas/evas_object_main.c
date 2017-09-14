@@ -1156,7 +1156,7 @@ end:
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rectangle r)
+_efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)
 {
    efl_gfx_position_set(obj, r.x, r.y);
    efl_gfx_size_set(obj, r.w, r.h);
@@ -1168,7 +1168,7 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   efl_gfx_geometry_set(eo_obj, (Eina_Rectangle) { x, y, w, h });
+   efl_gfx_geometry_set(eo_obj, EINA_RECT(x, y, w, h));
 }
 
 EAPI void
@@ -1316,16 +1316,16 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    evas_object_inform_call_resize(eo_obj);
 }
 
-EOLIAN Eina_Rectangle
+EOLIAN Eina_Rect
 _efl_canvas_object_efl_gfx_geometry_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   return obj->cur->geometry;
+   return (Eina_Rect) obj->cur->geometry;
 }
 
 EAPI void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   Eina_Rectangle r = efl_gfx_geometry_get(eo_obj);
+   Eina_Rect r = efl_gfx_geometry_get(eo_obj);
    if (x) *x = r.x;
    if (y) *y = r.y;
    if (w) *w = r.w;

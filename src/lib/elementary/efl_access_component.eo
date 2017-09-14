@@ -54,7 +54,7 @@ mixin Efl.Access.Component ()
                                    screen origin, otherwise relative to canvas]]
          }
          values {
-            rect: Eina.Rectangle; [[The geometry.]]
+            rect: Eina.Rect; [[The geometry.]]
          }
       }
       @property position @protected {

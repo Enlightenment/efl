@@ -27,7 +27,7 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
          return: bool; [[$true on success, $false otherwise]]
 	 params {
             @in op: Efl.Gfx.Render_Op; [[Render operation]]
-	    @in clips: array<ptr(Eina.Rectangle)>; [[Array of @Eina.Rectangle clip]]
+	    @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
 	 }
       }
    }

@@ -13,7 +13,7 @@ mixin Efl.Ui.Focus.Object
 
             }
             values {
-                rect : Eina.Rectangle; [[The geometry to use.]]
+                rect : Eina.Rect; [[The geometry to use.]]
             }
         }
         @property focus {

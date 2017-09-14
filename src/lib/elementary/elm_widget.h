@@ -312,8 +312,6 @@ typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool f
 typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
-
-typedef void (*region_hook_func_type)(void *data, Evas_Object *obj, Eina_Rectangle region);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "elm_widget.eo.h"
@@ -396,7 +394,7 @@ typedef struct _Elm_Widget_Smart_Data
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
     * parenting tree */
-   Eina_Rectangle                show_region;
+   Eina_Rect                     show_region;
 
    /* scrolling hold/freeze hints. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -697,9 +695,9 @@ EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
 EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_show_region_set(Evas_Object *obj, Eina_Rectangle sr, Eina_Bool forceshow);
-EAPI Eina_Rectangle   elm_widget_show_region_get(const Evas_Object *obj);
-EAPI Eina_Rectangle   elm_widget_focus_region_get(const Evas_Object *obj);
+EAPI void             elm_widget_show_region_set(Evas_Object *obj, Eina_Rect sr, Eina_Bool forceshow);
+EAPI Eina_Rect        elm_widget_show_region_get(const Evas_Object *obj);
+EAPI Eina_Rect        elm_widget_focus_region_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_region_show(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
 EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
@@ -741,7 +739,7 @@ EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *t
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
-EAPI Eina_Rectangle   elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
+EAPI Eina_Rect        elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);

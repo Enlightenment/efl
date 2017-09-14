@@ -38,7 +38,7 @@ interface Efl.Gfx.Fill {
          set {}
          get {}
          values {
-            fill: Eina.Rectangle; [[The top-left corner to start drawing from
+            fill: Eina.Rect; [[The top-left corner to start drawing from
                as well as the size at which the bound image will be displayed.]]
          }
       }

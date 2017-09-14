@@ -55,8 +55,8 @@ _ector_renderer_gl_gradient_radial_ector_renderer_gl_fill(Eo *obj, Ector_Rendere
 
 static void
 _ector_renderer_gl_gradient_radial_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
-                                                                          Ector_Renderer_GL_Gradient_Radial_Data *pd,
-                                                                          Eina_Rectangle *r)
+                                                             Ector_Renderer_GL_Gradient_Radial_Data *pd,
+                                                             Eina_Rect *r)
 {
    EINA_RECTANGLE_SET(r,
                       pd->base->origin.x + pd->radial->radial.x - pd->radial->radius,

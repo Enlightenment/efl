@@ -1507,7 +1507,7 @@ _text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int offset;
-   Eina_Rectangle rect;
+   Eina_Rect rect;
    AtspiCoordType type;
    Eina_Bool screen_coords, res;
    Eldbus_Message *ret;
@@ -1690,7 +1690,7 @@ _text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    int start, end;
-   Eina_Rectangle rect;
+   Eina_Rect rect;
    Eina_Bool screen_coords, res;
    AtspiCoordType type;
    Eldbus_Message *ret;
@@ -1722,7 +1722,7 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
-   Eina_Rectangle rect;
+   Eina_Rect rect;
    Eina_Bool screen_coords;
    AtspiCoordType type;
    Elm_Atspi_Text_Clip_Type xclip, yclip;
@@ -3351,7 +3351,7 @@ _component_get_extents(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    AtspiCoordType coord_type;
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_struct;
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_COMPONENT_MIXIN, msg);
 
@@ -3523,8 +3523,7 @@ _component_set_extends(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
 
    Eina_Bool type = coord_type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
-   Eina_Rectangle r = (Eina_Rectangle) { x, y, w, h };
-   result = efl_access_component_extents_set(obj, type, r);
+   result = efl_access_component_extents_set(obj, type, EINA_RECT(x, y, w, h));
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);

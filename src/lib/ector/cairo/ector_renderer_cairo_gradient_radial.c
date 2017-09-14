@@ -120,8 +120,8 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_fill(Eo *obj,
 
 static void
 _ector_renderer_cairo_gradient_radial_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
-                                                                             Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
-                                                                             Eina_Rectangle *r)
+                                                                Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
+                                                                Eina_Rect *r)
 {
    Ector_Renderer_Gradient_Radial_Data *gld;
    Ector_Renderer_Cairo_Data *bd;

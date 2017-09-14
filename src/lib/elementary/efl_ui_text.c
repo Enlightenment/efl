@@ -1041,7 +1041,6 @@ _cursor_geometry_recalc(Evas_Object *obj)
    Evas_Coord x, y, w, h;
    Evas_Coord x2, y2, w2, h2;
    Evas_Coord cx, cy, cw, ch;
-   Eina_Rectangle sr;
 
    cx = cy = cw = ch = 0;
    x2 = y2 = w2 = h2 = 0;
@@ -1063,8 +1062,7 @@ _cursor_geometry_recalc(Evas_Object *obj)
          &x2, &y2, &w2, &h2);
    cx = cx + x - x2;
    cy = cy + y - y2;
-   sr = (Eina_Rectangle) { cx, cy, cw, ch };
-   elm_widget_show_region_set(obj, sr, EINA_FALSE);
+   elm_widget_show_region_set(obj, EINA_RECT(cx, cy, cw, ch), EINA_FALSE);
 }
 
 EOLIAN static void
@@ -1207,11 +1205,11 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    efl_text_cursor_geometry_get(obj,
          efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
@@ -1237,7 +1235,7 @@ _efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *
 }
 
 static void
-_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 {
    elm_interface_scrollable_content_region_show(obj, r.x, r.y, r.w, r.h);
 }
@@ -4247,7 +4245,7 @@ _efl_ui_text_elm_interface_atspi_text_selection_add(Eo *obj, Efl_Ui_Text_Data *p
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_elm_interface_atspi_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rectangle rect EINA_UNUSED, Elm_Atspi_Text_Clip_Type xclip EINA_UNUSED, Elm_Atspi_Text_Clip_Type yclip EINA_UNUSED)
+_efl_ui_text_elm_interface_atspi_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Elm_Atspi_Text_Clip_Type xclip EINA_UNUSED, Elm_Atspi_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
@@ -4286,7 +4284,7 @@ _efl_ui_text_elm_interface_atspi_text_offset_at_point_get(Eo *obj, Efl_Ui_Text_D
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_interface_atspi_text_character_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rectangle *rect)
+_efl_ui_text_elm_interface_atspi_text_character_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur;
    int ret;
@@ -4317,7 +4315,7 @@ _efl_ui_text_elm_interface_atspi_text_character_extents_get(Eo *obj, Efl_Ui_Text
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_interface_atspi_text_range_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rectangle *rect)
+_efl_ui_text_elm_interface_atspi_text_range_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    int ret;

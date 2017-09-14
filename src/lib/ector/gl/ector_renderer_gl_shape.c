@@ -32,7 +32,7 @@ _ector_renderer_gl_shape_path_changed(void *data, const Efl_Event *event EINA_UN
 static Eina_Bool
 _ector_renderer_gl_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_GL_Shape_Data *pd)
 {
-   Eina_Rectangle bounding_box;
+   Eina_Rect bounding_box;
    Eina_Bool r;
 
    if (pd->vertex) return EINA_TRUE;
@@ -105,7 +105,7 @@ _ector_renderer_gl_shape_ector_renderer_gl_fill(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_gl_shape_ector_renderer_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rectangle *r)
+_ector_renderer_gl_shape_ector_renderer_bounds_get(Eo *obj, Ector_Renderer_GL_Shape_Data *pd, Eina_Rect *r)
 {
    efl_gfx_path_bounds_get(obj, r);
 

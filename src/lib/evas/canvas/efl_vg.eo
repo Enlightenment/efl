@@ -90,7 +90,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
 
            @since 1.14]]
          params {
-            @out r: Eina.Rectangle; [[Bounding box to be returned.]]
+            @out r: Eina.Rect; [[Bounding box to be returned.]]
          }
       }
       interpolate {

@@ -164,7 +164,7 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
 {
    double x1, x2, y1, y2;
    double line_len, len, sina, cosa;
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    x1 = line.start.x;
    y1 = line.start.y;

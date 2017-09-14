@@ -1122,14 +1122,14 @@ EOLIAN static void
 _elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Evas_Coord ox, oy;
-   Eina_Rectangle r;
+   Eina_Rect r;
    Evas_Object *o;
 
    o = elm_widget_parent_get(obj);
    if (!o) return;
 
    r = elm_widget_focus_region_get(obj);
-   if (eina_rectangle_is_empty(&r)) return;
+   if (eina_rectangle_is_empty(&r.rect)) return;
 
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
 
@@ -3467,14 +3467,14 @@ _elm_widget_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 }
 
 EOLIAN static void
-_elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rectangle sr, Eina_Bool forceshow)
+_elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rect sr, Eina_Bool forceshow)
 {
    Evas_Object *parent_obj, *child_obj;
    Evas_Coord px, py, cx, cy, nx = 0, ny = 0;
 
    evas_smart_objects_calculate(evas_object_evas_get(obj));
 
-   if (!forceshow && eina_rectangle_equal(&sr, &sd->show_region)) return;
+   if (!forceshow && eina_rectangle_equal(&sr.rect, &sd->show_region.rect)) return;
 
    sd->show_region = sr;
    if (sd->on_show_region)
@@ -3510,10 +3510,10 @@ _elm_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rectangle s
    while (parent_obj);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_widget_show_region_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   return sd->show_region;
+   return (Eina_Rect) sd->show_region;
 }
 
 /**
@@ -3534,10 +3534,10 @@ _elm_widget_show_region_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
  *
  * @ingroup Widget
  */
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
    efl_gfx_size_get(obj, &r.w, &r.h);
    return r;
 }
@@ -4516,12 +4516,12 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
   if (th != *h) *h = th;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    Evas_Coord ox = 0, oy = 0, ow = 0, oh = 0;
    Evas_Object *scroller = (Evas_Object *)obj;
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    evas_object_geometry_get(obj, &r.x, &r.y, &r.w, &r.h);
    elm_widget_focus_highlight_focus_part_geometry_get(sd->resize_obj, &r.x, &r.y, &r.w, &r.h);
@@ -6425,10 +6425,10 @@ _elm_widget_elm_interface_atspi_accessible_attributes_get(Eo *obj, Elm_Widget_Sm
    return ret;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_widget_item_efl_access_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
-   Eina_Rectangle r = { -1, -1, -1, -1 };
+   Eina_Rect r = EINA_RECT(-1, -1, -1, -1);
    int ee_x, ee_y;
 
    if (!sd->view) return r;
@@ -6448,7 +6448,7 @@ _elm_widget_item_efl_access_component_extents_get(Eo *obj EINA_UNUSED, Elm_Widge
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_item_efl_access_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, Eina_Rectangle r EINA_UNUSED)
+_elm_widget_item_efl_access_component_extents_set(Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords EINA_UNUSED, Eina_Rect r EINA_UNUSED)
 {
    return EINA_FALSE;
 }
@@ -6509,7 +6509,7 @@ _elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_
    return pd->focus.manager;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_widget_efl_ui_focus_object_focus_geometry_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return efl_gfx_geometry_get(obj);

@@ -64,7 +64,7 @@ mixin Efl.Gfx.Path
           @since 1.18
         ]]
         params {
-          @out r: Eina.Rectangle; [[Contain the bounding box of the currently set path]]
+          @out r: Eina.Rect; [[Contain the bounding box of the currently set path]]
         }
       }
       reset {

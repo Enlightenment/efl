@@ -133,7 +133,10 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
    if (tdcl && (eolian_typedecl_type_get(tdcl) == EOLIAN_TYPEDECL_STRUCT))
      {
         char *sn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tdcl));
-        eina_strbuf_append_printf(buf, "((%s){0})", sn);
+        if (eina_streq(sn, "Eina_Rect"))
+          eina_strbuf_append(buf, "(EINA_RECT_EMPTY())");
+        else
+          eina_strbuf_append_printf(buf, "((%s){0})", sn);
         free(sn);
         return;
      }

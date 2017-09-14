@@ -88,7 +88,7 @@ interface Efl.Canvas.Layout_Calc
            Note: On failure, this function will make all non-$null geometry
            pointers' pointed variables be set to zero.
          ]]
-         return: Eina.Rectangle; [[The calculated region.]]
+         return: Eina.Rect; [[The calculated region.]]
       }
       calc_freeze {
          [[Freezes the layout object.

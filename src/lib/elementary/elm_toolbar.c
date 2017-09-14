@@ -2414,10 +2414,10 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
    _elm_access_activate_callback_set(ai, _access_activate_cb, NULL);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_toolbar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
 {
-   Eina_Rectangle rect;
+   Eina_Rect rect;
 
    evas_object_geometry_get(VIEW(pd), &rect.x, &rect.y, &rect.w, &rect.h);
 
@@ -3010,17 +3010,17 @@ _elm_toolbar_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *
    _access_obj_process(sd, _elm_toolbar_smart_focus_next_enable);
 }
 
-static Eina_Rectangle
+static Eina_Rect
 _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it)
 {
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    evas_object_geometry_get(sd->hit_rect, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
-   r = (Eina_Rectangle) { ix, iy, iw, ih };
+   r = EINA_RECT(ix, iy, iw, ih);
 
    if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
      {
@@ -3049,10 +3049,10 @@ _elm_toolbar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Toolbar_Item_Data *
    elm_wdg_item_focus_set(obj, focus);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_toolbar_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Toolbar_Data *sd)
 {
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    if (sd->focused_item)
      {

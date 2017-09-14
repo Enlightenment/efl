@@ -3061,7 +3061,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
 {
    Ecore_Evas *subee;
    Eina_List *l;
-   Efl_Event_Animator_Tick a = { { 0, 0, 0, 0 } };
+   Efl_Event_Animator_Tick a = { EINA_RECT_ZERO() };
 
    if (!viewport)
      {
@@ -3069,7 +3069,7 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
      }
    else
      {
-        a.update_area = *viewport;
+        a.update_area.rect = *viewport;
      }
 
    ecore_loop_time_set(loop_time);

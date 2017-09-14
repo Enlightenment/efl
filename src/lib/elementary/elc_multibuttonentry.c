@@ -1080,12 +1080,7 @@ _entry_resize_cb(void *data,
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
    if (elm_widget_focus_get(sd->parent))
-     {
-        Eina_Rectangle sr = {};
-
-        evas_object_geometry_get(sd->entry, &sr.x, &sr.y, &sr.w, &sr.h);
-        elm_widget_show_region_set(sd->entry, sr, EINA_TRUE);
-     }
+     elm_widget_show_region_set(sd->entry, efl_gfx_geometry_get(sd->entry), EINA_TRUE);
 }
 
 static void

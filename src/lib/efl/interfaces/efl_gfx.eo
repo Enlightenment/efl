@@ -46,7 +46,7 @@ interface Efl.Gfx {
       @property geometry {
          [[Rectangular geometry that combines both position and size.]]
          values {
-            rect: Eina.Rectangle; [[The X,Y position and W,H size, in pixels.]]
+            rect: Eina.Rect; [[The X,Y position and W,H size, in pixels.]]
          }
       }
       @property color {

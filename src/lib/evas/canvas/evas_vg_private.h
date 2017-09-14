@@ -15,7 +15,7 @@ struct _Evas_VG_Data
    void   *engine_data;
    Efl_VG *root;
 
-   Eina_Rectangle fill;
+   Eina_Rect fill;
 
    unsigned int width, height;
 

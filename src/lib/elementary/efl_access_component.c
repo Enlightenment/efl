@@ -13,7 +13,7 @@
 EOLIAN static void
 _efl_access_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int *x, int *y)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_access_component_extents_get(obj, type);
    if (x) *x = r.x;
@@ -23,7 +23,7 @@ _efl_access_component_position_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, E
 EOLIAN static Eina_Bool
 _efl_access_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int x, int y)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_access_component_extents_get(obj, type);
    r.x = x;
@@ -34,7 +34,7 @@ _efl_access_component_position_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, E
 EOLIAN static Eina_Bool
 _efl_access_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w, int h)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_access_component_extents_get(obj, EINA_FALSE);
    r.w = w;
@@ -45,7 +45,7 @@ _efl_access_component_size_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int w
 EOLIAN static void
 _efl_access_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *w, int *h)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_access_component_extents_get(obj, EINA_FALSE);
    if (w) *w = r.w;
@@ -55,10 +55,10 @@ _efl_access_component_size_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, int *
 EOLIAN static Eina_Bool
 _efl_access_component_contains(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Eina_Bool type, int x, int y)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_access_component_extents_get(obj, type);
-   return eina_rectangle_coords_inside(&r, x, y);
+   return eina_rectangle_coords_inside(&r.rect, x, y);
 }
 
 EOLIAN static double
@@ -96,10 +96,10 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
    return ret;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    r = efl_gfx_geometry_get(obj);
    if (screen_coords)
@@ -117,7 +117,7 @@ _efl_access_component_extents_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool scre
 }
 
 EOLIAN static Eina_Bool
-_efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, Eina_Rectangle r)
+_efl_access_component_extents_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, Eina_Rect r)
 {
    int wx, wy;
 

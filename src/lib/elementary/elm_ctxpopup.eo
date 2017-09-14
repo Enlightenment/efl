@@ -221,6 +221,6 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
    }
    events {
       dismissed; [[Called when context popup was dismissed]]
-      geometry,update: const(ptr(Eina.Rectangle)); [[Called when context popup geometry was updated]]
+      geometry,update: const(ptr(Eina.Rect)); [[Called when context popup geometry was updated]]
    }
 }

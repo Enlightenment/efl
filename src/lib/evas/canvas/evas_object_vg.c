@@ -418,12 +418,12 @@ _evas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
 }
 
 void
-_evas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd, Eina_Rectangle fill)
+_evas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd, Eina_Rect fill)
 {
    pd->fill = fill;
 }
 
-Eina_Rectangle
+Eina_Rect
 _evas_vg_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 {
    return pd->fill;
