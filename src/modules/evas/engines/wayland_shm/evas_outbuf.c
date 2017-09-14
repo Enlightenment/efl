@@ -646,7 +646,7 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
    if (!ob->priv.rect_count) return;
    wls = ecore_wl2_window_surface_get(ob->info->info.wl2_win);
    if (wls)
-     ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count, ob->hidden);
+     ob->surface->funcs.post(ob->surface, ob->priv.rects, ob->priv.rect_count);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;
 }

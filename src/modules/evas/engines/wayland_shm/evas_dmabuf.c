@@ -456,7 +456,7 @@ _fallback(Dmabuf_Surface *s, int w, int h)
    new_data = surf->funcs.data_get(surf, NULL, NULL);
    for (y = 0; y < h; y++)
      memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
-   surf->funcs.post(surf, NULL, 0, EINA_FALSE);
+   surf->funcs.post(surf, NULL, 0);
    _buffer_manager_unmap(b);
    b->mapping = NULL;
 
@@ -679,7 +679,7 @@ _evas_dmabuf_surface_assign(Surface *s)
 }
 
 static void
-_evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count, Eina_Bool hidden)
+_evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    struct wl_surface *wls;
    Dmabuf_Surface *surface;
@@ -711,12 +711,10 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count,
 
    win = s->info->info.wl2_win;
    wls = ecore_wl2_window_surface_get(win);
-   if (!hidden)
-     {
-        ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
-        _evas_surface_damage(wls, surface->compositor_version,
-                             b->w, b->h, rects, count);
-     }
+
+   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
+   _evas_surface_damage(wls, surface->compositor_version,
+                        b->w, b->h, rects, count);
 
    ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
 }
