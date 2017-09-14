@@ -1445,3 +1445,19 @@ ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_
    if (ctx->klass->mime_type_accept_set)
      ctx->klass->mime_type_accept_set(ctx, mime_type);
 }
+
+EAPI void
+ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_position_set");
+        return;
+     }
+
+   if (x < 0 || y < 0) return;
+
+   if (ctx->klass->input_panel_position_set)
+     ctx->klass->input_panel_position_set(ctx, x, y);
+}
