@@ -37,6 +37,7 @@
 #include "eina_lock.h"
 #include "eina_file.h"
 #include "eina_rectangle.h"
+#include "eina_binbuf.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -5570,6 +5571,34 @@ eina_value_to_string(const Eina_Value *value)
      return NULL;
 
    return tmp.value.ptr; /* steal value */
+}
+
+EAPI Eina_Binbuf *
+eina_value_to_binbuf(Eina_Value *value)
+{
+   Eina_Value tmp = EINA_VALUE_EMPTY;
+   Eina_Value_Blob out;
+   Eina_Binbuf *buf;
+
+   if (value->type != EINA_VALUE_TYPE_BLOB)
+     {
+        eina_value_setup(&tmp, EINA_VALUE_TYPE_BLOB);
+
+        if (!eina_value_convert(value, &tmp))
+          return NULL;
+
+        value = &tmp;
+     }
+
+   eina_value_get(value, &out);
+   if (!out.memory) return NULL;
+
+   buf = eina_binbuf_new();
+   eina_binbuf_append_length(buf, out.memory, out.size);
+
+   eina_value_flush(&tmp);
+
+   return buf;
 }
 
 EAPI Eina_Value *
