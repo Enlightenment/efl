@@ -32,6 +32,7 @@ typedef uint32_t Eina_Unicode;
 
 #include "eina_config.h"
 #include "eina_private.h"
+#include "eina_alloca.h"
 #include "eina_main.h"
 #include "eina_safety_checks.h"
 
