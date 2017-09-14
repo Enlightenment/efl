@@ -115,8 +115,7 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
 
    _evas_outbuf_reconfigure(re->generic.ob, w, h,
                             einfo->info.rotation, einfo->info.depth,
-                            einfo->info.destination_alpha, resize,
-                            einfo->info.hidden);
+                            einfo->info.destination_alpha, resize);
 
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
