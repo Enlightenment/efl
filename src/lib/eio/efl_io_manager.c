@@ -527,7 +527,6 @@ _future_file_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
    eina_value_setup(&v, EINA_VALUE_TYPE_FILE);
    eina_value_set(&v, file);
    eina_promise_resolve(p, v);
-   eina_value_flush(&v);
 }
 
 static Eina_Future *
