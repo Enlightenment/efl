@@ -5,6 +5,7 @@
 #include <stdarg.h>
 
 #include "eina_types.h"
+#include "eina_slice.h"
 
 /**
  * @addtogroup Eina_Binary_Buffer_Group Binary Buffer

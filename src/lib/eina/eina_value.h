@@ -27,6 +27,7 @@
 #include "eina_list.h"
 #include "eina_hash.h"
 #include "eina_rectangle.h"
+#include "eina_binbuf.h"
 
 /**
  * @page eina_value_example_01_page Eina_Value usage
@@ -1070,6 +1071,22 @@ static inline Eina_Bool eina_value_pget(const Eina_Value *value,
 EAPI Eina_Bool eina_value_convert(const Eina_Value *value,
                                   Eina_Value *convert) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Converts one value to Eina_Binbuf.
+ * @param value Source value object.
+ * @return @c NULL if it failed to get a memory content, a valid Eina_Binbuf otherwise.
+ *
+ * Converts one value to EINA_TYPE_VALUE_BLOB if necessary by calling
+ * @c eina_value_convert() function.
+ *
+ * @note You are responsible for destroying the Eina_Binbuf returned.
+ *
+ * @see eina_value_to_string()
+ * @see eina_value_convert()
+ *
+ * @since 1.20
+ */
+EAPI Eina_Binbuf *eina_value_to_binbuf(Eina_Value *value);
 
 /**
  * @brief Converts value to string.
@@ -1077,6 +1094,7 @@ EAPI Eina_Bool eina_value_convert(const Eina_Value *value,
  * @return newly allocated memory or @c NULL on failure.
  *
  * @see eina_value_convert()
+ * @see eina_value_to_binbuf()
  * @since 1.2
  */
 EAPI char *eina_value_to_string(const Eina_Value *value) EINA_ARG_NONNULL(1);
