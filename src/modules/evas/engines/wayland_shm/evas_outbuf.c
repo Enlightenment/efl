@@ -56,7 +56,6 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->rotation = info->info.rotation;
    ob->depth = info->info.depth;
    ob->priv.destination_alpha = info->info.destination_alpha;
-   ob->hidden = info->info.hidden;
    ob->ewd = info->info.wl2_display;
 
    /* default to triple buffer */
@@ -207,8 +206,6 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (ob->hidden) return;
-
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
    if (ob->priv.rect_count) free(ob->priv.rects);
@@ -346,7 +343,7 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 }
 
 void 
-_evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize, Eina_Bool hidden)
+_evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
 {
    Eina_Bool dirty;
 
@@ -358,8 +355,7 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if (!ob->dirty && (ob->w == w) && (ob->h == h) &&
        (ob->rotation == rot) && (ob->depth == depth) && 
-       (ob->priv.destination_alpha == alpha) &&
-       (ob->hidden == hidden))
+       (ob->priv.destination_alpha == alpha))
      return;
 
    dirty = ob->dirty;
@@ -370,7 +366,6 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
    ob->rotation = rot;
    ob->depth = depth;
    ob->priv.destination_alpha = alpha;
-   ob->hidden = hidden;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
@@ -391,8 +386,6 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
    Eina_Rectangle *rect;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if (ob->hidden) return NULL;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
    if ((w <= 0) || (h <= 0)) return NULL;
@@ -521,8 +514,6 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
 
    /* check for pending writes */
    if (!ob->priv.pending_writes) return;
-
-   if (ob->hidden) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
