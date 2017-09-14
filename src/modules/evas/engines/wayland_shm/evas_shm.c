@@ -192,23 +192,6 @@ _shm_pool_reset(Shm_Pool *pool)
    pool->used = 0;
 }
 
-/* static void  */
-/* _shm_frame_release(void *data, struct wl_callback *callback, uint32_t timestamp EINA_UNUSED) */
-/* { */
-/*    Shm_Surface *surf; */
-
-/*    LOGFN(__FILE__, __LINE__, __FUNCTION__); */
-
-/*    if (!(surf = data)) return; */
-
-/*    wl_callback_destroy(callback); */
-/* } */
-
-/* static const struct wl_callback_listener _shm_frame_listener =  */
-/* { */
-/*    _shm_frame_release */
-/* }; */
-
 static Shm_Data *
 _shm_data_create_from_pool(Shm_Pool *pool, int w, int h, Eina_Bool alpha)
 {
