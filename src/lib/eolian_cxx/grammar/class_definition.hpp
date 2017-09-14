@@ -73,7 +73,7 @@ struct class_definition_generator
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, ::efl::eo::concrete{nullptr}, _eo_class(), f);\n"
          << scope_tab << "}\n"
-         << scope_tab << "template <typename F> " << string << "(  ::efl::eo::instantiate_t, ::efl::eo::concrete parent, F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value>::type* = 0)\n"
+         << scope_tab << "template <typename T, typename F> " << string << "(  ::efl::eo::instantiate_t, T&& parent, F f, typename ::std::enable_if< ::efl::eolian::is_callable<F>::value && ::efl::eo::is_eolian_object<T>::value>::type* = 0)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, parent, _eo_class(), f);\n"
          << scope_tab << "}\n"

@@ -44,6 +44,17 @@ START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
     }
     );
 
+  nonamespace::Generic g2
+    (efl::eo::instantiate, g,
+    [&]
+    {
+      g.required_ctor_a(2);
+      g.required_ctor_b(4);
+      g.optional_ctor_a(3);
+      g.optional_ctor_b(5);
+    }
+    );
+  
   fail_if(2 != g.req_ctor_a_value_get());
   fail_if(3 != g.opt_ctor_a_value_get());
   fail_if(4 != g.req_ctor_b_value_get());
