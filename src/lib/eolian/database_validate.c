@@ -131,6 +131,18 @@ _validate_typedecl(Eolian_Typedecl *tp)
    return EINA_TRUE;
 }
 
+static const char * const eo_complex_frees[] =
+{
+   "eina_accessor_free", "eina_array_free", "eina_iterator_free",
+   "eina_hash_free", "eina_list_free",
+
+   "efl_del" /* future */
+};
+
+static const char *eo_obj_free = "efl_del";
+static const char *eo_str_free = "free";
+static const char *eo_strshare_free = "eina_stringshare_del";
+
 static Eina_Bool
 _validate_type(Eolian_Type *tp)
 {
@@ -146,7 +158,13 @@ _validate_type(Eolian_Type *tp)
      {
       case EOLIAN_TYPE_VOID:
       case EOLIAN_TYPE_UNDEFINED:
+        return EINA_TRUE;
       case EOLIAN_TYPE_COMPLEX:
+        if (!tp->freefunc)
+          {
+             tp->freefunc = eina_stringshare_add(eo_complex_frees[
+               eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
+          }
         return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
         {
@@ -154,7 +172,23 @@ _validate_type(Eolian_Type *tp)
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->full_name);
            if (id)
-             return eo_lexer_is_type_keyword(id);
+             {
+                if (!eo_lexer_is_type_keyword(id))
+                  return EINA_FALSE;
+                if (!tp->freefunc)
+                  switch (id)
+                    {
+                     case KW_string:
+                       tp->freefunc = eina_stringshare_add(eo_str_free);
+                       break;
+                     case KW_stringshare:
+                       tp->freefunc = eina_stringshare_add(eo_strshare_free);
+                       break;
+                     default:
+                       break;
+                    }
+                return EINA_TRUE;
+             }
            /* user defined */
            tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(tp);
            if (!tpp)
@@ -189,7 +223,7 @@ _validate_type(Eolian_Type *tp)
                 return _type_error(tp, buf);
              }
            if (!tp->freefunc)
-             tp->freefunc = eina_stringshare_add("efl_del");
+             tp->freefunc = eina_stringshare_add(eo_obj_free);
            return EINA_TRUE;
         }
       default:
