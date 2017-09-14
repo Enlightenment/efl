@@ -8,13 +8,13 @@
 Evas_Object *dt1, *dt2, *dt3, *dt4;
 
 static void
-_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    printf("Clock value is changed\n");
 }
 
 static void
-_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_bt_clicked(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    time_t t;
    struct tm new_time;
@@ -32,81 +32,74 @@ _bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUS
    efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_AMPM, EINA_TRUE);
    efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_SECOND, EINA_TRUE);
    efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_DAY, EINA_TRUE);
-
    efl_ui_clock_value_set(dt1, new_time);
-   elm_object_disabled_set(dt1, EINA_TRUE);
 
-   elm_object_disabled_set(obj, EINA_TRUE);
-   evas_object_del(dt2);
-   evas_object_del(dt3);
+   elm_object_disabled_set(dt1, EINA_TRUE);
+   elm_object_disabled_set(ev->object, EINA_TRUE);
+
+   efl_del(dt2);
+   efl_del(dt3);
    dt2 = dt3 = NULL;
 }
 
 void
 test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bt, *lb;
+   Evas_Object *win, *bx;
 
-   win = elm_win_util_standard_add("ui_clock", "ui_clock");
-   elm_win_autodel_set(win, EINA_TRUE);
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_text_set(efl_added, "Efl.Ui.Clock"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   elm_box_horizontal_set(bx, EINA_FALSE);
-   evas_object_show(bx);
-   evas_object_size_hint_min_set(bx, 360, 240);
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+                efl_content_set(win, efl_added),
+                efl_gfx_size_hint_min_set(efl_added, 360, 240));
 
-   dt1 = efl_add(EFL_UI_CLOCK_CLASS, bx);
-   evas_object_size_hint_weight_set(dt1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(dt1, EVAS_HINT_FILL, 0.5);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_HOUR, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_MINUTE, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_AMPM, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_SECOND, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_DAY, EINA_FALSE);
-   efl_ui_clock_pause_set(dt1, EINA_TRUE);
-   elm_box_pack_end(bx, dt1);
-   evas_object_smart_callback_add(dt1, "changed", _changed_cb, NULL);
+   dt1 = efl_add(EFL_UI_CLOCK_CLASS, bx,
+                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_HOUR, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MINUTE, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_AMPM, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_SECOND, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_DAY, EINA_FALSE),
+                 efl_ui_clock_pause_set(efl_added, EINA_TRUE),
+                 efl_event_callback_add(efl_added, EFL_UI_CLOCK_EVENT_CHANGED, _changed_cb, NULL),
+                 efl_pack(bx, efl_added));
 
-   dt2 = efl_add(EFL_UI_CLOCK_CLASS, bx);
-   evas_object_size_hint_weight_set(dt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(dt2, EVAS_HINT_FILL, 0.5);
-   efl_ui_clock_field_visible_set(dt2, EFL_UI_CLOCK_TYPE_YEAR, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt2, EFL_UI_CLOCK_TYPE_MONTH, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt2, EFL_UI_CLOCK_TYPE_DATE, EINA_FALSE);
-   efl_ui_clock_field_visible_set(dt1, EFL_UI_CLOCK_TYPE_SECOND, EINA_FALSE);
-   elm_box_pack_end(bx, dt2);
-   efl_ui_clock_pause_set(dt2, EINA_TRUE);
+   dt2 = efl_add(EFL_UI_CLOCK_CLASS, bx,
+                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_YEAR, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MONTH, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_DATE, EINA_FALSE),
+                 efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_SECOND, EINA_FALSE),
+                 efl_ui_clock_pause_set(efl_added, EINA_TRUE),
+                 efl_pack(bx, efl_added));
    elm_object_disabled_set(dt2, EINA_TRUE);
 
-   dt3 = efl_add(EFL_UI_CLOCK_CLASS, bx);
-   evas_object_size_hint_weight_set(dt3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(dt3, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx, dt3);
+   dt3 = efl_add(EFL_UI_CLOCK_CLASS, bx,
+                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_pack(bx, efl_added));
 
-   //editable
-   lb = efl_add(ELM_LABEL_CLASS, bx);
-   elm_object_text_set(lb,
-                       "<b>Editable Clock:</b>"
-                       );
-   evas_object_size_hint_weight_set(lb, 0.0, 0.0);
-   evas_object_size_hint_align_set(lb, 0, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(lb, 100, 25);
-   elm_box_pack_end(bx, lb);
+   efl_add(EFL_UI_TEXT_CLASS, bx,
+           efl_text_set(efl_added, "Editable Clock:"),
+           efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_size_hint_align_set(efl_added, 0, EVAS_HINT_FILL),
+           efl_gfx_size_hint_min_set(efl_added, 100, 25),
+           efl_pack(bx, efl_added));
 
-   dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx);
-   evas_object_size_hint_weight_set(dt4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(dt4, EVAS_HINT_FILL, 0.5);
-   efl_ui_clock_edit_mode_set(dt4, EINA_TRUE);
-   efl_ui_clock_pause_set(dt4, EINA_TRUE);
-   elm_box_pack_end(bx, dt4);
+   dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx,
+                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_ui_clock_edit_mode_set(efl_added, EINA_TRUE),
+                 efl_ui_clock_pause_set(efl_added, EINA_TRUE),
+                 efl_pack(bx, efl_added));
 
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Back to the future...");
-   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, NULL);
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
-   evas_object_show(win);
+   efl_add(EFL_UI_BUTTON_CLASS, win,
+           efl_text_set(efl_added, "Back to the future..."),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+           efl_pack(bx, efl_added));
 }
