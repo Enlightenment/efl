@@ -1218,7 +1218,7 @@ typedef struct _Efl_Object_Call_Cache
      goto __##Name##_op_create; /* yes a goto - see below */ \
    __##Name##_op_create_done: \
    if (!_efl_object_call_resolve((Eo *) Obj, #Name, &___call, &___cache, \
-                                 __FILE__, __LINE__)) return DefRet; \
+                                 __FILE__, __LINE__)) goto __##Name##_failed; \
    _func_ = (_Eo_##Name##_func) ___call.func;
 
 // yes this looks ugly with gotos BUT it moves rare "init" handling code
@@ -1229,20 +1229,22 @@ typedef struct _Efl_Object_Call_Cache
 // used instructions that are skipepd by and if so moving those away out
 // of the cacheline that was already fetched should yield better cache
 // hits.
-#define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet) \
+#define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet, ErrorCase) \
 __##Name##_op_create: \
    if (EINA_UNLIKELY(___cache.op != EFL_NOOP)) memset(&___cache, 0, sizeof(___cache)); \
    ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
-   if (___cache.op == EFL_NOOP) return DefRet; \
+   if (___cache.op == EFL_NOOP) goto __##Name##_failed; \
    ___cache.generation = _efl_object_init_generation; \
-   goto __##Name##_op_create_done;
-
+   goto __##Name##_op_create_done; \
+__##Name##_failed: \
+   ErrorCase \
+   return DefRet;
 #define _EFL_OBJECT_API_BEFORE_HOOK
 #define _EFL_OBJECT_API_AFTER_HOOK
 #define _EFL_OBJECT_API_CALL_HOOK(x) x
 
 // to define an EAPI function
-#define _EFL_OBJECT_FUNC_BODY(Name, ObjType, Ret, DefRet) \
+#define _EFL_OBJECT_FUNC_BODY(Name, ObjType, Ret, DefRet, ErrorCase) \
   Ret \
   Name(ObjType obj) \
   { \
@@ -1254,10 +1256,10 @@ __##Name##_op_create: \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return _r; \
-     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet); \
+     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet, ErrorCase); \
   }
 
-#define _EFL_OBJECT_VOID_FUNC_BODY(Name, ObjType) \
+#define _EFL_OBJECT_VOID_FUNC_BODY(Name, ObjType, ErrorCase) \
   void \
   Name(ObjType obj) \
   { \
@@ -1268,10 +1270,10 @@ __##Name##_op_create: \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return; \
-     EFL_FUNC_COMMON_OP_END(obj, Name, ); \
+     EFL_FUNC_COMMON_OP_END(obj, Name, , ErrorCase); \
   }
 
-#define _EFL_OBJECT_FUNC_BODYV(Name, ObjType, Ret, DefRet, Arguments, ...) \
+#define _EFL_OBJECT_FUNC_BODYV(Name, ObjType, Ret, DefRet, ErrorCase, Arguments, ...) \
   Ret \
   Name(ObjType obj, __VA_ARGS__) \
   { \
@@ -1283,10 +1285,10 @@ __##Name##_op_create: \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return _r; \
-     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet); \
+     EFL_FUNC_COMMON_OP_END(obj, Name, DefRet, ErrorCase); \
   }
 
-#define _EFL_OBJECT_VOID_FUNC_BODYV(Name, ObjType, Arguments, ...) \
+#define _EFL_OBJECT_VOID_FUNC_BODYV(Name, ObjType, ErrorCase, Arguments, ...) \
   void \
   Name(ObjType obj, __VA_ARGS__) \
   { \
@@ -1297,18 +1299,31 @@ __##Name##_op_create: \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return; \
-     EFL_FUNC_COMMON_OP_END(obj, Name, ); \
+     EFL_FUNC_COMMON_OP_END(obj, Name, , ErrorCase); \
   }
 
-#define EFL_FUNC_BODY(Name, Ret, DefRet) _EFL_OBJECT_FUNC_BODY(Name, Eo *, Ret, DefRet)
-#define EFL_VOID_FUNC_BODY(Name) _EFL_OBJECT_VOID_FUNC_BODY(Name, Eo *)
-#define EFL_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, Eo *, Ret, DefRet, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
-#define EFL_VOID_FUNC_BODYV(Name, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, Eo *, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_FUNC_BODY(Name, Ret, DefRet) _EFL_OBJECT_FUNC_BODY(Name, Eo *, Ret, DefRet, )
+#define EFL_VOID_FUNC_BODY(Name) _EFL_OBJECT_VOID_FUNC_BODY(Name, Eo *, )
+#define EFL_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, Eo *, Ret, DefRet, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_VOID_FUNC_BODYV(Name, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, Eo *, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
 
-#define EFL_FUNC_BODY_CONST(Name, Ret, DefRet) _EFL_OBJECT_FUNC_BODY(Name, const Eo *, Ret, DefRet)
-#define EFL_VOID_FUNC_BODY_CONST(Name) _EFL_OBJECT_VOID_FUNC_BODY(Name, const Eo *)
-#define EFL_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, const Eo *, Ret, DefRet, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
-#define EFL_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, const Eo *, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_FUNC_BODY_CONST(Name, Ret, DefRet) _EFL_OBJECT_FUNC_BODY(Name, const Eo *, Ret, DefRet, )
+#define EFL_VOID_FUNC_BODY_CONST(Name) _EFL_OBJECT_VOID_FUNC_BODY(Name, const Eo *, )
+#define EFL_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, const Eo *, Ret, DefRet, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, const Eo *, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+
+// the following macros are also taking a FallbackCall the call you specify there will be called once the call cannot be redirected to a object,
+// which means eo will be the deepest scope this call will ever get.
+
+#define EFL_FUNC_BODY_FALLBACK(Name, Ret, DefRet, FallbackCall) _EFL_OBJECT_FUNC_BODY(Name, Eo *, Ret, DefRet, FallbackCall)
+#define EFL_VOID_FUNC_BODY_FALLBACK(Name, FallbackCall) _EFL_OBJECT_VOID_FUNC_BODY(Name, Eo *, FallbackCall)
+#define EFL_FUNC_BODYV_FALLBACK(Name, Ret, DefRet, FallbackCall, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, Eo *, Ret, DefRet, FallbackCall, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_VOID_FUNC_BODYV_FALLBACK(Name, FallbackCall, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, Eo *, FallbackCall, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+
+#define EFL_FUNC_BODY_CONST_FALLBACK(Name, Ret, DefRet, FallbackCall) _EFL_OBJECT_FUNC_BODY(Name, const Eo *, Ret, DefRet, FallbackCall)
+#define EFL_VOID_FUNC_BODY_CONST_FALLBACK(Name, FallbackCall) _EFL_OBJECT_VOID_FUNC_BODY(Name, const Eo *, FallbackCall)
+#define EFL_FUNC_BODYV_CONST_FALLBACK(Name, Ret, DefRet, FallbackCall, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, const Eo *, Ret, DefRet, FallbackCall, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
+#define EFL_VOID_FUNC_BODYV_CONST_FALLBACK(Name, FallbackCall, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, const Eo *, FallbackCall, EFL_FUNC_CALL(Arguments), __VA_ARGS__)
 
 #ifndef _WIN32
 # define _EFL_OBJECT_OP_API_ENTRY(a) (void*)a
