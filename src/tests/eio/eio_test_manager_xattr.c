@@ -70,26 +70,6 @@ _done_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_done_get_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_Accessor *ac = success->value;
-   int i = 0;
-   Eina_Binbuf *buf;
-
-   EINA_ACCESSOR_FOREACH(ac, i, buf)
-     {
-        fail_if(!buf);
-        fail_if(strcmp((const char*) eina_binbuf_string_get(buf),
-                       attr_data[i]) != 0);
-     }
-
-   fail_if(i != total_attributes);
-
-   ecore_main_loop_quit();
-}
-
-static void
 _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Future_Event_Failure *failure = ev->info;
@@ -101,12 +81,43 @@ _error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static Eina_Value
+_future_done_cb(void *data EINA_UNUSED,
+                const Eina_Value array,
+                const Eina_Future *dead EINA_UNUSED)
+{
+   Eina_Error err;
+   unsigned int i, len;
+   Eina_Value v = EINA_VALUE_EMPTY;
+   Eina_Binbuf *buf;
+
+   if (array.type == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_get(&array, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+     {
+        buf = eina_value_to_binbuf(&v);
+        fail_if(!buf);
+        fail_if(strcmp((const char*) eina_binbuf_string_get(buf),
+                       attr_data[i]) != 0);
+     }
+
+   fail_if((int) i != total_attributes);
+
+   ecore_main_loop_quit();
+   return array;
+}
+
+static Eina_Value
 _future_all_cb(void *data,
                const Eina_Value array,
                const Eina_Future *dead EINA_UNUSED)
 {
    Eina_Error err;
    unsigned int i, len;
+   Eina_Value v = EINA_VALUE_EMPTY;
    int *num_of_attr = (int *)data;
 
    if (array.type == EINA_VALUE_TYPE_ERROR)
@@ -115,12 +126,8 @@ _future_all_cb(void *data,
         fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
         abort();
      }
-   len = eina_value_array_count(&array);
-   for (i = 0; i < len; i++)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
      {
-        Eina_Value v;
-
-        eina_value_array_get(&array, i, &v);
         if (v.type == EINA_VALUE_TYPE_ERROR)
           {
              eina_value_get(&v, &err);
@@ -185,8 +192,8 @@ START_TEST(eio_test_job_xattr_set)
         futures[i] = efl_io_manager_xattr_get(job, test_file_path, attribute[i]);
      }
 
-   efl_future_then(efl_future_iterator_all(eina_carray_iterator_new((void**)futures)),
-                   _done_get_cb, _error_cb, NULL, &num_of_attr);
+   eina_future_then(eina_future_all_array(futures),
+                   _future_done_cb, &num_of_attr);
 
    ecore_main_loop_begin();
 
