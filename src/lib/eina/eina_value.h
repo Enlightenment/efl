@@ -1780,6 +1780,52 @@ static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
                                                    Eina_Value *dst) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * @def EINA_VALUE_ARRAY_FOREACH
+ * @brief Definition for the macro to iterate over an array contained in an Eina_Value.
+ *
+ * @param array The list to iterate over.
+ * @param length Contain the length of the array
+ * @param it Contain the current position walked over
+ * @param value Contain the value at the current position.
+ *
+ * This macro iterates over @p array from the first element to
+ * the last. @p value is the data related to the current element.
+ *
+ * It can be used like in the following example:
+ *
+ * @code
+ * Eina_Value array;
+ * Eina_Error err;
+ * unsigned int i, len;
+ * Eina_Value v = EINA_VALUE_EMPTY;
+ *
+ * // array is already filled,
+ * // its elements are unknown,
+ * // EINA_VALUE_ARRAY_FOREACH will be used to check if there is no error
+ *
+ *
+ * EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+ *   {
+ *      if (v.type == EINA_VALUE_TYPE_ERROR)
+ *        {
+ *           eina_value_get(&v, &err);
+ *           fprintf(stderr, "Something has gone wrong: %s at index: %i\n", eina_error_msg_get(err), i);
+ *           abort();
+ *        }
+ *   }
+ * @endcode
+ *
+ * @warning @p array and v must be a pointer to an Eina_Value
+ */
+#define EINA_VALUE_ARRAY_FOREACH(Array, Length, It, Value) \
+  for (Length = eina_value_array_count(Array),             \
+         It = 0,                                           \
+         eina_value_array_get(Array, It, Value);           \
+       It < Length;                                        \
+       It++,                                               \
+         eina_value_array_get(Array, It, Value))
+
+/**
  * @}
  */
 
