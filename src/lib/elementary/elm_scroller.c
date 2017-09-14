@@ -536,7 +536,7 @@ _elm_scroller_elm_widget_focus_direction(Eo *obj, Elm_Scroller_Data *sd, const E
 }
 
 static void
-_show_region_hook(void *data, Evas_Object *content_obj EINA_UNUSED, Eina_Rectangle r)
+_show_region_hook(void *data, Evas_Object *content_obj EINA_UNUSED, Eina_Rect r)
 {
    elm_interface_scrollable_content_region_show(data, r.x, r.y, r.w, r.h);
 }

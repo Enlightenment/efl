@@ -178,7 +178,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
              @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
              @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
-         return: iterator<Eina.Rectangle> @owned; [[
+         return: iterator<Eina.Rect> @owned; [[
             Iterator on all geoemtries of the given range
          ]]
       }
@@ -196,7 +196,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
              @in cur1: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
              @in cur2: ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
-         return: iterator<Eina.Rectangle> @owned; [[
+         return: iterator<Eina.Rect> @owned; [[
             Iterator on all simple geometries of the given range
          ]]
       }

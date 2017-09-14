@@ -207,9 +207,7 @@ _efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
 }
 
 static void
-_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED,
-                          Efl_Gfx_Path_Data *pd,
-                          Eina_Rectangle *r)
+_efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
 {
    double minx, miny, maxx, maxy;
    unsigned int i;

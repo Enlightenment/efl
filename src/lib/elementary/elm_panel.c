@@ -1107,10 +1107,10 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
    _panel_toggle(NULL, obj, NULL, NULL);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_panel_elm_widget_focus_region_get(Eo *obj, Elm_Panel_Data *sd)
 {
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    elm_interface_scrollable_content_pos_get(obj, &r.x, &r.y);
    evas_object_geometry_get(obj, NULL, NULL, &r.w, &r.h);

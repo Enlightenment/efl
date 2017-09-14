@@ -41,8 +41,8 @@ _ector_renderer_gl_gradient_linear_ector_renderer_draw(Eo *obj, Ector_Renderer_G
 
 static void
 _ector_renderer_gl_gradient_linear_ector_renderer_bounds_get(Eo *obj EINA_UNUSED,
-                                                                          Ector_Renderer_GL_Gradient_Linear_Data *pd,
-                                                                          Eina_Rectangle *r)
+                                                             Ector_Renderer_GL_Gradient_Linear_Data *pd,
+                                                             Eina_Rect *r)
 {
    EINA_RECTANGLE_SET(r,
                       pd->base->origin.x + pd->linear->start.x,

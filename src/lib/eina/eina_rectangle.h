@@ -43,6 +43,22 @@
 #define EINA_RECTANGLE_FORMAT "dx%d - %dx%d"
 #define EINA_RECTANGLE_ARGS(r) (r)->x, (r)->y, (r)->w, (r)->h
 
+#define EINA_RECT(x, y, w, h) ((Eina_Rect) { { x, y, w, h } })
+#define EINA_RECT_ZERO() { EINA_RECTANGLE_INIT }
+#define EINA_RECT_EMPTY() ((Eina_Rect) EINA_RECT_ZERO())
+
+/** @brief A 2D position in pixels coordinates */
+typedef struct _Eina_Position2D
+{
+   int x, y;
+} Eina_Position2D;
+
+/** @brief A 2D size in pixels coordinates */
+typedef struct _Eina_Size2D
+{
+   int w, h;
+} Eina_Size2D;
+
 /**
  * @typedef Eina_Rectangle
  * Simple rectangle structure.
@@ -54,6 +70,18 @@ typedef struct _Eina_Rectangle
    int w; /**< width of rectangle */
    int h; /**< height of rectangle */
 } Eina_Rectangle;
+
+typedef union _Eina_Rect
+{
+   Eina_Rectangle rect;
+   struct {
+      Eina_Position2D pos;
+      Eina_Size2D size;
+   };
+   struct {
+      int x, y, w, h;
+   };
+} Eina_Rect;
 
 /**
  * @typedef Eina_Rectangle_Pool
@@ -482,6 +510,8 @@ EAPI void                 eina_rectangle_pool_release(Eina_Rectangle *rect) EINA
       (Rectangle)->w = W;			  \
       (Rectangle)->h = H;			  \
     }
+
+#define EINA_RECT_SET(r, x, y, w, h) do { EINA_RECTANGLE_SET((&r), x, y, w, h) } while (0)
 
 
 /**

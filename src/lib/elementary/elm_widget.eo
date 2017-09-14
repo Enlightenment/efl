@@ -4,7 +4,7 @@ function Efl.Ui.Scrollable_On_Show_Region {
    [[Function pointer for on show region hook]]
    params {
       @in obj: Efl.Canvas.Object; [[Canvas object]]
-      @in region: Eina.Rectangle; [[Showed region]]
+      @in region: Eina.Rect; [[Showed region]]
    }
 };
 
@@ -435,14 +435,14 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
               unchanged.
             ]]
             values {
-               region: Eina.Rectangle; [[The region of interest.]]
+               region: Eina.Rect; [[The region of interest.]]
                force: bool; [[Set to $true to force show even if unchanged.]]
             }
          }
          get {
             [[Returns the current region of interest.]]
             values {
-               region: Eina.Rectangle; [[The region of interest.]]
+               region: Eina.Rect; [[The region of interest.]]
             }
          }
       }
@@ -484,7 +484,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          get {
          }
          values {
-            region: Eina.Rectangle;
+            region: Eina.Rect;
                [[The relative region to show. If width or height is <= 0 it
                  will be ignored, and no action will be taken.]]
          }
@@ -512,7 +512,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             [[This is a read-only property.]]
          }
          values {
-            region: Eina.Rectangle; [[The rectangle area.]]
+            region: Eina.Rect; [[The rectangle area.]]
          }
       }
       @property focus_highlight_enabled {

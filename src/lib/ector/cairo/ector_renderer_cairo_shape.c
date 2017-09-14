@@ -233,7 +233,7 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_fill(Eo *obj EINA_UNUSED,
 static void
 _ector_renderer_cairo_shape_ector_renderer_bounds_get(Eo *obj,
                                                       Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
-                                                      Eina_Rectangle *r)
+                                                      Eina_Rect *r)
 {
    Ector_Renderer_Cairo_Data *bd;
 

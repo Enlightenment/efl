@@ -1101,7 +1101,7 @@ edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int
 EAPI Eina_Bool
 edje_object_parts_extends_calc(Edje_Object *obj, int *x, int *y, int *w, int *h)
 {
-   Eina_Rectangle r = { 0, };
+   Eina_Rect r = EINA_RECT_ZERO();
    Edje *ed;
 
    ed = _edje_fetch(obj);

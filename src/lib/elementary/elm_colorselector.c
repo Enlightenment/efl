@@ -2258,22 +2258,18 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
      }
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_colorselector_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
-   Eina_Rectangle r = {};
-
    if (sd->focused_item && (sd->focused == ELM_COLORSELECTOR_PALETTE))
      {
        ELM_COLOR_ITEM_DATA_GET(sd->focused_item, focus_it);
-       evas_object_geometry_get(VIEW(focus_it), &r.x, &r.y, &r.w, &r.h);
+       return efl_gfx_geometry_get(VIEW(focus_it));
      }
    else if(sd->focused == ELM_COLORSELECTOR_COMPONENTS)
-     evas_object_geometry_get(sd->cb_data[sd->sel_color_type]->colorbar, &r.x, &r.y, &r.w, &r.h);
-   else
-     evas_object_geometry_get(obj, &r.x, &r.y, &r.w, &r.h);
+     return efl_gfx_geometry_get(sd->cb_data[sd->sel_color_type]->colorbar);
 
-   return r;
+   return efl_gfx_geometry_get(obj);
 }
 
 EOLIAN static void

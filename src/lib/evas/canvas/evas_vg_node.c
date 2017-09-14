@@ -194,17 +194,17 @@ _efl_vg_efl_gfx_size_get(Eo *obj,
                                    Efl_VG_Data *pd EINA_UNUSED,
                                    int *w, int *h)
 {
-   Eina_Rectangle r = { 0, 0, 0, 0 };
+   Eina_Rect r;
 
    efl_vg_bounds_get(obj, &r);
    if (w) *w = r.w;
    if (h) *h = r.h;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
-   Eina_Rectangle r = { 0, };
+   Eina_Rect r = EINA_RECT_ZERO();
    efl_gfx_position_get(obj, &r.x, &r.y);
    efl_gfx_size_get(obj, &r.w, &r.h);
    return r;
@@ -522,10 +522,10 @@ _efl_vg_root_parent_get(Eo *obj)
 static void
 _efl_vg_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 {
-   Eina_Rectangle bounds;
+   Eina_Rect bounds;
 
    efl_vg_bounds_get(root, &bounds);
-   if (!eina_rectangles_intersect(&bounds, r)) return ;
+   if (!eina_rectangles_intersect(&bounds.rect, r)) return ;
 
    eina_array_push(a, root);
 
@@ -555,7 +555,7 @@ _efl_vg_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
 static Efl_Gfx_Stack *
 _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
    Eina_Array a;
    Eo *current;
    Eo *below = NULL;
@@ -566,7 +566,7 @@ _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
-   _efl_vg_object_at(obj, &a, &r);
+   _efl_vg_object_at(obj, &a, &r.rect);
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)
@@ -585,7 +585,7 @@ _efl_vg_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 static Efl_Gfx_Stack *
 _efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
    Eina_Array a;
    Eo *current;
    Eo *above = NULL;
@@ -596,7 +596,7 @@ _efl_vg_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
-   _efl_vg_object_at(obj, &a, &r);
+   _efl_vg_object_at(obj, &a, &r.rect);
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)

@@ -100,17 +100,17 @@ _efl_canvas_layout_part_efl_object_finalize(Eo *obj, Efl_Canvas_Layout_Part_Data
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN Eina_Rectangle
+EOLIAN Eina_Rect
 _efl_canvas_layout_part_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp = pd->rp;
-   Eina_Rectangle r = { 0, };
+   Eina_Rect r = EINA_RECT_ZERO();
 
    PROXY_CALL_BEGIN(pd);
    _edje_recalc_do(pd->ed);
    if (!rp) RETURN_VAL(r);
 
-   RETURN_VAL(rp->rect);
+   RETURN_VAL((Eina_Rect) rp->rect);
 }
 
 EOLIAN static void

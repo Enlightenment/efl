@@ -1,10 +1,22 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
-struct @extern Eina.Rectangle {
-    [[Eina Rectangle]]
-    x: int; [[X coordinate of the rectangle]]
-    y: int; [[Y coordinate of the rectangle]]
-    w: int; [[Width of the rectangle]]
-    h: int; [[Height of the rectangle]]
+struct @extern Eina.Rect {
+    [[A rectangle in pixel dimensions.]]
+    x: int; [[X coordinate of the rectangle, from the top-left corner.]]
+    y: int; [[Y coordinate of the rectangle, from the top-left corner.]]
+    w: int; [[Width of the rectangle in pixels.]]
+    h: int; [[Height of the rectangle in pixels.]]
+}
+
+struct @extern Eina.Position2D {
+   [[A 2D location in pixels.]]
+   x: int; [[X position in pixels, from the top-left corner.]]
+   y: int; [[Y position in pixels, from the top-left corner.]]
+}
+
+struct @extern Eina.Size2D {
+   [[A 2D size in pixels.]]
+   w: int; [[X position in pixels, from the top-left corner.]]
+   h: int; [[Y position in pixels, from the top-left corner.]]
 }
 
 struct @extern Eina.File; [[Eina file data structure]]

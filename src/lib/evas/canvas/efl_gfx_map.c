@@ -78,7 +78,7 @@ struct _Gfx_Map_Pivot
 
    Evas_Object_Protected_Data *map_obj;
    Eo             *eo_obj; // strong or weak ref?
-   Eina_Rectangle  geometry;
+   Eina_Rect       geometry;
    Eina_Bool       event_cbs;
    Eina_Bool       is_evas;
    Eina_Bool       is_canvas;

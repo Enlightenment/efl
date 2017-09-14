@@ -2,7 +2,7 @@
 
 #define Q(o,_x,_y,_w,_h) \
   do {\
-   Eina_Rectangle rect = EINA_RECTANGLE_INIT; \
+   Eina_Rect rect; \
    rect.x = _x; \
    rect.y = _y; \
    rect.w = _w; \
@@ -58,7 +58,7 @@ elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
 //Test class implementation
 
 typedef struct {
-    Eina_Rectangle rect;
+    Eina_Rect rect;
     Eina_Bool focus;
 } Focus_Test_Data;
 
@@ -68,7 +68,7 @@ _focus_test_efl_object_constructor(Eo *obj, Focus_Test_Data *pd)
    Eo *eo;
 
    eo = efl_constructor(efl_super(obj, FOCUS_TEST_CLASS));
-   eina_rectangle_coords_from(&pd->rect, 0, 0, 0, 0);
+   eina_rectangle_coords_from(&pd->rect.rect, 0, 0, 0, 0);
    return eo;
 }
 
@@ -79,19 +79,19 @@ _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Boo
    printf("Object %p now focused\n", obj);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _focus_test_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
 
 EOLIAN static void
-_focus_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rectangle rect)
+_focus_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
 {
    pd->rect = rect;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;

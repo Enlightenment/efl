@@ -3616,7 +3616,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
           }
      }
 
-   efl_gfx_fill_set(ep->object, p3->type.common->fill);
+   efl_gfx_fill_set(ep->object, (Eina_Rect) p3->type.common->fill);
    efl_image_smooth_scale_set(ep->object, p3->smooth);
    evas_object_image_source_visible_set(ep->object, chosen_desc->proxy.source_visible);
    evas_object_image_source_clip_set(ep->object, chosen_desc->proxy.source_clip);
@@ -3656,7 +3656,7 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
           set->entry->border.scale_by : p3->type.common->spec.image.border_scale_by;
      }
 
-   efl_gfx_fill_set(ep->object, p3->type.common->fill);
+   efl_gfx_fill_set(ep->object, (Eina_Rect) p3->type.common->fill);
    efl_image_smooth_scale_set(ep->object, p3->smooth);
    if (chosen_desc->image.border.scale)
      {

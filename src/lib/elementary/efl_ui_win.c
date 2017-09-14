@@ -1037,7 +1037,7 @@ static void
 _elm_win_focus_highlight_anim_setup(Efl_Ui_Win_Data *sd,
                                     Evas_Object *obj)
 {
-   Eina_Rectangle rt, rp;
+   Eina_Rect rt, rp;
    Edje_Message_Int_Set *m;
    Evas_Object *target = sd->focus_highlight.cur.target;
 
@@ -1045,7 +1045,7 @@ _elm_win_focus_highlight_anim_setup(Efl_Ui_Win_Data *sd,
    rt = elm_widget_focus_highlight_geometry_get(target);
    efl_gfx_geometry_set(obj, rt);
 
-   if (eina_rectangle_equal(&rp, &rt)) return;
+   if (eina_rectangle_equal(&rp.rect, &rt.rect)) return;
 
    if (!_elm_config->focus_highlight_clip_disable)
      evas_object_clip_unset(obj);
@@ -6713,10 +6713,10 @@ _efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd
    return name;
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _efl_ui_win_efl_access_component_extents_get(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
    int ee_x, ee_y;
 
    r = efl_gfx_geometry_get(obj);

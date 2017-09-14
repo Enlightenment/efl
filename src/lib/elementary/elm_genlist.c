@@ -3465,7 +3465,7 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 /* FIXME: take off later. maybe this show region coords belong in the
  * interface (new api functions, set/get)? */
 static void
-_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 {
    ELM_GENLIST_DATA_GET_OR_RETURN(obj, sd);
 
@@ -8446,11 +8446,11 @@ elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
    return EO_OBJ(it);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_genlist_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Genlist_Data *sd)
 {
    Evas_Coord ox, oy, oh, ow, item_x = 0, item_y = 0, item_w = 0, item_h = 0;
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 

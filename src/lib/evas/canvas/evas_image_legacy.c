@@ -90,7 +90,7 @@ evas_object_image_fill_get(const Evas_Object *obj,
                            Evas_Coord *x, Evas_Coord *y,
                            Evas_Coord *w, Evas_Coord *h)
 {
-   Eina_Rectangle r;
+   Eina_Rect r;
 
    EVAS_IMAGE_API(obj);
    r = efl_gfx_fill_get(obj);

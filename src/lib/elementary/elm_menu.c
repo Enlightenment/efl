@@ -184,7 +184,6 @@ _sizing_eval(Evas_Object *obj)
    Elm_Object_Item *eo_item;
    Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh;
    Elm_Widget_Smart_Data *hover;
-   Eina_Rectangle r;
 
    ELM_MENU_DATA_GET(obj, sd);
 
@@ -211,8 +210,7 @@ _sizing_eval(Evas_Object *obj)
    if (y_p + h_p + bh > y2 + h2) y_p -= y_p + h_p + bh - (y2 + h2);
    if (y_p < y2) y_p = y2;
 
-   r = (Eina_Rectangle) { x_p, y_p, bw, h_p };
-   efl_gfx_geometry_set(sd->location, r);
+   efl_gfx_geometry_set(sd->location, EINA_RECT(x_p, y_p, bw, h_p));
    evas_object_size_hint_min_set(sd->location, bw, h_p);
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);

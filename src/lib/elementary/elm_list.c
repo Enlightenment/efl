@@ -1025,7 +1025,7 @@ _size_hints_changed_cb(void *data,
 /* FIXME: take off later. maybe this show region coords belong in the
  * interface (new api functions, set/get)? */
 static void
-_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rectangle r)
+_show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 {
    elm_interface_scrollable_content_region_set(obj, r.x, r.y, r.w, r.h);
 }
@@ -3086,7 +3086,7 @@ _elm_list_focus_on_selection_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
    return sd->focus_on_selection_enabled;
 }
 
-static Eina_Rectangle
+static Eina_Rect
 _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it)
 {
    Evas_Coord ix, iy, iw, ih, vx, vy, vw, vh;
@@ -3106,13 +3106,13 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it)
    if ((ix + iw) > (vx + vw))
      iw = (vx + vw - ix);
 
-   return (Eina_Rectangle) { ix, iy, iw, ih };
+   return EINA_RECT(ix, iy, iw, ih);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
-   Eina_Rectangle r = {};
+   Eina_Rect r = {};
 
    if (sd->focused_item)
      {

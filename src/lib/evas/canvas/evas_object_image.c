@@ -668,7 +668,7 @@ _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Rectangle fill)
+_efl_canvas_image_internal_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Rect fill)
 {
    // Should (0,0,0,0) reset the filled flag to true?
    o->filled = EINA_FALSE;
@@ -676,10 +676,10 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
    _evas_image_fill_set(eo_obj, o, fill.x, fill.y, fill.w, fill.h);
 }
 
-EOLIAN static Eina_Rectangle
+EOLIAN static Eina_Rect
 _efl_canvas_image_internal_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return o->cur->fill;
+   return (Eina_Rect) o->cur->fill;
 }
 
 EOLIAN static void

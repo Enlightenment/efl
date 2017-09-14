@@ -70,7 +70,7 @@ _anim_cb(void *data)
 {
    App_Data *ad = data;
    Evas_Object *o;
-   Eina_Rectangle rect;
+   Eina_Rect rect;
    int r, g, b, a, f, h, w;
    int win_w, win_h, mx, my;
 

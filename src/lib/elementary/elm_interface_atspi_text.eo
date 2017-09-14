@@ -141,7 +141,7 @@ interface Elm.Interface.Atspi.Text ()
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
          }
          values {
-            rect: Eina.Rectangle; [[Extents rectangle]]
+            rect: Eina.Rect; [[Extents rectangle]]
          }
       }
       @property character_count @protected {
@@ -171,7 +171,7 @@ interface Elm.Interface.Atspi.Text ()
          }
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
-            rect: Eina.Rectangle; [[Bounding box]]
+            rect: Eina.Rect; [[Bounding box]]
             xclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI xclip]]
             yclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI yclip]]
          }
@@ -190,7 +190,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: int; [[End offset]]
          }
          values {
-            rect: Eina.Rectangle; [[Range rectangle]]
+            rect: Eina.Rect; [[Range rectangle]]
          }
       }
       @property selections_count @protected {
