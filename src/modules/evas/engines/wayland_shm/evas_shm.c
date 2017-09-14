@@ -369,7 +369,7 @@ _shm_leaf_destroy(Shm_Leaf *leaf)
    leaf->resize_pool = NULL;
 }
 
-void 
+static void
 _evas_shm_surface_destroy(Surface *surface)
 {
    int i = 0;
@@ -385,7 +385,7 @@ _evas_shm_surface_destroy(Surface *surface)
    surface->surf.shm = NULL;
 }
 
-void 
+static void
 _evas_shm_surface_reconfigure(Surface *s, int w, int h, uint32_t flags, Eina_Bool force)
 {
    Shm_Surface *surface;
@@ -459,7 +459,7 @@ _evas_shm_surface_wait(Shm_Surface *surface)
    return NULL;
 }
 
-int
+static int
 _evas_shm_surface_assign(Surface *s)
 {
    int i;
@@ -500,7 +500,7 @@ _evas_shm_surface_assign(Surface *s)
    return surface->current->age;
 }
 
-void *
+static void *
 _evas_shm_surface_data_get(Surface *s, int *w, int *h)
 {
    Shm_Surface *surface;
@@ -524,7 +524,7 @@ _evas_shm_surface_data_get(Surface *s, int *w, int *h)
    return surface->current->data->map;
 }
 
-void
+static void
 _evas_shm_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    Ecore_Wl2_Window *win;
