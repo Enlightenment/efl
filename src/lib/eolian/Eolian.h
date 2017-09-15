@@ -1846,6 +1846,18 @@ EAPI size_t eolian_type_array_size_get(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_type_is_own(const Eolian_Type *tp);
 
 /*
+ * @brief Get whether the given type is owned.
+ *
+ * This is true when a parameter, return or whatever is marked as @owned.
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE when the type is marked owned, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_is_owned(const Eolian_Type *tp);
+
+/*
  * @brief Get whether the given type is const.
  *
  * @param[in] tp the type.
