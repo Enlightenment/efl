@@ -302,7 +302,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
               in the list are only valid so long as those items are not
               deleted or the gengrid is not deleted.
             ]]
-            return: free(own(list<ptr(Elm_Gen_Item)>), eina_list_free) @warn_unused; [[
+            return: list<ptr(Elm_Gen_Item)> @owned @warn_unused; [[
                 The list of realized items or $null if none are realized.
             ]]
          }

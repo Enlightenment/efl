@@ -305,7 +305,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               item pointers in the list are only valid so long as those
               items are not deleted or the genlist is not deleted.
             ]]
-            return: free(own(list<ptr(Elm_Gen_Item)>), eina_list_free) @warn_unused; [[List of realized items]]
+            return: list<ptr(Elm_Gen_Item)> @owned @warn_unused; [[List of realized items]]
          }
       }
       @property selected_items {
@@ -425,7 +425,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
            Return NULL if filter is not set. Application must take care
            of the case while calling the API. Must be freed after use.
          ]]
-         return: free(own(iterator<ptr(Elm_Gen_Item)>), eina_iterator_free); [[Iterator on genlist]]
+         return: iterator<ptr(Elm_Gen_Item)> @owned; [[Iterator on genlist]]
       }
       filtered_items_count @const {
          [[Return how many items have passed the filter currently.

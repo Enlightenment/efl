@@ -197,7 +197,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
 
                   @since 1.8]]
                 params {
-                     @in objs: own(list<Efl.Canvas.Object>); [[Order of objects to pass highlight]]
+                     @in objs: list<Efl.Canvas.Object> @owned; [[Order of objects to pass highlight]]
                 }
            }
            widget_get @const {

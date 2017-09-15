@@ -26,7 +26,7 @@ class Elm.Grid (Elm.Widget)
               It's possible to remove objects from the grid when walking this
               list, but these removals won't be reflected on it.
             ]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children]]
+            return: list<Efl.Canvas.Object> @owned @warn_unused; [[List of children]]
          }
       }
       clear {
