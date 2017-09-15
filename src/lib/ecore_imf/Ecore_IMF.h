@@ -1987,6 +1987,49 @@ EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_I
  */
 EAPI void                         ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y);
 
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Sets the prediction hint data at the specified key
+ *
+ * @since 1.21.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param key The key of the prediction hint
+ * @param data The data to replace
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * This function modifies the data of @p key with @p data in the hash associated @p
+ * ctx. If no entry is found, @p data is added to the hash associated @p ctx with the
+ * key @p key. On success this function returns EINA_TRUE,
+ * otherwise it returns @c EINA_FALSE.
+ */
+EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *key, const char *value);
+
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Removes the prediction hint data identified by a key
+ *
+ * @since 1.21.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @param key The key of the prediction hint
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * This function removes the entry identified by @p key from the hash associated @p ctx.
+ */
+EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *key);
+
+/**
+ * @ingroup Ecore_IMF_Context_Group
+ * @brief Gets the hash table of prediction hint data
+ *
+ * @since 1.21.0
+ *
+ * @param[in] ctx An #Ecore_IMF_Context
+ * @return The prediction hint hash table
+ */
+EAPI const Eina_Hash             *ecore_imf_context_prediction_hint_hash_get(Ecore_IMF_Context *ctx);
+
 /* The following entry points must be exported by each input method module
  */
 

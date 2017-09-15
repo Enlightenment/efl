@@ -60,6 +60,7 @@ struct _Ecore_IMF_Context
    int                            input_panel_layout_variation;
    Eina_Bool                    (*retrieve_selection_func)(void *data, Ecore_IMF_Context *ctx, char **text);
    void                          *retrieve_selection_data;
+   Eina_Hash                     *prediction_hint_hash;
    Eina_Bool                      allow_prediction : 1;
    Eina_Bool                      input_panel_enabled : 1;
    Eina_Bool                      input_panel_return_key_disabled : 1;

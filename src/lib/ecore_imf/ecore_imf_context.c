@@ -224,6 +224,9 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
            free(fn);
      }
 
+   if (ctx->prediction_hint_hash)
+     eina_hash_free(ctx->prediction_hint_hash);
+
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_NONE);
    free(ctx);
 }
@@ -1460,4 +1463,62 @@ ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y)
 
    if (ctx->klass->input_panel_position_set)
      ctx->klass->input_panel_position_set(ctx, x, y);
+}
+
+static void
+_prediction_hint_hash_free_cb(void *data)
+{
+   free(data);
+}
+
+EAPI Eina_Bool
+ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *key, const char *value)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_hint_hash_set");
+        return EINA_FALSE;
+     }
+
+   if (!ctx->prediction_hint_hash)
+     ctx->prediction_hint_hash = eina_hash_string_superfast_new(_prediction_hint_hash_free_cb);
+
+   if (!ctx->prediction_hint_hash)
+     return EINA_FALSE;
+
+   char *old_value = eina_hash_set(ctx->prediction_hint_hash, key, value ? strdup(value) : strdup(""));
+   if (old_value)
+     free(old_value);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *key)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_hint_hash_del");
+        return EINA_FALSE;
+     }
+
+   if (!ctx->prediction_hint_hash)
+     return EINA_FALSE;
+
+   return eina_hash_del(ctx->prediction_hint_hash, key, NULL);
+}
+
+EAPI const Eina_Hash *
+ecore_imf_context_prediction_hint_hash_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_prediction_hint_hash_get");
+        return NULL;
+     }
+
+   return ctx->prediction_hint_hash;
 }
