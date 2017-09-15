@@ -71,7 +71,7 @@ class Efl.Input.Device (Efl.Object)
 
            @since 1.20
          ]]
-         return: own(free(iterator<const(Efl.Input.Device)>, eina_iterator_free)); [[List of device children]]
+         return: iterator<const(Efl.Input.Device)> @owned; [[List of device children]]
       }
       has_pointer_caps {
          [[Determine whether a device has pointer capabilities.

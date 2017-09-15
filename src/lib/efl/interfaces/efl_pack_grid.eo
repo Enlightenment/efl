@@ -8,7 +8,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
       pack_grid {
       	 [[Pack object on the grid]]
          params {
-            subobj: own(Efl.Gfx); [[Object]]
+            subobj: Efl.Gfx @owned; [[Object]]
             col: int; [[Column number]]
             row: int; [[Row number]]
             colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]
@@ -18,7 +18,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
       }
       grid_contents_get {
          [[Returns all objects at a given position in this grid.]]
-         return: free(own(iterator<Efl.Gfx>), eina_iterator_free); [[Iterator to grid contents]]
+         return: iterator<Efl.Gfx> @owned; [[Iterator to grid contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]

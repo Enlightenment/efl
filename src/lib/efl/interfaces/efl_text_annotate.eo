@@ -43,8 +43,7 @@ interface Efl.Text.Annotate {
               @in start: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
               @in end:   ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
-         return: free(own(iterator<ptr(Efl.Text.Annotate.Annotation)>),
-                 eina_iterator_free); [[Handle of the Annotation]]
+         return: iterator<ptr(Efl.Text.Annotate.Annotation)> @owned; [[Handle of the Annotation]]
       }
       annotation_insert {
          [[Inserts an annotation format in a specified range [$start, $end - 1].

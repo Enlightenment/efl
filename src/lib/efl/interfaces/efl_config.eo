@@ -17,14 +17,14 @@ interface Efl.Config ()
          params {
             name: string; [[Configuration option name]]
          }
-         return: free(own(ptr(generic_value)), eina_value_free); [[Configuration option value]]
+         return: free(ptr(generic_value), eina_value_free) @owned; [[Configuration option value]]
       }
       config_list_get @const {
          [[Returns a list of generic values under a given key.]]
          params {
             @in name: string; [[Configuration option name]]
          }
-         return: free(own(iterator<ptr(generic_value)>), eina_iterator_free); [[
+         return: iterator<ptr(generic_value)> @owned; [[
                  List of configuration option values]]
       }
    }

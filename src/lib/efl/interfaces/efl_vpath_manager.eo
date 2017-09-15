@@ -11,7 +11,7 @@ class Efl.Vpath.Manager (Efl.Object)
          params {
             path: string; [[ The input virtual file path to fetch ]]
          }
-         return: own(Efl.Vpath.File); [[ An object representing the file ]]
+         return: Efl.Vpath.File @owned; [[ An object representing the file ]]
       }
       register @class {
          [[Register a vpath with the manager ]]
