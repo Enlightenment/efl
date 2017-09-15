@@ -116,15 +116,15 @@ _elm_pan_efl_gfx_position_set(Eo *obj, Elm_Pan_Smart_Data *psd, Eina_Position2D 
 }
 
 EOLIAN static void
-_elm_pan_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_pan_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Pan_Smart_Data *psd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
-   psd->w = w;
-   psd->h = h;
+   psd->w = sz.w;
+   psd->h = sz.h;
 
    _elm_pan_update(psd);
    efl_event_callback_legacy_call(psd->self, ELM_PAN_EVENT_CHANGED, NULL);
@@ -735,7 +735,8 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
 static inline void
 _elm_scroll_scroll_bar_auto_visibility_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 {
-   int sw = 0, sh = 0, w, h;
+   Eina_Size2D sz;
+   int w, h;
 
    if ((sid->vbar_flags != ELM_SCROLLER_POLICY_AUTO) ||
        (sid->hbar_flags != ELM_SCROLLER_POLICY_AUTO) ||
@@ -745,12 +746,12 @@ _elm_scroll_scroll_bar_auto_visibility_adjust(Elm_Scrollable_Smart_Interface_Dat
 
    w = sid->content_info.w;
    h = sid->content_info.h;
-   efl_gfx_size_get(sid->edje_obj, &sw, &sh);
+   sz = efl_gfx_size_get(sid->edje_obj);
 
    // Adjust when the content may fit but the bars are visible. The if() test
    // does not guarantee that the content will fit (offsets & margins depend
    // on the theme).
-   if ((w <= sw) && (h <= sh))
+   if ((w <= sz.w) && (h <= sz.h))
      {
         sid->hbar_visible = EINA_FALSE;
         sid->vbar_visible = EINA_FALSE;

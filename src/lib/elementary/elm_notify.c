@@ -228,19 +228,19 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 
    if (!sd->parent && sd->content)
      {
         Eina_Position2D pos;
 
         pos = efl_gfx_position_get(obj);
-        _notify_move_to_orientation(obj, pos.x, pos.y, w, h);
+        _notify_move_to_orientation(obj, pos.x, pos.y, sz.w, sz.h);
      }
 }
 

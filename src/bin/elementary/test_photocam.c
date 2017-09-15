@@ -766,7 +766,7 @@ _zoomable_move_resize_cb(void *data, const Efl_Event *ev)
    Eina_Rect r;
 
    r = efl_gfx_geometry_get(ev->object);
-   efl_gfx_size_set(data, r.w, r.h);
+   efl_gfx_size_set(data, EINA_SIZE2D(r.w,  r.h));
    efl_gfx_position_set(data, r.pos);
 }
 
@@ -845,5 +845,5 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_event_callback_add(zoomable, EFL_GFX_EVENT_RESIZE, _zoomable_move_resize_cb, rect);
    efl_event_callback_add(zoomable, EFL_GFX_EVENT_MOVE, _zoomable_move_resize_cb, rect);
 
-   efl_gfx_size_set(win, 300, 320);
+   efl_gfx_size_set(win, EINA_SIZE2D(300,  320));
 }

@@ -237,10 +237,10 @@ _code_changed_hack(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _text_resize(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   int w = 0, h = 0;
+   Eina_Size2D sz;
 
-   efl_gfx_size_get(ev->object, &w, &h);
-   efl_gfx_size_hint_min_set(ev->object, w, h);
+   sz = efl_gfx_size_get(ev->object);
+   efl_gfx_size_hint_min_set(ev->object, sz.w, sz.h);
 }
 
 static void
@@ -526,5 +526,5 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_spinner_value_set(spinner, 1.0);
    _spinner_cb(win, NULL);
 
-   efl_gfx_size_set(win, 500, 600);
+   efl_gfx_size_set(win, EINA_SIZE2D(500,  600));
 }

@@ -87,7 +87,7 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
    Eina_Matrix2 mat;
 
    len = w2 - w1;
-   efl_gfx_size_get(pd->text_obj, &w, &h);
+   EINA_SIZE2D(w, h) = efl_gfx_size_get(pd->text_obj);
    seg_len = eina_bezier_length_get(&bezier);
    if (pd->autofit)
      dt = len / (seg_len * (double) slice_no);
@@ -227,20 +227,21 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    Efl_Ui_Textpath_Segment *seg;
    Evas_Map *map;
    double slice_unit, slice_len;
-   int w, h, w1, w2;
+   int w1, w2;
    int remained_w;
    int total_slice, drawn_slice = 0;
    int cur_map_point = 0, map_point_no;
+   Eina_Size2D sz;
 
-   efl_gfx_size_get(pd->text_obj, &w, &h);
+   sz = efl_gfx_size_get(pd->text_obj);
    if (pd->autofit)
-     remained_w = w;
+     remained_w = sz.w;
    else
      remained_w = pd->total_length;
    slice_unit = (double)pd->slice_no / pd->total_length;
 
    slice_len = 1.0 / slice_unit;
-   total_slice = w / slice_len + 1;
+   total_slice = sz.w / slice_len + 1;
 
    map_point_no = _map_point_calc(pd);
    if (map_point_no == 0)
@@ -255,12 +256,12 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
      {
         int len = seg->length;
         if (!pd->autofit)
-          len = (double)seg->length * w / (double)pd->total_length;
+          len = (double)seg->length * sz.w / (double)pd->total_length;
         if (remained_w <= 0)
           break;
         w2 = w1 + len;
-        if (w2 > w)
-          w2 = w;
+        if (w2 > sz.w)
+          w2 = sz.w;
         if (seg->type == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
           {
              drawn_slice += 1;
@@ -442,7 +443,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
              w = pd->total_length;
           }
      }
-   efl_gfx_size_set(pd->text_obj, w, h);
+   efl_gfx_size_set(pd->text_obj, EINA_SIZE2D(w,  h));
    _textpath_ellipsis_set(pd, is_ellipsis);
 }
 
@@ -570,9 +571,9 @@ _efl_ui_textpath_efl_gfx_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Po
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_gfx_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_efl_ui_textpath_efl_gfx_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D sz)
 {
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

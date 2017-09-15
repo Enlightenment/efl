@@ -90,7 +90,7 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj2");
-   efl_gfx_size_get(o, NULL, &h);
+   h = efl_gfx_size_get(o).h;
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
@@ -105,7 +105,7 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj3");
-   efl_gfx_size_get(o, &w, &h);
+   EINA_SIZE2D(w, h) = efl_gfx_size_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);

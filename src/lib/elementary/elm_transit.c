@@ -507,9 +507,12 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
         else
           {
              Eina_Rect fill;
+             Eina_Size2D sz;
 
              fill = efl_gfx_fill_get(obj);
-             efl_gfx_size_get(obj, &w, &h);
+             sz = efl_gfx_size_get(obj);
+             w = sz.w;
+             h = sz.h;
 
              EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_rectangle_is_valid(&fill.rect), EINA_FALSE);
              double rate_x = (double) w / (double) fill.w;

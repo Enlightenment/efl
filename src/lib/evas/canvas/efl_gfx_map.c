@@ -277,7 +277,7 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
              if (pivot->is_evas)
                evas_output_size_get(pivot->eo_obj, &pivot->geometry.w, &pivot->geometry.h);
              else
-               efl_gfx_size_get(pivot->eo_obj, &pivot->geometry.w, &pivot->geometry.h);
+               pivot->geometry.size = efl_gfx_size_get(pivot->eo_obj);
              pivot->geometry.x = 0;
              pivot->geometry.y = 0;
           }

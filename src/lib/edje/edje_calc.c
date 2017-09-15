@@ -1495,7 +1495,7 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
         tw = th = 0;
         if (!chosen_desc->text.min_x)
           {
-             efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
+             efl_gfx_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
              efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
           }
         else
@@ -1521,7 +1521,7 @@ _edje_part_recalc_single_textblock_min_max_calc_legacy(Edje_Real_Part *ep,
         tw = th = 0;
         if (!chosen_desc->text.max_x)
           {
-             efl_gfx_size_set(ep->object, TO_INT(params->eval.w), TO_INT(params->eval.h));
+             efl_gfx_size_set(ep->object, EINA_SIZE2D(TO_INT(params->eval.w),  TO_INT(params->eval.h)));
              efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
           }
         else
@@ -1595,7 +1595,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
               * don't get meaningless height for multiline */
              if (temp_w > 0)
                {
-                  efl_gfx_size_set(ep->object, temp_w, temp_h);
+                  efl_gfx_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
                   efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
 
                   tw += ins_l + ins_r;
@@ -1633,7 +1633,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                        temp_h = *maxh;
                     }
 
-                  efl_gfx_size_set(ep->object, temp_w, temp_h);
+                  efl_gfx_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
                   efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
 
                   tw += ins_l + ins_r;
@@ -1718,7 +1718,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                    * don't get meaningless height for multiline */
                   if (temp_w > 0)
                     {
-                       efl_gfx_size_set(ep->object, temp_w, temp_h);
+                       efl_gfx_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
                        efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
 
                        tw += ins_l + ins_r;
@@ -1776,7 +1776,7 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                             /* text.min: 0 0
                              * text.max: 1 1 */
 
-                            efl_gfx_size_set(ep->object, temp_w, temp_h);
+                            efl_gfx_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
                             efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
 
                             tw += ins_l + ins_r;
@@ -1802,8 +1802,8 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
                        if (min_calc_w > temp_w)
                          temp_w = min_calc_w;
 
-                       efl_gfx_size_get(ep->object, NULL, &temp_h);
-                       efl_gfx_size_set(ep->object, temp_w, temp_h);
+                       temp_h = efl_gfx_size_get(ep->object).h;
+                       efl_gfx_size_set(ep->object, EINA_SIZE2D(temp_w,  temp_h));
                        efl_canvas_text_size_formatted_get(ep->object, &tw, &th);
 
                        tw += ins_l + ins_r;
@@ -2061,6 +2061,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
  */
 {
    int mw, mh, size;
+   Eina_Size2D sz;
    char *sfont = NULL;
 
    _edje_text_class_font_get(ed, desc, &size, &sfont);
@@ -2077,7 +2078,9 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      return;
 
    // Note: No need to add padding to that, it's already in the geometry
-   efl_gfx_size_get(ep->object, &mw, &mh);
+   sz = efl_gfx_size_get(ep->object);
+   mw = sz.w;
+   mh = sz.h;
 
    if (chosen_desc->text.max_x)
      {
@@ -2243,7 +2246,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
              evas_obj_text_style_set(ep->object, style);
              evas_obj_text_set(ep->object, text);
-             efl_gfx_size_get(ep->object, &tw, &th);
+             EINA_SIZE2D(tw, th) = efl_gfx_size_get(ep->object);
              if (chosen_desc->text.max_x)
                {
                   int l, r;
@@ -5244,7 +5247,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_EXTERNAL:
              /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
-             efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
+             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
              if ((ep->part->physics_body) && (!ep->body))
                {
                   if (_edje_physics_world_geometry_check(ed->world))
@@ -5267,13 +5270,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
              efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-             efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
+             efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 #endif
 
              if (ep->nested_smart) /* Move, Resize all nested parts */
                {   /* Not really needed but will improve the bounding box evaluation done by Evas */
                   efl_gfx_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->nested_smart, pf->final.w, pf->final.h);
+                  efl_gfx_size_set(ep->nested_smart, EINA_SIZE2D(pf->final.w,  pf->final.h));
                }
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_configure(ed, ep);
@@ -5308,16 +5311,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 Evas_Canvas3D_Camera *camera = NULL;
                 Edje_Part_Description_Camera *pd_camera;
 
-                efl_gfx_size_set(ep->object, pf->req.w, pf->req.h);
+                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
 
                 efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
-                efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
+                efl_gfx_size_set(ep->object, EINA_SIZE2D(pf->final.w,  pf->final.h));
 
                 viewport = evas_object_image_source_get(ep->object);
 
-                efl_gfx_size_set(viewport, pf->req.w, pf->req.h);
+                efl_gfx_size_set(viewport, EINA_SIZE2D(pf->req.w,  pf->req.h));
 
                 evas_object_image_source_visible_set(ep->object, EINA_FALSE);
                 evas_object_image_source_events_set(ep->object, EINA_TRUE);
@@ -5564,7 +5567,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
                   efl_gfx_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_size_set(ep->typedata.swallow->swallowed_object, pf->final.w, pf->final.h);
+                  efl_gfx_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
                   efl_gfx_visible_set(ep->typedata.swallow->swallowed_object, vis);
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);

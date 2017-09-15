@@ -39,10 +39,10 @@ _map_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 static void
 _image_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Coord w, h;
+   Eina_Size2D sz;
 
-   efl_gfx_size_get(obj, &w, &h);
-   _map_set(obj, w, h);
+   sz = efl_gfx_size_get(obj);
+   _map_set(obj, sz.w, sz.h);
 }
 
 void
@@ -69,5 +69,5 @@ test_evas_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    _map_set(img, W, H);
 
    efl_content_set(win, img);
-   efl_gfx_size_set(win, W, H);
+   efl_gfx_size_set(win, EINA_SIZE2D(W, H));
 }

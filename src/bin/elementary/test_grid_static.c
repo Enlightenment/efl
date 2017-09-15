@@ -184,5 +184,5 @@ test_grid_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_color_set(rc, 128, 64, 0, 128);
    efl_pack_grid(gd, rc, 60, 80, 10, 10);
 
-   efl_gfx_size_set(win, 480, 480);
+   efl_gfx_size_set(win, EINA_SIZE2D(480,  480));
 }

@@ -21,7 +21,11 @@ static inline void
 part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
 {
    if (!rp->part->use_alternate_font_metrics)
-     efl_gfx_size_get(rp->object, w, h);
+     {
+        Eina_Size2D sz = efl_gfx_size_get(rp->object);
+        if (w) *w = sz.w;
+        if (h) *h = sz.h;
+     }
    else
      {
         if (w) *w = evas_object_text_horiz_advance_get(rp->object);
@@ -139,7 +143,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    evas_obj_text_ellipsis_set(ep->object, params->type.text->ellipsis);
    efl_text_properties_font_set(ep->object, font, size);
    efl_text_set(ep->object, text);
-   efl_gfx_size_set(ep->object, sw, sh);
+   efl_gfx_size_set(ep->object, EINA_SIZE2D(sw,  sh));
 
    return text;
 }

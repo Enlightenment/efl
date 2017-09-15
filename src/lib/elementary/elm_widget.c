@@ -845,16 +845,16 @@ _elm_widget_efl_gfx_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd,
 }
 
 EOLIAN static void
-_elm_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   sd->w = w;
-   sd->h = h;
+   sd->w = sz.w;
+   sd->h = sz.h;
    _smart_reconfigure(sd);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void
@@ -3538,7 +3538,7 @@ EOLIAN static Eina_Rect
 _elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Eina_Rect r = {};
-   efl_gfx_size_get(obj, &r.w, &r.h);
+   r.size = efl_gfx_size_get(obj);
    return r;
 }
 

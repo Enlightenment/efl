@@ -364,5 +364,5 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
            efl_pack(box, efl_added));
 
-   efl_gfx_size_set(win, 300, 200);
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
 }
