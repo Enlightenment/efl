@@ -20,17 +20,17 @@ class Complex (Efl.Object)
       }
       incontcontown {
          params {
-           l: own(list<list<int>>);
+           l: list<list<int>> @owned;
          }
       }
       incontowncontown {
          params {
-           l: own(list<own(list<int>)>);
+           l: list<list<int> @owned> @owned;
          }
       }
       incontowncont {
          params {
-           l: list<own(list<int>)>;
+           l: list<list<int> @owned>;
          }
       }
       instringcont {
@@ -40,12 +40,12 @@ class Complex (Efl.Object)
       }
       instringowncont {
          params {
-           l: list<own(string)>;
+           l: list<string @owned>;
          }
       }
       instringcontown {
          params {
-           l: own(list<string>);
+           l: list<string> @owned;
          }
       }
       inarray {
@@ -55,7 +55,7 @@ class Complex (Efl.Object)
       }
       inarrayown {
          params {
-           l: own(array<int>);
+           l: array<int> @owned;
          }
       }
       inhash {
@@ -65,7 +65,7 @@ class Complex (Efl.Object)
       }
       inhashown {
          params {
-           l: own(hash<int, int>);
+           l: hash<int, int> @owned;
          }
       }
       initerator {
@@ -75,7 +75,7 @@ class Complex (Efl.Object)
       }
       initeratorown {
          params {
-           l: own(iterator<int>);
+           l: iterator<int> @owned;
          }
       }
       inaccessor {
@@ -85,7 +85,7 @@ class Complex (Efl.Object)
       }
       inaccessorown {
          params {
-           l: own(accessor<int>);
+           l: accessor<int> @owned;
          }
       }
       // out
@@ -101,17 +101,17 @@ class Complex (Efl.Object)
       }
       outcontcontown {
          params {
-           @out l: own(list<list<int>>);
+           @out l: list<list<int>> @owned;
          }
       }
       outcontowncontown {
          params {
-           @out l: own(list<own(list<int>)>);
+           @out l: list<list<int> @owned> @owned;
          }
       }
       outcontowncont {
          params {
-           @out l: list<own(list<int>)>;
+           @out l: list<list<int> @owned>;
          }
       }
       outstringcont {
@@ -121,12 +121,12 @@ class Complex (Efl.Object)
       }
       outstringowncont {
          params {
-           @out l: list<own(string)>;
+           @out l: list<string @owned>;
          }
       }
       outstringcontown {
          params {
-           @out l: own(list<string>);
+           @out l: list<string> @owned;
          }
       }
       outarray {
@@ -136,7 +136,7 @@ class Complex (Efl.Object)
       }
       outarrayown {
          params {
-           @out l: own(array<int>);
+           @out l: array<int> @owned;
          }
       }
       outhash {
@@ -146,7 +146,7 @@ class Complex (Efl.Object)
       }
       outhashown {
          params {
-           @out l: own(hash<int, int>);
+           @out l: hash<int, int> @owned;
          }
       }
       outiterator {
@@ -156,7 +156,7 @@ class Complex (Efl.Object)
       }
       outiteratorown {
          params {
-           @out l: own(iterator<int>);
+           @out l: iterator<int> @owned;
          }
       }
       outaccessor {
@@ -166,7 +166,7 @@ class Complex (Efl.Object)
       }
       outaccessorown {
          params {
-           @out l: own(accessor<int>);
+           @out l: accessor<int> @owned;
          }
       }
       //

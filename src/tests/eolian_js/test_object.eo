@@ -104,7 +104,7 @@ class Test.Object (Efl.Object) {
        }
        method_array_with_42_check {
            [[ tests parameters ]]
-           return: free(own(array<int>), eina_array_free) @warn_unused;
+           return: array<int> @owned @warn_unused;
        }
        method_array_in_array_out_check {
            [[ tests parameters ]]
@@ -157,7 +157,7 @@ class Test.Object (Efl.Object) {
        }
        method_list_with_42_check {
            [[ tests parameters ]]
-           return: free(own(list<int>), eina_list_free) @warn_unused;
+           return: list<int> @owned @warn_unused;
        }
        method_list_in_list_out_check {
            [[ tests parameters ]]
