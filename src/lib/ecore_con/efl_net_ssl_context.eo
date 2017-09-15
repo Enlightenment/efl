@@ -48,7 +48,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               Can only be set during object construction!
             ]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for certificates]]
+                paths: iterator<string> @owned; [[Path list for certificates]]
             }
         }
 
@@ -58,7 +58,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               Can only be set during object construction!
             ]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for private keys]]
+                paths: iterator<string> @owned; [[Path list for private keys]]
             }
         }
 
@@ -68,7 +68,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               Can only be set during object construction!
             ]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CRL's]]
+                paths: iterator<string> @owned; [[Path list for CRL's]]
             }
         }
 
@@ -78,7 +78,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
               Can only be set during object construction!
             ]]
             values {
-                paths: free(own(iterator<string>), eina_iterator_free); [[Path list for CA's]]
+                paths: iterator<string> @owned; [[Path list for CA's]]
             }
         }
 

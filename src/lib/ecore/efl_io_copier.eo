@@ -310,7 +310,7 @@ class Efl.Io.Copier (Efl.Loop_User, Efl.Io.Closer) {
              this case you should wait for "done", "data" or "line"
              events and then call it to retrieve (and own!) the data.
            ]]
-           return: free(own(ptr(Eina.Binbuf)), eina_binbuf_free) @warn_unused; [[Binbuf]]
+           return: free(ptr(Eina.Binbuf), eina_binbuf_free) @owned @warn_unused; [[Binbuf]]
         }
 
         @property pending_size {
