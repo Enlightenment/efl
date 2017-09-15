@@ -21,6 +21,6 @@ EOAPI void function_as_argument_set_cb(Eo *obj, void *cb_data, SimpleFunc cb, Ei
 
 EOAPI void function_as_argument_set_nonull_cb(Eo *obj, void *cb_data, VoidFunc cb, Eina_Free_Cb cb_free_cb) EINA_ARG_NONNULL(3);
 
-EOAPI const char *function_as_argument_call_cb(Eo *obj, int a, double b);
+EOAPI char *function_as_argument_call_cb(Eo *obj, int a, double b);
 
 #endif

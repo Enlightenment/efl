@@ -19,7 +19,7 @@ _function_as_argument_set_nonull_cb(Eo *obj, Function_As_Argument_Data *pd, void
 
 }
 
-EOLIAN static const char *
+EOLIAN static char *
 _function_as_argument_call_cb(Eo *obj, Function_As_Argument_Data *pd, int a, double b)
 {
 

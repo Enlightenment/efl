@@ -23,7 +23,7 @@ class Struct {
          params {
             idx: int;
          }
-         return: own(ptr(char));
+         return: string @owned;
       }
       bar {
          return: ptr(Named);

@@ -2,19 +2,19 @@ class Complex_Type {
    methods {
       @property a {
          set {
-            return: own(list<array<own(ptr(Eo))> >);
+            return: list<array<ptr(Eo) @owned> > @owned;
          }
          get {
          }
          values {
-            value: own(list<int>);
+            value: list<int> @owned;
          }
       }
       foo {
          params {
-            buf: own(ptr(char));
+            buf: string @owned;
          }
-         return: own(list<stringshare>); [[comment for method return]]
+         return: list<stringshare> @owned; [[comment for method return]]
       }
    }
 }
