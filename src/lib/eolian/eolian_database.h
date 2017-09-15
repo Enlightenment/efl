@@ -131,6 +131,8 @@ struct _Eolian_Function
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
+   Eina_Bool get_return_owned :1;
+   Eina_Bool set_return_owned :1;
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
@@ -150,6 +152,7 @@ struct _Eolian_Function_Parameter
    Eina_Bool nonull :1; /* True if this argument cannot be NULL - deprecated */
    Eina_Bool nullable :1; /* True if this argument is nullable */
    Eina_Bool optional :1; /* True if this argument is optional */
+   Eina_Bool owned :1;
 };
 
 struct _Eolian_Type
@@ -223,6 +226,7 @@ struct _Eolian_Event
    Eina_Bool is_beta :1;
    Eina_Bool is_hot  :1;
    Eina_Bool is_restart :1;
+   Eina_Bool owned :1;
 };
 
 struct _Eolian_Struct_Type_Field
@@ -231,6 +235,7 @@ struct _Eolian_Struct_Type_Field
    Eolian_Object     base;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
+   Eina_Bool owned :1;
 };
 
 struct _Eolian_Enum_Type_Field
