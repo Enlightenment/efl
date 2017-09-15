@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+#define ECORE_IMF_INPUT_HINT_AUTOFILL_MASK 0xff00
+
 /**
  * @defgroup Ecore_IMF_Lib_Group Ecore_IMF - Ecore Input Method Library Functions
  * @ingroup Ecore
@@ -371,6 +373,18 @@ typedef enum
    ECORE_IMF_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< Suggest word auto completion @since 1.12 */
    ECORE_IMF_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< Typed text should not be stored. @since 1.12 */
    ECORE_IMF_INPUT_HINT_MULTILINE           = 1 << 2,   /**< Multiline text @since 1.18 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_DATE   = 0x100, /**< Autofill hint for a credit card expiration date @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_DAY    = 0x200, /**< Autofill hint for a credit card expiration day @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_MONTH  = 0x300, /**< Autofill hint for a credit card expiration month @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_YEAR   = 0x400, /**< Autofill hint for a credit card expiration year @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_NUMBER            = 0x500, /**< Autofill hint for a credit card number @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_SECURITY_CODE     = 0x600, /**< Autofill hint for a credit card security code @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_EMAIL_ADDRESS                 = 0x700, /**< Autofill hint for an email address @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_NAME                          = 0x800, /**< Autofill hint for a user's real name @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_PHONE                         = 0x900, /**< Autofill hint for a phone number @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_ADDRESS                = 0xA00, /**< Autofill hint for a postal address @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_CODE                   = 0xB00, /**< Autofill hint for a postal code @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_ID                            = 0xC00  /**< Autofill hint for a user's ID @since 1.21 */
 } Ecore_IMF_Input_Hints;
 
 /**
