@@ -81,7 +81,7 @@ collections {
                align: 0.5 0.0;
                params {
                   string: "label" "<b>Label and Buttons are edje externals</>\
-<br>Click buttons to perform edje animations.<br><b>BUG</>: disabled style.";
+<br>Click buttons to perform edje animations.";
                }
             }
          }
@@ -459,8 +459,7 @@ collections {
                max: 200 50;
                align: 0.5 0.0;
                params {
-                  string: "label" "<b>All the Widgets and the Interaction are pure edje</>\
-<br>This is not a real test, just an experiment<br><b>BUG</>: clip issue, slider drag, lots of warning, ...";
+                  string: "label" "<b>All the Widgets and the Interaction are pure edje</>";
                }
             }
          }
@@ -1207,7 +1206,6 @@ embryo script and from C code.";
 
       }
    }
-
    group { name: "external/combobox";
       parts {
          COMMON_EXTERNAL_UNDER
