@@ -631,21 +631,21 @@ _efl_ui_image_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_image_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   if ((sd->img_w == w) && (sd->img_h == h)) goto super;
+   if ((sd->img_w == sz.w) && (sd->img_h == sz.h)) goto super;
 
-   sd->img_w = w;
-   sd->img_h = h;
+   sd->img_w = sz.w;
+   sd->img_h = sz.h;
 
    /* takes care of resizing */
    _efl_ui_image_internal_sizing_eval(obj, sd);
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void

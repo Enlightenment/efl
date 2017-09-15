@@ -262,19 +262,19 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_edje_object_efl_gfx_size_set(Eo *obj, Edje *ed, Evas_Coord w, Evas_Coord h)
+_edje_object_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   if ((w == ed->w) && (h == ed->h)) goto super;
+   if ((sz.w == ed->w) && (sz.h == ed->h)) goto super;
    if (ed->collection)
      {
-        _edje_limit_get(ed, ed->collection->limits.horizontal, ed->collection->limits.horizontal_count, ed->w, w);
-        _edje_limit_get(ed, ed->collection->limits.vertical, ed->collection->limits.vertical_count, ed->h, h);
+        _edje_limit_get(ed, ed->collection->limits.horizontal, ed->collection->limits.horizontal_count, ed->w, sz.w);
+        _edje_limit_get(ed, ed->collection->limits.vertical, ed->collection->limits.vertical_count, ed->h, sz.h);
      }
-   ed->w = w;
-   ed->h = h;
+   ed->w = sz.w;
+   ed->h = sz.h;
 #ifdef HAVE_EPHYSICS
    if ((ed->collection) && (ed->world))
      {
@@ -298,7 +298,7 @@ _edje_object_efl_gfx_size_set(Eo *obj, Edje *ed, Evas_Coord w, Evas_Coord h)
    _edje_emit(ed, "resize", NULL);
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void

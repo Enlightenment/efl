@@ -1091,17 +1091,16 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
    if (sd->scroll)
      {
         Evas_Coord vw, vh;
-        Evas_Coord tw, th;
         elm_interface_scrollable_content_viewport_geometry_get(obj, NULL, NULL, &vw, &vh);
-        efl_gfx_size_set(sd->entry_edje, vw, vh);
-        efl_gfx_size_get(sw, &tw, &th);
+        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(vw,  vh));
+        //efl_gfx_size_get(sw, &tw, &th); //unused?
         efl_canvas_text_size_formatted_get(sw, &fw, &fh);
         evas_object_size_hint_min_set(sw, fw, fh);
         edje_object_size_min_calc(sd->entry_edje, &minw, &minh);
         evas_object_size_hint_min_set(sw, -1, -1);
 
         if (vw > minw) minw = vw;
-        efl_gfx_size_set(sd->entry_edje, minw, minh);
+        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(minw,  minh));
 
         if (!efl_text_multiline_get(sw))
           {
@@ -3277,15 +3276,15 @@ _efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   evas_object_resize(sd->hit_rect, w, h);
+   efl_gfx_size_set(sd->hit_rect, sz);
    _update_selection_handler(obj);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

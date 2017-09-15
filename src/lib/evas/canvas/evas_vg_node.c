@@ -185,24 +185,21 @@ _efl_vg_mask_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
    return pd->mask;
 }
 
-static void
-_efl_vg_efl_gfx_size_get(Eo *obj,
-                                   Efl_VG_Data *pd EINA_UNUSED,
-                                   int *w, int *h)
+static Eina_Size2D
+_efl_vg_efl_gfx_size_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
    Eina_Rect r;
 
    efl_vg_bounds_get(obj, &r);
-   if (w) *w = r.w;
-   if (h) *h = r.h;
+   return r.size;
 }
 
 EOLIAN static Eina_Rect
 _efl_vg_efl_gfx_geometry_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {
-   Eina_Rect r = EINA_RECT_ZERO();
+   Eina_Rect r;
    r.pos = efl_gfx_position_get(obj);
-   efl_gfx_size_get(obj, &r.w, &r.h);
+   r.size = efl_gfx_size_get(obj);
    return r;
 }
 
@@ -808,16 +805,18 @@ evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h)
 {
    Eina_Rect r;
    r.pos = efl_gfx_position_get(obj);
-   efl_gfx_size_get(obj, w, h);
+   r.size = efl_gfx_size_get(obj);
    if (x) *x = r.x;
    if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 EAPI void
 evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h)
 {
    efl_gfx_position_set(obj, EINA_POSITION2D(x, y));
-   efl_gfx_size_set(obj, w, h);
+   efl_gfx_size_set(obj, EINA_SIZE2D(w,  h));
 }
 
 EAPI void

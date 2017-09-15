@@ -432,12 +432,12 @@ _evas_box_efl_canvas_group_group_del(Eo *o, Evas_Object_Box_Data *priv)
 }
 
 EOLIAN static void
-_evas_box_efl_gfx_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord w, Evas_Coord h)
+_evas_box_efl_gfx_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(o, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(o, MY_CLASS), sz);
    evas_object_smart_changed(o);
 }
 

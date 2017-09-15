@@ -295,17 +295,17 @@ _elm_genlist_pan_smart_resize_job(void *data)
 }
 
 EOLIAN static void
-_elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Size2D size)
 {
    Elm_Genlist_Data *sd = psd->wsd;
-   Evas_Coord ow, oh;
+   Eina_Size2D old;
 
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
 
-   efl_gfx_size_get(obj, &ow, &oh);
-   if ((ow == w) && (oh == h)) goto super; // should already be intercepted above
-   if ((sd->mode == ELM_LIST_COMPRESS) && (ow != w))
+   old = efl_gfx_size_get(obj);
+   if ((old.w == size.w) && (old.h == size.h)) goto super; // should already be intercepted above
+   if ((sd->mode == ELM_LIST_COMPRESS) && (old.w != size.w))
      {
         /* fix me later */
         ecore_job_del(psd->resize_job);
@@ -318,13 +318,13 @@ _elm_genlist_pan_efl_gfx_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord
    // if the width changed we may have to resize content if scrollbar went
    // away or appeared to queue a job to deal with it. it should settle in
    // the end to a steady-state
-   if (ow != w)
+   if (old.w != size.w)
      sd->calc_job = ecore_job_add(_calc_job, psd->wobj);
    else
      sd->calc_job = NULL;
 
 super:
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), size);
 }
 
 static void
@@ -5715,16 +5715,16 @@ _elm_genlist_efl_gfx_position_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Position2D
 }
 
 EOLIAN static void
-_elm_genlist_efl_gfx_size_set(Eo *obj, Elm_Genlist_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_genlist_efl_gfx_size_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   evas_object_resize(sd->hit_rect, w, h);
-   if ((sd->queue) && (!sd->queue_idle_enterer) && (w > 0))
+   efl_gfx_size_set(sd->hit_rect, sz);
+   if ((sd->queue) && (!sd->queue_idle_enterer) && (sz.w > 0))
      _requeue_idle_enterer(sd);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

@@ -22,7 +22,7 @@ interface Efl.Gfx {
             [[Retrieves the position of the given canvas object.]]
          }
          values {
-            pos: Eina.Position2D; [[A 2D pixel coordinate.]]
+            pos: Eina.Position2D; [[A 2D coordinate in pixel units.]]
          }
       }
       @property size {
@@ -40,8 +40,7 @@ interface Efl.Gfx {
             [[Retrieves the (rectangular) size of the given Evas object.]]
          }
          values {
-            w: int; [[Width]]
-            h: int; [[Height]]
+            size: Eina.Size2D; [[A 2D size in pixel units.]]
          }
       }
       @property geometry {

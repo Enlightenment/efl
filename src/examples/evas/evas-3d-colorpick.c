@@ -120,8 +120,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   efl_gfx_size_set(bg, w, h);
-   efl_gfx_size_set(image, w, h);
+   efl_gfx_size_set(bg, EINA_SIZE2D(w,  h));
+   efl_gfx_size_set(image, EINA_SIZE2D(w,  h));
 }
 
 static Eina_Bool
@@ -392,7 +392,7 @@ int main(int argc, char **argv)
 
    image = efl_add(EFL_CANVAS_SCENE3D_CLASS, evas);
 
-   efl_gfx_size_set(image, WIDTH, HEIGHT);
+   efl_gfx_size_set(image, EINA_SIZE2D(WIDTH,  HEIGHT));
    efl_gfx_visible_set(image, EINA_TRUE);
    evas_object_focus_set(image, EINA_TRUE);
    efl_canvas_scene3d_set(image, globalscene.scene);

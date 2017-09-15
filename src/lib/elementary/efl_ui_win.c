@@ -2983,9 +2983,9 @@ super_skip:
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
    if (sd->img_obj)
@@ -2995,25 +2995,25 @@ _efl_ui_win_efl_gfx_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord w, Evas_Co
              int sw, sh;
 
              ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &sw, &sh);
-             w = MIN(w, sw);
-             h = MIN(h, sh);
+             sz.w = MIN(sz.w, sw);
+             sz.h = MIN(sz.h, sh);
           }
-        if (w < 1) w = 1;
-        if (h < 1) h = 1;
+        if (sz.w < 1) sz.w = 1;
+        if (sz.h < 1) sz.h = 1;
 
-        evas_object_image_size_set(sd->img_obj, w, h);
+        evas_object_image_size_set(sd->img_obj, sz.w, sz.h);
      }
 
    _elm_win_frame_geometry_adjust(sd);
    if (!sd->response)
      {
         sd->req_wh = EINA_TRUE;
-        sd->req_w = w;
-        sd->req_h = h;
-        TRAP(sd, resize, w, h);
+        sd->req_w = sz.w;
+        sd->req_h = sz.h;
+        TRAP(sd, resize, sz.w, sz.h);
      }
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void

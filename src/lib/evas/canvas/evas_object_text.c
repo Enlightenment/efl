@@ -998,17 +998,17 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 }
 
 EOLIAN static void
-_evas_text_efl_gfx_size_set(Eo *eo_obj, Evas_Text_Data *o, int w, int h)
+_evas_text_efl_gfx_size_set(Eo *eo_obj, Evas_Text_Data *o, Eina_Size2D sz)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
-        state_write->geometry.w = w;
-        state_write->geometry.h = h;
+        state_write->geometry.w = sz.w;
+        state_write->geometry.h = sz.h;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
@@ -1326,7 +1326,7 @@ _evas_text_style_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Text_Style_Type style)
    if (o->items) w = obj->cur->geometry.w + (l - pl) + (r - pr);
    h = obj->cur->geometry.h + (t - pt) + (b - pb);
 
-   efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), EINA_SIZE2D(w,  h));
    evas_object_change(eo_obj, obj);
 }
 
@@ -2314,11 +2314,11 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
              int min;
 
              min = w + l + r < obj->cur->geometry.w || obj->cur->geometry.w == 0 ? w + l + r : obj->cur->geometry.w;
-             efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), min, h + t + b);
+             efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), EINA_SIZE2D(min,  h + t + b));
           }
         else
           {
-             efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), w + l + r, h + t + b);
+             efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), EINA_SIZE2D(w + l + r,  h + t + b));
           }
 ////        obj->cur->cache.geometry.validity = 0;
      }
@@ -2326,7 +2326,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
      {
         int t = 0, b = 0, l = 0, r = 0;
         _evas_object_text_pad_get(eo_obj, o, &l, &r, &t, &b);
-        efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), 0, o->max_ascent + o->max_descent + t + b);
+        efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), EINA_SIZE2D(0,  o->max_ascent + o->max_descent + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
      }
    o->last_computed.w = obj->cur->geometry.w;

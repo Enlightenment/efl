@@ -281,10 +281,10 @@ _efl_canvas_object_event_grabber_efl_gfx_position_set(Eo *eo_obj, Efl_Object_Eve
 }
 
 EOLIAN static void
-_efl_canvas_object_event_grabber_efl_gfx_size_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, int w, int h)
+_efl_canvas_object_event_grabber_efl_gfx_size_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Size2D sz)
 {
-   efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), w, h);
-   efl_gfx_size_set(pd->rect, w, h);
+   efl_gfx_size_set(efl_super(eo_obj, MY_CLASS), sz);
+   efl_gfx_size_set(pd->rect, sz);
 }
 
 EOLIAN static Eina_Bool

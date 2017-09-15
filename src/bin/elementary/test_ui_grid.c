@@ -174,7 +174,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    win = elm_win_util_standard_add("ui-grid", "Efl.Ui.Grid");
    elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, 600, 400);
+   efl_gfx_size_set(win, EINA_SIZE2D(600,  400));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
@@ -498,7 +498,7 @@ test_ui_grid_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("ui-grid-linear", "Efl.Ui.Grid Linear APIs");
    elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, 600, 400);
+   efl_gfx_size_set(win, EINA_SIZE2D(600,  400));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));

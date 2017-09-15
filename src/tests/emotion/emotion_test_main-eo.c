@@ -76,7 +76,7 @@ static const char  *theme_file = NULL;
 static void
 bg_resize(Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_set(o_bg, w, h);
+   efl_gfx_size_set(o_bg, EINA_SIZE2D(w,  h));
 }
 
 static void
@@ -114,7 +114,7 @@ bg_setup(void)
    o_bg = efl_add(EDJE_OBJECT_CLASS, evas);
    efl_file_set(o_bg, theme_file, "background");
    efl_gfx_position_set(o_bg, EINA_POSITION2D(0, 0));
-   efl_gfx_size_set(o_bg, startw, starth);
+   efl_gfx_size_set(o_bg, EINA_SIZE2D(startw,  starth));
    efl_gfx_stack_layer_set(o_bg, -999);
    efl_gfx_visible_set(o_bg, EINA_TRUE);
    evas_object_focus_set(o_bg, EINA_TRUE);
@@ -354,7 +354,7 @@ video_obj_frame_resize_cb(void *data, const Efl_Event *event)
    evas_object_size_hint_min_set(event->object, iw, ih);
    edje_object_part_swallow(oe, "video_swallow", event->object);
    edje_object_size_min_calc(oe, &w, &h);
-   efl_gfx_size_set(oe, w, h);
+   efl_gfx_size_set(oe, EINA_SIZE2D(w,  h));
    evas_object_size_hint_min_set(event->object, 0, 0);
    edje_object_part_swallow(oe, "video_swallow", event->object);
 }
@@ -566,11 +566,12 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
      }
    else if (fd->resizing)
      {
-        Evas_Coord x, y, ow, oh;
+        Evas_Coord x, y;
+        Eina_Size2D sz;
 
         evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
-        efl_gfx_size_get(o, &ow, &oh);
-        evas_object_resize(o, ow + (x - fd->x), oh + (y - fd->y));
+        sz = efl_gfx_size_get(o);
+        evas_object_resize(o, sz.w + (x - fd->x), sz.h + (y - fd->y));
         fd->x = x;
         fd->y = y;
      }
@@ -629,7 +630,7 @@ init_video_object(const char *module_filename, const char *filename)
    offset = 20 * (eina_list_count(video_objs) - 1);
    efl_gfx_position_set(oe, EINA_POSITION2D(offset, offset));
    edje_object_size_min_calc(oe, &w, &h);
-   efl_gfx_size_set(oe, w, h);
+   efl_gfx_size_set(oe, EINA_SIZE2D(w,  h));
 
    efl_event_callback_array_add(o, emotion_object_test_callbacks(), oe);
 

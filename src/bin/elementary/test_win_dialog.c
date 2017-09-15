@@ -51,7 +51,8 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 static void
 _size_update(void *data, const Efl_Event *ev)
 {
-   int w, h, W, H, wc, hc, ww, hh;
+   int w, h, W, H, wc, hc;
+   Eina_Size2D sz;
    char buf[2048];
    Eo *dia = ev->object;
    Eo *lbl = data;
@@ -59,12 +60,12 @@ _size_update(void *data, const Efl_Event *ev)
    efl_gfx_size_hint_combined_min_get(dia, &wc, &hc);
    efl_gfx_size_hint_min_get(dia, &w, &h);
    efl_gfx_size_hint_max_get(dia, &W, &H);
-   efl_gfx_size_get(dia, &ww, &hh);
+   sz = efl_gfx_size_get(dia);
 
    sprintf(buf, "This is a dialog with min/max size<br>"
            "Min size: %dx%d (requested) %dx%d (effective)<br>"
            "Max size: %dx%d<br>"
-           "Current size: %dx%d", w, h, wc, hc, W, H, ww, hh);
+           "Current size: %dx%d", w, h, wc, hc, W, H, sz.w, sz.h);
    //efl_text_set(lbl, buf);
    elm_object_text_set(lbl, buf);
 }

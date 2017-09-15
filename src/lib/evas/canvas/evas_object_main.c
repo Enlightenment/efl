@@ -1159,7 +1159,7 @@ EOLIAN static void
 _efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)
 {
    efl_gfx_position_set(obj, r.pos);
-   efl_gfx_size_set(obj, r.w, r.h);
+   efl_gfx_size_set(obj, EINA_SIZE2D(r.w,  r.h));
 }
 
 EAPI void
@@ -1239,7 +1239,7 @@ _efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *
 EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_set((Evas_Object *)obj, w, h);
+   efl_gfx_size_set((Evas_Object *)obj, EINA_SIZE2D(w,  h));
 }
 
 Eina_Bool
@@ -1264,16 +1264,16 @@ _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data
 
 EOLIAN static void
 _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                                    Evas_Coord w, Evas_Coord h)
+                                    Eina_Size2D sz)
 {
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
-   if (w < 0) w = 0;
-   if (h < 0) h = 0;
+   if (sz.w < 0) sz.w = 0;
+   if (sz.h < 0) sz.h = 0;
 
-   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, w, h))
+   if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 1, sz.w, sz.h))
      return;
 
    if (!(obj->layer->evas->is_frozen))
@@ -1288,12 +1288,12 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    obj->doing.in_resize++;
 
    if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->resize)
-     obj->smart.smart->smart_class->resize(eo_obj, w, h);
+     obj->smart.smart->smart_class->resize(eo_obj, sz.w, sz.h);
 
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
-        state_write->geometry.w = w;
-        state_write->geometry.h = h;
+        state_write->geometry.w = sz.w;
+        state_write->geometry.h = sz.h;
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
@@ -1343,20 +1343,14 @@ _efl_canvas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
    return ((Eina_Rect) pd->cur->geometry).pos;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Size2D
 _efl_canvas_object_efl_gfx_size_get(Eo *obj EINA_UNUSED,
-                                    Evas_Object_Protected_Data *pd,
-                                    Evas_Coord *w, Evas_Coord *h)
+                                    Evas_Object_Protected_Data *pd)
 {
    if (pd->delete_me)
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return;
-     }
+     return EINA_SIZE2D(0, 0);
 
-   if (w) *w = pd->cur->geometry.w;
-   if (h) *h = pd->cur->geometry.h;
+   return ((Eina_Rect) pd->cur->geometry).size;
 }
 
 static void

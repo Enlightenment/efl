@@ -377,7 +377,7 @@ START_TEST (efl_ui_win_multi_touch_inputs)
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
    elm_win_autohide_set(win, EINA_TRUE);
    efl_gfx_visible_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, 100, 100);
+   efl_gfx_size_set(win, EINA_SIZE2D(100,  100));
 
    ecore_timer_add(_timeout1, _inputs_timer1_cb, win);
    ecore_timer_add(_timeout2, _inputs_timer2_cb, win);

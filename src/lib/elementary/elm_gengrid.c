@@ -673,12 +673,12 @@ _elm_gengrid_pan_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_P
 }
 
 EOLIAN static void
-_elm_gengrid_pan_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord w, Evas_Coord h)
+_elm_gengrid_pan_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Pan_Data *psd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_PAN_CLASS), sz);
 
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wobj);
@@ -4235,13 +4235,13 @@ _elm_gengrid_efl_gfx_position_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Position2D
 }
 
 EOLIAN static void
-_elm_gengrid_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Data *sd, Evas_Coord w, Evas_Coord h)
+_elm_gengrid_efl_gfx_size_set(Eo *obj, Elm_Gengrid_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   evas_object_resize(sd->hit_rect, w, h);
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void

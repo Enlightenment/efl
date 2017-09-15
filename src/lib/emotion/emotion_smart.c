@@ -1956,27 +1956,27 @@ _efl_canvas_video_efl_canvas_group_group_del(Evas_Object *obj EINA_UNUSED, Efl_C
 EOLIAN static void
 _efl_canvas_video_efl_gfx_position_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Position2D pos)
 {
-   int w, h;
+   Eina_Size2D sz;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_size_get(obj, &w, &h);
    efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
-   _clipper_position_size_update(obj, pos.x, pos.y, w, h, sd->video.w, sd->video.h);
+   sz = efl_gfx_size_get(obj);
+   _clipper_position_size_update(obj, pos.x, pos.y, sz.w, sz.h, sd->video.w, sd->video.h);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_gfx_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Evas_Coord w, Evas_Coord h)
+_efl_canvas_video_efl_gfx_size_set(Evas_Object *obj, Efl_Canvas_Video_Data *sd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 
-   _efl_canvas_video_aspect_border_apply(obj, sd, w, h);
-   evas_object_resize(sd->bg, w, h);
+   _efl_canvas_video_aspect_border_apply(obj, sd, sz.w, sz.h);
+   evas_object_resize(sd->bg, sz.w, sz.h);
 }
 
 /* Internal EO APIs and hidden overrides */

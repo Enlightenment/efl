@@ -222,7 +222,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    win = elm_win_util_standard_add("ui-box", "Efl.Ui.Box");
    elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, 600, 400);
+   efl_gfx_size_set(win, EINA_SIZE2D(600,  400));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));

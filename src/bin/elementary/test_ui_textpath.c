@@ -178,6 +178,6 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_visible_set(btn, EINA_TRUE);
 
    elm_win_resize_object_add(win, box);
-   efl_gfx_size_set(win, 400, 400);
+   efl_gfx_size_set(win, EINA_SIZE2D(400,  400));
    efl_gfx_visible_set(win, 1);
 }

@@ -538,13 +538,13 @@ _elm_combobox_part_text_get(const Eo *obj, const char *part)
 }
 
 EOLIAN static void
-_elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Evas_Coord w, Evas_Coord h)
+_elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Eina_Size2D sz)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, w, h))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
    if (pd->count > 0) _table_resize(obj);
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 /* Internal EO APIs and hidden overrides */
