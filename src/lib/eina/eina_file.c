@@ -936,6 +936,11 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 #ifdef MAP_HUGETLB
         hugetlb = !!(flags & MAP_HUGETLB);
 #endif
+        if (!file->global_refcount)
+          file->global_hugetlb = hugetlb;
+        else
+          hugetlb = file->global_hugetlb;
+
         _eina_file_map_rule_apply(rule, file->global_map, file->length, hugetlb);
         file->global_refcount++;
         ret = file->global_map;
@@ -1059,13 +1064,21 @@ EAPI void
 eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,
                        unsigned long int offset, unsigned long int length)
 {
-   Eina_File_Map *em;
-   
    EINA_SAFETY_ON_NULL_RETURN(file);
    eina_lock_take(&file->lock);
-   em = eina_hash_find(file->rmap, &map);
-   if (em) _eina_file_map_rule_apply(rule, ((char *)em->map) + offset,
-                                     length, em->hugetlb);
+   if (map == file->global_map)
+     {
+        _eina_file_map_rule_apply(rule, ((char*) map) + offset, length,
+                                  file->global_hugetlb);
+     }
+   else
+     {
+        Eina_File_Map *em;
+
+        em = eina_hash_find(file->rmap, &map);
+        if (em) _eina_file_map_rule_apply(rule, ((char *) em->map) + offset,
+                                          length, em->hugetlb);
+     }
    eina_lock_release(&file->lock);
 }
 
