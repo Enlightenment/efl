@@ -237,27 +237,27 @@ _elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Evas_Coord w, Evas_Co
 
    if (!sd->parent && sd->content)
      {
-        Evas_Coord x, y;
+        Eina_Position2D pos;
 
-        efl_gfx_position_get(obj, &x, &y);
-        _notify_move_to_orientation(obj, x, y, w, h);
+        pos = efl_gfx_position_get(obj);
+        _notify_move_to_orientation(obj, pos.x, pos.y, w, h);
      }
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_position_set(Eo *obj, Elm_Notify_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_notify_efl_gfx_position_set(Eo *obj, Elm_Notify_Data *sd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
    if (!sd->parent && sd->content)
      {
         Evas_Coord w, h;
 
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-        _notify_move_to_orientation(obj, x, y, w, h);
+        _notify_move_to_orientation(obj, pos.x, pos.y, w, h);
      }
 }
 

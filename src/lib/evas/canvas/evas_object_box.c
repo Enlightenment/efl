@@ -442,12 +442,12 @@ _evas_box_efl_gfx_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Co
 }
 
 EOLIAN static void
-_evas_box_efl_gfx_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_evas_box_efl_gfx_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_MOVE , 0, x, y))
+   if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_MOVE , 0, pos))
      return;
 
-   efl_gfx_position_set(efl_super(o, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(o, MY_CLASS), pos);
    evas_object_smart_changed(o);
 }
 

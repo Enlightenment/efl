@@ -131,15 +131,15 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
    /* Example custom layout for grid:
     * divide space into regions of same size, place objects in center of their
     * cells using their min size
-    * Note: This is a TERRIBLE layout function (disregards align, weight, ...)
+    * Note: This is a TERRIBLE layout function (disregards align, weig.ht, ...)
     */
 
-   int rows, cols, gw, gh, gx, gy, c, r, cs, rs, gmw = 0, gmh = 0;
+   int rows, cols, c, r, cs, rs, gmw = 0, gmh = 0;
    Eina_Iterator *it;
+   Eina_Rect g;
    Eo *item;
 
-   efl_gfx_size_get(pack, &gw, &gh);
-   efl_gfx_position_get(pack, &gx, &gy);
+   g = efl_gfx_geometry_get(pack);
 
    efl_pack_grid_size_get(pack, &cols, &rows);
    if (!cols || !rows) goto end;
@@ -149,16 +149,15 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
      {
         if (efl_pack_grid_position_get(pack, item, &c, &r, &cs, &rs))
           {
-             int x, y, mw, mh;
+             Eina_Rect m;
 
-             efl_gfx_size_hint_combined_min_get(item, &mw, &mh);
-             x = gx + c * gw / cols + (cs * gw / cols - mw) / 2;
-             y = gy + r * gh / rows + (rs * gh / rows - mh) / 2;
-             efl_gfx_size_set(item, mw, mh);
-             efl_gfx_position_set(item, x, y);
+             efl_gfx_size_hint_combined_min_get(item, &m.w, &m.h);
+             m.x = g.x + c * g.w / cols + (cs * g.w / cols - m.w) / 2;
+             m.y = g.y + r * g.h / rows + (rs * g.h / rows - m.h) / 2;
+             efl_gfx_geometry_set(item, m);
 
-             gmw = MAX(gmw, mw);
-             gmh = MAX(gmh, mh);
+             gmw = MAX(gmw, m.w);
+             gmh = MAX(gmh, m.h);
           }
      }
    eina_iterator_free(it);

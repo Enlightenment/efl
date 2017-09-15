@@ -43,9 +43,12 @@
 #define EINA_RECTANGLE_FORMAT "dx%d - %dx%d"
 #define EINA_RECTANGLE_ARGS(r) (r)->x, (r)->y, (r)->w, (r)->h
 
-#define EINA_RECT(x, y, w, h) ((Eina_Rect) { { x, y, w, h } })
+#define EINA_RECT(x, y, w, h) ((Eina_Rect) { { (x), (y), (w), (h) } })
 #define EINA_RECT_ZERO() { EINA_RECTANGLE_INIT }
 #define EINA_RECT_EMPTY() ((Eina_Rect) EINA_RECT_ZERO())
+
+#define EINA_POSITION2D(x, y) ((Eina_Position2D) { (x), (y) })
+#define EINA_SIZE2D(x, y) ((Eina_Size2D) { (x), (y) })
 
 /** @brief A 2D position in pixels coordinates */
 typedef struct _Eina_Position2D

@@ -5264,15 +5264,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                     }
                }
              else
-               efl_gfx_position_set(ep->object, ed->x + pf->final.x, ed->y + pf->final.y);
+               efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
-             efl_gfx_position_set(ep->object, ed->x + pf->final.x, ed->y + pf->final.y);
+             efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
              efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
 #endif
 
              if (ep->nested_smart) /* Move, Resize all nested parts */
                {   /* Not really needed but will improve the bounding box evaluation done by Evas */
-                  efl_gfx_position_set(ep->nested_smart, ed->x + pf->final.x, ed->y + pf->final.y);
+                  efl_gfx_position_set(ep->nested_smart, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
                   efl_gfx_size_set(ep->nested_smart, pf->final.w, pf->final.h);
                }
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -5312,7 +5312,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                 pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
 
-                efl_gfx_position_set(ep->object, ed->x + pf->final.x, ed->y + pf->final.y),
+                efl_gfx_position_set(ep->object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y)),
                 efl_gfx_size_set(ep->object, pf->final.w, pf->final.h);
 
                 viewport = evas_object_image_source_get(ep->object);
@@ -5563,7 +5563,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
-                  efl_gfx_position_set(ep->typedata.swallow->swallowed_object, ed->x + pf->final.x, ed->y + pf->final.y);
+                  efl_gfx_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
                   efl_gfx_size_set(ep->typedata.swallow->swallowed_object, pf->final.w, pf->final.h);
                   efl_gfx_visible_set(ep->typedata.swallow->swallowed_object, vis);
                }

@@ -273,12 +273,12 @@ _elm_genlist_pan_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Pan_Data *psd)
 }
 
 EOLIAN static void
-_elm_genlist_pan_efl_gfx_position_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
+_elm_genlist_pan_efl_gfx_position_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
    psd->wsd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
@@ -5705,14 +5705,13 @@ _elm_genlist_efl_canvas_group_group_del(Eo *obj, Elm_Genlist_Data *sd)
 }
 
 EOLIAN static void
-_elm_genlist_efl_gfx_position_set(Eo *obj, Elm_Genlist_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_genlist_efl_gfx_position_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
-
-   evas_object_move(sd->hit_rect, x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void

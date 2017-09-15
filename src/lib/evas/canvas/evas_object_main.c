@@ -1158,7 +1158,7 @@ end:
 EOLIAN static void
 _efl_canvas_object_efl_gfx_geometry_set(Eo *obj, Evas_Object_Protected_Data *pd EINA_UNUSED, Eina_Rect r)
 {
-   efl_gfx_position_set(obj, r.x, r.y);
+   efl_gfx_position_set(obj, r.pos);
    efl_gfx_size_set(obj, r.w, r.h);
 }
 
@@ -1174,17 +1174,18 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   efl_gfx_position_set((Evas_Object *)obj, x, y);
+   efl_gfx_position_set(obj, EINA_POSITION2D(x, y));
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
-                                        Evas_Coord x, Evas_Coord y)
+_efl_canvas_object_efl_gfx_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
 {
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
    Evas_Map *map;
+   int x = pos.x;
+   int y = pos.y;
 
    if (_evas_object_intercept_call_evas(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 1, x, y))
      return;
@@ -1332,20 +1333,14 @@ evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y
    if (h) *h = r.h;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Position2D
 _efl_canvas_object_efl_gfx_position_get(Eo *obj EINA_UNUSED,
-                                        Evas_Object_Protected_Data *pd,
-                                        Evas_Coord *x, Evas_Coord *y)
+                                        Evas_Object_Protected_Data *pd)
 {
    if ((pd->delete_me) || (!pd->layer))
-     {
-        if (x) *x = 0;
-        if (y) *y = 0;
-        return;
-     }
+     return EINA_POSITION2D(0, 0);
 
-   if (x) *x = pd->cur->geometry.x;
-   if (y) *y = pd->cur->geometry.y;
+   return ((Eina_Rect) pd->cur->geometry).pos;
 }
 
 EOLIAN static void
@@ -2060,11 +2055,10 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    double scale;
    unsigned int m;
    int r, g, b, a;
-   int w, h;
    //int requestw, requesth;
    int minw, minh;
    int maxw, maxh;
-   int x, y;
+   Eina_Rect geom;
    short layer;
    Eina_Bool focus;
    Eina_Bool visible;
@@ -2076,8 +2070,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    visible = efl_gfx_visible_get(eo_obj);
    layer = efl_gfx_stack_layer_get(eo_obj);
    name = efl_name_get(eo_obj); // evas_object_name_get(eo_obj);
-   efl_gfx_position_get(eo_obj, &x, &y);
-   efl_gfx_size_get(eo_obj, &w, &h);
+   geom = efl_gfx_geometry_get(eo_obj);
    scale = efl_canvas_object_scale_get(eo_obj);
    efl_gfx_size_hint_restricted_min_get(eo_obj, &minw, &minh);
    efl_gfx_size_hint_max_get(eo_obj, &maxw, &maxh);
@@ -2100,12 +2093,12 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    EFL_DBG_INFO_APPEND(group, "Layer", EINA_VALUE_TYPE_INT, layer);
 
    node = EFL_DBG_INFO_LIST_APPEND(group, "Position");
-   EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_INT, x);
-   EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_INT, y);
+   EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_INT, geom.x);
+   EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_INT, geom.y);
 
    node = EFL_DBG_INFO_LIST_APPEND(group, "Size");
-   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, w);
-   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, h);
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, geom.w);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, geom.h);
 
    EFL_DBG_INFO_APPEND(group, "Scale", EINA_VALUE_TYPE_DOUBLE, scale);
 

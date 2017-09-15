@@ -12,16 +12,17 @@ interface Efl.Gfx {
            of the window, within its border decorations (application space).
          ]]
          set {
-            [[Moves the given Evas object to the given location inside its
-              canvas' viewport.
+            [[Moves the given canvas object to the given location inside its
+              canvas' viewport. If unchanged this call may be entirely skipped,
+              but if changed this will trigger move events, as well as
+              potential pointer,in or pointer,out events.
             ]]
          }
          get {
-            [[Retrieves the position of the given Evas object.]]
+            [[Retrieves the position of the given canvas object.]]
          }
          values {
-            x: int; [[X coordinate]]
-            y: int; [[Y coordinate]]
+            pos: Eina.Position2D; [[A 2D pixel coordinate.]]
          }
       }
       @property size {

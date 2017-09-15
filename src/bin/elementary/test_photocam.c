@@ -767,7 +767,7 @@ _zoomable_move_resize_cb(void *data, const Efl_Event *ev)
 
    r = efl_gfx_geometry_get(ev->object);
    efl_gfx_size_set(data, r.w, r.h);
-   efl_gfx_position_set(data, r.x, r.y);
+   efl_gfx_position_set(data, r.pos);
 }
 
 static void

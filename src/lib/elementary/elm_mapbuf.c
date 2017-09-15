@@ -156,12 +156,12 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Coord x, Evas_Coord y)
+_elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
    _mapbuf_auto_eval(obj, sd);
    _mapbuf_auto_smooth(obj, sd);

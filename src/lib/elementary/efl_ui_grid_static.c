@@ -26,9 +26,9 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
    Efl_Ui_Grid_Data *gd;
    Grid_Item *gi;
    Evas *e;
-   Evas_Coord x, y, w, h;
    long long xl, yl, wl, hl, vwl, vhl;
    Eina_Bool mirror;
+   Eina_Rect r;
 
    gd = efl_data_scope_get(obj, EFL_UI_GRID_CLASS);
    if (!gd->items) return;
@@ -36,12 +36,11 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
    e = evas_object_evas_get(obj);
    efl_event_freeze(e);
 
-   efl_gfx_position_get(obj, &x, &y);
-   efl_gfx_size_get(obj, &w, &h);
-   xl = x;
-   yl = y;
-   wl = w;
-   hl = h;
+   r = efl_gfx_geometry_get(obj);
+   xl = r.x;
+   yl = r.y;
+   wl = r.w;
+   hl = r.h;
    mirror = efl_ui_mirrored_get(obj);
 
    if (!gd->req_cols || !gd->req_rows)
@@ -69,8 +68,7 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
           }
         y1 = yl + ((hl * (long long)gi->row) / vhl);
         y2 = yl + ((hl * (long long)(gi->row + gi->row_span)) / vhl);
-        efl_gfx_position_set(gi->object, x1, y1);
-        efl_gfx_size_set(gi->object, x2 - x1, y2 - y1);
+        efl_gfx_geometry_set(gi->object, EINA_RECT(x1, y1, x2 - x1, y2 - y1));
      }
 err:
    efl_event_thaw(e);

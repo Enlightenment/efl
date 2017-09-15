@@ -97,17 +97,20 @@ _elm_menu_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED, Elm_Menu_Ite
 static inline void
 _parent_geometry_get(Elm_Menu_Data *sd, int *x, int *y, int *w, int *h)
 {
-   evas_object_geometry_get(sd->parent, x, y, w, h);
+   Eina_Rect r;
+
+   r = efl_gfx_geometry_get(sd->parent);
    if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
      {
         if (sd->menu_bar && efl_canvas_object_is_frame_object_get(sd->obj))
-          efl_gfx_position_get(sd->obj, x, y);
+          r.pos = efl_gfx_position_get(sd->obj);
         else
-          {
-             if (x) *x = 0;
-             if (y) *y = 0;
-          }
+          r.pos = EINA_POSITION2D(0, 0);
      }
+   if (x) *x = r.x;
+   if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 static void

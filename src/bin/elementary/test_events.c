@@ -111,18 +111,17 @@ _clicked_button2(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
    Eo *bt = td->button;
-   int x, y, w, h;
+   Eina_Rect r;
 
    if (!td->evkeyup)
      {
-        efl_gfx_position_get(bt, &x, &y);
-        efl_gfx_size_get(bt, &w, &h);
+        r = efl_gfx_geometry_get(bt);
 
-        x = x + w / 2;
-        y = y + h / 2;
-        efl_input_pointer_position_set(td->evmove, x, y);
-        efl_input_pointer_position_set(td->evdown, x, y);
-        efl_input_pointer_position_set(td->evup, x, y);
+        r.x = r.x + r.w / 2;
+        r.y = r.y + r.h / 2;
+        efl_input_pointer_position_set(td->evmove, r.x, r.y);
+        efl_input_pointer_position_set(td->evdown, r.x, r.y);
+        efl_input_pointer_position_set(td->evup, r.x, r.y);
 
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);

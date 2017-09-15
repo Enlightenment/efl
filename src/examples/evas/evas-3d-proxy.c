@@ -228,7 +228,7 @@ main(void)
 #ifdef USE_EO_IMAGE
    source = efl_add(EFL_CANVAS_IMAGE_CLASS, evas);
    efl_gfx_buffer_copy_set(source, NULL, IMG_WIDTH, IMG_HEIGHT, 0, EFL_GFX_COLORSPACE_ARGB8888, 0);
-   efl_gfx_position_set(source, (WIDTH / 2), (HEIGHT / 2));
+   efl_gfx_position_set(source, EINA_POSITION2D((WIDTH / 2), (HEIGHT / 2)));
    efl_gfx_size_set(source, (WIDTH / 2), (HEIGHT / 2));
    efl_gfx_visible_set(source, EINA_TRUE);
 #else
