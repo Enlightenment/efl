@@ -749,7 +749,9 @@ inline eina::string_view convert_to_return(const char** value, tag<const char**,
 {
   return {*value};
 }
-inline std::string convert_to_return(const char* value, tag<const char*, std::string>)
+template <typename S>
+inline std::string convert_to_return(const char* value, tag<const char*, S>
+                                     , typename std::enable_if<std::is_same<typename std::remove_cv<S>::type, std::string>::value>::type* = 0)
 {
   if(value)
     {
@@ -760,7 +762,36 @@ inline std::string convert_to_return(const char* value, tag<const char*, std::st
   else
     return {};
 }
-inline std::string convert_to_return(const char** value, tag<const char**, std::string>)
+template <typename S>
+inline std::string convert_to_return(const char** value, tag<const char**, S>
+                                     , typename std::enable_if<std::is_same<typename std::remove_cv<S>::type, std::string>::value>::type* = 0)
+{
+  if(value)
+    {
+       std::string r{*value};
+       free((void*)*value);
+       free((void*)value);
+       return r;
+    }
+  else
+    return {};
+}
+template <typename S>
+inline std::string convert_to_return(char* value, tag<char*, S>
+                                     , typename std::enable_if<std::is_same<typename std::remove_cv<S>::type, std::string>::value>::type* = 0)
+{
+  if(value)
+    {
+       std::string r{value};
+       free((void*)value);
+       return r;
+    }
+  else
+    return {};
+}
+template <typename S>
+inline std::string convert_to_return(char** value, tag<char**, S>
+                                     , typename std::enable_if<std::is_same<typename std::remove_cv<S>::type, std::string>::value>::type* = 0)
 {
   if(value)
     {
