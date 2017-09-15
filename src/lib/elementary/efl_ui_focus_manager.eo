@@ -124,7 +124,7 @@ interface Efl.Ui.Focus.Manager {
             params {
                 child : Efl.Ui.Focus.Object; [[The child object to inspect.]]
             }
-            return : own(ptr(Efl.Ui.Focus.Relations)); [[The list of relations
+            return : ptr(Efl.Ui.Focus.Relations) @owned; [[The list of relations
                 starting from $child.]]
         }
         logical_end {

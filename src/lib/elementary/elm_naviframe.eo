@@ -46,7 +46,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
          get {
             [[Get a list of all the naviframe items.]]
 
-            return: free(own(list<Elm.Widget.Item>), eina_list_free) @warn_unused; [[A list of naviframe items, @Elm.Widget.Item, or $NULL on failure. Note: The returned list MUST be freed.]]
+            return: list<Elm.Widget.Item> @owned @warn_unused; [[A list of naviframe items, @Elm.Widget.Item, or $NULL on failure. Note: The returned list MUST be freed.]]
          }
       }
       @property top_item {

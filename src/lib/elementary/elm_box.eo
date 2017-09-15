@@ -102,7 +102,7 @@ class Elm.Box (Elm.Widget)
               You must free this list with eina_list_free() once you are done with it.
 
             ]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[List of children]]
+            return: list<Efl.Canvas.Object> @owned @warn_unused; [[List of children]]
          }
       }
       pack_end {

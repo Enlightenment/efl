@@ -368,7 +368,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
               type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
             ]]
             values {
-               icon: own(Efl.Canvas.Object) @nullable;
+               icon: Efl.Canvas.Object @owned @nullable;
                   [[The image object to use for an icon.]]
             }
          }

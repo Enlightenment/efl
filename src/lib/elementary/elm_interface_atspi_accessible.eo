@@ -282,7 +282,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            children: free(own(list<Elm.Interface.Atspi_Accessible>), eina_list_free); [[List of widget's children]]
+            children: list<Elm.Interface.Atspi_Accessible> @owned; [[List of widget's children]]
          }
       }
       @property role_name @protected {
@@ -298,7 +298,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            attributes: free(own(list<own(ptr(Elm.Atspi.Attribute))>), elm_atspi_attributes_list_free); [[List of object attributes]]
+            attributes: free(list<ptr(Elm.Atspi.Attribute) @owned>, elm_atspi_attributes_list_free) @owned; [[List of object attributes]]
          }
       }
       @property index_in_parent @protected {
