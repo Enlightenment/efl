@@ -63,10 +63,10 @@ class Efl.Io.Manager (Efl.Loop_User)
             data: ptr(Eina.Binbuf); [[Data to set as information]]
             flags: Eina.Xattr.Flags; [[Extended attributes flags]]
          }
-         return: own(ptr(Eina.Future)); [[Future for asynchronous set operation]]
+         return: ptr(Eina.Future) @owned; [[Future for asynchronous set operation]]
       }
       get {
-         return: own(ptr(Eina.Future)); [[Information]]
+         return: ptr(Eina.Future) @owned; [[Information]]
       }
       keys {
          path: string; [[File path]]
@@ -83,7 +83,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in path: string; [[Path to file]]
         @in shared: bool; [[$true if the file can be accessed by others, $false otherwise]]
       }
-      return: own(ptr(Eina.Future)); [[Eina file handle]]
+      return: ptr(Eina.Future) @owned; [[Eina file handle]]
     }
     close {
       [[Closes an open Eina.File.]]
@@ -91,7 +91,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in file: ptr(Eina.File); [[Eina file handle]]
         // Here we're just interested whether the promise was fullfilled or not. No value needed.
       }
-      return: own(ptr(Eina.Future)); [[Close return code]]
+      return: ptr(Eina.Future) @owned; [[Close return code]]
     }
   }
 }

@@ -12,7 +12,7 @@ class Efl.VG.Container (Efl.VG)
       }
       children_get {
       	 [[Get all children of container]]
-         return: free(own(iterator<Efl.VG>), eina_iterator_free) @warn_unused; [[Iterator to children]]
+         return: iterator<Efl.VG> @owned @warn_unused; [[Iterator to children]]
       }
    }
    implements {

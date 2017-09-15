@@ -98,9 +98,9 @@ abstract Efl.Object ()
             @since 1.21
          ]]
          params {
-            @in sb: own(ptr(Eina.Strbuf)); [[A string buffer, must not be $null.]]
+            @in sb: ptr(Eina.Strbuf) @owned; [[A string buffer, must not be $null.]]
          }
-         return: own(ptr(Eina.Strbuf)); [[Should not be $null, may be $sb.]]
+         return: ptr(Eina.Strbuf) @owned; [[Should not be $null, may be $sb.]]
       }
       @property event_global_freeze_count @class {
          get {
@@ -227,7 +227,7 @@ abstract Efl.Object ()
       }
       children_iterator_new {
          [[Get an iterator on all childrens]]
-         return: free(own(iterator<Efl.Object>), eina_iterator_free) @warn_unused; [[Children iterator]]
+         return: iterator<Efl.Object> @owned @warn_unused; [[Children iterator]]
       }
       composite_attach {
            [[Make an object a composite object of another.
