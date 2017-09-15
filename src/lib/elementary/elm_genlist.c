@@ -167,6 +167,9 @@ static Eina_Bool _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd);
 
 static void _item_expanded_set_noevent(Elm_Gen_Item *it, Eina_Bool expanded);
 
+static Eina_Bool _item_process(Elm_Genlist_Data *sd, Elm_Gen_Item *it);
+static void _item_process_post(Elm_Genlist_Data *sd, Elm_Gen_Item *it);
+
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
    {"select", _key_action_select},
@@ -3732,15 +3735,25 @@ _item_del(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
+   if (it->item->rel_revs)
+     {
+        Elm_Gen_Item *tmp;
+        EINA_LIST_FREE(it->item->rel_revs, tmp)
+          {
+             if (tmp->item->queued && !(tmp->base)->on_deletion)
+               {
+                  tmp->item->queued = EINA_FALSE;
+                  sd->queue = eina_list_remove(sd->queue, tmp);
+                  _item_process(sd, tmp);
+                  _item_process_post(sd, tmp);
+               }
+             tmp->item->rel = NULL;
+          }
+     }
    if (it->item->rel)
      {
         it->item->rel->item->rel_revs =
            eina_list_remove(it->item->rel->item->rel_revs, it);
-     }
-   if (it->item->rel_revs)
-     {
-        Elm_Gen_Item *tmp;
-        EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
      }
    elm_genlist_item_subitems_clear(EO_OBJ(it));
    if (sd->show_item == it) sd->show_item = NULL;
