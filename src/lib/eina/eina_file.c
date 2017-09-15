@@ -68,7 +68,10 @@
  */
 
 #define EINA_SMALL_PAGE eina_cpu_page_size()
-#define EINA_HUGE_PAGE 16 * 1024 * 1024
+
+// FIXME: This assumes HugeTLB size of 2Mb. How to get this information at runtime?
+#define EINA_HUGE_PAGE (2 * 1024 * 1024)
+#define EINA_HUGE_PAGE_MIN (8 * EINA_HUGE_PAGE)
 
 #ifdef HAVE_DIRENT_H
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
@@ -331,11 +334,24 @@ _eina_file_map_populate(char *map, unsigned long int size, Eina_Bool hugetlb)
 }
 #endif
 
+static char *
+_page_aligned_address(const char *map, unsigned long int offset, Eina_Bool hugetlb)
+{
+   const uintptr_t align = hugetlb ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
+   uintptr_t pmap = (uintptr_t) map;
+
+   pmap = (pmap + offset) - ((pmap + offset) & (align - 1));
+
+   return (char *) pmap;
+}
+
 static int
-_eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int size, Eina_Bool hugetlb)
+_eina_file_map_rule_apply(Eina_File_Populate rule, const void *map, unsigned long int offset,
+                          unsigned long int size, unsigned long long maplen, Eina_Bool hugetlb)
 {
    int tmp = 42;
    int flag = MADV_RANDOM;
+   char *addr;
 
    switch (rule)
      {
@@ -352,6 +368,21 @@ _eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int
 # warning "EINA_FILE_REMOVE does not have system support"
 #endif        
       default: return tmp; break;
+     }
+
+   if (offset >= maplen) return tmp;
+
+   // Align address, clamp size
+   addr = _page_aligned_address(map, offset, hugetlb);
+   if (size > 0)
+     {
+        size += ((char *) map + offset) - addr;
+        offset -= ((char *) map + offset) - addr;
+        if ((offset + size) > maplen)
+          {
+             if (offset > maplen) return tmp;
+             size = maplen - offset;
+          }
      }
 
    madvise(addr, size, flag);
@@ -914,7 +945,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
 #endif
 #ifdef MAP_HUGETLB
-   if (file->length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
+   if (file->length >= EINA_HUGE_PAGE_MIN) flags |= MAP_HUGETLB;
 #endif
 
    eina_mmap_safety_enabled_set(EINA_TRUE);
@@ -941,7 +972,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
         else
           hugetlb = file->global_hugetlb;
 
-        _eina_file_map_rule_apply(rule, file->global_map, file->length, hugetlb);
+        _eina_file_map_rule_apply(rule, file->global_map, 0, file->length, file->length, hugetlb);
         file->global_refcount++;
         ret = file->global_map;
      }
@@ -986,7 +1017,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
 #endif
 #ifdef MAP_HUGETLB
-        if (length > EINA_HUGE_PAGE) flags |= MAP_HUGETLB;
+        if (length >= EINA_HUGE_PAGE_MIN) flags |= MAP_HUGETLB;
 #endif
 
         map = malloc(sizeof (Eina_File_Map));
@@ -1016,7 +1047,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
 
    map->refcount++;
 
-   _eina_file_map_rule_apply(rule, map->map, length, map->hugetlb);
+   _eina_file_map_rule_apply(rule, map->map, 0, length, map->length, map->hugetlb);
 
    eina_lock_release(&file->lock);
 
@@ -1064,21 +1095,14 @@ EAPI void
 eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,
                        unsigned long int offset, unsigned long int length)
 {
+   Eina_File_Map *em;
+
    EINA_SAFETY_ON_NULL_RETURN(file);
    eina_lock_take(&file->lock);
    if (map == file->global_map)
-     {
-        _eina_file_map_rule_apply(rule, ((char*) map) + offset, length,
-                                  file->global_hugetlb);
-     }
-   else
-     {
-        Eina_File_Map *em;
-
-        em = eina_hash_find(file->rmap, &map);
-        if (em) _eina_file_map_rule_apply(rule, ((char *) em->map) + offset,
-                                          length, em->hugetlb);
-     }
+     _eina_file_map_rule_apply(rule, map, offset, length, file->length, file->global_hugetlb);
+   else if ((em = eina_hash_find(file->rmap, &map)) != NULL)
+     _eina_file_map_rule_apply(rule, map, offset, length, em->length, em->hugetlb);
    eina_lock_release(&file->lock);
 }
 
