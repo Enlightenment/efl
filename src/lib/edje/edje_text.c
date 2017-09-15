@@ -515,7 +515,10 @@ arrange_text:
 
    if (!calc_only)
      {
-        efl_gfx_position_set(ep->object, ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x, ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
+        Eina_Position2D pos;
+        pos.x = ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x;
+        pos.y = ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y;
+        efl_gfx_position_set(ep->object, pos);
         efl_gfx_visible_set(ep->object, params->visible);
      }
 

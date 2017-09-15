@@ -176,7 +176,7 @@ main(void)
    evas_object_name_set(d.bg, "background rectangle");
    efl_gfx_color_set(d.bg, 255, 255, 255, 255);
    /* white bg */
-   efl_gfx_position_set(d.bg, 0, 0);
+   efl_gfx_position_set(d.bg, EINA_POSITION2D(0, 0));
    /* at canvas' origin */
    efl_gfx_size_set(d.bg, WIDTH, HEIGHT);
    /* covers full canvas */
@@ -202,7 +202,7 @@ main(void)
      }
    else
      {
-        efl_gfx_position_set(d.img, 0, 0);
+        efl_gfx_position_set(d.img, EINA_POSITION2D(0, 0));
         efl_gfx_size_set(d.img, WIDTH, HEIGHT);
         efl_gfx_visible_set(d.img, EINA_TRUE);
         printf("Image object added, class name is: %s\n",
@@ -222,7 +222,7 @@ main(void)
      {
         efl_image_border_set(d.clipper_border, 3, 3, 3, 3);
         efl_image_border_center_fill_set(d.clipper_border, EFL_GFX_BORDER_FILL_MODE_NONE);
-        efl_gfx_position_set(d.clipper_border, (WIDTH / 4) -3, (HEIGHT / 4) - 3);
+        efl_gfx_position_set(d.clipper_border, EINA_POSITION2D((WIDTH / 4) -3, (HEIGHT / 4) - 3));
         efl_gfx_size_set(d.clipper_border, (WIDTH / 2) + 6, (HEIGHT / 2) + 6);
         efl_gfx_visible_set(d.clipper_border, EINA_TRUE);
      }
@@ -232,7 +232,7 @@ main(void)
     * by 255) */
    d.clipper = efl_add(EFL_CANVAS_RECTANGLE_CLASS, d.canvas);
 
-   efl_gfx_position_set(d.clipper, WIDTH / 4, HEIGHT / 4);
+   efl_gfx_position_set(d.clipper, EINA_POSITION2D(WIDTH / 4, HEIGHT / 4));
    efl_gfx_size_set(d.clipper, WIDTH / 2, HEIGHT / 2);
    efl_gfx_visible_set(d.clipper, EINA_TRUE);
 

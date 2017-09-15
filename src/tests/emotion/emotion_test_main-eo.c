@@ -113,7 +113,7 @@ bg_setup(void)
 {
    o_bg = efl_add(EDJE_OBJECT_CLASS, evas);
    efl_file_set(o_bg, theme_file, "background");
-   efl_gfx_position_set(o_bg, 0, 0);
+   efl_gfx_position_set(o_bg, EINA_POSITION2D(0, 0));
    efl_gfx_size_set(o_bg, startw, starth);
    efl_gfx_stack_layer_set(o_bg, -999);
    efl_gfx_visible_set(o_bg, EINA_TRUE);
@@ -553,11 +553,14 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
    if (!fd) return;
    if (fd->moving)
      {
-        Evas_Coord x, y, ox, oy;
+        Evas_Coord x, y;
+        Eina_Position2D pos;
 
         evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
-        efl_gfx_position_get(o, &ox, &oy);
-        efl_gfx_position_set(o, ox + (x - fd->x), oy + (y - fd->y));
+        pos = efl_gfx_position_get(o);
+        pos.x += (x - fd->x);
+        pos.y += (y - fd->y);
+        efl_gfx_position_set(o, pos);
         fd->x = x;
         fd->y = y;
      }
@@ -624,7 +627,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_part_swallow(oe, "video_swallow", o);
 
    offset = 20 * (eina_list_count(video_objs) - 1);
-   efl_gfx_position_set(oe, offset, offset);
+   efl_gfx_position_set(oe, EINA_POSITION2D(offset, offset));
    edje_object_size_min_calc(oe, &w, &h);
    efl_gfx_size_set(oe, w, h);
 

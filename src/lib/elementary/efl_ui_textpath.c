@@ -293,6 +293,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
    const Efl_Gfx_Path_Command_Type *cmd;
    const double *points;
    Efl_Ui_Textpath_Segment *seg;
+   Eina_Position2D opos;
 
    EINA_INLIST_FREE(pd->segments, seg)
      {
@@ -300,44 +301,43 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
         free(seg);
      }
 
-   Evas_Coord x, y;
-   efl_gfx_position_get(obj, &x, &y);
+   opos = efl_gfx_position_get(obj);
 
    pd->total_length = 0;
    efl_gfx_path_get(obj, &cmd, &points);
    if (cmd)
      {
         int pos = -1;
-        Eina_Rectangle *rect = eina_rectangle_new(0, 0, 0, 0);
         double px0 = 0.0, py0 = 0.0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1;
+        Eina_Rect rect = EINA_RECT_ZERO();
 
         while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
           {
              if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
                {
                   pos++;
-                  px0 = points[pos] + x;
+                  px0 = points[pos] + opos.x;
                   pos++;
-                  py0 = points[pos] + y;
+                  py0 = points[pos] + opos.y;
                }
              else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
                {
                   Eina_Bezier bz;
                   double bx, by, bw, bh;
-                  Eina_Rectangle *brect;
+                  Eina_Rect brect;
 
                   pos++;
-                  ctrl_x0 = points[pos] + x;
+                  ctrl_x0 = points[pos] + opos.x;
                   pos++;
-                  ctrl_y0 = points[pos] + y;
+                  ctrl_y0 = points[pos] + opos.y;
                   pos++;
-                  ctrl_x1 = points[pos] + x;
+                  ctrl_x1 = points[pos] + opos.x;
                   pos++;
-                  ctrl_y1 = points[pos] + y;
+                  ctrl_y1 = points[pos] + opos.y;
                   pos++;
-                  px1 = points[pos] + x;
+                  px1 = points[pos] + opos.x;
                   pos++;
-                  py1 = points[pos] + y;
+                  py1 = points[pos] + opos.y;
 
                   eina_bezier_values_set(&bz, px0, py0, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1, px1, py1);
                   seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
@@ -359,18 +359,17 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   py0 = py1;
 
                   eina_bezier_bounds_get(&bz, &bx, &by, &bw, &bh);
-                  brect = eina_rectangle_new(bx, by, bw, bh);
-                  eina_rectangle_union(rect, brect);
-                  eina_rectangle_free(brect);
+                  brect = EINA_RECT(bx, by, bw, bh);
+                  eina_rectangle_union(&rect.rect, &brect.rect);
                }
              else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
                {
-                  Eina_Rectangle *lrect;
+                  Eina_Rect lrect;
 
                   pos++;
-                  px1 = points[pos] + x;
+                  px1 = points[pos] + opos.x;
                   pos++;
-                  py1 = points[pos] + y;
+                  py1 = points[pos] + opos.y;
 
                   seg = malloc(sizeof(Efl_Ui_Textpath_Segment));
                   if (!seg)
@@ -389,17 +388,15 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                   pd->segments = eina_inlist_append(pd->segments, EINA_INLIST_GET(seg));
                   pd->total_length += seg->length;
 
-                  lrect = eina_rectangle_new(px0, py0, px1 - px0, py1 - py0);
-                  eina_rectangle_union(rect, lrect);
-                  eina_rectangle_free(lrect);
+                  lrect = EINA_RECT(px0, py0, px1 - px0, py1 - py0);
+                  eina_rectangle_union(&rect.rect, &lrect.rect);
                }
              cmd++;
           }
         if (set_min)
           {
-             efl_gfx_size_hint_min_set(obj, rect->w, rect->h);
+             efl_gfx_size_hint_min_set(obj, rect.w, rect.h);
           }
-        eina_rectangle_free(rect);
      }
 }
 
@@ -565,9 +562,9 @@ _efl_ui_textpath_elm_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_gfx_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Evas_Coord x, Evas_Coord y)
+_efl_ui_textpath_efl_gfx_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Position2D pos)
 {
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
    _path_data_get(obj, pd, EINA_FALSE);
    _text_draw(pd);
 }

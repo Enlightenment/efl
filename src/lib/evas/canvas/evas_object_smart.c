@@ -886,14 +886,14 @@ _efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool 
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_position_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Coord x, Evas_Coord y)
+_efl_canvas_group_efl_gfx_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    if (o->clipped)
-     _evas_object_smart_clipped_smart_move_internal(eo_obj, x, y);
-   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), x, y);
+     _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
+   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), pos);
 }
 
 EOLIAN static void

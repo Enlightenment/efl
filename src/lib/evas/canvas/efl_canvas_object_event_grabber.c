@@ -274,10 +274,10 @@ _efl_canvas_object_event_grabber_efl_canvas_group_group_need_recalculate_get(Eo 
 }
 
 EOLIAN static void
-_efl_canvas_object_event_grabber_efl_gfx_position_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, int x, int y)
+_efl_canvas_object_event_grabber_efl_gfx_position_set(Eo *eo_obj, Efl_Object_Event_Grabber_Data *pd, Eina_Position2D pos)
 {
-   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), x, y);
-   efl_gfx_position_set(pd->rect, x, y);
+   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), pos);
+   efl_gfx_position_set(pd->rect, pos);
 }
 
 EOLIAN static void

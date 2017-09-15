@@ -7922,18 +7922,16 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
 static void
 _obstacle_update(Evas_Textblock_Obstacle *obs, Eo *eo_obj)
 {
-   Evas_Coord x, y;
-   Evas_Coord ox, oy, ow, oh;
+   Eina_Rect tb_geom, obs_geom;
    Eo *eo_obs = obs->eo_obs;
 
-   efl_gfx_position_get(eo_obs, &ox, &oy);
-   efl_gfx_size_get(eo_obs, &ow, &oh);
-   efl_gfx_position_get(eo_obj, &x, &y);
+   obs_geom = efl_gfx_geometry_get(eo_obs);
+   tb_geom = efl_gfx_geometry_get(eo_obj);
 
-   obs->x = ox - x;
-   obs->y = oy - y;
-   obs->w = ow;
-   obs->h = oh;
+   obs->x = obs_geom.x - tb_geom.x;
+   obs->y = obs_geom.y - tb_geom.y;
+   obs->w = obs_geom.w;
+   obs->h = obs_geom.h;
 }
 
 static void

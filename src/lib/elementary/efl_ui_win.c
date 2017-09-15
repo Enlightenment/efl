@@ -927,10 +927,10 @@ _elm_win_resize_job(void *data)
 
    if (sd->main_menu)
      {
-        int mx, my;
+        Eina_Position2D pos;
 
-        efl_gfx_position_get(sd->main_menu, &mx, &my);
-        elm_menu_move(sd->main_menu, mx, my);
+        pos = efl_gfx_position_get(sd->main_menu);
+        elm_menu_move(sd->main_menu, pos.x, pos.y);
      }
 
    sd->response++;
@@ -2922,17 +2922,17 @@ _elm_win_obj_intercept_show(void *data,
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Evas_Coord y)
+_efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    if (sd->img_obj)
      {
-        if ((x != sd->screen.x) || (y != sd->screen.y))
+        if ((pos.x != sd->screen.x) || (pos.y != sd->screen.y))
           {
-             sd->screen.x = x;
-             sd->screen.y = y;
+             sd->screen.x = pos.x;
+             sd->screen.y = pos.y;
              efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
           }
         goto super_skip;
@@ -2942,19 +2942,19 @@ _efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Eva
         if (!sd->response)
           {
              sd->req_xy = EINA_TRUE;
-             sd->req_x = x;
-             sd->req_y = y;
-             TRAP(sd, move, x, y);
+             sd->req_x = pos.x;
+             sd->req_y = pos.y;
+             TRAP(sd, move, pos.x, pos.y);
           }
         if (!ecore_evas_override_get(sd->ee)) goto super_skip;
      }
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
    if (ecore_evas_override_get(sd->ee))
      {
-        sd->screen.x = x;
-        sd->screen.y = y;
+        sd->screen.x = pos.x;
+        sd->screen.y = pos.y;
         efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_MOVE, NULL);
      }
    if (sd->frame_obj)
@@ -2963,13 +2963,13 @@ _efl_ui_win_efl_gfx_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Coord x, Eva
         /* TODO */
         /* ecore_wl_window_update_location(sd->wl.win, x, y); */
 #endif
-        sd->screen.x = x;
-        sd->screen.y = y;
+        sd->screen.x = pos.x;
+        sd->screen.y = pos.y;
      }
    if (sd->img_obj)
      {
-        sd->screen.x = x;
-        sd->screen.y = y;
+        sd->screen.x = pos.x;
+        sd->screen.y = pos.y;
      }
 
    return;
@@ -2979,7 +2979,7 @@ super_skip:
     * Ugly code flow: legacy code had an early return in smart_move, ie.
     * evas object move would be processed but smart object move would be
     * aborted. This super call tries to simulate that. */
-   efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, EFL_CANVAS_GROUP_CLASS), pos);
 }
 
 EOLIAN static void

@@ -328,7 +328,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
         if (efl_isa(sd->parent, EFL_UI_WIN_CLASS))
           {
              if (efl_canvas_object_is_frame_object_get(obj))
-               efl_gfx_position_get(obj, &x, &y);
+               evas_object_geometry_get(obj, &x, &y, NULL, NULL);
              else
                {
                   x = 0;
@@ -631,12 +631,12 @@ _elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_efl_gfx_position_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Evas_Coord x, Evas_Coord y)
+_elm_hover_efl_gfx_position_set(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, x, y))
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
    elm_layout_sizing_eval(obj);
 }
