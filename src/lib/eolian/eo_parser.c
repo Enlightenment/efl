@@ -517,6 +517,9 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->type = tp;
         fdef->name = eina_stringshare_ref(fname);
         pop_type(ls);
+        fdef->owned = (ls->t.kw == KW_at_owned);
+        if (fdef->owned)
+          eo_lexer_get(ls);
         check_next(ls, ';');
         FILL_DOC(ls, fdef, doc);
      }
@@ -964,6 +967,7 @@ typedef struct _Eo_Ret_Def
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
    Eina_Bool warn_unused: 1;
+   Eina_Bool owned: 1;
 } Eo_Ret_Def;
 
 static void
@@ -978,6 +982,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void, Eina_Bool allo
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
+   ret->owned = EINA_FALSE;
    if (allow_def && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
@@ -987,12 +992,17 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void, Eina_Bool allo
         ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
-   Eina_Bool has_warn_unused = EINA_FALSE;
+   Eina_Bool has_warn_unused = EINA_FALSE, has_owned = EINA_FALSE;
    for (;;) switch (ls->t.kw)
      {
       case KW_at_warn_unused:
         CASE_LOCK(ls, warn_unused, "warn_unused qualifier");
         ret->warn_unused = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_owned:
+        CASE_LOCK(ls, owned, "owned qualifier");
+        ret->owned = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
@@ -1008,7 +1018,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
             Eina_Bool is_vals)
 {
    Eina_Bool has_nonull   = EINA_FALSE, has_optional = EINA_FALSE,
-             has_nullable = EINA_FALSE;
+             has_nullable = EINA_FALSE, has_owned    = EINA_FALSE;
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->param_dir = EOLIAN_IN_PARAM;
    FILL_BASE(par->base, ls, ls->line_number, ls->column);
@@ -1067,6 +1077,11 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
           eo_lexer_syntax_error(ls, "both nullable and nonull specified");
         CASE_LOCK(ls, nullable, "nullable qualifier");
         par->nullable = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_owned:
+        CASE_LOCK(ls, owned, "owned qualifier");
+        par->owned = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
@@ -1182,6 +1197,7 @@ parse_accessor:
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
+             prop->get_return_owned = ret.owned;
           }
         else
           {
@@ -1189,6 +1205,7 @@ parse_accessor:
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
+             prop->set_return_owned = ret.owned;
           }
         break;
       case KW_legacy:
@@ -1392,6 +1409,7 @@ parse_function_pointer(Eo_Lexer *ls)
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
         meth->get_return_warn_unused = EINA_FALSE;
+        meth->get_return_owned = EINA_FALSE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
@@ -1486,6 +1504,7 @@ body:
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
+        meth->get_return_owned = ret.owned;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
@@ -1748,7 +1767,8 @@ parse_event(Eo_Lexer *ls)
    ev->name = eina_stringshare_add(eina_strbuf_string_get(buf));
    pop_strbuf(ls);
    Eina_Bool has_scope = EINA_FALSE, has_beta = EINA_FALSE,
-             has_hot   = EINA_FALSE, has_restart = EINA_FALSE;
+             has_hot   = EINA_FALSE, has_restart = EINA_FALSE,
+             has_owned = EINA_FALSE;
    for (;;) switch (ls->t.kw)
      {
       case KW_at_private:
@@ -1772,6 +1792,11 @@ parse_event(Eo_Lexer *ls)
       case KW_at_restart:
         CASE_LOCK(ls, restart, "restart qualifier");
         ev->is_restart = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_owned:
+        CASE_LOCK(ls, owned, "owned qualifier");
+        ev->owned = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:

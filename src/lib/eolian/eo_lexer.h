@@ -31,7 +31,7 @@ enum Tokens
     KW(set), KW(type), KW(values), KW(var), KWAT(auto), KWAT(beta), \
     KWAT(class), KWAT(const), KWAT(empty), KWAT(extern), \
     KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(nullable), \
-    KWAT(optional), KWAT(out), KWAT(private), KWAT(property), \
+    KWAT(optional), KWAT(out), KWAT(owned), KWAT(private), KWAT(property), \
     KWAT(protected), KWAT(restart), KWAT(pure_virtual), KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
