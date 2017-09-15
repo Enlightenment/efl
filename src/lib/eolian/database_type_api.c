@@ -327,13 +327,6 @@ eolian_type_array_size_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Bool
-eolian_type_is_own(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   return tp->is_own;
-}
-
-EAPI Eina_Bool
 eolian_type_is_owned(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
