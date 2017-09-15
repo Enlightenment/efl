@@ -72,6 +72,7 @@ struct concrete
    }
 
    concrete(concrete const& other)
+     : _eo_raw(nullptr)
    {
      if(other._eo_raw)
        _eo_raw = detail::ref(other._eo_raw);
@@ -94,17 +95,15 @@ struct concrete
         }
       if(other._eo_raw)
         _eo_raw = detail::ref(other._eo_raw);
+      else
+        _eo_raw = nullptr;
       return *this;
    }
 
    concrete& operator=(concrete&& other)
    {
-      if(_eo_raw)
-        {
-           detail::unref(_eo_raw);
-           _eo_raw = nullptr;
-        }
-      std::swap(_eo_raw, other._eo_raw);
+      concrete tmp(other);
+      std::swap(*this, tmp);
       return *this;
    }
   
