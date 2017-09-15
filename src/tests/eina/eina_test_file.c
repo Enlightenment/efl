@@ -405,9 +405,7 @@ START_TEST(eina_file_map_new_test)
    file_map = eina_file_map_new(e_file, EINA_FILE_WILLNEED, map_offset, map_length); 
    fail_if(!file_map);
    correct_map_check= strcmp((char*) file_map, eina_map_test_string); 
-   fail_if(correct_map_check != 0);  
-
-   eina_file_map_free(e_file, file_map);
+   fail_if(correct_map_check != 0);
 
    // test : offset = memory_page_size AND length = file->length - memory_page_size => correct partly map
    map_offset = memory_page_size;
@@ -417,7 +415,15 @@ START_TEST(eina_file_map_new_test)
    correct_map_check = strcmp((char*)file2_map, big_buffer + memory_page_size); 
    fail_if(correct_map_check != 0);  
 
+   // test no crash with eina_file_map_populate()
+   eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, 0, 0);
+   eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, file_length / 2, 0);
+   eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, 0, file_length * 2);
+   eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, file_length / 2, big_buffer_size);
+   eina_file_map_populate(e_file, EINA_FILE_POPULATE, file_map, big_buffer_size + 1, file_length);
+
    eina_file_map_free(e_file, file_map);
+   eina_file_map_free(e_file, file_map); // test no crash
    eina_file_map_free(e_file2, file2_map);
    eina_file_close(e_file);
    eina_file_close(e_file2);
