@@ -971,7 +971,8 @@ typedef struct _Eo_Ret_Def
 } Eo_Ret_Def;
 
 static void
-parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void, Eina_Bool allow_def)
+parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
+             Eina_Bool allow_def, Eina_Bool is_funcptr)
 {
    eo_lexer_get(ls);
    check_next(ls, ':');
@@ -993,7 +994,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void, Eina_Bool allo
         check_match(ls, ')', '(', line, col);
      }
    Eina_Bool has_warn_unused = EINA_FALSE, has_owned = EINA_FALSE;
-   for (;;) switch (ls->t.kw)
+   if (!is_funcptr) for (;;) switch (ls->t.kw)
      {
       case KW_at_warn_unused:
         CASE_LOCK(ls, warn_unused, "warn_unused qualifier");
@@ -1188,7 +1189,7 @@ parse_accessor:
       case KW_return:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, is_get, EINA_TRUE);
+        parse_return(ls, &ret, is_get, EINA_TRUE, EINA_FALSE);
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         if (is_get)
@@ -1403,7 +1404,7 @@ parse_function_pointer(Eo_Lexer *ls)
       case KW_return:
         CASE_LOCK(ls, return, "return");
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, EINA_FALSE, EINA_FALSE);
+        parse_return(ls, &ret, EINA_FALSE, EINA_FALSE, EINA_TRUE);
         pop_type(ls);
         meth->get_ret_type = ret.type;
         meth->get_return_doc = ret.doc;
@@ -1497,7 +1498,7 @@ body:
       case KW_return:
         CASE_LOCK(ls, return, "return")
         Eo_Ret_Def ret;
-        parse_return(ls, &ret, EINA_FALSE, EINA_TRUE);
+        parse_return(ls, &ret, EINA_FALSE, EINA_TRUE, EINA_FALSE);
         pop_type(ls);
         if (ret.default_ret_val) pop_expr(ls);
         meth->get_ret_type = ret.type;
