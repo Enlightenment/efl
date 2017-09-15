@@ -122,7 +122,7 @@ class Evas.Table (Efl.Canvas.Group)
               It's up to the user to destroy it when it no longer needs it.
               It's possible to remove objects from the table when walking this
               list, but these removals won't be reflected on it.]]
-            return: free(own(list<Efl.Canvas.Object>), eina_list_free) @warn_unused; [[Children list]]
+            return: list<Efl.Canvas.Object> @owned @warn_unused; [[Children list]]
          }
       }
       @property child {
@@ -150,14 +150,14 @@ class Evas.Table (Efl.Canvas.Group)
          [[Get an accessor to get random access to the list of children for the table.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free)
+         return: accessor<Efl.Canvas.Object> @owned
             @warn_unused; [[Accessor to children list]]
       }
       iterator_new @const {
          [[Get an iterator to walk the list of children for the table.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free)
+         return: iterator<Efl.Canvas.Object> @owned
             @warn_unused; [[Iterator to children]]
       }
       add_to {

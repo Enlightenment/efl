@@ -159,7 +159,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
            @since 1.18
          ]]
          legacy: null;
-         return: own(ptr(char)); [[The text in the given range]]
+         return: string @owned; [[The text in the given range]]
          params {
             @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
             @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
@@ -178,9 +178,9 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
              @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
              @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
-         return: free(own(iterator<Eina.Rectangle>),
-                         eina_iterator_free); [[Iterator on all geoemtries of
-                     the given range]]
+         return: iterator<Eina.Rectangle> @owned; [[
+            Iterator on all geoemtries of the given range
+         ]]
       }
       range_simple_geometry_get {
          [[Get the "simple" geometry of a range.
@@ -196,9 +196,9 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
              @in cur1: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
              @in cur2: ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
          }
-         return: free(own(iterator<Eina.Rectangle>),
-                         eina_iterator_free); [[Iterator on all simple
-                     geometries of the given range]]
+         return: iterator<Eina.Rectangle> @owned; [[
+            Iterator on all simple geometries of the given range
+         ]]
       }
       range_delete {
          [[Deletes the range between given cursors.

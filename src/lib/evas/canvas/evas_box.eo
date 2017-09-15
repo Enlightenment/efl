@@ -253,7 +253,7 @@ class Evas.Box (Efl.Canvas.Group)
          [[Get an iterator to walk the list of children of a given box object.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(iterator<Efl.Canvas.Object>), eina_iterator_free)
+         return: iterator<Efl.Canvas.Object> @owned
             @warn_unused; [[An iterator on $o's child objects, on success, or $null, on errors.]]
       }
       add_to {
@@ -325,7 +325,7 @@ class Evas.Box (Efl.Canvas.Group)
            list of children of a given box object.
 
            Note: Do not remove or delete objects while walking the list.]]
-         return: free(own(accessor<Efl.Canvas.Object>), eina_accessor_free)
+         return: accessor<Efl.Canvas.Object> @owned
             @warn_unused; [[An accessor on $o's child objects, on success, or $null,
                             on errors.]]
       }

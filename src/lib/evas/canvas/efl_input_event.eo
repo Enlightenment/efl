@@ -32,7 +32,7 @@ mixin Efl.Input.Event (Efl.Interface, Efl.Object)
       }
       dup @pure_virtual {
          [[Creates a copy of this event.]]
-         return: own(Efl.Input.Event); [[Event copy]]
+         return: Efl.Input.Event @owned; [[Event copy]]
       }
       @property device @pure_virtual {
          [[Input device that originated this event.]]
