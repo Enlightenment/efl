@@ -517,8 +517,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->type = tp;
         fdef->name = eina_stringshare_ref(fname);
         pop_type(ls);
-        fdef->owned = (ls->t.kw == KW_at_owned);
-        if (fdef->owned)
+        if ((fdef->owned = (ls->t.kw == KW_at_owned)))
           eo_lexer_get(ls);
         check_next(ls, ';');
         FILL_DOC(ls, fdef, doc);
@@ -827,11 +826,15 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
                   else
                     def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
                   pop_type(ls);
+                  if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
+                    eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
                        pop_type(ls);
+                       if ((def->base_type->next_type->owned = (ls->t.kw == KW_at_owned)))
+                         eo_lexer_get(ls);
                     }
                   else if((tpid == KW_future) && test_next(ls, ','))
                     {
