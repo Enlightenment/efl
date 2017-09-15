@@ -13,7 +13,7 @@ class Object_Impl (Base) {
             part: string;
          }
          values {
-            value: own(list<int>);
+            value: list<int> @owned;
          }
       }
       @property b {
@@ -23,7 +23,7 @@ class Object_Impl (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            value: own(list<int>);
+            value: list<int> @owned;
          }
       }
       constructor_1 {

@@ -339,7 +339,8 @@ class Elm.Web (Elm.Widget)
               The string returned must be freed by the user when it's done
               with it.
             ]]
-            return: string @owned @warn_unused; [[A newly allocated string, or
+            /* FIXME: const doesn't belong here */
+            return: const(string) @owned @warn_unused; [[A newly allocated string, or
                                                       $null if nothing is selected
                                                       or an error occurred.]]
          }

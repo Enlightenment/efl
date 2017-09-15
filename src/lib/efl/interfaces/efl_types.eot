@@ -43,5 +43,5 @@ struct Efl.Observable.Tuple
 {
    [[This type describes an observable touple]]
    key: string; [[Touple key]]
-   data: free(own(iterator<Efl.Observer>), eina_iterator_free); [[Touple data]]
+   data: iterator<Efl.Observer> @owned; [[Touple data]]
 }
