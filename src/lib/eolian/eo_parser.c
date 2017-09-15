@@ -720,19 +720,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
            check_match(ls, ')', '(', pline, pcol);
            return def;
         }
-      case KW_own:
-        {
-           int pline, pcolumn;
-           eo_lexer_get(ls);
-           pline = ls->line_number;
-           pcolumn = ls->column;
-           check_next(ls, '(');
-           def = parse_type_void(ls, allow_ref, EINA_FALSE);
-           FILL_BASE(def->base, ls, line, col);
-           def->is_own = EINA_TRUE;
-           check_match(ls, ')', '(', pline, pcolumn);
-           return def;
-        }
       case KW_free:
         {
            int pline, pcolumn;

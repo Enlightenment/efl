@@ -164,7 +164,6 @@ struct _Eolian_Type
    Eina_Stringshare *freefunc;
    size_t static_size;
    Eina_Bool is_const  :1;
-   Eina_Bool is_own    :1;
    Eina_Bool is_ptr    :1;
    Eina_Bool owned     :1;
 };
