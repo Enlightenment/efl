@@ -163,7 +163,7 @@ class Efl.Net.Control (Efl.Loop_User) {
             ]]
             get { }
             values {
-                access_points: free(own(iterator<Efl.Net.Control.Access_Point>), eina_iterator_free); [[Iterator of current access points]]
+                access_points: iterator<Efl.Net.Control.Access_Point> @owned; [[Iterator of current access points]]
             }
         }
 
@@ -177,7 +177,7 @@ class Efl.Net.Control (Efl.Loop_User) {
             ]]
             get { }
             values {
-                technologies: free(own(iterator<Efl.Net.Control.Technology>), eina_iterator_free); [[Iterator of current technologies]]
+                technologies: iterator<Efl.Net.Control.Technology> @owned; [[Iterator of current technologies]]
             }
         }
 

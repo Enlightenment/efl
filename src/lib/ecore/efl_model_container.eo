@@ -26,7 +26,7 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
          params {
             name: string; [[Property name]]
          }
-         return: free(own(iterator<void_ptr>), eina_iterator_free) @warn_unused;
+         return: iterator<void_ptr> @owned @warn_unused;
          [[The currently wrapped values]]
       }
       child_property_add {
@@ -41,7 +41,7 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
          params {
             name: string; [[Property name]]
             type: ptr(const(Eina.Value.Type)); [[Property type]]
-            values: own(iterator<const(void_ptr)>); [[Values to be added]]
+            values: iterator<const(void_ptr)> @owned; [[Values to be added]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }

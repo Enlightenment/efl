@@ -266,7 +266,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                name_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to DNS server]]
+                name_servers: iterator<string> @owned; [[Iterator to DNS server]]
             }
         }
 
@@ -280,7 +280,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                time_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to time server]]
+                time_servers: iterator<string> @owned; [[Iterator to time server]]
             }
         }
 
@@ -294,7 +294,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             ]]
             get { }
             values {
-                domains: free(own(iterator<string>), eina_iterator_free); [[Iterator to search domains]]
+                domains: iterator<string> @owned; [[Iterator to search domains]]
             }
         }
 
@@ -345,8 +345,8 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             values {
                 method: Efl.Net.Control.Access_Point.Proxy_Method; [[Proxy method]]
                 url: string; [[If @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
-                servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
-                excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
+                servers: iterator<string> @owned; [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
+                excludes: iterator<string> @owned; [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
             }
         }
 
@@ -362,7 +362,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                name_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to user DNS server]]
+                name_servers: iterator<string> @owned; [[Iterator to user DNS server]]
             }
         }
 
@@ -378,7 +378,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                time_servers: free(own(iterator<string>), eina_iterator_free); [[Iterator to user time server]]
+                time_servers: iterator<string> @owned; [[Iterator to user time server]]
             }
         }
 
@@ -394,7 +394,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             set { }
             get { }
             values {
-                domains: free(own(iterator<string>), eina_iterator_free); [[Iterator to user search domains]]
+                domains: iterator<string> @owned; [[Iterator to user search domains]]
             }
         }
 
@@ -451,8 +451,8 @@ class Efl.Net.Control.Access_Point (Efl.Loop_User) {
             values {
                 method: Efl.Net.Control.Access_Point.Proxy_Method; [[Proxy method]]
                 url: string; [[If @Efl.Net.Control.Access_Point.Proxy_Method.auto, then states the URL to use for proxy auto-configuration]]
-                servers: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
-                excludes: free(own(iterator<string>), eina_iterator_free); [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
+                servers: iterator<string> @owned; [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the URI with proxy servers to use, like "http://proxy.domain.com:911"]]
+                excludes: iterator<string> @owned; [[If @Efl.Net.Control.Access_Point.Proxy_Method.manual, then states the hosts or patterns to exclude from proxy access, such as "localhost", ".domain.com", or "10.0.0.0..."]]
             }
         }
     }
