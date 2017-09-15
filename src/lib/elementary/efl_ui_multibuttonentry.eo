@@ -1,12 +1,10 @@
 type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type; [[Elementary multibuttonentry item filter callback type]]
-type Elm_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttonentry format callback type]]
+type Efl_Ui_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttonentry format callback type]]
 
-class Elm.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable)
+class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable)
 {
    [[Elementary multibuttonentry class]]
    legacy_prefix: elm_multibuttonentry;
-   eo_prefix: elm_obj_multibuttonentry;
-   event_prefix: elm_multibuttonentry;
    methods {
       @property editable {
          [[Control if the multibuttonentry is to be editable or not.
@@ -44,7 +42,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable)
               @since 1.9]]
          }
          values {
-            format_function: Elm_Multibuttonentry_Format_Cb @nullable; [[Format_function The actual format function]]
+            format_function: Efl_Ui_Multibuttonentry_Format_Cb @nullable; [[Format_function The actual format function]]
             data: const(void_ptr) @optional; [[Data User data to passed to $format_function]]
          }
       }

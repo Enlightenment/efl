@@ -1,5 +1,5 @@
 /**
- * @defgroup Multibuttonentry Multibuttonentry
+ * @defgroup efl_ui_multibuttonentry
  * @ingroup Elementary
  *
  * @image html multibuttonentry_inheritance_tree.png
@@ -57,7 +57,7 @@
  * @{
  */
 
-#include "elc_multibuttonentry_common.h"
+#include "efl_ui_multibuttonentry_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_multibuttonentry_eo.h"
 #endif

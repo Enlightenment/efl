@@ -70,9 +70,9 @@ typedef struct _Elm_Multibuttonentry_Item_Filter
    void                               *data;
 } Elm_Multibuttonentry_Item_Filter;
 
-typedef struct _Elm_Multibuttonentry_Data
-  Elm_Multibuttonentry_Data;
-struct _Elm_Multibuttonentry_Data
+typedef struct _Efl_Ui_Multibuttonentry_Data
+  Efl_Ui_Multibuttonentry_Data;
+struct _Efl_Ui_Multibuttonentry_Data
 {
    Evas_Object                        *parent;
    Evas_Object                        *box;
@@ -88,7 +88,7 @@ struct _Elm_Multibuttonentry_Data
    Elm_Multibuttonentry_Item_Data     *selected_it; /* selected item */
    Elm_Multibuttonentry_Item_Data     *focused_it;
 
-   Elm_Multibuttonentry_Format_Cb      format_func;
+   Efl_Ui_Multibuttonentry_Format_Cb  format_func;
    const void                         *format_func_data;
 
    const char                         *label_str, *guide_text_str;
@@ -104,7 +104,7 @@ struct _Elm_Multibuttonentry_Data
 
    Eina_Bool                           last_it_select : 1;
    Eina_Bool                           editable : 1;
-   Eina_Bool                           focused : 1; // avoids infinite loop on focus in/out
+   Eina_Bool                           focused : 1;
    Eina_Bool                           label_packed : 1;
 
    Ecore_Timer                         *longpress_timer;
@@ -114,11 +114,11 @@ struct _Elm_Multibuttonentry_Data
  * @}
  */
 
-#define ELM_MULTIBUTTONENTRY_DATA_GET(o, sd) \
-  Elm_Multibuttonentry_Data *sd = efl_data_scope_get(o, ELM_MULTIBUTTONENTRY_CLASS);
+#define EFL_UI_MULTIBUTTONENTRY_DATA_GET(o, sd) \
+  Efl_Ui_Multibuttonentry_Data *sd = efl_data_scope_get(o, EFL_UI_MULTIBUTTONENTRY_CLASS);
 
-#define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(o, ptr) \
-  ELM_MULTIBUTTONENTRY_DATA_GET(o, ptr);                \
+#define EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(o, ptr) \
+  EFL_UI_MULTIBUTTONENTRY_DATA_GET(o, ptr);                \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        CRI("No widget data for object %p (%s)",         \
@@ -126,8 +126,8 @@ struct _Elm_Multibuttonentry_Data
        return;                                          \
     }
 
-#define ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  Elm_Multibuttonentry_Data * ptr = efl_data_scope_get(o, ELM_MULTIBUTTONENTRY_CLASS); \
+#define EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  Efl_Ui_Multibuttonentry_Data * ptr = efl_data_scope_get(o, EFL_UI_MULTIBUTTONENTRY_CLASS); \
   if (EINA_UNLIKELY(!ptr))                                       \
     {                                                            \
        CRI("No widget data for object %p (%s)",                  \
