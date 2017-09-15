@@ -648,9 +648,10 @@ local wrap_type_attrs = function(tp, str)
     if tp:is_const() then
         str = "const(" .. str .. ")"
     end
-    if tp:is_own() then
-        str = "own(" .. str .. ")"
-    end
+    -- TODO: implement new ownership system into docs
+    --if tp:is_own() then
+    --    str = "own(" .. str .. ")"
+    --end
     local ffunc = tp:free_func_get()
     if ffunc then
         str = "free(" .. str .. ", " .. ffunc .. ")"
@@ -725,8 +726,8 @@ M.Type = Node:clone {
         return self.type_array_size_get()
     end,
 
-    is_own = function(self)
-        return self.type:is_own()
+    is_owned = function(self)
+        return self.type:is_owned()
     end,
 
     is_const = function(self)
