@@ -517,7 +517,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->type = tp;
         fdef->name = eina_stringshare_ref(fname);
         pop_type(ls);
-        if ((fdef->owned = (ls->t.kw == KW_at_owned)))
+        if ((fdef->type->owned = (ls->t.kw == KW_at_owned)))
           eo_lexer_get(ls);
         check_next(ls, ';');
         FILL_DOC(ls, fdef, doc);
@@ -1085,7 +1085,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         break;
       case KW_at_owned:
         CASE_LOCK(ls, owned, "owned qualifier");
-        par->owned = EINA_TRUE;
+        par->type->owned = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
@@ -1201,7 +1201,7 @@ parse_accessor:
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
-             prop->get_return_owned = ret.owned;
+             prop->get_ret_type->owned = ret.owned;
           }
         else
           {
@@ -1209,7 +1209,7 @@ parse_accessor:
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
-             prop->set_return_owned = ret.owned;
+             prop->set_ret_type->owned = ret.owned;
           }
         break;
       case KW_legacy:
@@ -1413,7 +1413,6 @@ parse_function_pointer(Eo_Lexer *ls)
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
         meth->get_return_warn_unused = EINA_FALSE;
-        meth->get_return_owned = EINA_FALSE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
@@ -1508,7 +1507,7 @@ body:
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
-        meth->get_return_owned = ret.owned;
+        meth->get_ret_type->owned = ret.owned;
         break;
       case KW_legacy:
         CASE_LOCK(ls, legacy, "legacy name")
@@ -1800,7 +1799,6 @@ parse_event(Eo_Lexer *ls)
         break;
       case KW_at_owned:
         CASE_LOCK(ls, owned, "owned qualifier");
-        ev->owned = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       default:
@@ -1811,6 +1809,7 @@ end:
      {
         eo_lexer_get(ls);
         ev->type = parse_type(ls, EINA_TRUE, EINA_FALSE);
+        ev->type->owned = has_owned;
         pop_type(ls);
      }
    check(ls, ';');
