@@ -323,7 +323,8 @@ _efl_ui_image_async_open_do(void *data, Ecore_Thread *thread)
    // blindly load in here to let's say 32KB (Should be enough to get
    // image headers without getting to much data from the hard drive).
    size = size > 32 * 1024 ? 32 * 1024 : size;
-   map = eina_file_map_new(f, EINA_FILE_POPULATE, 0, size);
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   eina_file_map_populate(f, EINA_FILE_POPULATE, map, 0, size);
 
    if (ecore_thread_check(thread))
      {
