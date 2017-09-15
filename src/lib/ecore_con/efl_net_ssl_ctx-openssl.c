@@ -269,7 +269,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
 #ifndef OPENSSL_NO_SSL3_METHOD
               ctx->ssl_ctx = SSL_CTX_new(SSLv3_client_method());
 #else
-              ERR("ssl_ctx=%p SSLv3 is disabled in your OpenSSL build", ctx);
+              ctx->ssl_ctx = SSL_CTX_new(SSLv23_client_method());
 #endif
               break;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
@@ -281,6 +281,12 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
               break;
            case EFL_NET_SSL_CIPHER_TLSV1_2:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_2_client_method());
+              break;
+#else
+           case EFL_NET_SSL_CIPHER_TLSV1:
+           case EFL_NET_SSL_CIPHER_TLSV1_1:
+           case EFL_NET_SSL_CIPHER_TLSV1_2:
+              ctx->ssl_ctx = SSL_CTX_new(TLS_client_method());
               break;
 #endif
            default:
@@ -301,7 +307,7 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
 #ifndef OPENSSL_NO_SSL3_METHOD
               ctx->ssl_ctx = SSL_CTX_new(SSLv3_server_method());
 #else
-              ERR("ssl_ctx=%p SSLv3 is disabled in your OpenSSL build", ctx);
+              ctx->ssl_ctx = SSL_CTX_new(SSLv23_server_method());
 #endif
               break;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
@@ -313,6 +319,12 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
               break;
            case EFL_NET_SSL_CIPHER_TLSV1_2:
               ctx->ssl_ctx = SSL_CTX_new(TLSv1_2_server_method());
+              break;
+#else
+           case EFL_NET_SSL_CIPHER_TLSV1:
+           case EFL_NET_SSL_CIPHER_TLSV1_1:
+           case EFL_NET_SSL_CIPHER_TLSV1_2:
+              ctx->ssl_ctx = SSL_CTX_new(TLS_server_method());
               break;
 #endif
            default:
