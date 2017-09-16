@@ -22,6 +22,7 @@ _bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUS
    t = time(NULL);
    localtime_r(&t, &new_time);
 
+   new_time.tm_wday = 6;
    new_time.tm_year = 85;
    new_time.tm_mon = 9;
    new_time.tm_mday = 26;
