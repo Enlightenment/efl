@@ -65,8 +65,8 @@ _new_va(const char *name,
         const char *options,
         va_list args)
 {
-   Eina_Mempool_Backend *be = NULL;
-   Eina_Mempool *mp;
+   Eina_Mempool_Backend *be;
+   Eina_Mempool *mp = NULL;
 
    if (getenv("EINA_MEMPOOL_PASS"))
      {
@@ -100,9 +100,13 @@ _new_va(const char *name,
      }
 
    mp->backend_data = mp->backend.init(context, options, args);
+   if (EINA_UNLIKELY(! mp->backend_data)) goto clean_mp;
    return mp;
 
+clean_mp:
+   free(mp->backend2);
 on_error:
+   free(mp);
    return NULL;
 }
 
