@@ -950,7 +950,7 @@ EAPI const char *efl_debug_name_get(const Eo *obj_id);
  * @brief Init the eo subsystem
  * @return @c EINA_TRUE if eo is init, @c EINA_FALSE otherwise.
  *
- * @see eo_shutfown()
+ * @see eo_shutdown()
  */
 EAPI Eina_Bool efl_object_init(void);
 
