@@ -563,7 +563,7 @@ eina_chained_mempool_init(const char *context,
         memcpy((char *)mp->name, context, length);
      }
 
-   mp->item_alloc = eina_mempool_alignof(item_size);
+   mp->item_alloc = MAX(eina_mempool_alignof(item_size), sizeof(void *));
 
    mp->pool_size = (((((mp->item_alloc * mp->pool_size + aligned_chained_pool) / page_size)
 		      + 1) * page_size)
