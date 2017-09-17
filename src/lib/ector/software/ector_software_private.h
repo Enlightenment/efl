@@ -7,6 +7,16 @@
 #include "../ector_private.h"
 
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
+typedef struct _Ector_Software_Thread Ector_Software_Thread;
+
+struct _Ector_Software_Thread
+{
+   Eina_Thread_Queue *queue;
+   Eina_Thread thread;
+
+   SW_FT_Raster  raster;
+   SW_FT_Stroker stroker;
+};
 
 // Gradient related structure
 typedef struct _Software_Gradient_Linear_Data
@@ -118,13 +128,12 @@ void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, S
 
 
 
-Shape_Rle_Data * ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline);
-Shape_Rle_Data * ector_software_rasterizer_generate_stroke_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath);
+Shape_Rle_Data * ector_software_rasterizer_generate_rle_data(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer, SW_FT_Outline *outline);
+Shape_Rle_Data * ector_software_rasterizer_generate_stroke_rle_data(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath);
 
 void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer, int x, int y, uint32_t mul_col, Efl_Gfx_Render_Op op, Shape_Rle_Data* rle);
 
 void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
-
 
 
 // Gradient Api
@@ -132,5 +141,13 @@ void update_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
 void destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
 void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
 void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
+
+void ector_software_thread_init(Ector_Software_Thread *thread);
+void ector_software_thread_shutdown(Ector_Software_Thread *thread);
+
+typedef void (*Ector_Thread_Worker_Cb)(void *data, Ector_Software_Thread *thread);
+
+void ector_software_wait(Ector_Thread_Worker_Cb cb, Eina_Free_Cb done, void *data);
+void ector_software_schedule(Ector_Thread_Worker_Cb cb, Eina_Free_Cb done, void *data);
 
 #endif
