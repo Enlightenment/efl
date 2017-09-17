@@ -20,7 +20,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_R
         pd->surface = efl_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
 
-   update_color_table(pd);
+   ector_software_gradient_color_update(pd);
 
    pd->radial.cx = pd->grd->radial.x;
    pd->radial.cy = pd->grd->radial.y;
@@ -57,9 +57,9 @@ _ector_renderer_software_gradient_radial_ector_renderer_prepare(Eo *obj, Ector_R
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_draw(Eo *obj EINA_UNUSED,
-                                                                          Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
-                                                                          Efl_Gfx_Render_Op op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
-                                                                          unsigned int mul_col EINA_UNUSED)
+                                                             Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
+                                                             Efl_Gfx_Render_Op op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
+                                                             unsigned int mul_col EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -69,6 +69,7 @@ static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_software_fill(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_radial_gradient_set(pd->surface->rasterizer, pd);
+   ector_software_gradient_color_update(pd);
    return EINA_TRUE;
 }
 
@@ -79,6 +80,7 @@ _ector_renderer_software_gradient_radial_efl_object_constructor(Eo *obj,
    obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_RADIAL_CLASS));
    pd->gd  = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
    pd->gld = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN, obj);
+   pd->done = EINA_TRUE;
 
    return obj;
 }

@@ -44,8 +44,10 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
       Software_Gradient_Linear_Data linear;
       Software_Gradient_Radial_Data radial;
    };
-   Eina_Bool alpha;
    uint32_t* color_table;
+
+   Eina_Bool alpha;
+   Eina_Bool done;
 } Ector_Renderer_Software_Gradient_Data;
 
 typedef struct _Shape_Rle_Data
@@ -133,7 +135,6 @@ void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 
 
 // Gradient Api
-void update_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
 void destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
 void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
 void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
@@ -145,5 +146,7 @@ typedef void (*Ector_Thread_Worker_Cb)(void *data, Ector_Software_Thread *thread
 
 void ector_software_wait(Ector_Thread_Worker_Cb cb, Eina_Free_Cb done, void *data);
 void ector_software_schedule(Ector_Thread_Worker_Cb cb, Eina_Free_Cb done, void *data);
+
+void ector_software_gradient_color_update(Ector_Renderer_Software_Gradient_Data *gdata);
 
 #endif

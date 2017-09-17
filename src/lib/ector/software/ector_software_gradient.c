@@ -339,15 +339,38 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
    return alpha;
 }
 
-
-void
-update_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
+static void
+_update_color_table(void *data, Ector_Software_Thread *t EINA_UNUSED)
 {
-   if (gdata->color_table) return;
+   Ector_Renderer_Software_Gradient_Data *gdata = data;
 
    gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
    gdata->alpha = _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count,
                                                  gdata->color_table, GRADIENT_STOPTABLE_SIZE);
+}
+
+static void
+_done_color_table(void *data)
+{
+   Ector_Renderer_Software_Gradient_Data *gdata = data;
+
+   gdata->done = EINA_TRUE;
+}
+
+void
+ector_software_gradient_color_update(Ector_Renderer_Software_Gradient_Data *gdata)
+{
+   if (!gdata->done)
+     {
+        ector_software_wait(_update_color_table, _done_color_table, gdata);
+        return ;
+     }
+
+   if (!gdata->color_table)
+     {
+        gdata->done = EINA_FALSE;
+        ector_software_schedule(_update_color_table, _done_color_table, gdata);
+     }
 }
 
 void
