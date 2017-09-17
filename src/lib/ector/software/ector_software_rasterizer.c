@@ -300,14 +300,18 @@ _adjust_span_fill_methods(Span_Data *spdata)
      }
 }
 
-void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
+void ector_software_thread_init(Ector_Software_Thread *thread)
 {
    // initialize the rasterizer and stroker
-   sw_ft_grays_raster.raster_new(&rasterizer->raster);
+   sw_ft_grays_raster.raster_new(&thread->raster);
 
-   SW_FT_Stroker_New(&rasterizer->stroker);
-   SW_FT_Stroker_Set(rasterizer->stroker, 1<<6,SW_FT_STROKER_LINECAP_BUTT,SW_FT_STROKER_LINEJOIN_MITER,0);
+   SW_FT_Stroker_New(&thread->stroker);
+   SW_FT_Stroker_Set(thread->stroker, 1 << 6,
+                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER, 0);
+}
 
+void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
+{
    //initialize the span data.
    rasterizer->fill_data.clip.enabled = EINA_FALSE;
    rasterizer->fill_data.unclipped_blend = 0;
@@ -316,13 +320,14 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
    ector_software_gradient_init();
 }
 
-void ector_software_rasterizer_done(Software_Rasterizer *rasterizer)
+void ector_software_thread_shutdown(Ector_Software_Thread *thread)
 {
-   sw_ft_grays_raster.raster_done(rasterizer->raster);
-   SW_FT_Stroker_Done(rasterizer->stroker);
+   sw_ft_grays_raster.raster_done(thread->raster);
+   SW_FT_Stroker_Done(thread->stroker);
 }
 
-void ector_software_rasterizer_stroke_set(Software_Rasterizer *rasterizer, double width,
+void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
+                                          Software_Rasterizer *rasterizer EINA_UNUSED, double width,
                                           Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style,
                                           Eina_Matrix3 *m)
 {
@@ -366,7 +371,7 @@ void ector_software_rasterizer_stroke_set(Software_Rasterizer *rasterizer, doubl
           join = SW_FT_STROKER_LINEJOIN_MITER;
           break;
      }
-   SW_FT_Stroker_Set(rasterizer->stroker, stroke_width, cap, join, 0);
+   SW_FT_Stroker_Set(thread->stroker, stroke_width, cap, join, 0);
 }
 
 static void
@@ -393,7 +398,9 @@ _rle_generation_cb( int count, const SW_FT_Span*  spans,void *user)
 }
 
 Shape_Rle_Data *
-ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline)
+ector_software_rasterizer_generate_rle_data(Ector_Software_Thread *thread,
+                                            Software_Rasterizer *rasterizer EINA_UNUSED,
+                                            SW_FT_Outline *outline)
 {
    int i, rle_size;
    int l = 0, t = 0, r = 0, b = 0;
@@ -406,7 +413,7 @@ ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_
    params.user = rle_data;
    params.source = outline;
 
-   sw_ft_grays_raster.raster_render(rasterizer->raster, &params);
+   sw_ft_grays_raster.raster_render(thread->raster, &params);
 
    // update RLE bounding box.
    span = rle_data->spans;
@@ -429,22 +436,25 @@ ector_software_rasterizer_generate_rle_data(Software_Rasterizer *rasterizer, SW_
 }
 
 Shape_Rle_Data *
-ector_software_rasterizer_generate_stroke_rle_data(Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath)
+ector_software_rasterizer_generate_stroke_rle_data(Ector_Software_Thread *thread,
+                                                   Software_Rasterizer *rasterizer,
+                                                   SW_FT_Outline *outline,
+                                                   Eina_Bool closePath)
 {
    uint32_t points,contors;
    Shape_Rle_Data *rle_data;
    SW_FT_Outline strokeOutline = { 0, 0, NULL, NULL, NULL, 0 };
 
-   SW_FT_Stroker_ParseOutline(rasterizer->stroker, outline, !closePath);
-   SW_FT_Stroker_GetCounts(rasterizer->stroker,&points, &contors);
+   SW_FT_Stroker_ParseOutline(thread->stroker, outline, !closePath);
+   SW_FT_Stroker_GetCounts(thread->stroker,&points, &contors);
 
    strokeOutline.points = (SW_FT_Vector *) calloc(points, sizeof(SW_FT_Vector));
    strokeOutline.tags = (char *) calloc(points, sizeof(char));
    strokeOutline.contours = (short *) calloc(contors, sizeof(short));
 
-   SW_FT_Stroker_Export(rasterizer->stroker, &strokeOutline);
+   SW_FT_Stroker_Export(thread->stroker, &strokeOutline);
 
-   rle_data = ector_software_rasterizer_generate_rle_data(rasterizer, &strokeOutline);
+   rle_data = ector_software_rasterizer_generate_rle_data(thread, rasterizer, &strokeOutline);
 
    // cleanup the outline data.
    free(strokeOutline.points);

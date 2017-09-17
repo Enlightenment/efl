@@ -95,13 +95,9 @@ typedef struct _Span_Data
 
 typedef struct _Software_Rasterizer
 {
-   SW_FT_Raster     raster;
-   SW_FT_Stroker    stroker;
-
    Span_Data        fill_data;
    Eina_Matrix3    *transform;
    Eina_Rectangle   system_clip;
-
 } Software_Rasterizer;
 
 struct _Ector_Software_Surface_Data
@@ -114,9 +110,9 @@ struct _Ector_Software_Surface_Data
 
 int  ector_software_gradient_init(void);
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
-void ector_software_rasterizer_done(Software_Rasterizer *rasterizer);
 
-void ector_software_rasterizer_stroke_set(Software_Rasterizer *rasterizer, double width,
+void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer,
+                                          double width,
                                           Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m);
 
 void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t);

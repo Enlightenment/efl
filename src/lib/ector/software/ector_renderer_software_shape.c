@@ -13,16 +13,32 @@
 #include "ector_software_private.h"
 
 typedef struct _Ector_Renderer_Software_Shape_Data Ector_Renderer_Software_Shape_Data;
+typedef struct _Ector_Software_Shape_Task Ector_Software_Shape_Task;
+
+struct _Ector_Software_Shape_Task
+{
+   Ector_Renderer_Software_Shape_Data *pd;
+
+   const Efl_Gfx_Path_Command *cmds;
+   const double *pts;
+
+   Efl_Gfx_Fill_Rule fill_rule;
+};
+
 struct _Ector_Renderer_Software_Shape_Data
 {
-   Efl_Gfx_Shape_Public                *public_shape;
+   Efl_Gfx_Shape_Public        *public_shape;
 
-   Ector_Software_Surface_Data         *surface;
+   Ector_Software_Surface_Data *surface;
    Ector_Renderer_Shape_Data   *shape;
-   Ector_Renderer_Data    *base;
+   Ector_Renderer_Data         *base;
 
-   Shape_Rle_Data                      *shape_data;
-   Shape_Rle_Data                      *outline_data;
+   Shape_Rle_Data              *shape_data;
+   Shape_Rle_Data              *outline_data;
+
+   Ector_Software_Shape_Task   *task;
+
+   Eina_Bool                    done;
 };
 
 typedef struct _Outline
@@ -511,70 +527,110 @@ _generate_shape_data(Ector_Renderer_Software_Shape_Data *pd)
    return EINA_TRUE;
 }
 
-static void 
-_update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
+static Ector_Software_Shape_Task *
+_need_update_rle(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   const Efl_Gfx_Path_Command *cmds = NULL;
-   const double *pts = NULL;
-   Eina_Bool close_path;
+   Ector_Software_Shape_Task *r;
+   const Efl_Gfx_Path_Command *cmds;
+   const double *pts;
    Efl_Gfx_Fill_Rule fill_rule;
-   Outline *outline, *dash_outline;
+
+   if (!pd->done && pd->task) return pd->task;
+
+   if (!_generate_stroke_data(pd) &&
+       !_generate_shape_data(pd))
+     return NULL;
 
    efl_gfx_path_get(obj, &cmds, &pts);
    fill_rule = efl_gfx_shape_fill_rule_get(obj);
-   if (cmds && (_generate_stroke_data(pd) || _generate_shape_data(pd)))
+
+   if (!cmds) return NULL;
+
+   r = pd->task;
+   if (!r) r = malloc(sizeof (Ector_Software_Shape_Task));
+   if (!r) return NULL;
+
+   r->pd = pd;
+   r->cmds = cmds;
+   r->pts = pts;
+   r->fill_rule = fill_rule;
+
+   pd->done = EINA_FALSE;
+   pd->task = r;
+
+   return r;
+}
+
+static void
+_done_rle(void *data)
+{
+   Ector_Software_Shape_Task *task = data;
+
+   task->pd->done = EINA_TRUE;
+}
+
+static void
+_update_rle(void *data, Ector_Software_Thread *thread)
+{
+   Ector_Software_Shape_Task *task = data;
+   Eina_Bool close_path;
+   Outline *outline, *dash_outline;
+
+   outline = _outline_create();
+   close_path = _generate_outline(task->cmds, task->pts, outline);
+   if (task->fill_rule == EFL_GFX_FILL_RULE_ODD_EVEN)
+     outline->ft_outline.flags = SW_FT_OUTLINE_EVEN_ODD_FILL;
+   else
+     outline->ft_outline.flags = SW_FT_OUTLINE_NONE; // default is winding fill
+
+   _outline_transform(outline, task->pd->base->m);
+
+   //shape data generation
+   if (_generate_shape_data(task->pd))
+     task->pd->shape_data = ector_software_rasterizer_generate_rle_data(thread,
+                                                                        task->pd->surface->rasterizer,
+                                                                        &outline->ft_outline);
+
+   //stroke data generation
+   if (_generate_stroke_data(task->pd))
      {
-        outline = _outline_create();
-        close_path = _generate_outline(cmds, pts, outline);
-        if (fill_rule == EFL_GFX_FILL_RULE_ODD_EVEN)
-          outline->ft_outline.flags = SW_FT_OUTLINE_EVEN_ODD_FILL;
-        else
-          outline->ft_outline.flags = SW_FT_OUTLINE_NONE; // default is winding fill
+        ector_software_rasterizer_stroke_set(thread, task->pd->surface->rasterizer,
+                                             (task->pd->public_shape->stroke.width *
+                                              task->pd->public_shape->stroke.scale),
+                                             task->pd->public_shape->stroke.cap,
+                                             task->pd->public_shape->stroke.join,
+                                             task->pd->base->m);
 
-        _outline_transform(outline, pd->base->m);
-
-        //shape data generation 
-        if (_generate_shape_data(pd))
-          pd->shape_data = ector_software_rasterizer_generate_rle_data(pd->surface->rasterizer,
-                                                                       &outline->ft_outline);
-
-        //stroke data generation
-        if ( _generate_stroke_data(pd))
+        if (task->pd->public_shape->stroke.dash)
           {
-             ector_software_rasterizer_stroke_set(pd->surface->rasterizer,
-                                                  (pd->public_shape->stroke.width *
-                                                  pd->public_shape->stroke.scale),
-                                                  pd->public_shape->stroke.cap,
-                                                  pd->public_shape->stroke.join,
-                                                  pd->base->m);
-
-             if (pd->public_shape->stroke.dash)
-               {
-                  dash_outline = _outline_create();
-                  close_path = _generate_dashed_outline(cmds, pts, dash_outline,
-                                                        pd->public_shape->stroke.dash,
-                                                        pd->public_shape->stroke.dash_length);
-                  _outline_transform(dash_outline, pd->base->m);
-                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->rasterizer,
-                                                                                        &dash_outline->ft_outline,
-                                                                                        close_path);
-                  _outline_destroy(dash_outline);
-               }
-             else
-               {
-                  pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(pd->surface->rasterizer,
-                                                                                        &outline->ft_outline,
-                                                                                        close_path);
-               }
+             dash_outline = _outline_create();
+             close_path = _generate_dashed_outline(task->cmds, task->pts, dash_outline,
+                                                   task->pd->public_shape->stroke.dash,
+                                                   task->pd->public_shape->stroke.dash_length);
+             _outline_transform(dash_outline, task->pd->base->m);
+             task->pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(thread,
+                                                                                         task->pd->surface->rasterizer,
+                                                                                         &dash_outline->ft_outline,
+                                                                                         close_path);
+             _outline_destroy(dash_outline);
           }
-        _outline_destroy(outline);
+        else
+          {
+             task->pd->outline_data = ector_software_rasterizer_generate_stroke_rle_data(thread,
+                                                                                         task->pd->surface->rasterizer,
+                                                                                         &outline->ft_outline,
+                                                                                         close_path);
+          }
      }
+   _outline_destroy(outline);
 }
 
 static Eina_Bool
 _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
-                                                                   Ector_Renderer_Software_Shape_Data *pd)
+                                                      Ector_Renderer_Software_Shape_Data *pd)
 {
+   Ector_Software_Shape_Task *task;
+
    // FIXME: shouldn't this be part of the shape generic implementation?
    if (pd->shape->fill)
      ector_renderer_prepare(pd->shape->fill);
@@ -587,19 +643,25 @@ _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
    if (!pd->surface)
      pd->surface = efl_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
 
+   // Asynchronously lazy build of the RLE data for this shape
+   task = _need_update_rle(obj, pd);
+   if (task) ector_software_schedule(_update_rle, _done_rle, task);
+
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
-                                                                Ector_Renderer_Software_Shape_Data *pd,
-                                                                Efl_Gfx_Render_Op op, Eina_Array *clips,
-                                                                unsigned int mul_col)
+                                                   Ector_Renderer_Software_Shape_Data *pd,
+                                                   Efl_Gfx_Render_Op op, Eina_Array *clips,
+                                                   unsigned int mul_col)
 {
+   Ector_Software_Shape_Task *task;
    int x, y;
 
-   // do lazy creation of rle
-   _update_rle(obj, pd);
+   // check if RLE data are ready
+   task = _need_update_rle(obj, pd);
+   if (task) ector_software_wait(_update_rle, _done_rle, task);
 
    // adjust the offset
    x = pd->surface->x + (int)pd->base->origin.x;
@@ -684,10 +746,10 @@ static void
 _ector_renderer_software_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ector_Renderer_Software_Shape_Data *pd = data;
-   
+
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
-   
+
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 }
@@ -698,6 +760,8 @@ _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_So
    obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
    if (!obj) return NULL;
 
+   pd->task = NULL;
+   pd->done = EINA_FALSE;
    pd->public_shape = efl_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
@@ -711,10 +775,14 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
 {
    // FIXME: As base class, destructor can't call destructor of mixin class.
    // Call explicit API to free shape data.
+   if (!pd->done && pd->task)
+     ector_software_wait(_update_rle, _done_rle, pd->task);
+
    efl_gfx_path_reset(obj);
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   free(pd->task);
 
    efl_data_xunref(pd->base->surface, pd->surface, obj);
    efl_data_xunref(obj, pd->shape, obj);

@@ -90,6 +90,7 @@ _ector_software_init(void)
 
         t = &ths[i];
         t->queue = eina_thread_queue_new();
+        ector_software_thread_init(t);
         if (!eina_thread_create(&t->thread, EINA_THREAD_NORMAL, -1,
                                 _prepare_process, t))
           {
@@ -107,7 +108,11 @@ _ector_software_shutdown(void)
 
    if (!--count_init) return ;
 
-   if (!ths) return ;
+   if (!ths)
+     {
+        ector_software_thread_shutdown(&render_thread);
+        return ;
+     }
 
    for (i = 0; i < cpu_core; i++)
      {
@@ -123,6 +128,7 @@ _ector_software_shutdown(void)
 
         eina_thread_join(t->thread);
         eina_thread_queue_free(t->queue);
+        ector_software_thread_shutdown(t);
      }
 
    eina_thread_queue_free(render_queue);
@@ -220,7 +226,6 @@ _ector_software_surface_efl_object_constructor(Eo *obj, Ector_Software_Surface_D
 static void
 _ector_software_surface_efl_object_destructor(Eo *obj, Ector_Software_Surface_Data *pd)
 {
-   ector_software_rasterizer_done(pd->rasterizer);
    efl_data_unref(obj, pd->rasterizer->fill_data.raster_buffer);
    free(pd->rasterizer);
    pd->rasterizer = NULL;
