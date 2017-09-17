@@ -11,7 +11,7 @@
 
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_prepare(Eo *obj,
-                                                                             Ector_Renderer_Software_Gradient_Data *pd)
+                                                                Ector_Renderer_Software_Gradient_Data *pd)
 {
    if (!pd->surface)
      {
@@ -21,7 +21,7 @@ _ector_renderer_software_gradient_linear_ector_renderer_prepare(Eo *obj,
         pd->surface = efl_data_xref(base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);
      }
 
-   update_color_table(pd);
+   ector_software_gradient_color_update(pd);
 
    pd->linear.x1 = pd->gld->start.x;
    pd->linear.y1 = pd->gld->start.y;
@@ -46,19 +46,19 @@ _ector_renderer_software_gradient_linear_ector_renderer_prepare(Eo *obj,
 
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_draw(Eo *obj EINA_UNUSED,
-                                                                          Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
-                                                                          Efl_Gfx_Render_Op op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
-                                                                          unsigned int mul_col EINA_UNUSED)
+                                                             Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
+                                                             Efl_Gfx_Render_Op op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
+                                                             unsigned int mul_col EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_software_fill(Eo *obj EINA_UNUSED,
-                                                                           Ector_Renderer_Software_Gradient_Data *pd)
+                                                                      Ector_Renderer_Software_Gradient_Data *pd)
 {
    ector_software_rasterizer_linear_gradient_set(pd->surface->rasterizer, pd);
-
+   ector_software_gradient_color_update(pd);
    return EINA_TRUE;
 }
 
@@ -71,6 +71,7 @@ _ector_renderer_software_gradient_linear_efl_object_constructor(Eo *obj,
 
    pd->gd  = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_MIXIN, obj);
    pd->gld = efl_data_xref(obj, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN, obj);
+   pd->done = EINA_TRUE;
 
    return obj;
 }
