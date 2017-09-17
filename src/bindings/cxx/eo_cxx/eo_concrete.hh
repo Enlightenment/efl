@@ -102,8 +102,8 @@ struct concrete
 
    concrete& operator=(concrete&& other)
    {
-      concrete tmp(other);
-      std::swap(*this, tmp);
+      concrete tmp(std::move(other));
+      swap(tmp);
       return *this;
    }
   
@@ -139,6 +139,15 @@ struct concrete
    explicit operator bool() const
    {
       return _eo_raw;
+   }
+
+   friend void swap(concrete& lhs, concrete& rhs)
+   {
+      lhs.swap(rhs);
+   }
+   void swap(concrete& other)
+   {
+      std::swap(_eo_raw, other._eo_raw);
    }
 protected:
    Eo* _eo_raw; ///< The opaque <em>EO Object</em>.
