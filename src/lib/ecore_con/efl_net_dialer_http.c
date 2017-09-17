@@ -1533,6 +1533,8 @@ _efl_net_dialer_http_pause_reset(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    CURLMcode rm;
    Eina_Error err;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->cm == NULL, EALREADY);
+
    re = curl_easy_pause(pd->easy, pd->pause);
    if (re != CURLE_OK)
      {
@@ -1654,6 +1656,11 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
    err = _efl_net_dialer_http_pause_reset(o, pd);
    if (err) goto error;
 
+   if (!pd->cm)
+     {
+        err = EISCONN;
+        goto error;
+     }
    pd->error = 0;
    rm = curl_multi_socket_action(pd->cm->multi,
                                  pd->fd,
