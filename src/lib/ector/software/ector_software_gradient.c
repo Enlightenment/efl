@@ -280,9 +280,7 @@ _linear_helper_sse3(uint32_t *buffer, int length, Ector_Renderer_Software_Gradie
 
 #endif
 
-typedef double (*BLEND_FUNC)(double progress);
-
-static double
+static inline double
 _ease_linear(double t)
 {
    return t;
@@ -316,17 +314,14 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
 
    for (i = 0; i < stop_count - 1; ++i)
      {
-        BLEND_FUNC func;
-
         curr = (gradient_stops + i);
         next = (gradient_stops + i + 1);
         delta = 1/(next->offset - curr->offset);
         if (next->a != 255) alpha = EINA_TRUE;
         next_color = DRAW_ARGB_JOIN(next->a, next->r, next->g, next->b);
-        func = &_ease_linear;
         while (fpos < next->offset && pos < size)
           {
-             t = func((fpos - curr->offset) * delta);
+             t = _ease_linear((fpos - curr->offset) * delta);
              dist = (int)(256 * t);
              idist = 256 - dist;
              color_table[pos] = draw_interpolate_256(current_color, idist, next_color, dist);
