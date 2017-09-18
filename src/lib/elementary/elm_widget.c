@@ -499,7 +499,6 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    Efl_Ui_Focus_Object *old_registered_parent, *old_registered_manager;
 
    old_parent = _logical_parent_eval(obj, pd);
-   _focus_manager_eval(obj, pd);
 
    if (old_parent)
      {
@@ -514,6 +513,8 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
         _full_eval(pd->logical.parent, new_pd);
      }
+
+   _focus_manager_eval(obj, pd);
 
    old_registered_parent = pd->focus.parent;
    old_registered_manager = pd->focus.manager;
