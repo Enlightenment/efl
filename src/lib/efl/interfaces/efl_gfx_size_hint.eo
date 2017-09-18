@@ -22,8 +22,7 @@ interface Efl.Gfx.Size.Hint
            See also @.hint_step.
          ]]
          values {
-            w: int; [[The base width.]]
-            h: int; [[The base height.]]
+            sz: Eina.Size2D; [[Base size (hint) in pixels.]]
          }
       }
       @property hint_step {
@@ -38,8 +37,7 @@ interface Efl.Gfx.Size.Hint
            sizing restrictions.
          ]]
          values {
-            w: int; [[The stepping width (0 disables).]]
-            h: int; [[The stepping height (0 disables).]]
+            sz: Eina.Size2D; [[Step size (hint) in pixels.]]
          }
       }
       @property hint_aspect {
