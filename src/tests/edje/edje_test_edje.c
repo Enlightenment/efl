@@ -877,7 +877,7 @@ START_TEST(edje_test_signals)
 
    obj = efl_add(EDJE_OBJECT_CLASS, evas,
                  efl_file_set(efl_added, test_layout_get("test_signals.edj"), "level1"),
-                 efl_gfx_size_set(efl_added, 320, 240),
+                 efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),
                  efl_gfx_visible_set(efl_added, 1));
 
    edje_object_signal_emit(obj, "mouse,in", "text");
@@ -921,7 +921,7 @@ START_TEST(edje_test_signal_callback_del_full)
    obj = efl_add(EDJE_OBJECT_CLASS, evas,
                  efl_file_set(efl_added,
                  test_layout_get("test_signal_callback_del_full.edj"), "test"),
-                 efl_gfx_size_set(efl_added, 320, 240),
+                 efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),
                  efl_gfx_visible_set(efl_added, 1));
 
    edje_object_signal_callback_add(obj, "some_signal", "event", _signal_callback_count_cb, &data[0]);
