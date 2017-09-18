@@ -84,7 +84,7 @@ _animate_scene(void *data)
 
 #ifdef USE_EO_IMAGE
    Eina_Rw_Slice slice;
-   if (!efl_gfx_buffer_map(source, &slice, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, 0, 0, 0, 0,
+   if (!efl_gfx_buffer_map(source, &slice, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, NULL,
                            EFL_GFX_COLORSPACE_ARGB8888, 0, &stride))
      return EINA_TRUE;
    pixels = slice.mem;
@@ -105,7 +105,7 @@ _animate_scene(void *data)
 
 #ifdef USE_EO_IMAGE
    efl_gfx_buffer_unmap(source, &slice);
-   efl_gfx_buffer_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
+   efl_gfx_buffer_update_add(source, NULL);
 #else
    evas_object_image_data_set(source, pixels);
    evas_object_image_data_update_add(source, 0, 0, IMG_WIDTH, IMG_HEIGHT);
@@ -227,7 +227,7 @@ main(void)
    /* Add a background image. */
 #ifdef USE_EO_IMAGE
    source = efl_add(EFL_CANVAS_IMAGE_CLASS, evas);
-   efl_gfx_buffer_copy_set(source, NULL, IMG_WIDTH, IMG_HEIGHT, 0, EFL_GFX_COLORSPACE_ARGB8888, 0);
+   efl_gfx_buffer_copy_set(source, NULL, EINA_SIZE2D(IMG_WIDTH, IMG_HEIGHT), 0, EFL_GFX_COLORSPACE_ARGB8888, 0);
    efl_gfx_position_set(source, EINA_POSITION2D((WIDTH / 2), (HEIGHT / 2)));
    efl_gfx_size_set(source, EINA_SIZE2D((WIDTH / 2),  (HEIGHT / 2)));
    efl_gfx_visible_set(source, EINA_TRUE);

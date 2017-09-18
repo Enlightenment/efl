@@ -62,7 +62,6 @@ _render_post(void *data, const Efl_Event *ev)
 static void
 _save_image(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eina_Size2D sz;
    Eo *win = data;
    Eo *snap;
 
@@ -75,8 +74,7 @@ _save_image(void *data, const Efl_Event *ev EINA_UNUSED)
    // This is a special case handled by snapshot for the purpose of taking
    // screenshots like this. This is useful only if the button click has no
    // animation on screen and there is no spinning wheel either.
-   sz = efl_gfx_size_get(snap);
-   efl_gfx_buffer_update_add(snap, 0, 0, sz.w, sz.h);
+   efl_gfx_buffer_update_add(snap, NULL);
 }
 
 static void

@@ -24,8 +24,7 @@ interface Efl.Gfx.Buffer ()
          }
          get {}
          values {
-            w: int; [[Width in pixels.]]
-            h: int; [[Height in pixels.]]
+            sz: Eina.Size2D; [[Size of the buffer in pixels.]]
          }
       }
       @property colorspace {
@@ -96,10 +95,7 @@ interface Efl.Gfx.Buffer ()
            image object to be updated (redrawn) at the next rendering cycle.
          ]]
          params {
-            @in x: int; [[X-offset of the region to be updated.]]
-            @in y: int; [[Y-offset of the region to be updated.]]
-            @in w: int; [[Width of the region to be updated.]]
-            @in h: int; [[Height of the region to be updated.]]
+            @in region: const(ptr(Eina.Rect)) @optional; [[The updated region.]]
          }
       }
 
@@ -136,10 +132,7 @@ interface Efl.Gfx.Buffer ()
             @out slice: Eina.Rw_Slice; [[Pointer to the top-left pixel data.]]
             @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combination of flags).]]
-            @in x: int @optional;  [[X position of the top-left pixel to map, defaults to 0.]]
-            @in y: int @optional;  [[Y position of the top-left pixel to map, defaults to 0.]]
-            @in w: int @optional; [[If 0, defaults to the buffer width.]]
-            @in h: int @optional; [[If 0, defaults to the buffer height.]]
+            @in region: const(ptr(Eina.Rect)) @optional; [[The region to map.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[Requested colorspace. If different from the internal cspace,
                                                         map should try to convert the data into a new buffer.
                                                         argb8888 by default.]]
@@ -182,8 +175,7 @@ interface Efl.Gfx.Buffer ()
          ]]
          params {
             @in slice: ptr(const(Eina.Slice)) @nullable; [[If $null, allocates an empty buffer]]
-            @in width: int; [[Width]]
-            @in height: int; [[Height]]
+            @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
@@ -208,8 +200,7 @@ interface Efl.Gfx.Buffer ()
          ]]
          params {
             @in slice: ptr(const(Eina.Slice)) @nullable; [[If $null, detaches the previous buffer.]]
-            @in width: int; [[Width]]
-            @in height: int; [[Height]]
+            @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]

@@ -263,7 +263,7 @@ EOLIAN static Eina_Bool
 _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
                                             Eina_Rw_Slice *slice,
                                             Efl_Gfx_Buffer_Access_Mode mode,
-                                            int x, int y, int w, int h,
+                                            const Eina_Rect *region,
                                             Efl_Gfx_Colorspace cspace, int plane,
                                             int *stride)
 {
@@ -271,6 +271,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int s = 0, width = 0, height = 0;
    Eina_Bool ret = EINA_FALSE;
+   int x, y, w, h;
    void *image;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
@@ -305,10 +306,21 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (!w) w = width;
-   if (!h) h = height;
+   if (region)
+     {
+        x = region->x;
+        y = region->y;
+        w = region->w;
+        h = region->h;
+     }
+   else
+     {
+        x = y = 0;
+        w = width;
+        h = height;
+     }
 
-   if ((x < 0) || (y < 0) || ((x + w) > width) || ((y + h) > height))
+   if ((x < 0) || (y < 0) || (w <= 0) || (h <= 0) || ((x + w) > width) || ((y + h) > height))
      {
         ERR("Invalid map dimensions: %dx%d +%d,%d. Image is %dx%d.",
             w, h, x, y, width, height);

@@ -3286,11 +3286,15 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
              if (efl_isa(image, EFL_CANVAS_IMAGE_CLASS))
                {
+                  Eina_Rect rect = {};
+
                   unmap = EINA_TRUE;
-                  efl_gfx_buffer_size_get(image, &w, &h);
+                  rect.size = efl_gfx_buffer_size_get(image);
                   efl_gfx_buffer_map(image, &sl, EFL_GFX_BUFFER_ACCESS_MODE_READ,
-                                     0, 0, w, h, EFL_GFX_COLORSPACE_ARGB8888, 0,
+                                     &rect, EFL_GFX_COLORSPACE_ARGB8888, 0,
                                      &stride);
+                  w = rect.w;
+                  h = rect.h;
                }
              else
                {
