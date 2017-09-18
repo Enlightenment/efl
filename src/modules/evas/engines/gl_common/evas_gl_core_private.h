@@ -2,11 +2,8 @@
 #define _EVAS_GL_CORE_PRIVATE_H
 #include "evas_gl_private.h"
 #include "evas_gl_core.h"
-#include "evas_gl_api_ext.h"
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
-
-//#include "evas_gl_ext.h"
 
 extern int _evas_gl_log_dom;
 
@@ -33,6 +30,160 @@ extern int _evas_gl_log_dom;
 # undef CRI
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_gl_log_dom, __VA_ARGS__)
+
+
+#define _EVASGL_EXPAND(x) x
+
+#define _EVASGL_PARAM_OVERRIDE( \
+ ptype12, pname12, ptype11, pname11, ptype10, pname10, ptype9,  pname9, \
+ ptype8,  pname8,  ptype7,  pname7,  ptype6,  pname6,  ptype5,  pname5, \
+ ptype4,  pname4,  ptype3,  pname3,  ptype2,  pname2,  ptype1,  pname1, \
+ ptype0,  NAME, ...) NAME
+
+#define  _EVASGL_PARAM_PROTO0(...)
+#define  _EVASGL_PARAM_PROTO1(ptype1,  pname1,  ...) \
+   ptype1  pname1
+#define  _EVASGL_PARAM_PROTO2(ptype1,  pname1,  ptype2,  pname2,  ...) \
+   ptype1  pname1,  ptype2  pname2
+#define  _EVASGL_PARAM_PROTO3(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ...) \
+   ptype1  pname1,  ptype2  pname2,  ptype3  pname3
+#define  _EVASGL_PARAM_PROTO4(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ...) \
+   ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4
+
+#define  _EVASGL_PARAM_PROTO5(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ...) \
+   ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+ , ptype5  pname5
+#define  _EVASGL_PARAM_PROTO6(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ...) \
+   ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+ , ptype5  pname5,  ptype6  pname6
+#define  _EVASGL_PARAM_PROTO7(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ...) \
+    ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5,  ptype6  pname6,  ptype7  pname7
+#define  _EVASGL_PARAM_PROTO8(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ptype8,  pname8,  ...) \
+    ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5,  ptype6  pname6,  ptype7  pname7,  ptype8  pname8
+#define  _EVASGL_PARAM_PROTO9(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                              ...) \
+    ptype1  pname1,  ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5,  ptype6  pname6,  ptype7  pname7,  ptype8  pname8 \
+  , ptype9  pname9
+#define _EVASGL_PARAM_PROTO10(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                              ptype10, pname10, ...) \
+    ptype1  pname1, ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5, ptype6  pname6,  ptype7  pname7,  ptype8  pname8 \
+  , ptype9  pname9, ptype10 pname10
+#define _EVASGL_PARAM_PROTO11(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                              ptype10, pname10, ptype11, pname11, ...) \
+    ptype1  pname1, ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5, ptype6  pname6,  ptype7  pname7,  ptype8  pname8 \
+  , ptype9  pname9, ptype10 pname10, ptype11 pname11
+#define _EVASGL_PARAM_PROTO12(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                              ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                              ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                              ptype10, pname10, ptype11, pname11, ptype12, pname12, \
+                              ...) \
+    ptype1  pname1, ptype2  pname2,  ptype3  pname3,  ptype4  pname4 \
+  , ptype5  pname5, ptype6  pname6,  ptype7  pname7,  ptype8  pname8 \
+  , ptype9  pname9, ptype10 pname10, ptype11 pname11, ptype12 pname12
+
+#define _EVASGL_PARAM_PROTO(...) \
+   _EVASGL_EXPAND(_EVASGL_PARAM_OVERRIDE(__VA_ARGS__, \
+   _EVASGL_PARAM_PROTO12, _EVASGL_PARAM_PROTO12, \
+   _EVASGL_PARAM_PROTO11, _EVASGL_PARAM_PROTO11, \
+   _EVASGL_PARAM_PROTO10, _EVASGL_PARAM_PROTO10, \
+   _EVASGL_PARAM_PROTO9,  _EVASGL_PARAM_PROTO9, \
+   _EVASGL_PARAM_PROTO8,  _EVASGL_PARAM_PROTO8, \
+   _EVASGL_PARAM_PROTO7,  _EVASGL_PARAM_PROTO7, \
+   _EVASGL_PARAM_PROTO6,  _EVASGL_PARAM_PROTO6, \
+   _EVASGL_PARAM_PROTO5,  _EVASGL_PARAM_PROTO5, \
+   _EVASGL_PARAM_PROTO4,  _EVASGL_PARAM_PROTO4, \
+   _EVASGL_PARAM_PROTO3,  _EVASGL_PARAM_PROTO3, \
+   _EVASGL_PARAM_PROTO2,  _EVASGL_PARAM_PROTO2, \
+   _EVASGL_PARAM_PROTO1,  _EVASGL_PARAM_PROTO1, \
+   _EVASGL_PARAM_PROTO0) (__VA_ARGS__))
+
+#define  _EVASGL_PARAM_NAME0(...)
+#define  _EVASGL_PARAM_NAME1(ptype1,  pname1,  ...) \
+   pname1
+#define  _EVASGL_PARAM_NAME2(ptype1,  pname1,  ptype2,  pname2,  ...) \
+   pname1,  pname2
+#define  _EVASGL_PARAM_NAME3(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                            ...) \
+   pname1,  pname2,  pname3
+#define  _EVASGL_PARAM_NAME4(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ...) \
+   pname1,  pname2,  pname3,  pname4
+
+#define  _EVASGL_PARAM_NAME5(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5
+#define  _EVASGL_PARAM_NAME6(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6
+#define  _EVASGL_PARAM_NAME7(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7
+#define  _EVASGL_PARAM_NAME8(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ptype8,  pname8,  ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7,  pname8
+#define  _EVASGL_PARAM_NAME9(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                             ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7,  pname8,  pname9
+#define _EVASGL_PARAM_NAME10(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                             ptype10, pname10, ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7,  pname8,  pname9, \
+   pname10
+#define _EVASGL_PARAM_NAME11(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                             ptype10, pname10, ptype11, pname11, ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7,  pname8,  pname9, \
+   pname10, pname11
+#define _EVASGL_PARAM_NAME12(ptype1,  pname1,  ptype2,  pname2,  ptype3,  pname3,  \
+                             ptype4,  pname4,  ptype5,  pname5,  ptype6,  pname6,  \
+                             ptype7,  pname7,  ptype8,  pname8,  ptype9,  pname9,  \
+                             ptype10, pname10, ptype11, pname11, ptype12, pname12, \
+                             ...) \
+   pname1,  pname2,  pname3,  pname4,  pname5,  pname6,  pname7,  pname8,  pname9, \
+   pname10, pname11, pname12
+
+#define _EVASGL_PARAM_NAME(...) \
+   _EVASGL_EXPAND(_EVASGL_PARAM_OVERRIDE(__VA_ARGS__, \
+   _EVASGL_PARAM_NAME12, _EVASGL_PARAM_NAME12, \
+   _EVASGL_PARAM_NAME11, _EVASGL_PARAM_NAME11, \
+   _EVASGL_PARAM_NAME10, _EVASGL_PARAM_NAME10, \
+   _EVASGL_PARAM_NAME9,  _EVASGL_PARAM_NAME9, \
+   _EVASGL_PARAM_NAME8,  _EVASGL_PARAM_NAME8, \
+   _EVASGL_PARAM_NAME7,  _EVASGL_PARAM_NAME7, \
+   _EVASGL_PARAM_NAME6,  _EVASGL_PARAM_NAME6, \
+   _EVASGL_PARAM_NAME5,  _EVASGL_PARAM_NAME5, \
+   _EVASGL_PARAM_NAME4,  _EVASGL_PARAM_NAME4, \
+   _EVASGL_PARAM_NAME3,  _EVASGL_PARAM_NAME3, \
+   _EVASGL_PARAM_NAME2,  _EVASGL_PARAM_NAME2, \
+   _EVASGL_PARAM_NAME1,  _EVASGL_PARAM_NAME1, \
+   _EVASGL_PARAM_NAME0) (__VA_ARGS__))
 
 
 struct _EVGL_Interface
