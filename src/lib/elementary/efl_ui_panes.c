@@ -193,7 +193,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    if (first_content)
      {
         if (!sd->first_hint_min_allow)
-          efl_gfx_size_hint_combined_min_get(first_content, &sd->first_min.w, &sd->first_min.h);
+          sd->first_min = efl_gfx_size_hint_combined_min_get(first_content);
         else
           sd->first_min = efl_gfx_size_hint_min_get(first_content);
      }
@@ -201,7 +201,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    if (second_content)
      {
         if (!sd->second_hint_min_allow)
-          efl_gfx_size_hint_combined_min_get(second_content, &sd->second_min.w, &sd->second_min.h);
+          sd->second_min = efl_gfx_size_hint_combined_min_get(second_content);
         else
           sd->second_min = efl_gfx_size_hint_min_get(second_content);
      }

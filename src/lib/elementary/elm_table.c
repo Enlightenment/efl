@@ -138,7 +138,7 @@ _sizing_eval(Evas_Object *obj)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_gfx_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
+   evas_object_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 

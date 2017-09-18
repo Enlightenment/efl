@@ -253,7 +253,7 @@ _sizing_eval(void *data)
    edje_object_message_signal_process(elm_layout_edje_get(sd->hover));
 
    elm_box_recalculate(sd->bx);
-   efl_gfx_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
+   evas_object_size_hint_combined_min_get(sd->bx, &box_w, &box_h);
 
    max_size_str = elm_layout_data_get(sd->hover, "max_size");
    if (max_size_str)

@@ -910,7 +910,7 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
 
    if (sd->on_sub_del) return;;
 
-   efl_gfx_size_hint_combined_min_get(obj, &minw, NULL);
+   evas_object_size_hint_combined_min_get(obj, &minw, NULL);
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
 
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);

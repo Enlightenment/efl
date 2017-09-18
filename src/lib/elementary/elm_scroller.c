@@ -326,7 +326,7 @@ _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
 
    if (sd->content)
      {
-        efl_gfx_size_hint_combined_min_get(sd->content, &minw, &minh);
+        evas_object_size_hint_combined_min_get(sd->content, &minw, &minh);
         evas_object_size_hint_max_get(sd->content, &maxw, &maxh);
         evas_object_size_hint_weight_get(sd->content, &xw, &yw);
      }

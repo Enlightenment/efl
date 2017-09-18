@@ -48,6 +48,15 @@ EAPI Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
 
 EAPI void efl_input_pointer_finalize(Efl_Input_Pointer *obj);
 
+static inline void
+evas_object_size_hint_combined_min_get(const Eo *obj, int *w, int *h)
+{
+   Eina_Size2D sz;
+   sz = efl_gfx_size_hint_combined_min_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
+}
+
 /* Internal EO APIs */
 EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
 EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);

@@ -852,15 +852,14 @@ _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l
 static void
 _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
 {
-   Evas_Coord minw, minh;
-   Eina_Size2D max;
+   Eina_Size2D min, max;
 
-   efl_gfx_size_hint_combined_min_get(win, &minw, &minh);
+   min = efl_gfx_size_hint_combined_min_get(win);
    max = efl_gfx_size_hint_max_get(win);
    if (max.w < 1) max.w = -1;
    if (max.h < 1) max.h = -1;
 
-   TRAP(sd, size_min_set, minw, minh);
+   TRAP(sd, size_min_set, min.w, min.h);
    TRAP(sd, size_max_set, max.w, max.h);
 }
 
@@ -3453,7 +3452,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    Eina_Bool unresizable;
    double wx, wy;
 
-   efl_gfx_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
+   evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
    if ((!minw) && (!minh)) return;
 
    // If content has a weight, make resizable
@@ -8065,7 +8064,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
 
    ELM_WIN_DATA_GET(data, sd);
    if (sd->main_menu && efl_gfx_visible_get(sd->main_menu))
-     efl_gfx_size_hint_combined_min_get(sd->main_menu, &menuw, NULL);
+     evas_object_size_hint_combined_min_get(sd->main_menu, &menuw, NULL);
 
    EINA_LIST_FOREACH(p->children, l, opt)
      {
@@ -8074,7 +8073,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         if (EINA_DBL_EQ(wx, 0.0)) weight_x = 0;
         if (EINA_DBL_EQ(wy, 0.0)) weight_y = 0;
 
-        efl_gfx_size_hint_combined_min_get(child, &w, &h);
+        evas_object_size_hint_combined_min_get(child, &w, &h);
         if (w > minw) minw = w;
         if (h > minh) minh = h;
      }

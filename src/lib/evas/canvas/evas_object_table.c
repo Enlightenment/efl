@@ -344,7 +344,7 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
         Evas_Coord child_minw, child_minh, cell_minw, cell_minh;
         double weightw, weighth;
 
-        efl_gfx_size_hint_combined_min_get(child, &opt->min.w, &opt->min.h);
+        evas_object_size_hint_combined_min_get(child, &opt->min.w, &opt->min.h);
         evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
         evas_object_size_hint_padding_get
            (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
@@ -435,7 +435,7 @@ _evas_object_table_calculate_layout_homogeneous_sizes_item(const Evas_Object *o,
    Evas_Coord minw, minh;
    Eina_Bool expand_h, expand_v;
 
-   efl_gfx_size_hint_combined_min_get(o, &minw, &minh);
+   evas_object_size_hint_combined_min_get(o, &minw, &minh);
    expand_h = priv->expand_h;
    expand_v = priv->expand_v;
 
@@ -659,7 +659,7 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Table_Data *priv
         Evas_Object *child = opt->obj;
         double weightw, weighth;
 
-        efl_gfx_size_hint_combined_min_get(child, &opt->min.w, &opt->min.h);
+        evas_object_size_hint_combined_min_get(child, &opt->min.w, &opt->min.h);
         evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
         evas_object_size_hint_padding_get
            (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);

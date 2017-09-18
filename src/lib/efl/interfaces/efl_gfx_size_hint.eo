@@ -148,8 +148,7 @@ interface Efl.Gfx.Size.Hint
          ]]
          get {}
          values {
-            w: int; [[Integer to use as the minimum width hint.]]
-            h: int; [[Integer to use as the minimum height hint.]]
+            sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
          }
       }
       @property hint_margin {
