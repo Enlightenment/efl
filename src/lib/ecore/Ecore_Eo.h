@@ -40,6 +40,8 @@ extern "C" {
 
 #include "efl_loop_user.eo.h"
 
+EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);
+
 #include "efl_loop_fd.eo.h"
 
 #include "efl_promise.eo.h"
