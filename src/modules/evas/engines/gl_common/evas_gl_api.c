@@ -20,7 +20,7 @@
 #define SET_GL_ERROR(gl_error_type) \
     if (ctx->gl_error == GL_NO_ERROR) \
       { \
-         ctx->gl_error = glGetError(); \
+         ctx->gl_error = EVGL_TH(glGetError); \
          if (ctx->gl_error == GL_NO_ERROR) ctx->gl_error = gl_error_type; \
       }
 
@@ -96,7 +96,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
           {
              if (_evgl_direct_enabled())
                {
-                  glBindFramebuffer(target, 0);
+                  EVGL_TH(glBindFramebuffer, target, 0);
 
                   if (rsc->direct.partial.enabled)
                     {
@@ -109,7 +109,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                }
              else
                {
-                  glBindFramebuffer(target, ctx->surface_fbo);
+                  EVGL_TH(glBindFramebuffer, target, ctx->surface_fbo);
                }
              ctx->current_fbo = 0;
           }
@@ -124,7 +124,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                     }
                }
 
-             glBindFramebuffer(target, framebuffer);
+             EVGL_TH(glBindFramebuffer, target, framebuffer);
 
              // Save this for restore when doing make current
              ctx->current_fbo = framebuffer;
@@ -138,7 +138,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                {
                   if (_evgl_direct_enabled())
                     {
-                       glBindFramebuffer(target, 0);
+                       EVGL_TH(glBindFramebuffer, target, 0);
 
                        if (rsc->direct.partial.enabled)
                          {
@@ -151,7 +151,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                     }
                   else
                     {
-                       glBindFramebuffer(target, ctx->surface_fbo);
+                       EVGL_TH(glBindFramebuffer, target, ctx->surface_fbo);
                     }
                   ctx->current_draw_fbo = 0;
 
@@ -169,7 +169,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                          }
                     }
 
-                  glBindFramebuffer(target, framebuffer);
+                  EVGL_TH(glBindFramebuffer, target, framebuffer);
 
                   // Save this for restore when doing make current
                   ctx->current_draw_fbo = framebuffer;
@@ -184,17 +184,17 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
                {
                  if (_evgl_direct_enabled())
                    {
-                      glBindFramebuffer(target, 0);
+                      EVGL_TH(glBindFramebuffer, target, 0);
                    }
                  else
                    {
-                      glBindFramebuffer(target, ctx->surface_fbo);
+                      EVGL_TH(glBindFramebuffer, target, ctx->surface_fbo);
                    }
                  ctx->current_read_fbo = 0;
                }
              else
                {
-                 glBindFramebuffer(target, framebuffer);
+                 EVGL_TH(glBindFramebuffer, target, framebuffer);
 
                  // Save this for restore when doing make current
                  ctx->current_read_fbo = framebuffer;
@@ -202,7 +202,7 @@ _evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
           }
         else
           {
-             glBindFramebuffer(target, framebuffer);
+             EVGL_TH(glBindFramebuffer, target, framebuffer);
           }
      }
 }
@@ -211,9 +211,9 @@ void
 _evgl_glClearDepthf(GLclampf depth)
 {
 #ifdef GL_GLES
-   glClearDepthf(depth);
+   EVGL_TH(glClearDepthf, depth);
 #else
-   glClearDepth(depth);
+   EVGL_TH_CALL(glClearDepthf, glClearDepth, depth);
 #endif
 }
 
@@ -232,7 +232,7 @@ _evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
 
    if (!framebuffers)
      {
-        glDeleteFramebuffers(n, framebuffers);
+        EVGL_TH(glDeleteFramebuffers, n, framebuffers);
         return;
      }
 
@@ -244,7 +244,7 @@ _evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
                {
                   if (framebuffers[i] == ctx->current_fbo)
                     {
-                       glBindFramebuffer(GL_FRAMEBUFFER, ctx->surface_fbo);
+                       EVGL_TH(glBindFramebuffer, GL_FRAMEBUFFER, ctx->surface_fbo);
                        ctx->current_fbo = 0;
                        break;
                     }
@@ -256,29 +256,29 @@ _evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
                {
                   if (framebuffers[i] == ctx->current_draw_fbo)
                     {
-                       glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ctx->surface_fbo);
+                       EVGL_TH(glBindFramebuffer, GL_DRAW_FRAMEBUFFER, ctx->surface_fbo);
                        ctx->current_draw_fbo = 0;
                     }
 
                   if (framebuffers[i] == ctx->current_read_fbo)
                     {
-                       glBindFramebuffer(GL_READ_FRAMEBUFFER, ctx->surface_fbo);
+                       EVGL_TH(glBindFramebuffer, GL_READ_FRAMEBUFFER, ctx->surface_fbo);
                        ctx->current_read_fbo = 0;
                     }
                }
           }
      }
 
-   glDeleteFramebuffers(n, framebuffers);
+   EVGL_TH(glDeleteFramebuffers, n, framebuffers);
 }
 
 void
 _evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 {
 #ifdef GL_GLES
-   glDepthRangef(zNear, zFar);
+   EVGL_TH(glDepthRangef, zNear, zFar);
 #else
-   glDepthRange(zNear, zFar);
+   EVGL_TH_CALL(glDepthRangef, glDepthRange, zNear, zFar);
 #endif
 }
 
@@ -300,13 +300,13 @@ _evgl_glGetError(void)
 
         //reset error state to GL_NO_ERROR. (EvasGL & Native GL)
         ctx->gl_error = GL_NO_ERROR;
-        glGetError();
+        EVGL_TH(glGetError);
 
         return ret;
      }
    else
      {
-        return glGetError();
+        return EVGL_TH(glGetError);
      }
 }
 
@@ -314,7 +314,7 @@ void
 _evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
 {
 #ifdef GL_GLES
-   glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+   EVGL_TH(glGetShaderPrecisionFormat, shadertype, precisiontype, range, precision);
 #else
    if (range)
      {
@@ -334,7 +334,7 @@ void
 _evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
 {
 #ifdef GL_GLES
-   glShaderBinary(n, shaders, binaryformat, binary, length);
+   EVGL_TH(glShaderBinary, n, shaders, binaryformat, binary, length);
 #else
    // FIXME: need to dlsym/getprocaddress for this
    ERR("Binary Shader is not supported here yet.");
@@ -350,7 +350,7 @@ void
 _evgl_glReleaseShaderCompiler(void)
 {
 #ifdef GL_GLES
-   glReleaseShaderCompiler();
+   EVGL_TH(glReleaseShaderCompiler);
 #else
 #endif
 }
@@ -503,7 +503,7 @@ _evgl_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
         rsc->clear_color.g = green;
         rsc->clear_color.b = blue;
      }
-   glClearColor(red, green, blue, alpha);
+   EVGL_TH(glClearColor, red, green, blue, alpha);
 }
 
 static void
@@ -565,7 +565,7 @@ _evgl_glClear(GLbitfield mask)
 
              if ((!ctx->direct_scissor))
                {
-                  glEnable(GL_SCISSOR_TEST);
+                  EVGL_TH(glEnable, GL_SCISSOR_TEST);
                   ctx->direct_scissor = 1;
                }
 
@@ -582,7 +582,7 @@ _evgl_glClear(GLbitfield mask)
                                          oc, nc, cc);
 
                   RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                  glScissor(nc[0], nc[1], nc[2], nc[3]);
+                  EVGL_TH(glScissor, nc[0], nc[1], nc[2], nc[3]);
                   ctx->direct_scissor = 0;
                }
              else
@@ -595,10 +595,10 @@ _evgl_glClear(GLbitfield mask)
                                          rsc->direct.clip.x, rsc->direct.clip.y,
                                          rsc->direct.clip.w, rsc->direct.clip.h,
                                          oc, nc, cc);
-                  glScissor(cc[0], cc[1], cc[2], cc[3]);
+                  EVGL_TH(glScissor, cc[0], cc[1], cc[2], cc[3]);
                }
 
-             glClear(mask);
+             EVGL_TH(glClear, mask);
 
              // TODO/FIXME: Restore previous client-side scissors.
           }
@@ -606,22 +606,22 @@ _evgl_glClear(GLbitfield mask)
           {
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
-                  glDisable(GL_SCISSOR_TEST);
+                  EVGL_TH(glDisable, GL_SCISSOR_TEST);
                   ctx->direct_scissor = 0;
                }
 
-             glClear(mask);
+             EVGL_TH(glClear, mask);
           }
      }
    else
      {
         if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
           {
-             glDisable(GL_SCISSOR_TEST);
+             EVGL_TH(glDisable, GL_SCISSOR_TEST);
              ctx->direct_scissor = 0;
           }
 
-        glClear(mask);
+        EVGL_TH(glClear, mask);
      }
 }
 
@@ -657,7 +657,7 @@ _evgl_glEnable(GLenum cap)
                                                    rsc->direct.clip.x, rsc->direct.clip.y,
                                                    rsc->direct.clip.w, rsc->direct.clip.h,
                                                    oc, nc, cc);
-                            glScissor(cc[0], cc[1], cc[2], cc[3]);
+                            EVGL_TH(glScissor, cc[0], cc[1], cc[2], cc[3]);
                          }
                        else
                          {
@@ -670,7 +670,7 @@ _evgl_glEnable(GLenum cap)
                                                    rsc->direct.clip.x, rsc->direct.clip.y,
                                                    rsc->direct.clip.w, rsc->direct.clip.h,
                                                    oc, nc, cc);
-                            glScissor(nc[0], nc[1], nc[2], nc[3]);
+                            EVGL_TH(glScissor, nc[0], nc[1], nc[2], nc[3]);
                          }
                        ctx->direct_scissor = 1;
                     }
@@ -680,23 +680,23 @@ _evgl_glEnable(GLenum cap)
                   // Bound to an FBO, reset scissors to user data
                   if (ctx->scissor_updated)
                     {
-                       glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
-                                 ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                       EVGL_TH(glScissor, ctx->scissor_coord[0], ctx->scissor_coord[1],
+                                          ctx->scissor_coord[2], ctx->scissor_coord[3]);
                     }
                   else if (ctx->direct_scissor)
                     {
                        // Back to the default scissors (here: max texture size)
-                       glScissor(0, 0, evgl_engine->caps.max_w, evgl_engine->caps.max_h);
+                       EVGL_TH(glScissor, 0, 0, evgl_engine->caps.max_w, evgl_engine->caps.max_h);
                     }
                   ctx->direct_scissor = 0;
                }
 
-             glEnable(GL_SCISSOR_TEST);
+             EVGL_TH(glEnable, GL_SCISSOR_TEST);
              return;
           }
      }
 
-   glEnable(cap);
+   EVGL_TH(glEnable, cap);
 }
 
 static void
@@ -731,23 +731,23 @@ _evgl_glDisable(GLenum cap)
                                               oc, nc, cc);
 
                        RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                       glScissor(nc[0], nc[1], nc[2], nc[3]);
+                       EVGL_TH(glScissor, nc[0], nc[1], nc[2], nc[3]);
 
                        ctx->direct_scissor = 1;
-                       glEnable(GL_SCISSOR_TEST);
+                       EVGL_TH(glEnable, GL_SCISSOR_TEST);
                     }
                }
              else
                {
                   // Bound to an FBO, disable scissors for real
                   ctx->direct_scissor = 0;
-                  glDisable(GL_SCISSOR_TEST);
+                  EVGL_TH(glDisable, GL_SCISSOR_TEST);
                }
              return;
           }
      }
 
-   glDisable(cap);
+   EVGL_TH(glDisable, cap);
 }
 
 void
@@ -797,7 +797,7 @@ _evgl_glFramebufferParameteri(GLenum target, GLenum pname, GLint param)
            }
       }
 
-   _gles3_api.glFramebufferParameteri(target, pname, param);
+   EVGL_TH_CALL(glFramebufferParameteri, _gles3_api.glFramebufferParameteri, target, pname, param);
 }
 
 static void
@@ -856,7 +856,7 @@ _evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget,
            }
       }
 
-   glFramebufferTexture2D(target, attachment, textarget, texture, level);
+   EVGL_TH(glFramebufferTexture2D, target, attachment, textarget, texture, level);
 }
 
 static void
@@ -915,7 +915,7 @@ _evgl_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderb
            }
       }
 
-   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+   EVGL_TH(glFramebufferRenderbuffer, target, attachment, renderbuffertarget, renderbuffer);
 }
 
 void
@@ -1054,7 +1054,7 @@ _evgl_glGetFloatv(GLenum pname, GLfloat* params)
                {
                   if (ctx->current_read_fbo == 0)
                     {
-                       glGetFloatv(pname, params);
+                       EVGL_TH(glGetFloatv, pname, params);
                        if (*params == GL_COLOR_ATTACHMENT0)
                          {
                             *params = (GLfloat)GL_BACK;
@@ -1070,7 +1070,7 @@ _evgl_glGetFloatv(GLenum pname, GLfloat* params)
           }
      }
 
-   glGetFloatv(pname, params);
+   EVGL_TH(glGetFloatv, pname, params);
 }
 
 void
@@ -1102,7 +1102,7 @@ _evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GL
                {
                   if (ctx->current_draw_fbo == 0 && attachment == GL_BACK)
                     {
-                       glGetFramebufferAttachmentParameteriv(target, GL_COLOR_ATTACHMENT0, pname, params);
+                       EVGL_TH(glGetFramebufferAttachmentParameteriv, target, GL_COLOR_ATTACHMENT0, pname, params);
                        return;
                     }
                }
@@ -1110,14 +1110,14 @@ _evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GL
                {
                   if (ctx->current_read_fbo == 0 && attachment == GL_BACK)
                     {
-                       glGetFramebufferAttachmentParameteriv(target, GL_COLOR_ATTACHMENT0, pname, params);
+                       EVGL_TH(glGetFramebufferAttachmentParameteriv, target, GL_COLOR_ATTACHMENT0, pname, params);
                        return;
                     }
                }
           }
      }
 
-   glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
+   EVGL_TH(glGetFramebufferAttachmentParameteriv, target, attachment, pname, params);
 }
 
 void
@@ -1167,7 +1167,7 @@ _evgl_glGetFramebufferParameteriv(GLenum target, GLenum pname, GLint* params)
            }
       }
 
-   _gles3_api.glGetFramebufferParameteriv(target, pname, params);
+   EVGL_TH_CALL(glGetFramebufferParameteriv, _gles3_api.glGetFramebufferParameteriv, target, pname, params);
 }
 void
 _evgl_glGetIntegerv(GLenum pname, GLint* params)
@@ -1299,7 +1299,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
                {
                   if (ctx->current_read_fbo == 0)
                     {
-                       glGetIntegerv(pname, params);
+                       EVGL_TH(glGetIntegerv, pname, params);
 
                        if (*params == GL_COLOR_ATTACHMENT0)
                          {
@@ -1316,7 +1316,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
           }
      }
 
-   glGetIntegerv(pname, params);
+   EVGL_TH(glGetIntegerv, pname, params);
 }
 
 static const GLubyte *
@@ -1370,7 +1370,7 @@ _evgl_glGetString(GLenum name)
         break;
 
       case GL_SHADING_LANGUAGE_VERSION:
-        ret = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
+        ret = (const char *) EVGL_TH(glGetString, GL_SHADING_LANGUAGE_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
         // FIXME: We probably shouldn't wrap anything for EGL
@@ -1390,7 +1390,7 @@ _evgl_glGetString(GLenum name)
 #endif
 
       case GL_VERSION:
-        ret = (const char *) glGetString(GL_VERSION);
+        ret = (const char *) EVGL_TH(glGetString, GL_VERSION);
         if (!ret) return NULL;
 #ifdef GL_GLES
         version_extra = ret + 10;
@@ -1412,7 +1412,7 @@ _evgl_glGetString(GLenum name)
         break;
      }
 
-   return glGetString(name);
+   return EVGL_TH(glGetString, name);
 }
 
 static const GLubyte *
@@ -1488,16 +1488,16 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
                                     rsc->direct.clip.x, rsc->direct.clip.y,
                                     rsc->direct.clip.w, rsc->direct.clip.h,
                                     oc, nc, cc);
-             glReadPixels(nc[0], nc[1], nc[2], nc[3], format, type, pixels);
+             EVGL_TH(glReadPixels, nc[0], nc[1], nc[2], nc[3], format, type, pixels);
           }
         else
           {
-             glReadPixels(x, y, width, height, format, type, pixels);
+             EVGL_TH(glReadPixels, x, y, width, height, format, type, pixels);
           }
      }
    else
      {
-        glReadPixels(x, y, width, height, format, type, pixels);
+        EVGL_TH(glReadPixels, x, y, width, height, format, type, pixels);
      }
 }
 
@@ -1536,7 +1536,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              // Direct rendering to canvas
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
-                  glDisable(GL_SCISSOR_TEST);
+                  EVGL_TH(glDisable, GL_SCISSOR_TEST);
                }
 
              compute_gl_coordinates(rsc->direct.win_w, rsc->direct.win_h,
@@ -1555,7 +1555,7 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              ctx->scissor_coord[3] = height;
 
              RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-             glScissor(nc[0], nc[1], nc[2], nc[3]);
+             EVGL_TH(glScissor, nc[0], nc[1], nc[2], nc[3]);
 
              ctx->direct_scissor = 0;
 
@@ -1567,11 +1567,11 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
              // Bound to an FBO, use these new scissors
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
-                  glDisable(GL_SCISSOR_TEST);
+                  EVGL_TH(glDisable, GL_SCISSOR_TEST);
                   ctx->direct_scissor = 0;
                }
 
-             glScissor(x, y, width, height);
+             EVGL_TH(glScissor, x, y, width, height);
 
              // Why did we set this flag to 0???
              //ctx->scissor_updated = 0;
@@ -1581,11 +1581,11 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
      {
         if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
           {
-             glDisable(GL_SCISSOR_TEST);
+             EVGL_TH(glDisable, GL_SCISSOR_TEST);
              ctx->direct_scissor = 0;
           }
 
-        glScissor(x, y, width, height);
+        EVGL_TH(glScissor, x, y, width, height);
      }
 }
 
@@ -1623,7 +1623,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
           {
              if ((!ctx->direct_scissor))
                {
-                  glEnable(GL_SCISSOR_TEST);
+                  EVGL_TH(glEnable, GL_SCISSOR_TEST);
                   ctx->direct_scissor = 1;
                }
 
@@ -1641,7 +1641,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                                          oc, nc, cc);
 
                   RECTS_CLIP_TO_RECT(nc[0], nc[1], nc[2], nc[3], cc[0], cc[1], cc[2], cc[3]);
-                  glScissor(nc[0], nc[1], nc[2], nc[3]);
+                  EVGL_TH(glScissor, nc[0], nc[1], nc[2], nc[3]);
 
                   ctx->direct_scissor = 0;
 
@@ -1654,7 +1654,7 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                                          rsc->direct.clip.x, rsc->direct.clip.y,
                                          rsc->direct.clip.w, rsc->direct.clip.h,
                                          oc, nc, cc);
-                  glViewport(nc[0], nc[1], nc[2], nc[3]);
+                  EVGL_TH(glViewport, nc[0], nc[1], nc[2], nc[3]);
                }
              else
                {
@@ -1667,9 +1667,9 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                                          rsc->direct.clip.x, rsc->direct.clip.y,
                                          rsc->direct.clip.w, rsc->direct.clip.h,
                                          oc, nc, cc);
-                  glScissor(cc[0], cc[1], cc[2], cc[3]);
+                  EVGL_TH(glScissor, cc[0], cc[1], cc[2], cc[3]);
 
-                  glViewport(nc[0], nc[1], nc[2], nc[3]);
+                  EVGL_TH(glViewport, nc[0], nc[1], nc[2], nc[3]);
                }
 
              ctx->viewport_direct[0] = nc[0];
@@ -1689,22 +1689,22 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
           {
              if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                {
-                  glDisable(GL_SCISSOR_TEST);
+                  EVGL_TH(glDisable, GL_SCISSOR_TEST);
                   ctx->direct_scissor = 0;
                }
 
-             glViewport(x, y, width, height);
+             EVGL_TH(glViewport, x, y, width, height);
           }
      }
    else
      {
         if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
           {
-             glDisable(GL_SCISSOR_TEST);
+             EVGL_TH(glDisable, GL_SCISSOR_TEST);
              ctx->direct_scissor = 0;
           }
 
-        glViewport(x, y, width, height);
+        EVGL_TH(glViewport, x, y, width, height);
      }
 }
 
@@ -1726,7 +1726,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
 
     if (!bufs)
       {
-         _gles3_api.glDrawBuffers(n, bufs);
+         EVGL_TH_CALL(glDrawBuffers, _gles3_api.glDrawBuffers, n, bufs);
          return;
       }
 
@@ -1743,7 +1743,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
               if (*bufs == GL_BACK)
                 {
                    drawbuffer = GL_COLOR_ATTACHMENT0;
-                   _gles3_api.glDrawBuffers(n, &drawbuffer);
+                   EVGL_TH_CALL(glDrawBuffers, _gles3_api.glDrawBuffers, n, &drawbuffer);
                 }
               else if ((*bufs & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
                 {
@@ -1751,7 +1751,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
                 }
               else
                 {
-                   _gles3_api.glDrawBuffers(n, bufs);
+                   EVGL_TH_CALL(glDrawBuffers, _gles3_api.glDrawBuffers, n, bufs);
                 }
            }
          else
@@ -1761,7 +1761,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
       }
     else
       {
-         _gles3_api.glDrawBuffers(n, bufs);
+         EVGL_TH_CALL(glDrawBuffers, _gles3_api.glDrawBuffers, n, bufs);
       }
 }
 
@@ -1790,7 +1790,7 @@ _evgl_glReadBuffer(GLenum src)
       {
          if (src == GL_BACK)
            {
-              _gles3_api.glReadBuffer(GL_COLOR_ATTACHMENT0);
+              EVGL_TH_CALL(glReadBuffer, _gles3_api.glReadBuffer, GL_COLOR_ATTACHMENT0);
            }
          else if((src & GL_COLOR_ATTACHMENT0) == GL_COLOR_ATTACHMENT0)
            {
@@ -1798,39 +1798,40 @@ _evgl_glReadBuffer(GLenum src)
            }
          else
            {
-              _gles3_api.glReadBuffer(src);
+              EVGL_TH_CALL(glReadBuffer, _gles3_api.glReadBuffer, src);
            }
       }
     else
       {
-         _gles3_api.glReadBuffer(src);
+         EVGL_TH_CALL(glReadBuffer, _gles3_api.glReadBuffer, src);
       }
 }
 
+
 //-------------------------------------------------------------//
 // Open GLES 2.0 APIs
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
-static ret evgl_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret evgl_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
-   return _evgl_##name param2; \
+   return _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
-static void evgl_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void evgl_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
-   _evgl_##name param2; \
+   _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
-static ret evgl_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret evgl_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
-   return name param2; \
+   return EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, name, __VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN_VOID(name, param1, param2) \
-static void evgl_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void evgl_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
-   name param2; \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, name, __VA_ARGS__)); \
 }
 
 #include "evas_gl_api_def.h"
@@ -1843,33 +1844,34 @@ static void evgl_##name param1 { \
 
 //-------------------------------------------------------------//
 // Open GLES 2.0 APIs DEBUG
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
-static ret _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
-   ret _a = _evgl_##name param2; \
+   ret _a = _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
    EVGLD_FUNC_END(); \
    return _a; \
 }
 
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
-static void _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
-   _evgl_##name param2; \
+   _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
    EVGLD_FUNC_END(); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
-static ret _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
-   ret _a = name param2; \
+   ret _a; \
+   _a = EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, name, __VA_ARGS__)); \
    EVGLD_FUNC_END(); \
    return _a; \
 }
 
-#define _EVASGL_FUNCTION_BEGIN_VOID(name, param1, param2) \
-static void _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
-   name param2; \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, name, __VA_ARGS__)); \
    EVGLD_FUNC_END(); \
 }
 
@@ -1883,32 +1885,32 @@ static void _evgld_##name param1 { \
 
 //-------------------------------------------------------------//
 // Open GLES 3.0 APIs
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
-static ret evgl_gles3_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret evgl_gles3_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return (ret)0; \
-   return _evgl_##name param2; \
+   return _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
-static void evgl_gles3_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void evgl_gles3_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return; \
-   _evgl_##name param2; \
+   _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
-static ret evgl_gles3_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret evgl_gles3_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return (ret)0; \
-   return _gles3_api.name param2; \
+   return EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles3_api.name, __VA_ARGS__)); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN_VOID(name, param1, param2) \
-static void evgl_gles3_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void evgl_gles3_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGL_FUNC_BEGIN(); \
    if (!_gles3_api.name) return; \
-   _gles3_api.name param2; \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles3_api.name, __VA_ARGS__)); \
 }
 
 #include "evas_gl_api_gles3_def.h"
@@ -1921,37 +1923,38 @@ static void evgl_gles3_##name param1 { \
 
 //-------------------------------------------------------------//
 // Open GLES 3.0 APIs DEBUG
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, param1, param2) \
-static ret _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN(ret, name, ...) \
+static ret _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
    if (!_gles3_api.name) return (ret)0; \
-   ret _a = _evgl_##name param2; \
+   ret _a = _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
    EVGLD_FUNC_END(); \
    return _a; \
 }
 
-#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, param1, param2) \
-static void _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_PRIVATE_BEGIN_VOID(name, ...) \
+static void _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
    if (!_gles3_api.name) return; \
-   _evgl_##name param2; \
+   _evgl_##name (_EVASGL_PARAM_NAME(__VA_ARGS__)); \
    EVGLD_FUNC_END(); \
 }
 
-#define _EVASGL_FUNCTION_BEGIN(ret, name, param1, param2) \
-static ret _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN(ret, name, ...) \
+static ret _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
    if (!_gles3_api.name) return (ret)0; \
-   ret _a = _gles3_api.name param2; \
+   ret _a; \
+   _a = EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles3_api.name, __VA_ARGS__)); \
    EVGLD_FUNC_END(); \
    return _a; \
 }
 
-#define _EVASGL_FUNCTION_BEGIN_VOID(name, param1, param2) \
-static void _evgld_##name param1 { \
+#define _EVASGL_FUNCTION_BEGIN_VOID(name, ...) \
+static void _evgld_##name (_EVASGL_PARAM_PROTO(__VA_ARGS__)) { \
    EVGLD_FUNC_BEGIN(); \
    if (!_gles3_api.name) return; \
-   _gles3_api.name param2; \
+   EVGL_TH_CALL(name, _EVASGL_PARAM_NAME(void, _gles3_api.name, __VA_ARGS__)); \
    EVGLD_FUNC_END(); \
 }
 
@@ -2187,10 +2190,10 @@ _evgld_glShaderSource(GLuint shader, GLsizei count, const char* const* string, c
    EVGLD_FUNC_BEGIN();
 
 #ifdef GL_GLES
-   glShaderSource(shader, count, string, length);
+   EVGL_TH(glShaderSource, shader, count, string, length);
    goto finish;
 #else
-   //GET_EXT_PTR(void, glShaderSource, (int, int, char **, void *));
+   //GET_EXT_PTR(void, EVGL_TH(glShaderSource), (int, int, char **, void *));
    int size = count;
    int i;
    int acc_length = 0;
@@ -2216,7 +2219,7 @@ _evgld_glShaderSource(GLuint shader, GLsizei count, const char* const* string, c
    if (!tab_prog_new || !tab_length_new)
       ERR("Error allocating memory for shader string manipulation.");
 
-   glShaderSource(shader, count, tab_prog_new, tab_length_new);
+   EVGL_TH(glShaderSource, shader, count, tab_prog_new, tab_length_new);
 
    for (i = 0; i < count; i++)
       free(tab_prog_new[i]);
