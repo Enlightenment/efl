@@ -3166,7 +3166,9 @@ AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-AC_CHECK_FUNCS([accept4])
+AC_CHECK_FUNCS([accept4], ,
+   [AC_CHECK_LIB([socket], [accept4],
+   [AC_DEFINE([HAVE_ACCEPT4], [1])])])
 
 EFL_LIB_END([Ecore_Con])
 #### End of Ecore_Con
