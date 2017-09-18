@@ -124,11 +124,16 @@ interface Efl.Gfx.Size.Hint
            this size internally, so any change to it from an application
            might be ignored. Use @.hint_min instead.
          ]]
-         set @protected {}
-         get {}
+         set @protected {
+            [[This function is protected as it is meant for widgets to indicate
+              their "intrinsic" minimum size.
+            ]]
+         }
+         get {
+            [[Get the "intrinsic" minimum size of this object.]]
+         }
          values {
-            w: int; [[Integer to use as the minimum width hint.]]
-            h: int; [[Integer to use as the minimum height hint.]]
+            sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
          }
       }
       @property hint_combined_min {

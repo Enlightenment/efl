@@ -1614,7 +1614,7 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_wm_rotation)
      {
-        efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
+        efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
         efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
 #ifdef HAVE_ELEMENTARY_X
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
@@ -3495,7 +3495,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
      }
 
    sd->tmp_updating_hints = 1;
-   efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
+   efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
    efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
@@ -6079,7 +6079,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    sd->rot = rotation;
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
-   efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
+   efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
    efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
@@ -8080,7 +8080,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      }
 
    if (minw < menuw) minw = menuw;
-   efl_gfx_size_hint_restricted_min_set(o, minw, minh);
+   efl_gfx_size_hint_restricted_min_set(o, EINA_SIZE2D(minw, minh));
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;

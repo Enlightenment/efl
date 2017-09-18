@@ -933,12 +933,12 @@ _edje_recalc_do(Edje *ed)
 
    if (ed->update_hints && ed->recalc_hints && !ed->calc_only)
      {
-        Evas_Coord w, h;
+        Eina_Size2D min;
 
         ed->recalc_hints = EINA_FALSE;
 
-        edje_object_size_min_calc(ed->obj, &w, &h);
-        efl_gfx_size_hint_restricted_min_set(ed->obj, w, h);
+        edje_object_size_min_calc(ed->obj, &min.w, &min.h);
+        efl_gfx_size_hint_restricted_min_set(ed->obj, min);
      }
 
    if (!ed->collection) return;
@@ -3415,36 +3415,36 @@ _edje_part_recalc_single(Edje *ed,
        (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
          (((Edje_Part_Description_Table *)chosen_desc)->table.min.v))))
      {
-        Evas_Coord lminw = 0, lminh = 0;
+        Eina_Size2D lmin;
 
         efl_canvas_group_need_recalculate_set(ep->object, 1);
         efl_canvas_group_calculate(ep->object);
-        efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
+        lmin = efl_gfx_size_hint_restricted_min_get(ep->object);
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
           {
-             if (lminw > minw) minw = lminw;
+             if (lmin.w > minw) minw = lmin.w;
           }
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.v)
           {
-             if (lminh > minh) minh = lminh;
+             if (lmin.h > minh) minh = lmin.h;
           }
      }
    else if ((ep->part->type == EDJE_PART_TYPE_BOX) &&
             ((((Edje_Part_Description_Box *)chosen_desc)->box.min.h) ||
              (((Edje_Part_Description_Box *)chosen_desc)->box.min.v)))
      {
-        Evas_Coord lminw = 0, lminh = 0;
+        Eina_Size2D lmin;
 
         efl_canvas_group_need_recalculate_set(ep->object, 1);
         efl_canvas_group_calculate(ep->object);
-        efl_gfx_size_hint_restricted_min_get(ep->object, &lminw, &lminh);
+        lmin = efl_gfx_size_hint_restricted_min_get(ep->object);
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
           {
-             if (lminw > minw) minw = lminw;
+             if (lmin.w > minw) minw = lmin.w;
           }
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.v)
           {
-             if (lminh > minh) minh = lminh;
+             if (lmin.h > minh) minh = lmin.h;
           }
      }
    else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
