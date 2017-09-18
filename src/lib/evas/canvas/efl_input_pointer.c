@@ -224,6 +224,20 @@ _efl_input_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 }
 
 EOLIAN static void
+_efl_input_pointer_precise_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Eina_Vector2 pos)
+{
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_X);
+   _efl_input_value_mark(pd, EFL_INPUT_VALUE_Y);
+   pd->cur = pos;
+}
+
+EOLIAN static Eina_Vector2
+_efl_input_pointer_precise_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
+{
+   return pd->cur;
+}
+
+EOLIAN static void
 _efl_input_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Eina_Position2D pos)
 {
    _efl_input_value_mark(pd, EFL_INPUT_VALUE_PREVIOUS_X);

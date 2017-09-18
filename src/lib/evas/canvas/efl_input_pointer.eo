@@ -70,13 +70,25 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
       @property position {
          [[Position where the event happened, relative to the window.
 
-           This position, in integers, is an approximation of
-           @.value.get($x), @.value.get($y). Use @.position if you need
-           simple pixel positions, but prefer the generic interface
-           if you need precise coordinates.
+           See @.precise_position for floating point precision (subpixel
+           location).
          ]]
          values {
             pos: Eina.Position2D; [[The position of the event, in pixels.]]
+         }
+      }
+      @property precise_position {
+         [[Position where the event happened, relative to the window.
+
+           This position is in floating point values, for more precise
+           coordinates, in subpixels. Note that many input devices are unable
+           to give better precision than a single pixel, so this may be
+           equal to @.position.
+
+           See also @.position.
+         ]]
+         values {
+            pos: Eina.Vector2; [[The position of the event, in pixels.]]
          }
       }
       @property previous_position {
