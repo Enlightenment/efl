@@ -829,7 +829,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         prog = gc->state.current.prog;
         GL_TH(glUseProgram, prog->prog);
         GL_TH(glUniform1i, prog->uniform.rotation_id, gc->rot / 90);
-        GL_TH(glUniformMatrix4fv, prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
+        GL_TH(glUniformMatrix4fv, gc->state.current.prog->uniform.mvp, 1, GL_FALSE, gc->shared->proj);
      }
 }
 
@@ -3717,14 +3717,13 @@ start_tiling(Evas_Engine_GL_Context *gc EINA_UNUSED,
 }
 
 static void
-shader_array_flush(Evas_Engine_GL_Context *gc)
+_orig_shader_array_flush(Evas_Engine_GL_Context *gc)
 {
    int i, gw, gh, offx = 0, offy = 0;
    unsigned int pipe_done = 0;  //count pipe iteration for debugging
    Eina_Bool setclip;
    Eina_Bool fbo = EINA_FALSE;
 
-   if (!gc->havestuff) return;
    gw = gc->w;
    gh = gc->h;
    if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
@@ -4439,6 +4438,45 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (pipe_done > 0) printf("DONE (pipes): %i\n", pipe_done);
      }
    gc->havestuff = EINA_FALSE;
+}
+
+typedef struct
+{
+   Evas_Engine_GL_Context *gc;
+} GL_TH_ST(shader_array_flush);
+
+static void
+GL_TH_CB(shader_array_flush)(void *data)
+{
+   GL_TH_ST(shader_array_flush) *thread_param = *(void **)data;
+
+   _orig_shader_array_flush(thread_param->gc);
+}
+
+static void
+shader_array_flush(Evas_Engine_GL_Context *gc)
+{
+   GL_TH_ST(shader_array_flush) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   if (!gc->havestuff) return;
+
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_GL))
+     {
+        _orig_shader_array_flush(gc);
+        return;
+     }
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(shader_array_flush) *), &thcmd_ref);
+   *thread_data_ptr = thread_data;
+
+   thread_data->gc = gc;
+
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(shader_array_flush),
+                              EVAS_GL_THREAD_MODE_FINISH);
+
 }
 
 EAPI int

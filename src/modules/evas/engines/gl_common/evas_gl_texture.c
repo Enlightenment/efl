@@ -103,7 +103,15 @@ _tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int
 {
    if ((w > gc->shared->info.max_texture_size) ||
        (h > gc->shared->info.max_texture_size)) return;
-   GL_TH(glTexSubImage2D, GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
+   GL_TH_FN(glTexSubImage2DEVAS)(0, GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
+}
+
+static void
+_tex_sub_2d_push(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int type, const void *pix)
+{
+   if ((w > gc->shared->info.max_texture_size) ||
+       (h > gc->shared->info.max_texture_size)) return;
+   GL_TH_FN(glTexSubImage2DEVAS)(1, GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
 }
 
 static void
@@ -1776,7 +1784,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
              if (comp)
                GL_TH(glCompressedTexImage2D, GL_TEXTURE_2D, 0, tex->pt->intformat, w, h, 0, sz, data1);
              else
-               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
+               _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
           }
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->pta->texture);
         if (!_tex_2d(tex->gc, tex->pta->intformat, w, h, tex->pta->format, tex->pta->dataformat))
@@ -1786,7 +1794,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
              if (comp)
                GL_TH(glCompressedTexImage2D, GL_TEXTURE_2D, 0, tex->pta->intformat, w, h, 0, sz, data2);
              else
-               _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
+               _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
           }
      }
    else
@@ -1805,7 +1813,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
                   if (comp)
                     _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
                   else
-                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
+                    _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, data1);
                }
              else
                {
@@ -1814,7 +1822,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
                        if (comp)
                          _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, sz, data1);
                        else
-                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pt->format,
+                         _tex_sub_2d_push(tex->gc, 0, y, w, ystep, tex->pt->format,
                                      tex->pt->dataformat, data1 + rowlen * y / ystep);
                     }
                }
@@ -1831,7 +1839,7 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
                   if (comp)
                     _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, sz, data2);
                   else
-                    _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
+                    _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pta->format, tex->pta->dataformat, data2);
                }
              else
                {
@@ -1840,14 +1848,15 @@ evas_gl_common_texture_rgb_a_pair_update(Evas_GL_Texture *tex,
                        if (comp)
                          _comp_tex_sub_2d(tex->gc, 0, 0, w, h, tex->pta->format, sz, data2);
                        else
-                         _tex_sub_2d(tex->gc, 0, y, w, ystep, tex->pta->format,
-                                     tex->pta->dataformat, data2 + rowlen * y / ystep);
+                         _tex_sub_2d_push(tex->gc, 0, y, w, ystep, tex->pta->format,
+                                          tex->pta->dataformat, data2 + rowlen * y / ystep);
                     }
                }
           }
      }
 on_error:
    GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
+   evas_gl_thread_finish();
 }
 
 Evas_GL_Texture *
@@ -1955,7 +1964,7 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
 }
 
 void
-evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
+_orig_evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
 {
    Evas_GL_Texture_Pool *pt, *ptu, *ptv;
 
@@ -1978,18 +1987,18 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
         GL_TH(glPixelStorei, GL_UNPACK_ALIGNMENT, 1);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->pt->texture);
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
-          return;
-        _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+          goto finish;
+        _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptu->texture);
         GL_TH(glPixelStorei, GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
         if (!_tex_2d(tex->gc, tex->ptu->intformat, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat))
-          return;
-        _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
+          goto finish;
+        _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptv->texture);
         GL_TH(glPixelStorei, GL_UNPACK_ROW_LENGTH, rows[h + (h / 2) + 1] - rows[h + (h / 2)]);
         if (!_tex_2d(tex->gc, tex->ptv->intformat, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat))
-          return;
-        _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
+          goto finish;
+        _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
      }
    else if (rows[0] && rows[h])
      {
@@ -1998,39 +2007,85 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
         GL_TH(glPixelStorei, GL_UNPACK_ALIGNMENT, 1);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->pt->texture);
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
-          return;
+          goto finish;
         if ((rows[1] - rows[0]) == (int)w)
-          _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+          _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
         else
           {
              for (y = 0; y < h; y++)
-               _tex_sub_2d(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
+               _tex_sub_2d_push(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
           }
 
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptu->texture);
         if (!_tex_2d(tex->gc, tex->ptu->intformat, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat))
           return;
         if ((rows[h + 1] - rows[h]) == (int)(w / 2))
-          _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
+          _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
         else
           {
              for (y = 0; y < (h / 2); y++)
-               _tex_sub_2d(tex->gc, 0, y, w / 2, 1, tex->ptu->format, tex->ptu->dataformat, rows[h + y]);
+               _tex_sub_2d_push(tex->gc, 0, y, w / 2, 1, tex->ptu->format, tex->ptu->dataformat, rows[h + y]);
           }
 
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptv->texture);
         if (!_tex_2d(tex->gc, tex->ptv->intformat, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat))
-          return;
+          goto finish;
         if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (int)(w / 2))
-          _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
+          _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
         else
           {
              for (y = 0; y < (h / 2); y++)
-               _tex_sub_2d(tex->gc, 0, y, w / 2, 1, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2) + y]);
+               _tex_sub_2d_push(tex->gc, 0, y, w / 2, 1, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2) + y]);
           }
      }
    if (tex->pt->texture != tex->gc->state.current.cur_tex)
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
+
+finish:
+   evas_gl_thread_finish();
+}
+
+typedef struct
+{
+   Evas_GL_Texture *tex;
+   DATA8 **rows;
+   unsigned int w;
+   unsigned int h;
+} GL_TH_ST(evas_gl_common_texture_yuv_update);
+
+static void
+GL_TH_CB(evas_gl_common_texture_yuv_update)(void *data)
+{
+   GL_TH_ST(evas_gl_common_texture_yuv_update) *thread_data = *(void**)data;
+
+   _orig_evas_gl_common_texture_yuv_update(thread_data->tex, thread_data->rows, thread_data->w, thread_data->h);
+}
+
+void
+evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned int w, unsigned int h)
+{
+   GL_TH_ST(evas_gl_common_texture_yuv_update) thread_data_local, *thread_data = &thread_data_local, **thread_data_ptr;
+   void *thcmd_ref;
+
+   if (!evas_gl_thread_enabled(EVAS_GL_THREAD_TYPE_GL))
+     {
+        _orig_evas_gl_common_texture_yuv_update(tex, rows, w, h);
+        return;
+     }
+
+   thread_data_ptr =
+      evas_gl_thread_cmd_create(EVAS_GL_THREAD_TYPE_GL, sizeof(GL_TH_ST(evas_gl_common_texture_yuv_update) *), &thcmd_ref);
+   *thread_data_ptr = thread_data;
+
+   thread_data->tex = tex;
+   thread_data->rows = rows;
+   thread_data->w = w;
+   thread_data->h = h;
+
+   evas_gl_thread_cmd_enqueue(thcmd_ref,
+                              GL_TH_CB(evas_gl_common_texture_yuv_update),
+                              EVAS_GL_THREAD_MODE_FINISH);
+
 }
 
 static Evas_GL_Texture *
@@ -2174,16 +2229,16 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
    if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
      return;
    if ((rows[1] - rows[0]) == (int)w * 4)
-     _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+     _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
    else
      {
         for (y = 0; y < h; y++)
-          _tex_sub_2d(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
+          _tex_sub_2d_push(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
      }
 
    GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptuv->texture);
    if (!_tex_2d(tex->gc, tex->ptuv->intformat, w / 2, h, tex->ptuv->format, tex->ptuv->dataformat))
-     return;
+     goto finish;
 #if 0
    /*
      FIXME: this piece of code doesn't work anymore since texture width
@@ -2195,11 +2250,13 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 #endif
      {
         for (y = 0; y < h; y++)
-          _tex_sub_2d(tex->gc, 0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[y]);
+          _tex_sub_2d_push(tex->gc, 0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[y]);
      }
 
    if (tex->pt->texture != tex->gc->state.current.cur_tex)
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
+finish:
+   evas_gl_thread_finish();
 }
 
 void
@@ -2218,13 +2275,13 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
         GL_TH(glPixelStorei, GL_UNPACK_ALIGNMENT, 1);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->pt->texture);
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
-          return;
-        _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+          goto finish;
+        _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptuv->texture);
         GL_TH(glPixelStorei, GL_UNPACK_ROW_LENGTH, (rows[h + 1] - rows[h]) / 2);
         if (!_tex_2d(tex->gc, tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat))
-          return;
-        _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
+          goto finish;
+        _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
      }
    else
      {
@@ -2233,28 +2290,30 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
         GL_TH(glPixelStorei, GL_UNPACK_ALIGNMENT, 1);
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->pt->texture);
         if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
-          return;
+          goto finish;
         if ((rows[1] - rows[0]) == (int)w)
-          _tex_sub_2d(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
+          _tex_sub_2d_push(tex->gc, 0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
         else
           {
              for (y = 0; y < h; y++)
-               _tex_sub_2d(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
+               _tex_sub_2d_push(tex->gc, 0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
           }
 
         GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptuv->texture);
         if (!_tex_2d(tex->gc, tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat))
-          return;
+          goto finish;
         if ((rows[h + 1] - rows[h]) == (int)(w / 2))
-          _tex_sub_2d(tex->gc, 0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
+          _tex_sub_2d_push(tex->gc, 0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
         else
           {
              for (y = 0; y < (h / 2); y++)
-               _tex_sub_2d(tex->gc, 0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[h + y]);
+               _tex_sub_2d_push(tex->gc, 0, y, w / 2, 1, tex->ptuv->format, tex->ptuv->dataformat, rows[h + y]);
           }
      }
    if (tex->pt->texture != tex->gc->state.current.cur_tex)
      GL_TH(glBindTexture, tex->gc->state.current.tex_target, tex->gc->state.current.cur_tex);
+finish:
+   evas_gl_thread_finish();
 }
 
 void
@@ -2416,7 +2475,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 
    // We are telling the driver to not swizzle back the buffer as we are going to replace all pixel
    if (!_tex_2d(tex->gc, tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat))
-     return;
+     goto finish;
 
    /* Iterate each Y macroblock like we do in evas_convert_yuv.c */
    for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
@@ -2432,7 +2491,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 
         for (mb_x = 0; mb_x < mb_w * 2; mb_x++, rmb_x += 64 * 32)
           {
-             _tex_sub_2d(tex->gc, x, ry[offset], 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
+             _tex_sub_2d_push(tex->gc, x, ry[offset], 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
 
              step++;
              if ((step & 0x3) == 0)
@@ -2456,13 +2515,13 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
         ry = mb_y * 2 * 32;
 
         for (mb_x = 0; mb_x < mb_w; mb_x++, x += 64, rmb_x += 64 * 32)
-          _tex_sub_2d(tex->gc, x, ry, 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
+          _tex_sub_2d_push(tex->gc, x, ry, 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
      }
 
    GL_TH(glBindTexture, GL_TEXTURE_2D, tex->ptuv->texture);
 
    if (!_tex_2d(tex->gc, tex->ptuv->intformat, w, h, tex->ptuv->format, tex->ptuv->dataformat))
-     return;
+     goto finish;
 
    /* Iterate each UV macroblock like we do in evas_convert_yuv.c */
    base_h = (mb_h >> 1) + (mb_h & 0x1);
@@ -2487,9 +2546,9 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 
         for (mb_x = 0; mb_x < mb_w * 2; mb_x++, rmb_x += 64 * 32)
           {
-             _tex_sub_2d(tex->gc, x, ry[offset], 32, 32,
-                         tex->ptuv->format, tex->ptuv->dataformat,
-                         rows[mb_y + base_h] + rmb_x);
+             _tex_sub_2d_push(tex->gc, x, ry[offset], 32, 32,
+                              tex->ptuv->format, tex->ptuv->dataformat,
+                              rows[mb_y + base_h] + rmb_x);
              step++;
              if ((step & 0x3) == 0)
                {
@@ -2512,6 +2571,8 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
         ry = mb_y * 2 * 32;
 
         for (mb_x = 0; mb_x < mb_w; mb_x++, x += 32, rmb_x += 64 * 32)
-          _tex_sub_2d(tex->gc, x, ry, 64, 32, tex->ptuv->format, tex->ptuv->dataformat, rows[mb_y + base_h] + rmb_x);
+          _tex_sub_2d_push(tex->gc, x, ry, 64, 32, tex->ptuv->format, tex->ptuv->dataformat, rows[mb_y + base_h] + rmb_x);
      }
+finish:
+   evas_gl_thread_finish();
 }

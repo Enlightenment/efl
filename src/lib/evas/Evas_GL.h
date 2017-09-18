@@ -512,9 +512,12 @@ typedef enum _Evas_GL_Options_Bits
 {
    EVAS_GL_OPTIONS_NONE    = 0,     /**< No extra options */
    EVAS_GL_OPTIONS_DIRECT  = (1<<0),/**< Optional hint to allow rendering directly to the Evas window if possible */
-   EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION = (1<<1) /**< Force direct rendering even if the canvas is rotated.
+   EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION = (1<<1),/**< Force direct rendering even if the canvas is rotated.
                                                   *   In that case, it is the application's role to rotate the contents of
-                                                  *   the Evas_GL view. @see evas_gl_rotation_get. @since 1.12 */
+                                                  *   the Evas_GL view. @see evas_gl_rotation_get */
+   EVAS_GL_OPTIONS_THREAD  = (1<<2) /**< If enabled, Evas GL pixel callback will be called by another thread instead of main thread.
+                                     * This option can enhance performance because Evas GL is worked with aynchronized call,
+                                     * but user must guarantee synchronization with pixel callback and main loop when using this flag. */
 } Evas_GL_Options_Bits;
 
 /**

@@ -1615,6 +1615,8 @@ struct _Evas_Func
 
    Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
    Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
+
+   void (*gl_get_pixels)                 (void *data, Evas_Object_Image_Pixels_Get_Cb cb, void *get_pixels_data, Evas_Object *o, void *image);
 };
 
 struct _Evas_Image_Save_Func
