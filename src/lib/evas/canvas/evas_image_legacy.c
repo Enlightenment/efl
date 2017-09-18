@@ -181,8 +181,11 @@ evas_object_image_stride_get(const Evas_Object *obj)
 EAPI void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 {
+   Eina_Rect r;
+
    EVAS_IMAGE_API(obj);
-   efl_gfx_buffer_update_add(obj, x, y, w, h);
+   r = EINA_RECT(x, y, w, h);
+   efl_gfx_buffer_update_add(obj, &r);
 }
 
 EAPI void

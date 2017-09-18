@@ -732,11 +732,26 @@ _efl_canvas_image_internal_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Dat
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
+_efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Image_Data *o, const Eina_Rect *region)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
+   int x, y, w, h;
    int cnt;
+
+   if (region)
+     {
+        x = region->x;
+        y = region->y;
+        w = region->w;
+        h = region->h;
+     }
+   else
+     {
+        x = y = 0;
+        w = o->cur->image.w;
+        h = o->cur->image.h;
+     }
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur->image.w, o->cur->image.h);
    if ((w <= 0) || (h <= 0)) return;
@@ -826,7 +841,7 @@ _efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data 
           }
         o->written = EINA_TRUE;
      }
-   efl_gfx_buffer_update_add(eo_obj, 0, 0, o->cur->image.w, o->cur->image.h);
+   efl_gfx_buffer_update_add(eo_obj, NULL);
    EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
 }
 

@@ -617,13 +617,12 @@ _efl_canvas_image_efl_image_animated_animated_frame_get(Eo *eo_obj, void *_pd EI
    return _evas_image_animated_frame_get(eo_obj);
 }
 
-EOLIAN static void
-_efl_canvas_image_efl_gfx_buffer_buffer_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_canvas_image_efl_gfx_buffer_buffer_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   if (w) *w = o->cur->image.w;
-   if (h) *h = o->cur->image.h;
+   return EINA_SIZE2D(o->cur->image.w, o->cur->image.h);
 }
 
 static Eina_Bool
@@ -731,32 +730,32 @@ end:
    if (resized)
      evas_object_inform_call_image_resize(obj->object);
 
-   efl_gfx_buffer_update_add(obj->object, 0, 0, w, h);
+   efl_gfx_buffer_update_add(obj->object, NULL);
    return ret;
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_image_efl_gfx_buffer_buffer_managed_set(Eo *eo_obj, void *_pd EINA_UNUSED,
                                                     const Eina_Slice *slice,
-                                                    int w, int h, int stride,
+                                                    Eina_Size2D size, int stride,
                                                     Efl_Gfx_Colorspace cspace,
                                                     int plane)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   return _image_pixels_set(obj, o, slice, w, h, stride, cspace, plane, EINA_FALSE);
+   return _image_pixels_set(obj, o, slice, size.w, size.h, stride, cspace, plane, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_image_efl_gfx_buffer_buffer_copy_set(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                                 const Eina_Slice *slice, int w, int h, int stride,
+                                                 const Eina_Slice *slice, Eina_Size2D size, int stride,
                                                  Efl_Gfx_Colorspace cspace, int plane)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   return _image_pixels_set(obj, o, slice, w, h, stride, cspace, plane, EINA_TRUE);
+   return _image_pixels_set(obj, o, slice, size.w, size.h, stride, cspace, plane, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
@@ -782,7 +781,7 @@ EOLIAN static Eina_Bool
 _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
                                             Eina_Rw_Slice *slice,
                                             Efl_Gfx_Buffer_Access_Mode mode,
-                                            int x, int y, int w, int h,
+                                            const Eina_Rect *region,
                                             Efl_Gfx_Colorspace cspace,
                                             int plane, int *stride)
 {
@@ -790,6 +789,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int s = 0, width = 0, height = 0;
    Eina_Bool ret = EINA_FALSE;
+   int x, y, w, h;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
 
@@ -810,10 +810,21 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (!w) w = width;
-   if (!h) h = height;
+   if (region)
+     {
+        x = region->x;
+        y = region->y;
+        w = region->w;
+        h = region->h;
+     }
+   else
+     {
+        x = y = 0;
+        w = width;
+        h = height;
+     }
 
-   if ((x < 0) || (y < 0) || ((x + w) > width) || ((y + h) > height))
+   if ((x < 0) || (y < 0) || (w <= 0) || (h <= 0) || ((x + w) > width) || ((y + h) > height))
      {
         ERR("Invalid map dimensions: %dx%d +%d,%d. Image is %dx%d.",
             w, h, x, y, width, height);
