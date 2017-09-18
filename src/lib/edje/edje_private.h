@@ -1114,7 +1114,7 @@ struct _Edje_Part_Collection
    int          references;
 
    struct {
-      Edje_Size min, max;
+      Eina_Size2D min, max;
       unsigned char orientation;
    } prop;
 

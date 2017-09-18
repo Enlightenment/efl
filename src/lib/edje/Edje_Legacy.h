@@ -2231,6 +2231,50 @@ EAPI void edje_object_transition_duration_factor_set(Evas_Object *obj, double sc
 EAPI double edje_object_transition_duration_factor_get(const Evas_Object *obj);
 
 /**
+ * @brief Gets the minimum size specified -- as an EDC property -- for a given
+ * Edje object
+ *
+ * This function retrieves the obj object's minimum size values, as declared in
+ * its EDC group definition. For instance, for an Edje object of minimum size
+ * 100x100 pixels: collections { group { name: "a_group"; min: 100 100; } }
+ *
+ * @note If the @c min EDC property was not declared for this object, this call
+ * will return 0x0.
+ *
+ * @note On failure, this function also return 0x0.
+ *
+ * See also @ref edje_object_size_max_get.
+ *
+ * @param[out] minw Pointer to a variable where to store the minimum width
+ * @param[out] minh Pointer to a variable where to store the minimum height
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_size_min_get(const Edje_Object *obj, int *minw, int *minh);
+
+/**
+ * @brief Gets the maximum size specified -- as an EDC property -- for a given
+ * Edje object
+ *
+ * This function retrieves the object's maximum size values, as declared in its
+ * EDC group definition. For instance, for an Edje object of maximum size
+ * 100x100 pixels: collections { group { name: "a_group"; max: 100 100; } }
+ *
+ * @note If the @c max EDC property was not declared for the object, this call
+ * will return the maximum size a given Edje object may have, for each axis.
+ *
+ * @note On failure, this function will return 0x0.
+ *
+ * See also @ref edje_object_size_min_get.
+ *
+ * @param[out] maxw The maximum width
+ * @param[out] maxh The maximum height
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh);
+
+/**
  * @}
  */
 #include "edje_object.eo.legacy.h"

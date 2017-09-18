@@ -1,3 +1,5 @@
+import eina_types;
+
 interface Efl.Canvas.Layout_Group
 {
    [[APIs representing static data from a group in an edje file.
@@ -27,11 +29,9 @@ interface Efl.Canvas.Layout_Group
 
               See also @.group_size_max.
             ]]
-            legacy: edje_object_size_min_get;
          }
          values {
-            minw: int; [[Pointer to a variable where to store the minimum width]]
-            minh: int; [[Pointer to a variable where to store the minimum height]]
+            min: Eina.Size2D; [[The minimum size as set in EDC.]]
          }
       }
       @property group_size_max {
@@ -57,11 +57,9 @@ interface Efl.Canvas.Layout_Group
 
               See also @.group_size_min.
             ]]
-            legacy: edje_object_size_max_get;
          }
          values {
-            maxw: int; [[The maximum width]]
-            maxh: int; [[The maximum height]]
+            max: Eina.Size2D; [[The maximum size as set in EDC.]]
          }
       }
       @property group_data {

@@ -1165,28 +1165,22 @@ _efl_ui_image_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_I
      edje_object_signal_emit(sd->img, emission, source);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
-     edje_object_size_min_get(sd->img, w, h);
+     return efl_canvas_layout_group_size_min_get(sd->img);
    else
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-     }
+     return EINA_SIZE2D(0, 0);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
-     edje_object_size_max_get(sd->img, w, h);
+     return efl_canvas_layout_group_size_max_get(sd->img);
    else
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-     }
+     return EINA_SIZE2D(0, 0);
 }
 
 EOLIAN static void

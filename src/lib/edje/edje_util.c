@@ -3096,50 +3096,32 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
      return _edje_other_internal_proxy_get(obj, ed, rp);
 }
 
-EOLIAN void
-_edje_object_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh)
+EOLIAN Eina_Size2D
+_edje_object_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if ((!ed) || (!ed->collection))
-     {
-        if (minw) *minw = 0;
-        if (minh) *minh = 0;
-        return;
-     }
-   if (minw) *minw = ed->collection->prop.min.w;
-   if (minh) *minh = ed->collection->prop.min.h;
+     return EINA_SIZE2D(0, 0);
+
+   return ed->collection->prop.min;
 }
 
-EOLIAN void
-_edje_object_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED, Evas_Coord *maxw, Evas_Coord *maxh)
+EOLIAN Eina_Size2D
+_edje_object_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED)
 {
+   Eina_Size2D sz;
+
    if ((!ed) || (!ed->collection))
-     {
-        if (maxw) *maxw = 0;
-        if (maxh) *maxh = 0;
-        return;
-     }
+     return EINA_SIZE2D(0, 0);
 
    /* Need to recalc before providing the object. */
    _edje_recalc_do(ed);
 
-   if (ed->collection->prop.max.w == 0)
-     {
-        /* XXX TODO: convert maxw to 0, fix things that break. */
-        if (maxw) *maxw = EDJE_INF_MAX_W;
-     }
-   else
-     {
-        if (maxw) *maxw = ed->collection->prop.max.w;
-     }
-   if (ed->collection->prop.max.h == 0)
-     {
-        /* XXX TODO: convert maxh to 0, fix things that break. */
-        if (maxh) *maxh = EDJE_INF_MAX_H;
-     }
-   else
-     {
-        if (maxh) *maxh = ed->collection->prop.max.h;
-     }
+   sz = ed->collection->prop.max;
+
+   /* XXX TODO: use 0 as max, fix things that break. */
+   if (sz.w == 0) sz.w = EDJE_INF_MAX_W;
+   if (sz.h == 0) sz.h = EDJE_INF_MAX_H;
+   return sz;
 }
 
 EOLIAN void

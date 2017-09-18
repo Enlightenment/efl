@@ -1646,20 +1646,20 @@ _efl_ui_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Efl_Ui_Layout_Dat
    return efl_canvas_layout_group_data_get(wd->resize_obj, key);
 }
 
-EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_SIZE2D(0, 0));
 
-   efl_canvas_layout_group_size_min_get(wd->resize_obj, w, h);
+   return efl_canvas_layout_group_size_min_get(wd->resize_obj);
 }
 
-EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_SIZE2D(0, 0));
 
-   efl_canvas_layout_group_size_max_get(wd->resize_obj, w, h);
+   return efl_canvas_layout_group_size_max_get(wd->resize_obj);
 }
 
 /* layout's sizing evaluation is deferred. evaluation requests are
