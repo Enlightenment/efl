@@ -19,8 +19,7 @@ interface Efl.Canvas ()
             return: bool; [[$true on success, $false otherwise]] 
          }
          values {
-            maxw: int; [[Pointer to hold the return value in pixels of the maximum width.]]
-            maxh: int; [[Pointer to hold the return value in pixels of the maximum height.]]
+            max: Eina.Size2D; [[The maximum image size (in pixels).]]
          }
       }
       smart_objects_calculate {

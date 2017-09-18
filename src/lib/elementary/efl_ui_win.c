@@ -2477,9 +2477,9 @@ _efl_ui_win_efl_input_interface_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_image_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *maxw, int *maxh)
+_efl_ui_win_efl_canvas_image_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D *max)
 {
-   return evas_image_max_size_get(sd->evas, maxw, maxh);
+   return efl_canvas_image_max_size_get(sd->evas, max);
 }
 
 EOLIAN static void
