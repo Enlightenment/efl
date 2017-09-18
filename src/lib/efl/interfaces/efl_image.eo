@@ -125,8 +125,7 @@ interface Efl.Image ()
          ]]
          get {}
          values {
-            w: int; [[The image width.]]
-            h: int; [[The image height.]]
+            size: Eina.Size2D; [[The size in pixels.]]
          }
       }
 

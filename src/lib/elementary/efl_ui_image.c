@@ -1258,17 +1258,13 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
    return EINA_SIZE2D(tw, th);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return;
-     }
+     return EINA_SIZE2D(0, 0);
 
-   efl_image_size_get(sd->img, w, h);
+   return efl_image_size_get(sd->img);
 }
 
 EAPI void

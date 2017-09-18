@@ -1545,11 +1545,10 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
    return obj;
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
-   if (w) *w = pd->size.imw;
-   if (h) *h = pd->size.imh;
+   return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }
 
 EOLIAN static Eina_Size2D
