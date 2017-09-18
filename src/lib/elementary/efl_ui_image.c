@@ -1190,13 +1190,13 @@ _efl_ui_image_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Imag
      edje_object_calc_force(sd->img);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
-     edje_object_size_min_calc(sd->img, w, h);
+     return efl_gfx_size_hint_min_get(sd->img);
    else
-     evas_object_size_hint_combined_min_get(sd->img, w, h);
+     return efl_gfx_size_hint_combined_min_get(sd->img);
 }
 
 EOLIAN static void
