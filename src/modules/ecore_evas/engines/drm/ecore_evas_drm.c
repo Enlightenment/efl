@@ -172,8 +172,10 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
    ecore_event_evas_init();
    if (!handlers)
      {
-        handlers = eina_list_append(handlers,
-          ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE, _drm_device_change, NULL));
+        handlers =
+          eina_list_append(handlers,
+                           ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
+                                                   _drm_device_change, NULL));
      }
 
    return _drm_init_count;
