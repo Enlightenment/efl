@@ -21,8 +21,8 @@ interface Efl.Canvas.Layout_Calc
            will be notified of the size hints changes.
 
            A layout recalculation can be triggered by @.calc_size_min(),
-           @.calc_size_min_restricted(), @.calc_parts_extends() or even any
-           other internal event.
+           @.calc_size_min(), @.calc_parts_extends() or even any other internal
+           event.
          ]]
          set {
             [[Enable or disable auto-update of size hints.]]
@@ -35,23 +35,13 @@ interface Efl.Canvas.Layout_Calc
          }
       }
       calc_size_min {
-         [[Calculates the minimum required size for a given Edje object.
-
-           This call works exactly as edje_object_size_min_restricted_calc(),
-           with the last two arguments set to 0. Please refer to its
-           documentation, then.
-         ]]
-         return: Eina.Size2D; [[The minimum required size.]]
-      }
-      calc_size_min_restricted {
          [[Calculates the minimum required size for a given layout object.
 
            This call will trigger an internal recalculation of all parts of
            the object, in order to return its minimum required dimensions for
            width and height. The user might choose to impose those minimum
-           sizes, making the resulting calculation to get to values equal or
-           larger than $restrictedw and $restrictedh, for width and height,
-           respectively.
+           sizes, making the resulting calculation to get to values greater or
+           equal than $restricted in both directions.
 
            Note: At the end of this call, the object won't be automatically
            resized to the new dimensions, but just return the calculated sizes.

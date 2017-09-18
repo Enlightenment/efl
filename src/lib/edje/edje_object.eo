@@ -770,7 +770,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Layout_Calc.calc_auto_update_hints { get; set; }
       Efl.Canvas.Layout_Calc.calc_size_min;
-      Efl.Canvas.Layout_Calc.calc_size_min_restricted;
       Efl.Canvas.Layout_Calc.calc_parts_extends;
       Efl.Canvas.Layout_Calc.calc_freeze;
       Efl.Canvas.Layout_Calc.calc_thaw;

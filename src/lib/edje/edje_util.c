@@ -3147,12 +3147,6 @@ _edje_object_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
    _edje_util_freeze_val = pf2;
 }
 
-EOLIAN Eina_Size2D
-_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj, Edje *_pd EINA_UNUSED)
-{
-   return efl_canvas_layout_calc_size_min_restricted(obj, EINA_SIZE2D(0, 0));
-}
-
 EOLIAN Eina_Rectangle
 _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
@@ -3191,7 +3185,7 @@ _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Size2D
-_edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
+_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
 {
    const int CALC_COUNT_LIMIT = 255;
 
