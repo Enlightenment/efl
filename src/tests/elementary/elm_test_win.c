@@ -197,12 +197,7 @@ END_TEST
 /* a very lax definition of == for doubles */
 #define VALEQ(a, b) ((fabs((a) - (b))) <= 0.001)
 
-typedef struct
-{
-   double x, y;
-} point_t;
-
-static point_t points[2][4] =
+static const Eina_Position2D points[2][4] =
 {
    {
       { 20, 20 },
@@ -228,7 +223,7 @@ _inputs_timer1_cb(void *data)
    for (size_t i = 0; i < 4; i++)
      {
         ptr = efl_add(EFL_INPUT_POINTER_CLASS, win);
-        efl_input_pointer_position_set(ptr, points[0][i].x, points[0][i].y);
+        efl_input_pointer_position_set(ptr, points[0][i]);
         efl_input_pointer_tool_set(ptr, i);
         efl_input_pointer_button_set(ptr, 1);
 
@@ -239,7 +234,7 @@ _inputs_timer1_cb(void *data)
              efl_event_callback_call(win, EFL_EVENT_POINTER_IN, ptr);
 
              /* move second */
-             efl_input_pointer_position_set(ptr, points[0][i].x, points[0][i].y);
+             efl_input_pointer_position_set(ptr, points[0][i]);
              efl_input_pointer_action_set(ptr, EFL_POINTER_ACTION_MOVE);
              efl_event_callback_call(win, EFL_EVENT_POINTER_MOVE, ptr);
           }
@@ -295,7 +290,7 @@ _inputs_timer2_cb(void *data)
    for (i = 0; i < 4; i++)
      {
         ptr = efl_add(EFL_INPUT_POINTER_CLASS, win);
-        efl_input_pointer_position_set(ptr, points[1][i].x, points[1][i].y);
+        efl_input_pointer_position_set(ptr, points[1][i]);
         efl_input_pointer_tool_set(ptr, i);
         efl_input_pointer_button_set(ptr, 1);
 

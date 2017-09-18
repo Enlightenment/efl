@@ -76,8 +76,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            if you need precise coordinates.
          ]]
          values {
-            x: int; [[X coordinate of the event]]
-            y: int; [[Y coordinate of the event]]
+            pos: Eina.Position2D; [[The position of the event, in pixels.]]
          }
       }
       @property previous_position {
@@ -91,22 +90,7 @@ class Efl.Input.Pointer (Efl.Object, Efl.Input.Event, Efl.Input.State)
            but prefer the generic interface if you need precise coordinates.
          ]]
          values {
-            x: int; [[X coordinate of the previous event]]
-            y: int; [[Y coordinate of the previous event]]
-         }
-      }
-      @property delta {
-         [[Position delta, or movement, since the last event.
-
-           This position, in integers, is an approximation of
-           @.value.get($dx), @.value.get($dy). Use @.delta if you need
-           simple pixel positions, but prefer the generic interface
-           if you need precise coordinates.
-         ]]
-         get {}
-         values {
-            dx: int; [[X coordinate delta]]
-            dy: int; [[Y coordinate delta]]
+            pos: Eina.Position2D; [[The position of the event, in pixels.]]
          }
       }
       @property tool {
