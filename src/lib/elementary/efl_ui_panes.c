@@ -185,7 +185,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eo *first_content, *second_content;
-   int minw, minh;
+   Eina_Size2D min;
 
    first_content = efl_content_get(efl_part(obj, "first"));
    second_content = efl_content_get(efl_part(obj, "second"));
@@ -208,16 +208,16 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
-        minw = MAX(sd->first_min.w, sd->second_min.w);
-        minh = sd->first_min.h + sd->second_min.h;
+        min.w = MAX(sd->first_min.w, sd->second_min.w);
+        min.h = sd->first_min.h + sd->second_min.h;
      }
    else
      {
-        minw = sd->first_min.w + sd->second_min.w;
-        minh = MAX(sd->first_min.h, sd->second_min.h);
+        min.w = sd->first_min.w + sd->second_min.w;
+        min.h = MAX(sd->first_min.h, sd->second_min.h);
      }
 
-   efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
+   efl_gfx_size_hint_restricted_min_set(obj, min);
    _set_min_size_new(obj);
 }
 
