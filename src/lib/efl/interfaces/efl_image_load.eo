@@ -68,8 +68,7 @@ interface Efl.Image.Load ()
             [[Returns the requested load size.]]
          }
          values {
-            w: int; [[Width of the image's load size.]]
-            h: int; [[Height of the image's load size.]]
+            size: Eina.Size2D; [[The image load size.]]
          }
       }
       @property load_dpi {

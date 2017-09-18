@@ -682,7 +682,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Im
    return (Eina_Rect) o->cur->fill;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Size2D
 _efl_canvas_image_internal_efl_image_image_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return EINA_SIZE2D(o->file_size.w, o->file_size.h);
