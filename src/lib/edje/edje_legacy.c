@@ -1089,13 +1089,19 @@ edje_object_update_hints_get(const Edje_Object *obj)
 EAPI void
 edje_object_size_min_calc(Edje_Object *obj, int *minw, int *minh)
 {
-   efl_canvas_layout_calc_size_min(obj, minw, minh);
+   Eina_Size2D sz;
+   sz = efl_canvas_layout_calc_size_min(obj);
+   if (minw) *minw = sz.w;
+   if (minh) *minh = sz.h;
 }
 
 EAPI void
 edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int restrictedw, int restrictedh)
 {
-   efl_canvas_layout_calc_size_min_restricted(obj, minw, minh, restrictedw, restrictedh);
+   Eina_Size2D sz;
+   sz = efl_canvas_layout_calc_size_min_restricted(obj, EINA_SIZE2D(restrictedw, restrictedh));
+   if (minw) *minw = sz.w;
+   if (minh) *minh = sz.h;
 }
 
 EAPI Eina_Bool

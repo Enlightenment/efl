@@ -3147,10 +3147,10 @@ _edje_object_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
    _edje_util_freeze_val = pf2;
 }
 
-EOLIAN void
-_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj, Edje *_pd EINA_UNUSED, Evas_Coord *minw, Evas_Coord *minh)
+EOLIAN Eina_Size2D
+_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj, Edje *_pd EINA_UNUSED)
 {
-   edje_object_size_min_restricted_calc(obj, minw, minh, 0, 0);
+   return efl_canvas_layout_calc_size_min_restricted(obj, EINA_SIZE2D(0, 0));
 }
 
 EOLIAN Eina_Rectangle
@@ -3190,8 +3190,8 @@ _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje
    return (Eina_Rectangle) { xx1, yy1, xx2 - xx1, yy2 - yy1 };
 }
 
-EOLIAN void
-_edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
+EOLIAN Eina_Size2D
+_edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
 {
    const int CALC_COUNT_LIMIT = 255;
 
@@ -3205,13 +3205,10 @@ _edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED
    Evas_Coord ins_l, ins_r;
    Eina_Bool has_fixed_tb;
    Eina_Bool legacy_calc;
+   Eina_Size2D ret;
 
    if ((!ed) || (!ed->collection))
-     {
-        if (minw) *minw = restrictedw;
-        if (minh) *minh = restrictedh;
-        return;
-     }
+     return restricted;
 
    /*
     * It decides a calculation logic according to efl_version of Edje file.
@@ -3235,8 +3232,8 @@ _edje_object_efl_canvas_layout_calc_calc_size_min_restricted(Eo *obj EINA_UNUSED
 
 again:
    //restrict minimum size to
-   ed->w = restrictedw;
-   ed->h = restrictedh;
+   ed->w = restricted.w;
+   ed->h = restricted.h;
 
    max_over_w = 0;
    max_over_h = 0;
@@ -3338,14 +3335,14 @@ again:
              ed->w += max_over_w;
 
              //exceptional handling.
-             if (ed->w < restrictedw) ed->w = restrictedw;
+             if (ed->w < restricted.w) ed->w = restricted.w;
           }
         if (repeat_h)
           {
              ed->h += max_over_h;
 
              //exceptional handling.
-             if (ed->h < restrictedh) ed->h = restrictedh;
+             if (ed->h < restricted.h) ed->h = restricted.h;
           }
 
         if (reset_max && (calc_count > CALC_COUNT_LIMIT))
@@ -3385,9 +3382,7 @@ again:
 
    ed->min.w = ed->w;
    ed->min.h = ed->h;
-
-   if (minw) *minw = ed->min.w;
-   if (minh) *minh = ed->min.h;
+   ret = EINA_SIZE2D(ed->min.w, ed->min.h);
 
    ed->w = orig_w;
    ed->h = orig_h;
@@ -3398,6 +3393,8 @@ again:
 #endif
    _edje_recalc(ed);
    ed->calc_only = EINA_FALSE;
+
+   return ret;
 }
 
 /* FIXME: Correctly return other states */

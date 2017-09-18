@@ -41,11 +41,7 @@ interface Efl.Canvas.Layout_Calc
            with the last two arguments set to 0. Please refer to its
            documentation, then.
          ]]
-         // FIXME: Return a 2D size type (no @out values)
-         params {
-            @out minw: int; [[The minimum required width (return value)]]
-            @out minh: int; [[The minimum required height (return value)]]
-         }
+         return: Eina.Size2D; [[The minimum required size.]]
       }
       calc_size_min_restricted {
          [[Calculates the minimum required size for a given layout object.
@@ -64,14 +60,11 @@ interface Efl.Canvas.Layout_Calc
            Warning: Be advised that invisible parts in the object will be taken
            into account in this calculation.
          ]]
-         // FIXME: Return a 2D size type (no @out values)
+         return: Eina.Size2D; [[The minimum required size.]]
          params {
-            @out minw: int; [[The minimum required width (return value)]]
-            @out minh: int; [[The minimum required height (return value)]]
-            @in restrictedw: int @optional; [[The minimum width constraint as
-                                       input, $minw can not be lower than this]]
-            @in restrictedh: int @optional; [[The minimum height constraint as
-                                       input, $minh can not be lower than this]]
+            @in restricted: Eina.Size2D @optional;
+               [[The minimum size constraint as input, the returned size
+                 can not be lower than this (in both directions).]]
          }
       }
       calc_parts_extends {
