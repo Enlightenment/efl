@@ -256,12 +256,22 @@ mixin Efl.Gfx.Path
         }
       }
       interpolate {
-        [[Interpolate object]]
+        [[Creates intermediary path part-way between two paths
+
+         Sets the points of the $obj as the linear interpolation of the points
+         in the $from and to $paths.  The path's x,y position and control
+         point coordinates are likewise interpolated.
+
+         The $from and $to paths must not already have equivalent points,
+         and $to must contain at least as many points as $from, else the
+         function returns $false with no interpolation performed.  If $to
+         has more points than $from, the excess points are ignored.
+        ]]
         return: bool; [[$true on success, $false otherwise]]
         params {
-          @in from: const(Efl.Object); [[Source object]]
-          @in to: const(Efl.Object); [[Destination object]]
-          @in pos_map: double; [[Position map]]
+          @in from: const(Efl.Object); [[Source path]]
+          @in to: const(Efl.Object); [[Destination path]]
+          @in pos_map: double; [[Position map in range 0.0 to 1.0]]
         }
       }
       equal_commands {
