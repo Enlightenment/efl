@@ -6230,10 +6230,12 @@ _efl_ui_win_screen_constrain_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->constrain;
 }
 
-EOLIAN static void
-_efl_ui_win_efl_screen_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_win_efl_screen_screen_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, w, h);
+   Eina_Size2D sz;
+   ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &sz.w, &sz.h);
+   return sz;
 }
 
 EOLIAN static void

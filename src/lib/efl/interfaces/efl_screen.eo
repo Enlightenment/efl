@@ -6,11 +6,14 @@ interface Efl.Screen
    methods {
       @property screen_size {
          get {
-            [[Get screen geometry details for the screen that a window is on.]]
+            [[Get screen geometry details for the screen that a window is on.
+
+              Note that on some display systems this information is not
+              available (this could be the case Wayland for instance).
+            ]]
          }
          values {
-            w: int; [[Where to return the width value. May be $null.]]
-            h: int; [[Where to return the height value. May be $null.]]
+            size: Eina.Size2D; [[The screen size.]]
          }
       }
       @property screen_rotation {
