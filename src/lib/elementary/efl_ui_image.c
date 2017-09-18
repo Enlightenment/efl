@@ -1191,12 +1191,15 @@ _efl_ui_image_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Imag
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Size2D restricted)
 {
    if (sd->edje)
-     return efl_gfx_size_hint_min_get(sd->img);
+     return efl_canvas_layout_calc_size_min(sd->img, restricted);
    else
-     return efl_gfx_size_hint_combined_min_get(sd->img);
+     {
+        // Ignore restricted here? Combine with min? Hmm...
+        return efl_gfx_size_hint_combined_min_get(sd->img);
+     }
 }
 
 EOLIAN static void
