@@ -20,7 +20,7 @@ typedef struct
 EOLIAN static void
 _efl_ui_slider_interval_interval_value_get(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED, double *from, double *to)
 {
-   Efl_Ui_Slider_Data *pd =  efl_data_scope_safe_get(obj, EFL_UI_SLIDER_CLASS);
+   Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
    if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
    if (to) *to = fmax(pd->intvl_from, pd->intvl_to);
 }
@@ -92,7 +92,7 @@ _visuals_refresh(Eo *obj)
 EOLIAN static void
 _efl_ui_slider_interval_interval_value_set(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED, double from, double to)
 {
-   Efl_Ui_Slider_Data *pd =  efl_data_scope_safe_get(obj, EFL_UI_SLIDER_CLASS);
+   Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
 
    pd->intvl_from = from;
    pd->val = from;
