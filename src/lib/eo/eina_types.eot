@@ -21,6 +21,12 @@ struct @extern Eina.Size2D {
 
 struct @extern Eina.File; [[Eina file data structure]]
 
+struct @extern Eina.Vector2 {
+   [[A simple 2D vector type using floating point values.]]
+   x: double; [[X coordinate.]]
+   y: double; [[Y coordinate.]]
+}
+
 struct @extern Eina.Matrix3 {
    [[Eina 3x3 Matrix]]
    xx: double; [[XX matrix value]]
