@@ -1552,28 +1552,22 @@ _efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Imag
    if (h) *h = pd->size.imh;
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
-     edje_object_size_min_get(sd->edje, w, h);
+     return efl_canvas_layout_group_size_min_get(sd->edje);
    else
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-     }
+     return EINA_SIZE2D(0, 0);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
-     edje_object_size_max_get(sd->edje, w, h);
+     return efl_canvas_layout_group_size_max_get(sd->edje);
    else
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-     }
+     return EINA_SIZE2D(0, 0);
 }
 
 static Eina_Bool
