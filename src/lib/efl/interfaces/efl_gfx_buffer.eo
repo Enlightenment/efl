@@ -129,7 +129,6 @@ interface Efl.Gfx.Buffer ()
            be negative.
          ]]
          params {
-            @out slice: Eina.Rw_Slice; [[Pointer to the top-left pixel data.]]
             @in mode: Efl.Gfx.Buffer.Access_Mode; [[Specifies whether to map for read-only,
                                                     write-only or read-write access (OR combination of flags).]]
             @in region: const(ptr(Eina.Rect)) @optional; [[The region to map.]]
@@ -139,7 +138,8 @@ interface Efl.Gfx.Buffer ()
             @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
             @out stride: int @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: bool; [[$true on success, $false otherwise]]
+         return: Eina.Rw_Slice; [[The data slice. In case of failure, the
+            memory pointer will be $null.]]
       }
       buffer_unmap {
          [[Unmap a region of this buffer, and update the internal data if needed.
@@ -152,7 +152,7 @@ interface Efl.Gfx.Buffer ()
            valid anymore.
          ]]
          params {
-            @in slice: ptr(const(Eina.Rw_Slice)); [[Data slice returned by a previous call to map.]]
+            @in slice: Eina.Rw_Slice; [[Data slice returned by a previous call to map.]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }
@@ -211,14 +211,14 @@ interface Efl.Gfx.Buffer ()
          [[Get a direct pointer to the internal pixel data, if available.
 
            This will return $null unless @.buffer_managed_set was used to pass
-           in an external data pointer. The returned @Eina.Slice struct must be
-           freed by the caller.
+           in an external data pointer.
          ]]
          params {
-            @out slice: Eina.Slice; [[Data slice]]
-            @in plane: int @optional; [[Plane ID. 0 by default. Useful for planar formats only.]]
+            @in plane: int @optional; [[Plane ID. 0 by default. Useful for
+               planar formats only.]]
          }
-         return: bool; [[$true on success, $false otherwise]]
+         return: Eina.Slice; [[The data slice. The memory pointer will be $null
+            in case of failure.]]
       }
       /* Note: border, span and buffer flags not imported from ector buffer */
    }

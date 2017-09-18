@@ -3290,9 +3290,9 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
                   unmap = EINA_TRUE;
                   rect.size = efl_gfx_buffer_size_get(image);
-                  efl_gfx_buffer_map(image, &sl, EFL_GFX_BUFFER_ACCESS_MODE_READ,
-                                     &rect, EFL_GFX_COLORSPACE_ARGB8888, 0,
-                                     &stride);
+                  sl = efl_gfx_buffer_map(image, EFL_GFX_BUFFER_ACCESS_MODE_READ,
+                                          &rect, EFL_GFX_COLORSPACE_ARGB8888, 0,
+                                          &stride);
                   w = rect.w;
                   h = rect.h;
                }
@@ -3340,7 +3340,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
                               }
                          }
                     }
-                  if (unmap) efl_gfx_buffer_unmap(image, &sl);
+                  if (unmap) efl_gfx_buffer_unmap(image, sl);
                   else evas_object_image_data_set(image, sl.mem);
                }
           }
