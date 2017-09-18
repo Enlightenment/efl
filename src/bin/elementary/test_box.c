@@ -915,7 +915,7 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    /* image with a forced min size */
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    o = efl_add(EFL_UI_IMAGE_CLASS, win,
-               efl_gfx_size_hint_min_set(efl_added, 64, 64),
+               efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(64, 64)),
                efl_file_set(efl_added, buf, NULL));
    efl_pack(bx, o);
 

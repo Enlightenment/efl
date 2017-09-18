@@ -71,7 +71,7 @@ user_min_slider_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 0; i < 6; i++)
-     efl_gfx_size_hint_min_set(objects[i], val, val);
+     efl_gfx_size_hint_min_set(objects[i], EINA_SIZE2D(val, val));
 }
 
 static void
@@ -163,7 +163,7 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
    eina_iterator_free(it);
 
 end:
-   efl_gfx_size_hint_min_set(pack, gmw * cols, gmh * rows);
+   efl_gfx_size_hint_min_set(pack, EINA_SIZE2D(gmw * cols, gmh * rows));
 }
 
 void
@@ -407,7 +407,7 @@ test_ui_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    efl_gfx_visible_set(grid, 1);
 
    objects[i++] = o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
-   efl_gfx_size_hint_min_set(o, 10, 10);
+   efl_gfx_size_hint_min_set(o, EINA_SIZE2D(10, 10));
    efl_gfx_color_set(o, 64, 96, 128, 255);
    efl_pack_grid(grid, o, 0, 0, 3, 1);
 

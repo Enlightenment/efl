@@ -30,7 +30,7 @@ _image_create(Eo *win, const char *path)
 {
    return efl_add(EFL_UI_IMAGE_CLASS, win,
                   efl_file_set(efl_added, path, NULL),
-                  efl_gfx_size_hint_min_set(efl_added, 20, 20));
+                  efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(20, 20)));
 }
 
 static void

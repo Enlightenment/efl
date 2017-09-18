@@ -54,7 +54,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added),
-                efl_gfx_size_hint_min_set(efl_added, 360, 240));
+                efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(360, 240)));
 
    dt1 = efl_add(EFL_UI_CLOCK_CLASS, bx,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
@@ -88,7 +88,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
            efl_text_set(efl_added, "Editable Clock:"),
            efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_size_hint_align_set(efl_added, 0, EVAS_HINT_FILL),
-           efl_gfx_size_hint_min_set(efl_added, 100, 25),
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(100, 25)),
            efl_pack(bx, efl_added));
 
    dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx,
