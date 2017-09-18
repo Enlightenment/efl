@@ -852,15 +852,16 @@ _elm_win_obj_intercept_layer_set(void *data, Evas_Object *obj EINA_UNUSED, int l
 static void
 _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
 {
-   Evas_Coord minw, minh, maxw, maxh;
+   Evas_Coord minw, minh;
+   Eina_Size2D max;
 
    efl_gfx_size_hint_combined_min_get(win, &minw, &minh);
-   efl_gfx_size_hint_max_get(win, &maxw, &maxh);
-   if (maxw < 1) maxw = -1;
-   if (maxh < 1) maxh = -1;
+   max = efl_gfx_size_hint_max_get(win);
+   if (max.w < 1) max.w = -1;
+   if (max.h < 1) max.h = -1;
 
    TRAP(sd, size_min_set, minw, minh);
-   TRAP(sd, size_max_set, maxw, maxh);
+   TRAP(sd, size_max_set, max.w, max.h);
 }
 
 static void
@@ -1614,7 +1615,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_wm_rotation)
      {
         efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
-        efl_gfx_size_hint_max_set(obj, -1, -1);
+        efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
 #ifdef HAVE_ELEMENTARY_X
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_xwin_update(sd);
@@ -3495,7 +3496,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
 
    sd->tmp_updating_hints = 1;
    efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
-   efl_gfx_size_hint_max_set(obj, maxw, maxh);
+   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
 
@@ -5992,18 +5993,18 @@ _efl_ui_win_efl_gfx_size_hint_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, int w, int h)
+_efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
    if (sd->tmp_updating_hints)
      {
-        efl_gfx_size_hint_max_set(efl_super(obj, MY_CLASS), w, h);
+        efl_gfx_size_hint_max_set(efl_super(obj, MY_CLASS), sz);
      }
    else
      {
-        if (w < 1) w = -1;
-        if (h < 1) h = -1;
-        sd->max_w = w;
-        sd->max_h = h;
+        if (sz.w < 1) sz.w = -1;
+        if (sz.h < 1) sz.h = -1;
+        sd->max_w = sz.w;
+        sd->max_h = sz.h;
         _elm_win_resize_objects_eval(obj, EINA_FALSE);
      }
 }
@@ -6079,7 +6080,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
    efl_gfx_size_hint_restricted_min_set(obj, -1, -1);
-   efl_gfx_size_hint_max_set(obj, -1, -1);
+   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);

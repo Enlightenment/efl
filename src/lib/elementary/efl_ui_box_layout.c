@@ -12,7 +12,7 @@ struct _Item_Calc
    Evas_Object *obj;
    double weight[2];
    double align[2];
-   int max[2];
+   Eina_Size2D max;
    int pad[4];
    int want[2];
    Efl_Gfx_Size_Hint_Aspect aspect_type;
@@ -78,7 +78,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         efl_gfx_size_hint_weight_get(o, &item->weight[0], &item->weight[1]);
         efl_gfx_size_hint_align_get(o, &item->align[0], &item->align[1]);
         efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
-        efl_gfx_size_hint_max_get(o, &item->max[0], &item->max[1]);
+        item->max = efl_gfx_size_hint_max_get(o);
         efl_gfx_size_hint_combined_min_get(o, &item->want[0], &item->want[1]);
         efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect[0], &item->aspect[1]);
 
@@ -107,10 +107,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   if ((item->align[1] < 0) && (h < boxh))
                     {
                        double w1, h1;
-                       h1 = item->max[1] > 0 ? MIN(boxh, item->max[1]) : boxh;
+                       h1 = item->max.h > 0 ? MIN(boxh, item->max.h) : boxh;
                        h1 = MAX(h, h1);
                        w1 = h1 * item->aspect[0] / item->aspect[1];
-                       w = item->max[0] > 0 ? MIN(w1, item->max[0]) : w1;
+                       w = item->max.w > 0 ? MIN(w1, item->max.w) : w1;
                     }
                }
              else
@@ -118,10 +118,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   if ((item->align[0] < 0) && (w < boxw))
                     {
                        double w1, h1;
-                       w1 = item->max[0] > 0 ? MIN(boxw, item->max[0]) : boxw;
+                       w1 = item->max.w > 0 ? MIN(boxw, item->max.w) : boxw;
                        w1 = MAX(w, w1);
                        h1 = w1 * item->aspect[1] / item->aspect[0];
-                       h = item->max[1] > 0 ? MIN(h1, item->max[1]) : h1;
+                       h = item->max.h > 0 ? MIN(h1, item->max.h) : h1;
                     }
                }
              item->want[0] = w;
@@ -139,10 +139,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         if (item->want[0] < 0) item->want[0] = 0;
         if (item->want[1] < 0) item->want[1] = 0;
 
-        if (item->max[0] < 0) item->max[0] = INT_MAX;
-        if (item->max[1] < 0) item->max[1] = INT_MAX;
-        if (item->max[0] < item->want[0]) item->max[0] = item->want[0];
-        if (item->max[1] < item->want[1]) item->max[1] = item->want[1];
+        if (item->max.w < 0) item->max.w = INT_MAX;
+        if (item->max.h < 0) item->max.h = INT_MAX;
+        if (item->max.w < item->want[0]) item->max.w = item->want[0];
+        if (item->max.h < item->want[1]) item->max.h = item->want[1];
 
         item->want[0] += item->pad[0] + item->pad[1];
         item->want[1] += item->pad[2] + item->pad[3];
@@ -286,36 +286,36 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                     }
                }
 
-             if ((item->max[0] != INT_MAX) && (item->max[1] != INT_MAX))
+             if ((item->max.w != INT_MAX) && (item->max.h != INT_MAX))
                {
                   double mar, ar;
-                  mar = item->max[0] / (double)item->max[1];
+                  mar = item->max.w / (double)item->max.h;
                   ar = item->aspect[0] / (double)item->aspect[1];
                   if (ar < mar)
                     {
-                       if (h > item->max[1])
+                       if (h > item->max.h)
                          {
-                            h = item->max[1];
+                            h = item->max.h;
                             w = h * item->aspect[0] / item->aspect[1];
                          }
                     }
                   else
                     {
-                       if (w > item->max[0])
+                       if (w > item->max.w)
                          {
-                            w = item->max[0];
+                            w = item->max.w;
                             h = w * item->aspect[1] / item->aspect[0];
                          }
                     }
                }
-             else if (item->max[0] != INT_MAX)
+             else if (item->max.w != INT_MAX)
                {
-                  w = MIN(w, MAX(item->want[0], item->max[0]));
+                  w = MIN(w, MAX(item->want[0], item->max.w));
                   h = w * item->aspect[1] / item->aspect[0];
                }
              else
                {
-                  h = MIN(h, MAX(item->want[1], item->max[1]));
+                  h = MIN(h, MAX(item->want[1], item->max.h));
                   w = h * item->aspect[0] / item->aspect[1];
                }
              w = w - item->pad[0] - item->pad[1];
@@ -334,9 +334,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         else
           {
              // horizontally
-             if (item->max[0] < INT_MAX)
+             if (item->max.w < INT_MAX)
                {
-                  w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max[0]), cw);
+                  w = MIN(MAX(item->want[0] - item->pad[0] - item->pad[1], item->max.w), cw);
                   if (item->align[0] < 0)
                     {
                        // bad case: fill+max are not good together
@@ -361,9 +361,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                }
 
              // vertically
-             if (item->max[1] < INT_MAX)
+             if (item->max.h < INT_MAX)
                {
-                  h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max[1]), ch);
+                  h = MIN(MAX(item->want[1] - item->pad[2] - item->pad[3], item->max.h), ch);
                   if (item->align[1] < 0)
                     {
                        // bad case: fill+max are not good together

@@ -1441,33 +1441,30 @@ _efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSE
    if (h) *h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
 }
 
-EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_size_hint_hint_max_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
-     {
-        if (w) *w = -1;
-        if (h) *h = -1;
-        return;
-     }
-   if (w) *w = obj->size_hints->max.w;
-   if (h) *h = obj->size_hints->max.h;
+     return EINA_SIZE2D(-1, -1);
+
+   return obj->size_hints->max;
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h)
+_efl_canvas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Size2D sz)
 {
    if (obj->delete_me)
      return;
+
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
-        if ((w == -1) && (h == -1)) return;
+        if ((sz.w == -1) && (sz.h == -1)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->max.w == w) && (obj->size_hints->max.h == h)) return;
-   obj->size_hints->max.w = w;
-   obj->size_hints->max.h = h;
+   if ((obj->size_hints->max.w == sz.w) && (obj->size_hints->max.h == sz.h)) return;
+   obj->size_hints->max.w = sz.w;
+   obj->size_hints->max.h = sz.h;
 
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
@@ -2051,8 +2048,8 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    int r, g, b, a;
    //int requestw, requesth;
    int minw, minh;
-   int maxw, maxh;
    Eina_Rect geom;
+   Eina_Size2D max;
    short layer;
    Eina_Bool focus;
    Eina_Bool visible;
@@ -2067,7 +2064,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    geom = efl_gfx_geometry_get(eo_obj);
    scale = efl_canvas_object_scale_get(eo_obj);
    efl_gfx_size_hint_restricted_min_get(eo_obj, &minw, &minh);
-   efl_gfx_size_hint_max_get(eo_obj, &maxw, &maxh);
+   max = efl_gfx_size_hint_max_get(eo_obj);
    //efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
    efl_gfx_size_hint_align_get(eo_obj, &dblx, &dbly);
    efl_gfx_size_hint_weight_get(eo_obj, &dblw, &dblh);
@@ -2101,8 +2098,8 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, minh);
 
    node = EFL_DBG_INFO_LIST_APPEND(group, "Max size");
-   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, maxw);
-   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, maxh);
+   EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, max.w);
+   EFL_DBG_INFO_APPEND(node, "h", EINA_VALUE_TYPE_INT, max.h);
 
    //node = EFL_DBG_INFO_LIST_APPEND(group, "Request size");
    //EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_INT, requestw);
@@ -2569,13 +2566,16 @@ evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *as
 EAPI void
 evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_hint_max_set(obj, w, h);
+   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(w, h));
 }
 
 EAPI void
 evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
-   efl_gfx_size_hint_max_get(obj, w, h);
+   Eina_Size2D sz;
+   sz = efl_gfx_size_hint_max_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI void

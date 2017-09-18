@@ -909,7 +909,7 @@ test_box_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    /* rectangle with a max size */
    o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
                efl_gfx_color_set(efl_added, 64, 128, 64, 255),
-               efl_gfx_size_hint_max_set(efl_added, 128, 20));
+               efl_gfx_size_hint_max_set(efl_added, EINA_SIZE2D(128, 20)));
    efl_pack(bx, o);
 
    /* image with a forced min size */

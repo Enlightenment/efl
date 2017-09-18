@@ -527,7 +527,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button with a quite long text.");
    efl_gfx_size_hint_align_set(o, -1, -1);
-   efl_gfx_size_hint_max_set(o, 200, 100);
+   efl_gfx_size_hint_max_set(o, EINA_SIZE2D(200, 100));
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 

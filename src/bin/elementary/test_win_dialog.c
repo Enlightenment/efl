@@ -26,6 +26,7 @@ static void
 _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Efl_Canvas_Object *dia, *lb, *parent = data;
+   Eina_Size2D size = { 300, 150 };
 
    dia = efl_add(EFL_UI_WIN_CLASS, parent,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
@@ -41,7 +42,7 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    lb = efl_add(EFL_UI_TEXT_CLASS, dia,
                 efl_text_set(efl_added, "This is a non-resizable dialog."),
                 efl_gfx_size_hint_min_set(efl_added, 300, 150),
-                efl_gfx_size_hint_max_set(efl_added, 300, 150),
+                efl_gfx_size_hint_max_set(efl_added, size),
                 efl_gfx_size_hint_weight_set(efl_added, 0, 0));
 
    // Swallow in the label as the default content, this will make it visible.
@@ -51,21 +52,21 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 static void
 _size_update(void *data, const Efl_Event *ev)
 {
-   int w, h, W, H, wc, hc;
-   Eina_Size2D sz;
+   int w, h, wc, hc;
+   Eina_Size2D sz, max;
    char buf[2048];
    Eo *dia = ev->object;
    Eo *lbl = data;
 
    efl_gfx_size_hint_combined_min_get(dia, &wc, &hc);
    efl_gfx_size_hint_min_get(dia, &w, &h);
-   efl_gfx_size_hint_max_get(dia, &W, &H);
+   max = efl_gfx_size_hint_max_get(dia);
    sz = efl_gfx_size_get(dia);
 
    sprintf(buf, "This is a dialog with min/max size<br>"
            "Min size: %dx%d (requested) %dx%d (effective)<br>"
            "Max size: %dx%d<br>"
-           "Current size: %dx%d", w, h, wc, hc, W, H, sz.w, sz.h);
+           "Current size: %dx%d", w, h, wc, hc, max.w, max.h, sz.w, sz.h);
    //efl_text_set(lbl, buf);
    elm_object_text_set(lbl, buf);
 }
@@ -93,7 +94,7 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    // Set min & max size (app-side)
    efl_gfx_size_hint_min_set(dia, ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100));
-   efl_gfx_size_hint_max_set(dia, ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600));
+   efl_gfx_size_hint_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
 }
 
 static void
@@ -120,7 +121,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 
    // Set min & max size (app-side)
    efl_gfx_size_hint_min_set(dia, ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100));
-   efl_gfx_size_hint_max_set(dia, ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600));
+   efl_gfx_size_hint_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
 
    efl_ui_win_center(dia, EINA_TRUE, EINA_TRUE);
 }

@@ -383,6 +383,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(images); k++)
         {
+           Eina_Size2D size = { ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48) };
            char buf[PATH_MAX];
 
            if (!images[k].path) break;
@@ -390,7 +391,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
            o = efl_add(EFL_UI_IMAGE_CLASS, win,
                        efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
                        efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
-                       efl_gfx_size_hint_max_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
+                       efl_gfx_size_hint_max_set(efl_added, size),
                        efl_gfx_size_hint_min_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
                        efl_file_set(efl_added, buf, NULL),
                        efl_name_set(efl_added, images[k].src_name),
@@ -401,6 +402,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
            efl_pack(box2, o);
         }
 
+      Eina_Size2D maxsz = { -1, ELM_SCALE_SIZE(48 * 2) };
       const struct { int r, g, b, a; } colors[] = {
       { 255, 255, 255, 255 },
       { 0, 0, 0, 255 },
@@ -420,7 +422,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                   efl_gfx_size_hint_weight_set(efl_added, 1.0, 0),
                   efl_gfx_size_hint_align_set(efl_added, -1.0, 0),
                   elm_colorselector_mode_set(efl_added, ELM_COLORSELECTOR_PALETTE),
-                  efl_gfx_size_hint_max_set(efl_added, -1, ELM_SCALE_SIZE(48 * 2)),
+                  efl_gfx_size_hint_max_set(efl_added, maxsz),
                   efl_name_set(efl_added, "myColor"),
                   elm_object_tooltip_text_set(efl_added, "Pick a color to use as variable 'myColor'"),
                   efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_CHANGED, _colsel_cb, win));

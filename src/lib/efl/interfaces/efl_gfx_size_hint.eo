@@ -87,8 +87,8 @@ interface Efl.Gfx.Size.Hint
            the size of smart objects.
          ]]
          values {
-            w: int; [[Integer to use as the maximum width hint.]]
-            h: int; [[Integer to use as the maximum height hint.]]
+            sz: Eina.Size2D; [[Maximum size (hint) in pixels, (-1, -1) by
+               default for canvas objects).]]
          }
       }
       @property hint_min {
