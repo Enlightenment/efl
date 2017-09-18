@@ -1527,35 +1527,39 @@ _efl_canvas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protec
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Evas_Coord *w, Evas_Coord *h)
+_efl_canvas_object_efl_gfx_size_hint_hint_aspect_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect *aspect, Eina_Size2D *sz)
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
         if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
-        if (w) *w = 0;
-        if (h) *h = 0;
+        if (sz) *sz = EINA_SIZE2D(0, 0);
         return;
      }
    if (aspect) *aspect = obj->size_hints->aspect.mode;
-   if (w) *w = obj->size_hints->aspect.size.w;
-   if (h) *h = obj->size_hints->aspect.size.h;
+   if (sz)
+     {
+        sz->w = obj->size_hints->aspect.size.w;
+        sz->h = obj->size_hints->aspect.size.h;
+     }
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect aspect, Evas_Coord w, Evas_Coord h)
+_efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Size_Hint_Aspect aspect, Eina_Size2D sz)
 {
    if (obj->delete_me)
      return;
+
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
-        if (!w && !h) return;
+        if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->aspect.mode == aspect) && (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
+   if ((obj->size_hints->aspect.mode == aspect) &&
+       (obj->size_hints->aspect.size.w == sz.w) &&
+       (obj->size_hints->aspect.size.h == sz.h)) return;
    obj->size_hints->aspect.mode = aspect;
-   obj->size_hints->aspect.size.w = w;
-   obj->size_hints->aspect.size.h = h;
+   obj->size_hints->aspect.size = sz;
 
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
@@ -2544,13 +2548,16 @@ evas_object_static_clip_get(const Evas_Object *eo_obj)
 EAPI void
 evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_size_hint_aspect_set(obj, aspect, w, h);
+   efl_gfx_size_hint_aspect_set(obj, aspect, EINA_SIZE2D(w, h));
 }
 
 EAPI void
 evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
 {
-   efl_gfx_size_hint_aspect_get(obj, aspect, w, h);
+   Eina_Size2D sz = { 0, 0 };
+   efl_gfx_size_hint_aspect_get(obj, aspect, &sz);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI void

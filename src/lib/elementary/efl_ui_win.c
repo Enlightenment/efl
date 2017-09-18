@@ -5951,14 +5951,14 @@ _win_aspect_get(Efl_Ui_Win_Data *sd)
 
 EOLIAN static void
 _efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                              Efl_Gfx_Size_Hint_Aspect mode, int w, int h)
+                                              Efl_Gfx_Size_Hint_Aspect mode, Eina_Size2D sz)
 {
-   if (h) _win_aspect_set(pd, (double) w / (double) h);
+   if (sz.h) _win_aspect_set(pd, (double) sz.w / (double) sz.h);
    else _win_aspect_set(pd, 0.0);
-   efl_gfx_size_hint_aspect_set(efl_super(obj, MY_CLASS), mode, w, h);
+   efl_gfx_size_hint_aspect_set(efl_super(obj, MY_CLASS), mode, sz);
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->wl.win)
-     ecore_wl2_window_aspect_set(pd->wl.win, w, h, mode);
+     ecore_wl2_window_aspect_set(pd->wl.win, sz.w, sz.h, mode);
 #endif
 }
 
@@ -7957,10 +7957,12 @@ end:
 EAPI void
 elm_win_aspect_set(Eo *obj, double aspect)
 {
+   Eina_Size2D sz = { 0, 0 };
+
    if (aspect > DBL_EPSILON)
-     efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, 1000 * aspect, 1000);
-   else
-     efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, 0, 0);
+     sz = EINA_SIZE2D(1000 * aspect, 1000);
+
+   efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, sz);
 }
 
 EAPI double

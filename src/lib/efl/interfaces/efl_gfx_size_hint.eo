@@ -59,8 +59,7 @@ interface Efl.Gfx.Size.Hint
          */
          values {
             mode: Efl.Gfx.Size.Hint.Aspect; [[Mode of interpretation.]]
-            w: int; [[Width]]
-            h: int; [[Height]]
+            sz: Eina.Size2D; [[Base size to use for aspecting.]]
 
             /* FIXME: do we want min/max like Edje instead??
             min: double; [[Default: 0.0 (no preference).]]

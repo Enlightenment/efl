@@ -504,7 +504,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Min size");
    efl_gfx_size_hint_align_set(o, 0.5, 1.0);
-   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, 1, 1);
+   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 1));
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 
@@ -530,7 +530,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "BtnA");
-   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, 1, 2);
+   efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 2));
    efl_pack(bx, o);
    efl_gfx_visible_set(o, 1);
 
