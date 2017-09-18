@@ -388,13 +388,13 @@ inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char
 {
   return v.c_str();
 }
-inline const char* convert_to_c_impl( ::efl::eina::string_view v, tag<const char*, ::efl::eina::string_view, true>)
+inline char* convert_to_c_impl( ::efl::eina::string_view v, tag<char*, ::efl::eina::string_view, true>)
 {
   char* string = static_cast<char*>(malloc(v.size() + 1));
   std::strcpy(string, v.c_str());
   return string;
 }
-inline const char** convert_to_c_impl(efl::eina::string_view* /*view*/, tag<const char **, efl::eina::string_view*>)
+inline char** convert_to_c_impl(efl::eina::string_view* /*view*/, tag<char **, efl::eina::string_view*>)
 {
   std::abort();
 }
@@ -535,7 +535,7 @@ inline const char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char 
 {
   std::abort();
 }
-inline const char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char const **, efl::eina::string_view, true>)
+inline char** convert_to_c_impl(efl::eina::string_view /*view*/, tag<char **, efl::eina::string_view, true>)
 {
   std::abort();
 }
