@@ -1558,7 +1558,10 @@ _efl_ui_image_zoomable_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_U
    if (sd->edje)
      edje_object_size_min_get(sd->edje, w, h);
    else
-     efl_gfx_size_hint_combined_min_get(sd->img, w, h);
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+     }
 }
 
 EOLIAN static void
@@ -1567,7 +1570,10 @@ _efl_ui_image_zoomable_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_U
    if (sd->edje)
      edje_object_size_max_get(sd->edje, w, h);
    else
-     evas_object_size_hint_max_get(sd->img, w, h);
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+     }
 }
 
 static Eina_Bool

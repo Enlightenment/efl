@@ -182,13 +182,10 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
    EINA_ITERATOR_FOREACH(it, sobj)
      {
         Eina_Rect r;
-        int mw, mh;
 
-        efl_gfx_size_hint_combined_min_get(sobj, &mw, &mh);
         r.x = (rp.w / count) * i;
         r.y = (rp.h / count) * i;
-        r.w = mw;
-        r.h = mh;
+        r.size = efl_gfx_size_hint_combined_min_get(sobj);
         efl_gfx_geometry_set(sobj, r);
         i++;
      }

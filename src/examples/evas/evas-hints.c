@@ -112,15 +112,16 @@ static void
 _print_rect_stats(Evas_Object *rect)
 {
    Evas_Coord w, h, l, r, t, b;
+   Eina_Size2D cmin;
    double x, y;
 
    evas_object_size_hint_align_get(rect, &x, &y);
    printf("\talign hints: h(%f), v(%f)\n",
           x, y);
 
-   efl_gfx_size_hint_combined_min_get(rect, &w, &h);
+   cmin = efl_gfx_size_hint_combined_min_get(rect);
    printf("\tmin. size hints: h(%d), v(%d)\n",
-          w, h);
+          cmin.w, cmin.h);
 
    evas_object_size_hint_max_get(rect, &w, &h);
    printf("\tmax. size hints: h(%d), v(%d)\n",

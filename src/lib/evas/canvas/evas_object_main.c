@@ -1423,17 +1423,17 @@ _efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Ob
    evas_object_inform_call_changed_size_hints(eo_obj);
 }
 
-EOLIAN static void
-_efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_size_hint_hint_combined_min_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
+   Eina_Size2D sz = { 0, 0 };
+
    if ((!obj->size_hints) || obj->delete_me)
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return;
-     }
-   if (w) *w = MAX(obj->size_hints->min.w, obj->size_hints->user_min.w);
-   if (h) *h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
+     return sz;
+
+   sz.w = MAX(obj->size_hints->min.w, obj->size_hints->user_min.w);
+   sz.h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
+   return sz;
 }
 
 EOLIAN static Eina_Size2D

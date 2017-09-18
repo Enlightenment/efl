@@ -9,7 +9,7 @@ _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
 {
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *bd;
-   Eina_Size2D min = { 0, 0 };
+   Eina_Size2D min = { 0, 0 }, cmin;
    Eina_List *l;
 
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, EFL_UI_BOX_CLASS));
@@ -24,11 +24,10 @@ _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
    EINA_LIST_FOREACH(bd->children, l, opt)
      {
         Evas_Object *child = opt->obj;
-        int mw = 0, mh = 0;
 
-        efl_gfx_size_hint_combined_min_get(child, &mw, &mh);
-        if (mw > min.w) min.w = mw;
-        if (mh > min.h) min.h = mh;
+        cmin = efl_gfx_size_hint_combined_min_get(child);
+        if (cmin.w > min.w) min.w = cmin.w;
+        if (cmin.h > min.h) min.h = cmin.h;
      }
    efl_gfx_size_hint_restricted_min_set(obj, min);
 }
