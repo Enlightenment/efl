@@ -90,11 +90,26 @@ interface Efl.Gfx {
          }
       }
       @property visible {
+         [[The visibility of a canvas object.
+
+           All canvas objects will become visible by default just before
+           render. This means that it is not required to call @.visible.set
+           after creating an object unless you want to create it without
+           showing it. Note that this behavior is new since 1.21, and only
+           applies to canvas objects created with the EO API (i.e. not the
+           legacy C-only API). Other types of Gfx objects may or may not be
+           visible by default.
+
+           Note that many other parameters can prevent a visible object from
+           actually being "visible" on screen. For instance if its color
+           is fully transparent, or its parent is hidden, or it is clipped out,
+           etc...
+         ]]
          set {
-            [[Makes the given Evas object visible or invisible.]]
+            [[Shows or hides this object.]]
          }
          get {
-            [[Retrieves whether or not the given Evas object is visible.]]
+            [[Retrieves whether or not the given canvas object is visible.]]
          }
          values {
             v: bool; [[$true if to make the object visible, $false otherwise]]
