@@ -119,9 +119,9 @@ _clicked_button2(void *data, const Efl_Event *ev EINA_UNUSED)
 
         r.x = r.x + r.w / 2;
         r.y = r.y + r.h / 2;
-        efl_input_pointer_position_set(td->evmove, r.x, r.y);
-        efl_input_pointer_position_set(td->evdown, r.x, r.y);
-        efl_input_pointer_position_set(td->evup, r.x, r.y);
+        efl_input_pointer_position_set(td->evmove, r.pos);
+        efl_input_pointer_position_set(td->evdown, r.pos);
+        efl_input_pointer_position_set(td->evup, r.pos);
 
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_MOVE, td->evmove);
         efl_event_callback_call(td->win, EFL_EVENT_POINTER_DOWN, td->evdown);

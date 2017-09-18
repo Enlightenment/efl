@@ -209,43 +209,33 @@ _efl_input_pointer_button_pressed_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Dat
 }
 
 EOLIAN static void
-_efl_input_pointer_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int x, int y)
+_efl_input_pointer_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Eina_Position2D pos)
 {
    _efl_input_value_mark(pd, EFL_INPUT_VALUE_X);
    _efl_input_value_mark(pd, EFL_INPUT_VALUE_Y);
-   pd->cur.x = (double) x;
-   pd->cur.y = (double) y;
+   pd->cur.x = (double) pos.x;
+   pd->cur.y = (double) pos.y;
 }
 
-EOLIAN static void
-_efl_input_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int *x, int *y)
+EOLIAN static Eina_Position2D
+_efl_input_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
-   if (x) *x = (int) pd->cur.x;
-   if (y) *y = (int) pd->cur.y;
+   return EINA_POSITION2D((int) pd->cur.x, (int) pd->cur.y);
 }
 
 EOLIAN static void
-_efl_input_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int x, int y)
+_efl_input_pointer_previous_position_set(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, Eina_Position2D pos)
 {
    _efl_input_value_mark(pd, EFL_INPUT_VALUE_PREVIOUS_X);
    _efl_input_value_mark(pd, EFL_INPUT_VALUE_PREVIOUS_Y);
-   pd->prev.x = (double) x;
-   pd->prev.y = (double) y;
+   pd->prev.x = (double) pos.x;
+   pd->prev.y = (double) pos.y;
 }
 
-EOLIAN static void
-_efl_input_pointer_previous_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int *x, int *y)
+EOLIAN static Eina_Position2D
+_efl_input_pointer_previous_position_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
-   if (x) *x = (int) pd->prev.x;
-   if (y) *y = (int) pd->prev.y;
-}
-
-EOLIAN static void
-_efl_input_pointer_delta_get(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd, int *dx, int *dy)
-{
-   // Using (int) twice to return the same as previous_position - position
-   if (dx) *dx = (int) pd->prev.x - (int) pd->cur.x;
-   if (dy) *dy = (int) pd->prev.y - (int) pd->cur.y;
+   return EINA_POSITION2D((int) pd->prev.x, (int) pd->prev.y);
 }
 
 EOLIAN static void
