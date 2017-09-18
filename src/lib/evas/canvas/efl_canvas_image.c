@@ -270,9 +270,9 @@ _evas_image_load_size_set(Eo *eo_obj, int w, int h)
 }
 
 EOLIAN static void
-_efl_canvas_image_efl_image_load_load_size_set(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int w, int h)
+_efl_canvas_image_efl_image_load_load_size_set(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, Eina_Size2D sz)
 {
-   _evas_image_load_size_set(eo_obj, w, h);
+   _evas_image_load_size_set(eo_obj, sz.w, sz.h);
 }
 
 void
@@ -284,10 +284,12 @@ _evas_image_load_size_get(const Eo *eo_obj, int *w, int *h)
    if (h) *h = o->load_opts->h;
 }
 
-EOLIAN static void
-_efl_canvas_image_efl_image_load_load_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_canvas_image_efl_image_load_load_size_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
-   _evas_image_load_size_get(eo_obj, w, h);
+   Eina_Size2D sz;
+   _evas_image_load_size_get(eo_obj, &sz.w, &sz.h);
+   return sz;
 }
 
 void
