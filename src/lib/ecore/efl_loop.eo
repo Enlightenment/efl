@@ -70,18 +70,6 @@ class Efl.Loop (Efl.Object)
             @in exit_code: ubyte; [[Returned value by begin()]]
          }
       }
-      @property future_scheduler {
-         [[Gets the Eina_Future_Scheduler for a given mainloop.
-
-           The Eina_Future_Scheduler returned by this function
-           should be used for creating promises (eina_promise_new())
-           so then can properly schedule resolve/reject events.
-         ]]
-         get {}
-         values {
-             scheduler: ptr(Eina.Future.Scheduler); [[The scheduler.]]
-         }
-      }
       Eina_FutureXXX_job {
          [[A future promise that will be resolved from a clean main
            loop context as soon as possible.

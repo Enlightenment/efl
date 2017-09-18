@@ -3390,12 +3390,15 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    return &version;
 }
 
-EOLIAN static Eina_Future_Scheduler *
-_efl_loop_future_scheduler_get(Eo *obj EINA_UNUSED,
-                               Efl_Loop_Data *pd EINA_UNUSED)
+EAPI Eina_Future_Scheduler *
+efl_loop_future_scheduler_get(Eo *obj)
 {
-   return _ecore_event_future_scheduler_get();
-}
+   if (!obj) return NULL;
 
+   if (efl_isa(obj, EFL_LOOP_CLASS))
+     return _ecore_event_future_scheduler_get();
+
+   return efl_loop_future_scheduler_get(efl_loop_get(obj));
+}
 
 #include "efl_loop.eo.c"
