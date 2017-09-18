@@ -240,7 +240,7 @@ _text_resize(void *data EINA_UNUSED, const Efl_Event *ev)
    Eina_Size2D sz;
 
    sz = efl_gfx_size_get(ev->object);
-   efl_gfx_size_hint_min_set(ev->object, sz.w, sz.h);
+   efl_gfx_size_hint_min_set(ev->object, sz);
 }
 
 static void
@@ -250,7 +250,7 @@ _textblock_resize(void *data EINA_UNUSED, const Efl_Event *ev)
 
    evas_object_textblock_size_native_get(ev->object, &w, &h);
    evas_object_textblock_style_insets_get(ev->object, &l, &r, &t, &b);
-   efl_gfx_size_hint_min_set(ev->object, w + l + r, h + t + b);
+   efl_gfx_size_hint_min_set(ev->object, EINA_SIZE2D(w + l + r, h + t + b));
 }
 
 static void
@@ -392,7 +392,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
                        efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
                        efl_gfx_size_hint_max_set(efl_added, size),
-                       efl_gfx_size_hint_min_set(efl_added, ELM_SCALE_SIZE(48), ELM_SCALE_SIZE(48)),
+                       efl_gfx_size_hint_min_set(efl_added, size),
                        efl_file_set(efl_added, buf, NULL),
                        efl_name_set(efl_added, images[k].src_name),
                        elm_object_tooltip_text_set(efl_added, images[k].src_name));

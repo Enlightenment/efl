@@ -37,8 +37,7 @@ struct _Efl_Ui_Panes_Data
    Efl_Ui_Dir            dir;
    double                left_min_relative_size;
    double                right_min_relative_size;
-   int                   first_minw, first_minh;
-   int                   second_minw, second_minh;
+   Eina_Size2D           first_min, second_min;
    double                first_min_split_ratio, second_min_split_ratio;
 
    Evas_Coord            left_min_size;

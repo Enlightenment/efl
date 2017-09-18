@@ -193,28 +193,28 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    if (first_content)
      {
         if (!sd->first_hint_min_allow)
-          efl_gfx_size_hint_combined_min_get(first_content, &sd->first_minw, &sd->first_minh);
+          efl_gfx_size_hint_combined_min_get(first_content, &sd->first_min.w, &sd->first_min.h);
         else
-          efl_gfx_size_hint_min_get(first_content, &sd->first_minw, &sd->first_minh);
+          sd->first_min = efl_gfx_size_hint_min_get(first_content);
      }
 
    if (second_content)
      {
         if (!sd->second_hint_min_allow)
-          efl_gfx_size_hint_combined_min_get(second_content, &sd->second_minw, &sd->second_minh);
+          efl_gfx_size_hint_combined_min_get(second_content, &sd->second_min.w, &sd->second_min.h);
         else
-          efl_gfx_size_hint_min_get(second_content, &sd->second_minw, &sd->second_minh);
+          sd->second_min = efl_gfx_size_hint_min_get(second_content);
      }
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
-        minw = MAX(sd->first_minw, sd->second_minw);
-        minh = sd->first_minh + sd->second_minh;
+        minw = MAX(sd->first_min.w, sd->second_min.w);
+        minh = sd->first_min.h + sd->second_min.h;
      }
    else
      {
-        minw = sd->first_minw + sd->second_minw;
-        minh = MAX(sd->first_minh, sd->second_minh);
+        minw = sd->first_min.w + sd->second_min.w;
+        minh = MAX(sd->first_min.h, sd->second_min.h);
      }
 
    efl_gfx_size_hint_restricted_min_set(obj, minw, minh);
@@ -228,8 +228,8 @@ _set_min_size_new(void *data)
    EFL_UI_PANES_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   int first_minw = sd->first_minw, first_minh = sd->first_minh;
-   int second_minw = sd->second_minw, second_minh = sd->second_minh;
+   Eina_Size2D first_min = sd->first_min;
+   Eina_Size2D second_min = sd->second_min;
    int w, h;
    double first_min_relative_size = 0.0, second_min_relative_size = 0.0;
 
@@ -237,17 +237,17 @@ _set_min_size_new(void *data)
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      {
-        if (first_minh + second_minh > h)
+        if (first_min.h + second_min.h > h)
           {
-             first_min_relative_size = first_minh/(first_minh + second_minh);
-             second_min_relative_size = second_minh/(first_minh + second_minh);
+             first_min_relative_size = first_min.h/(first_min.h + second_min.h);
+             second_min_relative_size = second_min.h/(first_min.h + second_min.h);
           }
         else
           {
              if (h > 0)
                {
-                  first_min_relative_size = first_minh/(double)h;
-                  second_min_relative_size = second_minh/(double)h;
+                  first_min_relative_size = first_min.h/(double)h;
+                  second_min_relative_size = second_min.h/(double)h;
                }
           }
 
@@ -261,17 +261,17 @@ _set_min_size_new(void *data)
      }
    else
      {
-        if (first_minw + second_minw > w)
+        if (first_min.w + second_min.w > w)
           {
-             first_min_relative_size = first_minw/(first_minw + second_minw);
-             second_min_relative_size = second_minw/(first_minw + second_minw);
+             first_min_relative_size = first_min.w/(first_min.w + second_min.w);
+             second_min_relative_size = second_min.w/(first_min.w + second_min.w);
           }
         else
           {
              if (w > 0)
                {
-                  first_min_relative_size = first_minw/(double)w;
-                  second_min_relative_size = second_minw/(double)w;
+                  first_min_relative_size = first_min.w/(double)w;
+                  second_min_relative_size = second_min.w/(double)w;
                }
           }
 

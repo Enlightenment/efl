@@ -1237,9 +1237,9 @@ EOLIAN static void
 _efl_ui_slider_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
 {
    if (_is_horizontal(sd->dir))
-     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), size, 1);
+     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), EINA_SIZE2D(size, 1));
    else
-     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), 1, size);
+     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), EINA_SIZE2D(1, size));
 }
 
 EOLIAN static Evas_Coord
@@ -1565,30 +1565,24 @@ _span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
 }
 
 EOLIAN void
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int w, int h)
+_efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
-   _span_size_set(pd->obj, sd, w, h);
+   _span_size_set(pd->obj, sd, sz.w, sz.h);
 }
 
-EOLIAN void
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, int *w, int *h)
+EOLIAN Eina_Size2D
+_efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
    if (_is_horizontal(sd->dir))
-     {
-        if (w) *w = sd->size;
-        if (h) *h = 1;
-     }
+     return EINA_SIZE2D(sd->size, 1);
    else
-     {
-        if (w) *w = 1;
-        if (h) *h = sd->size;
-     }
+     return EINA_SIZE2D(1, sd->size);
 }
 
 #include "efl_ui_slider_part.eo.c"

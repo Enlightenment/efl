@@ -396,7 +396,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
           }
         if (set_min)
           {
-             efl_gfx_size_hint_min_set(obj, rect.w, rect.h);
+             efl_gfx_size_hint_min_set(obj, rect.size);
           }
      }
 }

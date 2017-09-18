@@ -107,8 +107,7 @@ interface Efl.Gfx.Size.Hint
            size).
          ]]
          values {
-            w: int; [[Integer to use as the maximum width hint.]]
-            h: int; [[Integer to use as the maximum height hint.]]
+            sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
          }
       }
       @property hint_restricted_min {

@@ -351,7 +351,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
            efl_file_set(efl_added, buf, NULL),
-           efl_gfx_size_hint_min_set(efl_added, 64, 64),
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(64, 64)),
            efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _file_cb, win),
            efl_pack(box, efl_added));
@@ -359,7 +359,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
            efl_file_set(efl_added, buf, NULL),
-           efl_gfx_size_hint_min_set(efl_added, 64, 64),
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(64, 64)),
            efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
            efl_pack(box, efl_added));
