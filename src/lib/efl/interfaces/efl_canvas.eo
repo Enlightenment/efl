@@ -45,8 +45,7 @@ interface Efl.Canvas ()
             The list of objects that are over the given position in $e.
          ]]
          params {
-            @in x: int; [[The horizontal coordinate of the position.]]
-            @in y: int; [[The vertical coordinate of the position.]]
+            @in pos: Eina.Position2D; [[The pixel position.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -72,8 +71,7 @@ interface Efl.Canvas ()
          ]]
          return: Efl.Gfx @warn_unused; [[The Evas object that is over all other objects at the given position.]]
          params {
-            @in x: int; [[The horizontal coordinate of the position.]]
-            @in y: int; [[The vertical coordinate of the position.]]
+            @in pos: Eina.Position2D; [[The pixel position.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -100,16 +98,7 @@ interface Efl.Canvas ()
          ]]
          return: iterator<Efl.Gfx> @owned @warn_unused; [[Iterator to objects]] 
          params {
-            @in x: int; [[
-               The top left corner's horizontal coordinate for the
-               rectangular region.
-            ]]
-            @in y: int; [[
-               The top left corner's vertical coordinate for the
-               rectangular region.
-            ]]
-            @in w: int; [[The width of the rectangular region.]]
-            @in h: int; [[The height of the rectangular region.]]
+            @in rect: Eina.Rect; [[The rectangular region.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.
@@ -139,16 +128,7 @@ interface Efl.Canvas ()
             rectangular region.
          ]]
          params {
-            @in x: int; [[
-               The top left corner's horizontal coordinate for the
-               rectangular region.
-            ]]
-            @in y: int; [[
-               The top left corner's vertical coordinate for the
-               rectangular region.
-            ]]
-            @in w: int; [[The width of the rectangular region.]]
-            @in h: int; [[The height of the rectangular region.]]
+            @in rect: Eina.Rect; [[The rectangular region.]]
             @in include_pass_events_objects: bool; [[
                Boolean flag to include or not objects which pass events
                in this calculation.

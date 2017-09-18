@@ -2489,31 +2489,31 @@ _efl_ui_win_efl_canvas_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_D
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_objects_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_objects_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
-   objs = evas_objects_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
-   return eina_list_iterator_new(objs);
+   objs = evas_objects_at_xy_get(sd->evas, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
+   return eina_list_iterator_new(objs); // FIXME: This leaks the list!
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_win_efl_canvas_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_object_top_at_xy_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return evas_object_top_at_xy_get(sd->evas, x, y, include_pass_events_objects, include_hidden_objects);
+   return evas_object_top_at_xy_get(sd->evas, pos.x, pos.y, include_pass_events_objects, include_hidden_objects);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_objects_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_objects_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_List *objs = NULL;
-   objs = evas_objects_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
-   return eina_list_iterator_new(objs);
+   objs = evas_objects_in_rectangle_get(sd->evas, r.x, r.y, r.w, r.h, include_pass_events_objects, include_hidden_objects);
+   return eina_list_iterator_new(objs); // FIXME: This leaks the list!
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
+_efl_ui_win_efl_canvas_object_top_in_rectangle_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Rect r, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
-   return evas_object_top_in_rectangle_get(sd->evas, x, y, w, h, include_pass_events_objects, include_hidden_objects);
+   return evas_object_top_in_rectangle_get(sd->evas, r.x, r.y, r.w, r.h, include_pass_events_objects, include_hidden_objects);
 }
 
 EOLIAN static Efl_Input_Device *
