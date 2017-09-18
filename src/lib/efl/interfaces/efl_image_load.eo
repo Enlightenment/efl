@@ -117,16 +117,10 @@ interface Efl.Image.Load ()
          get {
             [[Retrieve the coordinates of a given image object's selective
               (source image) load region.
-
-              Note: Use $null pointers on the coordinates you're not
-              interested in: they'll be ignored by the function.
             ]]
          }
          values {
-            x: int; [[X-offset of the region to be loaded.]]
-            y: int; [[Y-offset of the region to be loaded.]]
-            w: int; [[Width of the region to be loaded.]]
-            h: int; [[Height of the region to be loaded.]]
+            region: Eina.Rect; [[A region of the image.]]
          }
       }
       @property load_orientation {

@@ -389,9 +389,9 @@ _evas_image_load_region_set(Eo *eo_obj, int x, int y, int w, int h)
 }
 
 EOLIAN static void
-_efl_canvas_image_efl_image_load_load_region_set(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int x, int y, int w, int h)
+_efl_canvas_image_efl_image_load_load_region_set(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, Eina_Rect region)
 {
-   _evas_image_load_region_set(eo_obj, x, y, w, h);
+   _evas_image_load_region_set(eo_obj, region.x, region.y, region.w, region.h);
 }
 
 void
@@ -405,10 +405,12 @@ _evas_image_load_region_get(const Eo *eo_obj, int *x, int *y, int *w, int *h)
    if (h) *h = o->load_opts->region.h;
 }
 
-EOLIAN static void
-_efl_canvas_image_efl_image_load_load_region_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rect
+_efl_canvas_image_efl_image_load_load_region_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
-   _evas_image_load_region_get(eo_obj, x, y, w, h);
+   Eina_Rect r;
+   _evas_image_load_region_get(eo_obj, &r.x, &r.y, &r.w, &r.h);
+   return r;
 }
 
 void
