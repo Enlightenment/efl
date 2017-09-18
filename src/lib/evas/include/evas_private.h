@@ -1004,7 +1004,7 @@ struct _Evas_Size
 struct _Evas_Aspect
 {
    Evas_Aspect_Control mode;
-   Evas_Size size;
+   Eina_Size2D size;
 };
 
 struct _Evas_Border

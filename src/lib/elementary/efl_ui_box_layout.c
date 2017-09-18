@@ -12,10 +12,9 @@ struct _Item_Calc
    Evas_Object *obj;
    double weight[2];
    double align[2];
-   Eina_Size2D max, want;
+   Eina_Size2D max, want, aspect;
    int pad[4];
    Efl_Gfx_Size_Hint_Aspect aspect_type;
-   int aspect[2];
    int id;
 };
 
@@ -79,13 +78,13 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
         item->max = efl_gfx_size_hint_max_get(o);
         item->want = efl_gfx_size_hint_combined_min_get(o);
-        efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect[0], &item->aspect[1]);
+        efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect);
 
-        if (item->aspect[0] <= 0 || item->aspect[1] <= 0)
+        if (item->aspect.w <= 0 || item->aspect.h <= 0)
           {
              if (item->aspect_type >= EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
                ERR("Invalid aspect parameter for obj: %p", item->obj);
-             item->aspect[0] = item->aspect[1] = 0;
+             item->aspect.w = item->aspect.h = 0;
              item->aspect_type = EFL_GFX_SIZE_HINT_ASPECT_NONE;
           }
 
@@ -94,11 +93,11 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              double w, h;
 
              w = item->want.w;
-             h = w * item->aspect[1] / item->aspect[0];
+             h = w * item->aspect.h / item->aspect.w;
              if (h < item->want.h)
                {
                   h = item->want.h;
-                  w = h * item->aspect[0] / item->aspect[1];
+                  w = h * item->aspect.w / item->aspect.h;
                }
 
              if (horiz)
@@ -108,7 +107,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                        double w1, h1;
                        h1 = item->max.h > 0 ? MIN(boxh, item->max.h) : boxh;
                        h1 = MAX(h, h1);
-                       w1 = h1 * item->aspect[0] / item->aspect[1];
+                       w1 = h1 * item->aspect.w / item->aspect.h;
                        w = item->max.w > 0 ? MIN(w1, item->max.w) : w1;
                     }
                }
@@ -119,7 +118,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                        double w1, h1;
                        w1 = item->max.w > 0 ? MIN(boxw, item->max.w) : boxw;
                        w1 = MAX(w, w1);
-                       h1 = w1 * item->aspect[1] / item->aspect[0];
+                       h1 = w1 * item->aspect.h / item->aspect.w;
                        h = item->max.h > 0 ? MIN(h1, item->max.h) : h1;
                     }
                }
@@ -254,7 +253,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   h = item->want.h;
                   if (weight[0] > 0)
                     w = item->want.w + extra * item->weight[0] / weight[0];
-                  h = w * item->aspect[1] / item->aspect[0];
+                  h = w * item->aspect.h / item->aspect.w;
 
                   if (item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
                       item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_VERTICAL)
@@ -262,7 +261,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                        if (h > boxh)
                          {
                             h = boxh;
-                            w = h * item->aspect[0] / item->aspect[1];
+                            w = h * item->aspect.w / item->aspect.h;
                          }
                     }
                }
@@ -272,7 +271,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                   h = item->want.h;
                   if (weight[1] > 0)
                     h = item->want.h + extra * item->weight[1] / weight[1];
-                  w = h * item->aspect[0] / item->aspect[1];
+                  w = h * item->aspect.w / item->aspect.h;
 
                   if (item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_BOTH ||
                       item->aspect_type == EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL)
@@ -280,7 +279,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                        if (w > boxw)
                          {
                             w = boxw;
-                            h = w * item->aspect[1] / item->aspect[0];
+                            h = w * item->aspect.h / item->aspect.w;
                          }
                     }
                }
@@ -289,13 +288,13 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                {
                   double mar, ar;
                   mar = item->max.w / (double)item->max.h;
-                  ar = item->aspect[0] / (double)item->aspect[1];
+                  ar = item->aspect.w / (double)item->aspect.h;
                   if (ar < mar)
                     {
                        if (h > item->max.h)
                          {
                             h = item->max.h;
-                            w = h * item->aspect[0] / item->aspect[1];
+                            w = h * item->aspect.w / item->aspect.h;
                          }
                     }
                   else
@@ -303,19 +302,19 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                        if (w > item->max.w)
                          {
                             w = item->max.w;
-                            h = w * item->aspect[1] / item->aspect[0];
+                            h = w * item->aspect.h / item->aspect.w;
                          }
                     }
                }
              else if (item->max.w != INT_MAX)
                {
                   w = MIN(w, MAX(item->want.w, item->max.w));
-                  h = w * item->aspect[1] / item->aspect[0];
+                  h = w * item->aspect.h / item->aspect.w;
                }
              else
                {
                   h = MIN(h, MAX(item->want.h, item->max.h));
-                  w = h * item->aspect[0] / item->aspect[1];
+                  w = h * item->aspect.w / item->aspect.h;
                }
              w = w - item->pad[0] - item->pad[1];
              h = h - item->pad[2] - item->pad[3];
