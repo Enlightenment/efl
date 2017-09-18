@@ -208,9 +208,8 @@ _evas_image_3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Rw_Slice
 _efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                              Eina_Rw_Slice *slice,
                                               Efl_Gfx_Buffer_Access_Mode mode,
                                               const Eina_Rect *region,
                                               Efl_Gfx_Colorspace cspace, int plane,
@@ -222,28 +221,24 @@ _efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
    Evas_Canvas3D_Scene_Data *pd_scene;
    int width = -1, height = -1, ntex = -1;
    unsigned char *pixels = NULL;
+   Eina_Rw_Slice slice = {};
    int x, y, w, h;
    size_t len = 0;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
-
-   slice->len = 0;
-   slice->mem = NULL;
 
    if (!o->cur->scene)
      {
         ERR("invalid scene data");
-        return EINA_FALSE;
+        return slice;
      }
    if (mode & EFL_GFX_BUFFER_ACCESS_MODE_WRITE)
      {
         ERR("invalid map access mode");
-        return EINA_FALSE;
+        return slice;
      }
    if (cspace != EFL_GFX_COLORSPACE_ARGB8888)
      {
         ERR("invalid map colorspace. Only ARGB is supported");
-        return EINA_FALSE;
+        return slice;
      }
 
    pd_parent = efl_data_scope_get(o->cur->scene, EVAS_CANVAS3D_OBJECT_CLASS);
@@ -274,7 +269,7 @@ _efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
      {
         ERR("Invalid map dimensions : %dx%d +%d,%d. Image is %dx%d.",
             w, h, x, y, width, height);
-        return EINA_FALSE;
+        return slice;
      }
 
    if (e->engine.func->drawable_texture_target_id_get)
@@ -284,29 +279,29 @@ _efl_canvas_scene3d_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         if (e->engine.func->drawable_texture_rendered_pixels_get)
           {
              len = w * h * sizeof(DATA32); //four component texture
-             pixels = malloc(len + sizeof(*slice) + 8);
+             pixels = malloc(len + sizeof(slice) + 8);
              e->engine.func->drawable_texture_rendered_pixels_get(ntex, x, y, w, h,
                                                                   pd_scene->surface, pixels);
           }
         else
-          return EINA_FALSE;
+          return slice;
      }
    else
-     return EINA_FALSE;
+     return slice;
 
    if (stride) *stride = w * sizeof(DATA32);
-   slice->mem = pixels;
-   slice->len = len;
+   slice.mem = pixels;
+   slice.len = len;
    DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
-       eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(*slice));
+       eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(slice));
 
-   return EINA_TRUE;
+   return slice;
 }
 EOLIAN static Eina_Bool
 _efl_canvas_scene3d_efl_gfx_buffer_buffer_unmap(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED,
-                                                const Eina_Rw_Slice *slice)
+                                                const Eina_Rw_Slice slice)
 {
-   free(slice->mem);
+   free(slice.mem);
    return EINA_TRUE;
 }
 

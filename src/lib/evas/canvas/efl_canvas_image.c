@@ -758,28 +758,24 @@ _efl_canvas_image_efl_gfx_buffer_buffer_copy_set(Eo *eo_obj, void *_pd EINA_UNUS
    return _image_pixels_set(obj, o, slice, size.w, size.h, stride, cspace, plane, EINA_TRUE);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Slice
 _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED,
-                                                    Eina_Slice *slice, int plane)
+                                                    int plane)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
-
-   slice->len = 0;
-   slice->mem = NULL;
+   Eina_Slice slice = {};
 
    if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
-     return EINA_FALSE;
+     return slice;
 
-   return ENFN->image_data_direct_get(ENC, o->engine_data, plane, slice, &cspace, EINA_FALSE);
+   ENFN->image_data_direct_get(ENC, o->engine_data, plane, &slice, &cspace, EINA_FALSE);
+   return slice;
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Eina_Rw_Slice
 _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                            Eina_Rw_Slice *slice,
                                             Efl_Gfx_Buffer_Access_Mode mode,
                                             const Eina_Rect *region,
                                             Efl_Gfx_Colorspace cspace,
@@ -788,13 +784,8 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int s = 0, width = 0, height = 0;
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Rw_Slice slice = {};
    int x, y, w, h;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(slice, EINA_FALSE);
-
-   slice->len = 0;
-   slice->mem = NULL;
 
    if (!ENFN->image_data_map)
      goto end; // not implemented
@@ -831,30 +822,29 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (ENFN->image_data_map(ENC, &o->engine_data, slice, &s, x, y, w, h, cspace, mode, plane))
+   if (ENFN->image_data_map(ENC, &o->engine_data, &slice, &s, x, y, w, h, cspace, mode, plane))
      {
         DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
-            eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(*slice));
-        ret = EINA_TRUE;
+            eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(slice));
      }
    else DBG("map(%p, %d,%d %dx%d plane:%d) -> (null)", eo_obj, x, y, w, h, plane);
 
 end:
    if (stride) *stride = s;
-   return ret;
+   return slice;
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_image_efl_gfx_buffer_buffer_unmap(Eo *eo_obj, void *_pd EINA_UNUSED,
-                                              const Eina_Rw_Slice *slice)
+                                              Eina_Rw_Slice slice)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   if (!slice || !ENFN->image_data_unmap || !o->engine_data)
+   if (!slice.mem || !ENFN->image_data_unmap || !o->engine_data)
      return EINA_FALSE;
 
-   if (!ENFN->image_data_unmap(ENC, o->engine_data, slice))
+   if (!ENFN->image_data_unmap(ENC, o->engine_data, &slice))
      return EINA_FALSE;
 
    return EINA_TRUE;

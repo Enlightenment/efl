@@ -84,10 +84,10 @@ _animate_scene(void *data)
 
 #ifdef USE_EO_IMAGE
    Eina_Rw_Slice slice;
-   if (!efl_gfx_buffer_map(source, &slice, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, NULL,
-                           EFL_GFX_COLORSPACE_ARGB8888, 0, &stride))
-     return EINA_TRUE;
+   slice = efl_gfx_buffer_map(source, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, NULL,
+                              EFL_GFX_COLORSPACE_ARGB8888, 0, &stride);
    pixels = slice.mem;
+   if (!pixels) return EINA_TRUE;
 #else
    pixels = evas_object_image_data_get(source, EINA_TRUE);
    stride = evas_object_image_stride_get(source);
@@ -104,7 +104,7 @@ _animate_scene(void *data)
      }
 
 #ifdef USE_EO_IMAGE
-   efl_gfx_buffer_unmap(source, &slice);
+   efl_gfx_buffer_unmap(source, slice);
    efl_gfx_buffer_update_add(source, NULL);
 #else
    evas_object_image_data_set(source, pixels);

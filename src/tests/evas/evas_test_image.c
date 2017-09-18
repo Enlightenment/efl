@@ -667,13 +667,14 @@ START_TEST(evas_object_image_map_unmap)
 {
    Evas *e = _setup_evas();
    Evas_Object *o, *o2;
-   int stride, w, h, rx, ry, rw, rh;
+   int stride, w, h;
    Efl_Gfx_Colorspace cs;
    Eina_Tmpstr *tmp;
    int fd;
    uint32_t *data32;
    Eina_Bool all_white = 1, all_transparent = 1;
    Eina_Rw_Slice slice;
+   Eina_Rect r, r2;
 
    const char *imgpath = TESTS_IMG_DIR "/Pic4.png";
 
@@ -682,25 +683,25 @@ START_TEST(evas_object_image_map_unmap)
    efl_gfx_view_size_get(o, &w, &h);
    cs = efl_gfx_buffer_colorspace_get(o);
 
-   rx = (w / 4) & ~3;
-   ry = (h / 4) & ~3;
-   rw = (w / 2) & ~3;
-   rh = (h / 2) & ~3;
+   r.x = (w / 4) & ~3;
+   r.y = (h / 4) & ~3;
+   r.w = (w / 2) & ~3;
+   r.h = (h / 2) & ~3;
 
    // same cspace, full image
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0, 0, w, h, cs, 0, &stride));
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ, NULL, cs, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // same cspace, partial image
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_READ, rx, ry, rw, rh, cs, 0, &stride));
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ, &r, cs, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // argb cspace, full image
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0, 0, w, h, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride));
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ, NULL, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
    data32 = slice.mem;
@@ -712,36 +713,38 @@ START_TEST(evas_object_image_map_unmap)
           all_white = 0;
      }
    fail_if(all_white || all_transparent);
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // argb cspace, partial image
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_READ, rx, ry, rw, rh, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride));
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ, &r, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // argb cspace, partial image, write
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, rx, ry, rw, rh, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride));
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_WRITE, &r, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
    data32 = slice.mem;
-   for (int y = 0; y < rh; y += 2)
-     for (int x = 0; x < rw; x++)
+   for (int y = 0; y < r.h; y += 2)
+     for (int x = 0; x < r.w; x++)
        {
           data32[y*stride/4 + x] = 0xFF00FF00;
           data32[(y+1)*stride/4 + x] = 0xFFFF0000;
        }
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // argb cspace, partial image, write
-   fail_if(!efl_gfx_buffer_map(o, &slice, EFL_GFX_BUFFER_ACCESS_MODE_READ| EFL_GFX_BUFFER_ACCESS_MODE_WRITE,
-                             rx, ry, rw, rh / 2, EFL_GFX_COLORSPACE_GRY8, 0, &stride));
+   r2 = r;
+   r2.h = r.h / 2;
+   slice = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ | EFL_GFX_BUFFER_ACCESS_MODE_WRITE,
+                              &r2, EFL_GFX_COLORSPACE_GRY8, 0, &stride);
    fail_if(!slice.len || !slice.mem);
    fail_if(!stride);
-   for (int y = 0; y < rh / 4; y++)
-     for (int x = 0; x < rw; x++)
+   for (int y = 0; y < r.h / 4; y++)
+     for (int x = 0; x < r.w; x++)
        slice.bytes[y*stride + x] = x & 0xFF;
-   efl_gfx_buffer_unmap(o, &slice);
+   efl_gfx_buffer_unmap(o, slice);
 
    // save file, verify its pixels
    fd = eina_file_mkstemp("/tmp/evas-test.XXXXXX.png", &tmp);
@@ -762,11 +765,11 @@ START_TEST(evas_object_image_map_unmap)
         fail_if(w2 != w);
         fail_if(h2 != h);
 
-        fail_if(!efl_gfx_buffer_map(o, &sorig, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0, 0, w, h, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride));
+        sorig = efl_gfx_buffer_map(o, EFL_GFX_BUFFER_ACCESS_MODE_READ, NULL, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride);
         fail_if(!sorig.len || !sorig.mem);
         fail_if(!stride);
 
-        fail_if(!efl_gfx_buffer_map(o2, &sdest, EFL_GFX_BUFFER_ACCESS_MODE_READ, 0, 0, w2, h2, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride2));
+        sdest = efl_gfx_buffer_map(o2, EFL_GFX_BUFFER_ACCESS_MODE_READ, NULL, EFL_GFX_COLORSPACE_ARGB8888, 0, &stride2);
         fail_if(sorig.len != sdest.len);
         fail_if(stride2 != stride);
 
@@ -779,17 +782,17 @@ START_TEST(evas_object_image_map_unmap)
             fail_if(orig[y*stride/4 + x] != dest[y*stride2/4+x], "pixels differ [1]");
 
         // middle zone top: grey gradient
-        for (y = ry; y < (ry + rh / 4); y++)
-          for (x = rx; x < rx + rw; x++)
+        for (y = r.y; y < (r.y + r.h / 4); y++)
+          for (x = r.x; x < r.x + r.w; x++)
             {
-               uint32_t c = (x - rx) & 0xFF;
+               uint32_t c = (x - r.x) & 0xFF;
                c = 0xFF000000 | (c << 16) | (c << 8) | c;
                fail_if(dest[y*stride/4 + x] != c, "pixels differ [2]");
             }
 
         // middle zone: grey image
-        for (y = (ry + rh / 4 + 1); y < (ry + rh / 2); y++)
-          for (x = rx; x < rx + rw; x++)
+        for (y = (r.y + r.h / 4 + 1); y < (r.y + r.h / 2); y++)
+          for (x = r.x; x < r.x + r.w; x++)
             {
                uint32_t c = dest[y*stride/4 + x] & 0xFF;
                c = 0xFF000000 | (c << 16) | (c << 8) | c;
@@ -797,15 +800,15 @@ START_TEST(evas_object_image_map_unmap)
             }
 
         // next lines: green & red
-        y = ry + rh / 2;
-        for (x = rx; x < rx + rw; x++)
+        y = r.y + r.h / 2;
+        for (x = r.x; x < r.x + r.w; x++)
           {
              fail_if(dest[y*stride/4 + x] != 0xFF00FF00, "pixels differ [3]");
              fail_if(dest[(y+1)*stride/4 + x] != 0xFFFF0000, "pixels differ [4]");
           }
 
-        efl_gfx_buffer_unmap(o, &sorig);
-        efl_gfx_buffer_unmap(o2, &sdest);
+        efl_gfx_buffer_unmap(o, sorig);
+        efl_gfx_buffer_unmap(o2, sdest);
      }
    else unlink(tmp);
    eina_tmpstr_del(tmp);
