@@ -401,20 +401,17 @@ evas_object_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
-void
-_evas_vg_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                                    int *w, int *h)
+EOLIAN static Eina_Size2D
+_evas_vg_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 {
-   if (w) *w = pd->width;
-   if (h) *h = pd->height;
+   return EINA_SIZE2D(pd->width, pd->height);
 }
 
-void
-_evas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                                    int w, int h)
+EOLIAN static void
+_evas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd, Eina_Size2D sz)
 {
-   pd->width = w;
-   pd->height = h;
+   pd->width = sz.w;
+   pd->height = sz.h;
 }
 
 void

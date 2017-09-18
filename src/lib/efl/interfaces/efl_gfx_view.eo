@@ -1,3 +1,5 @@
+import eina_types;
+
 interface Efl.Gfx.View
 {
    [[Efl graphics view interface]]
@@ -28,8 +30,7 @@ interface Efl.Gfx.View
          set {}
          get {}
          values {
-            w: int; [[Width of the view.]]
-            h: int; [[Height of the view.]]
+            size: Eina.Size2D; [[Size of the view.]]
          }
       }
    }

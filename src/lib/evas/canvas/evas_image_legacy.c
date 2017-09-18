@@ -159,8 +159,11 @@ evas_object_image_border_center_fill_get(const Evas_Object *obj)
 EAPI void
 evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
+   Eina_Size2D sz;
    EVAS_IMAGE_API(obj);
-   efl_gfx_view_size_get(obj, w, h);
+   sz = efl_gfx_view_size_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI Evas_Colorspace
