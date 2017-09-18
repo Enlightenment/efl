@@ -1,6 +1,21 @@
 ==========
-EFL 1.20.3
+EFL 1.20.4
 ==========
+
+Changes since 1.20.3:
+---------------------
+
+Fixes:
+
+   * elm focus manager - dont leak child lists when updating focus order (T5800)
+   * evas: handle object names with a list hash
+   * evas: fix event grabber child stacking
+   * evas: proceed glyph iterator to handle next index properly
+   * filters: Safety++
+   * eo: only return NULL when the object is destructed. (T5968)
+   * edje: Add legacy compatibility code (T5944)
+   * ecore exe - fix fix  malloc fail handling
+   * wayland: fix xdg-shell popup windows
 
 Changes since 1.20.2:
 ---------------------
