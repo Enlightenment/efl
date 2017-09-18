@@ -864,11 +864,15 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
    Evas_Object *o;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
-     return;
+     {
+        _full_eval(obj, pd);
+        return;
+     }
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
    _full_eval(obj, pd);
+
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
