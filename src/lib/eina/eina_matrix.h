@@ -178,6 +178,18 @@ struct _Eina_Matrix3_F16p16
 EAPI void eina_matrix3_f16p16_identity(Eina_Matrix3_F16p16 *m);
 
 /**
+ * @brief Sets dst as the matrix multiplication (composition) of two
+ * Eina_F16p16 matrices.
+ *
+ * In matrix multiplication, AB, the resultant matrix is created from
+ * the rows of A multiplied against the columns of B and summed.  This
+ * is not a cummutative; i.e.  AB != BA, so the ordering of arguments
+ * @p m1 and @p m2 matters.
+ *
+ * @param[in] m1 The first matrix.  Must be non-NULL.
+ * @param[in] m2 The second matrix.  Must be non-NULL.
+ * @param[out] dst The matrix for the results to be placed.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_f16p16_compose(const Eina_Matrix3_F16p16 *m1,
@@ -341,6 +353,17 @@ EAPI void eina_matrix3_matrix3_f16p16_to(const Eina_Matrix3 *m,
 EAPI Eina_Bool eina_matrix3_equal(const Eina_Matrix3 *m1, const Eina_Matrix3 *m2);
 
 /**
+ * @brief Sets dst as the matrix multiplication (composition) of two matrices.
+ *
+ * In matrix multiplication, AB, the resultant matrix is created from
+ * the rows of A multiplied against the columns of B and summed.  This
+ * is not a cummutative; i.e.  AB != BA, so the ordering of arguments
+ * @p m1 and @p m2 matters.
+ *
+ * @param[in] m1 The first matrix.  Must be non-NULL.
+ * @param[in] m2 The second matrix.  Must be non-NULL.
+ * @param[out] dst The matrix for the results to be placed.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_compose(const Eina_Matrix3 *m1,
