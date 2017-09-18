@@ -2105,6 +2105,7 @@ _edje_file_del(Edje *ed)
              eina_stringshare_del(seat->name);
              free(seat);
           }
+        ed->seats_count = 0;
      }
 
    if (ed->L) _edje_lua2_script_shutdown(ed);
