@@ -2366,10 +2366,12 @@ _efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
    else _efl_ui_win_hide(obj, sd);
 }
 
-EOLIAN static void
-_efl_ui_win_efl_input_interface_pointer_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int *x, int *y)
+EOLIAN static Eina_Position2D
+_efl_ui_win_efl_input_interface_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   evas_pointer_canvas_xy_get(sd->evas, x, y);
+   Eina_Position2D pos;
+   evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
+   return pos;
 }
 
 EOLIAN static Eina_Bool

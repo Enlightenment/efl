@@ -1,3 +1,5 @@
+import eina_types;
+
 interface Efl.Input.Interface ()
 {
    [[An object implementing this interface can send pointer events.
@@ -24,19 +26,16 @@ interface Efl.Input.Interface ()
    eo_prefix: efl_input;
    event_prefix: efl;
    methods {
-      @property pointer_xy {
+      @property pointer_position {
          get {
             [[This function returns the current known pointer coordinates
 
-              This function returns the current known canvas unit
-              coordinates of the mouse pointer and sets the contents of
-              the Evas_Coords pointed to by $x and $y to contain these
-              coordinates.
+              This function returns the current position of the main input
+              pointer (mouse, pen, etc...).
             ]]
          }
          values {
-            x: int; [[The pointer to hold the return value of pointer's x position.]]
-            y: int; [[The pointer to hold the return value of pointer's y position.]]
+            pos: Eina.Position2D; [[The pointer position in pixels.]]
          }
       }
       @property pointer_inside {
