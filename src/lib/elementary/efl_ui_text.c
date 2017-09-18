@@ -2333,11 +2333,11 @@ _anchor_hover_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 
 static void
 _entry_hover_anchor_clicked_do(Evas_Object *obj,
-      Efl_Ui_Text_Anchor_Info *info)
+      Elm_Entry_Anchor_Info *info)
 {
    Evas_Object *hover_parent;
    Evas_Coord x, w, y, h, px, py;
-   Efl_Ui_Text_Anchor_Hover_Info ei;
+   Elm_Entry_Anchor_Hover_Info ei;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
@@ -5027,7 +5027,7 @@ _text_anchor_mouse_down_cb(void *data, Evas *e EINA_UNUSED,
    EFL_UI_TEXT_DATA_GET(obj, pd);
 
    Anchor *an = data;
-   Efl_Ui_Text_Anchor_Info ei;
+   Elm_Entry_Anchor_Info ei;
 
    ei.x = ei.y = ei.w = ei.h = 0;
    ei.name = an->name;
@@ -5042,7 +5042,7 @@ _text_anchor_mouse_up_cb(void *data, Evas *e EINA_UNUSED,
 {
    EFL_UI_TEXT_DATA_GET(obj, pd);
 
-   Efl_Ui_Text_Anchor_Info ei;
+   Elm_Entry_Anchor_Info ei;
    Anchor *an = data;
 
    ei.x = ei.y = ei.w = ei.h = 0;
