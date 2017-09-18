@@ -1,8 +1,29 @@
 /**
- * Example of basic nodes in Evas_VG.
+ * Example of Evas' vector graphics object and API.
  *
- * You'll need at least one engine built for it (excluding the buffer
- * one). See stdout/stderr for output.
+ * Vector graphics describe an image with distinct shapes - lines,
+ * rectangles, circles, curves; this distinguishes it from raster
+ * graphics where the image is comprised of a grid of colored pixels.
+ *
+ * Just as there are many different file and data formats for raster
+ * graphics, there are also many data formats for vector graphics.  A
+ * well-known one is Scalable Vector Graphics (SVG).  This example uses
+ * SVG-like path definitions to create a shape in evas_vg and then
+ * modify and animate it using the evas_vg API; there is a second test
+ * mode to demonstrate a timeline animation of morphing between two
+ * shapes using evas_vg's interpolation API.
+ *
+ * Internally, evas_vg uses EFL's Ector component to interface with the
+ * underlying graphics rendering subsystems in a two step process.
+ * First is a 'prepare' phase where CPU intensive operations are
+ * performed (ideally spawned on a separate thread), second is the
+ * 'render' phase where memory intensive work is done.  The reason for
+ * this split is to enable pushing work to the GPU in order to attain
+ * higher performance.  Ector currently supports use of Cairo, GL, and a
+ * software backend renderer.
+ *
+ * You'll need at least one engine built for this example (excluding the
+ * buffer one). See stdout/stderr for output.
  *
  * @verbatim
  * gcc -o evas_vg_simple evas-vg-simple.c `pkg-config --libs --cflags evas ecore ecore-evas eina ector eo efl` -lm
@@ -45,8 +66,15 @@ struct example_data
 
 static struct example_data d;
 Ecore_Animator *animator;
-static const char *batman = "M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18 220,56 235,81 283,88 285,78.7 286,69.3 288,60 289,61.3 290,62.7 291,64 291,64 297,63 300,63 303,63 309,64 309,64 310,62.7 311,61.3 312,60 314,69.3 315,78.7 317,88 365,82 380,56 367,18 431,71 453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z";
 
+/* These data strings follows an SVG-like convention for describing the
+ * nodes of a path.  'M x,y' indicates a move-to operation that sets
+ * where to start drawing.  'L x,y' draws a straight line that ends at
+ * the given point.  'C x1,y1 x2,y2 x,y' defines a Bezier curve's two
+ * control points and the x,y coordinate where the curve ends.  'Z' marks
+ * the end of the path.
+ */
+static const char *batman = "M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18 220,56 235,81 283,88 285,78.7 286,69.3 288,60 289,61.3 290,62.7 291,64 291,64 297,63 300,63 303,63 309,64 309,64 310,62.7 311,61.3 312,60 314,69.3 315,78.7 317,88 365,82 380,56 367,18 431,71 453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z";
 static const char *morph1[2] = {"M 0,0 L 0,0 L 100,0 L 100,0 L 100,100 L 100,100 L 0,100 L 0,100 L 0,0",
                                 "M 0,0 L 50,-80 L 100,0 L 180,50 L 100,100 L 50,180 L 0,100 L -80,50 L 0,0"};
 
@@ -55,10 +83,10 @@ static void _main_menu_key_handle(void *data, Evas *evas, Evas_Object *o, void *
 
 static const char *main_menu = \
   "Main Menu:\n"
-  "\t1 - Basic Shape test\n"
-  "\t2 - Interpolation\n"
-  "\te - Exit\n"
-  "\th - print help\n";
+  "\t1    - Basic Shape test\n"
+  "\t2    - Interpolation\n"
+  "\te    - Exit\n"
+  "\th    - Print help\n";
 
 static const char *basic_shape_menu = \
   "Basic Shape Menu:\n"
@@ -73,7 +101,7 @@ static const char *basic_shape_menu = \
   "\td    - Reset path data\n"
   "\te    - Exit\n"
   "\tb    - Back to Main Menu\n"
-  "\th    - print help\n";
+  "\th    - Print help\n";
 
 static const char *interpolation_menu = \
   "Interpolation Menu:\n"
@@ -88,7 +116,7 @@ _on_delete(Ecore_Evas *ee EINA_UNUSED)
    ecore_main_loop_quit();
 }
 
-static void /* adjust canvas' contents on resizes */
+static void
 _canvas_resize_cb(Ecore_Evas *ee)
 {
    int w, h;
@@ -104,7 +132,6 @@ reset_test()
   if(d.vg) evas_object_del(d.vg);
   d.shape_list = eina_list_free(d.shape_list);
 
-
   d.vg = evas_object_vg_add(d.evas);
   evas_object_show(d.vg);
   evas_object_focus_set(d.vg, 1);
@@ -113,8 +140,12 @@ reset_test()
 
 
 
-// 2.Basic shape  Test Case START
+// 2. Basic shape  Test Case START
 
+/* Applies a matrix transformation to a shape.  If there is already a
+ * matrix transformation applied, the new tranformation is matrix
+ * multiplied with the existing one so both transformations are used.
+ */
 static void
 _added_transformation(Efl_VG *shape, Eina_Matrix3 *m)
 {
@@ -133,6 +164,10 @@ _added_transformation(Efl_VG *shape, Eina_Matrix3 *m)
      }
 }
 
+/*
+ * Applies various modifications to the canvas objects as directed by
+ * the user.
+ */
 static void
 _basic_shape_key_handle(void        *data EINA_UNUSED,
                       Evas        *evas EINA_UNUSED,
@@ -145,25 +180,28 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
    Eina_Matrix3 m;
    double stroke_w;
 
-   if (strcmp(ev->key, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0)
      {
+        /* h - Print help */
         puts(basic_shape_menu);
         return;
      }
    if (strcmp(ev->key, "e") == 0)
      {
+        /* e    - Exit */
         _on_delete(d.ee);
         return;
      }
 
    if (strcmp(ev->key, "b") == 0)
      {
+        /* b - Back to Main Menu */
         _main_menu();
         return;
      }
    if (strcmp(ev->key, "Up") == 0)
      {
-
+        /* up - Increase Stroke Width by 0.5 */
         EINA_LIST_FOREACH(d.shape_list, l, shape)
         {
           stroke_w = evas_vg_shape_stroke_width_get(shape);
@@ -173,6 +211,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "Down") == 0)
      {
+        /* down - Decrease Stroke Width by 0.5 */
         EINA_LIST_FOREACH(d.shape_list, l, shape)
         {
           stroke_w = evas_vg_shape_stroke_width_get(shape);
@@ -183,6 +222,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "r") == 0)
      {
+        /* r - Rotate the shapes +10 degrees */
         eina_matrix3_identity(&m);
         eina_matrix3_rotate(&m, 10.0 * 2 * 3.141 / 360.0);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -193,6 +233,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "R") == 0)
      {
+        /* R - Rotate the shapes -10 degrees */
         eina_matrix3_identity(&m);
         eina_matrix3_rotate(&m, -10.0 * 2 * 3.141 / 360.0);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -203,6 +244,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "s") == 0)
      {
+        /* s - Scale the shapes +(.1, .1) */
         eina_matrix3_identity(&m);
         eina_matrix3_scale(&m, 1.1, 1.1);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -213,6 +255,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "S") == 0)
      {
+        /* S - Scale the shapes -(.1, .1) */
         eina_matrix3_identity(&m);
         eina_matrix3_scale(&m, .9, .9);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -223,6 +266,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "t") == 0)
      {
+        /* t - Translate the shapes +(10,10) */
         eina_matrix3_identity(&m);
         eina_matrix3_translate(&m, 10, 10);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -233,6 +277,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "T") == 0)
      {
+        /* T - Translate the shapes +(10,10) */
         eina_matrix3_identity(&m);
         eina_matrix3_translate(&m, -10, -10);
         EINA_LIST_FOREACH(d.shape_list, l, shape)
@@ -243,6 +288,7 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
    if (strcmp(ev->key, "d") == 0)
      {
+        /* d - Reset path data */
         EINA_LIST_FOREACH(d.shape_list, l, shape)
         {
           evas_vg_shape_reset(shape);
@@ -251,6 +297,9 @@ _basic_shape_key_handle(void        *data EINA_UNUSED,
      }
 }
 
+/* Create several different geometric objects - a line, rectangle,
+ * circle, and arc, each with distinct style and placement.
+ */
 static void
 _1_basic_shape_test()
 {
@@ -279,7 +328,6 @@ _1_basic_shape_test()
   evas_vg_node_origin_set(new_shape, 200, 50);
   evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_SQUARE);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
-
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_dup(new_shape, shape);
@@ -358,12 +406,11 @@ _1_basic_shape_test()
   evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
   evas_vg_node_origin_set(new_shape, 350, 450);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
-
 }
 
-// 2.Basic shape  Test Case END
+// 2. Basic shape  Test Case END
 
-// 2.Interpolation Test Case START
+// 2. Interpolation Test Case START
 
 static void
 _interpolation_key_handle(void  *data EINA_UNUSED,
@@ -373,19 +420,22 @@ _interpolation_key_handle(void  *data EINA_UNUSED,
 {
    Evas_Event_Key_Down *ev = einfo;
 
-   if (strcmp(ev->key, "h") == 0) /* print help */
+   if (strcmp(ev->key, "h") == 0)
      {
+        /* h - Print help */
         puts(basic_shape_menu);
         return;
      }
-   if (strcmp(ev->key, "e") == 0) /* exit */
+   if (strcmp(ev->key, "e") == 0)
      {
+        /* e - Exit */
         _on_delete(d.ee);
         return;
      }
 
-   if (strcmp(ev->key, "b") == 0) /* back to main menu */
+   if (strcmp(ev->key, "b") == 0)
      {
+        /* b - Back to main menu */
         _main_menu();
         return;
      }
@@ -440,11 +490,9 @@ _2_interpolation_test()
   shape = evas_vg_shape_add(evas_object_vg_root_node_get(d.vg));
   evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
-
-
 }
 
-// 2.Interpolation Test Case END
+// 2. Interpolation Test Case END
 
 // Main Menu START
 
@@ -484,22 +532,25 @@ _main_menu_key_handle(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0)
      {
+        /* h - Help menu */
         puts(main_menu);
         return;
      }
    if (strcmp(ev->key, "e") == 0)
      {
+        /* e - Exit */
         _on_delete(d.ee);
         return;
      }
-
    if (strcmp(ev->key, "1") == 0)
      {
+        /* 1 - Basic Shape test */
         _1_basic_shape_test();
         return;
      }
    if (strcmp(ev->key, "2") == 0)
      {
+        /* 2 - Interpolation */
         _2_interpolation_test();
         return;
      }
@@ -513,8 +564,6 @@ main(void)
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
-   /* this will give you a window with an Evas canvas under the first
-    * engine available */
    d.ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
    if (!d.ee)
      goto error;
