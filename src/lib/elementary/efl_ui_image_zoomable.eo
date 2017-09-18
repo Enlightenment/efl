@@ -29,6 +29,7 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
 
               See also @.image_region.set.
             ]]
+            legacy: null;
          }
          set {
             [[Set the viewed region of the image
@@ -39,10 +40,7 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
             legacy: null;
          }
          values {
-            x: int; [[X-coordinate of region in image original pixels]]
-            y: int; [[Y-coordinate of region in image original pixels]]
-            w: int; [[Width of region in image original pixels]]
-            h: int; [[Height of region in image original pixels]]
+            region: Eina.Rect; [[The region in the original image pixels.]]
          }
       }
    }

@@ -2211,67 +2211,49 @@ _efl_ui_image_zoomable_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Im
    return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_image_region_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, int *x, int *y, int *w, int *h)
+EOLIAN static Eina_Rect
+_efl_ui_image_zoomable_image_region_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    Evas_Coord sx, sy, sw, sh;
+   Eina_Rect region = {};
 
    elm_interface_scrollable_content_pos_get((Eo *)obj, &sx, &sy);
    elm_interface_scrollable_content_viewport_geometry_get
          ((Eo *)obj, NULL, NULL, &sw, &sh);
+
    if (sd->size.w > 0)
      {
-        if (x)
-          {
-             *x = (sd->size.imw * sx) / sd->size.w;
-             if (*x > sd->size.imw) *x = sd->size.imw;
-          }
-        if (w)
-          {
-             *w = (sd->size.imw * sw) / sd->size.w;
-             if (*w > sd->size.imw) *w = sd->size.imw;
-             else if (*w < 0)
-               *w = 0;
-          }
-     }
-   else
-     {
-        if (x) *x = 0;
-        if (w) *w = 0;
+        region.x = (sd->size.imw * sx) / sd->size.w;
+        if (region.x > sd->size.imw) region.x = sd->size.imw;
+        region.w = (sd->size.imw * sw) / sd->size.w;
+        if (region.w > sd->size.imw) region.w = sd->size.imw;
+        else if (region.w < 0)
+          region.w = 0;
      }
 
    if (sd->size.h > 0)
      {
-        if (y)
-          {
-             *y = (sd->size.imh * sy) / sd->size.h;
-             if (*y > sd->size.imh) *y = sd->size.imh;
-          }
-        if (h)
-          {
-             *h = (sd->size.imh * sh) / sd->size.h;
-             if (*h > sd->size.imh) *h = sd->size.imh;
-             else if (*h < 0)
-               *h = 0;
-          }
+        region.y = (sd->size.imh * sy) / sd->size.h;
+        if (region.y > sd->size.imh) region.y = sd->size.imh;
+        region.h = (sd->size.imh * sh) / sd->size.h;
+        if (region.h > sd->size.imh) region.h = sd->size.imh;
+        else if (region.h < 0)
+          region.h = 0;
      }
-   else
-     {
-        if (y) *y = 0;
-        if (h) *h = 0;
-     }
+
+   return region;
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_image_region_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, int x, int y, int w, int h)
+_efl_ui_image_zoomable_image_region_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Rect region)
 {
    int rx, ry, rw, rh;
 
    if ((sd->size.imw < 1) || (sd->size.imh < 1)) return;
-   rx = (x * sd->size.w) / sd->size.imw;
-   ry = (y * sd->size.h) / sd->size.imh;
-   rw = (w * sd->size.w) / sd->size.imw;
-   rh = (h * sd->size.h) / sd->size.imh;
+   rx = (region.x * sd->size.w) / sd->size.imw;
+   ry = (region.y * sd->size.h) / sd->size.imh;
+   rw = (region.w * sd->size.w) / sd->size.imw;
+   rh = (region.h * sd->size.h) / sd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
    if ((rx + rw) > sd->size.w) rx = sd->size.w - rw;
@@ -2922,7 +2904,7 @@ elm_photocam_file_get(const Evas_Object *obj)
 EAPI void
 elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
 {
-   efl_ui_image_zoomable_image_region_set(obj, x, y, w, h);
+   efl_ui_image_zoomable_image_region_set(obj, EINA_RECT(x, y, w, h));
 }
 
 EAPI void
@@ -2954,6 +2936,18 @@ elm_photocam_bounce_get(const Evas_Object *obj,
    ELM_PHOTOCAM_CHECK(obj);
 
    elm_interface_scrollable_bounce_allow_get((Eo *)obj, h_bounce, v_bounce);
+}
+
+EAPI void
+elm_photocam_image_region_get(const Efl_Ui_Image_Zoomable *obj, int *x, int *y, int *w, int *h)
+{
+   Eina_Rect r;
+
+   r = efl_ui_image_zoomable_image_region_get(obj);
+   if (x) *x = r.x;
+   if (y) *y = r.y;
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 /* Standard widget overrides */

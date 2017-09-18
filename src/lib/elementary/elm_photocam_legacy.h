@@ -218,5 +218,16 @@ EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photoca
  */
 EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 
+/**
+ * @brief Get the region of the image that is currently shown
+ *
+ * See also @ref Efl.Ui.Image_Zoomable.image_region.set.
+ *
+ * @param[out] x X-coordinate of region in image original pixels
+ * @param[out] y Y-coordinate of region in image original pixels
+ * @param[out] w Width of region in image original pixels
+ * @param[out] h Height of region in image original pixels
+ */
+EAPI void elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 #include "efl_ui_image_zoomable.eo.legacy.h"
