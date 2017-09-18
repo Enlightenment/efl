@@ -99,7 +99,7 @@ _efl_canvas_polygon_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Polygon_Data *
 }
 
 EOLIAN static void
-_efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coord x, Evas_Coord y)
+_efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Eina_Position2D pos)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl_Canvas_Polygon_Data *o = _pd;
@@ -135,8 +135,8 @@ _efl_canvas_polygon_point_add(Eo *eo_obj, Efl_Canvas_Polygon_Data *_pd, Evas_Coo
 
    p = malloc(sizeof(Efl_Canvas_Polygon_Point));
    if (!p) return;
-   p->x = x + o->offset.x;
-   p->y = y + o->offset.y;
+   p->x = pos.x + o->offset.x;
+   p->y = pos.y + o->offset.y;
 
    if (!o->points)
      {
@@ -530,7 +530,7 @@ evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED,
 EAPI void
 evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   efl_canvas_polygon_point_add(obj, x, y);
+   efl_canvas_polygon_point_add(obj, EINA_POSITION2D(x, y));
 }
 
 EAPI void

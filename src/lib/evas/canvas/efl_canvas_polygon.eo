@@ -6,8 +6,7 @@ class Efl.Canvas.Polygon (Efl.Canvas.Object)
       point_add {
          [[Adds the given point to the given evas polygon object.]]
          params {
-            @in x: int; [[The X coordinate of the given point.]]
-            @in y: int; [[The Y coordinate of the given point.]]
+            @in pos: Eina.Position2D; [[A point coordinate.]]
          }
       }
       points_clear {
