@@ -689,8 +689,8 @@ _efl_canvas_image_internal_efl_image_image_size_get(Eo *eo_obj EINA_UNUSED, Evas
    if (h) *h = o->file_size.h;
 }
 
-EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_canvas_image_internal_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Data *o)
 {
    int uvw, uvh;
    Evas_Object_Protected_Data *source = NULL;
@@ -727,8 +727,7 @@ _efl_canvas_image_internal_efl_gfx_view_view_size_get(Eo *eo_obj, Evas_Image_Dat
         uvh = source->proxy->h;
      }
 
-   if (w) *w = uvw;
-   if (h) *h = uvh;
+   return EINA_SIZE2D(uvw, uvh);
 }
 
 EOLIAN static void

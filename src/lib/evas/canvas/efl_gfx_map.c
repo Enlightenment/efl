@@ -319,7 +319,10 @@ _map_calc(Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *pd)
         if (obj->is_image_object)
           {
              // Image is a special case in terms of geometry
-             efl_gfx_view_size_get(eo_obj, &imw, &imh);
+             Eina_Size2D sz;
+             sz = efl_gfx_view_size_get(eo_obj);
+             imw = sz.w;
+             imh = sz.h;
           }
         else
           {

@@ -2206,11 +2206,10 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Ima
    return sd->mode;
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_zoomable_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
-   if (w) *w = pd->size.imw;
-   if (h) *h = pd->size.imh;
+   return EINA_SIZE2D(pd->size.imw, pd->size.imh);
 }
 
 EOLIAN static void
@@ -2361,7 +2360,8 @@ _min_obj_size_get(Evas_Object *o, int *w, int *h)
 {
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(o, sd);
 
-   efl_gfx_view_size_get(o, w, h);
+   *w = sd->size.imw;
+   *h = sd->size.imh;
 
    if (*w == 0 || *h == 0)
      {
@@ -2849,7 +2849,10 @@ elm_photocam_internal_image_get(const Evas_Object *obj)
 EAPI void
 elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
-   efl_gfx_view_size_get(obj, w, h);
+   Eina_Size2D sz;
+   sz = efl_gfx_view_size_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI Eina_Bool

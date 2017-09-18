@@ -675,14 +675,17 @@ START_TEST(evas_object_image_map_unmap)
    Eina_Bool all_white = 1, all_transparent = 1;
    Eina_Rw_Slice slice;
    Eina_Rect r, r2;
+   Eina_Size2D sz;
 
    const char *imgpath = TESTS_IMG_DIR "/Pic4.png";
 
    o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
    efl_file_set(o, imgpath, NULL);
-   efl_gfx_view_size_get(o, &w, &h);
+   sz = efl_gfx_view_size_get(o);
    cs = efl_gfx_buffer_colorspace_get(o);
 
+   w = sz.w;
+   h = sz.h;
    r.x = (w / 4) & ~3;
    r.y = (h / 4) & ~3;
    r.w = (w / 2) & ~3;
@@ -757,7 +760,9 @@ START_TEST(evas_object_image_map_unmap)
 
         o2 = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
         efl_file_set(o2, tmp, NULL);
-        efl_gfx_view_size_get(o, &w2, &h2);
+        sz = efl_gfx_view_size_get(o);
+        w2 = sz.w;
+        h2 = sz.h;
 
         // unlink now to not leave any crap after failing the test
         unlink(tmp);

@@ -508,22 +508,21 @@ _elm_glview_render_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Render_Po
 }
 
 EOLIAN static void
-_elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, int w, int h)
+_elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
 {
-   if ((w == sd->w) && (h == sd->h)) return;
+   if ((sz.w == sd->w) && (sz.h == sd->h)) return;
 
-   sd->w = w;
-   sd->h = h;
+   sd->w = sz.w;
+   sd->h = sz.h;
 
    _glview_update_surface(obj);
    elm_obj_glview_draw_request(obj);
 }
 
-EOLIAN static void
-_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
-   if (w) *w = sd->w;
-   if (h) *h = sd->h;
+   return EINA_SIZE2D(sd->w, sd->h);
 }
 
 EOLIAN static void
@@ -571,13 +570,16 @@ elm_glview_changed_set(Evas_Object *obj)
 EAPI void
 elm_glview_size_get(const Elm_Glview *obj, int *w, int *h)
 {
-   efl_gfx_view_size_get(obj, w, h);
+   Eina_Size2D sz;
+   sz = efl_gfx_view_size_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI void
 elm_glview_size_set(Elm_Glview *obj, int w, int h)
 {
-   efl_gfx_view_size_set(obj, w, h);
+   efl_gfx_view_size_set(obj, EINA_SIZE2D(w, h));
 }
 
 EAPI void

@@ -749,7 +749,7 @@ void
 _efl_ui_image_sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   int w = 0, h = 0;
+   Eina_Size2D sz;
    double ts;
 
    EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
@@ -764,37 +764,37 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
 
    ts = sd->scale;
    sd->scale = 1.0;
-   efl_gfx_view_size_get(obj, &w, &h);
+   sz = efl_gfx_view_size_get(obj);
 
    sd->scale = ts;
    evas_object_size_hint_combined_min_get(obj, &minw, &minh);
 
    if (sd->no_scale)
      {
-        maxw = minw = w;
-        maxh = minh = h;
+        maxw = minw = sz.w;
+        maxh = minh = sz.h;
         if ((sd->scale > 1.0) && (sd->scale_up))
           {
-             maxw = minw = w * sd->scale;
-             maxh = minh = h * sd->scale;
+             maxw = minw = sz.w * sd->scale;
+             maxh = minh = sz.h * sd->scale;
           }
         else if ((sd->scale < 1.0) && (sd->scale_down))
           {
-             maxw = minw = w * sd->scale;
-             maxh = minh = h * sd->scale;
+             maxw = minw = sz.w * sd->scale;
+             maxh = minh = sz.h * sd->scale;
           }
      }
    else
      {
         if (!sd->scale_down)
           {
-             minw = w * sd->scale;
-             minh = h * sd->scale;
+             minw = sz.w * sd->scale;
+             minh = sz.h * sd->scale;
           }
         if (!sd->scale_up)
           {
-             maxw = w * sd->scale;
-             maxh = h * sd->scale;
+             maxw = sz.w * sd->scale;
+             maxh = sz.h * sd->scale;
           }
      }
 
@@ -806,7 +806,6 @@ static void
 _efl_ui_image_file_set_do(Evas_Object *obj)
 {
    Evas_Object *pclip = NULL;
-   int w = 0, h = 0;
 
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
@@ -829,8 +828,8 @@ _efl_ui_image_file_set_do(Evas_Object *obj)
      evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
    else
      {
-        efl_gfx_view_size_get((Eo *) obj, &w, &h);
-        evas_object_image_load_size_set(sd->img, w, h);
+        Eina_Size2D sz = efl_gfx_view_size_get(obj);
+        evas_object_image_load_size_set(sd->img, sz.w, sz.h);
      }
 }
 
@@ -1246,20 +1245,17 @@ elm_image_async_open_set(Eo *obj, Eina_Bool async)
    if (!async) _async_cancel(pd);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, int *w, int *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    int tw, th;
-
-   if (w) *w = 0;
-   if (h) *h = 0;
 
    if (efl_isa(sd->img, EDJE_OBJECT_CLASS))
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);
-   if (w) *w = tw;
-   if (h) *h = th;
+
+   return EINA_SIZE2D(tw, th);
 }
 
 EOLIAN static void
@@ -2194,7 +2190,10 @@ elm_image_object_get(const Evas_Object *obj)
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
-   efl_gfx_view_size_get(obj, w, h);
+   Eina_Size2D sz;
+   sz = efl_gfx_view_size_get(obj);
+   if (w) *w = sz.w;
+   if (h) *h = sz.h;
 }
 
 EAPI void
