@@ -85,9 +85,6 @@ evas_init(void)
    _evas_preload_thread_init();
    evas_filter_init();
 
-   if (!evas_thread_init())
-     goto shutdown_filter;
-
    eina_log_timing(_evas_log_dom_global,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -96,11 +93,7 @@ evas_init(void)
 
    return _evas_init_count;
 
- shutdown_filter:
-   evas_filter_shutdown();
-   _evas_preload_thread_shutdown();
 #ifdef EVAS_CSERVE2
-   if (cs2) evas_cserve2_shutdown();
  shutdown_async_events:
 #endif
    evas_async_events_shutdown();
@@ -164,7 +157,6 @@ evas_shutdown(void)
    eina_cow_del(evas_object_mask_cow);
    evas_object_mask_cow = NULL;
 
-   evas_thread_shutdown();
    _evas_preload_thread_shutdown();
    evas_async_events_shutdown();
    evas_module_shutdown();
