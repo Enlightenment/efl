@@ -420,11 +420,11 @@ _efl_ui_button_class_constructor(Efl_Class *klass)
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
-EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
+ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
+ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data, _content_aliases)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
 #include "efl_ui_button_part.eo.c"
 

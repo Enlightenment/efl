@@ -6,8 +6,9 @@ class Efl.Ui.Layout.Part.Box (Efl.Object, Efl.Pack.Linear,
      Can not be deleted, this is only a representation of an internal object
      of an EFL layout.
    ]]
-   data: Efl_Ui_Layout_Table_Data;
+   data: Efl_Ui_Layout_Box_Data;
    methods {
+      /* FIXME: Remove this. */
       @property real_part @protected {
       	 [[Real part property]]
          set {}

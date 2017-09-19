@@ -9898,7 +9898,7 @@ _evas_textblock_cursor_copy(Evas_Textblock_Cursor *dst, const Efl_Text_Cursor_Cu
    dst->node = src->node;
 }
 
-static EOLIAN void
+EOLIAN static void
 _efl_canvas_text_efl_text_cursor_cursor_copy(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED,
       Efl_Text_Cursor_Cursor *dst, const Efl_Text_Cursor_Cursor *src)
 {
@@ -11131,7 +11131,7 @@ evas_textblock_cursor_range_text_get(const Efl_Text_Cursor_Cursor *cur1, const E
    return _evas_textblock_cursor_range_text_get(cur1, cur2, format);
 }
 
-static EOLIAN char *
+EOLIAN static char *
 _efl_canvas_text_range_text_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *pd EINA_UNUSED,
       const Efl_Text_Cursor_Cursor *cur1,
@@ -12327,7 +12327,7 @@ evas_textblock_cursor_range_simple_geometry_get(const Efl_Text_Cursor_Cursor *cu
    return efl_canvas_text_range_simple_geometry_get(cur1->obj, cur1, cur2);
 }
 
-static EOLIAN Eina_Iterator *
+EOLIAN static Eina_Iterator *
 _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o, const Efl_Text_Cursor_Cursor *cur1, const
       Evas_Textblock_Cursor *cur2)
@@ -12523,7 +12523,7 @@ evas_textblock_cursor_range_geometry_get(const Efl_Text_Cursor_Cursor *cur1, con
    return _efl_canvas_text_range_geometry_list_get(cur1->obj, o, cur1, cur2_obj);
 }
 
-static EOLIAN Eina_Iterator *
+EOLIAN static Eina_Iterator *
 _efl_canvas_text_range_geometry_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o, const Efl_Text_Cursor_Cursor *cur1, const
       Evas_Textblock_Cursor *cur2)

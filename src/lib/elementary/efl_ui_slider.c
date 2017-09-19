@@ -1237,9 +1237,9 @@ EOLIAN static void
 _efl_ui_slider_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
 {
    if (_is_horizontal(sd->dir))
-     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), EINA_SIZE2D(size, 1));
+     efl_gfx_size_hint_min_set(efl_part(obj, "span"), EINA_SIZE2D(size, 1));
    else
-     efl_gfx_size_hint_min_set(efl_part(obj, "elm.swallow.bar"), EINA_SIZE2D(1, size));
+     efl_gfx_size_hint_min_set(efl_part(obj, "span"), EINA_SIZE2D(1, size));
 }
 
 EOLIAN static Evas_Coord
@@ -1507,28 +1507,19 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 
 /* Standard widget overrides */
 
-EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
+ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, Efl_Ui_Slider_Data)
 
-static Eina_Bool
-_efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+EOLIAN static Eo *
+_efl_ui_slider_efl_part_part(const Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, const char *part)
 {
-   Eina_Bool int_ret;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
-   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-   if (!int_ret) return EINA_FALSE;
+   if (eina_streq(part, "span"))
+     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_SLIDER_PART_CLASS);
 
-   return EINA_TRUE;
-}
-
-static EOLIAN Eina_Bool
-_efl_ui_slider_part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_slider_content_set(pd->obj, sd, pd->part, content));
+   return efl_part(efl_super(obj, MY_CLASS), part);
 }
 
 static void
@@ -1570,6 +1561,7 @@ _efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, void *_pd EINA_UNUSE
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
+   EINA_SAFETY_ON_FALSE_RETURN(eina_streq(pd->part, "span"));
    _span_size_set(pd->obj, sd, sz.w, sz.h);
 }
 
@@ -1578,11 +1570,16 @@ _efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, void *_pd EINA_UNUSE
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+   Eina_Size2D ret = { 0, 0 };
 
+   EINA_SAFETY_ON_FALSE_GOTO(eina_streq(pd->part, "span"), end);
    if (_is_horizontal(sd->dir))
-     return EINA_SIZE2D(sd->size, 1);
+     ret = EINA_SIZE2D(sd->size, 1);
    else
-     return EINA_SIZE2D(1, sd->size);
+     ret = EINA_SIZE2D(1, sd->size);
+
+end:
+   return ret;
 }
 
 #include "efl_ui_slider_part.eo.c"
@@ -1750,12 +1747,12 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_slider)
 
 #define EFL_UI_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_slider), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_slider), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_slider)
 

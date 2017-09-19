@@ -1,4 +1,4 @@
-class Elm_Bubble.Part (Efl.Ui.Layout.Part, Efl.Text)
+class Elm_Bubble.Part (Efl.Ui.Layout.Part_Legacy)
 {
    [[Elementary Bubble internal part class]]
    data: null;

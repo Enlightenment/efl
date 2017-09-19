@@ -12,8 +12,6 @@
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
 
-#include "efl_ui_layout_part_box.eo.h"
-#include "efl_ui_layout_part_table.eo.h"
 #include "../evas/canvas/evas_box.eo.h"
 #include "../evas/canvas/evas_table.eo.h"
 
