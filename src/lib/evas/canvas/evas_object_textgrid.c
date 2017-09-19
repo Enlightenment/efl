@@ -493,7 +493,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                                                               c->r, c->g, c->b, c->a,
                                                               cells->bold,
                                                               cells->italic);
-                       // XXX: underlines and strikethroughs dont get
+                       // XXX: underlines and strikethroughs don't get
                        // merged into horizontal runs like bg rects above
                        if (cells->underline)
                          evas_object_textgrid_row_line_append(row, xp, w,
@@ -676,14 +676,14 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
    int is_v, was_v;
    Evas_Textgrid_Data *o = type_private_data;
 
-   /* dont pre-render the obj twice! */
+   /* don't pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
-   /* pre-render phase. this does anything an object needs to do just before */
-   /* rendering. this could mean loading the image data, retrieving it from */
-   /* elsewhere, decoding video etc. */
-   /* then when this is done the object needs to figure if it changed and */
-   /* if so what and where and add thr appropriate redraw rectangles */
+   /* pre-render phase.  This does anything an object needs to do just before */
+   /* rendering.  That could mean loading the image data, retrieving it from */
+   /* elsewhere, decoding video, etc. */
+   /* When this is done the object needs to figure if it changed and */
+   /* if so what and where and add the appropriate redraw rectangles */
 
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)
@@ -713,7 +713,7 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
    evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, eo_obj);
-   /* if we restacked (layer or just within a layer) and dont clip anyone */
+   /* if we restacked (layer or just within a layer) and don't clip anyone */
    if (obj->restack)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
@@ -1048,7 +1048,7 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
      }
    else
      {
-         DBG("can not load font '%s' with alternate weight/slant %s",
+         DBG("cannot load font '%s' with alternate weight/slant %s",
              fdesc->name, kind);
      }
    return ret;
@@ -1149,7 +1149,7 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
         o->ascent = 0;
      }
 
-   DBG("font: '%s' weigth: %d, slant: %d",
+   DBG("font: '%s' weight: %d, slant: %d",
        fdesc->name, fdesc->weight, fdesc->slant);
 
    /* Bold */
@@ -1336,7 +1336,7 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
              c = calloc(1, sizeof(Evas_Object_Textgrid_Color));
              if (!c)
                {
-                  ERR("Evas can not allocate memory");
+                  ERR("Evas cannot allocate memory");
                   free(color);
                   return;
                }
