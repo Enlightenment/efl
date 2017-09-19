@@ -161,7 +161,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
      }
    clip_calc(obj->cur->clipper, &c);
    // only worry about objects that intersect INCLUDING clippint
-   if ((!RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h)))
+   if ((!RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h)) && (!obj->child_has_map))
      {
 #ifdef DDD_DO
         if (obj->is_smart)
