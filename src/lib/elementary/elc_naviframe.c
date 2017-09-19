@@ -2099,12 +2099,12 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_naviframe, Elm_Naviframe_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, EFL_UI_LAYOUT, Elm_Naviframe_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
 #include "elm_naviframe_part.eo.c"
 
 /* Efl.Part end */

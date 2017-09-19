@@ -18,7 +18,7 @@ struct Elm.Widget.Focus_State {
 }
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
-                     Efl.Access.Component, Efl.Ui.Focus.User,
+                     Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
                      Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor)
 {
    [[Elementary widget abstract class]]
@@ -860,6 +860,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
+      Efl.Part.part; [[Returns @Efl.Ui.Widget.Part.]]
    }
    events {
       moved; [[Called when widget moved]]

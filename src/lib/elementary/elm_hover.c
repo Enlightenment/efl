@@ -892,10 +892,10 @@ _elm_hover_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_hover, ELM_HOVER, EFL_UI_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_hover, ELM_HOVER, EFL_UI_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_hover, ELM_HOVER, EFL_UI_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, EFL_UI_LAYOUT, Elm_Hover_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_hover, ELM_HOVER, Elm_Hover_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_hover, ELM_HOVER, Elm_Hover_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_hover, ELM_HOVER, Elm_Hover_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
 #include "elm_hover_part.eo.c"
 
 /* Efl.Part end */

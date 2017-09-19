@@ -424,8 +424,8 @@ EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, EFL_UI_LAYOUT, Efl_Ui_Button_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
 #include "efl_ui_button_part.eo.c"
 
 /* Efl.Part end */

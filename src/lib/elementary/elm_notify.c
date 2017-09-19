@@ -740,12 +740,12 @@ _elm_notify_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_IMPLEMENT(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_TEXT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_TEXT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_notify, "default")
 #include "elm_notify_part.eo.c"
 

@@ -5388,9 +5388,9 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
 #if 0
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, EFL_UI_LAYOUT, Efl_Ui_Text_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
 #include "elm_entry_part.eo.c"
 
 /* Efl.Part end */

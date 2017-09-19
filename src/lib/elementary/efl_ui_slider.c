@@ -1510,7 +1510,7 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 EFL_TEXT_PART_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, EFL_UI_LAYOUT, Efl_Ui_Slider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_slider, EFL_UI_SLIDER, Efl_Ui_Slider_Data)
 
 static Eina_Bool
 _efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
@@ -1524,9 +1524,9 @@ _efl_ui_slider_content_set(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED, const c
 }
 
 static EOLIAN Eina_Bool
-_efl_ui_slider_part_efl_container_content_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Efl_Gfx *content)
+_efl_ui_slider_part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
    ELM_PART_RETURN_VAL(_efl_ui_slider_content_set(pd->obj, sd, pd->part, content));
 }
@@ -1565,18 +1565,18 @@ _span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
 }
 
 EOLIAN void
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED, Eina_Size2D sz)
+_efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Size2D sz)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
    _span_size_set(pd->obj, sd, sz.w, sz.h);
 }
 
 EOLIAN Eina_Size2D
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, Elm_Part_Data *_pd EINA_UNUSED)
+_efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_LAYOUT_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
 
    if (_is_horizontal(sd->dir))

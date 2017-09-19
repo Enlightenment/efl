@@ -3223,8 +3223,8 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_fileselector, Elm_Fileselector_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, EFL_UI_LAYOUT, Elm_Fileselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_fileselector, ELM_FILESELECTOR, Elm_Fileselector_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, Elm_Fileselector_Data)
 #include "elm_fileselector_part.eo.c"
 
 /* Efl.Part end */

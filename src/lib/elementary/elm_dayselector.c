@@ -607,9 +607,9 @@ _elm_dayselector_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_dayselector, ELM_DAYSELECTOR, EFL_UI_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_dayselector, ELM_DAYSELECTOR, EFL_UI_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, EFL_UI_LAYOUT, Elm_Dayselector_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_dayselector, ELM_DAYSELECTOR, Elm_Dayselector_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_dayselector, ELM_DAYSELECTOR, Elm_Dayselector_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, Elm_Dayselector_Data)
 #include "elm_dayselector_part.eo.c"
 
 /* Efl.Part end */

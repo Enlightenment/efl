@@ -634,8 +634,8 @@ _elm_label_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(elm_label, ELM_LABEL, EFL_UI_LAYOUT, Elm_Label_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, EFL_UI_LAYOUT, Elm_Label_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_label, ELM_LABEL, Elm_Label_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, Elm_Label_Data)
 
 #include "elm_label_part.eo.c"
 /* Efl.Part end */

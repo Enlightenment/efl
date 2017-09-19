@@ -1,9 +1,8 @@
-class Elm.Panel.Part (Efl.Object, Efl.Container)
+class Elm.Panel.Part (Efl.Ui.Widget.Part, Efl.Container)
 {
    [[Elementary panel internal part class]]
-   data: Elm_Part_Data;
+   data: null;
    implements {
-      Efl.Object.destructor;
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }

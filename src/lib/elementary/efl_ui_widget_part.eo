@@ -1,0 +1,9 @@
+class Efl.Ui.Widget.Part (Efl.Object)
+{
+   data: Elm_Part_Data;
+   methods {
+   }
+   implements {
+      Efl.Object.destructor;
+   }
+}

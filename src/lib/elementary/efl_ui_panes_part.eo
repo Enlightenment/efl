@@ -1,7 +1,7 @@
 class Efl.Ui.Panes.Part (Efl.Ui.Layout.Part)
 {
    [[Elementary Panes internal part class]]
-   data: Elm_Part_Data;
+   data: null;
    methods {
       @property hint_min_allow {
           [[Allow user to set size hints to be respected and ignore combined

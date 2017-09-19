@@ -2398,10 +2398,10 @@ elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction 
 
 /* Efl.Part begin */
 
-ELM_PART_IMPLEMENT(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_CONTENT_DEFAULT_SET(efl_ui_flip, "front")
 #include "efl_ui_flip_part.eo.c"
 

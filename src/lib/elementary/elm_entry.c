@@ -6049,11 +6049,11 @@ _elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Entry_Data *sd)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, EFL_UI_LAYOUT, Elm_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_entry, ELM_ENTRY, Elm_Entry_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
 #include "elm_entry_part.eo.c"
 
