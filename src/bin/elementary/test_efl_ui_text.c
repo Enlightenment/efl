@@ -117,7 +117,7 @@ my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 {
    Evas_Object *en = data;
    efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
-         "size=32x32 href=emoticon");
+         "size=32x32 href=emoticon/evil-laugh");
 }
 
 static void
