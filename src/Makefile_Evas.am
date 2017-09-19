@@ -270,6 +270,7 @@ lib/evas/gesture/efl_gesture.c \
 lib/evas/gesture/efl_gesture_tap.c \
 lib/evas/gesture/efl_gesture_recognizer.c \
 lib/evas/gesture/efl_gesture_recognizer_tap.c \
+lib/evas/gesture/efl_gesture_manager.c \
 $(NULL)
 
 EXTRA_DIST2 += \
