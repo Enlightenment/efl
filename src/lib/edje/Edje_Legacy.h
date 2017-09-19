@@ -2157,6 +2157,398 @@ EAPI char *edje_object_part_text_unescaped_get(const Edje_Object *obj, const cha
 EAPI void edje_object_part_text_insert(Edje_Object *obj, const char *part, const char *text);
 
 /**
+ * @brief Sets the autocapitalization type on the immodule.
+ *
+ * @param[in] part The part name
+ * @param[in] autocapital_type The type of autocapitalization
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_autocapital_type_set(Edje_Object *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type);
+
+/**
+ * @brief Retrieves the autocapitalization type
+ *
+ * @param[in] part The part name
+ *
+ * @return The type of autocapitalization
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_Text_Autocapital_Type edje_object_part_text_autocapital_type_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets whether the prediction is allowed or not.
+ *
+ * @param[in] part The part name
+ * @param[in] prediction If @c true, the prediction feature is allowed.
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_prediction_allow_set(Edje_Object *obj, const char *part, Eina_Bool prediction);
+
+/**
+ * @brief Gets whether the prediction is allowed or not.
+ *
+ * @param[in] part The part name
+ *
+ * @return If @c true, the prediction feature is allowed.
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_prediction_allow_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Gets the input method context in entry.
+ *
+ * If ecore_imf was not available when edje was compiled, this function returns
+ * @c null otherwise, the returned pointer is an Ecore_IMF
+ *
+ * @param[in] part The part name
+ *
+ * @return The input method context (Ecore_IMF_Context *) in entry
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void *edje_object_part_text_imf_context_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Resets the input method context if needed.
+ *
+ * This can be necessary in the case where modifying the buffer would confuse
+ * on-going input method behavior
+ *
+ * @param[in] part The part name
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_imf_context_reset(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the input hint which allows input methods to fine-tune their
+ * behavior.
+ *
+ * @param[in] part The part name
+ * @param[in] input_hints Input hints
+ *
+ * @since 1.12.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_hint_set(Edje_Object *obj, const char *part, Edje_Input_Hints input_hints);
+
+/**
+ * @brief Gets the value of input hint
+ *
+ * @param[in] part The part name
+ *
+ * @return Input hints
+ *
+ * @since 1.12.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_Input_Hints edje_object_part_text_input_hint_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Shows the input panel (virtual keyboard) based on the input panel
+ * property such as layout, autocapital types, and so on.
+ *
+ * Note that input panel is shown or hidden automatically according to the
+ * focus state. This API can be used in the case of manually controlling by
+ * using edje_object_part_text_input_panel_enabled_set.
+ *
+ * @param[in] part The part name
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_show(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Hides the input panel (virtual keyboard). See also
+ * @ref edje_object_part_text_input_panel_show
+ *
+ * Note that input panel is shown or hidden automatically according to the
+ * focus state. This API can be used in the case of manually controlling by
+ * using edje_object_part_text_input_panel_enabled_set.
+ *
+ * @param[in] part The part name
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_hide(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the input panel-specific data to deliver to the input panel.
+ *
+ * This API is used by applications to deliver specific data to the input
+ * panel. The data format MUST be negotiated by both application and the input
+ * panel. The size and format of data are defined by the input panel.
+ *
+ * @param[in] part The part name
+ * @param[in] data The specific data to be set to the input panel.
+ * @param[in] len The length of data, in bytes, to send to the input panel
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_imdata_set(Edje_Object *obj, const char *part, const void *data, int len);
+
+/**
+ * @brief Gets the specific data of the current active input panel.
+ *
+ * @param[in] part The part name
+ * @param[in] data The specific data to be set to the input panel.
+ * @param[out] len The length of data, in bytes, to send to the input panel
+ *
+ * @return FIXME: void needed here?
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_imdata_get(const Edje_Object *obj, const char *part, void *data, int *len);
+
+/**
+ * @brief Sets the layout of the input panel.
+ *
+ * The layout of the input panel or virtual keyboard can make it easier or
+ * harder to enter content. This allows you to hint what kind of input you are
+ * expecting to enter and thus have the input panel automatically come up with
+ * the right mode.
+ *
+ * @param[in] part The part name
+ * @param[in] layout Layout type of the input panel
+ *
+ * @since 1.1
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_layout_set(Edje_Object *obj, const char *part, Edje_Input_Panel_Layout layout);
+
+/**
+ * @brief Gets the layout of the input panel.
+ *
+ * See also @ref edje_object_part_text_input_panel_layout_set
+ *
+ * @param[in] part The part name
+ *
+ * @return Layout type of the input panel
+ *
+ * @since 1.1
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the language mode of the input panel.
+ *
+ * This API can be used if you want to show the Alphabet keyboard.
+ *
+ * @param[in] part The part name
+ * @param[in] lang The language to be set to the input panel.
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_language_set(Edje_Object *obj, const char *part, Edje_Input_Panel_Lang lang);
+
+/**
+ * @brief Gets the language mode of the input panel.
+ *
+ * See also @ref edje_object_part_text_input_panel_language_set for more
+ * details.
+ *
+ * @param[in] part The part name
+ *
+ * @return The language to be set to the input panel.
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_Input_Panel_Lang edje_object_part_text_input_panel_language_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the layout variation of the input panel.
+ *
+ * The layout variation of the input panel or virtual keyboard can make it
+ * easier or harder to enter content. This allows you to hint what kind of
+ * input you are expecting to enter and thus have the input panel automatically
+ * come up with the right mode.
+ *
+ * @param[in] part The part name
+ * @param[in] variation Layout variation type
+ *
+ * @since 1.8
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_layout_variation_set(Edje_Object *obj, const char *part, int variation);
+
+/**
+ * @brief Gets the layout variation of the input panel.
+ *
+ * See also @ref edje_object_part_text_input_panel_layout_variation_set
+ *
+ * @param[in] part The part name
+ *
+ * @return Layout variation type
+ *
+ * @since 1.8
+ *
+ * @ingroup Edje_Object
+ */
+EAPI int edje_object_part_text_input_panel_layout_variation_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the attribute to show the input panel automatically.
+ *
+ * @param[in] part The part name
+ * @param[in] enabled If @c true, the input panel is appeared when entry is
+ * clicked or has a focus
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_enabled_set(Edje_Object *obj, const char *part, Eina_Bool enabled);
+
+/**
+ * @brief Retrieves the attribute to show the input panel automatically. See
+ * also @ref edje_object_part_text_input_panel_enabled_set
+ *
+ * @param[in] part The part name
+ *
+ * @return If @c true, the input panel is appeared when entry is clicked or has
+ * a focus
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_input_panel_enabled_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the return key on the input panel to be disabled.
+ *
+ * @param[in] part The part name
+ * @param[in] disabled The state
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_return_key_disabled_set(Edje_Object *obj, const char *part, Eina_Bool disabled);
+
+/**
+ * @brief Gets whether the return key on the input panel should be disabled or
+ * not.
+ *
+ * @param[in] part The part name
+ *
+ * @return The state
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_input_panel_return_key_disabled_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the "return" key type. This type is used to set string or icon
+ * on the "return" key of the input panel.
+ *
+ * An input panel displays the string or icon associated with this type
+ *
+ * @param[in] part The part name
+ * @param[in] return_key_type The type of "return" key on the input panel
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_return_key_type_set(Edje_Object *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type);
+
+/**
+ * @brief Gets the "return" key type.
+ *
+ * See also @ref edje_object_part_text_input_panel_return_key_type_set() for
+ * more details
+ *
+ * @param[in] part The part name
+ *
+ * @return The type of "return" key on the input panel
+ *
+ * @since 1.2.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_key_type_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the attribute to show the input panel in case of only an user's
+ * explicit Mouse Up event. It doesn't request to show the input panel even
+ * though it has focus.
+ *
+ * @param[in] part The part name
+ * @param[in] ondemand If @c true, the input panel will be shown in case of
+ * only Mouse up event. (Focus event will be ignored.)
+ *
+ * @since 1.9.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_input_panel_show_on_demand_set(Edje_Object *obj, const char *part, Eina_Bool ondemand);
+
+/**
+ * @brief Gets the attribute to show the input panel in case of only an user's
+ * explicit Mouse Up event.
+ *
+ * @param[in] part The part name
+ *
+ * @return If @c true, the input panel will be shown in case of only Mouse up
+ * event. (Focus event will be ignored.)
+ *
+ * @since 1.9.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the prediction hint to use an intelligent reply suggestion
+ * service.
+ *
+ * @param[in] part The part name
+ * @param[in] prediction_hint Prediction hint
+ *
+ * @since 1.20.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_prediction_hint_set(Edje_Object *obj, const char *part, const char *prediction_hint);
+
+/**
  * @brief Whether this object is playing or not.
  *
  * This property indicates whether the object is running or not. If stopped (or

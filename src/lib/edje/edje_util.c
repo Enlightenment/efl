@@ -2091,22 +2091,6 @@ _edje_object_part_text_select_extend(Eo *obj EINA_UNUSED, Edje *ed, const char *
      _edje_entry_select_extend(rp);
 }
 
-EOLIAN void *
-_edje_object_part_text_imf_context_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
-{
-   Edje_Real_Part *rp;
-
-   if ((!ed) || (!part)) return NULL;
-
-   rp = _edje_real_part_recursive_get(&ed, (char *)part);
-   if (!rp) return NULL;
-
-   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-     return _edje_entry_imf_context_get(rp);
-
-   return NULL;
-}
-
 EOLIAN Eina_Bool
 _edje_object_part_text_cursor_next(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
@@ -2289,10 +2273,32 @@ _edje_object_part_text_cursor_pos_get(Eo *obj EINA_UNUSED, Edje *ed, const char 
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_imf_context_reset(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI void *
+edje_object_part_text_imf_context_get(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(&ed, (char *)part);
+   if (!rp) return NULL;
+
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_imf_context_get(rp);
+
+   return NULL;
+}
+
+EAPI void
+edje_object_part_text_imf_context_reset(const Eo *obj, const char *part)
+{
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2303,10 +2309,13 @@ _edje_object_part_text_imf_context_reset(Eo *obj EINA_UNUSED, Edje *ed, const ch
      }
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Layout layout)
+EAPI void
+edje_object_part_text_input_panel_layout_set(Eo *obj, const char *part, Edje_Input_Panel_Layout layout)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2317,12 +2326,15 @@ _edje_object_part_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Edje *ed, con
      }
 }
 
-EOLIAN Edje_Input_Panel_Layout
-_edje_object_part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Edje_Input_Panel_Layout
+edje_object_part_text_input_panel_layout_get(const Eo *obj, const char *part)
 {
    Edje_Input_Panel_Layout ret;
    Edje_Real_Part *rp;
    ret = EDJE_INPUT_PANEL_LAYOUT_INVALID;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2335,10 +2347,13 @@ _edje_object_part_text_input_panel_layout_get(Eo *obj EINA_UNUSED, Edje *ed, con
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, int variation)
+EAPI void
+edje_object_part_text_input_panel_layout_variation_set(Eo *obj, const char *part, int variation)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2349,12 +2364,15 @@ _edje_object_part_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Edj
      }
 }
 
-EOLIAN int
-_edje_object_part_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI int
+edje_object_part_text_input_panel_layout_variation_get(const Eo *obj, const char *part)
 {
    int r;
 
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    r = 0;
    if ((!ed) || (!part)) return r;
@@ -2367,11 +2385,13 @@ _edje_object_part_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Edj
    return r;
 }
 
-EOLIAN void
-_edje_object_part_text_autocapital_type_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Text_Autocapital_Type autocapital_type)
+EAPI void
+edje_object_part_text_autocapital_type_set(Eo *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
 
+   ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return;
@@ -2381,12 +2401,15 @@ _edje_object_part_text_autocapital_type_set(Eo *obj EINA_UNUSED, Edje *ed, const
      }
 }
 
-EOLIAN Edje_Text_Autocapital_Type
-_edje_object_part_text_autocapital_type_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Edje_Text_Autocapital_Type
+edje_object_part_text_autocapital_type_get(const Eo *obj, const char *part)
 {
    Edje_Text_Autocapital_Type ret;
    Edje_Real_Part *rp;
    ret = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2399,10 +2422,13 @@ _edje_object_part_text_autocapital_type_get(Eo *obj EINA_UNUSED, Edje *ed, const
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_prediction_allow_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool prediction)
+EAPI void
+edje_object_part_text_prediction_allow_set(Eo *obj, const char *part, Eina_Bool prediction)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2413,12 +2439,15 @@ _edje_object_part_text_prediction_allow_set(Eo *obj EINA_UNUSED, Edje *ed, const
      }
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_text_prediction_allow_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Eina_Bool
+edje_object_part_text_prediction_allow_get(const Eo *obj, const char *part)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
    ret = EINA_FALSE;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2431,10 +2460,13 @@ _edje_object_part_text_prediction_allow_get(Eo *obj EINA_UNUSED, Edje *ed, const
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_hint_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Hints input_hints)
+EAPI void
+edje_object_part_text_input_hint_set(Eo *obj, const char *part, Edje_Input_Hints input_hints)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2445,10 +2477,13 @@ _edje_object_part_text_input_hint_set(Eo *obj EINA_UNUSED, Edje *ed, const char 
      }
 }
 
-EOLIAN Edje_Input_Hints
-_edje_object_part_text_input_hint_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Edje_Input_Hints
+edje_object_part_text_input_hint_get(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2460,10 +2495,13 @@ _edje_object_part_text_input_hint_get(const Eo *obj EINA_UNUSED, Edje *ed, const
    return EINA_FALSE;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool enabled)
+EAPI void
+edje_object_part_text_input_panel_enabled_set(Eo *obj, const char *part, Eina_Bool enabled)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2474,12 +2512,15 @@ _edje_object_part_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Edje *ed, co
      }
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Eina_Bool
+edje_object_part_text_input_panel_enabled_get(const Eo *obj, const char *part)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
    ret = EINA_FALSE;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2492,10 +2533,13 @@ _edje_object_part_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, Edje *ed, co
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_show(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI void
+edje_object_part_text_input_panel_show(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2504,10 +2548,13 @@ _edje_object_part_text_input_panel_show(Eo *obj EINA_UNUSED, Edje *ed, const cha
      _edje_entry_input_panel_show(rp);
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_hide(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI void
+edje_object_part_text_input_panel_hide(const Eo *obj, const char *part)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2516,10 +2563,13 @@ _edje_object_part_text_input_panel_hide(Eo *obj EINA_UNUSED, Edje *ed, const cha
      _edje_entry_input_panel_hide(rp);
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_language_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Lang lang)
+EAPI void
+edje_object_part_text_input_panel_language_set(Eo *obj, const char *part, Edje_Input_Panel_Lang lang)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2530,12 +2580,15 @@ _edje_object_part_text_input_panel_language_set(Eo *obj EINA_UNUSED, Edje *ed, c
      }
 }
 
-EOLIAN Edje_Input_Panel_Lang
-_edje_object_part_text_input_panel_language_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Edje_Input_Panel_Lang
+edje_object_part_text_input_panel_language_get(const Eo *obj, const char *part)
 {
    Edje_Input_Panel_Lang ret;
    Edje_Real_Part *rp;
    ret = EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2548,10 +2601,13 @@ _edje_object_part_text_input_panel_language_get(Eo *obj EINA_UNUSED, Edje *ed, c
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const void *data, int len)
+EAPI void
+edje_object_part_text_input_panel_imdata_set(Eo *obj, const char *part, const void *data, int len)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2562,10 +2618,13 @@ _edje_object_part_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Edje *ed, con
      }
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, void *data, int *len)
+EAPI void
+edje_object_part_text_input_panel_imdata_get(const Eo *obj, const char *part, void *data, int *len)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2576,10 +2635,13 @@ _edje_object_part_text_input_panel_imdata_get(Eo *obj EINA_UNUSED, Edje *ed, con
      }
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type)
+EAPI void
+edje_object_part_text_input_panel_return_key_type_set(Eo *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2590,12 +2652,15 @@ _edje_object_part_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Edje
      }
 }
 
-EOLIAN Edje_Input_Panel_Return_Key_Type
-_edje_object_part_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Edje_Input_Panel_Return_Key_Type
+edje_object_part_text_input_panel_return_key_type_get(const Eo *obj, const char *part)
 {
    Edje_Input_Panel_Return_Key_Type ret;
    Edje_Real_Part *rp;
    ret = EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2608,10 +2673,13 @@ _edje_object_part_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Edje
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool disabled)
+EAPI void
+edje_object_part_text_input_panel_return_key_disabled_set(Eo *obj, const char *part, Eina_Bool disabled)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2622,12 +2690,15 @@ _edje_object_part_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, 
      }
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Eina_Bool
+edje_object_part_text_input_panel_return_key_disabled_get(const Eo *obj, const char *part)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
+   Edje *ed;
+
    ret = EINA_FALSE;
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2640,10 +2711,13 @@ _edje_object_part_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, 
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Eina_Bool ondemand)
+EAPI void
+edje_object_part_text_input_panel_show_on_demand_set(Eo *obj, const char *part, Eina_Bool ondemand)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2654,12 +2728,15 @@ _edje_object_part_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Edje 
      }
 }
 
-EOLIAN Eina_Bool
-_edje_object_part_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+EAPI Eina_Bool
+edje_object_part_text_input_panel_show_on_demand_get(const Eo *obj, const char *part)
 {
    Eina_Bool ret;
    Edje_Real_Part *rp;
+   Edje *ed;
+
    ret = EINA_FALSE;
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return ret;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -2672,10 +2749,13 @@ _edje_object_part_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Edje 
    return ret;
 }
 
-EOLIAN void
-_edje_object_part_text_prediction_hint_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, const char *prediction_hint)
+EAPI void
+edje_object_part_text_prediction_hint_set(Eo *obj, const char *part, const char *prediction_hint)
 {
    Edje_Real_Part *rp;
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
 
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_recursive_get(&ed, part);
