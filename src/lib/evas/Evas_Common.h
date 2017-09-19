@@ -1790,6 +1790,11 @@ EAPI Eina_Bool                     evas_object_image_extension_can_load_fast_get
 /**
  * @defgroup Evas_Object_Textgrid Textgrid Object Functions
  *
+ * Textgrid objects manage chunks of text as a 2D grid of cells, each of
+ * which contains a single unicode character with color and style
+ * formatting information.  The object's text can be interacted with
+ * character-by-character or by row.
+ *
  * @todo put here some usage examples
  *
  * @since 1.7
@@ -1802,7 +1807,9 @@ EAPI Eina_Bool                     evas_object_image_extension_can_load_fast_get
 /**
  * @struct _Evas_Textgrid_Cell
  *
- * The values that describes each cell.
+ * A cell contains a single unicode character, with associated formatting
+ * data including style, color, and color palette.  Double-wide characters
+ * are flagged to permit visually merging the cell to the right.
  *
  * @since 1.7
  */
