@@ -1,7 +1,6 @@
-interface Elm.Interface.Atspi.Selection ()
+interface Efl.Access.Selection ()
 {
-   [[Elementary AT-SPI selection interface]]
-   eo_prefix: elm_interface_atspi_selection;
+   [[Elementary access selection interface]]
    methods {
       @property selected_children_count @protected {
          get {

@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
+#define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -4058,13 +4058,13 @@ _elm_toolbar_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Toolbar_D
 }
 
 EOLIAN int
-_elm_toolbar_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
+_elm_toolbar_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
 {
    return pd->selected_item ? 1 : 0;
 }
 
 EOLIAN Eo*
-_elm_toolbar_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_idx)
+_elm_toolbar_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_idx)
 {
    if (child_idx != 0)
      return NULL;
@@ -4073,7 +4073,7 @@ _elm_toolbar_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSE
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+_elm_toolbar_efl_access_selection_child_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
 {
    Elm_Toolbar_Item_Data *item;
    EINA_INLIST_FOREACH(pd->items, item)
@@ -4088,7 +4088,7 @@ _elm_toolbar_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+_elm_toolbar_efl_access_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
 {
    if (child_index != 0)
      return EINA_FALSE;
@@ -4102,7 +4102,7 @@ _elm_toolbar_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+_elm_toolbar_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
 {
    Elm_Toolbar_Item_Data *item;
 
@@ -4117,13 +4117,13 @@ _elm_toolbar_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd EINA_UNUSED)
+_elm_toolbar_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
+_elm_toolbar_efl_access_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
 {
    if (pd->selected_item)
      elm_toolbar_item_selected_set(pd->selected_item, EINA_FALSE);
@@ -4131,7 +4131,7 @@ _elm_toolbar_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolba
 }
 
 EOLIAN Eina_Bool
-_elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+_elm_toolbar_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
 {
    Elm_Toolbar_Item_Data *item;
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
