@@ -27,15 +27,15 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    efl::ui::Button btn(instantiate, win);
    btn.text_set("Good-Bye, World!");
-   btn.eo_cxx::efl::Gfx::size_set(120, 30);
-   btn.eo_cxx::efl::Gfx::position_set(60, 15);
+   btn.eo_cxx::efl::Gfx::size_set({120, 30});
+   btn.eo_cxx::efl::Gfx::position_set({60, 15});
    btn.visible_set(true);
 
    auto on_click = std::bind([] () { elm_exit(); });
 
    efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn, on_click);
 
-   win.eo_cxx::efl::Gfx::size_set(240, 60);
+   win.eo_cxx::efl::Gfx::size_set({240, 60});
    win.visible_set(true);
 
    elm_run();

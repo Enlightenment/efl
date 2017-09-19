@@ -19,7 +19,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl::ui::Box bx(instantiate, win);
    //bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //win.resize_object_add(bx);
-   bx.eo_cxx::efl::Gfx::size_set(300,300);
+   bx.eo_cxx::efl::Gfx::size_set({300,300});
    bx.visible_set(true);
 
    ::elm::Clock ck(instantiate, win);
@@ -53,7 +53,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bx.pack_end(ck5);
    ck5.visible_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set(500,500);
+   win.eo_cxx::efl::Gfx::size_set({500,500});
    win.visible_set(true);
 
    elm_run();

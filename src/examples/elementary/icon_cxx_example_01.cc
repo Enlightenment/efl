@@ -32,10 +32,10 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    // icon.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    //win.resize_object_add(icon);
-   icon.eo_cxx::efl::Gfx::size_set(320,320);
+   icon.eo_cxx::efl::Gfx::size_set({320,320});
    icon.visible_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set(320, 320);
+   win.eo_cxx::efl::Gfx::size_set({320, 320});
    win.visible_set(true);
 
    elm_run();
