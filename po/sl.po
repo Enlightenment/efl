@@ -417,7 +417,7 @@ msgstr "izbirnik s paleto barve"
 
 #: src/lib/elementary/elm_config.c:3766
 msgid "default:LTR"
-msgstr "privzeto:LTR"
+msgstr "default:LTR"
 
 #: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"

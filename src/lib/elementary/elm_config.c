@@ -3805,6 +3805,12 @@ _translation_init(void)
    if (_elm_config->translate)
      {
         bindtextdomain(PACKAGE, LOCALE_DIR);
+        /* TRANSLATORS: This string is special and defines if the language
+           by default is a Left To Right or Right To Left language. Most
+           languages are LTR and thus the default string is "default:LTR"
+           but if this is a right-to-left language like arabic, Farsi,
+           Hebrew, etc. then change this string to be "default:RTL"
+         */
         _elm_config->is_mirrored = !strcmp(E_("default:LTR"), "default:RTL");
      }
 
