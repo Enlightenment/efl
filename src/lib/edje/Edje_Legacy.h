@@ -2549,6 +2549,71 @@ EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Edje_O
 EAPI void edje_object_part_text_prediction_hint_set(Edje_Object *obj, const char *part, const char *prediction_hint);
 
 /**
+ * @brief Starts selecting at current cursor position
+ *
+ * @param[in] part The part name
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_begin(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Aborts any selection action on a part.
+ *
+ * @param[in] part The part name
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_abort(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Extends the current selection to the current cursor position
+ *
+ * @param[in] part The part name
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_extend(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the selection to be everything.
+ *
+ * This function selects all text of the object of the part.
+ *
+ * @param[in] part The part name
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_all(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Sets the selection to be none.
+ *
+ * This function sets the selection text to be none.
+ *
+ * @param[in] part The part name
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_part_text_select_none(const Edje_Object *obj, const char *part);
+
+/**
+ * @brief Returns the selection text of the object part.
+ *
+ * This function returns selection text of the object part.
+ *
+ * See also @ref edje_object_part_text_select_all() and
+ * @ref edje_object_part_text_select_none()
+ *
+ * @param[in] part The part name
+ *
+ * @return The text string
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_part_text_selection_get(const Edje_Object *obj, const char *part);
+
+/**
  * @brief Whether this object is playing or not.
  *
  * This property indicates whether the object is running or not. If stopped (or

@@ -886,10 +886,10 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      (obj, sd->entry_edje, "entry", _elm_entry_theme_group_get(obj), style);
 
    if (sd->sel_allow && _elm_config->desktop_entry)
-     edje_obj_part_text_select_allow_set
+     edje_object_part_text_select_allow_set
         (sd->entry_edje, "elm.text", EINA_TRUE);
    else
-     edje_obj_part_text_select_allow_set
+     edje_object_part_text_select_allow_set
         (sd->entry_edje, "elm.text", EINA_FALSE);
 
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
@@ -5449,7 +5449,7 @@ _elm_entry_select_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool a
    if (sd->sel_allow == allow) return;
    sd->sel_allow = allow;
 
-   edje_obj_part_text_select_allow_set(sd->entry_edje, "elm.text", allow);
+   edje_object_part_text_select_allow_set(sd->entry_edje, "elm.text", allow);
 }
 
 EOLIAN static Eina_Bool
