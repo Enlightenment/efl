@@ -1,7 +1,7 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
-#include "efl_ui_layout_part.eo.h"
+#include "efl_ui_layout_part_legacy.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%s@%p:%s [%d]", efl_class_name_get(pd->obj), pd->obj, pd->part, (int) pd->temp); } while(0)
 #define ELM_PART_HOOK do {} while(0)
@@ -39,8 +39,19 @@ struct _Elm_Part_Data
 
 // For any widget that has specific part handling
 
-#define ELM_PART_OVERRIDE_IMPLEMENT(TYPE) \
-   Eo *proxy = efl_add(TYPE ## _PART_CLASS, (Eo *) obj); \
+static inline Eina_Bool
+_elm_part_alias_find(const Elm_Layout_Part_Alias_Description *aliases, const char *part)
+{
+   const Elm_Layout_Part_Alias_Description *alias;
+
+   for (alias = aliases; alias && alias->alias; alias++)
+     if (eina_streq(alias->real_part, part))
+       return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+#define ELM_PART_OVERRIDE_IMPLEMENT(PART_CLASS) ({ \
+   Eo *proxy = efl_add(PART_CLASS, (Eo *) obj); \
    Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS); \
    if (pd) \
      { \
@@ -48,46 +59,56 @@ struct _Elm_Part_Data
         pd->part = eina_tmpstr_add(part); \
         pd->temp = 1; \
      } \
-   return proxy;
+   proxy; })
+
+#define ELM_PART_OVERRIDE_ONLY_ALIASES(type, TYPE, typedata, aliases) \
+   EOLIAN static Efl_Object * \
+   _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
+   { \
+      EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
+      if (_elm_part_alias_find(aliases, part)) \
+        return ELM_PART_OVERRIDE_IMPLEMENT(TYPE ## _PART_CLASS); \
+      return efl_part(efl_super(obj, MY_CLASS), part); \
+   }
 
 #define ELM_PART_OVERRIDE(type, TYPE, typedata) \
-static EOLIAN Efl_Object * \
+EOLIAN static Efl_Object * \
 _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
 { \
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
-   ELM_PART_OVERRIDE_IMPLEMENT(TYPE); \
+   return ELM_PART_OVERRIDE_IMPLEMENT(TYPE ## _PART_CLASS); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
-static EOLIAN Eina_Bool \
-_ ## type ## _part_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
+#define ELM_PART_OVERRIDE_CONTENT_SET_FULL(full, type, TYPE, typedata) \
+EOLIAN static Eina_Bool \
+_ ## full ## _efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_set(pd->obj, sd, pd->part, content)); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_GET(type, TYPE, typedata) \
-static EOLIAN Efl_Gfx * \
-_ ## type ## _part_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED) \
+#define ELM_PART_OVERRIDE_CONTENT_GET_FULL(full, type, TYPE, typedata) \
+EOLIAN static Efl_Gfx * \
+_ ## full ## _efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_get(pd->obj, sd, pd->part)); \
 }
 
-#define ELM_PART_OVERRIDE_CONTENT_UNSET(type, TYPE, typedata) \
-static EOLIAN Efl_Gfx * \
-_ ## type ## _part_efl_container_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
+#define ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(full, type, TYPE, typedata) \
+EOLIAN static Efl_Gfx * \
+_ ## full ## _efl_container_content_unset(Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _content_unset(pd->obj, sd, pd->part)); \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, typedata) \
-static EOLIAN void \
-_ ## type ## _part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
+#define ELM_PART_OVERRIDE_TEXT_SET_FULL(full, type, TYPE, typedata) \
+EOLIAN static void \
+_ ## full ## _efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
@@ -95,16 +116,31 @@ _ ## type ## _part_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char 
    ELM_PART_RETURN_VOID; \
 }
 
-#define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, typedata) \
-static EOLIAN const char *\
-_ ## type ## _part_efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
+#define ELM_PART_OVERRIDE_TEXT_GET_FULL(full, type, TYPE, typedata) \
+EOLIAN static const char *\
+_ ## full ## _efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
 { \
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
    ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, sd, pd->part)); \
 }
 
-#define EFL_TEXT_PART_DEFAULT_IMPLEMENT(type, Type) \
+#define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_CONTENT_GET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_CONTENT_GET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_CONTENT_UNSET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_TEXT_SET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_SET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_GET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_TEXT_DEFAULT_IMPLEMENT(type, Type) \
 EOLIAN static void \
 _ ## type ## _efl_text_text_set(Eo *obj, Type *pd EINA_UNUSED, const char *text) \
 { \

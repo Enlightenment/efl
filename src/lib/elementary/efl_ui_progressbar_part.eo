@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar.Part (Efl.Ui.Layout.Part, Efl.Ui.Range)
+class Efl.Ui.Progressbar.Part (Efl.Ui.Layout.Part_Content, Efl.Ui.Range)
 {
    [[Elementary progressbar internal part class]]
    data: null;

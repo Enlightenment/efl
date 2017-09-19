@@ -9,8 +9,6 @@
 
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
-
-#include "efl_ui_layout_part.eo.h"
 #include "elm_part_helper.h"
 
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
@@ -1246,7 +1244,7 @@ _efl_ui_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Efl_Ui_Layout
    return eina_list_count(sd->subs);
 }
 
-EOLIAN static Eina_Bool
+static Eina_Bool
 _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -1321,7 +1319,7 @@ _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const
    return EINA_TRUE;
 }
 
-EOLIAN static const char*
+static const char*
 _efl_ui_layout_text_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -2489,7 +2487,13 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
    if ((type == EDJE_PART_TYPE_BOX) || (type == EDJE_PART_TYPE_TABLE))
      return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
 
-   ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT);
+   if ((type == EDJE_PART_TYPE_TEXT) || (type == EDJE_PART_TYPE_TEXTBLOCK))
+     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS);
+
+   if (type == EDJE_PART_TYPE_SWALLOW)
+     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS);
+
+   return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS);
 }
 
 static const char *
@@ -2509,6 +2513,8 @@ _efl_ui_layout_default_text_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_
      return NULL;
    return part;
 }
+
+/* Efl.Ui.Layout.Part (common) */
 
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, const char *cursor)
@@ -2558,12 +2564,26 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(Eo *obj, void 
    ELM_PART_RETURN_VAL(!_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part));
 }
 
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_SET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
-ELM_PART_OVERRIDE_TEXT_GET(efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+/* Efl.Ui.Layout.Part_Content */
+ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
+/* Efl.Ui.Layout.Part_Text */
+ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
+/* Efl.Ui.Layout.Part_Legacy */
+ELM_PART_OVERRIDE_CONTENT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+
 #include "efl_ui_layout_part.eo.c"
+#include "efl_ui_layout_part_content.eo.c"
+#include "efl_ui_layout_part_text.eo.c"
+#include "efl_ui_layout_part_legacy.eo.c"
 
 /* Efl.Part end */
 

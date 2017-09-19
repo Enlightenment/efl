@@ -1,6 +1,6 @@
-class Elm.Popup.Part (Efl.Ui.Layout.Part_Legacy)
+class Efl.Ui.Layout.Part_Legacy (Efl.Ui.Layout.Part, Efl.Container, Efl.Text)
 {
-   [[Elementary popup internal part class]]
+   [[Elementary layout internal part class]]
    data: null;
    implements {
       Efl.Container.content { get; set; }

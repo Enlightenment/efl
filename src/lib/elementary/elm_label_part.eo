@@ -1,4 +1,4 @@
-class Elm_Label.Part (Efl.Ui.Layout.Part, Efl.Text)
+class Elm_Label.Part (Efl.Ui.Layout.Part_Legacy)
 {
    [[Elementary button internal part class]]
    data: null;

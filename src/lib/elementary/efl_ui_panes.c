@@ -531,7 +531,7 @@ _efl_ui_panes_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_panes, EFL_UI_PANES, Efl_Ui_Panes_Data)
+ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_panes, EFL_UI_PANES, Efl_Ui_Panes_Data, _content_aliases)
 
 EOLIAN static void
 _efl_ui_panes_part_hint_min_allow_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool allow)
@@ -613,11 +613,11 @@ _efl_ui_panes_part_split_ratio_min_set(Eo *obj, void *_pd EINA_UNUSED, double ra
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX);
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
 /* Legacy APIs */

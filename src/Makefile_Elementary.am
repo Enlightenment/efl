@@ -98,7 +98,10 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_grid_static.eo \
 	lib/elementary/efl_ui_layout_part.eo \
 	lib/elementary/efl_ui_layout_part_box.eo \
+	lib/elementary/efl_ui_layout_part_content.eo \
+	lib/elementary/efl_ui_layout_part_text.eo \
 	lib/elementary/efl_ui_layout_part_table.eo \
+	lib/elementary/efl_ui_layout_part_legacy.eo \
 	lib/elementary/efl_ui_button_part.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
 	lib/elementary/efl_ui_panes_part.eo \

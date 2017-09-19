@@ -9,6 +9,7 @@
 #include "elm_priv.h"
 #include "efl_ui_widget_frame.h"
 #include "elm_widget_layout.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_FRAME_CLASS
 #define MY_CLASS_PFX efl_ui_frame
@@ -198,18 +199,6 @@ _efl_ui_frame_efl_object_constructor(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_ui_frame_efl_text_text_set(Eo *obj, Efl_Ui_Frame_Data *pd EINA_UNUSED, const char *text)
-{
-   efl_text_set(efl_part(obj, _text_aliases[0].real_part), text);
-}
-
-EOLIAN static const char *
-_efl_ui_frame_efl_text_text_get(Eo *obj, Efl_Ui_Frame_Data *pd EINA_UNUSED)
-{
-   return efl_text_get(efl_part(obj, _text_aliases[0].real_part));
-}
-
-EOLIAN static void
 _efl_ui_frame_autocollapse_set(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *sd, Eina_Bool autocollapse)
 {
 
@@ -266,6 +255,8 @@ _efl_ui_frame_class_constructor(Efl_Class *klass)
 {
       evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 
 /* Internal EO APIs and hidden overrides */
 

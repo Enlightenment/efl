@@ -6638,7 +6638,7 @@ elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source
 
 /* Efl.Part implementation */
 
-static EOLIAN Efl_Object *
+EOLIAN static Efl_Object *
 _elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
 {
    Elm_Part_Data *pd;
@@ -6659,7 +6659,7 @@ _elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, 
    return proxy;
 }
 
-static EOLIAN void \
+EOLIAN static void \
 _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 {
    ELM_PART_HOOK;
