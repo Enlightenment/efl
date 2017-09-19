@@ -29,12 +29,16 @@ _outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 }
 
 static Eina_Bool
-_outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb)
+_outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb, int w, int h)
 {
    ofb->fb =
-     ecore_drm2_fb_create(ob->dev, ob->w, ob->h,
+     ecore_drm2_fb_create(ob->dev, w, h,
                           ob->depth, ob->bpp, ob->format);
-   if (!ofb->fb) return EINA_FALSE;
+   if (!ofb->fb)
+     {
+        WRN("Failed To Create FB: %d %d", w, h);
+        return EINA_FALSE;
+     }
 
    ofb->age = 0;
    ofb->drawn = EINA_FALSE;
@@ -59,7 +63,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
    Outbuf *ob;
    char *num;
-   int i = 0;
+   int i = 0, fw, fh;
 
    ob = calloc(1, sizeof(Outbuf));
    if (!ob) return NULL;
@@ -86,10 +90,21 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
         else if (ob->priv.num > 4) ob->priv.num = 4;
      }
 
+   if ((ob->rotation == 0) || (ob->rotation == 180))
+     {
+        fw = w;
+        fh = h;
+     }
+   else if ((ob->rotation == 90) || (ob->rotation == 270))
+     {
+        fw = h;
+        fh = w;
+     }
+
    if ((!w) || (!h)) return ob;
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i])))
+        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i]), fw, fh))
           {
              WRN("Failed to create framebuffer %d", i);
              continue;
@@ -103,6 +118,31 @@ void
 _outbuf_free(Outbuf *ob)
 {
    int i = 0;
+
+   while (ob->priv.pending)
+     {
+        RGBA_Image *img;
+        Eina_Rectangle *rect;
+
+        img = ob->priv.pending->data;
+        ob->priv.pending =
+          eina_list_remove_list(ob->priv.pending, ob->priv.pending);
+
+        rect = img->extended_info;
+
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(&img->cache_entry);
+        else
+#endif
+          evas_cache_image_drop(&img->cache_entry);
+
+        eina_rectangle_free(rect);
+     }
+
+   /* TODO: idle flush */
+
+   _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
 
    for (i = 0; i < ob->priv.num; i++)
      _outbuf_fb_destroy(&ob->priv.ofb[i]);
@@ -119,7 +159,7 @@ _outbuf_rotation_get(Outbuf *ob)
 void
 _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 {
-   int i = 0;
+   int i = 0, fw, fh;
    unsigned int format = DRM_FORMAT_ARGB8888;
 
    switch (depth)
@@ -165,30 +205,37 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
        (ob->depth == depth) && (ob->format == format))
      return;
 
+   ob->w = w;
+   ob->h = h;
    ob->depth = depth;
    ob->format = format;
    ob->rotation = rotation;
 
-   ob->w = w;
-   ob->h = h;
-   if ((ob->rotation == 90) || (ob->rotation == 270))
-     {
-        ob->w = h;
-        ob->h = w;
-     }
-
    for (i = 0; i < ob->priv.num; i++)
      _outbuf_fb_destroy(&ob->priv.ofb[i]);
+
+   if ((ob->rotation == 0) || (ob->rotation == 180))
+     {
+        fw = w;
+        fh = h;
+     }
+   else if ((ob->rotation == 90) || (ob->rotation == 270))
+     {
+        fw = h;
+        fh = w;
+     }
 
    if ((!w) || (!h)) return;
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i])))
+        if (!_outbuf_fb_create(ob, &(ob->priv.ofb[i]), fw, fh))
           {
              WRN("Failed to create framebuffer %d", i);
              continue;
           }
      }
+
+   /* TODO: idle flush */
 }
 
 static Outbuf_Fb *
@@ -262,51 +309,47 @@ void *
 _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *img = NULL;
+   Eina_Rectangle *rect;
 
    if ((w <= 0) || (h <= 0)) return NULL;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, ob->w, ob->h);
 
-   if (ob->rotation == 0) // && (ob->depth == 32))
+   if (!(rect = eina_rectangle_new(x, y, w, h)))
+     return NULL;
+
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     img = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
+   else
+#endif
+     img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+
+   if (!img)
      {
-        Eina_Rectangle *rect;
-
-        if (!(rect = eina_rectangle_new(x, y, w, h)))
-          return NULL;
-
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          img = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
-        else
-#endif
-          img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-
-        if (!img)
-          {
-             eina_rectangle_free(rect);
-             return NULL;
-          }
-
-        img->cache_entry.flags.alpha = ob->alpha;
-
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_surface_alloc(&img->cache_entry, w, h);
-        else
-#endif
-          evas_cache_image_surface_alloc(&img->cache_entry, w, h);
-
-        img->extended_info = rect;
-
-        if (cx) *cx = 0;
-        if (cy) *cy = 0;
-        if (cw) *cw = w;
-        if (ch) *ch = h;
-
-        /* add this cached image data to pending writes */
-        ob->priv.pending = 
-          eina_list_append(ob->priv.pending, img);
+        eina_rectangle_free(rect);
+        return NULL;
      }
+
+   img->cache_entry.flags.alpha = ob->alpha;
+
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     evas_cache2_image_surface_alloc(&img->cache_entry, w, h);
+   else
+#endif
+     evas_cache_image_surface_alloc(&img->cache_entry, w, h);
+
+   img->extended_info = rect;
+
+   if (cx) *cx = 0;
+   if (cy) *cy = 0;
+   if (cw) *cw = w;
+   if (ch) *ch = h;
+
+   /* add this cached image data to pending writes */
+   ob->priv.pending =
+     eina_list_append(ob->priv.pending, img);
 
    return img;
 }
