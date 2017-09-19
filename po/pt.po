@@ -418,7 +418,7 @@ msgstr "item do seletor de cor"
 
 #: src/lib/elementary/elm_config.c:3766
 msgid "default:LTR"
-msgstr "padrão: LTR"
+msgstr "default:LTR"
 
 #: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"

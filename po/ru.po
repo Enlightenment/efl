@@ -419,7 +419,7 @@ msgstr "элемент выбора цвета палитры"
 
 #: src/lib/elementary/elm_config.c:3766
 msgid "default:LTR"
-msgstr "по умолчанию: ЛНП"
+msgstr "default:LTR"
 
 #: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"

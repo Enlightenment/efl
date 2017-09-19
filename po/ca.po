@@ -419,7 +419,7 @@ msgstr "paleta de selecció de color"
 
 #: src/lib/elementary/elm_config.c:3766
 msgid "default:LTR"
-msgstr "Per defecte: LTR"
+msgstr "default:LTR"
 
 #: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
