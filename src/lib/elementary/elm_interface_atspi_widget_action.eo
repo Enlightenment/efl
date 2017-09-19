@@ -1,6 +1,6 @@
 type Elm_Atspi_Action: __undefined_type; [[Elementary AT-SPI action type]]
 
-mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
+mixin Elm.Interface.Atspi_Widget_Action (Efl.Access.Action)
 {
    [[AT-SPI widget action mixin]]
    eo_prefix: elm_interface_atspi_widget_action;
@@ -16,10 +16,10 @@ mixin Elm.Interface.Atspi_Widget_Action (Elm.Interface.Atspi_Action)
       }
    }
    implements {
-      Elm.Interface.Atspi_Action.action_do;
-      Elm.Interface.Atspi_Action.keybinding_get;
-      Elm.Interface.Atspi_Action.name { get; }
-      Elm.Interface.Atspi_Action.description { get; set; }
-      Elm.Interface.Atspi_Action.actions { get; }
+      Efl.Access.Action.action_do;
+      Efl.Access.Action.keybinding_get;
+      Efl.Access.Action.name { get; }
+      Efl.Access.Action.description { get; set; }
+      Efl.Access.Action.actions { get; }
    }
 }

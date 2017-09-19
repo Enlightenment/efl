@@ -1,7 +1,6 @@
-mixin Elm.Interface.Atspi_Action ()
+mixin Efl.Access.Action ()
 {
-   [[AT-SPI action mixin]]
-   eo_prefix: elm_interface_atspi_action;
+   [[Accessible action mixin]]
    data: null;
    methods {
       @property name @protected @pure_virtual {
