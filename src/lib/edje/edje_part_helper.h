@@ -98,31 +98,34 @@ Eo * \
 _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp) \
 { \
    Efl_Canvas_Layout_Internal_Data *pd; \
-   Eo *proxy; \
+   Eo *proxy = PROXY_STATIC_VAR(type); \
    \
-   pd = PROXY_STATIC_VAR(type) ? efl_data_scope_get(PROXY_STATIC_VAR(type), EFL_CANVAS_LAYOUT_INTERNAL_CLASS) : NULL; \
+   pd = proxy ? efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_INTERNAL_CLASS) : NULL; \
    if (!pd) \
      { \
-        if (PROXY_STATIC_VAR(type)) \
+        if (EINA_UNLIKELY(PROXY_STATIC_VAR(type) != NULL)) \
           ERR("Found invalid handle for efl_part. Reset."); \
-        PROXY_STATIC_VAR(type) = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
+        proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
         goto end ; \
      } \
    \
    if (EINA_UNLIKELY(pd->in_use)) \
      { \
         /* if (!pd->in_call) _part_reuse_error(pd); */ \
-        PROXY_STATIC_VAR(type) = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
+        proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
      } \
    else \
      { \
-        _edje_real_part_set(PROXY_STATIC_VAR(type), ed, rp, rp->part->name); \
+        _edje_real_part_set(proxy, ed, rp, rp->part->name); \
      } \
    \
 end: \
-   proxy = PROXY_STATIC_VAR(type); \
    __VA_ARGS__; \
-   if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+   if (!no_del_cb) \
+     { \
+        PROXY_STATIC_VAR(type) = proxy; \
+        efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+     } \
    return proxy; \
 }
 
