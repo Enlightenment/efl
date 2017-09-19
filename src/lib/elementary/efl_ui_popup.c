@@ -47,10 +47,7 @@ _calc_align(Evas_Object *obj)
    Evas_Coord pw, ph;
    evas_object_geometry_get(obj, NULL, NULL, &pw, &ph);
 
-   Efl_Ui_Popup_Align align;
-   align = efl_ui_popup_align_get(obj);
-
-   switch (align)
+   switch (pd->align)
      {
         case EFL_UI_POPUP_ALIGN_CENTER:
            efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(x + ((w - pw ) / 2), y + ((h - ph) / 2)));
