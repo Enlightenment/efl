@@ -56,6 +56,8 @@ struct _Outbuf
    int w, h, bpp, rotation;
    unsigned int depth, format;
 
+   Evas_Engine_Info_Drm *info;
+
    struct
      {
         int num;
