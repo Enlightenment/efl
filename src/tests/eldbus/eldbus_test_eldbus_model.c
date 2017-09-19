@@ -131,7 +131,7 @@ efl_model_nth_child_get(Efl_Model *efl_model, unsigned int n)
 Efl_Model *
 efl_model_first_child_get(Efl_Model *efl_model)
 {
-   return efl_model_nth_child_get(efl_model, 1);
+   return efl_model_nth_child_get(efl_model, 0);
 }
 
 void
@@ -243,7 +243,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
 
    // Test slice first child
    Eo *child = NULL;
-   future = efl_model_children_slice_get(efl_model, 1, 1);
+   future = efl_model_children_slice_get(efl_model, 0, 1);
    efl_ref(future);
    accessor = efl_model_future_then(future);
    ck_assert_ptr_ne(NULL, accessor);
@@ -256,7 +256,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    efl_unref(future);
 
    // Test slice last child
-   future = efl_model_children_slice_get(efl_model, count, 1);
+   future = efl_model_children_slice_get(efl_model, count - 1, 1);
    efl_ref(future);
    accessor = efl_model_future_then(future);
    ck_assert_ptr_ne(NULL, accessor);
@@ -269,7 +269,7 @@ check_efl_model_children_slice_get(Efl_Model *efl_model)
    efl_unref(future);
 
    // Test slice nonexistent element
-   future = efl_model_children_slice_get(efl_model, count + 1, 1);
+   future = efl_model_children_slice_get(efl_model, count, 1);
    efl_ref(future);
    ck_assert_ptr_ne(NULL, future);
    accessor = efl_model_future_then(future);
