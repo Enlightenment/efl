@@ -1918,7 +1918,8 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
         if ((point->state == EVAS_TOUCH_POINT_DOWN) ||
-            (point->state == EVAS_TOUCH_POINT_MOVE))
+            (point->state == EVAS_TOUCH_POINT_MOVE) ||
+            (point->state == EVAS_TOUCH_POINT_STILL))
           {
              ev->tool = point->id;
              ev->cur.x = point->x;
