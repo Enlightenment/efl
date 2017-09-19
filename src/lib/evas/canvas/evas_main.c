@@ -225,6 +225,8 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
+   e->gesture_manager = efl_add(EFL_GESTURE_MANAGER_CLASS, eo_obj);
+
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
                        ((1024 * sizeof (void*)) - sizeof (E->Array)) / sizeof (void*));
@@ -294,6 +296,9 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    _evas_post_event_callback_free(eo_e);
    _evas_canvas_event_shutdown(eo_e, e);
+
+   efl_del(e->gesture_manager);
+   e->gesture_manager = NULL;
 
    del = EINA_TRUE;
    e->walking_list++;
@@ -1247,7 +1252,7 @@ _evas_pointer_data_remove(Evas_Public_Data *edata, Efl_Input_Device *pointer)
    Evas_Pointer_Seat *pseat;
    Eo *seat;
 
-   seat = efl_input_device_seat_get(pointer);   
+   seat = efl_input_device_seat_get(pointer);
    EINA_INLIST_FOREACH(edata->seats, pseat)
      {
         if (pseat->seat != seat) continue;
