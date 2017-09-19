@@ -930,13 +930,6 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_theme_object_set
      (obj, sd->entry_edje, "efl_ui_text", _efl_ui_text_theme_group_get(obj), style);
 
-   if (sd->sel_allow && _elm_config->desktop_entry)
-     edje_obj_part_text_select_allow_set
-        (sd->entry_edje, "elm.text", EINA_TRUE);
-   else
-     edje_obj_part_text_select_allow_set
-        (sd->entry_edje, "elm.text", EINA_FALSE);
-
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
 
