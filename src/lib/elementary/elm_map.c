@@ -1423,8 +1423,9 @@ _region_max_min_get(Eina_List *overlays,
    double max_lon = -180, min_lon = 180;
    double max_lat = -90, min_lat = 90;
    Elm_Map_Overlay *overlay;
+   Eina_List *l;
 
-   EINA_LIST_FREE(overlays, overlay)
+   EINA_LIST_FOREACH(overlays, l, overlay)
      {
         double lon, lat;
 

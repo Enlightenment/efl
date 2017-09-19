@@ -97,6 +97,26 @@ _box_get(Evas_Object *obj, Overlay_Data *data, Elm_Map_Overlay *ovl)
    return bx;
 }
 
+static void
+_overlays_show(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Eina_List *members = elm_map_overlay_group_members_get(data);
+   elm_map_overlays_show(members);
+}
+
+static Evas_Object *
+_btn_get(Evas_Object *obj, Elm_Map_Overlay *ovl)
+{
+   Evas_Object *btn;
+
+   btn = elm_button_add(obj);
+   elm_object_text_set(btn, "Show");
+   evas_object_smart_callback_add(btn, "clicked", _overlays_show, ovl);
+   evas_object_show(btn);
+
+   return btn;
+}
+
 static Evas_Object *
 _label_get(Evas_Object *obj)
 {
@@ -956,6 +976,8 @@ _overlay_cb(void *data EINA_UNUSED, Evas_Object *map, void *ev)
                 elm_map_overlay_bubble_content_append(bubble_img,
                                                       _box_get(map, od, memb));
           }
+        elm_map_overlay_bubble_content_append(bubble_img,
+                                              _btn_get(map, overlay));
       }
      else
      {
