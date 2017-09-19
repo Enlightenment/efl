@@ -218,17 +218,75 @@ _drm_free(Ecore_Evas *ee)
 }
 
 static void
-_drm_rotation_do(Ecore_Evas *ee, int rotation, int resize EINA_UNUSED)
+_drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_Drm *einfo;
+   int diff;
 
    if (ee->rotation == rotation) return;
-   ee->rotation = rotation;
+
    einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
+
    einfo->info.rotation = rotation;
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+
+   diff = ee->rotation - rotation;
+   if (diff < 0) diff = -diff;
+
+   if (diff != 180)
+     {
+        if (!resize)
+          {
+             int ww, hh;
+
+             if (ECORE_EVAS_PORTRAIT(ee))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
+
+             ww = ee->h;
+             hh = ee->w;
+             ee->w = ww;
+             ee->h = hh;
+             ee->req.w = ww;
+             ee->req.h = hh;
+          }
+        else
+          {
+             if ((rotation == 0) || (rotation == 180))
+               {
+                  evas_output_size_set(ee->evas, ee->w, ee->h);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+               }
+             else
+               {
+                  evas_output_size_set(ee->evas, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+               }
+
+             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+             if (ECORE_EVAS_PORTRAIT(ee))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+          }
+
+        ee->rotation = rotation;
+     }
+   else
+     {
+        ee->rotation = rotation;
+
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+        if (ECORE_EVAS_PORTRAIT(ee))
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+     }
 }
 
 static void
