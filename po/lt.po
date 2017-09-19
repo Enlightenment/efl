@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#: src/lib/elementary/elm_config.c:3749
+#: src/lib/elementary/elm_config.c:3791
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-08-10 08:04+0900\n"
+"POT-Creation-Date: 2017-09-19 16:15+0900\n"
 "PO-Revision-Date: 2014-02-21 22:38+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
@@ -239,70 +239,70 @@ msgstr "Paveikslėliai"
 msgid "Videos"
 msgstr "Video"
 
-#: src/lib/elementary/elc_fileselector.c:1919
+#: src/lib/elementary/elc_fileselector.c:1905
 msgid "Up"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:1933
+#: src/lib/elementary/elc_fileselector.c:1919
 msgid "Home"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:1952
+#: src/lib/elementary/elc_fileselector.c:1938
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2246
+#: src/lib/elementary/elc_fileselector.c:2232
 msgid "OK"
 msgstr "Gerai"
 
-#: src/lib/elementary/elc_fileselector.c:2256
-#: src/lib/elementary/elm_entry.c:1735 src/lib/elementary/elm_entry.c:1760
+#: src/lib/elementary/elc_fileselector.c:2242
+#: src/lib/elementary/elm_entry.c:1719 src/lib/elementary/elm_entry.c:1744
 msgid "Cancel"
 msgstr "Atsisakyti"
 
-#: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:279
-#: src/lib/elementary/efl_ui_check.c:213 src/lib/elementary/elm_gengrid.c:1470
-#: src/lib/elementary/elm_genlist.c:1738 src/lib/elementary/elm_list.c:2176
-#: src/lib/elementary/efl_ui_radio.c:215
-#: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1020 src/lib/elementary/elm_toolbar.c:2347
+#: src/lib/elementary/elc_hoversel.c:436 src/lib/elementary/efl_ui_button.c:263
+#: src/lib/elementary/efl_ui_check.c:197 src/lib/elementary/elm_gengrid.c:1470
+#: src/lib/elementary/elm_genlist.c:1741 src/lib/elementary/elm_list.c:2155
+#: src/lib/elementary/efl_ui_radio.c:199
+#: src/lib/elementary/elm_segment_control.c:526
+#: src/lib/elementary/elm_spinner.c:1020 src/lib/elementary/elm_toolbar.c:2335
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elementary/elc_hoversel.c:640
+#: src/lib/elementary/elc_hoversel.c:638
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:711
+#: src/lib/elementary/elc_multibuttonentry.c:720
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:733
+#: src/lib/elementary/elc_multibuttonentry.c:742
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:1624
+#: src/lib/elementary/elc_multibuttonentry.c:1626
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elementary/elc_naviframe.c:461
+#: src/lib/elementary/elc_naviframe.c:467
 msgid "Title"
 msgstr ""
 
-#: src/lib/elementary/elc_naviframe.c:1020
-#: src/lib/elementary/elc_naviframe.c:1238
+#: src/lib/elementary/elc_naviframe.c:1033
+#: src/lib/elementary/elc_naviframe.c:1251
 msgid "Back"
 msgstr "Atgal"
 
-#: src/lib/elementary/elc_naviframe.c:1336
+#: src/lib/elementary/elc_naviframe.c:1349
 msgid "Next"
 msgstr ""
 
-#: src/lib/elementary/elc_popup.c:310 src/lib/elementary/elc_popup.c:975
+#: src/lib/elementary/elc_popup.c:308 src/lib/elementary/elc_popup.c:975
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:1051
+#: src/lib/elementary/elc_popup.c:318 src/lib/elementary/elc_popup.c:1051
 msgid "Popup Body Text"
 msgstr ""
 
@@ -314,7 +314,7 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_button.c:304
+#: src/lib/elementary/efl_ui_button.c:288
 msgid "Button"
 msgstr "Mygtukas"
 
@@ -358,21 +358,21 @@ msgstr ""
 msgid "calendar year"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_check.c:65 src/lib/elementary/efl_ui_check.c:226
-#: src/lib/elementary/efl_ui_radio.c:119 src/lib/elementary/efl_ui_radio.c:216
+#: src/lib/elementary/efl_ui_check.c:65 src/lib/elementary/efl_ui_check.c:210
+#: src/lib/elementary/efl_ui_radio.c:119 src/lib/elementary/efl_ui_radio.c:200
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:238
-#: src/lib/elementary/efl_ui_radio.c:218
+#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:222
+#: src/lib/elementary/efl_ui_radio.c:202
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_check.c:222 src/lib/elementary/efl_ui_check.c:235
+#: src/lib/elementary/efl_ui_check.c:206 src/lib/elementary/efl_ui_check.c:219
 msgid "State"
 msgstr "Būsena"
 
-#: src/lib/elementary/efl_ui_check.c:316
+#: src/lib/elementary/efl_ui_check.c:300
 msgid "Check"
 msgstr ""
 
@@ -416,35 +416,41 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elementary/elm_config.c:3766
+#. TRANSLATORS: This string is special and defines if the language
+#. by default is a Left To Right or Right To Left language. Most
+#. languages are LTR and thus the default string is "default:LTR"
+#. but if this is a right-to-left language like arabic, Farsi,
+#. Hebrew, etc. then change this string to be "default:RTL"
+#.
+#: src/lib/elementary/elm_config.c:3814
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:403
+#: src/lib/elementary/elm_dayselector.c:401
 msgid "day selector item"
 msgstr ""
 
-#: src/lib/elementary/elm_diskselector.c:702
+#: src/lib/elementary/elm_diskselector.c:700
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elementary/elm_entry.c:1725
+#: src/lib/elementary/elm_entry.c:1709
 msgid "Cut"
 msgstr "Iškirpti"
 
-#: src/lib/elementary/elm_entry.c:1728
+#: src/lib/elementary/elm_entry.c:1712
 msgid "Copy"
 msgstr "Kopijuoti"
 
-#: src/lib/elementary/elm_entry.c:1732 src/lib/elementary/elm_entry.c:1754
+#: src/lib/elementary/elm_entry.c:1716 src/lib/elementary/elm_entry.c:1738
 msgid "Paste"
 msgstr "Įdėti"
 
-#: src/lib/elementary/elm_entry.c:1747
+#: src/lib/elementary/elm_entry.c:1731
 msgid "Select"
 msgstr "Pasirinkti"
 
-#: src/lib/elementary/elm_entry.c:3842
+#: src/lib/elementary/elm_entry.c:3826
 msgid "Entry"
 msgstr ""
 
@@ -452,11 +458,11 @@ msgstr ""
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elementary/elm_index.c:102
+#: src/lib/elementary/elm_index.c:95
 msgid "Index"
 msgstr ""
 
-#: src/lib/elementary/elm_index.c:130
+#: src/lib/elementary/elm_index.c:123
 msgid "Index Item"
 msgstr ""
 
@@ -484,28 +490,28 @@ msgstr ""
 msgid "panel button"
 msgstr "skydelio mygtukas"
 
-#: src/lib/elementary/efl_ui_progressbar.c:314
+#: src/lib/elementary/efl_ui_progressbar.c:328
 msgid "progressbar"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_radio.c:244
+#: src/lib/elementary/efl_ui_radio.c:228
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2349
+#: src/lib/elementary/elm_segment_control.c:529
+#: src/lib/elementary/elm_toolbar.c:2337
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elementary/elm_segment_control.c:534
+#: src/lib/elementary/elm_segment_control.c:531
 msgid "State: Unselected"
 msgstr ""
 
-#: src/lib/elementary/elm_segment_control.c:548
+#: src/lib/elementary/elm_segment_control.c:545
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elementary/efl_ui_slider.c:1199
+#: src/lib/elementary/efl_ui_slider.c:1189
 msgid "slider"
 msgstr "šliaužiklis"
 
@@ -533,22 +539,22 @@ msgstr ""
 msgid "spinner text"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:1804 src/lib/elementary/elm_toolbar.c:2411
+#: src/lib/elementary/elm_toolbar.c:1792 src/lib/elementary/elm_toolbar.c:2399
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elementary/elm_toolbar.c:2345
+#: src/lib/elementary/elm_toolbar.c:2333
 msgid "Separator"
 msgstr "Skirtukas"
 
-#: src/lib/elementary/elm_toolbar.c:2351
+#: src/lib/elementary/elm_toolbar.c:2339
 msgid "Has menu"
 msgstr "Turi meniu"
 
-#: src/lib/elementary/elm_toolbar.c:2406
+#: src/lib/elementary/elm_toolbar.c:2394
 msgid "Unselected"
 msgstr "Nepasirinkta(s)"
 
-#: src/lib/elementary/elm_toolbar.c:2423
+#: src/lib/elementary/elm_toolbar.c:2411
 msgid "Toolbar Item"
 msgstr ""
