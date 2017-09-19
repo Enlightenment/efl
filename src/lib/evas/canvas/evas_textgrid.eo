@@ -42,9 +42,9 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
             [[Set the size of the textgrid object.
 
               This function sets the number of lines $h and the number
-              of columns $w to the textgrid object $obj. If
-              $w or $h are less or equal than 0, this
-              functiond does nothing.
+              of columns $w for the textgrid object $obj. If
+              $w or $h are less than or equal to 0, this
+              function does nothing.
 
               @since 1.7]]
          }
@@ -54,7 +54,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
               This function retrieves the number of lines in the buffer
               $h and the number of columns in the buffer $w of
               the textgrid object $obj. $w or $h can be
-              $null. On error, their value is 0.
+              $null. On error, they are set to 0.
 
               @since 1.7]]
          }
@@ -68,10 +68,10 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
             [[Retrieve the size of a cell of the given textgrid object in pixels.
 
               This functions retrieves the width and height, in pixels, of a cell
-              of the textgrid object $obj and store them respectively in the
-              buffers $width and $height. Their value depends on the
-              monospace font used for the textgrid object, as well as the
-              style. $width and $height can be $null. On error, they are
+              of the textgrid object $obj and stores them respectively in the
+              buffers $width and $height. Their values depend on the
+              monospace font and style used for the textgrid object.
+              $width and $height can be $null. On error, they are
               set to 0.
 
               See also @Efl.Text.Properties.font.set and @.supported_font_styles.set
@@ -79,9 +79,8 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
               @since 1.7]]
          }
          values {
-            width: int; [[A pointer to the location to store the width in pixels of a cell.]]
-            height: int; [[A pointer to the location to store the height in
-                           pixels of a cell.]]
+            width: int; [[A pointer to the location to store the cell's width in pixels.]]
+            height: int; [[A pointer to the location to store the cell's height in pixels.]]
          }
       }
       update_add {
@@ -105,7 +104,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
           *   evas_object_textgrid_update_add(obj, 0, row, width, 1);
           * @endcode
           */
-   
+
          params {
             @in x: int; [[The rect region of cells top-left x (column).]]
             @in y: int; [[The rect region of cells top-left y (row).]]
@@ -165,7 +164,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties)
 
          params {
             @in pal: Evas.Textgrid.Palette; [[The type of the palette to set the color.]]
-            @in idx: int; [[The index of the paletter to which the color is stored.]]
+            @in idx: int; [[The index of the palette to which the color is stored.]]
             @in r: int; [[The red component of the color.]]
             @in g: int; [[The green component of the color.]]
             @in b: int; [[The blue component of the color.]]
