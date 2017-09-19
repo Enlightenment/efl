@@ -1557,6 +1557,7 @@ _blank_fallback_handler(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsi
    output->fallback_usec = usec;
    output->fallback_sec = sec;
 }
+
 static int
 _blanktime_fallback(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec)
 {
