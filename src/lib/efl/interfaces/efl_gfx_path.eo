@@ -259,7 +259,7 @@ mixin Efl.Gfx.Path
         [[Creates intermediary path part-way between two paths
 
          Sets the points of the $obj as the linear interpolation of the points
-         in the $from and to $paths.  The path's x,y position and control
+         in the $from and $to paths.  The path's x,y position and control
          point coordinates are likewise interpolated.
 
          The $from and $to paths must not already have equivalent points,
