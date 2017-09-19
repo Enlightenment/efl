@@ -9,7 +9,7 @@ bx = new efl.Efl.Ui.Box(win);
 bx.setHintWeight(1.0, 1.0);
 win.setContent(bx);
 bx.setVisible(true);
-bx.setOrientation(efl.Efl.Orient.VERTICAL);
+bx.setDirection(efl.Efl.Dir.VERTICAL);
 
 ck = new efl.Elm.Clock(win);
 bx.packEnd(ck);

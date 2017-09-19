@@ -255,12 +255,12 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_
    ELM_PART_RETURN_VAL(efl_pack_index_get(pack, subobj));
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_layout_part_box_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_layout_part_box_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_ORIENT_NONE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_DIR_DEFAULT);
 
-   ELM_PART_RETURN_VAL(efl_orientation_get(efl_part(wd->resize_obj, pd->part)));
+   ELM_PART_RETURN_VAL(efl_ui_direction_get(efl_part(wd->resize_obj, pd->part)));
 }
 
 
