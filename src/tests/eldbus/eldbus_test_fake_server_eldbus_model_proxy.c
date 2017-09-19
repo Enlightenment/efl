@@ -123,9 +123,9 @@ END_TEST
 
 START_TEST(children_slice_get)
 {
-   Eldbus_Model_Arguments *method1 = efl_model_nth_child_get(fake_server_proxy, 1);
-   Eldbus_Model_Arguments *method2 = efl_model_nth_child_get(fake_server_proxy, 2);
-   Eldbus_Model_Arguments *signal1 = efl_model_nth_child_get(fake_server_proxy, 3);
+   Eldbus_Model_Arguments *method1 = efl_model_nth_child_get(fake_server_proxy, 0);
+   Eldbus_Model_Arguments *method2 = efl_model_nth_child_get(fake_server_proxy, 1);
+   Eldbus_Model_Arguments *signal1 = efl_model_nth_child_get(fake_server_proxy, 2);
 
    const char *actual_method1_name = eldbus_model_arguments_name_get(method1);
    const char *actual_method2_name = eldbus_model_arguments_name_get(method2);
