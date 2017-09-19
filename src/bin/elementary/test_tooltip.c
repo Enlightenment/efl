@@ -231,8 +231,8 @@ _tt_orient_text_replace(void *data       EINA_UNUSED,
      {
       case ELM_TOOLTIP_ORIENT_TOP_LEFT:
         {
-           elm_object_tooltip_text_set(obj, "Top Left");
            elm_object_tooltip_orient_set(obj, ELM_TOOLTIP_ORIENT_TOP_LEFT);
+           elm_object_tooltip_text_set(obj, "Top Left");
            printf("elm_object_tooltip_orient_get :: Orientation: ELM_TOOLTIP_ORIENT_TOP_LEFT\n");
            break;
         }
@@ -526,8 +526,8 @@ test_tooltip(void *data       EINA_UNUSED,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Orient Tooltip, click to change");
-   elm_object_tooltip_text_set(bt, "Top Left");
    elm_object_tooltip_orient_set(bt, ELM_TOOLTIP_ORIENT_TOP_LEFT);
+   elm_object_tooltip_text_set(bt, "Top Left");
    evas_object_smart_callback_add(bt, "clicked", _tt_orient_text_replace, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
@@ -572,8 +572,8 @@ test_tooltip(void *data       EINA_UNUSED,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Transparent Icon tooltip");
-   elm_object_tooltip_content_cb_set(bt, _tt_icon, NULL, NULL);
    elm_object_tooltip_style_set(bt, "transparent");
+   elm_object_tooltip_content_cb_set(bt, _tt_icon, NULL, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
@@ -611,8 +611,8 @@ test_tooltip(void *data       EINA_UNUSED,
 
    lst = elm_list_add(win);
    lit = elm_list_item_append(lst, "Hello", NULL, NULL, NULL, NULL);
-   elm_object_item_tooltip_content_cb_set(lit, _tt_item_label, NULL, NULL);
    elm_object_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   elm_object_item_tooltip_content_cb_set(lit, _tt_item_label, NULL, NULL);
    lit = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL, NULL, NULL);
    elm_object_item_tooltip_content_cb_set(lit, _tt_item_icon, NULL, NULL);
    lit = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);

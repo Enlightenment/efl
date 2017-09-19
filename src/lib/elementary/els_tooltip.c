@@ -34,6 +34,23 @@ static const char _tooltip_key[] = "_elm_tooltip";
     }                                                   \
   while (0)
 
+#define ELM_TOOLTIP_GET_OR_CREATE(tt, obj, ...)         \
+  Elm_Tooltip *tt;                                      \
+  do                                                    \
+    {                                                   \
+       if (!(obj))                                      \
+         {                                              \
+            CRI("Null pointer: " #obj);            \
+            return __VA_ARGS__;                         \
+         }                                              \
+       tt = evas_object_data_get((obj), _tooltip_key);  \
+       if (!tt)                                         \
+         {                                              \
+            tt = _elm_tooltip_create((obj));     \
+         }                                              \
+    }                                                   \
+  while (0)
+
 struct _Elm_Tooltip
 {
    Elm_Tooltip_Content_Cb   func;
@@ -734,6 +751,28 @@ _elm_tooltip_obj_free_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj, voi
    _elm_tooltip_unset(tt);
 }
 
+static Elm_Tooltip *
+_elm_tooltip_create(Evas_Object *eventarea)
+{
+   Elm_Tooltip *tt = NULL;
+
+   tt = ELM_NEW(Elm_Tooltip);
+   if (!tt) return NULL;
+
+   tt->eventarea = eventarea;
+   tt->evas = evas_object_evas_get(eventarea);
+   evas_object_data_set(eventarea, _tooltip_key, tt);
+
+   evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_IN,
+      _elm_tooltip_obj_mouse_in_cb, tt);
+   evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_OUT,
+      (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_out_cb, tt);
+   evas_object_event_callback_add(eventarea, EVAS_CALLBACK_FREE,
+      _elm_tooltip_obj_free_cb, tt);
+
+   return tt;
+}
+
 static void
 _tooltip_label_style_set(Evas_Object *obj, Evas_Object *label)
 {
@@ -826,7 +865,7 @@ elm_object_tooltip_move_freeze_get(const Evas_Object *obj)
 EAPI void
 elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
 {
-   ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
+   ELM_TOOLTIP_GET_OR_CREATE(tt, obj);
 
    if ((orient > ELM_TOOLTIP_ORIENT_NONE) && (orient < ELM_TOOLTIP_ORIENT_LAST))
      tt->orient = orient;
@@ -893,7 +932,7 @@ void
 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    Elm_Tooltip *tt = NULL;
-   Eina_Bool just_created;
+   Eina_Bool just_created = EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_GOTO(owner, error);
    EINA_SAFETY_ON_NULL_GOTO(eventarea, error);
@@ -905,7 +944,7 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
      }
 
    tt = evas_object_data_get(eventarea, _tooltip_key);
-   if (tt)
+   if (tt && tt->owner)
      {
         if (tt->owner != owner)
           {
@@ -930,23 +969,13 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
      }
    else
      {
-        tt = ELM_NEW(Elm_Tooltip);
-        if (!tt) goto error;
+        if (!tt)
+          {
+             tt = _elm_tooltip_create(eventarea);
+             if (!tt) goto error;
+          }
 
         tt->owner = owner;
-        tt->eventarea = eventarea;
-        tt->evas = evas_object_evas_get(eventarea);
-        evas_object_data_set(eventarea, _tooltip_key, tt);
-
-        just_created = EINA_TRUE;
-
-        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_IN,
-           _elm_tooltip_obj_mouse_in_cb, tt);
-        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_MOUSE_OUT,
-           (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_out_cb, tt);
-        evas_object_event_callback_add(eventarea, EVAS_CALLBACK_FREE,
-           _elm_tooltip_obj_free_cb, tt);
-
         if (owner != eventarea)
           evas_object_event_callback_add
             (owner, EVAS_CALLBACK_FREE, _elm_tooltip_obj_free_cb, tt);
@@ -1032,7 +1061,7 @@ elm_object_tooltip_unset(Evas_Object *obj)
 EAPI void
 elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 {
-   ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
+   ELM_TOOLTIP_GET_OR_CREATE(tt, obj);
    if (!eina_stringshare_replace(&tt->style, style)) return;
    elm_tooltip_theme(tt);
 }
@@ -1047,7 +1076,7 @@ elm_object_tooltip_style_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable)
 {
-   ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
+   ELM_TOOLTIP_GET_OR_CREATE(tt, obj, EINA_FALSE);
    return tt->free_size = disable;
 }
 
