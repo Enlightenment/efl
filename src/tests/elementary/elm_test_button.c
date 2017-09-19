@@ -4,7 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
+#define EFL_ACCESS_ACTION_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -36,7 +36,7 @@ START_TEST (elm_atspi_interfaces_check)
 
    ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
    ck_assert(efl_isa(button, EFL_ACCESS_COMPONENT_MIXIN));
-   ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_ACTION_MIXIN));
+   ck_assert(efl_isa(button, EFL_ACCESS_ACTION_MIXIN));
 
    elm_shutdown();
 }
