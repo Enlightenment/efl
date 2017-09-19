@@ -3,7 +3,7 @@ import elm_list;
 import elm_genlist_item;
 
 class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
-                   Elm.Interface.Atspi_Widget_Action, Elm.Interface.Atspi.Selection,
+                   Elm.Interface.Atspi_Widget_Action, Efl.Access.Selection,
                    Efl.Ui.Selectable)
 {
    [[Elementary genlist class]]
@@ -549,14 +549,14 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi.Selection.selected_children_count { get; }
-      Elm.Interface.Atspi.Selection.selected_child { get; }
-      Elm.Interface.Atspi.Selection.selected_child_deselect;
-      Elm.Interface.Atspi.Selection.child_select;
-      Elm.Interface.Atspi.Selection.child_deselect;
-      Elm.Interface.Atspi.Selection.is_child_selected;
-      Elm.Interface.Atspi.Selection.all_children_select;
-      Elm.Interface.Atspi.Selection.clear;
+      Efl.Access.Selection.selected_children_count { get; }
+      Efl.Access.Selection.selected_child { get; }
+      Efl.Access.Selection.selected_child_deselect;
+      Efl.Access.Selection.child_select;
+      Efl.Access.Selection.child_deselect;
+      Efl.Access.Selection.is_child_selected;
+      Efl.Access.Selection.all_children_select;
+      Efl.Access.Selection.clear;
    }
    events {
       item,focused; [[Called when genlist item got focus]]

@@ -12,7 +12,7 @@ enum Elm.Gengrid.Reorder_Type
 
 class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
-                   Elm.Interface.Atspi.Selection)
+                   Efl.Access.Selection)
 {
    [[Elementary gengrid class]]
    legacy_prefix: elm_gengrid;
@@ -564,14 +564,14 @@ class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface.Atspi_Accessible.children { get; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi.Selection.selected_children_count { get; }
-      Elm.Interface.Atspi.Selection.selected_child { get; }
-      Elm.Interface.Atspi.Selection.selected_child_deselect;
-      Elm.Interface.Atspi.Selection.child_select;
-      Elm.Interface.Atspi.Selection.child_deselect;
-      Elm.Interface.Atspi.Selection.is_child_selected;
-      Elm.Interface.Atspi.Selection.all_children_select;
-      Elm.Interface.Atspi.Selection.clear;
+      Efl.Access.Selection.selected_children_count { get; }
+      Efl.Access.Selection.selected_child { get; }
+      Efl.Access.Selection.selected_child_deselect;
+      Efl.Access.Selection.child_select;
+      Efl.Access.Selection.child_deselect;
+      Efl.Access.Selection.is_child_selected;
+      Efl.Access.Selection.all_children_select;
+      Efl.Access.Selection.clear;
    }
    events {
       realized; [[Called when gengrid realized]]

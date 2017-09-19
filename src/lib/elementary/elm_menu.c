@@ -4,7 +4,7 @@
 
 #define ELM_WIDGET_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
+#define EFL_ACCESS_SELECTION_PROTECTED
 
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
@@ -497,7 +497,7 @@ _menu_item_activate_cb(void *data,
              if (eo_item2 != EO_OBJ(item))
                elm_menu_item_selected_set(eo_item2, 0);
           }
-        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, EO_OBJ(item->parent), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, EO_OBJ(item->parent), EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, NULL);
      }
    else
      {
@@ -512,7 +512,7 @@ _menu_item_activate_cb(void *data,
                   elm_menu_item_selected_set(eo_item2, 0);
                }
           }
-        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, WIDGET(item), ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, WIDGET(item), EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, NULL);
         if (sd->menu_bar && was_open)
           _menu_item_select_cb(item, NULL, NULL, NULL);
      }
@@ -1428,7 +1428,7 @@ _elm_menu_item_elm_interface_atspi_accessible_state_set_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static int
-_elm_menu_item_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
+_elm_menu_item_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd)
 {
    int ret = 0;
    Elm_Object_Item *sobj = NULL;
@@ -1445,7 +1445,7 @@ _elm_menu_item_elm_interface_atspi_selection_selected_children_count_get(Eo *obj
 }
 
 EOLIAN static Eo*
-_elm_menu_item_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd, int child)
+_elm_menu_item_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Menu_Item_Data *sd, int child)
 {
    int seq = 0;
    Elm_Object_Item *sobj = NULL;
@@ -1467,7 +1467,7 @@ _elm_menu_item_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNU
 }
 
 EOLIAN static int
-_elm_menu_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_access_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Elm_Object_Item *sobj = NULL;
    Eina_List *l;
@@ -1483,7 +1483,7 @@ _elm_menu_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA
 }
 
 EOLIAN static Eo*
-_elm_menu_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, int child)
+_elm_menu_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd, int child)
 {
    int seq = 0;
    Elm_Object_Item *sobj = NULL;

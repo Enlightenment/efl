@@ -5,7 +5,7 @@
 #include <fnmatch.h>
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
+#define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -8608,19 +8608,19 @@ _elm_genlist_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Genlist_D
 }
 
 EOLIAN int
-_elm_genlist_elm_interface_atspi_selection_selected_children_count_get(Eo *objm EINA_UNUSED, Elm_Genlist_Data *pd)
+_elm_genlist_efl_access_selection_selected_children_count_get(Eo *objm EINA_UNUSED, Elm_Genlist_Data *pd)
 {
    return eina_list_count(pd->selected);
 }
 
 EOLIAN Eo*
-_elm_genlist_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_idx)
+_elm_genlist_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_idx)
 {
    return eina_list_nth(pd->selected, child_idx);
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
+_elm_genlist_efl_access_selection_child_select(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
 {
    Elm_Gen_Item *item;
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
@@ -8638,7 +8638,7 @@ _elm_genlist_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
+_elm_genlist_efl_access_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
 {
    Eo *item;
    Eina_List *l;
@@ -8655,7 +8655,7 @@ _elm_genlist_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
+_elm_genlist_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
 {
    Elm_Gen_Item *item;
 
@@ -8670,7 +8670,7 @@ _elm_genlist_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_all_children_select(Eo *obj, Elm_Genlist_Data *pd)
+_elm_genlist_efl_access_selection_all_children_select(Eo *obj, Elm_Genlist_Data *pd)
 {
    Elm_Gen_Item *item;
 
@@ -8684,13 +8684,13 @@ _elm_genlist_elm_interface_atspi_selection_all_children_select(Eo *obj, Elm_Genl
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd)
+_elm_genlist_efl_access_selection_clear(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd)
 {
    return _all_items_deselect(pd);
 }
 
 EOLIAN Eina_Bool
-_elm_genlist_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
+_elm_genlist_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlist_Data *pd, int child_index)
 {
    Elm_Gen_Item *item;
    if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)

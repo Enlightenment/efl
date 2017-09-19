@@ -7,7 +7,7 @@
 #define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_IMAGE_PROTECTED
-#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
+#define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
 #define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 
@@ -164,7 +164,7 @@ static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_MAXIMIZED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_MINIMIZED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_RESTORED, _window_signal_send},
-   { ELM_INTERFACE_ATSPI_SELECTION_EVENT_SELECTION_CHANGED, _selection_signal_send},
+   { EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, _selection_signal_send},
    { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, _text_caret_moved_send },
    { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, _text_text_inserted_send },
    { ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, _text_text_removed_send },
@@ -869,7 +869,7 @@ _selection_selected_child_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -878,7 +878,7 @@ _selection_selected_child_get(const Eldbus_Service_Interface *iface EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
-   child = elm_interface_atspi_selection_selected_child_get(obj, idx);
+   child = efl_access_selection_selected_child_get(obj, idx);
 
    _bridge_iter_object_reference_append(bridge, iter, child);
    _bridge_object_register(bridge, child);
@@ -896,7 +896,7 @@ _selection_child_select(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -904,7 +904,7 @@ _selection_child_select(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_child_select(obj, idx);
+   result = efl_access_selection_child_select(obj, idx);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -920,7 +920,7 @@ _selection_selected_child_deselect(const Eldbus_Service_Interface *iface, const 
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -928,7 +928,7 @@ _selection_selected_child_deselect(const Eldbus_Service_Interface *iface, const 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_selected_child_deselect(obj, idx);
+   result = efl_access_selection_selected_child_deselect(obj, idx);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -944,7 +944,7 @@ _selection_is_child_selected(const Eldbus_Service_Interface *iface, const Eldbus
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -952,7 +952,7 @@ _selection_is_child_selected(const Eldbus_Service_Interface *iface, const Eldbus
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_is_child_selected(obj, idx);
+   result = efl_access_selection_is_child_selected(obj, idx);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -967,12 +967,12 @@ _selection_all_children_select(const Eldbus_Service_Interface *iface, const Eldb
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_all_children_select(obj);
+   result = efl_access_selection_all_children_select(obj);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -987,12 +987,12 @@ _selection_clear(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_clear(obj);
+   result = efl_access_selection_clear(obj);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -1008,7 +1008,7 @@ _selection_child_deselect(const Eldbus_Service_Interface *iface, const Eldbus_Me
    Eldbus_Message *ret;
    Eina_Bool result;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -1016,7 +1016,7 @@ _selection_child_deselect(const Eldbus_Service_Interface *iface, const Eldbus_Me
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   result = elm_interface_atspi_selection_child_deselect(obj, idx);
+   result = efl_access_selection_child_deselect(obj, idx);
    eldbus_message_arguments_append(ret, "b", result);
 
    return ret;
@@ -2121,11 +2121,11 @@ _selection_property_get(const Eldbus_Service_Interface *interface, const char *p
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE, request_msg, error);
+   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_SELECTION_INTERFACE, request_msg, error);
 
    if (!strcmp(property, "NSelectedChildren"))
      {
-        n = elm_interface_atspi_selection_selected_children_count_get(obj);
+        n = efl_access_selection_selected_children_count_get(obj);
         eldbus_message_iter_basic_append(iter, 'i', n);
         return EINA_TRUE;
      }
@@ -2508,7 +2508,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         else if (!strcmp(ifc_name, "text"))
           class = ELM_INTERFACE_ATSPI_TEXT_INTERFACE;
         else if (!strcmp(ifc_name, "image"))
-          class = ELM_INTERFACE_ATSPI_SELECTION_INTERFACE;
+          class = EFL_ACCESS_SELECTION_INTERFACE;
         else if (!strcmp(ifc_name, "value"))
           class = EFL_ACCESS_VALUE_INTERFACE;
 
@@ -3130,7 +3130,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_EDITABLE_TEXT);
   if (efl_isa(obj, EFL_ACCESS_IMAGE_MIXIN))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_IMAGE);
-  if (efl_isa(obj, ELM_INTERFACE_ATSPI_SELECTION_INTERFACE))
+  if (efl_isa(obj, EFL_ACCESS_SELECTION_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_SELECTION);
   if (efl_isa(obj, ELM_INTERFACE_ATSPI_TEXT_INTERFACE))
     eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_TEXT);
