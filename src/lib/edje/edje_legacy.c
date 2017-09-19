@@ -1095,7 +1095,16 @@ edje_object_size_min_calc(Edje_Object *obj, int *minw, int *minh)
 EAPI void
 edje_object_size_min_restricted_calc(Edje_Object *obj, int *minw, int *minh, int restrictedw, int restrictedh)
 {
-   Eina_Size2D sz;
+   Eina_Size2D sz = { restrictedw, restrictedh };
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+        if (minw) *minw = sz.w;
+        if (minh) *minh = sz.h;
+        return;
+     }
    sz = efl_canvas_layout_calc_size_min(obj, EINA_SIZE2D(restrictedw, restrictedh));
    if (minw) *minw = sz.w;
    if (minh) *minh = sz.h;
