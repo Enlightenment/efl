@@ -1478,10 +1478,10 @@ _elm_panel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
 
 /* Efl.Part begin */
 
-ELM_PART_IMPLEMENT(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_panel, ELM_PANEL, Elm_Panel_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_panel, ELM_PANEL, Elm_Panel_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_panel, ELM_PANEL, Elm_Panel_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data)
 #include "elm_panel_part.eo.c"
 
 /* Efl.Part end */

@@ -659,9 +659,9 @@ _elm_actionslider_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, EFL_UI_LAYOUT, Elm_Actionslider_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_actionslider, ELM_ACTIONSLIDER, Elm_Actionslider_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_actionslider, ELM_ACTIONSLIDER, Elm_Actionslider_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_actionslider, ELM_ACTIONSLIDER, Elm_Actionslider_Data)
 
 #include "elm_actionslider_part.eo.c"
 /* Efl.Part end */

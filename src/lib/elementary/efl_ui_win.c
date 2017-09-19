@@ -6994,37 +6994,7 @@ _efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
    return EINA_FALSE;
 }
 
-/* Efl.Part begin */
-
-static void
-_efl_ui_win_part_efl_gfx_color_set(Eo *obj, Elm_Part_Data *pd, int r, int g, int b, int a)
-{
-   if (EVAS_COLOR_SANITIZE(r, g, b, a))
-     ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
-
-   _efl_ui_win_part_color_set(pd->obj, pd->sd, pd->part, r, g, b, a);
-   ELM_PART_RETURN_VOID;
-}
-
-static void
-_efl_ui_win_part_efl_gfx_color_get(Eo *obj, Elm_Part_Data *pd, int *r, int *g, int *b, int *a)
-{
-   _efl_ui_win_part_color_get(pd->obj, pd->sd, pd->part, r, g, b, a);
-   ELM_PART_RETURN_VOID;
-}
-
-static Eina_Bool
-_efl_ui_win_part_efl_file_file_set(Eo *obj, Elm_Part_Data *pd, const char *file, const char *key)
-{
-   ELM_PART_RETURN_VAL(_efl_ui_win_part_file_set(pd->obj, pd->sd, pd->part, file, key));
-}
-
-static void
-_efl_ui_win_part_efl_file_file_get(Eo *obj, Elm_Part_Data *pd, const char **file, const char **key)
-{
-   _efl_ui_win_part_file_get(pd->obj, pd->sd, pd->part, file, key);
-   ELM_PART_RETURN_VOID;
-}
+/* Default content */
 
 EOLIAN static Eina_Bool
 _efl_ui_win_efl_container_content_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *content)
@@ -7044,10 +7014,51 @@ _efl_ui_win_efl_container_content_unset(Eo *obj, Efl_Ui_Win_Data *sd)
    return _efl_ui_win_content_unset(obj, sd, "content");
 }
 
-ELM_PART_IMPLEMENT(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data, Elm_Part_Data)
+/* Efl.Part begin */
+
+static void
+_efl_ui_win_part_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+
+   if (EVAS_COLOR_SANITIZE(r, g, b, a))
+     ERR("Evas only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
+
+   _efl_ui_win_part_color_set(pd->obj, sd, pd->part, r, g, b, a);
+   ELM_PART_RETURN_VOID;
+}
+
+static void
+_efl_ui_win_part_efl_gfx_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   _efl_ui_win_part_color_get(pd->obj, sd, pd->part, r, g, b, a);
+   ELM_PART_RETURN_VOID;
+}
+
+static Eina_Bool
+_efl_ui_win_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *key)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   ELM_PART_RETURN_VAL(_efl_ui_win_part_file_set(pd->obj, sd, pd->part, file, key));
+}
+
+static void
+_efl_ui_win_part_efl_file_file_get(Eo *obj, void *_pd EINA_UNUSED, const char **file, const char **key)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   _efl_ui_win_part_file_get(pd->obj, sd, pd->part, file, key);
+   ELM_PART_RETURN_VOID;
+}
+
+ELM_PART_OVERRIDE(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_CONTENT_DEFAULT_SET(efl_ui_win, "content")
 #include "efl_ui_win_part.eo.c"
 

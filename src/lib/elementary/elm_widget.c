@@ -6636,6 +6636,42 @@ elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source
 }
 
 
+/* Efl.Part implementation */
+
+static EOLIAN Efl_Object *
+_elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
+{
+   Elm_Part_Data *pd;
+   Eo *proxy;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+
+   // Generic parts for every kind of widget
+   proxy = efl_add(EFL_UI_WIDGET_PART_CLASS, (Eo *) obj);
+   pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
+   if (pd)
+     {
+        pd->obj  = (Eo *) obj;
+        pd->part = eina_tmpstr_add(part);
+        pd->temp = 1;
+     }
+
+   return proxy;
+}
+
+static EOLIAN void \
+_efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
+{
+   ELM_PART_HOOK;
+   eina_tmpstr_del(pd->part);
+   efl_destructor(efl_super(obj, EFL_UI_WIDGET_PART_CLASS));
+}
+
+#include "efl_ui_widget_part.eo.c"
+
+/* Efl.Part end */
+
+
 /* Internal EO APIs and hidden overrides */
 
 EFL_FUNC_BODY_CONST(elm_widget_default_content_part_get, const char *, NULL)

@@ -1,7 +1,7 @@
 class Efl.Ui.Slider.Part (Efl.Ui.Layout.Part, Efl.Gfx.Size.Hint)
 {
    [[Elementary slider internal part class]]
-   data: Elm_Part_Data;
+   data: null;
    implements {
       Efl.Container.content { set; }
       Efl.Gfx.Size.Hint.hint_min { set; get; }

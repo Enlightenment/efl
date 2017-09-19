@@ -210,8 +210,7 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, Efl_Ui_L
    if (other)
      ELM_PART_RETURN_VAL(_efl_ui_layout_box_insert_before(pd->obj, pd->sd, pd->part, subobj, other));
 
-   ELM_PART_CALL(efl_pack_end(obj, subobj));
-   ELM_PART_RETURN_VAL(EINA_TRUE);
+   ELM_PART_RETURN_VAL(efl_pack_end(obj, subobj));
 }
 
 EOLIAN static Eina_Bool

@@ -1,9 +1,8 @@
-class Efl.Ui.Flip.Part (Efl.Object, Efl.Container)
+class Efl.Ui.Flip.Part (Efl.Ui.Widget.Part, Efl.Container)
 {
    [[Efl UI flip internal class]]
-   data: Elm_Part_Data;
+   data: null;
    implements {
-      Efl.Object.destructor;
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }

@@ -281,8 +281,8 @@ _elm_bubble_class_constructor(Efl_Class *klass)
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, EFL_UI_LAYOUT, Elm_Bubble_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_bubble, ELM_BUBBLE, Elm_Bubble_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_bubble, ELM_BUBBLE, Elm_Bubble_Data)
 
 #include "elm_bubble_part.eo.c"
 /* Efl.Part end */

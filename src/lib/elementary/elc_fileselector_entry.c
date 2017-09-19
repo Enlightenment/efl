@@ -670,12 +670,12 @@ _elm_fileselector_entry_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
-ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, EFL_UI_LAYOUT, Elm_Fileselector_Entry_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
+ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
+ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_fileselector_entry, "button icon")
 #include "elm_fileselector_entry_part.eo.c"
 

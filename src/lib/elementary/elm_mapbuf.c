@@ -441,10 +441,10 @@ _elm_mapbuf_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_IMPLEMENT(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_SET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_GET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
-ELM_PART_IMPLEMENT_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data, Elm_Part_Data)
+ELM_PART_OVERRIDE(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(elm_mapbuf, ELM_MAPBUF, Elm_Mapbuf_Data)
 ELM_PART_CONTENT_DEFAULT_SET(elm_mapbuf, "default")
 #include "elm_mapbuf_part.eo.c"
 

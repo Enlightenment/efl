@@ -1,9 +1,8 @@
-class Elm.Mapbuf.Part (Efl.Object, Efl.Container)
+class Elm.Mapbuf.Part (Efl.Ui.Widget.Part, Efl.Container)
 {
    [[Elementary mapbuf internal part class]]
-   data: Elm_Part_Data;
+   data: null;
    implements {
-      Efl.Object.destructor;
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
    }

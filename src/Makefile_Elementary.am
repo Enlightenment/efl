@@ -74,6 +74,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_view_form.eo \
 	lib/elementary/elm_web.eo \
 	lib/elementary/elm_widget.eo \
+	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_win.eo \
 	lib/elementary/efl_ui_win_inlined.eo \
 	lib/elementary/efl_ui_win_socket.eo \
