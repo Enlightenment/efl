@@ -162,7 +162,8 @@ lib/evas/canvas/efl_animation_object_scale_private.h \
 lib/evas/canvas/efl_animation_object_translate_private.h \
 lib/evas/canvas/efl_animation_object_group_private.h \
 lib/evas/canvas/efl_animation_object_group_parallel_private.h \
-lib/evas/canvas/efl_animation_object_group_sequential_private.h
+lib/evas/canvas/efl_animation_object_group_sequential_private.h \
+lib/evas/gesture/efl_gesture_private.h
 
 # Linebreak
 
