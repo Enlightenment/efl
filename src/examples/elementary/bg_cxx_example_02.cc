@@ -24,10 +24,10 @@ elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
    //ss << elm_app_data_dir_get() << "/images/plant_01.jpg";
    bg.file_set("/home/luciana/Pictures/surprised_cat.jpeg", nullptr);
    //win.resize_object_add(bg);
-   bg.eo_cxx::efl::Gfx::size_set(640,400);
+   bg.eo_cxx::efl::Gfx::size_set({640,400});
    bg.visible_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set(640, 400);
+   win.eo_cxx::efl::Gfx::size_set({640, 400});
    win.visible_set(true);
 
    elm_run();

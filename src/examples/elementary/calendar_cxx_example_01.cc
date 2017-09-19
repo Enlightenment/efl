@@ -18,11 +18,11 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    ::elm::Calendar cal(instantiate, win);
    //cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   cal.eo_cxx::efl::Gfx::size_set(134,134);
+   cal.eo_cxx::efl::Gfx::size_set({134,134});
    //win.resize_object_add(cal);
    cal.visible_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set(134,134);
+   win.eo_cxx::efl::Gfx::size_set({134,134});
    win.visible_set(true);
 
    elm_run();

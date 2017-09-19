@@ -25,7 +25,7 @@ elm_main(int argc, char* argv[])
       });
 
    win_1.autodel_set(true);
-   win_1.eo_cxx::efl::Gfx::size_set(320, 300);
+   win_1.eo_cxx::efl::Gfx::size_set({320, 300});
 
    efl::ui::Box box_1(instantiate, win_1);
    box_1.hint_weight_set(1.0, 1.0);

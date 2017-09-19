@@ -29,8 +29,8 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    cal.date_max_set(max);
    cal.visible_set(true);
 
-   cal.eo_cxx::efl::Gfx::size_set(140,140);
-   win.eo_cxx::efl::Gfx::size_set(140,140);
+   cal.eo_cxx::efl::Gfx::size_set({140,140});
+   win.eo_cxx::efl::Gfx::size_set({140,140});
    win.visible_set(true);
 
    elm_run();

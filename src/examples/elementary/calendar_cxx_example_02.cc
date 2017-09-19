@@ -32,8 +32,8 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    cal.format_function_set(_format_month_year);
    // cal.weekdays_names_set(weekdays);
 
-   cal.eo_cxx::efl::Gfx::size_set(125,134);  
-   win.eo_cxx::efl::Gfx::size_set(125,134);
+   cal.eo_cxx::efl::Gfx::size_set({125,134});
+   win.eo_cxx::efl::Gfx::size_set({125,134});
    cal.visible_set(true);
    win.visible_set(true);
 

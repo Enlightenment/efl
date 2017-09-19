@@ -11,7 +11,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    // win.title_set("Bg Plain");
    win.autohide_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set(320,320);
+   win.eo_cxx::efl::Gfx::size_set({320,320});
    //win.size_set(320,320);
    win.visible_set(true);
 
