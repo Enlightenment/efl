@@ -1,5 +1,5 @@
 //Compile with:
-// edje_cc animations2.edc && gcc -o animations2 animations2.c `pkg-config --libs --cflags ecore ecore-evas edje`
+// edje_cc animations2.edc && gcc -o animations2 animations2.c `pkg-config --libs --cflags ecore ecore-evas edje evas`
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
