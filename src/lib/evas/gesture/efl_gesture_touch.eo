@@ -1,0 +1,61 @@
+import efl_gesture_types;
+import efl_input_types;
+
+class Efl.Gesture.Touch(Efl.Object)
+{
+   methods {
+      point_record {
+         params {
+            @in tool       : int; [[The finger id ]]
+            @in x          : double; [[The x co-ordinate of the event]]
+            @in y          : double; [[The y co-ordinate of the event]]
+            @in timestamp  : double; [[The timestamp of the event]]
+            @in action     : Efl.Pointer.Action; [[action of the event]]
+         }
+      }
+      delta {
+         params {
+            @in tool        : int; [[The finger id ]]
+            @out x          : double; [[The x co-ordinate of the event]]
+            @out y          : double; [[The y co-ordinate of the event]]
+         }
+      }
+      distance {
+         params {
+            @in tool        : int; [[The finger id ]]
+            @out x          : double; [[The x co-ordinate of the event]]
+            @out y          : double; [[The y co-ordinate of the event]]
+         }
+      }
+      start_point {
+         params {
+            @out x          : double; [[The x co-ordinate of the event]]
+            @out y          : double; [[The y co-ordinate of the event]]
+         }
+      }
+      @property multi_touch {
+         [[This property tells if the event is multi touch.]]
+         get {
+            return: bool; [[returns true if its a multi touch]]
+         }
+      }
+      @property state {
+         [[This property holds the state of the touch event.]]
+         get {
+            return : Efl.Gesture.Touch.State; [[touch event state]]
+         }
+      }
+      @property finger_list {
+         get {
+            [[Get the list of finger id .]]
+         }
+         values {
+            ret: const(list<int>); [[List of finger id]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

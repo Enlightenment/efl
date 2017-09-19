@@ -1,0 +1,25 @@
+import efl_gesture_types;
+
+class Efl.Gesture.Tap(Efl.Gesture)
+{
+   methods {
+      @property position {
+         [[This property holds the type of the gesture.]]
+         set {
+         }
+         get {
+         }
+         values {
+            pos: Eina.Vector2;[[position of the mouse event]]
+         }
+      }
+   }
+   event_prefix: efl;
+   events {
+      gesture,tap; [[Event for tap gesture]]
+   }
+
+   implements {
+      Efl.Object.constructor;
+   }
+}
