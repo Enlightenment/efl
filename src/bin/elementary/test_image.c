@@ -98,6 +98,81 @@ im_align_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    printf("align %.3f %.3f\n", h, v);
 }
 
+static const struct {
+   Efl_Ui_Image_Scale_Type scale_type;
+   const char *name;
+} images_scale_type[] = {
+  { EFL_UI_IMAGE_SCALE_TYPE_NONE, "None" },
+  { EFL_UI_IMAGE_SCALE_TYPE_FILL, "Fill" },
+  { EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE, "Fit Inside" },
+  { EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE, "Fit Outside" },
+  { EFL_UI_IMAGE_SCALE_TYPE_TILE, "Tile" },
+  { 0, NULL }
+};
+
+static void
+my_im_scale_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win = data;
+   Evas_Object *im = evas_object_data_get(win, "im");
+   Evas_Object *rdg = evas_object_data_get(win, "rdg");
+   int v = elm_radio_value_get(rdg);
+
+   efl_ui_image_scale_type_set(im, images_scale_type[v].scale_type);
+   fprintf(stderr, "Set %d[%s] and got %d\n",
+   images_scale_type[v].scale_type, images_scale_type[v].name, efl_ui_image_scale_type_get(im));
+}
+
+void
+test_image_scale_type(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *im, *rd, *rdg = NULL;
+   int i;
+
+   win = elm_win_util_standard_add("image test scale type", "Image Test Scale Type");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   im = efl_add(EFL_UI_IMAGE_CLASS, win);
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+   elm_image_file_set(im, buf, NULL);
+   evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, im);
+   evas_object_show(im);
+
+   evas_object_data_set(win, "im", im);
+
+   for (i = 0; images_scale_type[i].name; ++i)
+     {
+        rd = elm_radio_add(win);
+        evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        elm_radio_state_value_set(rd, i);
+        elm_object_text_set(rd, images_scale_type[i].name);
+        elm_box_pack_end(box, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed", my_im_scale_ch, win);
+        if (!rdg)
+          {
+             rdg = rd;
+             evas_object_data_set(win, "rdg", rdg);
+          }
+        else
+          {
+             elm_radio_group_add(rd, rdg);
+          }
+     }
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
+
 void
 test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {

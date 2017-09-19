@@ -19,6 +19,7 @@ enum Efl.Ui.Image.Scale_Type
                   At least one of the dimensions of the image
                   should be equal to the corresponding 
                   dimension of the object.]]
+   tile,        [[Tile image at its original size.]]
    none         [[Not scale the internal image]]
 }
 

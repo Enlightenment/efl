@@ -153,18 +153,18 @@ _img_new(Evas_Object *obj)
 static void
 _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
+   Evas_Coord x = 0, y = 0, w = 1, h = 1;
 
    if (efl_isa(img, EDJE_OBJECT_CLASS))
      {
-        evas_object_move(img, sd->img_x, sd->img_y);
-        evas_object_resize(img, sd->img_w, sd->img_h);
-
-        evas_object_move(sd->hit_rect, sd->img_x, sd->img_y);
-        evas_object_resize(sd->hit_rect, sd->img_w, sd->img_h);
+        x = sd->img_x;
+        y = sd->img_y;
+        w = sd->img_w;
+        h = sd->img_h;
+        goto done;
      }
    else
      {
-        Evas_Coord x = 0, y = 0, w = 1, h = 1;
         double alignh = 0.5, alignv = 0.5;
         int iw = 0, ih = 0, offset_x = 0, offset_y = 0;
 
@@ -222,6 +222,13 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
                    h = ih;
                 }
               break;
+           case EFL_UI_IMAGE_SCALE_TYPE_TILE:
+              x = sd->img_x;
+              y = sd->img_y;
+              w = sd->img_w;
+              h = sd->img_h;
+              evas_object_image_fill_set(img, x, y, iw, ih);
+              goto done;
           }
 
         //3. Calculate offset according to align value
@@ -259,13 +266,13 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
              y = sd->img_y;
              h = sd->img_h;
           }
-
-        evas_object_move(img, x, y);
-        evas_object_resize(img, w, h);
-
-        evas_object_move(sd->hit_rect, x, y);
-        evas_object_resize(sd->hit_rect, w, h);
      }
+done:
+   evas_object_move(img, x, y);
+   evas_object_resize(img, w, h);
+
+   evas_object_move(sd->hit_rect, x, y);
+   evas_object_resize(sd->hit_rect, w, h);
 }
 
 static void
