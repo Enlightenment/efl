@@ -4805,6 +4805,8 @@ _item_obj_get(Anchor *an, Evas_Object *o, Evas_Object *smart, Evas_Object *clip)
    Eo *obj = an->obj;
    Evas_Object *item_obj;
 
+   if (!an->name) return NULL;
+
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    EINA_INLIST_FOREACH(sd->item_objs, io)
@@ -5089,12 +5091,16 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
                   an->sel = eina_list_append(an->sel, rect);
 
                   ob = _item_obj_get(an, o, smart, clip);
-                  rect->obj = ob;
 
-                  efl_text_object_item_geometry_get(an->obj,
-                           an->annotation, &cx, &cy, &cw, &ch);
-                  evas_object_move(rect->obj, x + cx, y + cy);
-                  evas_object_resize(rect->obj, cw, ch);
+                  if (ob)
+                    {
+                       rect->obj = ob;
+
+                       efl_text_object_item_geometry_get(an->obj,
+                             an->annotation, &cx, &cy, &cw, &ch);
+                       evas_object_move(rect->obj, x + cx, y + cy);
+                       evas_object_resize(rect->obj, cw, ch);
+                    }
                }
           }
         // for link anchors
