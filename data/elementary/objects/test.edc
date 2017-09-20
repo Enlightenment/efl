@@ -933,4 +933,82 @@ collections {
          }
       }
    }
+   group { "efl_ui_popup_anchor_layout";
+      parts {
+         spacer { "base";
+            desc { "default";
+            }
+         }
+         swallow { "anchor1";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.15 0.25;
+               rel2.relative: 0.15 0.25;
+               fixed: 1 1;
+               min: 50 50;
+            }
+         }
+         swallow { "anchor2";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.75 0.15;
+               rel2.relative: 0.75 0.15;
+               fixed: 1 1;
+               min: 50 50;
+            }
+         }
+         swallow { "anchor3";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.25 0.85;
+               rel2.relative: 0.25 0.85;
+               fixed: 1 1;
+               min: 50 50;
+            }
+         }
+         swallow { "anchor4";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.85 0.75;
+               rel2.relative: 0.85 0.75;
+               fixed: 1 1;
+               min: 50 50;
+            }
+         }
+         swallow { "anchor5";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.45 0.35;
+               rel2.relative: 0.45 0.35;
+               fixed: 1 1;
+               min: 50 50;
+            }
+         }
+         swallow { "anchor6";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel2.relative: 0.0 0.0;
+               rel1.offset: 150 300;
+               rel2.offset: 200 350;
+               fixed: 1 1;
+            }
+         }
+         swallow { "anchor_none";
+            scale;
+            desc { "default";
+               rel.to: "base";
+               rel1.relative: 0.60 0.45;
+               rel2.relative: 0.60 0.45;
+               fixed: 1 1;
+               min: 70 50;
+            }
+         }
+      }
+   }
 }
