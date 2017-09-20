@@ -12,8 +12,6 @@
 #include "elm_priv.h"
 #include "efl_ui_slider_private.h"
 #include "elm_widget_layout.h"
-
-#include "efl_ui_slider_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_SLIDER_CLASS
@@ -1234,21 +1232,6 @@ _efl_ui_slider_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, Evas_Coord size)
-{
-   if (_is_horizontal(sd->dir))
-     efl_gfx_size_hint_min_set(efl_part(obj, "span"), EINA_SIZE2D(size, 1));
-   else
-     efl_gfx_size_hint_min_set(efl_part(obj, "span"), EINA_SIZE2D(1, size));
-}
-
-EOLIAN static Evas_Coord
-_efl_ui_slider_efl_ui_range_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->size;
-}
-
-EOLIAN static void
 _efl_ui_slider_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -1509,29 +1492,9 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 
-/* Efl.Part begin */
-
-EOLIAN static Eo *
-_efl_ui_slider_efl_part_part(const Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-
-   if (eina_streq(part, "span"))
-     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_SLIDER_PART_CLASS);
-
-   return efl_part(efl_super(obj, MY_CLASS), part);
-}
-
 static void
-_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
+_slider_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int size)
 {
-   Evas_Coord size;
-
-   if (_is_horizontal(sd->dir))
-     size = w;
-   else
-     size = h;
-
    if (sd->size == size) return;
    sd->size = size;
 
@@ -1555,36 +1518,6 @@ _span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int w, int h)
    evas_object_smart_changed(obj);
 }
 
-EOLIAN void
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Size2D sz)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
-
-   EINA_SAFETY_ON_FALSE_RETURN(eina_streq(pd->part, "span"));
-   _span_size_set(pd->obj, sd, sz.w, sz.h);
-}
-
-EOLIAN Eina_Size2D
-_efl_ui_slider_part_efl_gfx_size_hint_hint_min_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
-   Eina_Size2D ret = { 0, 0 };
-
-   EINA_SAFETY_ON_FALSE_GOTO(eina_streq(pd->part, "span"), end);
-   if (_is_horizontal(sd->dir))
-     ret = EINA_SIZE2D(sd->size, 1);
-   else
-     ret = EINA_SIZE2D(1, sd->size);
-
-end:
-   return ret;
-}
-
-#include "efl_ui_slider_part.eo.c"
-/* Efl.Part end */
-
 /* Legacy APIs */
 
 EAPI Evas_Object *
@@ -1597,13 +1530,15 @@ elm_slider_add(Evas_Object *parent)
 EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
-   efl_ui_range_span_size_set(obj, size);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
+   _slider_span_size_set(obj, sd, size);
 }
 
 EAPI Evas_Coord
 elm_slider_span_size_get(const Evas_Object *obj)
 {
-   return efl_ui_range_span_size_get(obj);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, 0);
+   return sd->size;
 }
 
 EAPI void
@@ -1622,7 +1557,7 @@ EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(horizontal, _is_inverted(sd->dir));
 
@@ -1654,7 +1589,7 @@ EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
    Efl_Ui_Dir dir;
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
 
    dir = _direction_get(_is_horizontal(sd->dir), inverted);
 
@@ -1673,7 +1608,7 @@ elm_slider_inverted_get(const Evas_Object *obj)
 EAPI void
 elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
 {
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
 
    sd->units_format_func = func;
    sd->units_format_free = free_func;
@@ -1684,7 +1619,7 @@ elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, sl
 EAPI void
 elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
 {
-   EFL_UI_SLIDER_DATA_GET(obj, sd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
 
    if (sd->intvl_enable == enable) return;
 
@@ -1707,14 +1642,14 @@ elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
 EAPI Eina_Bool
 elm_slider_range_enabled_get(const Evas_Object *obj)
 {
-   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
    return pd->intvl_enable;
 }
 
 EAPI void
 elm_slider_range_set(Evas_Object *obj, double from, double to)
 {
-   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, pd);
    pd->intvl_from = from;
    pd->val = from;
    pd->intvl_to = to;
@@ -1728,7 +1663,7 @@ elm_slider_range_set(Evas_Object *obj, double from, double to)
 EAPI void
 elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
 {
-   EFL_UI_SLIDER_DATA_GET(obj, pd);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, pd);
    if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
    if (to) *to = fmax(pd->intvl_from, pd->intvl_to);
 }

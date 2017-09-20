@@ -66,26 +66,13 @@ struct _Efl_Ui_Slider_Data
 #define EFL_UI_SLIDER_DATA_GET(o, sd) \
   Efl_Ui_Slider_Data * sd = efl_data_scope_get(o, EFL_UI_SLIDER_CLASS)
 
-#define EFL_UI_SLIDER_DATA_GET_OR_RETURN(o, ptr)        \
-  EFL_UI_SLIDER_DATA_GET(o, ptr);                       \
-  if (EINA_UNLIKELY(!ptr))                           \
+#define EFL_UI_SLIDER_DATA_GET_OR_RETURN(o, sd, ...) \
+  Efl_Ui_Slider_Data * sd = efl_data_scope_safe_get(o, EFL_UI_SLIDER_CLASS); \
+  if (EINA_UNLIKELY(!sd))                            \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
-       return;                                       \
+       return __VA_ARGS__;                           \
     }
-
-#define EFL_UI_SLIDER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  EFL_UI_SLIDER_DATA_GET(o, ptr);                         \
-  if (EINA_UNLIKELY(!ptr))                             \
-    {                                                  \
-       CRI("No widget data for object %p (%s)",        \
-           o, evas_object_type_get(o));                \
-       return val;                                     \
-    }
-
-#define EFL_UI_SLIDER_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_SLIDER_CLASS))) \
-    return
 
 #endif

@@ -38,7 +38,7 @@ elm_main (int argc, char *argv[])
 
    ::elm::slider sl3(efl::eo::parent = win);
    sl3.value_set(1);
-   sl3.span_size_set(200);
+   sl3.hint_min_set(220, 0);
    sl3.size_hint_align_set(EVAS_HINT_FILL, 0.5);
    sl3.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    bx.pack_end(sl3);

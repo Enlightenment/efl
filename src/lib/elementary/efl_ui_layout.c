@@ -1042,8 +1042,7 @@ end:
 }
 
 EAPI Evas_Object *
-elm_layout_content_get(const Evas_Object *obj,
-                       const char *swallow)
+elm_layout_content_get(const Evas_Object *obj, const char *swallow)
 {
    EFL_UI_LAYOUT_CHECK(obj) NULL;
    if (!swallow)
@@ -1051,6 +1050,8 @@ elm_layout_content_get(const Evas_Object *obj,
         swallow = elm_widget_default_content_part_get(obj);
         if (!swallow) return NULL;
      }
+   else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
+     return NULL;
    return efl_content_get(efl_part(obj, swallow));
 }
 
