@@ -956,9 +956,7 @@ _efl_ui_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layo
 // and also message handler (not implemented yet as an EO interface!)
 
 EAPI Eina_Bool
-elm_layout_content_set(Evas_Object *obj,
-                       const char *swallow,
-                       Evas_Object *content)
+elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
    EFL_UI_LAYOUT_CHECK(obj) EINA_FALSE;
    if (!swallow)
@@ -966,6 +964,9 @@ elm_layout_content_set(Evas_Object *obj,
         swallow = elm_widget_default_content_part_get(obj);
         if (!swallow) return EINA_FALSE;
      }
+   else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
+     return EINA_FALSE;
+
    return efl_content_set(efl_part(obj, swallow), content);
 }
 
@@ -976,9 +977,6 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
    Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
-     return EINA_FALSE;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1052,6 +1050,7 @@ elm_layout_content_get(const Evas_Object *obj, const char *swallow)
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
      return NULL;
+
    return efl_content_get(efl_part(obj, swallow));
 }
 
@@ -1060,9 +1059,6 @@ _efl_ui_layout_content_get(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
    const Eina_List *l;
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
-
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
-     return NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1078,10 +1074,17 @@ _efl_ui_layout_content_get(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 }
 
 EAPI Evas_Object *
-elm_layout_content_unset(Evas_Object *obj,
-                         const char *swallow)
+elm_layout_content_unset(Evas_Object *obj, const char *swallow)
 {
    EFL_UI_LAYOUT_CHECK(obj) NULL;
+   if (!swallow)
+     {
+        swallow = elm_widget_default_content_part_get(obj);
+        if (!swallow) return NULL;
+     }
+   else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
+     return NULL;
+
    return efl_content_unset(efl_part(obj, swallow));
 }
 
@@ -1092,9 +1095,6 @@ _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
    Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_FALSE))
-     return NULL;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1254,9 +1254,6 @@ _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const
    Efl_Ui_Layout_Sub_Object_Data *sub_d = NULL;
    Efl_Ui_Layout_Sub_Connect *sc;
 
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
-     return EINA_FALSE;
-
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if ((sub_d->type == TEXT) && (!strcmp(part, sub_d->part)))
@@ -1324,9 +1321,6 @@ static const char*
 _efl_ui_layout_text_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
-     return NULL;
 
    return edje_object_part_text_get(wd->resize_obj, part);
 }
@@ -2285,6 +2279,9 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
         part = elm_widget_default_text_part_get(obj);
         if (!part) return EINA_FALSE;
      }
+   else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return EINA_FALSE;
+
    efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
@@ -2297,6 +2294,9 @@ elm_layout_text_get(const Eo *obj, const char *part)
         part = elm_widget_default_text_part_get(obj);
         if (!part) return NULL;
      }
+   else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+     return NULL;
+
    return efl_text_get(efl_part(obj, part));
 }
 
