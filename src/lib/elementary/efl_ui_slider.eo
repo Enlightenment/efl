@@ -121,7 +121,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Efl.Ui.Range.span_size { get; set; }
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.range_unit_format { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }
@@ -130,7 +129,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Efl.Part.part;
       Efl.Text.text { get; set; }
    }
    events {

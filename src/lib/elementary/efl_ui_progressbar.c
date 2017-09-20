@@ -174,33 +174,23 @@ _icon_signal_emit(Evas_Object *obj)
    elm_layout_signal_emit(obj, buf, "elm");
 }
 
-/* FIXME: replicated from elm_layout just because progressbar's icon
- * spot is elm.swallow.content, not elm.swallow.icon. Fix that
- * whenever we can changed the theme API */
 EOLIAN static Eina_Bool
-_efl_ui_progressbar_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_progressbar_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
-   if (!int_ret) return EINA_FALSE;
+   if (!elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj))
+     return EINA_FALSE;
 
    _icon_signal_emit(obj);
-
    return EINA_TRUE;
 }
 
-/* FIXME: replicated from elm_layout just because progressbar's icon
- * spot is elm.swallow.content, not elm.swallow.icon. Fix that
- * whenever we can changed the theme API */
 static Eina_Bool
-_efl_ui_progressbar_content_set(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
+_efl_ui_progressbar_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
 {
-   Eina_Bool int_ret = EINA_FALSE;
-   int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-   if (!int_ret) return EINA_FALSE;
+   if (!elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj))
+     return EINA_FALSE;
 
    _icon_signal_emit(obj);
-
    return EINA_TRUE;
 }
 
@@ -399,8 +389,8 @@ _efl_ui_progressbar_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_P
    return sd->dir;
 }
 
-EOLIAN static void
-_efl_ui_progressbar_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size)
+static void
+_progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size)
 {
    if (sd->size == size) return;
 
@@ -416,12 +406,6 @@ _efl_ui_progressbar_efl_ui_range_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data 
        elm_config_scale_get());
 
    elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static Evas_Coord
-_efl_ui_progressbar_efl_ui_range_span_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
-{
-   return sd->size;
 }
 
 static void
@@ -544,13 +528,15 @@ elm_progressbar_value_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
-   efl_ui_range_span_size_set(obj, size);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   _progressbar_span_size_set(obj, sd, size);
 }
 
 EAPI Evas_Coord
 elm_progressbar_span_size_get(const Evas_Object *obj)
 {
-   return efl_ui_range_span_size_get(obj);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, 0);
+   return sd->size;
 }
 
 EAPI void
@@ -642,8 +628,18 @@ _efl_ui_progressbar_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_progressbar, EFL_UI_PROGRESSBAR, Efl_Ui_Progressbar_Data, _content_aliases)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_progressbar, EFL_UI_PROGRESSBAR, Efl_Ui_Progressbar_Data)
+EOLIAN static Eo *
+_efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED, const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   // Progress bars are dragable types
+   if (edje_object_part_drag_dir_get(wd->resize_obj, part) != EFL_UI_DRAG_DIR_NONE)
+     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS);
+
+   return efl_part(efl_super(obj, MY_CLASS), part);
+}
 
 EOLIAN static void
 _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UNUSED, double val)
@@ -652,6 +648,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UN
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
   _progressbar_part_value_set(pd->obj, sd, pd->part, val);
+  ELM_PART_RETURN_VOID;
 }
 
 EOLIAN static double
@@ -660,7 +657,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UN
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
-   return _progressbar_part_value_get(sd, pd->part);
+   ELM_PART_RETURN_VAL(_progressbar_part_value_get(sd, pd->part));
 }
 
 #include "efl_ui_progressbar_part.eo.c"

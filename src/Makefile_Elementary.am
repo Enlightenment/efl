@@ -118,7 +118,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_progressbar_part.eo \
 	lib/elementary/elm_popup_part.eo \
 	lib/elementary/elm_scroller_part.eo \
-	lib/elementary/efl_ui_slider_part.eo \
 	lib/elementary/elm_label_part.eo \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \

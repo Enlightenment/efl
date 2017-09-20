@@ -2,27 +2,6 @@ interface Efl.Ui.Range
 {
    [[Efl UI progress interface]]
    methods {
-      @property span_size {
-         [[Control the (exact) length of the bar region of a given range widget
-
-           This sets the minimum width (when in horizontal mode) or height
-           (when in vertical mode) of the actual bar area of the range
-           bar $obj. This in turn affects the object's minimum size. Use
-           this when you're not setting other size hints expanding on the
-           given direction (like weight and alignment hints) and you would
-           like it to have a specific size.
-
-           Note: Icon, label and unit text around $obj will require their
-           own space, which will make $obj to require more the $size,
-           actually.]]
-         set {
-         }
-         get {
-         }
-         values {
-            size: int; [[The length of the range's bar region]]
-         }
-      }
       @property range_value {
          [[Control the range value (in percentage) on a given range widget
 
