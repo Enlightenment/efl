@@ -505,7 +505,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_slider.h \
 	lib/elementary/elm_slider_common.h \
 	lib/elementary/efl_ui_slider_eo.h \
-	lib/elementary/efl_ui_slider_interval.eo.h \
 	lib/elementary/elm_slider_legacy.h \
 	lib/elementary/elm_slideshow.h \
 	lib/elementary/elm_slideshow_common.h \
