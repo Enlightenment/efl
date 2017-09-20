@@ -456,8 +456,8 @@ _elm_hover_content_set(Eo *obj, Elm_Hover_Data *sd, const char *swallow, Evas_Ob
    int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), swallow), content);
    if (!int_ret) return EINA_FALSE;
 
-   if (strstr(swallow, "elm.swallow.slot."))
-     swallow += sizeof("elm.swallow.slot.");
+   if (!strncmp(swallow, "elm.swallow.slot.", sizeof("elm.swallow.slot")))
+     swallow += sizeof("elm.swallow.slot");
 
    ELM_HOVER_PARTS_FOREACH
    {
