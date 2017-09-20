@@ -975,7 +975,7 @@ static Eina_Bool
 _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *content)
 {
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
-   const Eina_List *l;
+   Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -997,6 +997,11 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
               * edje_object_part_swallow()'s behavior, then */
              else if (content == sub_d->obj)
                {
+                  sd->subs = eina_list_remove_list(sd->subs, l);
+                  _icon_signal_emit(sd, sub_d, EINA_FALSE);
+                  eina_stringshare_del(sub_d->part);
+                  free(sub_d);
+
                   _elm_widget_sub_object_redirect_to_top(obj, content);
                   break;
                }
@@ -1015,7 +1020,6 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
              _elm_widget_sub_object_redirect_to_top(obj, content);
              return EINA_FALSE;
           }
-
         sub_d = ELM_NEW(Efl_Ui_Layout_Sub_Object_Data);
         if (!sub_d)
           {
@@ -1086,7 +1090,7 @@ static Evas_Object*
 _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
-   const Eina_List *l;
+   Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1112,6 +1116,17 @@ _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 
              edje_object_part_unswallow
                (wd->resize_obj, content);
+             EINA_LIST_FOREACH(sd->subs, l, sub_d)
+               {
+                  if (sub_d->obj == content)
+                    {
+                       sd->subs = eina_list_remove_list(sd->subs, l);
+                       _icon_signal_emit(sd, sub_d, EINA_FALSE);
+                       eina_stringshare_del(sub_d->part);
+                       free(sub_d);
+                       break;
+                    }
+               }
              _eo_unparent_helper(content, obj);
              return content;
           }
