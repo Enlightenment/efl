@@ -6543,11 +6543,14 @@ _elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd 
  * elm_object_widget_check() returns true. The below checks avoid printing out
  * undesired ERR messages. */
 EAPI void
-elm_widget_content_part_set(Evas_Object *obj,
-                            const char *part,
-                            Evas_Object *content)
+elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_WIDGET_CHECK(obj);
+   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+     {
+        elm_layout_content_set(obj, part, content);
+        return;
+     }
    if (!efl_isa(obj, EFL_PART_INTERFACE)) return;
    if (!part)
      {
@@ -6558,10 +6561,11 @@ elm_widget_content_part_set(Evas_Object *obj,
 }
 
 EAPI Evas_Object *
-elm_widget_content_part_get(const Evas_Object *obj,
-                            const char *part)
+elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
+   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+     return elm_layout_content_get(obj, part);
    if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    if (!part)
      {
@@ -6572,10 +6576,11 @@ elm_widget_content_part_get(const Evas_Object *obj,
 }
 
 EAPI Evas_Object *
-elm_widget_content_part_unset(Evas_Object *obj,
-                              const char *part)
+elm_widget_content_part_unset(Evas_Object *obj, const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
+   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+     return elm_layout_content_unset(obj, part);
    if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    if (!part)
      {
