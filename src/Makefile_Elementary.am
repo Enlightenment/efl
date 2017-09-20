@@ -37,6 +37,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_popup_alert_scroll_part.eo \
 	lib/elementary/efl_ui_popup_alert_text.eo \
 	lib/elementary/efl_ui_popup_alert_text_part.eo \
+	lib/elementary/efl_ui_popup_anchor.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_ui_text_async.eo \
 	lib/elementary/efl_ui_textpath.eo \
@@ -293,6 +294,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_popup_alert_private.h \
 	lib/elementary/efl_ui_popup_alert_scroll_private.h \
 	lib/elementary/efl_ui_popup_alert_text_private.h \
+	lib/elementary/efl_ui_popup_anchor_private.h \
 	lib/elementary/elm_widget_index.h \
 	lib/elementary/elm_widget_inwin.h \
 	lib/elementary/elm_widget_label.h \
@@ -702,6 +704,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_popup_alert.c \
 	lib/elementary/efl_ui_popup_alert_scroll.c \
 	lib/elementary/efl_ui_popup_alert_text.c \
+	lib/elementary/efl_ui_popup_anchor.c \
 	lib/elementary/efl_ui_grid.c \
 	lib/elementary/efl_ui_grid_static.c \
 	lib/elementary/efl_ui_grid_private.h \
