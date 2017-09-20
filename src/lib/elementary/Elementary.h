@@ -285,6 +285,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_popup_alert.eo.h>
 # include <efl_ui_popup_alert_scroll.eo.h>
 # include <efl_ui_popup_alert_text.eo.h>
+# include <efl_ui_popup_anchor.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>

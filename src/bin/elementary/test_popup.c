@@ -1,6 +1,8 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#define EFL_UI_POPUP_ANCHOR_BETA
 #include <Elementary.h>
 
 #define POPUP_POINT_MAX 8
@@ -1204,4 +1206,118 @@ test_efl_ui_popup_alert_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(100, 180));
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+static void
+_anchor_set_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_anchor_set(data, obj);
+}
+
+static void
+_anchor_unset_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_anchor_set(data, NULL);
+}
+
+void
+test_efl_ui_popup_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *layout, *tbl, *btn;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("Efl UI AnchorPopup", "Efl UI AnchorPopup");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   evas_object_resize(win, 500, 500);
+   evas_object_show(win);
+
+   layout = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(layout, buf, "efl_ui_popup_anchor_layout");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, layout);
+   evas_object_show(layout);
+
+   Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ANCHOR_CLASS, win);
+
+   efl_ui_popup_bg_repeat_events_set(efl_ui_popup, EINA_TRUE);
+
+   //Default align priority order is top, left, right, bottom, center.
+   efl_ui_popup_anchor_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,
+                                          EFL_UI_POPUP_ALIGN_BOTTOM,
+                                          EFL_UI_POPUP_ALIGN_LEFT,
+                                          EFL_UI_POPUP_ALIGN_RIGHT,
+                                          EFL_UI_POPUP_ALIGN_CENTER);
+
+   evas_object_move(efl_ui_popup, 80, 80);
+   evas_object_resize(efl_ui_popup, 160, 120);
+   evas_object_show(efl_ui_popup);
+
+   for (int i = 0; i < 6; i++)
+     {
+        btn = elm_button_add(win);
+        elm_object_text_set(btn, "anchor");
+        evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_smart_callback_add(btn, "clicked", _anchor_set_cb, efl_ui_popup);
+
+        snprintf(buf, sizeof(buf), "anchor%d", i+1);
+        elm_object_part_content_set(layout, buf, btn);
+     }
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "anchor none");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(btn, "clicked", _anchor_unset_cb, efl_ui_popup);
+   elm_object_part_content_set(layout, "anchor_none", btn);
+
+   tbl = elm_table_add(efl_ui_popup);
+   evas_object_size_hint_weight_set(tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Center Align");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _center_align_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 0, 0, 1, 1);
+   evas_object_show(btn);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Left Align");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _left_align_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 1, 0, 1, 1);
+   evas_object_show(btn);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Right Align");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _right_align_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 2, 0, 1, 1);
+   evas_object_show(btn);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Top Align");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _top_align_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 0, 1, 1, 1);
+   evas_object_show(btn);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Bottom Align");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _bottom_align_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 1, 1, 1, 1);
+   evas_object_show(btn);
+
+   btn = elm_button_add(efl_ui_popup);
+   elm_object_text_set(btn, "Position Set");
+   evas_object_size_hint_min_set(btn, 70, 35);
+   evas_object_smart_callback_add(btn, "clicked", _position_set_cb, efl_ui_popup);
+   elm_table_pack(tbl, btn, 2, 1, 1, 1);
+   evas_object_show(btn);
+
+   efl_content_set(efl_ui_popup, tbl);
 }
