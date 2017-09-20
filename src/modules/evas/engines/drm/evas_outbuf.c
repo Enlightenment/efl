@@ -63,7 +63,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
    Outbuf *ob;
    char *num;
-   int i = 0, fw, fh;
+   int i = 0, fw = 0, fh = 0;
 
    ob = calloc(1, sizeof(Outbuf));
    if (!ob) return NULL;
@@ -159,7 +159,7 @@ _outbuf_rotation_get(Outbuf *ob)
 void
 _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 {
-   int i = 0, fw, fh;
+   int i = 0, fw = 0, fh = 0;
    unsigned int format = DRM_FORMAT_ARGB8888;
 
    switch (depth)
