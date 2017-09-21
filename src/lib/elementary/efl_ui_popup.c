@@ -131,6 +131,67 @@ _efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
    return pd->align;
 }
 
+static Eina_Bool
+_timer_cb(void *data)
+{
+   Evas_Object *popup = data;
+   evas_object_del(popup);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_timer_del(Efl_Ui_Popup_Data *pd)
+{
+   if (pd->timer)
+     {
+        ecore_timer_del(pd->timer);
+        pd->timer = NULL;
+     }
+}
+
+static void
+_timer_init(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   if (pd->timeout > 0.0)
+     pd->timer = ecore_timer_add(pd->timeout, _timer_cb, obj);
+}
+
+EOLIAN static void
+_efl_ui_popup_efl_gfx_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bool v)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, v))
+     return;
+
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
+
+   if (v)
+     {
+        _timer_del(pd);
+        _timer_init(obj, pd);
+     }
+}
+
+EOLIAN static void
+_efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
+{
+   if (time < 0.0)
+     time = 0.0;
+
+   pd->timeout = time;
+
+   _timer_del(pd);
+
+   if (efl_gfx_visible_get(obj))
+     _timer_init(obj, pd);
+}
+
+EOLIAN static double
+_efl_ui_popup_timeout_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+{
+   return pd->timeout;
+}
+
 EOLIAN static void
 _efl_ui_popup_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
