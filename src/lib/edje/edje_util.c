@@ -1793,19 +1793,6 @@ on_error:
    return NULL;
 }
 
-
-EOLIAN Eina_Bool
-_edje_object_part_exists(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
-{
-   Edje_Real_Part *rp;
-
-   if ((!ed) || (!part)) return EINA_FALSE;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 /* Legacy API: exposes internal object. Easy to abuse. */
 EAPI const Evas_Object *
 edje_object_part_object_get(const Eo *obj, const char *part)

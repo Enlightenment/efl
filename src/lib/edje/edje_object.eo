@@ -321,25 +321,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
          legacy: null;
          return: iterator<string> @owned; [[Part name iterator]]
       }
-      part_exists @const {
-         [[Checks if a part exists in a given Edje object's group definition.
-
-           This function returns if a given part exists in the Edje group
-           bound to this object (with @Efl.File.file.set()).
-
-           This call is useful, for example, when one could expect or not a
-           given GUI element, depending on the theme applied to the object.
-
-           Note: @Efl.Part.part() called on an Edje object will return $null
-           if it doesn't contain the given part.
-         ]]
-         return: bool; [[$true if the Edje part exists in obj's group, or
-                         $false otherwise (and on errors)]]
-         params {
-            @in part: string; [[The part's name to check for existence in obj's
-                                group]]
-         }
-      }
 
       /* TEXT PART APIS BEGIN ---------------------------------------------- */
       @property text_change_cb {
@@ -433,7 +414,7 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
-      Efl.Part.part;
+      Efl.Part.part; [[Returns @Efl.Canvas.Layout.Part.]]
       Efl.Observer.update;
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }

@@ -2732,6 +2732,45 @@ EAPI void edje_object_size_min_get(const Edje_Object *obj, int *minw, int *minh)
 EAPI void edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh);
 
 /**
+ * @brief Checks if a part exists in a given Edje object's group definition.
+ *
+ * This function returns if a given part exists in the Edje group bound to this
+ * object (with @ref edje_object_file_set()).
+ *
+ * This call is useful, for example, when one could expect or not a given GUI
+ * element, depending on the theme applied to the object.
+ *
+ * @param[in] part The part's name to check for existence in obj's group
+ *
+ * @return @c true if the Edje part exists in obj's group, or @c false
+ * otherwise (and on errors)
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_exists(const Edje_Object *obj, const char *part);
+
+typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
+#define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
+#define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE
+#define EDJE_PART_TYPE_TEXT        EFL_CANVAS_LAYOUT_PART_TYPE_TEXT
+#define EDJE_PART_TYPE_IMAGE       EFL_CANVAS_LAYOUT_PART_TYPE_IMAGE
+#define EDJE_PART_TYPE_SWALLOW     EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW
+#define EDJE_PART_TYPE_TEXTBLOCK   EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK
+#define EDJE_PART_TYPE_GRADIENT    EFL_CANVAS_LAYOUT_PART_TYPE_GRADIENT
+#define EDJE_PART_TYPE_GROUP       EFL_CANVAS_LAYOUT_PART_TYPE_GROUP
+#define EDJE_PART_TYPE_BOX         EFL_CANVAS_LAYOUT_PART_TYPE_BOX
+#define EDJE_PART_TYPE_TABLE       EFL_CANVAS_LAYOUT_PART_TYPE_TABLE
+#define EDJE_PART_TYPE_EXTERNAL    EFL_CANVAS_LAYOUT_PART_TYPE_EXTERNAL
+#define EDJE_PART_TYPE_PROXY       EFL_CANVAS_LAYOUT_PART_TYPE_PROXY
+#define EDJE_PART_TYPE_SPACER      EFL_CANVAS_LAYOUT_PART_TYPE_SPACER
+#define EDJE_PART_TYPE_MESH_NODE   EFL_CANVAS_LAYOUT_PART_TYPE_MESH_NODE
+#define EDJE_PART_TYPE_LIGHT       EFL_CANVAS_LAYOUT_PART_TYPE_LIGHT
+#define EDJE_PART_TYPE_CAMERA      EFL_CANVAS_LAYOUT_PART_TYPE_CAMERA
+#define EDJE_PART_TYPE_SNAPSHOT    EFL_CANVAS_LAYOUT_PART_TYPE_SNAPSHOT
+#define EDJE_PART_TYPE_VECTOR      EFL_CANVAS_LAYOUT_PART_TYPE_VECTOR
+#define EDJE_PART_TYPE_LAST        EFL_CANVAS_LAYOUT_PART_TYPE_LAST
+
+/**
  * @}
  */
 #include "edje_object.eo.legacy.h"
