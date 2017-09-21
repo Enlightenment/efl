@@ -11,9 +11,6 @@
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
 
-#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
-#include <Edje_Edit.h>
-
 #define MY_CLASS EFL_UI_LAYOUT_CLASS
 #define MY_CLASS_PFX efl_ui_layout
 
@@ -2474,27 +2471,39 @@ elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, con
 /* Efl.Part implementation */
 
 EOLIAN static Eo *
-_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
-                             const char *part)
+_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
-   Edje_Part_Type type;
+   Efl_Canvas_Layout_Part_Type type;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
 
-   // Check part type with edje_edit, as edje_object_part_object_get()
-   // has side effects (it calls recalc, which may be really bad).
-   type = edje_edit_part_type_get(wd->resize_obj, part);
-   if ((type == EDJE_PART_TYPE_BOX) || (type == EDJE_PART_TYPE_TABLE))
-     return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
+   // Check part type without using edje_object_part_object_get(), as this
+   // can cause recalc, which has side effects... and could be slow.
+   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
 
-   if ((type == EDJE_PART_TYPE_TEXT) || (type == EDJE_PART_TYPE_TEXTBLOCK))
-     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS);
+   if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
+     {
+        ERR("Invalid type found for part '%s' in group '%s'", part, sd->group);
+        return NULL;
+     }
 
-   if (type == EDJE_PART_TYPE_SWALLOW)
-     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS);
-
-   return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS);
+   switch (type)
+     {
+      case EFL_CANVAS_LAYOUT_PART_TYPE_BOX:
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TABLE:
+        return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXT:
+      case EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK:
+        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS);
+      case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
+        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS);
+      case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
+        DBG("No such part '%s' in group '%s'", part, sd->group);
+        return NULL;
+      default:
+        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS);
+     }
 }
 
 static const char *
