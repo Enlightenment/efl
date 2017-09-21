@@ -126,6 +126,18 @@ _efl_canvas_layout_part_state_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, cons
    RETURN_VOID;
 }
 
+EOLIAN static Efl_Canvas_Layout_Part_Type
+_efl_canvas_layout_part_part_type_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+{
+   Edje_Real_Part *rp;
+   PROXY_CALL_BEGIN(pd);
+
+   rp = _edje_real_part_recursive_get(&pd->ed, pd->part);
+   if (!rp || !rp->part) RETURN_VAL(EFL_CANVAS_LAYOUT_PART_TYPE_NONE);
+
+   RETURN_VAL((Efl_Canvas_Layout_Part_Type) rp->part->type);
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_efl_ui_drag_drag_value_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {

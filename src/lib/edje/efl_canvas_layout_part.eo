@@ -1,4 +1,5 @@
-/* FIXME: Rename to Efl.Canvas.Layout.Part */
+import edje_types;
+
 class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
 {
    [[Common class for part proxy objects for $Efl.Canvas.Layout.
@@ -24,6 +25,16 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
             val: double; [[The value of the state.]]
          }
       }
+      @property part_type {
+         [[Type of this part in the layout.]]
+         get {
+            [[Returns the type of the part.]]
+         }
+         values {
+            type: Efl.Canvas.Layout.Part_Type(Efl.Canvas.Layout.Part_Type.none);
+               [[One of the types or $none if not an existing part.]]
+         }
+      }
    }
    implements {
       Efl.Object.finalize;
@@ -35,8 +46,5 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
       Efl.Ui.Drag.drag_step_move;
       Efl.Ui.Drag.drag_page { set; get; }
       Efl.Ui.Drag.drag_page_move;
-   }
-   events {
-      /* FIXME: Are there really no events? */
    }
 }

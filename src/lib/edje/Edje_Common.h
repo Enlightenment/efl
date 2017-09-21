@@ -1270,37 +1270,6 @@ EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
  */
 
 /**
- * @typedef Edje_Part_Type
- *
- * All possible "part" types in Edje.
- */
-typedef enum _Edje_Part_Type
-{
-   EDJE_PART_TYPE_NONE      = 0,  /**< None type value */
-   EDJE_PART_TYPE_RECTANGLE = 1,  /**< Rectangle type value */
-   EDJE_PART_TYPE_TEXT      = 2,  /**< Text type value */
-   EDJE_PART_TYPE_IMAGE     = 3,  /**< Image type value */
-   EDJE_PART_TYPE_SWALLOW   = 4,  /**< Swallow  type value */
-   EDJE_PART_TYPE_TEXTBLOCK = 5,  /**< Text block type value */
-   EDJE_PART_TYPE_GRADIENT  = 6,  /**< Gradient type value */
-   EDJE_PART_TYPE_GROUP     = 7,  /**< Group type value */
-   EDJE_PART_TYPE_BOX       = 8,  /**< Box type value */
-   EDJE_PART_TYPE_TABLE     = 9,  /**< Table type value */
-   EDJE_PART_TYPE_EXTERNAL  = 10, /**< External type value */
-   EDJE_PART_TYPE_PROXY     = 11, /**< Proxy type value */
-   EDJE_PART_TYPE_SPACER    = 12, /**< Spacer type value @since 1.7 */
-   EDJE_PART_TYPE_MESH_NODE = 13,
-   EDJE_PART_TYPE_LIGHT     = 14,
-   EDJE_PART_TYPE_CAMERA    = 15,
-   EDJE_PART_TYPE_SNAPSHOT  = 16, /**< Snapshot @since 1.16 */
-   EDJE_PART_TYPE_VECTOR    = 17, /**< Vector @since 1.18 */
-   EDJE_PART_TYPE_LAST      = 18  /**< Last type value */
-} Edje_Part_Type;
-/**
- * @}
- */
-
-/**
  * @defgroup Edje_Part_Text Edje Text Part
  * @ingroup Edje_Object_Part
  *
