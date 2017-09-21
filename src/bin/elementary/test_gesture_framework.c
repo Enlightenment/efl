@@ -204,6 +204,38 @@ finger_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
 }
 
 static void
+finger_long_tap_start(void *data , Efl_Gesture *tap)
+{
+   Eina_Vector2 pos = efl_gesture_long_tap_position_get(tap);
+
+   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Long Tap Gesture started x,y=<%f,%f> \n", pos.x, pos.y);
+}
+
+static void
+finger_long_tap_update(void *data , Efl_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   printf("Long Tap Gesture updated\n");
+}
+
+static void
+finger_long_tap_end(void *data , Efl_Gesture *tap)
+{
+   Eina_Vector2 pos = efl_gesture_long_tap_position_get(tap);
+
+   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Long Tap Gesture ended x,y=<%f,%f> \n",pos.x, pos.y);
+}
+
+static void
+finger_long_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Long Tap Aborted\n");
+}
+
+static void
 tap_gesture_cb(void *data , const Efl_Event *ev)
 {
    Efl_Gesture *g = ev->info;
@@ -220,6 +252,29 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
          break;
       case EFL_GESTURE_FINISHED:
          finger_tap_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+long_tap_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STARTED:
+         finger_long_tap_start(data, g);
+         break;
+      case EFL_GESTURE_UPDATED:
+         finger_long_tap_update(data, g);
+         break;
+      case EFL_GESTURE_CANCELED:
+         finger_long_tap_abort(data, g);
+         break;
+      case EFL_GESTURE_FINISHED:
+         finger_long_tap_end(data, g);
          break;
       default:
          break;
@@ -411,6 +466,7 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    // LISTEN FOR TAP GESTURE
    efl_event_callback_add(r, EFL_EVENT_GESTURE_TAP, tap_gesture_cb, infra);
+   efl_event_callback_add(r, EFL_EVENT_GESTURE_LONG_TAP, long_tap_gesture_cb, infra);
 
    /* Update color state 20 times a second */
    infra->colortimer = ecore_timer_add(0.05, _icon_color_set_cb, infra->icons);
