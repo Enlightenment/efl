@@ -66,6 +66,8 @@ _efl_gesture_manager_efl_object_constructor(Eo *obj, Efl_Gesture_Manager_Data *p
    pd->m_config = eina_hash_string_superfast_new(EINA_FREE_CB(eina_value_free));
 
    efl_gesture_manager_recognizer_register(obj, efl_add(EFL_GESTURE_RECOGNIZER_TAP_CLASS, obj));
+   efl_gesture_manager_recognizer_register(obj, efl_add(EFL_GESTURE_RECOGNIZER_LONG_TAP_CLASS, obj));
+
    return obj;
 }
 
