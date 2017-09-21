@@ -1,0 +1,118 @@
+import efl_selection_types;
+import efl_dnd_types;
+
+/*enum Efl.Dnd.Drag_Action {
+   unknown, [[Action type is unknown]]
+   copy, [[Copy the data]]
+   move, [[Move the data]]
+   private, [[Pricate action type]]
+   ask, [[Ask the user what to do]]
+   list, [[List the data]]
+   link, [[Link the data]]
+   description [[Describe the data]]
+}
+
+function Efl.Dnd.Drag_Icon_Create {
+   [[Function pointer for creating icon at the drag side.]]
+   params {
+      @in win: Efl.Canvas.Object; [[The window to create the objects relative to]]
+      @out xoff: Evas.Coord; [[A return coordinate for the X offset at which to place the drag icon object relative to the source drag object]]
+      @out yoff: Evas.Coord; [[A return coordinate for the Y offset at which to place the drag icon object relative to the source drag object]]
+   }
+   return: ptr(Eo); [[The drag icon object]]
+};
+
+function Efl.Dnd.Drag_Data_Get {
+   [[Function pointer for getting data and format at the drag side.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+      @out format: Efl.Cnp.Format; [[Data format]]
+      @out buf: const(void_ptr); [[Data]]
+      @out len: int; [[The data's length]]
+   }
+};
+
+//FIXME: This should be general for both drag and drop
+function Efl.Dnd.Drag_Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in x: int; [[The x coordinate to get item]]
+      @in y: int; [[The y coordinate to get item]]
+   }
+   return: ptr(Elm_Object_Item);
+};
+
+function Efl.Dnd.Drag_Icon_List_Create {
+   [[Function pointer to create list of icons at the drag side.
+     These icons are used for animation on combining selection icons
+     to one icon.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+   }
+   return: Eina_List;
+};
+
+struct Efl.Dnd.Drag_Accept {
+   accepted: bool;
+}
+
+struct Efl.Dnd.Drag_Pos {
+   x: int; [[Evas Coordinate]]
+   y: int; [[Evas Coordinate]]
+   action: Efl.Dnd.Drag_Action;
+}*/
+
+interface Efl.Dnd.Drag (Efl.Selection) {
+   //eo_prefix: efl_dnd_drag;
+   methods {
+      start {
+         [[This starts a drag and drop process at the drag side.
+           During dragging, there are three events emitted as belows:
+              - EFL_DND_EVENT_DRAG_POS
+              - EFL_DND_EVENT_DRAG_ACCEPT
+              - EFL_DND_EVENT_DRAG_DONE
+         ]]
+         params {
+            @in format: Efl.Cnp.Format; [[The data format]]
+            @in buf: const(void_ptr);
+            @in len: int; [[The data's length.]]
+            @in action: Efl.Dnd.Drag_Action; [[Action when data is transferred]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+         }
+      }
+      action_set {
+         [[This sets the action for the drag]]
+         params {
+            @in action: Efl.Dnd.Drag_Action; [[Drag action]]
+         }
+      }
+      cancel {
+         [[This cancels the on-going drag]]
+      }
+      item_container_add {
+         [[This registers a drag for items in a container. Many items can be
+           dragged at a time. During dragging, there are three events emitted:
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
+         params {
+            @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
+            @in anim_durataion: double; [[animation duration]]
+            @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
+            @in item_func: Efl.Dnd.Drag_Item_Get; [[Item to determine drag start]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+         }
+      }
+      item_container_del {
+         [[Remove drag function of items in the container object.]]
+         params {
+         }
+      }
+   }
+   implements {
+   }
+   events {
+      drag,pos; [[called when changing drag position]]
+      drag,accept; [[accept drag data]]
+      drag,done; [[drag is done (mouse up)]]
+   }
+}

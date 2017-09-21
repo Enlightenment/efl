@@ -74,6 +74,10 @@
 #include "interfaces/efl_ui_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
 
+#include "interfaces/efl_selection.eo.c"
+#include "interfaces/efl_dnd_drag.eo.c"
+#include "interfaces/efl_dnd_drop.eo.c"
+
 EAPI void
 __efl_internal_init(void)
 {

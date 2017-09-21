@@ -80,6 +80,9 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_color_class.eo \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
+      lib/efl/interfaces/efl_selection.eo \
+      lib/efl/interfaces/efl_dnd_drag.eo \
+      lib/efl/interfaces/efl_dnd_drop.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -89,6 +92,8 @@ efl_eolian_type_files = \
 	lib/efl/interfaces/efl_input_types.eot \
 	lib/efl/interfaces/efl_types.eot \
 	lib/efl/interfaces/efl_text_types.eot \
+	lib/efl/interfaces/efl_selection_types.eot \
+	lib/efl/interfaces/efl_dnd_types.eot \
 	$(NULL)
 
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h) \

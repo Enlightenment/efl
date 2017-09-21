@@ -1,0 +1,46 @@
+import efl_selection_types;
+import efl_dnd_types;
+
+
+//FIXME: This should be general for both drag and drop
+/*function Efl.Dnd.Drop_Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in x: int; [[The x coordinate to get item]]
+      @in y: int; [[The y coordinate to get item]]
+   }
+   return: ptr(Elm_Object_Item);
+};*/
+
+
+interface Efl.Dnd.Drop (Efl.Selection) {
+   eo_prefix: efl_dnd_drop;
+   methods {
+      target_add {
+         [[There are four events emitted: EFL_DND_DROP_DRAG_ENTER, EFL_DND_DROP_DRAG_LEAVE,
+           EFL_DND_DROP_DRAG_POS, EFL_DND_DROP_DRAG_DROP.]]
+         params {
+            @in format: Efl.Cnp.Format; [[Accepted data format]]
+         }
+      }
+      target_del {
+         params {
+            @in format: Efl.Cnp.Format; [[Accepted data format]]
+         }
+      }
+      item_container_add {
+         params {
+            @in format: Efl.Cnp.Format; [[Accepted data formats]]
+            @in item_func: Efl.Dnd.Drop_Item_Get; [[Get item at specific position]]
+         }
+      }
+      item_container_del {
+      }
+   }
+   events {
+      drag,enter; [[called when the drag object enters this object]]
+      drag,leave; [[called when the drag object leaves this object]]
+      drag,pos; [[called when the drag object changes drag position]]
+      drag,drop; [[called when the drag object dropped on this object]]
+   }
+}

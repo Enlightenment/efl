@@ -1,0 +1,32 @@
+
+
+enum Efl.Cnp.Type
+{
+   primary, [[Primary text selection (highlighted or selected text)]]
+   secondary, [[Used when primary selection is in use]]
+   dnd, [[Drag and Drop]]
+   clipboard [[Clipboard selectio (ctrl+C)]]
+}
+
+//should be more general: Efl.Data.Format???
+enum Efl.Cnp.Format
+{
+   [[Selection format]]
+   targets = -1, [[For matching every possible atom]]
+   none = 0x0, [[Content is from outside of Elementary]]
+   text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
+   markup = 0x2, [[Edje textblock markup, including inline images]]
+   image = 0x4, [[Images]]
+   vcard = 0x08, [[Vcards]]
+   html = 0x10 [[Raw HTML-like data (eg. webkit)]]
+}
+
+struct Efl.Cnp.Selection
+{
+   [[EFL Cnp selection]]
+   data: void_ptr; [[data]]
+   length: int; [[length]]
+}
+
+
+

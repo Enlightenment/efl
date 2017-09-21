@@ -1,0 +1,71 @@
+enum Efl.Dnd.Drag_Action {
+   unknown, [[Action type is unknown]]
+   copy, [[Copy the data]]
+   move, [[Move the data]]
+   private, [[Pricate action type]]
+   ask, [[Ask the user what to do]]
+   list, [[List the data]]
+   link, [[Link the data]]
+   description [[Describe the data]]
+}
+
+function Efl.Dnd.Drag_Icon_Create {
+   [[Function pointer for creating icon at the drag side.]]
+   params {
+      @in win: ptr(Eo); [[The window to create the objects relative to]]
+      @out xoff: int; [[A return coordinate for the X offset at which to place the drag icon object relative to the source drag object]]
+      @out yoff: int; [[A return coordinate for the Y offset at which to place the drag icon object relative to the source drag object]]
+   }
+   return: ptr(Eo); [[The drag icon object]]
+};
+
+function Efl.Dnd.Drag_Data_Get {
+   [[Function pointer for getting data and format at the drag side.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+      @out format: Efl.Cnp.Format; [[Data format]]
+      @out buf: const(void_ptr); [[Data]]
+      @out len: int; [[The data's length]]
+   }
+};
+
+//FIXME: This should be general for both drag and drop
+function Efl.Dnd.Drag_Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in x: int; [[The x coordinate to get item]]
+      @in y: int; [[The y coordinate to get item]]
+   }
+   return: ptr(Eo);
+};
+
+function Efl.Dnd.Drag_Icon_List_Create {
+   [[Function pointer to create list of icons at the drag side.
+     These icons are used for animation on combining selection icons
+     to one icon.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+   }
+   return: Eina_List;
+};
+
+struct Efl.Dnd.Drag_Accept {
+   accepted: bool;
+}
+
+struct Efl.Dnd.Drag_Pos {
+   x: int; [[Evas Coordinate]]
+   y: int; [[Evas Coordinate]]
+   action: Efl.Dnd.Drag_Action;
+}
+
+function Efl.Dnd.Drop_Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in x: int; [[The x coordinate to get item]]
+      @in y: int; [[The y coordinate to get item]]
+   }
+   return: ptr(Eo);
+};
+
+

@@ -1,9 +1,22 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
+//#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+//#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+//#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
+//#define ELM_LAYOUT_PROTECTED
+
+#include <Elementary.h>
+//#include <Elementary_Cursor.h>
+#include "elm_priv.h"
+
 #include "efl_cnp_private.h"
 
-#define MY_CLASS EFL_CNP_CLASS
+//#define MY_CLASS EFL_CNP_CLASS
+#define MY_CLASS EFL_CNP_MIXIN
 #define MY_CLASS_NAME "Efl.Cnp"
-#define MY_CLASS_NAME_LEGACY "elm_cnp"
-
+//#define MY_CLASS_NAME_LEGACY "elm_cnp"
 
 static Ecore_X_Window
 _x11_elm_widget_xwin_get(Evas_Object *obj)
@@ -108,25 +121,38 @@ _efl_cnp_x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, voi
 }
 
 EOLIAN static Efl_Future *
-_efl_cnp_selection_get(Eo *obj, Efl_Cnp_Data *pd, Elm_Cnp_Mode mode, Efl_Cnp_Format format, const void *data)
+_efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Cnp_Format format, Efl_Input_Device *seat)
 {
    ERR("in");
    Efl_Promise *p;
 
+   pd->atom.name = "TARGETS";
+   pd->atom.x_atom = ecore_x_atom_get(pd->atom.name);
+   ecore_x_selection_converter_atom_add(pd->atom.x_atom, _efl_cnp_x11_target_converter);
+   pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _efl_cnp_x11_selection_notify, pd);
+
+
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   ERR("xwin: %d", xwin);
    ecore_x_selection_primary_request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS,loop);
-   if (!p) return NULL;
-   
-   pd->promise = p;
+   //issue: ctrl-v many times continuously, promise cannot sastify it
+   //1st set value to promise, 2nd set value for the same promise -> error
+   //another bug case: 1st get selection type A, 2nd get selection type B
+   if (!pd->promise)
+     {
+        Eo *loop = efl_loop_get(obj);
+        p = efl_add(EFL_PROMISE_CLASS,loop);
+        if (!p) return NULL;
 
-   return efl_promise_future_get(p);
+        pd->promise = p;
+     }
+
+   return efl_promise_future_get(pd->promise);
 }
 
 EOLIAN static void
-_efl_cnp_selection_set(Eo *obj, Efl_Cnp_Data *pd, Elm_Cnp_Mode mode, Efl_Cnp_Format format, const void *buf, int len)
+_efl_cnp_efl_selection_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Cnp_Format format, const void *buf, int len, Efl_Input_Device *seat)
 {
    ERR("in");
    //add implementation
@@ -139,8 +165,31 @@ _efl_cnp_selection_set(Eo *obj, Efl_Cnp_Data *pd, Elm_Cnp_Mode mode, Efl_Cnp_For
    ERR("sel set ret: %d", ret);
 }
 
+EOLIAN static void
+_efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Input_Device *seat)
+{
+    ERR("In");
+}
+
+//Selection loss event callback:: name
+//future or event???
+EOLIAN static Efl_Future *
+_efl_cnp_efl_selection_selection_loss_feedback(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type)
+{
+    ERR("In");
+    Efl_Promise *p;
+
+    Eo *loop = efl_loop_get(obj);
+    p = efl_add(EFL_PROMISE_CLASS, loop);
+    if (!p) return NULL;
+
+    pd->promise = p;
+
+    return efl_promise_future_get(p);
+}
 
 
+/*
 EOLIAN static Eo*
 _efl_cnp_efl_object_constructor(Eo *obj, Efl_Cnp_Data *_pd)
 {
@@ -160,5 +209,5 @@ _efl_cnp_efl_object_destructor(Eo *obj, Efl_Cnp_Data *_pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 
    ecore_event_handler_del(_pd->notify_handler);
-}
+}*/
 #include "efl_cnp.eo.c"

@@ -1,6 +1,6 @@
 import efl_selection_types;
-/*
-enum Efl.Cnp.Type
+
+/*enum Efl.Cnp.Type
 {
    primary, [[Primary text selection (highlighted or selected text)]]
    secondary, [[Used when primary selection is in use]]
@@ -26,19 +26,19 @@ struct Efl.Cnp.Selection
    [[EFL Cnp selection]]
    data: void_ptr; [[data]]
    length: int; [[length]]
-}
-*/
+}*/
+
 
 //mixin or class
 //class: how to get top_win and set selection
 //mixin: every object can get/set selection, how to handle it efficiently
 //class Efl.Cnp (Efl.Object) {
-mixin Efl.Cnp (Efl.Selection) {
+interface Efl.Selection {
    [[Efl Copy and Paste class]]
    //legacy_prefix: elm_cnp;
-   //eo_prefix: efl_cnp;
+   //eo_prefix: efl_selection;
    methods {
-      /*selection_set {
+      selection_set {
          params {
             @in type: Efl.Cnp.Type; [[Selection Type]]
             @in format: Efl.Cnp.Format; [[Selection Format]]
@@ -66,15 +66,11 @@ mixin Efl.Cnp (Efl.Selection) {
             @in type: Efl.Cnp.Type; [[Selection type]]
          }
          return: future<generic_value>; [[Future of selection that is ready]]
-      }*/
+      }
    }
    implements {
-      Efl.Selection.selection_set;
-      Efl.Selection.selection_get;
-      Efl.Selection.selection_clear;
-      Efl.Selection.selection_loss_feedback;
    }
-   /*events {
+   events {
       selection,loss; [[Called when selection is lost]]
-   }*/
+   }
 }
