@@ -50,10 +50,24 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
              type: Efl.Ui.Popup.Align;
          }
       }
+      @property timeout {
+         set {
+            [[ Set the timeout seconds.
+               After timeout seconds, popup will be deleted automatically.
+            ]]
+         }
+         get {
+            [[ Get the currently set timeout seconds.]]
+         }
+         values {
+             time: double;
+         }
+      }
    }
    implements {
       class.constructor;
       Efl.Gfx.position { set; }
+      Efl.Gfx.visible { set; }
       Elm.Widget.widget_parent { set; }
       Efl.Container.content { get; set; }
       Efl.Container.content_unset;
