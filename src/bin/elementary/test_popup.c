@@ -1011,6 +1011,14 @@ _position_set_cb(void *data, Evas_Object *obj EINA_UNUSED,
    evas_object_move(data, 0, 0);
 }
 
+static void
+_timeout_set_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   efl_ui_popup_timeout_set(data, 3);
+   printf("timemout is set to 3 seconds\n");
+}
+
 void
 test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -1031,7 +1039,6 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_CLASS, win);
 
    evas_object_smart_callback_add(efl_ui_popup, "bg,clicked", _bg_clicked, NULL);
-
    evas_object_resize(efl_ui_popup, 160, 160);
    evas_object_show(efl_ui_popup);
 
@@ -1091,6 +1098,14 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_resize(position_btn, 100, 50);
    evas_object_show(position_btn);
    evas_object_smart_callback_add(position_btn, "clicked", _position_set_cb, efl_ui_popup);
+
+   Evas_Object *timeout_btn;
+   timeout_btn = elm_button_add(win);
+   elm_object_text_set(timeout_btn, "Timeout Set");
+   evas_object_move(timeout_btn, 0, 400);
+   evas_object_resize(timeout_btn, 100, 50);
+   evas_object_show(timeout_btn);
+   evas_object_smart_callback_add(timeout_btn, "clicked", _timeout_set_cb, efl_ui_popup);
 
    efl_content_set(efl_ui_popup, btn);
 }
