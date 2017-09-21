@@ -1,0 +1,10 @@
+class Efl.Gesture.Recognizer.Long.Tap(Efl.Gesture.Recognizer)
+{
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Gesture.Recognizer.create;
+      Efl.Gesture.Recognizer.recognize;
+      Efl.Gesture.Recognizer.reset;
+   }
+}

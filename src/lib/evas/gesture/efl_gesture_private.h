@@ -10,6 +10,7 @@
 
 //private gesture classes
 #include "efl_gesture_recognizer_tap.eo.h"
+#include "efl_gesture_recognizer_long_tap.eo.h"
 
 typedef struct _Efl_Gesture_Recognizer_Data             Efl_Gesture_Recognizer_Data;
 typedef struct _Efl_Gesture_Data                        Efl_Gesture_Data;
