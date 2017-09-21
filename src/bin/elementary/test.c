@@ -339,6 +339,9 @@ void test_efl_anim_repeat(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_start_delay(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 
+void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
+
+
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
 Eina_List *tests;
@@ -1082,6 +1085,7 @@ add_tests:
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
    ADD_TEST(NULL, "Evas", "Gfx Map", test_efl_gfx_map);
+   ADD_TEST(NULL, "Evas", "Gesture", test_gesture_framework);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
