@@ -1600,7 +1600,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
    Evas_Event_Key_Down *ev = event_info;
 
-   if (!pd->editable)
+   if (!pd->editable || (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
      return;
 
    _elm_code_widget_update_focus_directions(widget);
