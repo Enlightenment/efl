@@ -1,8 +1,12 @@
 class Efl.Ui.Widget.Part (Efl.Object)
 {
+   [[This is the base class for all "Part" handles in Efl.Ui widgets.
+
+     Since objects of this type are returned by @Efl.Part.part, their lifetime
+     is limited to exactly one function call only. Each widget class should
+     expose more specific types for their API-defined parts.
+   ]]
    data: Elm_Part_Data;
-   methods {
-   }
    implements {
       Efl.Object.destructor;
    }
