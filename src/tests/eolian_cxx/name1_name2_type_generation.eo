@@ -56,7 +56,7 @@ class Name1.Name2.Type_Generation (Efl.Object)
      }
      instringown {
        params {
-         @in v: string @owned;
+         @in v: mstring @owned;
        }
      }
      instringptrown {
@@ -102,7 +102,7 @@ class Name1.Name2.Type_Generation (Efl.Object)
        return: ptr(string);
      }
      returnstringown {
-       return: string @owned;
+       return: mstring @owned;
      }
      returnstringownptr {
        return: ptr(string) @owned;

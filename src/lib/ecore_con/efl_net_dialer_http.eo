@@ -383,7 +383,7 @@ class Efl.Net.Dialer.Http (Efl.Loop_User, Efl.Net.Dialer, Efl.Io.Sizer) {
             params {
                 epochtime: int64; [[UNIX Epoch time - seconds since 1/1/1970]]
             }
-            return: string @owned @warn_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
+            return: mstring @owned @warn_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
         }
     }
 

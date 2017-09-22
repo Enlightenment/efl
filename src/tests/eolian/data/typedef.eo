@@ -33,7 +33,7 @@ class Typedef {
          params {
             idx: int;
          }
-         return: string @owned;
+         return: mstring @owned;
       }
    }
 }

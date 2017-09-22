@@ -24,7 +24,7 @@ class Free_Func {
          params {
             idx: int;
          }
-         return: string @owned;
+         return: mstring @owned;
       }
    }
 }
