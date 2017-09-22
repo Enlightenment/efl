@@ -757,6 +757,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref)
         check(ls, TOK_VALUE);
         if (eo_lexer_is_type_keyword(ls->t.kw))
           {
+             def->btype = ls->t.kw - KW_byte + 1;
              _fill_name(eina_stringshare_ref(ls->t.value.s), &def->full_name,
                         &def->name, &def->namespaces);
              eo_lexer_get(ls);

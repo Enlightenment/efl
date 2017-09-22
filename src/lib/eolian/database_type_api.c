@@ -103,6 +103,13 @@ eolian_type_type_get(const Eolian_Type *tp)
    return tp->type;
 }
 
+EAPI Eolian_Type_Builtin_Type
+eolian_type_builtin_type_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EOLIAN_TYPE_BUILTIN_INVALID);
+   return tp->btype;
+}
+
 EAPI Eolian_Typedecl_Type
 eolian_typedecl_type_get(const Eolian_Typedecl *tp)
 {
