@@ -2047,8 +2047,28 @@ void
 _ecore_x_event_handle_mapping_notify(XEvent *xevent)
 {
    Ecore_X_Event_Mapping_Change *e;
+   static unsigned long last_serial;
+   int type;
 
    _ecore_x_last_event_mouse_move = 0;
+
+   switch (xevent->xmapping.request)
+     {
+      case MappingModifier:
+        type = ECORE_X_MAPPING_MODIFIER;
+        break;
+
+      case MappingKeyboard:
+        if ((last_serial && (xevent->xmapping.serial == last_serial))) return;
+        type = ECORE_X_MAPPING_KEYBOARD;
+        last_serial = xevent->xmapping.serial;
+        break;
+
+      case MappingPointer:
+      default:
+        type = ECORE_X_MAPPING_MOUSE;
+        break;
+     }
 
    _ecore_x_window_grab_suspend();
    _ecore_x_key_grab_suspend();
@@ -2060,21 +2080,7 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent)
    _ecore_x_key_grab_resume();
    e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));
    if (!e) return;
-   switch (xevent->xmapping.request)
-     {
-      case MappingModifier:
-        e->type = ECORE_X_MAPPING_MODIFIER;
-        break;
-
-      case MappingKeyboard:
-        e->type = ECORE_X_MAPPING_KEYBOARD;
-        break;
-
-      case MappingPointer:
-      default:
-        e->type = ECORE_X_MAPPING_MOUSE;
-        break;
-     }
+   e->type = type;
    e->keycode = xevent->xmapping.first_keycode;
    e->num = xevent->xmapping.count;
    ecore_event_add(ECORE_X_EVENT_MAPPING_CHANGE, e, NULL, NULL);
