@@ -16,11 +16,11 @@
 # include <unistd.h>
 #endif
 
-#if defined(HAVE_SYS_MMAN_H) || defined(HAVE_EVIL)
+#if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
 # include <sys/mman.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

@@ -20,9 +20,9 @@
 # include <netinet/in.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
-#endif /* ifdef HAVE_EVIL */
+#endif /* ifdef _WIN32 */
 
 #include <Eina.h>
 #include <Emile.h>

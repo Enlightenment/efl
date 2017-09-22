@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
@@ -91,7 +91,7 @@ efreet_desktop_init(void)
         return 0;
     }
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
     if (!evil_sockets_init())
     {
         ERR("Could not initialize Winsock system");
@@ -138,7 +138,7 @@ efreet_desktop_shutdown(void)
     EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
     eina_lock_free(&_lock);
-#ifdef HAVE_EVIL
+#ifdef _WIN32
     evil_sockets_shutdown();
 #endif
     eina_log_domain_unregister(_efreet_desktop_log_dom);

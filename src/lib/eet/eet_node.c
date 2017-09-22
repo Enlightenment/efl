@@ -5,9 +5,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
-#endif /* ifdef HAVE_EVIL */
+#endif /* ifdef _WIN32 */
 
 #include <Eina.h>
 

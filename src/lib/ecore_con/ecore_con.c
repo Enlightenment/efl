@@ -42,7 +42,7 @@
 # include <ws2tcpip.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
@@ -84,7 +84,7 @@ ecore_con_init(void)
    if (++_ecore_con_init_count != 1)
      return _ecore_con_init_count;
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    if (!evil_init())
      return --_ecore_con_init_count;
 #endif
@@ -129,7 +129,7 @@ ecore_con_log_error:
    ecore_shutdown();
 
 ecore_err:
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    evil_shutdown();
 #endif
    return --_ecore_con_init_count;
@@ -160,7 +160,7 @@ ecore_con_shutdown(void)
     */
 
    ecore_shutdown();
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    evil_shutdown();
 #endif
 

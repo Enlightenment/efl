@@ -20,7 +20,7 @@
 #include <Eina.h>
 #include <Ecore.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 #include <Evil.h>
 #endif
 

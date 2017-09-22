@@ -33,7 +33,7 @@
 #include <string.h>
 #include <assert.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

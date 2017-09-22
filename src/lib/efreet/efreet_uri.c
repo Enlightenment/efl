@@ -8,7 +8,7 @@
 #define _POSIX_HOST_NAME_MAX 255
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

@@ -40,7 +40,7 @@ evas_init(void)
       }
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    if (!evil_init())
      return --_evas_init_count;
 #endif
@@ -118,7 +118,7 @@ evas_init(void)
  shutdown_eina:
    eina_shutdown();
  shutdown_evil:
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    evil_shutdown();
 #endif
 
@@ -185,7 +185,7 @@ evas_shutdown(void)
    eet_shutdown();
 
    eina_shutdown();
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    evil_shutdown();
 #endif
 

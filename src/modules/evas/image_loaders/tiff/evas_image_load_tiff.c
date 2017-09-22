@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <tiffio.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

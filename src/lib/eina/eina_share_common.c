@@ -63,7 +63,7 @@
 #include <string.h>
 #include <stddef.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

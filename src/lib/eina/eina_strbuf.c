@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

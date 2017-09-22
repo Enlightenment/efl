@@ -6,7 +6,7 @@
 #include <string.h>
 #include <webp/decode.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
