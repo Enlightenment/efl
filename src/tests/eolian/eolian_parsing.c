@@ -677,21 +677,6 @@ START_TEST(eolian_struct)
    fail_if(!(type_name = eolian_type_c_type_get(ftype, EOLIAN_C_TYPE_DEFAULT)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
-   fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "arr")));
-   fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(eolian_type_is_ptr(ftype));
-   fail_if(eolian_type_array_size_get(ftype) != 16);
-   fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_STATIC_ARRAY);
-   fail_if(!(type_name = eolian_type_c_type_get(ftype, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(strcmp(type_name, "int *"));
-   eina_stringshare_del(type_name);
-   fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "tarr")));
-   fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(eolian_type_is_ptr(ftype));
-   fail_if(!(type_name = eolian_type_c_type_get(ftype, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_TERMINATED_ARRAY);
-   fail_if(strcmp(type_name, "const char **"));
-   eina_stringshare_del(type_name);
 
    /* referencing */
    fail_if(!(tdl = eolian_typedecl_struct_get_by_name(unit, "Another")));

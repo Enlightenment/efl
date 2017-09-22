@@ -667,8 +667,6 @@ M.Type = Node:clone {
     VOID = eolian.type_type.VOID,
     REGULAR = eolian.type_type.REGULAR,
     CLASS = eolian.type_type.CLASS,
-    STATIC_ARRAY = eolian.type_type.STATIC_ARRAY,
-    TERMINATED_ARRAY = eolian.type_type.TERMINATED_ARRAY,
     UNDEFINED = eolian.type_type.UNDEFINED,
 
     __ctor = function(self, tp)
@@ -719,10 +717,6 @@ M.Type = Node:clone {
     class_get = function(self)
         -- FIXME: unit
         return self.type:class_get(nil)
-    end,
-
-    array_size_get = function(self)
-        return self.type_array_size_get()
     end,
 
     is_owned = function(self)
@@ -779,13 +773,6 @@ M.Type = Node:clone {
                     .. table.concat(stypes, ", ") .. ">")
             end
             return wrap_type_attrs(self, self:full_name_get())
-        elseif tpt == self.STATIC_ARRAY then
-            return wrap_type_attrs(self, "static_array<"
-                .. self:base_type_get():serialize() .. ", "
-                .. self:array_size_get() .. ">")
-        elseif tpt == self.TERMINATED_ARRAY then
-            return wrap_type_attrs(self, "terminated_array<"
-                .. self:base_type_get():serialize() .. ">")
         end
         error("unhandled type type: " .. tpt)
     end

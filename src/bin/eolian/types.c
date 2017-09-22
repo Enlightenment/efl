@@ -41,22 +41,10 @@ _type_generate(const Eolian_Unit *src, const Eolian_Typedecl *tp,
              {
                 const Eolian_Type *mtp = eolian_typedecl_struct_field_type_get(memb);
                 Eina_Stringshare *ct = NULL;
-                if (eolian_type_type_get(mtp) == EOLIAN_TYPE_STATIC_ARRAY)
-                  {
-                     ct = eolian_type_c_type_get(eolian_type_base_type_get(mtp),
-                                                 EOLIAN_C_TYPE_DEFAULT);
-                     eina_strbuf_append_printf(buf, "  %s%s%s[%zu];",
-                        ct, strchr(ct, '*') ? "" : " ",
-                        eolian_typedecl_struct_field_name_get(memb),
-                        eolian_type_array_size_get(mtp));
-                  }
-                else
-                  {
-                     ct = eolian_type_c_type_get(mtp, EOLIAN_C_TYPE_DEFAULT);
-                     eina_strbuf_append_printf(buf, "  %s%s%s;",
-                        ct, strchr(ct, '*') ? "" : " ",
-                        eolian_typedecl_struct_field_name_get(memb));
-                  }
+                ct = eolian_type_c_type_get(mtp, EOLIAN_C_TYPE_DEFAULT);
+                eina_strbuf_append_printf(buf, "  %s%s%s;",
+                   ct, strchr(ct, '*') ? "" : " ",
+                   eolian_typedecl_struct_field_name_get(memb));
                 eina_stringshare_del(ct);
                 const Eolian_Documentation *fdoc
                    = eolian_typedecl_struct_field_documentation_get(memb);
