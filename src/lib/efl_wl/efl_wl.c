@@ -5240,7 +5240,7 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
         if (gl) gl = strdup(gl);
         setenv("ELM_ACCEL", "gl", 1);
      }
-   exe = ecore_exe_run(cmd, c);
+   exe = ecore_exe_pipe_run(cmd, ECORE_EXE_TERM_WITH_PARENT, c);
    if (disp) setenv("DISPLAY", disp, 1);
    if (env) setenv("WAYLAND_DISPLAY", env, 1);
    else unsetenv("WAYLAND_DISPLAY");
