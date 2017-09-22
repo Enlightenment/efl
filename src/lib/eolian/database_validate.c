@@ -187,7 +187,7 @@ _validate_type(Eolian_Type *tp)
                      case KW_stringshare:
                        tp->freefunc = eina_stringshare_add(eo_strshare_free);
                        break;
-                     case KW_generic_value:
+                     case KW_any_value:
                        tp->freefunc = eina_stringshare_add(eo_value_free);
                        break;
                      default:

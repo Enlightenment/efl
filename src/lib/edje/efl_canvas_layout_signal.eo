@@ -40,7 +40,7 @@ interface Efl.Canvas.Layout_Signal
          ]]
          params {
             @in id: int; [[A identification number for the message to be sent]]
-            @in msg: const(generic_value); [[The message's payload]]
+            @in msg: const(any_value); [[The message's payload]]
          }
       }
       signal_callback_add {

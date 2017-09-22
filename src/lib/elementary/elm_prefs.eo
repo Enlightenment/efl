@@ -93,7 +93,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          return: bool; [[$true, on success, $false otherwise]]
          params {
             @in name: string; [[The name of the item (as declared in the prefs collection)]]
-            @in value: ptr(const(generic_value)); [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
+            @in value: ptr(const(any_value)); [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
          }
       }
       item_value_get @const {
@@ -106,7 +106,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
 
          params {
             @in name: string; [[The name of the item (as declared in the prefs collection) to get value from]]
-            @out value: generic_value; [[Where to store the value of the item. It will be overwritten and setup with the type the item is bound to]]
+            @out value: any_value; [[Where to store the value of the item. It will be overwritten and setup with the type the item is bound to]]
          }
       }
       item_object_get {
