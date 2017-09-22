@@ -120,13 +120,8 @@ void
 database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
                      Eolian_C_Type_Type ctype)
 {
-   if ((tp->type == EOLIAN_TYPE_COMPLEX
-     || tp->type == EOLIAN_TYPE_CLASS)
-     && tp->is_const)
-     {
-        eina_strbuf_append(buf, "const ");
-     }
    if ((tp->type == EOLIAN_TYPE_REGULAR
+     || tp->type == EOLIAN_TYPE_CLASS
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
      && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp, EINA_FALSE)))
@@ -134,7 +129,6 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
         eina_strbuf_append(buf, "const ");
      }
    if (tp->type == EOLIAN_TYPE_REGULAR
-    || tp->type == EOLIAN_TYPE_COMPLEX
     || tp->type == EOLIAN_TYPE_CLASS)
      {
         Eina_List *l;
@@ -162,7 +156,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
         if (tp->is_const && (ctype != EOLIAN_C_TYPE_RETURN))
           eina_strbuf_append(buf, " const");
      }
-   if (tp->type == EOLIAN_TYPE_COMPLEX || tp->type == EOLIAN_TYPE_CLASS)
+   if (tp->type == EOLIAN_TYPE_CLASS)
      _buf_add_suffix(buf, "*");
    if (tp->is_ptr)
      _buf_add_suffix(buf, "*");

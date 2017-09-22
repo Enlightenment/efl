@@ -253,51 +253,50 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
 {
    c_type = ::eolian_type_c_type_get(eolian_type, ctype);
    // ::eina_stringshare_del(stringshare); // this crashes
+   Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
        original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}};
        break;
      case EOLIAN_TYPE_REGULAR:
-       {
-         bool is_undefined = false;
-         Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
-         bool is_function_ptr = decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
-         if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
-           {
-             Eolian_Type const* aliased = eolian_typedecl_base_type_get(decl);
-             if(aliased && eolian_type_type_get(aliased) == EOLIAN_TYPE_UNDEFINED)
-               {
-                 is_undefined = true;
-               }
-           }
-         
-         if(c_type == "va_list *")
-           throw std::runtime_error("");
-         std::vector<std::string> namespaces;
-         for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
-               , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
-           namespaces.push_back(&*namespace_iterator);
-         original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined, is_function_ptr}};
-       }
+       if (!stp)
+         {
+           bool is_undefined = false;
+           Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
+           bool is_function_ptr = decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
+           if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
+             {
+               Eolian_Type const* aliased = eolian_typedecl_base_type_get(decl);
+               if(aliased && eolian_type_type_get(aliased) == EOLIAN_TYPE_UNDEFINED)
+                 {
+                   is_undefined = true;
+                 }
+             }
+           if(c_type == "va_list *")
+             throw std::runtime_error("");
+           std::vector<std::string> namespaces;
+           for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
+                 , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+             namespaces.push_back(&*namespace_iterator);
+           original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined, is_function_ptr}};
+         }
+       else
+         {
+           complex_type_def complex
+            {{::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
+           while (stp)
+             {
+                complex.subtypes.push_back({stp, unit, EOLIAN_C_TYPE_DEFAULT});
+                stp = eolian_type_next_type_get(stp);
+             }
+           original_type = complex;
+         }
        break;
      case EOLIAN_TYPE_CLASS:
        {
           Eolian_Class const* klass = eolian_type_class_get(unit, eolian_type);
           original_type = klass_name(klass, {qualifiers(eolian_type), {}});
-       }
-       break;
-     case EOLIAN_TYPE_COMPLEX:
-       {
-         complex_type_def complex
-          {{::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
-         Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
-         while (stp)
-           {
-              complex.subtypes.push_back({stp, unit, EOLIAN_C_TYPE_DEFAULT});
-              stp = eolian_type_next_type_get(stp);
-           }
-         original_type = complex;
        }
        break;
      default:

@@ -26,13 +26,12 @@ _eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
    switch (type->type)
      {
       case EOLIAN_TYPE_CLASS:
-      case EOLIAN_TYPE_COMPLEX:
         return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
       case EOLIAN_TYPE_REGULAR:
         {
-           int  kw = eo_lexer_keyword_str_to_id(type->name);
-           if (type->is_ptr)
+           if (database_type_is_ownable(type, EINA_FALSE))
              return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
+           int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)
              {
                 const Eolian_Typedecl *base = eolian_type_typedecl_get(type);

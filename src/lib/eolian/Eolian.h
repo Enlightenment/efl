@@ -227,7 +227,6 @@ typedef enum
    EOLIAN_TYPE_UNKNOWN_TYPE = 0,
    EOLIAN_TYPE_VOID,
    EOLIAN_TYPE_REGULAR,
-   EOLIAN_TYPE_COMPLEX,
    EOLIAN_TYPE_CLASS,
    EOLIAN_TYPE_STATIC_ARRAY,
    EOLIAN_TYPE_TERMINATED_ARRAY,
@@ -1761,8 +1760,8 @@ EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
 /*
  * @brief Get the base type of a type.
  *
- * For pointers, this is the type before the star and for complex types,
- * this is the first inner type.
+ * Only applies to "complex" ordinary types, i.e. this is the first inner
+ * type in <>.
  *
  * @param[in] tp the type.
  * @return the base type or NULL.
@@ -1883,8 +1882,8 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
- * @brief Get the name of the given type. For regular or complex types, this
- * is for example "int". For EOLIAN_TYPE_CLASS, this can be "Button". Keep in
+ * @brief Get the name of the given type. For regular types, this is for
+ * example "int". For EOLIAN_TYPE_CLASS, this can be "Button". Keep in
  * mind that the name doesn't include namespaces.
  *
  * @param[in] tp the type.
@@ -1920,8 +1919,9 @@ EAPI Eina_Iterator *eolian_type_namespaces_get(const Eolian_Type *tp);
  * @param[in] tp the type.
  * @return the free func name.
  *
- * For pointer, class and complex types, this returns name of the func used
- * to free the pointer. For other types, this returns NULL.
+ * For types that translate to C pointers, this is the function used to
+ * free them. For other types, this is the function to free a pointer to
+ * those types.
  *
  * @ingroup Eolian
  */

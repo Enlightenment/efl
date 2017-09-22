@@ -806,7 +806,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
              if (tpid >= KW_accessor && tpid <= KW_future)
                {
                   int bline = ls->line_number, bcol = ls->column;
-                  def->type = EOLIAN_TYPE_COMPLEX;
                   check_next(ls, '<');
                   if (tpid == KW_future)
                     def->base_type = parse_type_void(ls, EINA_FALSE, EINA_FALSE);
