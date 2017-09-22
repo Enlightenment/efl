@@ -93,7 +93,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
          return: bool; [[$true, on success, $false otherwise]]
          params {
             @in name: string; [[The name of the item (as declared in the prefs collection)]]
-            @in value: ptr(const(any_value)); [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
+            @in value: const(any_value_ptr); [[The value to set on the item. It should be typed as the item expects, preferably, or a conversion will take place]]
          }
       }
       item_value_get @const {
