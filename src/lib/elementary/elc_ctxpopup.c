@@ -48,7 +48,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_List *l;
    Elm_Object_Item *it;
@@ -58,7 +58,7 @@ _elm_ctxpopup_elm_widget_translate(Eo *obj, Elm_Ctxpopup_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Bool

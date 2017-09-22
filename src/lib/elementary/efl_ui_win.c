@@ -3679,7 +3679,7 @@ _elm_win_translate(void)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     elm_widget_translate(obj);
+     efl_ui_translatable_translation_update(obj);
 }
 
 void

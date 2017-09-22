@@ -19,7 +19,8 @@ struct Elm.Widget.Focus_State {
 
 abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                      Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
-                     Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor)
+                     Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
+                     Efl.Ui.Translatable)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
@@ -285,14 +286,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
 
       /* Translation & Text API. */
-      translate @protected {
-         [[Virtual function handling language changes.
-
-           If a widget is composed of multiple sub-objects, this function might
-           need to be reimplemented to translate all those sub-objects that
-           have visible (or accessible) translatable text.
-         ]]
-      }
       @property domain_part_text_translatable {
          [[Translate domain text part property]]
          set {
@@ -860,6 +853,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
+      Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part; [[Returns @Efl.Ui.Widget.Part.]]
    }
    events {

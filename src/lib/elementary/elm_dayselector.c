@@ -56,7 +56,7 @@ _dayselector_resize(void *data,
 }
 
 EOLIAN static void
-_elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    time_t t;
    Eina_List *l;
@@ -76,7 +76,7 @@ _elm_dayselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Dayselector_Data 
         elm_object_text_set(VIEW(it), buf);
      }
 
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static void

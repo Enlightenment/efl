@@ -49,7 +49,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_diskselector_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
+_elm_diskselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
    Eina_List *l;

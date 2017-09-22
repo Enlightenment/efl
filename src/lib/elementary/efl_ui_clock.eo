@@ -229,7 +229,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
       Elm.Widget.focus_next;
       Elm.Widget.on_disabled_update;
       Elm.Widget.on_focus_update;
-      Elm.Widget.translate;
+      Efl.Ui.Translatable.translation_update;
    }
    events {
       changed; [[Called when clock changed]]

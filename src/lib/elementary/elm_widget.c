@@ -3882,7 +3882,7 @@ elm_widget_part_text_translate(Eo *obj, const char *part, const char *text)
 }
 
 EOLIAN static void
-_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    const Eina_List *l;
    Evas_Object *child;
@@ -3890,10 +3890,10 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          elm_widget_translate(child);
+          efl_ui_translatable_translation_update(child);
      }
 
-   if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
+   if (sd->hover_obj) efl_ui_translatable_translation_update(sd->hover_obj);
 
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
@@ -6693,3 +6693,6 @@ ELM_PART_TEXT_DEFAULT_GET(elm_widget, NULL)
 
 #include "elm_widget_item.eo.c"
 #include "elm_widget.eo.c"
+
+/* Others */
+#include "efl_ui_translatable.eo.c"

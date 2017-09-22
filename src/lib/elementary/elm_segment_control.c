@@ -26,7 +26,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EOLIAN static void
-_elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
+_elm_segment_control_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -34,7 +34,7 @@ _elm_segment_control_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Segment_Contr
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

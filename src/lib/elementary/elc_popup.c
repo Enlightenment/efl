@@ -67,7 +67,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_notify_cb,
 static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 EOLIAN static void
-_elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
+_elm_popup_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
    Eina_List *l;
@@ -75,8 +75,8 @@ _elm_popup_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, it)
       elm_wdg_item_translate(EO_OBJ(it));
 
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-   elm_obj_widget_translate(sd->main_layout);
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(sd->main_layout);
 }
 
 static void
