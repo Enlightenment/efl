@@ -1,5 +1,5 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
-struct @extern Eina.Rect {
+struct @extern @free(eina_rectangle_free) Eina.Rect {
     [[A rectangle in pixel dimensions.]]
     x: int; [[X coordinate of the rectangle, from the top-left corner.]]
     y: int; [[Y coordinate of the rectangle, from the top-left corner.]]

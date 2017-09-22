@@ -298,7 +298,8 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            attributes: free(list<ptr(Elm.Atspi.Attribute) @owned>, elm_atspi_attributes_list_free) @owned; [[List of object attributes]]
+            /* FIXME: API for attribute free */
+            attributes: list<ptr(Elm.Atspi.Attribute) @owned> @owned; [[List of object attributes]]
          }
       }
       @property index_in_parent @protected {

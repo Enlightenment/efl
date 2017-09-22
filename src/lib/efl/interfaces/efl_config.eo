@@ -17,7 +17,7 @@ interface Efl.Config ()
          params {
             name: string; [[Configuration option name]]
          }
-         return: free(ptr(generic_value), eina_value_free) @owned; [[Configuration option value]]
+         return: ptr(generic_value) @owned; [[Configuration option value]]
       }
       config_list_get @const {
          [[Returns a list of generic values under a given key.]]

@@ -142,13 +142,14 @@ static const char * const eo_complex_frees[] =
 static const char *eo_obj_free = "efl_del";
 static const char *eo_str_free = "free";
 static const char *eo_strshare_free = "eina_stringshare_del";
+static const char *eo_value_free = "eina_value_free";
 
 static Eina_Bool
 _validate_type(Eolian_Type *tp)
 {
    char buf[256];
 
-   if ((tp->owned || tp->freefunc) && !database_type_is_ownable(tp, EINA_FALSE))
+   if (tp->owned && !database_type_is_ownable(tp, EINA_FALSE))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
         return _type_error(tp, buf);
@@ -183,6 +184,9 @@ _validate_type(Eolian_Type *tp)
                        break;
                      case KW_stringshare:
                        tp->freefunc = eina_stringshare_add(eo_strshare_free);
+                       break;
+                     case KW_generic_value:
+                       tp->freefunc = eina_stringshare_add(eo_value_free);
                        break;
                      default:
                        break;
