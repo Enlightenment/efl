@@ -1,0 +1,25 @@
+struct @free(free_a) Test.A {
+   t : int;
+}
+
+class Owning {
+   methods {
+     test1 {
+       params {
+         test1 : list<int> @owned;
+         test2 : iterator<int> @owned;
+         test3 : hash<int, int> @owned;
+         test4 : accessor<int> @owned;
+       }
+     }
+     test2 {
+       params {
+         test1 : list<ptr(Test.A) @owned> @owned;
+         test2 : iterator<ptr(Test.A) @owned> @owned;
+         test3 : hash<int, ptr(Test.A) @owned> @owned;
+         test4 : accessor<ptr(Test.A) @owned> @owned;
+       }
+     }
+
+   }
+}

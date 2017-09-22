@@ -217,6 +217,18 @@ START_TEST(eolian_function_pointers)
 }
 END_TEST
 
+START_TEST(owning)
+{
+   char output_filepath[PATH_MAX] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/eolian_owning",
+            eina_environment_tmp_get());
+   _remove_ref(output_filepath, "c");
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/owning.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/owning.eo.c", output_filepath, "c"));
+
+}
+END_TEST
+
 void eolian_generation_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_types_generation);
@@ -227,4 +239,5 @@ void eolian_generation_test(TCase *tc)
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_docs);
    tcase_add_test(tc, eolian_function_pointers);
+   tcase_add_test(tc, owning);
 }
