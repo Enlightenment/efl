@@ -149,7 +149,7 @@ _validate_type(Eolian_Type *tp)
 {
    char buf[256];
 
-   if (tp->owned && !database_type_is_ownable(tp, EINA_FALSE))
+   if (tp->owned && !database_type_is_ownable(tp))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
         return _type_error(tp, buf);
