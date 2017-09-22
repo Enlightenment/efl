@@ -25,7 +25,7 @@
 #include <jpeglib.h>
 #include <jerror.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 #include <Evil.h>
 #endif
 

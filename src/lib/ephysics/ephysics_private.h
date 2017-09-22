@@ -1,7 +1,7 @@
 #ifndef _EPHYSICS_PRIVATE_H
 #define _EPHYSICS_PRIVATE_H
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

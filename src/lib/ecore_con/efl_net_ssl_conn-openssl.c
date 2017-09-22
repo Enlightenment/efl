@@ -17,7 +17,7 @@
 # include <dlfcn.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

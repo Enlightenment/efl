@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 #ifdef __linux__

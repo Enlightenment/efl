@@ -15,7 +15,7 @@
 # include <langinfo.h>
 #endif
 
-#if defined(HAVE_SYS_MMAN_H) || defined(HAVE_EVIL)
+#if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
 # include <sys/mman.h>
 #endif
 
@@ -23,7 +23,7 @@
 # include <systemd/sd-daemon.h>
 #endif
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 #include <Eina.h>
@@ -221,7 +221,7 @@ ecore_init(void)
         WRN("Not a utf8 locale!");
       }
     */
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    if (!evil_init())
      return --_ecore_init_count;
 #endif
@@ -337,7 +337,7 @@ shutdown_mempool:
 shutdown_log_dom:
    eina_shutdown();
 shutdown_evil:
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    evil_shutdown();
 #endif
 
@@ -453,7 +453,7 @@ ecore_shutdown(void)
 
      eina_evlog("<RUN", NULL, 0.0, NULL);
      eina_shutdown();
-#ifdef HAVE_EVIL
+#ifdef _WIN32
      evil_shutdown();
 #endif
 

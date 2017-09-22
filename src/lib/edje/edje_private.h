@@ -35,7 +35,7 @@
 #include <lauxlib.h>
 #include <setjmp.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

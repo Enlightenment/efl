@@ -36,7 +36,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

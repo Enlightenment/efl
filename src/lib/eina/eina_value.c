@@ -24,7 +24,7 @@
 #include <inttypes.h> /* PRId64 and PRIu64 */
 #include <sys/time.h> /* struct timeval */
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

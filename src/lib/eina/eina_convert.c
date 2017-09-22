@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 

@@ -8,7 +8,7 @@
 
 #include <Eina.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
@@ -2560,7 +2560,7 @@ efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Ite
 static inline double
 _eo_log_time_now(void)
 {
-#ifdef HAVE_EVIL
+#ifdef _WIN32
    return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
    static double clk_conv = -1.0;
@@ -2693,7 +2693,7 @@ _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char 
                {
                   const char *fname;
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
                   fname = strrchr(info.dli_fname, '\\');
 #else
                   fname = strrchr(info.dli_fname, '/');

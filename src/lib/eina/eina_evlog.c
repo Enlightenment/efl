@@ -24,7 +24,7 @@
 #include "eina_evlog.h"
 #include "eina_debug.h"
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
@@ -80,7 +80,7 @@ get_time(void)
         return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000.0);
      }
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
-#elif defined(HAVE_EVIL)
+#elif defined(_WIN32)
    return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
    return _eina_evlog_time_clock_conversion * (double)mach_absolute_time();

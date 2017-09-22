@@ -144,7 +144,7 @@ _expanded_fmt_str_get(char ch)
    switch (ch)
      {
       case 'c':
-#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
+#if defined(HAVE_LANGINFO_H) || defined (_WIN32)
         exp_fmt = nl_langinfo(D_T_FMT);
 #else
         exp_fmt = "";
@@ -152,7 +152,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'x':
-#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
+#if defined(HAVE_LANGINFO_H) || defined (_WIN32)
         exp_fmt = nl_langinfo(D_FMT);
 #else
         exp_fmt = "";
@@ -160,7 +160,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'X':
-#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
+#if defined(HAVE_LANGINFO_H) || defined (_WIN32)
         exp_fmt = nl_langinfo(T_FMT);
 #else
         exp_fmt = "";
@@ -168,7 +168,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'r':
-#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
+#if defined(HAVE_LANGINFO_H) || defined (_WIN32)
         exp_fmt = nl_langinfo(T_FMT_AMPM);
 #else
         exp_fmt = "";
@@ -347,7 +347,7 @@ _reload_format(Evas_Object *obj)
    // FIXME: provide nl_langinfo on Windows if possible
    // fetch the default format from Libc.
    if (!sd->user_format)
-#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
+#if defined(HAVE_LANGINFO_H) || defined (_WIN32)
      strncpy(sd->format, nl_langinfo(D_T_FMT), EFL_UI_CLOCK_MAX_FORMAT_LEN);
 #else
      strncpy(sd->format, "", EFL_UI_CLOCK_MAX_FORMAT_LEN);

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#ifdef HAVE_EVIL
+#ifdef _WIN32
 # include <Evil.h>
 #endif
 
@@ -43,7 +43,7 @@ ecore_time_get(void)
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
-#elif defined(HAVE_EVIL)
+#elif defined(_WIN32)
    return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
    return _ecore_time_clock_conversion * (double)mach_absolute_time();
@@ -110,7 +110,7 @@ _ecore_time_init(void)
              "Fallback to unix time.");
      }
 #else
-# ifndef HAVE_EVIL
+# ifndef _WIN32
 #  if defined(__APPLE__) && defined(__MACH__)
    mach_timebase_info_data_t info;
    kern_return_t err = mach_timebase_info(&info);
