@@ -160,15 +160,17 @@ _validate_type(Eolian_Type *tp)
       case EOLIAN_TYPE_VOID:
       case EOLIAN_TYPE_UNDEFINED:
         return EINA_TRUE;
-      case EOLIAN_TYPE_COMPLEX:
-        if (!tp->freefunc)
-          {
-             tp->freefunc = eina_stringshare_add(eo_complex_frees[
-               eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
-          }
-        return EINA_TRUE;
       case EOLIAN_TYPE_REGULAR:
         {
+           if (tp->base_type)
+             {
+                if (!tp->freefunc)
+                  {
+                     tp->freefunc = eina_stringshare_add(eo_complex_frees[
+                       eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
+                  }
+                return EINA_TRUE;
+             }
            Eolian_Typedecl *tpp;
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->full_name);

@@ -666,7 +666,6 @@ M.Type = Node:clone {
     UNKNOWN = eolian.type_type.UNKNOWN,
     VOID = eolian.type_type.VOID,
     REGULAR = eolian.type_type.REGULAR,
-    COMPLEX = eolian.type_type.COMPLEX,
     CLASS = eolian.type_type.CLASS,
     STATIC_ARRAY = eolian.type_type.STATIC_ARRAY,
     TERMINATED_ARRAY = eolian.type_type.TERMINATED_ARRAY,
@@ -769,16 +768,17 @@ M.Type = Node:clone {
         elseif tpt == self.UNDEFINED then
             return wrap_type_attrs(self, "__undefined_type")
         elseif tpt == self.REGULAR or tpt == self.CLASS then
-            return wrap_type_attrs(self, self:full_name_get())
-        elseif tpt == self.COMPLEX then
-            local stypes = {}
             local stp = self:base_type_get()
-            while stp do
-                stypes[#stypes + 1] = stp:serialize()
-                stp = stp:next_type_get()
+            if stp then
+                local stypes = {}
+                while stp do
+                    stypes[#stypes + 1] = stp:serialize()
+                    stp = stp:next_type_get()
+                end
+                return wrap_type_attrs(self, self:full_name_get() .. "<"
+                    .. table.concat(stypes, ", ") .. ">")
             end
-            return wrap_type_attrs(self, self:full_name_get() .. "<"
-                .. table.concat(stypes, ", ") .. ">")
+            return wrap_type_attrs(self, self:full_name_get())
         elseif tpt == self.STATIC_ARRAY then
             return wrap_type_attrs(self, "static_array<"
                 .. self:base_type_get():serialize() .. ", "
