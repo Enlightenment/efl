@@ -156,6 +156,7 @@ struct _Eolian_Type
 {
    Eolian_Object base;
    Eolian_Type_Type type;
+   Eolian_Type_Builtin_Type btype;
    Eolian_Type *base_type;
    Eolian_Type *next_type;
    Eina_Stringshare *name;
