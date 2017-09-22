@@ -50,8 +50,6 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(static_array), KW(terminated_array), \
-    \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
     KW(future),                                   \
     KW(generic_value), \

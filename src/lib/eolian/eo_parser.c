@@ -751,48 +751,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref, Eina_Bool allow_sarray)
         def->type = EOLIAN_TYPE_UNDEFINED;
         eo_lexer_get(ls);
      }
-   else if (ls->t.kw == KW_static_array)
-     {
-        if (!allow_sarray)
-          eo_lexer_syntax_error(ls, "static arrays not allowed in this context");
-        def->type = EOLIAN_TYPE_STATIC_ARRAY;
-        eo_lexer_get(ls);
-        check_next(ls, '<');
-        def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
-        pop_type(ls);
-        check_next(ls, ',');
-        check(ls, TOK_NUMBER);
-        eo_lexer_context_push(ls);
-        if (ls->t.kw == NUM_FLOAT || ls->t.kw == NUM_DOUBLE)
-          {
-             eo_lexer_context_restore(ls);
-             eo_lexer_syntax_error(ls, "integer expected");
-          }
-        eo_lexer_context_pop(ls);
-        switch (ls->t.kw)
-          {
-           case NUM_INT   : def->static_size = ls->t.value.i;   break;
-           case NUM_UINT  : def->static_size = ls->t.value.u;   break;
-           case NUM_LONG  : def->static_size = ls->t.value.l;   break;
-           case NUM_ULONG : def->static_size = ls->t.value.ul;  break;
-           case NUM_LLONG : def->static_size = ls->t.value.ll;  break;
-           case NUM_ULLONG: def->static_size = ls->t.value.ull; break;
-           default:
-             eo_lexer_syntax_error(ls, "wrong type, internal error");
-             break;
-          }
-        eo_lexer_get(ls);
-        check_next(ls, '>');
-     }
-   else if (ls->t.kw == KW_terminated_array)
-     {
-        def->type = EOLIAN_TYPE_TERMINATED_ARRAY;
-        eo_lexer_get(ls);
-        check_next(ls, '<');
-        def->base_type = parse_type(ls, EINA_FALSE, EINA_FALSE);
-        pop_type(ls);
-        check_next(ls, '>');
-     }
    else
      {
         int tpid = ls->t.kw;

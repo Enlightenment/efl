@@ -208,17 +208,6 @@ _validate_type(Eolian_Type *tp)
              tp->freefunc = eina_stringshare_ref(tpp->freefunc);
            return EINA_TRUE;
         }
-      case EOLIAN_TYPE_TERMINATED_ARRAY:
-        if (!database_type_is_ownable(tp->base_type, EINA_TRUE))
-          {
-             snprintf(buf, sizeof(buf),
-                      "invalid base type '%s' for terminated array",
-                      tp->base_type->full_name);
-             return _type_error(tp, buf);
-          }
-        return _validate_type(tp->base_type);
-      case EOLIAN_TYPE_STATIC_ARRAY:
-        return _validate_type(tp->base_type);
       case EOLIAN_TYPE_CLASS:
         {
            /* FIXME: pass unit properly */

@@ -15,8 +15,6 @@ typedef struct _Named
 {
   int *field;
   const char *something;
-  int arr[16];
-  const char **tarr;
 } Named;
 
 typedef struct _Another
