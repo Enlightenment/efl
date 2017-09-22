@@ -3129,7 +3129,8 @@ _ecore_evas_tick_source_find(void)
 
    _general_tick = NULL;
    EINA_INLIST_FOREACH(ecore_evases, ee)
-     if (ee->engine.func->fn_animator_register &&
+     if (!ee->deleted &&
+         ee->engine.func->fn_animator_register &&
          ee->engine.func->fn_animator_unregister)
        {
           if (ee->anim_count)
