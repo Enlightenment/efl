@@ -116,11 +116,12 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::stringshare");
               }}
-           , {"generic_value", true, nullptr, nullptr, [&]
+           /* FIXME: handle any_value_ptr */
+           , {"any_value", true, nullptr, nullptr, [&]
               {
                 return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
-           , {"generic_value", false, nullptr, nullptr, [&]
+           , {"any_value", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
               }}
         };
