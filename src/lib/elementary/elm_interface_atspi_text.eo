@@ -70,7 +70,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
          values {
-            string: string @owned; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
+            string: mstring @owned; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
       @property text @protected {
@@ -82,7 +82,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: int; [[End offset of text.]]
          }
          values {
-            text: string @owned; [[UTF-8 encoded text.]]
+            text: mstring @owned; [[UTF-8 encoded text.]]
          }
       }
       @property caret_offset @protected {
@@ -108,7 +108,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: ptr(int); [[Position in text to which given attribute is set.]]
          }
          values {
-            value: string @owned; [[Value of text attribute. Should be free()]]
+            value: mstring @owned; [[Value of text attribute. Should be free()]]
          }
       }
       @property attributes @protected {

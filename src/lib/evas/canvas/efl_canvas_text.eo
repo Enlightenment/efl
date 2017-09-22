@@ -159,7 +159,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
            @since 1.18
          ]]
          legacy: null;
-         return: string @owned; [[The text in the given range]]
+         return: mstring @owned; [[The text in the given range]]
          params {
             @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
             @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]

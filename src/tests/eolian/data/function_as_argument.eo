@@ -19,7 +19,7 @@ class Function_As_Argument {
         a: int;
         b: double;
       }
-      return: string @owned;
+      return: mstring @owned;
     }
   }
 }

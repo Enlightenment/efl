@@ -40,7 +40,7 @@ class Complex (Efl.Object)
       }
       instringowncont {
          params {
-           l: list<string @owned>;
+           l: list<mstring @owned>;
          }
       }
       instringcontown {
@@ -121,7 +121,7 @@ class Complex (Efl.Object)
       }
       outstringowncont {
          params {
-           @out l: list<string @owned>;
+           @out l: list<mstring @owned>;
          }
       }
       outstringcontown {

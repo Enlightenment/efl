@@ -146,12 +146,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
           }
         int kw = eo_lexer_keyword_str_to_id(tp->name);
         if (kw && eo_lexer_is_type_keyword(kw))
-          {
-             /* FIXME: deal with aliased strings? */
-             if ((kw == KW_string) && !tp->owned)
-               eina_strbuf_append(buf, "const ");
-             eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
-          }
+          eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
         else
           eina_strbuf_append(buf, tp->name);
      }

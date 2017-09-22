@@ -16,7 +16,7 @@ class Decl {
          params {
             idx: int;
          }
-         return: string @owned;
+         return: mstring @owned;
       }
    }
 }
