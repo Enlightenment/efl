@@ -149,7 +149,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
       Elm.Widget.focus_next;
-      Elm.Widget.translate;
+      Efl.Ui.Translatable.translation_update;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
       Efl.Canvas.Layout_Signal.signal_emit;

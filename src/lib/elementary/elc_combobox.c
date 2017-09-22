@@ -45,14 +45,14 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_combobox_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
-   elm_obj_widget_translate(sd->genlist);
-   elm_obj_widget_translate(sd->entry);
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(sd->genlist);
+   efl_ui_translatable_translation_update(sd->entry);
 
    if (sd->hover)
-     elm_obj_widget_translate(sd->hover);
+     efl_ui_translatable_translation_update(sd->hover);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply

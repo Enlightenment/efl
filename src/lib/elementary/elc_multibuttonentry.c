@@ -64,7 +64,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
 );
 
 EOLIAN static void
-_elm_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -72,7 +72,7 @@ _elm_multibuttonentry_elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Multibuttone
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   elm_obj_widget_translate(efl_super(obj, MY_CLASS));
+   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static char *
