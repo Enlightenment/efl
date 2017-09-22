@@ -47,7 +47,7 @@ interface Efl.Model ()
             ]]
            params {
                @in property: string; [[Property name]]
-               @in value: ptr(const(any_value)); [[New value]]
+               @in value: const(any_value_ptr); [[New value]]
            }
            return: future<any_value>; [[Future returning the recorded value or error]]
         }

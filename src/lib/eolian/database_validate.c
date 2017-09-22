@@ -142,7 +142,8 @@ static const char * const eo_complex_frees[] =
 static const char *eo_obj_free = "efl_del";
 static const char *eo_str_free = "free";
 static const char *eo_strshare_free = "eina_stringshare_del";
-static const char *eo_value_free = "eina_value_free";
+static const char *eo_value_free = "eina_value_flush";
+static const char *eo_value_ptr_free = "eina_value_free";
 
 static Eina_Bool
 _validate_type(Eolian_Type *tp)
@@ -189,6 +190,9 @@ _validate_type(Eolian_Type *tp)
                        break;
                      case KW_any_value:
                        tp->freefunc = eina_stringshare_add(eo_value_free);
+                       break;
+                     case KW_any_value_ptr:
+                       tp->freefunc = eina_stringshare_add(eo_value_ptr_free);
                        break;
                      default:
                        break;
