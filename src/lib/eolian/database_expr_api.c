@@ -29,7 +29,7 @@ _eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
         return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
       case EOLIAN_TYPE_REGULAR:
         {
-           if (database_type_is_ownable(type, EINA_FALSE))
+           if (database_type_is_ownable(type))
              return database_expr_eval(unit, expr, EOLIAN_MASK_NULL);
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)

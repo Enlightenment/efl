@@ -80,17 +80,14 @@ static const Eina_Bool _ownable_types[] = {
 };
 
 Eina_Bool
-database_type_is_ownable(const Eolian_Type *tp, Eina_Bool term)
+database_type_is_ownable(const Eolian_Type *tp)
 {
    if (tp->is_ptr)
      return EINA_TRUE;
    if (tp->type == EOLIAN_TYPE_REGULAR)
      {
-        int kwid = eo_lexer_keyword_str_to_id(tp->name);
-        /* don't include bool, it only has 2 values so it's useless */
-        if (term && (kwid >= KW_byte && kwid < KW_bool))
-          return EINA_TRUE;
-        const char *ct = eo_lexer_get_c_type(kwid);
+        int kw = eo_lexer_keyword_str_to_id(tp->name);
+        const char *ct = eo_lexer_get_c_type(kw);
         if (!ct)
           {
              const Eolian_Typedecl *tpp = eolian_type_typedecl_get(tp);
@@ -99,7 +96,7 @@ database_type_is_ownable(const Eolian_Type *tp, Eina_Bool term)
              if (tpp->type == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                return EINA_TRUE;
              if (tpp->type == EOLIAN_TYPEDECL_ALIAS)
-               return database_type_is_ownable(tpp->base_type, term);
+               return database_type_is_ownable(tpp->base_type);
              return EINA_FALSE;
           }
         return (ct[strlen(ct) - 1] == '*');
@@ -124,7 +121,7 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name,
      || tp->type == EOLIAN_TYPE_CLASS
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
-     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp, EINA_FALSE)))
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(tp)))
      {
         eina_strbuf_append(buf, "const ");
      }
