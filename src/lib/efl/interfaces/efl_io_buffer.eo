@@ -132,7 +132,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
               On failure, for example a read-only backing store was
               adopted with @.adopt_readonly, NULL is returned.
             ]]
-            return: free(ptr(Eina.Binbuf), eina_binbuf_free) @owned @warn_unused; [[Binbuf]]
+            return: ptr(Eina.Binbuf) @owned @warn_unused; [[Binbuf]]
         }
     }
 

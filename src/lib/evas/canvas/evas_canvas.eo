@@ -571,8 +571,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
 
            @since 1.15
          ]]
-         return: free(list<ptr(Eina.Rect)>, evas_render_updates_free)
-            @owned @warn_unused; [[
+         return: list<ptr(Eina.Rect)> @owned @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
             ($Eina.Rect structs). Free this list with
             \@ref evas_render_updates_free.
@@ -866,8 +865,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
 
          See the full @ref Example_Evas_Events "example".
          */
-         return: free(list<ptr(Eina.Rect)>, evas_render_updates_free)
-            @owned @warn_unused; [[
+         return: list<ptr(Eina.Rect)> @owned @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
             ($Eina.Rect structs). Free this list with
             \@ref evas_render_updates_free.
