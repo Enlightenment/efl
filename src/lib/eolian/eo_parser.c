@@ -743,6 +743,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ref)
    if (ls->t.kw == KW_void)
      {
         def->type = EOLIAN_TYPE_VOID;
+        def->btype = EOLIAN_TYPE_BUILTIN_VOID;
         eo_lexer_get(ls);
      }
    else if (ls->t.kw == KW___undefined_type)

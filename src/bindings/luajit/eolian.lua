@@ -83,6 +83,67 @@ ffi.cdef [[
         EOLIAN_TYPE_UNDEFINED
     } Eolian_Type_Type;
 
+    typedef enum
+    {
+        EOLIAN_TYPE_BUILTIN_INVALID = 0,
+
+        EOLIAN_TYPE_BUILTIN_BYTE,
+        EOLIAN_TYPE_BUILTIN_UBYTE,
+        EOLIAN_TYPE_BUILTIN_CHAR,
+        EOLIAN_TYPE_BUILTIN_SHORT,
+        EOLIAN_TYPE_BUILTIN_USHORT,
+        EOLIAN_TYPE_BUILTIN_INT,
+        EOLIAN_TYPE_BUILTIN_UINT,
+        EOLIAN_TYPE_BUILTIN_LONG,
+        EOLIAN_TYPE_BUILTIN_ULONG,
+        EOLIAN_TYPE_BUILTIN_LLONG,
+        EOLIAN_TYPE_BUILTIN_ULLONG,
+
+        EOLIAN_TYPE_BUILTIN_INT8,
+        EOLIAN_TYPE_BUILTIN_UINT8,
+        EOLIAN_TYPE_BUILTIN_INT16,
+        EOLIAN_TYPE_BUILTIN_UINT16,
+        EOLIAN_TYPE_BUILTIN_INT32,
+        EOLIAN_TYPE_BUILTIN_UINT32,
+        EOLIAN_TYPE_BUILTIN_INT64,
+        EOLIAN_TYPE_BUILTIN_UINT64,
+        EOLIAN_TYPE_BUILTIN_INT128,
+        EOLIAN_TYPE_BUILTIN_UINT128,
+
+        EOLIAN_TYPE_BUILTIN_SIZE,
+        EOLIAN_TYPE_BUILTIN_SSIZE,
+        EOLIAN_TYPE_BUILTIN_INTPTR,
+        EOLIAN_TYPE_BUILTIN_UINTPTR,
+        EOLIAN_TYPE_BUILTIN_PTRDIFF,
+
+        EOLIAN_TYPE_BUILTIN_TIME,
+
+        EOLIAN_TYPE_BUILTIN_FLOAT,
+        EOLIAN_TYPE_BUILTIN_DOUBLE,
+
+        EOLIAN_TYPE_BUILTIN_BOOL,
+
+        EOLIAN_TYPE_BUILTIN_VOID,
+
+        EOLIAN_TYPE_BUILTIN_ACCESSOR,
+        EOLIAN_TYPE_BUILTIN_ARRAY,
+        EOLIAN_TYPE_BUILTIN_ITERATOR,
+        EOLIAN_TYPE_BUILTIN_HASH,
+        EOLIAN_TYPE_BUILTIN_LIST,
+
+        EOLIAN_TYPE_BUILTIN_FUTURE,
+
+        EOLIAN_TYPE_BUILTIN_ANY_VALUE,
+        EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR,
+
+        EOLIAN_TYPE_BUILTIN_MSTRING,
+        EOLIAN_TYPE_BUILTIN_STRING,
+        EOLIAN_TYPE_BUILTIN_STRINGSHARE,
+
+        EOLIAN_TYPE_BUILTIN_VOID_PTR,
+        EOLIAN_TYPE_BUILTIN_FREE_CB
+    } Eolian_Type_Builtin_Type;
+
     typedef enum {
         EOLIAN_C_TYPE_DEFAULT = 0,
         EOLIAN_C_TYPE_PARAM,
@@ -313,6 +374,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_typedecl_all_structs_get(const Eolian_Unit *unit);
     Eina_Iterator *eolian_typedecl_all_enums_get(const Eolian_Unit *unit);
     Eolian_Type_Type eolian_type_type_get(const Eolian_Type *tp);
+    Eolian_Type_Builtin_Type eolian_type_builtin_type_get(const Eolian_Type *tp);
     Eolian_Typedecl_Type eolian_typedecl_type_get(const Eolian_Typedecl *tp);
     Eina_Iterator *eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp);
     const Eolian_Struct_Type_Field *eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field);
@@ -504,6 +566,66 @@ M.type_type = {
     UNDEFINED        = 4
 }
 
+M.type_builtin_type = {
+   INVALID       = 0,
+
+   BYTE          = 1,
+   UBYTE         = 2,
+   CHAR          = 3,
+   SHORT         = 4,
+   USHORT        = 5,
+   INT           = 6,
+   UINT          = 7,
+   LONG          = 8,
+   ULONG         = 9,
+   LLONG         = 10,
+   ULLONG        = 11,
+
+   INT8          = 12,
+   UINT8         = 13,
+   INT16         = 14,
+   UINT16        = 15,
+   INT32         = 16,
+   UINT32        = 17,
+   INT64         = 18,
+   UINT64        = 19,
+   INT128        = 20,
+   UINT128       = 21,
+
+   SIZE          = 22,
+   SSIZE         = 23,
+   INTPTR        = 24,
+   UINTPTR       = 25,
+   PTRDIFF       = 26,
+
+   TIME          = 27,
+
+   FLOAT         = 28,
+   DOUBLE        = 29,
+
+   BOOL          = 30,
+
+   VOID          = 31,
+
+   ACCESSOR      = 32,
+   ARRAY         = 33,
+   ITERATOR      = 34,
+   HASH          = 35,
+   LIST          = 36,
+
+   FUTURE        = 37,
+
+   ANY_VALUE     = 38,
+   ANY_VALUE_PTR = 39,
+
+   MSTRING       = 40,
+   STRING        = 41,
+   STRINGSHARE   = 42,
+
+   VOID_PTR      = 43,
+   FREE_CB       = 44
+}
+
 M.typedecl_type = {
     UNKNOWN          = 0,
     STRUCT           = 1,
@@ -672,6 +794,10 @@ M.Type = ffi.metatype("Eolian_Type", {
     __index = {
         type_get = function(self)
             return tonumber(eolian.eolian_type_type_get(self))
+        end,
+
+        builtin_type_get = function(self)
+            return tonumber(eolian.eolian_type_builtin_type_get(self))
         end,
 
         file_get = function(self, name)
