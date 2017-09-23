@@ -317,24 +317,58 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 #warning "Have support for this"
 #endif
          }
-         /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the
-          * second pipe if it's open. On the other hand, there was the
-          * Great FD Leak Scare of '06, so let's be paranoid. */
-         if (ok && (flags & ECORE_EXE_PIPE_ERROR))
-         {
-            E_NO_ERRNO(result, close(STDERR_FILENO), ok);
-            E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
-         }
-         if (ok && (flags & ECORE_EXE_PIPE_READ))
-         {
-            E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
-            E_NO_ERRNO(result, dup2(readPipe[1], STDOUT_FILENO), ok);
-         }
-         if (ok && (flags & ECORE_EXE_PIPE_WRITE))
-         {
-            E_NO_ERRNO(result, close(STDIN_FILENO), ok);
-            E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO), ok);
-         }
+         if (ok && (flags & ECORE_EXE_ISOLATE_IO))
+           {
+              int devnull;
+
+              /* we want to isolatie the stdin/out/err of the process so
+               * it can't share those of the parent, so close and replace with
+               * /dev/null */
+              devnull = open("/dev/null", O_RDONLY);
+              if (devnull >= 0)
+                {
+                   E_NO_ERRNO(result, close(STDIN_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(devnull, STDIN_FILENO), ok);
+                   E_NO_ERRNO(result, close(devnull), ok);
+                }
+
+              devnull = open("/dev/null", O_WRONLY);
+              if (devnull >= 0)
+                {
+                   E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(devnull, STDOUT_FILENO), ok);
+                   E_NO_ERRNO(result, close(devnull), ok);
+                }
+
+              devnull = open("/dev/null", O_WRONLY);
+              if (devnull >= 0)
+                {
+                   E_NO_ERRNO(result, close(STDERR_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(devnull, STDERR_FILENO), ok);
+                   E_NO_ERRNO(result, close(devnull), ok);
+                }
+           }
+         else
+           {
+              /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the
+               * second pipe if it's open. On the other hand, there was the
+               * Great FD Leak Scare of '06, so let's be paranoid. */
+              if (ok && (flags & ECORE_EXE_PIPE_ERROR))
+                {
+                   E_NO_ERRNO(result, close(STDERR_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
+                }
+              if (ok && (flags & ECORE_EXE_PIPE_READ))
+                {
+                   E_NO_ERRNO(result, close(STDOUT_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(readPipe[1], STDOUT_FILENO), ok);
+                }
+              if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+                {
+                   E_NO_ERRNO(result, close(STDIN_FILENO), ok);
+                   E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO), ok);
+                }
+           }
 
          if (ok)
          {
