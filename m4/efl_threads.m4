@@ -7,7 +7,7 @@ dnl Macro that check if POSIX or Win32 threads library is available or not.
 dnl Usage: EFL_CHECK_THREADS(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
 dnl Call AC_SUBST(EFL_PTHREAD_CFLAGS)
 dnl Call AC_SUBST(EFL_PTHREAD_LIBS)
-dnl Defines EFL_HAVE_POSIX_THREADS or EFL_HAVE_WIN32_THREADS, and EFL_HAVE_THREADS
+dnl Defines EFL_HAVE_THREADS
 
 AC_DEFUN([EFL_CHECK_THREADS],
 [

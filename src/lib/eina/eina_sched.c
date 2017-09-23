@@ -28,14 +28,6 @@
 # include <errno.h>
 #endif
 
-#ifdef EFL_HAVE_WIN32_THREADS
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
-
 #include "eina_sched.h"
 #include "eina_log.h"
 
