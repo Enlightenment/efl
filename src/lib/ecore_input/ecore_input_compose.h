@@ -9,7 +9,7 @@
  * algorithms.
  */
 
-static const char *comp =
+static const char *const comp =
   "dead_breve\x00"  "\x83\x07" /* 'dead_breve' 775 */
     "dead_breve\x00"  "\x10" /* 'dead_breve' 16 */
       "˘\x00"  "\x04" /* '˘' 4 */
