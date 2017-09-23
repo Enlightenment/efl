@@ -376,7 +376,6 @@ _elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, El
      configured_state->manager, configured_state->parent, configured_state->logical,
      current_state.manager, current_state.parent, current_state.logical
    );
-   abort();
    return EINA_FALSE;
 }
 
