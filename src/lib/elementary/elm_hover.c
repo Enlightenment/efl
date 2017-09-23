@@ -710,6 +710,12 @@ _elm_hover_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Hover_Data *
    return manager;
 }
 
+EOLIAN static Eina_Bool
+_elm_hover_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state EINA_UNUSED, Elm_Widget_Focus_State *configured_state EINA_UNUSED, Elm_Widget *redirect EINA_UNUSED)
+{
+    return EINA_TRUE;
+}
+
 EOLIAN static Eo *
 _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
 {
