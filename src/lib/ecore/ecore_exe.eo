@@ -35,7 +35,8 @@ enum Ecore.Exe_Flags
    respawn = 64, [[FIXME: Exe is restarted if it dies]]
    use_sh = 128, [[Use /bin/sh to run the command.]]
    not_leader = 256, [[Do not use setsid() to have the executed process be its own session leader]]
-   term_with_parent = 512 [[Makes child receive SIGTERM when parent dies.]]
+   term_with_parent = 512, [[Makes child receive SIGTERM when parent dies.]]
+   isolate_io = 1024, [[Try and isolate stdin/out and err of the process so it isn't shared with the parent.]]
 }
 
 class Ecore.Exe (Efl.Object, Efl.Control)
