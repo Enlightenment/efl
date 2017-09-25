@@ -225,8 +225,6 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
       Elm.Widget.on_disabled_update;
       Elm.Widget.on_focus_update;
       Efl.Ui.Translatable.translation_update;
