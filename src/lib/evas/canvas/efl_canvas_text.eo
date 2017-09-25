@@ -260,6 +260,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
 
            @since 1.21
          ]]
+         legacy: null;
          return: ptr(Eina.Future) @owned; [[Future for layout result]]
       }
    }
