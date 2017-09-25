@@ -266,6 +266,8 @@ lib/evas/canvas/efl_animation_object_group.c \
 lib/evas/canvas/efl_animation_object_group_parallel.c \
 lib/evas/canvas/efl_animation_object_group_sequential.c \
 lib/evas/gesture/efl_gesture_touch.c \
+lib/evas/gesture/efl_gesture.c \
+lib/evas/gesture/efl_gesture_tap.c \
 $(NULL)
 
 EXTRA_DIST2 += \
