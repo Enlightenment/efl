@@ -1,5 +1,5 @@
 class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
-                  Elm.Interface.Atspi_Widget_Action)
+                     Elm.Interface.Atspi_Widget_Action, Efl.Ui.Translatable)
 {
    [[Push-button widget
 
@@ -25,5 +25,6 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Tex
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
       Efl.Text.text { get; set; }
+      Efl.Ui.Translatable.translatable_text { get; set; }
    }
 }

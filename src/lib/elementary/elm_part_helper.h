@@ -150,6 +150,16 @@ EOLIAN static const char * \
 _ ## type ## _efl_text_text_get(Eo *obj, Type *pd EINA_UNUSED) \
 { \
   return efl_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text")); \
+} \
+EOLIAN static void \
+_ ## type ## _efl_ui_translatable_translatable_text_set(Eo *obj, Type *pd EINA_UNUSED, const char *label, const char *domain) \
+{ \
+   efl_ui_translatable_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), label, domain); \
+} \
+EOLIAN static const char * \
+_ ## type ## _efl_ui_translatable_translatable_text_get(Eo *obj, Type *pd EINA_UNUSED, const char **domain) \
+{ \
+  return efl_ui_translatable_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text"), domain); \
 }
 
 #endif
