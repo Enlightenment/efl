@@ -1117,8 +1117,10 @@ _on_layout_complete(void *data, const Eina_Value v)
 {
    Layout_Ctx *c = data;
    Eina_Rectangle r;
-   eina_value_pget(&v, &r);
-   _layout_text_sizing_eval(c->obj, 1, 1);
+   if (eina_value_get(&v, &r))
+     {
+        _layout_text_sizing_eval(c->obj, r.w, r.h);
+     }
    free(c);
    return v;
 }
