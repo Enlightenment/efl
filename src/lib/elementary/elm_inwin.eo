@@ -1,4 +1,4 @@
-class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Manager)
+class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Manager, Efl.Container)
 {
    [[Elementary inwin class]]
    legacy_prefix: elm_inwin;
@@ -27,5 +27,7 @@ class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Manager)
       Elm.Widget.focus_manager_create;
       Efl.Gfx.visible { set; }
       Efl.Ui.Focus.Manager.move;
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
    }
 }
