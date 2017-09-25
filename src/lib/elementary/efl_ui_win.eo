@@ -889,5 +889,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       wm,rotation,changed; [[Called when window manager rotation changed]]
       theme,changed; [[Called when theme changed]]
       elm,action,block_menu; [[Called when elementary block menu action happened]]
+      pause; [[Called when the window is going not be displayed for some time]]
+      resume; [[Called before a window get rendered after a pause event]]
    }
 }
