@@ -180,6 +180,65 @@ interface Efl.Canvas ()
             seat: Efl.Input.Device; [[The seat or $null if not found.]]
          }
       }
+      @property pointer_position {
+         get {
+            [[This function returns the current known pointer coordinates
+
+              This function returns the current position of the main input
+              pointer (mouse, pen, etc...).
+            ]]
+         }
+         /* FIXME: missing keys { seat } */
+         values {
+            pos: Eina.Position2D; [[The pointer position in pixels.]]
+         }
+      }
+      @property pointer_inside {
+         get {
+            [[Returns whether the mouse pointer is logically inside the
+              canvas.
+
+              When this function is called it will return a value of either
+              $false or $true, depending on whether a pointer,in or pointer,out
+              event has been called previously.
+
+              A return value of $true indicates the mouse is logically
+              inside the canvas, and $false implies it is logically
+              outside the canvas.
+
+              A canvas begins with the mouse being assumed outside ($false).
+            ]]
+         }
+         /* FIXME: missing keys { seat } */
+         values {
+            inside: bool; [[$true if the mouse pointer is inside the canvas,
+                            $false otherwise]]
+         }
+      }
+      /* FIXME: maybe not necessary if gesture supports this */
+      pointer_iterate @const {
+         [[Returns an iterator over the current known pointer positions.
+
+           This is used to iterate over the current known multi-touch positions,
+           including the first finger. Each pointer position is represented by
+           an object of type @Efl.Input.Pointer.
+
+           Each finger in a multi touch environment can then be identified
+           by the @Efl.Input.Pointer.tool property. The order of the pointers
+           in this iterator is not defined.
+
+           Note: If the input surface supports hovering input, some pointers
+           may not be in a "down" state. To retrieve the list of such pointers,
+           set the $hover value to $true. Remember though that most devices
+           currently don't support this.
+         ]]
+         params {
+            /* FIXME: missing seat. hover is not useful */
+            hover: bool @optional; [[$false by default, $true means to include
+                                     fingers that are currently hovering.]]
+         }
+         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+      }
    }
    events {
       focus,in: Efl.Input.Focus; [[Called when canvas got focus]]

@@ -849,9 +849,9 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Efl.Gfx.Size.Hint.hint_aspect { set; }
       Efl.Gfx.Size.Hint.hint_max { set; }
       Efl.Text.text { get; set; }
-      Efl.Input.Interface.pointer_position { get; }
-      Efl.Input.Interface.pointer_inside { get; }
-      Efl.Input.Interface.pointer_iterate;
+      Efl.Canvas.pointer_position { get; }
+      Efl.Canvas.pointer_inside { get; }
+      Efl.Canvas.pointer_iterate;
       Efl.Canvas.image_max_size { get; }
       Efl.Canvas.smart_objects_calculate;
       Efl.Canvas.objects_at_xy_get;

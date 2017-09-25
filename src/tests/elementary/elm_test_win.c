@@ -256,7 +256,7 @@ _inputs_timer2_cb(void *data)
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_input_pointer_iterate(win, 0);
+   it = efl_canvas_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         double x, y;
@@ -313,12 +313,13 @@ static Eina_Bool
 _inputs_timer3_cb(void *data)
 {
    Efl_Input_Pointer *ptr;
+   Eina_Position2D pos;
    Eina_Iterator *it;
    Eo *win = data;
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_input_pointer_iterate(win, 0);
+   it = efl_canvas_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         int tool, ok = 0;
@@ -347,6 +348,11 @@ _inputs_timer3_cb(void *data)
      }
    eina_iterator_free(it);
    fail_if(cnt != 2); // 2 moves (in the list), 2 ups (gone)
+
+   fail_if(!efl_canvas_pointer_inside_get(win));
+   pos = efl_canvas_pointer_position_get(win);
+   ck_assert_int_eq(pos.x, points[1][0].x);
+   ck_assert_int_eq(pos.y, points[1][0].y);
 
    elm_exit();
 

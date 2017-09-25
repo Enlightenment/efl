@@ -2423,7 +2423,7 @@ _efl_ui_win_efl_gfx_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_win_efl_input_interface_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Position2D pos;
    evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
@@ -2431,7 +2431,7 @@ _efl_ui_win_efl_input_interface_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_input_interface_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return evas_pointer_inside_get(sd->evas);
 }
@@ -2467,8 +2467,8 @@ _input_pointer_iterator_free(Input_Pointer_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_input_interface_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
-                                                Eina_Bool hover EINA_UNUSED)
+_efl_ui_win_efl_canvas_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
+                                       Eina_Bool hover EINA_UNUSED)
 {
    Input_Pointer_Iterator *it;
    Eina_List *list = NULL;
