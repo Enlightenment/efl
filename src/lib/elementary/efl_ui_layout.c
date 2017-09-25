@@ -1132,24 +1132,6 @@ _efl_ui_layout_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_container_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *content)
-{
-   return _efl_ui_layout_content_set(obj, sd, NULL, content);
-}
-
-EOLIAN static Evas_Object*
-_efl_ui_layout_efl_container_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd)
-{
-   return _efl_ui_layout_content_get(obj, sd, NULL);
-}
-
-EOLIAN static Evas_Object*
-_efl_ui_layout_efl_container_content_unset(Eo *obj, Efl_Ui_Layout_Data *sd)
-{
-   return _efl_ui_layout_content_unset(obj, sd, NULL);
-}
-
-EOLIAN static Eina_Bool
 _efl_ui_layout_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
                                          Efl_Gfx *content)
 {
