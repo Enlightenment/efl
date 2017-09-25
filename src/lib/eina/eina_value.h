@@ -3346,7 +3346,7 @@ static inline Eina_Bool eina_value_struct_vget(const Eina_Value *value,
  *     int x = 5678;
  *     char y = 0xf;
  *
- *     eina_value_struct_pset(value, "i", &);
+ *     eina_value_struct_pset(value, "i", &x);
  *     eina_value_struct_pget(value, "i", &x);
  *     eina_value_struct_pset(value, "c", &y);
  *     eina_value_struct_pget(value, "c", &y);
