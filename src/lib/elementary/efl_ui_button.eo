@@ -18,8 +18,6 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Efl.Ui.Autorepeat.autorepeat_enabled { set; get; }
       Efl.Ui.Autorepeat.autorepeat_supported { get;}
       Elm.Widget.on_access_activate;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
