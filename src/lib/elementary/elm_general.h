@@ -110,12 +110,32 @@ extern EAPI double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
 #define EFL_MAIN() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); ret__ = efl_loop_begin(ecore_main_loop_get()); elm_shutdown(); return ret__; }
+
+#define EFL_MAIN_EX()                                                   \
+  EFL_CALLBACKS_ARRAY_DEFINE(_efl_main_ex,                              \
+                             { EFL_LOOP_EVENT_ARGUMENTS, efl_main },    \
+                             { EFL_LOOP_EVENT_PAUSE, efl_pause },       \
+                             { EFL_LOOP_EVENT_RESUME, efl_resume },     \
+                             { EFL_EVENT_DEL, efl_terminate });         \
+  int main(int argc, char **argv)                                       \
+  {                                                                     \
+     int ret__;                                                         \
+     _EFL_APP_VERSION_SET();                                            \
+     _elm_startup_time = ecore_time_unix_get();                         \
+     elm_init(argc, argv);                                              \
+     efl_event_callback_array_add(ecore_main_loop_get(), _efl_main_ex(), NULL); \
+     ret__ = efl_loop_begin(ecore_main_loop_get());                     \
+     elm_shutdown();                                                    \
+     return ret__;                                                      \
+  }
+
 #else
 /** @deprecated macro to be used after the elm_main() function.
  * Do not define ELM_LIB_QUICKLAUNCH
  * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
  */
-#define EFL_MAIN() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; }
+#define EFL_MAIN() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; (void) efl_main(NULL, NULL); return 0; }
+#define EFL_MAIN_EX() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; (void) efl_main(NULL, NULL);  (void) efl_pause(NULL, NULL);  (void) efl_resume(NULL, NULL); (void) efl_terminate(NULL, NULL); return 0; }
 #endif
 
 #endif /* EFL_BETA_API_SUPPORT */

@@ -930,6 +930,18 @@ static int (*qr_main)(int    argc,
                       char **argv) = NULL;
 static void (*qre_main)(void *data,
                         const Efl_Event *ev) = NULL;
+static void (*qre_pause)(void *data,
+                        const Efl_Event *ev) = NULL;
+static void (*qre_resume)(void *data,
+                        const Efl_Event *ev) = NULL;
+static void (*qre_terminate)(void *data,
+                        const Efl_Event *ev) = NULL;
+
+EFL_CALLBACKS_ARRAY_DEFINE(_qre_main_ex,
+                           { EFL_LOOP_EVENT_ARGUMENTS, qre_main },
+                           { EFL_LOOP_EVENT_PAUSE, qre_pause },
+                           { EFL_LOOP_EVENT_RESUME, qre_resume },
+                           { EFL_EVENT_DEL, qre_terminate });
 
 EAPI Eina_Bool
 elm_quicklaunch_prepare(int    argc,
@@ -1057,6 +1069,9 @@ efl_quicklaunch_prepare(int    argc,
      {
         INF("dlopen('%s') = %p", exe, qr_handle);
         qre_main = dlsym(qr_handle, "efl_main");
+        qre_pause = dlsym(qr_handle, "efl_pause");
+        qre_resume = dlsym(qr_handle, "efl_resume");
+        qre_terminate = dlsym(qr_handle, "efl_terminate");
         if (qre_main)
           {
              INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
@@ -1090,6 +1105,9 @@ efl_quicklaunch_prepare(int    argc,
    INF("dlopen('%s') = %p", exe2, qr_handle);
    qre_main = dlsym(qr_handle, "efl_main");
    INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
+   qre_pause = dlsym(qr_handle, "efl_pause");
+   qre_resume = dlsym(qr_handle, "efl_resume");
+   qre_terminate = dlsym(qr_handle, "efl_terminate");
    if (!qre_main)
      {
         WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
@@ -1210,7 +1228,14 @@ elm_quicklaunch_fork(int    argc,
 
    if (qre_main)
      {
-        efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+        if (qre_pause && qre_resume && qre_terminate)
+          {
+             efl_event_callback_array_add(ecore_main_loop_get(), _qre_main_ex(), NULL);
+          }
+        else
+          {
+             efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+          }
         ret = efl_loop_begin(ecore_main_loop_get());
         elm_shutdown();
         exit(ret);
