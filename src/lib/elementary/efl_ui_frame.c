@@ -53,51 +53,6 @@ _sizing_eval(Evas_Object *obj,
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_frame_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_frame_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *content;
-
-   content = elm_layout_content_get(obj, NULL);
-
-   if (!content) return EINA_FALSE;
-
-   else
-     {
-        /* attempt to follow focus cycle into sub-object */
-        return elm_obj_widget_focus_next_get(content, dir, next, next_item);
-     }
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_frame_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_frame_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Efl_Ui_Frame_Data *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Evas_Object *content;
-
-   content = elm_layout_content_get(obj, NULL);
-
-   if (!content) return EINA_FALSE;
-
-   else
-     {
-        /* Try to cycle focus on content */
-        return elm_obj_widget_focus_direction_get
-           (content, base, degree, direction, direction_item, weight);
-     }
-}
-
 static void
 _recalc(void *data, const Efl_Event *event EINA_UNUSED)
 {

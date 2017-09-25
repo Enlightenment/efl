@@ -57,10 +57,6 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text.Markup,
       Efl.Object.constructor;
       class.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
