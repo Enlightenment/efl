@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary popup class]]
    legacy_prefix: elm_popup;
@@ -168,12 +168,8 @@ class Elm.Popup (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
       Elm.Widget.widget_parent { set; }
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.widget_sub_object_del;

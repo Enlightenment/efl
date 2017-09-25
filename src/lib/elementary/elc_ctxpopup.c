@@ -38,11 +38,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_CTXPOPUP_SIGNALS
 
-static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
-   {"move", _key_action_move},
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
@@ -59,81 +57,6 @@ _elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data 
      elm_wdg_item_translate(it);
 
    efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   if (!sd)
-     return EINA_FALSE;
-
-   if (!elm_obj_widget_focus_next_get(sd->box, dir, next, next_item))
-     {
-        elm_obj_widget_focused_object_clear(sd->box);
-        elm_obj_widget_focus_next_get(sd->box, dir, next, next_item);
-     }
-
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Eina_Bool int_ret;
-
-   Eina_List *l = NULL;
-   void *(*list_data_get)(const Eina_List *list);
-
-   if (!sd)
-     return EINA_FALSE;
-
-   list_data_get = eina_list_data_get;
-
-   l = eina_list_append(l, sd->box);
-
-   int_ret = elm_widget_focus_list_direction_get
-            (obj, base, l, list_data_get, degree, direction, direction_item, weight);
-   eina_list_free(l);
-
-   return int_ret;
-}
-
-static Eina_Bool
-_key_action_move(Evas_Object *obj, const char *params)
-{
-   ELM_CTXPOPUP_DATA_GET(obj, sd);
-   const char *dir = params;
-
-   if (!sd->box) return EINA_FALSE;
-
-   _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "previous"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_PREVIOUS);
-   else if (!strcmp(dir, "next"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_NEXT);
-   else if (!strcmp(dir, "left"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_LEFT);
-   else if (!strcmp(dir, "right"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_RIGHT);
-   else if (!strcmp(dir, "up"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_UP);
-   else if (!strcmp(dir, "down"))
-     elm_obj_widget_focus_cycle(sd->box, ELM_FOCUS_DOWN);
-   else return EINA_FALSE;
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1608,12 +1531,6 @@ _elm_ctxpopup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
 {
    static Elm_Atspi_Action atspi_actions[] = {
           { "escape", "escape", NULL, _key_action_escape},
-          { "move,previous", "move", "previous", _key_action_move},
-          { "move,next", "move", "next", _key_action_move},
-          { "move,left", "move", "left", _key_action_move},
-          { "move,right", "move", "right", _key_action_move},
-          { "move,up", "move", "up", _key_action_move},
-          { "move,down", "move", "down", _key_action_move},
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
