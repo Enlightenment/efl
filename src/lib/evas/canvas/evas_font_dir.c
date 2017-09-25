@@ -32,6 +32,7 @@ struct _Fndat
    Evas_Font_Set   *font;
    int              ref;
    Font_Rend_Flags  wanted_rend;
+   Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
 
 #ifdef HAVE_FONTCONFIG
    FcFontSet *set;
@@ -235,7 +236,7 @@ evas_font_free(Evas *eo_evas, void *font)
 #ifdef HAVE_FONTCONFIG
 static Evas_Font_Set *
 _evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int size,
-      Font_Rend_Flags wanted_rend)
+      Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    int i;
@@ -248,9 +249,9 @@ _evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int si
 	FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
 
 	if (font)
-	  evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)filename.u.s, size, wanted_rend);
+	  evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
 	else
-	  font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)filename.u.s, size, wanted_rend);
+	  font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
      }
 
    return font;
@@ -550,7 +551,7 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 }
 
 void *
-evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size)
+evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 #ifdef HAVE_FONTCONFIG
@@ -585,8 +586,9 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	     if (((!source) && (!fd->source)) ||
 		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
 	       {
-		  if ((size == fd->size) &&
-                        (wanted_rend == fd->wanted_rend))
+                  if ((size == fd->size) &&
+                      (wanted_rend == fd->wanted_rend) &&
+                      (bitmap_scalable == fd->bitmap_scalable))
 		    {
 		       fonts_cache = eina_list_promote_list(fonts_cache, l);
 		       fd->ref++;
@@ -605,7 +607,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend);
+        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend, bitmap_scalable);
         goto on_find;
      }
 #endif
@@ -638,7 +640,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend);
+        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend, bitmap_scalable);
         goto on_find;
      }
 #endif
@@ -656,7 +658,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 		  fake_name = evas_file_path_join(source, nm);
 		  if (fake_name)
 		    {
-		       font = evas->engine.func->font_load(_evas_engine_context(evas), fake_name, size, wanted_rend);
+		       font = evas->engine.func->font_load(_evas_engine_context(evas), fake_name, size, wanted_rend, bitmap_scalable);
 		       if (!font) /* Load from fake name failed, probably not cached */
 			 {
 			    /* read original!!! */
@@ -669,7 +671,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 				 fdata = eet_read(ef, nm, &fsize);
 				 if (fdata)
 				   {
-				      font = evas->engine.func->font_memory_load(_evas_engine_context(evas), source, nm, size, fdata, fsize, wanted_rend);
+				      font = evas->engine.func->font_memory_load(_evas_engine_context(evas), source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
 				      free(fdata);
 				   }
 				 eet_close(ef);
@@ -681,7 +683,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	     if (!font) /* Source load failed */
 	       {
 		  if (evas_file_path_is_full_path((char *)nm)) /* Try filename */
-		    font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)nm, size, wanted_rend);
+		    font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)nm, size, wanted_rend, bitmap_scalable);
 		  else /* search font path */
 		    {
 		       Eina_List *ll;
@@ -694,7 +696,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
 			    if (f_file)
 			      {
-				 font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend);
+				 font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend, bitmap_scalable);
 				 if (font) break;
 			      }
                          }
@@ -708,7 +710,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                                  f_file = evas_font_dir_cache_find(dir, (char *)nm);
                                  if (f_file)
                                    {
-                                      font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend);
+                                      font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend, bitmap_scalable);
                                       if (font) break;
                                    }
                               }
@@ -729,7 +731,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 		  if (fake_name)
 		    {
 		       /* FIXME: make an engine func */
-		       if (!evas->engine.func->font_add(_evas_engine_context(evas), font, fake_name, size, wanted_rend))
+		       if (!evas->engine.func->font_add(_evas_engine_context(evas), font, fake_name, size, wanted_rend, bitmap_scalable))
 			 {
 			    /* read original!!! */
 			    ef = eet_open(source, EET_FILE_MODE_READ);
@@ -741,7 +743,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
-				      ok = evas->engine.func->font_memory_add(_evas_engine_context(evas), font, source, nm, size, fdata, fsize, wanted_rend);
+				      ok = evas->engine.func->font_memory_add(_evas_engine_context(evas), font, source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
 				   }
 				 eet_close(ef);
                                  free(fdata);
@@ -755,7 +757,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	     if (!ok)
 	       {
 		  if (evas_file_path_is_full_path((char *)nm))
-		    evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)nm, size, wanted_rend);
+		    evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)nm, size, wanted_rend, bitmap_scalable);
 		  else
 		    {
 		       Eina_List *ll;
@@ -769,7 +771,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
 			    if (f_file)
 			      {
-				 fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend);
+				 fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend, bitmap_scalable);
 				 if (fn)
 				   break;
 			      }
@@ -784,7 +786,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                                  f_file = evas_font_dir_cache_find(dir, (char *)nm);
                                  if (f_file)
                                    {
-                                      fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend);
+                                      fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend, bitmap_scalable);
                                       if (fn)
                                          break;
                                    }
@@ -854,7 +856,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
 	  }
 	else
           {
-             font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
+             font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend, bitmap_scalable);
           }
      }
    else /* Add a fallback list from fontconfig according to the found font. */
@@ -881,7 +883,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                }
              else
                {
-                  font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend);
+                  font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend, bitmap_scalable);
                }
           }
 #endif
@@ -899,6 +901,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
         fd->font = font;
         fd->wanted_rend = wanted_rend;
         fd->size = size;
+        fd->bitmap_scalable = bitmap_scalable;
         fd->ref = 1;
         fonts_cache = eina_list_prepend(fonts_cache, fd);
 #ifdef HAVE_FONTCONFIG

@@ -37,6 +37,18 @@ enum Efl.Text.Font.Slant {
     italic, [[Italic font slant]]
 }
 
+/* FIXME: It needs to support "normal" option for non-color bitmap font.
+   For supporting "normal" option, S/W glyph drawing engine should be updated.
+ */
+enum Efl.Text.Font.Bitmap_Scalable {
+   [[Scalable of bitmap fonts
+
+     @since 1.21
+   ]]
+   none = 0,         [[Disable scalable feature for bitmap fonts.]]
+   color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
+}
+
 interface Efl.Text.Font {
    [[Font settings of the text
 
@@ -113,6 +125,18 @@ interface Efl.Text.Font {
          values {
             lang: string; [[Language]]
          }
+      }
+
+      @property font_bitmap_scalable {
+           [[The bitmap fonts have fixed size glyphs for several available sizes.
+             Basically, it is not scalable. But, it needs to be scalable for some use cases.
+             (ex. colorful emoji fonts)
+
+             Default is $Efl.Text.Font.Bitmap_Scalable.none\.
+           ]]
+           values {
+              scalable: Efl.Text.Font.Bitmap_Scalable; [[Scalable]]
+           }
       }
    }
 }

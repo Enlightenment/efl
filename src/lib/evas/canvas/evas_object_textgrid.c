@@ -36,6 +36,7 @@ struct _Evas_Textgrid_Data
 
       Eina_Array                  palette_standard;
       Eina_Array                  palette_extended;
+      Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
    } cur, prev;
 
    int                            ascent;
@@ -156,6 +157,7 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
 
    Evas_Textgrid_Data *o = obj->private_data;
    o->magic = MAGIC_OBJ_TEXTGRID;
+   o->prev.bitmap_scalable = o->cur.bitmap_scalable = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
    o->prev = o->cur;
    eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
    eina_array_step_set(&o->cur.palette_extended, sizeof (Eina_Array), 16);
@@ -1005,7 +1007,8 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
                          fdesc,
                          o->cur.font_source,
                          (int)(((double) o->cur.font_size) *
-                               obj->cur->scale));
+                               obj->cur->scale),
+                         o->cur.bitmap_scalable);
    if (font)
      {
         Eina_Unicode W[2] = { 'O', 0 };
@@ -1054,11 +1057,8 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
    return ret;
 }
 
-EOLIAN static void
-_evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
-                                            Evas_Textgrid_Data *o,
-                                            const char *font_name,
-                                            Evas_Font_Size font_size)
+static void
+_evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
@@ -1066,30 +1066,7 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
    Evas_Font_Description *fdesc;
    Eina_List *was = NULL;
 
-   if ((!font_name) || (!*font_name) || (font_size <= 0))
-     return;
-
-   evas_object_async_block(obj);
-   fdesc = evas_font_desc_new();
-   /* Set default language according to locale. */
-   eina_stringshare_replace(&(fdesc->lang),
-                            evas_font_lang_normalize("auto"));
-   evas_font_name_parse(fdesc, font_name);
-   if (o->cur.font_description_normal &&
-       !evas_font_desc_cmp(fdesc, o->cur.font_description_normal) &&
-       (font_size == o->cur.font_size))
-     {
-        evas_font_desc_unref(fdesc);
-        return;
-     }
-
-   if (o->cur.font_description_normal)
-     evas_font_desc_unref(o->cur.font_description_normal);
-   o->cur.font_description_normal = fdesc;
-
-   o->cur.font_size = font_size;
-   eina_stringshare_replace(&o->cur.font_name, font_name);
-   o->prev.font_name = NULL;
+   fdesc = o->cur.font_description_normal;
 
    if (!(obj->layer->evas->is_frozen))
      {
@@ -1111,7 +1088,8 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
                             o->cur.font_description_normal,
                             o->cur.font_source,
                             (int)(((double) o->cur.font_size) *
-                                  obj->cur->scale));
+                                  obj->cur->scale),
+                            o->cur.bitmap_scalable);
    if (o->font_normal)
      {
         Eina_Unicode W[2] = { 'O', 0 };
@@ -1242,6 +1220,43 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
    o->core_change = 1;
    evas_object_textgrid_rows_clear(eo_obj);
    evas_object_change(eo_obj, obj);
+}
+
+EOLIAN static void
+_evas_textgrid_efl_text_properties_font_set(Eo *eo_obj,
+                                            Evas_Textgrid_Data *o,
+                                            const char *font_name,
+                                            Evas_Font_Size font_size)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Font_Description *fdesc;
+
+   if ((!font_name) || (!*font_name) || (font_size <= 0))
+     return;
+
+   evas_object_async_block(obj);
+   fdesc = evas_font_desc_new();
+   /* Set default language according to locale. */
+   eina_stringshare_replace(&(fdesc->lang),
+                            evas_font_lang_normalize("auto"));
+   evas_font_name_parse(fdesc, font_name);
+   if (o->cur.font_description_normal &&
+       !evas_font_desc_cmp(fdesc, o->cur.font_description_normal) &&
+       (font_size == o->cur.font_size))
+     {
+        evas_font_desc_unref(fdesc);
+        return;
+     }
+
+   if (o->cur.font_description_normal)
+     evas_font_desc_unref(o->cur.font_description_normal);
+   o->cur.font_description_normal = fdesc;
+
+   o->cur.font_size = font_size;
+   eina_stringshare_replace(&o->cur.font_name, font_name);
+   o->prev.font_name = NULL;
+
+   _evas_textgrid_font_reload(eo_obj, o);
 }
 
 EOLIAN static void
@@ -1498,6 +1513,21 @@ EAPI void
 evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size)
 {
    efl_text_properties_font_get((Eo *) obj, font_name, font_size);
+}
+
+EOLIAN static void
+_evas_textgrid_efl_text_font_font_bitmap_scalable_set(Eo *eo_obj, Evas_Textgrid_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+{
+   if (o->cur.bitmap_scalable == bitmap_scalable) return;
+   o->prev.bitmap_scalable = o->cur.bitmap_scalable;
+   o->cur.bitmap_scalable = bitmap_scalable;
+   _evas_textgrid_font_reload(eo_obj, o);
+}
+
+EOLIAN static Efl_Text_Font_Bitmap_Scalable
+_evas_textgrid_efl_text_font_font_bitmap_scalable_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o)
+{
+   return o->cur.bitmap_scalable;
 }
 
 #define EVAS_TEXTGRID_EXTRA_OPS \

@@ -46,27 +46,27 @@ EAPI int               evas_common_font_source_load_complete (RGBA_Font_Source *
 EAPI RGBA_Font_Source *evas_common_font_source_find          (const char *name);
 EAPI void              evas_common_font_source_free          (RGBA_Font_Source *fs);
 EAPI void              evas_common_font_size_use             (RGBA_Font *fn);
-EAPI RGBA_Font_Int    *evas_common_font_int_load             (const char *name, int size, Font_Rend_Flags wanted_rend);
+EAPI RGBA_Font_Int    *evas_common_font_int_load             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 EAPI RGBA_Font_Int    *evas_common_font_int_load_init        (RGBA_Font_Int *fn);
 EAPI RGBA_Font_Int    *evas_common_font_int_load_complete    (RGBA_Font_Int *fi);
-EAPI RGBA_Font        *evas_common_font_memory_load          (const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_load                 (const char *name, int size, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_add                  (RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_memory_add           (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend);
+EAPI RGBA_Font        *evas_common_font_memory_load          (const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_load                 (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_add                  (RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_memory_add           (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 EAPI void              evas_common_font_free                 (RGBA_Font *fn);
 EAPI void              evas_common_font_int_unref            (RGBA_Font_Int *fi);
 EAPI void              evas_common_font_hinting_set          (RGBA_Font *fn, Font_Hint_Flags hinting);
 EAPI Eina_Bool         evas_common_hinting_available         (Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_load  (const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_hinting_load         (const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_hinting_add          (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_add   (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend);
+EAPI RGBA_Font        *evas_common_font_memory_hinting_load  (const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_hinting_load         (const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_hinting_add          (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EAPI RGBA_Font        *evas_common_font_memory_hinting_add   (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 EAPI void              evas_common_font_int_modify_cache_by  (RGBA_Font_Int *fi, int dir);
 EAPI int               evas_common_font_cache_get            (void);
 EAPI void              evas_common_font_cache_set            (int size);
 EAPI void              evas_common_font_flush                (void);
 EAPI void              evas_common_font_flush_last           (void);
-EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size, Font_Rend_Flags wanted_rend);
+EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 EAPI void              evas_common_font_all_clear            (void);
 EAPI void              evas_common_font_ext_clear            (void);
 
@@ -85,7 +85,7 @@ EAPI int               evas_common_font_query_run_font_end_get(RGBA_Font *fn, RG
 EAPI void              evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent);
 
 EAPI void             *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
-EAPI void              evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, RGBA_Draw_Context *dc, RGBA_Image *dst, int dst_pitch, int x, int y, int cx, int cy, int cw, int ch);
+EAPI void              evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, RGBA_Draw_Context *dc, RGBA_Image *dst, int dst_pitch, int dx, int dy, int dw, int dh, int cx, int cy, int cw, int ch);
 EAPI DATA8            *evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret);
 
 void evas_common_font_load_init(void);

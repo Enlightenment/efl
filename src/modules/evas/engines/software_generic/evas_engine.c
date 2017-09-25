@@ -3192,30 +3192,33 @@ eng_image_cache_get(void *data EINA_UNUSED)
 
 static Evas_Font_Set *
 eng_font_load(void *data EINA_UNUSED, const char *name, int size,
-      Font_Rend_Flags wanted_rend)
+      Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
-   return (Evas_Font_Set *) evas_common_font_load(name, size, wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_load(name, size, wanted_rend, bitmap_scalable);
 }
 
 static Evas_Font_Set *
-eng_font_memory_load(void *data EINA_UNUSED, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
+eng_font_memory_load(void *data EINA_UNUSED, const char *source, const char *name, int size, const void *fdata, int fdata_size,
+                     Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    return (Evas_Font_Set *) evas_common_font_memory_load(source, name, size,
-         fdata, fdata_size, wanted_rend);
+         fdata, fdata_size, wanted_rend, bitmap_scalable);
 }
 
 static Evas_Font_Set *
-eng_font_add(void *data EINA_UNUSED, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend)
+eng_font_add(void *data EINA_UNUSED, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend,
+             Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    return (Evas_Font_Set *) evas_common_font_add((RGBA_Font *) font, name,
-         size, wanted_rend);
+         size, wanted_rend, bitmap_scalable);
 }
 
 static Evas_Font_Set *
-eng_font_memory_add(void *data EINA_UNUSED, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
+eng_font_memory_add(void *data EINA_UNUSED, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size,
+                    Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    return (Evas_Font_Set *) evas_common_font_memory_add((RGBA_Font *) font,
-         source, name, size, fdata, fdata_size, wanted_rend);
+         source, name, size, fdata, fdata_size, wanted_rend, bitmap_scalable);
 }
 
 static void

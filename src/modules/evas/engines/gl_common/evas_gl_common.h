@@ -748,7 +748,7 @@ Evas_GL_Image    *evas_gl_common_image_virtual_scaled_get(Evas_GL_Image *scaled,
 
 void             *evas_gl_font_texture_new(void *gc, RGBA_Font_Glyph *fg);
 void              evas_gl_font_texture_free(void *);
-void              evas_gl_font_texture_draw(void *gc, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y);
+void              evas_gl_font_texture_draw(void *gc, void *surface, void *dc, RGBA_Font_Glyph *fg, int x, int y, int w, int h);
 void             *evas_gl_font_image_new(void *gc, RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace);
 void              evas_gl_font_image_free(void *im);
 void              evas_gl_font_image_draw(void *gc, void *im, int dx, int dy, int dw, int dh, int smooth);

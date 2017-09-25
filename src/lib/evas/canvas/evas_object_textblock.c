@@ -512,6 +512,7 @@ struct _Evas_Object_Textblock_Format
       const char       *source;  /**< Pointer to object from which to search for the font. */
       Evas_Font_Set    *font;  /**< Pointer to font set. */
       Evas_Font_Size    size;  /**< Size of the font. */
+      Efl_Text_Font_Bitmap_Scalable bitmap_scalable;  /**< Scalable for bitmap font. */
    } font;
    struct {
       struct {
@@ -629,6 +630,7 @@ struct _Evas_Object_Textblock
          Efl_Text_Style_Effect_Type      effect;
          Efl_Text_Style_Shadow_Direction shadow_direction;
          Efl_Text_Format_Wrap            wrap;
+         Efl_Text_Font_Bitmap_Scalable   bitmap_scalable;
       } info;
    } default_format;
    double                              valign;
@@ -2826,7 +2828,7 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
 
    /* FIXME: just ref the font here... */
    fmt2->font.font = evas_font_load(obj->layer->evas->evas, fmt2->font.fdesc,
-         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale));
+         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale), fmt2->font.bitmap_scalable);
 
    if (fmt->gfx_filter)
      {
@@ -3365,6 +3367,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         c->format_stack  = eina_list_prepend(c->format_stack, fmt);
         *fmt = c->o->default_format.format;
         fmt->ref = 1;
+        fmt->font.bitmap_scalable = _FMT_INFO(bitmap_scalable);
 
         // Apply font if specified
         if (_FMT_INFO(font))
@@ -3389,7 +3392,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->width = _FMT_INFO(font_width);
              fmt->font.fdesc->lang = _FMT_INFO(font_lang);
              fmt->font.font = evas_font_load(evas_obj->layer->evas->evas, fmt->font.fdesc,
-                   fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale));
+                   fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale), fmt->font.bitmap_scalable);
           }
         if (_FMT_INFO(gfx_filter_name))
           {
@@ -4490,7 +4493,7 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
    of = fmt->font.font;
 
    fmt->font.font = evas_font_load(obj->layer->evas->evas, fmt->font.fdesc,
-         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur->scale));
+         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur->scale), fmt->font.bitmap_scalable);
    if (of) evas_font_free(obj->layer->evas->evas, of);
 }
 
@@ -6760,6 +6763,7 @@ _efl_canvas_text_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Text_Data *class_
    _FMT(linerelgap) = 0.0;
    _FMT(password) = 1;
    _FMT(ellipsis) = -1;
+   _FMT_INFO(bitmap_scalable) = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
 
    return eo_obj;
 }
@@ -15157,6 +15161,20 @@ static Efl_Text_Font_Width
 _efl_canvas_text_efl_text_font_font_width_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    return _FMT_INFO(font_width);
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_text_font_font_bitmap_scalable_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+{
+   if (_FMT_INFO(bitmap_scalable) == bitmap_scalable) return;
+   _FMT_INFO(bitmap_scalable) = bitmap_scalable;
+   _canvas_text_format_changed(obj, o);
+}
+
+EOLIAN static Efl_Text_Font_Bitmap_Scalable
+_efl_canvas_text_efl_text_font_font_bitmap_scalable_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+{
+   return _FMT_INFO(bitmap_scalable);
 }
 
 /* Efl.Text.Style interface implementation */

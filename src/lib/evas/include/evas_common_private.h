@@ -749,7 +749,7 @@ struct _RGBA_Draw_Context
       struct {
          void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg);
          void  (*gl_free) (void *ext_dat);
-         void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
+         void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y, int w, int h);
          void *(*gl_image_new) (void *gc, RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace);
          void  (*gl_image_free) (void *image);
          void  (*gl_image_draw) (void *gc, void *im, int dx, int dy, int dw, int dh, int smooth);
@@ -1010,6 +1010,7 @@ struct _RGBA_Font_Int
    Eina_Hash        *kerning;
    Fash_Glyph       *fash;
    unsigned int      size;
+   float             scale_factor;
    int               real_size;
    int               max_h;
    int               references;
@@ -1032,6 +1033,8 @@ struct _RGBA_Font_Int
 #endif
 
    int              generation;
+
+   Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
 
    unsigned char    sizeok : 1;
    unsigned char    inuse : 1;

@@ -1501,10 +1501,10 @@ struct _Evas_Func
    void *(*image_plane_assign)             (void *data, void *image, int x, int y);
    void (*image_plane_release)             (void *data, void *image, void *plane);
 
-   Evas_Font_Set *(*font_load)             (void *engine, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_load)      (void *engine, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_add)              (void *engine, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_add)       (void *engine, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_load)             (void *engine, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+   Evas_Font_Set *(*font_memory_load)      (void *engine, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+   Evas_Font_Set *(*font_add)              (void *engine, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+   Evas_Font_Set *(*font_memory_add)       (void *engine, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
    void (*font_free)                       (void *engine, Evas_Font_Set *font);
    int  (*font_ascent_get)                 (void *engine, Evas_Font_Set *font);
    int  (*font_descent_get)                (void *engine, Evas_Font_Set *font);
@@ -1774,7 +1774,7 @@ void evas_font_desc_unref(Evas_Font_Description *fdesc);
 int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Description *b);
 Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
 const char *evas_font_lang_normalize(const char *lang);
-void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size);
+void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool sourve_invisible);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
