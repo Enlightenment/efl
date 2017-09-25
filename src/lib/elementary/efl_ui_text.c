@@ -3142,7 +3142,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
      (priv->entry_edje, "entry,redo,request", "elm.text",
      _entry_redo_request_signal_cb, obj);
 
-   elm_layout_text_set(obj, "elm.text", "");
+   efl_text_set(priv->text_obj, "");
 
    elm_object_sub_cursor_set
      (wd->resize_obj, obj, ELM_CURSOR_XTERM);
