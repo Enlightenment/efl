@@ -48,6 +48,7 @@ struct _Evas_Text_Data
 
       Evas_Font_Size       size;
       Evas_Text_Style_Type style;
+      Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
    } cur, prev;
 
    struct {
@@ -417,14 +418,58 @@ _evas_text_efl_text_properties_font_source_get(Eo *eo_obj EINA_UNUSED, Evas_Text
    return o->cur.source;
 }
 
-EOLIAN static void
-_evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
+static void
+_evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool pass = EINA_FALSE, freeze = EINA_FALSE;
    Eina_Bool source_invisible = EINA_FALSE;
-   Evas_Font_Description *fdesc;
    Eina_List *was = NULL;
+
+   if (!(obj->layer->evas->is_frozen))
+     {
+        pass = evas_event_passes_through(eo_obj, obj);
+        freeze = evas_event_freezes_through(eo_obj, obj);
+        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
+        if ((!pass) && (!freeze) && (!source_invisible))
+          was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj,
+                                               1, 1);
+     }
+
+   /* DO IT */
+   if (o->font)
+     {
+        evas_font_free(obj->layer->evas->evas, o->font);
+        o->font = NULL;
+     }
+
+   o->font = evas_font_load(obj->layer->evas->evas, o->cur.fdesc, o->cur.source,
+         (int)(((double) o->cur.size) * obj->cur->scale), o->cur.bitmap_scalable);
+     {
+        o->ascent = 0;
+        o->descent = 0;
+        o->max_ascent = 0;
+        o->max_descent = 0;
+     }
+   _evas_object_text_items_clear(o);
+   _evas_object_text_recalc(eo_obj, o->cur.text);
+   o->changed = 1;
+   if (o->has_filter)
+     evas_filter_changed_set(eo_obj, EINA_TRUE);
+   evas_object_change(eo_obj, obj);
+   evas_object_clip_dirty(eo_obj, obj);
+   evas_object_coords_recalc(eo_obj, obj);
+   if (!obj->layer->evas->is_frozen && !pass && !freeze && obj->cur->visible)
+     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
+   eina_list_free(was);
+   evas_object_inform_call_resize(eo_obj);
+}
+
+EOLIAN static void
+_evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *font, Evas_Font_Size size)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Font_Description *fdesc;
 
    if ((!font) || (size <= 0)) return;
 
@@ -455,43 +500,7 @@ _evas_text_efl_text_properties_font_set(Eo *eo_obj, Evas_Text_Data *o, const cha
    eina_stringshare_replace(&o->cur.font, font);
    o->prev.font = NULL;
 
-   if (!(obj->layer->evas->is_frozen))
-     {
-        pass = evas_event_passes_through(eo_obj, obj);
-        freeze = evas_event_freezes_through(eo_obj, obj);
-        source_invisible = evas_object_is_source_invisible(eo_obj, obj);
-        if ((!pass) && (!freeze) && (!source_invisible))
-          was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj,
-                                               1, 1);
-     }
-
-   /* DO IT */
-   if (o->font)
-     {
-        evas_font_free(obj->layer->evas->evas, o->font);
-        o->font = NULL;
-     }
-
-   o->font = evas_font_load(obj->layer->evas->evas, o->cur.fdesc, o->cur.source,
-         (int)(((double) o->cur.size) * obj->cur->scale));
-     {
-        o->ascent = 0;
-        o->descent = 0;
-        o->max_ascent = 0;
-        o->max_descent = 0;
-     }
-   _evas_object_text_items_clear(o);
-   _evas_object_text_recalc(eo_obj, o->cur.text);
-   o->changed = 1;
-   if (o->has_filter)
-     evas_filter_changed_set(eo_obj, EINA_TRUE);
-   evas_object_change(eo_obj, obj);
-   evas_object_clip_dirty(eo_obj, obj);
-   evas_object_coords_recalc(eo_obj, obj);
-   if (!obj->layer->evas->is_frozen && !pass && !freeze && obj->cur->visible)
-     _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
-   eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   _evas_text_font_reload(eo_obj, o);
 }
 
 EOLIAN static void
@@ -1618,6 +1627,7 @@ evas_object_text_init(Evas_Object *eo_obj)
    Evas_Text_Data *o = obj->private_data;
    /* alloc obj private data */
    o->prev.ellipsis = o->cur.ellipsis = -1.0;
+   o->prev.bitmap_scalable = o->cur.bitmap_scalable = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
    o->prev = o->cur;
 #ifdef BIDI_SUPPORT
    o->bidi_par_props = evas_bidi_paragraph_props_new();
@@ -2440,6 +2450,21 @@ _evas_text_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED,
                                                      Evas_Text_Data *o)
 {
    return o->paragraph_direction;
+}
+
+EOLIAN static void
+_evas_text_efl_text_font_font_bitmap_scalable_set(Eo *eo_obj, Evas_Text_Data *o, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+{
+   if (o->cur.bitmap_scalable == bitmap_scalable) return;
+   o->prev.bitmap_scalable = o->cur.bitmap_scalable;
+   o->cur.bitmap_scalable = bitmap_scalable;
+   _evas_text_font_reload(eo_obj, o);
+}
+
+EOLIAN static Efl_Text_Font_Bitmap_Scalable
+_evas_text_efl_text_font_font_bitmap_scalable_get(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
+{
+   return o->cur.bitmap_scalable;
 }
 
 #define EVAS_TEXT_EXTRA_OPS \

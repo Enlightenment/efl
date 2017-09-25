@@ -24,16 +24,25 @@ evas_common_font_draw_init(void)
 }
 
 static void *
-_evas_font_image_new_from_data(int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
+_evas_font_image_new(RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace)
 {
+   DATA32 *image_data;
+   int src_w, src_h;
+
+   if (!fg) return NULL;
+
+   image_data = (DATA32 *)fg->glyph_out->bitmap.buffer;
+   src_w = fg->glyph_out->bitmap.width;
+   src_h = fg->glyph_out->bitmap.rows;
+
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      {
         Evas_Cache2 *cache = evas_common_image_cache2_get();
-        return evas_cache2_image_data(cache, w, h, image_data, alpha, cspace);
+        return evas_cache2_image_data(cache, src_w, src_h, image_data, alpha, cspace);
      }
 #endif
-   return evas_cache_image_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
+   return evas_cache_image_data(evas_common_image_cache_get(), src_w, src_h, image_data, alpha, cspace);
 }
 
 static void
@@ -50,12 +59,15 @@ _evas_font_image_free(void *image)
 }
 
 static void
-_evas_font_image_draw(void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+_evas_font_image_draw(void *context, void *surface, void *image, RGBA_Font_Glyph *fg, int x, int y, int w, int h, int smooth)
 {
    RGBA_Image *im;
+   int src_w, src_h;
 
-   if (!image) return;
+   if (!image || !fg) return;
    im = image;
+   src_w = fg->glyph_out->bitmap.width;
+   src_h = fg->glyph_out->bitmap.rows;
 
 #ifdef BUILD_PIPE_RENDER
    if ((eina_cpu_count() > 1))
@@ -66,24 +78,24 @@ _evas_font_image_draw(void *context, void *surface, void *image, int src_x, int 
 #endif
         evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im),
                                                   surface, context, smooth,
-                                                  src_x, src_y, src_w, src_h,
-                                                  dst_x, dst_y, dst_w, dst_h);
+                                                  0, 0, src_w, src_h,
+                                                  x, y, w, h);
 
         evas_common_pipe_image_draw(im, surface, context, smooth,
-                                    src_x, src_y, src_w, src_h,
-                                    dst_x, dst_y, dst_w, dst_h);
+                                    0, 0, src_w, src_h,
+                                    x, y, w, h);
      }
    else
 #endif
      {
         evas_common_rgba_image_scalecache_prepare
           (&im->cache_entry, surface, context, smooth,
-           src_x, src_y, src_w, src_h,
-           dst_x, dst_y, dst_w, dst_h);
+           0, 0, src_w, src_h,
+           x, y, w, h);
         evas_common_rgba_image_scalecache_do
           (&im->cache_entry, surface, context, smooth,
-           src_x, src_y, src_w, src_h,
-           dst_x, dst_y, dst_w, dst_h);
+           0, 0, src_w, src_h,
+           x, y, w, h);
 
         evas_common_cpu_end_opt();
      }
@@ -111,8 +123,19 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
         int chr_x, chr_y, w, h;
 
         fg = glyph->fg;
+
         w = fg->glyph_out->bitmap.width;
         h = fg->glyph_out->bitmap.rows;
+
+        if (FT_HAS_FIXED_SIZES(fg->fi->src->ft.face))
+          {
+             if ((fg->fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR) &&
+                 FT_HAS_COLOR(fg->fi->src->ft.face))
+               {
+                  w *= fg->fi->scale_factor;
+                  h *= fg->fi->scale_factor;
+               }
+          }
 
         if ((!fg->ext_dat) && (dc->font_ext.func.gl_new))
           {
@@ -132,9 +155,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                }
              else
                {
-                  fg->ext_dat = _evas_font_image_new_from_data
-                    (w, h, (DATA32 *)fg->glyph_out->bitmap.buffer,
-                     EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+                  fg->ext_dat = _evas_font_image_new(fg, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
                   fg->ext_dat_free = _evas_font_image_free;
                }
           }
@@ -150,10 +171,11 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                        if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
                          dc->font_ext.func.gl_draw(dc->font_ext.data, dst,
                                                    dc, fg,
-                                                   chr_x, y - (chr_y - y));
+                                                   chr_x, y - (chr_y - y), w, h);
                        else
+                         // TODO: scale with evas_font_compress_draw.c...
                          evas_common_font_glyph_draw(fg, dc, dst, im_w,
-                                                     chr_x, y - (chr_y - y),
+                                                     chr_x, y - (chr_y - y), w, h,
                                                      ext_x, ext_y,
                                                      ext_w, ext_h);
                     }
@@ -165,7 +187,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                             chr_x, y - (chr_y - y), w, h, EINA_TRUE);
                        else
                          _evas_font_image_draw
-                           (dc, dst, fg->ext_dat, 0, 0, w, h,
+                           (dc, dst, fg->ext_dat, fg,
                             chr_x, y - (chr_y - y), w, h, EINA_TRUE);
                     }
                }

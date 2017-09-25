@@ -482,14 +482,19 @@ EAPI void
 evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, 
                             RGBA_Draw_Context *dc,
                             RGBA_Image *dst_image, int dst_pitch,
-                            int x, int y, int cx, int cy, int cw, int ch)
+                            int dx, int dy, int dw, int dh, int cx, int cy, int cw, int ch)
 {
    RGBA_Font_Glyph_Out *fgo = fg->glyph_out;
-   int w, h, x1, x2, y1, y2, i, *iptr;
+   int x, y, w, h, x1, x2, y1, y2, i, *iptr;
    DATA32 *dst = dst_image->image.data;
    DATA32 coltab[16], col;
    DATA16 mtab[16], v;
 
+   // FIXME: Use dw, dh for scaling glyphs...
+   (void) dw;
+   (void) dh;
+   x = dx;
+   y = dy;
    w = fgo->bitmap.width; h = fgo->bitmap.rows;
    // skip if totally clipped out
    if ((y >= (cy + ch)) || ((y + h) <= cy) ||
@@ -582,7 +587,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
 
              ptr = dst + (x + x1) + ((y + row) * dst_pitch);
              buf_ptr = buf + (row * w) + x1;
-             func(buf_ptr, mask, 0, ptr, x2 - x1);
+             func(buf_ptr, mask, 0, ptr, w);
           }
      }
    else

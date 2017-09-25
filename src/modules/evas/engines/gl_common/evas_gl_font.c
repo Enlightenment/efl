@@ -57,7 +57,7 @@ evas_gl_font_texture_free(void *tex)
 }
 
 void
-evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_context, RGBA_Font_Glyph *fg, int x, int y)
+evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_context, RGBA_Font_Glyph *fg, int x, int y, int w, int h)
 {
    Evas_Engine_GL_Context *gc = context;
    RGBA_Draw_Context *dc = draw_context;
@@ -108,25 +108,25 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
           {
              int nx, ny, nw, nh;
 
-             nx = x; ny = y; nw = tex->w; nh = tex->h;
+             nx = x; ny = y; nw = w; nh = h;
              RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
                                 gc->dc->clip.x, gc->dc->clip.y,
                                 gc->dc->clip.w, gc->dc->clip.h);
              if ((nw < 1) || (nh < 1)) return;
-             if ((nx == x) && (ny == y) && (nw == tex->w) && (nh == tex->h))
+             if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
                {
                   evas_gl_common_context_font_push(gc, tex,
                                                    0.0, 0.0, 0.0, 0.0,
 //                                                   sx, sy, sw, sh,
-                                                   x, y, tex->w, tex->h,
+                                                   x, y, w, h,
                                                    mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                                    r, g, b, a);
                   return;
                }
-             ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
-             ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
-             ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
-             ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
+             ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(w));
+             ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(h));
+             ssw = ((double)sw * (double)(nw)) / (double)(w);
+             ssh = ((double)sh * (double)(nh)) / (double)(h);
              evas_gl_common_context_font_push(gc, tex,
                                               ssx, ssy, ssw, ssh,
                                               nx, ny, nw, nh,
@@ -138,7 +138,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
              evas_gl_common_context_font_push(gc, tex,
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
-                                              x, y, tex->w, tex->h,
+                                              x, y, w, h,
                                               mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                               r, g, b, a);
           }
@@ -147,7 +147,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    /* save out clip info */
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
    evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->shared->w, gc->shared->h);
-   evas_common_draw_context_clip_clip(gc->dc, x, y, tex->w, tex->h);
+   evas_common_draw_context_clip_clip(gc->dc, x, y, w, h);
    /* our clip is 0 size.. abort */
    if ((gc->dc->clip.w <= 0) || (gc->dc->clip.h <= 0))
      {
@@ -160,23 +160,23 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
         int nx, ny, nw, nh;
 
         rct = _evas_gl_common_cutout_rects->rects + i;
-        nx = x; ny = y; nw = tex->w; nh = tex->h;
+        nx = x; ny = y; nw = w; nh = h;
         RECTS_CLIP_TO_RECT(nx, ny, nw, nh, rct->x, rct->y, rct->w, rct->h);
         if ((nw < 1) || (nh < 1)) continue;
-        if ((nx == x) && (ny == y) && (nw == tex->w) && (nh == tex->h))
+        if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
           {
              evas_gl_common_context_font_push(gc, tex,
                                               0.0, 0.0, 0.0, 0.0,
 //                                              sx, sy, sw, sh,
-                                              x, y, tex->w, tex->h,
+                                              x, y, w, h,
                                               mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                               r, g, b, a);
              continue;
           }
-        ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
-        ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
-        ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
-        ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
+        ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(w));
+        ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(h));
+        ssw = ((double)sw * (double)(nw)) / (double)(w);
+        ssh = ((double)sh * (double)(nh)) / (double)(h);
         evas_gl_common_context_font_push(gc, tex,
                                          ssx, ssy, ssw, ssh,
                                          nx, ny, nw, nh,

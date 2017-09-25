@@ -282,6 +282,7 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
       Efl.Text.Font.font_weight { get; set; }
       Efl.Text.Font.font_slant { get; set; }
       Efl.Text.Font.font_width { get; set; }
+      Efl.Text.Font.font_bitmap_scalable { get; set; }
       Efl.Text.Style.normal_color { get; set; }
       Efl.Text.Style.backing_type { get; set; }
       Efl.Text.Style.backing_color { get; set; }

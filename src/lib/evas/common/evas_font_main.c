@@ -115,6 +115,14 @@ evas_common_font_instance_ascent_get(RGBA_Font_Int *fi)
         WRN("NOT SCALABLE!");
      }
    val = (int)fi->src->ft.face->size->metrics.ascender;
+
+   if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+     {
+        if (FT_HAS_COLOR(fi->src->ft.face) &&
+            fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+          val *= fi->scale_factor;
+     }
+
    return FONT_METRIC_ROUNDUP(val);
 //   printf("%i | %i\n", val, val >> 6);
 //   if (fi->src->ft.face->units_per_EM == 0)
@@ -137,6 +145,14 @@ evas_common_font_instance_descent_get(RGBA_Font_Int *fi)
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->size->metrics.descender;
+
+   if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+     {
+        if (FT_HAS_COLOR(fi->src->ft.face) &&
+            fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+          val *= fi->scale_factor;
+     }
+
    return FONT_METRIC_ROUNDUP(val);
 //   if (fi->src->ft.face->units_per_EM == 0)
 //     return val;
@@ -165,6 +181,14 @@ evas_common_font_instance_max_ascent_get(RGBA_Font_Int *fi)
      val = FONT_METRIC_ROUNDUP((int)fi->src->ft.face->size->metrics.ascender);
    else
      val = (int)fi->src->ft.face->bbox.yMax;
+
+   if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+     {
+        if (FT_HAS_COLOR(fi->src->ft.face) &&
+            fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+          val *= fi->scale_factor;
+     }
+
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
@@ -192,6 +216,14 @@ evas_common_font_instance_max_descent_get(RGBA_Font_Int *fi)
      val = FONT_METRIC_ROUNDUP(-(int)fi->src->ft.face->size->metrics.descender);
    else
      val = -(int)fi->src->ft.face->bbox.yMin;
+
+   if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+     {
+        if (FT_HAS_COLOR(fi->src->ft.face) &&
+            fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+          val *= fi->scale_factor;
+     }
+
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
@@ -244,6 +276,14 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->size->metrics.height;
+
+   if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+     {
+        if ((fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR) &&
+            FT_HAS_COLOR(fi->src->ft.face))
+          val *= fi->scale_factor;
+     }
+
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
@@ -558,6 +598,19 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
         fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
         fg->y_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.yMax);
+
+        if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+          {
+             if (FT_HAS_COLOR(fi->src->ft.face) &&
+                 fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
+               {
+                  fg->glyph->advance.x *= fi->scale_factor;
+                  fg->glyph->advance.y *= fi->scale_factor;
+                  fg->width *= fi->scale_factor;
+                  fg->x_bear *= fi->scale_factor;
+                  fg->y_bear *= fi->scale_factor;
+               }
+          }
      }
 
    fg->index = idx;
