@@ -635,7 +635,6 @@ EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
 EAPI Efl_Ui_Theme_Apply  elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
-EAPI void             efl_ui_translatable_translation_update(Evas_Object *obj);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb data_free);
 EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
@@ -728,10 +727,8 @@ EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
 EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
-EAPI void             elm_widget_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
-EAPI const char *     elm_widget_part_text_translate(Evas_Object *obj, const char *part, const char *text);
 EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
@@ -743,6 +740,8 @@ EAPI Eina_Rect        elm_widget_focus_highlight_geometry_get(const Evas_Object 
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
+const char           *elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const char **domain);
+void                  elm_widget_part_translatable_text_set(Eo *obj, const char *part, const char *label, const char *domain);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
