@@ -4259,22 +4259,41 @@ _exit_timer(void *data EINA_UNUSED)
    return ECORE_CALLBACK_CANCEL;
 }
 
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   fprintf(stderr, "Terminating.\n");
+   if (interactive)
+     {
+        const char *web_backend_set = elm_config_web_backend_get();
+
+        web_backend = elm_object_text_get(web_backend_entry);
+        fprintf(stderr, "[%s] vs [%s]\n", web_backend, web_backend_set);
+        if (web_backend_set != web_backend ||
+            (web_backend && web_backend_set && !!strcmp(web_backend, web_backend_set)))
+          {
+             elm_config_web_backend_set(web_backend);
+             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
+             elm_config_all_flush();
+          }
+     }
+}
+
 /* this is your elementary main function - it MUST be called IMMEDIATELY
  * after elm_init() and MUST be passed argc and argv, and MUST be called
  * elm_main and not be static - must be a visible symbol with EAPI infront */
-EAPI_MAIN int
-elm_main(int    argc,
-         char **argv)
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   int i;
+   Efl_Loop_Arguments *arge = ev->info;
+   char               *arg;
+   Eina_Array_Iterator iterator;
+   unsigned int        i;
 
-   elm_app_info_set(elm_main, "elementary", "images/logo.png");
-   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-
-   for (i = 1; i < argc; i++)
+   EINA_ARRAY_ITER_NEXT(arge->argv, i, arg, iterator)
      {
-        if (!strcmp(argv[i], "-h"))
+        if (!strcmp(arg, "-h"))
           {
              printf("Usage:\n"
                     "  -h                This help\n"
@@ -4285,42 +4304,50 @@ elm_main(int    argc,
                     "  -w WEB_BACKEND    Set the web backend to be used\n"
                     );
           }
-        else if (!strcmp(argv[i], "-q"))
+        else if (!strcmp(arg, "-q"))
           {
              quiet = 1;
              interactive = 0;
           }
-        else if ((!strcmp(argv[i], "-t")) && (i < argc - 1))
+        else if ((!strcmp(arg, "-t")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             theme_set = argv[i];
+             theme_set = arg;
              interactive = 0;
           }
-        else if ((!strcmp(argv[i], "-f")) && (i < argc - 1))
+        else if ((!strcmp(arg, "-f")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             finger_size_set = argv[i];
+             finger_size_set = arg;
              interactive = 0;
           }
-        else if ((!strcmp(argv[i], "-s")) && (i < argc - 1))
+        else if ((!strcmp(arg, "-s")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             scale_set = argv[i];
+             scale_set = arg;
              interactive = 0;
           }
-        else if ((!strcmp(argv[i], "-w")) && (i < argc - 1))
+        else if ((!strcmp(arg, "-w")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             web_backend = argv[i];
+             web_backend = arg;
              interactive = 0;
           }
      }
+
    /* put here any init code specific to this app like parsing args, etc. */
-   if (!quiet)
+   if (arge->initialization)
      {
 #ifdef ELM_EFREET
         elm_need_efreet();
 #endif
+        elm_app_info_set(efl_main, "elementary", "images/logo.png");
+        elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+        elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+     }
+
+   if (!quiet)
+     {
         win_create(); /* create main window */
         if (!interactive)
           ecore_timer_add(2.0, _exit_timer, NULL);
@@ -4336,26 +4363,20 @@ elm_main(int    argc,
 
         if (quiet) elm_exit();
      }
-   elm_run(); /* and run the program now and handle all events, etc. */
-   /* if the mainloop that elm_run() runs exists, we exit the app */
-   /* exit code */
-
-   if (interactive)
-     {
-        const char *web_backend_set = elm_config_web_backend_get();
-
-        web_backend = elm_object_text_get(web_backend_entry);
-        fprintf(stderr, "[%s] vs [%s]\n", web_backend, web_backend_set);
-        if (web_backend_set != web_backend ||
-           (web_backend && web_backend_set && !!strcmp(web_backend, web_backend_set)))
-          {
-             elm_config_web_backend_set(web_backend);
-             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
-             elm_config_all_flush();
-          }
-     }
-
-   return 0;
 }
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   fprintf(stderr, "Resuming activity.\n");
+}
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   fprintf(stderr, "Let's take a pause.\n");
+   elm_config_all_flush();
+}
+
 /* All elementary apps should use this. Put it right after elm_main() */
-ELM_MAIN()
+EFL_MAIN_EX()
