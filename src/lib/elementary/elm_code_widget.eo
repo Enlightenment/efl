@@ -301,8 +301,6 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Elm.Widget.widget_event;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
    }
    constructors {
       .code;
