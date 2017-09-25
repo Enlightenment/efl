@@ -3,8 +3,8 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
-#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
+#define EFL_ACCESS_TEXT_PROTECTED
+#define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -2191,20 +2191,20 @@ _entry_changed_user_signal_cb(void *data,
      }
    if (_elm_config->atspi_mode)
      {
-        Elm_Atspi_Text_Change_Info atspi_info;
+        Efl_Access_Text_Change_Info atspi_info;
         if (edje_info && edje_info->insert)
           {
              atspi_info.content = edje_info->change.insert.content;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
           }
         else if (edje_info && !edje_info->insert)
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
           }
      }
 }
@@ -2222,7 +2222,7 @@ _entry_preedit_changed_signal_cb(void *data,
 
    if (_elm_config->atspi_mode)
      {
-        Elm_Atspi_Text_Change_Info atspi_info;
+        Efl_Access_Text_Change_Info atspi_info;
         if (edje_info && edje_info->insert)
           {
              text = elm_entry_markup_to_utf8(edje_info->change.insert.content);
@@ -2231,7 +2231,7 @@ _entry_preedit_changed_signal_cb(void *data,
              atspi_info.len = edje_info->change.insert.plain_length;
              elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN,
                                                        data,
-                                                       ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_INSERTED,
+                                                       EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED,
                                                        &atspi_info);
              free(text);
           }
@@ -2316,7 +2316,7 @@ _entry_selection_changed_signal_cb(void *data,
      _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
+     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -2420,7 +2420,7 @@ _entry_cursor_changed_signal_cb(void *data,
    efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2432,7 +2432,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
    efl_event_callback_legacy_call
      (data, ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL, NULL);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, ELM_INTERFACE_ATSPI_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     elm_interface_atspi_accessible_event_emit(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -5467,7 +5467,7 @@ _elm_entry_class_constructor(Efl_Class *klass)
 // ATSPI Accessibility
 
 EOLIAN static Eina_Unicode
-_elm_entry_elm_interface_atspi_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+_elm_entry_efl_access_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
 {
    char *txt;
    int idx = 0;
@@ -5489,7 +5489,7 @@ _elm_entry_elm_interface_atspi_text_character_get(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static int
-_elm_entry_elm_interface_atspi_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    char *txt;
    int ret = -1;
@@ -5504,7 +5504,7 @@ _elm_entry_elm_interface_atspi_text_character_count_get(Eo *obj, Elm_Entry_Data 
 }
 
 EOLIAN static char*
-_elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Elm_Atspi_Text_Granularity granularity, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5522,18 +5522,18 @@ _elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA
 
    switch (granularity)
      {
-      case ELM_ATSPI_TEXT_GRANULARITY_CHAR:
+      case EFL_ACCESS_TEXT_GRANULARITY_CHAR:
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_WORD:
+      case EFL_ACCESS_TEXT_GRANULARITY_WORD:
          evas_textblock_cursor_word_start(cur);
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_SENTENCE:
+      case EFL_ACCESS_TEXT_GRANULARITY_SENTENCE:
          // TODO - add sentence support in textblock first
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_LINE:
+      case EFL_ACCESS_TEXT_GRANULARITY_LINE:
          evas_textblock_cursor_line_char_first(cur);
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH:
+      case EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH:
          evas_textblock_cursor_paragraph_char_first(cur);
          break;
      }
@@ -5543,23 +5543,23 @@ _elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA
 
    switch (granularity)
      {
-      case ELM_ATSPI_TEXT_GRANULARITY_CHAR:
+      case EFL_ACCESS_TEXT_GRANULARITY_CHAR:
          evas_textblock_cursor_char_next(cur2);
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_WORD:
+      case EFL_ACCESS_TEXT_GRANULARITY_WORD:
          evas_textblock_cursor_word_end(cur2);
          // since word_end sets cursor position ON (before) last
          // char of word, we need to manually advance cursor to get
          // proper string from function range_text_get
          evas_textblock_cursor_char_next(cur2);
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_SENTENCE:
+      case EFL_ACCESS_TEXT_GRANULARITY_SENTENCE:
          // TODO - add sentence support in textblock first
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_LINE:
+      case EFL_ACCESS_TEXT_GRANULARITY_LINE:
          evas_textblock_cursor_line_char_last(cur2);
          break;
-      case ELM_ATSPI_TEXT_GRANULARITY_PARAGRAPH:
+      case EFL_ACCESS_TEXT_GRANULARITY_PARAGRAPH:
          evas_textblock_cursor_paragraph_char_last(cur2);
          break;
      }
@@ -5589,7 +5589,7 @@ fail:
 }
 
 EOLIAN static char*
-_elm_entry_elm_interface_atspi_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5629,26 +5629,26 @@ fail:
 }
 
 EOLIAN static int
-_elm_entry_elm_interface_atspi_text_caret_offset_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_caret_offset_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_cursor_pos_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_caret_offset_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+_elm_entry_efl_access_text_caret_offset_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
 {
    elm_entry_cursor_pos_set(obj, offset);
    return EINA_TRUE;
 }
 
 EOLIAN static int
-_elm_entry_elm_interface_atspi_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_selection_get(obj) ? 1 : 0;
 }
 
 EOLIAN static void
-_elm_entry_elm_interface_atspi_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -5656,7 +5656,7 @@ _elm_entry_elm_interface_atspi_text_selection_get(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+_elm_entry_efl_access_text_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
 {
    if (selection_number != 0) return EINA_FALSE;
 
@@ -5666,7 +5666,7 @@ _elm_entry_elm_interface_atspi_text_selection_set(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_selection_remove(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int selection_number)
+_elm_entry_efl_access_text_selection_remove(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int selection_number)
 {
    if (selection_number != 0) return EINA_FALSE;
    elm_entry_select_none(obj);
@@ -5674,7 +5674,7 @@ _elm_entry_elm_interface_atspi_text_selection_remove(Eo *obj, Elm_Entry_Data *pd
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_selection_add(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_text_selection_add(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, int start_offset, int end_offset)
 {
    elm_entry_select_region_set(obj, start_offset, end_offset);
 
@@ -5682,13 +5682,13 @@ _elm_entry_elm_interface_atspi_text_selection_add(Eo *obj, Elm_Entry_Data *pd EI
 }
 
 EOLIAN static Eina_List*
-_elm_entry_elm_interface_atspi_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Elm_Atspi_Text_Clip_Type xclip EINA_UNUSED, Elm_Atspi_Text_Clip_Type yclip EINA_UNUSED)
+_elm_entry_efl_access_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_elm_entry_elm_interface_atspi_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+_elm_entry_efl_access_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5722,7 +5722,7 @@ _elm_entry_elm_interface_atspi_text_offset_at_point_get(Eo *obj, Elm_Entry_Data 
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
+_elm_entry_efl_access_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5754,7 +5754,7 @@ _elm_entry_elm_interface_atspi_text_character_extents_get(Eo *obj, Elm_Entry_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_range_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
+_elm_entry_efl_access_text_range_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5802,10 +5802,10 @@ _elm_entry_elm_interface_atspi_text_range_extents_get(Eo *obj, Elm_Entry_Data *_
    return EINA_TRUE;
 }
 
-static Elm_Atspi_Text_Attribute*
+static Efl_Access_Text_Attribute*
 _textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Format *format)
 {
-   Elm_Atspi_Text_Attribute *ret = NULL;
+   Efl_Access_Text_Attribute *ret = NULL;
    const char *txt;
 
    txt = evas_textblock_node_format_text_get(format);
@@ -5820,7 +5820,7 @@ _textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Forma
         while (*tmp != '\0' && *tmp != '=') tmp++;
         if (*tmp++ != '=') return NULL;
 
-        ret = calloc(1, sizeof(Elm_Atspi_Text_Attribute));
+        ret = calloc(1, sizeof(Efl_Access_Text_Attribute));
         if (!ret) return NULL;
 
         ret->value = eina_stringshare_add(tmp);
@@ -5832,13 +5832,13 @@ _textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Forma
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+_elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
    Eina_List *formats, *l;
    Evas_Object_Textblock_Node_Format *format;
-   Elm_Atspi_Text_Attribute *attr;
+   Efl_Access_Text_Attribute *attr;
 
    txtblk = elm_entry_textblock_get(obj);
    if (!txtblk) return EINA_FALSE;
@@ -5880,13 +5880,13 @@ _elm_entry_elm_interface_atspi_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static Eina_List*
-_elm_entry_elm_interface_atspi_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
    Eina_List *formats, *ret = NULL, *l;
    Evas_Object_Textblock_Node_Format *format;
-   Elm_Atspi_Text_Attribute *attr;
+   Efl_Access_Text_Attribute *attr;
 
    txtblk = elm_entry_textblock_get(obj);
    if (!txtblk) return NULL;
@@ -5922,12 +5922,12 @@ _elm_entry_elm_interface_atspi_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd 
 }
 
 EOLIAN static Eina_List*
-_elm_entry_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    Evas_Object *txtblk;
    Eina_List *ret = NULL;
    const Evas_Object_Textblock_Node_Format *format;
-   Elm_Atspi_Text_Attribute *attr;
+   Efl_Access_Text_Attribute *attr;
 
    txtblk = elm_entry_textblock_get(obj);
    if (!txtblk) return NULL;
@@ -5947,14 +5947,14 @@ _elm_entry_elm_interface_atspi_text_default_attributes_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
+_elm_entry_efl_access_editable_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
 {
    elm_entry_entry_set(obj, content);
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_insert(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *string, int position)
+_elm_entry_efl_access_editable_text_insert(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *string, int position)
 {
    elm_entry_cursor_pos_set(obj, position);
    elm_entry_entry_insert(obj, string);
@@ -5963,7 +5963,7 @@ _elm_entry_elm_interface_atspi_text_editable_insert(Eo *obj, Elm_Entry_Data *_pd
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_copy(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+_elm_entry_efl_access_editable_text_copy(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
 {
    elm_entry_select_region_set(obj, start, end);
    elm_entry_selection_copy(obj);
@@ -5972,7 +5972,7 @@ _elm_entry_elm_interface_atspi_text_editable_copy(Eo *obj, Elm_Entry_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_delete(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_editable_text_delete(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -6004,7 +6004,7 @@ _elm_entry_elm_interface_atspi_text_editable_delete(Eo *obj, Elm_Entry_Data *_pd
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_paste(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int position)
+_elm_entry_efl_access_editable_text_paste(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int position)
 {
    elm_entry_cursor_pos_set(obj, position);
    elm_entry_selection_paste(obj);
@@ -6012,7 +6012,7 @@ _elm_entry_elm_interface_atspi_text_editable_paste(Eo *obj, Elm_Entry_Data *_pd 
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_interface_atspi_text_editable_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
+_elm_entry_efl_access_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start, int end)
 {
    elm_entry_select_region_set(obj, start, end);
    elm_entry_selection_cut(obj);

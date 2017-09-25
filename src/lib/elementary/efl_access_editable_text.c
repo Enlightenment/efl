@@ -2,10 +2,10 @@
   #include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
+#define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
 
-#include "elm_interface_atspi_text_editable.eo.c"
+#include "efl_access_editable_text.eo.c"
