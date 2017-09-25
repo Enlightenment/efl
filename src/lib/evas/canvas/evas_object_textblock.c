@@ -15912,7 +15912,7 @@ _resolve_async(Text_Promise_Ctx *td, Evas_Coord w, Evas_Coord h)
    Eina_Value v;
    Eina_Rectangle r = { 0, 0, w, h };
    eina_value_setup(&v, EINA_VALUE_TYPE_RECTANGLE);
-   eina_value_pset(&v, &r);
+   eina_value_set(&v, r);
    eina_promise_resolve(td->p, v);
    free(td);
 }
