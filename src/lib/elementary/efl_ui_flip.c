@@ -109,55 +109,6 @@ _efl_ui_flip_elm_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_focus_next(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-
-   /* attempt to cycle focus on in sub-items */
-   if (sd->state)
-     return elm_obj_widget_focus_next_get(sd->front.content, dir, next, next_item);
-   else
-     return elm_obj_widget_focus_next_get(sd->back.content, dir, next, next_item);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *_pd EINA_UNUSED)
-{
-   if (!elm_widget_can_focus_get(obj))
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_focus_direction(Eo *obj, Efl_Ui_Flip_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Eina_Bool ret;
-
-   Eina_List *l = NULL;
-   void *(*list_data_get)(const Eina_List *list);
-
-   list_data_get = eina_list_data_get;
-
-   if (sd->front.content)
-     l = eina_list_append(l, sd->front.content);
-   if (sd->back.content)
-     l = eina_list_append(l, sd->back.content);
-
-   ret = elm_widget_focus_list_direction_get
-            (obj, base, l, list_data_get, degree, direction, direction_item, weight);
-
-   eina_list_free(l);
-
-   return ret;
-}
-
 static void
 _changed_size_hints_cb(void *data,
                        Evas *e EINA_UNUSED,
@@ -2223,7 +2174,7 @@ _content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx *content)
    Eina_Bool state;
 
    evas_object_smart_member_del(content);
-   // if its not the front or back object just return. 
+   // if its not the front or back object just return.
    if ((pd->front.content != content) ||
        (pd->back.content != content))
      return;
@@ -2368,28 +2319,28 @@ _efl_ui_flip_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EAPI void 
+EAPI void
 elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, double hitsize)
 {
    Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
    efl_ui_flip_interaction_direction_hitsize_set(obj, uidir, hitsize);
 }
 
-EAPI double 
+EAPI double
 elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
 {
    Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
    return efl_ui_flip_interaction_direction_hitsize_get(obj, uidir);
 }
 
-EOAPI void 
+EOAPI void
 elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
 {
    Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);
    efl_ui_flip_interaction_direction_enabled_set(obj, uidir, enabled);
 }
 
-EOAPI Eina_Bool 
+EOAPI Eina_Bool
 elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir)
 {
    Efl_Ui_Dir uidir = _flip_dir_to_efl_ui_dir(dir);

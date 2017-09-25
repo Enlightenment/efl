@@ -179,7 +179,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
          [[Runs the flip animation to front or back.
 
            Flips the front and back contents using the $mode animation.
-           This effectively hides the currently visible content and shows 
+           This effectively hides the currently visible content and shows
            he hidden one.
 
            There a number of possible animations to use for the flipping,
@@ -229,12 +229,8 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.focus_direction;
       Elm.Widget.widget_sub_object_add;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
       Elm.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
