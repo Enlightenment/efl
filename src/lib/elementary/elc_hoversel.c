@@ -326,7 +326,7 @@ _sizing_eval(void *data)
         if (adjusted.x < 0) adjusted.x = parent.x;
         if ((adjusted.x + adjusted.w) > (parent.x + parent.w))
           {
-             if ((base.x + base.w - parent.x) > ((parent.x + parent.w) - base.x))
+             if ((base.x + base.w) > (parent.x + parent.w))
                {
                   if (efl_ui_mirrored_get(obj))
                     elm_object_signal_emit(sd->hover, "elm,state,align,right", "elm");
