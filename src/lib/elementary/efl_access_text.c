@@ -2,14 +2,14 @@
   #include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
+#define EFL_ACCESS_TEXT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
 
 void
-EAPI elm_atspi_text_text_attribute_free(Elm_Atspi_Text_Attribute *attr)
+EAPI elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr)
 {
    if (!attr) return;
    if (attr->name) eina_stringshare_del(attr->name);
@@ -17,4 +17,4 @@ EAPI elm_atspi_text_text_attribute_free(Elm_Atspi_Text_Attribute *attr)
    free(attr);
 }
 
-#include "elm_interface_atspi_text.eo.c"
+#include "efl_access_text.eo.c"

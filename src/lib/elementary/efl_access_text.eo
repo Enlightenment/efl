@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Elm.Atspi_Text.Granularity
+enum Efl.Access.Text.Granularity
 {
    [[Text accessibility granularity]]
    char, [[Character granularity]]
@@ -10,7 +10,7 @@ enum Elm.Atspi_Text.Granularity
    paragraph [[Paragraph granularity]]
 }
 
-enum Elm.Atspi_Text.Clip_Type
+enum Efl.Access.Text.Clip_Type
 {
    [[Text clip type]]
    legacy: elm_atspi_text_clip;
@@ -20,14 +20,14 @@ enum Elm.Atspi_Text.Clip_Type
    both [[Both clip types]]
 }
 
-struct Elm.Atspi_Text.Attribute
+struct Efl.Access.Text.Attribute
 {
    [[Text attribute]]
    name:  string; [[Text attribute name]]
    value: string; [[Text attribute value]]
 }
 
-struct Elm.Atspi_Text.Range
+struct Efl.Access.Text.Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]
@@ -35,7 +35,7 @@ struct Elm.Atspi_Text.Range
    content: ptr(char); [[Range content]]
 }
 
-struct Elm.Atspi_Text.Change_Info
+struct Efl.Access.Text.Change_Info
 {
    [[Text change information]]
    content: string; [[Change content]]
@@ -44,10 +44,9 @@ struct Elm.Atspi_Text.Change_Info
    len: size; [[Change length]]
 }
 
-interface Elm.Interface.Atspi.Text ()
+interface Efl.Access.Text ()
 {
-   [[Elementary AT-SPI text interface]]
-   eo_prefix: elm_interface_atspi_text;
+   [[Elementary accessible text interface]]
    methods {
       @property character @protected {
          get {
@@ -65,7 +64,7 @@ interface Elm.Interface.Atspi.Text ()
             [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
-            granularity: Elm.Atspi_Text.Granularity; [[Text granularity]]
+            granularity: Efl.Access.Text.Granularity; [[Text granularity]]
             start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
@@ -120,7 +119,7 @@ interface Elm.Interface.Atspi.Text ()
             end_offset: ptr(int); [[End offset]]
          }
          values {
-            attributes: list<ptr(Elm.Atspi_Text.Attribute) @owned> @owned; [[List of text attributes]]
+            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of text attributes]]
          }
       }
       @property default_attributes @protected {
@@ -128,7 +127,7 @@ interface Elm.Interface.Atspi.Text ()
          get {
          }
          values {
-            attributes: list<ptr(Elm.Atspi_Text.Attribute) @owned> @owned; [[List of default attributes]]
+            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of default attributes]]
          }
       }
       @property character_extents @protected {
@@ -172,11 +171,11 @@ interface Elm.Interface.Atspi.Text ()
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
             rect: Eina.Rect; [[Bounding box]]
-            xclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI xclip]]
-            yclip: Elm.Atspi_Text.Clip_Type; [[AT-SPI yclip]]
+            xclip: Efl.Access.Text.Clip_Type; [[xclip]]
+            yclip: Efl.Access.Text.Clip_Type; [[yclip]]
          }
          values {
-            ranges: list<ptr(Elm.Atspi_Text.Range) @owned> @owned; [[List of ranges]]
+            ranges: list<ptr(Efl.Access.Text.Range) @owned> @owned; [[List of ranges]]
          }
       }
       @property range_extents @protected {
