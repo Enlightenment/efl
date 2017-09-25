@@ -1,4 +1,5 @@
-class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text)
+class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text,
+                    Efl.Ui.Translatable)
 {
    [[Frame widget
 
@@ -61,5 +62,6 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text)
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Efl.Text.text { get; set; }
+      Efl.Ui.Translatable.translatable_text { get; set; }
    }
 }
