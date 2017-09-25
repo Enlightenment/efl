@@ -192,19 +192,19 @@ _elm_inwin_efl_ui_focus_manager_move(Eo *obj, Elm_Inwin_Data *pd, Efl_Ui_Focus_D
 EOLIAN static Eina_Bool
 _elm_inwin_efl_container_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
 {
-   return efl_content_set(efl_part(obj, "default"), content);
+   return efl_content_set(efl_part(obj, _content_aliases[0].real_part), content);
 }
 
 EOLIAN static Efl_Gfx *
 _elm_inwin_efl_container_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
-   return efl_content_get(efl_part(obj, "default"));
+   return efl_content_get(efl_part(obj, _content_aliases[0].real_part));
 }
 
 EOLIAN static Efl_Gfx *
 _elm_inwin_efl_container_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
-   return efl_content_unset(efl_part(obj, "default"));
+   return efl_content_unset(efl_part(obj, _content_aliases[0].real_part));
 }
 
 EAPI void
@@ -237,7 +237,7 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_inwin)
-ELM_PART_CONTENT_DEFAULT_SET(elm_inwin, "default")
+ELM_PART_CONTENT_DEFAULT_SET(elm_inwin, _content_aliases[0].real_part)
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
