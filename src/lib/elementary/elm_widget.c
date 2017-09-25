@@ -3822,11 +3822,16 @@ elm_widget_part_translatable_text_set(Eo *obj, const char *part, const char *lab
    sd->on_translate = EINA_FALSE;
 }
 
-EOLIAN static void
-_elm_widget_domain_part_text_translatable_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *part, const char *domain, Eina_Bool translatable)
+/* legacy only */
+EAPI void
+elm_widget_domain_part_text_translatable_set(Eo *obj, const char *part, const char *domain, Eina_Bool translatable)
 {
    Elm_Translate_String_Data *ts;
+   Elm_Widget_Smart_Data *sd;
    const char *text = NULL;
+
+   sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
 
    ts = _part_text_translatable_set(&sd->translate_strings, part,
                                     translatable, EINA_TRUE);

@@ -285,18 +285,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          legacy: null; /* FIXME: legacy API does extra work */
       }
 
-      /* Translation & Text API. */
-      @property domain_part_text_translatable {
-         [[Translate domain text part property]]
-         set {
-         }
-         values {
-            part: string; [[Part name]]
-            domain: string; [[Domain]]
-            translatable: bool; [[$true if translatable, $false otherwise]]
-         }
-      }
-
       /* Internal hooks. */
       widget_sub_object_add @protected {
          [[Virtual function handling sub objects being added.
