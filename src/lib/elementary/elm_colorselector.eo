@@ -12,8 +12,8 @@ enum Elm.Colorselector.Mode
    all [[All possible color selector is displayed.]]
 }
 
-class Elm.Colorselector (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
-                         Efl.Ui.Clickable)
+class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
+                         Elm.Interface.Atspi_Widget_Action, Efl.Ui.Clickable)
 {
    [[Elementary colorselector class]]
    legacy_prefix: elm_colorselector;
@@ -109,9 +109,6 @@ class Elm.Colorselector (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action,
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_highlight_geometry { get; }
       Elm.Widget.on_access_update;
       Elm.Widget.widget_event;
