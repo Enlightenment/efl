@@ -26,6 +26,8 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_text_format.eo \
       lib/efl/interfaces/efl_text_cursor.eo \
       lib/efl/interfaces/efl_text_annotate.eo \
+      lib/efl/interfaces/efl_text_markup.eo \
+      lib/efl/interfaces/efl_text_markup_util.eo \
       lib/efl/interfaces/efl_text_properties.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
@@ -125,6 +127,7 @@ lib/efl/interfaces/efl_io_writer.c \
 lib/efl/interfaces/efl_io_buffer.c \
 lib/efl/interfaces/efl_io_queue.c \
 lib/efl/interfaces/efl_observer.c \
+lib/efl/interfaces/efl_text_markup_util.c \
 $(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA

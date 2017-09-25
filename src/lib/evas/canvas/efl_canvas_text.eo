@@ -2,8 +2,9 @@ import efl_text_types;
 
 struct Efl.Canvas.Text.Style; [[EFL text style data structure]]
 
-class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Canvas.Filter.Internal,
-Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annotate)
+class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
+Efl.Canvas.Filter.Internal, Efl.Text.Font, Efl.Text.Style, Efl.Text.Format,
+Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -346,6 +347,8 @@ Efl.Text.Font, Efl.Text.Style, Efl.Text.Format, Efl.Text.Cursor, Efl.Text.Annota
       Efl.Text.Annotate.annotation_positions_get;
       Efl.Text.Annotate.cursor_object_item_annotation { get; }
       Efl.Text.Annotate.cursor_object_item_insert;
+      Efl.Text.Markup.markup { set; get; }
+      Efl.Text.Markup.cursor_markup_insert;
    }
    events {
       cursor,changed; [[Called when cursor changed]]

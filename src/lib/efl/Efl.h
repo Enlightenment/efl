@@ -163,6 +163,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_format.eo.h"
 #include "interfaces/efl_text_cursor.eo.h"
 #include "interfaces/efl_text_annotate.eo.h"
+#include "interfaces/efl_text_markup.eo.h"
+#include "interfaces/efl_text_markup_util.eo.h"
 
 #else
 
