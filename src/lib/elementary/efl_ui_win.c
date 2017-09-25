@@ -37,6 +37,8 @@
 
 static const Elm_Win_Trap *trap = NULL;
 
+static int _paused_windows = 0;
+
 #define TRAP(sd, name, ...)                                             \
   do                                                                    \
     {                                                                   \
@@ -274,6 +276,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    single_edje_content: 1; /* hack for E */
    Eina_Bool    shown : 1;
    Eina_Bool    stack_base : 1;
+   Eina_Bool    paused : 1;
 };
 
 struct _Input_Pointer_Iterator
@@ -505,6 +508,8 @@ _elm_win_state_eval(void *data EINA_UNUSED)
                             evas_render_dump(evas);
                          }
                     }
+
+                  efl_event_callback_call(obj, EFL_UI_WIN_EVENT_PAUSE, NULL);
                   continue;
                }
           }
@@ -2180,6 +2185,28 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
 }
 
 static void
+_win_paused(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Win_Data *sd = data;
+
+   if (sd->paused)
+     {
+        ERR("A window did receive a pause event while still paused. Dismissing.");
+        return ;
+     }
+   sd->paused = EINA_TRUE;
+   _paused_windows++;
+
+   if (_elm_win_count == _paused_windows)
+     efl_event_callback_call(efl_loop_get(ev->object), EFL_LOOP_EVENT_PAUSE, NULL);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_elm_win_tracking,
+                           { EFL_EVENT_CALLBACK_ADD, _win_event_add_cb },
+                           { EFL_EVENT_CALLBACK_DEL, _win_event_del_cb },
+                           { EFL_UI_WIN_EVENT_PAUSE, _win_paused })
+
+static void
 _elm_win_cb_mouse_up(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    DBG("Evas mouse up event");
@@ -2187,6 +2214,26 @@ _elm_win_cb_mouse_up(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Ui_Win_Data *sd = data;
    if(sd->resizing) sd->resizing = EINA_FALSE;
 }
+
+static void
+_elm_win_resume(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Win_Data *sd = data;
+
+   if (!sd->paused) return ;
+
+   efl_event_callback_call(sd->obj, EFL_UI_WIN_EVENT_RESUME, NULL);
+   sd->paused = EINA_FALSE;
+
+   if (_elm_win_count == _paused_windows)
+     efl_event_callback_call(efl_loop_get(ev->object), EFL_LOOP_EVENT_RESUME, NULL);
+
+   _paused_windows--;
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(_elm_evas_tracking,
+                           { EFL_EVENT_POINTER_UP, _elm_win_cb_mouse_up },
+                           { EFL_CANVAS_EVENT_RENDER_PRE, _elm_win_resume })
 
 static void
 _deferred_ecore_evas_free(void *data)
@@ -2809,6 +2856,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
    _elm_win_count--;
    _elm_win_state_eval_queue();
+
+   if (_elm_win_count == _paused_windows)
+     efl_event_callback_call(efl_loop_get(obj), EFL_LOOP_EVENT_PAUSE, NULL);
 
    if (sd->ee)
      {
@@ -5298,10 +5348,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    efl_composite_attach(obj, efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
 
    efl_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
-   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _win_event_add_cb, sd);
-   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _win_event_del_cb, sd);
+   efl_event_callback_array_add(obj, _elm_evas_tracking(), sd);
 
-   efl_event_callback_add(sd->evas, EFL_EVENT_POINTER_UP, _elm_win_cb_mouse_up, sd);
+   efl_event_callback_array_add(sd->evas, _elm_win_tracking(), sd);
    evas_object_show(sd->legacy.edje);
 
    if (type == ELM_WIN_FAKE)
@@ -5330,9 +5379,13 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
 EOLIAN static Eo *
 _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
 {
+   Eina_Bool resume = !_elm_win_count;
+
    obj = _elm_win_finalize_internal(obj, sd, sd->name, sd->type);
    if (!obj) return NULL;
-   return efl_finalize(efl_super(obj, MY_CLASS));
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (obj && resume) efl_event_callback_call(efl_loop_get(obj), EFL_LOOP_EVENT_RESUME, NULL);
+   return obj;
 }
 
 EOLIAN static void
