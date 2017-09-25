@@ -1,0 +1,17 @@
+mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manager) {
+   [[This defines the inheriting widget as focus layer
+
+     A focus layer is a layer that will, for the time of existance or visibility, be the upper most layer that gets input, and handles all focus related events, its NOT possible to escape this layer with focus movement.
+
+     Once the object is hidden or destructed the focus will go back to the mainwindow, where it has been before.
+   ]]
+   implements {
+      Elm.Widget.focus_manager_create;
+      Elm.Widget.focus_state_apply;
+      Efl.Gfx.visible {set;}
+      Efl.Ui.Focus.Manager.move;
+      Efl.Ui.Focus.User.manager { get; }
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

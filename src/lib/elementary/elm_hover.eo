@@ -7,7 +7,7 @@ enum Elm.Hover.Axis
    both [[ELM_HOVER_AXIS_BOTH -- both.]]
 }
 
-class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action, Efl.Ui.Focus.Manager)
+class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary hover class]]
    legacy_prefix: elm_hover;
@@ -68,8 +68,6 @@ class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Act
       Elm.Widget.widget_sub_object_add;
       Elm.Widget.widget_parent { get; set; }
       Elm.Widget.widget_sub_object_del;
-      Elm.Widget.focus_manager_create;
-      Elm.Widget.focus_state_apply;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Part.part;
    }

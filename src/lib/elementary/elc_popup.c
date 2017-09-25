@@ -45,7 +45,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _block_clicked_cb(void *data, const Efl_Event *event);
@@ -54,7 +53,6 @@ static void _timeout_cb(void *data, const Efl_Event *event);
 static void _hide_effect_finished_cb(void *data, const Efl_Event *event);
 
 static const Elm_Action key_actions[] = {
-   {"move", _key_action_move},
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
@@ -1392,106 +1390,6 @@ err:
    ERR("The part name is invalid! : popup=%p", obj);
 
    return NULL;
-}
-
-EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *ao;
-   Eina_List *items = NULL;
-   Eina_Iterator *base_it;
-
-   /* access */
-   if (_elm_config->access_mode)
-     {
-        if (sd->title_text)
-          {
-             ao = _access_object_get(obj, ACCESS_TITLE_PART);
-             items = eina_list_append(items, ao);
-          }
-
-        ao = _access_object_get(obj, ACCESS_BODY_PART);
-        if (ao) items = eina_list_append(items, ao);
-     }
-
-   base_it = efl_content_iterate(sd->main_layout);
-   EINA_ITERATOR_FOREACH(base_it, ao)
-     if (ao) items = eina_list_append(items, ao);
-   eina_iterator_free(base_it);
-
-   if (!elm_widget_focus_list_next_get(sd->main_layout, items, eina_list_data_get, dir, next, next_item))
-     *next = sd->main_layout;
-   eina_list_free(items);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Popup_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_popup_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Evas_Object *ao;
-   Eina_List *items = NULL;
-   Eina_Iterator *base_it;
-
-   /* access */
-   if (_elm_config->access_mode)
-     {
-        if (sd->title_text)
-          {
-             ao = _access_object_get(obj, ACCESS_TITLE_PART);
-             items = eina_list_append(items, ao);
-          }
-
-        ao = _access_object_get(obj, ACCESS_BODY_PART);
-        if (ao) items = eina_list_append(items, ao);
-     }
-
-   base_it = efl_content_iterate(sd->main_layout);
-   EINA_ITERATOR_FOREACH(base_it, ao)
-     if (ao) items = eina_list_append(items, ao);
-   eina_iterator_free(base_it);
-
-   elm_widget_focus_list_direction_get
-     (sd->main_layout, base, items, eina_list_data_get, degree, direction, direction_item, weight);
-   eina_list_free(items);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_key_action_move(Evas_Object *obj, const char *params)
-{
-   const char *dir = params;
-
-   _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "previous"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
-   else if (!strcmp(dir, "next"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-   else if (!strcmp(dir, "left"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_LEFT);
-   else if (!strcmp(dir, "right"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_RIGHT);
-   else if (!strcmp(dir, "up"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_UP);
-   else if (!strcmp(dir, "down"))
-     elm_obj_widget_focus_cycle(obj, ELM_FOCUS_DOWN);
-   else return EINA_FALSE;
-
-   return EINA_TRUE;
-
 }
 
 static Eina_Bool

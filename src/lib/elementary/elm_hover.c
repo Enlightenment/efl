@@ -698,24 +698,6 @@ elm_hover_add(Evas_Object *parent)
    return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
-_elm_hover_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
-{
-   Efl_Ui_Focus_Manager *manager;
-
-   manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
-     efl_ui_focus_manager_root_set(efl_added, root)
-   );
-
-   return manager;
-}
-
-EOLIAN static Eina_Bool
-_elm_hover_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state EINA_UNUSED, Elm_Widget_Focus_State *configured_state EINA_UNUSED, Elm_Widget *redirect EINA_UNUSED)
-{
-    return EINA_TRUE;
-}
-
 EOLIAN static Eo *
 _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
 {
