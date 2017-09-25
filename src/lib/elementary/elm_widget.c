@@ -8,6 +8,7 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
 #define EFL_INPUT_EVENT_PROTECTED
+#define EFL_UI_TRANSLATABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -3787,11 +3788,15 @@ _part_text_translatable_set(Eina_Inlist **translate_strings, const char *part, E
    return ts;
 }
 
-EOLIAN static void
-_elm_widget_domain_translatable_part_text_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *part, const char *domain, const char *label)
+/* internal */
+void
+elm_widget_part_translatable_text_set(Eo *obj, const char *part, const char *label, const char *domain)
 {
-
    Elm_Translate_String_Data *ts;
+   Elm_Widget_Smart_Data *sd;
+
+   sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return;
 
    if (!label)
      {
@@ -3815,16 +3820,6 @@ _elm_widget_domain_translatable_part_text_set(Eo *obj, Elm_Widget_Smart_Data *sd
    sd->on_translate = EINA_TRUE;
    elm_widget_part_text_set(obj, part, label);
    sd->on_translate = EINA_FALSE;
-}
-
-EOLIAN static const char*
-_elm_widget_translatable_part_text_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, const char *part)
-{
-   Elm_Translate_String_Data *ts;
-
-   ts = _translate_string_data_get(sd->translate_strings, part);
-   if (ts) return ts->string;
-   else return NULL;
 }
 
 EOLIAN static void
@@ -3853,32 +3848,23 @@ _elm_widget_domain_part_text_translatable_set(Eo *obj, Elm_Widget_Smart_Data *sd
    sd->on_translate = EINA_FALSE;
 }
 
-static const char*
-_part_text_translate(Eina_Inlist *translate_strings,
-                     const char *part,
-                     const char *text)
+/* internal */
+const char *
+elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const char **domain)
 {
+   Elm_Widget_Smart_Data *sd;
    Elm_Translate_String_Data *ts;
-   ts = _translate_string_data_get(translate_strings, part);
-   if (!ts) return text;
 
-   if (!ts->string) ts->string = eina_stringshare_add(text);
-   else eina_stringshare_replace(&ts->string, text);
-#ifdef HAVE_GETTEXT
-   if (text && text[0])
-     text = dgettext(ts->domain, text);
-#endif
-   return text;
-}
+   if (domain) *domain = NULL;
 
-EAPI const char*
-elm_widget_part_text_translate(Eo *obj, const char *part, const char *text)
-{
-   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return NULL;
 
-   if (!sd) return text;
-   if (!sd->translate_strings || sd->on_translate) return text;
-   return _part_text_translate(sd->translate_strings, part, text);
+   ts = _translate_string_data_get(sd->translate_strings, part);
+   if (!ts) return NULL;
+
+   if (domain) *domain = ts->domain;
+   return ts->string;
 }
 
 EOLIAN static void

@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_UI_TRANSLATABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"

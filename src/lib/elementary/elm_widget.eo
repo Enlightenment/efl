@@ -296,23 +296,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             translatable: bool; [[$true if translatable, $false otherwise]]
          }
       }
-      translatable_part_text_get @const {
-         [[Get translatable part text]]
-         return: string; [[Part text]]
-         params {
-            @in part: string; [[Part name]]
-         }
-      }
-      @property domain_translatable_part_text {
-         [[Domain translatable text part property]]
-         set {
-         }
-         values {
-            part: string; [[Part name]]
-            domain: string; [[Domain name]]
-            label: string; [[Label]]
-         }
-      }
 
       /* Internal hooks. */
       widget_sub_object_add @protected {
