@@ -12,6 +12,7 @@
 #include "elm_inwin.eo.h"
 #include "elm_widget_inwin.h"
 #include "elm_widget_layout.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS ELM_INWIN_CLASS
 #define MY_CLASS_PFX elm_inwin
@@ -188,6 +189,23 @@ _elm_inwin_efl_ui_focus_manager_move(Eo *obj, Elm_Inwin_Data *pd, Efl_Ui_Focus_D
    return efl_ui_focus_manager_focus_get(obj);
 }
 
+EOLIAN static Eina_Bool
+_elm_inwin_efl_container_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
+{
+   return efl_content_set(efl_part(obj, "default"), content);
+}
+
+EOLIAN static Efl_Gfx *
+_elm_inwin_efl_container_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+{
+   return efl_content_get(efl_part(obj, "default"));
+}
+
+EOLIAN static Efl_Gfx *
+_elm_inwin_efl_container_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+{
+   return efl_content_unset(efl_part(obj, "default"));
+}
 
 EAPI void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
@@ -218,11 +236,13 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_inwin)
+ELM_PART_CONTENT_DEFAULT_SET(elm_inwin, "default")
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(elm_inwin), \
+   ELM_PART_CONTENT_DEFAULT_OPS(elm_inwin)
 
 #include "elm_inwin.eo.c"
