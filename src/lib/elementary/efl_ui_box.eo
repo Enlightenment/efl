@@ -18,10 +18,6 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Ui.Direction.direction { get; set; }
