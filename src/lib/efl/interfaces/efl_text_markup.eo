@@ -1,0 +1,21 @@
+interface Efl.Text.Markup(Efl.Text.Cursor) {
+   [[Markup data that populates the text object's style and format
+
+     @since 1.21
+   ]]
+   methods {
+      @property markup {
+         values {
+            markup: string; [[The markup-text representation set to this text.]]
+         }
+      }
+      cursor_markup_insert {
+         [[Inserts a markup text to the text object in a given cursor position]]
+         params {
+            cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor position to insert markup]]
+            @in markup: string; [[The markup text to insert]]
+         }
+      }
+   }
+}
+
