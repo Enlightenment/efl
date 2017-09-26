@@ -309,19 +309,20 @@ ecore_ipc_init(void)
    if (++_ecore_ipc_init_count != 1)
      return _ecore_ipc_init_count;
 
-   if (_ecore_ipc_log_dom < 0)
+   _ecore_ipc_log_dom = eina_log_domain_register
+         ("ecore_ipc", ECORE_IPC_DEFAULT_LOG_COLOR);
+   if(_ecore_ipc_log_dom < 0)
      {
-        _ecore_ipc_log_dom = eina_log_domain_register
-          ("ecore_ipc", ECORE_IPC_DEFAULT_LOG_COLOR);
-        if(_ecore_ipc_log_dom < 0)
-          {
-             EINA_LOG_ERR("Impossible to create a log domain for the Ecore IPC module.");
-             return --_ecore_ipc_init_count;
-          }
+        EINA_LOG_ERR("Impossible to create a log domain for the Ecore IPC module.");
+        return --_ecore_ipc_init_count;
      }
 
    if (!ecore_con_init())
-     return --_ecore_ipc_init_count;
+     {
+        eina_log_domain_unregister(_ecore_ipc_log_dom);
+        _ecore_ipc_log_dom = -1;
+        return --_ecore_ipc_init_count;
+     }
 
    ECORE_IPC_EVENT_CLIENT_ADD = ecore_event_type_new();
    ECORE_IPC_EVENT_CLIENT_DEL = ecore_event_type_new();
@@ -353,9 +354,8 @@ ecore_ipc_shutdown(void)
 
    ecore_con_shutdown();
 
-   /* do not unregister log domain as ecore_ipc_servers may be pending deletion
-    * due Ecore_Event.
-    */
+   eina_log_domain_unregister(_ecore_ipc_log_dom);
+   _ecore_ipc_log_dom = -1;
 
    return _ecore_ipc_init_count;
 }
