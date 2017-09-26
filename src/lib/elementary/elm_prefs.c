@@ -471,30 +471,6 @@ _elm_prefs_efl_canvas_group_group_del(Eo *obj, Elm_Prefs_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Eina_Bool
-_elm_prefs_elm_widget_focus_next(Eo *obj, Elm_Prefs_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   const Eina_List *items;
-
-   ELM_PREFS_CHECK(obj) EINA_FALSE;
-
-   items = elm_obj_widget_focus_custom_chain_get(obj);
-   if (items)
-     {
-        return elm_widget_focus_list_next_get
-           (obj, items, eina_list_data_get, dir, next, next_item);
-     }
-
-   if (sd->root && sd->root->w_obj)
-     {
-        return elm_obj_widget_focus_next_get(sd->root->w_obj, dir, next, next_item);
-     }
-
-   if (next) *next = NULL;
-
-   return EINA_FALSE;
-}
-
 EAPI Evas_Object *
 elm_prefs_add(Evas_Object *parent)
 {
