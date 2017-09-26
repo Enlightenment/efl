@@ -361,18 +361,6 @@ _efl_ui_video_remember_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
    return sd->remember;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_video_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_video_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _efl_ui_video_class_constructor(Efl_Class *klass)
 {
