@@ -137,6 +137,7 @@ class Efl.Loop (Efl.Object)
       poll,low; [[Event occurs multiple time every 15 minutes. The exact tick is undefined and could be adjusted system wide.]]
       pause; [[Called when the window is going not be displayed for some time]]
       resume; [[Called before a window get rendered after a pause event]]
+      terminate; [[Called before starting the shutdown of elementary]]
    }
    implements {
       Efl.Object.constructor;
