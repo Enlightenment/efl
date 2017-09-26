@@ -358,43 +358,6 @@ _parent_hide_cb(void *data,
    evas_object_hide(data);
 }
 
-EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *cur;
-
-   if (!sd->content) return EINA_FALSE;
-
-   cur = sd->content;
-
-   /* Try to cycle focus on content */
-   return elm_obj_widget_focus_next_get(cur, dir, next, next_item);
-}
-
-EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_notify_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Evas_Object *cur;
-
-   if (!sd->content) return EINA_FALSE;
-
-   cur = sd->content;
-
-   return elm_obj_widget_focus_direction_get(cur, base, degree, direction, direction_item, weight);
-}
-
 static Eina_Bool
 _elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Object *content)
 {
