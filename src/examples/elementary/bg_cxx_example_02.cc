@@ -1,3 +1,10 @@
+/* To compile:
+ * g++ `pkg-config --cflags --libs elementary-cxx eo-cxx efl-cxx eina-cxx ecore-cxx evas-cxx edje-cxx` ./bg_cxx_example_02.cc -o bg_cxx_example_02
+ *
+ * To run:
+ * ./bg_cxx_example_02
+ */
+
 #include <Elementary.hh>
 
 #include <sstream>
@@ -10,25 +17,19 @@ elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
    using efl::eo::instantiate;
 
    efl::ui::Win win(instantiate);
-   //win.title_set("Bg Image");
+   win.text_set("Bg Image");
    win.autohide_set(true);
 
-   //elm_app_compile_data_dir_set("/usr/share/elementary");
-  //elm_app_info_set(reinterpret_cast<void*>(elm_main), "elementary", "images/plant_01.jpg");
+   // FIXME: Part API needs some fixing to be nice in C++ :)
+   //efl::eo::downcast<efl::ui::win::Part>(win.part("background"))
+   //      .file_set("performance/background.png", nullptr);
 
-   elm::Bg bg(instantiate, win);
-   //bg.load_size_set(320,320);
-   //bg.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   bg.option_set(ELM_BG_OPTION_SCALE);
-   //std::stringstream ss;
-   //ss << elm_app_data_dir_get() << "/images/plant_01.jpg";
-   bg.file_set("/home/luciana/Pictures/surprised_cat.jpeg", nullptr);
-   //win.resize_object_add(bg);
-   bg.eo_cxx::efl::Gfx::size_set({640,400});
-   bg.visible_set(true);
+   efl::ui::Bg bg(instantiate, win);
+   bg.scale_type_set(EFL_UI_IMAGE_SCALE_TYPE_FILL);
+   bg.file_set("performance/background.png", nullptr);
+   win.content_set(bg);
 
    win.eo_cxx::efl::Gfx::size_set({640, 400});
-   win.visible_set(true);
 
    elm_run();
    return 0;
