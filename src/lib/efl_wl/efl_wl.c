@@ -1298,7 +1298,7 @@ comp_surface_buffer_detach(Comp_Buffer **pbuffer)
    wl_list_remove(&buffer->destroy_listener.link);
    //if (buffer->dbg) fprintf(stderr, "BUFFER(%d) RELEASE\n", wl_resource_get_id(buffer->res));
    if (buffer->pool) wl_shm_pool_unref(buffer->pool);
-   wl_resource_queue_event(buffer->res, WL_BUFFER_RELEASE);
+   wl_buffer_send_release(buffer->res);
    free(buffer);
    *pbuffer = NULL;
 }
