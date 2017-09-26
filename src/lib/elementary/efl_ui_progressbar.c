@@ -608,18 +608,6 @@ elm_progressbar_inverted_get(const Evas_Object *obj)
    return _is_inverted(dir);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_progressbar_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _efl_ui_progressbar_class_constructor(Efl_Class *klass)
 {
