@@ -1853,6 +1853,14 @@ EFL_CALLBACKS_ARRAY_DEFINE(_elm_win_evas_feed_fake_callbacks,
 { EFL_EVENT_KEY_DOWN, _evas_event_key_feed_fake_cb },
 { EFL_EVENT_KEY_UP, _evas_event_key_feed_fake_cb })
 
+#define RECURSE_PROTECT(x) \
+   do { static int calling = 0; \
+      if (calling) return; \
+      calling++; \
+      x; \
+      calling--; \
+   } while (0)
+
 static void
 _elm_win_evas_render_post(void *data,
                           Evas *e EINA_UNUSED,
@@ -1861,7 +1869,7 @@ _elm_win_evas_render_post(void *data,
    Efl_Gfx_Event_Render_Post *ev = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_POST, ev);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_POST, ev));
 }
 
 static void
@@ -1872,7 +1880,7 @@ _elm_win_evas_render_pre(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_PRE, NULL);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_RENDER_PRE, NULL));
 }
 
 static void
@@ -1883,7 +1891,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_IN, NULL);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_IN, NULL));
 }
 
 static void
@@ -1893,7 +1901,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_OUT, NULL);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_FOCUS_OUT, NULL));
 }
 
 static void
@@ -1905,7 +1913,7 @@ _elm_win_evas_object_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_IN, object);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_IN, object));
 }
 
 static void
@@ -1916,7 +1924,7 @@ _elm_win_evas_object_focus_out(void *data,
    Eo *object = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT, object);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT, object));
 }
 
 static void
@@ -1927,7 +1935,7 @@ _elm_win_evas_device_changed(void *data,
    Eo *device = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device);
+   RECURSE_PROTECT(efl_event_callback_legacy_call(win, EFL_CANVAS_EVENT_DEVICE_CHANGED, device));
 }
 
 static void
