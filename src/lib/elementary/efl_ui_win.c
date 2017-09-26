@@ -2203,6 +2203,8 @@ _win_paused(void *data, const Efl_Event *ev)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_elm_win_tracking,
+                           { EFL_EVENT_CALLBACK_ADD, _win_event_add_cb },
+                           { EFL_EVENT_CALLBACK_DEL, _win_event_del_cb },
                            { EFL_UI_WIN_EVENT_PAUSE, _win_paused })
 
 static void
@@ -2827,11 +2829,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
 
-   efl_event_callback_del(obj, EFL_EVENT_CALLBACK_ADD, _win_event_add_cb, sd);
-   efl_event_callback_del(obj, EFL_EVENT_CALLBACK_DEL, _win_event_del_cb, sd);
+   efl_event_callback_array_del(obj, _elm_evas_tracking(), sd);
    efl_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
-
-   efl_event_callback_del(sd->evas, EFL_EVENT_POINTER_UP, _elm_win_cb_mouse_up, sd);
+   efl_event_callback_array_del(sd->evas, _elm_win_tracking(), sd);
    evas_object_del(sd->legacy.box);
    evas_object_del(sd->legacy.edje);
 
