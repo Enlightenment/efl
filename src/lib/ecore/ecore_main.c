@@ -1650,6 +1650,7 @@ _ecore_main_shutdown(void)
    fd_handlers_to_call_current = NULL;
    fd_handlers_to_delete = NULL;
    fd_handler_current = NULL;
+   do_quit = 0;
 
 #ifdef _WIN32
    while (win32_handlers)
