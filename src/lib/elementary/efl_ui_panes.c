@@ -92,48 +92,6 @@ _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_panes_elm_widget_focus_next(Eo *obj, Efl_Ui_Panes_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   Eina_List *items = NULL;
-   Eina_List *(*list_free)(Eina_List *list);
-   void *(*list_data_get)(const Eina_List *list);
-   Evas_Object *left = NULL;
-   Evas_Object *right = NULL;
-
-   /* Focus chain */
-   /* TODO: Change this to use other chain */
-   if ((items = (Eina_List *)elm_obj_widget_focus_custom_chain_get(obj)))
-     {
-        list_data_get = eina_list_data_get;
-        list_free = NULL;
-     }
-   else
-     {
-        left = elm_layout_content_get(obj, "left");
-        if (left)
-          items = eina_list_append(items, left);
-
-        right = elm_layout_content_get(obj, "right");
-        if (right)
-          items = eina_list_append(items, right);
-
-        list_data_get = eina_list_data_get;
-        list_free = eina_list_free;
-
-        if (!items) return EINA_FALSE;
-     }
-
-   int_ret = elm_widget_focus_list_next_get
-      (obj, (const Eina_List *)items, list_data_get, dir, next, next_item);
-
-   if (list_free) list_free((Eina_List *)items);
-
-   return int_ret;
-}
-
 static void
 _on_clicked(void *data,
             Evas_Object *obj EINA_UNUSED,
@@ -515,12 +473,6 @@ EOLIAN static Eina_Bool
 _efl_ui_panes_fixed_get(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *sd)
 {
    return sd->fixed;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_panes_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Panes_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
 }
 
 static void
