@@ -547,6 +547,8 @@ void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor
 void _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj);
 void _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj);
 
+void _elm_interface_atspi_shutdown(void);
+
 /* Combobox: no proper support for Efl.Part API yet. */
 void        _elm_combobox_part_text_set(Eo *obj, const char * part, const char *label);
 const char *_elm_combobox_part_text_get(const Eo *obj, const char *part);
