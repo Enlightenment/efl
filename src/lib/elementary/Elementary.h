@@ -271,6 +271,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_layout_part_content.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
+# include <efl_ui_win_part.eo.h>
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_box_stack.eo.h>
@@ -286,7 +287,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>
 # include <efl_ui_image_factory.eo.h>
-#include <efl_ui_slider_interval.eo.h>
+# include <efl_ui_slider_interval.eo.h>
 #endif
 
 /* include deprecated calls last of all */
