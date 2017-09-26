@@ -2829,9 +2829,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
 
-   efl_event_callback_array_del(obj, _elm_evas_tracking(), sd);
+   efl_event_callback_array_del(sd->evas, _elm_evas_tracking(), sd);
    efl_event_callback_array_del(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
-   efl_event_callback_array_del(sd->evas, _elm_win_tracking(), sd);
+   efl_event_callback_array_del(obj, _elm_win_tracking(), sd);
    evas_object_del(sd->legacy.box);
    evas_object_del(sd->legacy.edje);
 
@@ -5347,10 +5347,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
    // attach config API
    efl_composite_attach(obj, efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
 
+   efl_event_callback_array_add(sd->evas, _elm_evas_tracking(), sd);
    efl_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
-   efl_event_callback_array_add(obj, _elm_evas_tracking(), sd);
-
-   efl_event_callback_array_add(sd->evas, _elm_win_tracking(), sd);
+   efl_event_callback_array_add(obj, _elm_win_tracking(), sd);
    evas_object_show(sd->legacy.edje);
 
    if (type == ELM_WIN_FAKE)
