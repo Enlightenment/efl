@@ -5,12 +5,14 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <ctype.h>
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
+#include "efl_ui_focus_composition.eo.h"
 
 #include "Eo.h"
 
@@ -642,7 +644,6 @@ _toggle_entry(Evas_Object *obj)
              elm_layout_signal_emit(obj, "elm,state,active", "elm");
              _entry_show(sd);
              elm_entry_select_all(sd->ent);
-             elm_widget_focus_set(sd->ent, EINA_TRUE);
              sd->entry_visible = EINA_TRUE;
           }
 
@@ -651,6 +652,17 @@ _toggle_entry(Evas_Object *obj)
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
+        {
+           Eina_List *items = NULL;
+
+           items = eina_list_append(items, sd->dec_button);
+           items = eina_list_append(items, sd->text_button);
+           items = eina_list_append(items, sd->ent);
+           items = eina_list_append(items, sd->inc_button);
+
+           efl_ui_focus_composition_elements_set(obj, items);
+        }
+        efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), sd->ent);
      }
 }
 
@@ -1215,6 +1227,16 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         elm_layout_content_set(obj, "elm.swallow.dec_button", priv->dec_button);
         elm_widget_sub_object_add(obj, priv->dec_button);
+
+        {
+           Eina_List *items = NULL;
+
+           items = eina_list_append(items, priv->dec_button);
+           items = eina_list_append(items, priv->text_button);
+           items = eina_list_append(items, priv->inc_button);
+
+           efl_ui_focus_composition_elements_set(obj, items);
+        }
      }
    else
      {
@@ -1319,89 +1341,6 @@ _elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
-
-EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
-{
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   return _elm_spinner_smart_focus_next_enable | sd->button_layout;
-}
-
-EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
-{
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   if (sd->button_layout) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Eina_Bool ret;
-   Eina_List *items = NULL;
-   void *(*list_data_get)(const Eina_List *list);
-
-   ELM_SPINNER_CHECK(obj) EINA_FALSE;
-
-   if (!_pd)
-     return EINA_FALSE;
-
-   list_data_get = eina_list_data_get;
-
-   items = eina_list_append(items, _pd->inc_button);
-   items = eina_list_append(items, _pd->text_button);
-   items = eina_list_append(items, _pd->dec_button);
-
-   ret = elm_widget_focus_list_direction_get
-      (obj, base, items, list_data_get, degree, direction, direction_item, weight);
-   eina_list_free(items);
-
-   return ret;
-}
-
-static Evas_Object *
-_access_object_get(const Evas_Object *obj, const char* part)
-{
-   Evas_Object *eo, *po, *ao;
-
-   eo = elm_layout_edje_get(obj);
-
-   po = (Evas_Object *)edje_object_part_object_get(eo, part);
-   ao = evas_object_data_get(po, "_part_access_obj");
-
-   return ao;
-}
-
-EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *ao;
-   Eina_List *items = NULL;
-   int ret;
-
-   ELM_SPINNER_CHECK(obj) EINA_FALSE;
-
-   if (_elm_config->access_mode)
-     {
-        ao = _access_object_get(obj, "access");
-        items = eina_list_append(items, ao);
-     }
-   if (!elm_widget_disabled_get(obj))
-     {
-        items = eina_list_append(items, _pd->dec_button);
-        items = eina_list_append(items, _pd->text_button);
-        items = eina_list_append(items, _pd->inc_button);
-     }
-
-   ret = elm_widget_focus_list_next_get
-      (obj, items, eina_list_data_get, dir, next, next_item);
-   eina_list_free(items);
-
-   return ret;
-}
 
 EOLIAN static void
 _elm_spinner_elm_widget_on_access_update(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
