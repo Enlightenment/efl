@@ -394,7 +394,11 @@ inline char* convert_to_c_impl( ::efl::eina::string_view v, tag<char*, ::efl::ei
   std::strcpy(string, v.c_str());
   return string;
 }
-inline char** convert_to_c_impl(efl::eina::string_view* /*view*/, tag<char **, efl::eina::string_view*>)
+inline char** convert_to_c_impl(efl::eina::string_view& /*view*/, tag<char **, efl::eina::string_view, true>)
+{
+  std::abort();
+}
+inline const char** convert_to_c_impl(efl::eina::string_view& /*view*/, tag<const char **, efl::eina::string_view, true>)
 {
   std::abort();
 }

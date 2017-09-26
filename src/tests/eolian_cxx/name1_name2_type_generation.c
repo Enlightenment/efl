@@ -102,7 +102,7 @@ void _name1_name2_type_generation_instringshareown(Eo *obj EINA_UNUSED, Type_Gen
   eina_stringshare_del(v);
 }
 
-void _name1_name2_type_generation_instringptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, char * *v)
+void _name1_name2_type_generation_instringptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, const char * *v)
 {
   ck_assert_str_eq(*v, "foobar");
   free((void*)*v);
@@ -197,7 +197,7 @@ char * _name1_name2_type_generation_returnstringown(Eo *obj EINA_UNUSED, Type_Ge
   return p;
 }
 
-char * * _name1_name2_type_generation_returnstringownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
+const char * * _name1_name2_type_generation_returnstringownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
 {
   const char foobar[] = "foobar";
   char** p1 = malloc(sizeof(const char*));
