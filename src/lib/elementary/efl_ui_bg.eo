@@ -1,0 +1,17 @@
+class Efl.Ui.Bg (Efl.Ui.Layout, Efl.Ui.Image)
+{
+   [[The bg (background) widget is used for setting (solid) background decorations
+
+   to a window (unless it has transparency enabled) or to any container object. It
+   works just like an image, but has some properties useful to a background, like
+   setting it to tiled, centered, scaled or stretched.
+   ]]
+   legacy_prefix: elm_bg;
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.File.file { get; set; }
+      Efl.Gfx.color { set; }
+      Efl.Ui.Image.scale_type { get; set; }
+   }
+}
