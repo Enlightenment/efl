@@ -2795,7 +2795,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coo
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
-   efl_text_cursor_geometry_get(obj, 
+   efl_text_cursor_geometry_get(obj,
          efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          &cx, &cy, &cw, &ch,
@@ -4068,18 +4068,6 @@ _efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 static void
 _efl_ui_text_class_constructor(Efl_Class *klass)
 {
@@ -4722,7 +4710,7 @@ _update_text_cursors(Eo *obj)
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    _decoration_calc_offset(sd, &x, &y);
-   bidi_cursor = efl_text_cursor_geometry_get(obj, 
+   bidi_cursor = efl_text_cursor_geometry_get(obj,
          efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE, &xx, &yy, &ww, &hh, &xx2, &yy2,
          NULL, NULL);
@@ -5006,8 +4994,8 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    _anchors_clear_all(obj, sd);
 
-   start = efl_text_cursor_new(text_obj); 
-   end = efl_text_cursor_new(text_obj); 
+   start = efl_text_cursor_new(text_obj);
+   end = efl_text_cursor_new(text_obj);
 
    /* Retrieve all annotations in the text. */
    efl_text_cursor_paragraph_first(obj, start);
