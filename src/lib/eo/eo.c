@@ -498,6 +498,7 @@ ok_klass_back:
                        call->func = func->func;
                        if (is_obj)
                          call->data = (char *)obj + cache->off[i].off;
+                       if (EINA_UNLIKELY(!call->func)) goto err_cache_op;
                        return EINA_TRUE;
                     }
                }
