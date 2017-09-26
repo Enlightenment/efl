@@ -117,8 +117,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Canvas.Group.group_calculate;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_activate;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Efl.Ui.Range.range_value { get; set; }
