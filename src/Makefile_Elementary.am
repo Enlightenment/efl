@@ -232,10 +232,10 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_interfaces.h \
 	lib/elementary/elm_widget.h \
 	lib/elementary/elm_widget_actionslider.h \
-	lib/elementary/elm_widget_bg.h \
 	lib/elementary/elm_widget_box.h \
 	lib/elementary/elm_widget_bubble.h \
 	lib/elementary/efl_ui_button_private.h \
+	lib/elementary/efl_ui_bg_private.h \
 	lib/elementary/elm_widget_calendar.h \
 	lib/elementary/efl_ui_check_private.h \
 	lib/elementary/elm_widget_clock.h \
