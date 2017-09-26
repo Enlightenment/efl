@@ -159,54 +159,6 @@ _elm_fileselector_entry_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Entry_D
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *chain[2];
-   Evas_Object *to_focus;
-   unsigned char i;
-
-   /* Direction */
-   if (dir == ELM_FOCUS_PREVIOUS)
-     {
-        chain[0] = sd->button;
-        chain[1] = sd->entry;
-     }
-   else if (dir == ELM_FOCUS_NEXT)
-     {
-        chain[0] = sd->entry;
-        chain[1] = sd->button;
-     }
-   else
-     return EINA_FALSE;
-
-   i = elm_widget_focus_get(chain[1]);
-
-   if (elm_obj_widget_focus_next_get(chain[i], dir, next, next_item)) return EINA_TRUE;
-
-   i = !i;
-
-   if (elm_obj_widget_focus_next_get(chain[i], dir, &to_focus, next_item))
-     {
-        *next = to_focus;
-        return !!i;
-     }
-
-   return EINA_FALSE;
-}
-
 EOLIAN static Efl_Ui_Theme_Apply
 _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
