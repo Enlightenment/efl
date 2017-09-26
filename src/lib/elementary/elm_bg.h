@@ -30,7 +30,7 @@
  */
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_bg_eo.h"
+#include "efl_ui_bg_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_bg_legacy.h"

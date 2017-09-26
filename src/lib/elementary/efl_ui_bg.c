@@ -7,13 +7,13 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_bg.h"
+#include "efl_ui_bg_private.h"
 #include "elm_widget_layout.h"
 
-#define MY_CLASS ELM_BG_CLASS
-#define MY_CLASS_PFX elm_bg
+#define MY_CLASS EFL_UI_BG_CLASS
+#define MY_CLASS_PFX efl_ui_bg
 
-#define MY_CLASS_NAME "Elm_Bg"
+#define MY_CLASS_NAME "Efl.Ui.Bg"
 #define MY_CLASS_NAME_LEGACY "elm_bg"
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
@@ -23,7 +23,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 };
 
 EOLIAN static void
-_elm_bg_elm_layout_sizing_eval(Eo *obj, Elm_Bg_Data *sd)
+_efl_ui_bg_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Bg_Data *sd)
 {
    Evas_Coord iw = 0, ih = 0, mw = -1, mh = -1;
    Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
@@ -43,40 +43,44 @@ _elm_bg_elm_layout_sizing_eval(Eo *obj, Elm_Bg_Data *sd)
    evas_object_geometry_get
      (wd->resize_obj, &bx, &by, &bw, &bh);
 
-   switch (sd->option)
+   switch (sd->scale_type)
      {
-      case ELM_BG_OPTION_CENTER:
-        fw = mw = iw;
-        fh = mh = ih;
-        break;
-
-      case ELM_BG_OPTION_SCALE:
-        fw = bw;
-        fh = ((ih * fw) / iw);
-        if (fh < bh)
-          {
-             fh = bh;
-             fw = ((iw * fh) / ih);
-          }
-        fx = ((bw - fw) / 2);
-        fy = ((bh - fh) / 2);
-        break;
-
-      case ELM_BG_OPTION_TILE:
-        fw = iw;
-        fh = ih;
-        break;
-
-      case ELM_BG_OPTION_STRETCH:
-      default:
-        fw = bw;
-        fh = bh;
-        break;
+       case EFL_UI_IMAGE_SCALE_TYPE_NONE:
+         fw = mw = iw;
+         fh = mh = ih;
+         break;
+       case EFL_UI_IMAGE_SCALE_TYPE_FILL:
+         fw = bw;
+         fh = bh;
+         break;
+       case EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE:
+         mw = fw = bw;
+         mh = fh = ((ih * fw) / iw);
+         if (fh > bh)
+           {
+              mh = fh = bh;
+              mw = fw = ((iw * fh) / ih);
+           }
+         break;
+       case EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+         fw = bw;
+         fh = ((ih * fw) / iw);
+         if (fh < bh)
+           {
+              fh = bh;
+              fw = ((iw * fh) / ih);
+           }
+         fx = ((bw - fw) / 2);
+         fy = ((bh - fh) / 2);
+         break;
+       case EFL_UI_IMAGE_SCALE_TYPE_TILE:
+         fw = iw;
+         fh = ih;
+         break;
      }
 
    evas_object_image_fill_set(sd->img, fx, fy, fw, fh);
 
-   evas_object_size_hint_min_set(sd->img, mw, mh);
    evas_object_size_hint_max_set(sd->img, mw, mh);
 }
 
@@ -90,14 +94,14 @@ _on_resize(void *data,
 }
 
 EOLIAN static void
-_elm_bg_efl_canvas_group_group_add(Eo *obj, Elm_Bg_Data *priv)
+_efl_ui_bg_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Bg_Data *priv)
 {
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   priv->option = ELM_BG_OPTION_SCALE;
+   priv->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, obj);
 
@@ -113,7 +117,7 @@ elm_bg_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_elm_bg_efl_object_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
+_efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED)
 {
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -123,7 +127,7 @@ _elm_bg_efl_object_constructor(Eo *obj, Elm_Bg_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_bg_efl_file_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char *group)
+_efl_ui_bg_efl_file_file_set(Eo *obj, Efl_Ui_Bg_Data *sd, const char *file, const char *group)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -178,24 +182,78 @@ _elm_bg_efl_file_file_set(Eo *obj, Elm_Bg_Data *sd, const char *file, const char
 }
 
 EOLIAN static void
-_elm_bg_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, const char **file, const char **group)
+_efl_ui_bg_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
    if (group) *group = sd->group;
 }
 
-EOLIAN static void
-_elm_bg_option_set(Eo *obj, Elm_Bg_Data *sd, Elm_Bg_Option option)
+EAPI void
+elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
-   sd->option = option;
+  EFL_UI_BG_DATA_GET(obj, sd);
+  switch (option)
+    {
+      case ELM_BG_OPTION_CENTER:
+        sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_NONE;
+        break;
+      case ELM_BG_OPTION_SCALE:
+        sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+        break;
+      case ELM_BG_OPTION_TILE:
+        sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_TILE;
+        break;
+      case ELM_BG_OPTION_STRETCH:
+        sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FILL;
+        break;
+      case ELM_BG_OPTION_LAST:
+      default:
+        sd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+    }
 
-   elm_layout_sizing_eval(obj);
+  elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static Elm_Bg_Option
-_elm_bg_option_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd)
+EAPI Elm_Bg_Option
+elm_bg_option_get(const Evas_Object *obj)
 {
-   return sd->option;
+  Elm_Bg_Option option = ELM_BG_OPTION_LAST;
+  EFL_UI_BG_DATA_GET(obj, sd);
+
+  switch (sd->scale_type)
+  {
+    case EFL_UI_IMAGE_SCALE_TYPE_NONE:
+      option = ELM_BG_OPTION_CENTER;
+      break;
+    case EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+      option = ELM_BG_OPTION_SCALE;
+      break;
+    case EFL_UI_IMAGE_SCALE_TYPE_TILE:
+      option = ELM_BG_OPTION_TILE;
+      break;
+    case EFL_UI_IMAGE_SCALE_TYPE_FILL:
+      option = ELM_BG_OPTION_STRETCH;
+      break;
+    case EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE:
+    default:
+      ERR("Scale type %d cannot be converted to Elm_Bg_Option", sd->scale_type);
+      break;
+  }
+  return option;
+}
+
+EOLIAN static void
+_efl_ui_bg_efl_ui_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, Efl_Ui_Image_Scale_Type scale_type)
+{
+  sd->scale_type = scale_type;
+
+  elm_layout_sizing_eval(obj);
+}
+
+EOLIAN static Efl_Ui_Image_Scale_Type
+_efl_ui_bg_efl_ui_image_scale_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
+{
+   return sd->scale_type;
 }
 
 EAPI void
@@ -204,12 +262,12 @@ elm_bg_color_set(Evas_Object *obj,
                  int g,
                  int b)
 {
-   ELM_BG_CHECK(obj);
-   elm_obj_bg_color_set(obj, r, g, b, 255);
+   EFL_UI_BG_CHECK(obj);
+   efl_gfx_color_set(obj, r, g, b, 255);
 }
 
 EOLIAN static void
-_elm_bg_color_set(Eo *obj, Elm_Bg_Data *sd, int r, int g, int b, int a)
+_efl_ui_bg_efl_gfx_color_set(Eo *obj, Efl_Ui_Bg_Data *sd, int r, int g, int b, int a)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -224,9 +282,8 @@ _elm_bg_color_set(Eo *obj, Elm_Bg_Data *sd, int r, int g, int b, int a)
      {
         sd->rect = evas_object_rectangle_add
             (evas_object_evas_get(wd->resize_obj));
-
+        efl_gfx_visible_set(sd->rect, EINA_TRUE);
         elm_layout_content_set(obj, "elm.swallow.rectangle", sd->rect);
-
         elm_layout_sizing_eval(obj);
      }
 
@@ -239,20 +296,15 @@ elm_bg_color_get(const Evas_Object *obj,
                  int *g,
                  int *b)
 {
-   ELM_BG_CHECK(obj);
-   elm_obj_bg_color_get((Eo *) obj, r, g, b, NULL);
+   EFL_UI_BG_CHECK(obj);
+   efl_gfx_color_get((Eo *) obj, r, g, b, NULL);
 }
 
-EOLIAN static void
-_elm_bg_color_get(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, int *r, int *g, int *b, int *a)
-{
-   evas_object_color_get(sd->rect, r, g, b, a);
-}
-
-EOLIAN static void
-_elm_bg_load_size_set(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, Evas_Coord w, Evas_Coord h)
+EAPI void
+elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 {
    const char *p;
+   EFL_UI_BG_DATA_GET(obj, sd);
 
    sd->load_opts.w = w;
    sd->load_opts.h = h;
@@ -263,7 +315,7 @@ _elm_bg_load_size_set(Eo *obj EINA_UNUSED, Elm_Bg_Data *sd, Evas_Coord w, Evas_C
 }
 
 static void
-_elm_bg_class_constructor(Efl_Class *klass)
+_efl_ui_bg_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
@@ -284,9 +336,9 @@ elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
-#define ELM_BG_EXTRA_OPS \
+#define EFL_UI_BG_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_bg), \
-   EFL_CANVAS_GROUP_ADD_OPS(elm_bg)
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_bg), \
+   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_bg)
 
-#include "elm_bg.eo.c"
+#include "efl_ui_bg.eo.c"

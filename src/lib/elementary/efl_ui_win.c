@@ -6911,7 +6911,7 @@ _elm_win_standard_init(Eo *obj)
         /* Legacy theme compatibility */
         DBG("Detected legacy theme used for elm_bg. Swallowing object.");
         sd->csd.need_bg_solid = EINA_FALSE;
-        _elm_win_bg_set(sd, efl_add(ELM_BG_CLASS, obj));
+        _elm_win_bg_set(sd, efl_add(EFL_UI_BG_CLASS, obj));
      }
 
    _elm_win_frame_style_update(sd, 0, 1);

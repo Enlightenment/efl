@@ -366,3 +366,111 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
 }
+
+static void
+_cb_radio_changed_scale_type(void *data, const Efl_Event *ev)
+{
+   Evas_Object *o_bg = data;
+
+   efl_ui_image_scale_type_set(o_bg, efl_ui_radio_value_get(ev->object));
+}
+
+static void
+_cb_check_changed_scale_type(void *data, const Efl_Event *ev)
+{
+   Evas_Object *o_bg = data;
+
+   if (efl_ui_check_selected_get(ev->object))
+     efl_gfx_color_set(o_bg, 255, 128, 128, 255);
+   else
+     efl_gfx_color_set(o_bg, 0, 0, 0, 0);
+}
+
+void
+test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win;
+   Evas_Object *box, *hbox, *o_bg;
+   Evas_Object *rd, *rdg;
+   char buf[PATH_MAX];
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_text_set(efl_added, "Bg EOAPI (Efl.Ui.Bg)"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
+                 efl_ui_win_alpha_set(efl_added, EINA_FALSE));
+
+   efl_add(EFL_UI_BG_CLASS, win,
+           efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+           efl_content_set(win, efl_added));
+
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+                 efl_content_set(win, efl_added));
+
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+
+   o_bg = efl_add(EFL_UI_BG_CLASS, box,
+                  efl_file_set(efl_added, buf, NULL),
+                  efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
+                  efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+                  efl_pack(box, efl_added));
+
+   hbox = efl_add(EFL_UI_BOX_CLASS, box,
+                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                  efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+                  efl_pack(box, efl_added));
+
+   rdg = rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
+                efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FILL),
+                efl_text_set(efl_added, "Fill"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+   
+   rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
+                efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE),
+                efl_ui_radio_group_add(efl_added, rdg),
+                efl_text_set(efl_added, "Fit Inside"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+
+   
+   rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
+                efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                efl_ui_radio_group_add(efl_added, rdg),
+                efl_text_set(efl_added, "Fit Outside"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+   
+   rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
+                efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_NONE),
+                efl_ui_radio_group_add(efl_added, rdg),
+                efl_text_set(efl_added, "None"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+
+   rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
+                efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_TILE),
+                efl_ui_radio_group_add(efl_added, rdg),
+                efl_text_set(efl_added, "Tile"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+
+   efl_ui_radio_value_set(rdg, EFL_UI_IMAGE_SCALE_TYPE_FILL);
+
+   efl_add(EFL_UI_CHECK_CLASS, hbox,
+                efl_text_set(efl_added, "Bg Color"),
+                efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
+                efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED, _cb_check_changed_scale_type, o_bg),
+                efl_pack(hbox, efl_added));
+
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+}
+
+
