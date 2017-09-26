@@ -5431,18 +5431,6 @@ _elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_elm_entry_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_entry_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_entry_select_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool allow)
 {
