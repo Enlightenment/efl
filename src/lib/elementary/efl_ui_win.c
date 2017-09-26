@@ -2936,14 +2936,15 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    sd->wm_rot.rots = NULL;
 
    /* Don't let callback in the air that point to sd */
-   ecore_evas_callback_delete_request_set(sd->ee, NULL);
-   ecore_evas_callback_resize_set(sd->ee, NULL);
-   ecore_evas_callback_mouse_in_set(sd->ee, NULL);
-   ecore_evas_callback_focus_in_set(sd->ee, NULL);
-   ecore_evas_callback_focus_out_set(sd->ee, NULL);
-   ecore_evas_callback_move_set(sd->ee, NULL);
-   ecore_evas_callback_state_change_set(sd->ee, NULL);
-   ecore_evas_callback_pre_render_set(sd->ee, NULL);
+   if (sd->ee)
+     {
+        ecore_evas_callback_mouse_in_set(sd->ee, NULL);
+        ecore_evas_callback_focus_in_set(sd->ee, NULL);
+        ecore_evas_callback_focus_out_set(sd->ee, NULL);
+        ecore_evas_callback_move_set(sd->ee, NULL);
+        ecore_evas_callback_state_change_set(sd->ee, NULL);
+        ecore_evas_callback_pre_render_set(sd->ee, NULL);
+     }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
