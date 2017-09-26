@@ -2203,8 +2203,6 @@ _win_paused(void *data, const Efl_Event *ev)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_elm_win_tracking,
-                           { EFL_EVENT_CALLBACK_ADD, _win_event_add_cb },
-                           { EFL_EVENT_CALLBACK_DEL, _win_event_del_cb },
                            { EFL_UI_WIN_EVENT_PAUSE, _win_paused })
 
 static void
