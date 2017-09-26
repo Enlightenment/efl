@@ -48,31 +48,6 @@ _elm_inwin_elm_layout_sizing_eval(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Eina_Bool
-_elm_inwin_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_inwin_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Inwin_Data *pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *content;
-
-   content = elm_layout_content_get(obj, NULL);
-
-   /* attempt to follow focus cycle into sub-object */
-   if (content)
-     {
-        elm_obj_widget_focus_next_get(content, dir, next, next_item);
-        if (*next) return EINA_TRUE;
-     }
-
-   *next = (Evas_Object *)obj;
-
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
