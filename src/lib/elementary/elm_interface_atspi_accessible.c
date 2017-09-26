@@ -612,6 +612,11 @@ _elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Ats
 void
 _elm_interface_atspi_shutdown(void)
 {
+   Elm_Atspi_Event_Handler *hdl;
+
+   EINA_LIST_FREE(global_callbacks, hdl)
+     free(hdl);
+
    ELM_SAFE_DEL(root);
 }
 
