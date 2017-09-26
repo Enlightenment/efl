@@ -358,6 +358,7 @@ eio_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
+   efl_loop_unregister(ecore_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
    efl_del(io_manager);
    io_manager = NULL;
 
