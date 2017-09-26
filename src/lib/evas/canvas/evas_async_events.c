@@ -158,6 +158,7 @@ evas_async_events_shutdown(void)
 
    free(async_queue_cache);
    async_queue_cache = NULL;
+   async_queue_cache_max = 0;
 
    eina_spinlock_free(&async_lock);
    eina_inarray_flush(&async_queue);
