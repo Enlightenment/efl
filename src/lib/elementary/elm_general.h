@@ -116,7 +116,7 @@ extern EAPI double _elm_startup_time;
                              { EFL_LOOP_EVENT_ARGUMENTS, efl_main },    \
                              { EFL_LOOP_EVENT_PAUSE, efl_pause },       \
                              { EFL_LOOP_EVENT_RESUME, efl_resume },     \
-                             { EFL_EVENT_DEL, efl_terminate });         \
+                             { EFL_LOOP_EVENT_TERMINATE, efl_terminate });         \
   int main(int argc, char **argv)                                       \
   {                                                                     \
      int ret__;                                                         \

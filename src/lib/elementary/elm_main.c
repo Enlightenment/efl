@@ -435,6 +435,8 @@ elm_shutdown(void)
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
 
+   efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
+
    ecore_event_handler_del(system_handlers[0]);
    ecore_event_handler_del(system_handlers[1]);
 
