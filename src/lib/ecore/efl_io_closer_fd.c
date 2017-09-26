@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include "ecore_private.h"
 
-#define MY_CLASS EFL_IO_CLOSER_FD_CLASS
+#define MY_CLASS EFL_IO_CLOSER_FD_MIXIN
 
 typedef struct _Efl_Io_Closer_Fd_Data
 {
@@ -16,28 +16,25 @@ typedef struct _Efl_Io_Closer_Fd_Data
 
    Eina_Bool close_on_exec;
    Eina_Bool close_on_destructor;
-   Eina_Bool initialized;
 } Efl_Io_Closer_Fd_Data;
 
-static void
-_efl_io_closer_initialize(Efl_Io_Closer_Fd_Data *pd)
+static Efl_Object *
+_efl_io_closer_fd_efl_object_constructor(Eo *obj, Efl_Io_Closer_Fd_Data *pd)
 {
-   if (pd->initialized) return ;
    pd->fd = -1;
-   pd->initialized = EINA_TRUE;
+
+   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
 _efl_io_closer_fd_closer_fd_set(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd, int fd)
 {
-   _efl_io_closer_initialize(pd);
    pd->fd = fd;
 }
 
 EOLIAN static int
 _efl_io_closer_fd_closer_fd_get(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 {
-   _efl_io_closer_initialize(pd);
    return pd->fd;
 }
 
@@ -47,7 +44,6 @@ _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUS
    int fd;
    Eina_Error err = 0;
 
-   _efl_io_closer_initialize(pd);
    fd = efl_io_closer_fd_get(o);
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(fd < 0, EBADF);
@@ -61,15 +57,12 @@ _efl_io_closer_fd_efl_io_closer_close(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUS
 EOLIAN static Eina_Bool
 _efl_io_closer_fd_efl_io_closer_closed_get(Eo *o, Efl_Io_Closer_Fd_Data *pd EINA_UNUSED)
 {
-   _efl_io_closer_initialize(pd);
    return efl_io_closer_fd_get(o) < 0;
 }
 
 EOLIAN static Eina_Bool
 _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *pd, Eina_Bool close_on_exec)
 {
-   _efl_io_closer_initialize(pd);
-
 #ifdef _WIN32
    DBG("close on exec is not supported on windows");
    pd->close_on_exec = close_on_exec;
@@ -101,8 +94,6 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_set(Eo *o, Efl_Io_Closer_Fd_Data *
 EOLIAN static Eina_Bool
 _efl_io_closer_fd_efl_io_closer_close_on_exec_get(Eo *o, Efl_Io_Closer_Fd_Data *pd)
 {
-   _efl_io_closer_initialize(pd);
-
 #ifdef _WIN32
    return pd->close_on_exec;
    (void)o;
@@ -130,14 +121,12 @@ _efl_io_closer_fd_efl_io_closer_close_on_exec_get(Eo *o, Efl_Io_Closer_Fd_Data *
 EOLIAN static void
 _efl_io_closer_fd_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd, Eina_Bool close_on_destructor)
 {
-   _efl_io_closer_initialize(pd);
    pd->close_on_destructor = close_on_destructor;
 }
 
 EOLIAN static Eina_Bool
 _efl_io_closer_fd_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Closer_Fd_Data *pd)
 {
-   _efl_io_closer_initialize(pd);
    return pd->close_on_destructor;
 }
 

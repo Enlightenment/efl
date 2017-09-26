@@ -1,4 +1,4 @@
-mixin Efl.Io.Closer.Fd (Efl.Io.Closer) {
+mixin Efl.Io.Closer.Fd (Efl.Io.Closer, Efl.Object) {
     [[Close fd using close(2).
 
       @since 1.19
@@ -16,6 +16,7 @@ mixin Efl.Io.Closer.Fd (Efl.Io.Closer) {
     }
 
     implements {
+        Efl.Object.constructor;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
