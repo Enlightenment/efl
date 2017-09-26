@@ -860,19 +860,6 @@ _elm_hover_dismiss(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
    elm_layout_signal_emit(obj, "elm,action,dismiss", "elm");
 }
 
-EOLIAN static Eina_Bool
-_elm_hover_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_hover_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-
 EOLIAN static void
 _elm_hover_class_constructor(Efl_Class *klass)
 {
