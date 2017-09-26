@@ -640,18 +640,6 @@ _elm_actionslider_selected_label_get(Eo *obj, Elm_Actionslider_Data *sd)
    return ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_actionslider_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_actionslider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 static void
 _elm_actionslider_class_constructor(Efl_Class *klass)
 {
