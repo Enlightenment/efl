@@ -110,6 +110,24 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::string_view");
               }}
+           , {"mstring", false, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier |= qualifier_info::is_ref;
+                // r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                if(is_out || is_return)
+                  return replace_base_type(r, " ::std::string");
+                return replace_base_type(r, " ::efl::eina::string_view");
+              }}
+           , {"mstring", true, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                // r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                if(is_out || is_return)
+                  return replace_base_type(r, " ::std::string");
+                return replace_base_type(r, " ::efl::eina::string_view");
+              }}
            , {"stringshare", nullptr, nullptr, nullptr, [&]
               {
                 regular_type_def r = regular;
@@ -123,6 +141,13 @@ struct visitor_generate
               }}
            , {"any_value", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
+              }}
+           , {"any_value_ptr", true, nullptr, nullptr, [&]
+              {
+                return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
+              }}
+           , {"any_value_ptr", false, nullptr, nullptr, [&]
+              { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
         };
       if(regular.base_type == "void_ptr")
