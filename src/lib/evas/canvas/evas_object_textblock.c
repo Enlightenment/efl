@@ -3032,25 +3032,22 @@ _layout_item_ascent_descent_adjust(Evas_Object_Protected_Data *obj,
           }
      }
 
-   if (fmt)
-     {
-        asc = ENFN->font_ascent_get(ENC, fmt->font.font);
-        desc = ENFN->font_descent_get(ENC, fmt->font.font);
-
-        if (asc > *ascent) *ascent = asc;
-        if (desc > *descent) *descent = desc;
-     }
-
    if (fi)
      {
         asc = evas_common_font_instance_ascent_get(fi);
         desc = evas_common_font_instance_descent_get(fi);
-
-        if (asc > *ascent) *ascent = asc;
-        if (desc > *descent) *descent = desc;
      }
 
-   if (fmt) _layout_format_ascent_descent_adjust(obj, ascent, descent, fmt);
+   else if (fmt)
+     {
+        asc = ENFN->font_ascent_get(ENC, fmt->font.font);
+        desc = ENFN->font_descent_get(ENC, fmt->font.font);
+     }
+
+   if (fmt) _layout_format_ascent_descent_adjust(obj, &asc, &desc, fmt);
+
+   if (asc > *ascent) *ascent = asc;
+   if (desc > *descent) *descent = desc;
 }
 
 /**
