@@ -609,4 +609,10 @@ _elm_interface_atspi_accessible_efl_object_destructor(Eo *obj, Elm_Interface_Ats
    efl_destructor(efl_super(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
 }
 
+void
+_elm_interface_atspi_shutdown(void)
+{
+   ELM_SAFE_DEL(root);
+}
+
 #include "elm_interface_atspi_accessible.eo.c"
