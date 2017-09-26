@@ -3065,43 +3065,6 @@ _elm_fileselector_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_next(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-
-   if (sd->up_button) items = eina_list_append(items, sd->up_button);
-   if (sd->home_button) items = eina_list_append(items, sd->home_button);
-   if (sd->files_view) items = eina_list_append(items, sd->files_view);
-   if (sd->path_entry) items = eina_list_append(items, sd->path_entry);
-   if (sd->name_entry) items = eina_list_append(items, sd->name_entry);
-   if (sd->filter_hoversel) items = eina_list_append(items, sd->filter_hoversel);
-   if (sd->cancel_button) items = eina_list_append(items, sd->cancel_button);
-   if (sd->ok_button) items = eina_list_append(items, sd->ok_button);
-
-   if (_elm_config->access_mode)
-     return elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next, next_item);
-
-   if (!elm_widget_focus_list_next_get(obj, items, eina_list_data_get, dir, next, next_item))
-     *next = (Evas_Object *)obj;
-
-   eina_list_free(items);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
 _elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
    Eina_Bool ret = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
@@ -3109,29 +3072,6 @@ _elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *p
    _focus_chain_update(obj, pd);
 
    return ret;
-}
-
-
-EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   Eina_List *items = NULL;
-
-   if (sd->up_button) items = eina_list_append(items, sd->up_button);
-   if (sd->home_button) items = eina_list_append(items, sd->home_button);
-   if (sd->files_view) items = eina_list_append(items, sd->files_view);
-   if (sd->path_entry) items = eina_list_append(items, sd->path_entry);
-   if (sd->name_entry) items = eina_list_append(items, sd->name_entry);
-   if (sd->filter_hoversel) items = eina_list_append(items, sd->filter_hoversel);
-   if (sd->cancel_button) items = eina_list_append(items, sd->cancel_button);
-   if (sd->ok_button) items = eina_list_append(items, sd->ok_button);
-
-   elm_widget_focus_list_direction_get
-     (obj, base, items, eina_list_data_get, degree, direction, direction_item, weight);
-
-   eina_list_free(items);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
