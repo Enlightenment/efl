@@ -688,18 +688,6 @@ _elm_slideshow_count_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
    return eina_list_count(sd->items);
 }
 
-EOLIAN static Eina_Bool
-_elm_slideshow_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_slideshow_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_slideshow_class_constructor(Efl_Class *klass)
 {

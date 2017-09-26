@@ -304,8 +304,6 @@ class Elm.Slideshow (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.widget_event;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
