@@ -977,6 +977,7 @@ typedef struct _Efl_Object_Call_Cache
 // hits.
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet) \
 __##Name##_op_create: \
+   if (EINA_UNLIKELY(___cache.op != EFL_NOOP)) memset(&___cache, 0, sizeof(___cache)); \
    ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
    if (___cache.op == EFL_NOOP) return DefRet; \
    ___cache.generation = _efl_object_init_generation; \
