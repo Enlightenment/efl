@@ -1400,18 +1400,6 @@ _efl_ui_slider_indicator_visible_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
 _efl_ui_slider_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
@@ -1447,7 +1435,7 @@ _efl_ui_slider_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Slider_Data *
    double oldval = sd->val;
 
    if (value < sd->val_min) value = sd->val_min;
-   if (value > sd->val_max) value = sd->val_max; 
+   if (value > sd->val_max) value = sd->val_max;
 
    efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    sd->val = value;
