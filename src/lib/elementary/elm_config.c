@@ -4307,6 +4307,7 @@ elm_config_web_backend_set(const char *backend)
 EAPI const char *
 elm_config_web_backend_get(void)
 {
+   if (!_elm_config) return NULL;
    return _elm_config->web_backend;
 }
 
