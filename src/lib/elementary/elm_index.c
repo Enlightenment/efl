@@ -1135,55 +1135,6 @@ _elm_index_efl_canvas_group_group_del(Eo *obj, Elm_Index_Data *sd)
 
 static Eina_Bool _elm_index_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static Eina_Bool
-_elm_index_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Index_Data *_pd EINA_UNUSED)
-{
-   return _elm_index_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_index_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Index_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_index_elm_widget_focus_next(Eo *obj, Elm_Index_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   Eina_List *items = NULL;
-   Eina_List *l = NULL;
-   Elm_Object_Item *eo_item;
-   Evas_Object *ao;
-   Evas_Object *po;
-
-   if (!sd->autohide_disabled)
-     elm_layout_signal_emit((Evas_Object *)obj, "elm,state,active", "elm");
-
-   po = (Evas_Object *)edje_object_part_object_get
-              (elm_layout_edje_get(obj), "access");
-   ao = evas_object_data_get(po, "_part_access_obj");
-   items = eina_list_append(items, ao);
-
-   EINA_LIST_FOREACH(sd->items, l, eo_item)
-     {
-        ELM_INDEX_ITEM_DATA_GET(eo_item, it);
-        if (it->level != 0) continue;
-        items = eina_list_append(items, it->base->access_obj);
-     }
-
-   int_ret = elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
-   eina_list_free(items);
-
-   // to hide index item, if there is nothing to focus on autohide disable mode
-   if ((!sd->autohide_disabled) && (!int_ret))
-     elm_layout_signal_emit((Evas_Object *)obj, "elm,state,inactive", "elm");
-
-   return int_ret;
-}
-
 static void
 _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 {

@@ -198,10 +198,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Elm.Interface.Atspi_Accessible.children { get; }
    }
