@@ -4486,6 +4486,7 @@ _elm_atspi_bridge_shutdown(void)
         efl_del(_instance);
         _init_count = 0;
      }
+   _elm_interface_atspi_shutdown();
 }
 
 static Key_Event_Info*
