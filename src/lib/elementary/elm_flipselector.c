@@ -881,18 +881,6 @@ _elm_flipselector_efl_ui_spin_interval_get(Eo *obj EINA_UNUSED, Elm_Flipselector
    return sd->first_interval;
 }
 
-EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_flipselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_flipselector_class_constructor(Efl_Class *klass)
 {
