@@ -883,7 +883,7 @@ elm_quicklaunch_shutdown(void)
    _elm_emotion_shutdown();
 
    ecore_file_shutdown();
-   eio_init();
+   eio_shutdown();
    ecore_shutdown();
    eet_shutdown();
 
