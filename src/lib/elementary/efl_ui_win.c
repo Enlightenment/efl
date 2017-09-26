@@ -4333,7 +4333,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
 
         if (sd->icon_name)
           set = elm_icon_standard_set(sd->icon, sd->icon_name);
-        if ((!sd->icon_name) || (!set))
+        if (((!sd->icon_name) || (!set)) && _elm_appname)
           {
              Efreet_Desktop *d;
              d = efreet_util_desktop_exec_find(_elm_appname);
