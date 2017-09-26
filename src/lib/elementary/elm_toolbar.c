@@ -2928,62 +2928,7 @@ _elm_toolbar_efl_canvas_group_group_member_add(Eo *obj, Elm_Toolbar_Data *sd, Ev
      evas_object_raise(sd->hit_rect);
 }
 
-static Eina_List *
-_access_item_find_append(const Evas_Object *obj,
-                         Evas_Object *bx,
-                         Eina_List *items)
-{
-   Elm_Toolbar_Item_Data *it;
-   Eina_List *list;
-
-   ELM_TOOLBAR_DATA_GET(obj, sd);
-
-   list = evas_object_box_children_get(bx);
-   if (!list) return items;
-
-   EINA_INLIST_FOREACH (sd->items, it)
-     {
-        if (it->separator) continue;
-        if (eina_list_data_find(list, it->base->view))
-          items = eina_list_append(items, it->base->access_obj);
-     }
-   eina_list_free(list);
-
-   return items;
-}
-
 static Eina_Bool _elm_toolbar_smart_focus_next_enable = EINA_FALSE;
-
-EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *_pd EINA_UNUSED)
-{
-   return _elm_toolbar_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-   Eina_List *list;
-
-   if (sd->more_item && sd->more_item->selected)
-     {
-        items = _access_item_find_append(obj, sd->bx_more, items);
-        items = _access_item_find_append(obj, sd->bx_more2, items);
-        items = eina_list_append(items, sd->more_item->base->access_obj);
-     }
-   else
-     {
-        items = _access_item_find_append(obj, sd->bx, items);
-        list = evas_object_box_children_get(sd->bx);
-        if (sd->more_item && eina_list_data_find(list, sd->more_item->base->view))
-          items = eina_list_append(items, sd->more_item->base->access_obj);
-        eina_list_free(list);
-     }
-
-   return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
-}
 
 static void
 _access_obj_process(Elm_Toolbar_Data * sd, Eina_Bool is_access)
@@ -3068,7 +3013,7 @@ elm_toolbar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    configured_state->logical = EINA_TRUE;
    return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);

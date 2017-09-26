@@ -320,9 +320,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Ui.Direction,
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.focus_next_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus_update;
       Efl.Ui.Translatable.translation_update;
