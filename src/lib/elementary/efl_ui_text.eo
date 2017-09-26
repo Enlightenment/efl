@@ -359,13 +359,11 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Canvas.Layout_Signal.signal_callback_del;
       Efl.Canvas.Layout_Signal.signal_emit;
       Elm.Widget.on_access_activate;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus_update;
       Elm.Widget.focus_region { get; }
       Elm.Widget.on_disabled_update;
       Elm.Widget.widget_sub_object_del;
-      Elm.Widget.focus_next_manager_is;
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
       Elm.Interface.Atspi_Accessible.state_set { get; }
