@@ -270,6 +270,7 @@ timeout_shutdown:
 
    free(evas_thread_queue_cache);
    evas_thread_queue_cache = NULL;
+   evas_thread_queue_cache_max = 0;
    eina_inarray_flush(&evas_thread_queue);
 
    eina_threads_shutdown();
