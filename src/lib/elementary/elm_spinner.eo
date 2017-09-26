@@ -1,4 +1,4 @@
-class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin,
+class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
                    Efl.Access.Value, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary spinner class]]
@@ -147,11 +147,7 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin,
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Efl.Ui.Spin.min_max { get; set; }
