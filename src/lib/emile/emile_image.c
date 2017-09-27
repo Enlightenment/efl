@@ -680,6 +680,7 @@ _emile_tgv_data(Emile_Image *image,
 
 on_error:
    if (image->compress) eina_binbuf_free(buffer);
+   _emile_image_file_source_unmap(image);
    return r;
 }
 
@@ -2325,6 +2326,7 @@ done:
 
    jpeg_destroy_decompress(&cinfo);
    _emile_jpeg_membuf_src_term(&cinfo);
+   _emile_image_file_source_unmap(image);
    return r;
 
 }
