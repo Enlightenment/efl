@@ -145,6 +145,22 @@ _win_del(void *data, const Efl_Event *ev EINA_UNUSED)
    free(td);
 }
 
+static void
+_button_pointer_down(void *data, const Efl_Event *ev)
+{
+   if (((intptr_t) data) != 0x1) abort();
+   printf("Button raw event: DOWN. Fake = %d\n", efl_input_fake_get(ev->info));
+   fflush(stdout);
+}
+
+static void
+_button_pointer_up(void *data, const Efl_Event *ev)
+{
+   if (((intptr_t) data) != 0x1) abort();
+   printf("Button raw event: UP.   Fake = %d\n", efl_input_fake_get(ev->info));
+   fflush(stdout);
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(rect_pointer_callbacks,
 { EFL_EVENT_POINTER_DOWN, _pointer_down },
 { EFL_EVENT_POINTER_MOVE, _pointer_move },
@@ -153,6 +169,10 @@ EFL_CALLBACKS_ARRAY_DEFINE(rect_pointer_callbacks,
 EFL_CALLBACKS_ARRAY_DEFINE(win_key_callbacks,
 { EFL_EVENT_KEY_DOWN, _key_down },
 { EFL_EVENT_KEY_UP, _key_up })
+
+EFL_CALLBACKS_ARRAY_DEFINE(button_pointer_callbacks,
+{ EFL_EVENT_POINTER_DOWN, _button_pointer_down },
+{ EFL_EVENT_POINTER_UP, _button_pointer_up })
 
 void
 test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -197,6 +217,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
 
    efl_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
+   efl_event_callback_array_add(td->button, button_pointer_callbacks(), (void*)(intptr_t)0x1);
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
    efl_event_callback_add(win, EFL_EVENT_DEL, _win_del, td);
    efl_event_callback_array_add(o, rect_pointer_callbacks(), td);
