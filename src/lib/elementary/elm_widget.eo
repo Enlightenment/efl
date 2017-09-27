@@ -551,159 +551,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             animate: bool; [[The enabled value for the highlight animation.]]
          }
       }
-
-      /* Old focus API. FIXME: Needs massive clean up! */
-      @property focus_order @beta {
-         [[Focus order property]]
-         get {
-            return: uint; [[FIXME]]
-         }
-      }
-      focus_next_object_set @beta {
-         [[Set the next object with specific focus direction.
-
-           @since 1.8]]
-         params {
-            @in next: Efl.Canvas.Object @nullable; [[Focus next object]]
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-         }
-      }
-      focus_next_object_get @const @beta {
-         [[Get the next object with specific focus direction.
-
-           @since 1.8]]
-         return: Efl.Canvas.Object; [[Focus next object]]
-         params {
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-         }
-      }
-      focus_next_item_set @beta {
-         [[Set the next object item with specific focus direction.
-
-           @since 1.16]]
-         params {
-            @in next_item: Elm.Widget.Item @nullable; [[Focus next object item]]
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-         }
-      }
-      focus_next_item_get @const @beta {
-         [[Get the next object item with specific focus direction.
-
-           @since 1.16]]
-         return: Elm.Widget.Item; [[Focus next object item]]
-         params {
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-         }
-      }
-      focus_custom_chain_prepend @beta {
-         [[Prepend object to custom focus chain.
-
-           Note: If @"relative_child" equal to $null or not in custom chain,
-           the object will be added in begin.
-
-           Note: On focus cycle, only will be evaluated children of this container.]]
-         params {
-            @in child: Efl.Canvas.Object; [[The child to be added in custom chain.]]
-            @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
-         }
-      }
-      focus_cycle @beta {
-         [[Give focus to next object with specific focus direction in
-           object tree.]]
-         params {
-            @in dir: Elm.Focus_Direction; [[Direction to move the focus.]]
-         }
-      }
-      focus_direction @pure_virtual @beta {
-         [['Virtual' function handling passing focus to sub-objects given a direction, in degrees.]]
-         params {
-            @in base: const(Efl.Canvas.Object); [[Base object]]
-            @in degree: double; [[Degree]]
-            @out direction: Efl.Canvas.Object; [[Direction]]
-            @out direction_item: Elm.Widget.Item; [[Direction item]]
-            @out weight: double; [[Weight]]
-         }
-         return: bool; [[$true on success, $false otherwise]]
-      }
-      focus_next_manager_is @beta {
-         [['Virtual' function which checks if handling of passing focus to sub-objects is supported by widget.]]
-         return: bool; [[$true on success, $false otherwise]]
-      }
-      focused_object_clear @beta {
-         [[Clear focused object]]
-      }
-      focus_direction_go @beta {
-         [[Go in focus direction]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in degree: double; [[Degree]]
-         }
-      }
-      focus_next_get @const @beta {
-         [[Get next focus item]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-            @out next: Efl.Canvas.Object; [[Next object]]
-            @out next_item: Elm.Widget.Item; [[Next item]]
-         }
-      }
-      focus_restore @beta {
-         [[Restore the focus state of the sub-tree.
-
-         This API will restore the focus state of the sub-tree to the latest
-         state. If a sub-tree is unfocused and wants to get back to the latest
-         focus state, this API will be helpful.]]
-      }
-      focus_custom_chain_unset @beta {
-         [[Unset a custom focus chain on a given Elementary widget.
-
-           Any focus chain previously set is removed entirely after this call.]]
-      }
-      focus_steal @beta {
-         [[Steal focus]]
-         params {
-            @in item: Elm.Widget.Item @nullable; [[Widget to steal focus from]]
-         }
-      }
-      focus_hide_handle @beta {
-         [[Handle hide focus]]
-      }
-      focus_next @pure_virtual @beta {
-         [['Virtual' function handling passing focus to sub-objects.]]
-         params {
-            @in dir: Elm.Focus_Direction; [[Focus direction]]
-            @out next: Efl.Canvas.Object; [[Next object]]
-            @out next_item: Elm.Widget.Item; [[Next item]]
-         }
-         return: bool; [[$true on success, $false otherwise]]
-      }
-      focus_direction_get @const @beta {
-         [[Get focus direction]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in base: const(Efl.Canvas.Object); [[Base]]
-            @in degree: double; [[Degree]]
-            @out direction: Efl.Canvas.Object; [[Direction]]
-            @out direction_item: Elm.Widget.Item; [[Direction item]]
-            @out weight: double; [[Weight]]
-         }
-      }
-      focus_disabled_handle @beta {
-         [[Handle disable widget focus]]
-      }
-      focus_custom_chain_append @beta {
-         [[Append object to custom focus chain.
-
-           Note: If @"relative_child" equal to $null or not in custom chain,
-           the object will be added in end.
-
-           Note: On focus cycle, only will be evaluated children of this container.]]
-         params {
-            @in child: Efl.Canvas.Object; [[The child to be added in custom chain.]]
-            @in relative_child: Efl.Canvas.Object @optional; [[The relative object to position the child.]]
-         }
-      }
       @property focus_move_policy @beta {
          [[The widget's focus move policy.]]
          values {
@@ -712,46 +559,19 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       }
       @property focus_move_policy_automatic @beta {
          [[Control the widget's focus_move_policy mode setting.
-
+         
            @since 1.18]]
          values {
             automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
          }
       }
-      focus_reconfigure @beta {
-         [[@since 1.18]]
-      }
-      @property focus_custom_chain @beta {
-         [[A custom chain of objects to pass focus.
 
-           Note: On focus cycle, only will be evaluated children of this container.]]
-         set {
-            [[This function overwrites any previous custom focus chain within
-              the list of objects. The previous list will be deleted and this list
-              will be managed by elementary. After it is set, don't modify it.]]
-            values {
-               objs: list<Efl.Canvas.Object>; [[Chain of objects to pass focus]]
-            }
-         }
-         get {
-            values {
-               objs: const(list<Efl.Canvas.Object>); [[Chain of objects]]
-            }
-         }
-      }
       @property focused_item @beta {
          get {
             [[Get the focused widget item.]]
             return: Elm.Widget.Item; [[Focused item]]
          }
       }
-      @property focused_object @beta {
-         [[Current focused object in object tree.]]
-         get {
-            return: Efl.Canvas.Object; [[Current focused or $null, if there is no focused object.]]
-         }
-      }
-
       /* Focus Manager API */
       focus_state_apply @protected {
          [[Register focus with the given configuration.
@@ -779,12 +599,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
             @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
          }
          return: Efl.Ui.Focus.Manager; [[Focus manager]]
-      }
-      focus_direction_manager_is @protected {
-         [[Virtual function which checks if this widget can handle passing
-           focus to sub-object, in a given direction.]]
-         return: bool; [[$true on success, $false otherwise]]
-         legacy: null;
       }
    }
    implements {
