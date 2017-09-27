@@ -41,16 +41,33 @@ EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
 
+typedef enum _Eo_Ref_Op {
+   EO_REF_OP_NONE,
+   EO_REF_OP_NEW,
+   EO_REF_OP_FREE,
+   EO_REF_OP_REF,
+   EO_REF_OP_UNREF,
+   EO_REF_OP_REUSE,
+} Eo_Ref_Op;
+
 static inline void _eo_log_obj_init(void);
 static inline void _eo_log_obj_shutdown(void);
-static inline void _eo_log_obj_new(const _Eo_Object *obj);
-static inline void _eo_log_obj_free(const _Eo_Object *obj);
+static inline void _eo_log_obj_ref_op(const _Eo_Object *obj, Eo_Ref_Op ref_op);
 #ifdef EO_DEBUG
 static int _eo_log_objs_dom = -1;
-static Eina_Bool _eo_log_objs_enabled = EINA_FALSE;
+static int _eo_log_objs_backtrace = 0;
+static Eo_Ref_Op _eo_log_objs_level = EO_REF_OP_NONE;
 static Eina_Inarray _eo_log_objs_debug;
 static Eina_Inarray _eo_log_objs_no_debug;
 static double _eo_log_time_start;
+static const char *_eo_ref_op_str[] = {
+   "ERROR",
+   "New  ",
+   "Free ",
+   "Ref  ",
+   "Unref",
+   "Reuse",
+};
 #ifdef HAVE_BACKTRACE
 static Eina_Array _eo_log_objs;
 static Eina_Spinlock _eo_log_objs_lock;
@@ -58,8 +75,7 @@ static Eina_Spinlock _eo_log_objs_lock;
 #else
 static inline void _eo_log_obj_init(void) { }
 static inline void _eo_log_obj_shutdown(void) { }
-static inline void _eo_log_obj_new(const _Eo_Object *obj EINA_UNUSED) { }
-static inline void _eo_log_obj_free(const _Eo_Object *obj EINA_UNUSED) { }
+static inline void _eo_log_obj_ref_op(const _Eo_Object *obj EINA_UNUSED, Eo_Ref_Op ref_op EINA_UNUSED) { }
 void _eo_log_obj_report(const Eo_Id id EINA_UNUSED, int log_level EINA_UNUSED, const char *func_name EINA_UNUSED, const char *file EINA_UNUSED, int line EINA_UNUSED) { }
 #endif
 
@@ -893,7 +909,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    obj->header.id = _eo_id_allocate(obj, parent_id);
    Eo *eo_id = _eo_obj_id_get(obj);
 
-   _eo_log_obj_new(obj);
+   _eo_log_obj_ref_op(obj, EO_REF_OP_NEW);
 
    _eo_condtor_reset(obj);
 
@@ -1009,11 +1025,16 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 }
 
 EAPI void
-efl_reuse(const Eo *_obj)
+efl_reuse(const Eo *eo_id)
 {
-   Eo *obj = (Eo *) _obj;
+   Eo *obj = (Eo *) eo_id;
    efl_object_override(obj, NULL);
    _efl_object_parent_sink_set(obj, EINA_FALSE);
+#ifdef EO_DEBUG
+   EO_OBJ_POINTER_RETURN(eo_id, _obj);
+   _eo_log_obj_ref_op(_obj, EO_REF_OP_REUSE);
+   EO_OBJ_DONE(eo_id);
+#endif
 }
 
 void
@@ -1021,7 +1042,7 @@ _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 {
    _Efl_Class *klass = (_Efl_Class*) obj->klass;
 
-   _eo_log_obj_free(obj);
+   _eo_log_obj_ref_op(obj, EO_REF_OP_FREE);
 
 #ifdef EO_DEBUG
    if (manual_free)
@@ -1825,6 +1846,9 @@ efl_ref(const Eo *obj_id)
    ++(obj->user_refcount);
    if (EINA_UNLIKELY(obj->user_refcount == 1))
      _efl_ref(obj);
+#ifdef EO_DEBUG
+   _eo_log_obj_ref_op(obj, EO_REF_OP_REF);
+#endif
    EO_OBJ_DONE(obj_id);
    return (Eo *)obj_id;
 }
@@ -1835,6 +1859,9 @@ efl_unref(const Eo *obj_id)
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
    --(obj->user_refcount);
+#ifdef EO_DEBUG
+   _eo_log_obj_ref_op(obj, EO_REF_OP_UNREF);
+#endif
    if (EINA_UNLIKELY(obj->user_refcount <= 0))
      {
         if (obj->user_refcount < 0)
@@ -2626,18 +2653,21 @@ typedef struct _Eo_Log_Obj_Entry {
    const _Eo_Object *obj;
    const _Efl_Class *klass;
    double timestamp;
-   Eina_Bool is_free;
-   uint8_t bt_size;
+   Eo_Ref_Op ref_op;
+   unsigned bt_size;
+   unsigned bt_hits;
+   uintptr_t bt_hash;
    void *bt[];
 } Eo_Log_Obj_Entry;
 
 static void
-_eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Obj_Entry **deleted)
+_eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, int *added_idx, const Eo_Log_Obj_Entry **deleted)
 {
    const Eo_Log_Obj_Entry *entry;
    Eina_Array_Iterator it;
    unsigned int idx;
 
+   *added_idx = -1;
    *added = NULL;
    *deleted = NULL;
 
@@ -2646,10 +2676,11 @@ _eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Ob
      {
         if (EINA_UNLIKELY(id == entry->id))
           {
-             if (entry->is_free)
+             if (entry->ref_op == EO_REF_OP_FREE)
                *deleted = entry;
-             else
+             else if (entry->ref_op == EO_REF_OP_NEW)
                {
+                  *added_idx = idx;
                   *added = entry;
                   *deleted = NULL; /* forget previous add, if any */
                }
@@ -2661,18 +2692,20 @@ _eo_log_obj_find(const Eo_Id id, const Eo_Log_Obj_Entry **added, const Eo_Log_Ob
 static void
 _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char *func_name, const char *file, int line, double now)
 {
-   uint8_t i;
+   unsigned i;
 
    eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
-                  "obj_id=%p %s obj=%p, class=%p (%s) [%0.4fs, %0.4f ago]:",
+                  "%s obj_id=%p obj=%p, class=%p (%s) [%0.4fs, %0.4fs ago] [%d hits]:",
+                  _eo_ref_op_str[entry->ref_op],
                   (void *)entry->id,
-                  entry->is_free ? "deleted" : "created",
                   entry->obj,
                   entry->klass,
                   entry->klass->desc->name,
-                  entry->timestamp - _eo_log_time_start, now - entry->timestamp);
+                  entry->timestamp - _eo_log_time_start, now - entry->timestamp,
+                  entry->bt_hits);
 
-   for (i = 0; i < entry->bt_size; i++)
+   // Skip EAPI and _eo_log_obj_ref_op()
+   for (i = 2; i < entry->bt_size; i++)
      {
 #ifdef HAVE_DLADDR
         Dl_info info;
@@ -2720,16 +2753,72 @@ _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char 
 }
 #endif
 
+#ifdef HAVE_BACKTRACE
+static uintptr_t
+_eo_log_obj_backtrace_hash(Eo_Log_Obj_Entry *entry)
+{
+   if (!entry->bt_hash)
+     {
+        entry->bt_hash = (uintptr_t) 4294967291;
+        for (unsigned k = 0; k < entry->bt_size; k++)
+          entry->bt_hash ^= ((uintptr_t) (entry->bt[k]));
+     }
+
+   return entry->bt_hash;
+}
+
+static Eina_Bool
+_eo_log_obj_entry_is_new_backtrace(const Eina_List *entries, Eo_Log_Obj_Entry *entry)
+{
+   Eina_Bool ret = EINA_TRUE;
+   Eo_Log_Obj_Entry *other;
+   const Eina_List *li;
+   uintptr_t hash;
+
+   hash = _eo_log_obj_backtrace_hash(entry);
+   EINA_LIST_FOREACH(entries, li, other)
+     if (_eo_log_obj_backtrace_hash(other) == hash)
+       {
+          other->bt_hits++;
+          ret = EINA_FALSE;
+       }
+
+   return ret;
+}
+
+static Eina_List *
+_eo_log_obj_find_all(const Eo_Id id, int start_idx)
+{
+   Eo_Log_Obj_Entry *entry;
+   Eina_List *entries = NULL;
+   unsigned int idx;
+
+   eina_spinlock_take(&_eo_log_objs_lock);
+   for (idx = start_idx + 1; idx < eina_array_count(&_eo_log_objs); idx++)
+     {
+        entry = eina_array_data_get(&_eo_log_objs, idx);
+        if (entry->id != id) continue;
+        if (entry->ref_op > _eo_log_objs_level) continue;
+        if (entry->ref_op == EO_REF_OP_FREE) break;
+        if (_eo_log_obj_entry_is_new_backtrace(entries, entry))
+          entries = eina_list_append(entries, entry);
+     }
+   eina_spinlock_release(&_eo_log_objs_lock);
+   return entries;
+}
+#endif
+
 inline void
 _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const char *file, int line)
 {
 #ifdef HAVE_BACKTRACE
    const Eo_Log_Obj_Entry *added, *deleted;
+   int added_idx = -1;
    double now;
 
-   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+   if (EINA_LIKELY(!_eo_log_objs_level)) return;
 
-   _eo_log_obj_find(id, &added, &deleted);
+   _eo_log_obj_find(id, &added, &added_idx, &deleted);
 
    if ((!added) && (!deleted))
      {
@@ -2762,7 +2851,18 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
    now = _eo_log_time_now();
 
    if (added)
-     _eo_log_obj_entry_show(added, log_level, func_name, file, line, now);
+     {
+        _eo_log_obj_entry_show(added, log_level, func_name, file, line, now);
+
+        if (_eo_log_objs_level > EO_REF_OP_FREE)
+          {
+             Eina_List *entries = _eo_log_obj_find_all(id, added_idx);
+             const Eo_Log_Obj_Entry *entry;
+
+             EINA_LIST_FREE(entries, entry)
+               _eo_log_obj_entry_show(entry, log_level, func_name, file, line, now);
+          }
+     }
 
    if (deleted)
      {
@@ -2783,23 +2883,24 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
 
 #ifdef HAVE_BACKTRACE
 static Eo_Log_Obj_Entry *
-_eo_log_obj_entry_new_and_add(const _Eo_Object *obj, Eina_Bool is_free, uint8_t size, void *const *bt)
+_eo_log_obj_entry_ref_op(const _Eo_Object *obj, Eo_Ref_Op refop, unsigned size, void *const *bt)
 {
    Eo_Log_Obj_Entry *entry;
    Eina_Bool ret;
 
-   entry = malloc(sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
+   entry = calloc(1, sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
    if (EINA_UNLIKELY(!entry)) return NULL;
 
    entry->id = (Eo_Id)_eo_obj_id_get(obj);
    entry->timestamp = _eo_log_time_now();
    entry->obj = obj;
    entry->klass = obj->klass;
-   entry->is_free = is_free;
+   entry->ref_op = refop;
    entry->bt_size = size;
+   entry->bt_hash = 0;
+   entry->bt_hits = 1;
    memcpy(entry->bt, bt, size * sizeof(void *));
 
-   if (EINA_UNLIKELY(!entry)) return NULL;
    eina_spinlock_take(&_eo_log_objs_lock);
    ret = eina_array_push(&_eo_log_objs, entry);
    eina_spinlock_release(&_eo_log_objs_lock);
@@ -2857,49 +2958,30 @@ _eo_log_obj_desired(const _Eo_Object *obj)
    return EINA_FALSE;
 }
 
-static inline void
-_eo_log_obj_new(const _Eo_Object *obj)
+static void
+_eo_log_obj_ref_op(const _Eo_Object *obj, Eo_Ref_Op ref_op)
 {
-#ifdef HAVE_BACKTRACE
-   void *bt[64];
-   int size;
-#endif
-
-   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+   if (EINA_LIKELY(_eo_log_objs_level < ref_op)) return;
    if (EINA_LIKELY(!_eo_log_obj_desired(obj))) return;
 
 #ifdef HAVE_BACKTRACE
-   size = backtrace(bt, sizeof(bt)/sizeof(bt[0]));
-   if (EINA_UNLIKELY(size < 1)) return;
+   if (_eo_log_objs_backtrace > 0)
+     {
+        int size;
+        void **bt;
 
-   _eo_log_obj_entry_new_and_add(obj, EINA_FALSE, size, bt);
+        bt = alloca(sizeof(void *) * _eo_log_objs_backtrace);
+        size = backtrace(bt, _eo_log_objs_backtrace);
+        if (EINA_UNLIKELY(size < 1)) return;
+
+        _eo_log_obj_entry_ref_op(obj, ref_op, size, bt);
+     }
 #endif
+
    EINA_LOG_DOM_DBG(_eo_log_objs_dom,
-                    "new obj=%p obj_id=%p class=%p (%s) [%0.4f]",
-                    obj, _eo_obj_id_get(obj), obj->klass, obj->klass->desc->name,
-                    _eo_log_time_now() - _eo_log_time_start);
-}
-
-static inline void
-_eo_log_obj_free(const _Eo_Object *obj)
-{
-#ifdef HAVE_BACKTRACE
-   void *bt[64];
-   int size;
-#endif
-
-   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
-   if (EINA_LIKELY(!_eo_log_obj_desired(obj))) return;
-
-#ifdef HAVE_BACKTRACE
-   size = backtrace(bt, sizeof(bt)/sizeof(bt[0]));
-   if (EINA_UNLIKELY(size < 1)) return;
-
-   _eo_log_obj_entry_new_and_add(obj, EINA_TRUE, size, bt);
-#endif
-   EINA_LOG_DOM_DBG(_eo_log_objs_dom,
-                    "free obj=%p obj_id=%p class=%p (%s) [%0.4f]",
-                    obj, _eo_obj_id_get(obj), obj->klass, obj->klass->desc->name,
+                    "%s obj_id=%p class=%p (%s) [%0.4f]",
+                    _eo_ref_op_str[ref_op], _eo_obj_id_get(obj),
+                    obj->klass, obj->klass->desc->name,
                     _eo_log_time_now() - _eo_log_time_start);
 }
 
@@ -2918,10 +3000,38 @@ _eo_log_obj_init(void)
    eina_inarray_step_set(&_eo_log_objs_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
    eina_inarray_step_set(&_eo_log_objs_no_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
 
+   s = getenv("EO_LIFECYCLE_BACKTRACE");
+   if (s && (atoi(s) > 0))
+     {
+        _eo_log_objs_backtrace = atoi(s) + 2;
+        if (_eo_log_objs_backtrace > 1024)
+          _eo_log_objs_backtrace = 1024;
+     }
+   else _eo_log_objs_backtrace = 64;
+
    s = getenv("EO_LIFECYCLE_DEBUG");
    if ((s) && (s[0] != '\0'))
      {
-        _eo_log_objs_enabled = EINA_TRUE;
+        int lvl = 1;
+
+        _eo_log_objs_level = EO_REF_OP_FREE;
+        if (sscanf(s, "%d:%*s", &lvl) == 1)
+          {
+             if (lvl >= 3)
+               {
+                  _eo_log_objs_level = EO_REF_OP_REUSE;
+                  EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                                   "will log new, free, ref, unref and reuse");
+               }
+             else if (lvl == 2)
+               {
+                  _eo_log_objs_level = EO_REF_OP_UNREF;
+                  EINA_LOG_DOM_DBG(_eo_log_objs_dom,
+                                   "will log new, free, ref and unref");
+               }
+             s = strchr(s, ':') + 1;
+          }
+
         if ((strcmp(s, "*") == 0) || (strcmp(s, "1") == 0))
           {
              EINA_LOG_DOM_DBG(_eo_log_objs_dom,
@@ -2962,7 +3072,7 @@ _eo_log_obj_init(void)
 #endif
      }
 
-   if (EINA_LIKELY(!_eo_log_objs_enabled)) return;
+   if (EINA_LIKELY(!_eo_log_objs_level)) return;
 
    DBG("logging object allocation and free, use EINA_LOG_LEVELS=eo_lifecycle:4");
 
@@ -3027,11 +3137,11 @@ _eo_log_obj_shutdown(void)
           {
              void * const *cur;
              entry = *itr;
-             if (entry->is_free) continue;
+             if (entry->ref_op == EO_REF_OP_FREE) continue;
              for (cur = itr + 1; cur < itr_end; cur++)
                {
                   const Eo_Log_Obj_Entry *cur_entry = *cur;
-                  if (EINA_UNLIKELY((cur_entry->id == entry->id) && (cur_entry->is_free)))
+                  if (EINA_UNLIKELY((cur_entry->id == entry->id) && (cur_entry->ref_op == EO_REF_OP_FREE)))
                     break;
                }
              if (EINA_UNLIKELY(cur == itr_end))
