@@ -51,6 +51,11 @@ struct _Job_Closure
 };
 
 /* Helper functions */
+static void
+_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   eio_file_cancel(data);
+}
 
 static void
 _no_future(void *data, const Efl_Event *ev EINA_UNUSED)
@@ -343,50 +348,80 @@ _efl_io_manager_ls(Eo *obj,
 }
 
 /* Stat function */
+EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
+                              NULL,
+                              sizeof (Eina_Stat),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, dev),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ino),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, mode),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, nlink),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, uid),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, gid),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, rdev),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, size),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blksize),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blocks),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atimensec),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtimensec),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctimensec));
+
 static void
 _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *stat)
 {
-   Efl_Promise *p = data;
-   Eina_Stat *c;
+   Eina_Value_Struct value = { _eina_stat_desc(), NULL };
+   Eina_Promise *p = data;
+   Eina_Value r = EINA_VALUE_EMPTY;
+   Eina_Stat *cpy = NULL;
 
-   c = calloc(1, sizeof (Eina_Stat));
-   if (!c)
-     {
-        efl_promise_failed_set(p, ENOMEM);
-        goto end;
-     }
+   cpy = calloc(1, sizeof (Eina_Stat));
+   if (!cpy) goto on_error;
 
-   memcpy(c, stat, sizeof (Eina_Stat));
-   efl_promise_value_set(p, c, free);
+   memcpy(cpy, stat, sizeof (Eina_Stat));
+   value.memory = cpy;
 
- end:
-   efl_del(p);
+   if (!eina_value_setup(&r, EINA_VALUE_TYPE_STRUCT))
+     goto on_error;
+   if (!eina_value_pset(&r, &value))
+     goto on_error;
+
+   eina_promise_resolve(p, r);
+
+   return ;
+
+ on_error:
+   free(cpy);
+   eina_value_flush(&r);
+   eina_promise_reject(p, eina_error_get());
 }
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_stat(Eo *obj,
                      Efl_Io_Manager_Data *pd EINA_UNUSED,
                      const char *path)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = eio_file_direct_stat(path,
                             _file_stat_done_cb,
                             _file_error_cb,
                             p);
    if (!h) goto end;
+   eina_promise_data_set(p, h);
 
-   efl_event_callback_array_add(p, promise_handling(), h);
-   return efl_promise_future_get(p);
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 /* eXtended attribute manipulation */
@@ -451,12 +486,6 @@ _future_file_error_cb(void *data,
    Eina_Promise *p = data;
 
    eina_promise_reject(p, error);
-}
-
-static void
-_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
-{
-   eio_file_cancel(data);
 }
 
 static Eina_Future *

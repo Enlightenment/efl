@@ -52,7 +52,7 @@ class Efl.Io.Manager (Efl.Loop_User)
       params {
         @in path: string; [[Path we want to get stat information for]]
       }
-      return: future<Eina.Stat>; [[Stat information]]
+      return: ptr(Eina.Future); [[Stat information]]
     }
 
     // FIXME: Add helper for Eina.Value to Xattr
