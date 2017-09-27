@@ -152,7 +152,6 @@ class Elm.Dayselector (Efl.Ui.Layout)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_direction_manager_is;
       Efl.Ui.Translatable.translation_update;
       Efl.Part.part;
    }
