@@ -1872,7 +1872,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
    if (_evas_render_has_map(obj) && !_evas_render_can_map(obj))
      {
         int sw, sh;
-        Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
+        Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE, pchanged = EINA_FALSE;
 
         clean_them = EINA_TRUE;
 
@@ -1881,7 +1881,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
         RD(level, "  surf size: %ix%i\n", sw, sh);
         if ((sw <= 0) || (sh <= 0)) goto end;
 
-        changed = evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
+        pchanged = evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
 
         if (obj->map->surface)
           {
@@ -1919,7 +1919,7 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
         /* mark the old map as invalid, so later we don't reuse it as a
          * cache. */
-        if (changed && obj->map->prev.map)
+        if (pchanged && obj->map->prev.map)
           {
              EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
                map_write->prev.valid_map = EINA_FALSE;
