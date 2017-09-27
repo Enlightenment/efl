@@ -663,19 +663,15 @@ EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
 EAPI void             elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 EAPI void            *elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
-EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight);
-EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item);
 EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_newest_focus_order_get(const Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
-double                _elm_widget_focus_direction_weight_get(const Evas_Object *obj1, const Evas_Object *obj2, double degree);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
 /**
