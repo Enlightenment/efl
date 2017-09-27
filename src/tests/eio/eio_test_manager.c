@@ -75,19 +75,37 @@ _open_done_cb(void *data,
    return file;
 }
 
-static void
-_stat_done_cb(void *data, const Efl_Event *ev)
+static Eina_Value
+_stat_done_cb(void *data,
+              const Eina_Value st,
+              const Eina_Future *dead EINA_UNUSED)
 {
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_Stat const* stat = success->value;
    Eina_Bool *is_dir = data;
    unsigned int rights;
 
-   fail_if(eio_file_is_dir(stat) != *is_dir);
-   fail_if(eio_file_is_lnk(stat));
-   rights = stat->mode & (S_IRWXU | S_IRWXG | S_IRWXO);
-   fail_if(rights != default_rights);
+   if (st.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+        eina_value_get(&st, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+
+   if (st.type == EINA_VALUE_TYPE_STRUCT)
+     {
+        unsigned int mode = 0;
+
+        fail_if(!eina_value_struct_get(&st, "mode", &mode));
+        fail_if(S_ISDIR(mode) != *is_dir);
+        fail_if(S_ISLNK(mode));
+
+        rights = mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+        fail_if(rights != default_rights);
+     }
+
    ecore_main_loop_quit();
+
+   return st;
 }
 
 static void
@@ -128,7 +146,7 @@ START_TEST(efl_io_manager_test_stat)
    Eina_Tmpstr *nested_dirname;
    Eina_Tmpstr *nested_filename;
    Efl_Io_Manager *job;
-   Efl_Future *f;
+   Eina_Future *f;
    Eina_Bool is_dir = EINA_TRUE;
    int ret;
 
@@ -150,12 +168,12 @@ START_TEST(efl_io_manager_test_stat)
 
    // Start testing
    f = efl_io_manager_stat(job, nested_dirname);
-   efl_future_then(f, &_stat_done_cb, &_error_cb, NULL, &is_dir);
+   eina_future_then(f, _stat_done_cb, &is_dir);
    ecore_main_loop_begin();
 
    is_dir = EINA_FALSE;
    f = efl_io_manager_stat(job, nested_filename);
-   efl_future_then(f, &_stat_done_cb, &_error_cb, NULL, &is_dir);
+   eina_future_then(f, _stat_done_cb, &is_dir);
    ecore_main_loop_begin();
 
    // Cleanup
