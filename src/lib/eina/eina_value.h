@@ -3066,6 +3066,28 @@ struct _Eina_Value_Struct
    void *memory; /**< The managed structure memory */
 };
 
+#define EINA_VALUE_STRUCT_DESC_DEFINE(Name, Ops, Size, ...)             \
+  static Eina_Value_Struct_Desc *                                       \
+  Name(void)                                                            \
+  {                                                                     \
+     Eina_Value_Struct_Member tmp[] = { __VA_ARGS__ };                  \
+     static Eina_Value_Struct_Member members[EINA_C_ARRAY_LENGTH(tmp) + 1] = { { "", NULL, 0 } }; \
+     static Eina_Value_Struct_Desc r = {                                \
+       EINA_VALUE_STRUCT_DESC_VERSION,                                  \
+       NULL,                                                             \
+       members,                                                         \
+       EINA_C_ARRAY_LENGTH(tmp),                                        \
+       Size                                                             \
+     };                                                                 \
+                                                                        \
+     if (members[0].name)                                               \
+       {                                                                \
+          r.ops = Ops;                                                  \
+          memcpy(members, tmp, sizeof(tmp));                            \
+       }                                                                \
+     return &r;                                                         \
+  }
+
 /**
  * @brief Creates generic value storage of type struct.
  * @param desc How to manage this struct members.
