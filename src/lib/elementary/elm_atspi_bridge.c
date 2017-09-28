@@ -4135,6 +4135,12 @@ _text_text_inserted_send(void *data, const Efl_Event *event)
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return;
 
+   if (!info->content)
+     {
+        WRN("Try to send signal with NULL value");
+        return;
+     }
+
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_CHANGED], "insert", info->pos, info->len, "s", info->content);
 }
@@ -4148,6 +4154,12 @@ _text_text_removed_send(void *data, const Efl_Event *event)
 
    if (!STATE_TYPE_GET(pd->object_broadcast_mask, ATSPI_OBJECT_EVENT_TEXT_CHANGED))
      return;
+
+   if (!info->content)
+     {
+        WRN("Try to send signal with NULL value");
+        return;
+     }
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_CHANGED], "delete", info->pos, info->len, "s", info->content);
