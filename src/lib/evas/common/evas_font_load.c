@@ -487,7 +487,12 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
                {
                   if (FT_HAS_COLOR(fi->src->ft.face) &&
                       fi->bitmap_scalable & EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR)
-                    fi->scale_factor = (float)fi->size * 64.0 / (float)fi->real_size;
+                    {
+                       if (fi->real_size > 0)
+                         fi->scale_factor = (float)fi->size * 64.0 / (float)fi->real_size;
+                       else
+                         fi->scale_factor = (float)64.0;
+                    }
                }
           }
         else
