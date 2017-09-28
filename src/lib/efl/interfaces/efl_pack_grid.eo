@@ -6,9 +6,14 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
    eo_prefix: efl_pack;
    methods {
       pack_grid {
-      	 [[Pack object on the grid]]
+         [[Pack object at a given location in the grid.
+
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+           container without deleting it.
+         ]]
          params {
-            subobj: Efl.Gfx @owned; [[Object]]
+            subobj: Efl.Gfx; [[A child object to pack in this grid.]]
             col: int; [[Column number]]
             row: int; [[Row number]]
             colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]

@@ -7,9 +7,13 @@ interface Efl.Pack.Linear (Efl.Pack)
          [[Prepend an object at the beginning of this container.
 
            This is the same as @.pack_at($subobj, 0).
+
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+           container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx @owned; [[Item to pack.]]
+            @in subobj: Efl.Gfx; [[Item to pack.]]
          }
          return: bool; [[$false if $subobj could not be packed]]
       }
@@ -17,41 +21,59 @@ interface Efl.Pack.Linear (Efl.Pack)
          [[Append object at the end of this container.
 
            This is the same as @.pack_at($subobj, -1).
+
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+           container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx @owned; [[Item to pack.]]
+            @in subobj: Efl.Gfx; [[Item to pack at the end.]]
          }
          return: bool; [[$false if $subobj could not be packed]]
       }
       pack_before {
-         [[Prepend item before other sub object.]]
+         [[Prepend item before other sub object.
+
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+           container without deleting it.
+         ]]
          params {
-            @in subobj: Efl.Gfx @owned; [[Item to pack.]]
+            @in subobj: Efl.Gfx; [[Item to pack before $existing.]]
             @in existing: const(Efl.Gfx); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
-                         could not be packed]]
+                         could not be packed.]]
       }
       pack_after {
-         [[Append item after other sub object.]]
+         [[Append item after other sub object.
+
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+           container without deleting it.
+         ]]
          params {
-            @in subobj: Efl.Gfx @owned; [[Item to pack.]]
+            @in subobj: Efl.Gfx; [[Item to pack after $existing.]]
             @in existing: const(Efl.Gfx); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
-                         could not be packed]]
+                         could not be packed.]]
       }
       pack_at {
           [[Inserts $subobj at the specified $index.
 
             Valid range: -$count to +$count. -1 refers to the last element.
             Out of range indices will trigger an append.
+
+            When this container is deleted, it will request deletion on the
+            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
+            container without deleting it.
           ]]
           params {
-             @in subobj: Efl.Gfx @owned; [[Item to pack.]]
+             @in subobj: Efl.Gfx; [[Item to pack at given index.]]
              @in index:  int; [[A position.]]
           }
-          return: bool; [[$false if $subobj could not be packed]]
+          return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_content_get {
          [[Content at a given index in this container.
