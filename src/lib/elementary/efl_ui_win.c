@@ -8335,21 +8335,21 @@ EAPI void
 elm_win_available_profiles_set(Elm_Win *obj, const char **profiles, unsigned int count)
 {
    if (!efl_isa(obj, MY_CLASS)) return;
-   if (count && profiles)
+   if ((count > 0) && (profiles))
      {
         Eina_Array *ar;
         unsigned int i;
 
-        ar = eina_array_new(count ?: 1);
-        for (i = 0; i < count; i++)
-          eina_array_push(ar, profiles[i]);
-        efl_ui_win_wm_available_profiles_set(obj, ar);
-        eina_array_free(ar);
+        ar = eina_array_new(count);
+        if (ar)
+          {
+             for (i = 0; i < count; i++)
+               eina_array_push(ar, profiles[i]);
+             efl_ui_win_wm_available_profiles_set(obj, ar);
+             eina_array_free(ar);
+          }
      }
-   else
-     {
-        efl_ui_win_wm_available_profiles_set(obj, NULL);
-     }
+   else efl_ui_win_wm_available_profiles_set(obj, NULL);
 }
 
 // deprecated
