@@ -253,22 +253,21 @@ _ecore_wl2_dnd_enter(Ecore_Wl2_Input *input, struct wl_data_offer *offer, struct
      {
         input->drag.offer = wl_data_offer_get_user_data(offer);
 
-        input->drag.offer->serial = serial;
-        input->drag.offer->window_id = window->id;
-
-        if (input->display->wl.data_device_manager_version >=
-            WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION)
+        if (input->drag.offer)
           {
-             if (input->drag.offer)
+             input->drag.offer->serial = serial;
+             input->drag.offer->window_id = window->id;
+
+             if (input->display->wl.data_device_manager_version >=
+                 WL_DATA_OFFER_SET_ACTIONS_SINCE_VERSION)
                ecore_wl2_offer_actions_set(input->drag.offer,
-                  ECORE_WL2_DRAG_ACTION_MOVE | ECORE_WL2_DRAG_ACTION_COPY,
-                  ECORE_WL2_DRAG_ACTION_MOVE);
+                                           ECORE_WL2_DRAG_ACTION_MOVE |
+                                           ECORE_WL2_DRAG_ACTION_COPY,
+                                           ECORE_WL2_DRAG_ACTION_MOVE);
           }
      }
-   else
-     {
-        input->drag.offer = NULL;
-     }
+   else input->drag.offer = NULL;
+
    input->drag.enter_serial = serial;
    input->drag.window_id = window->id;
 
