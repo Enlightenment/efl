@@ -1,5 +1,5 @@
 class Efl.Canvas.Layout.Part_Text (Efl.Canvas.Layout.Part, Efl.Text,
-   Efl.Text.Cursor)
+Efl.Text.Markup, Efl.Text.Cursor)
 {
    [[Represents a TEXT part of a layout
 
@@ -9,6 +9,7 @@ class Efl.Canvas.Layout.Part_Text (Efl.Canvas.Layout.Part, Efl.Text,
    data: null;
    implements {
       Efl.Text.text { set; get; }
+      Efl.Text.Markup.markup { get; set; }
       Efl.Text.Cursor.cursor { get; }
       Efl.Text.Cursor.cursor_paragraph_first;
       Efl.Text.Cursor.cursor_paragraph_last;
@@ -22,6 +23,6 @@ class Efl.Canvas.Layout.Part_Text (Efl.Canvas.Layout.Part, Efl.Text,
       Efl.Text.Cursor.cursor_copy;
       Efl.Text.Cursor.cursor_content { get; }
       Efl.Text.Cursor.cursor_geometry { get; }
-      Efl.Text.Cursor.cursor_text_insert;
+      Efl.Text.Markup.cursor_markup_insert;
    }
 }
