@@ -81,7 +81,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
            See also @.group_member_is.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object @owned @nonull; [[The member object.]]
+            @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
          }
          legacy: null;
       }

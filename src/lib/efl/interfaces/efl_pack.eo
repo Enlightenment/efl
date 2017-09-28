@@ -19,7 +19,7 @@ interface Efl.Pack (Efl.Container)
       unpack {
          [[Removes an existing item from the container, without deleting it.]]
          params {
-            subobj: Efl.Gfx @owned; [[Unpacked object]]
+            subobj: Efl.Gfx; [[The unpacked object.]]
          }
          return: bool; [[$false if $subobj wasn't a child or can't be removed]]
       }
@@ -30,11 +30,12 @@ interface Efl.Pack (Efl.Container)
            spot, replacing any already existing element or append to the end
            of the container if there is no default part.
 
-           The container takes ownership of this object. This means if packing
-           failed, the object will be unrefed.
+           When this container is deleted, it will request deletion on the
+           given $subobj. Use @.unpack to remove $subobj from this container
+           without deleting it.
          ]]
          params {
-            subobj: Efl.Gfx @owned; [[Packed object]]
+            subobj: Efl.Gfx; [[An object to pack.]]
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }

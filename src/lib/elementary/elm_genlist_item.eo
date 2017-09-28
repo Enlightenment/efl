@@ -334,7 +334,7 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                   elsewhere if the user wants to.
                 ]]
                 params {
-                     @out l: list<Efl.Canvas.Object @owned> @owned; [[The contents list to return.]]
+                     @out l: list<Efl.Canvas.Object> @owned; [[The contents list to return.]]
                 }
            }
            update {
