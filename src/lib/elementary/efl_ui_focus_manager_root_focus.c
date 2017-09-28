@@ -27,12 +27,12 @@ _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   if (!pd->none_logicals && pd->rect_registered)
+   if (pd->none_logicals && pd->rect_registered)
      {
          efl_ui_focus_manager_calc_unregister(obj, pd->rect);
          pd->rect_registered = EINA_FALSE;
      }
-   else if (pd->none_logicals && !pd->rect_registered)
+   else if (!pd->none_logicals && !pd->rect_registered)
      {
          efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
          pd->rect_registered = EINA_TRUE;
