@@ -1477,13 +1477,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED,
 
    //we need to return the most lower right element
 
-   while(T(child).children && !child->redirect_manager)
+   while ((child) && (T(child).children) && (!child->redirect_manager))
      child = eina_list_last_data_get(T(child).children);
-   while (child->type != NODE_TYPE_NORMAL && !child->redirect_manager)
+   while ((child) && (child->type != NODE_TYPE_NORMAL) && (!child->redirect_manager))
      child = _prev(child);
 
-   ret.is_regular_end = child->type == NODE_TYPE_NORMAL;
-   ret.element = child ? child->focusable : NULL;
+   if (child)
+     {
+        ret.is_regular_end = child->type == NODE_TYPE_NORMAL;
+        ret.element = child ? child->focusable : NULL;
+     }
    return ret;
 }
 
