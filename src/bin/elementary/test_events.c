@@ -143,6 +143,11 @@ static void
 _win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
+   efl_del(td->evdown);
+   efl_del(td->evup);
+   efl_del(td->evmove);
+   efl_del(td->evkeydown);
+   efl_del(td->evkeyup);
    free(td);
 }
 
