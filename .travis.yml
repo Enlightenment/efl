@@ -1,0 +1,29 @@
+language: c
+
+sudo: required
+dist: trusty
+
+os: linux
+
+services:
+  - docker
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-deps.sh ; fi
+
+matrix:
+  include:
+    - env: DISTRO=Ubuntu1704
+    - env: DISTRO=Fedora26
+    - env: DISTRO=Debian91
+    - os: osx
+      osx_image: xcode7.3
+    - os: osx
+      osx_image: xcode8.3
+
+# Xcode 7.3.1, OS X 10.11
+# Xcode 8.3.3, OS X 10.12
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then docker build -f  .ci/Dockerfile-$DISTRO . ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-build.sh ; fi
