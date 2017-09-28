@@ -983,7 +983,8 @@ efl_reuse(const Eo *_obj)
 {
    Eo *obj = (Eo *) _obj;
    efl_object_override(obj, NULL);
-   _efl_object_parent_sink_set(obj, EINA_FALSE);
+   if (!efl_parent_get(obj))
+     _efl_object_parent_sink_set(obj, EINA_FALSE);
 }
 
 void
