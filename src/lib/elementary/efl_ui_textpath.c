@@ -410,17 +410,11 @@ _sizing_eval(Efl_Ui_Textpath_Data *pd)
 static void
 _textpath_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
 {
-   Eina_Strbuf *buf = eina_strbuf_new();
-   const char *format;
-
    edje_object_part_text_style_user_pop(pd->text_obj, "elm.text");
+
    if (enabled)
-     {
-        eina_strbuf_append_printf(buf, "DEFAULT='ellipsis=1.0'");
-        format = eina_stringshare_add(eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-        edje_object_part_text_style_user_push(pd->text_obj, "elm.text", format);
-     }
+     edje_object_part_text_style_user_push(pd->text_obj, "elm.text",
+                                           "DEFAULT='ellipsis=1.0'");
 }
 
 static void
