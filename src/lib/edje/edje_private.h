@@ -3160,8 +3160,10 @@ Evas_Object *_edje_object_part_external_content_get(Edje *ed, const char *part, 
 
 /* part text */
 Eo *_edje_text_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
-Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text);
-const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part);
+Eina_Bool   _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text, Eina_Bool set_markup);
+const char *_edje_efl_text_get(Eo *obj, Edje *ed, const char *part, Eina_Bool legacy, Eina_Bool get_markup);
+Eina_Bool   _edje_efl_text_markup_set(Eo *obj, Edje *ed, const char *part, const char *markup);
+const char *_edje_efl_text_markup_get(Eo *obj, Edje *ed, const char *part);
 Evas_Textblock_Cursor *_edje_text_cursor_get(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_text_cursor_begin(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *cur);
 void _edje_text_cursor_end(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor *cur);

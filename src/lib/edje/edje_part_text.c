@@ -11,7 +11,7 @@ _efl_canvas_layout_part_text_efl_text_text_set(Eo *obj,
       void *_pd EINA_UNUSED, const char *text)
 {
    PROXY_DATA_GET(obj, pd);
-   _edje_efl_text_set(obj, pd->ed, pd->part, text);
+   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE);
    RETURN_VOID;
 }
 
@@ -20,8 +20,26 @@ _efl_canvas_layout_part_text_efl_text_text_get(Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_efl_text_get(obj, pd->ed, pd->part));
+   RETURN_VAL(_edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_FALSE));
 }
+
+EOLIAN static const char *
+_efl_canvas_layout_part_text_efl_text_markup_markup_get(Eo *obj,
+      void *_pd EINA_UNUSED)
+{
+   PROXY_DATA_GET(obj, pd);
+   RETURN_VAL(_edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_TRUE));
+}
+
+EOLIAN static void
+_efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
+      void *_pd EINA_UNUSED, const char *text)
+{
+   PROXY_DATA_GET(obj, pd);
+   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_TRUE);
+   RETURN_VOID;
+}
+
 
 EOLIAN static Efl_Text_Cursor_Cursor *
 _efl_canvas_layout_part_text_efl_text_cursor_cursor_get(Eo *obj,
@@ -180,8 +198,8 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
    RETURN_VAL(EINA_FALSE);
 }
 
-EOLIAN static int
-_efl_canvas_layout_part_text_efl_text_cursor_cursor_text_insert(Eo *obj,
+EOLIAN static void
+_efl_canvas_layout_part_text_efl_text_markup_cursor_markup_insert(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur EINA_UNUSED,
       const char *text)
 {
@@ -189,7 +207,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_text_insert(Eo *obj,
    // Ignoring cursor type and always inserting with main cursor
    _edje_object_part_text_insert(pd->ed, pd->rp, text);
    // FIXME: entry should report the length of inserted text (after filtering)
-   RETURN_VAL(0);
 }
 
 #include "efl_canvas_layout_part_text.eo.c"

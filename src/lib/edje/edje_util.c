@@ -1842,7 +1842,7 @@ _edje_object_text_change_cb_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Text_Change_
 }
 
 Eina_Bool
-_edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
+_edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text, Eina_Bool set_markup)
 {
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_TRUE;
@@ -1860,7 +1860,21 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
      _edje_entry_text_markup_set(rp, text);
    else
    if (text)
-     rp->typedata.text->text = eina_stringshare_add(text);
+     {
+        if (set_markup)
+          {
+             char *mkup;
+             mkup =
+                efl_text_markup_util_text_to_markup(EFL_TEXT_MARKUP_UTIL_CLASS,
+                                                    text);
+             rp->typedata.text->text = eina_stringshare_add(mkup);
+             free(mkup);
+          }
+        else
+          {
+             rp->typedata.text->text = eina_stringshare_add(text);
+          }
+     }
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE;
    ed->recalc_hints = EINA_TRUE;
@@ -1871,6 +1885,13 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
    if (ed->text_change.func)
      ed->text_change.func(ed->text_change.data, obj, part);
    return EINA_TRUE;
+}
+
+Eina_Bool
+_edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
+{
+   return _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
+                                                 EINA_FALSE);
 }
 
 void
@@ -1902,7 +1923,8 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_
 }
 
 Eina_Bool
-_edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
+_edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
+                   Eina_Bool set_markup)
 {
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
@@ -1917,13 +1939,15 @@ _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
      {
         return EINA_TRUE;
      }
-   int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
+   int_ret = _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
+                                                    set_markup);
    _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_NORMAL);
    return int_ret;
 }
 
 const char *
-_edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+_edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
+                   Eina_Bool legacy, Eina_Bool get_markup)
 {
    Edje_Real_Part *rp;
 
@@ -1958,7 +1982,24 @@ _edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
           }
         if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
           {
-             return evas_object_textblock_text_markup_get(rp->object);
+             const char *entry;
+             if (legacy)
+               {
+                  entry = evas_object_textblock_text_markup_get(rp->object);
+               }
+             else
+               {
+                  if (get_markup)
+                    {
+                       entry = efl_text_markup_get(rp->object);
+                    }
+                  else
+                    {
+                       entry = efl_text_get(rp->object);
+                    }
+               }
+
+             return entry;
           }
      }
 
@@ -6093,14 +6134,25 @@ edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 EAPI Eina_Bool
 edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *text)
 {
-   efl_text_set(efl_part(obj, part), text);
+   efl_text_markup_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
 
 EAPI const char *
 edje_object_part_text_get(const Edje_Object *obj, const char *part)
 {
-   return efl_text_get(efl_part(obj, part));
+   Edje_Real_Part *rp;
+   Edje *ed;
+
+   if (!_edje_part_fetch(obj, part, &ed, &rp)) return NULL;
+
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     {
+        ERR("Invalid call on a non-text or non-textblock part: '%s' in group '%s'", part, ed->group);
+        return NULL;
+     }
+   return _edje_efl_text_get((Eo *)obj, ed, part, EINA_TRUE, EINA_FALSE);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
