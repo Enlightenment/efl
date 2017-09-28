@@ -6,7 +6,7 @@ class Efl.Model.Composite.Selection (Efl.Model.Composite.Boolean)
          params {
            idx: int;
          }
-         return: future<eina.value>;
+         return: future<any_value>;
       }
       @property exclusive_selection {
          values {
