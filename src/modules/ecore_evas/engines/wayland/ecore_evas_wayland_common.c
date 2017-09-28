@@ -316,41 +316,45 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                   /* copied from e_client.c */
                   Evas_Aspect_Control aspect;
                   int aw, ah;
-                  double val, a = (double)w / h;
+                  double val, a;
 
-                  if (fabs(a - ee->prop.aspect) > 0.001)
+                  if (h > 0)
                     {
-                       int step_w = ee->prop.step.w ?: 1, step_h = ee->prop.step.h ?: 1;
-                       if (wdata->resizing || wdata->win->resizing)
-                         ew = wdata->cw, eh = wdata->ch;
-                       if (abs(w - ew) > abs(h - eh))
-                         aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
-                       else
-                         aspect = EVAS_ASPECT_CONTROL_VERTICAL;
-                       switch (aspect)
+                       a = (double)w / (double)h;
+                       if (fabs(a - ee->prop.aspect) > 0.001)
                          {
-                          case EVAS_ASPECT_CONTROL_HORIZONTAL:
-                            val = ((h - (w / ee->prop.aspect)) * step_h) / step_h;
-                            if (val > 0)
-                              ah = ceil(val);
+                            int step_w = ee->prop.step.w ?: 1;
+                            int step_h = ee->prop.step.h ?: 1;
+
+                            if (wdata->resizing || wdata->win->resizing)
+                              ew = wdata->cw, eh = wdata->ch;
+                            if (abs(w - ew) > abs(h - eh))
+                              aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
                             else
-                              ah = floor(val);
-                            if ((h - ah > minh) || (minh < 1))
+                              aspect = EVAS_ASPECT_CONTROL_VERTICAL;
+                            switch (aspect)
                               {
-                                 h -= ah;
+                               case EVAS_ASPECT_CONTROL_HORIZONTAL:
+                                 val = ((h - (w / ee->prop.aspect)) *
+                                        step_h) / step_h;
+                                 if (val > 0) ah = ceil(val);
+                                 else ah = floor(val);
+                                 if ((h - ah > minh) || (minh < 1))
+                                   {
+                                      h -= ah;
+                                      break;
+                                   }
+                                 EINA_FALLTHROUGH;
+                                 /* no break */
+                               default:
+                                 val = (((h * ee->prop.aspect) - w) *
+                                        step_w) / step_w;
+                                 if (val > 0) aw = ceil(val);
+                                 else aw = floor(val);
+                                 if ((w + aw < maxw) || (maxw < 1))
+                                   w += aw;
                                  break;
                               }
-                            EINA_FALLTHROUGH;
-                            /* no break */
-                          default:
-                            val = (((h * ee->prop.aspect) - w) * step_w) / step_w;
-                            if (val > 0)
-                              aw = ceil(val);
-                            else
-                              aw = floor(val);
-                            if ((w + aw < maxw) || (maxw < 1))
-                              w += aw;
-                            break;
                          }
                     }
                }
