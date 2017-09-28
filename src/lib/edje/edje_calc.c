@@ -840,11 +840,12 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
                  (((pmin->w == pmax->w) && (pmin->h == pmax->h) && (pmin->w > 0) && (pmin->h > 0)) &&
                   (((min->w != max->w) || (min->h != max->h) || (min->w <= 0) || (min->h <= 0)))))
                {
-                  Edje *ted;
-
-                  ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
-                  ted->recalc_call = ted->dirty = ted->recalc_hints = EINA_TRUE;
-                  _edje_recalc(ted);
+                  Edje *ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
+                  if (ted)
+                    {
+                       ted->recalc_call = ted->dirty = ted->recalc_hints = EINA_TRUE;
+                       _edje_recalc(ted);
+                    }
                }
 
              edje_object_mirrored_set(ep->typedata.swallow->swallowed_object,
