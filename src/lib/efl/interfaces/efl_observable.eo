@@ -1,3 +1,5 @@
+import efl_types;
+
 class Efl.Observable (Efl.Object) {
    [[Efl observable class]]
    methods {

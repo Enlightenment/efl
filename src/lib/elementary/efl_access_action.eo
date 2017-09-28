@@ -1,3 +1,5 @@
+import elm_general;
+
 mixin Efl.Access.Action ()
 {
    [[Accessible action mixin]]

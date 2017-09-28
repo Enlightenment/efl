@@ -229,3 +229,7 @@ enum Elm.Activate
    left, [[Activate left]]
    back, [[Activate back]]
 }
+
+/* FIXME: shouldn't exist */
+struct @extern Elm_Gen_Item;
+struct @extern Elm_Atspi_Action;

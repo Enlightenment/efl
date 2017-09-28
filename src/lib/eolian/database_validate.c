@@ -170,6 +170,14 @@ _validate_type(Eolian_Type *tp)
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
                        eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
                   }
+                Eolian_Type *itp = tp->base_type;
+                /* validate types in brackets so freefuncs get written... */
+                while (itp)
+                  {
+                     if (!_validate_type(itp))
+                       return EINA_FALSE;
+                     itp = itp->next_type;
+                  }
                 return EINA_TRUE;
              }
            Eolian_Typedecl *tpp;

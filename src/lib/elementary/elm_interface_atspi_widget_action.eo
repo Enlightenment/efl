@@ -1,4 +1,4 @@
-type Elm_Atspi_Action: __undefined_type; [[Elementary AT-SPI action type]]
+import elm_general;
 
 mixin Elm.Interface.Atspi_Widget_Action (Efl.Access.Action)
 {
