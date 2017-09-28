@@ -1,3 +1,5 @@
+struct @extern Eo;
+
 class Complex_Type {
    methods {
       @property a {
