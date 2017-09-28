@@ -4383,7 +4383,7 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
           }
 
 
-        efl_ui_focus_manager_focus_set(pd->focus.manager, obj);
+        efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), obj);
      }
 }
 
