@@ -830,10 +830,12 @@ T convert_to_return(U& object)
 }
 
 /// Miscellaneous
-template <typename T, typename Enable = void>
-struct is_callable : std::false_type {};
-template <typename T>
-struct is_callable<T, decltype(std::declval<T>() ())> : std::true_type {};
+template <typename T, typename U, typename Enable = void>
+struct is_constructor_lambda : std::false_type {};
+template <typename T, typename U>
+struct is_constructor_lambda<T, U, decltype(std::declval<T>() ())> : std::true_type {};
+template <typename T, typename U>
+struct is_constructor_lambda<T, U, decltype(std::declval<T>() (std::declval<U>()))> : std::true_type {};
 
 template <typename P>
 inline void do_eo_add(Eo*& object, P const& parent
@@ -843,12 +845,30 @@ inline void do_eo_add(Eo*& object, P const& parent
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
 }
-template <typename P, typename F>
-void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass, F f
+
+template <typename T>
+struct void_t { typedef void type; };
+
+template <typename F, typename U>
+auto call_lambda(F&& f, U&) -> typename void_t<decltype(f())>::type
+{
+  f();
+}
+
+template <typename F, typename U>
+auto call_lambda(F&& f, U& object) -> typename void_t<decltype(f(object))>::type
+{
+  f(object);
+}
+
+template <typename P, typename F, typename U>
+void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass
+               , U& proxy
+               , F&& f
                , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
-  f();
+  ::efl::eolian::call_lambda(std::forward<F>(f), proxy);
   object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
 }
 
