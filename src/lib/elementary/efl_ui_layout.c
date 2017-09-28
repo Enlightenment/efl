@@ -1225,7 +1225,7 @@ _efl_ui_layout_efl_container_content_count(Eo *eo_obj EINA_UNUSED, Efl_Ui_Layout
 }
 
 static Eina_Bool
-_efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text)
+_efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text, Eina_Bool is_markup)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -1255,9 +1255,18 @@ _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const
 
    if (!text) return EINA_TRUE;
 
-   if (!edje_object_part_text_escaped_set
+   if (is_markup)
+     {
+        if (!edje_object_part_text_escaped_set
          (wd->resize_obj, part, text))
-     return EINA_FALSE;
+           return EINA_FALSE;
+     }
+   else
+     {
+        if (!edje_object_part_text_unescaped_set
+         (wd->resize_obj, part, text))
+           return EINA_FALSE;
+     }
 
    if (!sub_d)
      {
@@ -1296,12 +1305,32 @@ _efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_efl_ui_layout_text_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text)
+{
+   return _efl_ui_layout_text_generic_set(obj, sd, part, text, EINA_FALSE);
+}
+
 static const char*
 _efl_ui_layout_text_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   return edje_object_part_text_get(wd->resize_obj, part);
+   return efl_text_get(efl_part(wd->resize_obj, part));
+}
+
+static const char*
+_efl_ui_layout_text_markup_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   return efl_text_markup_get(efl_part(wd->resize_obj, part));
+}
+
+static Eina_Bool
+_efl_ui_layout_text_markup_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, const char *text)
+{
+   return _efl_ui_layout_text_generic_set(obj, sd, part, text, EINA_TRUE);
 }
 
 static void
@@ -2564,6 +2593,8 @@ ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_content, efl_ui_layout, 
 /* Efl.Ui.Layout.Part_Text */
 ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
@@ -2585,6 +2616,8 @@ ELM_PART_OVERRIDE_CONTENT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL
 ELM_PART_OVERRIDE_CONTENT_UNSET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 ELM_PART_OVERRIDE_TEXT_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)

@@ -2,8 +2,8 @@ type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
 class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
-                     Efl.Access.Value, Efl.Text, Efl.Ui.Translatable,
-                     Elm.Interface.Atspi_Widget_Action)
+                     Efl.Access.Value, Efl.Text, Efl.Text.Markup,
+                     Efl.Ui.Translatable, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
@@ -130,6 +130,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Value.increment { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Text.text { get; set; }
+      Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }
    events {
