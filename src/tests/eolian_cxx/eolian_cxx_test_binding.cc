@@ -66,7 +66,11 @@ START_TEST(eolian_cxx_test_type_generation)
 {
   efl::eo::eo_init eo_init;
 
-  name1::name2::Type_Generation g(efl::eo::instantiate);
+  name1::name2::Type_Generation g1(efl::eo::instantiate);
+  name1::name2::Type_Generation g2(efl::eo::instantiate
+                                   , [] {});
+  name1::name2::Type_Generation g3(efl::eo::instantiate
+                                   , [] (name1::name2::Type_Generation) {});
 }
 END_TEST
 
