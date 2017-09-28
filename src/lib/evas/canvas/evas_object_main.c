@@ -902,17 +902,9 @@ evas_object_ref_get(const Evas_Object *eo_obj)
    return obj->ref;
 }
 
-EAPI void
-evas_object_del(Evas_Object *eo_obj)
+EOLIAN static void
+_efl_canvas_object_efl_object_del(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (!eo_obj) return;
-   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
-
-   if (!obj) return;
    evas_object_async_block(obj);
    if (obj->delete_me || obj->efl_del_called) return;
    if (obj->ref > 0)
@@ -920,9 +912,21 @@ evas_object_del(Evas_Object *eo_obj)
         obj->del_ref = EINA_TRUE;
         return;
      }
-   evas_object_hide(eo_obj);
+   efl_gfx_visible_set((Eo *) eo_obj, EINA_FALSE);
    obj->efl_del_called = EINA_TRUE;
+   efl_del(efl_super(eo_obj, MY_CLASS));
+}
 
+EAPI void
+evas_object_del(Evas_Object *eo_obj)
+{
+   if (!eo_obj) return;
+   if (!efl_isa(eo_obj, MY_CLASS))
+     {
+        ERR("Called %s on a non-evas object: %s@%p",
+            __FUNCTION__, efl_class_name_get(eo_obj), eo_obj);
+        return;
+     }
    efl_del(eo_obj);
 }
 

@@ -662,6 +662,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Object.provider_find;
+      Efl.Object.del;
       Efl.Object.debug_name_override;
       Efl.Gfx.visible { get; set; }
       Efl.Gfx.color { get; set; }
