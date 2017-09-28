@@ -107,7 +107,7 @@ _efl_ui_slider_interval_interval_value_set(Eo *obj, Efl_Ui_Slider_Interval_Data 
 EOLIAN static Efl_Object *
 _efl_ui_slider_interval_efl_object_finalize(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Slider_Data *pd =  efl_data_scope_safe_get(obj, EFL_UI_SLIDER_CLASS);
+   Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
 
    pd->intvl_enable = EINA_TRUE;
 
