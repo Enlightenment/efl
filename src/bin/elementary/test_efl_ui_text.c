@@ -39,6 +39,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 {
    Evas_Object *win, *bx;
    Eo *en;
+   char *markup;
 
    win = elm_win_util_standard_add("label", "Label");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -85,7 +86,34 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    efl_ui_text_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
 
-   evas_object_resize(win, 480, 320);
+   en = _create_label(win, bx);
+   efl_text_markup_set(en, "You can also <b>ENTER</b> markup!");
+   efl_text_font_set(en, "Sans", 14);
+   efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
+   efl_text_multiline_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
+
+   en = _create_label(win, bx);
+   markup = efl_text_markup_util_text_to_markup(EFL_TEXT_MARKUP_UTIL_CLASS,
+         "You can use the text -> markup helper\nto make coding easier.");
+   efl_text_markup_set(en, markup);
+   free(markup);
+   efl_text_font_set(en, "Sans", 14);
+   efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
+   efl_text_multiline_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
+
+   en = _create_label(win, bx);
+   markup = efl_text_markup_util_markup_to_text(EFL_TEXT_MARKUP_UTIL_CLASS,
+         "You can use markup -&gt; text helpers<ps>to make coding easier.");
+   efl_text_set(en, markup);
+   free(markup);
+   efl_text_font_set(en, "Sans", 14);
+   efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
+   efl_text_multiline_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.5);
+
+   evas_object_resize(win, 480, 480);
    evas_object_show(win);
 }
 
