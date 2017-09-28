@@ -125,6 +125,25 @@ _ ## full ## _efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
    ELM_PART_RETURN_VAL(_ ## type ## _text_get(pd->obj, sd, pd->part)); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(full, type, TYPE, typedata) \
+EOLIAN static const char *\
+_ ## full ## _efl_text_markup_markup_get(Eo *obj, void *_pd EINA_UNUSED) \
+{ \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   ELM_PART_RETURN_VAL(_ ## type ## _text_markup_get(pd->obj, sd, pd->part)); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(full, type, TYPE, typedata) \
+EOLIAN static void \
+_ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const char *markup) \
+{ \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS); \
+   _ ## type ## _text_markup_set(pd->obj, sd, pd->part, markup); \
+  ELM_PART_RETURN_VOID; \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, TYPE, typedata)
 
@@ -139,6 +158,12 @@ _ ## full ## _efl_text_text_get(Eo *obj, void *_pd EINA_UNUSED) \
 
 #define ELM_PART_OVERRIDE_TEXT_GET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_TEXT_GET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_MARKUP_SET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(type ## _part, type, TYPE, typedata)
+
+#define ELM_PART_OVERRIDE_MARKUP_GET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(type ## _part, type, TYPE, typedata)
 
 #define ELM_PART_TEXT_DEFAULT_IMPLEMENT(type, Type) \
 EOLIAN static void \
@@ -161,5 +186,17 @@ _ ## type ## _efl_ui_translatable_translatable_text_get(Eo *obj, Type *pd EINA_U
 { \
   return efl_ui_translatable_text_get(efl_part(efl_super(obj, MY_CLASS), "elm.text"), domain); \
 }
+
+#define ELM_PART_MARKUP_DEFAULT_IMPLEMENT(type, Type) \
+EOLIAN static const char * \
+_ ## type ## _efl_text_markup_markup_get(Eo *obj, Type *pd EINA_UNUSED) \
+{ \
+  return efl_text_markup_get(efl_part(efl_super(obj, MY_CLASS), "elm.text")); \
+} \
+EOLIAN static void \
+_ ## type ## _efl_text_markup_markup_set(Eo *obj, Type *pd EINA_UNUSED, const char *markup) \
+{ \
+  return efl_text_markup_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), markup); \
+} \
 
 #endif

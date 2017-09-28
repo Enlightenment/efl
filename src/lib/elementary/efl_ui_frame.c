@@ -257,6 +257,7 @@ _efl_ui_frame_class_constructor(Efl_Class *klass)
 }
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
+ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 
 /* Internal EO APIs and hidden overrides */
 

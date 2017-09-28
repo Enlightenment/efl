@@ -5,6 +5,6 @@ class Elm.Entry.Part (Efl.Ui.Layout.Part_Legacy)
    implements {
       Efl.Container.content { set; }
       Efl.Container.content_unset;
-      Efl.Text.text { set; get; }
+      Efl.Text.text { get; set; }
    }
 }

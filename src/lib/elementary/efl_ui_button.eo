@@ -1,4 +1,5 @@
-class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat, Efl.Text,
+class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+                     Efl.Text, Efl.Text.Markup,
                      Elm.Interface.Atspi_Widget_Action, Efl.Ui.Translatable)
 {
    [[Push-button widget

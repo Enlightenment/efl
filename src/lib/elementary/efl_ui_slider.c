@@ -1491,6 +1491,7 @@ _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UN
 /* Standard widget overrides */
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
+ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 
 static void
 _slider_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int size)
