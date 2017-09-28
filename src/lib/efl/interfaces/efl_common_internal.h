@@ -114,7 +114,7 @@ struct _Efl_Input_Focus_Data
 {
    Eo *eo;
    Efl_Input_Device *device; //The seat
-   Eo *object; //The focused object - Efl.Canvas.Object or Efl.Canvas.
+   Eo *object_wref; // wref on the focused object - Efl.Canvas.Object or Efl.Canvas.
    double timestamp;
 };
 

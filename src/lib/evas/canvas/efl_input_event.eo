@@ -31,8 +31,15 @@ mixin Efl.Input.Event (Efl.Interface, Efl.Object)
          [[Resets the internal data to 0 or default values.]]
       }
       dup @pure_virtual {
-         [[Creates a copy of this event.]]
-         return: own(Efl.Input.Event); [[Event copy]]
+         [[Creates a copy of this event.
+
+           The returned event object is similar to the given object in most
+           ways except that @.fake will be $true.
+
+           Note: A reference is given to the caller. In order to avoid leaks
+           the C API users should call $efl_unref() after use.
+         ]]
+         return: own(Efl.Input.Event); [[Event copy, marked as @.fake.]]
       }
       @property device @pure_virtual {
          [[Input device that originated this event.]]

@@ -80,7 +80,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
    if (!evt) return;
 
    ev_data->device = efl_ref(seat);
-   ev_data->object = obj->object;
+   efl_wref_add(obj->object, &ev_data->object_wref);
    ev_data->timestamp = time(NULL);
 
    if (in)

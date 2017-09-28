@@ -144,13 +144,14 @@ _efl_input_pointer_efl_input_event_reset(Eo *obj, Efl_Input_Pointer_Data *pd)
 }
 
 EOLIAN static Efl_Input_Event *
-_efl_input_pointer_efl_input_event_dup(Eo *obj, Efl_Input_Pointer_Data *pd)
+_efl_input_pointer_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Pointer_Data *pd)
 {
    Efl_Input_Pointer_Data *ev;
-   Efl_Input_Pointer *evt;
+   Efl_Input_Focus *evt;
 
-   evt = efl_input_instance_get(MY_CLASS, efl_parent_get(obj), (void **) &ev);
-   if (!evt) return NULL;
+   evt = efl_add(MY_CLASS, NULL);
+   ev = efl_data_scope_get(evt, MY_CLASS);
+   if (!ev) return NULL;
 
    memcpy(ev, pd, sizeof(*ev));
    ev->eo = evt;
@@ -158,7 +159,6 @@ _efl_input_pointer_efl_input_event_dup(Eo *obj, Efl_Input_Pointer_Data *pd)
    ev->evas_done = 0;
    ev->win_fed = 0;
    ev->fake = 1;
-   ev->legacy = NULL;
    ev->device = efl_ref(pd->device);
 
    return evt;

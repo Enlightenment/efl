@@ -101,17 +101,19 @@ _efl_input_hold_efl_input_event_reset(Eo *obj, Efl_Input_Hold_Data *pd)
 }
 
 EOLIAN static Efl_Input_Event *
-_efl_input_hold_efl_input_event_dup(Eo *obj, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    Efl_Input_Hold_Data *ev;
-   Efl_Input_Event *evt = efl_add(EFL_INPUT_HOLD_CLASS, efl_parent_get(obj));
+   Efl_Input_Hold *evt;
+
+   evt = efl_add(MY_CLASS, NULL);
    ev = efl_data_scope_get(evt, MY_CLASS);
    if (!ev) return NULL;
 
+   memcpy(ev, pd, sizeof(*ev));
    ev->eo = evt;
-   ev->timestamp = pd->timestamp;
-   ev->data = pd->data;
-   ev->hold = pd->hold;
+   ev->legacy = NULL;
+   ev->evas_done = 0;
    ev->device = efl_ref(pd->device);
 
    return evt;

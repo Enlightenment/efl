@@ -39,6 +39,7 @@ _del_hook(Eo *evt)
 static void
 _efl_input_focus_free(Efl_Input_Focus_Data *pd)
 {
+   efl_wref_del_safe(&pd->object_wref);
    efl_unref(pd->device);
 }
 
@@ -71,13 +72,13 @@ EOLIAN static void
 _efl_input_focus_object_set(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd,
                             Efl_Object *object)
 {
-   pd->object = object;
+   pd->object_wref = object;
 }
 
 EOLIAN static Efl_Object *
 _efl_input_focus_object_get(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
 {
-   return pd->object;
+   return pd->object_wref;
 }
 
 EOLIAN static void
@@ -111,18 +112,20 @@ _efl_input_focus_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Input_Focus *
-_efl_input_focus_efl_input_event_dup(Eo *obj, Efl_Input_Focus_Data *pd)
+_efl_input_focus_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
 {
    Efl_Input_Focus_Data *ev;
    Efl_Input_Focus *evt;
 
-   evt = efl_input_instance_get(MY_CLASS, efl_parent_get(obj), (void **) &ev);
-   if (!evt || !ev) return NULL;
+   evt = efl_add(MY_CLASS, NULL);
+   ev = efl_data_scope_get(evt, MY_CLASS);
+   if (!ev) return NULL;
 
+   memcpy(ev, pd, sizeof(*ev));
    ev->eo        = evt;
-   ev->object    = pd->object;
    ev->device    = efl_ref(pd->device);
-   ev->timestamp = pd->timestamp;
+   efl_wref_add(ev->object_wref, &ev->object_wref);
+
    return evt;
 }
 

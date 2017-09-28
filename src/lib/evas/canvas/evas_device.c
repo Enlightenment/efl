@@ -460,7 +460,7 @@ evas_device_seat_id_get(const Evas_Device *dev)
 void
 _evas_device_cleanup(Evas *eo_e)
 {
-   Eina_List *cpy;
+   Eina_List *cpy, *deleted = NULL;
    Evas_Device *dev;
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
@@ -473,19 +473,26 @@ _evas_device_cleanup(Evas *eo_e)
      }
 
    /* If the device is deleted, _del_cb will remove the device
-      from the devices list. */
+    * from the devices list. Ensure we delete them only once, and only if this
+    * Evas is the owner, otherwise we would kill external references (eg.
+    * from efl_input_dup()). */
 again:
    e->devices_modified = EINA_FALSE;
    cpy = eina_list_clone(e->devices);
    EINA_LIST_FREE(cpy, dev)
      {
-        evas_device_del(dev);
-        if (e->devices_modified)
+        if (!eina_list_data_find(deleted, dev) && (efl_parent_get(dev) == eo_e))
           {
-             eina_list_free(cpy);
-             goto again;
+             evas_device_del(dev);
+             deleted = eina_list_append(deleted, dev);
+             if (e->devices_modified)
+               {
+                  eina_list_free(cpy);
+                  goto again;
+               }
           }
      }
+   eina_list_free(deleted);
 
    /* Not all devices were deleted. The user probably will unref them later.
       Since Evas will be deleted, remove the del callback from them and
@@ -493,9 +500,7 @@ again:
    */
    EINA_LIST_FREE(e->devices, dev)
      {
-        efl_event_callback_call(e->evas,
-                                EFL_CANVAS_EVENT_DEVICE_REMOVED,
-                                dev);
+        efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED, dev);
         efl_event_callback_del(dev, EFL_EVENT_DEL, _del_cb, e);
      }
 }
