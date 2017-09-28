@@ -58,6 +58,7 @@ typedef struct
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
+   Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
 } Efl_Object_Data;
 
 typedef enum
@@ -2088,9 +2089,22 @@ composite_obj:
    goto composite_obj_back;
 
 err_parent:
-   ERR("Object '%p' still has a parent at the time of destruction.", obj);
+   if (EINA_LIKELY(!pd->allow_parent_unref))
+     ERR("Object '%p' still has a parent at the time of destruction.", obj);
    efl_parent_set(obj, NULL);
    goto err_parent_back;
+}
+
+EOLIAN static void
+_efl_object_allow_parent_unref_set(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd, Eina_Bool allow)
+{
+   pd->allow_parent_unref = !!allow;
+}
+
+EOLIAN static Eina_Bool
+_efl_object_allow_parent_unref_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
+{
+   return pd->allow_parent_unref;
 }
 
 EOLIAN static Eo *
