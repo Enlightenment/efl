@@ -7986,12 +7986,11 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
 }
 
 EAPI char *
-evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
+evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj EINA_UNUSED,
+      const char *text)
 {
    Eina_Strbuf *sbuf;
    char *str = NULL;
-
-   (void) eo_obj;
 
    if (!text) return NULL;
 
@@ -8002,7 +8001,6 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *eo_obj, const char *text)
    str = eina_strbuf_string_steal(sbuf);
    eina_strbuf_free(sbuf);
    return str;
-
 }
 
 static void
