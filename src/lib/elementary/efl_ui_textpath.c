@@ -274,8 +274,6 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
              slice_no = pd->slice_no * seg->length / (double)pd->total_length;
              if (slice_no == 0)
                slice_no = len * slice_unit + 1;
-             if (remained_w == 0)
-               slice_no = total_slice - drawn_slice;
              drawn_slice += slice_no;
              _segment_draw(pd, slice_no, w1, w2, cur_map_point, map, seg->bezier);
              cur_map_point += slice_no * 4;
