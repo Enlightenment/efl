@@ -21,7 +21,7 @@ _pointer_down(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    td->down = 1;
-   efl_del(td->evdown);
+   efl_unref(td->evdown);
    td->evdown = efl_input_dup(ev->info);
 }
 
@@ -29,7 +29,7 @@ static void
 _pointer_move(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
-   efl_del(td->evmove);
+   efl_unref(td->evmove);
    td->evmove = efl_input_dup(ev->info);
 }
 
@@ -38,7 +38,7 @@ _pointer_up(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    td->down = 0;
-   efl_del(td->evup);
+   efl_unref(td->evup);
    td->evup = efl_input_dup(ev->info);
 }
 
@@ -63,7 +63,7 @@ _key_down(void *data, const Efl_Event *ev)
 
    if (!efl_input_fake_get(ev->info))
      {
-        efl_del(td->evkeydown);
+        efl_unref(td->evkeydown);
         td->evkeydown = efl_input_dup(ev->info);
      }
 }
@@ -83,7 +83,7 @@ _key_up(void *data, const Efl_Event *ev)
 
    if (!efl_input_fake_get(ev->info))
      {
-        efl_del(td->evkeyup);
+        efl_unref(td->evkeyup);
         td->evkeyup = efl_input_dup(ev->info);
      }
 
@@ -131,8 +131,8 @@ _clicked_button2(void *data, const Efl_Event *ev EINA_UNUSED)
      {
         efl_event_callback_call(td->win, EFL_EVENT_KEY_DOWN, td->evkeydown);
         efl_event_callback_call(td->win, EFL_EVENT_KEY_UP, td->evkeyup);
-        efl_del(td->evkeydown);
-        efl_del(td->evkeyup);
+        efl_unref(td->evkeydown);
+        efl_unref(td->evkeyup);
         td->evkeydown = NULL;
         td->evkeyup = NULL;
      }
@@ -142,11 +142,11 @@ static void
 _win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    testdata *td = data;
-   efl_del(td->evdown);
-   efl_del(td->evup);
-   efl_del(td->evmove);
-   efl_del(td->evkeydown);
-   efl_del(td->evkeyup);
+   efl_unref(td->evdown);
+   efl_unref(td->evup);
+   efl_unref(td->evmove);
+   efl_unref(td->evkeydown);
+   efl_unref(td->evkeyup);
    free(td);
 }
 
