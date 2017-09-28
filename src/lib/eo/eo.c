@@ -2813,6 +2813,7 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
 {
 #ifdef HAVE_BACKTRACE
    const Eo_Log_Obj_Entry *added, *deleted;
+   Eo_Log_Obj_Entry *current = NULL;
    int added_idx = -1;
    double now;
 
@@ -2850,6 +2851,31 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
 
    now = _eo_log_time_now();
 
+#ifdef HAVE_BACKTRACE
+   if ((_eo_log_objs_backtrace > 0) && deleted)
+     {
+        void **bt;
+        int size;
+
+        bt = alloca(sizeof(void *) * _eo_log_objs_backtrace);
+        size = backtrace(bt, _eo_log_objs_backtrace);
+        if (EINA_UNLIKELY(size < 1)) return;
+
+        current = calloc(1, sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
+        if (EINA_UNLIKELY(!current)) return;
+
+        current->id = id;
+        current->timestamp = now;
+        current->obj = deleted->obj;
+        current->klass = deleted->klass;
+        current->ref_op = EO_REF_OP_NONE;
+        current->bt_size = size;
+        current->bt_hash = 0;
+        current->bt_hits = 1;
+        memcpy(current->bt, bt, size * sizeof(void *));
+     }
+#endif
+
    if (added)
      {
         _eo_log_obj_entry_show(added, log_level, func_name, file, line, now);
@@ -2870,6 +2896,14 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
         eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
                        "obj_id=%p was already deleted %0.4f seconds ago!",
                        (void *)id, now - deleted->timestamp);
+     }
+
+   if (current)
+     {
+        eina_log_print(_eo_log_objs_dom, log_level, file, func_name, line,
+                       "obj_id=%p current use from:", (void *)id);
+        _eo_log_obj_entry_show(current, log_level, func_name, file, line, now);
+        free(current);
      }
 
 #else
