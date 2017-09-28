@@ -117,7 +117,8 @@ _efl_input_focus_efl_input_event_dup(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *
    Efl_Input_Focus_Data *ev;
    Efl_Input_Focus *evt;
 
-   evt = efl_add(MY_CLASS, NULL);
+   evt = efl_add(MY_CLASS, efl_parent_get(obj),
+                 efl_allow_parent_unref_set(efl_added, EINA_TRUE));
    ev = efl_data_scope_get(evt, MY_CLASS);
    if (!ev) return NULL;
 
