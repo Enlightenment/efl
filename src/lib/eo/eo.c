@@ -54,8 +54,10 @@ static inline void _eo_log_obj_init(void);
 static inline void _eo_log_obj_shutdown(void);
 static inline void _eo_log_obj_ref_op(const _Eo_Object *obj, Eo_Ref_Op ref_op);
 #ifdef EO_DEBUG
+#define EO_LOG_OBJS_BACKTRACE_MAX     1022
+#define EO_LOG_OBJS_BACKTRACE_DEFAULT 62
 static int _eo_log_objs_dom = -1;
-static int _eo_log_objs_backtrace = 0;
+static int _eo_log_objs_backtrace = EO_LOG_OBJS_BACKTRACE_DEFAULT; // 0 = enable tracking but no bt, N>0 = enable tracking and bt of size N
 static Eo_Ref_Op _eo_log_objs_level = EO_REF_OP_NONE;
 static Eina_Inarray _eo_log_objs_debug;
 static Eina_Inarray _eo_log_objs_no_debug;
@@ -2856,14 +2858,21 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
    now = _eo_log_time_now();
 
 #ifdef HAVE_BACKTRACE
-   if ((_eo_log_objs_backtrace > 0) && deleted)
+   if ((_eo_log_objs_backtrace >= 0) && deleted)
      {
-        void **bt;
-        int size;
+        void **bt = NULL;
+        int size = 0;
 
-        bt = alloca(sizeof(void *) * _eo_log_objs_backtrace);
-        size = backtrace(bt, _eo_log_objs_backtrace);
-        if (EINA_UNLIKELY(size < 1)) return;
+        if (_eo_log_objs_backtrace > 0)
+          {
+             bt = alloca(sizeof(void *) * (_eo_log_objs_backtrace + 2));
+             size = backtrace(bt, (_eo_log_objs_backtrace + 2));
+             if (EINA_UNLIKELY(size < 1))
+               {
+                  bt = NULL;
+                  size = 0;
+               }
+          }
 
         current = calloc(1, sizeof(Eo_Log_Obj_Entry) + size * sizeof(void *));
         if (EINA_UNLIKELY(!current)) return;
@@ -2876,7 +2885,8 @@ _eo_log_obj_report(const Eo_Id id, int log_level, const char *func_name, const c
         current->bt_size = size;
         current->bt_hash = 0;
         current->bt_hits = 1;
-        memcpy(current->bt, bt, size * sizeof(void *));
+        if (bt && size)
+          memcpy(current->bt, bt, size * sizeof(void *));
      }
 #endif
 
@@ -2937,7 +2947,8 @@ _eo_log_obj_entry_ref_op(const _Eo_Object *obj, Eo_Ref_Op refop, unsigned size, 
    entry->bt_size = size;
    entry->bt_hash = 0;
    entry->bt_hits = 1;
-   memcpy(entry->bt, bt, size * sizeof(void *));
+   if (size && bt)
+     memcpy(entry->bt, bt, size * sizeof(void *));
 
    eina_spinlock_take(&_eo_log_objs_lock);
    ret = eina_array_push(&_eo_log_objs, entry);
@@ -3003,14 +3014,17 @@ _eo_log_obj_ref_op(const _Eo_Object *obj, Eo_Ref_Op ref_op)
    if (EINA_LIKELY(!_eo_log_obj_desired(obj))) return;
 
 #ifdef HAVE_BACKTRACE
-   if (_eo_log_objs_backtrace > 0)
+   if (_eo_log_objs_backtrace >= 0)
      {
-        int size;
-        void **bt;
+        void **bt = NULL;
+        int size = 0;
 
-        bt = alloca(sizeof(void *) * _eo_log_objs_backtrace);
-        size = backtrace(bt, _eo_log_objs_backtrace);
-        if (EINA_UNLIKELY(size < 1)) return;
+        if (_eo_log_objs_backtrace > 0)
+          {
+             bt = alloca(sizeof(void *) * (_eo_log_objs_backtrace + 2));
+             size = backtrace(bt, (_eo_log_objs_backtrace + 2));
+             if (EINA_UNLIKELY(size < 1)) return;
+          }
 
         _eo_log_obj_entry_ref_op(obj, ref_op, size, bt);
      }
@@ -3039,13 +3053,16 @@ _eo_log_obj_init(void)
    eina_inarray_step_set(&_eo_log_objs_no_debug, sizeof(Eina_Inarray), sizeof(Eina_Slice), 0);
 
    s = getenv("EO_LIFECYCLE_BACKTRACE");
-   if (s && (atoi(s) > 0))
+   if (s && *s)
      {
-        _eo_log_objs_backtrace = atoi(s) + 2;
-        if (_eo_log_objs_backtrace > 1024)
-          _eo_log_objs_backtrace = 1024;
+        _eo_log_objs_backtrace = atoi(s);
+        if (_eo_log_objs_backtrace > EO_LOG_OBJS_BACKTRACE_MAX)
+          _eo_log_objs_backtrace = EO_LOG_OBJS_BACKTRACE_MAX;
+        else if (_eo_log_objs_backtrace < 0)
+          _eo_log_objs_backtrace = 0;
      }
-   else _eo_log_objs_backtrace = 64;
+   else
+     _eo_log_objs_backtrace = EO_LOG_OBJS_BACKTRACE_DEFAULT;
 
    s = getenv("EO_LIFECYCLE_DEBUG");
    if ((s) && (s[0] != '\0'))
