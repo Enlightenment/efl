@@ -1028,13 +1028,17 @@ EAPI void
 efl_reuse(const Eo *eo_id)
 {
    Eo *obj = (Eo *) eo_id;
+   EO_OBJ_POINTER_RETURN(obj, _obj);
+
    efl_object_override(obj, NULL);
-   _efl_object_parent_sink_set(obj, EINA_FALSE);
+   if (!efl_parent_get(obj))
+     _efl_object_parent_sink_set(obj, EINA_FALSE);
+
 #ifdef EO_DEBUG
-   EO_OBJ_POINTER_RETURN(eo_id, _obj);
    _eo_log_obj_ref_op(_obj, EO_REF_OP_REUSE);
-   EO_OBJ_DONE(eo_id);
 #endif
+
+   EO_OBJ_DONE(eo_id);
 }
 
 void
