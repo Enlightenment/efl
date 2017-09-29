@@ -4519,10 +4519,12 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
         if (eina_value_type_get(val) == EINA_VALUE_TYPE_STRING) \
           { \
              const char *str; \
-             eina_value_get(val, &str); \
-             for (unsigned i = 0; i < (sizeof(_enum_map_ ## opt) / sizeof(_enum_map_ ## opt[0])); i++) \
+             if (eina_value_get(val, &str)) \
                { \
-                 if (eina_streq(_enum_map_ ## opt[i].str, str)) { v = _enum_map_ ## opt[i].val; break; } \
+                  for (unsigned i = 0; i < (sizeof(_enum_map_ ## opt) / sizeof(_enum_map_ ## opt[0])); i++) \
+                    { \
+                       if (eina_streq(_enum_map_ ## opt[i].str, str)) { v = _enum_map_ ## opt[i].val; break; } \
+                    } \
                } \
              if (v == -1) \
                { \
