@@ -4921,6 +4921,7 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    Edje_Entry_Change_Info *info;
    int cursor_pos;
    int start, end;
+   char *tmp;
 
    rp = _edje_entry_imf_default_focused_rp_get(ed);
    if ((!rp)) return;
@@ -4945,9 +4946,6 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    end = evas_textblock_cursor_pos_get(del_end);
    if (start == end) goto end;
 
-   evas_textblock_cursor_range_delete(del_start, del_end);
-   _anchors_get(en->cursor, rp->object, en);
-   _anchors_update_check(ed, rp);
    info = calloc(1, sizeof(*info));
    if  (!info)
      {
@@ -4957,6 +4955,15 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
    info->insert = EINA_FALSE;
    info->change.del.start = start;
    info->change.del.end = end;
+
+   tmp = evas_textblock_cursor_range_text_get(del_start, del_end, EVAS_TEXTBLOCK_TEXT_MARKUP);
+   info->change.del.content = eina_stringshare_add(tmp);
+   if (tmp) free(tmp);
+
+   evas_textblock_cursor_range_delete(del_start, del_end);
+   _anchors_get(en->cursor, rp->object, en);
+   _anchors_update_check(ed, rp);
+
    _edje_emit(ed, "entry,changed", en->rp->part->name);
    _edje_emit_full(ed, "entry,changed,user", en->rp->part->name, info,
                    _free_entry_change_info);
