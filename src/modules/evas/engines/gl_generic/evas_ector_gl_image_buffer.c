@@ -252,7 +252,7 @@ _evas_ector_gl_image_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED,
              if (map->free_image)
                eng_image_free(ENC, map->im);
              else
-               eng_image_data_put(ENC, map->im, map->image_data);
+               map->im = eng_image_data_put(ENC, map->im, map->image_data);
              if (map->allocated)
                free(map->base_data);
              free(map);
