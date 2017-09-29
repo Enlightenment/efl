@@ -19,6 +19,19 @@ static Eina_Bool direct = EINA_FALSE;
 #define DONE_CALLED 0xdeadbeef
 
 static void
+_access_cb(void *data, Eina_Accessor *access)
+{
+   uint64_t *number_of_listed_files = data;
+   Eina_Stringshare *s;
+   unsigned int count;
+
+   EINA_ACCESSOR_FOREACH(access, count, s)
+     {
+        (*number_of_listed_files)++;
+     }
+}
+
+static void
 _progress_cb(void *data, const Efl_Event *ev)
 {
    Efl_Future_Event_Progress *p = ev->info;
@@ -26,6 +39,36 @@ _progress_cb(void *data, const Efl_Event *ev)
    uint64_t *number_of_listed_files = data;
 
    (*number_of_listed_files) += eina_array_count(batch);
+}
+
+static Eina_Value
+_future_cb(void *data,
+           const Eina_Value file,
+           const Eina_Future *dead EINA_UNUSED)
+{
+   if (file.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+
+        eina_value_get(&file, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+   if (file.type == EINA_VALUE_TYPE_UINT64)
+     {
+        uint64_t *number_of_listed_files = data;
+        uint64_t value;
+
+        eina_value_get(&file, &value);
+
+        fail_if((*number_of_listed_files) != test_count);
+        fail_if(value != test_count);
+        *number_of_listed_files = DONE_CALLED;
+     }
+
+   ecore_main_loop_quit();
+
+   return file;
 }
 
 static void
@@ -196,7 +239,7 @@ START_TEST(efl_io_manager_test_ls)
    Eina_Tmpstr *nested_dirname;
    Eina_Tmpstr *nested_filename;
    Efl_Io_Manager *job;
-   Efl_Future *f;
+   Eina_Future *f;
    uint64_t main_files = 0;
    int ret;
 
@@ -217,9 +260,9 @@ START_TEST(efl_io_manager_test_ls)
    job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
    fail_if(!job);
 
-   f = efl_io_manager_ls(job, test_dirname);
+   f = efl_io_manager_ls(job, test_dirname, &main_files, _access_cb, NULL);
    test_count = 6;
-   efl_future_then(f, &_done_cb, &_error_cb, &_progress_cb, &main_files);
+   eina_future_then(f, _future_cb, &main_files);
 
    ecore_main_loop_begin();
 
