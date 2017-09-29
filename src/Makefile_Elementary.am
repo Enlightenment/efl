@@ -856,7 +856,7 @@ bin/elementary/test_scroller.c \
 bin/elementary/test_segment_control.c \
 bin/elementary/test_separator.c \
 bin/elementary/test_slider.c \
-bin/elementary/test_slider_interval.c \
+bin/elementary/test_ui_slider_interval.c \
 bin/elementary/test_slideshow.c \
 bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \
