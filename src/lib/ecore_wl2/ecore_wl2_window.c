@@ -99,7 +99,7 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA
    Ecore_Wl2_Window *window;
 
    window = data;
-   window->configure_serial = serial;
+   window->config.serial = serial;
    if (!window->pending.configure) return;
 
    _configure_complete(window);
@@ -117,49 +117,52 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
    uint32_t *s;
    Eina_Bool fs, max;
 
-   if ((!win->maximized) && (!win->fullscreen))
-     win->saved = win->geometry;
+   if ((!win->config.maximized) && (!win->config.fullscreen))
+     win->saved = win->config.geometry;
 
-   fs = win->fullscreen;
-   max = win->maximized;
+   fs = win->config.fullscreen;
+   max = win->config.maximized;
 
-   win->minimized = EINA_FALSE;
-   win->maximized = EINA_FALSE;
-   win->fullscreen = EINA_FALSE;
-   win->focused = EINA_FALSE;
-   win->resizing = EINA_FALSE;
+   win->config.minimized = EINA_FALSE;
+   win->config.maximized = EINA_FALSE;
+   win->config.fullscreen = EINA_FALSE;
+   win->config.focused = EINA_FALSE;
+   win->config.resizing = EINA_FALSE;
 
    wl_array_for_each(s, states)
      {
         switch (*s)
           {
            case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
-             win->maximized = EINA_TRUE;
+             win->config.maximized = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
-             win->fullscreen = EINA_TRUE;
+             win->config.fullscreen = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
-             win->resizing = EINA_TRUE;
+             win->config.resizing = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
-             win->focused = EINA_TRUE;
-             win->minimized = EINA_FALSE;
+             win->config.focused = EINA_TRUE;
+             win->config.minimized = EINA_FALSE;
            default:
              break;
           }
      }
 
-   if ((win->geometry.w == width) && (win->geometry.h == height))
+   if ((win->config.geometry.w == width) &&
+       (win->config.geometry.h == height))
      width = height = 0;
-   else if ((!width) && (!height) && (!win->fullscreen) && (!win->maximized) &&
-            ((win->fullscreen != fs) || (win->maximized != max)))
+   else if ((!width) && (!height) && (!win->config.fullscreen) &&
+            (!win->config.maximized) &&
+            ((win->config.fullscreen != fs) ||
+             (win->config.maximized != max)))
      width = win->saved.w, height = win->saved.h;
 
-   _ecore_wl2_window_configure_send(win, width, height, !!win->resizing,
-                                    win->fullscreen, win->maximized);
+   _ecore_wl2_window_configure_send(win, width, height, !!win->config.resizing,
+                                    win->config.fullscreen, win->config.maximized);
 
-   if (win->focused)
+   if (win->config.focused)
      _ecore_wl2_window_activate_send(win);
    else
      _ecore_wl2_window_deactivate_send(win);
@@ -214,9 +217,9 @@ _ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
    pos = zxdg_shell_v6_create_positioner(win->display->wl.zxdg_shell);
    if (!pos) return;
 
-   zxdg_positioner_v6_set_anchor_rect(pos, win->geometry.x, win->geometry.y,
+   zxdg_positioner_v6_set_anchor_rect(pos, win->config.geometry.x, win->config.geometry.y,
                                       1, 1);
-   zxdg_positioner_v6_set_size(pos, win->geometry.w, win->geometry.h);
+   zxdg_positioner_v6_set_size(pos, win->config.geometry.w, win->config.geometry.h);
    zxdg_positioner_v6_set_anchor(pos, ZXDG_POSITIONER_V6_ANCHOR_TOP |
                                  ZXDG_POSITIONER_V6_ANCHOR_LEFT);
    zxdg_positioner_v6_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
@@ -342,10 +345,10 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
              if (ptop)
                zxdg_toplevel_v6_set_parent(window->zxdg_toplevel, ptop);
 
-             if (window->maximized)
+             if (window->config.maximized)
                zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
 
-             if (window->fullscreen)
+             if (window->config.fullscreen)
                zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
              if (window->aspect.set && window->display->wl.efl_hints)
                efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
@@ -363,10 +366,10 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
                                              window->surface, window->uuid);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                                   window->geometry.x,
-                                                   window->geometry.y,
-                                                   window->geometry.w,
-                                                   window->geometry.h);
+                                                   window->config.geometry.x,
+                                                   window->config.geometry.y,
+                                                   window->config.geometry.w,
+                                                   window->config.geometry.h);
 
              ecore_wl2_window_opaque_region_set(window,
                                                 window->opaque.x,
@@ -454,10 +457,10 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    win->parent = parent;
    win->id = _win_id++;
 
-   win->geometry.x = x;
-   win->geometry.y = y;
-   win->geometry.w = w;
-   win->geometry.h = h;
+   win->config.geometry.x = x;
+   win->config.geometry.y = y;
+   win->config.geometry.w = w;
+   win->config.geometry.h = h;
 
    win->opaque.x = x;
    win->opaque.y = y;
@@ -551,7 +554,7 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
         window->callback = NULL;
      }
 
-   window->configure_serial = 0;
+   window->config.serial = 0;
    window->zxdg_configure_ack = NULL;
    window->zxdg_set_min_size = NULL;
    window->zxdg_set_max_size = NULL;
@@ -652,8 +655,8 @@ ecore_wl2_window_raise(Ecore_Wl2_Window *window)
         s = wl_array_add(&states, sizeof(*s));
         *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
         _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                    window->geometry.w,
-                                    window->geometry.h, &states);
+                                    window->config.geometry.w,
+                                    window->config.geometry.h, &states);
         wl_array_release(&states);
      }
 }
@@ -846,7 +849,7 @@ ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   return window->maximized;
+   return window->config.maximized;
 }
 
 EAPI void
@@ -856,16 +859,16 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   prev = window->maximized;
+   prev = window->config.maximized;
    maximized = !!maximized;
    if (prev == maximized) return;
 
    if (!ecore_wl2_window_shell_surface_exists(window))
-     window->maximized = maximized;
+     window->config.maximized = maximized;
 
    if (maximized)
      {
-        window->saved = window->geometry;
+        window->saved = window->config.geometry;
 
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
@@ -882,7 +885,7 @@ ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   return window->fullscreen;
+   return window->config.fullscreen;
 }
 
 EAPI void
@@ -892,16 +895,16 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   prev = window->fullscreen;
+   prev = window->config.fullscreen;
    fullscreen = !!fullscreen;
    if (prev == fullscreen) return;
 
    if (!ecore_wl2_window_shell_surface_exists(window))
-     window->fullscreen = fullscreen;
+     window->config.fullscreen = fullscreen;
 
    if (fullscreen)
      {
-        window->saved = window->geometry;
+        window->saved = window->config.geometry;
 
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
@@ -958,10 +961,10 @@ ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, 
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if (x) *x = window->geometry.x;
-   if (y) *y = window->geometry.y;
-   if (w) *w = window->geometry.w;
-   if (h) *h = window->geometry.h;
+   if (x) *x = window->config.geometry.x;
+   if (y) *y = window->config.geometry.y;
+   if (w) *w = window->config.geometry.w;
+   if (h) *h = window->config.geometry.h;
 }
 
 EAPI void
@@ -969,14 +972,14 @@ ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((window->geometry.x == x) && (window->geometry.y == y) &&
-       (window->geometry.w == w) && (window->geometry.h == h))
+   if ((window->config.geometry.x == x) && (window->config.geometry.y == y) &&
+       (window->config.geometry.w == w) && (window->config.geometry.h == h))
      return;
 
-   window->geometry.x = x;
-   window->geometry.y = y;
-   window->geometry.w = w;
-   window->geometry.h = h;
+   window->config.geometry.x = x;
+   window->config.geometry.y = y;
+   window->config.geometry.w = w;
+   window->config.geometry.h = h;
 
    if (window->zxdg_toplevel)
      zxdg_surface_v6_set_window_geometry(window->zxdg_surface, x, y, w, h);
@@ -987,7 +990,7 @@ ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   return window->minimized;
+   return window->config.minimized;
 }
 
 EAPI void
@@ -997,11 +1000,11 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   prev = window->minimized;
+   prev = window->config.minimized;
    iconified = !!iconified;
    if (prev == iconified) return;
 
-   window->minimized = iconified;
+   window->config.minimized = iconified;
 
    if (iconified)
      {
@@ -1019,8 +1022,8 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
              s = wl_array_add(&states, sizeof(*s));
              *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
              _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                         window->geometry.w,
-                                         window->geometry.h, &states);
+                                         window->config.geometry.w,
+                                         window->config.geometry.h, &states);
              wl_array_release(&states);
           }
      }
@@ -1060,7 +1063,7 @@ EAPI Eina_Bool
 ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
-   return window->focused;
+   return window->config.focused;
 }
 
 EAPI Ecore_Wl2_Output *
@@ -1072,8 +1075,8 @@ ecore_wl2_window_output_find(Ecore_Wl2_Window *window)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
-   x = window->geometry.x;
-   y = window->geometry.y;
+   x = window->config.geometry.x;
+   y = window->config.geometry.y;
 
    EINA_INLIST_FOREACH_SAFE(window->display->outputs, tmp, out)
      {
@@ -1463,5 +1466,5 @@ ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
-   return window->resizing;
+   return window->config.resizing;
 }

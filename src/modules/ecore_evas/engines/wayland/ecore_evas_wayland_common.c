@@ -508,8 +508,8 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nw = ev->w;
    nh = ev->h;
 
-   pfw = fw = wdata->win->geometry.w - wdata->content.w;
-   pfh = fh = wdata->win->geometry.h - wdata->content.h;
+   pfw = fw = wdata->win->config.geometry.w - wdata->content.w;
+   pfh = fh = wdata->win->config.geometry.h - wdata->content.h;
 
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen) ||
@@ -517,19 +517,19 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
      {
         state_change = EINA_TRUE;
         _ecore_evas_wl_common_state_update(ee);
-        fw = wdata->win->geometry.w - wdata->content.w;
-        fh = wdata->win->geometry.h - wdata->content.h;
+        fw = wdata->win->config.geometry.w - wdata->content.w;
+        fh = wdata->win->config.geometry.h - wdata->content.h;
      }
 
    if ((!nw) && (!nh))
      {
-        if (wdata->win->configure_serial && wdata->win->surface &&
+        if (wdata->win->config.serial && wdata->win->surface &&
             ((!state_change) || ((pfw == fw) && (pfh == fh))))
           {
              if (wdata->win->zxdg_configure_ack)
                wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
-                                              wdata->win->configure_serial);
-             wdata->win->configure_serial = 0;
+                                              wdata->win->config.serial);
+             wdata->win->config.serial = 0;
           }
         return ECORE_CALLBACK_RENEW;
      }
@@ -1709,18 +1709,18 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
 
    if (!ecore_wl2_window_shell_surface_exists(wdata->win)) return;
 
-   if (wdata->win->zxdg_configure_ack && wdata->win->configure_serial)
+   if (wdata->win->zxdg_configure_ack && wdata->win->config.serial)
      wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
-                                    wdata->win->configure_serial);
-   wdata->win->configure_serial = 0;
+                                    wdata->win->config.serial);
+   wdata->win->config.serial = 0;
 
    /* Surviving bits of WWW - track interesting state we might want
     * to pass to clients to do client side effects
     */
-   einfo->window.x = wdata->win->geometry.x;
-   einfo->window.y = wdata->win->geometry.y;
-   einfo->window.w = wdata->win->geometry.w;
-   einfo->window.h = wdata->win->geometry.h;
+   einfo->window.x = wdata->win->config.geometry.x;
+   einfo->window.y = wdata->win->config.geometry.y;
+   einfo->window.w = wdata->win->config.geometry.w;
+   einfo->window.h = wdata->win->config.geometry.h;
    if (einfo->resizing)
      {
         einfo->x_rel = 0;
