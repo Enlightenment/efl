@@ -154,47 +154,18 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
 static void
 _generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Strbuf *parameter, const char *additional_intention)
 {
-   //simply append the free function
-   const char *free_func;
-
-   Eolian_Type_Builtin_Type t = eolian_type_builtin_type_get(type);
-
-   if (t == EOLIAN_TYPE_BUILTIN_LIST)
-     {
-        free_func = "eina_list_free";
-     }
-   else if (t == EOLIAN_TYPE_BUILTIN_ITERATOR)
-     {
-        free_func = "eina_iterator_free";
-     }
-   else if (t == EOLIAN_TYPE_BUILTIN_ACCESSOR)
-     {
-        free_func = "eina_accessor_free";
-     }
-   else if (t == EOLIAN_TYPE_BUILTIN_MSTRING)
-     {
-        free_func = "free";
-     }
-   else if (t == EOLIAN_TYPE_BUILTIN_STRINGSHARE)
-     {
-        free_func = "eina_stringshare_del";
-     }
-   else if (t == EOLIAN_TYPE_BUILTIN_HASH)
-     {
-        eina_strbuf_append_printf(*buf,"   eina_hash_free_cb_set(");
-        eina_strbuf_append_buffer(*buf, parameter);
-        eina_strbuf_append(*buf, ",NULL);\n");
-        free_func = "eina_hash_free";
-     }
-   else
-     {
-        free_func = eolian_type_free_func_get(type);
-     }
-
+   const char *free_func = eolian_type_free_func_get(type);
    if (!free_func)
      {
         printf("No free type %s\n", eolian_type_name_get(type));
         return;
+     }
+
+   if (eolian_type_builtin_type_get(type) == EOLIAN_TYPE_BUILTIN_HASH)
+     {
+        eina_strbuf_append_printf(*buf,"   eina_hash_free_cb_set(");
+        eina_strbuf_append_buffer(*buf, parameter);
+        eina_strbuf_append(*buf, ",NULL);\n");
      }
 
    eina_strbuf_append_printf(*buf,"   %s%s(", additional_intention, free_func);
