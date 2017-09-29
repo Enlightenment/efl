@@ -1526,9 +1526,7 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
    else if (efl_isa(inner_server, EFL_NET_SERVER_SSL_CLASS))
      {
         /* old ecore_con did not map ipv4 to ipv6... */
-        efl_net_server_ssl_ipv6_only_set(inner_server, EINA_TRUE);
-        efl_net_server_ssl_reuse_address_set(inner_server, EINA_TRUE);
-        efl_net_server_ssl_reuse_port_set(inner_server, EINA_TRUE);
+        efl_net_server_ip_ipv6_only_set(inner_server, EINA_TRUE);
      }
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    else if (efl_isa(inner_server, EFL_NET_SERVER_UNIX_CLASS))
@@ -1542,8 +1540,6 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
      {
         if (efl_isa(inner_server, EFL_NET_SERVER_FD_CLASS))
           efl_net_server_fd_socket_activate(inner_server, address);
-        else if (efl_isa(inner_server, EFL_NET_SERVER_SSL_CLASS))
-          efl_net_server_ssl_socket_activate(inner_server, address);
         else
           {
              ERR("svr=%p (%s): not able to socket-activate this type!", svr, efl_class_name_get(inner_server));

@@ -1,4 +1,4 @@
-class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
+class Efl.Net.Server.Ssl (Efl.Net.Server.Tcp) {
     [[A SSL server over TCP.
 
       @since 1.19
@@ -17,131 +17,12 @@ class Efl.Net.Server.Ssl (Efl.Loop_User, Efl.Net.Server) {
                 ssl_context: Efl.Net.Ssl.Context; [[SSL context]]
             }
         }
-
-        socket_activate {
-            [[If this method is called use an already activated socket.
-
-              This method allows a server to use an existing socket
-              received from systemd or similar system.
-
-              It will replace @Efl.Net.Server.serve, thus if this is
-              used, that method will return EALREADY.
-
-              \@note The parameter 'address' given to this function is
-              only used to validate the next socket available, it
-              doesn't search for a socket with the given address. Thus
-              the socket to be used is the next unused and orders
-              matter is using multiple servers!
-
-              Errors:
-
-                - EALREADY: already have a socket, either from
-                  previous @.socket_activate or
-                  @Efl.Net.Server.serve. Usually represents a
-                  programming error.
-
-                - ENOENT: no sockets received from process manager
-                  (ie: systemd). Usually this is not a fatal error,
-                  just proceed by calling @Efl.Net.Server.serve
-
-                - EINVAL: the socket received is not of the correct
-                  family, type or protocol. Usually this means a
-                  configuration mismatch with the order of server
-                  creation and calls to socket_activate. The
-                  systemd.socket entries must match the order in your
-                  application.
-            ]]
-            params {
-                address: string; [[The address to validate the next available socket. It doesn't serve as search, only as validation!]]
-            }
-            return: Eina.Error; [[0 on success, ENOENT if no socket is available or EALREADY if already have a socket]]
-        }
-
-        @property family {
-            [[The address family (AF_*) family of this socket.
-
-              It will be one of AF_INET (IPv4) or AF_INET6 (IPv6).
-            ]]
-            get { }
-            values {
-                family: int; [[Socket address family]]
-            }
-        }
-
-        @property close_on_exec {
-            [[Controls Close-on-Exec() using FD_CLOEXEC.
-
-              Children socket will inherit the server's setting by
-              default. One can change the behavior using each instance
-              @Efl.Io.Closer.close_on_exec.set. Defaults to $true.
-            ]]
-            get { }
-            set {
-                return: bool (false); [[$true on success]]
-            }
-            values {
-                close_on_exec: bool; [[If $true close on exec will be used, $false otherwise]]
-            }
-        }
-
-        @property reuse_address {
-            [[Controls address reuse() using SO_REUSEADDR]]
-            get { }
-            set {
-                return: bool (false); [[$true on success]]
-            }
-            values {
-                reuse_address: bool; [[If $true the server will reuse the address, $false otherwise]]
-            }
-        }
-
-        @property reuse_port {
-            [[Controls port reuse() using SO_REUSEPORT (since linux 3.9)]]
-            get { }
-            set {
-                return: bool (false); [[$true on success]]
-            }
-            values {
-                reuse_port: bool; [[If $true the server will reuse the port, $false otherwise]]
-            }
-        }
-
-        @property ipv6_only {
-            [[Whenever IPv6 listen address will accept only same-family clients or will allow IPv4 to connect as well.
-
-              Since Linux 2.4.21, Windows Vista and MacOS X these
-              control whenever a server that did bind to an IPv6
-              address will accept only IPv6 clients or will also
-              accept IPv4 by automatically converting them in an IPv6
-              address, allowing a single socket to handle both
-              protocols.
-
-              If an IPv6 address was used in @Efl.Net.Server.address,
-              this property is $false and an IPv4 connects, then an
-              address such as [::ffff:IPv4]:PORT will be used, such as
-              [::ffff:192.168.0.2]:1234, where the IPv4 address can be
-              extracted.
-
-              If an IPv4 address was used in @Efl.Net.Server.address,
-              this has no effect.
-
-              Systems can configure their default value, usually true
-              (allows only IPv6 clients).
-            ]]
-            values {
-                ipv6_only: bool; [[If $true the server will only accept IPv6 clients, $false otherwise]]
-            }
-        }
     }
 
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Net.Server.serve;
         Efl.Net.Server.client_announce;
-        Efl.Net.Server.address { get; }
-        Efl.Net.Server.clients_count { get; }
-        Efl.Net.Server.clients_limit { get; set; }
-        Efl.Net.Server.serving { get; }
+        Efl.Net.Server.Fd.client_add;
     }
 }
