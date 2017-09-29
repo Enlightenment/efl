@@ -1,0 +1,14 @@
+class Efl.Ui.Focus.Composition.Adapter (Efl.Object, Efl.Ui.Focus.Object)
+{
+   methods {
+      @property canvas_object {
+         values {
+            v : Efl.Canvas.Object;
+         }
+      }
+   }
+   implements {
+     Efl.Ui.Focus.Object.focus_geometry {get;}
+     Efl.Ui.Focus.Object.focus {set;}
+   }
+}
