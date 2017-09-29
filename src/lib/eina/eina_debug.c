@@ -156,14 +156,22 @@ eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *dat
 #ifndef _WIN32
    eina_spinlock_take(&_eina_debug_lock);
    /* Sending header */
-   write(session->fd, &hdr, sizeof(hdr));
+   if (write(session->fd, &hdr, sizeof(hdr)) != sizeof(hdr)) goto err;
    /* Sending payload */
-   if (size) write(session->fd, data, size);
+   if (size)
+     {
+        if (write(session->fd, data, size) != size) goto err;
+     }
    eina_spinlock_release(&_eina_debug_lock);
 #else
    (void)data;
 #endif
    return size;
+#ifndef _WIN32
+err:
+   e_debug("Cannot write to eina debug session");
+   return 0;
+#endif
 }
 
 #ifndef _WIN32
