@@ -326,7 +326,8 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                             int step_w = ee->prop.step.w ?: 1;
                             int step_h = ee->prop.step.h ?: 1;
 
-                            if (wdata->resizing || wdata->win->resizing)
+                            if (wdata->resizing ||
+                                ecore_wl2_window_resizing_get(wdata->win))
                               ew = wdata->cw, eh = wdata->ch;
                             if (abs(w - ew) > abs(h - eh))
                               aspect = EVAS_ASPECT_CONTROL_HORIZONTAL;
@@ -492,7 +493,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    wdata = ee->engine.data;
    if (!wdata) return ECORE_CALLBACK_PASS_ON;
 
-   if ((!wdata->win->resizing) && (!wdata->resizing))
+   if (!ecore_wl2_window_resizing_get(wdata->win) && !wdata->resizing)
      wdata->cw = wdata->ch = 0;
 
    prev_max = ee->prop.maximized;
@@ -538,7 +539,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      {
-        if (wdata->win->resizing || wdata->resizing)
+        if (ecore_wl2_window_resizing_get(wdata->win) || wdata->resizing)
           {
              if ((wdata->cw != nw) || (wdata->ch != nh))
                _ecore_evas_wl_common_resize(ee, nw, nh);
@@ -547,7 +548,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         else
           _ecore_evas_wl_common_resize(ee, nw, nh);
      }
-   wdata->resizing = wdata->win->resizing;
+   wdata->resizing = ecore_wl2_window_resizing_get(wdata->win);
 
    if (ee->prop.wm_rot.supported)
      {
@@ -1736,7 +1737,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    einfo->x_cursor -= fx;
    einfo->y_cursor -= fy;
    wdata->x_rel = wdata->y_rel = 0;
-   einfo->resizing = wdata->win->resizing;
+   einfo->resizing = ecore_wl2_window_resizing_get(wdata->win);
    einfo->dragging = wdata->dragging;
    einfo->drag_start = EINA_FALSE;
    einfo->drag_stop = EINA_FALSE;
