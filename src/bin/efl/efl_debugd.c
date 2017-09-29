@@ -197,7 +197,9 @@ _dispatch(Client *src, void *buffer)
                   hdr->cid = SWAP_32(src->cid);
                   hdr->size = SWAP_32(hdr->size);
                   hdr->opcode = SWAP_32(hdr->opcode);
-                  efl_io_writer_write(dest->client, &s, NULL);
+                  if (efl_io_writer_write(dest->client, &s, NULL) !=
+                      EINA_ERROR_NO_ERROR)
+                    ERR("Cannot write to client [%s:%i]", dest->app_name, (int)dest->pid);
                   INF("Transfer of %d bytes from %s(%d) to %s(%d): operation %s\n",
                         hdr->size,
                         src->app_name, src->pid,
