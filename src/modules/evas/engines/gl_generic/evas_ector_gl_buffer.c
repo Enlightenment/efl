@@ -341,7 +341,7 @@ _evas_ector_gl_buffer_ector_buffer_unmap(Eo *obj EINA_UNUSED, Evas_Ector_GL_Buff
                   else
                     {
                        MAP_DUMP(pd->glim, "out_ro_nofree");
-                       eng_image_data_put(ENC, pd->glim, map->image_data);
+                       pd->glim = eng_image_data_put(ENC, pd->glim, map->image_data);
                     }
                }
              if (map->allocated)
