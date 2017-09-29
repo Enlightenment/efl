@@ -146,6 +146,17 @@ struct _Ecore_Wl2_Frame_Cb_Handle
    void *data;
 };
 
+typedef struct _Ecore_Wl2_Window_Configure_State
+{
+   uint32_t serial;
+   Eina_Rectangle geometry;
+   Eina_Bool minimized : 1;
+   Eina_Bool maximized : 1;
+   Eina_Bool fullscreen : 1;
+   Eina_Bool focused : 1;
+   Eina_Bool resizing : 1;
+} Ecore_Wl2_Window_Configure_State;
+
 struct _Ecore_Wl2_Window
 {
    EINA_INLIST;
@@ -170,13 +181,11 @@ struct _Ecore_Wl2_Window
 
    Eina_Stringshare *uuid;
 
-   uint32_t configure_serial;
    void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
    void (*zxdg_set_min_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
    void (*zxdg_set_max_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
 
    Eina_Rectangle saved;
-   Eina_Rectangle geometry;
    Eina_Rectangle opaque;
    Eina_Rectangle input_rect;
 
@@ -193,12 +202,9 @@ struct _Ecore_Wl2_Window
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
 
+   Ecore_Wl2_Window_Configure_State config;
+
    Eina_Bool moving : 1;
-   Eina_Bool minimized : 1;
-   Eina_Bool maximized : 1;
-   Eina_Bool fullscreen : 1;
-   Eina_Bool focused : 1;
-   Eina_Bool resizing : 1;
    Eina_Bool alpha : 1;
    Eina_Bool transparent : 1;
 
