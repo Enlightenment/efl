@@ -229,7 +229,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    double slice_unit, slice_len;
    int w1, w2;
    int remained_w;
-   int total_slice, drawn_slice = 0;
+   int drawn_slice = 0;
    int cur_map_point = 0, map_point_no;
    Eina_Size2D sz;
 
@@ -241,7 +241,6 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    slice_unit = (double)pd->slice_no / pd->total_length;
 
    slice_len = 1.0 / slice_unit;
-   total_slice = sz.w / slice_len + 1;
 
    map_point_no = _map_point_calc(pd);
    if (map_point_no == 0)
