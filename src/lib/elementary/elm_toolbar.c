@@ -102,29 +102,24 @@ _item_focus_eval(Elm_Toolbar_Item_Data *pd)
 static void
 _item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
 {
+   Elm_Toolbar_Item_Data *it;
    Elm_Widget_Smart_Data *wpd;
+   Eina_List *order = NULL;
 
    wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
-   if (wpd->focus.manager)
+   EINA_INLIST_FOREACH(pd->items, it)
      {
-        Eina_List *order = NULL;
-        Elm_Toolbar_Item_Data *it;
-
-        EINA_INLIST_FOREACH(pd->items, it)
-          {
-             _item_focus_eval(it);
-             order = eina_list_append(order, EO_OBJ(it));
-          }
-
-        if (pd->more_item)
-          {
-             _item_focus_eval(pd->more_item);
-             order = eina_list_append(order, EO_OBJ(pd->more_item));
-          }
-
-        efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
-        eina_list_free(order);
+        _item_focus_eval(it);
+        order = eina_list_append(order, EO_OBJ(it));
      }
+
+   if (pd->more_item)
+     {
+        _item_focus_eval(pd->more_item);
+        order = eina_list_append(order, EO_OBJ(pd->more_item));
+     }
+
+   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
 }
 
 static int

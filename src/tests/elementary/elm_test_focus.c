@@ -320,7 +320,6 @@ START_TEST(order_check)
    order = eina_list_append(order, child3);
    order = eina_list_append(order, child1);
    ck_assert_int_eq(efl_ui_focus_manager_calc_update_children(m, root, order), 1);
-   eina_list_free(order);
 
    order = NULL;
 
