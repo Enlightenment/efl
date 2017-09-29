@@ -1888,7 +1888,7 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * @surface surface to commit
  * @flush EINA_TRUE if we need to flush immediately.
  *
- * @since 1.20
+ * @since 1.21
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
@@ -1900,7 +1900,7 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
  *
  * @return whether the window's surface is pending or not.
  *
- * @since 1.20
+ * @since 1.21
  */
 EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
@@ -1911,7 +1911,7 @@ EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
  * @cb The callback
  * @data user data to provide to the callback handler
  *
- * @since 1.20
+ * @since 1.21
  */
 EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data);
 
@@ -1921,7 +1921,7 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
  * @window the window to add a callback on
  * @cb The callback handle
  *
- * @since 1.20
+ * @since 1.21
  */
 EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
 
@@ -1939,7 +1939,7 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
  * @y y offset from corner
  * @implicit true if an external library is doing the actual attaching
  *
- * @since 1.20
+ * @since 1.21
  */
 EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
@@ -1951,7 +1951,7 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  * as after a commit.
  *
  * @param display
- * @since 1.20
+ * @since 1.21
  */
 EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
