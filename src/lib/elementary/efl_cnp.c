@@ -90,9 +90,10 @@ _x11_notify_text(Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *dda
 
 
 static Eina_Bool
-_efl_cnp_x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
+_efl_cnp_x11_selection_notify(void *udata, int type EINA_UNUSED, void *event)
 {
    ERR("in");
+   Efl_Cnp_Data *pd = udata;
    Ecore_X_Event_Selection_Notify *ev = event;
    Ecore_X_Selection_Data *data = ev->data;
    ERR("data: %s (%d), target: %s", (char *)data->data, data->length, ev->target);
@@ -101,80 +102,151 @@ _efl_cnp_x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, voi
    sd->data = malloc(data->length);
    if (!sd->data) ERR("failed to allocate sd->data memory");
    memcpy(sd->data, data->data, data->length);
-   //sd->data = strcpy((char *)sd->data, data->data);
    sd->length = data->length;
 
-   Efl_Cnp_Data *pd = udata;
-   if (pd->promise)
+   if (pd->data_func)
      {
-        ERR("call future");
-        efl_promise_value_set(pd->promise, sd, NULL);
-
-        return EINA_TRUE;
+        ERR("call function data pointer");
+        pd->data_func(pd->data_func_data, pd->obj, sd->data, sd->length);
+        pd->data_func_data = NULL;
+        pd->data_func = NULL;
+        pd->data_func_free_cb = NULL;
      }
-   else
-     {
-        ERR("promise does not exist");
-     }
+   ecore_event_handler_del(pd->notify_handler);
+   pd->notify_handler = NULL;
 
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Future *
-_efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Cnp_Format format, Efl_Input_Device *seat)
+EOLIAN static void
+_efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format,
+                                     void *data_func_data, Efl_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, Efl_Input_Device *seat)
 {
    ERR("in");
-   Efl_Promise *p;
 
    pd->atom.name = "TARGETS";
    pd->atom.x_atom = ecore_x_atom_get(pd->atom.name);
    ecore_x_selection_converter_atom_add(pd->atom.x_atom, _efl_cnp_x11_target_converter);
    pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _efl_cnp_x11_selection_notify, pd);
 
-
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    ERR("xwin: %d", xwin);
    ecore_x_selection_primary_request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
 
-   //issue: ctrl-v many times continuously, promise cannot sastify it
-   //1st set value to promise, 2nd set value for the same promise -> error
-   //another bug case: 1st get selection type A, 2nd get selection type B
-   if (!pd->promise)
-     {
-        Eo *loop = efl_loop_get(obj);
-        p = efl_add(EFL_PROMISE_CLASS,loop);
-        if (!p) return NULL;
-
-        pd->promise = p;
-     }
-
-   return efl_promise_future_get(pd->promise);
+   pd->obj = obj;
+   pd->data_func_data = data_func_data;
+   pd->data_func = data_func;
+   pd->data_func_free_cb = data_func_free_cb;
 }
 
+static void
+_local_efl_cnp_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format, const void *buf, int len, Efl_Input_Device *seat)
+{
+   ERR("In");
+}
+
+#ifdef HAVE_ELEMENTARY_X
+static void
+_x11_efl_cnp_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format, const void *buf, int len, Efl_Input_Device *seat)
+{
+   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+
+   pd->has_sel = EINA_TRUE;
+   pd->buf = malloc(len);
+   if (!pd->buf)
+     {
+        ERR("failed to allocate memory");
+     }
+   pd->buf = memcpy(pd->buf, buf, len);
+   pd->len = len;
+   pd->type = type;
+   pd->format = format;
+
+   switch (type)
+     {
+      case EFL_SELECTION_TYPE_PRIMARY:
+         ecore_x_selection_primary_set(xwin, pd->buf, pd->len);
+         break;
+      case EFL_SELECTION_TYPE_SECONDARY:
+         ecore_x_selection_secondary_set(xwin, pd->buf, pd->len);
+         break;
+      case EFL_SELECTION_TYPE_DND: //FIXME: Check
+         ecore_x_selection_xdnd_set(xwin, pd->buf, pd->len);
+         break;
+      case EFL_SELECTION_TYPE_CLIPBOARD:
+         ecore_x_selection_clipboard_set(xwin, pd->buf, pd->len);
+         break;
+      default:
+         break;
+     }
+}
+#endif
+
 EOLIAN static void
-_efl_cnp_efl_selection_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Cnp_Format format, const void *buf, int len, Efl_Input_Device *seat)
+_efl_cnp_efl_selection_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format, const void *buf, int len, Efl_Input_Device *seat)
 {
    ERR("in");
-   //add implementation
-   Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
+   if (type > EFL_SELECTION_TYPE_CLIPBOARD)
+     {
+        ERR("Not supported format: %d", type);
+        return;
+     }
+#ifdef HAVE_ELEMENTARY_X
+   return _x11_efl_cnp_selection_set(obj, pd, type, format, buf, len, seat);
+   /*Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    ERR("xwin: %d", xwin);
    char *data = malloc(len);
    if (!data) ERR("failed to allocate mem: %d", len);
    memcpy(data, buf, len);
    int ret = ecore_x_selection_primary_set(xwin, data, len);
-   ERR("sel set ret: %d", ret);
+   ERR("sel set ret: %d", ret);*/
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+#endif
+#ifdef HAVE_ELEMENTARY_WIN32
+#endif
+   _local_efl_cnp_selection_set(obj, pd, type, format, buf, len, seat);
 }
 
 EOLIAN static void
-_efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type, Efl_Input_Device *seat)
+_efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Input_Device *seat)
 {
     ERR("In");
+}
+
+//issue: selection clear only come with window-level
+//if a window has two entries, selection moves from one entry to the other
+//the selection clear does not come (still in that window)
+//fix: make selection manager: 1 selection manager per one window
+//it manages selection, calls selection loss even selection moves inside window.
+//Implementation: has SelMan mixin, ui_win includes it.
+//this cnp handles all converter, while SelMan manages selection requests.
+static Eina_Bool
+_x11_efl_cnp_selection_clear_cb(void *data, int type, void *event)
+{
+   ERR("In");
+   Efl_Cnp_Data *pd = data;
+   Ecore_X_Event_Selection_Clear *ev = event;
+
+   if (pd->has_sel)
+     {
+        ERR("call selection clear");
+        efl_promise_value_set(pd->promise, NULL, NULL);
+        pd->has_sel = EINA_FALSE;
+        pd->len = 0;
+        ELM_SAFE_FREE(pd->buf, free);
+
+        return ECORE_CALLBACK_PASS_ON;
+     }
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 //Selection loss event callback:: name
 //future or event???
 EOLIAN static Efl_Future *
-_efl_cnp_efl_selection_selection_loss_feedback(Eo *obj, Efl_Cnp_Data *pd, Efl_Cnp_Type type)
+_efl_cnp_efl_selection_selection_loss_feedback(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type)
 {
     ERR("In");
     Efl_Promise *p;
@@ -184,6 +256,8 @@ _efl_cnp_efl_selection_selection_loss_feedback(Eo *obj, Efl_Cnp_Data *pd, Efl_Cn
     if (!p) return NULL;
 
     pd->promise = p;
+
+    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_efl_cnp_selection_clear_cb, pd);
 
     return efl_promise_future_get(p);
 }

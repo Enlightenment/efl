@@ -90,6 +90,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_cnp.eo \
 	lib/elementary/efl_ui_dnd_drag.eo \
 	lib/elementary/efl_ui_dnd_drop.eo \
+	lib/elementary/efl_selection_manager.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -738,6 +739,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_widget_item_static_focus.c \
 	lib/elementary/efl_cnp.c \
 	lib/elementary/efl_dnd.c \
+	lib/elementary/efl_selection_manager.c \
 	$(NULL)
 
 

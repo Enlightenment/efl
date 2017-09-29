@@ -23,7 +23,7 @@ function Efl.Dnd.Drag_Data_Get {
    [[Function pointer for getting data and format at the drag side.]]
    params {
       @in obj: ptr(Eo); [[The container object]]
-      @out format: Efl.Cnp.Format; [[Data format]]
+      @out format: Efl.Selection.Format; [[Data format]]
       @out buf: const(void_ptr); [[Data]]
       @out len: int; [[The data's length]]
    }

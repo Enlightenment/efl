@@ -17,6 +17,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Elementary.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -53,6 +54,25 @@ struct example_data
 };
 
 static struct example_data d;
+
+Evas_Object *selObj = NULL, *newSelObj = NULL;
+
+typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Data *ev);
+
+static Eina_Bool
+_selection_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+{
+    char *buf = ev->data;
+    printf("data: %s\n", buf);
+
+    return EINA_TRUE;
+}
+
+static void
+_selection_loss_cb(void *data, Elm_Sel_Type selection)
+{
+    printf("Selection lost\n");
+}
 
 static void /* custom 'diagonal' layout */
 _custom_layout(Evas_Object          *o,
@@ -146,6 +166,7 @@ list_free:
 
    if (strcmp(ev->key, "a") == 0)
      {
+	elm_cnp_selection_get(selObj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, _selection_cb, NULL);
         double h, v;
 
         evas_object_box_align_get(d.box, &h, &v);
@@ -165,6 +186,13 @@ list_free:
                h, v);
         return;
      }
+
+   if (strcmp(ev->key, "b") == 0)
+   {
+       printf("set selection to new object\n");
+       elm_cnp_selection_set(newSelObj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, "new", 3);
+       return;
+   }
 
    if (strcmp(ev->key, "p") == 0)
      {
@@ -350,6 +378,13 @@ main(void)
         evas_object_color_set(
           o, rand() % 256, rand() % 256, rand() % 256, 255);
         evas_object_show(o);
+	if (i == 1)
+	{
+	    selObj = o;
+	} else if (i == 2)
+	{
+	    newSelObj = o;
+	}
 
         if (!evas_object_box_append(d.box, o))
           {
@@ -357,6 +392,9 @@ main(void)
              goto error;
           }
      }
+
+   elm_cnp_selection_set(selObj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, "abc", 3);
+   elm_cnp_selection_loss_callback_set(selObj, ELM_SEL_TYPE_PRIMARY, _selection_loss_cb, selObj);
 
    /* this is a border around the box, container of the rectangles we
     * are going to experiment with. this way you can see how the

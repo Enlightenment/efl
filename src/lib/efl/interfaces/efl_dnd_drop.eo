@@ -20,17 +20,17 @@ interface Efl.Dnd.Drop (Efl.Selection) {
          [[There are four events emitted: EFL_DND_DROP_DRAG_ENTER, EFL_DND_DROP_DRAG_LEAVE,
            EFL_DND_DROP_DRAG_POS, EFL_DND_DROP_DRAG_DROP.]]
          params {
-            @in format: Efl.Cnp.Format; [[Accepted data format]]
+            @in format: Efl.Selection.Format; [[Accepted data format]]
          }
       }
       target_del {
          params {
-            @in format: Efl.Cnp.Format; [[Accepted data format]]
+            @in format: Efl.Selection.Format; [[Accepted data format]]
          }
       }
       item_container_add {
          params {
-            @in format: Efl.Cnp.Format; [[Accepted data formats]]
+            @in format: Efl.Selection.Format; [[Accepted data formats]]
             @in item_func: Efl.Dnd.Drop_Item_Get; [[Get item at specific position]]
          }
       }

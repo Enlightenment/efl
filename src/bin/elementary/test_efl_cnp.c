@@ -28,6 +28,19 @@ _selection_get_cb(void *data, Efl_Event const *event)
 }
 
 static void
+_selection_data_ready_cb(void *data, Eo *obj, void *buf, int length)
+{
+    printf("obj: %p, data: %s, length: %d\n", obj, (char *)buf, length);
+}
+
+static void
+_selection_loss_cb(void *data, Efl_Event const *event)
+{
+    Eo *obj = data;
+    ERR("obj: %p has lost selection; %p", obj, event->object);
+}
+
+static void
 _selection_failure_cb(void *data, Efl_Event const *event)
 {
    ERR("in");
@@ -49,22 +62,20 @@ _delete_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_selection_btn_cb(void *data, Evas_Object *obj, void *event_info)
+_selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    //Evas_Object *cnp = efl_add(EFL_CNP_CLASS, win);
 
-   Efl_Future *f = efl_selection_get(obj, EFL_CNP_TYPE_PRIMARY, EFL_CNP_FORMAT_TEXT, seat);
-   if (f)
-     {
-        ERR("Register callbacks");
-        efl_future_then(f, _selection_get_cb, _selection_failure_cb, _selection_progress_cb, win);
-     }
-   else
-     {
-        ERR("future is NULL");
-     }
-   //
+   efl_selection_get(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT,
+	   NULL, _selection_data_ready_cb, NULL, seat);
+}
+
+static void
+_selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT,
+	    "new", 3, NULL);
 }
 
 static void
@@ -120,25 +131,25 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, win);
+   //bt = efl_add(EFL_CANVAS_IMAGE_CLASS, win); //FIXME: need support for all objects
    efl_text_set(bt, "test sel");
    efl_gfx_visible_set(bt, EINA_TRUE);
    elm_box_pack_end(bx, bt);
 
    //test cnp
    //Evas_Object *cnp = efl_add(EFL_CNP_CLASS, en);
-   efl_selection_set(bt, EFL_CNP_TYPE_PRIMARY, EFL_CNP_FORMAT_TEXT, "abc", 3, NULL);
+   efl_selection_set(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, "abc", 3, NULL);
 
-   Efl_Future *f = efl_selection_get(bt, EFL_CNP_TYPE_PRIMARY, EFL_CNP_FORMAT_TEXT, seat);
+   efl_selection_get(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, NULL, _selection_data_ready_cb, NULL, seat);
+
+   Efl_Future *f = efl_selection_loss_feedback(bt, EFL_SELECTION_TYPE_PRIMARY);
    if (f)
-     {
-        ERR("Register callbacks");
-        efl_future_then(f, _selection_get_cb, _selection_failure_cb, _selection_progress_cb, bt);
-     }
-   else
-     {
-        ERR("future is NULL");
-     }
+   {
+       printf("register future callbacks\n");
+       efl_future_then(f, _selection_loss_cb, NULL, NULL, bt);
+   }
    //
+
    /*bt2 = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(bt2, "get selection");
    efl_gfx_visible_set(bt2, EINA_TRUE);
@@ -179,9 +190,16 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Selection Get");
-   evas_object_smart_callback_add(bt, "clicked", _selection_btn_cb, win);
+   evas_object_smart_callback_add(bt, "clicked", _selection_get_btn_cb, win);
    evas_object_show(bt);
    elm_box_pack_end(hbox, bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Selection Set");
+   evas_object_smart_callback_add(bt, "clicked", _selection_set_btn_cb, win);
+   evas_object_show(bt);
+   elm_box_pack_end(hbox, bt);
+
 
    evas_object_resize(win, 480, 320);
    evas_object_show(win);

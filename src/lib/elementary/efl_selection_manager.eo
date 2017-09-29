@@ -1,40 +1,8 @@
-import efl_selection_types;
-
-/*enum Efl.Cnp.Type
-{
-   primary, [[Primary text selection (highlighted or selected text)]]
-   secondary, [[Used when primary selection is in use]]
-   dnd, [[Drag and Drop]]
-   clipboard [[Clipboard selectio (ctrl+C)]]
-}
-
-//should be more general: Efl.Data.Format???
-enum Efl.Cnp.Format
-{
-   [[Selection format]]
-   targets = -1, [[For matching every possible atom]]
-   none = 0x0, [[Content is from outside of Elementary]]
-   text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
-   markup = 0x2, [[Edje textblock markup, including inline images]]
-   image = 0x4, [[Images]]
-   vcard = 0x08, [[Vcards]]
-   html = 0x10 [[Raw HTML-like data (eg. webkit)]]
-}
-
-struct Efl.Cnp.Selection
-{
-   [[EFL Cnp selection]]
-   data: void_ptr; [[data]]
-   length: int; [[length]]
-}*/
-
-interface Efl.Selection {
-   [[Efl Copy and Paste class]]
-   //legacy_prefix: elm_cnp;
-   //eo_prefix: efl_selection;
+class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
    methods {
       selection_set {
          params {
+            @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in buf: const(void_ptr);
@@ -44,6 +12,7 @@ interface Efl.Selection {
       }
       selection_get {
          params {
+            @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in data_func: Efl.Selection.Data_Ready; [[Data ready function pointer]]
@@ -52,20 +21,26 @@ interface Efl.Selection {
       }
       selection_clear {
          params {
+            @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
       selection_loss_feedback { //name!!!
          params {
+            @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection type]]
          }
          return: future<generic_value>; [[Future of selection that is ready]]
       }
    }
    implements {
+      //Efl.Selection.selection_set;
+      //Efl.Selection.selection_get;
+      //Efl.Selection.selection_clear;
+      //Efl.Selection.selection_loss_feedback;
    }
    events {
-      selection,loss; [[Called when selection is lost]]
+      selection,loss; [[Called when seleciton is lost]]
    }
 }

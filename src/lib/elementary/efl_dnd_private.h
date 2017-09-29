@@ -30,7 +30,7 @@ struct _Efl_Ui_Dnd_Drag_Data
 struct _Efl_Ui_Dnd_Drop_Data
 {
    Efl_Promise *promise;
-   Efl_Cnp_Format format;
+   Efl_Selection_Format format;
 };
 
 #endif

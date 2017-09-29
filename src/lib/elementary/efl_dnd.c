@@ -16,11 +16,11 @@
 #define MY_CLASS EFL_DND_MIXIN
 #define MY_CLASS_NAME "Efl.Dnd"
 
-//FIXME: Efl_Cnp_Format should be changed to Efl_Data_Format
+//FIXME: Efl_Selection_Format should be changed to Efl_Data_Format
 
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Cnp_Format format, const void *buf, int len, Efl_Dnd_Drag_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
+_efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Dnd_Drag_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
 {
    ERR("In");
    Efl_Dnd_Drag_Accept da;
@@ -71,7 +71,7 @@ _efl_ui_dnd_drag_efl_dnd_drag_item_container_del(Eo *obj, Efl_Ui_Dnd_Drag_Data *
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Cnp_Format format)
+_efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format)
 {
    ERR("In");
    pd->format = format;
@@ -84,14 +84,14 @@ _efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Cnp_Format format)
+_efl_ui_dnd_drop_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format)
 {
    ERR("In");
    pd->format = format;
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Cnp_Format format, void *item_func_data, Efl_Dnd_Drop_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
+_efl_ui_dnd_drop_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Drop_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
 {
    ERR("In");
 }

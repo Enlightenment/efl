@@ -1,6 +1,6 @@
 
 
-enum Efl.Cnp.Type
+enum Efl.Selection.Type
 {
    primary, [[Primary text selection (highlighted or selected text)]]
    secondary, [[Used when primary selection is in use]]
@@ -9,7 +9,7 @@ enum Efl.Cnp.Type
 }
 
 //should be more general: Efl.Data.Format???
-enum Efl.Cnp.Format
+enum Efl.Selection.Format
 {
    [[Selection format]]
    targets = -1, [[For matching every possible atom]]
@@ -27,6 +27,15 @@ struct Efl.Cnp.Selection
    data: void_ptr; [[data]]
    length: int; [[length]]
 }
+
+function Efl.Selection.Data_Ready {
+   [[Function pointer for getting selection.]]
+   params {
+      @in obj: ptr(Eo);
+      @in buf: void_ptr;
+      @in length: int;
+   }
+};
 
 
 

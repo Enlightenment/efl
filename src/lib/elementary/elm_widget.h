@@ -463,6 +463,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
    Eina_Bool                     legacy : 1; /**< Widget was created with a legacy API, not efl_add() */
+   Eina_Bool                     is_sel_owner : 1;
 } Elm_Widget_Smart_Data;
 
 typedef Elm_Widget_Smart_Data Efl_Ui_Widget_Data;

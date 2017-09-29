@@ -315,6 +315,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_cnp.eo.h>
 //# include <efl_ui_dnd_drag.eo.h>
 //# include <efl_ui_dnd_drop.eo.h>
+#include <efl_selection_manager.eo.h>
 #endif
 
 /* include deprecated calls last of all */
