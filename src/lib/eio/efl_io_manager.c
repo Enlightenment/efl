@@ -58,6 +58,24 @@ _efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUS
 }
 
 static void
+_future_file_done_cb(void *data, Eio_File *handler)
+{
+   Eina_Promise *p = data;
+
+   eina_promise_resolve(p, eina_value_uint64_init(handler->length));
+}
+
+static void
+_future_file_error_cb(void *data,
+                      Eio_File *handler EINA_UNUSED,
+                      int error)
+{
+   Eina_Promise *p = data;
+
+   eina_promise_reject(p, error);
+}
+
+static void
 _no_future(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eio_File *h = data;
@@ -151,6 +169,31 @@ _cleanup_info_progress(void *data)
    EINA_ARRAY_ITER_NEXT(existing, i, d, it)
      eio_direct_info_free(d);
    eina_array_free(existing);
+}
+
+static void
+_future_string_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gather)
+{
+   EflIoPath paths = ecore_thread_local_data_find(handler->thread, ".paths");
+   void *paths_data = ecore_thread_local_data_find(handler->thread, ".paths_data");
+   Eina_Accessor *access;
+   unsigned int count;
+   Eina_Stringshare *s;
+
+   if (!paths)
+     {
+        eina_array_free(gather);
+        return ;
+     }
+
+   access = eina_array_accessor_new(gather);
+   paths(paths_data, access);
+
+   // Cleanup strings, accessor and array
+   EINA_ACCESSOR_FOREACH(access, count, s)
+     eina_stringshare_del(s);
+   eina_accessor_free(access);
+   eina_array_free(gather);
 }
 
 static void
@@ -320,31 +363,36 @@ _efl_io_manager_stat_ls(Eo *obj,
    return NULL;
 }
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_ls(Eo *obj,
                    Efl_Io_Manager_Data *pd EINA_UNUSED,
-                   const char *path)
+                   const char *path,
+                   void *paths_data, EflIoPath paths, Eina_Free_Cb paths_free_cb)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = _eio_file_ls(path,
-                    _file_string_cb,
-                    _file_done_cb,
-                    _file_error_cb,
+                    _future_string_cb,
+                    _future_file_done_cb,
+                    _future_file_error_cb,
                     p);
    if (!h) goto end;
 
-   efl_event_callback_array_add(p, promise_progress_handling(), h);
-   return efl_promise_future_get(p);
+   ecore_thread_local_data_add(h->thread, ".paths", paths, NULL, EINA_TRUE);
+   ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
+   eina_promise_data_set(p, h);
+
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 /* Stat function */
@@ -454,14 +502,6 @@ _efl_io_manager_xattr_ls(Eo *obj,
 }
 
 static void
-_future_file_done_cb(void *data, Eio_File *handler)
-{
-   Eina_Promise *p = data;
-
-   eina_promise_resolve(p, eina_value_uint64_init(handler->length));
-}
-
-static void
 _future_file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char *attr_data, unsigned int size)
 {
    Eina_Promise *p = data;
@@ -476,16 +516,6 @@ _future_file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char 
    eina_value_setup(&v, EINA_VALUE_TYPE_BLOB);
    eina_value_set(&v, &blob);
    eina_promise_resolve(p, v);
-}
-
-static void
-_future_file_error_cb(void *data,
-                      Eio_File *handler EINA_UNUSED,
-                      int error)
-{
-   Eina_Promise *p = data;
-
-   eina_promise_reject(p, error);
 }
 
 static Eina_Future *

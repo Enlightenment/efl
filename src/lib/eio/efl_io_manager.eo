@@ -7,17 +7,32 @@ struct Eio.Data
   size: uint; [[Size of private data]]
 }
 
+function EflIoPath {
+  params {
+     @in paths: accessor<string>; [[Accessor to an array of path.]]
+  }
+};
+
+function EflIoDirectInfo {
+  params {
+     @in entries: accessor<Eina.File.Direct.Info>; [[Accessor to an array of info.]]
+  }
+};
+
 class Efl.Io.Manager (Efl.Loop_User)
 {
   [[Class representing an asynchronous file operation.]]
 
   methods {
     ls {
-      [[Lists entries in a given path.]]
+      [[Lists entries in a given path.
+        See \@ref eina_file_ls().
+      ]]
       params {
         @in path: string; [[Path we want to list entries for]]
+	paths: EflIoPath; [[Callback called for each packet of files found]]
       }
-      return: future<uint64, const(array<string>)>; [[List of entries in path]]
+      return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
     }
 
     direct_ls {
