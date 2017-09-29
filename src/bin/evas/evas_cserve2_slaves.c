@@ -222,6 +222,11 @@ _slave_proc_read_cb(int fd, Fd_Flags flags, void *data)
           {
              return;
           }
+        if ((ints[0] < 0) || (ints[0] > (128 * 1024)))
+          {
+             ERR("Invalid size to read: %i", ints[0]);
+             return;
+          }
         s->read.size = ints[0];
         s->read.cmd = ints[1];
         if (s->read.size)
