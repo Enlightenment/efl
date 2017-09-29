@@ -1234,10 +1234,10 @@ ecore_thread_local_data_add(Ecore_Thread *thread,
    if ((!thread) || (!key) || (!value))
      return EINA_FALSE;
 
-   if (!PHE(worker->self, PHS())) return EINA_FALSE;
-
+   LKL(worker->mutex);
    if (!worker->hash)
      worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
+   LKU(worker->mutex);
 
    if (!worker->hash)
      return EINA_FALSE;
@@ -1248,10 +1248,12 @@ ecore_thread_local_data_add(Ecore_Thread *thread,
    d->data = value;
    d->cb = cb;
 
+   LKL(worker->mutex);
    if (direct)
      ret = eina_hash_direct_add(worker->hash, key, d);
    else
      ret = eina_hash_add(worker->hash, key, d);
+   LKU(worker->mutex);
    CDB(worker->cond);
    return ret;
 }
@@ -1269,10 +1271,11 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
    if ((!thread) || (!key) || (!value))
      return NULL;
 
-   if (!PHE(worker->self, PHS())) return NULL;
 
+   LKL(worker->mutex);
    if (!worker->hash)
      worker->hash = eina_hash_string_small_new(_ecore_thread_data_free);
+   LKU(worker->mutex);
 
    if (!worker->hash)
      return NULL;
@@ -1283,9 +1286,11 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
    d->data = value;
    d->cb = cb;
 
+   LKL(worker->mutex);
    r = eina_hash_set(worker->hash, key, d);
+   LKU(worker->mutex);
    CDB(worker->cond);
-   
+
    if (r)
      {
    	ret = r->data;
@@ -1305,12 +1310,12 @@ ecore_thread_local_data_find(Ecore_Thread *thread,
    if ((!thread) || (!key))
      return NULL;
 
-   if (!PHE(worker->self, PHS())) return NULL;
-
    if (!worker->hash)
      return NULL;
 
+   LKL(worker->mutex);
    d = eina_hash_find(worker->hash, key);
+   LKU(worker->mutex);
    if (d)
      return d->data;
    return NULL;
@@ -1321,15 +1326,18 @@ ecore_thread_local_data_del(Ecore_Thread *thread,
                             const char   *key)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)thread;
+   Eina_Bool r;
 
    if ((!thread) || (!key))
      return EINA_FALSE;
 
-   if (!PHE(worker->self, PHS())) return EINA_FALSE;
-
    if (!worker->hash)
      return EINA_FALSE;
-   return eina_hash_del_by_key(worker->hash, key);
+
+   LKL(worker->mutex);
+   r = eina_hash_del_by_key(worker->hash, key);
+   LKU(worker->mutex);
+   return r;
 }
 
 EAPI Eina_Bool
