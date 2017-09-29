@@ -1485,7 +1485,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED,
    if (child)
      {
         ret.is_regular_end = child->type == NODE_TYPE_NORMAL;
-        ret.element = child ? child->focusable : NULL;
+        ret.element = child->focusable;
      }
    return ret;
 }
