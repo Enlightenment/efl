@@ -284,13 +284,13 @@ _efl_net_server_ssl_reuse_port_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *p
 EOLIAN void
 _efl_net_server_ssl_ipv6_only_set(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd, Eina_Bool ipv6_only)
 {
-   efl_net_server_tcp_ipv6_only_set(pd->server, ipv6_only);
+   efl_net_server_ip_ipv6_only_set(pd->server, ipv6_only);
 }
 
 EOLIAN Eina_Bool
 _efl_net_server_ssl_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ssl_Data *pd)
 {
-   return efl_net_server_tcp_ipv6_only_get(pd->server);
+   return efl_net_server_ip_ipv6_only_get(pd->server);
 }
 
 

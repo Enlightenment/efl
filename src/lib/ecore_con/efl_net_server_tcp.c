@@ -32,15 +32,7 @@
 typedef struct _Efl_Net_Server_Tcp_Data
 {
    Ecore_Thread *resolver;
-   Eina_Bool ipv6_only;
 } Efl_Net_Server_Tcp_Data;
-
-EOLIAN Efl_Object *
-_efl_net_server_tcp_efl_object_constructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
-{
-   pd->ipv6_only = 0xff;
-   return efl_constructor(efl_super(o, MY_CLASS));
-}
 
 EOLIAN void
 _efl_net_server_tcp_efl_object_destructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
@@ -80,10 +72,7 @@ _efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const stru
    /* apply pending value BEFORE bind() */
    if (addr->ai_family == AF_INET6)
      {
-        if (pd->ipv6_only == 0xff)
-          efl_net_server_tcp_ipv6_only_get(o); /* fetch & sync */
-        else
-          efl_net_server_tcp_ipv6_only_set(o, pd->ipv6_only);
+        efl_net_server_ip_ipv6_only_set(o, efl_net_server_ip_ipv6_only_get(o));
      }
 
    r = bind(fd, addr->ai_addr, addrlen);
@@ -292,62 +281,5 @@ _efl_net_server_tcp_efl_net_server_fd_client_reject(Eo *o, Efl_Net_Server_Tcp_Da
    closesocket(client_fd);
    efl_event_callback_call(o, EFL_NET_SERVER_EVENT_CLIENT_REJECTED, str);
 }
-
-EOLIAN void
-_efl_net_server_tcp_ipv6_only_set(Eo *o, Efl_Net_Server_Tcp_Data *pd, Eina_Bool ipv6_only)
-{
-#ifdef IPV6_V6ONLY
-   Eina_Bool old = pd->ipv6_only;
-   SOCKET fd = efl_loop_fd_get(o);
-#ifdef _WIN32
-   DWORD value = ipv6_only;
-#else
-   int value = ipv6_only;
-#endif
-#endif
-
-   pd->ipv6_only = ipv6_only;
-
-#ifdef IPV6_V6ONLY
-   if (fd == INVALID_SOCKET) return;
-   if (efl_net_server_fd_family_get(o) != AF_INET6) return;
-
-   if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&value, sizeof(value)) != 0)
-     {
-        ERR("could not set socket=" SOCKET_FMT " IPV6_V6ONLY=%d: %s", fd, (int)value, eina_error_msg_get(efl_net_socket_error_get()));
-        pd->ipv6_only = old;
-     }
-#endif
-}
-
-EOLIAN Eina_Bool
-_efl_net_server_tcp_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Tcp_Data *pd)
-{
-#ifdef IPV6_V6ONLY
-   SOCKET fd = efl_loop_fd_get(o);
-#ifdef _WIN32
-   DWORD value = 0;
-   int valuelen;
-#else
-   int value = 0;
-   socklen_t valuelen;
-#endif
-
-   if (fd == INVALID_SOCKET) goto end;
-   if (efl_net_server_fd_family_get(o) != AF_INET6) goto end;
-
-   valuelen = sizeof(value);
-   if (getsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&value, &valuelen) != 0)
-     {
-        WRN("getsockopt(" SOCKET_FMT ", IPPROTO_IPV6, IPV6_V6ONLY): %s", fd, eina_error_msg_get(efl_net_socket_error_get()));
-        goto end;
-     }
-   pd->ipv6_only = !!value;
-
- end:
-#endif
-   return pd->ipv6_only;
-}
-
 
 #include "efl_net_server_tcp.eo.c"

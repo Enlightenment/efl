@@ -229,7 +229,7 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
         fprintf(stderr,
                 "TCP options:\n"
                 " - IPv6 only: %u\n",
-                efl_net_server_tcp_ipv6_only_get(event->object));
+                efl_net_server_ip_ipv6_only_get(event->object));
      }
    else if (efl_class_get(event->object) == EFL_NET_SERVER_UDP_CLASS)
      {
@@ -243,7 +243,7 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
                 " - multicast TTL: %u\n"
                 " - multicast loopback: %u\n"
                 " - multicast groups:\n",
-                efl_net_server_udp_ipv6_only_get(event->object),
+                efl_net_server_ip_ipv6_only_get(event->object),
                 efl_net_server_udp_dont_route_get(event->object),
                 efl_net_server_udp_multicast_time_to_live_get(event->object),
                 efl_net_server_udp_multicast_loopback_get(event->object));
@@ -459,7 +459,7 @@ main(int argc, char **argv)
 
    if (cls == EFL_NET_SERVER_TCP_CLASS)
      {
-        efl_net_server_tcp_ipv6_only_set(server, ipv6_only);
+        efl_net_server_ip_ipv6_only_set(server, ipv6_only);
         efl_net_server_fd_reuse_address_set(server, EINA_TRUE); /* optional, but nice for testing */
         efl_net_server_fd_reuse_port_set(server, EINA_TRUE); /* optional, but nice for testing... not secure unless you know what you're doing */
 
@@ -469,7 +469,7 @@ main(int argc, char **argv)
      {
         const Eina_List *lst;
 
-        efl_net_server_udp_ipv6_only_set(server, ipv6_only);
+        efl_net_server_ip_ipv6_only_set(server, ipv6_only);
         efl_net_server_udp_dont_route_set(server, udp_dont_route);
 
         efl_net_server_udp_multicast_time_to_live_set(server, udp_mcast_ttl);
