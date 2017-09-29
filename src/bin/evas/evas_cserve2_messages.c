@@ -87,7 +87,14 @@ cserve2_message_handler(int fd EINA_UNUSED, Fd_Flags flags, void *data)
      return;
 
    if (!client->msg.reading)
-     len = cserve2_client_read(client, &msgsize, sizeof(msgsize));
+     {
+        len = cserve2_client_read(client, &msgsize, sizeof(msgsize));
+        if ((msgsize < 0) || (msgsize > (128 * 1024)))
+          {
+             ERR("Client sending garbage message size of %i\n", msgsize);
+             return;
+          }
+     }
    else
      len = cserve2_client_read(client, &client->msg.buf[client->msg.done],
                                client->msg.size - client->msg.done);
