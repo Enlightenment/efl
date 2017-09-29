@@ -409,11 +409,11 @@ EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, size),
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blksize),
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blocks),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, atime),
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atimensec),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, mtime),
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtimensec),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctime),
+                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, ctime),
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctimensec));
 
 static void
