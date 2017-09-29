@@ -13,6 +13,8 @@
 #include "efl_net_socket_fd.eo.h"
 #include "efl_net_server_fd.eo.h"
 
+#include "efl_net_server_ip.eo.h"
+
 #include "efl_net_socket_tcp.eo.h"
 #include "efl_net_dialer_tcp.eo.h"
 #include "efl_net_server_tcp.eo.h"

@@ -16,6 +16,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_server.eo \
         lib/ecore_con/efl_net_server_simple.eo \
         lib/ecore_con/efl_net_server_fd.eo \
+        lib/ecore_con/efl_net_server_ip.eo \
         lib/ecore_con/efl_net_server_tcp.eo \
         lib/ecore_con/efl_net_server_udp.eo \
         lib/ecore_con/efl_net_server_udp_client.eo \
@@ -108,6 +109,7 @@ lib/ecore_con/efl_net_dialer_websocket.c \
 lib/ecore_con/efl_net_server.c \
 lib/ecore_con/efl_net_server_simple.c \
 lib/ecore_con/efl_net_server_fd.c \
+lib/ecore_con/efl_net_server_ip.c \
 lib/ecore_con/efl_net_server_tcp.c \
 lib/ecore_con/efl_net_server_udp.c \
 lib/ecore_con/efl_net_server_udp_client.c \

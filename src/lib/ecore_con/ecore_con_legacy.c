@@ -1515,12 +1515,12 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
    if (efl_isa(inner_server, EFL_NET_SERVER_TCP_CLASS))
      {
         /* old ecore_con did not map ipv4 to ipv6... */
-        efl_net_server_tcp_ipv6_only_set(inner_server, EINA_TRUE);
+        efl_net_server_ip_ipv6_only_set(inner_server, EINA_TRUE);
      }
    else if (efl_isa(inner_server, EFL_NET_SERVER_UDP_CLASS))
      {
         /* old ecore_con did not map ipv4 to ipv6... */
-        efl_net_server_udp_ipv6_only_set(inner_server, EINA_TRUE);
+        efl_net_server_ip_ipv6_only_set(inner_server, EINA_TRUE);
         svr->want_mcast = type == ECORE_CON_REMOTE_MCAST;
      }
    else if (efl_isa(inner_server, EFL_NET_SERVER_SSL_CLASS))
