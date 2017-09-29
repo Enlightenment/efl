@@ -492,9 +492,20 @@ _node_new_geometery_cb(void *data, const Efl_Event *event)
    return;
 }
 
+static void
+_object_del_cb(void *data, const Efl_Event *event)
+{
+   /*
+    * Lets just implicitly delete items that are deleted
+    * Otherwise we have later just a bunch of errors
+    */
+   efl_ui_focus_manager_calc_unregister(data, event->object);
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
     {EFL_GFX_EVENT_RESIZE, _node_new_geometery_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometery_cb},
+    {EFL_EVENT_DEL, _object_del_cb},
 );
 
 //=============================
