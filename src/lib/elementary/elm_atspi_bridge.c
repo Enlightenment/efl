@@ -3783,8 +3783,9 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
      }
    while (eldbus_message_iter_get_and_next(iter, 'r', &siter))
      {
-        eldbus_message_iter_arguments_get(siter, "ss", &bus, &event);
-        _set_broadcast_flag(event, data);
+        if (!eldbus_message_iter_arguments_get(siter, "ss", &bus, &event))
+          ERR("Cannot get bus and event from registered listener");
+        else _set_broadcast_flag(event, data);
      }
 
    if (!pd->connected)
