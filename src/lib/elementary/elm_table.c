@@ -18,13 +18,9 @@ static void
 _focus_order_flush(Eo *obj)
 {
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
-   if (wpd->focus.manager)
-     {
-        Eina_List *order = evas_object_table_children_get(wpd->resize_obj);
+   Eina_List *order = evas_object_table_children_get(wpd->resize_obj);
 
-        efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
-        eina_list_free(order);
-     }
+   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
 }
 
 EOLIAN static Eina_Bool

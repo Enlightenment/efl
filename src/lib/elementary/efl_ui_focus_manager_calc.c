@@ -552,7 +552,6 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
 
         tmp = eina_list_clone(T(pnode).saved_order);
         efl_ui_focus_manager_calc_update_order(obj, parent, tmp);
-        eina_list_free(tmp);
      }
 
    return EINA_TRUE;
@@ -595,7 +594,6 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
 
         tmp = eina_list_clone(T(pnode).saved_order);
         efl_ui_focus_manager_calc_update_order(obj, parent, tmp);
-        eina_list_free(tmp);
      }
 
    return EINA_TRUE;
@@ -695,7 +693,7 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
      return;
 
    ELM_SAFE_FREE(T(pnode).saved_order, eina_list_free);
-   T(pnode).saved_order = eina_list_clone(order);
+   T(pnode).saved_order = order;
 
    //get all nodes from the subset
    EINA_LIST_FOREACH(order, n, o)
@@ -728,14 +726,14 @@ _efl_ui_focus_manager_calc_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Man
    Node *pnode;
    Efl_Ui_Focus_Object *o;
    Eina_Bool fail = EINA_FALSE;
-   Eina_List *node_order = NULL, *n;
+   Eina_List *node_order = NULL;
 
    pnode = node_get(obj, pd, parent);
    if (!pnode)
      return EINA_FALSE;
 
    //get all nodes from the subset
-   EINA_LIST_FOREACH(order, n, o)
+   EINA_LIST_FREE(order, o)
      {
         Node *tmp;
 
