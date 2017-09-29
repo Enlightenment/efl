@@ -417,18 +417,11 @@ EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
                               EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctimensec));
 
 static void
-_file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *stat)
+_file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st)
 {
-   Eina_Value_Struct value = { _eina_stat_desc(), NULL };
+   const Eina_Value_Struct value = { _eina_stat_desc(), (void*) st };
    Eina_Promise *p = data;
    Eina_Value r = EINA_VALUE_EMPTY;
-   Eina_Stat *cpy = NULL;
-
-   cpy = calloc(1, sizeof (Eina_Stat));
-   if (!cpy) goto on_error;
-
-   memcpy(cpy, stat, sizeof (Eina_Stat));
-   value.memory = cpy;
 
    if (!eina_value_setup(&r, EINA_VALUE_TYPE_STRUCT))
      goto on_error;
@@ -440,7 +433,6 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
    return ;
 
  on_error:
-   free(cpy);
    eina_value_flush(&r);
    eina_promise_reject(p, eina_error_get());
 }
