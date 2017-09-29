@@ -226,7 +226,7 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
 {
    Efl_Ui_Textpath_Segment *seg;
    Evas_Map *map;
-   double slice_unit, slice_len;
+   double slice_unit;
    int w1, w2;
    int remained_w;
    int drawn_slice = 0;
@@ -239,8 +239,6 @@ _text_draw(Efl_Ui_Textpath_Data *pd)
    else
      remained_w = pd->total_length;
    slice_unit = (double)pd->slice_no / pd->total_length;
-
-   slice_len = 1.0 / slice_unit;
 
    map_point_no = _map_point_calc(pd);
    if (map_point_no == 0)
