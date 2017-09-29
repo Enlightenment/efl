@@ -296,7 +296,7 @@ _escaped_char_get(const char *s, const char *s_end)
         int base = 10;
         s += 2; /* Skip "&#" */
 
-        if ((*s == 'x') && (*s == 'X'))
+        if ((*s == 'x') || (*s == 'X'))
           {
              s++;
              base = 16;
