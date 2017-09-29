@@ -1955,6 +1955,8 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  */
 EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
+EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
+
 # endif
 
 # undef EAPI
