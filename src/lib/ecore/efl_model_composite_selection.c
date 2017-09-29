@@ -60,7 +60,7 @@ static void _select_slice_then(void* data EINA_UNUSED, Efl_Event const* event)
    Eina_Value value;
    Efl_Model* child;
 
-   eina_accessor_data_get(accessor, 0, (void**)&child);
+   if (!eina_accessor_data_get(accessor, 0, (void **)&child)) return;
     
    eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
    eina_value_set(&value, EINA_TRUE);
