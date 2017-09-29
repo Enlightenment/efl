@@ -244,14 +244,15 @@ _evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int si
    /* Do loading for all in family */
    for (i = 0; i < set->nfont; i++)
      {
-	FcValue filename;
+        FcValue filename;
 
-	FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
-
-	if (font)
-	  evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
-	else
-	  font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
+        if (FcPatternGet(set->fonts[i], FC_FILE, 0, &filename) == FcResultMatch)
+          {
+             if (font)
+               evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
+             else
+               font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
+          }
      }
 
    return font;
