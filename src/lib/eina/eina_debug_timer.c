@@ -200,7 +200,8 @@ _eina_debug_timer_shutdown(void)
 {
    char c = '\0';
    _exit_required = EINA_TRUE;
-   write(pipeToThread[1], &c, 1);
+   if (write(pipeToThread[1], &c, 1) != 1)
+     e_debug("Eina debug timer shutdown write failed!");
    eina_spinlock_free(&_lock);
    return EINA_TRUE;
 }
