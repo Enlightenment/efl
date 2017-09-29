@@ -54,7 +54,7 @@ src/bin/elementary/test_scaling.c
 src/bin/elementary/test_scroller.c
 src/bin/elementary/test_separator.c
 src/bin/elementary/test_slider.c
-src/bin/elementary/test_slider_interval.c
+src/bin/elementary/test_ui_slider_interval.c
 src/bin/elementary/test_slideshow.c
 src/bin/elementary/test_spinner.c
 src/bin/elementary/test_store.c
