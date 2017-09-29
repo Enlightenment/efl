@@ -1107,13 +1107,10 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
 
    prev_flags = *event_flags;
    if (ecd->func((void *)ecd->data, parent, obj, type, event_info.any) ||
-       (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
+       ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
      {
-        if (event_flags)
-          {
-             if (prev_flags != *event_flags)
-               efl_input_event_flags_set(event->info, *event_flags);
-          }
+        if (prev_flags != *event_flags)
+          efl_input_event_flags_set(event->info, *event_flags);
         return EINA_TRUE;
      }
 
