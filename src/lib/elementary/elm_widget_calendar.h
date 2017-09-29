@@ -50,6 +50,7 @@ struct _Elm_Calendar_Data
    Evas_Object             *inc_btn_year;
    Evas_Object             *dec_btn_year;
    Evas_Object             *year_access;
+   Eo                      *items[42];
 
    Elm_Calendar_Weekday     first_week_day;
    Elm_Calendar_Select_Mode select_mode;
