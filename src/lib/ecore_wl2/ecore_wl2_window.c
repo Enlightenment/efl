@@ -1457,3 +1457,11 @@ ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y
    else
      win->has_buffer = EINA_TRUE;
 }
+
+EAPI Eina_Bool
+ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
+
+   return window->resizing;
+}
