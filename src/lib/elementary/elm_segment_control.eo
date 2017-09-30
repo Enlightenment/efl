@@ -1,4 +1,4 @@
-class Elm.Segment_Control (Efl.Ui.Layout)
+class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
 {
    [[Elementary segment control class]]
    legacy_prefix: elm_segment_control;
@@ -137,9 +137,6 @@ class Elm.Segment_Control (Efl.Ui.Layout)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
       Elm.Widget.on_disabled_update;
       Efl.Ui.Translatable.translation_update;
