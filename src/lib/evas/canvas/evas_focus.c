@@ -280,6 +280,8 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
    return;
    MAGIC_CHECK_END();
 
+   if (_efl_canvas_object_seat_focus_check(eo_obj, obj, NULL) == focus) return;
+
    if (focus)
      _efl_canvas_object_seat_focus_add(eo_obj, obj, NULL);
    else
