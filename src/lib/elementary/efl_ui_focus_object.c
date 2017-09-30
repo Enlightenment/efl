@@ -18,6 +18,12 @@ _efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd, Eina_Bool 
    pd->old_focus = focus;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_focus_object_focus_get(Eo *obj, Efl_Ui_Focus_Object_Data *pd)
+{
+   return pd->old_focus;
+}
+
 
 #include "efl_ui_focus_object.eo.c"
 #include "efl_ui_focus_user.eo.c"
