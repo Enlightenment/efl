@@ -52,35 +52,30 @@ _efl_net_server_windows_client_listen_success(void *data, Eo *client, DWORD used
    Eo *o = data;
    Efl_Net_Server_Windows_Data *pd = efl_data_scope_get(o, MY_CLASS);
    char cstr[256], sstr[256];
-   ULONG cpid = 0, spid = 0;
+   ULONG cpid, spid;
    const char *addr = efl_net_server_address_get(o);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINVAL);
 
-#if _WIN32_WINNT >= 0x0600
-   if (!GetNamedPipeClientProcessId(_efl_net_socket_windows_handle_get(client), &cpid))
+   if (GetNamedPipeClientProcessId(_efl_net_socket_windows_handle_get(client), &cpid))
+     snprintf(cstr, sizeof(cstr), "%s:%lu", addr, cpid);
+   else
      {
         char *msg = evil_last_error_get();
         WRN("server=%p (%s) could not GetNamedPipeClientProcessId(client): %s", o, addr, msg);
         free(msg);
+        eina_strlcpy(cstr, addr, sizeof(cstr));
      }
-   if (!GetNamedPipeServerProcessId(_efl_net_socket_windows_handle_get(client), &spid))
+
+   if (GetNamedPipeServerProcessId(_efl_net_socket_windows_handle_get(client), &spid))
+     snprintf(sstr, sizeof(sstr), "%s:%lu", addr, spid);
+   else
      {
         char *msg = evil_last_error_get();
         WRN("server=%p (%s) could not GetNamedPipeServerProcessId(client): %s", o, addr, msg);
         free(msg);
+        eina_strlcpy(sstr, addr, sizeof(sstr));
      }
-#endif
-
-   if (cpid)
-     snprintf(cstr, sizeof(cstr), "%s:%lu", addr, cpid);
-   else
-     eina_strlcpy(cstr, addr, sizeof(cstr));
-
-   if (spid)
-     snprintf(sstr, sizeof(sstr), "%s:%lu", addr, spid);
-   else
-     eina_strlcpy(sstr, addr, sizeof(sstr));
 
    DBG("server=%p received incoming connection at %s<->%s", o, sstr, cstr);
 

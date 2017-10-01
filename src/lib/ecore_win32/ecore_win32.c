@@ -27,10 +27,8 @@
 
 /* FIXME: uncomment when mingw-w64 will be updated in win-builds */
 
-/* #if _WIN32_WINNT >= 0x0600 */
-/* # ifndef WM_CLIPBOARDUPDATE */
-#  define WM_CLIPBOARDUPDATE 0x031D
-/* # endif */
+/* #ifndef WM_CLIPBOARDUPDATE */
+# define WM_CLIPBOARDUPDATE 0x031D
 /* #endif */
 
 /* OLE IID for Drag'n Drop */

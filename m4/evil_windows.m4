@@ -12,15 +12,15 @@ AC_DEFUN([EFL_SELECT_WINDOWS_VERSION],
 dnl configure option
 
 AC_ARG_WITH([windows-version],
-   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (xp, vista or win7) @<:@default=win7@:>@])],
+   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (vista or win7) @<:@default=win7@:>@])],
    [
     if test "x${with_windows_version}" = "xvista" ; then
        _winver="vista"
     else
-       if test "x${with_windows_version}" = "xxp" ; then
-          _winver="xp"
-       else
+       if test "x${with_windows_version}" = "xwin7" ; then
           _winver="win7"
+       else
+          _winver="error"
        fi
     fi
    ],
@@ -39,8 +39,7 @@ case "${_winver}" in
      _efl_windows_version="Windows 7"
      ;;
   *)
-     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0501"
-     _efl_windows_version="Windows XP"
+     AC_MSG_ERROR([Wrong Windows version passed to configure. Run ./configure --help])
      ;;
 esac
 

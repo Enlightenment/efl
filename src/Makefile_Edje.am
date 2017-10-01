@@ -262,6 +262,7 @@ $(CWARNFLAGS) \
 -DTARGET_VT=11
 if HAVE_WIN32
 bin_edje_epp_epp_CPPFLAGS += \
+@EFL_WINDOWS_VERSION_CFLAGS@ \
 -I$(top_srcdir)/src/lib/evil \
 -I$(top_builddir)/src/lib/evil
 bin_edje_epp_epp_LDADD = lib/evil/libevil.la

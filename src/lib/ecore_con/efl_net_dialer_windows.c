@@ -36,7 +36,7 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
    Eina_Error err;
    HANDLE h;
    char cstr[256], sstr[256];
-   ULONG cpid = 0, spid = 0;
+   ULONG cpid, spid;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(address, EINVAL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(strchr(address, '/') != NULL, EINVAL);
@@ -81,30 +81,25 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
         return err;
      }
 
-#if _WIN32_WINNT >= 0x0600
-  if (!GetNamedPipeClientProcessId(_efl_net_socket_windows_handle_get(o), &cpid))
-     {
-        char *msg = evil_last_error_get();
-        WRN("server=%p (%s) could not GetNamedPipeClientProcessId(o): %s", o, address, msg);
-        free(msg);
-     }
-   if (!GetNamedPipeServerProcessId(_efl_net_socket_windows_handle_get(o), &spid))
-     {
-        char *msg = evil_last_error_get();
-        WRN("server=%p (%s) could not GetNamedPipeServerProcessId(o): %s", o, address, msg);
-        free(msg);
-     }
-#endif
+  if (GetNamedPipeClientProcessId(_efl_net_socket_windows_handle_get(o), &cpid))
+    snprintf(cstr, sizeof(cstr), "%s:%lu", address, cpid);
+  else
+    {
+       char *msg = evil_last_error_get();
+       WRN("server=%p (%s) could not GetNamedPipeClientProcessId(o): %s", o, address, msg);
+       free(msg);
+       eina_strlcpy(cstr, address, sizeof(cstr));
+    }
 
-   if (cpid)
-     snprintf(cstr, sizeof(cstr), "%s:%lu", address, cpid);
-   else
-     eina_strlcpy(cstr, address, sizeof(cstr));
-
-   if (spid)
-     snprintf(sstr, sizeof(sstr), "%s:%lu", address, spid);
-   else
-     eina_strlcpy(sstr, address, sizeof(sstr));
+  if (GetNamedPipeServerProcessId(_efl_net_socket_windows_handle_get(o), &spid))
+    snprintf(sstr, sizeof(sstr), "%s:%lu", address, spid);
+  else
+    {
+       char *msg = evil_last_error_get();
+       WRN("server=%p (%s) could not GetNamedPipeServerProcessId(o): %s", o, address, msg);
+       free(msg);
+       eina_strlcpy(sstr, address, sizeof(sstr));
+     }
 
    efl_net_socket_address_remote_set(o, sstr);
    efl_net_socket_address_local_set(o, cstr);
