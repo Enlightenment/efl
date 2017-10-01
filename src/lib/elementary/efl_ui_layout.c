@@ -1255,17 +1255,19 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
 
    if (!text) return EINA_TRUE;
 
-   if (is_markup)
+   if (wd->legacy)
      {
         if (!edje_object_part_text_escaped_set
          (wd->resize_obj, part, text))
            return EINA_FALSE;
      }
+   else if (is_markup)
+     {
+        efl_text_markup_set(efl_part(wd->resize_obj, part), text);
+     }
    else
      {
-        if (!edje_object_part_text_unescaped_set
-         (wd->resize_obj, part, text))
-           return EINA_FALSE;
+        efl_text_set(efl_part(wd->resize_obj, part), text);
      }
 
    if (!sub_d)
