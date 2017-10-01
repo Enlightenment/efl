@@ -11,7 +11,7 @@ _efl_canvas_layout_part_text_efl_text_text_set(Eo *obj,
       void *_pd EINA_UNUSED, const char *text)
 {
    PROXY_DATA_GET(obj, pd);
-   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE);
+   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE, EINA_FALSE);
    RETURN_VOID;
 }
 
@@ -36,7 +36,7 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
       void *_pd EINA_UNUSED, const char *text)
 {
    PROXY_DATA_GET(obj, pd);
-   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_TRUE);
+   _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE, EINA_TRUE);
    RETURN_VOID;
 }
 

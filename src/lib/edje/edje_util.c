@@ -1842,7 +1842,7 @@ _edje_object_text_change_cb_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Text_Change_
 }
 
 Eina_Bool
-_edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text, Eina_Bool set_markup)
+_edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text, Eina_Bool set_markup, Eina_Bool legacy)
 {
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return EINA_TRUE;
@@ -1861,18 +1861,25 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
    else
    if (text)
      {
-        if (set_markup && (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
-          {
-             char *mkup;
-             mkup =
-                efl_text_markup_util_text_to_markup(EFL_TEXT_MARKUP_UTIL_CLASS,
-                                                    text);
-             rp->typedata.text->text = eina_stringshare_add(mkup);
-             free(mkup);
-          }
-        else
+        if (legacy)
           {
              rp->typedata.text->text = eina_stringshare_add(text);
+          }
+        else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+             if (set_markup)
+               {
+                  rp->typedata.text->text = eina_stringshare_add(text);
+               }
+             else
+               {
+                  char *mkup;
+                  mkup = efl_text_markup_util_text_to_markup(
+                     EFL_TEXT_MARKUP_UTIL_CLASS,
+                     text);
+                  rp->typedata.text->text = eina_stringshare_add(mkup);
+                  free(mkup);
+               }
           }
      }
    ed->dirty = EINA_TRUE;
@@ -1891,7 +1898,7 @@ Eina_Bool
 _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
 {
    return _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
-                                                 EINA_FALSE);
+                                                 EINA_FALSE, EINA_TRUE);
 }
 
 void
@@ -1924,7 +1931,7 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_
 
 Eina_Bool
 _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
-                   Eina_Bool set_markup)
+                   Eina_Bool legacy, Eina_Bool set_markup)
 {
    Edje_Real_Part *rp;
    Eina_Bool int_ret;
@@ -1940,7 +1947,7 @@ _edje_efl_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
         return EINA_TRUE;
      }
    int_ret = _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
-                                                    set_markup);
+                                                    set_markup, legacy);
    _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_NORMAL);
    return int_ret;
 }
@@ -6134,7 +6141,11 @@ edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 EAPI Eina_Bool
 edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *text)
 {
-   efl_text_set(efl_part(obj, part), text);
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+
+   _edje_efl_text_set((Eo *) obj, ed, part, text, EINA_TRUE, EINA_FALSE);
    return EINA_TRUE;
 }
 
