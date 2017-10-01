@@ -169,6 +169,7 @@ eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *dat
    return size;
 #ifndef _WIN32
 err:
+   eina_spinlock_release(&_eina_debug_lock);
    e_debug("Cannot write to eina debug session");
    return 0;
 #endif
