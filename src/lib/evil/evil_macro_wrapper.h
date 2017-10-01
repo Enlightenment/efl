@@ -3,29 +3,6 @@
 
 
 /*
- * evil_inet.h
- */
-
-#if ! (_WIN32_WINNT >= 0x600 /* _WIN32_WINNT_VISTA */)
-
-/**
- * @def inet_pton(x,y,z)
- *
- * Wrapper around evil_inet_pton().
- */
-#define inet_pton(x,y,z) evil_inet_pton(x,y,z)
-
-/**
- * @def inet_ntop(x,y,z,s)
- *
- * Wrapper around evil_inet_ntop().
- */
-#define inet_ntop(x,y,z,s) evil_inet_ntop(x,y,z,s)
-
-
-#endif /* _WIN32_WINNT >= _WIN32_WINNT_VISTA */
-
-/*
  * evil_locale.h
  */
 

@@ -9,7 +9,6 @@ dist_install_evilheaders_DATA = \
 lib/evil/Evil.h \
 lib/evil/evil_dlfcn.h \
 lib/evil/evil_fcntl.h \
-lib/evil/evil_inet.h \
 lib/evil/evil_langinfo.h \
 lib/evil/evil_locale.h \
 lib/evil/evil_macro.h \
@@ -36,7 +35,6 @@ lib/evil/evil_dlfcn.c \
 lib/evil/evil_fcntl.c \
 lib/evil/evil_fnmatch.c \
 lib/evil/evil_fnmatch_list_of_states.c \
-lib/evil/evil_inet.c \
 lib/evil/evil_langinfo.c \
 lib/evil/evil_locale.c \
 lib/evil/evil_link_xp.cpp \

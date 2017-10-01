@@ -35,6 +35,17 @@ evil_init(void)
    if (++_evil_init_count != 1)
      return _evil_init_count;
 
+   {
+      DWORD v;
+
+      v = GetVersion();
+      if (!v || ((DWORD)(LOBYTE(LOWORD(v))) < 6))
+        {
+           fprintf(stderr, "Windows XP not supported anymore, exiting.\n");
+           return 0;
+        }
+   }
+
    if (!QueryPerformanceFrequency(&freq))
        return 0;
 

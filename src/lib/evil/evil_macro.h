@@ -1,6 +1,10 @@
 #ifndef __EVIL_MACRO_H__
 #define __EVIL_MACRO_H__
 
+#if _WIN32_WINNT < 0x0600
+# error Windows XP not supported anymore
+#endif
+
 #ifdef EAPI
 # undef EAPI
 #endif
