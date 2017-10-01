@@ -2217,7 +2217,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    pd->scroller = scroller;
 
    background = elm_bg_add(scroller);
-   evas_object_color_set(background, 145, 145, 145, 255);
+   evas_object_color_set(background, 36, 36, 36, 255);
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
