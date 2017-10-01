@@ -1861,7 +1861,7 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
    else
    if (text)
      {
-        if (set_markup)
+        if (set_markup && (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
           {
              char *mkup;
              mkup =
@@ -6134,7 +6134,7 @@ edje_object_part_swallow_get(const Edje_Object *obj, const char *part)
 EAPI Eina_Bool
 edje_object_part_text_set(const Edje_Object *obj, const char *part, const char *text)
 {
-   efl_text_markup_set(efl_part(obj, part), text);
+   efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
 
