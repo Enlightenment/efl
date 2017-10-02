@@ -1861,25 +1861,19 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
    else
    if (text)
      {
-        if (legacy)
+        if (legacy || (rp->part->type == EDJE_PART_TYPE_TEXT) || set_markup)
           {
              rp->typedata.text->text = eina_stringshare_add(text);
           }
-        else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+        else // !legacy && (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+             // && !set_markup
           {
-             if (set_markup)
-               {
-                  rp->typedata.text->text = eina_stringshare_add(text);
-               }
-             else
-               {
-                  char *mkup;
-                  mkup = efl_text_markup_util_text_to_markup(
-                     EFL_TEXT_MARKUP_UTIL_CLASS,
-                     text);
-                  rp->typedata.text->text = eina_stringshare_add(mkup);
-                  free(mkup);
-               }
+             char *mkup;
+             mkup = efl_text_markup_util_text_to_markup(
+                EFL_TEXT_MARKUP_UTIL_CLASS,
+                text);
+             rp->typedata.text->text = eina_stringshare_add(mkup);
+             free(mkup);
           }
      }
    ed->dirty = EINA_TRUE;
