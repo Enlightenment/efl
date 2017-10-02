@@ -46,7 +46,7 @@ _efl_net_server_tcp_efl_object_destructor(Eo *o, Efl_Net_Server_Tcp_Data *pd)
 }
 
 static Eina_Error
-_efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd, const struct addrinfo *addr)
+_efl_net_server_tcp_resolved_bind(Eo *o, Efl_Net_Server_Tcp_Data *pd EINA_UNUSED, const struct addrinfo *addr)
 {
    Eina_Error err = 0;
    char buf[INET6_ADDRSTRLEN + sizeof("[]:65536")];
