@@ -5,6 +5,20 @@ mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manag
 
      Once the object is hidden or destructed the focus will go back to the mainwindow, where it has been before.
    ]]
+   methods {
+     @property enable @protected {
+        values {
+           v : bool; [[$true to set enable the layer $false to disable it]]
+        }
+     }
+     @property behaviour @protected {
+        [[Constructor for setting the behaviour of the layer]]
+        values {
+           enable_on_visible : bool;  [[$true means layer will set itself once the inheriting widget gets visible, $false means the layer does not get enabled automatically]]
+           cycle : bool; [[If $true the focus will cycle in the layer, if $false]]
+        }
+     }
+   }
    implements {
       Elm.Widget.focus_manager_create;
       Elm.Widget.focus_state_apply;
