@@ -6,7 +6,7 @@ mixin Ector.Surface (Ector.Buffer)
    data: null;
    methods {
       @property reference_point {
-         [[This define where is (0,0) in pixels coordinate inside the surface]]
+         [[This defines where (0,0) is in pixel coordinates inside the surface]]
          set @pure_virtual {
          }
          values {
