@@ -202,16 +202,12 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL, ecore_audio_obj_name_set(efl_added, snd_id_str), ecore_audio_obj_in_speed_set(efl_added, speed), ecore_audio_obj_vio_set(efl_added, &eet_data->vio, eet_data, _free), efl_event_callback_add(efl_added, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL));
              if (!out)
                {
-#if HAVE_PULSE
-                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#endif
+                  out = efl_add(ECORE_AUDIO_OUT_RENDER_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL, _out_fail, NULL));
                   if (out) outs++;
                }
              if (!out)
                {
-#if HAVE_PULSE
-                  ERR("Could not create multisense audio out (pulse)");
-#endif
+                  ERR("Could not create multisense audio out");
                   efl_del(in);
                   return EINA_FALSE;
                }
@@ -270,9 +266,7 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 
              if (!out)
                {
-#if HAVE_PULSE
-                  out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#endif
+                  out = efl_add(ECORE_AUDIO_OUT_RENDER_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL, _out_fail, NULL));
                   if (out) outs++;
                }
 
