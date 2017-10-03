@@ -82,6 +82,7 @@ typedef struct _Elput_Input
    Eldbus_Pending *current_pending;
    int pipe;
    int pointer_w, pointer_h;
+   int rotation;
 
    Eina_Bool suspended : 1;
 } Elput_Input;

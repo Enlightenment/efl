@@ -217,12 +217,44 @@ _device_add(Elput_Manager *em, struct libinput_device *dev)
    eseat->devices = eina_list_append(eseat->devices, edev);
 
    DBG("Input Device Added: %s", libinput_device_get_name(dev));
+
    if (edev->caps & ELPUT_DEVICE_CAPS_KEYBOARD)
      DBG("\tDevice added as Keyboard device");
+
    if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
-     DBG("\tDevice added as Pointer device");
+     {
+        DBG("\tDevice added as Pointer device");
+        switch (em->input.rotation)
+          {
+           case 0:
+             edev->swap = EINA_FALSE;
+             edev->invert_x = EINA_FALSE;
+             edev->invert_y = EINA_FALSE;
+             break;
+           case 90:
+             edev->swap = EINA_TRUE;
+             edev->invert_x = EINA_FALSE;
+             edev->invert_y = EINA_TRUE;
+             break;
+           case 180:
+             edev->swap = EINA_FALSE;
+             edev->invert_x = EINA_TRUE;
+             edev->invert_y = EINA_TRUE;
+             break;
+           case 270:
+             edev->swap = EINA_TRUE;
+             edev->invert_x = EINA_TRUE;
+             edev->invert_y = EINA_FALSE;
+             break;
+           default:
+             break;
+          }
+     }
+
    if (edev->caps & ELPUT_DEVICE_CAPS_TOUCH)
-     DBG("\tDevice added as Touch device");
+     {
+        DBG("\tDevice added as Touch device");
+     }
 
    _device_event_send(edev, ELPUT_DEVICE_ADDED);
 }
@@ -577,6 +609,8 @@ elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation)
 
    if ((rotation % 90 != 0) || (rotation / 90 > 3) || (rotation < 0))
      return EINA_FALSE;
+
+   manager->input.rotation = rotation;
 
    EINA_LIST_FOREACH(manager->input.seats, l, eseat)
      {
