@@ -16,12 +16,12 @@ abstract Ector.Renderer (Efl.Object)
    eo_prefix: ector_renderer;
    methods {
       @property surface {
-         [[Surface associated to this renderer]]
+         [[Surface associated with this renderer]]
          set {
 	    [[Do not use.]]
 	 }
 	 get {
-	    [[Gets the surface associated to this renderer. Can not be set.]]
+	    [[Gets the surface associated with this renderer. Can not be set.]]
 	 }
 	 values {
 	    s: Ector.Surface; [[Associated surface]]
@@ -49,13 +49,13 @@ abstract Ector.Renderer (Efl.Object)
 	 }
       }
       @property visibility {
-         [[The given Ector renderer visible or invisible.]]
+         [[The given Ector renderer can be visible or invisible.]]
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    v: bool; [[$true if to make the object visible, $false otherwise]]
+	    v: bool; [[$true to make the object visible, $false otherwise]]
 	 }
       }
       @property color {
@@ -119,7 +119,7 @@ abstract Ector.Renderer (Efl.Object)
 	 params {
 	    @in op: Efl.Gfx.Render_Op; [[Renderer operation]]
 	    @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
-	    @in mul_col: uint; [[Premultiplied color]] 
+	    @in mul_col: uint; [[Premultiplied color]]
 	 }
       }
       prepare {
