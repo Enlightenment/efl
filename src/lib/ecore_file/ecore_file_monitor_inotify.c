@@ -262,17 +262,9 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
         em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
    if (mask & IN_IGNORED)
-     {
-        /* The watch is removed. If the file name still exists monitor the new one,
-         * else delete it */
-        if (ecore_file_exists(em->path))
-          {
-             if (_ecore_file_monitor_inotify_monitor(em, em->path))
-               em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
-          }
-        else
-          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
-     }
+     /* The watch is removed. If the file name still exists monitor the new one,
+      * else delete it */
+     _ecore_file_monitor_inotify_monitor(em, em->path);
 }
 
 static int
