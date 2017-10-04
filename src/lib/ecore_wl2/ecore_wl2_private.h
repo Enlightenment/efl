@@ -202,7 +202,8 @@ struct _Ecore_Wl2_Window
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
 
-   Ecore_Wl2_Window_Configure_State config;
+   Ecore_Wl2_Window_Configure_State set_config;
+   Ecore_Wl2_Window_Configure_State req_config;
 
    Eina_Bool moving : 1;
    Eina_Bool alpha : 1;
