@@ -1408,6 +1408,7 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         wl_surface_commit(window->surface);
         ecore_wl2_display_flush(window->display);
      }
+   window->updating = EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1467,4 +1468,12 @@ ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
 
    return window->req_config.resizing;
+}
+
+EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_TRUE_RETURN(window->updating);
+
+   window->updating = EINA_TRUE;
 }

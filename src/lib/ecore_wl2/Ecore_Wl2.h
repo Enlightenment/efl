@@ -1957,6 +1957,21 @@ EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
 EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
 
+/**
+ * Latch window state at the start of an update
+ *
+ * When async render takes place we continue to dispatch wayland
+ * events from the main loop. We need to defer any changes to
+ * window state from those events until the update is complete.
+ *
+ * Events deferred during an update will automatically fire
+ * immediately after the caller calls ecore_wl2_window_commit.
+ *
+ * @param window
+ * @since 1.21
+ */
+EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
+
 # endif
 
 # undef EAPI
