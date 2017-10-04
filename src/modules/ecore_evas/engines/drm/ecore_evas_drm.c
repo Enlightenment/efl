@@ -221,12 +221,63 @@ static void
 _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_Drm *einfo;
-   int diff;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Eina_Bool use_hw = EINA_FALSE;
+   int diff, rotations = 0, orient = 0;
 
    if (ee->rotation == rotation) return;
 
    einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
+
+   edata = ee->engine.data;
+
+   rotations = ecore_drm2_output_supported_rotations_get(edata->output);
+   if (rotations >= 0)
+     {
+        if (rotations & ECORE_DRM2_ROTATION_NORMAL)
+          {
+             if (rotation == 0)
+               {
+                  use_hw = EINA_TRUE;
+                  orient = ECORE_DRM2_ROTATION_NORMAL;
+               }
+          }
+
+        if (rotations & ECORE_DRM2_ROTATION_90)
+          {
+             if (rotation == 90)
+               {
+                  use_hw = EINA_TRUE;
+                  orient = ECORE_DRM2_ROTATION_90;
+               }
+          }
+
+        if (rotations & ECORE_DRM2_ROTATION_180)
+          {
+             if (rotation == 180)
+               {
+                  use_hw = EINA_TRUE;
+                  orient = ECORE_DRM2_ROTATION_180;
+               }
+          }
+
+        if (rotations & ECORE_DRM2_ROTATION_270)
+          {
+             if (rotation == 270)
+               {
+                  use_hw = EINA_TRUE;
+                  orient = ECORE_DRM2_ROTATION_270;
+               }
+          }
+     }
+
+   if (use_hw)
+     {
+        ecore_drm2_output_rotation_set(edata->output, orient);
+        ee->rotation = rotation;
+        return;
+     }
 
    einfo->info.rotation = rotation;
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
