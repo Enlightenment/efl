@@ -233,6 +233,7 @@ struct _Ecore_Wl2_Window
         unsigned int count;
      } wm_rot;
    Eina_Bool has_buffer : 1;
+   Eina_Bool updating : 1;
 };
 
 struct _Ecore_Wl2_Output

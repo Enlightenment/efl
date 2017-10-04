@@ -1710,6 +1710,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
 
    if (!ecore_wl2_window_shell_surface_exists(wdata->win)) return;
 
+   ecore_wl2_window_update_begin(wdata->win);
    if (wdata->win->zxdg_configure_ack && wdata->win->req_config.serial &&
        (wdata->win->req_config.serial != wdata->win->set_config.serial))
      wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
