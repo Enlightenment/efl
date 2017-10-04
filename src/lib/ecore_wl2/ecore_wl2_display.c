@@ -471,7 +471,8 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
         EINA_INLIST_FOREACH_SAFE(window->subsurfs, tmp2, subsurf)
           _ecore_wl2_subsurf_unmap(subsurf);
         _ecore_wl2_window_semi_free(window);
-        window->config.serial = 0;
+        window->set_config.serial = 0;
+        window->req_config.serial = 0;
         window->zxdg_configure_ack = NULL;
         window->zxdg_set_min_size = NULL;
         window->zxdg_set_max_size = NULL;
