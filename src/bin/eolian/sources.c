@@ -386,6 +386,8 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
                eina_strbuf_free(fallback_free_ownership);
                fallback_free_ownership = NULL;
             }
+
+        eina_strbuf_free(param_call);
      }
 
    /* property values or method params if applicable */
