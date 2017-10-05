@@ -711,13 +711,6 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
-     {
-        if (window->surface)
-          wl_surface_set_opaque_region(window->surface, NULL);
-        return;
-     }
-
    switch (window->rotation)
      {
       case 0:
@@ -756,9 +749,15 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    window->opaque.y = ny;
    window->opaque.w = nw;
    window->opaque.h = nh;
-   window->opaque_set = EINA_TRUE;
+   window->opaque_set = x || y || w || h;
 
    if (!window->surface) return;
+
+   if (!window->opaque_set)
+     {
+        wl_surface_set_opaque_region(window->surface, NULL);
+        return;
+     }
 
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
