@@ -1,10 +1,25 @@
 import eina_types;
+import efl_gfx_types;
 
-interface Efl.File {
+mixin Efl.File {
    [[Efl file interface]]
    methods {
+      @property load_error {
+         get {
+            [[Gets the (last) file loading error for a given Edje object
+
+              This function is meant to be used after an Edje EDJ file
+              loading, what takes place with the $file_set() function. If that
+              function does not return $true, one should check for the reason
+              of failure with this one.
+            ]]
+         }
+         values {
+            error: Efl.Image.Load.Error(Efl.Image.Load.Error.none); [[The load error code.]]
+         }
+      }
       @property mmap {
-         set {
+         set @pure_virtual {
             [[Set the source mmaped file from where an image object must fetch the real
               image data (it must be an Eina_File).
 
@@ -16,7 +31,7 @@ interface Efl.File {
 
             return: bool; [[$true on success, $false otherwise]]
          }
-         get {
+         get @pure_virtual {
             [[Get the source mmaped file from where an image object must fetch the real
               image data (it must be an Eina_File).
 
@@ -80,7 +95,7 @@ interface Efl.File {
                                  $null, otherwise.]]
          }
       }
-      save @const {
+      save @const @pure_virtual {
          [[Save the given image object's contents to an (image) file.
 
            The extension suffix on $file will determine which saver
