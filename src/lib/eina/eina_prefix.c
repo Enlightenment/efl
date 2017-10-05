@@ -399,6 +399,7 @@ _get_env_var(char **var, const char *envprefix, const char *envsuffix, const cha
    else
      {
         DBG("No env %s_PREFIX or %s for dir '%s'", envprefix, env, dir);
+        STRDUP_REP(*var, "");
         return 0;
      }
 }
