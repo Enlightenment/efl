@@ -59,7 +59,7 @@ _ecore_evas_wl_common_animator_register(Ecore_Evas *ee)
    edata->frame = ecore_wl2_window_frame_callback_add(edata->win,
                                                       _anim_cb_tick, ee);
    if (!ecore_wl2_window_pending_get(edata->win) && !ee->in_async_render)
-     ecore_wl2_window_commit(edata->win, EINA_TRUE);
+     ecore_wl2_window_false_commit(edata->win);
    edata->ticking = EINA_TRUE;
 }
 
@@ -83,7 +83,7 @@ _ecore_evas_wl_common_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
 
    edata = (Ecore_Evas_Engine_Wl_Data *)ee->engine.data;
    if (edata->ticking && !ecore_wl2_window_pending_get(edata->win))
-     ecore_wl2_window_commit(edata->win, EINA_TRUE);
+     ecore_wl2_window_false_commit(edata->win);
 }
 
 static void
