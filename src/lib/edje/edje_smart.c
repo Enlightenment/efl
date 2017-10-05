@@ -47,17 +47,6 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
    return obj;
 }
 
-EOLIAN static void
-_edje_object_efl_object_destructor(Eo *obj, Edje *class_data)
-{
-   if (class_data->file_obj)
-     {
-        efl_del(class_data->file_obj);
-        class_data->file_obj = NULL;
-     }
-   efl_destructor(efl_super(obj, MY_CLASS));
-}
-
 EOLIAN static Eina_Strbuf *
 _edje_object_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 {
@@ -376,74 +365,6 @@ _edje_object_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN static Eina_Bool
-_edje_object_efl_file_file_set(Eo *obj, Edje *ed, const char *file, const char *group)
-{
-   Eina_Bool ret;
-   Eina_File *f = NULL;
-   Eina_Array *nested;
-
-   ret = EINA_FALSE;
-
-   if (ed->file_obj)
-     {
-        efl_del(ed->file_obj);
-        ed->file_obj = NULL;
-     }
-   if (file)
-     {
-        const char *file2;
-
-        ed->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-        efl_vpath_file_do(ed->file_obj);
-        // XXX:FIXME: allow this to be async
-        efl_vpath_file_wait(ed->file_obj);
-        file2 = efl_vpath_file_result_get(ed->file_obj);
-
-        f = eina_file_open(file2, EINA_FALSE);
-        if ((ed->file_obj) && (!efl_vpath_file_keep_get(ed->file_obj)))
-          {
-             efl_del(ed->file_obj);
-             ed->file_obj = NULL;
-          }
-        if (!f)
-          {
-             efl_del(ed->file_obj);
-             ed->file_obj = NULL;
-             if (ed->path) eina_stringshare_del(ed->path);
-             ed->path = NULL;
-             ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
-             return ret;
-          }
-     }
-   nested = eina_array_new(8);
-
-   if (_edje_object_file_set_internal(obj, f, group, NULL, NULL, nested))
-     {
-        if (file)
-          {
-             ed->path = eina_stringshare_add(file);
-          }
-        else
-          {
-             if (ed->path) eina_stringshare_del(ed->path);
-             ed->path = NULL;
-          }
-        ret = EINA_TRUE;
-     }
-   else
-     {
-        if (ed->path) eina_stringshare_del(ed->path);
-        ed->path = NULL;
-     }
-
-   eina_array_free(nested);
-   eina_file_close(f);
-   _edje_object_orientation_inform(obj);
-
-   return ret;
-}
-
-EOLIAN static Eina_Bool
 _edje_object_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
                                const Eina_File *f, const char *key)
 {
@@ -467,7 +388,7 @@ EOLIAN static void
 _edje_object_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
                                const Eina_File **f, const char **key)
 {
-   if (f) *f = pd->file->f;
+   if (f) *f = pd->file ? pd->file->f : NULL;
    if (key) *key = pd->group;
 }
 
