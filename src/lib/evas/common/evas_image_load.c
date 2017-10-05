@@ -420,7 +420,7 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    evas_image_load_func = ie->info.loader;
    evas_module_use(ie->info.module);
 
-   if (!ie->f)
+   if (!ie->loader_data)
      {
         Evas_Module *em = ie->info.module;
 
@@ -451,7 +451,7 @@ end:
              ie->info.module = em;
           }
      }
-   if ((!ie->f) || (!ie->info.module))
+   if ((!ie->f) || (!ie->info.module) || (!ie->loader_data))
      {
         ie->load_failed = 1;
         return EVAS_LOAD_ERROR_DOES_NOT_EXIST;
