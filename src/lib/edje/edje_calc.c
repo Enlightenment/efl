@@ -5456,7 +5456,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           proxy = ed->file->image_dir->entries[pd_mesh_node->mesh_node.texture.id].entry;
                           if (proxy)
                             {
-                               evas_canvas3d_texture_file_set(texture, eina_stringshare_add(proxy), NULL);
+                               efl_file_mmap_set(texture, ed->file->f, proxy);
                                evas_canvas3d_texture_filter_set(texture, pd_mesh_node->mesh_node.texture.filter1, pd_mesh_node->mesh_node.texture.filter2);
                                evas_canvas3d_texture_wrap_set(texture, pd_mesh_node->mesh_node.texture.wrap1, pd_mesh_node->mesh_node.texture.wrap2);
                             }

@@ -332,8 +332,9 @@ _evas_canvas3d_texture_efl_object_constructor(Eo *obj, Evas_Canvas3D_Texture_Dat
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_efl_object_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd  EINA_UNUSED)
+_evas_canvas3d_texture_efl_object_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {
+   eina_file_close(pd->f);
    _texture_fini(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -372,7 +373,14 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
 }
 
 EOLIAN static void
-_evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const char *file, const char *key)
+_evas_canvas3d_texture_efl_file_mmap_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, const Eina_File **f, const char **key)
+{
+   if (f) *f = pd->f;
+   if (key) *key = pd->key;
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas3d_texture_efl_file_mmap_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const Eina_File *f, const char *key)
 {
 
    Evas_Image_Load_Opts lo;
@@ -387,12 +395,12 @@ _evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const c
      pd->engine_data = e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);
 
    memset(&lo, 0x0, sizeof(Evas_Image_Load_Opts));
-   image = e->engine.func->image_load(_evas_engine_context(e),
-                                      file, key, &load_error, &lo);
+   image = e->engine.func->image_mmap(_evas_engine_context(e),
+                                      (Eina_File *) f, key, &load_error, &lo);
    if (!image)
      {
         ERR("Can't load image from file");
-        return;
+        return EINA_FALSE;
      }
 
    if (e->engine.func->texture_image_set)
@@ -401,7 +409,12 @@ _evas_canvas3d_texture_file_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const c
                                        image);
 
    e->engine.func->image_free(_evas_engine_context(e), image);
+
+   pd->f = eina_file_dup(f);
+   pd->key = eina_stringshare_add(key);
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
+
+   return EINA_TRUE;
 }
 
 EAPI void

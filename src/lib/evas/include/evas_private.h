@@ -433,6 +433,9 @@ struct _Evas_Canvas3D_Texture
    /* Engine-side object. */
    void             *engine_data;
 
+   Eina_File        *f;
+   const char       *key;
+
    /*Use atlases, @EINA_TRUE by default*/
    Eina_Bool        atlas_enable :1;
 };
