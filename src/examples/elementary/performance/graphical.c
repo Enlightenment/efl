@@ -427,7 +427,7 @@ _init_scene(Evas_Object *img)
 
    globalGraphical.material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, globalGraphical.evas);
    globalGraphical.texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, globalGraphical.evas);
-   evas_canvas3d_texture_file_set(globalGraphical.texture, "target_texture.png", NULL);
+   efl_file_set(globalGraphical.texture, "target_texture.png", NULL);
    evas_canvas3d_texture_filter_set(globalGraphical.texture, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR);
    evas_canvas3d_texture_wrap_set(globalGraphical.texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, globalGraphical.texture);
