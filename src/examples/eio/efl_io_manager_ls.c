@@ -10,43 +10,42 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void leave(Efl_Io_Manager *job EINA_UNUSED)
+static Eina_Value
+done_cb(void *data EINA_UNUSED,
+        const Eina_Value file,
+        const Eina_Future *dead EINA_UNUSED)
 {
+   if (file.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+
+        eina_value_get(&file, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        abort();
+     }
+   if (file.type == EINA_VALUE_TYPE_UINT64)
+     {
+        uint64_t value;
+
+        eina_value_get(&file, &value);
+
+        printf("%s done listing files %"PRIu64".\n", __FUNCTION__, value);
+     }
+
    ecore_main_loop_quit();
-}
 
-void done_cb(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Success *success = ev->info;
-   uint64_t *count = success->value;
-
-   printf("%s done listing files %"PRIu64".\n", __FUNCTION__, *count);
-
-   leave(data);
-}
-
-void error_cb(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Failure *failure = ev->info;
-   const char *msg = eina_error_msg_get(failure->error);
-
-   printf("%s error: %s\n", __FUNCTION__, msg);
-
-   leave(data);
+   return file;
 }
 
 // Progress used to be the "Eio_Main_Cb" family of callbacks in the legacy API.
-void progress_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+static void
+progress_cb(void *data EINA_UNUSED, Eina_Accessor *access)
 {
-   Efl_Future_Event_Progress *p = ev->info;
-   const Eina_Array *batch = p->progress;
-   Eina_Iterator *it;
    const char *filename;
+   unsigned int count;
 
-   it = eina_array_iterator_new(batch);
-   EINA_ITERATOR_FOREACH(it, filename)
+   EINA_ACCESSOR_FOREACH(access, count, filename)
      printf("%s listing filename: %s\n", __FUNCTION__, filename);
-   eina_iterator_free(it);
 }
 
 void list_files(void *data)
@@ -54,7 +53,7 @@ void list_files(void *data)
    Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
    const char *path = data;
 
-   efl_future_then(efl_io_manager_ls(job, path), &done_cb, &error_cb, &progress_cb, job);
+   eina_future_then(efl_io_manager_ls(job, path, NULL, progress_cb, NULL), done_cb, NULL);
 }
 
 int main(int argc, char const *argv[])
