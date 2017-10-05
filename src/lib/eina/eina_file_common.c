@@ -519,6 +519,8 @@ eina_file_close(Eina_File *file)
    unsigned int key;
 
    if (!file) return ;
+   EINA_FILE_MAGIC_CHECK(file);
+
    eina_lock_take(&_eina_file_lock_cache);
 
    eina_lock_take(&file->lock);
