@@ -787,7 +787,7 @@ _evas_module_libdir_get(void)
    if (!pfx) pfx = eina_prefix_new
       (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
        PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-   if (!pfx) return NULL;
+   if (!pfx) return "";
    return eina_prefix_lib_get(pfx);
 }
 

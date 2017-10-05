@@ -195,14 +195,14 @@ EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    EVAS_IMAGE_API(obj);
-   _evas_image_file_set(obj, file, key);
+   efl_file_set(obj, file, key);
 }
 
 EAPI void
 evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    EVAS_IMAGE_API(obj);
-   _evas_image_file_get(obj, file, key);
+   efl_file_get(obj, file, key);
 }
 
 EAPI void
@@ -648,11 +648,6 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
         o->engine_data = NULL;
-        if (o->file_obj)
-          {
-             efl_del(o->file_obj);
-             o->file_obj = NULL;
-          }
      }
 /* FIXME - in engine call above
    if (o->engine_data)
@@ -661,7 +656,6 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
    if (o->pixels_checked_out > 0) o->pixels_checked_out--;
    if (p_data != o->engine_data)
      {
-        EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
         o->pixels_checked_out = 0;
      }
    if (resize_call) evas_object_inform_call_image_resize(eo_obj);
@@ -748,7 +742,6 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
    if (for_writing)
      {
         o->written = EINA_TRUE;
-        EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
      }
 
    return data;
@@ -775,11 +768,6 @@ evas_object_image_data_copy_set(Eo *eo_obj, void *data)
        (o->cur->image.h <= 0)) return;
    if (o->engine_data)
      ENFN->image_free(ENC, o->engine_data);
-   if (o->file_obj)
-     {
-        efl_del(o->file_obj);
-        o->file_obj = NULL;
-     }
    o->engine_data = ENFN->image_new_from_copied_data(ENC,
                                                      o->cur->image.w,
                                                      o->cur->image.h,
@@ -810,7 +798,6 @@ evas_object_image_data_copy_set(Eo *eo_obj, void *data)
         o->written = EINA_TRUE;
      }
    o->pixels_checked_out = 0;
-   EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
 /* Evas_Object equivalent: pixels_set(null, w, h, cspace) to (re)allocate an image */
@@ -1129,18 +1116,21 @@ evas_object_image_reload(Evas_Object *eo_obj)
         o->preloading = EINA_FALSE;
         ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
      }
-   if ((!o->cur->u.file) ||
+   if ((!o->cur->f) ||
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = ENFN->image_dirty_region(ENC, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
+
+   eina_file_refresh(o->cur->f);
    o->written = EINA_FALSE;
+
    _evas_image_unload(eo_obj, obj, 1);
    evas_object_inform_call_image_unloaded(eo_obj);
    _evas_image_load(eo_obj, obj, o);
 
    EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, prev_write)
      {
-        prev_write->u.file = NULL;
+        prev_write->f = NULL;
         prev_write->key = NULL;
      }
    EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, prev_write);
@@ -1230,24 +1220,6 @@ evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool isma
 {
    WRN("This function is not implemented, has never been and never will be.");
    EVAS_IMAGE_LEGACY_API(eo_obj);
-}
-
-EOLIAN static Eina_Bool
-_evas_image_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file, const char *key)
-{
-   WRN("efl_file_set shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   EVAS_IMAGE_API(obj, EINA_FALSE);
-   return _evas_image_file_set(obj, file, key);
-}
-
-EOLIAN static void
-_evas_image_efl_file_file_get(Eo *obj, void *pd EINA_UNUSED, const char **file, const char **key)
-{
-   WRN("efl_file_get shouldn't be used on Evas.Image. please switch to Efl.Canvas.Image");
-   if (file) *file = NULL;
-   if (key) *key = NULL;
-   EVAS_IMAGE_API(obj);
-   _evas_image_file_get(obj, file, key);
 }
 
 EOLIAN static Eina_Bool

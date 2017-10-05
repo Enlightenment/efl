@@ -13,8 +13,8 @@ _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_
    if (o->cur->scene == scene) return;
 
    evas_object_async_block(obj);
-   _evas_image_init_set(NULL, NULL, NULL, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_load(ENC, o->cur->u.file, o->cur->key, &o->load_error, &lo);
+   _evas_image_init_set(NULL, NULL, eo_obj, obj, o, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
    _evas_image_done_set(eo_obj, obj, o);
 
    if (scene) _evas_image_3d_set(eo_obj, scene);

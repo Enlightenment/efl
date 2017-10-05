@@ -637,24 +637,12 @@ MAGIC_CHECK_FAILED(o, t, m)
    if (!_e) return __VA_ARGS__
 
 #define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(cur, prev)                  \
-  if (cur->u.file && !cur->mmaped_source)				\
-    {                                                                   \
-       eina_stringshare_del(cur->u.file);				\
-       if (prev->u.file == cur->u.file)					\
-         prev->u.file = NULL;						\
-       cur->u.file = NULL;						\
-    }                                                                   \
   if (cur->key)                                                         \
     {                                                                   \
        eina_stringshare_del(cur->key);                                  \
        if (prev->key == cur->key)                                       \
          prev->key = NULL;                                              \
        cur->key = NULL;                                                 \
-    }                                                                   \
-  if (prev->u.file && !prev->mmaped_source)				\
-    {                                                                   \
-       eina_stringshare_del(prev->u.file);				\
-       prev->u.file = NULL;						\
     }                                                                   \
   if (prev->key)                                                        \
     {                                                                   \
