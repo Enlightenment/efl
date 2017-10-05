@@ -508,7 +508,7 @@ eina_file_clean_close(Eina_File *file)
 
    // Final death
    EINA_MAGIC_SET(file, 0);
-   free(file);   
+   free(file);
 }
 
 EAPI void
@@ -518,8 +518,7 @@ eina_file_close(Eina_File *file)
    unsigned int length;
    unsigned int key;
 
-   EINA_FILE_MAGIC_CHECK(file);
-
+   if (!file) return ;
    eina_lock_take(&_eina_file_lock_cache);
 
    eina_lock_take(&file->lock);
