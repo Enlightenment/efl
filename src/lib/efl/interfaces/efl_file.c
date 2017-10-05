@@ -15,7 +15,7 @@ struct _Efl_File_Data
 static Eina_Bool
 _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key)
 {
-   Eina_File *f;
+   Eina_File *f = NULL;
    Eina_Bool r = EINA_FALSE;
 
    pd->error = EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
