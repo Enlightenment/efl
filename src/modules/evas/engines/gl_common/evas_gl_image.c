@@ -243,7 +243,7 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
        ((int)im_im->cache_entry.h > gc->shared->info.max_texture_size))
      {
         evas_cache_image_drop(&(im_im->cache_entry));
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        if (error) *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
     */
@@ -259,7 +259,7 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
              gc->shared->images = eina_list_remove_list(gc->shared->images, l);
              gc->shared->images = eina_list_prepend(gc->shared->images, im);
              evas_gl_common_image_ref(im);
-             *error = EVAS_LOAD_ERROR_NONE;
+             if (error) *error = EVAS_LOAD_ERROR_NONE;
              return im;
           }
      }
@@ -273,7 +273,7 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
         else
 #endif
           evas_cache_image_drop(&(im_im->cache_entry));
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        if (error) *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
    if (im_im->cache_entry.cspaces)
