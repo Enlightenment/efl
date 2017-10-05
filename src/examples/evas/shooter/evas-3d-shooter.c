@@ -133,14 +133,14 @@ _key_down(void *data,
         if (!scene->blending)
           {
              scene->blending = EINA_TRUE;
-             evas_canvas3d_texture_file_set(scene->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
+             efl_file_set(scene->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
              evas_canvas3d_mesh_blending_enable_set(scene->mesh_carpet, EINA_TRUE);
              evas_canvas3d_mesh_blending_func_set(scene->mesh_carpet, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
           }
         else
           {
              scene->blending = EINA_FALSE;
-             evas_canvas3d_texture_file_set(scene->texture_diffuse_carpet, gazebo_t_path, NULL);
+             efl_file_set(scene->texture_diffuse_carpet, gazebo_t_path, NULL);
              evas_canvas3d_mesh_blending_enable_set(scene->mesh_carpet, EINA_FALSE);
           }
      }
@@ -763,7 +763,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    if (data->blending)
      {
         evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_carpet, EINA_FALSE);
-        evas_canvas3d_texture_file_set(data->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
+        efl_file_set(data->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
         evas_canvas3d_mesh_blending_enable_set(data->mesh_carpet, EINA_TRUE);
         evas_canvas3d_mesh_blending_func_set(data->mesh_carpet, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
      }
@@ -888,7 +888,7 @@ _mesh_setup_column(Scene_Data *data, int index)
 
    data->texture_diffuse_column = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
-   evas_canvas3d_texture_file_set(data->texture_diffuse_column, red_brick_path, NULL);
+   efl_file_set(data->texture_diffuse_column, red_brick_path, NULL);
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_column, EINA_FALSE);
    evas_canvas3d_texture_filter_set(data->texture_diffuse_column, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_column, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);

@@ -159,7 +159,7 @@ main(void)
 
    material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   evas_canvas3d_texture_file_set(texture, image_path, NULL);
+   efl_file_set(texture, image_path, NULL);
    evas_canvas3d_texture_filter_set(texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);

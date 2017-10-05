@@ -156,7 +156,7 @@ typedef struct _vec2
    data->texture_diffuse_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
-   evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
+   efl_file_set(data->texture_diffuse_##Object, image, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \
@@ -175,7 +175,7 @@ typedef struct _vec2
    data->texture_diffuse_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
                                                                                                 \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
-   evas_canvas3d_texture_file_set(data->texture_diffuse_##Object, image, NULL); \
+   efl_file_set(data->texture_diffuse_##Object, image, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);         \
@@ -190,7 +190,7 @@ typedef struct _vec2
    data->texture_normal_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_normal_##Object, EINA_FALSE); \
-   evas_canvas3d_texture_file_set(data->texture_normal_##Object, normal, NULL); \
+   efl_file_set(data->texture_normal_##Object, normal, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_normal_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_normal_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \
