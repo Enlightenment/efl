@@ -766,7 +766,7 @@ evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc)
 EAPI void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
-   if (!im) return ;
+   if (!im) return;
 
    im->references--;
    if (im->references > 0) return;
@@ -781,7 +781,8 @@ evas_gl_common_image_free(Evas_GL_Image *im)
         im->fglyph->ext_dat_free = NULL;
      }
 
-   evas_gl_common_context_flush(im->gc);
+   if (im->gc)
+     evas_gl_common_context_flush(im->gc);
 
    evas_gl_common_image_preload_unwatch(im);
 
