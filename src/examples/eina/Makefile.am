@@ -12,6 +12,10 @@ if HAVE_WINDOWS
 AM_CPPFLAGS += \
 -I$(top_srcdir)/src/lib/evil \
 -I$(top_builddir)/src/lib/evil
+
+AM_CFLAGS = \
+@EFL_WINDOWS_VERSION_CFLAGS@
+
 endif
 
 LDADD = $(top_builddir)/src/lib/eina/libeina.la @EINA_LDFLAGS@

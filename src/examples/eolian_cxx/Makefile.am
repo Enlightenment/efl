@@ -44,6 +44,7 @@ AM_CXXFLAGS = \
 
 if HAVE_WINDOWS
 AM_CXXFLAGS += \
+@EFL_WINDOWS_VERSION_CFLAGS@ \
 -I$(top_srcdir)/src/lib/evil \
 -I$(top_builddir)/src/lib/evil
 endif
