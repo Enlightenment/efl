@@ -780,13 +780,6 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
 
    EINA_SAFETY_ON_NULL_RETURN(window);
 
-   if ((x == 0) && (y == 0) && (w == 0) && (h == 0))
-     {
-        if (window->surface)
-          wl_surface_set_input_region(window->surface, NULL);
-        return;
-     }
-
    switch (window->rotation)
      {
       case 0:
@@ -825,10 +818,16 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    window->input_rect.y = ny;
    window->input_rect.w = nw;
    window->input_rect.h = nh;
-   window->input_set = EINA_TRUE;
+   window->input_set = x || y || w || h;
 
    if (!window->surface) return;
    if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+
+   if (!window->input_set)
+     {
+        wl_surface_set_input_region(window->surface, NULL);
+        return;
+     }
 
    region = wl_compositor_create_region(window->display->wl.compositor);
    if (!region)
