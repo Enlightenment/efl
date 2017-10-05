@@ -96,7 +96,7 @@ static const Evas_Object_Image_State default_state = {
    { 0, 0, 0 }, // image
    { 1.0, 0, 0, 0, 0, 1 }, // border
    NULL, NULL, NULL, //source, defmap, scene
-   { NULL }, //u
+   NULL, //f
    NULL, //key
    0, //frame
    EVAS_COLORSPACE_ARGB8888,
@@ -105,8 +105,7 @@ static const Evas_Object_Image_State default_state = {
    EINA_TRUE, // smooth
    EINA_FALSE, // has_alpha
    EINA_FALSE, // opaque_valid
-   EINA_FALSE, // opaque
-   EINA_FALSE // mmapped_source
+   EINA_FALSE // opaque
 };
 
 Eina_Cow *evas_object_image_load_opts_cow = NULL;
@@ -120,7 +119,7 @@ evas_object_image_render_prepare(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
    // if image data not loaded or in texture then upload
-   if ((o->cur->u.file) || (o->written) || (o->cur->frame != 0))
+   if ((o->cur->f) || (o->written) || (o->cur->frame != 0))
      {
         if (o->engine_data) ENFN->image_prepare(ENC, o->engine_data);
      }
@@ -247,7 +246,7 @@ _efl_canvas_image_internal_efl_object_finalize(Eo *eo_obj, Evas_Image_Data *o)
 }
 
 void
-_evas_image_init_set(const Eina_File *f, const char *file, const char *key,
+_evas_image_init_set(const Eina_File *f, const char *key,
                      Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
                      Evas_Image_Load_Opts *lo)
 {
@@ -256,36 +255,23 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    {
-      if (f)
-        {
-           if (!state_write->mmaped_source)
-             eina_stringshare_del(state_write->u.file);
-           else if (state_write->u.f)
-             eina_file_close(state_write->u.f);
-           state_write->u.f = eina_file_dup(f);
-        }
-      else
-        {
-           if (!state_write->mmaped_source)
-             eina_stringshare_replace(&state_write->u.file, file);
-           else
-             {
-                if (state_write->u.f) eina_file_close(state_write->u.f);
-                state_write->u.file = eina_stringshare_add(file);
-             }
-        }
-      state_write->mmaped_source = !!f;
-      eina_stringshare_replace(&state_write->key, key);
+      Eina_File *tmp =  state_write->f;
 
+      state_write->f = NULL;
+
+      if (f) state_write->f = eina_file_dup(f);
+      eina_file_close(tmp);
+
+      eina_stringshare_replace(&state_write->key, key);
       state_write->opaque_valid = 0;
    }
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
-   if (o->prev->u.file != NULL || o->prev->key != NULL)
+   if (o->prev->f != NULL || o->prev->key != NULL)
      {
         EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, o->prev, Evas_Object_Image_State, state_write)
         {
-           state_write->u.file = NULL;
+           state_write->f = NULL;
            state_write->key = NULL;
         }
         EINA_COW_WRITE_END(evas_object_image_state_cow, o->prev, state_write);
@@ -299,11 +285,6 @@ _evas_image_init_set(const Eina_File *f, const char *file, const char *key,
              ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
           }
         ENFN->image_free(ENC, o->engine_data);
-     }
-   if (o->file_obj)
-     {
-        efl_del(o->file_obj);
-        o->file_obj = NULL;
      }
    o->load_error = EVAS_LOAD_ERROR_NONE;
    lo->emile.scale_down_by = o->load_opts->scale_down_by;
@@ -514,10 +495,7 @@ _efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *
    Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
 
    const char *file, *key;
-   if (o->cur->mmaped_source)
-     file = eina_file_filename_get(o->cur->u.f);
-   else
-     file = o->cur->u.file;
+   file = eina_file_filename_get(o->cur->f);
    key = o->cur->key;
 
    EFL_DBG_INFO_APPEND(group, "Image File", EINA_VALUE_TYPE_STRING, file);
@@ -1230,7 +1208,7 @@ _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
    Eina_Bool resize_call = EINA_FALSE;
 
    o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if ((!o->cur->u.file) ||
+   if ((!o->cur->f) ||
        (o->pixels_checked_out > 0)) return;
 
    evas_object_async_block(obj);
@@ -1292,29 +1270,7 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
    lo.emile.orientation = o->load_opts->orientation;
    lo.emile.degree = 0;
    lo.skip_head = o->skip_head;
-   if (o->cur->mmaped_source)
-     o->engine_data = ENFN->image_mmap(ENC, o->cur->u.f, o->cur->key, &o->load_error, &lo);
-   else
-     {
-        const char *file2 = o->cur->u.file;
-
-        if (o->file_obj) efl_del(o->file_obj);
-        o->file_obj = NULL;
-        if (file2)
-          {
-             o->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file2);
-             efl_vpath_file_do(o->file_obj);
-             // XXX:FIXME: allow this to be async
-             efl_vpath_file_wait(o->file_obj);
-             file2 = efl_vpath_file_result_get(o->file_obj);
-          }
-        o->engine_data = ENFN->image_load(ENC, file2, o->cur->key, &o->load_error, &lo);
-        if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
-          {
-             efl_del(o->file_obj);
-             o->file_obj = NULL;
-          }
-     }
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
 
    if (o->engine_data)
      {
@@ -1476,14 +1432,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Eina_Rectangle *r;
 
    /* free obj */
-   if (!o->cur->mmaped_source)
-     {
-        if (o->cur->u.file) eina_stringshare_del(o->cur->u.file);
-     }
-   else
-     {
-        if (o->cur->u.f) eina_file_close(o->cur->u.f);
-     }
+   eina_file_close(o->cur->f);
    if (o->cur->key) eina_stringshare_del(o->cur->key);
    if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
    if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
@@ -1510,11 +1459,6 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    o->engine_data = NULL;
    o->engine_data_prep = NULL;
-   if (o->file_obj)
-     {
-        efl_del(o->file_obj);
-        o->file_obj = NULL;
-     }
    if (o->pixels->images_to_free)
      {
         eina_hash_free(o->pixels->images_to_free);
@@ -1681,7 +1625,6 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
           {
              Evas_Native_Surface *ns;
              ns = ENFN->image_native_get(engine, o->engine_data);
-             fprintf(stderr, "direct render\n");
 
              if (ENFN->gl_direct_override_get)
                ENFN->gl_direct_override_get(engine, &direct_override, &direct_force_off);
@@ -2497,8 +2440,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
      }
    if (o->changed)
      {
-        if (((o->cur->u.file) && (!o->prev->u.file)) ||
-            ((!o->cur->u.file) && (o->prev->u.file)) ||
+        if (((o->cur->f) && (!o->prev->f)) ||
+            ((!o->cur->f) && (o->prev->f)) ||
             ((o->cur->key) && (!o->prev->key)) ||
             ((!o->cur->key) && (o->prev->key))
             )
@@ -3691,10 +3634,9 @@ EOLIAN static Eina_Strbuf *
 _efl_canvas_image_internal_efl_object_debug_name_override(Eo *eo_obj, Evas_Image_Data *o, Eina_Strbuf *sb)
 {
    sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
-   if (o->cur->u.f)
+   if (o->cur->f)
      {
-        const char *fname = o->cur->mmaped_source ?
-          eina_file_filename_get(o->cur->u.f) : o->cur->u.file;
+        const char *fname = eina_file_filename_get(o->cur->f);
         eina_strbuf_append_printf(sb, ":file='%s',key='%s'", fname, o->cur->key);
      }
    else if (o->pixels && o->pixels->func.get_pixels)

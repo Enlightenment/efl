@@ -11,7 +11,7 @@ _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
 
-   if (o->cur->u.f == f)
+   if (o->cur->f == f)
      {
         if ((!o->cur->key) && (!key))
           return EINA_FALSE;
@@ -19,8 +19,8 @@ _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
           return EINA_FALSE;
      }
    evas_object_async_block(obj);
-   _evas_image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_mmap(ENC, o->cur->u.f, o->cur->key, &o->load_error, &lo);
+   _evas_image_init_set(f, key, eo_obj, obj, o, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
    o->file_size.w = o->cur->image.w;
@@ -42,7 +42,7 @@ _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key)
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    if (f)
-     *f = o->cur->mmaped_source ? o->cur->u.f : NULL;
+     *f = o->cur->f;
    if (key)
      *key = o->cur->key;
 }
@@ -54,82 +54,13 @@ _efl_canvas_image_efl_file_mmap_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSE
    _evas_image_mmap_get(eo_obj, f, key);
 }
 
-Eina_Bool
-_evas_image_file_set(Eo *eo_obj, const char *file, const char *key)
-{
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   Evas_Image_Load_Opts lo;
-   const char *file2;
-
-   if ((o->cur->u.file) && (file) && (!strcmp(o->cur->u.file, file)))
-     {
-        if ((!o->cur->key) && (!key))
-          return EINA_FALSE;
-        if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
-          return EINA_FALSE;
-     }
-
-   evas_object_async_block(obj);
-   _evas_image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
-   if (o->file_obj) efl_del(o->file_obj);
-   o->file_obj = NULL;
-   file2 = o->cur->u.file;
-   if (file2)
-     {
-        o->file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file2);
-        efl_vpath_file_do(o->file_obj);
-        // XXX:FIXME: allow this to be async
-        efl_vpath_file_wait(o->file_obj);
-        file2 = efl_vpath_file_result_get(o->file_obj);
-     }
-   o->engine_data = ENFN->image_load(ENC, file2, o->cur->key, &o->load_error, &lo);
-   o->buffer_data_set = EINA_FALSE;
-   _evas_image_done_set(eo_obj, obj, o);
-   o->file_size.w = o->cur->image.w;
-   o->file_size.h = o->cur->image.h;
-   if ((o->file_obj) && (!efl_vpath_file_keep_get(o->file_obj)))
-     {
-        efl_del(o->file_obj);
-        o->file_obj = NULL;
-     }
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_image_efl_file_file_set(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED,
-                                    const char *file, const char *key)
-{
-   return _evas_image_file_set(eo_obj, file, key);
-}
-
-void
-_evas_image_file_get(const Eo *eo_obj, const char **file, const char **key)
-{
-   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-
-   if (file)
-     {
-        if (o->cur->mmaped_source)
-          *file = eina_file_filename_get(o->cur->u.f);
-        else
-           *file = o->cur->u.file;
-     }
-   if (key) *key = o->cur->key;
-}
-
-EOLIAN static void
-_efl_canvas_image_efl_file_file_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED,
-                                    const char **file, const char **key)
-{
-   _evas_image_file_get(eo_obj, file, key);
-}
-
 Efl_Image_Load_Error
 _evas_image_load_error_get(const Eo *eo_obj)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   Efl_Image_Load_Error r = efl_file_load_error_get(eo_obj);
 
+   if (r != EFL_IMAGE_LOAD_ERROR_NONE) return r;
    return o->load_error;
 }
 
@@ -213,7 +144,7 @@ _evas_image_load_dpi_set(Eo *eo_obj, double dpi)
      low->dpi = dpi;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->u.file)
+   if (o->cur->f)
      {
         _evas_image_unload(eo_obj, obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
@@ -258,7 +189,7 @@ _evas_image_load_size_set(Eo *eo_obj, int w, int h)
    }
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->u.file)
+   if (o->cur->f)
      {
         _evas_image_unload(eo_obj, obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
@@ -304,7 +235,7 @@ _evas_image_load_scale_down_set(Eo *eo_obj, int scale_down)
      low->scale_down_by = scale_down;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->u.file)
+   if (o->cur->f)
      {
         _evas_image_unload(eo_obj, obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
@@ -378,7 +309,7 @@ _evas_image_load_region_set(Eo *eo_obj, int x, int y, int w, int h)
    }
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
-   if (o->cur->u.file)
+   if (o->cur->f)
      {
         _evas_image_unload(eo_obj, obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
@@ -570,7 +501,7 @@ _evas_image_animated_frame_set(Eo *eo_obj, int frame_index)
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    int frame_count = 0;
 
-   if (!o->cur->u.file) return EINA_FALSE;
+   if (!o->cur->f) return EINA_FALSE;
    if (o->cur->frame == frame_index) return EINA_TRUE;
 
    if (!evas_object_image_animated_get(eo_obj)) return EINA_FALSE;
@@ -610,7 +541,7 @@ _evas_image_animated_frame_get(const Eo *eo_obj)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-   if (!o->cur->u.file) return EINA_FALSE;
+   if (!o->cur->f) return EINA_FALSE;
    if (!evas_object_image_animated_get(eo_obj)) return EINA_FALSE;
    return o->cur->frame;
 }
@@ -655,12 +586,6 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
         ERR("Calling efl_gfx_buffer_%s_set after evas_object_image_data_get is "
             "not valid.", copy ? "copy" : "managed");
         return EINA_FALSE;
-     }
-
-   if (o->file_obj)
-     {
-        efl_del(o->file_obj);
-        o->file_obj = NULL;
      }
 
    if (o->engine_data)
@@ -712,12 +637,12 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
    if (ENFN->image_stride_get)
      ENFN->image_stride_get(ENC, o->engine_data, &int_stride);
 
-   if (resized || o->cur->u.file || o->cur->key ||
+   if (resized || o->cur->f || o->cur->key ||
        (o->cur->image.stride != int_stride) || (cspace != o->cur->cspace))
      {
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, cur)
         {
-           cur->u.f = NULL;
+           cur->f = NULL;
            cur->key = NULL;
            cur->cspace = cspace;
            cur->image.w = w;

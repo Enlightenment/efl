@@ -83,10 +83,7 @@ struct _Evas_Object_Image_State
    Evas_Map      *defmap;
    Evas_Canvas3D_Scene *scene;
 
-   union {
-      const char    *file; // used if !mmaped_source
-      Eina_File     *f; // used if mmaped_source
-   } u;
+   Eina_File     *f;
    const char    *key;
    int            frame;
 
@@ -97,7 +94,6 @@ struct _Evas_Object_Image_State
    Eina_Bool      has_alpha :1;
    Eina_Bool      opaque_valid : 1;
    Eina_Bool      opaque : 1;
-   Eina_Bool      mmaped_source : 1;
 };
 
 struct _Evas_Image_Data
@@ -109,7 +105,6 @@ struct _Evas_Image_Data
 
    void             *engine_data;
    void             *engine_data_prep;
-   Efl_Vpath_File   *file_obj;
 
    void             *plane;
 
@@ -153,7 +148,7 @@ struct _Evas_Image_Data
 };
 
 /* shared functions between legacy and new eo classes */
-void _evas_image_init_set(const Eina_File *f, const char *file, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
+void _evas_image_init_set(const Eina_File *f, const char *key, Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o, Evas_Image_Load_Opts *lo);
 void _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o);
 void *_evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *engine, void *output, void *context, void *surface, int x, int y, int *imagew, int *imageh, int *uvw, int *uvh, Eina_Bool filtered, Eina_Bool needs_post_render);
@@ -240,7 +235,7 @@ void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
   EINA_COW_WRITE_END(evas_object_image_load_opts_cow, Obj->load_opts, Write)
 
 # define EVAS_OBJECT_WRITE_IMAGE_FREE_FILE_AND_KEY(Obj)                 \
-  if ((!Obj->cur->mmaped_source && Obj->cur->u.file) || Obj->cur->key) \
+  if (Obj->cur->key) \
     {                                                                   \
        EINA_COW_IMAGE_STATE_WRITE_BEGIN(Obj, cur_write)                 \
          {                                                              \

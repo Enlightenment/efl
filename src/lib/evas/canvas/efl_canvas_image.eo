@@ -16,7 +16,6 @@ class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
       Efl.Gfx.Buffer.buffer_size { get; }
       Efl.Gfx.Buffer.buffer_map;
       Efl.Gfx.Buffer.buffer_unmap;
-      Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Image.Animated.animated { get; }
       Efl.Image.Animated.animated_frame { get; set; }

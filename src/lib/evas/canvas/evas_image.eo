@@ -3,7 +3,6 @@ class Evas.Image (Efl.Canvas.Image.Internal, Efl.File)
    [[Internal class for legacy support of Evas Image.]]
    data: null;
    implements {
-      Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
    }
 }
