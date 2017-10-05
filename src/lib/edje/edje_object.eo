@@ -388,7 +388,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Object.constructor;
-      Efl.Object.destructor;
       Efl.Object.debug_name_override;
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { set; }
@@ -411,7 +410,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }
       Efl.Ui.Base.base_scale { get; }
-      Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
       Efl.Part.part; [[Returns @Efl.Canvas.Layout.Part.]]

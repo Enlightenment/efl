@@ -1721,7 +1721,6 @@ struct _Edje
 #endif
    double                duration_scale;
    double                paused_at;
-   Efl_Vpath_File       *file_obj;
    Eina_List            *user_defined;
    lua_State            *L;
    Eina_Inlist          *lua_objs;
