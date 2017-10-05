@@ -1411,6 +1411,22 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
    window->updating = EINA_FALSE;
 }
 
+EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_NULL_RETURN(window->surface);
+   EINA_SAFETY_ON_TRUE_RETURN(window->pending.configure);
+
+   if (window->commit_pending)
+     ERR("Commit before previous commit processed");
+
+   window->callback = wl_surface_frame(window->surface);
+   wl_callback_add_listener(window->callback, &_frame_listener, window);
+   wl_surface_commit(window->surface);
+   ecore_wl2_display_flush(window->display);
+   window->commit_pending = EINA_TRUE;
+}
+
 EAPI Eina_Bool
 ecore_wl2_window_pending_get(Ecore_Wl2_Window *window)
 {
