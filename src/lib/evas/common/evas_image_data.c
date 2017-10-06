@@ -110,7 +110,7 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
 }
 
 int
-evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, unsigned int w, unsigned int h EINA_UNUSED)
+evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, unsigned int w EINA_UNUSED, unsigned int h EINA_UNUSED)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
    RGBA_Image   *im = (RGBA_Image *) ie_im;
@@ -121,7 +121,6 @@ evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, u
        (im->cache_entry.space == EVAS_COLORSPACE_YCBCR420TM12601_PL) ||
        (im->cache_entry.space == EVAS_COLORSPACE_YCBCR420NV12601_PL))
      {
-        w &= ~0x1;
         dst->cs.data = calloc(1, dst->cache_entry.h * sizeof(unsigned char *) * 2);
      }
 
