@@ -900,8 +900,8 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
           {
              pp = strchr(p, ' ');
              if (pp) *pp = 0;
-             sscanf(p, "quality=%i", &quality);
-             sscanf(p, "compress=%i", &compress);
+             sscanf(p, "quality=%4i", &quality);
+             sscanf(p, "compress=%4i", &compress);
              sscanf(p, "encoding=%ms", &encoding);
              if (pp) p = pp + 1;
              else break;
