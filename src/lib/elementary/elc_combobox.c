@@ -358,7 +358,8 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    //hover
    sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
-                       elm_obj_widget_style_set(efl_added, buf));
+                       elm_obj_widget_style_set(efl_added, buf),
+                       efl_canvas_object_legacy_ctor(efl_added));
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
