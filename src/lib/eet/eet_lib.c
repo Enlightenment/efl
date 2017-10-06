@@ -1159,7 +1159,7 @@ eet_internal_read1(Eet_File *ef)
           }
 
         /* invalid name_size */
-        if (eet_test_close(name_size <= 0, ef))
+        if (eet_test_close(name_size == 0, ef))
           {
              eet_file_node_mp_free(efn);
              return NULL;
