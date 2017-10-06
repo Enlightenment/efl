@@ -3895,7 +3895,7 @@ _property_changed_signal_send(void *data, const Efl_Event *event)
      }
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
-                       &_event_obj_signals[ATSPI_OBJECT_EVENT_PROPERTY_CHANGED], atspi_desc, 0, 0, NULL, NULL);
+                       &_event_obj_signals[ATSPI_OBJECT_EVENT_PROPERTY_CHANGED], atspi_desc, 0, 0, NULL);
 }
 
 static void
@@ -3911,7 +3911,7 @@ _visible_data_changed_signal_send(void *data, const Efl_Event *event)
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_VISIBLE_DATA_CHANGED], "",
-                       0, 0, NULL, NULL);
+                       0, 0, NULL);
 }
 
 static void
@@ -4123,7 +4123,7 @@ _text_caret_moved_send(void *data, const Efl_Event *event)
    cursor_pos = efl_access_text_caret_offset_get(event->object);
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
-                       &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED], "", cursor_pos, 0, NULL, NULL);
+                       &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED], "", cursor_pos, 0, NULL);
 }
 
 static void
@@ -4175,7 +4175,7 @@ _text_selection_changed_send(void *data, const Efl_Event *event)
      return;
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
-                       &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED], "", 0, 0, NULL, NULL);
+                       &_event_obj_signals[ATSPI_OBJECT_EVENT_TEXT_SELECTION_CHANGED], "", 0, 0, NULL);
 }
 
 static void
