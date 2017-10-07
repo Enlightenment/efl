@@ -8,27 +8,15 @@
 #undef EAPI
 #endif
 
-#ifdef _WIN32
-# ifdef EFL_ECORE_AUDIO_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_AUDIO_BUILD */
+#ifdef __GNUC__
+#if __GNUC__ >= 4
+#define EAPI __attribute__ ((visibility("default")))
 #else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif /* ! _WIN32 */
+#define EAPI
+#endif
+#else
+#define EAPI
+#endif
 
 /**
  * @file Ecore_Audio.h
@@ -58,7 +46,6 @@ enum _Ecore_Audio_Type {
     ECORE_AUDIO_TYPE_TONE,    /**< Use tone module */
     ECORE_AUDIO_TYPE_CORE_AUDIO, /**< Use Core Audio module (Apple) - DEPRECATED */
     ECORE_AUDIO_TYPE_CUSTOM,  /**< Use custom module */
-    ECORE_AUDIO_TYPE_WASAPI,  /**< Use Wasapi module @since 1.21*/
     ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
 };
 
@@ -192,6 +179,11 @@ EAPI int                 ecore_audio_init(void);
  */
 EAPI int                 ecore_audio_shutdown(void);
 
+
+#ifdef __cplusplus
+}
+#endif
+
 #include <ecore_audio_obj.h>
 #include <ecore_audio_obj_in.h>
 #include <ecore_audio_obj_out.h>
@@ -201,25 +193,11 @@ EAPI int                 ecore_audio_shutdown(void);
 
 #include <ecore_audio_obj_in_tone.h>
 
-#if HAVE_PULSE
-# include <ecore_audio_obj_out_pulse.h>
-# define ECORE_AUDIO_OUT_RENDER_CLASS ECORE_AUDIO_OUT_PULSE_CLASS
-# define ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL
-#endif
-
-#if HAVE_WASAPI
-# include <ecore_audio_obj_out_wasapi.h>
-# define ECORE_AUDIO_OUT_RENDER_CLASS ECORE_AUDIO_OUT_WASAPI_CLASS
-# define ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL
-#endif
+#include <ecore_audio_obj_out_pulse.h>
 
 /**
  * @}
  */
-
-#ifdef __cplusplus
-}
-#endif
 
 #undef EAPI
 #define EAPI

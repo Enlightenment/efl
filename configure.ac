@@ -3930,8 +3930,6 @@ want_alsa="no"
 # TODO: and the EFL_OPTIONAL_DEPEND_PKG(), use EFL_DEPEND_PKG()
 want_sndfile="yes"
 
-want_wasapiaudio="no"
-
 AC_ARG_ENABLE([pulseaudio],
    [AS_HELP_STRING([--disable-pulseaudio],[disable pulseaudio sound support. @<:@default=enabled@:>@])],
    [
@@ -3939,12 +3937,7 @@ AC_ARG_ENABLE([pulseaudio],
        want_pulseaudio="yes"
     else
        want_pulseaudio="no"
-       if test "x${have_win32}" = "xyes" ; then
-         want_wasapiaudio="yes"
-       else
-          want_wasapiaudio="no"
-          CFOPT_WARNING="xyes"
-       fi
+       CFOPT_WARNING="xyes"
     fi
    ],
    [want_pulseaudio="yes"])
@@ -3978,10 +3971,6 @@ if test "x${want_sndfile}" = "xyes" ; then
   PKG_CHECK_MODULES([ECORE_AUDIO_SNDFILE], [sndfile])
   AC_DEFINE([HAVE_SNDFILE], [1], [Sndfile support])
 fi
-if test "x${want_wasapiaudio}" = "xyes" ; then
-  EFL_ADD_LIBS([ECORE_AUDIO], [-luuid -lwinmm -lksuser])
-  AC_DEFINE([HAVE_WASAPI], [1], [Wasapiaudio support])
-fi
 
 dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_ALSA], [${want_alsa}], [ALSA], [alsa])
 dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_PULSE], [${want_pulseaudio}], [PULSE], [libpulse])
@@ -3992,7 +3981,6 @@ EFL_EVAL_PKGS([ECORE_AUDIO])
 EFL_ADD_FEATURE([ECORE_AUDIO], [alsa])
 EFL_ADD_FEATURE([ECORE_AUDIO], [pulseaudio])
 EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
-EFL_ADD_FEATURE([ECORE_AUDIO], [wasapiaudio])
 
 ### Checks for header files
 
@@ -4009,7 +3997,6 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [wasapiaudio])
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_WASASPI], [test "x${want_wasapiaudio}" = "xyes"])
 
 #### End of Ecore_Audio
 
@@ -4777,13 +4764,8 @@ AC_ARG_ENABLE([multisense],
     if test "x${want_pulseaudio}" = "xyes"; then
        want_multisense="yes"
     else
-       if test "x${want_wasapiaudio}" = "xyes"; then
-          want_multisense="yes"
-       else
-          want_multisense="no"
-       fi
+       want_multisense="no"
     fi
-
    ])
 
 # TODO: should we keep or remove these?
