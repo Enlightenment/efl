@@ -428,6 +428,7 @@ emotion_video_sink_main_render(void *data)
      {
         if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
           {
+             gst_buffer_unref(buffer);
              ERR("Cannot map video buffer for read.\n");
              goto exit_point;
           }
@@ -440,6 +441,21 @@ emotion_video_sink_main_render(void *data)
    evas_object_image_size_set(priv->evas_object, send->info.width, send->eheight);
 
    evas_data = evas_object_image_data_get(priv->evas_object, 1);
+   if (!evas_data)
+     {
+        if (!send->vfmapped)
+          {
+             gst_buffer_unmap(buffer, &map);
+             priv->mapped = EINA_FALSE;
+          }
+        else
+          {
+             gst_video_frame_unmap(buffer);
+             priv->vfmapped = EINA_FALSE;
+          }
+        gst_buffer_unref(buffer);
+        goto exit_point;
+     }
 
 // XXX: need to handle GstVideoCropMeta to get video cropping right
 // XXX: can't get crop meta from buffer (always null)
