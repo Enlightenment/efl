@@ -3385,7 +3385,6 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                }
              fmt->font.fdesc = evas_font_desc_new();
 
-             evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
              eina_stringshare_replace(&(fmt->font.fdesc->lang),
                    evas_font_lang_normalize("auto"));
              eina_stringshare_replace(&(fmt->font.fdesc->fallbacks),
@@ -3396,6 +3395,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->slant = _FMT_INFO(font_slant);
              fmt->font.fdesc->width = _FMT_INFO(font_width);
              fmt->font.fdesc->lang = _FMT_INFO(font_lang);
+             evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
              fmt->font.font = evas_font_load(evas_obj->layer->evas->font_path,
                                              evas_obj->layer->evas->hinting,
                                              fmt->font.fdesc,
