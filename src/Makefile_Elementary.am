@@ -189,6 +189,9 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_textpath.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_list.eo \
+	lib/elementary/efl_ui_list_model.eo \
+	lib/elementary/efl_ui_list_relayout.eo \
+	lib/elementary/efl_ui_list_precise_layouter.eo \
 	lib/elementary/efl_ui_list_pan.eo \
 	lib/elementary/efl_ui_layout_factory.eo \
 	$(NULL)
@@ -234,6 +237,7 @@ elm_legacy_eolian_files = \
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot \
 	lib/elementary/efl_ui.eot
+	lib/elementary/efl_ui_list_types.eot
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
 elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
@@ -346,6 +350,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_toolbar.h \
 	lib/elementary/efl_ui_video_private.h \
 	lib/elementary/efl_ui_list_private.h \
+	lib/elementary/efl_ui_list_segarray.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -739,6 +744,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_parent_provider_gen.c \
 	lib/elementary/elm_widget_item_static_focus.c \
 	lib/elementary/efl_ui_list.c \
+	lib/elementary/efl_ui_list_precise_layouter.c \
+	lib/elementary/efl_ui_list_segarray.c \
 	lib/elementary/efl_ui_layout_factory.c \
 	$(NULL)
 

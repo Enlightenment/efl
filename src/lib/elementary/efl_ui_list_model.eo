@@ -1,0 +1,33 @@
+import efl_ui_list_types;
+
+interface Efl.Ui.List.Model (Efl.Interface)
+{
+   methods {
+      @property load_range {
+         set {}
+         values {
+            first: int;
+            count: int;
+         }
+      }
+      realize {
+         params {
+            item: ptr(Efl.Ui.List.LayoutItem);
+         }
+         return: ptr(Efl.Ui.List.LayoutItem);
+      }
+      // @property visible_range {
+      //    set {}
+      //    values {
+      //       first: int;
+      //       count: int;
+      //    }
+      // }
+      @property size {
+         get {}
+         values {
+            s: int;
+         }
+      }
+   }
+}

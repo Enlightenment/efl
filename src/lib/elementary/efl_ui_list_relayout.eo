@@ -1,0 +1,15 @@
+import efl_ui_list_types;
+
+interface Efl.Ui.List.Relayout (Efl.Interface)
+{
+   methods {
+      layout_do {
+         params {
+            modeler: Efl.Ui.List.Model;
+            first: int;
+            count: int;
+            children: accessor<Efl.Ui.List.LayoutItem>;
+         }
+      }
+   }
+}

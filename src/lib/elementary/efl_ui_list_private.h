@@ -19,12 +19,12 @@ struct _Efl_Ui_List_Item
 {
    Efl_Ui_List          *list;
    Efl_Model            *model;
-   Efl_Ui_Layout           *layout;
+   Efl_Ui_Layout        *layout;
    Efl_Future           *future;
    unsigned int         index;
-   Evas_Coord           x, y, minw, minh, w, h;
-   // double               h, v, wx, wy;
-   double               wx, wy;
+   // Evas_Coord           x, y, minw, minh, w, h;
+   // // double               h, v, wx, wy;
+   // double               wx, wy;
    Ecore_Timer         *long_timer;
    Eina_Bool            selected: 1;
    Eina_Bool            down: 1;
@@ -32,6 +32,8 @@ struct _Efl_Ui_List_Item
 };
 
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
+
+#include "efl_ui_list_segarray.h"
 
 struct _Efl_Ui_List_Data
 {
@@ -54,12 +56,15 @@ struct _Efl_Ui_List_Data
       double                    x, y;
    } weight;
 
-   struct {
-      Evas_Coord                w, h;
-      int                       start;
-      int                       slice;
-   } realized;
+   // struct {
+   //    Evas_Coord                w, h;
+   //    int                       start;
+   //    int                       slice;
+   // } realized;
 
+   int segarray_first;
+   Efl_Ui_List_SegArray segarray;
+  
    struct {
       Evas_Coord                x, y, move_diff;
       Evas_Object               *obj;
@@ -67,9 +72,9 @@ struct _Efl_Ui_List_Data
 
    Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected_items;
-   struct {
-     Eina_Inarray               array;
-   } items;
+   // struct {
+   //   Eina_Inarray               array;
+   // } items;
    Eina_Stringshare             *style;
    Elm_Object_Select_Mode       select_mode;
    Elm_List_Mode                mode;
@@ -77,10 +82,12 @@ struct _Efl_Ui_List_Data
    Efl_Ui_Focus_Manager         *manager;
    Evas_Coord                   minw, minh;
    int                          /*average_item_size, avsom, */item_count;
-   Efl_Future                   *future;
+   Efl_Future                   *slice_future;
+   Efl_Future                   *count_future;
+   Efl_Ui_List_Relayout         *relayout;
    struct {
      int slice_start;
-     int slice;
+     int slice_count;
    } outstanding_slice;
 
    Eina_Bool                    homogeneous : 1;
