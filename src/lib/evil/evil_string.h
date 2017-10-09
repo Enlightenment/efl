@@ -38,42 +38,6 @@
 EAPI char *strndup(const char *str, size_t n);
 
 /**
- * @brief Return the position of the first (least significant) bit set in a word
- *
- * @param i Word to take the first bit.
- * @return The position of the first bit set, or 0 if no bits are set.
- *
- * This function returns the position of the first (least significant)
- * bit set in @p i. The least significant bit is position 1 and the
- * most significant position e.g. 32 or 64. The function returns 0 if
- * no bits are set in @p i, or the position of the first bit set
- * otherwise.
- *
- * Conformity: BSD
- *
- * Supported OS: Windows XP.
- */
-EAPI int ffs(int i);
-
-
-/**
- * @brief Get the last substring occurence.
- *
- * @param str The string to search from.
- * @param substr The substring to search.
- * @return The last occurrence of the substring if found, @c NULL otherwise.
- *
- * This function retrieves the last occurrence of @p substring in the
- * string @p str. If @p str or @p substr are @c NULL, of if @p substr
- * is not found in @p str, @c NULL is returned.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows XP.
- */
-EAPI char *strrstr (const char *str, const char *substr);
-
-/**
  * @brief Locate a substring into a string, ignoring case.
  *
  * @param haystack The string to search in.

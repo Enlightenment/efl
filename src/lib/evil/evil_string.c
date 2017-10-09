@@ -29,34 +29,6 @@ strndup(const char *str, size_t n)
    return ret;
 }
 
-int ffs(int i)
-{
-   int size;
-   int x;
-
-   if (!i) return 1;
-
-   /* remove the sign bit */
-   x = i & -i;
-   size = sizeof(int) << 3;
-   for (i = size; i > 0; --i, x <<= 1)
-     if (x & (1 << (size - 1))) return i;
-
-   return x;
-}
-
-char *
-strrstr (const char *str, const char *substr)
-{
-  char *it;
-  char *ret = NULL;
-
-  while ((it = strstr(str, substr)))
-    ret = it;
-
-  return ret;
-}
-
 char *strcasestr(const char *haystack, const char *needle)
 {
    size_t length_needle;
