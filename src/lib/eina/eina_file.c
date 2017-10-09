@@ -606,7 +606,7 @@ eina_file_split(char *path)
      {
         length = current - path;
 
-        if (length <= 0)
+        if (length == 0)
            continue;
 
         eina_array_push(ea, path);
