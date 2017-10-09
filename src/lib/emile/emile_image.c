@@ -1602,7 +1602,7 @@ _emile_jpeg_head(Emile_Image *image,
         RECTS_CLIP_TO_RECT(load_region_x, load_region_y,
                            load_region_w, load_region_h,
                            0, 0, prop->w, prop->h);
-        if ((load_region_w <= 0) || (load_region_h <= 0))
+        if ((load_region_w == 0) || (load_region_h == 0))
           {
              jpeg_destroy_decompress(&cinfo);
              _emile_jpeg_membuf_src_term(&cinfo);
