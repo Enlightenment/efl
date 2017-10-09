@@ -242,7 +242,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    if (!evas_bidi_is_rtl_str(eina_ustr) &&
        (base_bidi != EVAS_BIDI_PARAGRAPH_RTL))
      {
-        len = -1;
         goto cleanup;
      }
 
@@ -263,7 +262,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    char_types = (EvasBiDiCharType *) malloc(sizeof(EvasBiDiCharType) * len);
    if (!char_types)
       {
-         len = -2;
          goto cleanup;
       }
    fribidi_get_bidi_types(ustr, len, char_types);
@@ -271,7 +269,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
    embedding_levels = (EvasBiDiLevel *)malloc(sizeof(EvasBiDiLevel) * len);
    if (!embedding_levels)
      {
-        len = -2;
         goto cleanup;
      }
 
@@ -290,7 +287,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
                       &direction,
                       embedding_levels + pos))
                {
-                  len = -2;
                   goto cleanup;
                }
 
@@ -317,7 +313,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
                  &direction,
                  embedding_levels + pos))
           {
-             len = -2;
              goto cleanup;
           }
 
@@ -336,7 +331,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
         if (!fribidi_get_par_embedding_levels(char_types, len,
                  &bidi_props->direction, embedding_levels))
           {
-             len = -2;
              goto cleanup;
           }
      }
