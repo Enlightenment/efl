@@ -1196,24 +1196,13 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
-   //if we want to focus the root then just spin to the first normal
-   if (focus == pd->root->focusable)
-     {
-        Node *f = _logical_movement(pd, pd->root, EFL_UI_FOCUS_DIRECTION_NEXT);
-
-        if (f)
-          focus = f->focusable;
-
-        if (!focus) return;
-     }
-
    //check if node is part of this manager object
    node = node_get(obj, pd, focus);
    if (!node) return;
 
    F_DBG("Manager: %p focusing object %p %s", obj, focus, efl_class_name_get(focus));
 
-   if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager && pd->root != node)
+   if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager)
      {
         Node *target = NULL;
 
