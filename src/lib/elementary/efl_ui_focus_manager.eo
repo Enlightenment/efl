@@ -69,7 +69,10 @@ interface Efl.Ui.Focus.Manager {
             return : Efl.Ui.Focus.Object; [[Next object to focus]]
         }
         @property focus {
-            [[The element which is currently focused by this manager]]
+            [[The element which is currently focused by this manager
+
+              For the case focus is a logical child, then the item will go to the next none logical element. If there is none, focus will stay where it is right now.
+            ]]
 
             values {
                 focus : Efl.Ui.Focus.Object @nonull; [[Focused element]]
