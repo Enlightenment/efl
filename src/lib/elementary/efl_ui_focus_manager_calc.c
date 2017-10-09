@@ -1215,8 +1215,37 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager && pd->root != node)
      {
-        ERR(" %p is logical, cannot be focused", obj);
-        return;
+        Node *target = NULL;
+
+        F_DBG(" %p is logical, fetching the next subnode that is either a redirect or a regular", obj);
+
+        //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
+        if (node->tree.children)
+          {
+             target = node;
+
+             //try to find a child that is not logical or has a redirect manager
+             while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
+               {
+                  target = _next(target);
+
+                  //abort if we are exceeding the childrens of node
+                  if (target == node) target = NULL;
+               }
+
+             F_DBG("Found node %p", target);
+          }
+
+        //check if we have found anything
+        if (target)
+          {
+             node = target;
+          }
+        else
+          {
+             ERR("Could not fetch a node located at %p", node->focusable);
+             return;
+          }
      }
 
    if (pd->redirect)

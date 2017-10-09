@@ -331,6 +331,41 @@ START_TEST(order_check)
    elm_shutdown();
 }
 END_TEST
+
+START_TEST(logical_shift)
+{
+   Efl_Ui_Focus_Manager *m;
+
+   elm_init(1, NULL);
+
+   TEST_OBJ_NEW(root, 0, 0, 10, 10);
+   TEST_OBJ_NEW(child, 0, 0, 10, 10);
+   TEST_OBJ_NEW(sub, 0, 0, 10, 10);
+   TEST_OBJ_NEW(sub_sub, 0, 0, 10, 10);
+   TEST_OBJ_NEW(sub_child, 0, 0, 10, 10);
+
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
+    efl_ui_focus_manager_root_set(efl_added, root)
+   );
+
+   efl_ui_focus_manager_calc_register(m, child, root, NULL);
+   efl_ui_focus_manager_calc_register_logical(m, sub, root, NULL);
+   efl_ui_focus_manager_calc_register_logical(m, sub_sub, sub, NULL);
+   efl_ui_focus_manager_calc_register(m, sub_child, sub, NULL);
+
+   efl_ui_focus_manager_focus_set(m, root);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), child);
+
+   efl_ui_focus_manager_focus_set(m, sub);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), sub_child);
+
+   efl_ui_focus_manager_focus_set(m, sub_sub);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), sub_child);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -343,4 +378,5 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, redirect_param);
     tcase_add_test(tc, invalid_args_check);
     tcase_add_test(tc, order_check);
+    tcase_add_test(tc, logical_shift);
 }
