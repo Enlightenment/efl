@@ -178,9 +178,9 @@ void rect_update()
 
    for (i = 0; i < 2; i ++)
      {
-        if (rects[rect_idx][0][i].w > 0 && rects[rect_idx][0][i].w > 0)
+        if (rects[rect_idx][0][i].w > 0 && rects[rect_idx][0][i].h > 0)
           eina_tiler_rect_add(tiler1, &rects[rect_idx][0][i]);
-        if (rects[rect_idx][1][i].w > 0 && rects[rect_idx][1][i].w > 0)
+        if (rects[rect_idx][1][i].w > 0 && rects[rect_idx][1][i].h > 0)
           eina_tiler_rect_add(tiler2, &rects[rect_idx][1][i]);
      }
 
