@@ -7,6 +7,7 @@ class Efl.Ui.List.Pan (Elm.Pan)
       Elm.Pan.pos { get; set; }
       Elm.Pan.pos_min { get; }
       Elm.Pan.pos_max { get; }
+      Efl.Canvas.Group.group_calculate;
    }
    events {
       item,focused; [[Called when item got focus]]

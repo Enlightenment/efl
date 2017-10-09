@@ -287,6 +287,9 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_image_factory.eo.h>
 #include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_list_types.eot.h>
+# include <efl_ui_list_model.eo.h>
+# include <efl_ui_list_relayout.eo.h>
 # include <efl_ui_list.eo.h>
 # include <efl_ui_list_pan.eo.h>
 #endif

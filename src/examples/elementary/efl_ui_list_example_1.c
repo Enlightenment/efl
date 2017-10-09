@@ -32,7 +32,7 @@ _realized_cb(void *data, const Efl_Event *event)
 
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_obj_widget_focus_allow_set(layout, EINA_TRUE);
+   elm_object_focus_allow_set(layout, EINA_TRUE);
 }
 
 /*

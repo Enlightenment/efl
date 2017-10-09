@@ -1,0 +1,6 @@
+class Efl.Ui.List.Precise_Layouter (Efl.Object, Efl.Ui.List.Relayout)
+{
+   implements {
+      Efl.Ui.List.Relayout.layout_do;
+   }
+}
