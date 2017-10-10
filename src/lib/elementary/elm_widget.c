@@ -4332,9 +4332,12 @@ _elm_widget_focus_hide_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
    _if_focused_revert(obj, EINA_TRUE);
 }
 
-EOLIAN static void
-_elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *pd)
+/* internal */
+EAPI void
+elm_widget_focus_mouse_up_handle(Eo *obj)
 {
+   Elm_Widget_Smart_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+
    if (!_is_focusable(obj)) return;
 
    elm_obj_widget_focus_steal(obj, NULL);

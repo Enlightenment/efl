@@ -369,10 +369,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
-      /* FIXME: Needs better doc... maybe merge with widget_event? */
-      focus_mouse_up_handle {
-         [[Handle focus mouse up]]
-      }
 
       /* Scroll API. */
       @property on_show_region_hook @protected {
