@@ -4660,21 +4660,20 @@ EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNU
 static void
 _focused_element(void *data, const Efl_Event *event)
 {
-   Eina_Rectangle geom;
-   Eina_Rectangle obj_geom;
+   Eina_Rect geom;
    Efl_Ui_Focus_Object *obj = data;
    Efl_Ui_Focus_Object *focus = event->info;
    Elm_Scrollable_Smart_Interface_Data *pd;
+   int pan_x, pan_y;
 
    pd = efl_data_scope_get(obj, MY_SCROLLABLE_INTERFACE);
 
    if (!focus) return;
 
-   evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
-   evas_object_geometry_get(pd->content, &obj_geom.x, &obj_geom.y, &obj_geom.w, &obj_geom.h);
-
-   geom.x = geom.x - obj_geom.x;
-   geom.y = geom.y - obj_geom.y;
+   geom = efl_ui_focus_object_focus_geometry_get(focus);
+   elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
+   geom.x = geom.x + pan_x;
+   geom.y = geom.y + pan_y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
@@ -4706,11 +4705,11 @@ _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_I
 static Eina_Bool
 _filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
 {
-   Eina_Rectangle geom;
+   Eina_Rect geom;
 
-   evas_object_geometry_get(data, &geom.x, &geom.y, &geom.w, &geom.h);
+   geom = efl_ui_focus_object_focus_geometry_get(data);
 
-   return eina_rectangles_intersect(&geom, fdata);
+   return eina_rectangles_intersect(&geom.rect, fdata);
 }
 
 EOLIAN static Eina_Iterator*
@@ -4728,13 +4727,13 @@ _elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(Eo *obj, Elm_
 EOLIAN static void
 _elm_interface_scrollable_efl_ui_focus_manager_focus_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
 {
-   Eina_Rectangle geom;
+   Eina_Rect geom;
    int pan_x, pan_y;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
    efl_ui_focus_manager_focus_set(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
 
-   evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
+   geom = efl_ui_focus_object_focus_geometry_get(focus);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
    geom.x = geom.x + pan_x;
    geom.y = geom.y + pan_y;
