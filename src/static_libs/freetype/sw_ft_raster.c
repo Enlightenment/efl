@@ -1272,8 +1272,6 @@ typedef struct  SW_FT_Outline_Funcs_
           /* for closure                                      */
           v_start.x = ( v_start.x + v_last.x ) / 2;
           v_start.y = ( v_start.y + v_last.y ) / 2;
-
-          v_last = v_start;
         }
         point--;
         tags--;
