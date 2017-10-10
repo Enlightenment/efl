@@ -5,10 +5,12 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_colorselector.h"
+#include "efl_ui_focus_composition.eo.h"
 
 #define MY_CLASS ELM_COLORSELECTOR_CLASS
 
@@ -191,6 +193,28 @@ static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
    {NULL, NULL}
 };
+
+static void
+_flush_color_children(Eo *obj, Elm_Colorselector_Data *pd)
+{
+   Eina_List *items = NULL;
+
+   if (pd->mode == ELM_COLORSELECTOR_ALL) {
+      items = eina_list_append(items, pd->picker);
+      items = eina_list_merge(items, eina_list_clone(pd->items));
+      items = eina_list_append(items, pd->col_bars_area);
+   } else if (pd->mode == ELM_COLORSELECTOR_BOTH) {
+      items = eina_list_merge(items, eina_list_clone(pd->items));
+      items = eina_list_append(items, pd->col_bars_area);
+   } else if (pd->mode == ELM_COLORSELECTOR_COMPONENTS) {
+      items = eina_list_append(items, pd->col_bars_area);
+   } else if (pd->mode == ELM_COLORSELECTOR_PALETTE) {
+      items = eina_list_merge(items, eina_list_clone(pd->items));
+   } else if (pd->mode == ELM_COLORSELECTOR_PICKER) {
+      items = eina_list_append(items, pd->picker);
+   }
+   efl_ui_focus_composition_elements_set(obj, items);
+}
 
 enum Palette_Box_Direction
 {
@@ -947,7 +971,7 @@ _create_colorpicker(Evas_Object *obj)
 
         sd->spinners[i] = spinner;
      }
-     
+
    elm_layout_content_set(sd->picker, "elm.swallow.red", sd->spinners[0]);
    elm_layout_text_set(sd->picker, "elm.label.red", E_("R:"));
    elm_layout_content_set(sd->picker, "elm.swallow.green", sd->spinners[1]);
@@ -1949,9 +1973,10 @@ _elm_colorselector_efl_canvas_group_group_add(Eo *obj, Elm_Colorselector_Data *p
    priv->grab.xroot = -1;
 #endif
    priv->grab.in = EINA_TRUE;
-
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   _flush_color_children(obj, priv);
 }
 
 EOLIAN static void
@@ -2169,55 +2194,6 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 
 static Eina_Bool _elm_colorselector_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *_pd EINA_UNUSED)
-{
-   return _elm_colorselector_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_colorselector_elm_widget_focus_next(Eo *obj, Elm_Colorselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-   Eina_List *l;
-   Elm_Object_Item *eo_item;
-   int i = 0;
-
-   if (!sd) return EINA_FALSE;
-
-   if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
-       (sd->mode == ELM_COLORSELECTOR_ALL)||
-       (sd->mode == ELM_COLORSELECTOR_BOTH))
-     {
-        if (!sd->items) return EINA_FALSE;
-        EINA_LIST_FOREACH(sd->items, l, eo_item)
-          {
-             Elm_Widget_Item_Data *witem = efl_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
-             items = eina_list_append(items, witem->access_obj);
-          }
-     }
-   if ((sd->mode == ELM_COLORSELECTOR_COMPONENTS) ||
-       (sd->mode == ELM_COLORSELECTOR_ALL) ||
-       (sd->mode == ELM_COLORSELECTOR_BOTH))
-     {
-        for (i = 0; i < 4; i++)
-          {
-             items = eina_list_append(items, sd->cb_data[i]->lbt);
-             items = eina_list_append(items, sd->cb_data[i]->access_obj);
-             items = eina_list_append(items, sd->cb_data[i]->rbt);
-          }
-     }
-
-   return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
-}
-
 static void
 _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 {
@@ -2389,6 +2365,7 @@ _elm_colorselector_mode_set(Eo *obj, Elm_Colorselector_Data *sd, Elm_Colorselect
 
    _colors_set(obj, sd->r, sd->g, sd->b, sd->a, EINA_TRUE);
    elm_layout_sizing_eval(obj);
+   _flush_color_children(obj, sd);
 }
 
 EOLIAN static Elm_Colorselector_Mode
@@ -2717,6 +2694,20 @@ _elm_color_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Color_Ite
    it->base->accessible_name = eina_stringshare_add(accessible_name);
    free(accessible_name);
    return it->base->accessible_name;
+}
+
+EOLIAN static Eina_Rect
+_elm_color_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
+{
+   return efl_gfx_geometry_get(pd->color_obj);
+}
+
+EOLIAN static void
+_elm_color_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Color_Item_Data *pd, Eina_Bool focus)
+{
+   efl_ui_focus_object_focus_set(efl_super(obj, ELM_COLOR_ITEM_CLASS), focus);
+   evas_object_focus_set(pd->color_obj, focus);
+   elm_object_item_focus_set(obj, focus);
 }
 
 /* Standard widget overrides */

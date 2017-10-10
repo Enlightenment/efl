@@ -69,7 +69,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
            This pops an item that is on the top(visible) of the naviframe, makes it
            disappear, then deletes the item. The item that was underneath it on the
            stack will become visible.
-           
+
            When pop transition animation is in progress, new pop operation is blocked until current pop operation
            is complete.
           ]]
@@ -98,7 +98,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
 
            The item pushed becomes one page of the naviframe, this item will be
            deleted when it is popped.
-           
+
            When push transition animation is in progress, pop operation is blocked until push is complete.
 
            The following styles are available for this item:
@@ -144,11 +144,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       class.constructor;
       Efl.Object.constructor;
       Efl.Gfx.visible { set; }
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;

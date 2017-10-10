@@ -389,18 +389,6 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED,
    return sd->ar_gap_timeout;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_button_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_button_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN const Elm_Atspi_Action *
 _efl_ui_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {

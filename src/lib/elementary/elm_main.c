@@ -1611,8 +1611,88 @@ elm_cache_all_flush(void)
 EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *focused_child;
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   if (!elm_widget_is(obj))
+     return evas_object_focus_get(obj);
+
+   m = efl_ui_focus_user_manager_get(obj);
+
+   //no manager means not registered
+   if (!m) return EINA_FALSE;
+
+   //first ensure that the manager where we are registered in is in the redirect chain
+   while(m != elm_widget_top_get(obj))
+     {
+        Efl_Ui_Focus_Manager *m_low = efl_ui_focus_user_manager_get(m);
+
+        if (efl_ui_focus_manager_redirect_get(m_low) != m) return EINA_FALSE;
+
+        m = m_low;
+     }
+   //assertion: our redirect manager m is in the redirect chain
+   m = efl_ui_focus_user_manager_get(obj);
+
+   //if there is a redirect manager
+   if (!!efl_ui_focus_manager_redirect_get(m)) return EINA_FALSE;
+
+   //now take the focused object and walk down the parents, if this is
+   focused_child = efl_ui_focus_manager_focus_get(m);
+
+   while(focused_child)
+     {
+        if (focused_child == obj) return EINA_TRUE;
+
+        focused_child = efl_ui_focus_user_parent_get(focused_child);
+     }
+
    return elm_widget_focus_get(obj);
+}
+
+static void _elm_widget_focus(Evas_Object *obj);
+
+static void
+_manager_changed(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   _elm_widget_focus(event->object);
+}
+
+static void
+_elm_widget_focus(Evas_Object *obj)
+{
+   Efl_Ui_Focus_Manager *m, *m2 = obj;
+   Efl_Ui_Focus_Object *o;
+
+   m = elm_widget_top_get(obj);
+   m2 = efl_ui_focus_user_manager_get(obj);
+
+   o = efl_key_data_get(m, "__delayed_focus_set");
+   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+   efl_key_data_set(m, "__delayed_focus_set", NULL);
+
+   if (!m2)
+     {
+        efl_key_data_set(m, "__delayed_focus_set", obj);
+        efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        return;
+     }
+
+   //build the chain of redirects
+   do
+     {
+       Efl_Ui_Focus_Manager *new_manager;;
+       new_manager = efl_ui_focus_user_manager_get(m2);
+       //new manager is in a higher hirarchy than m2
+       //so we set m2 as redirect in new_manager
+       efl_ui_focus_manager_redirect_set(new_manager, m2);
+       m2 = new_manager;
+     }
+   while(m && m2 && m != m2);
+
+   //now set the focus
+   efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), obj);
 }
 
 EAPI void
@@ -1621,25 +1701,25 @@ elm_object_focus_set(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   if (elm_widget_is(obj))
+   // ugly, but, special case for inlined windows
+   if (efl_isa(obj, EFL_UI_WIN_CLASS))
      {
-        if (focus == elm_widget_focus_get(obj)) return;
-
-        // ugly, but, special case for inlined windows
-        if (efl_isa(obj, EFL_UI_WIN_CLASS))
+        Evas_Object *inlined = elm_win_inlined_image_object_get(obj);
+        if (inlined)
           {
-             Evas_Object *inlined = elm_win_inlined_image_object_get(obj);
-
-             if (inlined)
-               {
-                  evas_object_focus_set(inlined, focus);
-                  return;
-               }
+             evas_object_focus_set(inlined, focus);
+             return;
           }
+     }
+   else if (elm_widget_is(obj))
+     {
         if (focus)
-          elm_obj_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+          _elm_widget_focus(obj);
         else
-          elm_obj_widget_focused_object_clear(obj);
+          {
+             if (efl_ui_focus_manager_focus_get(efl_ui_focus_user_manager_get(obj)) == obj)
+               efl_ui_focus_manager_pop_history_stack(efl_ui_focus_user_manager_get(obj));
+          }
      }
    else
      {
@@ -1664,42 +1744,43 @@ elm_object_focus_allow_get(const Evas_Object *obj)
 
 EAPI void
 elm_object_focus_custom_chain_set(Evas_Object *obj,
-                                  Eina_List   *objs)
+                                  Eina_List   *objs EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_custom_chain_set(obj, objs);
+   ERR("Focus-chain not supported");
 }
 
 EAPI void
 elm_object_focus_custom_chain_unset(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_custom_chain_unset(obj);
+   ERR("Focus-chain not supported");
 }
 
 EAPI const Eina_List *
 elm_object_focus_custom_chain_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_obj_widget_focus_custom_chain_get(obj);
+   ERR("Focus-chain not supported");
+   return NULL;
 }
 
 EAPI void
 elm_object_focus_custom_chain_append(Evas_Object *obj,
-                                     Evas_Object *child,
-                                     Evas_Object *relative_child)
+                                     Evas_Object *child EINA_UNUSED,
+                                     Evas_Object *relative_child EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_custom_chain_append(obj, child, relative_child);
+   ERR("Focus-chain not supported");
 }
 
 EAPI void
 elm_object_focus_custom_chain_prepend(Evas_Object *obj,
-                                      Evas_Object *child,
-                                      Evas_Object *relative_child)
+                                      Evas_Object *child EINA_UNUSED,
+                                      Evas_Object *relative_child EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_custom_chain_prepend(obj, child, relative_child);
+   ERR("Focus-chain not supported");
 }
 
 EINA_DEPRECATED EAPI void
@@ -1713,49 +1794,61 @@ EAPI void
 elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
+   Elm_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_cycle(obj, dir);
+
+   efl_ui_focus_manager_move(top, dir);
 }
 
 EAPI Evas_Object *
 elm_object_focus_next_object_get(const Evas_Object  *obj,
                                  Elm_Focus_Direction dir)
 {
+   Elm_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_obj_widget_focus_next_object_get(obj, dir);
+
+   return efl_ui_focus_manager_request_move(top, dir);
 }
 
 EAPI void
 elm_object_focus_next_object_set(Evas_Object        *obj,
-                                 Evas_Object        *next,
-                                 Elm_Focus_Direction dir)
+                                 Evas_Object        *next EINA_UNUSED,
+                                 Elm_Focus_Direction dir EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_next_object_set(obj, next, dir);
+   ERR("setting explicit objects not allowed not supported");
 }
 
 EAPI Elm_Object_Item *
 elm_object_focus_next_item_get(const Evas_Object  *obj,
-                               Elm_Focus_Direction dir)
+                               Elm_Focus_Direction dir EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_obj_widget_focus_next_item_get(obj, dir);
+   /* FOCUS-FIXME */
+   return NULL;
 }
 
 EAPI void
 elm_object_focus_next_item_set(Evas_Object     *obj,
-                               Elm_Object_Item *next_item,
-                               Elm_Focus_Direction dir)
+                               Elm_Object_Item *next_item EINA_UNUSED,
+                               Elm_Focus_Direction dir EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_next_item_set(obj, next_item, dir);
+   /* FOCUS-FIXME */
 }
 
 EAPI Evas_Object *
 elm_object_focused_object_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_obj_widget_focused_object_get(obj);
+   Efl_Ui_Focus_Manager *man = elm_object_top_widget_get(obj);
+
+   while(efl_ui_focus_manager_redirect_get(man))
+     {
+        man = efl_ui_focus_manager_redirect_get(man);
+     }
+
+   return efl_ui_focus_manager_focus_get(man);
 }
 
 EAPI void
@@ -1799,7 +1892,7 @@ EAPI void
 elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_move_policy_automatic_set(obj, automatic);
+   return elm_obj_widget_focus_move_policy_automatic_set(obj, automatic);
 }
 
 EAPI void

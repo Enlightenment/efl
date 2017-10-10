@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FOCUS_LAYER_PROTECTED
 
 #include <Elementary.h>
 
@@ -261,63 +262,6 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_panel_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Panel_Data *_pd EINA_UNUSED)
-{
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_elm_panel_elm_widget_focus_next(Eo *obj, Elm_Panel_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *cur;
-   Eina_List *items = NULL;
-   Eina_Bool ret = EINA_FALSE;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   if (!sd->content) return EINA_FALSE;
-
-   if (sd->scrollable)
-     {
-        if (sd->hidden) return EINA_FALSE;
-
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-          {
-             Evas_Object *ao = _access_object_get(obj, ACCESS_OUTLINE_PART);
-             if (ao) items = eina_list_append(items, ao);
-             items = eina_list_append(items, sd->content);
-
-             ret = elm_widget_focus_list_next_get
-                (obj, items, eina_list_data_get, dir, next, next_item);
-             eina_list_free(items);
-
-             return ret;
-          }
-
-        return elm_obj_widget_focus_next_get(sd->content, dir, next, next_item);
-     }
-
-   cur = sd->content;
-
-   /* Try to Focus cycle in subitem */
-   if (!sd->hidden) return elm_obj_widget_focus_next_get(cur, dir, next, next_item);
-
-   /* access */
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-     {
-        Evas_Object *ao, *po;
-        po = (Evas_Object *)edje_object_part_object_get
-               (wd->resize_obj, "btn_icon");
-        ao = evas_object_data_get(po, "_part_access_obj");
-        _elm_access_highlight_set(ao);
-     }
-
-   /* Return */
-   *next = (Evas_Object *)obj;
-   return !elm_widget_focus_get(obj);
-}
-
 static void
 _box_layout_cb(Evas_Object *o,
                Evas_Object_Box_Data *priv,
@@ -492,16 +436,14 @@ _panel_toggle(void *data EINA_UNUSED,
              elm_layout_signal_emit(obj, "elm,action,hide", "elm");
              sd->hidden = EINA_TRUE;
              evas_object_repeat_events_set(obj, EINA_TRUE);
-             if (sd->content && elm_widget_focus_get(sd->content))
-               {
-                  elm_obj_widget_focused_object_clear(obj);
-                  elm_obj_widget_focus_steal(obj, NULL);
-               }
           }
 
+        //if the panel is hidden, make this thing unfocusable
+        elm_widget_tree_unfocusable_set(obj, sd->hidden);
         edje_object_message_signal_process(wd->resize_obj);
      }
 
+   efl_ui_focus_layer_enable_set(obj, !sd->hidden);
    efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
 }
 
@@ -1028,6 +970,8 @@ _elm_panel_efl_object_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PANEL);
+
+   efl_ui_focus_layer_behaviour_set(obj, EINA_FALSE, EINA_FALSE);
 
    return obj;
 }

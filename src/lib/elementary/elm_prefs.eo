@@ -216,7 +216,6 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
-      Elm.Widget.focus_next;
    }
    events {
       page,changed; [[Called when page changed]]

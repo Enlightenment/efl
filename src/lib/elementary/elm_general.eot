@@ -129,16 +129,16 @@ enum Elm.Wrap.Type
    last      [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Elm.Focus_Direction
+enum Efl.Ui.Focus.Direction
 {
    [[ Focus directions. ]]
-   legacy: elm_focus;
-   previous, [[ previous direction ]]
-   next,     [[ next direction ]]
-   up,       [[ up direction ]]
-   down,     [[ down direction ]]
-   right,    [[ right direction ]]
-   left,     [[ left direction ]]
+   previous = 0, [[ previous direction ]]
+   next = 1,     [[ next direction ]]
+   up = 2,       [[ up direction ]]
+   down = 3,     [[ down direction ]]
+   right = 4,    [[ right direction ]]
+   left = 5,     [[ left direction ]]
+   last = 6
 }
 
 enum Elm.Focus.Region.Show_Mode

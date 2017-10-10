@@ -50,8 +50,6 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.widget_sub_object_add;
       Elm.Widget.widget_sub_object_del;
       Efl.Ui.Range.range_value { get; set; }

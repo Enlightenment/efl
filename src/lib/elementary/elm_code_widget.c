@@ -537,58 +537,6 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    _elm_code_widget_refresh(widget, NULL);
 }
 
-static Eina_Bool
-_elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
-{
-   Elm_Code_Widget_Data *pd;
-   Elm_Code_Line *line;
-
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-
-   if (!line)
-     return EINA_FALSE;
-
-   if (!strcmp(key, "Up"))
-     return pd->cursor_line > 1;
-   else if (!strcmp(key, "Down"))
-     return pd->cursor_line < elm_code_file_lines_get(pd->code->file);
-   else if (!strcmp(key, "Left"))
-     return pd->cursor_col > 1 || pd->cursor_line > 1;
-   else if (!strcmp(key, "Right"))
-     return pd->cursor_col < elm_code_widget_line_text_column_width_get(widget, line) + 1 ||
-        pd->cursor_line < elm_code_file_lines_get(pd->code->file);
-   else
-     return EINA_FALSE;
-}
-
-static void
-_elm_code_widget_update_focus_directions(Elm_Code_Widget *obj)
-{
-   if (_elm_code_widget_cursor_key_will_move(obj, "Up"))
-     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_UP);
-   else
-     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_UP);
-
-   if (_elm_code_widget_cursor_key_will_move(obj, "Down"))
-     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_DOWN);
-   else
-     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_DOWN);
-
-   if (_elm_code_widget_cursor_key_will_move(obj, "Left"))
-     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_LEFT);
-   else
-     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_LEFT);
-
-   if (_elm_code_widget_cursor_key_will_move(obj, "Right"))
-     elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_RIGHT);
-   else
-     elm_obj_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_RIGHT);
-
-   elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_PREVIOUS);
-   elm_obj_widget_focus_next_object_set(obj, obj, ELM_FOCUS_NEXT);
-}
-
 static void
 _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 {
@@ -618,8 +566,7 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 }
 
 static void
-_elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, unsigned int col, unsigned int line,
-                             Eina_Bool was_key)
+_elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, unsigned int col, unsigned int line)
 {
    Elm_Code *code;
    Elm_Code_Line *line_obj;
@@ -636,9 +583,6 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    text = elm_code_line_text_get(line_obj, &length);
    if (position < length && text[position] == '\t')
      pd->cursor_col = elm_code_widget_line_text_column_width_to_position(widget, line_obj, position);
-
-   if (!was_key)
-     _elm_code_widget_update_focus_directions(widget);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
    _elm_code_widget_cursor_ensure_visible(widget);
@@ -954,7 +898,7 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, unsigned int row, 
    else if (col <= 0)
      col = 1;
 
-   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_FALSE);
+   _elm_code_widget_cursor_move(widget, pd, col, row);
 }
 
 static void
@@ -1119,7 +1063,7 @@ _elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
    if (pd->cursor_col <= 1)
      return;
 
-   _elm_code_widget_cursor_move(widget, pd, 1, pd->cursor_line, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, 1, pd->cursor_line);
 }
 
 static void
@@ -1136,7 +1080,7 @@ _elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
    if (pd->cursor_col > lastcol + 1)
      return;
 
-   _elm_code_widget_cursor_move(widget, pd, lastcol + 1, pd->cursor_line, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, lastcol + 1, pd->cursor_line);
 }
 
 static void
@@ -1159,7 +1103,7 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
    if (col > column_width + 1)
      col = column_width + 1;
 
-   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, col, row);
 }
 
 static void
@@ -1182,7 +1126,7 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
    if (col > column_width + 1)
      col = column_width + 1;
 
-   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, col, row);
 }
 
 static void
@@ -1202,7 +1146,7 @@ _elm_code_widget_cursor_move_left(Elm_Code_Widget *widget)
         return;
      }
 
-   _elm_code_widget_cursor_move(widget, pd, pd->cursor_col-1, pd->cursor_line, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, pd->cursor_col-1, pd->cursor_line);
 }
 
 static void
@@ -1230,7 +1174,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    if (elm_code_line_text_get(line, NULL)[position] == '\t')
      next_col = pd->cursor_col + pd->tabstop;
 
-   _elm_code_widget_cursor_move(widget, pd, next_col, pd->cursor_line, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, next_col, pd->cursor_line);
 }
 
 static unsigned int
@@ -1266,7 +1210,7 @@ _elm_code_widget_cursor_move_pageup(Elm_Code_Widget *widget)
    if (col > column_width + 1)
      col = column_width + 1;
 
-   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, col, row);
 }
 
 static void
@@ -1292,7 +1236,7 @@ _elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
    if (col > column_width + 1)
      col = column_width + 1;
 
-   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+   _elm_code_widget_cursor_move(widget, pd, col, row);
 }
 
 static Elm_Code_Widget_Change_Info *
@@ -1603,8 +1547,6 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
    if (!pd->editable || (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
      return;
 
-   _elm_code_widget_update_focus_directions(widget);
-
 #if defined(__APPLE__) && defined(__MACH__)
    if (evas_key_modifier_is_set(ev->modifiers, "Super"))
 #else
@@ -1702,7 +1644,6 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    pd->focussed = EINA_TRUE;
    elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
-   _elm_code_widget_update_focus_directions(widget);
    _elm_code_widget_refresh(obj, NULL);
 }
 
@@ -1749,20 +1690,6 @@ _elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Da
      }
 
    return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED,
-                                                  Elm_Code_Widget_Data *pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED,
-                                                       Elm_Code_Widget_Data *pd EINA_UNUSED)
-{
-   return EINA_TRUE;
 }
 
 static void
@@ -2186,7 +2113,7 @@ _elm_code_widget_tab_inserts_spaces_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
 EOLIAN static void
 _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int row, unsigned int col)
 {
-   _elm_code_widget_cursor_move(obj, pd, col, row, EINA_FALSE);
+   _elm_code_widget_cursor_move(obj, pd, col, row);
 }
 
 EOLIAN static void

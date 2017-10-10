@@ -11,7 +11,7 @@
 #define DIM_EFL_UI_FOCUS_DIRECTION(dim,neg) dim*2+neg
 #define NODE_DIRECTIONS_COUNT 4
 
-#define DIRECTION_CHECK(dir) (dir >= 0 && dir < EFL_UI_FOCUS_DIRECTION_LAST)
+#define DIRECTION_CHECK(dir) (dir >= EFL_UI_FOCUS_DIRECTION_PREVIOUS && dir < EFL_UI_FOCUS_DIRECTION_LAST)
 
 //#define CALC_DEBUG
 #define DEBUG_TUPLE(obj) efl_name_get(obj), efl_class_name_get(obj)
@@ -23,6 +23,8 @@ static int _focus_log_domain = -1;
 #define F_WRN(...) EINA_LOG_DOM_WARN(_focus_log_domain, __VA_ARGS__)
 #define F_INF(...) EINA_LOG_DOM_INFO(_focus_log_domain, __VA_ARGS__)
 #define F_DBG(...) EINA_LOG_DOM_DBG(_focus_log_domain, __VA_ARGS__)
+
+#define DIRECTION_ACCESS(V, ID) ((V)->graph.directions[(ID) - 2])
 
 typedef struct {
     Eina_Bool positive;
@@ -85,7 +87,7 @@ _complement(Efl_Ui_Focus_Direction dir)
 
     COMP(EFL_UI_FOCUS_DIRECTION_RIGHT, EFL_UI_FOCUS_DIRECTION_LEFT)
     COMP(EFL_UI_FOCUS_DIRECTION_UP, EFL_UI_FOCUS_DIRECTION_DOWN)
-    COMP(EFL_UI_FOCUS_DIRECTION_PREV, EFL_UI_FOCUS_DIRECTION_NEXT)
+    COMP(EFL_UI_FOCUS_DIRECTION_PREVIOUS, EFL_UI_FOCUS_DIRECTION_NEXT)
 
     #undef COMP
 
@@ -101,11 +103,11 @@ border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *lis
 {
    Node *partner;
    Eina_List *lnode;
-   Border *border = &G(node).directions[direction];
+   Border *border = &DIRECTION_ACCESS(node, direction);
 
    EINA_LIST_FREE(border->partners, partner)
      {
-        Border *comp_border = &G(partner).directions[_complement(direction)];
+        Border *comp_border = &DIRECTION_ACCESS(partner, _complement(direction));
 
         comp_border->partners = eina_list_remove(comp_border->partners, node);
      }
@@ -114,7 +116,7 @@ border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *lis
 
    EINA_LIST_FOREACH(border->partners, lnode, partner)
      {
-        Border *comp_border = &G(partner).directions[_complement(direction)];
+        Border *comp_border = &DIRECTION_ACCESS(partner,_complement(direction));
 
         comp_border->partners = eina_list_append(comp_border->partners, node);
      }
@@ -164,7 +166,7 @@ node_item_free(Node *item)
    Node *n;
    Eina_List *l;
    //free the graph items
-   for(int i = 0;i < NODE_DIRECTIONS_COUNT; i++)
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < NODE_DIRECTIONS_COUNT; i++)
      {
         border_partners_set(item, i, NULL);
      }
@@ -373,7 +375,7 @@ _debug_node(Node *node)
 
    printf("NODE %s-%s\n", DEBUG_TUPLE(node->focusable));
 
-#define DIR_LIST(dir) G(node).directions[dir].partners
+#define DIR_LIST(dir) DIRECTION_ACCESS(node,dir).partners
 
 #define DIR_OUT(dir)\
    tmp = DIR_LIST(dir); \
@@ -492,9 +494,20 @@ _node_new_geometery_cb(void *data, const Efl_Event *event)
    return;
 }
 
+static void
+_object_del_cb(void *data, const Efl_Event *event)
+{
+   /*
+    * Lets just implicitly delete items that are deleted
+    * Otherwise we have later just a bunch of errors
+    */
+   efl_ui_focus_manager_calc_unregister(data, event->object);
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
     {EFL_GFX_EVENT_RESIZE, _node_new_geometery_cb},
     {EFL_GFX_EVENT_MOVE, _node_new_geometery_cb},
+    {EFL_EVENT_DEL, _object_del_cb},
 );
 
 //=============================
@@ -780,12 +793,12 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
 
    //add all neighbors of the node to the dirty list
-   for(int i = 0; i < 4; i++)
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < NODE_DIRECTIONS_COUNT; i++)
      {
         Node *partner;
         Eina_List *n;
 
-        EINA_LIST_FOREACH(node->graph.directions[i].partners, n, partner)
+        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).partners, n, partner)
           {
              dirty_add(obj, pd, partner);
           }
@@ -884,10 +897,10 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 
    EINA_ITERATOR_FOREACH(it->real_iterator, node)
      {
-        for(int i = 0 ;i < NODE_DIRECTIONS_COUNT; i++)
+        for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < NODE_DIRECTIONS_COUNT; i++)
           {
              if (node->type != NODE_TYPE_ONLY_LOGICAL &&
-                 !node->graph.directions[i].partners)
+                 !DIRECTION_ACCESS(node, i).partners)
                {
                   *data = node->focusable;
                   return EINA_TRUE;
@@ -973,7 +986,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
      {
-        if (eina_list_data_find(G(upper).directions[direction].partners, candidate))
+        if (eina_list_data_find(DIRECTION_ACCESS(upper, direction).partners, candidate))
           {
              //this is the next accessable part
              return candidate;
@@ -982,7 +995,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
 
    //if we haven't found anything in the history, use the widget with the smallest distance
    {
-      Eina_List *lst = G(upper).directions[direction].partners;
+      Eina_List *lst = DIRECTION_ACCESS(upper, direction).partners;
       Eina_List *n;
       Node *node, *min = NULL;
       Eina_Vector2 elem, other;
@@ -1146,7 +1159,7 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 
    dirty_flush(obj, pd, upper);
 
-   if (direction == EFL_UI_FOCUS_DIRECTION_PREV
+   if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
       dir = _logical_movement(pd, upper, direction);
    else
@@ -1326,7 +1339,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
              n = eina_hash_find(pd->node_hash, &old_candidate);
 
              if (direction == EFL_UI_FOCUS_DIRECTION_NEXT ||
-                 direction == EFL_UI_FOCUS_DIRECTION_PREV)
+                 direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
                {
                  if (n)
                    {
@@ -1447,7 +1460,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
 
    dirty_flush(obj, pd, n);
 
-#define DIR_CLONE(dir) _convert(G(n).directions[dir].partners);
+#define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir).partners);
 
    res->right = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_RIGHT);
    res->left = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_LEFT);
@@ -1518,5 +1531,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSE
 
   pd->focus_stack = eina_list_free(pd->focus_stack);
 }
+
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+  Node *last;
+
+  if (!pd->focus_stack) return;
+  //remove last element
+  last = eina_list_last_data_get(pd->focus_stack);
+  pd->focus_stack =  eina_list_remove(pd->focus_stack, last);
+  //unfocus it
+  efl_ui_focus_object_focus_set(last->focusable, EINA_FALSE);
+
+  //get now the highest, and unfocus that!
+  last = eina_list_last_data_get(pd->focus_stack);
+  if (last) efl_ui_focus_object_focus_set(last->focusable, EINA_TRUE);
+}
+
 
 #include "efl_ui_focus_manager_calc.eo.c"

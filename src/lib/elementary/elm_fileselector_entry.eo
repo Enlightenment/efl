@@ -7,10 +7,7 @@ class Elm.Fileselector_Entry (Efl.Ui.Layout, Elm.Interface.Fileselector,
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_next;
       Elm.Widget.on_disabled_update;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;
       Elm.Interface.Fileselector.folder_only { get; set; }

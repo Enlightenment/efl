@@ -1,0 +1,26 @@
+mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
+   [[This defines the inheriting widget as Composition widget.
+
+     A composition widget is a widget that is just the logical parent of a other set of widgets thet can be used as interaction.
+   ]]
+   methods {
+      @property composition_elements @protected  {
+         [[Set the order of elements that will be used for composition
+
+           Elements of the list can be either A Elm.Widget, A Efl.Ui.Focus.Object, or a Efl.Gfx.
+
+           If the element is a Efl.Gfx, then the geometry is used as focus geomtry, the focus property is redirected to the evas focus property. The mixin will take care of reistering.
+
+           If the element is a Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
+
+           For the case that the element is a Elm.Widget nothing is done and the widget is just part of the order.
+         ]]
+         values {
+            logical_order : list<Efl.Gfx> @owned; [[The order to use]]
+         }
+      }
+   }
+   implements {
+      Elm.Widget.focus_state_apply;
+   }
+}

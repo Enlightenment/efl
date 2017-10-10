@@ -501,7 +501,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
 
                   @since 1.16]]
                 params {
-                     dir: Elm.Focus_Direction; [[Focus direction]]
+                     dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
                 return: Efl.Canvas.Object; [[Focus next object]]
            }
@@ -511,7 +511,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                   @since 1.16]]
                 params {
                      next: Efl.Canvas.Object @nullable; [[Focus next object]]
-                     dir: Elm.Focus_Direction; [[Focus direction]]
+                     dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
            }
            focus_next_item_get @const {
@@ -519,7 +519,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
 
                   @since 1.16]]
                 params {
-                     dir: Elm.Focus_Direction; [[Focus direction]]
+                     dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
                 return: Elm.Widget.Item; [[Focus next object item]]
            }
@@ -529,7 +529,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
                   @since 1.16]]
                 params {
                      next_item: Elm.Widget.Item @nullable; [[Focus next object item]]
-                     dir: Elm.Focus_Direction; [[Focus direction]]
+                     dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
            }
       }

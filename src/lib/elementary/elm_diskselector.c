@@ -923,38 +923,6 @@ _elm_diskselector_elm_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd
 
 static Eina_Bool _elm_diskselector_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED)
-{
-   return _elm_diskselector_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_focus_next(Eo *obj, Elm_Diskselector_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-   Eina_List *elist = NULL;
-   Elm_Diskselector_Item_Data *it;
-
-   EINA_LIST_FOREACH(sd->items, elist, it)
-     items = eina_list_append(items, it->base->access_obj);
-
-   if (!sd->round)
-     {
-        return elm_widget_focus_list_next_get
-              (obj, items, eina_list_data_get, dir, next, next_item);
-     }
-
-   if (!elm_widget_focus_list_next_get
-          (obj, items, eina_list_data_get, dir, next, next_item))
-     {
-        elm_obj_widget_focused_object_clear((Evas_Object *)obj);
-        elm_widget_focus_list_next_get
-          (obj, items, eina_list_data_get, dir, next, next_item);
-     }
-   return EINA_TRUE;
-}
-
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {

@@ -385,14 +385,6 @@ _efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    return theme_apply;
 }
 
-static void *
-_efl_ui_layout_list_data_get(const Eina_List *list)
-{
-   Efl_Ui_Layout_Sub_Object_Data *sub_d = eina_list_data_get(list);
-
-   return sub_d->obj;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
@@ -420,73 +412,6 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
      edje_object_message_signal_process(wd->resize_obj);
 
    return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
-{
-   if (!elm_widget_can_focus_get(obj))
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-static int
-_access_focus_list_sort_cb(const void *data1, const void *data2)
-{
-   Evas_Coord_Point p1, p2;
-   Evas_Object *obj1, *obj2;
-
-   obj1 = ((Efl_Ui_Layout_Sub_Object_Data *)data1)->obj;
-   obj2 = ((Efl_Ui_Layout_Sub_Object_Data *)data2)->obj;
-
-   evas_object_geometry_get(obj1, &p1.x, &p1.y, NULL, NULL);
-   evas_object_geometry_get(obj2, &p2.x, &p2.y, NULL, NULL);
-
-   if (p1.y == p2.y)
-     {
-        return p1.x - p2.x;
-     }
-
-   return p1.y - p2.y;
-}
-
-static const Eina_List *
-_access_focus_list_sort(Eina_List *origin)
-{
-   Eina_List *l, *temp = NULL;
-   Efl_Ui_Layout_Sub_Object_Data *sub_d;
-
-   EINA_LIST_FOREACH(origin, l, sub_d)
-     temp = eina_list_sorted_insert(temp, _access_focus_list_sort_cb, sub_d);
-
-   return temp;
-}
-
-/* WARNING: if you're making a widget *not* supposed to have focusable
- * child objects, but still inheriting from elm_layout, just set its
- * focus_next smart function back to NULL */
-EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   const Eina_List *items;
-   void *(*list_data_get)(const Eina_List *list);
-
-   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
-     list_data_get = eina_list_data_get;
-   else
-     {
-        items = sd->subs;
-        list_data_get = _efl_ui_layout_list_data_get;
-
-        if (!items) return EINA_FALSE;
-
-        if (_elm_config->access_mode)
-          items = _access_focus_list_sort((Eina_List *)items);
-     }
-
-   return elm_widget_focus_list_next_get
-            (obj, items, list_data_get, dir, next, next_item);
 }
 
 EOLIAN static Eina_Bool
@@ -541,38 +466,6 @@ _efl_ui_layout_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd,
    elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
-{
-   if (!elm_widget_can_focus_get(obj))
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_focus_direction(Eo *obj, Efl_Ui_Layout_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
-{
-   const Eina_List *items;
-   void *(*list_data_get)(const Eina_List *list);
-
-   if (!sd->subs) return EINA_FALSE;
-
-   /* Focus chain (This block is different from elm_win cycle) */
-   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
-     list_data_get = eina_list_data_get;
-   else
-     {
-        items = sd->subs;
-        list_data_get = _efl_ui_layout_list_data_get;
-
-        if (!items) return EINA_FALSE;
-     }
-
-   return elm_widget_focus_list_direction_get
-            (obj, base, items, list_data_get, degree, direction, direction_item, weight);
 }
 
 static void

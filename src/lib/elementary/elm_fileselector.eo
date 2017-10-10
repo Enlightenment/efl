@@ -35,12 +35,8 @@ class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_direction;
       Elm.Widget.widget_event;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_state_apply;
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.selected_model_get;

@@ -3,10 +3,12 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
+#include "efl_ui_focus_composition.eo.h"
 
 #define MY_CLASS ELM_CLOCK_CLASS
 
@@ -338,6 +340,48 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
 
 }
 
+static Evas_Object*
+_part_get(Evas_Object *part, const char *part_name)
+{
+   Evas_Object *po;
+
+   po = (Evas_Object *)edje_object_part_object_get
+          (part, part_name);
+
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
+     return po;
+
+   return evas_object_data_get(po, "_part_access_obj");
+}
+
+static void
+_flush_clock_composite_elements(Evas_Object *obj, Elm_Clock_Data *sd)
+{
+   Eina_List *items = NULL;
+   int i;
+
+   if (sd->edit)
+     {
+        for (i = 0; i < 6; i++)
+          {
+             if ((!sd->seconds) && (i >= 4)) break;
+             if (sd->digedit & (1 << i))
+               {
+                  items = eina_list_append(items, _part_get(sd->digit[i], "access.t"));
+                  items = eina_list_append(items, _part_get(sd->digit[i], "access.b"));
+               }
+          }
+
+        if (sd->am_pm)
+          {
+             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.t"));
+             items = eina_list_append(items, _part_get(sd->am_pm_obj, "access.b"));
+          }
+     }
+
+   efl_ui_focus_composition_elements_set(obj, items);
+}
+
 static void
 _time_update(Evas_Object *obj, Eina_Bool theme_update)
 {
@@ -468,6 +512,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
         sd->cur.am_pm = sd->am_pm;
         sd->cur.edit = sd->edit;
         sd->cur.digedit = sd->digedit;
+        _flush_clock_composite_elements(obj, sd);
      }
    if (sd->hrs != sd->cur.hrs)
      {
@@ -701,65 +746,6 @@ _elm_clock_efl_canvas_group_group_del(Eo *obj, Elm_Clock_Data *sd)
 
 static Eina_Bool _elm_clock_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static Eina_Bool
-_elm_clock_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED)
-{
-   return _elm_clock_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_clock_elm_widget_focus_next(Eo *obj, Elm_Clock_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Evas_Object *ao, *po;
-   Eina_List *items = NULL;
-
-
-   if (!sd->edit)
-     {
-        *next = (Evas_Object *)obj;
-        return !elm_widget_highlight_get(obj);
-     }
-   else if (!elm_widget_highlight_get(obj))
-     {
-        *next = (Evas_Object *)obj;
-        return EINA_TRUE;
-     }
-
-   int i;
-   for (i = 0; i < 6; i++)
-     {
-        if ((!sd->seconds) && (i >= 4)) break;
-        if (sd->digedit & (1 << i))
-          {
-             po = (Evas_Object *)edje_object_part_object_get
-                    (sd->digit[i], "access.t");
-             ao = evas_object_data_get(po, "_part_access_obj");
-             items = eina_list_append(items, ao);
-
-             po = (Evas_Object *)edje_object_part_object_get
-                    (sd->digit[i], "access.b");
-             ao = evas_object_data_get(po, "_part_access_obj");
-             items = eina_list_append(items, ao);
-          }
-     }
-
-   if (sd->am_pm)
-     {
-        po = (Evas_Object *)edje_object_part_object_get
-               (sd->am_pm_obj, "access.t");
-        ao = evas_object_data_get(po, "_part_access_obj");
-        items = eina_list_append(items, ao);
-
-        po = (Evas_Object *)edje_object_part_object_get
-               (sd->am_pm_obj, "access.b");
-        ao = evas_object_data_get(po, "_part_access_obj");
-        items = eina_list_append(items, ao);
-     }
-
-   return elm_widget_focus_list_next_get
-           (obj, items, eina_list_data_get, dir, next, next_item);
-}
-
 static void
 _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 {
@@ -939,12 +925,6 @@ EOLIAN static Eina_Bool
 _elm_clock_pause_get(Eo *obj EINA_UNUSED, Elm_Clock_Data *sd)
 {
    return sd->paused;
-}
-
-EOLIAN static Eina_Bool
-_elm_clock_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
 }
 
 static void

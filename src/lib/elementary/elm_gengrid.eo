@@ -548,11 +548,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.on_access_update;
-      Elm.Widget.focus_next;
-      Elm.Widget.focus_direction;
       Elm.Widget.on_focus_update;
       Elm.Widget.focus_region { get; }
       Elm.Widget.widget_event;

@@ -93,18 +93,6 @@ _elm_separator_horizontal_get(Eo *obj EINA_UNUSED, Elm_Separator_Data *sd)
    return sd->horizontal;
 }
 
-EOLIAN static Eina_Bool
-_elm_separator_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Separator_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_separator_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Separator_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 EOLIAN static void
 _elm_separator_class_constructor(Efl_Class *klass)
 {

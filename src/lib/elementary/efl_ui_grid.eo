@@ -5,10 +5,6 @@ class Efl.Ui.Grid (Elm.Widget, Efl.Pack.Grid, Efl.Pack.Layout,
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.focus_direction;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
-      Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
       Efl.Container.content_iterate;
       Efl.Container.content_count;

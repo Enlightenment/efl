@@ -291,6 +291,7 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
         return EINA_TRUE;
      }
 
+   /* FOCUS-FIXME
    if (dir != ELM_FOCUS_PREVIOUS)
      {
         Evas_Object *nextfocus;
@@ -309,7 +310,7 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
         if (idx >= focus_objs) idx = 0;
         focused = focus_chain[idx];
      }
-
+   */
    elm_object_focus_set(focused, EINA_TRUE);
    return EINA_TRUE;
 }
@@ -2340,39 +2341,6 @@ _resize_cb(void *data,
 }
 
 static Eina_Bool _elm_list_smart_focus_next_enable = EINA_FALSE;
-
-EOLIAN static Eina_Bool
-_elm_list_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_List_Data *sd EINA_UNUSED)
-{
-   return _elm_list_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_list_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_List_Data *sd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_list_elm_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-   Eina_List *elist = NULL;
-   Elm_Object_Item *eo_it;
-
-   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON) return EINA_FALSE;
-
-   EINA_LIST_FOREACH(sd->items, elist, eo_it)
-     {
-        ELM_LIST_ITEM_DATA_GET(eo_it, it);
-        items = eina_list_append(items, it->base->access_obj);
-        if (it->icon) items = eina_list_append(items, it->icon);
-        if (it->end) items = eina_list_append(items, it->end);
-     }
-
-   return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
-}
 
 EOLIAN static void
 _elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)

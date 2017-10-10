@@ -128,8 +128,6 @@ class Elm.Flipselector (Efl.Ui.Layout, Efl.Ui.Spin,
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
-      Elm.Widget.focus_next_manager_is;
-      Elm.Widget.focus_direction_manager_is;
       Elm.Widget.widget_event;
       Efl.Ui.Spin.min_max { get; set; }
       Efl.Ui.Spin.step { get; set; }

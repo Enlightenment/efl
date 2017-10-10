@@ -535,9 +535,19 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             ret = elm_obj_widget_focus_next_get(obj, dir, &target, NULL);
-             if (ret && target)
-               _elm_access_highlight_set(target);
+             Efl_Ui_Focus_Relations *rel;
+
+             rel = efl_ui_focus_manager_fetch(efl_ui_focus_user_manager_get(obj), obj);
+
+             if (rel)
+               {
+                  if (dir == ELM_FOCUS_NEXT)
+                    _elm_access_highlight_set(rel->next);
+                  else
+                    _elm_access_highlight_set(rel->prev);
+
+                  free(rel);
+               }
           }
      }
 
@@ -690,7 +700,10 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
              elm_widget_focus_region_show(comming);
           }
         else
-          elm_obj_widget_focus_cycle(obj, dir);
+          {
+             elm_widget_focus_set(obj, EINA_TRUE);
+             efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
+          }
      }
 
    action_by = ELM_ACCESS_ACTION_FIRST;

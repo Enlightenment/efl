@@ -5,6 +5,7 @@
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 
@@ -12,6 +13,7 @@
 #include "elm_segment_control.eo.h"
 #include "elm_segment_control_item.eo.h"
 #include "elm_widget_segment_control.h"
+#include "efl_ui_focus_composition.eo.h"
 
 #define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
 
@@ -138,6 +140,7 @@ _update_list(Elm_Segment_Control_Data *sd)
    int item_count;
    Elm_Object_Item *eo_it;
 
+   efl_ui_focus_composition_elements_set(sd->obj, eina_list_clone(sd->items));
    _position_items(sd);
 
    item_count = eina_list_count(sd->items);
@@ -645,37 +648,6 @@ _elm_segment_control_efl_canvas_group_group_del(Eo *obj, Elm_Segment_Control_Dat
 
 static Eina_Bool _elm_segment_control_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static Eina_Bool
-_elm_segment_control_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *_pd EINA_UNUSED)
-{
-   return _elm_segment_control_smart_focus_next_enable;
-}
-
-EOLIAN static Eina_Bool
-_elm_segment_control_elm_widget_focus_next(Eo *obj, Elm_Segment_Control_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
-{
-   Eina_List *items = NULL;
-   Eina_List *l;
-   Elm_Object_Item *eo_item;
-
-   ELM_SEGMENT_CONTROL_CHECK(obj) EINA_FALSE;
-
-   EINA_LIST_FOREACH(sd->items, l, eo_item)
-     {
-        ELM_SEGMENT_ITEM_DATA_GET(eo_item, it);
-        items = eina_list_append(items, it->base->access_obj);
-     }
-
-   return elm_widget_focus_list_next_get
-            (obj, items, eina_list_data_get, dir, next, next_item);
-}
-
-EOLIAN static Eina_Bool
-_elm_segment_control_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 static void
 _access_obj_process(Elm_Segment_Control_Data *sd, Eina_Bool is_access)
 {
@@ -841,6 +813,12 @@ _elm_segment_control_class_constructor(Efl_Class *klass)
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
       _elm_segment_control_smart_focus_next_enable = EINA_TRUE;
+}
+
+EOLIAN static Eina_Rect
+_elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
+{
+   return efl_gfx_geometry_get(VIEW(pd));
 }
 
 /* Internal EO APIs and hidden overrides */

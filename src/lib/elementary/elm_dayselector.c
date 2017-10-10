@@ -594,12 +594,6 @@ _elm_dayselector_weekdays_names_get(const Eo *obj, Elm_Dayselector_Data *sd EINA
    return weekdays;
 }
 
-EOLIAN static Eina_Bool
-_elm_dayselector_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *_pd EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
-
 static void
 _elm_dayselector_class_constructor(Efl_Class *klass)
 {

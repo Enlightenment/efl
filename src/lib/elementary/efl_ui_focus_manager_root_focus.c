@@ -5,6 +5,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#include "efl_ui_focus_rectangle.eo.h"
+
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS
 
 typedef struct {
@@ -27,12 +29,12 @@ _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   if (!pd->none_logicals && pd->rect_registered)
+   if (pd->none_logicals && pd->rect_registered)
      {
          efl_ui_focus_manager_calc_unregister(obj, pd->rect);
          pd->rect_registered = EINA_FALSE;
      }
-   else if (pd->none_logicals && !pd->rect_registered)
+   else if (!pd->none_logicals && !pd->rect_registered)
      {
          efl_ui_focus_manager_calc_register(obj, pd->rect, pd->root, NULL);
          pd->rect_registered = EINA_TRUE;
@@ -42,14 +44,15 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
 {
+   Eina_Bool ret = EINA_FALSE;
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
         pd->none_logicals = eina_list_append(pd->none_logicals, child);
-        return EINA_TRUE;
+        ret = EINA_TRUE;
      }
    if (child != pd->rect)
      _state_eval(obj, pd);
-   return EINA_FALSE;
+   return ret;
 }
 
 EOLIAN static void
@@ -132,7 +135,11 @@ _efl_ui_focus_manager_root_focus_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manag
    ret = efl_finalize(efl_super(obj, MY_CLASS));
 
    pd->root = efl_ui_focus_manager_root_get(obj);
-   pd->rect = evas_object_rectangle_add(evas_object_evas_get(pd->root));
+
+   pd->rect = efl_add(EFL_UI_FOCUS_RECTANGLE_CLASS, evas_object_evas_get(pd->root));
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd->rect, NULL);
+
    pd->iterator_list = eina_list_append(pd->iterator_list, pd->root);
 
    _state_eval(obj, pd);
@@ -142,3 +149,36 @@ _efl_ui_focus_manager_root_focus_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manag
 
 
 #include "efl_ui_focus_manager_root_focus.eo.c"
+/* focus rectnangle implementation */
+typedef struct {
+  Eina_Bool focus;
+} Efl_Ui_Focus_Rectangle_Data;
+
+EOLIAN static Eina_Rect
+_efl_ui_focus_rectangle_efl_ui_focus_object_focus_geometry_get(Eo *obj, Efl_Ui_Focus_Rectangle_Data *pd EINA_UNUSED)
+{
+   Eina_Rect geom;
+
+   evas_object_geometry_get(obj, &geom.x, &geom.y, &geom.w, &geom.h);
+
+   return geom;
+}
+
+
+EOLIAN static void
+_efl_ui_focus_rectangle_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Rectangle_Data *pd, Eina_Bool focus)
+{
+   efl_ui_focus_object_focus_set(efl_super(obj, EFL_UI_FOCUS_RECTANGLE_CLASS), focus);
+
+   pd->focus = focus;
+}
+
+
+EOLIAN static Eina_Bool
+_efl_ui_focus_rectangle_efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Rectangle_Data *pd)
+{
+   return pd->focus;
+}
+
+
+#include "efl_ui_focus_rectangle.eo.c"

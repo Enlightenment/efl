@@ -99,6 +99,7 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         Efl.Ui.Focus.Manager.fetch;
         Efl.Ui.Focus.Manager.logical_end;
         Efl.Ui.Focus.Manager.reset_history;
+        Efl.Ui.Focus.Manager.pop_history_stack;
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.provider_find;
