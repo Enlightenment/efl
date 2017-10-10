@@ -336,6 +336,15 @@ elm_combobox_add(Evas_Object *parent)
    return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
+static inline void
+_hover_ctor(Eo *parent, Eo *hover)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd);
+   if (wd->legacy)
+     efl_canvas_object_legacy_ctor(hover);
+   efl_gfx_visible_set(hover, EINA_FALSE);
+}
+
 EOLIAN static Eo *
 _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 {
@@ -358,8 +367,8 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    //hover
    sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
-                       elm_obj_widget_style_set(efl_added, buf),
-                       efl_canvas_object_legacy_ctor(efl_added));
+                       _hover_ctor(obj, efl_added),
+                       elm_obj_widget_style_set(efl_added, buf));
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
