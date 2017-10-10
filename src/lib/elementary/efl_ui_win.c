@@ -1757,12 +1757,14 @@ _key_action_move(Evas_Object *obj, const char *params)
 
         do {
           last = efl_ui_focus_manager_logical_end(rec_manager);
+          EINA_SAFETY_ON_NULL_GOTO(last.element, end);
           efl_ui_focus_manager_focus_set(rec_manager, last.element);
 
           rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
         } while (!last.is_regular_end);
      }
 
+end:
    return EINA_TRUE;
 }
 

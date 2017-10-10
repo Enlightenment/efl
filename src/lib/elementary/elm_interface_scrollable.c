@@ -4731,9 +4731,8 @@ _elm_interface_scrollable_efl_ui_focus_manager_focus_set(Eo *obj, Elm_Scrollable
    Eina_Rectangle geom;
    int pan_x, pan_y;
 
+   EINA_SAFETY_ON_NULL_RETURN(focus);
    efl_ui_focus_manager_focus_set(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
-
-   if (!focus) return;
 
    evas_object_geometry_get(focus, &geom.x, &geom.y, &geom.w, &geom.h);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
