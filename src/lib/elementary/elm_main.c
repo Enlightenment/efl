@@ -1635,6 +1635,9 @@ elm_object_focus_get(const Evas_Object *obj)
    //assertion: our redirect manager m is in the redirect chain
    m = efl_ui_focus_user_manager_get(obj);
 
+   //if obj is the redriect manager its kind of focused
+   if (efl_ui_focus_manager_redirect_get(m) == obj) return EINA_TRUE;
+
    //if there is a redirect manager
    if (!!efl_ui_focus_manager_redirect_get(m)) return EINA_FALSE;
 
