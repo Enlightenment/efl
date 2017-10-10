@@ -790,6 +790,25 @@ _elm_widget_efl_gfx_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Ein
    efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
+static void
+_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
+{
+   Eina_List *l;
+   Eo *child;
+
+   _full_eval(obj, sd);
+
+   EINA_LIST_FOREACH(sd->subobjs , l, child)
+     {
+        Elm_Widget_Smart_Data *sd_child;
+
+        if (!efl_isa(child, ELM_WIDGET_CLASS)) continue;
+
+        sd_child = efl_data_scope_get(child, ELM_WIDGET_CLASS);
+        _full_eval_children(child, sd_child);
+     }
+}
+
 EOLIAN static void
 _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vis)
 {
@@ -798,13 +817,13 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      {
-        _full_eval(obj, pd);
+        _full_eval_children(obj, pd);
         return;
      }
 
    efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   _full_eval(obj, pd);
+   _full_eval_children(obj, pd);
 
 
    it = evas_object_smart_iterator_new(obj);
@@ -1673,25 +1692,6 @@ elm_widget_child_can_focus_get(const Eo *obj)
    if (!sd) return EINA_FALSE;
 
    return sd->child_can_focus;
-}
-
-static void
-_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *sd)
-{
-   Eina_List *l;
-   Eo *child;
-
-   _full_eval(obj, sd);
-
-   EINA_LIST_FOREACH(sd->subobjs , l, child)
-     {
-        Elm_Widget_Smart_Data *sd_child;
-
-        if (!efl_isa(child, ELM_WIDGET_CLASS)) continue;
-
-        sd_child = efl_data_scope_get(child, ELM_WIDGET_CLASS);
-        _full_eval_children(child, sd_child);
-     }
 }
 
 /**
