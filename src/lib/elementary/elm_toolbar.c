@@ -84,7 +84,7 @@ _item_focus_eval(Elm_Toolbar_Item_Data *pd)
 
    //grab manager from widget
    widget = WIDGET(pd);
-   manager = efl_ui_focus_user_manager_get(widget);
+   manager = widget;
 
    if (want)
      {
@@ -119,7 +119,7 @@ _item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
         order = eina_list_append(order, EO_OBJ(pd->more_item));
      }
 
-   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
+   efl_ui_focus_manager_calc_update_order(obj, obj, order);
 }
 
 static int
@@ -3071,7 +3071,7 @@ EOLIAN static Eina_Bool
 _elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
    configured_state->logical = EINA_TRUE;
-   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
+   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 EOLIAN static Eo *
