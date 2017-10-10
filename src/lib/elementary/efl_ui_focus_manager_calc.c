@@ -1532,4 +1532,22 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSE
   pd->focus_stack = eina_list_free(pd->focus_stack);
 }
 
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+  Node *last;
+
+  if (!pd->focus_stack) return;
+  //remove last element
+  last = eina_list_last_data_get(pd->focus_stack);
+  pd->focus_stack =  eina_list_remove(pd->focus_stack, last);
+  //unfocus it
+  efl_ui_focus_object_focus_set(last->focusable, EINA_FALSE);
+
+  //get now the highest, and unfocus that!
+  last = eina_list_last_data_get(pd->focus_stack);
+  if (last) efl_ui_focus_object_focus_set(last->focusable, EINA_TRUE);
+}
+
+
 #include "efl_ui_focus_manager_calc.eo.c"

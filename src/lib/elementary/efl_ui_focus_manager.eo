@@ -131,6 +131,9 @@ interface Efl.Ui.Focus.Manager {
               To not break the assertion that there should be always a focused element, you should focus a other element immidiatly after calling that.
             ]]
         }
+        pop_history_stack {
+            [[Removes the most upper history element, and gives the focus to the next one below]]
+        }
     }
     events {
         redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
