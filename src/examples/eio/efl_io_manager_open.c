@@ -9,31 +9,56 @@
 #include <Eio.h>
 #include <Ecore.h>
 
-void error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+static Eina_Value
+_closing_cb(void* data EINA_UNUSED,
+            const Eina_Value file,
+            const Eina_Future *dead EINA_UNUSED)
 {
-   Efl_Future_Event_Failure *failure = ev->info;
-   const char *msg = eina_error_msg_get(failure->error);
-   EINA_LOG_ERR("error: %s", msg);
+   if (file.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
+
+        eina_value_get(&file, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+     }
+   else
+     {
+        printf("%s closed file.\n", __FUNCTION__);
+     }
 
    ecore_main_loop_quit();
+
+   return file;
 }
 
-void done_closing_cb(void* data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_open_cb(void *data,
+         const Eina_Value file,
+         const Eina_Future *dead EINA_UNUSED)
 {
-   printf("%s closed file.\n", __FUNCTION__);
-
-   ecore_main_loop_quit();
-}
-
-void done_open_cb(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_File *file = success->value;
    Efl_Io_Manager *job = data;
 
-   printf("%s opened file %s\n", __FUNCTION__, eina_file_filename_get(file));
+   if (file.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err;
 
-   efl_future_then(efl_io_manager_close(job, file), &done_closing_cb, &error_cb, NULL, NULL);
+        eina_value_get(&file, &err);
+        fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
+        ecore_main_loop_quit();
+
+        return file;
+     }
+   if (file.type == EINA_VALUE_TYPE_FILE)
+     {
+        Eina_File *f;
+
+        eina_value_get(&file, &f);
+
+        printf("%s opened file %s\n", __FUNCTION__, eina_file_filename_get(f));
+
+        return eina_future_as_value(efl_io_manager_close(job, f));
+     }
+   return file;
 }
 
 void open_file(const char *path)
@@ -42,7 +67,9 @@ void open_file(const char *path)
 
    job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
 
-   efl_future_then(efl_io_manager_open(job, path, EINA_FALSE), &done_open_cb, &error_cb, NULL, job);
+   eina_future_chain(efl_io_manager_open(job, path, EINA_FALSE),
+                     { .cb = _open_cb, .data = job },
+                     { .cb = _closing_cb, .data = NULL });
 }
 
 int main(int argc, char const *argv[])
