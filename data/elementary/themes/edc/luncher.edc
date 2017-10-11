@@ -424,6 +424,7 @@ group { name: "e/gadget/luncher/preview";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel1.to_y: "e.swallow.title";
             rel1.relative: 0.0 1.0;
+            rel2.offset: 0 -2;
          }
          description { state: "menu";
             inherit: "default" 0.0;
