@@ -63,7 +63,6 @@ struct _Dmabuf_Buffer
    Eina_Bool locked : 1;
    Eina_Bool busy : 1;
    Eina_Bool used : 1;
-   Eina_Bool pending : 1;
    Eina_Bool orphaned : 1;
 };
 
@@ -478,7 +477,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 {
    if (!b) return;
 
-   if (b->locked || b->busy || b->pending)
+   if (b->locked || b->busy)
      {
         b->orphaned = EINA_TRUE;
         b->surface = NULL;
@@ -567,8 +566,7 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
      {
         for (i = 0; i < s->nbuf; i++)
           if (!s->buffer[i]->locked &&
-              !s->buffer[i]->busy &&
-              !s->buffer[i]->pending)
+              !s->buffer[i]->busy)
             return s->buffer[i];
 
         wl_display_dispatch_pending(disp);
