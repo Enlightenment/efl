@@ -786,6 +786,33 @@ EAPI Eina_Future *eina_future_new(Eina_Promise *p) EINA_ARG_NONNULL(1) EINA_WARN
 EAPI Eina_Future *eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Value value) EINA_ARG_NONNULL(1);
 
 /**
+ * Creates a new future that is already rejected to a specified error.
+ *
+ * This function creates a new future with an already known error,
+ * that will be resolved and dispatched by the given @a scheduler as
+ * usual.
+ *
+ * This is a helper that behaves the same as eina_promise_new()
+ * followed by eina_future_new() and then eina_promise_rejected().
+ *
+ * Futures can also be canceled using eina_future_cancel(), which will
+ * cause the whole chain to be cancelled alongside with any pending
+ * promise.
+ *
+ * @param scheduler The scheduler to use.
+ * @param err An Eina_Error value
+ *
+ * @return The future or @c NULL on error.
+ *
+ * @see eina_promise_new()
+ * @see eina_future_new()
+ * @see eina_promise_reject()
+ * @see eina_promise_resolve()
+ * @see eina_future_cancel()
+ */
+EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Error err);
+
+/**
  * Register an Eina_Future_Desc to be used when the future is resolve/rejected.
  *
  * With this function a callback and data is attached to the future and then

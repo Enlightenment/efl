@@ -815,6 +815,27 @@ eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Value value)
 }
 
 EAPI Eina_Future *
+eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Error err)
+{
+   Eina_Promise *p;
+   Eina_Future *f;
+
+   EINA_SAFETY_ON_NULL_GOTO(scheduler, error);
+
+   p = eina_promise_new(scheduler, _dummy_cancel, NULL);
+   EINA_SAFETY_ON_NULL_GOTO(p, error);
+
+   f = eina_future_new(p);
+   EINA_SAFETY_ON_NULL_GOTO(f, error);
+
+   eina_promise_reject(p, err);
+   return f;
+
+ error:
+   return NULL;
+}
+
+EAPI Eina_Future *
 eina_future_then_from_desc(Eina_Future *prev, const Eina_Future_Desc desc)
 {
    EINA_FUTURE_CHECK_GOTO(prev, err_future);
