@@ -356,24 +356,12 @@ group { name: "e/gadget/luncher/icon";
 }
 
 group { name: "e/gadget/luncher/preview"; 
-   script {
-      public message(Msg_Type:type, id, ...) {
-         if ((type == MSG_INT_SET) && (id == 1)) {
-            new size = getarg(2);
-
-            custom_state(PART:"icon", "default", 0.0);
-            set_state_val(PART:"icon", STATE_MIN, size, size);
-            set_state_val(PART:"icon", STATE_MAX, size, size);
-            set_state(PART:"icon", "custom", 0.0);
-         }
-      }
-   }
    parts {
       part { name: "base"; type: RECT;
          description { state: "default";
             color: 255 255 255 0;
-            rel1.offset: 0 0;
-            rel2.offset: -2 0;
+            rel1.offset: -1 -1;
+            rel2.offset: 2 2;
             link.base: "e,state,unfocused" "e";
             link.transition: DECEL 0.1;
          }
@@ -413,26 +401,13 @@ group { name: "e/gadget/luncher/preview";
             rel2.offset: -3 -1;
          }
       }
-      part { name: "icon"; type: SPACER;
-         description { state: "default";
-            rel1.to_y: "e.swallow.title";
-            rel1.relative: 0.0 1.0;
-            min: 64 64;
-            max: 64 64;
-         }
-         description { state: "menu";
-            inherit: "default" 0.0;
-            min: 48 48;
-            max: 48 48;
-         }
-      }
       part { name: "border"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default";
             rel1.to: "e.swallow.icon";
             rel2.to: "e.swallow.icon";
             rel1.offset: -1 -1;
-            rel2.offset: 0.5 0.5;
+            rel2.offset: 0 0;
             visible: 1;
             color: 255 255 255 255;
          }
@@ -447,10 +422,12 @@ group { name: "e/gadget/luncher/preview";
          description { state: "default";
             align: 0.5 0.5;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            rel1.to: "icon";
-            rel2.to: "icon";
-            rel1.offset: 1 3;
-            rel2.offset: -3 -5;
+            rel1.to_y: "e.swallow.title";
+            rel1.relative: 0.0 1.0;
+         }
+         description { state: "menu";
+            inherit: "default" 0.0;
+            min: 48 48;
          }
       }
       part { name: "event"; type: RECT;
@@ -465,7 +442,7 @@ group { name: "e/gadget/luncher/preview";
          action: STATE_SET "menu" 0.0;
          target: "border";
          target: "e.swallow.title";
-         target: "icon";
+         target: "e.swallow.icon";
       }
       program { name: "go_alpha";
          signal: "e,state,icon,alpha"; source: "e";
