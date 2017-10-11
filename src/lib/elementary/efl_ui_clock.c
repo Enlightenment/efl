@@ -31,8 +31,6 @@
  * EFL_UI_CLOCK_TYPE_COUNT are in the valid range, and must get in the
  * place of "%d".
  */
-#define EDC_CLOCK_FOCUSIN_SIG_STR   "elm,action,focus"
-#define EDC_CLOCK_FOCUSOUT_SIG_STR  "elm,action,unfocus"
 #define EDC_PART_FIELD_STR             "field%d"
 #define EDC_PART_SEPARATOR_STR         "separator%d"
 #define EDC_PART_FIELD_ENABLE_SIG_STR  "field%d,enable"
