@@ -910,6 +910,7 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_unset_fullscreen(window->zxdg_toplevel);
      }
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI int
