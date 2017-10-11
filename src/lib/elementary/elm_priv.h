@@ -54,8 +54,6 @@
 #include "elm_access.eo.h"
 #include "elm_code_private.h"
 
-#include "efl_ui_focus_layer.eo.h"
-
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
 #endif

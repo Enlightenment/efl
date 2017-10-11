@@ -152,6 +152,8 @@ EAPI extern Elm_Version *elm_version;
 # include "efl_ui_focus_user.eo.h"
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
+# include <efl_ui_focus_composition.eo.h>
+# include <efl_ui_focus_layer.eo.h>
 #endif
 
 #include <elm_tooltip.h>

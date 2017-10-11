@@ -12,7 +12,6 @@
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
-#include "efl_ui_focus_composition.eo.h"
 
 #include "Eo.h"
 

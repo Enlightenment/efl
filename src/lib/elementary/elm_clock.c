@@ -8,7 +8,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
-#include "efl_ui_focus_composition.eo.h"
 
 #define MY_CLASS ELM_CLOCK_CLASS
 
