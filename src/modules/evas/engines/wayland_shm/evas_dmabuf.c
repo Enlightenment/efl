@@ -466,78 +466,6 @@ out:
 }
 
 static void
-_allocation_complete(Dmabuf_Buffer *b)
-{
-   b->pending = EINA_FALSE;
-   if (!dmabuf_totally_hosed) return;
-
-   if (!b->surface) return;
-
-   /* Something went wrong, better try to fall back to a different
-    * buffer type...
-    */
-   _fallback(b->surface, b->w, b->h);
-   b->surface = NULL;
-}
-
-static void
-_create_succeeded(void *data,
-                 struct zwp_linux_buffer_params_v1 *params,
-                 struct wl_buffer *new_buffer)
-{
-   Ecore_Wl2_Window *win;
-   struct wl_surface *wls;
-   Dmabuf_Buffer *b = data;
-
-   b->wl_buffer = new_buffer;
-   wl_buffer_add_listener(b->wl_buffer, &buffer_listener, b);
-   zwp_linux_buffer_params_v1_destroy(params);
-
-   if (b->orphaned)
-     {
-        _allocation_complete(b);
-        _evas_dmabuf_buffer_destroy(b);
-        return;
-     }
-
-   _allocation_complete(b);
-   if (dmabuf_totally_hosed) return;
-
-   if (!b->busy) return;
-   if (b != b->surface->pre) return;
-
-   /* This buffer was drawn into before it had a handle */
-   win = b->surface->surface->info->info.wl2_win;
-   wls = ecore_wl2_window_surface_get(win);
-   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
-   _evas_surface_damage(wls, b->surface->compositor_version,
-                        b->w, b->h, NULL, 0);
-   ecore_wl2_window_commit(b->surface->surface->info->info.wl2_win, EINA_TRUE);
-   b->surface->pre = NULL;
-   b->busy = EINA_FALSE;
-}
-
-static void
-_create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
-{
-   Dmabuf_Buffer *b = data;
-   Eina_Bool orphaned;
-
-   zwp_linux_buffer_params_v1_destroy(params);
-
-   dmabuf_totally_hosed = EINA_TRUE;
-   orphaned = b->orphaned;
-   _allocation_complete(b);
-   if (orphaned) _evas_dmabuf_buffer_destroy(b);
-}
-
-static const struct zwp_linux_buffer_params_v1_listener params_listener =
-{
-   _create_succeeded,
-   _create_failed
-};
-
-static void
 _evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
 {
    _buffer_manager_unmap(b);
@@ -722,6 +650,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 static Dmabuf_Buffer *
 _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 {
+   struct wl_buffer *buf;
    Dmabuf_Buffer *out;
    struct zwp_linux_dmabuf_v1 *dmabuf;
    struct zwp_linux_buffer_params_v1 *dp;
@@ -742,13 +671,16 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->w = w;
    out->h = h;
 
-   out->pending = EINA_TRUE;
    dmabuf = ecore_wl2_display_dmabuf_get(s->surface->ob->ewd);
    dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
    zwp_linux_buffer_params_v1_add(dp, out->fd, 0, 0, out->stride, 0, 0);
-   zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, out);
-   zwp_linux_buffer_params_v1_create(dp, out->w, out->h,
-                                     DRM_FORMAT_ARGB8888, flags);
+   buf = zwp_linux_buffer_params_v1_create_immed(dp, out->w, out->h,
+                                                 DRM_FORMAT_ARGB8888, flags);
+   wl_buffer_add_listener(buf, &buffer_listener, out);
+   zwp_linux_buffer_params_v1_destroy(dp);
+   out->wl_buffer = buf;
+
+   ecore_wl2_display_flush(s->surface->info->info.wl2_display);
    return out;
 }
 
