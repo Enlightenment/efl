@@ -204,6 +204,7 @@ struct _Ecore_Wl2_Window
 
    Ecore_Wl2_Window_Configure_State set_config;
    Ecore_Wl2_Window_Configure_State req_config;
+   Ecore_Wl2_Window_Configure_State def_config;
 
    Eina_Bool moving : 1;
    Eina_Bool alpha : 1;
@@ -222,6 +223,11 @@ struct _Ecore_Wl2_Window
         Eina_Bool configure : 1;
         Eina_Bool min : 1;
         Eina_Bool max : 1;
+        Eina_Bool geom : 1;
+        Eina_Bool opaque : 1;
+        Eina_Bool input : 1;
+        Eina_Bool fullscreen : 1;
+        Eina_Bool maximized : 1;
      } pending;
 
    struct

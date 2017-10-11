@@ -26,28 +26,6 @@ _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
    window->surface_id = -1;
 }
 
-
-static void
-_ecore_wl2_window_configure_send(Ecore_Wl2_Window *window, int w, int h, unsigned int edges, Eina_Bool fs, Eina_Bool max)
-{
-   Ecore_Wl2_Event_Window_Configure *ev;
-
-   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure));
-   if (!ev) return;
-
-   ev->win = window->id;
-   ev->event_win = window->id;
-   ev->w = w;
-   ev->h = h;
-   ev->edges = edges;
-   if (fs)
-     ev->states |= ECORE_WL2_WINDOW_STATE_FULLSCREEN;
-   if (max)
-     ev->states |= ECORE_WL2_WINDOW_STATE_MAXIMIZED;
-
-   ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
-}
-
 static void
 _ecore_wl2_window_activate_send(Ecore_Wl2_Window *window)
 {
@@ -79,6 +57,44 @@ _ecore_wl2_window_deactivate_send(Ecore_Wl2_Window *window)
 }
 
 static void
+_ecore_wl2_window_configure_send(Ecore_Wl2_Window *win)
+{
+   Ecore_Wl2_Event_Window_Configure *ev;
+
+   ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure));
+   if (!ev) return;
+
+   ev->win = win->id;
+   ev->event_win = win->id;
+
+   if ((win->set_config.geometry.w == win->def_config.geometry.w) &&
+       (win->set_config.geometry.h == win->def_config.geometry.h))
+     ev->w = ev->h = 0;
+   else if ((!win->def_config.geometry.w) && (!win->def_config.geometry.h) &&
+            (!win->def_config.fullscreen) &&
+            (!win->def_config.maximized) &&
+            ((win->def_config.fullscreen != win->req_config.fullscreen) ||
+             (win->def_config.maximized != win->req_config.maximized)))
+     ev->w = win->saved.w, ev->h = win->saved.h;
+   else
+     ev->w = win->def_config.geometry.w, ev->h = win->def_config.geometry.h;
+
+   ev->edges = !!win->def_config.resizing;
+   if (win->def_config.fullscreen)
+     ev->states |= ECORE_WL2_WINDOW_STATE_FULLSCREEN;
+   if (win->def_config.maximized)
+     ev->states |= ECORE_WL2_WINDOW_STATE_MAXIMIZED;
+
+   win->req_config = win->def_config;
+   ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
+
+   if (win->def_config.focused)
+     _ecore_wl2_window_activate_send(win);
+   else
+     _ecore_wl2_window_deactivate_send(win);
+}
+
+static void
 _configure_complete(Ecore_Wl2_Window *window)
 {
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
@@ -99,10 +115,19 @@ _zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA
    Ecore_Wl2_Window *window;
 
    window = data;
-   window->req_config.serial = serial;
-   if (!window->pending.configure) return;
+   window->def_config.serial = serial;
 
-   _configure_complete(window);
+   if (window->pending.configure)
+     {
+        window->saved.w = window->set_config.geometry.w;
+        window->saved.h = window->set_config.geometry.h;
+        _configure_complete(window);
+     }
+   if (window->pending.configure && window->updating)
+     ERR("Window shouldn't be rendering before initial configure");
+
+   if (!window->updating)
+     _ecore_wl2_window_configure_send(window);
 }
 
 static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
@@ -115,54 +140,35 @@ _zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel E
 {
    Ecore_Wl2_Window *win = data;
    uint32_t *s;
-   Eina_Bool fs, max;
 
-   fs = win->req_config.fullscreen;
-   max = win->req_config.maximized;
-
-   win->req_config.minimized = EINA_FALSE;
-   win->req_config.maximized = EINA_FALSE;
-   win->req_config.fullscreen = EINA_FALSE;
-   win->req_config.focused = EINA_FALSE;
-   win->req_config.resizing = EINA_FALSE;
+   win->def_config.minimized = EINA_FALSE;
+   win->def_config.maximized = EINA_FALSE;
+   win->def_config.fullscreen = EINA_FALSE;
+   win->def_config.focused = EINA_FALSE;
+   win->def_config.resizing = EINA_FALSE;
+   win->def_config.geometry.w = width;
+   win->def_config.geometry.h = height;
 
    wl_array_for_each(s, states)
      {
         switch (*s)
           {
            case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
-             win->req_config.maximized = EINA_TRUE;
+             win->def_config.maximized = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
-             win->req_config.fullscreen = EINA_TRUE;
+             win->def_config.fullscreen = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
-             win->req_config.resizing = EINA_TRUE;
+             win->def_config.resizing = EINA_TRUE;
              break;
            case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
-             win->req_config.focused = EINA_TRUE;
-             win->req_config.minimized = EINA_FALSE;
+             win->def_config.focused = EINA_TRUE;
+             win->def_config.minimized = EINA_FALSE;
            default:
              break;
           }
      }
-
-   if ((win->set_config.geometry.w == width) &&
-       (win->set_config.geometry.h == height))
-     width = height = 0;
-   else if ((!width) && (!height) && (!win->req_config.fullscreen) &&
-            (!win->req_config.maximized) &&
-            ((win->req_config.fullscreen != fs) ||
-             (win->req_config.maximized != max)))
-     width = win->saved.w, height = win->saved.h;
-
-   _ecore_wl2_window_configure_send(win, width, height, !!win->req_config.resizing,
-                                    win->req_config.fullscreen, win->req_config.maximized);
-
-   if (win->req_config.focused)
-     _ecore_wl2_window_activate_send(win);
-   else
-     _ecore_wl2_window_deactivate_send(win);
 }
 
 static void
@@ -555,6 +561,7 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
 
    window->set_config.serial = 0;
    window->req_config.serial = 0;
+   window->def_config.serial = 0;
    window->zxdg_configure_ack = NULL;
    window->zxdg_set_min_size = NULL;
    window->zxdg_set_max_size = NULL;
@@ -706,7 +713,6 @@ ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent
 EAPI void
 ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
-   struct wl_region *region;
    int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -750,32 +756,12 @@ ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w
    window->opaque.w = nw;
    window->opaque.h = nh;
    window->opaque_set = x || y || w || h;
-
-   if (!window->surface) return;
-
-   if (!window->opaque_set)
-     {
-        wl_surface_set_opaque_region(window->surface, NULL);
-        return;
-     }
-
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
-     {
-        ERR("Failed to create opaque region");
-        return;
-     }
-
-   wl_region_add(region, window->opaque.x, window->opaque.y,
-                 window->opaque.w, window->opaque.h);
-   wl_surface_set_opaque_region(window->surface, region);
-   wl_region_destroy(region);
+   window->pending.opaque = EINA_TRUE;
 }
 
 EAPI void
 ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h)
 {
-   struct wl_region *region;
    int nx = 0, ny = 0, nw = 0, nh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -819,27 +805,7 @@ ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w,
    window->input_rect.w = nw;
    window->input_rect.h = nh;
    window->input_set = x || y || w || h;
-
-   if (!window->surface) return;
-   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
-
-   if (!window->input_set)
-     {
-        wl_surface_set_input_region(window->surface, NULL);
-        return;
-     }
-
-   region = wl_compositor_create_region(window->display->wl.compositor);
-   if (!region)
-     {
-        ERR("Failed to create input region");
-        return;
-     }
-
-   wl_region_add(region, window->input_rect.x, window->input_rect.y,
-                 window->input_rect.w, window->input_rect.h);
-   wl_surface_set_input_region(window->surface, region);
-   wl_region_destroy(region);
+   window->pending.input = EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -862,6 +828,11 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
    if (prev == maximized) return;
 
    window->set_config.maximized = maximized;
+   if (window->updating)
+     {
+        window->pending.maximized = EINA_TRUE;
+        return;
+     }
 
    if (maximized)
      {
@@ -899,6 +870,11 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
    if (prev == fullscreen) return;
 
    window->set_config.fullscreen = fullscreen;
+   if (window->updating)
+     {
+        window->pending.fullscreen = EINA_TRUE;
+        return;
+     }
 
    if (fullscreen)
      {
@@ -982,9 +958,7 @@ ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int
    window->set_config.geometry.y = y;
    window->set_config.geometry.w = w;
    window->set_config.geometry.h = h;
-
-   if (window->zxdg_toplevel)
-     zxdg_surface_v6_set_window_geometry(window->zxdg_surface, x, y, w, h);
+   window->pending.geom = EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -1390,6 +1364,84 @@ static struct wl_callback_listener _frame_listener =
    _frame_cb
 };
 
+static void
+_maximized_set(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window->zxdg_toplevel);
+
+   if (window->set_config.maximized)
+     {
+        window->saved = window->set_config.geometry;
+        zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
+     }
+   else
+     zxdg_toplevel_v6_unset_maximized(window->zxdg_toplevel);
+}
+
+static void
+_fullscreen_set(Ecore_Wl2_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window->zxdg_toplevel);
+
+   if (window->set_config.fullscreen)
+     {
+        window->saved = window->set_config.geometry;
+        zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+     }
+   else
+     zxdg_toplevel_v6_unset_fullscreen(window->zxdg_toplevel);
+}
+
+static void
+_input_set(Ecore_Wl2_Window *window)
+{
+   struct wl_region *region;
+
+   if (window->type == ECORE_WL2_WINDOW_TYPE_DND) return;
+
+   if (!window->input_set)
+     {
+        wl_surface_set_input_region(window->surface, NULL);
+        return;
+     }
+
+   region = wl_compositor_create_region(window->display->wl.compositor);
+   if (!region)
+     {
+        ERR("Failed to create input region");
+        return;
+     }
+
+   wl_region_add(region, window->input_rect.x, window->input_rect.y,
+                 window->input_rect.w, window->input_rect.h);
+   wl_surface_set_input_region(window->surface, region);
+   wl_region_destroy(region);
+}
+
+static void
+_opaque_set(Ecore_Wl2_Window *window)
+{
+   struct wl_region *region;
+
+   if (!window->opaque_set)
+     {
+        wl_surface_set_opaque_region(window->surface, NULL);
+        return;
+     }
+
+   region = wl_compositor_create_region(window->display->wl.compositor);
+   if (!region)
+     {
+        ERR("Failed to create opaque region");
+        return;
+     }
+
+   wl_region_add(region, window->opaque.x, window->opaque.y,
+                 window->opaque.w, window->opaque.h);
+   wl_surface_set_opaque_region(window->surface, region);
+   wl_region_destroy(region);
+}
+
 EAPI void
 ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 {
@@ -1404,13 +1456,50 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         window->commit_pending = EINA_TRUE;
         window->callback = wl_surface_frame(window->surface);
         wl_callback_add_listener(window->callback, &_frame_listener, window);
+        /* Dispatch any state we've been saving along the way */
+        if (window->pending.geom && window->zxdg_toplevel)
+          zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
+                                              window->set_config.geometry.x,
+                                              window->set_config.geometry.y,
+                                              window->set_config.geometry.w,
+                                              window->set_config.geometry.h);
+        if (window->pending.opaque)
+          _opaque_set(window);
+
+        if (window->pending.input)
+          _input_set(window);
+
+        if (window->pending.maximized)
+          _maximized_set(window);
+
+        if (window->pending.fullscreen)
+          _fullscreen_set(window);
+
+        window->pending.geom = EINA_FALSE;
+        window->pending.opaque = EINA_FALSE;
+        window->pending.input = EINA_FALSE;
+        window->pending.maximized = EINA_FALSE;
+        window->pending.fullscreen = EINA_FALSE;
+     }
+
+   if (window->req_config.serial != window->set_config.serial)
+     {
+        if (window->zxdg_configure_ack)
+           window->zxdg_configure_ack(window->zxdg_surface,
+                                      window->req_config.serial);
+        window->set_config.serial = window->req_config.serial;
      }
    if (flush)
      {
         wl_surface_commit(window->surface);
         ecore_wl2_display_flush(window->display);
      }
+
+   if (!window->updating) return;
+
    window->updating = EINA_FALSE;
+   if (window->def_config.serial != window->set_config.serial)
+      _ecore_wl2_window_configure_send(window);
 }
 
 EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
