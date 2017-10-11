@@ -25,7 +25,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Size
 static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
-   , Efl_Ui_List_Model *modeler, int first, int ccount, Eina_Accessor *items)
+   , Efl_Ui_List_Model *modeler, int first, int count, Eina_Accessor *items)
 {
    Efl_Ui_List_LayoutItem* layout_item;
    Efl_Ui_List_Precise_Layouter_Size* size;
@@ -37,7 +37,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
-   int count = 0;
    Eina_List *order = NULL;
    int pad[4];
 
@@ -94,7 +93,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         box_align[1] = 0.5;
      }
 
-   count = 1;
+   //count = 1;
 /*    count = eina_inarray_count(&pd->items.array); */
 
    elm_interface_scrollable_content_viewport_geometry_get
