@@ -9,7 +9,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_calendar.h"
-#include "efl_ui_focus_composition.eo.h"
 #include "elm_calendar_item.eo.h"
 
 #define MY_CLASS ELM_CALENDAR_CLASS
