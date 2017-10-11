@@ -1514,7 +1514,7 @@ _children_slice_then(void * data, Efl_Event const* event)
    Efl_Ui_List_Data *pd = data;
    Eina_Accessor *acc = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
 
-   efl_ui_list_segarray_insert(pd->outstanding_slice.slice_start, acc);
+   efl_ui_list_segarray_insert(&pd->segarray, pd->outstanding_slice.slice_start, acc);
 
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;

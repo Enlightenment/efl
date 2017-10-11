@@ -21,9 +21,12 @@ typedef struct _Efl_Ui_List_SegArray
    Eina_Rbtree *root; // of Efl_Ui_List_SegArray_Nodea
 
    int array_initial_size;
+   int node_count;
+   int count;
 } Efl_Ui_List_SegArray;
 
 Eina_Accessor* efl_ui_list_segarray_accessor_get(Efl_Ui_List_SegArray* segarray);
-void efl_ui_list_segarray_insert_accessor(int first, Eina_Accessor* accessor);
+void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor);
+int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray);
 
 #endif
