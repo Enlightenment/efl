@@ -901,7 +901,8 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
 
    if (fullscreen)
      {
-        window->saved = window->set_config.geometry;
+        if (!window->set_config.maximized)
+          window->saved = window->set_config.geometry;
 
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
