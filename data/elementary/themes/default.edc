@@ -163,4 +163,7 @@ collections {
 // port unchanged stuff so this can work as a replacement
 #include "edc/O/efm_icons.edc"
 #include "edc/O/icons.edc"
+
+// New efl ui themes
+#include "edc/efl/button.edc"
 }
