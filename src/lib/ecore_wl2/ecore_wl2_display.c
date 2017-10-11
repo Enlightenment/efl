@@ -278,7 +278,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
    else if (!strcmp(interface, "zwp_linux_dmabuf_v1"))
      {
         ewd->wl.dmabuf =
-          wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 1);
+          wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 2);
         zwp_linux_dmabuf_v1_add_listener(ewd->wl.dmabuf, &_dmabuf_listener, ewd);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
