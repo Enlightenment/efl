@@ -9,7 +9,26 @@
 
 static Eina_Rbtree_Direction _rbtree_compare(Eina_Rbtree const* left, Eina_Rbtree const* right)
 {
-  
+   Efl_Ui_List_SegArray_Node *nl = left, *nr = right;
+   return !nl ? EINA_RBTREE_LEFT :
+     (
+       !nr ? EINA_RBTREE_RIGHT :
+       (
+        nl->first < nr->first ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT
+       )
+     );
+}
+
+static Efl_Ui_List_SegArray_Node*
+_alloc_node(Efl_Ui_List_SegArray* segarray, int first, int max)
+{
+   Efl_Ui_List_SegArray_Node* node;
+   node = malloc(sizeof(Efl_Ui_List_SegArray_Node) + max*sizeof(Efl_Ui_List_Item*));
+   node->first = first;
+   node->max = max;
+   segarray->root = eina_rbtree_insert(segarray->root, EINA_RBTREE_GET(node), &_rbtree_compare);
+   segarray->node_count++;
+   return node;
 }
 
 void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_size,
@@ -20,24 +39,104 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
    segarray->array_initial_size = initial_step_size;
 }
 
-void efl_ui_list_segarray_insert_accessor(int first, Eina_Accessor* accessor)
+void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
 {
    int i;
    Efl_Model* children;
+   Efl_Ui_List_SegArray_Node* node = NULL;
+   Efl_Ui_List_SegArray_Node* first_node = NULL;
+   int array_first = 0;
+
+   if(segarray->root)
+     {
+        Eina_Iterator* pre_iterator = eina_rbtree_iterator_prefix(segarray->root);
+        eina_iterator_next(pre_iterator, &first_node);
+        array_first = first_node->first;
+     }
+   
    EINA_ACCESSOR_FOREACH(accessor, i, children)
      {
-        ;
+        if((first + i < array_first) || !efl_ui_list_segarray_count(segarray))
+          {
+             if(!node)
+               {
+                  node = _alloc_node(segarray, i + first, segarray->array_initial_size);
+                  
+               }
+             else
+               {
+               }
+          }
+        else if(first + i < array_first + efl_ui_list_segarray_count(segarray))
+          {
+            
+          }
+        else
+          {
+          }
      }
 }
 
-static void _insert(Efl_Ui_List_SegArray* segarray, Efl_Ui_List_Item* item)
+int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray)
 {
-  
+   return segarray->count;
 }
 
-static void _prepend(Efl_Ui_List_SegArray* segarray, Efl_Ui_List_Item* item)
+typedef struct _Efl_Ui_List_Segarray_Eina_Accessor
 {
+   Eina_Accessor vtable;
    
+} Efl_Ui_List_Segarray_Eina_Accessor;
+
+static Eina_Bool
+_efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
+                                      unsigned int idx, void** data)
+{
+}
+
+static void*
+_efl_ui_list_segarray_accessor_get_container(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+}
+
+static void
+_efl_ui_list_segarray_accessor_free(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+}
+
+static void
+_efl_ui_list_segarray_accessor_lock(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+}
+
+static void
+_efl_ui_list_segarray_accessor_unlock(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+}
+
+static Eina_Accessor*
+_efl_ui_list_segarray_accessor_clone(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+   return acc;
+}
+
+static void
+_efl_ui_list_segarray_accessor_setup(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+{
+   acc->vtable.version = EINA_ACCESSOR_VERSION;
+   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_at);
+   acc->vtable.get_container = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_container);
+   acc->vtable.free = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_free);
+   acc->vtable.lock = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_lock);
+   acc->vtable.unlock = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_unlock);
+   acc->vtable.clone = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_clone);
+}
+
+Eina_Accessor* efl_ui_list_segarray_accessor_get(Efl_Ui_List_SegArray* segarray)
+{
+   Efl_Ui_List_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_Segarray_Eina_Accessor));
+   _efl_ui_list_segarray_accessor_setup(acc);
+   return &acc->vtable;
 }
 
 /* static void */
