@@ -361,7 +361,7 @@ _elm_test_add(Eina_List **p_list, const char *icon, const char *category, const 
 void
 my_win_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   elm_exit(); /* exit the program's main loop that runs in elm_run() */
+   efl_exit(); /* exit the program's main loop that runs in elm_run() */
 }
 
 static void
@@ -1086,7 +1086,7 @@ add_tests:
           free(t);
 
         if (!l)
-          elm_exit();
+          efl_exit();
 
         return;
      }
