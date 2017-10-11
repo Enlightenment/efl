@@ -316,28 +316,17 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   evas_output_size_set(ee->evas, ee->h, ee->w);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
-
-             if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
-             if (ECORE_EVAS_PORTRAIT(ee))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-             else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
           }
-
-        ee->rotation = rotation;
      }
+
+   ee->rotation = rotation;
+
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
    else
-     {
-        ee->rotation = rotation;
-
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
-        if (ECORE_EVAS_PORTRAIT(ee))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-        else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-     }
+     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
 }
 
 static void
