@@ -875,6 +875,7 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_unset_maximized(window->zxdg_toplevel);
      }
+   ecore_wl2_display_flush(window->display);
 }
 
 EAPI Eina_Bool
