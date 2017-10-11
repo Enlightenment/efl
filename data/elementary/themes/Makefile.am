@@ -1013,6 +1013,9 @@ elementary/themes/snd/kbd-tap4.wav \
 elementary/themes/snd/kbd-tap5.wav \
 elementary/themes/snd/kbd-tap.wav
 
+efl_ui_themes_files = \
+elementary/themes/edc/efl/button.edc
+
 
 elementary_fdo_actions_128_files = \
 	elementary/themes/fdo/actions/128/address-book-new.png \
@@ -1480,4 +1483,4 @@ elementary_fdo_files = \
 	$(elementary_fdo_intl_128_files)
 
 
-EXTRA_DIST += $(elementary_themes_files) $(elementary_fdo_files)
+EXTRA_DIST += $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files)
