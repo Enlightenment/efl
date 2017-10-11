@@ -450,7 +450,7 @@ emotion_video_sink_main_render(void *data)
           }
         else
           {
-             gst_video_frame_unmap(buffer);
+             gst_video_frame_unmap(&(send->vframe));
              priv->vfmapped = EINA_FALSE;
           }
         gst_buffer_unref(buffer);
