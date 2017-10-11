@@ -6,6 +6,9 @@
 #include "elm_priv.h"
 #include "efl_selection_manager_private.h"
 
+#define MY_CLASS EFL_SELECTION_MANAGER_CLASS
+//#define MY_CLASS_NAME "Efl.Selection_Manager"
+
 static Ecore_X_Window
 _x11_xwin_get(Evas_Object *obj)
 {
@@ -96,8 +99,8 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
         pd->data_func = NULL;
         pd->data_func_free_cb = NULL;
      }
-   ecore_event_handler_del(pd->notify_handler);
-   pd->notify_handler = NULL;
+   //ecore_event_handler_del(pd->notify_handler);
+   //pd->notify_handler = NULL;
 
    return EINA_TRUE;
 }
@@ -109,7 +112,6 @@ _x11_efl_sel_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_
 {
    Ecore_X_Window xwin = _x11_xwin_get(obj);
 
-   //pd->has_sel = EINA_TRUE;
    pd->buf = malloc(len);
    if (!pd->buf)
      {
@@ -140,6 +142,13 @@ _x11_efl_sel_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_
 }
 #endif
 
+static void
+_selection_loss_data_clear_cb(void *data)
+{
+   Efl_Selection_Type *lt = data;
+   free(lt);
+}
+
 
 EOLIAN static void
 _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
@@ -153,6 +162,19 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
         ERR("Not supported format: %d", type);
         return;
      }
+
+    //check if owner is changed
+    if (pd->sel_owner != NULL &&
+        pd->sel_owner != owner)
+      {
+         //call selection_loss callback: should we include prev owner??
+         Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
+         *lt = pd->loss_type;
+         efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);
+      }
+
+    pd->sel_owner = owner;
+
 #ifdef HAVE_ELEMENTARY_X
    return _x11_efl_sel_manager_selection_set(obj, pd, type, format, buf, len, seat);
    /*Ecore_X_Window xwin = _x11_xwin_get(obj);
@@ -184,7 +206,6 @@ _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
    pd->atom.name = "TARGETS";
    pd->atom.x_atom = ecore_x_atom_get(pd->atom.name);
    ecore_x_selection_converter_atom_add(pd->atom.x_atom, _efl_sel_manager_x11_target_converter);
-   pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _efl_sel_manager_x11_selection_notify, pd);
 
    Ecore_X_Window xwin = _x11_xwin_get(obj);
    ERR("xwin: %d", xwin);
@@ -201,7 +222,48 @@ EOLIAN static void
 _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
                                        Efl_Object *owner, Efl_Selection_Type type, Efl_Input_Device *seat)
 {
+   //no need to call loss cb here: it will be called from WM
     ERR("In");
+    if (type > EFL_SELECTION_TYPE_CLIPBOARD)
+      {
+         ERR("Not supported type: %d", type);
+         return;
+      }
+    if (pd->sel_owner != owner)
+      {
+         return;
+      }
+    pd->sel_owner = NULL;
+    if (type == EFL_SELECTION_TYPE_PRIMARY)
+      {
+         ecore_x_selection_primary_clear();
+      }
+    else if (type == EFL_SELECTION_TYPE_SECONDARY)
+      {
+         ecore_x_selection_secondary_clear();
+      }
+    else if (type == EFL_SELECTION_TYPE_DND)
+      {
+      }
+    else if (type == EFL_SELECTION_TYPE_CLIPBOARD)
+      {
+         ecore_x_selection_clipboard_clear();
+      }
+}
+
+static Eina_Bool
+_x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
+{
+   Efl_Selection_Manager_Data *pd = data;
+   if (pd->promise)
+     {
+        Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
+        *lt = pd->loss_type;
+        efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);
+        pd->promise = NULL;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 
@@ -213,10 +275,35 @@ _efl_selection_manager_selection_loss_feedback(Eo *obj, Efl_Selection_Manager_Da
     Efl_Promise *p;
     Eo *loop = efl_loop_get(obj);
 
+    pd->promise = NULL;
     p = efl_add(EFL_PROMISE_CLASS, loop);
     if (!p) return NULL;
+    pd->promise = p;
+    pd->loss_type = type;
 
     return efl_promise_future_get(p);
+}
+
+static Efl_Object *
+_efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Data *pd)
+{
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+
+   pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
+                                                _efl_sel_manager_x11_selection_notify, pd);
+   pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
+                                               _x11_selection_clear, pd);
+   return obj;
+}
+
+
+static void
+_efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data *pd)
+{
+   ecore_event_handler_del(pd->notify_handler);
+   ecore_event_handler_del(pd->clear_handler);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 

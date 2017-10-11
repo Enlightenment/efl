@@ -21,6 +21,9 @@ struct _Efl_Selection_Manager_Data
 {
     Eo *obj;
     Ecore_Event_Handler *notify_handler;
+    Ecore_Event_Handler *clear_handler;
+    Efl_Promise *promise;
+    Efl_Selection_Type loss_type;
 
     void *data_func_data;
     Efl_Selection_Data_Ready data_func;

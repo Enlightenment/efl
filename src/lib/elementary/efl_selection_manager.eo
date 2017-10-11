@@ -26,7 +26,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      selection_loss_feedback { //name!!!
+      selection_loss_feedback { //name!!!: xxx_set
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection type]]
@@ -35,6 +35,8 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
       }
    }
    implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       //Efl.Selection.selection_set;
       //Efl.Selection.selection_get;
       //Efl.Selection.selection_clear;
