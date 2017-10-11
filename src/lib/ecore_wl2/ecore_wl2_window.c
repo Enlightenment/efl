@@ -865,7 +865,8 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
 
    if (maximized)
      {
-        window->saved = window->set_config.geometry;
+        if (!window->set_config.fullscreen)
+          window->saved = window->set_config.geometry;
 
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
