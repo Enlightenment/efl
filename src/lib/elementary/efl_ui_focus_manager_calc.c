@@ -11,6 +11,8 @@
 #define DIM_EFL_UI_FOCUS_DIRECTION(dim,neg) dim*2+neg
 #define NODE_DIRECTIONS_COUNT 4
 
+#define DIRECTION_IS_LOGICAL(dir) (dir >= EFL_UI_FOCUS_DIRECTION_PREVIOUS && dir < EFL_UI_FOCUS_DIRECTION_UP)
+#define DIRECTION_IS_2D(dir) (dir >= EFL_UI_FOCUS_DIRECTION_UP && dir < EFL_UI_FOCUS_DIRECTION_LAST)
 #define DIRECTION_CHECK(dir) (dir >= EFL_UI_FOCUS_DIRECTION_PREVIOUS && dir < EFL_UI_FOCUS_DIRECTION_LAST)
 
 //#define CALC_DEBUG
@@ -103,7 +105,11 @@ border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *lis
 {
    Node *partner;
    Eina_List *lnode;
-   Border *border = &DIRECTION_ACCESS(node, direction);
+   Border *border;
+
+   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
+
+   border = &DIRECTION_ACCESS(node, direction);
 
    EINA_LIST_FREE(border->partners, partner)
      {
@@ -983,6 +989,8 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
    Node *candidate;
    Eina_List *node_list;
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_IS_2D(direction), NULL);
+
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
      {
@@ -1113,6 +1121,8 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
    Node* (*deliver)(Node *n);
    Node *result;
    Eina_List *stack = NULL;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_IS_LOGICAL(direction), NULL);
 
    if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
      deliver = _next;
