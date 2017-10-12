@@ -176,6 +176,7 @@ struct _Efl_Ui_Win_Data
    Evas_Object *main_menu;
 
    Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Parent_Provider_Standard *provider;
 
    struct
    {
@@ -5361,6 +5362,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
 
    pd->obj = obj;
    pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
+   pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
    efl_composite_attach(obj, pd->manager);
@@ -6756,6 +6758,10 @@ _efl_ui_win_efl_object_provider_find(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED,
 {
     if (klass == EFL_UI_WIN_CLASS)
       return obj;
+
+    if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
+      return pd->provider;
+
     return efl_provider_find(efl_super(obj, MY_CLASS), klass);
 }
 

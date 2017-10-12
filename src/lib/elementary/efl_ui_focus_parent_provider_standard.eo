@@ -1,0 +1,5 @@
+class Efl.Ui.Focus.Parent_Provider.Standard(Efl.Object, Efl.Ui.Focus.Parent_Provider) {
+   implements {
+      Efl.Ui.Focus.Parent_Provider.find_logical_parent;
+   }
+}

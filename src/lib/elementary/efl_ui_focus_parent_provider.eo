@@ -1,0 +1,11 @@
+interface Efl.Ui.Focus.Parent_Provider {
+   methods {
+      find_logical_parent {
+        [[Called to get the logical parent of widget]]
+        params {
+           widget : Efl.Ui.Focus.Object;
+        }
+        return : Efl.Ui.Focus.Object;
+      }
+   }
+}
