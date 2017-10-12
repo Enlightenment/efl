@@ -361,7 +361,7 @@ group { name: "e/gadget/luncher/preview";
          description { state: "default";
             color: 255 255 255 0;
             rel1.offset: -1 -1;
-            rel2.offset: 2 2;
+            rel2.offset: 0 0;
             link.base: "e,state,unfocused" "e";
             link.transition: DECEL 0.1;
          }
@@ -388,16 +388,19 @@ group { name: "e/gadget/luncher/preview";
          clip_to: "clip";
          description { state: "default" 0.0;
             align: 0.5 0.0;
-            min: 90 0;
+            rel1.to_x: "e.swallow.icon";
             rel1.relative: 0.0 0.0;
             rel1.offset: 1 1;
+            rel2.to_x: "e.swallow.icon";
             rel2.relative: 1.0 0.0;
             rel2.offset: -3 -3;
          }
          description { state: "menu" 0.0;
-            inherit: "default" 0.0;
             min: 120 0;
+            align: 0.5 0.0;
+            rel1.relative: 0.0 0.0;
             rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
             rel2.offset: -3 -1;
          }
       }
@@ -424,7 +427,7 @@ group { name: "e/gadget/luncher/preview";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel1.to_y: "e.swallow.title";
             rel1.relative: 0.0 1.0;
-            rel2.offset: 0 -2;
+            rel2.offset: 0 -3;
          }
          description { state: "menu";
             inherit: "default" 0.0;
