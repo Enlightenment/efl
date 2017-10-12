@@ -562,7 +562,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          
            @since 1.18]]
          values {
-            automatic: bool; [[$true to follow system focus move policy change, $false otherwise]]
+            automatic: bool; [[$true to follow system focus move policy change,
+                               $false otherwise]]
          }
       }
 
@@ -576,18 +577,26 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       focus_state_apply @protected {
          [[Register focus with the given configuration.
 
-           The implementation can feel free to change the logical flag as it wants, but other than that it should strictly keep the configuration.
+           The implementation can feel free to change the logical flag as it
+           wants, but other than that it should strictly keep the configuration.
 
-           The implementation in elm.widget updates the current state into what is passed as configured state, respecting manager changes, registeration and unregistration based on if it should be registered or unregistered.
+           The implementation in elm.widget updates the current state into what
+           is passed as configured state, respecting manager changes,
+           registeration and unregistration based on if it should be registered
+           or unregistered.
 
-           A manager field that is $null means that the widget should not or was not registered.
+           A manager field that is $null means that the widget should not or was
+           not registered.
          ]]
          params {
-            @in current_state : Elm.Widget.Focus_State; [[The focus manager to register with.]]
-            @inout configured_state : Elm.Widget.Focus_State; [[The evalulated Focus state that should be used]]
-            @in redirect : Elm.Widget; [[A redirect that will be set by the elm.widget implementation]]
+            @in current_state : Elm.Widget.Focus_State;
+               [[The focus manager to register with.]]
+            @inout configured_state : Elm.Widget.Focus_State;
+               [[The evalulated Focus state that should be used.]]
+            @in redirect : Elm.Widget;
+               [[A redirect that will be set by the elm.widget implementation.]]
          }
-         return: bool; [[return $true or $false if the widget is registered or false if it is not]]
+         return: bool; [[Returns whether the widget is registered or not.]]
       }
       focus_manager_create @protected {
          [[If the widget needs a focus manager, this function will be called.
@@ -598,7 +607,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          params {
             @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
          }
-         return: Efl.Ui.Focus.Manager; [[Focus manager]]
+         return: Efl.Ui.Focus.Manager; [[The focus manager.]]
       }
    }
    implements {
