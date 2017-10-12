@@ -316,7 +316,7 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       }
       /* CLASS APIS END ---------------------------------------------------- */
 
-      access_part_iterate {
+      access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
          legacy: null;
          return: iterator<string> @owned; [[Part name iterator]]
