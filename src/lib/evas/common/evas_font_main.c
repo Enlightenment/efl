@@ -48,9 +48,12 @@ evas_common_font_init(void)
    s = getenv("EVAS_FONT_DPI");
    if (s)
      {
-        int dpi = atoi(s);
+        int dpi_h = 75, dpi_v = 0;
 
-        if (dpi > 0) evas_common_font_dpi_set(dpi);
+        if (sscanf(s, "%dx%d", &dpi_h, &dpi_v) < 2)
+          dpi_h = dpi_v = atoi(s);
+
+        if (dpi_h > 0) evas_common_font_dpi_set(dpi_h, dpi_v);
      }
    LKI(lock_font_draw);
    LKI(lock_bidi);

@@ -24,7 +24,8 @@ extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
-static int                font_dpi = 75;
+static int                font_dpi_h = 75;
+static int                font_dpi_v = 75;
 
 static Eina_Hash   *fonts_src = NULL;
 static Eina_Hash   *fonts = NULL;
@@ -131,9 +132,11 @@ evas_common_font_load_shutdown(void)
 }
 
 EAPI void
-evas_common_font_dpi_set(int dpi)
+evas_common_font_dpi_set(int dpi_h, int dpi_v)
 {
-   font_dpi = dpi;
+   if (dpi_v <= 0) dpi_v = dpi_h;
+   font_dpi_h = dpi_h;
+   font_dpi_v = dpi_v;
 }
 
 EAPI RGBA_Font_Source *
@@ -365,7 +368,7 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      {
-        fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi,
+        fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi_h,
                                                  wanted_rend);
         if (fi->cs2_handler)
           {
@@ -409,7 +412,7 @@ evas_common_font_int_load(const char *name, int size,
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      {
-        fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi,
+        fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi_h,
                                                  wanted_rend);
         if (fi->cs2_handler)
           {
@@ -449,7 +452,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
      }
    fi->real_size = fi->size * 64;
    fi->scale_factor = 1.0;
-   error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
+   error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi_h, font_dpi_v);
    if (error)
      error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
    FTUNLOCK();
@@ -503,12 +506,12 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
         FTUNLOCK();
 	if (error)
 	  {
-             error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
+             error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi_h, font_dpi_v);
              if (error)
                {
                   /* hack around broken fonts */
                   fi->real_size = (chosen_size2 / 64) * 60;
-                  error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
+                  error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi_h, font_dpi_v);
                   if (error)
                     {
                        /* couldn't choose the size anyway... what now? */

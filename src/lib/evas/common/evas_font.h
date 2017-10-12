@@ -39,7 +39,7 @@ EAPI void              evas_common_font_draw_do(const Cutout_Rects *reuse, const
 EAPI Eina_Bool         evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func);
 
 /* load */
-EAPI void              evas_common_font_dpi_set              (int dpi);
+EAPI void              evas_common_font_dpi_set              (int dpi_h, int dpi_v);
 EAPI RGBA_Font_Source *evas_common_font_source_memory_load   (const char *name, const void *data, int data_size);
 EAPI RGBA_Font_Source *evas_common_font_source_load          (const char *name);
 EAPI int               evas_common_font_source_load_complete (RGBA_Font_Source *fs);
