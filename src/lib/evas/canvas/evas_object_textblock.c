@@ -15581,14 +15581,45 @@ static const struct
    { EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT },
 };
 
+#define MAP_LEN(a) ((sizeof (a)) / sizeof((a)[0]))
+
+static Evas_Text_Style_Type
+_get_style_from_map(Efl_Text_Style_Effect_Type st)
+{
+   size_t i;
+   size_t len = MAP_LEN(_map_style_effect);
+   for (i = 0; i < len; i++)
+     {
+        if (_map_style_effect[i].x == st)
+           return _map_style_effect[i].y;
+     }
+   ERR("Mapping style failed. Please check code\n");
+   return EVAS_TEXT_STYLE_SHADOW; // shouldn't reach
+}
+
+static Evas_Text_Style_Type
+_get_dir_from_map(Efl_Text_Style_Shadow_Direction dir)
+{
+   size_t i;
+   size_t len = MAP_LEN(_map_shadow_dir);
+   for (i = 0; i < len; i++)
+     {
+        if (_map_shadow_dir[i].x == dir)
+           return _map_shadow_dir[i].y;
+     }
+   ERR("Mapping direction failed. Please check code\n");
+   return EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT; // shouldn't reach
+}
+
 static void
 _efl_canvas_text_efl_text_style_effect_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Effect_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(effect, type);
-   _FMT(style) = _map_style_effect[type].y;
+   _FMT(style) = _get_style_from_map(type);
    // Re-apply shadow direction
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style),
+         _get_dir_from_map(_FMT_INFO(shadow_direction)));
    _FMT_INFO_SET_END();
 }
 
@@ -15616,7 +15647,8 @@ _efl_canvas_text_efl_text_style_shadow_direction_set(Eo *obj EINA_UNUSED, Efl_Ca
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(shadow_direction, type);
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style),
+         _get_dir_from_map(_FMT_INFO(shadow_direction)));
    _FMT_INFO_SET_END();
 }
 
