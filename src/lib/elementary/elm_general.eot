@@ -141,10 +141,9 @@ enum Efl.Ui.Focus.Direction
    last = 6
 }
 
-enum Elm.Focus.Region.Show_Mode
+enum Efl.Ui.Interest_Region_Mode
 {
    [[Focus region show mode.]]
-   legacy: elm_focus_region_show;
    widget, [[As a widget.]]
    item, [[As an item.]]
 }

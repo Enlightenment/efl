@@ -1050,7 +1050,7 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_elm_panel_elm_widget_focus_region_get(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_elm_widget_interest_region_get(Eo *obj, Elm_Panel_Data *sd)
 {
    Eina_Rect r = {};
 

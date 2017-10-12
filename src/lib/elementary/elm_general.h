@@ -45,6 +45,11 @@ typedef enum
    ELM_OBJECT_LAYER_LAST /**< last layer known by Elementary */
 } Elm_Object_Layer;
 
+/** How the focus region should be calculated (not related to input focus). */
+typedef Efl_Ui_Interest_Region_Mode Elm_Focus_Region_Show_Mode;
+#define ELM_FOCUS_REGION_SHOW_WIDGET EFL_UI_INTEREST_REGION_MODE_WIDGET
+#define ELM_FOCUS_REGION_SHOW_ITEM   EFL_UI_INTEREST_REGION_MODE_ITEM
+
 /**************************************************************************/
 EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
