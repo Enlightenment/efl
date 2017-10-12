@@ -155,6 +155,8 @@ elm_private_eolian_files = \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_ui_focus_rectangle.eo \
 	lib/elementary/elm_calendar_item.eo \
+	lib/elementary/efl_ui_focus_parent_provider.eo \
+	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -707,7 +709,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_manager_root_focus.c \
 	lib/elementary/efl_ui_textpath.c \
 	lib/elementary/efl_ui_focus_layer.c \
-  lib/elementary/efl_ui_focus_composition.c \
+	lib/elementary/efl_ui_focus_composition.c \
+	lib/elementary/efl_ui_focus_parent_provider.c \
+	lib/elementary/efl_ui_focus_parent_provider_standard.c \
 	$(NULL)
 
 

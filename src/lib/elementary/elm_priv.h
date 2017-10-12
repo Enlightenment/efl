@@ -53,6 +53,8 @@
 #include "elm_widget.h"
 #include "elm_access.eo.h"
 #include "elm_code_private.h"
+#include "efl_ui_focus_parent_provider.eo.h"
+#include "efl_ui_focus_parent_provider_standard.eo.h"
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
