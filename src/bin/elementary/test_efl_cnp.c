@@ -53,6 +53,13 @@ _selection_progress_cb(void *data, Efl_Event const *event)
 }
 
 static void
+_selection_loss_event_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Eo *obj = event->object;
+   ERR("Lost selection for obj: %p", obj);
+}
+
+static void
 _delete_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *en = data;
@@ -94,7 +101,6 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 
-//copy from ui.text
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
@@ -131,7 +137,6 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, win);
-   //bt = efl_add(EFL_CANVAS_IMAGE_CLASS, win); //FIXME: need support for all objects
    efl_text_set(bt, "test sel");
    efl_gfx_visible_set(bt, EINA_TRUE);
    elm_box_pack_end(bx, bt);
@@ -142,12 +147,14 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    efl_selection_get(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, NULL, _selection_data_ready_cb, NULL, seat);
 
-   Efl_Future *f = efl_selection_loss_feedback(bt, EFL_SELECTION_TYPE_PRIMARY);
+   //efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOSS, _selection_loss_event_cb, NULL);
+
+   /*Efl_Future *f = efl_selection_loss_feedback(bt, EFL_SELECTION_TYPE_PRIMARY);
    if (f)
    {
        printf("register future callbacks\n");
        efl_future_then(f, _selection_loss_cb, NULL, NULL, bt);
-   }
+   }*/
    //
 
    /*bt2 = efl_add(EFL_UI_BUTTON_CLASS, win);
@@ -197,6 +204,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Selection Set");
    evas_object_smart_callback_add(bt, "clicked", _selection_set_btn_cb, win);
+   efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOSS, _selection_loss_event_cb, NULL);
    evas_object_show(bt);
    elm_box_pack_end(hbox, bt);
 

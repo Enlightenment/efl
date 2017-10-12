@@ -135,7 +135,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(bx, chk);
 
 
-   Efl_Future *ft = efl_selection_manager_selection_loss_feedback(sel_man, chk, EFL_SELECTION_TYPE_PRIMARY);
+   /*Efl_Future *ft = efl_selection_manager_selection_loss_feedback(sel_man, chk, EFL_SELECTION_TYPE_PRIMARY);
    if (ft)
      {
         ERR("registered sel loss cb");
@@ -144,7 +144,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    else
      {
         ERR("cannot register sel loss cb");
-     }
+     }*/
 
    const char *buf = "Selection from SELMAN";
    efl_selection_manager_selection_set(sel_man, chk, EFL_SELECTION_TYPE_PRIMARY,

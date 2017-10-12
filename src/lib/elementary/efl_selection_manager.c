@@ -56,7 +56,10 @@ _x11_xwin_get(Evas_Object *obj)
 }
 
 static Eina_Bool
-_efl_sel_manager_x11_target_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype EINA_UNUSED, int *typesize EINA_UNUSED)
+_efl_sel_manager_x11_target_converter(char *target, void *data, int size,
+                                      void **data_ret, int *size_ret,
+                                      Ecore_X_Atom *ttype EINA_UNUSED,
+                                      int *typesize EINA_UNUSED)
 {
    ERR("In:: target: %s, data: %s, size: %d", target, (char *)data, size);
    if (data_ret) *data_ret = strdup(data);
@@ -108,7 +111,9 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
 
 #ifdef HAVE_ELEMENTARY_X
 static void
-_x11_efl_sel_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format, const void *buf, int len, Efl_Input_Device *seat)
+_x11_efl_sel_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
+                                   Efl_Selection_Type type, Efl_Selection_Format format,
+                                   const void *buf, int len, Efl_Input_Device *seat)
 {
    Ecore_X_Window xwin = _x11_xwin_get(obj);
 
@@ -156,34 +161,38 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
                                      Efl_Selection_Format format,
                                      const void *buf, int len, Efl_Input_Device *seat)
 {
-    ERR("In");
-    if (type > EFL_SELECTION_TYPE_CLIPBOARD)
+   ERR("In");
+   if (type > EFL_SELECTION_TYPE_CLIPBOARD)
      {
         ERR("Not supported format: %d", type);
         return;
      }
 
-    //check if owner is changed
-    if (pd->sel_owner != NULL &&
-        pd->sel_owner != owner)
-      {
-         //call selection_loss callback: should we include prev owner??
-         Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
-         *lt = pd->loss_type;
-         efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);
-      }
-
-    pd->sel_owner = owner;
-
 #ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin = _x11_xwin_get(owner);
+#endif
+   //check if owner is changed
+   if (pd->sel_owner != NULL &&
+       pd->sel_owner != owner
+#ifdef HAVE_ELEMENTARY_X
+       //support 1 app with multiple window, 1 selection manager
+       && pd->xwin == xwin
+#endif
+      )
+     {
+        /*//call selection_loss callback: should we include prev owner??
+        Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
+        *lt = pd->loss_type;
+        efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);*/
+
+        efl_event_callback_call(pd->sel_owner, EFL_SELECTION_EVENT_SELECTION_LOSS, NULL);
+     }
+
+   pd->sel_owner = owner;
+#ifdef HAVE_ELEMENTARY_X
+   pd->xwin = xwin;
+
    return _x11_efl_sel_manager_selection_set(obj, pd, type, format, buf, len, seat);
-   /*Ecore_X_Window xwin = _x11_xwin_get(obj);
-   ERR("xwin: %d", xwin);
-   char *data = malloc(len);
-   if (!data) ERR("failed to allocate mem: %d", len);
-   memcpy(data, buf, len);
-   int ret = ecore_x_selection_primary_set(xwin, data, len);
-   ERR("sel set ret: %d", ret);*/
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
 #endif
@@ -223,66 +232,70 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
                                        Efl_Object *owner, Efl_Selection_Type type, Efl_Input_Device *seat)
 {
    //no need to call loss cb here: it will be called from WM
-    ERR("In");
-    if (type > EFL_SELECTION_TYPE_CLIPBOARD)
-      {
-         ERR("Not supported type: %d", type);
-         return;
-      }
-    if (pd->sel_owner != owner)
-      {
-         return;
-      }
-    pd->sel_owner = NULL;
-    if (type == EFL_SELECTION_TYPE_PRIMARY)
-      {
-         ecore_x_selection_primary_clear();
-      }
-    else if (type == EFL_SELECTION_TYPE_SECONDARY)
-      {
-         ecore_x_selection_secondary_clear();
-      }
-    else if (type == EFL_SELECTION_TYPE_DND)
-      {
-      }
-    else if (type == EFL_SELECTION_TYPE_CLIPBOARD)
-      {
-         ecore_x_selection_clipboard_clear();
-      }
+   ERR("In");
+   if (type > EFL_SELECTION_TYPE_CLIPBOARD)
+     {
+        ERR("Not supported type: %d", type);
+        return;
+     }
+   if (pd->sel_owner != owner)
+     {
+        return;
+     }
+   pd->sel_owner = NULL;
+   if (type == EFL_SELECTION_TYPE_PRIMARY)
+     {
+        ecore_x_selection_primary_clear();
+     }
+   else if (type == EFL_SELECTION_TYPE_SECONDARY)
+     {
+        ecore_x_selection_secondary_clear();
+     }
+   else if (type == EFL_SELECTION_TYPE_DND)
+     {
+     }
+   else if (type == EFL_SELECTION_TYPE_CLIPBOARD)
+     {
+        ecore_x_selection_clipboard_clear();
+     }
 }
 
 static Eina_Bool
 _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
-   if (pd->promise)
+   ERR("In");
+   /*if (pd->promise)
      {
         Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
         *lt = pd->loss_type;
         efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);
         pd->promise = NULL;
-     }
+     }*/
+   efl_event_callback_call(pd->sel_owner, EFL_SELECTION_EVENT_SELECTION_LOSS, NULL);
+   //clear the buffer
+   //
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
-
+/*
 EOLIAN static Efl_Future *
 _efl_selection_manager_selection_loss_feedback(Eo *obj, Efl_Selection_Manager_Data *pd,
                                                Efl_Object *owner, Efl_Selection_Type type)
 {
-    ERR("In");
-    Efl_Promise *p;
-    Eo *loop = efl_loop_get(obj);
+   ERR("In");
+   Efl_Promise *p;
+   Eo *loop = efl_loop_get(obj);
 
-    pd->promise = NULL;
-    p = efl_add(EFL_PROMISE_CLASS, loop);
-    if (!p) return NULL;
-    pd->promise = p;
-    pd->loss_type = type;
+   pd->promise = NULL;
+   p = efl_add(EFL_PROMISE_CLASS, loop);
+   if (!p) return NULL;
+   pd->promise = p;
+   pd->loss_type = type;
 
-    return efl_promise_future_get(p);
-}
+   return efl_promise_future_get(p);
+}*/
 
 static Efl_Object *
 _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Data *pd)

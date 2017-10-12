@@ -26,13 +26,13 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      selection_loss_feedback { //name!!!: xxx_set
+      /*selection_loss_feedback { //name!!!: xxx_set
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection type]]
          }
          return: future<generic_value>; [[Future of selection that is ready]]
-      }
+      }*/
    }
    implements {
       Efl.Object.constructor;

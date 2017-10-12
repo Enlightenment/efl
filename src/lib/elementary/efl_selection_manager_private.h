@@ -24,6 +24,9 @@ struct _Efl_Selection_Manager_Data
     Ecore_Event_Handler *clear_handler;
     Efl_Promise *promise;
     Efl_Selection_Type loss_type;
+#ifdef HAVE_ELEMENTARY_X
+    Ecore_X_Window *xwin;
+#endif
 
     void *data_func_data;
     Efl_Selection_Data_Ready data_func;
