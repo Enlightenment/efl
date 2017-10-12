@@ -81,6 +81,7 @@ _efl_ui_bg_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Bg_Data *sd)
 
    evas_object_image_fill_set(sd->img, fx, fy, fw, fh);
 
+   evas_object_size_hint_min_set(sd->img, mw, mh);
    evas_object_size_hint_max_set(sd->img, mw, mh);
 }
 
