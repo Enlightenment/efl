@@ -302,6 +302,252 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
+   pd->atomlist = calloc(1, SELECTION_N_ATOMS * sizeof(Efl_Sel_Manager_Atom));
+   if (!pd->atomlist)
+     {
+        ERR("failed to allocate atomlist");
+        return NULL;
+     }
+   pd->atomlist[CNP_ATOM_TARGETS].name = "TARGETS";
+   pd->atomlist[CNP_ATOM_TARGETS].format = ELM_SEL_FORMAT_TARGETS;
+#ifdef HAVE_ELEMENTARY_X
+   //pd->atomlist[CNP_ATOM_TARGETS].x_converter = _x11_targets_converter;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   pd->atomlist[CNP_ATOM_TARGETS].wl_converter = _wl_targets_converter;
+#endif
+#ifdef HAVE_ELEMENTARY_X
+   pd->atomlist[CNP_ATOM_ATOM].name = "ATOM"; // for opera browser
+        pd->atomlist[CNP_ATOM_ATOM].format = ELM_SEL_FORMAT_TARGETS;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_ATOM].x_converter = _x11_targets_converter;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_ATOM].wl_converter = _wl_targets_converter;
+#endif
+   
+        pd->atomlist[CNP_ATOM_XELM].name = "application/x-elementary-markup";
+        pd->atomlist[CNP_ATOM_XELM].format = ELM_SEL_FORMAT_MARKUP;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_XELM].x_converter = _x11_general_converter;
+        pd->atomlist[CNP_ATOM_XELM].x_data_preparer = _x11_data_preparer_markup;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_XELM].wl_converter = _wl_general_converter;
+        pd->atomlist[CNP_ATOM_XELM].wl_data_preparer = _wl_data_preparer_markup;
+#endif
+   
+        pd->atomlist[CNP_ATOM_text_urilist].name = "text/uri-list";
+        pd->atomlist[CNP_ATOM_text_urilist].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_text_urilist].x_converter = _x11_general_converter;
+        pd->atomlist[CNP_ATOM_text_urilist].x_data_preparer = _x11_data_preparer_uri;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_text_urilist].wl_converter = _wl_general_converter;
+        pd->atomlist[CNP_ATOM_text_urilist].wl_data_preparer = _wl_data_preparer_uri;
+#endif
+   
+        pd->atomlist[CNP_ATOM_text_x_vcard].name = "text/x-vcard";
+        pd->atomlist[CNP_ATOM_text_x_vcard].format = ELM_SEL_FORMAT_VCARD;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_text_x_vcard].x_converter = _x11_vcard_send;
+        pd->atomlist[CNP_ATOM_text_x_vcard].x_data_preparer = _x11_data_preparer_vcard;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_text_x_vcard].wl_data_preparer = _wl_data_preparer_vcard;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_png].name = "image/png";
+        pd->atomlist[CNP_ATOM_image_png].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_png].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_png].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_png].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_jpeg].name = "image/jpeg";
+        pd->atomlist[CNP_ATOM_image_jpeg].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_jpeg].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_jpeg].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_jpeg].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_bmp].name = "image/x-ms-bmp";
+        pd->atomlist[CNP_ATOM_image_bmp].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_bmp].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_bmp].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_bmp].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_gif].name = "image/gif";
+        pd->atomlist[CNP_ATOM_image_gif].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_gif].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_gif].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_gif].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_tiff].name = "image/tiff";
+        pd->atomlist[CNP_ATOM_image_tiff].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_tiff].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_tiff].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_tiff].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_svg].name = "image/svg+xml";
+        pd->atomlist[CNP_ATOM_image_svg].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_svg].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_svg].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_svg].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_xpm].name = "image/x-xpixmap";
+        pd->atomlist[CNP_ATOM_image_xpm].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_xpm].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_xpm].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_xpm].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_tga].name = "image/x-tga";
+        pd->atomlist[CNP_ATOM_image_tga].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_tga].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_tga].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_tga].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+        pd->atomlist[CNP_ATOM_image_ppm].name = "image/x-portable-pixmap";
+        pd->atomlist[CNP_ATOM_image_ppm].format = ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_image_ppm].x_converter = _x11_image_converter;
+        pd->atomlist[CNP_ATOM_image_ppm].x_data_preparer = _x11_data_preparer_image;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_image_ppm].wl_data_preparer = _wl_data_preparer_image;
+#endif
+   
+/*
+   ARRAYINIT(CNP_ATOM_text_html_utf8) {
+      .name = "text/html;charset=utf-8",
+      .format = ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+      .x_converter = _x11_general_converter,
+      .x_notify = _x11_notify_handler_html,
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        .wl_converter = _wl_general_converter,
+        .wl_data_preparer = _wl_data_preparer_handler_html,
+#endif
+
+   },
+   ARRAYINIT(CNP_ATOM_text_html) {
+      .name = "text/html",
+      .format = ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+      .x_converter = _x11_general_converter,
+      .x_notify = _x11_notify_handler_html,
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        .wl_converter = _wl_general_converter,
+        .wl_data_preparer = _wl_data_preparer_handler_html,
+#endif
+   },
+ */
+        pd->atomlist[CNP_ATOM_UTF8STRING].name = "UTF8_STRING",
+        pd->atomlist[CNP_ATOM_UTF8STRING].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_UTF8STRING].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_UTF8STRING].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_UTF8STRING].wl_converter = _wl_text_converter,
+        pd->atomlist[CNP_ATOM_UTF8STRING].wl_data_preparer = _wl_data_preparer_text,
+#endif
+   
+        pd->atomlist[CNP_ATOM_STRING].name = "STRING";
+        pd->atomlist[CNP_ATOM_STRING].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_STRING].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_STRING].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_STRING].wl_converter = _wl_text_converter;
+        pd->atomlist[CNP_ATOM_STRING].wl_data_preparer = _wl_data_preparer_text;
+#endif
+   
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].name = "COMPOUND_TEXT";
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].wl_converter = _wl_text_converter;
+        pd->atomlist[CNP_ATOM_COMPOUND_TEXT].wl_data_preparer = _wl_data_preparer_text;
+#endif
+   
+        pd->atomlist[CNP_ATOM_TEXT].name = "TEXT";
+        pd->atomlist[CNP_ATOM_TEXT].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_TEXT].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_TEXT].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_TEXT].wl_converter = _wl_text_converter;
+        pd->atomlist[CNP_ATOM_TEXT].wl_data_preparer = _wl_data_preparer_text;
+#endif
+
+        pd->atomlist[CNP_ATOM_text_plain_utf8].name = "text/plain;charset=utf-8";
+        pd->atomlist[CNP_ATOM_text_plain_utf8].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_text_plain_utf8].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_text_plain_utf8].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_text_plain_utf8].wl_converter = _wl_text_converter;
+        pd->atomlist[CNP_ATOM_text_plain_utf8].wl_data_preparer = _wl_data_preparer_text;
+#endif
+
+        pd->atomlist[CNP_ATOM_text_plain].name = "text/plain";
+        pd->atomlist[CNP_ATOM_text_plain].format = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML;
+#ifdef HAVE_ELEMENTARY_X
+        pd->atomlist[CNP_ATOM_text_plain].x_converter = _x11_text_converter;
+        pd->atomlist[CNP_ATOM_text_plain].x_data_preparer = _x11_data_preparer_text;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+        pd->atomlist[CNP_ATOM_text_plain].wl_converter = _wl_text_converter;
+        pd->atomlist[CNP_ATOM_text_plain].wl_data_preparer = _wl_data_preparer_text;
+#endif
+   int i;
+   for (i = 0; i < SELECTION_N_ATOMS; i++)
+     {
+        pd->atomlist[i].x_atom = ecore_x_atom_get(pd->atomlist[i].name);
+        ecore_x_selection_converter_atom_add
+          (pd->atomlist[i].x_atom, pd->atomlist[i].x_converter);
+     }
+#endif
    pd->notify_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
                                                 _efl_sel_manager_x11_selection_notify, pd);
    pd->clear_handler = ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR,
@@ -315,6 +561,7 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
 {
    ecore_event_handler_del(pd->notify_handler);
    ecore_event_handler_del(pd->clear_handler);
+   free(pd->atomlist);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
