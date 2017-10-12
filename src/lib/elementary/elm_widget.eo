@@ -395,14 +395,14 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
               unchanged.
             ]]
             values {
-               region: Eina.Rect; [[The region of interest.]]
+               region: Eina.Rect; [[The region to show.]]
                force: bool; [[Set to $true to force show even if unchanged.]]
             }
          }
          get {
-            [[Returns the current region of interest.]]
+            [[Returns the current region to show.]]
             values {
-               region: Eina.Rect; [[The region of interest.]]
+               region: Eina.Rect; [[The region to show.]]
             }
          }
       }
@@ -422,10 +422,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
          [[Pop scroller freeze]]
       }
 
-      /* FIXME: This is not 100% related to focus. This documentation needs
-       * further fixing. */
-      @property focus_region @protected {
-         [[Region to show when focus changes within this widget.
+      /* Region of interest */
+      @property interest_region @protected {
+         [[Region of interest inside this widget, that should be given
+           priority to be visible inside a scroller.
 
            When this widget or one of its subwidgets is given focus, this
            region should be shown, which means any parent scroller should
@@ -439,9 +439,10 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            widget. W,H must be greater or equal to 1 for this region to be
            taken into account, otherwise it is ignored.
 
-           See also @.focus_region_show.
+           See also @.interest_region_mode
          ]]
          get {
+            legacy: elm_widget_focus_region_get;
          }
          values {
             region: Eina.Rect;
@@ -449,19 +450,25 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
                  will be ignored, and no action will be taken.]]
          }
       }
-      focus_region_show @protected {
-         [[Show the region of interest inside this widget.
+      @property interest_region_mode {
+         [[Defines how @.show_region should be calculated.
 
-           See also @.focus_region.
+           It is up to the implementation of @.show_region.get to take this
+           value into account (or ignore it).
          ]]
-      }
-      @property focus_region_show_mode {
-         [[Control the focus_region_show mode.]]
+         get {
+            legacy: elm_widget_focus_region_show_mode_get;
+         }
+         set {
+            legacy: elm_widget_focus_region_show_mode_set;
+         }
          values {
-            /* FIXME: This enum is in Elm namespace! */
-            mode: Elm.Focus.Region.Show_Mode; [[Focus region show mode]]
+            mode: Efl.Ui.Interest_Region_Mode;
+               [[Whether to show a specific item or the widget as a whole.]]
          }
       }
+
+      /* Focus highlight (visual focus rectangle) properties */
       @property focus_highlight_geometry @protected {
          [[The rectangle region to be highlighted on focus.
 

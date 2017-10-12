@@ -1250,7 +1250,7 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_text_elm_widget_focus_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_elm_widget_interest_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
    Eina_Rect r = {};

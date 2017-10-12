@@ -1045,8 +1045,8 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
  * If elm_widget_focus_region_get() returns an empty rect (w or h <= 0),
  * this function will ignore region show action.
  */
-EOLIAN static void
-_elm_widget_focus_region_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+EAPI void
+elm_widget_focus_region_show(Eo *obj)
 {
    Evas_Coord ox, oy;
    Eina_Rect r;
@@ -2532,7 +2532,7 @@ _elm_widget_show_region_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
  * @ingroup Widget
  */
 EOLIAN static Eina_Rect
-_elm_widget_focus_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
+_elm_widget_interest_region_get(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    Eina_Rect r = {};
    r.size = efl_gfx_size_get(obj);
@@ -3450,13 +3450,13 @@ _elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EIN
 }
 
 EOLIAN static void
-_elm_widget_focus_region_show_mode_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd, Elm_Focus_Region_Show_Mode mode)
+_elm_widget_interest_region_mode_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd, Elm_Focus_Region_Show_Mode mode)
 {
    _pd->focus_region_show_mode = mode;
 }
 
 EOLIAN static Elm_Focus_Region_Show_Mode
-_elm_widget_focus_region_show_mode_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd)
+_elm_widget_interest_region_mode_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd)
 {
    return _pd->focus_region_show_mode;
 }
