@@ -9,6 +9,9 @@
 # include <unistd.h>
 #endif
 
+#define EFL_OBJECT_BETA
+#define EFL_OBJECT_PROTECTED
+
 #include <Eo.h>
 
 #include "eo_suite.h"
@@ -1719,6 +1722,59 @@ START_TEST(efl_cast_test)
 }
 END_TEST
 
+static void
+_auto_unref_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   *((int *) data) = 1;
+}
+
+START_TEST(efl_object_auto_unref_test)
+{
+   int _auto_unref_del;
+   Eo *obj, *parent;
+
+   efl_object_init();
+
+   // Test unref after valid call
+   _auto_unref_del = 0;
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   fail_if(efl_ref_get(obj) != 1);
+   efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
+   efl_auto_unref_set(obj, 1);
+   fail_if(_auto_unref_del);
+   fail_if(efl_ref_get(obj) != 1);
+   efl_name_set(obj, "name");
+   fail_if(!_auto_unref_del);
+
+   // Test unref after invalid call
+   _auto_unref_del = 0;
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   fail_if(efl_ref_get(obj) != 1);
+   efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
+   efl_auto_unref_set(obj, 1);
+   fail_if(_auto_unref_del);
+   fail_if(efl_ref_get(obj) != 1);
+   simple_no_implementation(obj);
+   fail_if(!_auto_unref_del);
+
+   // Same with a parent
+   _auto_unref_del = 0;
+   parent = efl_add(SIMPLE_CLASS, NULL);
+   obj = efl_add(SIMPLE_CLASS, parent);
+   fail_if(efl_ref_get(obj) != 1);
+   efl_allow_parent_unref_set(obj, 1);
+   efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
+   efl_auto_unref_set(obj, 1);
+   fail_if(_auto_unref_del);
+   fail_if(efl_ref_get(obj) != 1);
+   efl_name_set(obj, "name");
+   fail_if(!_auto_unref_del);
+   efl_del(parent);
+
+   efl_object_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1744,4 +1800,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_rec_interface);
    tcase_add_test(tc, eo_domain);
    tcase_add_test(tc, efl_cast_test);
+   tcase_add_test(tc, efl_object_auto_unref_test);
 }
