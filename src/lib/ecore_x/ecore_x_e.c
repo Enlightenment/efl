@@ -1173,7 +1173,7 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
    if (!win)
      return;
 
-   if ((!profiles) || (num_profiles <= 0))
+   if ((!profiles) || (num_profiles == 0))
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST);
    else
      {
@@ -1382,7 +1382,7 @@ ecore_x_e_window_available_profiles_set(Ecore_X_Window  win,
    if (!win)
      return;
 
-   if ((!profiles) || (count <= 0))
+   if ((!profiles) || (count == 0))
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_WINDOW_PROFILE_AVAILABLE_LIST);
    else
      {

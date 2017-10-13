@@ -200,7 +200,7 @@ _shared_data_shm_resize(Data_Shm *ds, size_t newsize)
    Shm_Handle *shm;
    size_t mapping_size;
 
-   if (newsize <= 0)
+   if (newsize == 0)
      return -1;
 
    mapping_size = cserve2_shm_size_normalize(newsize, ARRAY_MINSIZE);

@@ -681,7 +681,7 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *obj)
      return EINA_FALSE;
 
    num = eina_binbuf_length_get(svr->buf) - svr->write_buf_offset;
-   if (num <= 0) return EINA_TRUE;
+   if (num == 0) return EINA_TRUE;
 
    res = WriteFile(svr->pipe, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num, &written, NULL);
    if (!res)
@@ -732,7 +732,7 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *obj)
      return EINA_FALSE;
 
    num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
-   if (num <= 0) return EINA_TRUE;
+   if (num == 0) return EINA_TRUE;
 
    res = WriteFile(svr->pipe, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, &written, NULL);
    if (!res)

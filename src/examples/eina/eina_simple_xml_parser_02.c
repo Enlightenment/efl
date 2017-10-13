@@ -17,7 +17,7 @@ static Eina_Bool
 _xml_tag_parse_cb(void *data, Eina_Simple_XML_Type type, const char *content,
                   unsigned offset EINA_UNUSED, unsigned int length)
 {
-   if (length <= 0) return EINA_FALSE;
+   if (length == 0) return EINA_FALSE;
 
    if (type == EINA_SIMPLE_XML_OPEN)
      {

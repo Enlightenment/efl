@@ -542,7 +542,7 @@ _ecore_x_window_keygrab_unset_internal(Ecore_X_Window win,
    if (!_ecore_x_window_keytable_get(win, &keytable))
       return EINA_FALSE;
 
-   if (keytable.key_cnt <= 0)
+   if (keytable.key_cnt == 0)
      return EINA_FALSE;
 
    i = _ecore_x_window_keytable_key_search(&keytable, keycode);
