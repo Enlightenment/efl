@@ -37,7 +37,7 @@ static DATA8 *x_color_alloc_gray_4(Display *d, Colormap cmap, Visual *v);
 static DATA8 *x_color_alloc_mono(Display *d, Colormap cmap, Visual *v);
 
 static DATA8 *
-x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v EINA_UNUSED)
 {
    int r, g, b, i;
    DATA8 *color_lut;
