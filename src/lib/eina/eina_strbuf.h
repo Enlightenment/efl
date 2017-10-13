@@ -738,6 +738,74 @@ EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UN
 EAPI char* eina_strbuf_release(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * @brief append the given buffer based on strftime output.
+ *
+ * @param tm Pointer to a tm structure needed by strftime.
+ * @param fmt String containing format specifiers needed by strftime.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This will add append buffer of exact required size based on strftime output
+ *
+ * Example usage:
+ * @code
+ * time_t curr_time;
+ * struct tm *info;
+ * Eina_Strbuf *buf = eina_strbuf_new();
+ * curr_time = time(NULL);
+ * info = localtime(&curr_time);
+ * eina_strbuf_append_strftime(buf, "%I:%M%p", info);
+ * //after use
+ * eina_strbuf_free(buf);
+ * @endcode #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @since 1.21
+ */
+EAPI Eina_Bool eina_strbuf_append_strftime(Eina_Strbuf *buf, const char *fmt, const struct tm *tm);
+
+/**
+ * @brief insert the given buffer based on strftime output at given position
+ *
+ * @param buf The string buffer to prepend to.
+ * @param fmt String containing format specifiers needed by strftime.
+ * @param tm Pointer to a tm structure needed by strftime.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This will add append buffer of exact required size based on strftime output
+ *
+ * Example usage:
+ * @code
+ * time_t curr_time;
+ * struct tm *info;
+ * Eina_Strbuf *buf = eina_strbuf_new();
+ * curr_time = time(NULL);
+ * info = localtime(&curr_time);
+ * eina_strbuf_insert_strftime(buf, "%I:%M%p", info, 2);
+ * //after use
+ * eina_strbuf_free(buf);
+ * @endcode
+ *
+ * @since 1.21
+ */
+EAPI Eina_Bool eina_strbuf_insert_strftime(Eina_Strbuf *buf, const char *fmt, const struct tm *tm, size_t pos);
+
+/**
+ * @def eina_strbuf_prepend_strftime(buf, fmt, tm)
+ * @brief Prepends the given string to the given buffer.
+ *
+ * @param buf The string buffer to prepend to.
+ * @param fmt The string to prepend.
+ * @param tm The variable arguments.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This macro is calling eina_strbuf_insert_strftime() at position 0. If @p buf
+ * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
+ *
+ * @since 1.21
+ */
+#define eina_strbuf_prepend_strftime(buf, fmt, tm)                eina_strbuf_insert_strftime(buf, fmt, tm, 0)
+
+/**
  * @}
  */
 

@@ -660,6 +660,36 @@ START_TEST(strbuf_release_test)
 }
 END_TEST
 
+START_TEST(strbuf_strftime_test)
+{
+   Eina_Strbuf *buf;
+   time_t curr_time;
+   struct tm *info;
+   char cbuf[32];
+   const char *str;
+
+   curr_time = time(NULL);
+   info = localtime(&curr_time);
+
+   strftime(cbuf, 32, "%I:%M%p", info);
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_strftime(buf, "%I:%M%p", info);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, cbuf) != 0);
+   eina_strbuf_reset(buf);
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append(buf, "Hours: Minutes");
+   eina_strbuf_prepend_strftime(buf, "%I ", info);
+   eina_strbuf_insert_strftime(buf, "%M ", info, 10);
+   strftime(cbuf, 32, "%I Hours: %M Minutes", info);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, cbuf) != 0);
+
+   eina_strbuf_free(buf);
+}
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -677,4 +707,5 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, strbuf_substr_get);
    tcase_add_test(tc, strbuf_prepend_print);
    tcase_add_test(tc, strbuf_release_test);
+   tcase_add_test(tc, strbuf_strftime_test);
 }
