@@ -47,6 +47,7 @@ EWAPI const Efl_Class *class_simple_class_get(void);
  *
  * comment a.set
  *
+ * @param[in] obj The object.
  * @param[in] value Value description
  *
  * @return comment for property set return
@@ -59,6 +60,8 @@ EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
 #ifdef CLASS_SIMPLE_BETA
 /**
  * @brief Common desc for a
+ *
+ * @param[in] obj The object.
  *
  * @return Value description
  *
@@ -73,6 +76,7 @@ EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
 /**
  * @brief comment foo
  *
+ * @param[in] obj The object.
  * @param[in] a a
  * @param[in,out] b
  * @param[out] c

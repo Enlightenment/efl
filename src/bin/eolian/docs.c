@@ -569,6 +569,17 @@ eo_gen_docs_func_gen(const Eolian_Unit *src, const Eolian_Function *fid,
           }
      }
 
+   if (!eolian_function_is_class(fid))
+     {
+        _indent_line(buf, indent);
+        eina_strbuf_append(buf, " * @param[in] obj The object.\n");
+        if (!par && (rdoc || since))
+          {
+             _indent_line(buf, indent);
+             eina_strbuf_append(buf, " *\n");
+          }
+     }
+
    while (par)
      {
         const Eolian_Documentation *adoc = eolian_parameter_documentation_get(par);

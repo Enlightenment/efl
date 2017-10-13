@@ -88,6 +88,7 @@ EWAPI const Efl_Class *docs_class_get(void);
 /**
  * @brief Method documentation.
  *
+ * @param[in] obj The object.
  * @param[in] a Param documentation.
  * @param[out] b
  * @param[out] c Another param documentation.
@@ -105,6 +106,7 @@ EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
  *
  * Set documentation.
  *
+ * @param[in] obj The object.
  * @param[in] val Value documentation.
  *
  * @since 1.18
@@ -117,6 +119,8 @@ EOAPI void docs_prop_set(Eo *obj, int val);
  * @brief Property common documentation.
  *
  * Get documentation.
+ *
+ * @param[in] obj The object.
  *
  * @return Value documentation.
  *
