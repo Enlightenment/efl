@@ -727,9 +727,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
           {
              unsigned int mul_col;
 
-             /* a scanline buffer */
-             buf = alloca(dst_clip_w * sizeof(DATA32));
-
              mul_col = dc->mul.use ? dc->mul.col : 0xFFFFFFFF;
 
              /* do we have enough data to start some additional thread ? */
