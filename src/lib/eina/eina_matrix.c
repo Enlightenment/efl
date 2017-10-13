@@ -601,7 +601,7 @@ eina_matrix3_square_quad_map(Eina_Matrix3 *m, const Eina_Quad *q)
    // y0 - y1 + y2 - y3
    double ey = QUAD_Y0(q) - QUAD_Y1(q) + QUAD_Y2(q) - QUAD_Y3(q);
 
-   /* paralellogram */
+   /* parallelogram */
    if (EINA_DBL_EQ(ex, 0.0) && EINA_DBL_EQ(ey, 0.0))
      {
         /* create the affine matrix */
