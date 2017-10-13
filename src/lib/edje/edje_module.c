@@ -165,11 +165,7 @@ edje_available_modules_get(void)
 
         EINA_ITERATOR_FOREACH(it, info)
           {
-             eina_strbuf_append_printf(buf, "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
-#ifdef EDJE_EXTRA_MODULE_NAME
-                                       , info->path + info->name_start
-#endif
-                                       );
+             eina_strbuf_append_printf(buf, "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH);
 
              if (ecore_file_exists(eina_strbuf_string_get(buf)))
                result = eina_list_append(result, eina_stringshare_add(info->path + info->name_start));
