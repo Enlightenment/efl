@@ -344,6 +344,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Ui.Direction,
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
+      Efl.Ui.Focus.Object.prepare_logical;
    }
    events {
       item,focused; [[Called when toolbar item got focus]]
