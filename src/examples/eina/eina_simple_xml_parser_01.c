@@ -63,7 +63,7 @@ _xml_tag_cb(void *data, Eina_Simple_XML_Type type, const char *content,
 {
    char buffer[length+1];
    Eina_Array *array = data;
-   char str[512];
+   char str[512] = {'\0'};
 
    if (type == EINA_SIMPLE_XML_OPEN)
      {
