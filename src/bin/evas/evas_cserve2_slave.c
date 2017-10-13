@@ -28,7 +28,7 @@ struct ext_loader_s
 };
 
 #define MATCHING(Ext, Module)                   \
-  { sizeof (Ext), Ext, Module }
+  { Ext, Module }
 
 /* The following list comes from evas_image_load.c
  * TODO: Don't duplicate, reuse common functions
