@@ -16,6 +16,9 @@
 # include <mach/mach_time.h>
 #endif
 
+#define EFL_OBJECT_BETA
+#define EFL_OBJECT_PROTECTED
+
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
@@ -616,6 +619,11 @@ err_func_src:
 err:
    if (is_obj)
      {
+        if (EINA_UNLIKELY(obj->auto_unref != 0))
+          {
+             if (!(--obj->auto_unref))
+               efl_unref(eo_id);
+          }
         _efl_unref(obj);
         _eo_obj_pointer_done((Eo_Id)eo_id);
      }
@@ -670,6 +678,11 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
 {
    if (EINA_LIKELY(!!call->obj))
      {
+        if (EINA_UNLIKELY(call->obj->auto_unref != 0))
+          {
+             if (!(--call->obj->auto_unref))
+               efl_unref(call->eo_id);
+          }
         _efl_unref(call->obj);
         _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
@@ -721,19 +734,26 @@ _efl_object_api_op_id_get(const void *api_func)
 }
 
 EAPI Efl_Object_Op
-_efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line)
+_efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *api_func_name, const char *file, int line)
 {
    Efl_Object_Op op;
 
 #ifndef EO_DEBUG
-   if (!obj) return EFL_NOOP;
+   if (!eo_obj) return EFL_NOOP;
 #endif
    op = _efl_object_api_op_id_get_internal(api_func);
    if (op == EFL_NOOP)
      {
+        EO_OBJ_POINTER(eo_obj, obj);
         eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
                        file, api_func_name, line,
-                       "Unable to resolve op for api func %p for obj=%p (%s)", api_func, obj, efl_class_name_get(obj));
+                       "Unable to resolve op for api func %p for obj=%p (%s)", api_func, eo_obj, efl_class_name_get(eo_obj));
+        if (EINA_UNLIKELY(obj->auto_unref))
+          {
+             if (!(--obj->auto_unref))
+               efl_unref(eo_obj);
+          }
+        return EFL_NOOP;
      }
 
    return op;
