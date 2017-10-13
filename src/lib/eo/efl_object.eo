@@ -279,6 +279,29 @@ abstract Efl.Object ()
                even if @.parent is not $null.]]
          }
       }
+      @property auto_unref @protected @beta {
+         [[Mark an object to be automatically deleted after a function call.
+
+           This becomes effectives only after finalize is done. After any EO
+           function has been called on this object, it will be unref'ed. This
+           property will also be reset to $false. This is intended to simplify
+           Part objects lifecycle.
+
+           Note: This applies to any EO function call, even if the object was
+           of the wrong type (call resolution failed).
+
+           This is a write-only property as reading it would unref the object,
+           and reset the flag.
+
+           Warning: This is a beta API, do not use it unless you know exactly
+           what you are doing.
+         ]]
+         set {}
+         values {
+            enable: bool(false);
+               [[If $true, unref this object after the next call.]]
+         }
+      }
    }
    implements {
         class.constructor;
