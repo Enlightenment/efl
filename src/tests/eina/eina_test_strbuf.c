@@ -689,6 +689,7 @@ START_TEST(strbuf_strftime_test)
 
    eina_strbuf_free(buf);
 }
+END_TEST
 
 void
 eina_test_strbuf(TCase *tc)
