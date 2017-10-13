@@ -353,10 +353,10 @@ EAPI int               ecore_ipc_shutdown(void);
  * @ingroup Ecore_IPC_Server_Group
  * @brief Creates an IPC server that listens for connections.
  *
- * For more details about the @p compl_type, @p name and @p port
+ * For more details about the @p type, @p name and @p port
  * parameters, see the @ref ecore_con_server_add documentation.
  *
- * @param   compl_type The connection type.
+ * @param   type      The connection type.
  * @param   name       Name to associate with the socket used for connection.
  * @param   port       Number to identify with socket used for connection.
  * @param   data       Data to associate with the IPC server.
@@ -370,10 +370,10 @@ EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *nam
  * @brief Creates an IPC server object to represent the IPC server listening
  * on the given port.
  *
- * For more details about the @p compl_type, @p name and @p port
+ * For more details about the @p type, @p name and @p port
  * parameters, see the @ref ecore_con_server_connect documentation.
  *
- * @param   compl_type The IPC connection type.
+ * @param   type       The IPC connection type.
  * @param   name       Name used to determine which socket to use for the
  *                     IPC connection.
  * @param   port       Number used to identify the socket to use for the
@@ -468,7 +468,7 @@ EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, 
  * @param   svr           The given server.
  * @param   size          The maximum data payload size in bytes.
  */
-EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv, int size);
+EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -477,7 +477,7 @@ EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *srv,
  * @param   svr           The given server.
  * @return The maximum data payload in bytes.
  */
-EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *srv);
+EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
