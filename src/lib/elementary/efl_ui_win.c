@@ -6658,12 +6658,11 @@ _efl_ui_win_class_constructor(Efl_Class *klass)
      }
 }
 
-EOLIAN static Eina_Strbuf *
+EOLIAN static void
 _efl_ui_win_efl_object_debug_name_override(Eo *obj, Efl_Ui_Win_Data *pd, Eina_Strbuf *sb)
 {
-   sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, ":'%s':'%s'", pd->name, pd->title);
-   return sb;
 }
 
 EOLIAN static Eo*

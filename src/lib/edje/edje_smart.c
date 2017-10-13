@@ -47,14 +47,13 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
    return obj;
 }
 
-EOLIAN static Eina_Strbuf *
+EOLIAN static void
 _edje_object_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 {
-   sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, ":file='%s':group='%s'",
                              ed->file ? eina_file_filename_get(ed->file->f) : NULL,
                              ed->group);
-   return sb;
 }
 
 EOLIAN static void

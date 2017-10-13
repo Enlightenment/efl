@@ -2565,14 +2565,14 @@ efl_debug_name_get(const Eo *obj_id)
 
    if (!obj->cur_klass)
      {
-        sb = efl_debug_name_override((Eo *) obj_id, sb);
+        efl_debug_name_override((Eo *) obj_id, sb);
      }
    else
      {
         if (obj->super)
-          sb = efl_debug_name_override(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
+          efl_debug_name_override(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
         else
-          sb = efl_debug_name_override(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
+          efl_debug_name_override(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
         obj->super = EINA_FALSE;
         obj->cur_klass = NULL;
      }
