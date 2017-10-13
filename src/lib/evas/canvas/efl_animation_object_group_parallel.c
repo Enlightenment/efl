@@ -217,7 +217,7 @@ _efl_animation_object_group_parallel_efl_animation_object_progress_set(Eo *eo_ob
                      efl_animation_object_repeat_count_get(anim_obj);
                   if (repeat_count > 0)
                     {
-                       int repeated_count = _repeated_count_get(pd, anim_obj);
+                       repeated_count = _repeated_count_get(pd, anim_obj);
                        if (repeated_count < repeat_count)
                          {
                             repeated_count++;
