@@ -2739,6 +2739,9 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
    if (!_efl_animation_event_type_is_valid(event_type))
      return;
 
+   // This may happen if the object never was fully created.
+   if (!pd->event_anims) return;
+
    Event_Animation *event_anim =
       eina_array_data_get(pd->event_anims, event_type);
    if (!event_anim) return;
