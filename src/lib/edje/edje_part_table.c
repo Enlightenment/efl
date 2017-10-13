@@ -64,59 +64,58 @@ _efl_canvas_layout_part_table_efl_container_content_iterate(Eo *obj, void *_pd E
    Eina_Iterator *it;
 
    PROXY_DATA_GET(obj, pd);
-   if (!pd->rp->typedata.container) RETURN_VAL(NULL);
+   if (!pd->rp->typedata.container) return NULL;
    it = evas_object_table_iterator_new(pd->rp->object);
 
-   RETURN_VAL(_part_item_iterator_create(pd->rp->object, it));
+   return _part_item_iterator_create(pd->rp->object, it);
 }
 
 EOLIAN static int
 _efl_canvas_layout_part_table_efl_container_content_count(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(evas_obj_table_count(pd->rp->object));
+   return evas_obj_table_count(pd->rp->object);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx *content)
+_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx *content)
 {
-   PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(PROXY_CALL(efl_pack_unpack(obj, content)));
+   return efl_pack_unpack(obj, content);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_table_efl_pack_pack_clear(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_part_table_clear(pd->ed, pd->part, EINA_TRUE));
+   return _edje_part_table_clear(pd->ed, pd->part, EINA_TRUE);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_table_efl_pack_unpack_all(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_part_table_clear(pd->ed, pd->part, EINA_FALSE));
+   return _edje_part_table_clear(pd->ed, pd->part, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl_Gfx *subobj)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_part_table_unpack(pd->ed, pd->part, subobj));
+   return _edje_part_table_unpack(pd->ed, pd->part, subobj);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_table_efl_pack_grid_pack_grid(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *subobj, int col, int row, int colspan, int rowspan)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan));
+   return _edje_part_table_pack(pd->ed, pd->part, subobj, col, row, colspan, rowspan);
 }
 
 EOLIAN static Efl_Gfx *
 _efl_canvas_layout_part_table_efl_pack_grid_grid_content_get(Eo *obj, void *_pd EINA_UNUSED, int col, int row)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_part_table_child_get(pd->ed, pd->part, col, row));
+   return _edje_part_table_child_get(pd->ed, pd->part, col, row);
 }
 
 EOLIAN static void
@@ -124,7 +123,6 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_size_get(Eo *obj, void *_pd EIN
 {
    PROXY_DATA_GET(obj, pd);
    _edje_part_table_col_row_size_get(pd->ed, pd->part, cols, rows);
-   RETURN_VOID;
 }
 
 EOLIAN static int
@@ -133,7 +131,7 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_columns_get(Eo *obj, void *_pd 
    PROXY_DATA_GET(obj, pd);
    int cols = 0, rows = 0;
    _edje_part_table_col_row_size_get(pd->ed, pd->part, &cols, &rows);
-   RETURN_VAL(cols);
+   return cols;
 }
 
 EOLIAN static int
@@ -142,7 +140,7 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_rows_get(Eo *obj, void *_pd EIN
    PROXY_DATA_GET(obj, pd);
    int cols = 0, rows = 0;
    _edje_part_table_col_row_size_get(pd->ed, pd->part, &cols, &rows);
-   RETURN_VAL(rows);
+   return rows;
 }
 
 /* New table apis with eo */
@@ -203,7 +201,7 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_contents_get(Eo *obj, void *_pd
    eina_iterator_free(it);
 
    pit = calloc(1, sizeof(*pit));
-   if (!pit) RETURN_VAL(NULL);
+   if (!pit) return NULL;
 
    EINA_MAGIC_SET(&pit->iterator, EINA_MAGIC_ITERATOR);
 
@@ -215,7 +213,7 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_contents_get(Eo *obj, void *_pd
    pit->iterator.free = FUNC_ITERATOR_FREE(_table_item_iterator_free);
    efl_wref_add(obj, &pit->object);
 
-   RETURN_VAL(&pit->iterator);
+   return &pit->iterator;
 }
 
 EOLIAN static Eina_Bool
@@ -231,7 +229,7 @@ _efl_canvas_layout_part_table_efl_pack_grid_grid_position_get(Eo *obj, void *_pd
    if (colspan) *colspan = cs;
    if (rowspan) *rowspan = rs;
 
-   RETURN_VAL(ret);
+   return ret;
 }
 
 /* Legacy API implementation */

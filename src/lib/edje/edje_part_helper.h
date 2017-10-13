@@ -9,7 +9,6 @@ struct _Efl_Canvas_Layout_Part_Data
    Edje_Real_Part *rp;
    const char     *part;
    Eo             *obj;
-   unsigned char   temp, in_call, in_use;
 };
 
 struct _Part_Item_Iterator
@@ -23,13 +22,6 @@ struct _Part_Item_Iterator
 void _part_reuse_error(Efl_Canvas_Layout_Part_Data *pd);
 const char * _part_type_to_string(unsigned char type);
 
-#define PROXY_CALL_BEGIN(pd) do { pd->in_call = 1; } while (0)
-#define PROXY_CALL_END(pd) do { pd->in_call = 0; } while (0)
-#define PROXY_REF(obj, pd) do { if (!(pd->temp++)) efl_ref(obj); } while(0)
-#define PROXY_UNREF(obj, pd) do { if (pd->temp) { if (!(--pd->temp)) efl_del(obj); } } while(0)
-#define RETURN_VAL(a) do { typeof(a) _ret = a; PROXY_CALL_END(pd); PROXY_UNREF(obj, pd); return _ret; } while(0)
-#define RETURN_VOID do { PROXY_CALL_END(pd); PROXY_UNREF(obj, pd); return; } while(0)
-#define PROXY_CALL(a) ({ PROXY_REF(obj, pd); a; })
 #define PROXY_STATIC_VAR(type) _##type##_proxy
 
 #ifndef PROXY_ADD_EXTRA_OP
@@ -44,10 +36,6 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
    Efl_Canvas_Layout_Part_Data *pd;
    if (*static_var)
      {
-        // FIXME: Enable debug checks only in debug mode
-        pd = efl_data_scope_get(*static_var, EFL_CANVAS_LAYOUT_PART_CLASS);
-        if (pd && pd->temp && !pd->in_call)
-          _part_reuse_error(pd);
         if (*static_var != proxy)
           efl_del_intercept_set(*static_var, NULL);
      }
@@ -58,7 +46,6 @@ _part_proxy_del_cb(Eo *proxy, Eo **static_var)
      }
    efl_reuse(proxy);
    pd = efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_PART_CLASS);
-   pd->in_use = EINA_FALSE;
    *static_var = proxy;
 }
 
@@ -77,8 +64,7 @@ void \
 _ ## type ## _shutdown(void); \
 
 #define PROXY_DATA_GET(obj, pd) \
-   Efl_Canvas_Layout_Part_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_PART_CLASS); \
-   PROXY_CALL_BEGIN(pd)
+   Efl_Canvas_Layout_Part_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_PART_CLASS);
 
 #define PROXY_IMPLEMENTATION(type, KLASS, no_del_cb, ...) \
 static Eo * PROXY_STATIC_VAR(type) = NULL; \
@@ -109,25 +95,15 @@ _edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Ed
         proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
         goto end ; \
      } \
+   else PROXY_STATIC_VAR(type) = NULL; \
    \
-   if (EINA_UNLIKELY(pd->in_use)) \
-     { \
-        /* if (!pd->in_call) _part_reuse_error(pd); */ \
-        proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
-     } \
-   else \
-     { \
-        _edje_real_part_set(proxy, ed, rp, rp->part->name); \
-     } \
+   _edje_real_part_set(proxy, ed, rp, rp->part->name); \
    \
 end: \
-    \
    __VA_ARGS__; \
-   if (!no_del_cb) \
-     { \
-        PROXY_STATIC_VAR(type) = proxy; \
-        efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
-     } \
+   if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
+   efl_allow_parent_unref_set(proxy, 1); \
+   efl_auto_unref_set(proxy, 1); \
    return proxy; \
 }
 
