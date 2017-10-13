@@ -544,8 +544,11 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd)
    /* set this to block _sizing_eval() calls */
    pd->delete_me = EINA_TRUE;
    bd = evas_object_smart_data_get(wd->resize_obj);
-   EINA_LIST_FOREACH (bd->children, l, opt)
-     children = eina_list_append(children, opt->obj);
+   if (bd)
+     {
+        EINA_LIST_FOREACH (bd->children, l, opt)
+          children = eina_list_append(children, opt->obj);
+     }
    pd->delete_me = EINA_FALSE;
 
    /* EINA_FALSE means do not delete objects */
