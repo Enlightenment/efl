@@ -137,12 +137,12 @@ _eina_test_tls_thread(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
    int *ptr;
 
    ptr = eina_tls_get(key);
-   fail_if(eina_tls_get(key) != NULL);
+   fail_if(ptr != NULL);
 
    fail_if(!eina_tls_set(key, _eina_test_tls_alloc(24)));
 
    ptr = eina_tls_get(key);
-   fail_if(eina_tls_get(key) == NULL);
+   fail_if(ptr == NULL);
    fail_if(*ptr != 24);
 
    return NULL;

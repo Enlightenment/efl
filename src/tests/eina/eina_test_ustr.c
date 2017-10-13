@@ -161,7 +161,7 @@ START_TEST(eina_unicode_strncpy_test)
    fail_if(buf[9] != 0);
 
    buf[0] = '7';
-   rv = eina_unicode_strncpy(buf, STR1, 0);
+   eina_unicode_strncpy(buf, STR1, 0);
    fail_if(buf[0] != '7');
 
 #ifdef EINA_SAFETY_CHECKS

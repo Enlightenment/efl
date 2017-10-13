@@ -119,7 +119,6 @@ _mkstemp(char *suffix, int val)
    suffix[4] = lookup[v % 62];
    v /= 62;
    suffix[5] = lookup[v % 62];
-   v /= 62;
 
    val += 7777;
 
