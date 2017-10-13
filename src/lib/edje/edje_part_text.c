@@ -12,7 +12,6 @@ _efl_canvas_layout_part_text_efl_text_text_set(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE, EINA_FALSE);
-   RETURN_VOID;
 }
 
 EOLIAN static const char *
@@ -20,7 +19,7 @@ _efl_canvas_layout_part_text_efl_text_text_get(Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_FALSE));
+   return _edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_FALSE);
 }
 
 EOLIAN static const char *
@@ -28,7 +27,7 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_get(Eo *obj,
       void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_TRUE));
+   return _edje_efl_text_get(obj, pd->ed, pd->part, EINA_FALSE, EINA_TRUE);
 }
 
 EOLIAN static void
@@ -37,7 +36,6 @@ _efl_canvas_layout_part_text_efl_text_markup_markup_set(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_efl_text_set(obj, pd->ed, pd->part, text, EINA_FALSE, EINA_TRUE);
-   RETURN_VOID;
 }
 
 
@@ -46,7 +44,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_get(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor_Get_Type get_type)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_text_cursor_get(pd->rp, (int) get_type));
+   return _edje_text_cursor_get(pd->rp, (int) get_type);
 }
 
 EOLIAN static void
@@ -55,7 +53,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_paragraph_first(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_begin(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -64,7 +61,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_paragraph_last(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_end(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -73,7 +69,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_position_set(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_pos_set(pd->rp, cur, pos);
-   RETURN_VOID;
 }
 
 EOLIAN static int
@@ -81,7 +76,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_position_get(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_text_cursor_pos_get(pd->rp, cur));
+   return _edje_text_cursor_pos_get(pd->rp, cur);
 }
 
 EOLIAN static void
@@ -91,7 +86,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_coord_set(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_coord_set(pd->rp, cur, x, y);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -100,7 +94,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_line_char_first(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_line_begin(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -109,7 +102,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_line_char_last(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_line_end(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -118,7 +110,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_char_prev(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_prev(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -127,7 +118,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_char_next(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_next(pd->rp, cur);
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -143,7 +133,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_line_jump_by(Eo *obj,
      {
         _edje_text_cursor_up(pd->rp, cur);
      }
-   RETURN_VOID;
 }
 
 EOLIAN static void
@@ -154,7 +143,6 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_copy(Eo *obj,
 {
    PROXY_DATA_GET(obj, pd);
    _edje_text_cursor_copy(pd->rp, (Efl_Text_Cursor_Cursor *) cur, dst);
-   RETURN_VOID;
 }
 
 EOLIAN static Eina_Unicode
@@ -176,7 +164,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_content_get(Eo *obj,
         uc = *ustr;
         free(ustr);
      }
-   RETURN_VAL(uc);
+   return uc;
 }
 
 EOLIAN static Eina_Bool
@@ -195,7 +183,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(Eo *obj,
         if (cx) *cx -= pd->ed->x;
         if (cy) *cy -= pd->ed->y;
      }
-   RETURN_VAL(EINA_FALSE);
+   return EINA_FALSE;
 }
 
 EOLIAN static void
