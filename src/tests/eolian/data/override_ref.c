@@ -6,9 +6,9 @@ EOAPI EFL_VOID_FUNC_BODY_CONST(override_a_get);
 
 static void __eolian_override_b_set(Eo *obj EINA_UNUSED, Override_Data *pd, int idx EINA_UNUSED, float a, char b, int c)
 {
-   a = pd->a;
-   b = pd->b;
-   c = pd->c;
+   pd->a = a;
+   pd->b = b;
+   pd->c = c;
 }
 
 EOAPI EFL_VOID_FUNC_BODYV(override_b_set, EFL_FUNC_CALL(idx, a, b, c), int idx, float a, char b, int c);
@@ -42,9 +42,9 @@ void _override_base_constructor(Eo *obj, Override_Data *pd);
 
 static void __eolian_override_base_z_set(Eo *obj EINA_UNUSED, Override_Data *pd, int a, char b, float c)
 {
-   a = pd->a;
-   b = pd->b;
-   c = pd->c;
+   pd->a = a;
+   pd->b = b;
+   pd->c = c;
 }
 
 
