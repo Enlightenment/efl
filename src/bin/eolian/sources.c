@@ -281,7 +281,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
              if (is_auto)
                {
                   if (ftype == EOLIAN_PROP_SET)
-                    eina_strbuf_append_printf(params_init, "   %s = pd->%s;\n", prn, prn);
+                    eina_strbuf_append_printf(params_init, "   pd->%s = %s;\n", prn, prn);
                   else
                     {
                        eina_strbuf_append_printf(params_init, "   if (%s) *%s = pd->%s;\n",
