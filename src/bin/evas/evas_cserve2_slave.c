@@ -23,7 +23,6 @@ static Eina_Prefix *pfx = NULL;
 
 struct ext_loader_s
 {
-   unsigned int length;
    const char *extension;
    const char *loader;
 };
