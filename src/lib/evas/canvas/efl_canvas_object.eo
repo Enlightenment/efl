@@ -661,7 +661,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          [[Set the $animation which starts when the given $event_name happens to the object.]]
          params {
             @in event_type: Efl.Animation.Event_Type; [[The event type the given $animation is set for.]]
-            @in animation: Efl.Animation; [[The animation which starts when the given $event_name happens to the object.]]
+            @in animation: Efl.Object /* FIXME: Efl.Animation */;
+               [[The animation which starts when the given $event_name happens to the object.]]
          }
          legacy: null;
       }
@@ -671,7 +672,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             @in event_type: Efl.Animation.Event_Type; [[The event type the given $animation is set for.]]
          }
          legacy: null;
-         return: Efl.Animation @warn_unused;
+         return: Efl.Object /* FIXME: Efl.Animation */ @warn_unused;
       }
    }
    implements {
