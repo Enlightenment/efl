@@ -220,6 +220,34 @@ eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len)
    return eina_strbuf_manage_new(str);
 }
 
+EAPI Eina_Bool
+eina_strbuf_append_strftime(Eina_Strbuf *buf, const char *format, const struct tm *tm)
+{
+   char *outputbuf;
+
+   outputbuf = eina_strftime(format, tm);
+   if (!outputbuf) return EINA_FALSE;
+
+   eina_strbuf_append(buf, outputbuf);
+   free(outputbuf);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+eina_strbuf_insert_strftime(Eina_Strbuf *buf, const char *format, const struct tm *tm, size_t pos)
+{
+   char *outputbuf;
+
+   outputbuf = eina_strftime(format, tm);
+   if (!outputbuf) return EINA_FALSE;
+
+   eina_strbuf_insert_length(buf, outputbuf, strlen(outputbuf), pos);
+   free(outputbuf);
+
+   return EINA_TRUE;
+}
+
 /* Unicode */
 
 #include "eina_strbuf_template_c.x"
