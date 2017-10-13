@@ -30,9 +30,16 @@ mixin Efl.Ui.Focus.Object
                 focus : bool; [[The state in which the object should be put]]
             }
         }
+        prepare_logical {
+            [[Tells the object that the children of it will be queried soon by the given manager.
+
+              Deleting items in the manager in this call will result in undefied behaviour and may crash. Dont do that!
+            ]]
+        }
     }
     implements {
         @empty .focus_geometry;
+        @empty .prepare_logical;
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
