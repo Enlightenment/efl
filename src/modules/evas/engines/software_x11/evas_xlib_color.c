@@ -41,11 +41,14 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 {
    int r, g, b, i;
    DATA8 *color_lut;
-   int sig_mask = 0, delt = 0;
+   int delt = 0;
+/*
+   int sig_mask = 0;
 
    for (i = 0; i < v->bits_per_rgb; i++)
      sig_mask |= (0x1 << i);
    sig_mask <<= (16 - v->bits_per_rgb);
+*/
    i = 0;
    color_lut = malloc((nr) * (ng) * (nb));
    if (!color_lut) return NULL;
