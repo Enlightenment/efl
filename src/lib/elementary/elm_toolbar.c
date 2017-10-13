@@ -103,10 +103,8 @@ static void
 _item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
 {
    Elm_Toolbar_Item_Data *it;
-   Elm_Widget_Smart_Data *wpd;
    Eina_List *order = NULL;
 
-   wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
    EINA_INLIST_FOREACH(pd->items, it)
      {
         _item_focus_eval(it);
