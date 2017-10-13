@@ -740,7 +740,7 @@ eina_share_common_add_length(Eina_Share *share,
 
    eina_share_common_population_add(share, slen);
 
-   if (slen <= 0)
+   if (slen == 0)
       return NULL;
 
    hash = eina_hash_superfast(str, slen);
