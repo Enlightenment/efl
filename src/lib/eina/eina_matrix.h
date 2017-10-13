@@ -440,10 +440,10 @@ EAPI void eina_matrix3_divide(Eina_Matrix3 *m, double scalar);
 /**
  * @brief Computes the inverse of the given matrix.
  *
- * @param m The matrix to inverse.
+ * @param m The source matrix.
  * @param m2 The inverse matrix.
  *
- * This function inverse the matrix @p m and stores the result in
+ * This function inverts the matrix @p m and stores the result in
  * @p m2. No check is done on @p m or @p m2. If @p m can not be
  * invertible, then @p m2 is set to the identity matrix.
  *
@@ -452,27 +452,79 @@ EAPI void eina_matrix3_divide(Eina_Matrix3 *m, double scalar);
 EAPI void eina_matrix3_inverse(const Eina_Matrix3 *m, Eina_Matrix3 *m2);
 
 /**
+ * @brief Computes the transpose of the given matrix.
+ *
+ * @param m The source matrix.
+ * @param a The transposed matrix.
+ *
+ * This function transposes the matrix @p m and stores the result in
+ * @p a. No check is done on @p m or @p a.  The transpose of a matrix
+ * essentially flips a matrix over its diagonal.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_transpose(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
+ * @brief Computes the cofactor of the given matrix.
+ *
+ * @param m The source matrix.
+ * @param a The cofactored matrix.
+ *
+ * This function cofactors the matrix @p m and stores the result in
+ * @p a.  No check is done on @p m or @p a.  The cofactor of a matrix3 at
+ * row i, column j is computed by taking the determinant of the
+ * submatrix formed by deleting the i-th row and j-th column, and then
+ * multiplying by (-1)^(i+j).
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_cofactor(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
+ * @brief Computes the adjoint of the given matrix.
+ *
+ * @param m The matrix to be adjointed.
+ * @param a The adjoint matrix.
+ *
+ * This function finds the adjoint of the matrix @p m and stores the
+ * result in @p a. No check is done on @p m or @p a.  The adjoint of a
+ * matrix3 is effectively the transpose of its cofactor.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_adjoint(const Eina_Matrix3 *m, Eina_Matrix3 *a);
 
 /**
+ * @brief Computes the transform of a 2D point using the given matrix.
+ *
+ * @param m The transformation matrix to apply.
+ * @param x The x point to be transformed.
+ * @param y The y point to be transformed.
+ * @param xr The transformed x point.
+ * @param yr The transformed y point.
+ *
+ * Applies the transformation matrix @p m to the point (x,y), and stores
+ * the result in (*xr,*yr).  No check is done on @p m; @p xr and @p yr
+ * must point to valid memory.  A fast-path is included for if the zx
+ * and zy components of the matrix are zero.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_point_transform(const Eina_Matrix3 *m,
                                        double x, double y,
                                        double *xr, double *yr);
 /**
+ * @brief Computes the transformation of a rectangle using the given matrix.
+ *
+ * @param m The transformation matrix to apply.
+ * @param r The rectangle to be transformed.
+ * @param q The resultant transformed points.
+ *
+ * Performs a point transformation of each corner of the rectangle @p r,
+ * and stores the result in the quadrangle @p q.  No checks are done on the
+ * inputs, and @p q must point to valid memory.
+ *
  * @since 1.14
  */
 EAPI void eina_matrix3_rectangle_transform(const Eina_Matrix3 *m,
@@ -481,18 +533,48 @@ EAPI void eina_matrix3_rectangle_transform(const Eina_Matrix3 *m,
 
 /**
  * @brief Creates a projective matrix that maps a quadrangle to a quadrangle.
+ *
+ * @param m The transformation matrix to create.
+ * @param src The source quadrangle.
+ * @param dst The destination quadrangle.
+ * @return @c EINA_TRUE if matrix could be successfully created, @c EINA_FALSE otherwise.
+ *
+ * Calculates a matrix @p m that can be used to transform from an arbitrary
+ * source quadrangle @p src to another arbitrary quadrangle @p dst.
  */
 EAPI Eina_Bool eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
                                           const Eina_Quad *src,
                                           const Eina_Quad *dst);
 
 /**
+ * @brief Creates a matrix for unit-square to quad mapping.
+ *
+ * @param m The transformation matrix to create.
+ * @param q The source quadrangle.
+ *
+ * Calculates a matrix @p m that can be used to transform an arbitrary
+ * quadrangle @p q into a square.  If @p q is a parallelogram, then a
+ * fast path affine transformation is used, otherwise it computes the
+ * matrix using a full projective transformation operation.  No other
+ * checks are done on @p m or @p q.
+ *
  * @since 1.14
  */
 EAPI Eina_Bool eina_matrix3_square_quad_map(Eina_Matrix3 *m,
                                             const Eina_Quad *q);
 
 /**
+ * @brief Creates a matrix for mapping squares to match quad.
+ *
+ * @param m The transformation matrix to create.
+ * @param q The source quadrangle.
+ * @return @c EINA_FALSE on successful transform creation, @c EINA_FALSE otherwise.
+ *
+ * Calculates a matrix @p m that can be used to transform a square to
+ * fit a given quadrangle.  The created matrix will always have its zz
+ * element equal to 1.0.  The @p m matrix and @p q quad must be valid
+ * memory.
+ *
  * @since 1.14
  */
 EAPI Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
