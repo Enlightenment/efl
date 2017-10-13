@@ -229,7 +229,7 @@ evas_image_load_file_head_ico(void *loader_data,
         //else hot_y = word;
         if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
         if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
-        if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
+        if ((bmsize == 0) || (bmoffset == 0) || (bmoffset >= fsize)) goto close_file;
         if (search == BIGGEST)
           {
              pdelta = prop->w * prop->h;
@@ -461,7 +461,7 @@ evas_image_load_file_data_ico(void *loader_data,
         //else hot_y = word;
         if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
         if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
-        if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
+        if ((bmsize == 0) || (bmoffset == 0) || (bmoffset >= fsize)) goto close_file;
         if (search == BIGGEST)
           {
              pdelta = w * h;

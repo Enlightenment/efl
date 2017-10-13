@@ -1477,7 +1477,7 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
 {
    unsigned int i;
 
-   if (!window || !state || (num <= 0))
+   if (!window || !state || (num == 0))
      return;
 
    INF("setting window state");
