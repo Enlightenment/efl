@@ -653,8 +653,6 @@ _resize_job(void *data)
    eina_list_free(list);
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
-
-   _item_focus_eval_all(obj, sd);
 }
 
 static void
@@ -855,7 +853,7 @@ _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
 
-        if (!elm_widget_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
 
         if (eo_it != sd->focused_item)
@@ -864,14 +862,17 @@ _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it
                _elm_toolbar_item_unfocused(sd->focused_item);
              _elm_toolbar_item_focused(eo_it);
           }
+
      }
    else
      {
-        if (!elm_widget_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
         if (eo_it)
           _elm_toolbar_item_unfocused(eo_it);
      }
+
+   evas_object_focus_set(VIEW(it), focused);
 
    _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
    _elm_widget_highlight_in_theme_update(obj);
@@ -4109,6 +4110,13 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 {
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
+
+EOLIAN static void
+_elm_toolbar_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Toolbar_Data *pd)
+{
+   _item_focus_eval_all(obj, pd);
+}
+
 
 /* Standard widget overrides */
 
