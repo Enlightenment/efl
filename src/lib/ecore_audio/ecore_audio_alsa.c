@@ -103,10 +103,6 @@ recover:
 static void
 _alsa_output_add_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
 {
-   Ecore_Audio_Module *outmod = output->module;
-   Ecore_Audio_Module *inmod = input->module;
-   struct _Ecore_Audio_Alsa *alsa = (struct _Ecore_Audio_Alsa *)output->module_data;
-
    ecore_timer_add(0.3, _alsa_output_async_cb, output);
 }
 
