@@ -383,7 +383,7 @@ EAPI const char    *ecore_file_file_get     (const char *path);
  * returns @c NULL. When not needed anymore, the returned value must
  * be freed.
  */
-EAPI char          *ecore_file_dir_get      (const char *path);
+EAPI char          *ecore_file_dir_get      (const char *file);
 
 /**
  * @brief Checks if the given file can be read.
@@ -422,7 +422,7 @@ EAPI Eina_Bool      ecore_file_can_exec     (const char *file);
 /**
  * @brief Gets the path pointed by the given link.
  *
- * @param  lnk The name of the link.
+ * @param  link The name of the link.
  * @return The path pointed by link or NULL.
  *
  * This function returns the path pointed by @p link as a newly
@@ -488,7 +488,7 @@ EAPI char          *ecore_file_escape_name  (const char *filename);
  * failure, the function returns @c NULL. When not needed anymore, the
  * returned value must be freed.
  */
-EAPI char          *ecore_file_strip_ext    (const char *file);
+EAPI char          *ecore_file_strip_ext    (const char *path);
 
 /**
  * @brief Checks if the given directory is empty.
@@ -537,7 +537,7 @@ EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
  * of the notify methods (Inotify, Windows notification or polling) is
  * availablethis function does nothing.
  */
-EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
+EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *em);
 
 /**
  * @brief Gets the monitored path.
@@ -550,7 +550,7 @@ EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_m
  * returned by ecore_file_monitor_add(). If @p em is @c NULL, the
  * function returns @c NULL.
  */
-EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_file_monitor);
+EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *em);
 
 /* Path */
 
