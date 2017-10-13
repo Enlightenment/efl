@@ -1035,6 +1035,10 @@ _prev_item(Node *node)
    Eina_List *lnode;
 
    parent = T(node).parent;
+
+   //we are accessing the parents children, prepare!
+   efl_ui_focus_object_prepare_logical(parent->focusable);
+
    lnode = eina_list_data_find_list(T(parent).children, node);
    lnode = eina_list_prev(lnode);
 
@@ -1047,6 +1051,9 @@ static Node*
 _next(Node *node)
 {
    Node *n;
+
+   //prepare the node itself so if there are probebly no children, then they are here.
+   efl_ui_focus_object_prepare_logical(node->focusable);
 
    //Case 1 we are having children
    //But only enter the children if it does NOT have a redirect manager
@@ -1069,6 +1076,10 @@ _next(Node *node)
         Eina_List *lnode;
 
         parent = T(n).parent;
+
+        //we are accessing the parents children, prepare!
+        efl_ui_focus_object_prepare_logical(parent->focusable);
+
         lnode = eina_list_data_find_list(T(parent).children, n);
         lnode = eina_list_next(lnode);
 
@@ -1094,6 +1105,11 @@ _prev(Node *node)
      return NULL;
 
    n =_prev_item(node);
+
+   //we are accessing prev items children, prepare them!
+   if (n && n->focusable)
+     efl_ui_focus_object_prepare_logical(n->focusable);
+
    //case 1 there is a item in the parent previous to node, which has children
    if (n && T(n).children)
      {
@@ -1232,6 +1248,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         F_DBG(" %p is logical, fetching the next subnode that is either a redirect or a regular", obj);
 
         //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
+        efl_ui_focus_object_prepare_logical(node->focusable);
         if (node->tree.children)
           {
              target = node;
@@ -1240,7 +1257,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
              while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
                {
                   target = _next(target);
-
                   //abort if we are exceeding the childrens of node
                   if (target == node) target = NULL;
                }
@@ -1469,6 +1485,10 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
    res = calloc(1, sizeof(Efl_Ui_Focus_Relations));
 
    dirty_flush(obj, pd, n);
+
+   //make sure to prepare_logical so next and prev are correctly
+   if (n->tree.parent)
+     efl_ui_focus_object_prepare_logical(n->tree.parent->focusable);
 
 #define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir).partners);
 
