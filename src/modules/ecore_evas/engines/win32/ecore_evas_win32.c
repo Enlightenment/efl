@@ -790,8 +790,8 @@ _ecore_evas_win32_shaped_set(Ecore_Evas *ee, int shaped)
              if (ee->shaped)
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
           }
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_GDI */
      }
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_GDI */
 }
 
 static void
