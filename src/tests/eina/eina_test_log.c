@@ -376,7 +376,6 @@ END_TEST
 
 START_TEST(eina_log_customize)
 {
-   struct log_ctx ctx;
    int d;
 
    /* please don't define EINA_LOG_LEVELS for it */

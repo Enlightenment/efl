@@ -390,8 +390,6 @@ START_TEST(strbuf_realloc)
 
    eina_strbuf_remove(buf, 0, 0 + 32);
    fail_if(eina_strbuf_length_get(buf) != sz - 32);
-   sz -= 32;
-
 
    eina_strbuf_free(buf);
 
