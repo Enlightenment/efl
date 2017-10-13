@@ -453,7 +453,6 @@ static Efl_Ui_Focus_Object*
 _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Elm_Widget *parent;
-   Efl_Ui_Focus_Parent_Provider *provider;
 
    parent = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, obj);
 
