@@ -37,16 +37,17 @@ enum
    SELECTION_N_ATOMS,
 };
 
+typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
 typedef struct _Tmp_Info      Tmp_Info;
+typedef struct _Saved_Type    Saved_Type;
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Ecore_X_Event_Selection_Notify *, Elm_Selection_Data *, Tmp_Info **);
+typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Efl_Selection_Manager_Data *pd, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
 
 typedef struct _Efl_Selection_Manager_Atom Efl_Selection_Manager_Atom;
 typedef struct _Efl_Sel_Manager_Atom Efl_Sel_Manager_Atom;
-typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
 
 struct _Tmp_Info
 {
@@ -56,6 +57,16 @@ struct _Tmp_Info
    int   len;
 };
 
+struct _Saved_Type
+{
+   const char  **types;
+   char         *imgfile;
+   int           ntypes;
+   int           x, y;
+   Eina_Bool     textreq: 1;
+};
+
+
 struct _X11_Cnp_Selection
 {
    const char        *debug;
@@ -63,7 +74,7 @@ struct _X11_Cnp_Selection
    char              *selbuf;
    Evas_Object       *requestwidget;
    void              *udata;
-   //Elm_Sel_Format     requestformat;
+   Efl_Selection_Format     requestformat;
    //Elm_Drop_Cb        datacb;
    Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
    Eina_Bool        (*clear)   (void);
@@ -71,7 +82,7 @@ struct _X11_Cnp_Selection
    //Elm_Selection_Loss_Cb  loss_cb;
    //void                  *loss_data;
 
-   //Elm_Sel_Format     format;
+   Efl_Selection_Format     format;
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
    //Elm_Xdnd_Action    action;
@@ -121,8 +132,9 @@ struct _Efl_Selection_Manager_Data
     Efl_Selection_Data_Ready data_func;
     Eina_Free_Cb data_func_free_cb;
 
-    Efl_Selection_Type type;
-    Efl_Selection_Format format;
+    Eina_Bool has_sel;
+    Efl_Selection_Type active_type;
+    Efl_Selection_Format active_format;
     Efl_Selection_Manager_Atom atom;
     void *buf;
     int len;
@@ -130,6 +142,9 @@ struct _Efl_Selection_Manager_Data
     Eo *sel_owner;
 
     Efl_Sel_Manager_Atom *atomlist;
+    //Efl_Sel_Manager_Selection *sellist;
+    X11_Cnp_Selection *sellist;
+    Saved_Type *savedtypes;
 };
 
 #endif

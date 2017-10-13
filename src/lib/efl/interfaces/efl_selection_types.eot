@@ -28,14 +28,37 @@ struct Efl.Cnp.Selection
    length: int; [[length]]
 }
 
+enum Efl.Selection.Action
+{
+   [[Defines the kind of action associated with the drop data]]
+   unknown, [[Action type is unknown]]
+   copy, [[Copy the data]]
+   move, [[Move the data]]
+   private, [[Pricate action type]]
+   ask, [[Ask the user what to do]]
+   list, [[List the data]]
+   link, [[Link the data]]
+   description [[Describe the data]]
+}
+
+struct Efl.Selection.Data
+{
+   [[Structure holding the info about selected data.]]
+   x: int; [[The coordinates of the drop (DND operations only)]]
+   y: int; [[The coordinates of the drop (DND operations only)]]
+   format: Efl.Selection.Format; [[The format of the selection]]
+   data: void_ptr; [[The selection data, type determined by format member]]
+   len: int; [[The length of the selection data]]
+   action: Efl.Selection.Action; [[The action to perform with the data @since 1.8]]
+}
+
 function Efl.Selection.Data_Ready {
    [[Function pointer for getting selection.]]
    params {
       @in obj: ptr(Eo);
-      @in buf: void_ptr;
-      @in length: int;
+      @in seldata: ptr(Efl.Selection.Data);
+      //@in buf: void_ptr;
+      //@in length: int;
    }
 };
-
-
 

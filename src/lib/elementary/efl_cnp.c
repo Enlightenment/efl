@@ -23,11 +23,11 @@ _selection_manager_get(Eo *obj)
      {
         top = obj;
      }
-   Eo *sel_man = evas_object_data_get(top, "__selection_manager");
+   Eo *sel_man = efl_key_data_get(top, "__selection_manager");
    if (!sel_man)
      {
         Eo *sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, top);
-        evas_object_data_set(top, "__selection_manager", sel_man);
+        efl_key_data_set(top, "__selection_manager", sel_man);
      }
    return sel_man;
 }
