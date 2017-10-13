@@ -1563,7 +1563,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
   Node *last;
 
