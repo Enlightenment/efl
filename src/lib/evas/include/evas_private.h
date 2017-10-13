@@ -1209,7 +1209,7 @@ struct _Evas_Object_Protected_Data
    unsigned char               no_change_render;
    unsigned char               delete_me;
 
-   Eina_Array                 *event_anims; //Array of Efl_Animation
+   Eina_Inlist                *event_anims; //List of Efl_Animation
 
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
@@ -1987,11 +1987,8 @@ void _evas_touch_point_remove(Evas *e, int id);
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 
-/* for animation event count */
-#define EFL_ANIMATION_EVENT_TYPE_COUNT 3
-
 /* to show object if show is called during hide animation */
-Eina_Bool _efl_canvas_object_event_animation_is_running(Eo *eo_obj, Efl_Animation_Event_Type event);
+Eina_Bool _efl_canvas_object_event_animation_is_running(Eo *eo_obj, const Efl_Event_Description *desc);
 void _efl_canvas_object_event_animation_cancel(Eo *eo_obj);
 
 /* legacy/eo events */

@@ -108,7 +108,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
               * proceeded. */
              if (i &&
                  _efl_canvas_object_event_animation_is_running(eo_obj,
-                                                               EFL_ANIMATION_EVENT_TYPE_HIDE))
+                                                               EFL_GFX_EVENT_HIDE))
                _efl_canvas_object_event_animation_cancel(eo_obj);
              else
                return 1;
