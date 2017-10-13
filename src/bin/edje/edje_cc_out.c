@@ -1390,7 +1390,7 @@ data_write_images(Eet_File *ef, int *image_num)
                   break;
                }
           }
-        if (load_err != EVAS_LOAD_ERROR_NONE)
+        if (!img_dirs || (load_err != EVAS_LOAD_ERROR_NONE))
           {
              evas_object_image_file_set(im, img->entry, NULL);
              load_err = evas_object_image_load_error_get(im);
