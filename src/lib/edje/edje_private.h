@@ -39,6 +39,9 @@
 # include <Evil.h>
 #endif
 
+// auto_unref
+#define EFL_OBJECT_BETA
+#define EFL_OBJECT_PROTECTED
 #define EDJE_OBJECT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_CANVAS_LAYOUT_CALC_PROTECTED

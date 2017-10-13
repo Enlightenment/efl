@@ -11,14 +11,14 @@ EOLIAN static Efl_Gfx *
 _efl_canvas_layout_part_swallow_efl_container_content_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_efl_container_content_get(pd->ed, pd->part));
+   return _edje_efl_container_content_get(pd->ed, pd->part);
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_layout_part_swallow_efl_container_content_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx *content)
 {
    PROXY_DATA_GET(obj, pd);
-   RETURN_VAL(_edje_efl_container_content_set(pd->ed, pd->part, content));
+   return _edje_efl_container_content_set(pd->ed, pd->part, content);
 }
 
 EOLIAN static Efl_Gfx *
@@ -26,9 +26,9 @@ _efl_canvas_layout_part_swallow_efl_container_content_unset(Eo *obj, void *_pd E
 {
    PROXY_DATA_GET(obj, pd);
    Efl_Gfx *content = _edje_efl_container_content_get(pd->ed, pd->part);
-   if (!content) RETURN_VAL(NULL);
-   PROXY_CALL(efl_content_remove(obj, content));
-   RETURN_VAL(content);
+   if (!content) return NULL;
+   efl_content_remove(obj, content);
+   return content;
 }
 
 #include "efl_canvas_layout_part_swallow.eo.c"

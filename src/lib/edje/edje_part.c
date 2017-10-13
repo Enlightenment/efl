@@ -77,7 +77,7 @@ _edje_internal_proxy_shutdown(void)
 }
 
 void
-_edje_real_part_set(Eo *obj, Edje *ed, Edje_Real_Part *rp, const char *part)
+_edje_real_part_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp, const char *part)
 {
    Efl_Canvas_Layout_Part_Data *pd;
 
@@ -86,147 +86,128 @@ _edje_real_part_set(Eo *obj, Edje *ed, Edje_Real_Part *rp, const char *part)
    pd->ed = ed;
    pd->rp = rp;
    pd->part = part;
-   pd->temp = 1;
-   pd->in_use = 1;
-   pd->in_call = 0;
    efl_parent_set(obj, ed->obj);
 }
 
 EOLIAN static Efl_Object *
-_efl_canvas_layout_part_efl_object_finalize(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_efl_object_finalize(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd->rp && pd->ed && pd->part, NULL);
-   // Do not use RETURN_VAL() here!
+   // Do not use return  here!
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN Eina_Rect
-_efl_canvas_layout_part_efl_gfx_geometry_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp = pd->rp;
    Eina_Rect r = EINA_RECT_ZERO();
 
-   PROXY_CALL_BEGIN(pd);
    _edje_recalc_do(pd->ed);
-   if (!rp) RETURN_VAL(r);
+   if (!rp) return r;
 
-   RETURN_VAL((Eina_Rect) rp->rect);
+   return (Eina_Rect) rp->rect;
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_state_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, const char **name, double *val)
+_efl_canvas_layout_part_state_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, const char **name, double *val)
 {
    const char *str;
-   PROXY_CALL_BEGIN(pd);
 
-   if (!name && !val)
-     RETURN_VOID;
+   if (!name && !val) return;
    str = _edje_object_part_state_get(pd->ed, pd->part, val);
    if (name) *name = str;
-   RETURN_VOID;
 }
 
 EOLIAN static Efl_Canvas_Layout_Part_Type
-_efl_canvas_layout_part_part_type_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_part_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    Edje_Real_Part *rp;
-   PROXY_CALL_BEGIN(pd);
 
    rp = _edje_real_part_recursive_get(&pd->ed, pd->part);
-   if (!rp || !rp->part) RETURN_VAL(EFL_CANVAS_LAYOUT_PART_TYPE_NONE);
+   if (!rp || !rp->part) return EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
 
-   RETURN_VAL((Efl_Canvas_Layout_Part_Type) rp->part->type);
+   return (Efl_Canvas_Layout_Part_Type) rp->part->type;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_value_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_value_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_value_set(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_value_set(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_value_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_value_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_value_get(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_value_get(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_size_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dw, double dh)
+_efl_canvas_layout_part_efl_ui_drag_drag_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dw, double dh)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_size_set(pd->ed, pd->part, dw, dh));
+   return _edje_object_part_drag_size_set(pd->ed, pd->part, dw, dh);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_size_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double *dw, double *dh)
+_efl_canvas_layout_part_efl_ui_drag_drag_size_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double *dw, double *dh)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_size_get(pd->ed, pd->part, dw, dh));
+   return _edje_object_part_drag_size_get(pd->ed, pd->part, dw, dh);
 }
 
 EOLIAN static Efl_Ui_Drag_Dir
-_efl_canvas_layout_part_efl_ui_drag_drag_dir_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+_efl_canvas_layout_part_efl_ui_drag_drag_dir_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_dir_get(pd->ed, pd->part));
+   return _edje_object_part_drag_dir_get(pd->ed, pd->part);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_step_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_step_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_step_set(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_step_set(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_step_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_step_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_step_get(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_step_get(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_step_move(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_step_move(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_step(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_step(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_page_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_page_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_page_set(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_page_set(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_page_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_page_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double *dx, double *dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_page_get(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_page_get(pd->ed, pd->part, dx, dy);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_efl_ui_drag_drag_page_move(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
+_efl_canvas_layout_part_efl_ui_drag_drag_page_move(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, double dx, double dy)
 {
-   PROXY_CALL_BEGIN(pd);
-   RETURN_VAL(_edje_object_part_drag_page(pd->ed, pd->part, dx, dy));
+   return _edje_object_part_drag_page(pd->ed, pd->part, dx, dy);
 }
 
 static Eo *
-_edje_invalid_part_efl_content_get(Eo *obj, Efl_Canvas_Layout_Part_Data *pd)
+_edje_invalid_part_efl_content_get(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
    ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
-   RETURN_VAL(NULL);
+   return NULL;
 }
 
 static Eina_Bool
-_edje_invalid_part_efl_content_set(Eo *obj, Efl_Canvas_Layout_Part_Data *pd, Eo *subobj EINA_UNUSED)
+_edje_invalid_part_efl_content_set(Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd, Eo *subobj EINA_UNUSED)
 {
    ERR("Part '%s' (type: %s) of group '%s' is not a SWALLOW part!", pd->part, _part_type_to_string(pd->rp->type), pd->ed->group);
-   RETURN_VAL(EINA_FALSE);
+   return EINA_FALSE;
 }
 
 /* Internal EO APIs and hidden overrides */
