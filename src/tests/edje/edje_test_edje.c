@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #define EFL_GFX_FILTER_BETA
+#define EDJE_OBJECT_BETA
 
 #include <Eina.h>
 #include <Edje.h>
