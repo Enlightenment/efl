@@ -94,7 +94,7 @@ eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
    len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (len <= 0 || !str)
+   if (len == 0 || !str)
       return EINA_FALSE;
 
    ret = eina_strbuf_append_length(buf, str, len);
@@ -111,7 +111,7 @@ eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args)
 
    len = vasprintf(&str, fmt, args);
 
-   if (len <= 0 || !str)
+   if (len == 0 || !str)
       return EINA_FALSE;
 
    ret = eina_strbuf_append_length(buf, str, len);
@@ -131,7 +131,7 @@ eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
    len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (len <= 0 || !str)
+   if (len == 0 || !str)
       return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
@@ -151,7 +151,7 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
 
    len = vasprintf(&str, fmt, args);
 
-   if (len <= 0 || !str)
+   if (len == 0 || !str)
       return EINA_FALSE;
 
    ret = eina_strbuf_insert(buf, str, pos);
