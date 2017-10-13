@@ -720,7 +720,7 @@ _efl_canvas_group_efl_object_destructor(Eo *eo_obj, Evas_Smart_Data *o)
      }
 }
 
-EOLIAN static Eina_Strbuf *
+EOLIAN static void
 _efl_canvas_group_efl_object_debug_name_override(Eo *eo_obj, Evas_Smart_Data *o, Eina_Strbuf *sb)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -729,7 +729,7 @@ _efl_canvas_group_efl_object_debug_name_override(Eo *eo_obj, Evas_Smart_Data *o,
    if (obj->smart.smart && obj->smart.smart->smart_class)
      smart_class = obj->smart.smart->smart_class->name;
 
-   sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
+   efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
    if (smart_class)
      {
         eina_strbuf_append_printf(sb, ":children=%d:smart_class=%s",
@@ -739,7 +739,6 @@ _efl_canvas_group_efl_object_debug_name_override(Eo *eo_obj, Evas_Smart_Data *o,
      {
         eina_strbuf_append_printf(sb, ":children=%d", eina_inlist_count(o->contained));
      }
-   return sb;
 }
 
 static inline void

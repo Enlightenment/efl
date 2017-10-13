@@ -5130,15 +5130,14 @@ _elm_widget_legacy_ctor(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->legacy = EINA_TRUE;
 }
 
-EOLIAN static Eina_Strbuf *
+EOLIAN static void
 _elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Strbuf *sb)
 {
    const char *focus = "";
 
    if (elm_obj_widget_focus_get(obj)) focus = ":focused";
-   sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+   efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, "%s", focus);
-   return sb;
 }
 
 EOLIAN static Eina_Bool

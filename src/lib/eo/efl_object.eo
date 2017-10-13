@@ -88,19 +88,17 @@ abstract Efl.Object ()
             the entire debug name, from parent to child classes. In C the usual
             way to build the string is as follows:
 
-            sb = efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
+            efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
             eina_strbuf_append_printf(sb, "new_information");
-            return sb;
 
-            The receiving function should always either free the strbuf or
-            returning it back to the caller, as ownership is transferred.
+            In general, more debug information should be added to $sb after
+            calling the super function.
 
             @since 1.21
          ]]
          params {
-            @in sb: ptr(Eina.Strbuf) @owned; [[A string buffer, must not be $null.]]
+            @in sb: ptr(Eina.Strbuf); [[A string buffer, must not be $null.]]
          }
-         return: ptr(Eina.Strbuf) @owned; [[Should not be $null, may be $sb.]]
       }
       @property event_global_freeze_count @class {
          get {

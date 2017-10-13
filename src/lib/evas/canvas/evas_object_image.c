@@ -3630,10 +3630,10 @@ _evas_object_image_surface_get(Evas_Object_Protected_Data *obj, Eina_Bool create
    return pd->engine_data;
 }
 
-EOLIAN static Eina_Strbuf *
+EOLIAN static void
 _efl_canvas_image_internal_efl_object_debug_name_override(Eo *eo_obj, Evas_Image_Data *o, Eina_Strbuf *sb)
 {
-   sb = efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
+   efl_debug_name_override(efl_super(eo_obj, MY_CLASS), sb);
    if (o->cur->f)
      {
         const char *fname = eina_file_filename_get(o->cur->f);
@@ -3652,7 +3652,6 @@ _efl_canvas_image_internal_efl_object_debug_name_override(Eo *eo_obj, Evas_Image
      {
         eina_strbuf_append_printf(sb, ":unknown_image");
      }
-   return sb;
 }
 
 #define EFL_CANVAS_IMAGE_INTERNAL_EXTRA_OPS \
