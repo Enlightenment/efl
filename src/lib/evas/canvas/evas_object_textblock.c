@@ -4082,7 +4082,8 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         Evas_Object_Protected_Data *obj = c->evas_o;
 
         x = w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
-           c->marginr - from_x - ti->x_adjustment;
+           c->marginr - from_x;
+
         if (x < 0)
           x = 0;
         return ENFN->font_last_up_to_pos(ENC, fmt->font.font,
@@ -5269,7 +5270,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 
    save_cx = c->x;
    temp_w = c->w;
-   ellip_w = ellip_ti->parent.w;
+   ellip_w = ellip_ti->parent.w - ellip_ti->x_adjustment;
 #ifdef BIDI_SUPPORT
    // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
    // line may be reordered in a way that the item placement will cause the
@@ -5669,6 +5670,7 @@ _layout_par(Ctxt *c)
         int adv_line = 0;
         int redo_item = 0;
         Evas_Textblock_Obstacle_Info *obs_info = NULL;
+        Evas_Coord itw;
 
         it = _ITEM(eina_list_data_get(i));
         /* Skip visually deleted items */
@@ -5714,9 +5716,15 @@ _layout_par(Ctxt *c)
           }
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
+        itw = it->w;
+        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             itw -= _ITEM_TEXT(it)->x_adjustment;
+          }
+
         if ((c->w >= 0) &&
               (obs ||
-                 (((c->x + it->w) >
+                 (((c->x + itw) >
                    (c->w - c->o->style_pad.l - c->o->style_pad.r -
                     c->marginl - c->marginr)) || (wrap > 0))))
           {

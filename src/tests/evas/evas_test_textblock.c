@@ -3559,6 +3559,7 @@ START_TEST(evas_textblock_style)
 {
    Evas_Coord w, h, nw, nh;
    Evas_Coord l, r, t, b;
+   Evas_Coord bw;
    START_TB_TEST();
    Evas_Textblock_Style *newst;
    const char *buf = "Test<ps/>Test2<ps/>נסיון";
@@ -3683,6 +3684,24 @@ START_TEST(evas_textblock_style)
    evas_object_textblock_size_formatted_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
+
+   // Ellipsis style padding
+   // Should be consistent if style_pad is added
+   evas_object_textblock_text_markup_set(tb, "hello");
+   evas_object_textblock_size_native_get(tb, &w, &h);
+   evas_object_resize(tb, w - 1, 200);
+   evas_object_textblock_text_markup_set(tb,
+         "<ellipsis=1.0>hello");
+   evas_object_textblock_size_formatted_get(tb, &bw, NULL);
+   evas_object_textblock_text_markup_set(tb,
+         "<ellipsis=1.0 style=glow>hello</style>");
+   evas_object_textblock_style_insets_get(tb, &l, &r, NULL, NULL);
+   // Add padding to compensate for the style
+   evas_object_resize(tb, w - 1 + l + r, 200);
+   evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+   ck_assert_int_eq(nw, bw);
+
+
    END_TB_TEST();
 }
 END_TEST
