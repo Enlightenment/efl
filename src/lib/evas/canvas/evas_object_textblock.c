@@ -4193,6 +4193,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    int shad_sz = 0, shad_dst = 0, out_sz = 0;
    int dx = 0, minx = 0, maxx = 0, shx1, shx2;
    Evas_Object_Protected_Data *obj = c->evas_o;
+   int l, r, t, b;
+   l = r = t = b = 0;
 
    if (fmt->font.font)
      {
@@ -4289,6 +4291,16 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    ti->parent.h = th;
    ti->parent.adv = advw;
    ti->parent.x = 0;
+
+   l = -minx;
+   r = maxx;
+   // Get height padding as well
+   evas_text_style_pad_get(fmt->style, NULL, NULL, &t, &b);
+
+   if (l > c->style_pad.l) c->style_pad.l = l;
+   if (r > c->style_pad.r) c->style_pad.r = r;
+   if (t > c->style_pad.t) c->style_pad.t = t;
+   if (b > c->style_pad.b) c->style_pad.b = b;
 }
 
 /**
@@ -6575,6 +6587,7 @@ _layout_done(Ctxt *c, Evas_Coord *w_ret, Evas_Coord *h_ret)
         c->o->style_pad.b = c->style_pad.b;
         _paragraphs_clear(c);
         LYDBG("ZZ: ... layout #2\n");
+        c->o->content_changed = 0;
         _layout(c->obj, c->w, c->h, w_ret, h_ret);
         efl_event_callback_call(c->obj, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, NULL);
 
