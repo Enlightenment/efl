@@ -18,7 +18,7 @@
  * @author Brett Nash <nash@@nash.id.au>
  * @author Bruno Dilly <bdilly@@profusion.mobi>
  * @author Rafael Fonseca <rfonseca@@profusion.mobi>
- * @author Hermet (Chuneon Park) <hermet@@hermet.pe.kr>
+ * @author Hermet Park <hermetpark@@gmail.com>
  * @author Woohyun Jung <wh0705.jung@@samsung.com>
  * @author Jaehwan Kim <jae.hwan.kim@@samsung.com>
  * @author Wonguk Jeong <wonguk.jeong@@samsung.com>
