@@ -3668,6 +3668,21 @@ START_TEST(evas_textblock_style)
    ck_assert_int_eq(nw, 0);
    ck_assert_int_eq(nw, nh);
 
+   evas_textblock_style_set(newst,
+         "DEFAULT='" TEST_FONT " font_size=10 color=#000"
+         "  style=glow text_class=entry'");
+   evas_object_textblock_style_set(tb, newst);
+   evas_object_textblock_text_markup_set(tb, "Hello");
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+
+   evas_textblock_style_set(newst,
+         "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'");
+   evas_object_textblock_style_set(tb, newst);
+   evas_object_textblock_text_markup_set(tb,
+         "<style=glow>Hello");
+   evas_object_textblock_size_formatted_get(tb, &nw, &nh);
+   ck_assert_int_eq(w, nw);
+   ck_assert_int_eq(h, nh);
    END_TB_TEST();
 }
 END_TEST
