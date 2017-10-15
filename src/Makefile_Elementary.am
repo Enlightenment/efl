@@ -157,6 +157,7 @@ elm_private_eolian_files = \
 	lib/elementary/elm_calendar_item.eo \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
+	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -712,6 +713,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_composition.c \
 	lib/elementary/efl_ui_focus_parent_provider.c \
 	lib/elementary/efl_ui_focus_parent_provider_standard.c \
+	lib/elementary/efl_ui_focus_parent_provider_gen.c \
 	$(NULL)
 
 

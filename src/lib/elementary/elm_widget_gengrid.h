@@ -50,6 +50,9 @@ struct _Elm_Gengrid_Data
    Elm_Object_Item                      *bring_in_it;
    Elm_Gengrid_Item_Scrollto_Type        scroll_to_type;
 
+   Eina_Hash                            *content_item_map;
+   Eo                                   *provider;
+
    Ecore_Job                            *calc_job;
    int                                   walking;
    int                                   item_width, item_height;
