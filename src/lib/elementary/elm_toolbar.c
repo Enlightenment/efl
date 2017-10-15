@@ -2966,6 +2966,8 @@ _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TOOL_BAR);
 
+   efl_ui_focus_composition_custom_manager_set(obj, obj);
+
    return obj;
 }
 
