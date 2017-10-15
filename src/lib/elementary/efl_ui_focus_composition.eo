@@ -29,6 +29,12 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
            You can use this function to call composition_elements.
          ]]
       }
+      @property custom_manager @protected {
+         [[Every widget will be registered in this manager]]
+         values {
+            custom_manager : Efl.Ui.Focus.Manager;
+         }
+      }
    }
    implements {
       Elm.Widget.focus_state_apply;

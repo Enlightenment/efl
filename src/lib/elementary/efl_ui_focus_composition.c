@@ -14,20 +14,27 @@ typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
    Eina_List *adapters;
-   Efl_Ui_Focus_Manager *registered;
+   Efl_Ui_Focus_Manager *registered, *custom_manager;
    Eina_Bool dirty;
 } Efl_Ui_Focus_Composition_Data;
 
 static void
 _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 {
+   Efl_Ui_Focus_Manager *manager;
+
+   if (pd->custom_manager)
+     manager = pd->custom_manager;
+   else
+     manager = pd->registered;
+
    if (!pd->registered && pd->registered_targets)
      {
         Efl_Ui_Focus_Object *o;
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
-             efl_ui_focus_manager_calc_unregister(pd->registered, o);
+             efl_ui_focus_manager_calc_unregister(manager, o);
           }
      }
    else if (pd->registered)
@@ -37,16 +44,16 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
-             efl_ui_focus_manager_calc_unregister(pd->registered, o);
+             efl_ui_focus_manager_calc_unregister(manager, o);
           }
 
         EINA_LIST_FOREACH(pd->register_target, n, o)
           {
-             efl_ui_focus_manager_calc_register(pd->registered, o, obj, NULL);
+             efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
              pd->registered_targets = eina_list_append(pd->registered_targets, o);
           }
 
-        efl_ui_focus_manager_calc_update_order(pd->registered, obj, eina_list_clone(pd->targets_ordered));
+        efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->targets_ordered));
      }
 }
 
@@ -154,6 +161,19 @@ _efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Fo
 
    pd->dirty = EINA_FALSE;
 }
+
+EOLIAN static void
+_efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Focus_Manager *custom_manager)
+{
+   pd->custom_manager = custom_manager;
+}
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_focus_composition_custom_manager_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+{
+   return pd->custom_manager;
+}
+
 
 #include "efl_ui_focus_composition.eo.c"
 
