@@ -2534,6 +2534,18 @@ const char *   _edje_text_class_font_get(Edje *ed,
 const char *   _edje_text_font_get(const char *base, const char *new,
                                    char **free_later);
 
+void
+_edje_part_recalc_single_textblock(FLOAT_T sc,
+                                   Edje *ed,
+                                   Edje_Real_Part *ep,
+                                   Edje_Part_Description_Text *chosen_desc,
+                                   Edje_Calc_Params *params,
+                                   int *minw, int *minh,
+                                   int *maxw, int *maxh);
+void
+_edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
+                             Edje_Calc_Params *params,
+                             Edje_Part_Description_Text *chosen_desc);
 
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);

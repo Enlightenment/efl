@@ -95,6 +95,7 @@ lib/edje/edje_multisense.c \
 lib/edje/edje_program.c \
 lib/edje/edje_smart.c \
 lib/edje/edje_text.c \
+lib/edje/edje_textblock.c \
 lib/edje/edje_textblock_styles.c \
 lib/edje/edje_util.c \
 lib/edje/edje_legacy.c \
