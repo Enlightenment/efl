@@ -131,7 +131,6 @@ evas_image_load_file_head_jp2k_internal(unsigned int *w, unsigned int *h,
 
    if (cfmt == OPJ_CODEC_UNKNOWN)
      {
-        ERR("jpeg200 file format invalid");
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
