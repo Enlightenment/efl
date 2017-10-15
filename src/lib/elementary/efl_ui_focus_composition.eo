@@ -19,8 +19,20 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
             logical_order : list<Efl.Gfx> @owned; [[The order to use]]
          }
       }
+      dirty @protected {
+         [[ Mark this widget as dirty, the children can be considered to be changed after that call
+         ]]
+      }
+      prepare @protected {
+         [[A call to prepare the children of this element, called if marked as dirty
+
+           You can use this function to call composition_elements.
+         ]]
+      }
    }
    implements {
       Elm.Widget.focus_state_apply;
+      Efl.Ui.Focus.Object.prepare_logical;
+      @empty .prepare;
    }
 }

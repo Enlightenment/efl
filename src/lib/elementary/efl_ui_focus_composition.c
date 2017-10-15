@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
@@ -13,6 +15,7 @@ typedef struct {
    Eina_List *register_target, *registered_targets;
    Eina_List *adapters;
    Efl_Ui_Focus_Manager *registered;
+   Eina_Bool dirty;
 } Efl_Ui_Focus_Composition_Data;
 
 static void
@@ -132,6 +135,24 @@ _efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Com
    _state_apply(obj, pd);
 
    return registered;
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_dirty(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+{
+   pd->dirty = EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
+{
+   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
+
+   if (!pd->dirty) return;
+
+   efl_ui_focus_composition_prepare(obj);
+
+   pd->dirty = EINA_FALSE;
 }
 
 #include "efl_ui_focus_composition.eo.c"
