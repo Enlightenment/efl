@@ -2547,6 +2547,11 @@ const char *   _edje_text_class_font_get(Edje *ed,
                                          int *size, char **free_later);
 const char *   _edje_text_font_get(const char *base, const char *new,
                                    char **free_later);
+const char *   _set_translated_string(Edje *ed, Edje_Real_Part *ep);
+
+#define PART_IS_TEXT(ed, ep) \
+   (((ep)->part->type == EDJE_PART_TYPE_TEXTBLOCK) || \
+     ((ep)->part->type == EDJE_PART_TYPE_TEXT))
 
 void
 _edje_part_recalc_single_textblock(FLOAT_T sc,

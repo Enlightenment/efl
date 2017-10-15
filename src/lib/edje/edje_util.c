@@ -2078,7 +2078,7 @@ _edje_efl_text_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part,
                     return desc->text.text.str;
                }
           }
-        if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+        else
           {
              const char *entry;
              if (legacy)
@@ -3496,7 +3496,7 @@ again:
              //width
              if (!ep->chosen_description->fixed.w)
                {
-                  if ((legacy_calc) && (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+                  if ((legacy_calc) && PART_IS_TEXT(ed, ep))
                     {
                        //We care textblock width size specially.
                        Evas_Coord tb_mw;
@@ -3524,9 +3524,8 @@ again:
                {
                   if (legacy_calc)
                     {
-                       if ((ep->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
-                           ((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x ||
-                           !skip_h)
+                       if (!PART_IS_TEXT(ed, ep) ||
+                           ((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x || !skip_h)
                          {
                             if (over_h > max_over_h)
                               {
@@ -3536,7 +3535,7 @@ again:
                               }
                          }
 
-                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                       if (PART_IS_TEXT(ed, ep))
                          has_fixed_tb = EINA_FALSE;
                     }
                   else if (over_h > max_over_h)
