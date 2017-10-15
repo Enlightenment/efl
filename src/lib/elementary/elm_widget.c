@@ -355,6 +355,7 @@ _elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, El
 
    if (//check if we have changed the manager
        (current_state.manager != configured_state->manager) ||
+       (current_state.parent != configured_state->parent) ||
        //check if we are already registered but in a different state
        (current_state.logical != configured_state->logical))
      {
