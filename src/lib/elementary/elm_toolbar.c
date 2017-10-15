@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
@@ -63,62 +64,6 @@ static const Elm_Action key_actions[] = {
 };
 
 static void _item_select(Elm_Toolbar_Item_Data *it);
-
-static void
-_item_focus_eval(Elm_Toolbar_Item_Data *pd)
-{
-   Eina_Bool want = EINA_TRUE;
-   Efl_Ui_Focus_Object *widget;
-   Efl_Ui_Focus_Manager *manager;
-
-   if (elm_wdg_item_disabled_get(pd->base->eo_obj))
-     want = EINA_FALSE;
-
-   if (!evas_object_visible_get(VIEW(pd)))
-     want = EINA_FALSE;
-
-   if (pd->separator)
-     want = EINA_FALSE;
-
-   if (!!pd->registered == !!want) return;
-
-   //grab manager from widget
-   widget = WIDGET(pd);
-   manager = widget;
-
-   if (want)
-     {
-        efl_ui_focus_manager_calc_register(manager, EO_OBJ(pd), widget, NULL);
-        pd->registered = manager;
-     }
-   else
-     {
-        efl_ui_focus_manager_calc_unregister(manager, EO_OBJ(pd));
-        pd->registered = NULL;
-     }
-
-}
-
-static void
-_item_focus_eval_all(Elm_Toolbar *obj, Elm_Toolbar_Data *pd)
-{
-   Elm_Toolbar_Item_Data *it;
-   Eina_List *order = NULL;
-
-   EINA_INLIST_FOREACH(pd->items, it)
-     {
-        _item_focus_eval(it);
-        order = eina_list_append(order, EO_OBJ(it));
-     }
-
-   if (pd->more_item)
-     {
-        _item_focus_eval(pd->more_item);
-        order = eina_list_append(order, EO_OBJ(pd->more_item));
-     }
-
-   efl_ui_focus_manager_calc_update_order(obj, obj, order);
-}
 
 static int
 _toolbar_item_prio_compare_cb(const void *i1,
@@ -949,7 +894,7 @@ EOLIAN static void
 _elm_toolbar_item_elm_widget_item_disabled_set(Eo *eo_id, Elm_Toolbar_Item_Data *sd, Eina_Bool disabled)
 {
    elm_wdg_item_disabled_set(efl_super(eo_id, ELM_TOOLBAR_ITEM_CLASS), disabled);
-   _item_focus_eval(sd);
+   efl_ui_focus_composition_dirty(WIDGET(sd));
 }
 
 EOLIAN static void
@@ -2359,12 +2304,7 @@ _elm_toolbar_item_efl_object_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item
                  item->selected && next) _item_select(next);
           }
      }
-
-   if (item->registered)
-     {
-        efl_ui_focus_manager_calc_unregister(item->registered, eo_item);
-        item->registered = NULL;
-     }
+   efl_ui_focus_composition_dirty(WIDGET(item));
 
    _item_del(item);
 
@@ -4109,10 +4049,41 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
 
-EOLIAN static void
-_elm_toolbar_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Toolbar_Data *pd)
+static Eina_Bool
+_part_of_chain(Elm_Toolbar_Item_Data *pd)
 {
-   _item_focus_eval_all(obj, pd);
+   Eina_Bool want = EINA_TRUE;
+   if (elm_wdg_item_disabled_get(pd->base->eo_obj))
+     want = EINA_FALSE;
+
+   if (!evas_object_visible_get(VIEW(pd)))
+     want = EINA_FALSE;
+
+   if (pd->separator)
+     want = EINA_FALSE;
+
+   return want;
+}
+
+EOLIAN static void
+_elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
+{
+   Elm_Toolbar_Item_Data *it;
+   Eina_List *order = NULL;
+
+   EINA_INLIST_FOREACH(pd->items, it)
+     {
+       if (_part_of_chain(it))
+          order = eina_list_append(order, EO_OBJ(it));
+     }
+
+   if (pd->more_item)
+     {
+        if (_part_of_chain(pd->more_item))
+          order = eina_list_append(order, EO_OBJ(pd->more_item));
+     }
+
+   efl_ui_focus_composition_elements_set(obj, order);
 }
 
 
