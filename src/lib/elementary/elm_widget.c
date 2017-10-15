@@ -454,8 +454,11 @@ static Efl_Ui_Focus_Object*
 _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    Elm_Widget *parent;
+   Efl_Ui_Focus_Parent_Provider *provider;
 
-   parent = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, obj);
+   provider = efl_provider_find(obj, EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE);
+
+   parent = efl_ui_focus_parent_provider_find_logical_parent(provider, obj);
 
    if (pd->logical.parent != parent)
      {
@@ -5084,7 +5087,6 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = efl_parent_get(obj);
    elm_obj_widget_parent_set(obj, parent);
-   sd->provider = efl_provider_find(obj, EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE);
    sd->on_create = EINA_FALSE;
 
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_UNKNOWN);
