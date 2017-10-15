@@ -1,4 +1,4 @@
-class Elm.Grid (Elm.Widget)
+class Elm.Grid (Elm.Widget, Efl.Ui.Focus.Composition)
 {
    [[Elementary grid class]]
    legacy_prefix: elm_grid;
@@ -56,5 +56,6 @@ class Elm.Grid (Elm.Widget)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
+      Efl.Ui.Focus.Composition.prepare;
    }
 }
