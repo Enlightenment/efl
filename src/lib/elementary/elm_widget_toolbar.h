@@ -83,7 +83,6 @@ struct _Elm_Toolbar_Item_Data
    Eina_List    *states;
    Eina_List    *current_state;
 
-   Efl_Ui_Focus_Manager *registered;
    Eina_Bool     separator : 1;
    Eina_Bool     selected : 1;
    Eina_Bool     menu : 1;

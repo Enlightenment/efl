@@ -23,7 +23,7 @@ enum Elm.Toolbar.Shrink_Mode
    last [[Indicates error if returned by elm_toolbar_shrink_mode_get()]]
 }
 
-class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Ui.Direction,
+class Elm.Toolbar (Elm.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Elm.Interface.Atspi_Widget_Action, Efl.Access.Selection,
                    Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
 {
@@ -344,7 +344,7 @@ class Elm.Toolbar (Elm.Widget, Elm.Interface_Scrollable, Efl.Ui.Direction,
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
-      Efl.Ui.Focus.Object.prepare_logical;
+      Efl.Ui.Focus.Composition.prepare;
    }
    events {
       item,focused; [[Called when toolbar item got focus]]
