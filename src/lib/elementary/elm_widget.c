@@ -467,26 +467,32 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
         //update old logical parent;
         if (pd->logical.parent)
           {
-             ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
-             if (!logical_wd)
+             if (efl_isa(pd->logical.parent, ELM_WIDGET_CLASS))
                {
-                  ERR("Widget parent has the wrong type!");
-                  return NULL;
+                  ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
+                  if (!logical_wd)
+                    {
+                       ERR("Widget parent has the wrong type!");
+                       return NULL;
+                    }
+                  logical_wd->logical.child_count --;
                }
-             logical_wd->logical.child_count --;
              old = pd->logical.parent;
              efl_weak_unref(&pd->logical.parent);
              pd->logical.parent = NULL;
           }
         if (parent)
           {
-             ELM_WIDGET_DATA_GET(parent, logical_wd);
-             if (!logical_wd)
+             if (efl_isa(parent, ELM_WIDGET_CLASS))
                {
-                  ERR("Widget parent has the wrong type!");
-                  return NULL;
+                  ELM_WIDGET_DATA_GET(parent, parent_wd);
+                  if (!parent_wd)
+                    {
+                       ERR("Widget parent has the wrong type!");
+                       return NULL;
+                    }
+                  parent_wd->logical.child_count ++;
                }
-             logical_wd->logical.child_count ++;
              pd->logical.parent = parent;
              efl_weak_ref(&pd->logical.parent);
           }
@@ -503,15 +509,14 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
    old_parent = _logical_parent_eval(obj, pd);
 
-   if (old_parent)
+   if (efl_isa(old_parent, ELM_WIDGET_CLASS))
      {
         //emit signal and focus eval old and new
         ELM_WIDGET_DATA_GET(old_parent, old_pd);
         _full_eval(old_parent, old_pd);
-
      }
 
-   if (pd->logical.parent)
+   if (efl_isa(pd->logical.parent, ELM_WIDGET_CLASS))
      {
         ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
         _full_eval(pd->logical.parent, new_pd);
