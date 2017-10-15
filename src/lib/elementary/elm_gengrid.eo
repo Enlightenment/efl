@@ -10,7 +10,7 @@ enum Elm.Gengrid.Reorder_Type
    swap    [[Swap reorder type]]
 }
 
-class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
+class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
                    Efl.Access.Selection)
 {
@@ -544,6 +544,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.provider_find;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
@@ -568,6 +569,8 @@ class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.clear;
+      Efl.Ui.Focus.Composition.prepare;
+      Elm.Widget.focus_state_apply;
    }
    events {
       realized; [[Called when gengrid realized]]

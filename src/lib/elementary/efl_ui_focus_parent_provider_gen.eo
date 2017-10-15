@@ -1,0 +1,17 @@
+class Efl.Ui.Focus.Parent_Provider.Gen(Efl.Object, Efl.Ui.Focus.Parent_Provider) {
+   methods {
+      @property content_item_map {
+         values {
+            map : hash<Elm.Widget, Elm.Widget.Item>;
+         }
+      }
+      @property container {
+         values {
+            container : Elm.Widget;
+         }
+      }
+   }
+   implements {
+      Efl.Ui.Focus.Parent_Provider.find_logical_parent;
+   }
+}
