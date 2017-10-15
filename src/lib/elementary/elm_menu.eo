@@ -68,6 +68,7 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
+      Efl.Object.provider_find;
    }
    events {
       dismissed; [[Called when menu widget was dismissed]]
