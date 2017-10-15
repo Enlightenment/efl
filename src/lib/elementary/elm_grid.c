@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <elm_grid.eo.h>
@@ -14,12 +15,12 @@
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
 static void
-_focus_order_flush(Eo *obj)
+_elm_grid_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
    Eina_List *order = evas_object_grid_children_get(wpd->resize_obj);
 
-   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
+   efl_ui_focus_composition_elements_set(obj, order);
 }
 
 static void
@@ -125,7 +126,7 @@ _elm_grid_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, Evas_Coord x
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static void
@@ -135,7 +136,7 @@ _elm_grid_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
 
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
    evas_object_grid_unpack(wd->resize_obj, subobj);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static void
@@ -154,7 +155,7 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
      }
 
    evas_object_grid_clear(wd->resize_obj, clear);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EAPI void
@@ -170,7 +171,7 @@ elm_grid_pack_set(Evas_Object *subobj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EAPI void
