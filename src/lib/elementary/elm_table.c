@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <elm_table.eo.h>
@@ -15,12 +16,12 @@
 #define MY_CLASS_NAME_LEGACY "elm_table"
 
 static void
-_focus_order_flush(Eo *obj)
+_elm_table_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
    Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
    Eina_List *order = evas_object_table_children_get(wpd->resize_obj);
 
-   efl_ui_focus_manager_calc_update_order(wpd->focus.manager, obj, order);
+   efl_ui_focus_composition_elements_set(obj, order);
 }
 
 static void
@@ -239,7 +240,7 @@ _elm_table_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col, in
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static void
@@ -270,7 +271,7 @@ _elm_table_pack_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_pack(wd->resize_obj, subobj, col, row, colspan, rowspan);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EAPI void
@@ -305,7 +306,7 @@ _elm_table_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_table_clear(wd->resize_obj, clear);
-   _focus_order_flush(obj);
+   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static Evas_Object*
@@ -329,19 +330,6 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 
    evas_object_smart_calculate(wd->resize_obj);
 }
-
-EOLIAN Eina_Bool
-_elm_table_elm_widget_focus_state_apply(Eo *obj, void *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
-{
-   Eina_Bool result = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
-
-   //later registering children are automatically set into the order of the internal table
-   if (configured_state->manager)
-     _focus_order_flush(obj);
-
-   return result;
-}
-
 
 /* Internal EO APIs and hidden overrides */
 

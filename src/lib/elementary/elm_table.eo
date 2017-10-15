@@ -1,4 +1,4 @@
-class Elm.Table (Elm.Widget)
+class Elm.Table (Elm.Widget, Efl.Ui.Focus.Composition)
 {
    [[Elementary table class]]
    legacy_prefix: elm_table;
@@ -123,6 +123,6 @@ class Elm.Table (Elm.Widget)
       Efl.Canvas.Group.group_calculate;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_sub_object_del;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Focus.Composition.prepare;
    }
 }
