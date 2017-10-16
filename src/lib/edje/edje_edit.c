@@ -14186,9 +14186,6 @@ fill:
         size_abs = ((img->image.fill.abs_x == 0) && (img->image.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
      }
 
-
-
-   attr_amount = smooth + type;
    attr_orig_amount = orig_rel + orig_abs;
    attr_size_amount = size_rel + size_abs;
    attr_amount = smooth + type + attr_orig_amount + attr_size_amount;
@@ -14532,9 +14529,6 @@ fill_proxy:
         size_abs = ((pro->proxy.fill.abs_x == 0) && (pro->proxy.fill.abs_y == 0)) ? EINA_FALSE : EINA_TRUE;
      }
 
-
-
-   attr_amount = smooth + type;
    attr_orig_amount = orig_rel + orig_abs;
    attr_size_amount = size_rel + size_abs;
    attr_amount = smooth + type + attr_orig_amount + attr_size_amount;
