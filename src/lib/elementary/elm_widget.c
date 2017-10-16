@@ -3473,7 +3473,7 @@ _elm_widget_interest_region_mode_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data 
 }
 
 EAPI void
-elm_widget_activate(Evas_Object *obj, Elm_Activate act)
+elm_widget_activate(Evas_Object *obj, Efl_Ui_Activate act)
 {
    Evas_Object *parent;
    Eina_Bool ret;
@@ -5186,7 +5186,7 @@ _elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UN
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_on_access_activate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Elm_Activate act EINA_UNUSED)
+_elm_widget_on_access_activate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Efl_Ui_Activate act EINA_UNUSED)
 {
    WRN("The %s widget does not implement the \"activate\" functions.",
        efl_class_name_get(efl_class_get(obj)));

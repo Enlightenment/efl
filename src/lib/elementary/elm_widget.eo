@@ -268,7 +268,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
            This is an unstable API.
          ]]
          params {
-            @in act: Elm.Activate; [[Type of activation.]]
+            @in act: Efl.Ui.Activate; [[Type of activation.]]
          }
          return: bool; [[$true on success, $false otherwise]]
          legacy: null; /* FIXME: legacy API does extra work */

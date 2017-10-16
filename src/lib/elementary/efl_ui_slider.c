@@ -600,20 +600,20 @@ _efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Ef
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Elm_Activate act)
+_efl_ui_slider_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Efl_Ui_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (act == ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act == EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
-   if ((act == ELM_ACTIVATE_UP) ||
-       (act == ELM_ACTIVATE_RIGHT))
+   if ((act == EFL_UI_ACTIVATE_UP) ||
+       (act == EFL_UI_ACTIVATE_RIGHT))
      {
         if (!_is_inverted(sd->dir))
           _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
-   else if ((act == ELM_ACTIVATE_DOWN) ||
-            (act == ELM_ACTIVATE_LEFT))
+   else if ((act == EFL_UI_ACTIVATE_DOWN) ||
+            (act == EFL_UI_ACTIVATE_LEFT))
      {
         if (!_is_inverted(sd->dir))
           _drag_down(obj, NULL, NULL, NULL);

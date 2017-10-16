@@ -88,10 +88,10 @@ _efl_ui_button_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_button_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, Elm_Activate act)
+_efl_ui_button_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
    efl_event_callback_legacy_call

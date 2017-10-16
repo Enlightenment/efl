@@ -262,7 +262,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Elm_Activate act)
+_elm_scroller_elm_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -272,35 +272,35 @@ _elm_scroller_elm_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA
    Evas_Coord page_y = 0;
 
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (act == ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act == EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, NULL, NULL, &v_w, &v_h);
 
-   if (act == ELM_ACTIVATE_UP)
+   if (act == EFL_UI_ACTIVATE_UP)
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if (act == ELM_ACTIVATE_DOWN)
+   else if (act == EFL_UI_ACTIVATE_DOWN)
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;
         else
           y += page_y;
      }
-   else if (act == ELM_ACTIVATE_LEFT)
+   else if (act == EFL_UI_ACTIVATE_LEFT)
      {
         if (page_x < 0)
           x -= -(page_x * v_w) / 100;
         else
           x -= page_x;
      }
-   else if (act == ELM_ACTIVATE_RIGHT)
+   else if (act == EFL_UI_ACTIVATE_RIGHT)
      {
         if (page_x < 0)
           x += -(page_x * v_w) / 100;

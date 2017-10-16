@@ -5414,9 +5414,9 @@ _elm_entry_anchor_hover_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 /* END - ANCHOR HOVER */
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Elm_Activate act)
+_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
-   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
