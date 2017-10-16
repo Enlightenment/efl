@@ -39,6 +39,12 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
             custom_manager : Efl.Ui.Focus.Manager;
          }
       }
+      @property logical_mode @protected {
+         [[Set to true if all children should be registered as logicals]]
+         values {
+            logical_mode : bool; [[$true or $false]]
+         }
+      }
    }
    implements {
       Elm.Widget.focus_state_apply;
