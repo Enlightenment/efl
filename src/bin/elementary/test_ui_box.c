@@ -238,7 +238,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
-   elm_object_content_set(f, hbox);
+   efl_content_set(f, hbox);
    efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
 
 
@@ -481,7 +481,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack_padding_set(bx, 10, 10, EINA_TRUE);
    efl_gfx_size_hint_align_set(bx, 0.5, 0.5);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
-   elm_object_content_set(f, bx);
+   efl_content_set(f, bx);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Btn1");

@@ -23,7 +23,8 @@ struct _Elm_Part_Data
 // Note: this generic implementation can be improved to support part object
 // caching or something...
 
-
+// FIXME: Some widgets return the alias name, some return the real name
+// alias doesn't work for frame, _elm_layout_part_aliasing_eval() fails for scroller
 #define ELM_PART_CONTENT_DEFAULT_SET(type, part) \
    static const char * _ ## type ## _default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED) { return part; }
 
@@ -35,6 +36,25 @@ struct _Elm_Part_Data
 
 #define ELM_PART_TEXT_DEFAULT_OPS(type) \
    EFL_OBJECT_OP_FUNC(elm_widget_default_text_part_get, _ ## type ## _default_text_part_get)
+
+#define ELM_PART_CONTENT_DEFAULT_IMPLEMENT(type, typedata) \
+   EOLIAN static Eina_Bool \
+   _ ## type ## _efl_container_content_set(Eo *obj, typedata *sd, Evas_Object *content) \
+   { \
+      return efl_content_set(efl_part(obj, _ ## type ## _default_content_part_get(obj, sd)), content); \
+   } \
+   \
+   EOLIAN static Evas_Object* \
+   _ ## type ## _efl_container_content_get(Eo *obj, typedata *sd) \
+   { \
+      return efl_content_get(efl_part(obj, _ ## type ## _default_content_part_get(obj, sd))); \
+   } \
+   \
+   EOLIAN static Evas_Object* \
+   _ ## type ## _efl_container_content_unset(Eo *obj, typedata *sd) \
+   { \
+      return efl_content_unset(efl_part(obj, _ ## type ## _default_content_part_get(obj, sd))); \
+   }
 
 
 // For any widget that has specific part handling
