@@ -84,7 +84,7 @@ _access_action_callback_call(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Activate act)
+_elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    int type = ELM_ACCESS_ACTION_FIRST;
 
@@ -93,25 +93,25 @@ _elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Ac
 
    switch (act)
      {
-      case ELM_ACTIVATE_DEFAULT:
+      case EFL_UI_ACTIVATE_DEFAULT:
         type = ELM_ACCESS_ACTION_ACTIVATE;
         break;
 
-      case ELM_ACTIVATE_UP:
+      case EFL_UI_ACTIVATE_UP:
         type = ELM_ACCESS_ACTION_UP;
         break;
 
-      case ELM_ACTIVATE_DOWN:
+      case EFL_UI_ACTIVATE_DOWN:
         type = ELM_ACCESS_ACTION_DOWN;
         break;
 
-      case ELM_ACTIVATE_RIGHT:
+      case EFL_UI_ACTIVATE_RIGHT:
         break;
 
-      case ELM_ACTIVATE_LEFT:
+      case EFL_UI_ACTIVATE_LEFT:
         break;
 
-      case ELM_ACTIVATE_BACK:
+      case EFL_UI_ACTIVATE_BACK:
         type = ELM_ACCESS_ACTION_BACK;
         break;
 
@@ -132,7 +132,7 @@ _elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Elm_Ac
      }
 
    /* TODO: deprecate below? */
-   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+   if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    Elm_Access_Info *ac = evas_object_data_get(obj, "_elm_access");
    if (!ac) return EINA_FALSE;
@@ -632,7 +632,7 @@ _elm_access_activate_callback_set(Elm_Access_Info           *ac,
 }
 
 EAPI void
-_elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
+_elm_access_highlight_object_activate(Evas_Object *obj, Efl_Ui_Activate act)
 {
    Evas_Object *highlight;
 
@@ -1383,15 +1383,15 @@ elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Acces
         break;
 
       case ELM_ACCESS_ACTION_ACTIVATE:
-        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_DEFAULT);
+        _elm_access_highlight_object_activate(obj, EFL_UI_ACTIVATE_DEFAULT);
         break;
 
       case ELM_ACCESS_ACTION_UP:
-        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_UP);
+        _elm_access_highlight_object_activate(obj, EFL_UI_ACTIVATE_UP);
         break;
 
       case ELM_ACCESS_ACTION_DOWN:
-        _elm_access_highlight_object_activate(obj, ELM_ACTIVATE_DOWN);
+        _elm_access_highlight_object_activate(obj, EFL_UI_ACTIVATE_DOWN);
         break;
 
       case ELM_ACCESS_ACTION_SCROLL:

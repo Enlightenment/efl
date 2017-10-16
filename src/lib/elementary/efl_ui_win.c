@@ -3673,7 +3673,7 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE)
                {
                   _elm_access_highlight_object_activate
-                    (sd->obj, ELM_ACTIVATE_DEFAULT);
+                    (sd->obj, EFL_UI_ACTIVATE_DEFAULT);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
@@ -3705,13 +3705,13 @@ _elm_win_client_message(void *data,
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP)
                {
                   _elm_access_highlight_object_activate
-                    (sd->obj, ELM_ACTIVATE_UP);
+                    (sd->obj, EFL_UI_ACTIVATE_UP);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN)
                {
                   _elm_access_highlight_object_activate
-                    (sd->obj, ELM_ACTIVATE_DOWN);
+                    (sd->obj, EFL_UI_ACTIVATE_DOWN);
                }
           }
      }

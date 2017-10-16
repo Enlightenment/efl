@@ -218,7 +218,7 @@ enum Elm.Icon.Type
 }
 
 /* 'on_access_activate' is beta API in the Widget class */
-enum Elm.Activate
+enum Efl.Ui.Activate
 {
    [[Accessibility ]]
    default = 0, [[Activate default]]

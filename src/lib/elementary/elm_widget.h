@@ -367,7 +367,7 @@ typedef struct _Elm_Widget_Smart_Class
    void             (*access)(Evas_Object *obj,
                               Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */
    Eina_Bool        (*activate)(Evas_Object *obj,
-                                Elm_Activate act); /**< 'Virtual' function to activate widget  */
+                                Efl_Ui_Activate act); /**< 'Virtual' function to activate widget  */
 } Elm_Widget_Smart_Class;
 
 /**
@@ -562,7 +562,7 @@ EAPI void             _elm_access_widget_item_register(Elm_Widget_Item_Data *ite
 EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item_Data *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
 EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
-EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
+EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Efl_Ui_Activate act);
 EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
 EINA_DEPRECATED EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
@@ -719,7 +719,7 @@ EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *n
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
-EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
+EAPI void             elm_widget_activate(Evas_Object *obj, Efl_Ui_Activate act);
 EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
 EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
