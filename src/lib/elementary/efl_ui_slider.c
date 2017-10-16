@@ -571,7 +571,8 @@ _efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Ef
 
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        _slider_elm_widget_widget_event(obj, sd, eo_event, src);
+        if (!_slider_elm_widget_widget_event(obj, sd, eo_event, src))
+          return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)
      {
