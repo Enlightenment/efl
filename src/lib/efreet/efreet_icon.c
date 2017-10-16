@@ -267,7 +267,9 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
     Eina_List *tmps = NULL;
     const char *icon = NULL;
     const char *value = NULL;
+#ifdef SLOPPY_SPEC
     char *data;
+#endif
     Efreet_Icon_Theme *theme;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(icons, NULL);
