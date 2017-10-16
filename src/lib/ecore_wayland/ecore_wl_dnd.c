@@ -769,10 +769,9 @@ static void
 _ecore_wl_dnd_source_cb_target(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type EINA_UNUSED)
 {
    Ecore_Wl_Event_Data_Source_Target *event;
-   Ecore_Wl_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   if (!(input = data)) return;
+   if (!data) return;
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Data_Source_Target)))) return;
 
@@ -800,11 +799,10 @@ static void
 _ecore_wl_dnd_source_cb_send(void *data, struct wl_data_source *source EINA_UNUSED, const char *mime_type, int32_t fd)
 {
    Ecore_Wl_Event_Data_Source_Send *event;
-   Ecore_Wl_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(input = data)) return;
+   if (!data) return;
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Data_Source_Send)))) return;
 
