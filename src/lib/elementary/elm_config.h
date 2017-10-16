@@ -2140,6 +2140,46 @@ EAPI void elm_config_web_backend_set(const char *backend);
  */
 EAPI const char *elm_config_web_backend_get(void);
 
+/**
+ * Get whether the system is offline
+ *
+ * @return True only if the system config is set as offline
+ *
+ * @since 1.21
+ * @see elm_config_offline_set()
+ */
+EAPI Eina_Bool elm_config_offline_get(void);
+
+/**
+ * Set whether the system is offline
+ *
+ * @param set True only if the system is offline
+ *
+ * @since 1.21
+ * @see elm_config_offline_get()
+ */
+EAPI void elm_config_offline_set(Eina_Bool set);
+
+/**
+ * Get whether the system should be conserving power
+ *
+ * @return Values greater than 0 if power is being conserved; higher numbers indicate greater conservation
+ *
+ * @since 1.21
+ * @see elm_config_powersave_set()
+ */
+EAPI int elm_config_powersave_get(void);
+
+/**
+ * Set whether the system should be conserving power
+ *
+ * @param set Values greater than 0 if power is being conserved; higher numbers indicate greater conservation
+ *
+ * @since 1.21
+ * @see elm_config_powersave_set()
+ */
+EAPI void elm_config_powersave_set(int set);
+
 
 /* new efl.config interface helpers in C */
 

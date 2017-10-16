@@ -506,6 +506,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, spinner_min_max_filter_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_theme, T_STRING);
    ELM_CONFIG_VAL(D, T, entry_select_allow, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, offline, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, powersave, T_INT);
 #undef T
 #undef D
 #undef T_INT
@@ -4590,6 +4592,34 @@ elm_config_web_backend_get(void)
    return _elm_config->web_backend;
 }
 
+EAPI Eina_Bool
+elm_config_offline_get(void)
+{
+   if (!_elm_config) return EINA_FALSE;
+   return _elm_config->offline;
+}
+
+EAPI void
+elm_config_offline_set(Eina_Bool set)
+{
+   if (!_elm_config) return;
+   _elm_config->offline = !!set;
+}
+
+EAPI int
+elm_config_powersave_get(void)
+{
+   if (!_elm_config) return EINA_FALSE;
+   return _elm_config->powersave;
+}
+
+EAPI void
+elm_config_powersave_set(int set)
+{
+   if (!_elm_config) return;
+   _elm_config->powersave = set;
+}
+
 void
 _elm_config_profile_set(const char *profile)
 {
@@ -4891,6 +4921,8 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETB(atspi_mode);
    CONFIG_SETD(transition_duration_factor);
    CONFIG_SETS(web_backend);
+   CONFIG_SETB(offline);
+   CONFIG_SETI(powersave);
 
    const size_t len = sizeof("audio_mute") - 1;
    if (!strncmp(name, "audio_mute", len))
@@ -5023,6 +5055,8 @@ _efl_config_global_efl_config_config_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_GETB(atspi_mode);
    CONFIG_GETD(transition_duration_factor);
    CONFIG_GETS(web_backend);
+   CONFIG_GETB(offline);
+   CONFIG_GETI(powersave);
 
    const size_t len = sizeof("audio_mute") - 1;
    if (!strncmp(name, "audio_mute", len))
