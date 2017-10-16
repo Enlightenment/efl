@@ -68,6 +68,7 @@
 #include "interfaces/efl_ui_scrollable.eo.c"
 #include "interfaces/efl_ui_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
+#include "interfaces/efl_ui_format.eo.c"
 
 EAPI void
 __efl_internal_init(void)

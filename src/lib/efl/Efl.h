@@ -135,6 +135,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_model_connect.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
 #include "interfaces/efl_ui_model_factory_connect.eo.h"
+#include "interfaces/efl_ui_format.eo.h"
 
 /* Observable interface */
 #include "interfaces/efl_observer.eo.h"
