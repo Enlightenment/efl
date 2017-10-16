@@ -229,7 +229,7 @@ _ecore_x_window_keytable_possible_global_exclusiveness_unset(int keycode)
         return EINA_FALSE;
      }
    else
-     ret = _ecore_x_window_keytable_key_del(&keytable, keycode, _atom_grab_excl_win);
+     _ecore_x_window_keytable_key_del(&keytable, keycode, _atom_grab_excl_win);
 
    _keytable_free(&keytable);
    return EINA_FALSE;
