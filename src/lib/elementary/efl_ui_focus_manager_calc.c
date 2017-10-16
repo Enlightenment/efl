@@ -784,6 +784,7 @@ EOLIAN static void
 _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Node *node;
+   Eina_Bool refocus = EINA_FALSE;
 
    node = eina_hash_find(pd->node_hash, &child);
 
@@ -791,12 +792,26 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    F_DBG("Manager: %p unregister %p", obj, child);
 
+   if (eina_list_last_data_get(pd->focus_stack) == node)
+     {
+        //unfocus the current head
+        efl_ui_focus_object_focus_set(child, EINA_FALSE);
+        refocus = EINA_TRUE;
+     }
+
 
    //remove the object from the stack if it hasn't done that until now
    //after this it's not at the top anymore
    //elm_widget_focus_set(node->focusable, EINA_FALSE);
    //delete again from the list, for the case it was not at the top
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+
+   if (refocus)
+     {
+        Node *n = eina_list_last_data_get(pd->focus_stack);
+        if (n)
+          efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
+     }
 
    //add all neighbors of the node to the dirty list
    for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < NODE_DIRECTIONS_COUNT; i++)
