@@ -151,15 +151,21 @@ _efl_ui_focus_composition_dirty(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Da
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_elements_flush(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 {
-   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
-
    if (!pd->dirty) return;
 
    efl_ui_focus_composition_prepare(obj);
 
    pd->dirty = EINA_FALSE;
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
+{
+   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
+
+   efl_ui_focus_composition_elements_flush(obj);
 }
 
 EOLIAN static void

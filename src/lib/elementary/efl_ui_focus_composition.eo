@@ -19,6 +19,10 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
             logical_order : list<Efl.Gfx> @owned; [[The order to use]]
          }
       }
+      elements_flush {
+        [[Function that will emit prepare if this is marked as dirty]]
+      }
+
       dirty @protected {
          [[ Mark this widget as dirty, the children can be considered to be changed after that call
          ]]
