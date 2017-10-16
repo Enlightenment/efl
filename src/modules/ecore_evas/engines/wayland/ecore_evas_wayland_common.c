@@ -535,8 +535,11 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         return ECORE_CALLBACK_RENEW;
      }
 
-   nw -= fw;
-   nh -= fh;
+   if (!ee->prop.borderless)
+     {
+        nw -= fw;
+        nh -= fh;
+     }
 
    if (ee->prop.fullscreen || (ee->req.w != nw) || (ee->req.h != nh))
      {
