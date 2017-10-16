@@ -16,6 +16,7 @@ typedef struct {
    Eina_List *adapters;
    Efl_Ui_Focus_Manager *registered, *custom_manager;
    Eina_Bool dirty;
+   Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
 
 static void
@@ -49,7 +50,10 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 
         EINA_LIST_FOREACH(pd->register_target, n, o)
           {
-             efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
+             if (!pd->logical)
+               efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
+             else
+               efl_ui_focus_manager_calc_register_logical(manager, o, obj, NULL);
              pd->registered_targets = eina_list_append(pd->registered_targets, o);
           }
 
@@ -180,6 +184,17 @@ _efl_ui_focus_composition_custom_manager_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_C
    return pd->custom_manager;
 }
 
+EOLIAN static void
+_efl_ui_focus_composition_logical_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Eina_Bool logical_mode)
+{
+   pd->logical = logical_mode;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_focus_composition_logical_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+{
+   return pd->logical;
+}
 
 #include "efl_ui_focus_composition.eo.c"
 
