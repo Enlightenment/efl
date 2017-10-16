@@ -26,7 +26,7 @@ _selection_manager_get(Eo *obj)
    Eo *sel_man = efl_key_data_get(top, "__selection_manager");
    if (!sel_man)
      {
-        Eo *sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, top);
+        sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, top);
         efl_key_data_set(top, "__selection_manager", sel_man);
      }
    return sel_man;
@@ -38,6 +38,7 @@ _efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Ty
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
+   ERR("sel_man: %p", sel_man);
    efl_selection_manager_selection_get(sel_man, obj, type, format,
                                        data_func_data, data_func,
                                        data_func_free_cb, seat);
@@ -48,6 +49,7 @@ _efl_cnp_efl_selection_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Ty
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
+   ERR("sel_man: %p", sel_man);
    efl_selection_manager_selection_set(sel_man, obj, type, format, buf, len, seat);
 }
 

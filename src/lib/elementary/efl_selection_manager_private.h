@@ -10,29 +10,27 @@
 
 enum
 {
-   CNP_ATOM_TARGETS = 0,
-   CNP_ATOM_ATOM,
-   CNP_ATOM_LISTING_ATOMS = CNP_ATOM_ATOM,
-   CNP_ATOM_text_urilist,
-   CNP_ATOM_text_x_vcard,
-   CNP_ATOM_image_png,
-   CNP_ATOM_image_jpeg,
-   CNP_ATOM_image_bmp,
-   CNP_ATOM_image_gif,
-   CNP_ATOM_image_tiff,
-   CNP_ATOM_image_svg,
-   CNP_ATOM_image_xpm,
-   CNP_ATOM_image_tga,
-   CNP_ATOM_image_ppm,
-   CNP_ATOM_XELM,
-//   CNP_ATOM_text_html_utf8,
-//   CNP_ATOM_text_html,
-   CNP_ATOM_UTF8STRING,
-   CNP_ATOM_STRING,
-   CNP_ATOM_COMPOUND_TEXT,
-   CNP_ATOM_TEXT,
-   CNP_ATOM_text_plain_utf8,
-   CNP_ATOM_text_plain,
+   SELECTION_ATOM_TARGETS = 0,
+   SELECTION_ATOM_ATOM,
+   SELECTION_ATOM_LISTING_ATOMS = SELECTION_ATOM_ATOM,
+   SELECTION_ATOM_TEXT_URILIST,
+   SELECTION_ATOM_TEXT_X_VCARD,
+   SELECTION_ATOM_IMAGE_PNG,
+   SELECTION_ATOM_IMAGE_JPEG,
+   SELECTION_ATOM_IMAGE_BMP,
+   SELECTION_ATOM_IMAGE_GIF,
+   SELECTION_ATOM_IMAGE_TIFF,
+   SELECTION_ATOM_IMAGE_SVG,
+   SELECTION_ATOM_IMAGE_XPM,
+   SELECTION_ATOM_IMAGE_TGA,
+   SELECTION_ATOM_IMAGE_PPM,
+   SELECTION_ATOM_XELM,
+   SELECTION_ATOM_UTF8STRING,
+   SELECTION_ATOM_STRING,
+   SELECTION_ATOM_COMPOUND_TEXT,
+   SELECTION_ATOM_TEXT,
+   SELECTION_ATOM_TEXT_PLAIN_UTF8,
+   SELECTION_ATOM_TEXT_PLAIN,
 
    SELECTION_N_ATOMS,
 };
@@ -72,9 +70,8 @@ struct _X11_Cnp_Selection
    const char        *debug;
    Evas_Object       *widget;
    char              *selbuf;
-   Evas_Object       *requestwidget;
-   void              *udata;
-   Efl_Selection_Format     requestformat;
+   unsigned int       len;
+   Efl_Selection_Format     request_format;
    //Elm_Drop_Cb        datacb;
    Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
    Eina_Bool        (*clear)   (void);
@@ -87,14 +84,19 @@ struct _X11_Cnp_Selection
    Ecore_X_Window     xwin;
    //Elm_Xdnd_Action    action;
 
-   Eina_Bool          active : 1;
+   Eo *owner;
+
+   Eo *request_obj;
+   void *data_func_data;
+   Efl_Selection_Data_Ready data_func;
+   Eina_Free_Cb data_func_free_cb;
 };
 
 
 struct _Efl_Selection_Manager_Atom
 {
-    const char *name;
-    Ecore_X_Atom x_atom;
+   const char *name;
+   Ecore_X_Atom x_atom;
 };
 
 struct _Efl_Sel_Manager_Atom
@@ -119,32 +121,22 @@ struct _Efl_Sel_Manager_Atom
 
 struct _Efl_Selection_Manager_Data
 {
-    Eo *obj;
-    Ecore_Event_Handler *notify_handler;
-    Ecore_Event_Handler *clear_handler;
-    Efl_Promise *promise;
-    Efl_Selection_Type loss_type;
+   Ecore_Event_Handler *notify_handler;
+   Ecore_Event_Handler *clear_handler;
+   Efl_Promise *promise;
+   Efl_Selection_Type loss_type;
 #ifdef HAVE_ELEMENTARY_X
-    Ecore_X_Window *xwin;
 #endif
 
-    void *data_func_data;
-    Efl_Selection_Data_Ready data_func;
-    Eina_Free_Cb data_func_free_cb;
+   Eina_Bool has_sel;
+   Efl_Selection_Type active_type;
+   Efl_Selection_Format active_format;
+   Efl_Selection_Manager_Atom atom;
 
-    Eina_Bool has_sel;
-    Efl_Selection_Type active_type;
-    Efl_Selection_Format active_format;
-    Efl_Selection_Manager_Atom atom;
-    void *buf;
-    int len;
-
-    Eo *sel_owner;
-
-    Efl_Sel_Manager_Atom *atomlist;
-    //Efl_Sel_Manager_Selection *sellist;
-    X11_Cnp_Selection *sellist;
-    Saved_Type *savedtypes;
+   Efl_Sel_Manager_Atom *atomlist;
+   //Efl_Sel_Manager_Selection *sellist;
+   X11_Cnp_Selection *sellist;
+   Saved_Type *savedtypes;
 };
 
 #endif

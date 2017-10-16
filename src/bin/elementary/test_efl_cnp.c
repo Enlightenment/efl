@@ -28,9 +28,10 @@ _selection_get_cb(void *data, Efl_Event const *event)
 }
 
 static void
-_selection_data_ready_cb(void *data, Eo *obj, void *buf, int length)
+//_selection_data_ready_cb(void *data, Eo *obj, void *buf, int length)
+_selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
 {
-    printf("obj: %p, data: %s, length: %d\n", obj, (char *)buf, length);
+    printf("obj: %p, data: %s, length: %d\n", obj, (char *)seldata->data, seldata->len);
 }
 
 static void
@@ -81,7 +82,7 @@ _selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 _selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT,
+    efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
 	    "new", 3, NULL);
 }
 
@@ -143,9 +144,9 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    //test cnp
    //Evas_Object *cnp = efl_add(EFL_CNP_CLASS, en);
-   efl_selection_set(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, "abc", 3, NULL);
+   //efl_selection_set(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, "abc", 3, NULL);
 
-   efl_selection_get(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, NULL, _selection_data_ready_cb, NULL, seat);
+   //efl_selection_get(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, NULL, _selection_data_ready_cb, NULL, seat);
 
    //efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOSS, _selection_loss_event_cb, NULL);
 
