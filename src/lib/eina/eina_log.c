@@ -2350,12 +2350,16 @@ eina_log_timing(int domain,
                 Eina_Log_State state,
                 const char *phase)
 {
+#ifdef EINA_SAFETY_CHECKS
    Eina_Log_Domain *d;
+#endif
    Eina_Log_Timing *t;
 
    if (_disable_timing) return;
 
+#ifdef EINA_SAFETY_CHECKS
    d = _log_domains + domain;
+#endif
    t = _log_timing + domain;
 #ifdef EINA_SAFETY_CHECKS
    if (EINA_UNLIKELY(d->deleted))
