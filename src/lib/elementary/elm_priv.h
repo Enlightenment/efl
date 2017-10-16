@@ -449,6 +449,8 @@ struct _Elm_Config
    int           gl_msaa;
    const char   *icon_theme;
    unsigned char entry_select_allow;
+   Eina_Bool     offline;
+   int  powersave;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
