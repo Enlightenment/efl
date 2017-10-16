@@ -885,7 +885,7 @@ EAPI void eina_matrix4_multiply(Eina_Matrix4 *out, const Eina_Matrix4 *mat_a,
  * @param left The left value
  * @param bottom The bottom value
  * @param top The top value
- * @param dneat The dnear value
+ * @param dnear The dnear value
  * @param dfar The dfar value
  *
  * @since 1.17
@@ -968,12 +968,12 @@ EAPI void eina_matrix2_values_get(const Eina_Matrix2 *m, double *xx, double *xy,
 /**
  * @brief Computes the inverse with check of the given matrix.
  *
- * @param m The matrix to inverse.
- * @param m2 The inverse matrix.
+ * @param out The matrix to inverse.
+ * @param mat The inverse matrix.
  *
- * This function inverse the matrix @p m and stores the result in
- * @p m2. No check is done on @p m or @p m2. If @p m can not be
- * invertible, then @p m2 is set to the identity matrix.
+ * This function inverse the matrix @p out and stores the result in
+ * @p mat. No check is done on @p out or @p mat. If @p out can not be
+ * invertible, then @p mat is set to the identity matrix.
  *
  * @since 1.17
  */
@@ -1017,8 +1017,8 @@ EAPI void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
  * @brief Multiplies two matrix.
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */
@@ -1029,8 +1029,8 @@ EAPI void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
  * @brief Multiplies two matrix with check.
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */
