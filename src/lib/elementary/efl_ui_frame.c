@@ -211,17 +211,22 @@ _efl_ui_frame_class_constructor(Efl_Class *klass)
       evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+/* Default text (title) and content */
+
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_frame, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_frame)
+ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_frame)
 
 #define EFL_UI_FRAME_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_frame), \
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_frame), \
+   ELM_LAYOUT_TEXT_ALIASES_OPS(efl_ui_frame)
 
 #include "efl_ui_frame.eo.c"

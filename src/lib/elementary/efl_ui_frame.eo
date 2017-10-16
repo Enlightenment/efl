@@ -1,5 +1,5 @@
 class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text.Markup,
-                    Efl.Ui.Translatable)
+                    Efl.Ui.Translatable, Efl.Container)
 {
    [[Frame widget
 
@@ -60,5 +60,7 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text.Markup,
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Container.content { get; set; }
+      Efl.Container.content_unset;
    }
 }

@@ -6992,26 +6992,6 @@ _efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
    return EINA_FALSE;
 }
 
-/* Default content */
-
-EOLIAN static Eina_Bool
-_efl_ui_win_efl_container_content_set(Eo *obj, Efl_Ui_Win_Data *sd, Evas_Object *content)
-{
-   return _efl_ui_win_content_set(obj, sd, "content", content);
-}
-
-EOLIAN static Evas_Object*
-_efl_ui_win_efl_container_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
-{
-   return _efl_ui_win_content_get(obj, sd, "content");
-}
-
-EOLIAN static Evas_Object*
-_efl_ui_win_efl_container_content_unset(Eo *obj, Efl_Ui_Win_Data *sd)
-{
-   return _efl_ui_win_content_unset(obj, sd, "content");
-}
-
 /* Efl.Part begin */
 
 static void
@@ -7058,6 +7038,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_CONTENT_DEFAULT_SET(efl_ui_win, "content")
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
 #include "efl_ui_win_part.eo.c"
 
 /* Efl.Part end */
