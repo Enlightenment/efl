@@ -75,6 +75,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_item.eo \
       lib/efl/interfaces/efl_ui_menu.eo \
       lib/efl/interfaces/efl_ui_autorepeat.eo \
+      lib/efl/interfaces/efl_ui_format.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 

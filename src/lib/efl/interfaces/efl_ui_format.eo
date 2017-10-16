@@ -1,0 +1,44 @@
+import eina_types;
+
+function Efl.Ui.Format_Func_Cb {
+   [[Function pointer for format function hook]]
+   params {
+      @in str: ptr(Eina.Strbuf);
+      @in value: Eina.Value;
+   }
+};
+
+interface Efl.Ui.Format
+{
+   [[interface class for format_func]]
+   methods {
+      @property func_cb @protected {
+         set {
+            [[Set the format function pointer to format the indicator string.
+            ]]
+         }
+         values {
+            func: Efl.Ui.Format_Func_Cb @nullable; [[The format function callback]]
+         }
+      }
+      @property unit @protected {
+         [[Control the format string for a given units label
+
+           If $NULL is passed on $format, it will make $obj's units
+           area to be hidden completely. If not, it'll set the <b>format
+           string</b> for the units label's text. The units label is
+           provided a floating point value, so the units text is up display
+           at most one floating point value. Note that the units label is
+           optional. Use a format string such as "%1.2f meters" for example.
+
+           Note: The default format string is an integer percentage,
+           as in $"%.0f %%".
+         ]]
+         set {
+         }
+         values {
+            units: string @nullable; [[The format string for $obj's units label.]]
+         }
+      }
+   }
+}
