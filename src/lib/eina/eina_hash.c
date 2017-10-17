@@ -484,6 +484,12 @@ _eina_hash_del_by_key(Eina_Hash *hash, const void *key, const void *data)
    return _eina_hash_del_by_key_hash(hash, key, key_length, key_hash, data);
 }
 
+static int
+_eina_stringshared_hash(const void *key, int key_length EINA_UNUSED)
+{
+   return eina_hash_superfast(&key, sizeof (void*));
+}
+
 static unsigned int
 _eina_string_key_length(const char *key)
 {
@@ -840,7 +846,7 @@ eina_hash_stringshared_new(Eina_Free_Cb data_free_cb)
 {
    return eina_hash_new(NULL,
                         EINA_KEY_CMP(_eina_stringshared_key_cmp),
-                        EINA_KEY_HASH(eina_hash_superfast),
+                        EINA_KEY_HASH(_eina_stringshared_hash),
                         data_free_cb,
                         EINA_HASH_BUCKET_SIZE);
 }
