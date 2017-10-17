@@ -24,6 +24,7 @@
 #include "eina_magic.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
+#include "eina_stringshare.h"
 
 #ifndef ABS
 # define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -141,6 +142,8 @@ Eina_Bool eina_file_mmap_faulty(void *addr, long page_size);
 #ifndef EINA_FREEQ_H_
 typedef struct _Eina_FreeQ Eina_FreeQ;
 #endif
+
+Eina_Stringshare *eina_file_sanitize(const char *path);
 
 void eina_freeq_main_set(Eina_FreeQ *fq);
 
