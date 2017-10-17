@@ -1405,31 +1405,26 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
      {
         Efl_Ui_Focus_Object *old_candidate = NULL;
         candidate = efl_ui_focus_manager_move(pd->redirect, direction);
-        old_candidate = efl_ui_focus_manager_focus_get(pd->redirect);
 
         if (!candidate)
           {
              Efl_Ui_Focus_Object *new_candidate = NULL;
-             Node *n;
 
-             //there is no candidate check if we have something for that direction
-             new_candidate = NULL;
-             n = eina_hash_find(pd->node_hash, &old_candidate);
-
-             if (direction == EFL_UI_FOCUS_DIRECTION_NEXT ||
-                 direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+             if (DIRECTION_IS_LOGICAL(direction))
                {
-                 if (n)
-                   {
-                      n = T(n).parent;
-                      new_candidate = _request_move(obj, pd, direction, n);
-                      if (new_candidate)
-                        efl_ui_focus_manager_focus_set(obj, new_candidate);
-                      candidate = new_candidate;
-                   }
+                  // lets just take the last
+                  Node *n = eina_list_last_data_get(pd->focus_stack);
+                  new_candidate = _request_move(obj, pd, direction, n);
+                  if (new_candidate)
+                    efl_ui_focus_manager_focus_set(obj, new_candidate);
+                  candidate = new_candidate;
                }
              else
                {
+                  Node *n;
+
+                  old_candidate = efl_ui_focus_manager_focus_get(pd->redirect);
+                  n = eina_hash_find(pd->node_hash, &old_candidate);
 
                   if (n)
                     new_candidate = _request_move(obj, pd, direction, n);
@@ -1439,9 +1434,9 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                        //redirect does not have smth. but we do have.
                        efl_ui_focus_manager_focus_set(obj, new_candidate);
                     }
-                 candidate = new_candidate;
-               }
 
+                  candidate = new_candidate;
+               }
           }
      }
    else
