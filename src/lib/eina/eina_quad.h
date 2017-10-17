@@ -55,32 +55,66 @@ typedef struct _Eina_Quad
 } Eina_Quad;
 
 /**
+ * @brief Transform the given quadrangle to the given rectangle.
+ *
+ * @param q The quadrangle to get coordinates.
+ * @param r The rectangle.
+ *
  * @since 1.14
  * */
 EAPI void eina_quad_rectangle_to(const Eina_Quad *q,
                                  Eina_Rectangle *r);
 /**
+ * @brief Transform the given rectangle to the given quadrangle.
+ *
+ * @param q The quadrangle.
+ * @param r The rectangle to get coordinates.
+ *
  * @since 1.14
  * */
 EAPI void eina_quad_rectangle_from(Eina_Quad *q,
                                    const Eina_Rectangle *r);
 /**
+ * @brief Sets the values of the coordinates of the given quadrangle.
+ *
+ * @param q The quadrangle to set coordinates.
+ * @param x0 Top left x coordinate.
+ * @param y0 Top left y coordinate.
+ * @param x1 Top right x coordinate.
+ * @param y1 Top right y coordinate.
+ * @param x2 Bottom right x coordinate.
+ * @param y2 Bottom right y coordinate.
+ * @param x3 Bottom left x coordinate.
+ * @param y3 Bottom left y coordinate.
+ *
  * @since 1.14
  * */
 EAPI void eina_quad_coords_set(Eina_Quad *q,
+                               double x0, double y0,
                                double x1, double y1,
                                double x2, double y2,
-                               double x3, double y3,
-                               double x4, double y4);
+                               double x3, double y3);
 
 /**
+ * @brief Gets the values of the coordinates of the given quadrangle.
+ *
+ * @param q The quadrangle to get coordinates.
+ * @param x0 Top left x coordinate.
+ * @param y0 Top left y coordinate.
+ * @param x1 Top right x coordinate.
+ * @param y1 Top right y coordinate.
+ * @param x2 Bottom right x coordinate.
+ * @param y2 Bottom right y coordinate.
+ * @param x3 Bottom left x coordinate.
+ * @param y3 Bottom left y coordinate.
+ *
  * @since 1.14
  * */
 EAPI void eina_quad_coords_get(const Eina_Quad *q,
+                               double *x0, double *y0,
                                double *x1, double *y1,
                                double *x2, double *y2,
-                               double *x3, double *y3,
-                               double *x4, double *y4);
+                               double *x3, double *y3);
 
 /**
  * @}
