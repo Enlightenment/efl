@@ -224,6 +224,24 @@ _focus_stack_unfocus_last(Efl_Ui_Focus_Manager_Calc_Data *pd)
      efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
 }
 
+static Node*
+_focus_stack_last_regular(Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+   Eina_List *l;
+   Node *upper;
+
+   l = eina_list_last(pd->focus_stack);
+   upper = eina_list_last_data_get(pd->focus_stack);
+
+   while (upper && upper->type != NODE_TYPE_NORMAL)
+     {
+        l = eina_list_prev(l);
+        upper = eina_list_data_get(l);
+     }
+
+   return upper;
+}
+
 //CALCULATING STUFF
 
 static inline int
@@ -1022,6 +1040,9 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
      {
+        //we only calculate partners for normal nodes
+        if (candidate->type == NODE_TYPE_NORMAL) continue;
+
         if (eina_list_data_find(DIRECTION_ACCESS(upper, direction).partners, candidate))
           {
              //this is the next accessable part
@@ -1200,7 +1221,7 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
    Node *dir = NULL;
 
    if (!upper)
-     upper = eina_list_last_data_get(pd->focus_stack);
+     upper = _focus_stack_last_regular(pd);
 
    if (!upper)
      {
@@ -1330,9 +1351,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
         _focus_stack_unfocus_last(pd);
 
-        //remove the object from the list and add it again
-        pd->focus_stack = eina_list_remove(pd->focus_stack, node);
-        pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
         //save fields we later need
         node_focusable = node->focusable;
@@ -1340,8 +1358,14 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         //populate the new change
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, node_focusable);
-        node = NULL;
      }
+
+   //remove the object from the list and add it again
+   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+   pd->focus_stack = eina_list_append(pd->focus_stack, node);
+
+   //set to NULL here, from the event earlier this pointer could be dead.
+   node = NULL;
 
    //now check if this is also a listener object
    if (redirect_manager)
