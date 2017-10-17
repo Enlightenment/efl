@@ -373,8 +373,10 @@ static inline Eina_Bool   eina_rectangle_height_cut(Eina_Rectangle *thiz, Eina_R
 /**
  * @brief Subtracts two rectangles.
  *
- * @param thiz The minuend rectangle
- * @param other The subtrahend rectangle
+ * @param thiz The minuend rectangle.
+ * @param other The subtrahend rectangle.
+ * @param out Stored the difference between two rectangles.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function subtract two rectangles. The difference is stored on @p out
  * There will be at most four differences, use eina_rectangle_is_valid to
@@ -546,6 +548,7 @@ EAPI void            eina_rectangle_free(Eina_Rectangle *rect) EINA_ARG_NONNULL(
  * @brief Sets the type of given rectangle pool.
  *
  * @param pool The rectangle pool for which type is to be set.
+ * @param type Type of Eina Pool based on packing algorithm.
  *
  * This function sets @p type of @p pool.
  * @see Eina_Rectangle_Packing
