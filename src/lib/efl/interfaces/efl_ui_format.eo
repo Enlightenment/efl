@@ -3,8 +3,8 @@ import eina_types;
 function Efl.Ui.Format_Func_Cb {
    [[Function pointer for format function hook]]
    params {
-      @in str: ptr(Eina.Strbuf);
-      @in value: Eina.Value;
+      @out str: Eina.Strbuf; [[the formated string to be appended by user.]]
+      @in value: const(any_value); [[The Eina.Value passed by $obj.]]
    }
 };
 
@@ -12,16 +12,16 @@ interface Efl.Ui.Format
 {
    [[interface class for format_func]]
    methods {
-      @property func_cb @protected {
+      @property format_cb @protected {
          set {
-            [[Set the format function pointer to format the indicator string.
+            [[Set the format function pointer to format the string.
             ]]
          }
          values {
             func: Efl.Ui.Format_Func_Cb @nullable; [[The format function callback]]
          }
       }
-      @property unit @protected {
+      @property format_string @protected {
          [[Control the format string for a given units label
 
            If $NULL is passed on $format, it will make $obj's units
