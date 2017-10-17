@@ -71,7 +71,7 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
     "llong", "ullong", "int8", "uint8", "int16", "uint16", "int32", "uint32", \
     "int64", "uint64", "int128", "uint128", "size", "ssize", "intptr", "uintptr", \
     "ptrdiff", "time", "float", "double", "bool", "void", "void_ptr", \
-    "string", "stringshare", "generic_value", \
+    "string", "stringshare", "any_value", \
     "abstract", "class", "data", "mixin", "import", "interface", "type", "const", "var", \
     "own", "free", "struct", "enum", "@extern", "@free", "@auto", "@empty", \
     "@private", "@protected", "@beta", "@hot", "@const", "@class", "@pure_virtual", \
