@@ -131,7 +131,7 @@ _grid_sel(void        *data,
 
    elm_gengrid_item_pos_get(event_info, &x, &y);
 
-   printf("Item [%p], with data [%p], path %s, at position (%d, %d),"
+   printf("Item [%p], with data [%p], path %s, at position (%u, %u),"
            " has been selected\n", event_info, data, it->path, x, y);
 }
 
