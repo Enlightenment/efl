@@ -151,7 +151,17 @@ extern EAPI double _elm_startup_time;
 #define EFL_MAIN_EX() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; (void) efl_main(NULL, NULL);  (void) efl_pause(NULL, NULL);  (void) efl_resume(NULL, NULL); (void) efl_terminate(NULL, NULL); return 0; }
 #endif
 
-#define efl_exit() elm_exit()
+/**
+ * @brief Quits the main loop once all the events currently on the queue have
+ * been processed.
+ *
+ * @param[in] exit_code Returned value by begin()
+ *
+ * @note This function can only be called from the main loop.
+ *
+ * @ingroup Efl_Loop
+ */
+EAPI void efl_exit(unsigned char exit_code);
 
 #endif /* EFL_BETA_API_SUPPORT */
 

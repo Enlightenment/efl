@@ -1362,9 +1362,9 @@ elm_run(void)
 }
 
 EAPI void
-elm_exit(void)
+efl_exit(unsigned char exit_code)
 {
-   ecore_main_loop_quit();
+   efl_loop_quit(ecore_main_loop_get(), exit_code);
 
    if (elm_policy_get(ELM_POLICY_EXIT) == ELM_POLICY_EXIT_WINDOWS_DEL)
      {
@@ -1374,6 +1374,12 @@ elm_exit(void)
         EINA_LIST_FOREACH_SAFE(_elm_win_list, l, l_next, win)
           evas_object_del(win);
      }
+}
+
+EAPI void
+elm_exit(void)
+{
+   efl_exit(0);
 }
 
 //FIXME: Use Elm_Policy Parameter when 2.0 is released.
