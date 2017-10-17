@@ -5,9 +5,6 @@
  * @image html flipselector_inheritance_tree.png
  * @image latex flipselector_inheritance_tree.eps
  *
- * @image html img/widget/flipselector/preview-00.png
- * @image latex img/widget/flipselector/preview-00.eps
- *
  * A flip selector is a widget to show a set of @b text items, one
  * at a time, with the same sheet switching style as the @ref Clock
  * "clock" widget, when one changes the current displaying sheet
