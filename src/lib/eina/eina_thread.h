@@ -87,8 +87,8 @@ EAPI Eina_Bool eina_thread_equal(Eina_Thread t1, Eina_Thread t2) EINA_WARN_UNUSE
 /**
  * @brief Creates a new thread, setting its priority and affinity.
  *
- * @param t[out] where to return the thread identifier. Must @b not be @c NULL.
- * @param prio thread priority to use, usually #EINA_THREAD_BACKGROUND
+ * @param[out] t where to return the thread identifier. Must @b not be @c NULL.
+ * @param prio thread priority to use, usually EINA_THREAD_BACKGROUND
  * @param affinity thread affinity to use. To not set affinity use @c -1.
  * @param func function to run in the thread. Must @b not be @c NULL.
  * @param data context data to provide to @a func as first argument.
