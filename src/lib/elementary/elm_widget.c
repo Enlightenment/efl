@@ -381,10 +381,17 @@ static void
 _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *should, Eina_Bool *want_full)
 {
    *should = *want_full = EINA_FALSE;
+
     if (pd->can_focus)
       {
         *should = EINA_TRUE;
         //can focus can be overridden by the following properties
+
+        if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS))
+          *should = EINA_FALSE;
+
+        if (!pd->parent_obj)
+          *should = EINA_FALSE;
 
         if (_tree_unfocusable(obj))
           *should = EINA_FALSE;
@@ -402,6 +409,12 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
    if (!*should && pd->logical.child_count > 0)
      {
         *should = EINA_TRUE;
+
+        if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS))
+          *should = EINA_FALSE;
+
+        if (!pd->parent_obj)
+          *should = EINA_FALSE;
 
         if (_tree_unfocusable(obj))
           *should = EINA_FALSE;
