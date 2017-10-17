@@ -209,7 +209,20 @@ node_item_free(Node *item)
 
    free(item);
 }
+//FOCUS-STACK HELPERS
 
+static void
+_focus_stack_unfocus_last(Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+   Node *n;
+
+   n = eina_list_last_data_get(pd->focus_stack);
+
+   pd->focus_stack = eina_list_remove(pd->focus_stack, n);
+
+   if (n)
+     efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
+}
 
 //CALCULATING STUFF
 
@@ -1238,11 +1251,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED
      }
 }
 
+
+
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    Node *node;
-   Node *old_focus;
    Efl_Ui_Focus_Manager *redirect_manager;
    Eo *focusable;
    Node_Type type;
@@ -1313,8 +1327,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    if (node->type == NODE_TYPE_NORMAL)
      {
         Eo *node_focusable;
-        //check if this is already the focused object
-        old_focus = eina_list_last_data_get(pd->focus_stack);
+
+        _focus_stack_unfocus_last(pd);
 
         //remove the object from the list and add it again
         pd->focus_stack = eina_list_remove(pd->focus_stack, node);
@@ -1324,7 +1338,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
         node_focusable = node->focusable;
 
         //populate the new change
-        if (old_focus) efl_ui_focus_object_focus_set(old_focus->focusable, EINA_FALSE);
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, node_focusable);
         node = NULL;
@@ -1567,12 +1580,9 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_logical_end(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-  Node *last;
-
   if (!pd->focus_stack) return;
 
-  last = eina_list_last_data_get(pd->focus_stack);
-  efl_ui_focus_object_focus_set(last->focusable, EINA_FALSE);
+  _focus_stack_unfocus_last(pd);
 
   pd->focus_stack = eina_list_free(pd->focus_stack);
 }
@@ -1583,11 +1593,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_U
   Node *last;
 
   if (!pd->focus_stack) return;
-  //remove last element
-  last = eina_list_last_data_get(pd->focus_stack);
-  pd->focus_stack =  eina_list_remove(pd->focus_stack, last);
-  //unfocus it
-  efl_ui_focus_object_focus_set(last->focusable, EINA_FALSE);
+  _focus_stack_unfocus_last(pd);
 
   //get now the highest, and unfocus that!
   last = eina_list_last_data_get(pd->focus_stack);
