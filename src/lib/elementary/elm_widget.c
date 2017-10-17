@@ -474,6 +474,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
    if (should)
      {
         provider = efl_provider_find(obj, EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(provider, NULL);
         parent = efl_ui_focus_parent_provider_find_logical_parent(provider, obj);
      }
    else
