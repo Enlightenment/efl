@@ -12,7 +12,7 @@ interface Efl.Ui.Format
 {
    [[interface class for format_func]]
    methods {
-      @property format_cb @protected {
+      @property format_cb {
          set {
             [[Set the format function pointer to format the string.
             ]]
@@ -21,7 +21,7 @@ interface Efl.Ui.Format
             func: Efl.Ui.Format_Func_Cb @nullable; [[The format function callback]]
          }
       }
-      @property format_string @protected {
+      @property format_string {
          [[Control the format string for a given units label
 
            If $NULL is passed on $format, it will make $obj's units
@@ -34,8 +34,6 @@ interface Efl.Ui.Format
            Note: The default format string is an integer percentage,
            as in $"%.0f %%".
          ]]
-         set {
-         }
          values {
             units: string @nullable; [[The format string for $obj's units label.]]
          }

@@ -473,7 +473,7 @@ _efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Pro
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
+_efl_ui_progressbar_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
 {
    const char *sig;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -488,7 +488,7 @@ _efl_ui_progressbar_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Progressb
 }
 
 EOLIAN static const char *
-_efl_ui_progressbar_efl_ui_range_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_format_format_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return sd->units;
 }
@@ -542,13 +542,13 @@ elm_progressbar_span_size_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
-   efl_ui_range_unit_format_set(obj, units);
+   efl_ui_format_string_set(obj, units);
 }
 
 EAPI const char *
 elm_progressbar_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_range_unit_format_get(obj);
+   return efl_ui_format_string_get(obj);
 }
 
 EAPI void
