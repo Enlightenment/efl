@@ -151,7 +151,7 @@ config_exit(void *data       EINA_UNUSED,
    fndata.cur_style = NULL;
 
    elm_config_save();
-   efl_exit(); /* exit the program's main loop that runs in elm_run() */
+   efl_exit(0); /* exit the program's main loop that runs in elm_run() */
 }
 
 static void
@@ -4255,7 +4255,7 @@ win_create(void)
 static Eina_Bool
 _exit_timer(void *data EINA_UNUSED)
 {
-   efl_exit();
+   efl_exit(0);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -4360,7 +4360,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 
         elm_config_all_flush();
 
-        if (quiet) efl_exit();
+        if (quiet) efl_exit(0);
      }
 }
 
