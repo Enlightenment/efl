@@ -97,13 +97,13 @@ struct @extern Eina.Future.Scheduler; [[This struct is used as a bridge between 
 
 function @extern Eina.Future.Cb {
     params {
-       value: const(generic_value); [[An Eina_Value which contains the operation result. Before using
+       value: const(any_value); [[An Eina_Value which contains the operation result. Before using
                                       the value, its type must be checked in order to avoid errors. This is needed, because
                                       if an operation fails the Eina_Value type will be EINA_VALUE_TYPE_ERROR
                                       which is a different type than the expected operation result.]]
        dead_ptr: const(ptr(Eina.Future)); [[A pointer to the future that was completed]]
     }
-    return: generic_value; [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+    return: any_value; [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
                              If there is no need to convert the received value, it's recommended
                              to pass-thru value argument. If you need to convert to a different type
                              or generate a new value, use eina_value_setup() on another Eina_Value
@@ -124,9 +124,9 @@ function @extern Eina.Promise.Cancel.Cb {
 
 function @extern Eina.Future.Success.Cb {
    params {
-      value: const(generic_value); [[The operation result]]
+      value: const(any_value); [[The operation result]]
    }
-   return: generic_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+   return: any_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
                              If there is no need to convert the received value, it's recommended
                              to pass-thru value argument. If you need to convert to a different type
                              or generate a new value, use eina_value_setup() on another Eina_Value
@@ -143,7 +143,7 @@ function @extern Eina.Future.Error.Cb {
    params {
       error: const(Eina.Error); [[The operation error]]
    }
-   return: generic_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
+   return: any_value;  [[An Eina_Value to pass to the next Eina_Future in the chain (if any).
                              If there is no need to convert the received value, it's recommended
                              to pass-thru value argument. If you need to convert to a different type
                              or generate a new value, use eina_value_setup() on another Eina_Value
