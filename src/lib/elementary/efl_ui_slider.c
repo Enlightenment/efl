@@ -1233,39 +1233,6 @@ _efl_ui_slider_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_range_range_unit_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   eina_stringshare_replace(&sd->units, units);
-   if (units)
-     {
-        elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
-        edje_object_message_signal_process(wd->resize_obj);
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
-     }
-   else
-     {
-        elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
-        edje_object_message_signal_process(wd->resize_obj);
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,units,hidden", "elm");
-     }
-   evas_object_smart_changed(obj);
-}
-
-EOLIAN static const char *
-_efl_ui_slider_efl_ui_range_range_unit_format_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->units;
-}
-
-EOLIAN static void
 _efl_ui_slider_indicator_format_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *indicator)
 {
    eina_stringshare_replace(&sd->indicator, indicator);
@@ -1462,6 +1429,39 @@ _efl_ui_slider_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider
    return sd->step;
 }
 
+EOLIAN static void
+_efl_ui_slider_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Slider_Data *sd, const char *units)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   eina_stringshare_replace(&sd->units, units);
+   if (units)
+     {
+        elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+        edje_object_message_signal_process(wd->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,visible", "elm");
+     }
+   else
+     {
+        elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
+        edje_object_message_signal_process(wd->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,units,hidden", "elm");
+     }
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN static const char *
+_efl_ui_slider_efl_ui_format_format_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
+{
+   return sd->units;
+}
+
 EOLIAN const Elm_Atspi_Action *
 _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
@@ -1534,13 +1534,13 @@ elm_slider_span_size_get(const Evas_Object *obj)
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
-   efl_ui_range_unit_format_set(obj, units);
+   efl_ui_format_string_set(obj, units);
 }
 
 EAPI const char *
 elm_slider_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_range_unit_format_get(obj);
+   return efl_ui_format_string_get(obj);
 }
 
 EAPI void

@@ -2,7 +2,7 @@ type slider_func_type: __undefined_type; [[Elementary slider function type]]
 type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
 
 class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
-                     Efl.Access.Value, Efl.Text, Efl.Text.Markup,
+                     Efl.Access.Value, Efl.Text, Efl.Text.Markup, Efl.Ui.Format,
                      Efl.Ui.Translatable, Elm.Interface.Atspi_Widget_Action)
 {
    [[Elementary slider class]]
@@ -120,7 +120,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Efl.Ui.Range.range_value { get; set; }
-      Efl.Ui.Range.range_unit_format { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Access.Value.value_and_text { get; set; }
@@ -129,6 +128,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
+      Efl.Ui.Format.format_string { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }
    events {
