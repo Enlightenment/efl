@@ -36,6 +36,7 @@
 #include "eina_inlist.h"
 #include "eina_list.h"
 #include "eina_counter.h"
+#include "eina_strbuf.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -222,6 +223,7 @@ eina_benchmark_run(Eina_Benchmark *bench)
    char *buffer;
    Eina_Bool first = EINA_FALSE;
    size_t length;
+   Eina_Strbuf *sbname, *sbrun;
 
    if (!bench)
       return NULL;
@@ -252,6 +254,14 @@ eina_benchmark_run(Eina_Benchmark *bench)
 
    eina_array_push(ea, strdup(buffer));
 
+   sbname = eina_strbuf_new();
+   eina_strbuf_append(sbname, bench->name);
+   eina_strbuf_replace_all(sbname, "_", "\\_");
+
+   sbrun = eina_strbuf_new();
+   eina_strbuf_append(sbrun, bench->run);
+   eina_strbuf_replace_all(sbrun, "_", "\\_");
+
    fprintf(
       main_script,
       "set   autoscale                        # scale axes automatically\n"
@@ -262,14 +272,17 @@ eina_benchmark_run(Eina_Benchmark *bench)
 /*     "set logscale y\n" */
       "set terminal png size 1024,768\n"
       "set output \"output_%s_%s.png\"\n"
-      "set title \"%s %s\n"
+      "set title '%s %s'\n"
       "set xlabel \"tests\"\n"
       "set ylabel \"time\"\n"
       "plot ",
       bench->name,
       bench->run,
-      bench->name,
-      bench->run);
+      eina_strbuf_string_get(sbname),
+      eina_strbuf_string_get(sbrun));
+
+   eina_strbuf_free(sbname);
+   eina_strbuf_free(sbrun);
 
    EINA_INLIST_FOREACH(bench->runs, run)
    {
@@ -327,9 +340,15 @@ eina_benchmark_run(Eina_Benchmark *bench)
       else
          fprintf(main_script, ", \\\n");
 
+      sbname = eina_strbuf_new();
+      eina_strbuf_append(sbname, run->name);
+      eina_strbuf_replace_all(sbname, "_", "\\_");
+
       fprintf(main_script,
               "\"%s\" using 1:2 title \'%s\' with line",
-              buffer, run->name);
+              buffer, eina_strbuf_string_get(sbname));
+
+      eina_strbuf_free(sbname);
    }
 
    fprintf(main_script, "\n");
