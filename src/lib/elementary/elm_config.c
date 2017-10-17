@@ -798,7 +798,6 @@ _elm_config_derived_option_apply(Elm_Config *cfg, const char *option)
    char *bp = buf;
 
    p = option;
-   bp = buf;
    for (;;)
      {
         if ((*p == 0) || (*p == ' '))
