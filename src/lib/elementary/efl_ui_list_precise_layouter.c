@@ -25,7 +25,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Size
 static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
-   , Efl_Ui_List_Model *modeler, Eina_Accessor* items)
+   , Efl_Ui_List_Model *modeler, int first, int ccount, Eina_Accessor *items)
 {
    Efl_Ui_List_LayoutItem* layout_item;
    Efl_Ui_List_Precise_Layouter_Size* size;

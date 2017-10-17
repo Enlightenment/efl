@@ -1412,6 +1412,14 @@ _efl_ui_list_elm_widget_widget_event(Eo *obj, Efl_Ui_List_Data *pd, Efl_Event co
    return EINA_TRUE;
 }
 
+
+EOLIAN static Efl_Ui_List_LayoutItem *
+_efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
+{
+    /* TODO */
+    return NULL;
+}
+
 Eina_Bool
 _efl_ui_list_item_select_clear(Eo *obj)
 {
@@ -1514,13 +1522,14 @@ _children_slice_then(void * data, Efl_Event const* event)
    Efl_Ui_List_Data *pd = data;
    Eina_Accessor *acc = (Eina_Accessor*)((Efl_Future_Event_Success*)event->info)->value;
 
-   efl_ui_list_segarray_insert(&pd->segarray, pd->outstanding_slice.slice_start, acc);
+   efl_ui_list_segarray_insert_accessor(&pd->segarray, pd->outstanding_slice.slice_start, acc);
 
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
 }
 
-static void efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Data* pd, int first, int count)
+EOLIAN static void
+_efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Data* pd, int first, int count)
 {
    // slice
    if(!pd->slice_future)
@@ -1530,6 +1539,13 @@ static void efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Da
         pd->outstanding_slice.slice_count = count;
         efl_future_then(pd->slice_future, &_children_slice_then, &_children_slice_error, NULL, pd);
      }
+}
+
+EOLIAN static int
+_efl_ui_list_efl_ui_list_model_size_get(Eo *obj, Efl_Ui_List_Data *pd)
+{
+    /* TODO */
+    return 0;
 }
 
 /* layout */
