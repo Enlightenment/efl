@@ -761,13 +761,13 @@ eina_file_open(const char *path, Eina_Bool shared)
 {
    Eina_File *file;
    Eina_File *n;
-   char *filename;
+   Eina_Stringshare *filename;
    struct stat file_stat;
    int fd = -1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
-   filename = eina_file_path_sanitize(path);
+   filename = eina_file_sanitize(path);
    if (!filename) return NULL;
 
    if (shared)
@@ -799,7 +799,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (!file)
      {
-        n = malloc(sizeof(Eina_File) + strlen(filename) + 1);
+        n = malloc(sizeof(Eina_File));
         if (!n)
 	  {
              eina_lock_release(&_eina_file_lock_cache);
@@ -807,8 +807,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 	  }
 
         memset(n, 0, sizeof(Eina_File));
-        n->filename = (char*) (n + 1);
-        strcpy((char*) n->filename, filename);
+        n->filename = filename;
         n->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
                                EINA_KEY_CMP(eina_file_map_key_cmp),
                                EINA_KEY_HASH(eina_file_map_key_hash),
@@ -844,14 +843,12 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    eina_lock_release(&_eina_file_lock_cache);
 
-   free(filename);
-
    return n;
 
  on_error:
    WRN("Could not open file [%s].", filename);
+   eina_stringshare_del(filename);
 
-   free(filename);
    if (fd >= 0) close(fd);
    return NULL;
 }

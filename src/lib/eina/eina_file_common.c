@@ -502,6 +502,7 @@ eina_file_clean_close(Eina_File *file)
    // Generic destruction of the file
    eina_hash_free(file->rmap); file->rmap = NULL;
    eina_hash_free(file->map); file->map = NULL;
+   eina_stringshare_del(file->filename);
 
    // Backend specific file resource close
    eina_file_real_close(file);
@@ -515,7 +516,6 @@ EAPI void
 eina_file_close(Eina_File *file)
 {
    Eina_Bool leave = EINA_TRUE;
-   unsigned int length;
    unsigned int key;
 
    EINA_FILE_MAGIC_CHECK(file);
@@ -528,13 +528,12 @@ eina_file_close(Eina_File *file)
    eina_lock_release(&file->lock);
    if (leave) goto end;
 
-   length = strlen(file->filename) + 1;
-   key = eina_hash_djb2(file->filename, length);
+   key = eina_hash_superfast((void*) &file->filename, sizeof (void*));
    if (eina_hash_find_by_hash(_eina_file_cache,
-                              file->filename, length, key) == file)
+                              file->filename, 0, key) == file)
      {
         eina_hash_del_by_key_hash(_eina_file_cache,
-                                  file->filename, length, key);
+                                  file->filename, 0, key);
      }
 
    eina_file_clean_close(file);
@@ -561,6 +560,20 @@ eina_file_filename_get(const Eina_File *file)
 {
    EINA_FILE_MAGIC_CHECK(file, NULL);
    return file->filename;
+}
+
+Eina_Stringshare *
+eina_file_sanitize(const char *path)
+{
+   char *filename;
+   Eina_Stringshare *ss;
+
+   filename = eina_file_path_sanitize(path);
+   if (!filename) return NULL;
+
+   ss = eina_stringshare_add(filename);
+   free(filename);
+   return ss;
 }
 
 /* search '\r' and '\n' by preserving cache locality and page locality
@@ -1054,7 +1067,7 @@ eina_file_init(void)
         return EINA_FALSE;
      }
 
-   _eina_file_cache = eina_hash_string_djb2_new(NULL);
+   _eina_file_cache = eina_hash_stringshared_new(NULL);
    if (!_eina_file_cache)
      {
         ERR("Could not create cache.");

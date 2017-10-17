@@ -711,7 +711,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 {
    Eina_File *file;
    Eina_File *n;
-   char *filename;
+   Eina_Stringshare *filename;
    HANDLE handle;
    WIN32_FILE_ATTRIBUTE_DATA fad;
    ULARGE_INTEGER length;
@@ -719,7 +719,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
-   filename = eina_file_path_sanitize(path);
+   filename = eina_file_sanitize(path);
    if (!filename) return NULL;
 
    /* FIXME: how to emulate shm_open ? Just OpenFileMapping ? */
@@ -770,7 +770,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (!file)
      {
-        n = malloc(sizeof(Eina_File) + strlen(filename) + 1);
+        n = malloc(sizeof(Eina_File));
         if (!n)
           {
              eina_lock_release(&_eina_file_lock_cache);
@@ -778,8 +778,7 @@ eina_file_open(const char *path, Eina_Bool shared)
           }
 
         memset(n, 0, sizeof(Eina_File));
-        n->filename = (char*) (n + 1);
-        strcpy((char*) n->filename, filename);
+        n->filename = filename;
         n->map = eina_hash_new(EINA_KEY_LENGTH(eina_file_map_key_length),
                                EINA_KEY_CMP(eina_file_map_key_cmp),
                                EINA_KEY_HASH(eina_file_map_key_hash),
@@ -808,15 +807,13 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    eina_lock_release(&_eina_file_lock_cache);
 
-   free(filename);
-
    return n;
 
  close_handle:
    CloseHandle(handle);
  free_file:
    ERR("Could not open file [%s].", filename);
-   free(filename);
+   eina_stringshare_del(filename);
 
    return NULL;
 }
@@ -824,8 +821,9 @@ eina_file_open(const char *path, Eina_Bool shared)
 EAPI Eina_Bool
 eina_file_unlink(const char *pathname)
 {
-   char *unlink_path = eina_file_path_sanitize(pathname);
+   Eina_Stringshare *unlink_path = eina_file_sanitize(pathname);
    Eina_File *file = eina_hash_find(_eina_file_cache, unlink_path);
+   Eina_Bool r = EINA_FALSE;
 
    if (file)
      {
@@ -845,17 +843,16 @@ eina_file_unlink(const char *pathname)
               {
                  CloseHandle(file->handle);
                  file->handle = INVALID_HANDLE_VALUE;
-                 return EINA_TRUE;
+                 r = EINA_TRUE;
+                 goto finish;
               }
           }
      }
 
-   if ( unlink(unlink_path) < 0)
-     {
-        return EINA_FALSE;
-     }
+   if ( unlink(unlink_path) >= 0) r = EINA_TRUE;
+   eina_stringshare_del(unlink_path);
 
-   return EINA_TRUE;
+   return r;
 }
 
 
