@@ -377,50 +377,52 @@ _elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, El
    );
    return EINA_FALSE;
 }
+static void
+_eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *should, Eina_Bool *want_full)
+{
+   *should = *want_full = EINA_FALSE;
+    if (pd->can_focus)
+      {
+        *should = EINA_TRUE;
+        //can focus can be overridden by the following properties
+
+        if (_tree_unfocusable(obj))
+          *should = EINA_FALSE;
+
+        if (_tree_disabled(obj))
+          *should = EINA_FALSE;
+
+        if (!evas_object_visible_get(obj))
+          *should = EINA_FALSE;
+
+        if (*should)
+          *want_full = EINA_TRUE;
+     }
+
+   if (!*should && pd->logical.child_count > 0)
+     {
+        *should = EINA_TRUE;
+
+        if (_tree_unfocusable(obj))
+          *should = EINA_FALSE;
+
+        if (_tree_disabled(obj))
+          *should = EINA_FALSE;
+
+        if (!evas_object_visible_get(obj))
+          *should = EINA_FALSE;
+     }
+}
 
 static void
-_focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
+_focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Bool want_full)
 {
-   Eina_Bool should = EINA_FALSE;
-   Eina_Bool want_full = EINA_FALSE;
    Elm_Widget_Focus_State configuration;
 
    //this would mean we are registering again the root, we dont want that
    if (pd->manager.manager == obj) return;
 
    //there are two reasons to be registered, the child count is bigger than 0, or the widget is flagged to be able to handle focus
-   if (pd->can_focus)
-     {
-        should = EINA_TRUE;
-        //can focus can be overridden by the following properties
-
-        if (_tree_unfocusable(obj))
-          should = EINA_FALSE;
-
-        if (_tree_disabled(obj))
-          should = EINA_FALSE;
-
-        if (!evas_object_visible_get(obj))
-          should = EINA_FALSE;
-
-        if (should)
-          want_full = EINA_TRUE;
-     }
-
-   if (!should && pd->logical.child_count > 0)
-     {
-        should = EINA_TRUE;
-
-        if (_tree_unfocusable(obj))
-          should = EINA_FALSE;
-
-        if (_tree_disabled(obj))
-          should = EINA_FALSE;
-
-        if (!evas_object_visible_get(obj))
-          should = EINA_FALSE;
-     }
-
    if (should)
      {
         configuration.parent = pd->logical.parent;
@@ -506,6 +508,9 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Efl_Ui_Focus_Object *old_parent;
    Efl_Ui_Focus_Object *old_registered_parent, *old_registered_manager;
+   Eina_Bool should, want_full;
+
+   _eval_registration_candidate(obj, pd, &should, &want_full);
 
    old_parent = _logical_parent_eval(obj, pd);
 
@@ -527,7 +532,7 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    old_registered_parent = pd->focus.parent;
    old_registered_manager = pd->focus.manager;
 
-   _focus_state_eval(obj, pd);
+   _focus_state_eval(obj, pd, should, want_full);
 
    if (old_registered_parent != pd->focus.parent)
      {
