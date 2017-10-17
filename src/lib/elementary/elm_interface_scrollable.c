@@ -4664,6 +4664,7 @@ _focused_element(void *data, const Efl_Event *event)
    Efl_Ui_Focus_Object *obj = data;
    Efl_Ui_Focus_Object *focus = event->info;
    Elm_Scrollable_Smart_Interface_Data *pd;
+   Eina_Position2D pos;
    int pan_x, pan_y;
 
    pd = efl_data_scope_get(obj, MY_SCROLLABLE_INTERFACE);
@@ -4671,9 +4672,10 @@ _focused_element(void *data, const Efl_Event *event)
    if (!focus) return;
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
+   pos = efl_gfx_position_get(obj);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
-   geom.x = geom.x + pan_x;
-   geom.y = geom.y + pan_y;
+   geom.x = geom.x + pan_x - pos.x;
+   geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
@@ -4728,15 +4730,17 @@ EOLIAN static void
 _elm_interface_scrollable_efl_ui_focus_manager_focus_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *focus)
 {
    Eina_Rect geom;
+   Eina_Position2D pos;
    int pan_x, pan_y;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
    efl_ui_focus_manager_focus_set(efl_super(obj, MY_SCROLLABLE_INTERFACE), focus);
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
+   pos = efl_gfx_position_get(obj);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
-   geom.x = geom.x + pan_x;
-   geom.y = geom.y + pan_y;
+   geom.x = geom.x + pan_x - pos.x;
+   geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
 }
