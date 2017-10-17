@@ -5,9 +5,6 @@
  * @image html flip_inheritance_tree.png
  * @image latex flip_inheritance_tree.eps
  *
- * @image html img/widget/flip/preview-00.png
- * @image latex img/widget/flip/preview-00.eps
- *
  * This widget holds 2 content objects(Evas_Object): one on the front and one
  * on the back. It allows you to flip from front to back and vice-versa using
  * various animations.
