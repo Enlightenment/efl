@@ -1935,12 +1935,16 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
           }
         else if (array[i].desc == EFL_EVENT_KEY_DOWN)
           {
+             // Legacy API: Must grab key
+             if (elm_widget_is_legacy(win)) return;
              if (!(sd->event_forward.key_down++))
                efl_event_callback_add(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
           }
         else if (array[i].desc == EFL_EVENT_KEY_UP)
           {
+             // Legacy API: Must grab key
+             if (elm_widget_is_legacy(win)) return;
              if (!(sd->event_forward.key_up++))
                efl_event_callback_add(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
@@ -2062,12 +2066,16 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
           }
         else if (array[i].desc == EFL_EVENT_KEY_DOWN)
           {
+             // Legacy API: Must grab key
+             if (elm_widget_is_legacy(win)) return;
              if (!(--sd->event_forward.key_down))
                efl_event_callback_del(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
           }
         else if (array[i].desc == EFL_EVENT_KEY_UP)
           {
+             // Legacy API: Must grab key
+             if (elm_widget_is_legacy(win)) return;
              if (!(--sd->event_forward.key_up))
                efl_event_callback_del(sd->evas, array[i].desc,
                                      _evas_event_key_cb, win);
