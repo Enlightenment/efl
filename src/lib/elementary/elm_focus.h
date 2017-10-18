@@ -132,6 +132,7 @@ EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
  * Get custom focus chain
  *
  * @param obj The container object
+ * @return Chain of objects to pass focus.
  * @ingroup Elm_Focus
  */
 EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj);

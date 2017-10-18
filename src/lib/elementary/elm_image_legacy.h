@@ -201,6 +201,7 @@ EAPI Eina_Bool elm_image_smooth_get(const Evas_Object *obj);
  * @ingroup Elm_Image
  * @since 1.7
  *
+ * @param obj The image object
  * @param[in] play @c EINA_TRUE to start the animation, @c EINA_FALSE
 otherwise. Default is @c EINA_FALSE.
  */
@@ -209,6 +210,7 @@ EAPI void             elm_image_animated_play_set(Evas_Object *obj, Eina_Bool pl
 /**
  * Get whether an image object is under animation or not.
  *
+ * @param obj The image object
  * @return @c EINA_TRUE, if the image is being animated, @c EINA_FALSE
  * otherwise.
  *
@@ -236,6 +238,7 @@ EAPI Eina_Bool        elm_image_animated_play_get(const Evas_Object *obj);
  * @ingroup Elm_Image
  * @since 1.7
  *
+ * @param obj The image object
  * @param[in] anim @c EINA_TRUE if the object is to animate itself,
  * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
  */
@@ -245,6 +248,7 @@ EAPI void             elm_image_animated_set(Evas_Object *obj, Eina_Bool anim);
  *
  * Get whether an image object has animation enabled or not.
  *
+ * @param obj The image object
  * @return @c EINA_TRUE if the image has animation enabled,
  * @c EINA_FALSE otherwise.
  *
@@ -532,6 +536,9 @@ EAPI Eina_Bool elm_image_aspect_fixed_get(const Evas_Object *obj);
 
 /**
  * @brief Enable asynchronous file I/O for elm_image_file_set.
+ *
+ * @param obj The image object
+ * @param[in] async @ true will make elm_image_file_set() an asynchronous operation
  *
  * If @c true, this will make elm_image_file_set() an asynchronous operation.
  * Use of this function is not recommended and the standard EO-based
