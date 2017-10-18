@@ -18,7 +18,11 @@
  * @{
  */
 
+// Legacy types
 #include "elm_general.eot.h"
+
+// EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
+#include "efl_ui.eot.h"
 
 #define ELM_FOCUS_PREVIOUS EFL_UI_FOCUS_DIRECTION_PREVIOUS
 #define ELM_FOCUS_NEXT EFL_UI_FOCUS_DIRECTION_NEXT

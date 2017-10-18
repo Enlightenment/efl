@@ -1,4 +1,4 @@
-import elm_general;
+import efl_ui;
 
 struct Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focussable objects.

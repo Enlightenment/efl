@@ -1,0 +1,103 @@
+/* Efl.Ui enum and struct types */
+
+enum Efl.Ui.Theme.Apply
+{
+   [[Return error code when setting the style on a widget.]]
+   failed = 0,  [[Failed to apply theme. The widget may become unusable.]]
+   default = 1, [[Successfully applied the default style. The widget may
+                  look different from the rest of the UI if a custom theme
+                  is in use, but it should be usable.]]
+   success = 3  [[Successfully applied the requested style from the current
+                  theme.]]
+}
+
+enum Efl.Ui.Focus.Direction
+{
+   [[ Focus directions. ]]
+   previous = 0, [[ previous direction ]]
+   next = 1,     [[ next direction ]]
+   up = 2,       [[ up direction ]]
+   down = 3,     [[ down direction ]]
+   right = 4,    [[ right direction ]]
+   left = 5,     [[ left direction ]]
+   last = 6
+}
+
+enum Efl.Ui.Interest_Region_Mode
+{
+   [[Focus region show mode.]]
+   widget, [[As a widget.]]
+   item, [[As an item.]]
+}
+
+enum Efl.Ui.Focus.Move_Policy
+{
+   [[Focus Movement Policy.
+     @since 1.10]]
+   click, [[Move focus by mouse click or touch. Elementary focus is set on mouse
+            click and this is checked at mouse up time. (default)]]
+   in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
+         mouse pointer is moved into an object.]]
+   key_only, [[Move focus by key. Elementary focus is set on key input like
+               Left, Right, Up, Down, Tab, or Shift+Tab.]]
+}
+
+enum Efl.Ui.Slider.Indicator_Visible_Mode
+{
+   [[Slider's indicator visiblity mode.
+
+     @since 1.13
+   ]]
+   default,   [[show indicator on mouse down or change in slider value]]
+   always,    [[Always show the indicator.]]
+   on_focus,  [[Show the indicator on focus]]
+   none       [[Never show the indicator ]]
+}
+
+enum Efl.Ui.Focus.Autoscroll_Mode
+{
+   [[Focus Autoscroll Mode
+
+     @since 1.10
+   ]]
+   show,    [[Directly show the focused region or item automatically.]]
+   none,    [[Do not show the focused region or item automatically.]]
+   bring_in [[Bring in the focused region or item automatically which might invole the scrolling.]]
+}
+
+enum Efl.Ui.Softcursor_Mode
+{
+   [[Software cursor mode.
+
+     @since 1.7
+   ]]
+   auto, [[Auto-detect if a software cursor should be used (default).]]
+   on,   [[Always use a softcursor.]]
+   off   [[Never use a softcursor.]]
+}
+
+enum Efl.Ui.Scroll_Block
+{
+   [[Direction in which a scroller should be blocked.
+
+     Note: These options may be effective only in case of thumbscroll (i.e.
+     when scrolling by dragging).
+
+     @since 1.21
+   ]]
+   none = 0,      [[Don't block any movement.]]
+   vertical = 1,  [[Block vertical movement.]]
+   horizontal = 2 [[Block horizontal movement.]]
+}
+
+/* 'on_access_activate' is beta API in the Widget class */
+enum Efl.Ui.Activate
+{
+   [[Accessibility ]]
+   default = 0, [[Activate default]]
+   up, [[Activate up]]
+   down, [[Activate down]]
+   right, [[Activate right]]
+   left, [[Activate left]]
+   back, [[Activate back]]
+}
