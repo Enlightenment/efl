@@ -3683,8 +3683,8 @@ _item_del(Elm_Gen_Item *it)
                {
                   tmp->item->queued = EINA_FALSE;
                   sd->queue = eina_list_remove(sd->queue, tmp);
-                  _item_process(sd, tmp);
-                  _item_process_post(sd, tmp);
+                  if (_item_process(sd, tmp))
+                    _item_process_post(sd, tmp);
                }
              tmp->item->rel = NULL;
           }
@@ -4574,6 +4574,7 @@ _item_process_post(Elm_Genlist_Data *sd, Elm_Gen_Item *it)
 {
    Eina_Bool show_me = EINA_FALSE;
 
+   EINA_SAFETY_ON_FALSE_RETURN(it && it->item && it->item->block);
    if (it->item->block->changed)
      {
         show_me = _item_block_recalc
