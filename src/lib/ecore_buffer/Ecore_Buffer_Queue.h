@@ -189,6 +189,8 @@ EAPI int   ecore_buffer_queue_init(void);
  *
  * @since 1.15
  *
+ * @return How many times the lib has been initialized.
+ *
  * This closes the connection of Buffer Queue daemon, and Shut down Ecore_Buffer_Queue libraries.
  *
  * @see ecore_buffer_queue_init()

@@ -199,6 +199,8 @@ EAPI void ecore_main_loop_select_func_set(Ecore_Select_Function func);
  * Gets the select function set by ecore_select_func_set(),
  * or the native select function if none was set.
  *
+ * @return A function which can be used to replace select() in the main loop.
+ *
  */
 EAPI Ecore_Select_Function ecore_main_loop_select_func_get(void);
 
@@ -747,7 +749,8 @@ EAPI int ecore_event_type_new(void);
 
 /**
  * @brief Forcefully flush all pending type without processing them
- * @param Serie of Ecore_Event finished by ECORE_EVENT_NONE.
+ * @param type Ecore_Event.
+ * @param ... Serie of Ecore_Event finished by ECORE_EVENT_NONE.
  *
  * This function is to be called before calling ecore_shutdown() if any event
  * has still a chance to be in the ecore event queue.
@@ -756,7 +759,7 @@ EAPI void ecore_event_type_flush_internal(int type, ...);
 
 /**
  * @brief Forcefully flush all pending type without processing them
- * @param Serie of Ecore_Event.
+ * @param ... Serie of Ecore_Event.
  *
  * This function is to be called before calling ecore_shutdown() if any event
  * has still a chance to be in the ecore event queue.
@@ -1662,7 +1665,7 @@ EAPI void ecore_loop_time_set(double t);
  *
  * @image html ecore_thread.png
  * @image rtf ecore_thread.png
- * @image latex ecore_thread.eps width=\textwidth
+ * @image latex ecore_thread.eps width=\\textwidth
  *
  * For larger tasks that may require continuous communication with the main
  * program, the feedback workers provide the same functionality plus a way
@@ -1676,7 +1679,7 @@ EAPI void ecore_loop_time_set(double t);
  *
  * @image html ecore_thread_feedback.png
  * @image rtf ecore_thread_feedback.png
- * @image latex ecore_thread_feedback.eps width=\textwidth
+ * @image latex ecore_thread_feedback.eps width=\\textwidth
  *
  * See an overview example in @ref ecore_thread_example_c.
  *
@@ -2804,7 +2807,7 @@ EAPI double ecore_animator_frametime_get(void);
  * @note When not listed v1 and v2 have no effect.
  *
  * @image html ecore-pos-map.png
- * @image latex ecore-pos-map.eps width=\textwidth
+ * @image latex ecore-pos-map.eps width=\\textwidth
  *
  * One way to use this would be:
  * @code
@@ -2869,7 +2872,7 @@ EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, dou
  * @note When not listed v has no effect.
  *
  * @image html ecore-pos-map.png
- * @image latex ecore-pos-map.eps width=\textwidth
+ * @image latex ecore-pos-map.eps width=\\textwidth
  *
  * One way to use this would be:
  * @code

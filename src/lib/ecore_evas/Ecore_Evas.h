@@ -133,11 +133,17 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_OPENGL_DRM
 } Ecore_Evas_Engine_Type;
 
+/**
+ * @enum _Ecore_Evas_Avoid_Damage_Type
+ * This option causes updates of the Ecore_Evas to be done on a pixmap, and
+ * then copied to the window, or the pixmap used directly on the window,
+ * depending on the setting.
+ */
 typedef enum _Ecore_Evas_Avoid_Damage_Type
 {
-   ECORE_EVAS_AVOID_DAMAGE_NONE = 0,
-   ECORE_EVAS_AVOID_DAMAGE_EXPOSE = 1,
-   ECORE_EVAS_AVOID_DAMAGE_BUILT_IN = 2
+   ECORE_EVAS_AVOID_DAMAGE_NONE = 0, /**< every expose event triggers a new damage and consequently render of the affected area. The rendering of things happens directly on the window */
+   ECORE_EVAS_AVOID_DAMAGE_EXPOSE = 1, /**< there's a pixmap where everything is rendered into, and then copied to the window. On expose events, there's no need to render things again, just to copy the exposed region to the window */
+   ECORE_EVAS_AVOID_DAMAGE_BUILT_IN = 2 /**<  there's the same pixmap as the previous one, but it is set as a "background pixmap" of the window. The rendered things appear directly on the window, with no need to copy anything, but would stay stored on the pixmap, so there's no need to render things again on expose events. This option can be faster than the previous one, but may lead to artifacts during resize of the window */
 } Ecore_Evas_Avoid_Damage_Type;
 
 typedef enum _Ecore_Evas_Object_Associate_Flags
