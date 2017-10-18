@@ -191,7 +191,8 @@ elm_legacy_eolian_files = \
 	$(NULL)
 
 elm_eolian_type_files = \
-	lib/elementary/elm_general.eot
+	lib/elementary/elm_general.eot \
+	lib/elementary/efl_ui.eot
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
 elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \

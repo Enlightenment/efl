@@ -1,17 +1,13 @@
-enum Efl.Ui.Theme.Apply
-{
-   [[Return error code when setting the style on a widget.]]
-   failed = 0,  [[Failed to apply theme. The widget may become unusable.]]
-   default = 1, [[Successfully applied the default style. The widget may
-                  look different from the rest of the UI if a custom theme
-                  is in use, but it should be usable.]]
-   success = 3  [[Successfully applied the requested style from the current
-                  theme.]]
-}
+/* Elementary legacy-only types.
+ * NOTE: Some of those types still need to be moved to Efl.Ui
+ */
 
+/* Legacy-only function pointer types, for the legacy EO classes (genlist, etc...) */
+type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
+type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
+type @extern Elm.Glob.Match_Flags: __undefined_type; [[Elementary glob matching flags]]
 
-/* The below Elm names need to be cleaned up... */
-
+/* FIXME: elm_policy API is not bound to EO */
 struct Elm.Event.Policy_Changed
 {
    [[Data on the event when an Elementary policy has changed]]
@@ -19,13 +15,6 @@ struct Elm.Event.Policy_Changed
    new_value: int; [[value the policy had before the change]]
    old_value: int; [[new value the policy got]]
 }
-
-/* FIXME: These shouldn't be here, we don't do functions in eolian!!! */
-type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
-type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
-type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
-type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
-type @extern Elm.Glob.Match_Flags: __undefined_type; [[Elementary glob matching flags]]
 
 /* FIXME: elm_policy API is not bound to EO */
 enum Elm.Policy
@@ -44,9 +33,10 @@ enum Elm.Policy
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
+/* FIXME: elm_policy API is not bound to EO */
 enum Elm.Policy.Quit
 {
-   [[Possible values for the #ELM_POLICY_QUIT policy]]
+   [[Possible values for the @Elm.Policy.quit policy]]
    none = 0, [[never quit the application automatically]]
    last_window_closed, [[quit when the application's last window is closed]]
    last_window_hidden [[quit when the application's last window is hidden
@@ -54,9 +44,10 @@ enum Elm.Policy.Quit
                         @since 1.14]]
 }
 
+/* FIXME: elm_policy API is not bound to EO */
 enum Elm.Policy.Exit
 {
-   [[Possible values for the #ELM_POLICY_EXIT policy.
+   [[Possible values for the @Elm.Policy.exit policy.
 
      @since 1.8
    ]]
@@ -64,9 +55,10 @@ enum Elm.Policy.Exit
    windows_del [[delete all the windows after quitting the main loop]]
 }
 
+/* FIXME: elm_policy API is not bound to EO */
 enum Elm.Policy.Throttle
 {
-   [[Possible values for the #ELM_POLICY_THROTTLE policy.
+   [[Possible values for the @Elm.Policy.throttle policy.
 
      @since 1.8
    ]]
@@ -76,6 +68,7 @@ enum Elm.Policy.Throttle
            settings]]
 }
 
+/* FIXME: Move to Efl.Ui namespace after Efl.Ui.List gets merged! */
 enum Elm.Object.Select_Mode
 {
    [[Possible values for the #ELM_OBJECT_SELECT_MODE policy.
@@ -99,6 +92,7 @@ enum Elm.Object.Select_Mode
          is forbidden.]]
 }
 
+/* FIXME: Move to Efl.Ui namespace after Efl.Ui.List gets merged! */
 enum Elm.Object.Multi_Select_Mode
 {
    [[Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
@@ -112,6 +106,7 @@ enum Elm.Object.Multi_Select_Mode
          ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden.]]
 }
 
+/* Legacy only: elm_entry, elm_label, elm_popup */
 enum Elm.Wrap.Type
 {
    [[Line wrapping types.
@@ -129,85 +124,6 @@ enum Elm.Wrap.Type
    last      [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Ui.Focus.Direction
-{
-   [[ Focus directions. ]]
-   previous = 0, [[ previous direction ]]
-   next = 1,     [[ next direction ]]
-   up = 2,       [[ up direction ]]
-   down = 3,     [[ down direction ]]
-   right = 4,    [[ right direction ]]
-   left = 5,     [[ left direction ]]
-   last = 6
-}
-
-enum Efl.Ui.Interest_Region_Mode
-{
-   [[Focus region show mode.]]
-   widget, [[As a widget.]]
-   item, [[As an item.]]
-}
-
-enum Efl.Ui.Focus.Move_Policy
-{
-   [[Focus Movement Policy.
-     @since 1.10]]
-   click, [[Move focus by mouse click or touch. Elementary focus is set on mouse
-            click and this is checked at mouse up time. (default)]]
-   in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
-         mouse pointer is moved into an object.]]
-   key_only, [[Move focus by key. Elementary focus is set on key input like
-               Left, Right, Up, Down, Tab, or Shift+Tab.]]
-}
-
-enum Efl.Ui.Slider.Indicator_Visible_Mode
-{
-   [[Slider's indicator visiblity mode.
-
-     @since 1.13
-   ]]
-   default,   [[show indicator on mouse down or change in slider value]]
-   always,    [[Always show the indicator.]]
-   on_focus,  [[Show the indicator on focus]]
-   none       [[Never show the indicator ]]
-}
-
-enum Efl.Ui.Focus.Autoscroll_Mode
-{
-   [[Focus Autoscroll Mode
-
-     @since 1.10
-   ]]
-   show,    [[Directly show the focused region or item automatically.]]
-   none,    [[Do not show the focused region or item automatically.]]
-   bring_in [[Bring in the focused region or item automatically which might invole the scrolling.]]
-}
-
-enum Efl.Ui.Softcursor_Mode
-{
-   [[Software cursor mode.
-
-     @since 1.7
-   ]]
-   auto, [[Auto-detect if a software cursor should be used (default).]]
-   on,   [[Always use a softcursor.]]
-   off   [[Never use a softcursor.]]
-}
-
-enum Efl.Ui.Scroll_Block
-{
-   [[Direction in which a scroller should be blocked.
-
-     Note: These options may be effective only in case of thumbscroll (i.e.
-     when scrolling by dragging).
-
-     @since 1.21
-   ]]
-   none = 0,      [[Don't block any movement.]]
-   vertical = 1,  [[Block vertical movement.]]
-   horizontal = 2 [[Block horizontal movement.]]
-}
-
 enum Elm.Icon.Type
 {
    [[Elementary icon types]]
@@ -215,18 +131,6 @@ enum Elm.Icon.Type
    none, [[Icon has no type set]]
    file, [[Icon is of type file]]
    standard [[Icon is of type standard]]
-}
-
-/* 'on_access_activate' is beta API in the Widget class */
-enum Efl.Ui.Activate
-{
-   [[Accessibility ]]
-   default = 0, [[Activate default]]
-   up, [[Activate up]]
-   down, [[Activate down]]
-   right, [[Activate right]]
-   left, [[Activate left]]
-   back, [[Activate back]]
 }
 
 /* FIXME: shouldn't exist */
