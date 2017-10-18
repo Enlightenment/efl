@@ -4639,8 +4639,8 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
 }
 
 EOLIAN static Eina_Value *
-_efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
-                                           const char *name)
+_efl_config_global_efl_config_config_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+                                         const char *name)
 {
    Eina_Value *val = NULL;
 
@@ -4763,15 +4763,6 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
      }
 
    ERR("Config '%s' does not exist", name);
-   return NULL;
-}
-
-EOLIAN static Eina_Iterator *
-_efl_config_global_efl_config_config_list_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
-                                              const char *name)
-{
-   // Not implemented: none of the elm_config functions returns a list of primitive types
-   (void) name;
    return NULL;
 }
 
