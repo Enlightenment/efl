@@ -2254,6 +2254,12 @@ comp_surface_smart_del(Evas_Object *obj)
      }
    evas_object_del(cs->img);
    evas_object_del(cs->clip);
+   if (cs->shell.surface)
+     {
+        if (cs->role)
+          wl_resource_destroy(cs->role);
+        wl_resource_destroy(cs->shell.surface);
+     }
    cs->c->surfaces = eina_inlist_remove(cs->c->surfaces, EINA_INLIST_GET(cs));
    cs->c->surfaces_count--;
    free(cs);
