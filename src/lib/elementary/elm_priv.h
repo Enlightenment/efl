@@ -88,6 +88,7 @@
 
 typedef struct _Elm_Theme_Files          Elm_Theme_Files;
 typedef struct _Edje_Signal_Data         Edje_Signal_Data;
+typedef struct _Elm_Config_Flags         Elm_Config_Flags;
 typedef struct _Elm_Config               Elm_Config;
 typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
 typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
@@ -187,6 +188,40 @@ extern const char *_elm_engines[];
 #define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
    {name, type},
 
+struct _Elm_Config_Flags
+{
+   Eina_Bool engine : 1;
+   Eina_Bool accel : 1;
+   Eina_Bool web_backend : 1;
+   Eina_Bool accel_override : 1;
+   Eina_Bool vsync : 1;
+   Eina_Bool thumbscroll_enable : 1;
+   Eina_Bool thumbscroll_threshold : 1;
+   Eina_Bool thumbscroll_hold_threshold : 1;
+   Eina_Bool thumbscroll_momentum_threshold : 1;
+   Eina_Bool thumbscroll_flick_distance_tolerance : 1;
+   Eina_Bool thumbscroll_friction : 1;
+   Eina_Bool thumbscroll_min_friction : 1;
+   Eina_Bool thumbscroll_friction_standard : 1;
+   Eina_Bool thumbscroll_bounce_friction : 1;
+   Eina_Bool thumbscroll_acceleration_threshold : 1;
+   Eina_Bool thumbscroll_acceleration_time_limit : 1;
+   Eina_Bool thumbscroll_acceleration_weight : 1;
+   Eina_Bool page_scroll_friction : 1;
+   Eina_Bool bring_in_scroll_friction : 1;
+   Eina_Bool zoom_friction : 1;
+   Eina_Bool scroll_animation_disable : 1;
+   Eina_Bool scroll_accel_factor : 1;
+   Eina_Bool thumbscroll_bounce_enable : 1;
+   Eina_Bool thumbscroll_border_friction : 1;
+   Eina_Bool thumbscroll_sensitivity_friction : 1;
+   Eina_Bool scroll_smooth_start_enable : 1;
+   Eina_Bool scroll_smooth_amount : 1;
+   Eina_Bool scroll_smooth_time_window : 1;
+   Eina_Bool scale : 1;
+   // ...
+};
+
 struct _Elm_Config
 {
    int           config_version;
@@ -224,7 +259,7 @@ struct _Elm_Config
    double        scale;
    int           bgpixmap;
    int           compositing;
-   Eina_List    *font_dirs;
+   Eina_List    *font_dirs; // priv flags for Elm_Config_Flags -> up to here...
    Eina_List    *font_overlays;
    int           font_hinting;
    int           cache_flush_poll_interval;
@@ -322,6 +357,8 @@ struct _Elm_Config
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
    Eina_Bool     translate : 1;
+
+   Elm_Config_Flags priv;
 };
 
 struct _Elm_Config_Bindings_Widget

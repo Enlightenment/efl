@@ -1821,6 +1821,60 @@ _config_load(void)
 }
 
 static void
+_elm_config_reload_do(void)
+{
+   Elm_Config *prev_config;
+
+   prev_config = _elm_config;
+   _elm_config = NULL;
+   _config_load();
+   if (prev_config)
+     {
+#define KEEP_VAL(xxx) \
+   if (prev_config->priv.xxx) { \
+      _elm_config->xxx = prev_config->xxx; \
+   }
+#define KEEP_STR(xxx) \
+   if (prev_config->priv.xxx) { \
+      eina_stringshare_replace(&(_elm_config->xxx), prev_config->xxx); \
+   }
+        KEEP_STR(engine);
+        KEEP_STR(accel);
+        KEEP_STR(web_backend);
+        KEEP_VAL(accel_override);
+        KEEP_VAL(vsync);
+        KEEP_VAL(thumbscroll_enable);
+        KEEP_VAL(thumbscroll_threshold);
+        KEEP_VAL(thumbscroll_hold_threshold);
+        KEEP_VAL(thumbscroll_momentum_threshold);
+        KEEP_VAL(thumbscroll_flick_distance_tolerance);
+        KEEP_VAL(thumbscroll_friction);
+        KEEP_VAL(thumbscroll_min_friction);
+        KEEP_VAL(thumbscroll_friction_standard);
+        KEEP_VAL(thumbscroll_bounce_friction);
+        KEEP_VAL(thumbscroll_acceleration_threshold);
+        KEEP_VAL(thumbscroll_acceleration_time_limit);
+        KEEP_VAL(thumbscroll_acceleration_weight);
+        KEEP_VAL(page_scroll_friction);
+        KEEP_VAL(bring_in_scroll_friction);
+        KEEP_VAL(zoom_friction);
+        KEEP_VAL(scroll_animation_disable);
+        KEEP_VAL(scroll_accel_factor);
+        KEEP_VAL(thumbscroll_bounce_enable);
+        KEEP_VAL(thumbscroll_border_friction);
+        KEEP_VAL(thumbscroll_sensitivity_friction);
+        KEEP_VAL(scroll_smooth_start_enable);
+        KEEP_VAL(scroll_smooth_amount);
+        KEEP_VAL(scroll_smooth_time_window);
+        KEEP_VAL(scale);
+
+        _elm_config->priv = prev_config->priv;
+        _config_free(prev_config);
+     }
+   _env_get();
+}
+
+static void
 _config_flush_get(void)
 {
    Eina_Bool is_mirrored;
@@ -1833,10 +1887,8 @@ _config_flush_get(void)
 
    _elm_config_font_overlays_cancel();
    _color_overlays_cancel();
-   _config_free(_elm_config);
-   _elm_config = NULL;
-   _config_load();
-   _env_get();
+
+   _elm_config_reload_do();
 
    /* restore prev value which is not part of the EET file */
    _elm_config->is_mirrored = is_mirrored;
@@ -2711,6 +2763,7 @@ elm_config_scale_get(void)
 EAPI void
 elm_config_scale_set(double scale)
 {
+   _elm_config->priv.scale = EINA_TRUE;
    if (scale < 0.0) return;
    if (_elm_config->scale == scale) return;
    _elm_config->scale = scale;
@@ -3128,6 +3181,7 @@ elm_config_vsync_get(void)
 EAPI void
 elm_config_vsync_set(Eina_Bool enabled)
 {
+   _elm_config->priv.vsync = EINA_TRUE;
    _elm_config->vsync = enabled;
 }
 
@@ -3140,6 +3194,7 @@ elm_config_accel_preference_override_get(void)
 EAPI void
 elm_config_accel_preference_override_set(Eina_Bool enabled)
 {
+   _elm_config->priv.accel_override = EINA_TRUE;
    _elm_config->accel_override = enabled;
 }
 
@@ -3225,6 +3280,7 @@ elm_config_scroll_bounce_enabled_get(void)
 EAPI void
 elm_config_scroll_bounce_enabled_set(Eina_Bool enabled)
 {
+   _elm_config->priv.thumbscroll_bounce_enable = EINA_TRUE;
    _elm_config->thumbscroll_bounce_enable = enabled;
 }
 
@@ -3237,6 +3293,7 @@ elm_config_scroll_bounce_friction_get(void)
 EAPI void
 elm_config_scroll_bounce_friction_set(double friction)
 {
+   _elm_config->priv.thumbscroll_bounce_friction = EINA_TRUE;
    _elm_config->thumbscroll_bounce_friction = friction;
 }
 
@@ -3249,6 +3306,7 @@ elm_config_scroll_page_scroll_friction_get(void)
 EAPI void
 elm_config_scroll_page_scroll_friction_set(double friction)
 {
+   _elm_config->priv.page_scroll_friction = EINA_TRUE;
    _elm_config->page_scroll_friction = friction;
 }
 
@@ -3261,6 +3319,7 @@ elm_config_scroll_bring_in_scroll_friction_get(void)
 EAPI void
 elm_config_scroll_bring_in_scroll_friction_set(double friction)
 {
+   _elm_config->priv.bring_in_scroll_friction = EINA_TRUE;
    _elm_config->bring_in_scroll_friction = friction;
 }
 
@@ -3285,6 +3344,7 @@ elm_config_scroll_thumbscroll_enabled_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
 {
+   _elm_config->priv.thumbscroll_enable = EINA_TRUE;
    _elm_config->thumbscroll_enable = enabled;
 }
 
@@ -3297,6 +3357,7 @@ elm_config_scroll_thumbscroll_threshold_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_threshold_set(unsigned int threshold)
 {
+   _elm_config->priv.thumbscroll_threshold = EINA_TRUE;
    _elm_config->thumbscroll_threshold = threshold;
 }
 
@@ -3309,6 +3370,7 @@ elm_config_scroll_thumbscroll_hold_threshold_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_hold_threshold_set(unsigned int threshold)
 {
+   _elm_config->priv.thumbscroll_hold_threshold = EINA_TRUE;
    _elm_config->thumbscroll_hold_threshold = threshold;
 }
 
@@ -3321,6 +3383,7 @@ elm_config_scroll_thumbscroll_momentum_threshold_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_momentum_threshold_set(double threshold)
 {
+   _elm_config->priv.thumbscroll_momentum_threshold = EINA_TRUE;
    _elm_config->thumbscroll_momentum_threshold = threshold;
 }
 
@@ -3333,6 +3396,7 @@ elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance)
 {
+   _elm_config->priv.thumbscroll_flick_distance_tolerance = EINA_TRUE;
    _elm_config->thumbscroll_flick_distance_tolerance = distance;
 }
 
@@ -3345,6 +3409,7 @@ elm_config_scroll_thumbscroll_friction_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_friction_set(double friction)
 {
+   _elm_config->priv.thumbscroll_friction = EINA_TRUE;
    _elm_config->thumbscroll_friction = friction;
 }
 
@@ -3357,6 +3422,7 @@ elm_config_scroll_thumbscroll_min_friction_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_min_friction_set(double friction)
 {
+   _elm_config->priv.thumbscroll_min_friction = EINA_TRUE;
    _elm_config->thumbscroll_min_friction = friction;
 }
 
@@ -3369,6 +3435,7 @@ elm_config_scroll_thumbscroll_friction_standard_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_friction_standard_set(double standard)
 {
+   _elm_config->priv.thumbscroll_friction_standard = EINA_TRUE;
    _elm_config->thumbscroll_friction_standard = standard;
 }
 
@@ -3381,6 +3448,7 @@ elm_config_scroll_thumbscroll_border_friction_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_border_friction_set(double friction)
 {
+   _elm_config->priv.thumbscroll_border_friction = EINA_TRUE;
    if (friction < 0.0) friction = 0.0;
    if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_border_friction = friction;
@@ -3395,18 +3463,19 @@ elm_config_scroll_thumbscroll_sensitivity_friction_get(void)
 EAPI Eina_Bool
 elm_config_context_menu_disabled_get(void)
 {
-	return _elm_config->context_menu_disabled;
+   return _elm_config->context_menu_disabled;
 }
 
 EAPI void
 elm_config_context_menu_disabled_set(Eina_Bool disabled)
 {
-	_elm_config->context_menu_disabled = !!disabled;
+   _elm_config->context_menu_disabled = !!disabled;
 }
 
 EAPI void
 elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction)
 {
+   _elm_config->priv.thumbscroll_sensitivity_friction = EINA_TRUE;
    if (friction < 0.1) friction = 0.1;
    if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_sensitivity_friction = friction;
@@ -3421,6 +3490,7 @@ elm_config_scroll_thumbscroll_smooth_start_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable)
 {
+   _elm_config->priv.scroll_smooth_start_enable = EINA_TRUE;
    _elm_config->scroll_smooth_start_enable = enable;
 }
 
@@ -3433,12 +3503,14 @@ elm_config_scroll_animation_disabled_get(void)
 EAPI void
 elm_config_scroll_animation_disabled_set(Eina_Bool disable)
 {
+   _elm_config->priv.scroll_animation_disable = EINA_TRUE;
    _elm_config->scroll_animation_disable = !!disable;
 }
 
 EAPI void
 elm_config_scroll_accel_factor_set(double factor)
 {
+   _elm_config->priv.scroll_accel_factor = EINA_TRUE;
    if (factor < 0.0) factor = 0.0;
    if (factor > 10.0) factor = 10.0;
    _elm_config->scroll_accel_factor = factor;
@@ -3453,6 +3525,7 @@ elm_config_scroll_accel_factor_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_smooth_amount_set(double amount)
 {
+   _elm_config->priv.scroll_smooth_amount = EINA_TRUE;
    if (amount < 0.0) amount = 0.0;
    if (amount > 1.0) amount = 1.0;
    _elm_config->scroll_smooth_amount = amount;
@@ -3467,6 +3540,7 @@ elm_config_scroll_thumbscroll_smooth_amount_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_smooth_time_window_set(double amount)
 {
+   _elm_config->priv.scroll_smooth_time_window = EINA_TRUE;
    if (amount < 0.0) amount = 0.0;
    if (amount > 1.0) amount = 1.0;
    _elm_config->scroll_smooth_time_window = amount;
@@ -3487,6 +3561,7 @@ elm_config_scroll_thumbscroll_acceleration_threshold_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_acceleration_threshold_set(double threshold)
 {
+   _elm_config->priv.thumbscroll_acceleration_threshold = EINA_TRUE;
    _elm_config->thumbscroll_acceleration_threshold = threshold;
 }
 
@@ -3499,6 +3574,7 @@ elm_config_scroll_thumbscroll_acceleration_time_limit_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_acceleration_time_limit_set(double time_limit)
 {
+   _elm_config->priv.thumbscroll_acceleration_time_limit = EINA_TRUE;
    _elm_config->thumbscroll_acceleration_time_limit = time_limit;
 }
 
@@ -3511,6 +3587,7 @@ elm_config_scroll_thumbscroll_acceleration_weight_get(void)
 EAPI void
 elm_config_scroll_thumbscroll_acceleration_weight_set(double weight)
 {
+   _elm_config->priv.thumbscroll_acceleration_weight = EINA_TRUE;
    _elm_config->thumbscroll_acceleration_weight = weight;
 }
 
@@ -4077,11 +4154,8 @@ _elm_config_reload(void)
    is_mirrored = _elm_config->is_mirrored;
    translate = _elm_config->translate;
 
-   _config_free(_elm_config);
-   _elm_config = NULL;
-
-   _config_load();
-
+   _elm_config_reload_do();
+   
    /* restore prev value which is not part of the EET file */
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
@@ -4122,6 +4196,7 @@ _elm_config_reload(void)
 void
 _elm_config_engine_set(const char *engine)
 {
+   _elm_config->priv.engine = EINA_TRUE;
    eina_stringshare_replace(&(_elm_config->engine), engine);
 }
 
@@ -4232,6 +4307,7 @@ _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel,
 EAPI void
 elm_config_accel_preference_set(const char *pref)
 {
+   _elm_config->priv.accel = EINA_TRUE;
    if (pref)
      {
         Eina_Bool hw;
@@ -4299,6 +4375,7 @@ elm_config_transition_duration_factor_get(void)
 EAPI void
 elm_config_web_backend_set(const char *backend)
 {
+     _elm_config->priv.web_backend = EINA_TRUE;
    if (_elm_web_init(backend))
      _elm_config->web_backend = backend;
 }
@@ -4331,9 +4408,8 @@ _elm_config_profile_set(const char *profile)
    _elm_profile = strdup(profile);
 
    _color_overlays_cancel();
-   _config_free(_elm_config);
-   _elm_config = NULL;
-   _config_load();
+
+   _elm_config_reload_do();
 
    /* restore prev value which is not part of the EET file */
    _elm_config->is_mirrored = is_mirrored;
