@@ -2116,7 +2116,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      {
         const char *text;
         const char *font;
-        Evas_Coord tw, th;
+        Eina_Size2D ts;
         int inlined_font = 0;
         Edje_Real_Part *source, *text_source;
 
@@ -2247,33 +2247,33 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 
              evas_obj_text_style_set(ep->object, style);
              evas_obj_text_set(ep->object, text);
-             EINA_SIZE2D(tw, th) = efl_gfx_size_get(ep->object);
+             ts = efl_gfx_size_get(ep->object);
              if (chosen_desc->text.max_x)
                {
                   int l, r;
                   evas_object_text_style_pad_get(ep->object, &l, &r, NULL, NULL);
-                  mw = tw + l + r;
+                  mw = ts.w + l + r;
                   if ((*maxw < 0) || (mw < *maxw)) *maxw = mw;
                }
              if (chosen_desc->text.max_y)
                {
                   int t, b;
                   evas_object_text_style_pad_get(ep->object, NULL, NULL, &t, &b);
-                  mh = th + t + b;
+                  mh = ts.h + t + b;
                   if ((*maxh < 0) || (mh < *maxh)) *maxh = mh;
                }
              if (chosen_desc->text.min_x)
                {
                   int l, r;
                   evas_object_text_style_pad_get(ep->object, &l, &r, NULL, NULL);
-                  mw = tw + l + r;
+                  mw = ts.w + l + r;
                   if (mw > *minw) *minw = mw;
                }
              if (chosen_desc->text.min_y)
                {
                   int t, b;
                   evas_object_text_style_pad_get(ep->object, NULL, NULL, &t, &b);
-                  mh = th + t + b;
+                  mh = ts.h + t + b;
                   if (mh > *minh) *minh = mh;
                }
           }
