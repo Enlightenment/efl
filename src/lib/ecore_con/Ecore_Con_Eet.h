@@ -124,7 +124,7 @@ EAPI Ecore_Con_Eet *ecore_con_eet_client_new(Ecore_Con_Server *server);
  *                  ecore_con_eet_client_new.
  *
  */
-EAPI void ecore_con_eet_server_free(Ecore_Con_Eet *ece);
+EAPI void ecore_con_eet_server_free(Ecore_Con_Eet *server);
 
 /**
  * @brief Registers an @c Eet data descriptor on a Ecore_Con_Eet object.
