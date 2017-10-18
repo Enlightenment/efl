@@ -1653,6 +1653,8 @@ comp_surface_set_input_region(struct wl_client *client EINA_UNUSED, struct wl_re
 {
    Comp_Surface *cs = wl_resource_get_user_data(resource);
 
+   if (cs->cursor) return;
+
    cs->pending.set_input = 1;
    eina_tiler_clear(cs->pending.input);
    if (region_resource)
@@ -2416,6 +2418,8 @@ comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint
    cs->opaque = tiler_new();
    cs->input = tiler_new();
    comp_buffer_state_alloc(&cs->pending);
+   cs->pending.set_input = 1;
+   eina_tiler_rect_add(cs->pending.input, &(Eina_Rectangle){0, 0, 65535, 65535});
 
    wl_resource_set_implementation(res, &comp_surface_interface, cs, comp_surface_impl_destroy);
 }
@@ -2822,6 +2826,8 @@ data_device_start_drag(struct wl_client *client, struct wl_resource *resource, s
 
         ics->cursor = 1;
         ics->drag = s;
+        ics->pending.set_input = 1;
+        eina_tiler_clear(ics->pending.input);
         evas_object_smart_member_del(ics->obj);
         evas_object_pass_events_set(ics->obj, 1);
         evas_object_layer_set(ics->obj, EVAS_LAYER_MAX - 1);
@@ -3674,6 +3680,8 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
    if (cs)
      {
         cs->cursor = 1;
+        cs->pending.set_input = 1;
+        eina_tiler_clear(cs->pending.input);
         evas_object_pass_events_set(cs->obj, 1);
      }
    if (s->ptr.cursor.surface) s->ptr.cursor.surface->cursor = 0;
