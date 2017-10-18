@@ -53,7 +53,7 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         eina_iterator_next(pre_iterator, &first_node);
         array_first = first_node->first;
      }
-   
+
    EINA_ACCESSOR_FOREACH(accessor, i, children)
      {
         if((first + i < array_first) || !efl_ui_list_segarray_count(segarray))
@@ -61,7 +61,6 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
              if(!node)
                {
                   node = _alloc_node(segarray, i + first, segarray->array_initial_size);
-                  
                }
              else
                {
@@ -69,7 +68,6 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
           }
         else if(first + i < array_first + efl_ui_list_segarray_count(segarray))
           {
-            
           }
         else
           {
@@ -123,6 +121,7 @@ _efl_ui_list_segarray_accessor_clone(Efl_Ui_List_Segarray_Eina_Accessor* acc)
 static void
 _efl_ui_list_segarray_accessor_setup(Efl_Ui_List_Segarray_Eina_Accessor* acc)
 {
+   EINA_MAGIC_SET(&acc->vtable, EINA_MAGIC_ACCESSOR);
    acc->vtable.version = EINA_ACCESSOR_VERSION;
    acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_at);
    acc->vtable.get_container = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_container);
