@@ -77,17 +77,18 @@ _deg_to_rad(double angle)
 static void
 _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, Evas_Map *map, Eina_Bezier bezier)
 {
-   int x = 0, y = 0, w = 0, h = 0;
    int i, len, seg_len;
    double u0, u1, v0, v1;
    double dist, t, dt;
    double px, py, px2, py2;
    double rad;
+   Eina_Rect r;
    Eina_Vector2 vec, nvec, vec0, vec1, vec2, vec3;
    Eina_Matrix2 mat;
 
    len = w2 - w1;
-   EINA_SIZE2D(w, h) = efl_gfx_size_get(pd->text_obj);
+   r = efl_gfx_geometry_get(pd->text_obj);
+
    seg_len = eina_bezier_length_get(&bezier);
    if (pd->autofit)
      dt = len / (seg_len * (double) slice_no);
@@ -108,7 +109,7 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
 
    eina_vector2_transform(&vec, &mat, &nvec);
    eina_vector2_normalize(&nvec, &vec);
-   eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+   eina_vector2_scale(&vec, &nvec, ((double) r.h) * 0.5);
 
    vec1.x = (vec.x + px);
    vec1.y = (vec.y + py);
@@ -134,23 +135,23 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, int w1, int w2, int cmp, E
         eina_vector2_normalize(&nvec, &vec);
         eina_vector2_transform(&vec, &mat, &nvec);
         eina_vector2_normalize(&nvec, &vec);
-        eina_vector2_scale(&vec, &nvec, ((double) h) * 0.5);
+        eina_vector2_scale(&vec, &nvec, ((double) r.h) * 0.5);
 
         vec1.x = (vec.x + px);
         vec1.y = (vec.y + py);
         vec2.x = (-vec.x + px);
         vec2.y = (-vec.y + py);
 
-        evas_map_point_coord_set(map, cmp + i * 4, (int) vec0.x + x, (int) vec0.y + y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 1, (int) vec1.x + x, (int) vec1.y + y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 2, (int) vec2.x + x, (int) vec2.y + y, 0);
-        evas_map_point_coord_set(map, cmp + i * 4 + 3, (int) vec3.x + x, (int) vec3.y + y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4, (int) vec0.x + r.x, (int) vec0.y + r.y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 1, (int) vec1.x + r.x, (int) vec1.y + r.y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 2, (int) vec2.x + r.x, (int) vec2.y + r.y, 0);
+        evas_map_point_coord_set(map, cmp + i * 4 + 3, (int) vec3.x + r.x, (int) vec3.y + r.y, 0);
 
         //UV
         u0 = w1 + i * dist;
         u1 = u0 + dist;
         v0 = (double) 0;
-        v1 = (double) h;
+        v1 = (double) r.h;
 
         evas_map_point_image_uv_set(map, cmp + i * 4, u0, v0);
         evas_map_point_image_uv_set(map, cmp + i * 4 + 1, u1, v0);
