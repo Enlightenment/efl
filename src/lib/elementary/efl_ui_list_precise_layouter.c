@@ -12,6 +12,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Data
 {
    Eina_Bool initialized;
    Eina_Hash* size_information;
+   Evas_Coord width, height;
 } Efl_Ui_List_Precise_Layouter_Data;
 
 typedef struct _Efl_Ui_List_Precise_Layouter_Size
@@ -22,6 +23,59 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Size
 
 #include "efl_ui_list_precise_layouter.eo.h"
 
+
+static void
+_item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layouter_Size *size, Evas_Coord new_w, Evas_Coord new_h)
+{
+//   if(_horiz(pd->orient))
+//     {
+//        pdp->realized.w -= item->minw;
+//        pd->realized.w += w;
+//        if(pd->realized.h <= h)
+//          pd->realized.h = h;
+//        else if (pd->realized.h < item->minh)
+//          {
+//             pd->realized.h = h;
+//             EINA_INARRAY_FOREACH(&pd->items.array, it)
+//               {
+//                  litem = *it;
+//                  if (!litem) continue;
+//                  if (pd->realized.h < litem->minh)
+//                    pd->realized.h = litem->minh;
+//
+//                  if (litem != item && litem->minh == item->minh)
+//                    break;
+//               }
+//          }
+//     }
+//   else
+//     {
+
+        pd->height += new_h - size->min_height;
+
+        if(pd->width <= new_w)
+          pd->width = new_w;
+        else if (pd->width == size->min_width)
+          {
+             pd->width = new_w;
+             /*EINA_INARRAY_FOREACH(&pd->items.array, it) //find new minimal width
+               {
+                  litem = *it;
+                  if (!litem) continue;
+                  if (pd->realized.w < litem->minw)
+                    pd->realized.w = litem->minw;
+
+                  if (litem != item && litem->minw == item->minw)
+                    break;
+               }
+            */
+          }
+//     }
+
+   size->min_width  = new_w;
+   size->min_height = new_h;
+}
+
 static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
@@ -30,7 +84,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Efl_Ui_List_LayoutItem* layout_item;
    Efl_Ui_List_Precise_Layouter_Size* size;
    int i;
-   /****/
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
    Evas_Coord ow, oh, want, minw, minh;
    int boxx, boxy, boxw, boxh, length, /*pad, */extra = 0, rounding = 0;
@@ -39,6 +92,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
    Eina_List *order = NULL;
    int pad[4];
+
+   EINA_SAFETY_ON_NULL_RETURN(items);
 
    if(!pd->initialized)
      {
@@ -53,22 +108,27 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         size = eina_hash_find(pd->size_information, &layout_item);
         if(!size)
         {
-           size = malloc(sizeof(Efl_Ui_List_Precise_Layouter_Size));
            if(!layout_item->layout)
              efl_ui_list_model_realize(modeler, layout_item);
            if(!layout_item->layout)
              {
                // error
+               continue;
              }
 
-           size = malloc(sizeof(Efl_Ui_List_Precise_Layouter_Size));
+           size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
            edje_object_size_min_calc(layout_item->layout, &size->min_width, &size->min_height);
            efl_gfx_size_hint_margin_get(layout_item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
            efl_gfx_size_hint_weight_get(layout_item->layout, &size->weight_x, &size->weight_y);
 
            size->min_width += pad[0] + pad[1];
            size->min_height += pad[2] + pad[3];
+           pd->height += size->min_height;
 
+           if (pd->width < size->min_width)
+             pd->width = size->min_width;
+
+           eina_hash_add(pd->size_information, &layout_item, size);
            /* pd->weight.x += item->wx; */
            /* pd->weight.y += item->wy; */
         }
@@ -80,19 +140,19 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    scale = evas_object_scale_get(modeler);
 /*    // Box align: used if "item has max size and fill" or "no item has a weight" */
 /*    // Note: cells always expand on the orthogonal direction */
-   box_align[0] = 0;/*pd->align.h;*/
-   box_align[1] = 0;/*pd->align.v;*/
-   if (box_align[0] < 0)
-     {
-        box_fill[0] = EINA_TRUE;
-        box_align[0] = 0.5;
-     }
-   if (box_align[1] < 0)
-     {
-        box_fill[1] = EINA_TRUE;
-        box_align[1] = 0.5;
-     }
-
+//   box_align[0] = 0;/*pd->align.h;*/
+//   box_align[1] = 0;/*pd->align.v;*/
+//   if (box_align[0] < 0)
+//     {
+//        box_fill[0] = EINA_TRUE;
+//        box_align[0] = 0.5;
+//     }
+//   if (box_align[1] < 0)
+//     {
+//        box_fill[1] = EINA_TRUE;
+//        box_align[1] = 0.5;
+//     }
+//
    //count = 1;
 /*    count = eina_inarray_count(&pd->items.array); */
 
@@ -139,8 +199,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         // available space. if <0 we overflow
         extra = length - want;
 
-        minw = 100;//pd->realized.w + boxl + boxr;
-        minh = 100;//pd->realized.h + pad * (count - 1) + boxt + boxb;
+        minw = pd->width + boxl + boxr;
+        minh = 100;//pd->height + pad * (count - 1) + boxt + boxb;
         /* if (pd->item_count > count) */
         /*   minh = pd->item_count * average_item_size; */
      }

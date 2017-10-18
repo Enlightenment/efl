@@ -491,7 +491,7 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
      }
 
    /* TODO:calculate new min */
-   _item_min_calc(pd, item, 0, 0);
+   //_item_min_calc(pd, item, 0, 0);
 
    evt.child = item->model;
    evt.layout = item->layout;
