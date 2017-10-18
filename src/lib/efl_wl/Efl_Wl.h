@@ -106,6 +106,43 @@ EAPI void efl_wl_rotate(Evas_Object *obj, Efl_Wl_Rotation rot, Eina_Bool rtl);
  * @param scale The scale factor to set
  */
 EAPI void efl_wl_scale_set(Evas_Object *obj, double scale);
+
+/**
+ * Transfer aspect hints from top-most surface onto the efl_wl object
+ *
+ * @param obj The compositor widget
+ * @param set Whether to enable aspect setting
+ */
+EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * Transfer min/max hints from top-most surface onto the efl_wl object
+ *
+ * @param obj The compositor widget
+ * @param set Whether to enable min/max setting
+ */
+EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
+
+/**
+ * Add an externally-managed global to the compositor
+ * @note The external implementation is expected to restrict access to authorized
+ * clients
+ * @see wl_global_create() docs
+ * @since 1.21
+ */
+EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);
+
+/**
+ * Extract a child surface from the compositor
+ *
+ * An extracted surface can be freely manipulated by external code.
+ * @note size hints must be respected, and the extracted object must not be externally deleted
+ *
+ * @param surface The surface to extract
+ * @return True if the surface was successfully extracted
+ * @since 1.21
+ */
+EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
 #endif
 
 #endif

@@ -16,6 +16,7 @@
 
 #include <wayland-server.h>
 #include "xdg-shell-unstable-v6-server-protocol.h"
+#include "efl-hints-server-protocol.h"
 #include "dmabuf.h"
 
 #include "Ecore_Evas.h"
@@ -142,6 +143,8 @@ typedef struct Comp
    Eina_Bool data_device_proxy : 1;
    Eina_Bool x11_selection : 1;
    Eina_Bool rtl : 1;
+   Eina_Bool aspect : 1;
+   Eina_Bool minmax : 1;
 } Comp;
 
 typedef struct Comp_Data_Device_Source Comp_Data_Device_Source;
@@ -322,6 +325,7 @@ struct Comp_Surface
    Eina_Bool post_render_queue : 1;
    Eina_Bool dead : 1;
    Eina_Bool commit : 1;
+   Eina_Bool extracted : 1;
 };
 
 struct Comp_Subsurface
@@ -460,19 +464,22 @@ static inline void
 comp_surface_reparent(Comp_Surface *cs, Comp_Surface *pcs)
 {
    if (cs->parent == pcs) return;
-   evas_object_smart_member_del(cs->obj);
+   if (!cs->extracted)
+     evas_object_smart_member_del(cs->obj);
    if (cs->parent)
      cs->parent->children = eina_inlist_remove(cs->parent->children, EINA_INLIST_GET(cs));
    if (pcs)
      {
         cs->c->surfaces = eina_inlist_remove(cs->c->surfaces, EINA_INLIST_GET(cs));
         cs->c->surfaces_count--;
-        evas_object_smart_member_add(cs->obj, pcs->obj);
+        if (!cs->extracted)
+          evas_object_smart_member_add(cs->obj, pcs->obj);
         pcs->children = eina_inlist_append(pcs->children, EINA_INLIST_GET(cs));
      }
    else
      {
-        evas_object_smart_member_add(cs->obj, cs->c->obj);
+        if (!cs->extracted)
+          evas_object_smart_member_add(cs->obj, cs->c->obj);
         cs->c->surfaces = eina_inlist_append(cs->c->surfaces, EINA_INLIST_GET(cs));
         cs->c->surfaces_count++;
      }
@@ -1166,6 +1173,35 @@ shell_surface_activate_recurse(Comp_Surface *cs)
 }
 
 static void
+shell_surface_minmax_update(Comp_Surface *cs)
+{
+   int w, h;
+
+   if (!cs) return;
+   if (!cs->c->minmax) return;
+   if (cs->extracted) return;
+   evas_object_size_hint_min_get(cs->obj, &w, &h);
+   evas_object_size_hint_min_set(cs->c->obj, w, h);
+   evas_object_size_hint_max_get(cs->obj, &w, &h);
+   if (!w) w = -1;
+   if (!h) h = -1;
+   evas_object_size_hint_max_set(cs->c->obj, w, h);
+}
+
+static void
+shell_surface_aspect_update(Comp_Surface *cs)
+{
+   Evas_Aspect_Control aspect;
+   int w, h;
+
+   if (!cs) return;
+   if (!cs->c->aspect) return;
+   if (cs->extracted) return;
+   evas_object_size_hint_aspect_get(cs->obj, &aspect, &w, &h);
+   evas_object_size_hint_aspect_set(cs->c->obj, aspect, w, h);
+}
+
+static void
 shell_surface_send_configure(Comp_Surface *cs)
 {
    uint32_t serial, *s;
@@ -1190,7 +1226,8 @@ shell_surface_send_configure(Comp_Surface *cs)
      {
         s = wl_array_add(&states, sizeof(uint32_t));
         *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
-        evas_object_raise(cs->obj);
+        if (!cs->extracted)
+          evas_object_raise(cs->obj);
         if (cs->parent)
           cs->parent->children = eina_inlist_demote(cs->parent->children, EINA_INLIST_GET(cs));
         else
@@ -1198,7 +1235,10 @@ shell_surface_send_configure(Comp_Surface *cs)
         shell_surface_activate_recurse(cs);
      }
    serial = wl_display_next_serial(cs->c->display);
-   evas_object_geometry_get(cs->c->clip, NULL, NULL, &w, &h);
+   if (cs->extracted)
+     evas_object_geometry_get(cs->obj, NULL, NULL, &w, &h);
+   else
+     evas_object_geometry_get(cs->c->clip, NULL, NULL, &w, &h);
    zxdg_toplevel_v6_send_configure(cs->role, w, h, &states);
    zxdg_surface_v6_send_configure(cs->shell.surface, serial);
    wl_array_release(&states);
@@ -1210,6 +1250,8 @@ shell_surface_send_configure(Comp_Surface *cs)
         EINA_INLIST_FOREACH(cs->children, ccs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
+        shell_surface_aspect_update(cs);
+        shell_surface_minmax_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -1368,6 +1410,11 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
      {
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
+        if (cs->shell.popup)
+          {
+             evas_object_size_hint_min_set(cs->obj, buffer->w, buffer->h);
+             evas_object_size_hint_max_set(cs->obj, buffer->w, buffer->h);
+          }
      }
    else if (cs->shell.new)
      shell_surface_init(cs);
@@ -1652,6 +1699,8 @@ static void
 comp_surface_set_input_region(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
    Comp_Surface *cs = wl_resource_get_user_data(resource);
+
+   if (cs->cursor) return;
 
    cs->pending.set_input = 1;
    eina_tiler_clear(cs->pending.input);
@@ -2252,6 +2301,12 @@ comp_surface_smart_del(Evas_Object *obj)
      }
    evas_object_del(cs->img);
    evas_object_del(cs->clip);
+   if (cs->shell.surface)
+     {
+        if (cs->role)
+          wl_resource_destroy(cs->role);
+        wl_resource_destroy(cs->shell.surface);
+     }
    cs->c->surfaces = eina_inlist_remove(cs->c->surfaces, EINA_INLIST_GET(cs));
    cs->c->surfaces_count--;
    free(cs);
@@ -2319,7 +2374,7 @@ comp_surface_smart_hide(Evas_Object *obj)
              if (!evas_object_visible_get(lcs->obj)) continue;
              if ((!lcs->shell.surface) || (!lcs->role)) continue;
              lcs->shell.activated = 1;
-             if (lcs->shell.popup)
+             if (lcs->shell.popup && (!lcs->extracted))
                evas_object_raise(lcs->obj);
              else
                shell_surface_send_configure(lcs);
@@ -2416,6 +2471,8 @@ comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint
    cs->opaque = tiler_new();
    cs->input = tiler_new();
    comp_buffer_state_alloc(&cs->pending);
+   cs->pending.set_input = 1;
+   eina_tiler_rect_add(cs->pending.input, &(Eina_Rectangle){0, 0, 65535, 65535});
 
    wl_resource_set_implementation(res, &comp_surface_interface, cs, comp_surface_impl_destroy);
 }
@@ -2822,6 +2879,8 @@ data_device_start_drag(struct wl_client *client, struct wl_resource *resource, s
 
         ics->cursor = 1;
         ics->drag = s;
+        ics->pending.set_input = 1;
+        eina_tiler_clear(ics->pending.input);
         evas_object_smart_member_del(ics->obj);
         evas_object_pass_events_set(ics->obj, 1);
         evas_object_layer_set(ics->obj, EVAS_LAYER_MAX - 1);
@@ -3041,6 +3100,7 @@ shell_surface_toplevel_set_parent(struct wl_client *client EINA_UNUSED, struct w
    if (parent_resource) pcs = wl_resource_get_user_data(parent_resource);
 
    comp_surface_reparent(cs, pcs);
+   evas_object_smart_callback_call(cs->c->obj, "child_added", cs->obj);
 }
 
 static void
@@ -3065,10 +3125,25 @@ static void
 shell_surface_toplevel_move(){}
 static void
 shell_surface_toplevel_resize(){}
+
 static void
-shell_surface_toplevel_set_max_size(){}
+shell_surface_toplevel_set_max_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(resource);
+   evas_object_size_hint_max_set(cs->obj, w, h);
+   if (cs == cs->c->active_surface)
+     shell_surface_minmax_update(cs);
+}
+
 static void
-shell_surface_toplevel_set_min_size(){}
+shell_surface_toplevel_set_min_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(resource);
+   evas_object_size_hint_min_set(cs->obj, w, h);
+   if (cs == cs->c->active_surface)
+     shell_surface_minmax_update(cs);
+}
+
 static void
 shell_surface_toplevel_set_maximized(){}
 static void
@@ -3211,6 +3286,7 @@ shell_surface_popup_create(struct wl_client *client, struct wl_resource *resourc
    comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
    cs->shell.positioner = wl_resource_get_user_data(positioner_resource);
    _apply_positioner(cs, cs->shell.positioner);
+   evas_object_smart_callback_call(cs->c->obj, "popup_added", cs->obj);
 }
 
 static void
@@ -3674,6 +3750,8 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
    if (cs)
      {
         cs->cursor = 1;
+        cs->pending.set_input = 1;
+        eina_tiler_clear(cs->pending.input);
         evas_object_pass_events_set(cs->obj, 1);
      }
    if (s->ptr.cursor.surface) s->ptr.cursor.surface->cursor = 0;
@@ -4911,10 +4989,36 @@ EFL_CALLBACKS_ARRAY_DEFINE(comp_device_cbs,
   { EFL_CANVAS_EVENT_DEVICE_REMOVED, comp_device_del });
 
 static void
+hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, uint32_t width, uint32_t height, uint32_t aspect)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface);
+   evas_object_size_hint_aspect_set(cs->obj, aspect, width, height);
+   if (cs == cs->c->active_surface)
+     shell_surface_aspect_update(cs);
+}
+
+static const struct efl_hints_interface hints_interface =
+{
+   hints_set_aspect,
+};
+
+static void
+efl_hints_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
+   struct wl_resource *res;
+
+   if (!client_allowed_check(data, client)) return;
+   res = wl_resource_create(client, &efl_hints_interface, version, id);
+   wl_resource_set_implementation(res, &hints_interface, data, NULL);
+}
+
+
+
+static void
 comp_smart_add(Evas_Object *obj)
 {
    Comp *c;
-   char *env;
+   char *env, *dbg = NULL;
 
    c = calloc(1, sizeof(Comp));
    c->wayland_time_base = ecore_loop_time_get();
@@ -4922,7 +5026,19 @@ comp_smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, c);
    env = getenv("WAYLAND_DISPLAY");
    if (env) env = strdup(env);
+
+   if (getenv("EFL_WL_DEBUG"))
+     {
+        dbg = eina_strdup(getenv("WAYLAND_DEBUG"));
+        setenv("WAYLAND_DEBUG", "1", 1);
+     }
    c->disp = ecore_wl2_display_create(NULL);
+   if (getenv("EFL_WL_DEBUG"))
+     {
+        if (dbg) setenv("WAYLAND_DEBUG", dbg, 1);
+        else unsetenv("WAYLAND_DEBUG");
+        free(dbg);
+     }
    c->env = eina_strdup(getenv("WAYLAND_DISPLAY"));
    if (env) setenv("WAYLAND_DISPLAY", env, 1);
    else unsetenv("WAYLAND_DISPLAY");
@@ -4946,6 +5062,7 @@ comp_smart_add(Evas_Object *obj)
    wl_global_create(c->display, &wl_output_interface, 2, c, output_bind);
    wl_global_create(c->display, &zxdg_shell_v6_interface, 1, c, shell_bind);
    wl_global_create(c->display, &wl_data_device_manager_interface, 3, c, data_device_manager_bind);
+   wl_global_create(c->display, &efl_hints_interface, 1, c, efl_hints_bind);
    wl_display_init_shm(c->display);
 
    if (env)
@@ -5067,7 +5184,7 @@ comp_smart_resize(Evas_Object *obj, int w, int h)
      output_resize(c, res);
    //fprintf(stderr, "COMP %dx%d\n", w, h);
    EINA_INLIST_FOREACH(c->surfaces, cs)
-     if (cs->shell.surface && cs->role)
+     if (cs->shell.surface && cs->role && (!cs->extracted))
        shell_surface_send_configure(cs);
 }
 
@@ -5206,6 +5323,18 @@ comp_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
    return EINA_TRUE;
 }
 
+void
+comp_dmabuf_formats_query(void *compositor EINA_UNUSED, int **formats EINA_UNUSED, int *num_formats)
+{
+   *num_formats = 0;
+}
+
+void
+comp_dmabuf_modifiers_query(void *compositor EINA_UNUSED, int format EINA_UNUSED, uint64_t **modifiers EINA_UNUSED, int *num_modifiers)
+{
+   *num_modifiers = 0;
+}
+
 Evas_Object *
 efl_wl_add(Evas *e)
 {
@@ -5332,4 +5461,103 @@ efl_wl_scale_set(Evas_Object *obj, double scale)
    EINA_LIST_FOREACH(c->output_resources, l, res)
      if (wl_resource_get_version(res) >= WL_OUTPUT_SCALE_SINCE_VERSION)
        wl_output_send_scale(res, lround(c->scale));
+}
+
+void
+efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (c->aspect == (!!set)) return;
+   c->aspect = !!set;
+   if (c->aspect)
+     shell_surface_aspect_update(c->active_surface);
+   else
+     evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_NONE, 0, 0);
+}
+
+void
+efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (c->minmax == (!!set)) return;
+   c->minmax = !!set;
+   if (c->minmax)
+     shell_surface_minmax_update(c->active_surface);
+   else
+     {
+        evas_object_size_hint_min_set(obj, 0, 0);
+        evas_object_size_hint_max_set(obj, -1, -1);
+     }
+}
+
+EAPI void *
+efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(interface, NULL);
+   c = evas_object_smart_data_get(obj);
+   return wl_global_create(c->display, interface, version, data, bind_cb);
+}
+
+static void
+extracted_focus(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Comp_Surface *cs = data;
+
+   if (cs->dead) return;
+   if (!cs->shell.popup)
+     {
+        cs->shell.activated = 1;
+        shell_surface_send_configure(data);
+     }
+   evas_object_focus_set(cs->c->obj, 1);
+}
+
+static void
+extracted_unfocus(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Comp_Surface *cs = data;
+   Evas_Object *focus;
+
+   if (cs->dead) return;
+   focus = evas_focus_get(cs->c->evas);
+   if ((!focus) || (focus == cs->c->obj)) return;
+   cs->shell.activated = 0;
+   shell_surface_send_configure(data);
+}
+
+static void
+extracted_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Comp_Surface *cs = data;
+
+   if (cs->dead) return;
+   shell_surface_send_configure(data);
+}
+
+EAPI Eina_Bool
+efl_wl_surface_extract(Evas_Object *surface)
+{
+   Comp_Surface *cs;
+   if (!eina_streq(evas_object_type_get(surface), "comp_surface")) abort();
+   cs = evas_object_smart_data_get(surface);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->extracted, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, EINA_FALSE);
+   cs->extracted = 1;
+   if (!cs->shell.popup)
+     {
+        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_RESIZE, extracted_changed, cs);
+        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_OUT, extracted_unfocus, cs);
+     }
+   evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_IN, extracted_focus, cs);
+   evas_object_smart_member_del(surface);
+   return EINA_TRUE;
 }

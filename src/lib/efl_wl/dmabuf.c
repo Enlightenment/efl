@@ -43,6 +43,8 @@
 #include <Eina.h>
 
 __attribute__ ((visibility("hidden"))) Eina_Bool comp_dmabuf_test(struct linux_dmabuf_buffer *dmabuf);
+__attribute__ ((visibility("hidden"))) void comp_dmabuf_formats_query(void *c, int **formats, int *num_formats);
+__attribute__ ((visibility("hidden"))) void comp_dmabuf_modifiers_query(void *c, int format, uint64_t **modifiers, int *num_modifiers);
 
 static void
 linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
@@ -55,7 +57,6 @@ linux_dmabuf_buffer_destroy(struct linux_dmabuf_buffer *buffer)
 	}
 
 	buffer->attributes.n_planes = 0;
-
 	free(buffer);
 }
 
@@ -123,7 +124,7 @@ params_add(struct wl_client *client,
 	buffer->attributes.offset[plane_idx] = offset;
 	buffer->attributes.stride[plane_idx] = stride;
 	buffer->attributes.modifier[plane_idx] = ((uint64_t)modifier_hi << 32) |
-	                                         modifier_lo;
+						 modifier_lo;
 	buffer->attributes.n_planes++;
 }
 
@@ -154,12 +155,13 @@ destroy_linux_dmabuf_wl_buffer(struct wl_resource *resource)
 }
 
 static void
-params_create(struct wl_client *client,
-	      struct wl_resource *params_resource,
-	      int32_t width,
-	      int32_t height,
-	      uint32_t format,
-	      uint32_t flags)
+params_create_common(struct wl_client *client,
+		     struct wl_resource *params_resource,
+		     uint32_t buffer_id,
+		     int32_t width,
+		     int32_t height,
+		     uint32_t format,
+		     uint32_t flags)
 {
 	struct linux_dmabuf_buffer *buffer;
 	int i;
@@ -275,7 +277,7 @@ params_create(struct wl_client *client,
 
 	buffer->buffer_resource = wl_resource_create(client,
 						     &wl_buffer_interface,
-						     1, 0);
+						     1, buffer_id);
 	if (!buffer->buffer_resource) {
 		wl_resource_post_no_memory(params_resource);
 		goto err_buffer;
@@ -285,7 +287,10 @@ params_create(struct wl_client *client,
 				       &linux_dmabuf_buffer_implementation,
 				       buffer, destroy_linux_dmabuf_wl_buffer);
 
-	zwp_linux_buffer_params_v1_send_created(params_resource,
+	/* send 'created' event when the request is not for an immediate
+	 * import, ie buffer_id is zero */
+	if (buffer_id == 0)
+		zwp_linux_buffer_params_v1_send_created(params_resource,
 						buffer->buffer_resource);
 
 	return;
@@ -295,17 +300,54 @@ err_buffer:
 		buffer->user_data_destroy_func(buffer);
 
 err_failed:
-	zwp_linux_buffer_params_v1_send_failed(params_resource);
+	if (buffer_id == 0)
+		zwp_linux_buffer_params_v1_send_failed(params_resource);
+	else
+		/* since the behavior is left implementation defined by the
+		 * protocol in case of create_immed failure due to an unknown cause,
+		 * we choose to treat it as a fatal error and immediately kill the
+		 * client instead of creating an invalid handle and waiting for it
+		 * to be used.
+		 */
+		wl_resource_post_error(params_resource,
+			ZWP_LINUX_BUFFER_PARAMS_V1_ERROR_INVALID_WL_BUFFER,
+			"importing the supplied dmabufs failed");
 
 err_out:
 	linux_dmabuf_buffer_destroy(buffer);
+}
+
+static void
+params_create(struct wl_client *client,
+	      struct wl_resource *params_resource,
+	      int32_t width,
+	      int32_t height,
+	      uint32_t format,
+	      uint32_t flags)
+{
+	params_create_common(client, params_resource, 0, width, height, format,
+			     flags);
+}
+
+static void
+params_create_immed(struct wl_client *client,
+		    struct wl_resource *params_resource,
+		    uint32_t buffer_id,
+		    int32_t width,
+		    int32_t height,
+		    uint32_t format,
+		    uint32_t flags)
+{
+	params_create_common(client, params_resource, buffer_id, width, height,
+			     format, flags);
 }
 
 static const struct zwp_linux_buffer_params_v1_interface
 zwp_linux_buffer_params_implementation = {
 	params_destroy,
 	params_add,
-	params_create
+	params_create,
+	params_create_immed
 };
 
 static void
@@ -438,6 +480,11 @@ bind_linux_dmabuf(struct wl_client *client,
 {
 	void *compositor = data;
 	struct wl_resource *resource;
+	int *formats = NULL;
+	uint64_t *modifiers = NULL;
+	int num_formats, num_modifiers;
+	uint64_t modifier_invalid = DRM_FORMAT_MOD_INVALID;
+	int i, j;
 
 	resource = wl_resource_create(client, &zwp_linux_dmabuf_v1_interface,
 				      version, id);
@@ -449,9 +496,38 @@ bind_linux_dmabuf(struct wl_client *client,
 	wl_resource_set_implementation(resource, &linux_dmabuf_implementation,
 				       compositor, NULL);
 
-	/* EGL_EXT_image_dma_buf_import does not provide a way to query the
-	 * supported pixel formats. */
-	/* XXX: send formats */
+	if (version < ZWP_LINUX_DMABUF_V1_MODIFIER_SINCE_VERSION)
+		return;
+	/*
+	 * Use EGL_EXT_image_dma_buf_import_modifiers to query and advertise
+	 * format/modifier codes.
+	 */
+	comp_dmabuf_formats_query(compositor, &formats,
+						   &num_formats);
+
+	for (i = 0; i < num_formats; i++) {
+		comp_dmabuf_modifiers_query(compositor,
+							     formats[i],
+							     &modifiers,
+							     &num_modifiers);
+
+		/* send DRM_FORMAT_MOD_INVALID token when no modifiers are supported
+		 * for this format */
+		if (num_modifiers == 0) {
+			num_modifiers = 1;
+			modifiers = &modifier_invalid;
+		}
+		for (j = 0; j < num_modifiers; j++) {
+			uint32_t modifier_lo = modifiers[j] & 0xFFFFFFFF;
+			uint32_t modifier_hi = modifiers[j] >> 32;
+			zwp_linux_dmabuf_v1_send_modifier(resource, formats[i],
+							  modifier_hi,
+							  modifier_lo);
+		}
+		if (modifiers != &modifier_invalid)
+			free(modifiers);
+	}
+	free(formats);
 }
 
 /** Advertise linux_dmabuf support
@@ -469,7 +545,7 @@ int
 linux_dmabuf_setup(struct wl_display *display, void *comp)
 {
 	if (!wl_global_create(display,
-			      &zwp_linux_dmabuf_v1_interface, 1,
+			      &zwp_linux_dmabuf_v1_interface, 3,
 			      comp, bind_linux_dmabuf))
 		return -1;
 
@@ -487,7 +563,7 @@ linux_dmabuf_setup(struct wl_display *display, void *comp)
  * In any case, the options are to either composite garbage or nothing,
  * or disconnect the client. This is a helper function for the latter.
  *
- * The error is sent as a INVALID_OBJECT error on the client's wl_display.
+ * The error is sent as an INVALID_OBJECT error on the client's wl_display.
  *
  * \param buffer The linux_dmabuf_buffer that is unusable.
  * \param msg A custom error message attached to the protocol error.

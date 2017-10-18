@@ -1,0 +1,19 @@
+<protocol name="efl_hints">
+
+  <interface name="efl_hints" version="1">
+    <enum name="aspect">
+      <entry name="none" value="0"/>
+      <entry name="neither" value="1"/>
+      <entry name="horizontal" value="2"/>
+      <entry name="vertical" value="3"/>
+      <entry name="both" value="4"/>
+    </enum>
+    <request name="set_aspect">
+      <arg name="surface" type="object" interface="zxdg_toplevel_v6"/>
+      <arg name="width" type="uint"/>
+      <arg name="height" type="uint"/>
+      <arg name="aspect" type="uint" enum="aspect"/>
+    </request>
+  </interface>
+
+</protocol>
