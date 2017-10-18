@@ -701,11 +701,9 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
    RGBA_Draw_Context *dc;
    int w, h;
 
-   gl_context = gl_generic_context_find(re, 1);
 
    w = im1->w;
    h = im1->h;
-   alpha = eng_image_alpha_get(re, im1);
 
    if (im1->orient == EVAS_IMAGE_ORIENT_90 ||
        im1->orient == EVAS_IMAGE_ORIENT_270 ||
@@ -716,6 +714,10 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
         h = im1->w;
      }
 
+   if ((w * h) <= 0) return NULL;
+
+   alpha = eng_image_alpha_get(re, im1);
+   gl_context = gl_generic_context_find(re, 1);
    im2 = evas_gl_common_image_surface_new(gl_context, w, h, alpha, EINA_FALSE);
 
    evas_gl_common_context_target_surface_set(gl_context, im2);
@@ -906,8 +908,18 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
 #endif
      error = evas_cache_image_load_data(&im->im->cache_entry);
 
+   if (err) *err = error;
    if (error != EVAS_LOAD_ERROR_NONE)
      {
+        if (!im->im->image.data ||
+            (im->im->cache_entry.allocated.w != (unsigned) im->w) ||
+            (im->im->cache_entry.allocated.h != (unsigned) im->h))
+          {
+             ERR("GL image has no source data, failed to get pixel data");
+             *image_data = NULL;
+             return im;
+          }
+
         if (tofree && !to_write)
           goto rotate_image;
      }
