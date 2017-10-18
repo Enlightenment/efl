@@ -255,8 +255,7 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else return EINA_FALSE;
 
-   elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
-
+   elm_interface_scrollable_content_region_show(obj, x, y, v_w, v_h);
 
    return EINA_TRUE;
 }
