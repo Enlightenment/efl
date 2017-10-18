@@ -2,30 +2,29 @@ interface Efl.Config ()
 {
    [[A generic configuration interface, that holds key-value pairs.]]
    methods {
-      /* FIXME: make this a property -- @own is a problem */
-      config_set {
-      	 [[Set configuration]]
-         params {
-            name: string; [[Configuration option name]]
-            val: const(any_value_ptr); [[Configuration option value]]
+      @property config {
+         [[A generic configuration value, refered to by name.]]
+         get {
+            keys {
+               name: string; [[Configuration option name.]]
+            }
+            values {
+               value: any_value_ptr @owned;
+                  [[The value. It will be empty if it doesn't exist. The caller
+                    must free it after use (using $eina_value_free() in C).]]
+            }
          }
-         return: bool; [[$false in case of error: value type was invalid, the
-                         config can't be changed, config does not exist...]]
-      }
-      config_get @const {
-      	 [[Get configuration]]
-         params {
-            name: string; [[Configuration option name]]
+         set {
+            keys {
+               name: string; [[Configuration option name.]]
+            }
+            values {
+               value: const(any_value_ptr);
+                  [[Configuration option value. May be $null if not found.]]
+            }
+            return: bool; [[$false in case of error: value type was invalid, the
+                            config can't be changed, config does not exist...]]
          }
-         return: any_value_ptr @owned; [[Configuration option value]]
-      }
-      config_list_get @const {
-         [[Returns a list of generic values under a given key.]]
-         params {
-            @in name: string; [[Configuration option name]]
-         }
-         return: iterator<any_value_ptr> @owned; [[
-                 List of configuration option values]]
       }
    }
 }

@@ -106,8 +106,6 @@ class Efl.Config.Global (Efl.Object, Efl.Config)
       }
    }
    implements {
-      Efl.Config.config_set;
-      Efl.Config.config_get;
-      Efl.Config.config_list_get;
+      Efl.Config.config { get; set; }
    }
 }
