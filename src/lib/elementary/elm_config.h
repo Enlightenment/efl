@@ -799,6 +799,10 @@ EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double w
  * elementary will automatically scroll the focused area to the visible
  * viewport.
  *
+ * @return ELM_FOCUS_AUTOSCROLL_MODE_SHOW if directly show the focused region or item automatically.
+ *  ELM_FOCUS_AUTOSCROLL_MODE_NONE if do not show the focused region or item automatically.
+ *  ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN if bring_in the focused region or item automatically which might invole the scrolling.
+ *
  * @see elm_config_focus_autoscroll_mode_set()
  * @ingroup Elm_Focus
  * @since 1.10
@@ -1209,6 +1213,7 @@ EAPI Eina_List *elm_config_text_classes_list_get(void);
 /**
  * Free Elementary's list of supported text classes.
  *
+ * @param list The text classes list.
  * @ingroup Elm_Fonts
  *
  * @see elm_config_text_classes_list_get().
@@ -1335,6 +1340,7 @@ EAPI void             elm_config_font_overlay_apply(void);
  * EVAS_FONT_HINTING_AUTO < Automatic font hinting
  * EVAS_FONT_HINTING_BYTECODE < Bytecode font hinting
  *
+ * @param type The font hinting type
  * @ingroup Elm_Fonts
  *
  * This applies font hint changes to all windows of the current application.

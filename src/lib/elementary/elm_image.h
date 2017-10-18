@@ -5,9 +5,6 @@
  * @image html image_inheritance_tree.png
  * @image latex image_inheritance_tree.eps
  *
- * @image html img/widget/image/preview-00.png
- * @image latex img/widget/image/preview-00.eps
- *
  * An Elementary image object is a direct realization of
  * @ref elm-image-class, and it allows one to load and display an @b image
  * file on it, be it from a disk file or from a memory

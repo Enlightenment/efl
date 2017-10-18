@@ -5,9 +5,6 @@
  * @image html icon_inheritance_tree.png
  * @image latex icon_inheritance_tree.eps
  *
- * @image html img/widget/icon/preview-00.png
- * @image latex img/widget/icon/preview-00.eps
- *
  * An icon object is used to display standard icon images ("delete",
  * "edit", "arrows", etc.) or images coming from a custom file (PNG,
  * JPG, EDJE, etc.), on icon contexts.

@@ -5,8 +5,6 @@
  * @image html genlist_inheritance_tree.png
  * @image latex genlist_inheritance_tree.eps
  *
- * @image html img/widget/genlist/preview-00.png
- * @image latex img/widget/genlist/preview-00.eps
  * @image html img/genlist.png
  * @image latex img/genlist.eps
  *
@@ -89,25 +87,9 @@
  * available item styles:
  * - default
  * - default_style - The text part is a textblock
- *
- * @image html img/widget/genlist/preview-04.png
- * @image latex img/widget/genlist/preview-04.eps
- *
  * - double_label
- *
- * @image html img/widget/genlist/preview-01.png
- * @image latex img/widget/genlist/preview-01.eps
- *
  * - icon_top_text_bottom
- *
- * @image html img/widget/genlist/preview-02.png
- * @image latex img/widget/genlist/preview-02.eps
- *
  * - group_index
- *
- * @image html img/widget/genlist/preview-03.png
- * @image latex img/widget/genlist/preview-03.eps
- *
  * - one_icon - Only 1 icon (left) (since 1.7)
  * - end_icon - Only 1 icon (at end/right) (since 1.7)
  * - no_icon - No icon (at end/right) (since 1.7)
