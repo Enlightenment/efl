@@ -143,6 +143,17 @@ EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t v
  * @since 1.21
  */
 EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
+
+/**
+ * Get the Evas_Object for an extracted wl_surface resource created by an efl_wl object
+ *
+ * @note Passing anything other than a valid wl_surface resource from an efl_wl object will guarantee a crash.
+ *
+ * @param surface_resource The wl_resource for a wl_surface
+ * @return The Evas_Object of the surface, NULL on failure
+ * @since 1.21
+ */
+EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
 #endif
 
 #endif

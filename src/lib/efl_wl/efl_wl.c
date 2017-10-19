@@ -5561,3 +5561,15 @@ efl_wl_surface_extract(Evas_Object *surface)
    evas_object_smart_member_del(surface);
    return EINA_TRUE;
 }
+
+Evas_Object *
+efl_wl_extracted_surface_object_find(void *surface_resource)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface_resource);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cs, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!cs->extracted, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, NULL);
+
+   return cs->obj;
+}
