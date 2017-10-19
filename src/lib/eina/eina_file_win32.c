@@ -849,9 +849,10 @@ eina_file_unlink(const char *pathname)
           }
      }
 
-   if ( unlink(unlink_path) >= 0) r = EINA_TRUE;
+   if (unlink(unlink_path) >= 0) r = EINA_TRUE;
    eina_stringshare_del(unlink_path);
 
+ finish:
    return r;
 }
 
