@@ -172,7 +172,7 @@ node_item_free(Node *item)
    Node *n;
    Eina_List *l;
    //free the graph items
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < NODE_DIRECTIONS_COUNT; i++)
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
         border_partners_set(item, i, NULL);
      }
@@ -845,7 +845,7 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
      }
 
    //add all neighbors of the node to the dirty list
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < NODE_DIRECTIONS_COUNT; i++)
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
         Node *partner;
         Eina_List *n;
@@ -949,7 +949,7 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 
    EINA_ITERATOR_FOREACH(it->real_iterator, node)
      {
-        for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < NODE_DIRECTIONS_COUNT; i++)
+        for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
           {
              if (node->type != NODE_TYPE_ONLY_LOGICAL &&
                  !DIRECTION_ACCESS(node, i).partners)
