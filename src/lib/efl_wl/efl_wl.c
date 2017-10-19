@@ -1181,6 +1181,7 @@ shell_surface_minmax_update(Comp_Surface *cs)
    if (!cs) return;
    if (!cs->c->minmax) return;
    if (cs->extracted) return;
+   if (cs->parent) return;
    evas_object_size_hint_min_get(cs->obj, &w, &h);
    evas_object_size_hint_min_set(cs->c->obj, w, h);
    evas_object_size_hint_max_get(cs->obj, &w, &h);
@@ -1198,6 +1199,7 @@ shell_surface_aspect_update(Comp_Surface *cs)
    if (!cs) return;
    if (!cs->c->aspect) return;
    if (cs->extracted) return;
+   if (cs->parent) return;
    evas_object_size_hint_aspect_get(cs->obj, &aspect, &w, &h);
    evas_object_size_hint_aspect_set(cs->c->obj, aspect, w, h);
 }
