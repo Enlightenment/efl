@@ -255,5 +255,6 @@ class Elm.Gengrid.Item(Elm.Widget.Item, Efl.Ui.Focus.Object)
            Elm.Widget.Item.cursor_unset;
            Efl.Access.name { get; }
            Efl.Access.state_set { get; }
+           Efl.Ui.Focus.Object.prepare_logical;
       }
 }
