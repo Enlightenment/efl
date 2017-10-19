@@ -4,7 +4,7 @@
 
 #include <Emotion.h>
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -265,7 +265,7 @@ _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_ANIMATION);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
 
    return obj;
 }

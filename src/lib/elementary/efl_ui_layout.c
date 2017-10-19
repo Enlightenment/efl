@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -398,7 +398,7 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
         efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
      }
    else
      {
@@ -406,7 +406,7 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
         efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-          elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
      }
    if (efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      edje_object_message_signal_process(wd->resize_obj);
@@ -2059,7 +2059,7 @@ _efl_ui_layout_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }

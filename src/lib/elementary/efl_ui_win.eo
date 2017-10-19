@@ -830,9 +830,9 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Widget.focus_manager_create;
-      Elm.Interface.Atspi_Accessible.parent { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
-      Elm.Interface.Atspi_Accessible.name { get; }
+      Efl.Access.parent { get; }
+      Efl.Access.state_set { get; }
+      Efl.Access.name { get; }
       Efl.Access.Component.extents { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }

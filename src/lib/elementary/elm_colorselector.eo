@@ -113,7 +113,7 @@ class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
       Elm.Widget.on_access_update;
       Elm.Widget.widget_event;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi_Accessible.children { get; }
+      Efl.Access.children { get; }
    }
    events {
       color,item,selected; [[Called when color item was selected]]

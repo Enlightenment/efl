@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -1531,7 +1531,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_NOTIFICATION);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
 
    return obj;
 }
@@ -1799,13 +1799,13 @@ _elm_popup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED
    return &atspi_actions[0];
 }
 
-EOLIAN static Elm_Atspi_State_Set
-_elm_popup_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_elm_popup_efl_access_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, MY_CLASS));
+   Efl_Access_State_Set ret;
+   ret = efl_access_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MODAL);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
 
    return ret;
 }

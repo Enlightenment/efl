@@ -1,4 +1,4 @@
-#include "elm_interface_atspi_accessible.h"
+#include "efl_access.h"
 #include "efl_access_text.h"
 #include "elm_interface_atspi_widget_action.h"
 #include "efl_access_window.h"

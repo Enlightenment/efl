@@ -543,8 +543,8 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.bounce_allow { get; set; }
       Elm.Interface_Scrollable.policy { get; set; }
-      Elm.Interface.Atspi_Accessible.children { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Efl.Access.children { get; }
+      Efl.Access.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }

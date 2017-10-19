@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
@@ -1243,7 +1243,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    if (_elm_config->atspi_mode)
      {
         efl_access_window_activated_signal_emit(obj);
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
+        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_TRUE);
      }
 
    /* do nothing */
@@ -1277,7 +1277,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    if (_elm_config->atspi_mode)
      {
         efl_access_window_deactivated_signal_emit(obj);
-        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
+        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_FALSE);
      }
 
    /* do nothing */
@@ -2273,9 +2273,9 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         Eo *root;
         efl_access_window_created_signal_emit(obj);
-        root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+        root = efl_access_root_get(EFL_ACCESS_MIXIN);
         if (root)
-           elm_interface_atspi_accessible_children_changed_added_signal_emit(root, obj);
+           efl_access_children_changed_added_signal_emit(root, obj);
      }
 
    if (do_eval)
@@ -2334,10 +2334,10 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (_elm_config->atspi_mode)
      {
         Eo *root;
-        root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+        root = efl_access_root_get(EFL_ACCESS_MIXIN);
         efl_access_window_destroyed_signal_emit(obj);
         if (root)
-           elm_interface_atspi_accessible_children_changed_del_signal_emit(root, obj);
+           efl_access_children_changed_del_signal_emit(root, obj);
      }
 
    if (_elm_win_policy_quit_triggered(obj))
@@ -4319,7 +4319,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
                   efreet_desktop_free(d);
                }
           }
-        elm_interface_atspi_accessible_type_set(sd->icon, ELM_ATSPI_TYPE_DISABLED);
+        efl_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
      }
 
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);
@@ -5282,7 +5282,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_W
           elm_win_focus_highlight_animate_set(obj, EINA_TRUE);
      }
 
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_WINDOW);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_WINDOW);
    if (_elm_config->atspi_mode)
      efl_access_window_created_signal_emit(obj);
 
@@ -6648,7 +6648,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
                 target = efl_ui_focus_manager_focus_get(m);
              }
              if (target)
-               elm_interface_atspi_accessible_state_changed_signal_emit(target, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+               efl_access_state_changed_signal_emit(target, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
           }
         else
           efl_access_window_deactivated_signal_emit(win);
@@ -6676,11 +6676,11 @@ _efl_ui_win_efl_object_debug_name_override(Eo *obj, Efl_Ui_Win_Data *pd, Eina_St
 }
 
 EOLIAN static Eo*
-_efl_ui_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    // attach all kinds of windows directly to ATSPI application root object
    Eo *root;
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
    return root;
 }
 
@@ -6699,23 +6699,23 @@ _efl_ui_win_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSE
    return &atspi_actions[0];
 }
 
-EOLIAN static Elm_Atspi_State_Set
-_efl_ui_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_efl_ui_win_efl_access_state_set_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, MY_CLASS));
+   Efl_Access_State_Set ret;
+   ret = efl_access_state_set_get(efl_super(obj, MY_CLASS));
 
    if (elm_win_focus_get(obj))
-     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_ACTIVE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ACTIVE);
 
    return ret;
 }
 
 EOLIAN static const char*
-_efl_ui_win_elm_interface_atspi_accessible_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_access_name_get(Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    const char *ret;
-   ret = elm_interface_atspi_accessible_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
+   ret = efl_access_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
    if (ret) return ret;
    const char *name = elm_win_title_get(obj);
    return name;

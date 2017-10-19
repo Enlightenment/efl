@@ -1,7 +1,7 @@
 /* FIXME: This definitely shouldn't be here. */
 type Efl_Event_Cb: __undefined_type; [[Efl event callback type]]
 
-enum Elm.Atspi.Type
+enum Efl.Access.Type
 {
    [[Type of accessibility object]]
    regular, [[default accessibile object]]
@@ -9,9 +9,9 @@ enum Elm.Atspi.Type
    skipped [[skip object in accessibility hierarchy]]
 }
 
-enum Elm.Atspi.Role
+enum Efl.Access.Role
 {
-   [[Describes the role of an object visible to AT-SPI Clients.]]
+   [[Describes the role of an object visible to Accessibility Clients.]]
    invalid, [[Role: invalid]]
    accelerator_label, [[Role: accelerator label]]
    alert, [[Role: alert]]
@@ -118,10 +118,10 @@ enum Elm.Atspi.Role
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Elm.Atspi.State_Type
+enum Efl.Access.State_Type
 {
-   [[Describes a possible states of an object visible to AT-SPI clients.]]
-   legacy: elm_atspi_state;
+   [[Describes a possible states of an object visible to accessibility clients.]]
+   legacy: efl_access_state;
    invalid, [[State: invalid]]
    active, [[State: active]]
    armed, [[State: armed]]
@@ -166,10 +166,10 @@ enum Elm.Atspi.State_Type
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Elm.Atspi.Relation_Type
+enum Efl.Access.Relation_Type
 {
    [[Describes relation between two objects.]]
-   legacy: elm_atspi_relation;
+   legacy: efl_access_relation;
    null, [[No relation]]
    label_for, [[Label for relation]]
    labelled_by, [[Labelled by relation]]
@@ -192,54 +192,54 @@ enum Elm.Atspi.Relation_Type
    last_defined, [[Last enum entry sentinel]]
 }
 
-type Elm.Atspi.State_Set: uint64; [[AT-SPI object state set.]]
+type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
-struct Elm.Atspi.Event.Handler; [[AT-SPI event listener]]
+struct Efl.Access.Event.Handler; [[Accessibility event listener]]
 
-struct Elm.Atspi.Event.State_Changed.Data
+struct Efl.Access.Event.State_Changed.Data
 {
-   [[AT-SPI state changed event data]]
-   type: Elm.Atspi.State_Type; [[Type of the state changed event]]
+   [[Accessibility state changed event data]]
+   type: Efl.Access.State_Type; [[Type of the state changed event]]
    new_value: bool; [[New value]]
 }
 
-struct Elm.Atspi.Event.Geometry_Changed.Data
+struct Efl.Access.Event.Geometry_Changed.Data
 {
-   [[AT-SPI geometry changed event data]]
+   [[Accessibility geometry changed event data]]
    x: int; [[X coordinate]]
    y: int; [[Y coordinate]]
    width: int; [[Width]]
    height: int; [[Height]]
 }
 
-struct Elm.Atspi.Event.Children_Changed.Data
+struct Efl.Access.Event.Children_Changed.Data
 {
-   [[AT-SPI children changed event data]]
+   [[Accessibility children changed event data]]
    is_added: bool; [[Child is added or not]]
    child: Efl.Object; [[Child object]]
 }
 
-struct Elm.Atspi.Attribute
+struct Efl.Access.Attribute
 {
-   [[AT-SPI Attribute]]
+   [[Accessibility Attribute]]
    key: string; [[Attribute key]]
    value: string; [[Attribute value]]
 }
 
-struct Elm.Atspi.Relation
+struct Efl.Access.Relation
 {
-   [[AT-SPI Relation]]
-   type: Elm.Atspi.Relation_Type; [[Relation type]]
+   [[Accessibility Relation]]
+   type: Efl.Access.Relation_Type; [[Relation type]]
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-type Elm.Atspi.Relation_Set: list<ptr(Elm.Atspi.Relation)>; [[Elementary AT-SPI relation set type]]
+type Efl.Access.Relation_Set: list<ptr(Efl.Access.Relation)>; [[Elementary Accessibility relation set type]]
 
-mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
+mixin Efl.Access (Efl.Interface, Efl.Object)
 {
-   [[AT-SPI accessible mixin]]
-   eo_prefix: elm_interface_atspi_accessible;
-   data: Elm_Interface_Atspi_Accessible_Data;
+   [[Accessibility accessible mixin]]
+   eo_prefix: efl_access;
+   data: Efl_Access_Data;
    methods {
       @property localized_role_name @protected {
          [[Gets an localized string describing accessible object role name.]]
@@ -264,7 +264,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            relations: Elm.Atspi.Relation_Set; [[Accessible relation set]]
+            relations: Efl.Access.Relation_Set; [[Accessible relation set]]
          }
       }
       @property role {
@@ -274,7 +274,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          set {
          }
          values {
-            role: Elm.Atspi.Role; [[Accessible role]]
+            role: Efl.Access.Role; [[Accessible role]]
          }
       }
       @property children @protected {
@@ -282,7 +282,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            children: list<Elm.Interface.Atspi_Accessible> @owned; [[List of widget's children]]
+            children: list<Efl.Access> @owned; [[List of widget's children]]
          }
       }
       @property role_name @protected {
@@ -299,7 +299,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          }
          values {
             /* FIXME: API for attribute free */
-            attributes: list<ptr(Elm.Atspi.Attribute) @owned> @owned; [[List of object attributes]]
+            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes]]
          }
       }
       @property index_in_parent @protected {
@@ -327,7 +327,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          set {
          }
          values {
-            parent: Elm.Interface.Atspi_Accessible; [[Accessible parent]]
+            parent: Efl.Access; [[Accessible parent]]
          }
       }
       @property state_set @protected {
@@ -335,7 +335,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            states: Elm.Atspi.State_Set; [[Accessible state set]]
+            states: Efl.Access.State_Set; [[Accessible state set]]
          }
       }
       event_handler_add @class @protected {
@@ -344,18 +344,18 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
               @in cb: Efl_Event_Cb; [[Callback]]
               @in data: void_ptr; [[Data]]
          }
-         return: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
+         return: ptr(Efl.Access.Event.Handler); [[Event handler]]
       }
       event_handler_del @class @protected {
          [[Deregister accessibility event listener]]
          params {
-              @in handler: ptr(Elm.Atspi.Event.Handler); [[Event handler]]
+              @in handler: ptr(Efl.Access.Event.Handler); [[Event handler]]
          }
       }
       event_emit @class @protected {
       	 [[Emit event]]
          params {
-            @in accessible: Elm.Interface.Atspi_Accessible; [[Accessibility object.]]
+            @in accessible: Efl.Access; [[Accessibility object.]]
             @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
@@ -389,7 +389,7 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
            set {
            }
            values {
-               type: Elm.Atspi.Type; [[Object type]]
+               type: Efl.Access.Type; [[Object type]]
            }
       }
       relationship_append {
@@ -402,13 +402,13 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
            provide customized feedback, improving overall user experience.
 
            Relationship_append API is asymmetric, which means that
-           appending, for example, relation ELM_ATSPI_RELATION_FLOWS_TO from object A to B,
-           do NOT append relation ELM_ATSPI_RELATION_FLOWS_FROM from object B to
+           appending, for example, relation EFL_ACCESS_RELATION_FLOWS_TO from object A to B,
+           do NOT append relation EFL_ACCESS_RELATION_FLOWS_FROM from object B to
            object A.]]
          return: bool; [[$true if relationship was successfully appended, $false otherwise]]
          params {
-            @in type: Elm.Atspi.Relation_Type; [[Relation type]]
-            @in relation_object: const(Elm.Interface.Atspi_Accessible); [[Object to relate to]]
+            @in type: Efl.Access.Relation_Type; [[Relation type]]
+            @in relation_object: const(Efl.Access); [[Object to relate to]]
          }
       }
       relationship_remove {
@@ -418,8 +418,8 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
           of given type.
          ]]
          params {
-            @in type: Elm.Atspi.Relation_Type; [[Relation type]]
-            @in relation_object: const(Elm.Interface.Atspi_Accessible); [[Object to remove relation from]]
+            @in type: Efl.Access.Relation_Type; [[Relation type]]
+            @in relation_object: const(Efl.Access); [[Object to remove relation from]]
          }
       }
       relationships_clear {
@@ -439,9 +439,9 @@ mixin Elm.Interface.Atspi_Accessible (Efl.Interface, Efl.Object)
    }
    events {
       property,changed: string; [[Called when roperty has changed]]
-      children,changed: Elm.Atspi.Event.Children_Changed.Data; [[Called when children have changed]]
-      state,changed: Elm.Atspi.Event.State_Changed.Data; [[Called when tate has changed]]
-      bounds,changed: Elm.Atspi.Event.Geometry_Changed.Data; [[Called when bounds have changed]]
+      children,changed: Efl.Access.Event.Children_Changed.Data; [[Called when children have changed]]
+      state,changed: Efl.Access.Event.State_Changed.Data; [[Called when tate has changed]]
+      bounds,changed: Efl.Access.Event.Geometry_Changed.Data; [[Called when bounds have changed]]
       visible,data,changed; [[Called when visibility has changed]]
       active,descendant,changed; [[Called when active state of descendant has changed]]
       added; [[Called when item was added]]

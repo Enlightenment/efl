@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_IMAGE_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_CANVAS_LAYOUT_CALC_PROTECTED
 
@@ -864,7 +864,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_IMAGE);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    pd->scale_type = EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE;
    pd->self = obj;

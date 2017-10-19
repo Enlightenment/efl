@@ -183,7 +183,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable)
       Elm.Widget.on_focus_update;
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Accessible.children { get; }
+      Efl.Access.children { get; }
       Efl.Part.part;
    }
    events {

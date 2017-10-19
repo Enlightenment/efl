@@ -274,8 +274,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
            Elm.Widget.Item.part_content_unset;
            Efl.Ui.Focus.Object.focus_geometry { get; }
            Efl.Ui.Focus.Object.focus { set; }
-           Elm.Interface.Atspi_Accessible.name { get; }
-           Elm.Interface.Atspi_Accessible.state_set { get; }
+           Efl.Access.name { get; }
+           Efl.Access.state_set { get; }
            Efl.Ui.Item.selected { get; set; }
            Efl.Ui.Item.prev { get; }
            Efl.Ui.Item.next { get; }

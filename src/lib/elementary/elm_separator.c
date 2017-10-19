@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 
 #include <Elementary.h>
 
@@ -71,7 +71,7 @@ _elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SEPARATOR);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_SEPARATOR);
 
    return obj;
 }

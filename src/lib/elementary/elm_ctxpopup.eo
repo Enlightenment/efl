@@ -212,7 +212,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widge
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Efl.Access.state_set { get; }
       Efl.Part.part;
    }
    events {

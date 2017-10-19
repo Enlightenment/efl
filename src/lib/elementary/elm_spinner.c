@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -220,7 +220,7 @@ apply:
    else
      elm_layout_text_set(obj, "elm.text", buf);
 
-   elm_interface_atspi_accessible_name_changed_signal_emit(obj);
+   efl_access_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
 
@@ -269,7 +269,7 @@ _value_set(Evas_Object *obj,
      efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_MAX_REACHED, NULL);
 
    efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
-   elm_interface_atspi_accessible_value_changed_signal_emit(obj);
+   efl_access_value_changed_signal_emit(obj);
    ecore_timer_del(sd->delay_change_timer);
    sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
                                             _delay_change_timer_cb, obj);
@@ -1409,7 +1409,7 @@ _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SPIN_BUTTON);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
 }
@@ -1690,10 +1690,10 @@ _elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Dat
 }
 
 EOLIAN static const char*
-_elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    const char *name;
-   name = elm_interface_atspi_accessible_name_get(efl_super(obj, ELM_SPINNER_CLASS));
+   name = efl_access_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    const char *ret = elm_layout_text_get(obj, "elm.text");
    return ret;

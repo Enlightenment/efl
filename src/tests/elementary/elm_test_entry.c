@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_TEXT_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -380,15 +380,15 @@ END_TEST
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *entry;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
 
    entry = elm_entry_add(win);
-   role = elm_interface_atspi_accessible_role_get(entry);
+   role = efl_access_role_get(entry);
 
-   ck_assert(role == ELM_ATSPI_ROLE_ENTRY);
+   ck_assert(role == EFL_ACCESS_ROLE_ENTRY);
 
    elm_shutdown();
 }

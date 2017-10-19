@@ -4,7 +4,7 @@ import efl_ui;
 type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 
-class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
+class Elm.Widget.Item(Efl.Object, Efl.Access,
                       Efl.Access.Component)
 {
       [[Elementary widget item class]]
@@ -540,7 +540,7 @@ class Elm.Widget.Item(Efl.Object, Elm.Interface.Atspi_Accessible,
       implements {
            Efl.Object.constructor;
            Efl.Object.destructor;
-           Elm.Interface.Atspi_Accessible.state_set { get; }
+           Efl.Access.state_set { get; }
            Efl.Access.Component.extents { get; set; }
            Efl.Access.Component.alpha { get; }
            Efl.Access.Component.layer { get; }

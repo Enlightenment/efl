@@ -82,6 +82,6 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
         Elm.Widget.Item.part_content_unset;
-        Elm.Interface.Atspi_Accessible.children { get; }
+        Efl.Access.children { get; }
    }
 }

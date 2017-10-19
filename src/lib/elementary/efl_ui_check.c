@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_NSTATE_PROTECTED
@@ -79,8 +79,8 @@ _activate(Evas_Object *obj)
    efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(obj,
-                                                                ELM_ATSPI_STATE_CHECKED,
+       efl_access_state_changed_signal_emit(obj,
+                                                                EFL_ACCESS_STATE_CHECKED,
                                                                 efl_ui_nstate_value_get(obj));
 }
 
@@ -100,15 +100,15 @@ _icon_signal_emit(Evas_Object *obj)
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-EOLIAN static Elm_Atspi_State_Set
-_efl_ui_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_efl_ui_check_efl_access_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set states = 0;
+   Efl_Access_State_Set states = 0;
 
-   states = elm_interface_atspi_accessible_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
+   states = efl_access_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
-       STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
+       STATE_TYPE_SET(states, EFL_ACCESS_STATE_CHECKED);
 
    return states;
 }
@@ -239,8 +239,8 @@ _on_check_off(void *data,
    efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                                ELM_ATSPI_STATE_CHECKED,
+       efl_access_state_changed_signal_emit(data,
+                                                                EFL_ACCESS_STATE_CHECKED,
                                                                 efl_ui_nstate_value_get(obj));
 }
 
@@ -260,8 +260,8 @@ _on_check_on(void *data,
    efl_event_callback_legacy_call(obj, EFL_UI_CHECK_EVENT_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                              ELM_ATSPI_STATE_CHECKED,
+     efl_access_state_changed_signal_emit(data,
+                                                              EFL_ACCESS_STATE_CHECKED,
                                                               efl_ui_nstate_value_get(obj));
 }
 
@@ -356,7 +356,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_CHECK_BOX);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
 
    return obj;
 }

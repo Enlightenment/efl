@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 
 #include <Elementary.h>
 
@@ -492,7 +492,7 @@ _elm_prefs_efl_object_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_prefs_smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_REDUNDANT_OBJECT);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_REDUNDANT_OBJECT);
 
    return obj;
 }

@@ -188,7 +188,7 @@ _efl_ui_grid_efl_object_constructor(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    pd->dir1 = EFL_UI_DIR_RIGHT;
    pd->dir2 = EFL_UI_DIR_DOWN;

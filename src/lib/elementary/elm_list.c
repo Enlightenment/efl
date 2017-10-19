@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -1139,7 +1139,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (WIDGET(it), ELM_LIST_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -1166,7 +1166,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_LIST_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
 }
 
 /*
@@ -1396,7 +1396,7 @@ call:
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, eo_it);
      if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+       efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
    sd->last_selected_item = eo_it;
 
    _elm_list_unwalk(obj, sd);
@@ -1466,7 +1466,7 @@ _item_unselect(Elm_List_Item_Data *it)
           efl_event_callback_legacy_call
             (WIDGET(it), EFL_UI_EVENT_UNSELECTED, EO_OBJ(it));
         if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2103,33 +2103,33 @@ _elm_list_item_elm_widget_item_focus_get(Eo *eo_it, Elm_List_Item_Data *it)
    return EINA_FALSE;
 }
 
-EOLIAN static Elm_Atspi_State_Set
-_elm_list_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_List_Item_Data *data EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_elm_list_item_efl_access_state_set_get(Eo *eo_it, Elm_List_Item_Data *data EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
+   Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
+   ret = efl_access_state_set_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
 
    if (elm_object_item_disabled_get(eo_it))
      return ret;
 
-   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
 
    sel = elm_obj_list_item_selected_get(eo_it);
    if (sel)
-     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
    else
-     STATE_TYPE_UNSET(ret, ELM_ATSPI_STATE_SELECTED);
+     STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_SELECTED);
 
    return ret;
 }
 
 EOLIAN static const char*
-_elm_list_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_List_Item_Data *data)
+_elm_list_item_efl_access_name_get(Eo *eo_it, Elm_List_Item_Data *data)
 {
    const char *ret;
-   ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
+   ret = efl_access_name_get(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    if (ret) return ret;
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->label);
 }
@@ -2256,7 +2256,7 @@ _elm_list_item_efl_object_constructor(Eo *eo_it, Elm_List_Item_Data *it)
 {
    eo_it = efl_constructor(efl_super(eo_it, ELM_LIST_ITEM_CLASS));
    it->base = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
-   elm_interface_atspi_accessible_role_set(eo_it, ELM_ATSPI_ROLE_LIST_ITEM);
+   efl_access_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
 
    return eo_it;
 }
@@ -2284,8 +2284,8 @@ _item_new(Evas_Object *obj,
 
    if (_elm_config->atspi_mode)
    {
-       if (it->icon) elm_interface_atspi_accessible_parent_set(it->icon, eo_it);
-       if (it->end) elm_interface_atspi_accessible_parent_set(it->end, eo_it);
+       if (it->icon) efl_access_parent_set(it->icon, eo_it);
+       if (it->end) efl_access_parent_set(it->end, eo_it);
    }
 
    /* access */
@@ -2312,7 +2312,7 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        elm_interface_atspi_accessible_type_set(it->icon, ELM_ATSPI_TYPE_DISABLED);
+        efl_access_type_set(it->icon, EFL_ACCESS_TYPE_DISABLED);
         elm_widget_tree_unfocusable_set(it->icon, EINA_TRUE);
      }
    if (it->end)
@@ -2321,12 +2321,12 @@ _item_new(Evas_Object *obj,
         evas_object_event_callback_add
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
-        elm_interface_atspi_accessible_type_set(it->end, ELM_ATSPI_TYPE_DISABLED);
+        efl_access_type_set(it->end, EFL_ACCESS_TYPE_DISABLED);
         elm_widget_tree_unfocusable_set(it->end, EINA_TRUE);
      }
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_added(eo_it);
+     efl_access_added(eo_it);
 
    return it;
 }
@@ -2391,7 +2391,7 @@ _elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)
    priv->box = elm_box_add(obj);
    evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
-   elm_interface_atspi_accessible_type_set(priv->box, ELM_ATSPI_TYPE_DISABLED);
+   efl_access_type_set(priv->box, EFL_ACCESS_TYPE_DISABLED);
 
    /* FIXME: change this ugly code path later */
    elm_widget_on_show_region_hook_set(priv->box, obj, _show_region_hook, NULL);
@@ -2514,7 +2514,7 @@ _elm_list_efl_object_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    return obj;
 }
@@ -2751,7 +2751,7 @@ _elm_list_item_append(Eo *obj, Elm_List_Data *sd, const char *label, Evas_Object
    elm_box_pack_end(sd->box, VIEW(it));
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+     efl_access_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2768,7 +2768,7 @@ _elm_list_item_prepend(Eo *obj, Elm_List_Data *sd, const char *label, Evas_Objec
    elm_box_pack_start(sd->box, VIEW(it));
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+     efl_access_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2790,7 +2790,7 @@ _elm_list_item_insert_before(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_bef
    elm_box_pack_before(sd->box, VIEW(it), VIEW(before_it));
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+     efl_access_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2812,7 +2812,7 @@ _elm_list_item_insert_after(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_afte
    elm_box_pack_after(sd->box, VIEW(it), VIEW(after_it));
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+     efl_access_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2843,7 +2843,7 @@ _elm_list_item_sorted_insert(Eo *obj, Elm_List_Data *sd, const char *label, Evas
      }
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_children_changed_added_signal_emit(obj, EO_OBJ(it));
+     efl_access_children_changed_added_signal_emit(obj, EO_OBJ(it));
 
    return EO_OBJ(it);
 }
@@ -2856,9 +2856,9 @@ _elm_list_item_separator_set(Eo *eo_item, Elm_List_Item_Data *it, Eina_Bool sett
    it->is_separator = !!setting;
 
    if (it->is_separator)
-      elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_SEPARATOR);
+      efl_access_role_set(eo_item, EFL_ACCESS_ROLE_SEPARATOR);
    else
-      elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_LIST_ITEM);
+      efl_access_role_set(eo_item, EFL_ACCESS_ROLE_LIST_ITEM);
 }
 
 EOLIAN static Eina_Bool
@@ -3142,10 +3142,10 @@ _elm_list_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN Eina_List*
-_elm_list_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_List_Data *pd)
+_elm_list_efl_access_children_get(Eo *obj, Elm_List_Data *pd)
 {
    Eina_List *ret;
-   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_LIST_CLASS));
+   ret = efl_access_children_get(efl_super(obj, ELM_LIST_CLASS));
    return eina_list_merge(eina_list_clone(pd->items), ret);
 }
 

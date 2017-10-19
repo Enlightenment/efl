@@ -17,7 +17,7 @@ struct Elm.Widget.Focus_State {
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
-abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
+abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
                      Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
                      Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
                      Efl.Ui.Translatable)
@@ -636,11 +636,11 @@ abstract Elm.Widget (Efl.Canvas.Group, Elm.Interface.Atspi_Accessible,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_member_add;
-      Elm.Interface.Atspi_Accessible.name { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
-      Elm.Interface.Atspi_Accessible.children { get; }
-      Elm.Interface.Atspi_Accessible.parent { get; }
-      Elm.Interface.Atspi_Accessible.attributes { get; }
+      Efl.Access.name { get; }
+      Efl.Access.state_set { get; }
+      Efl.Access.children { get; }
+      Efl.Access.parent { get; }
+      Efl.Access.attributes { get; }
       Efl.Access.Component.focus_grab;
       Efl.Ui.Focus.User.manager { get; }
       Efl.Ui.Focus.User.parent { get; }

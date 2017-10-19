@@ -330,8 +330,8 @@ class Elm.Toolbar (Elm.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollabl
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Elm.Widget.focus_state_apply;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi_Accessible.children { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Efl.Access.children { get; }
+      Efl.Access.state_set { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;

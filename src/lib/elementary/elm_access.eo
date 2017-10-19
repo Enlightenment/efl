@@ -10,6 +10,6 @@ class Elm.Access (Elm.Widget, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.on_access_activate;
       Elm.Widget.on_focus_update;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Efl.Access.state_set { get; }
    }
 }

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 #include "elm_test_helper.h"
@@ -11,15 +11,15 @@
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *gengrid;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
 
    gengrid = elm_gengrid_add(win);
-   role = elm_interface_atspi_accessible_role_get(gengrid);
+   role = efl_access_role_get(gengrid);
 
-   ck_assert(role == ELM_ATSPI_ROLE_TREE_TABLE);
+   ck_assert(role == EFL_ACCESS_ROLE_TREE_TABLE);
 
    elm_shutdown();
 }
@@ -53,7 +53,7 @@ START_TEST(elm_atspi_children_parent)
    Evas_Object *gengrid = elm_gengrid_add(win);
    evas_object_resize(gengrid, 100, 100);
 
-   Elm_Interface_Atspi_Accessible *parent;
+   Efl_Access *parent;
    content = NULL;
 
    itc.item_style = "default";
@@ -66,7 +66,7 @@ START_TEST(elm_atspi_children_parent)
    elm_gengrid_item_fields_update(it, "*.", ELM_GENGRID_ITEM_FIELD_CONTENT);
 
    ck_assert(content != NULL);
-   parent = elm_interface_atspi_accessible_parent_get(content);
+   parent = efl_access_parent_get(content);
    ck_assert(it == parent);
 
    elm_shutdown();

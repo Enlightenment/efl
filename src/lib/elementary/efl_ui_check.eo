@@ -29,7 +29,7 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.widget_event;
       Efl.Ui.Nstate.count { set; }
       Efl.Ui.Nstate.value { set; }
-      Elm.Interface.Atspi_Accessible.state_set { get; }
+      Efl.Access.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
    }
    events {
