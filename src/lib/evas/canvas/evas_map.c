@@ -17,7 +17,7 @@ _evas_map_calc_geom_change(Evas_Object *eo_obj)
           }
      }
    evas_object_inform_call_move(eo_obj, obj);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 void

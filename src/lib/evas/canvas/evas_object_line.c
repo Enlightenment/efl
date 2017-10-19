@@ -176,7 +176,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
      _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
    eina_list_free(was);
    evas_object_inform_call_move(eo_obj, obj);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 EOLIAN static void

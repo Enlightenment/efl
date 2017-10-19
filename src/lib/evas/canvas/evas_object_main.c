@@ -1537,7 +1537,7 @@ _efl_canvas_object_efl_gfx_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
           _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
      }
    eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 EOLIAN Eina_Rect
