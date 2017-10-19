@@ -1215,7 +1215,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    if (!obj->layer->evas->is_frozen && !pass && !freeze && obj->cur->visible)
      _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
    eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
    o->changed = 1;
    o->core_change = 1;
    evas_object_textgrid_rows_clear(eo_obj);

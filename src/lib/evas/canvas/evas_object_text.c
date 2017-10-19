@@ -462,7 +462,7 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
    if (!obj->layer->evas->is_frozen && !pass && !freeze && obj->cur->visible)
      _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_TRUE, NULL);
    eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -1101,7 +1101,7 @@ _evas_text_efl_text_text_set(Eo *eo_obj, Evas_Text_Data *o, const char *_text)
    if (obj->cur->visible)
      _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_FALSE, NULL);
    eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -2255,7 +2255,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
    if (obj->cur->visible)
      _evas_canvas_event_pointer_in_list_mouse_move_feed(obj->layer->evas, was, eo_obj, obj, 1, 1, EINA_FALSE, NULL);
    eina_list_free(was);
-   evas_object_inform_call_resize(eo_obj);
+   evas_object_inform_call_resize(eo_obj, obj);
 }
 
 static void
