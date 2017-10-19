@@ -154,7 +154,7 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Ui.Spin.step { get; set; }
       Efl.Ui.Spin.value { get; set; }
       Efl.Ui.Spin.interval { get; set; }
-      Elm.Interface.Atspi_Accessible.name { get; }
+      Efl.Access.name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }

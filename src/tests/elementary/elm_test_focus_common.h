@@ -5,7 +5,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERNAL_API_ARGESFSDFEFC
 #include <Elementary.h>
 #include "elm_suite.h"

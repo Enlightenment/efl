@@ -158,11 +158,11 @@ _efl_ui_box_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Box_Data *sd)
 EOLIAN static Eo *
 _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
 {
-   elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_SKIPPED);
+   efl_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    pd->align.h = 0.5;
    pd->align.v = 0.5;

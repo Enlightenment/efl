@@ -28,7 +28,7 @@ elm_public_eolian_files = \
 	lib/elementary/elm_hover.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/elm_index.eo \
-	lib/elementary/elm_interface_atspi_accessible.eo \
+	lib/elementary/efl_access.eo \
 	lib/elementary/efl_access_action.eo \
 	lib/elementary/efl_access_component.eo \
 	lib/elementary/efl_access_editable_text.eo \
@@ -233,7 +233,7 @@ includesdir = $(includedir)/elementary-@VMAJ@
 includesunstable_HEADERS = \
 	lib/elementary/elm_gen_common.h \
 	lib/elementary/elm_atspi_bridge.h \
-	lib/elementary/elm_interface_atspi_accessible.h \
+	lib/elementary/efl_access.h \
 	lib/elementary/efl_access_text.h \
 	lib/elementary/elm_interface_atspi_widget_action.h \
 	lib/elementary/efl_access_window.h \
@@ -625,7 +625,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_icon.c \
 	lib/elementary/efl_ui_image.c \
 	lib/elementary/elm_index.c \
-	lib/elementary/elm_interface_atspi_accessible.c \
+	lib/elementary/efl_access.c \
 	lib/elementary/efl_access_action.c \
 	lib/elementary/efl_access_component.c \
 	lib/elementary/efl_access_editable_text.c \

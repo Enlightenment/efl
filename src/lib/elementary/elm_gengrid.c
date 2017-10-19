@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -703,7 +703,7 @@ _item_unselect(Elm_Gen_Item *it)
         efl_event_callback_legacy_call
           (WIDGET(it), EFL_UI_EVENT_UNSELECTED, eo_it);
         if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
      }
 }
 
@@ -1009,7 +1009,7 @@ _item_text_realize(Elm_Gen_Item *it,
              edje_object_part_text_set(target, key, "");
           }
         if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
+          efl_access_name_changed_signal_emit(EO_OBJ(it));
      }
 }
 
@@ -2306,7 +2306,7 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    efl_event_callback_legacy_call(obj, ELM_GENGRID_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2336,7 +2336,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_GENGRID_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3968,7 +3968,7 @@ _item_select(Elm_Gen_Item *it)
      {
         efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
         if (_elm_config->atspi_mode)
-          elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_SELECTED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
      }
 
    it->walking--;
@@ -3992,7 +3992,7 @@ _elm_gengrid_item_efl_object_constructor(Eo *eo_it, Elm_Gen_Item *it)
 {
    eo_it = efl_constructor(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
    it->base = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
-   elm_interface_atspi_accessible_role_set(eo_it, ELM_ATSPI_ROLE_LIST_ITEM);
+   efl_access_role_set(eo_it, EFL_ACCESS_ROLE_LIST_ITEM);
 
    return eo_it;
 }
@@ -4245,7 +4245,7 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_TREE_TABLE);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
    return obj;
 }
@@ -4335,8 +4335,8 @@ _elm_gengrid_item_append(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_C
 
    if (_elm_config->atspi_mode)
      {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
+        efl_access_added(EO_OBJ(it));
+        efl_access_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
      }
 
    return EO_OBJ(it);
@@ -4361,8 +4361,8 @@ _elm_gengrid_item_prepend(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_Item_
 
    if (_elm_config->atspi_mode)
      {
-        elm_interface_atspi_accessible_added(EO_OBJ(it));
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
+        efl_access_added(EO_OBJ(it));
+        efl_access_children_changed_added_signal_emit(sd->obj, EO_OBJ(it));
      }
 
    return EO_OBJ(it);
@@ -5350,32 +5350,32 @@ _elm_gengrid_item_select_mode_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    return it->select_mode;
 }
 
-EOLIAN Elm_Atspi_State_Set
-_elm_gengrid_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
+EOLIAN Efl_Access_State_Set
+_elm_gengrid_item_efl_access_state_set_get(Eo *eo_it, Elm_Gen_Item *it EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
+   Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
+   ret = efl_access_state_set_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
 
    sel = elm_obj_gengrid_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
 
    return ret;
 }
 
 EOLIAN const char*
-_elm_gengrid_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Gen_Item *it)
+_elm_gengrid_item_efl_access_name_get(Eo *eo_it, Elm_Gen_Item *it)
 {
    const char *ret;
    Eina_Strbuf *buf;
    char *accessible_name;
 
-   ret = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
+   ret = efl_access_name_get(efl_super(eo_it, ELM_GENGRID_ITEM_CLASS));
    if (ret) return ret;
 
    buf = eina_strbuf_new();
@@ -5555,7 +5555,7 @@ _elm_gengrid_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
 }
 
 EOLIAN Eina_List*
-_elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Gengrid_Data *sd)
+_elm_gengrid_efl_access_children_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Eina_List *ret = NULL, *ret2 = NULL;
    Elm_Gen_Item *it;
@@ -5563,19 +5563,19 @@ _elm_gengrid_elm_interface_atspi_accessible_children_get(Eo *obj, Elm_Gengrid_Da
    EINA_INLIST_FOREACH(sd->items, it)
       ret = eina_list_append(ret, EO_OBJ(it));
 
-   ret2 = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_GENGRID_CLASS));
+   ret2 = efl_access_children_get(efl_super(obj, ELM_GENGRID_CLASS));
 
    return eina_list_merge(ret, ret2);
 }
 
-EOLIAN Elm_Atspi_State_Set
-_elm_gengrid_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
+EOLIAN Efl_Access_State_Set
+_elm_gengrid_efl_access_state_set_get(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
+   Efl_Access_State_Set ret;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_GENGRID_CLASS));
+   ret = efl_access_state_set_get(efl_super(obj, ELM_GENGRID_CLASS));
 
-   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
 
    return ret;
 }

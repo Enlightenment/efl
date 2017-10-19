@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
@@ -542,7 +542,7 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
         if (nit->title_label) strncat(buf, " ", 1);
         strncat(buf, nit->subtitle_label, sizeof(buf) - strlen(buf) - 2);
      }
-   elm_interface_atspi_accessible_name_set(eo_it, buf);
+   efl_access_name_set(eo_it, buf);
 
    elm_layout_sizing_eval(WIDGET(nit));
 }
@@ -1265,8 +1265,8 @@ _item_new(Evas_Object *obj,
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
    eo_item = efl_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
-   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_PAGE_TAB);
-   elm_interface_atspi_accessible_name_set(eo_item, (char*)title_label);
+   efl_access_role_set(eo_item, EFL_ACCESS_ROLE_PAGE_TAB);
+   efl_access_name_set(eo_item, (char*)title_label);
 
    if (!eo_item)
      {
@@ -1591,7 +1591,7 @@ _elm_naviframe_efl_object_constructor(Eo *obj, Elm_Naviframe_Data *sd)
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_PAGE_TAB_LIST);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
 
    return obj;
 }
@@ -1943,7 +1943,7 @@ _elm_naviframe_item_pop_cb_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_List*
-_elm_naviframe_item_elm_interface_atspi_accessible_children_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
+_elm_naviframe_item_efl_access_children_get(Eo *eo_item EINA_UNUSED, Elm_Naviframe_Item_Data *nit)
 {
    Eina_List *ret = NULL;
 

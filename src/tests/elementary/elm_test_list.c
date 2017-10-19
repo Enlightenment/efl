@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_SELECTION_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -186,15 +186,15 @@ END_TEST
 START_TEST (elm_atspi_role_get)
 {
  Evas_Object *win, *list;
- Elm_Atspi_Role role;
+ Efl_Access_Role role;
 
  elm_init(1, NULL);
  win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
 
  list = elm_list_add(win);
- role = elm_interface_atspi_accessible_role_get(list);
+ role = efl_access_role_get(list);
 
- ck_assert(role == ELM_ATSPI_ROLE_LIST);
+ ck_assert(role == EFL_ACCESS_ROLE_LIST);
 
  elm_shutdown();
 }
@@ -207,7 +207,7 @@ END_TEST
  */
 START_TEST(elm_atspi_children_parent)
 {
-   Elm_Interface_Atspi_Accessible *parent;
+   Efl_Access *parent;
 
    elm_init(1, NULL);
    Evas_Object *win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
@@ -220,10 +220,10 @@ START_TEST(elm_atspi_children_parent)
 
    evas_object_show(list);
 
-   parent = elm_interface_atspi_accessible_parent_get(icon);
+   parent = efl_access_parent_get(icon);
    ck_assert(list == parent);
 
-   parent = elm_interface_atspi_accessible_parent_get(end);
+   parent = efl_access_parent_get(end);
    ck_assert(list == parent);
 
    elm_shutdown();

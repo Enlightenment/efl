@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -1735,8 +1735,8 @@ _item_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_state_changed_signal_emit(obj,
-                                                              ELM_ATSPI_STATE_CHECKED,
+     efl_access_state_changed_signal_emit(obj,
+                                                              EFL_ACCESS_STATE_CHECKED,
                                                               EINA_TRUE);
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
@@ -1802,7 +1802,7 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_wdg_item_access_register(eo_item);
 
-   elm_interface_atspi_accessible_role_set(eo_item, ELM_ATSPI_ROLE_RADIO_BUTTON);
+   efl_access_role_set(eo_item, EFL_ACCESS_ROLE_RADIO_BUTTON);
 
    return eo_item;
 }
@@ -2267,7 +2267,7 @@ _elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *_pd E
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_COLOR_CHOOSER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_COLOR_CHOOSER);
 
    return obj;
 }
@@ -2592,11 +2592,11 @@ _elm_colorselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EIN
 }
 
 EOLIAN static Eina_List*
-_elm_colorselector_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    Eina_List *ret = NULL;
 
-   ret = elm_interface_atspi_accessible_children_get(efl_super(obj, ELM_COLORSELECTOR_CLASS));
+   ret = efl_access_children_get(efl_super(obj, ELM_COLORSELECTOR_CLASS));
    // filter - out box contiainer
    ret = eina_list_remove(ret, sd->palette_box);
    // append items as colorselector children
@@ -2605,18 +2605,18 @@ _elm_colorselector_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUS
    return ret;
 }
 
-EOLIAN static Elm_Atspi_State_Set
-_elm_color_item_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_elm_color_item_efl_access_state_set_get(Eo *obj, Elm_Color_Item_Data *sd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
+   Efl_Access_State_Set ret;
    Eina_Bool sel;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, ELM_COLOR_ITEM_CLASS));
+   ret = efl_access_state_set_get(efl_super(obj, ELM_COLOR_ITEM_CLASS));
 
    sel = elm_obj_color_item_selected_get(obj);
 
    if (sel)
-     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
 
    return ret;
 }
@@ -2669,14 +2669,14 @@ _elm_color_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA
 }
 
 EOLIAN static const char*
-_elm_color_item_elm_interface_atspi_accessible_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
+_elm_color_item_efl_access_name_get(Eo *eo_it, Elm_Color_Item_Data *it)
 {
    Eina_Strbuf *buf;
    const char *color_name = NULL;
    const char *name;
    char *accessible_name;
 
-   name = elm_interface_atspi_accessible_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
+   name = efl_access_name_get(efl_super(eo_it, ELM_COLOR_ITEM_CLASS));
    if (name) return name;
 
    buf = eina_strbuf_new();

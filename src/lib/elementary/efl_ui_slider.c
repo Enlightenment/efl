@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
@@ -69,7 +69,7 @@ _delay_change(void *data)
    efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_DELAY_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_value_changed_signal_emit(data);
+     efl_access_value_changed_signal_emit(data);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -208,7 +208,7 @@ _val_set(Evas_Object *obj)
 
    // emit accessiblity event also if value was chagend by API
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_value_changed_signal_emit(obj);
+     efl_access_value_changed_signal_emit(obj);
 }
 
 static void
@@ -1213,7 +1213,7 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUS
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_SLIDER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
 
    return obj;
 }

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 
@@ -79,7 +79,7 @@ _val_set(Evas_Object *obj)
 
    // emit accessiblity event also if value was chagend by API
    if (_elm_config->atspi_mode)
-     elm_interface_atspi_accessible_value_changed_signal_emit(obj);
+     efl_access_value_changed_signal_emit(obj);
 }
 
 static void

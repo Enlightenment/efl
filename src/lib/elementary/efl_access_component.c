@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 
 #include <Elementary.h>
 
@@ -76,7 +76,7 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
    Eina_List *l, *children;
    Eo *ret = NULL, *child;
 
-   children = elm_interface_atspi_accessible_children_get(obj);
+   children = efl_access_children_get(obj);
 
    EINA_LIST_FOREACH(children, l, child)
      {

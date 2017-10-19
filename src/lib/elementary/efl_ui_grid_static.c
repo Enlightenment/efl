@@ -11,7 +11,7 @@ _efl_ui_grid_static_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_FILLER);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    gd = efl_data_scope_get(obj, EFL_UI_GRID_CLASS);
    gd->req_cols = 100;

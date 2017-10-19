@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_IMAGE_PROTECTED
@@ -93,14 +93,14 @@ typedef struct _Elm_Atspi_Bridge_Data
         Eldbus_Service_Interface *text;
         Eldbus_Service_Interface *value;
    } interfaces;
-   Elm_Atspi_Event_Handler *event_hdlr;
+   Efl_Access_Event_Handler *event_hdlr;
    Eina_Hash *event_hash;
    Eina_Bool connected : 1;
 } Elm_Atspi_Bridge_Data;
 
 
 struct collection_match_rule {
-     Elm_Atspi_State_Set states;
+     Efl_Access_State_Set states;
      AtspiCollectionMatchType statematchtype;
      Eina_List *attributes;
      AtspiCollectionMatchType attributematchtype;
@@ -149,14 +149,14 @@ typedef struct {
 } Elm_Atspi_Bridge_Event_Handler;
 
 static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_CHILDREN_CHANGED, _children_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_BOUNDS_CHANGED, _bounds_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_STATE_CHANGED, _state_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_VISIBLE_DATA_CHANGED, _visible_data_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ACTIVE_DESCENDANT_CHANGED, _active_descendant_changed_signal_send},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_ADDED, _on_object_add},
-   { ELM_INTERFACE_ATSPI_ACCESSIBLE_EVENT_REMOVED, _on_object_del},
+   { EFL_ACCESS_EVENT_CHILDREN_CHANGED, _children_changed_signal_send},
+   { EFL_ACCESS_EVENT_PROPERTY_CHANGED, _property_changed_signal_send},
+   { EFL_ACCESS_EVENT_BOUNDS_CHANGED, _bounds_changed_signal_send},
+   { EFL_ACCESS_EVENT_STATE_CHANGED, _state_changed_signal_send},
+   { EFL_ACCESS_EVENT_VISIBLE_DATA_CHANGED, _visible_data_changed_signal_send},
+   { EFL_ACCESS_EVENT_ACTIVE_DESCENDANT_CHANGED, _active_descendant_changed_signal_send},
+   { EFL_ACCESS_EVENT_ADDED, _on_object_add},
+   { EFL_ACCESS_EVENT_REMOVED, _on_object_del},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_CREATED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_DESTROYED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_ACTIVATED, _window_signal_send},
@@ -283,185 +283,185 @@ static const Eldbus_Signal _window_obj_signals[] = {
 };
 
 static const int elm_roles_to_atspi_roles[][2] = {
-   { ELM_ATSPI_ROLE_INVALID, ATSPI_ROLE_INVALID },
-   { ELM_ATSPI_ROLE_ACCELERATOR_LABEL, ATSPI_ROLE_ACCELERATOR_LABEL },
-   { ELM_ATSPI_ROLE_ALERT, ATSPI_ROLE_ALERT },
-   { ELM_ATSPI_ROLE_ANIMATION, ATSPI_ROLE_ANIMATION },
-   { ELM_ATSPI_ROLE_ARROW, ATSPI_ROLE_ARROW },
-   { ELM_ATSPI_ROLE_CALENDAR, ATSPI_ROLE_CALENDAR },
-   { ELM_ATSPI_ROLE_CANVAS, ATSPI_ROLE_CANVAS },
-   { ELM_ATSPI_ROLE_CHECK_BOX, ATSPI_ROLE_CHECK_BOX },
-   { ELM_ATSPI_ROLE_CHECK_MENU_ITEM, ATSPI_ROLE_CHECK_MENU_ITEM },
-   { ELM_ATSPI_ROLE_COLOR_CHOOSER, ATSPI_ROLE_COLOR_CHOOSER },
-   { ELM_ATSPI_ROLE_COLUMN_HEADER, ATSPI_ROLE_COLUMN_HEADER },
-   { ELM_ATSPI_ROLE_COMBO_BOX, ATSPI_ROLE_COMBO_BOX },
-   { ELM_ATSPI_ROLE_DATE_EDITOR, ATSPI_ROLE_DATE_EDITOR },
-   { ELM_ATSPI_ROLE_DESKTOP_ICON, ATSPI_ROLE_DESKTOP_ICON },
-   { ELM_ATSPI_ROLE_DESKTOP_FRAME, ATSPI_ROLE_DESKTOP_FRAME },
-   { ELM_ATSPI_ROLE_DIAL, ATSPI_ROLE_DIAL },
-   { ELM_ATSPI_ROLE_DIALOG, ATSPI_ROLE_DIALOG },
-   { ELM_ATSPI_ROLE_DIRECTORY_PANE, ATSPI_ROLE_DIRECTORY_PANE },
-   { ELM_ATSPI_ROLE_DRAWING_AREA, ATSPI_ROLE_DRAWING_AREA },
-   { ELM_ATSPI_ROLE_FILE_CHOOSER, ATSPI_ROLE_FILE_CHOOSER },
-   { ELM_ATSPI_ROLE_FILLER, ATSPI_ROLE_FILLER },
-   { ELM_ATSPI_ROLE_FOCUS_TRAVERSABLE, ATSPI_ROLE_FOCUS_TRAVERSABLE },
-   { ELM_ATSPI_ROLE_FONT_CHOOSER, ATSPI_ROLE_FONT_CHOOSER },
-   { ELM_ATSPI_ROLE_FRAME, ATSPI_ROLE_FRAME },
-   { ELM_ATSPI_ROLE_GLASS_PANE, ATSPI_ROLE_GLASS_PANE },
-   { ELM_ATSPI_ROLE_HTML_CONTAINER, ATSPI_ROLE_HTML_CONTAINER },
-   { ELM_ATSPI_ROLE_ICON, ATSPI_ROLE_ICON },
-   { ELM_ATSPI_ROLE_IMAGE, ATSPI_ROLE_IMAGE },
-   { ELM_ATSPI_ROLE_INTERNAL_FRAME, ATSPI_ROLE_INTERNAL_FRAME },
-   { ELM_ATSPI_ROLE_LABEL, ATSPI_ROLE_LABEL },
-   { ELM_ATSPI_ROLE_LAYERED_PANE, ATSPI_ROLE_LAYERED_PANE },
-   { ELM_ATSPI_ROLE_LIST, ATSPI_ROLE_LIST },
-   { ELM_ATSPI_ROLE_LIST_ITEM, ATSPI_ROLE_LIST_ITEM },
-   { ELM_ATSPI_ROLE_MENU, ATSPI_ROLE_MENU },
-   { ELM_ATSPI_ROLE_MENU_BAR, ATSPI_ROLE_MENU_BAR },
-   { ELM_ATSPI_ROLE_MENU_ITEM, ATSPI_ROLE_MENU_ITEM },
-   { ELM_ATSPI_ROLE_OPTION_PANE, ATSPI_ROLE_OPTION_PANE },
-   { ELM_ATSPI_ROLE_PAGE_TAB, ATSPI_ROLE_PAGE_TAB },
-   { ELM_ATSPI_ROLE_PAGE_TAB_LIST, ATSPI_ROLE_PAGE_TAB_LIST },
-   { ELM_ATSPI_ROLE_PANEL, ATSPI_ROLE_PANEL },
-   { ELM_ATSPI_ROLE_PASSWORD_TEXT, ATSPI_ROLE_PASSWORD_TEXT },
-   { ELM_ATSPI_ROLE_POPUP_MENU, ATSPI_ROLE_POPUP_MENU },
-   { ELM_ATSPI_ROLE_PROGRESS_BAR, ATSPI_ROLE_PROGRESS_BAR },
-   { ELM_ATSPI_ROLE_PUSH_BUTTON, ATSPI_ROLE_PUSH_BUTTON },
-   { ELM_ATSPI_ROLE_RADIO_BUTTON, ATSPI_ROLE_RADIO_BUTTON },
-   { ELM_ATSPI_ROLE_RADIO_MENU_ITEM, ATSPI_ROLE_RADIO_MENU_ITEM },
-   { ELM_ATSPI_ROLE_ROOT_PANE, ATSPI_ROLE_ROOT_PANE },
-   { ELM_ATSPI_ROLE_ROW_HEADER, ATSPI_ROLE_ROW_HEADER },
-   { ELM_ATSPI_ROLE_SCROLL_BAR, ATSPI_ROLE_SCROLL_BAR },
-   { ELM_ATSPI_ROLE_SCROLL_PANE, ATSPI_ROLE_SCROLL_PANE },
-   { ELM_ATSPI_ROLE_SEPARATOR, ATSPI_ROLE_SEPARATOR },
-   { ELM_ATSPI_ROLE_SLIDER, ATSPI_ROLE_SLIDER },
-   { ELM_ATSPI_ROLE_SPIN_BUTTON, ATSPI_ROLE_SPIN_BUTTON },
-   { ELM_ATSPI_ROLE_SPLIT_PANE, ATSPI_ROLE_SPLIT_PANE },
-   { ELM_ATSPI_ROLE_STATUS_BAR, ATSPI_ROLE_STATUS_BAR },
-   { ELM_ATSPI_ROLE_TABLE, ATSPI_ROLE_TABLE },
-   { ELM_ATSPI_ROLE_TABLE_CELL, ATSPI_ROLE_TABLE_CELL },
-   { ELM_ATSPI_ROLE_TABLE_COLUMN_HEADER, ATSPI_ROLE_TABLE_COLUMN_HEADER },
-   { ELM_ATSPI_ROLE_TABLE_ROW_HEADER, ATSPI_ROLE_TABLE_ROW_HEADER },
-   { ELM_ATSPI_ROLE_TEAROFF_MENU_ITEM, ATSPI_ROLE_TEAROFF_MENU_ITEM },
-   { ELM_ATSPI_ROLE_TERMINAL, ATSPI_ROLE_TERMINAL },
-   { ELM_ATSPI_ROLE_TEXT, ATSPI_ROLE_TEXT },
-   { ELM_ATSPI_ROLE_TOGGLE_BUTTON, ATSPI_ROLE_TOGGLE_BUTTON },
-   { ELM_ATSPI_ROLE_TOOL_BAR, ATSPI_ROLE_TOOL_BAR },
-   { ELM_ATSPI_ROLE_TOOL_TIP, ATSPI_ROLE_TOOL_TIP },
-   { ELM_ATSPI_ROLE_TREE, ATSPI_ROLE_TREE },
-   { ELM_ATSPI_ROLE_TREE_TABLE, ATSPI_ROLE_TREE_TABLE },
-   { ELM_ATSPI_ROLE_UNKNOWN, ATSPI_ROLE_UNKNOWN },
-   { ELM_ATSPI_ROLE_VIEWPORT, ATSPI_ROLE_VIEWPORT },
-   { ELM_ATSPI_ROLE_WINDOW, ATSPI_ROLE_WINDOW },
-   { ELM_ATSPI_ROLE_EXTENDED, ATSPI_ROLE_EXTENDED },
-   { ELM_ATSPI_ROLE_HEADER, ATSPI_ROLE_HEADER },
-   { ELM_ATSPI_ROLE_FOOTER, ATSPI_ROLE_FOOTER },
-   { ELM_ATSPI_ROLE_PARAGRAPH, ATSPI_ROLE_PARAGRAPH },
-   { ELM_ATSPI_ROLE_RULER, ATSPI_ROLE_RULER },
-   { ELM_ATSPI_ROLE_APPLICATION, ATSPI_ROLE_APPLICATION },
-   { ELM_ATSPI_ROLE_AUTOCOMPLETE, ATSPI_ROLE_AUTOCOMPLETE },
-   { ELM_ATSPI_ROLE_EDITBAR, ATSPI_ROLE_EDITBAR },
-   { ELM_ATSPI_ROLE_EMBEDDED, ATSPI_ROLE_EMBEDDED },
-   { ELM_ATSPI_ROLE_ENTRY, ATSPI_ROLE_ENTRY },
-   { ELM_ATSPI_ROLE_CHART, ATSPI_ROLE_CHART },
-   { ELM_ATSPI_ROLE_CAPTION, ATSPI_ROLE_CAPTION },
-   { ELM_ATSPI_ROLE_DOCUMENT_FRAME, ATSPI_ROLE_DOCUMENT_FRAME },
-   { ELM_ATSPI_ROLE_HEADING, ATSPI_ROLE_HEADING },
-   { ELM_ATSPI_ROLE_PAGE, ATSPI_ROLE_PAGE },
-   { ELM_ATSPI_ROLE_SECTION, ATSPI_ROLE_SECTION },
-   { ELM_ATSPI_ROLE_REDUNDANT_OBJECT, ATSPI_ROLE_REDUNDANT_OBJECT },
-   { ELM_ATSPI_ROLE_FORM, ATSPI_ROLE_FORM },
-   { ELM_ATSPI_ROLE_LINK, ATSPI_ROLE_LINK },
-   { ELM_ATSPI_ROLE_INPUT_METHOD_WINDOW, ATSPI_ROLE_INPUT_METHOD_WINDOW },
-   { ELM_ATSPI_ROLE_TABLE_ROW, ATSPI_ROLE_TABLE_ROW },
-   { ELM_ATSPI_ROLE_TREE_ITEM, ATSPI_ROLE_TREE_ITEM },
-   { ELM_ATSPI_ROLE_DOCUMENT_SPREADSHEET, ATSPI_ROLE_DOCUMENT_SPREADSHEET },
-   { ELM_ATSPI_ROLE_DOCUMENT_PRESENTATION, ATSPI_ROLE_DOCUMENT_PRESENTATION },
-   { ELM_ATSPI_ROLE_DOCUMENT_TEXT, ATSPI_ROLE_DOCUMENT_TEXT },
-   { ELM_ATSPI_ROLE_DOCUMENT_WEB, ATSPI_ROLE_DOCUMENT_WEB },
-   { ELM_ATSPI_ROLE_DOCUMENT_EMAIL, ATSPI_ROLE_DOCUMENT_EMAIL },
-   { ELM_ATSPI_ROLE_COMMENT, ATSPI_ROLE_COMMENT },
-   { ELM_ATSPI_ROLE_LIST_BOX, ATSPI_ROLE_LIST_BOX },
-   { ELM_ATSPI_ROLE_GROUPING, ATSPI_ROLE_GROUPING },
-   { ELM_ATSPI_ROLE_IMAGE_MAP, ATSPI_ROLE_IMAGE_MAP },
-   { ELM_ATSPI_ROLE_NOTIFICATION, ATSPI_ROLE_NOTIFICATION },
-   { ELM_ATSPI_ROLE_INFO_BAR, ATSPI_ROLE_INFO_BAR },
-   { ELM_ATSPI_ROLE_LAST_DEFINED, ATSPI_ROLE_LAST_DEFINED },
+   { EFL_ACCESS_ROLE_INVALID, ATSPI_ROLE_INVALID },
+   { EFL_ACCESS_ROLE_ACCELERATOR_LABEL, ATSPI_ROLE_ACCELERATOR_LABEL },
+   { EFL_ACCESS_ROLE_ALERT, ATSPI_ROLE_ALERT },
+   { EFL_ACCESS_ROLE_ANIMATION, ATSPI_ROLE_ANIMATION },
+   { EFL_ACCESS_ROLE_ARROW, ATSPI_ROLE_ARROW },
+   { EFL_ACCESS_ROLE_CALENDAR, ATSPI_ROLE_CALENDAR },
+   { EFL_ACCESS_ROLE_CANVAS, ATSPI_ROLE_CANVAS },
+   { EFL_ACCESS_ROLE_CHECK_BOX, ATSPI_ROLE_CHECK_BOX },
+   { EFL_ACCESS_ROLE_CHECK_MENU_ITEM, ATSPI_ROLE_CHECK_MENU_ITEM },
+   { EFL_ACCESS_ROLE_COLOR_CHOOSER, ATSPI_ROLE_COLOR_CHOOSER },
+   { EFL_ACCESS_ROLE_COLUMN_HEADER, ATSPI_ROLE_COLUMN_HEADER },
+   { EFL_ACCESS_ROLE_COMBO_BOX, ATSPI_ROLE_COMBO_BOX },
+   { EFL_ACCESS_ROLE_DATE_EDITOR, ATSPI_ROLE_DATE_EDITOR },
+   { EFL_ACCESS_ROLE_DESKTOP_ICON, ATSPI_ROLE_DESKTOP_ICON },
+   { EFL_ACCESS_ROLE_DESKTOP_FRAME, ATSPI_ROLE_DESKTOP_FRAME },
+   { EFL_ACCESS_ROLE_DIAL, ATSPI_ROLE_DIAL },
+   { EFL_ACCESS_ROLE_DIALOG, ATSPI_ROLE_DIALOG },
+   { EFL_ACCESS_ROLE_DIRECTORY_PANE, ATSPI_ROLE_DIRECTORY_PANE },
+   { EFL_ACCESS_ROLE_DRAWING_AREA, ATSPI_ROLE_DRAWING_AREA },
+   { EFL_ACCESS_ROLE_FILE_CHOOSER, ATSPI_ROLE_FILE_CHOOSER },
+   { EFL_ACCESS_ROLE_FILLER, ATSPI_ROLE_FILLER },
+   { EFL_ACCESS_ROLE_FOCUS_TRAVERSABLE, ATSPI_ROLE_FOCUS_TRAVERSABLE },
+   { EFL_ACCESS_ROLE_FONT_CHOOSER, ATSPI_ROLE_FONT_CHOOSER },
+   { EFL_ACCESS_ROLE_FRAME, ATSPI_ROLE_FRAME },
+   { EFL_ACCESS_ROLE_GLASS_PANE, ATSPI_ROLE_GLASS_PANE },
+   { EFL_ACCESS_ROLE_HTML_CONTAINER, ATSPI_ROLE_HTML_CONTAINER },
+   { EFL_ACCESS_ROLE_ICON, ATSPI_ROLE_ICON },
+   { EFL_ACCESS_ROLE_IMAGE, ATSPI_ROLE_IMAGE },
+   { EFL_ACCESS_ROLE_INTERNAL_FRAME, ATSPI_ROLE_INTERNAL_FRAME },
+   { EFL_ACCESS_ROLE_LABEL, ATSPI_ROLE_LABEL },
+   { EFL_ACCESS_ROLE_LAYERED_PANE, ATSPI_ROLE_LAYERED_PANE },
+   { EFL_ACCESS_ROLE_LIST, ATSPI_ROLE_LIST },
+   { EFL_ACCESS_ROLE_LIST_ITEM, ATSPI_ROLE_LIST_ITEM },
+   { EFL_ACCESS_ROLE_MENU, ATSPI_ROLE_MENU },
+   { EFL_ACCESS_ROLE_MENU_BAR, ATSPI_ROLE_MENU_BAR },
+   { EFL_ACCESS_ROLE_MENU_ITEM, ATSPI_ROLE_MENU_ITEM },
+   { EFL_ACCESS_ROLE_OPTION_PANE, ATSPI_ROLE_OPTION_PANE },
+   { EFL_ACCESS_ROLE_PAGE_TAB, ATSPI_ROLE_PAGE_TAB },
+   { EFL_ACCESS_ROLE_PAGE_TAB_LIST, ATSPI_ROLE_PAGE_TAB_LIST },
+   { EFL_ACCESS_ROLE_PANEL, ATSPI_ROLE_PANEL },
+   { EFL_ACCESS_ROLE_PASSWORD_TEXT, ATSPI_ROLE_PASSWORD_TEXT },
+   { EFL_ACCESS_ROLE_POPUP_MENU, ATSPI_ROLE_POPUP_MENU },
+   { EFL_ACCESS_ROLE_PROGRESS_BAR, ATSPI_ROLE_PROGRESS_BAR },
+   { EFL_ACCESS_ROLE_PUSH_BUTTON, ATSPI_ROLE_PUSH_BUTTON },
+   { EFL_ACCESS_ROLE_RADIO_BUTTON, ATSPI_ROLE_RADIO_BUTTON },
+   { EFL_ACCESS_ROLE_RADIO_MENU_ITEM, ATSPI_ROLE_RADIO_MENU_ITEM },
+   { EFL_ACCESS_ROLE_ROOT_PANE, ATSPI_ROLE_ROOT_PANE },
+   { EFL_ACCESS_ROLE_ROW_HEADER, ATSPI_ROLE_ROW_HEADER },
+   { EFL_ACCESS_ROLE_SCROLL_BAR, ATSPI_ROLE_SCROLL_BAR },
+   { EFL_ACCESS_ROLE_SCROLL_PANE, ATSPI_ROLE_SCROLL_PANE },
+   { EFL_ACCESS_ROLE_SEPARATOR, ATSPI_ROLE_SEPARATOR },
+   { EFL_ACCESS_ROLE_SLIDER, ATSPI_ROLE_SLIDER },
+   { EFL_ACCESS_ROLE_SPIN_BUTTON, ATSPI_ROLE_SPIN_BUTTON },
+   { EFL_ACCESS_ROLE_SPLIT_PANE, ATSPI_ROLE_SPLIT_PANE },
+   { EFL_ACCESS_ROLE_STATUS_BAR, ATSPI_ROLE_STATUS_BAR },
+   { EFL_ACCESS_ROLE_TABLE, ATSPI_ROLE_TABLE },
+   { EFL_ACCESS_ROLE_TABLE_CELL, ATSPI_ROLE_TABLE_CELL },
+   { EFL_ACCESS_ROLE_TABLE_COLUMN_HEADER, ATSPI_ROLE_TABLE_COLUMN_HEADER },
+   { EFL_ACCESS_ROLE_TABLE_ROW_HEADER, ATSPI_ROLE_TABLE_ROW_HEADER },
+   { EFL_ACCESS_ROLE_TEAROFF_MENU_ITEM, ATSPI_ROLE_TEAROFF_MENU_ITEM },
+   { EFL_ACCESS_ROLE_TERMINAL, ATSPI_ROLE_TERMINAL },
+   { EFL_ACCESS_ROLE_TEXT, ATSPI_ROLE_TEXT },
+   { EFL_ACCESS_ROLE_TOGGLE_BUTTON, ATSPI_ROLE_TOGGLE_BUTTON },
+   { EFL_ACCESS_ROLE_TOOL_BAR, ATSPI_ROLE_TOOL_BAR },
+   { EFL_ACCESS_ROLE_TOOL_TIP, ATSPI_ROLE_TOOL_TIP },
+   { EFL_ACCESS_ROLE_TREE, ATSPI_ROLE_TREE },
+   { EFL_ACCESS_ROLE_TREE_TABLE, ATSPI_ROLE_TREE_TABLE },
+   { EFL_ACCESS_ROLE_UNKNOWN, ATSPI_ROLE_UNKNOWN },
+   { EFL_ACCESS_ROLE_VIEWPORT, ATSPI_ROLE_VIEWPORT },
+   { EFL_ACCESS_ROLE_WINDOW, ATSPI_ROLE_WINDOW },
+   { EFL_ACCESS_ROLE_EXTENDED, ATSPI_ROLE_EXTENDED },
+   { EFL_ACCESS_ROLE_HEADER, ATSPI_ROLE_HEADER },
+   { EFL_ACCESS_ROLE_FOOTER, ATSPI_ROLE_FOOTER },
+   { EFL_ACCESS_ROLE_PARAGRAPH, ATSPI_ROLE_PARAGRAPH },
+   { EFL_ACCESS_ROLE_RULER, ATSPI_ROLE_RULER },
+   { EFL_ACCESS_ROLE_APPLICATION, ATSPI_ROLE_APPLICATION },
+   { EFL_ACCESS_ROLE_AUTOCOMPLETE, ATSPI_ROLE_AUTOCOMPLETE },
+   { EFL_ACCESS_ROLE_EDITBAR, ATSPI_ROLE_EDITBAR },
+   { EFL_ACCESS_ROLE_EMBEDDED, ATSPI_ROLE_EMBEDDED },
+   { EFL_ACCESS_ROLE_ENTRY, ATSPI_ROLE_ENTRY },
+   { EFL_ACCESS_ROLE_CHART, ATSPI_ROLE_CHART },
+   { EFL_ACCESS_ROLE_CAPTION, ATSPI_ROLE_CAPTION },
+   { EFL_ACCESS_ROLE_DOCUMENT_FRAME, ATSPI_ROLE_DOCUMENT_FRAME },
+   { EFL_ACCESS_ROLE_HEADING, ATSPI_ROLE_HEADING },
+   { EFL_ACCESS_ROLE_PAGE, ATSPI_ROLE_PAGE },
+   { EFL_ACCESS_ROLE_SECTION, ATSPI_ROLE_SECTION },
+   { EFL_ACCESS_ROLE_REDUNDANT_OBJECT, ATSPI_ROLE_REDUNDANT_OBJECT },
+   { EFL_ACCESS_ROLE_FORM, ATSPI_ROLE_FORM },
+   { EFL_ACCESS_ROLE_LINK, ATSPI_ROLE_LINK },
+   { EFL_ACCESS_ROLE_INPUT_METHOD_WINDOW, ATSPI_ROLE_INPUT_METHOD_WINDOW },
+   { EFL_ACCESS_ROLE_TABLE_ROW, ATSPI_ROLE_TABLE_ROW },
+   { EFL_ACCESS_ROLE_TREE_ITEM, ATSPI_ROLE_TREE_ITEM },
+   { EFL_ACCESS_ROLE_DOCUMENT_SPREADSHEET, ATSPI_ROLE_DOCUMENT_SPREADSHEET },
+   { EFL_ACCESS_ROLE_DOCUMENT_PRESENTATION, ATSPI_ROLE_DOCUMENT_PRESENTATION },
+   { EFL_ACCESS_ROLE_DOCUMENT_TEXT, ATSPI_ROLE_DOCUMENT_TEXT },
+   { EFL_ACCESS_ROLE_DOCUMENT_WEB, ATSPI_ROLE_DOCUMENT_WEB },
+   { EFL_ACCESS_ROLE_DOCUMENT_EMAIL, ATSPI_ROLE_DOCUMENT_EMAIL },
+   { EFL_ACCESS_ROLE_COMMENT, ATSPI_ROLE_COMMENT },
+   { EFL_ACCESS_ROLE_LIST_BOX, ATSPI_ROLE_LIST_BOX },
+   { EFL_ACCESS_ROLE_GROUPING, ATSPI_ROLE_GROUPING },
+   { EFL_ACCESS_ROLE_IMAGE_MAP, ATSPI_ROLE_IMAGE_MAP },
+   { EFL_ACCESS_ROLE_NOTIFICATION, ATSPI_ROLE_NOTIFICATION },
+   { EFL_ACCESS_ROLE_INFO_BAR, ATSPI_ROLE_INFO_BAR },
+   { EFL_ACCESS_ROLE_LAST_DEFINED, ATSPI_ROLE_LAST_DEFINED },
 };
 
 struct atspi_state_desc
 {
-   Elm_Atspi_State_Type elm_state;
+   Efl_Access_State_Type elm_state;
    AtspiStateType atspi_state;
    const char *name;
 };
 
 static const struct atspi_state_desc elm_states_to_atspi_state[] = {
-   { ELM_ATSPI_STATE_INVALID, ATSPI_STATE_INVALID, "invalid" },
-   { ELM_ATSPI_STATE_ACTIVE, ATSPI_STATE_ACTIVE, "active" },
-   { ELM_ATSPI_STATE_ARMED, ATSPI_STATE_ARMED, "armed" },
-   { ELM_ATSPI_STATE_BUSY, ATSPI_STATE_BUSY, "busy" },
-   { ELM_ATSPI_STATE_CHECKED, ATSPI_STATE_CHECKED, "checked" },
-   { ELM_ATSPI_STATE_COLLAPSED, ATSPI_STATE_COLLAPSED, "collapsed" },
-   { ELM_ATSPI_STATE_DEFUNCT, ATSPI_STATE_DEFUNCT, "defunct" },
-   { ELM_ATSPI_STATE_EDITABLE, ATSPI_STATE_EDITABLE, "editable" },
-   { ELM_ATSPI_STATE_ENABLED, ATSPI_STATE_ENABLED, "enabled" },
-   { ELM_ATSPI_STATE_EXPANDABLE, ATSPI_STATE_EXPANDABLE, "expandable" },
-   { ELM_ATSPI_STATE_EXPANDED, ATSPI_STATE_EXPANDED, "expanded" },
-   { ELM_ATSPI_STATE_FOCUSABLE, ATSPI_STATE_FOCUSABLE, "focusable" },
-   { ELM_ATSPI_STATE_FOCUSED, ATSPI_STATE_FOCUSED, "focused" },
-   { ELM_ATSPI_STATE_HAS_TOOLTIP, ATSPI_STATE_HAS_TOOLTIP, "has-tooltip" },
-   { ELM_ATSPI_STATE_HORIZONTAL, ATSPI_STATE_HORIZONTAL, "horizontal" },
-   { ELM_ATSPI_STATE_ICONIFIED, ATSPI_STATE_ICONIFIED, "iconified" },
-   { ELM_ATSPI_STATE_MODAL, ATSPI_STATE_MODAL, "modal" },
-   { ELM_ATSPI_STATE_MULTI_LINE, ATSPI_STATE_MULTI_LINE, "multi-line" },
-   { ELM_ATSPI_STATE_MULTISELECTABLE, ATSPI_STATE_MULTISELECTABLE, "multiselectable" },
-   { ELM_ATSPI_STATE_OPAQUE, ATSPI_STATE_OPAQUE, "opaque" },
-   { ELM_ATSPI_STATE_PRESSED, ATSPI_STATE_PRESSED, "pressed" },
-   { ELM_ATSPI_STATE_RESIZABLE, ATSPI_STATE_RESIZABLE, "resizable" },
-   { ELM_ATSPI_STATE_SELECTABLE, ATSPI_STATE_SELECTABLE, "selectable" },
-   { ELM_ATSPI_STATE_SELECTED, ATSPI_STATE_SELECTED, "selected" },
-   { ELM_ATSPI_STATE_SENSITIVE, ATSPI_STATE_SENSITIVE, "sensitive" },
-   { ELM_ATSPI_STATE_SHOWING, ATSPI_STATE_SHOWING, "showing" },
-   { ELM_ATSPI_STATE_SINGLE_LINE, ATSPI_STATE_SINGLE_LINE, "single-line" },
-   { ELM_ATSPI_STATE_STALE, ATSPI_STATE_STALE, "stale" },
-   { ELM_ATSPI_STATE_TRANSIENT, ATSPI_STATE_TRANSIENT, "transient" },
-   { ELM_ATSPI_STATE_VERTICAL, ATSPI_STATE_VERTICAL, "vertical" },
-   { ELM_ATSPI_STATE_VISIBLE, ATSPI_STATE_VISIBLE, "visible" },
-   { ELM_ATSPI_STATE_MANAGES_DESCENDANTS, ATSPI_STATE_MANAGES_DESCENDANTS, "manages-descendants" },
-   { ELM_ATSPI_STATE_INDETERMINATE, ATSPI_STATE_INDETERMINATE, "indeterminate" },
-   { ELM_ATSPI_STATE_REQUIRED, ATSPI_STATE_REQUIRED, "required" },
-   { ELM_ATSPI_STATE_TRUNCATED, ATSPI_STATE_TRUNCATED, "truncated" },
-   { ELM_ATSPI_STATE_ANIMATED, ATSPI_STATE_ANIMATED, "animated" },
-   { ELM_ATSPI_STATE_INVALID_ENTRY, ATSPI_STATE_INVALID_ENTRY, "invalid-entry" },
-   { ELM_ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, "supports-autocompletion" },
-   { ELM_ATSPI_STATE_SELECTABLE_TEXT, ATSPI_STATE_SELECTABLE_TEXT, "selectable-text" },
-   { ELM_ATSPI_STATE_IS_DEFAULT, ATSPI_STATE_IS_DEFAULT, "is-default" },
-   { ELM_ATSPI_STATE_VISITED, ATSPI_STATE_VISITED, "visited" },
-   { ELM_ATSPI_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED, "last-defined" },
+   { EFL_ACCESS_STATE_INVALID, ATSPI_STATE_INVALID, "invalid" },
+   { EFL_ACCESS_STATE_ACTIVE, ATSPI_STATE_ACTIVE, "active" },
+   { EFL_ACCESS_STATE_ARMED, ATSPI_STATE_ARMED, "armed" },
+   { EFL_ACCESS_STATE_BUSY, ATSPI_STATE_BUSY, "busy" },
+   { EFL_ACCESS_STATE_CHECKED, ATSPI_STATE_CHECKED, "checked" },
+   { EFL_ACCESS_STATE_COLLAPSED, ATSPI_STATE_COLLAPSED, "collapsed" },
+   { EFL_ACCESS_STATE_DEFUNCT, ATSPI_STATE_DEFUNCT, "defunct" },
+   { EFL_ACCESS_STATE_EDITABLE, ATSPI_STATE_EDITABLE, "editable" },
+   { EFL_ACCESS_STATE_ENABLED, ATSPI_STATE_ENABLED, "enabled" },
+   { EFL_ACCESS_STATE_EXPANDABLE, ATSPI_STATE_EXPANDABLE, "expandable" },
+   { EFL_ACCESS_STATE_EXPANDED, ATSPI_STATE_EXPANDED, "expanded" },
+   { EFL_ACCESS_STATE_FOCUSABLE, ATSPI_STATE_FOCUSABLE, "focusable" },
+   { EFL_ACCESS_STATE_FOCUSED, ATSPI_STATE_FOCUSED, "focused" },
+   { EFL_ACCESS_STATE_HAS_TOOLTIP, ATSPI_STATE_HAS_TOOLTIP, "has-tooltip" },
+   { EFL_ACCESS_STATE_HORIZONTAL, ATSPI_STATE_HORIZONTAL, "horizontal" },
+   { EFL_ACCESS_STATE_ICONIFIED, ATSPI_STATE_ICONIFIED, "iconified" },
+   { EFL_ACCESS_STATE_MODAL, ATSPI_STATE_MODAL, "modal" },
+   { EFL_ACCESS_STATE_MULTI_LINE, ATSPI_STATE_MULTI_LINE, "multi-line" },
+   { EFL_ACCESS_STATE_MULTISELECTABLE, ATSPI_STATE_MULTISELECTABLE, "multiselectable" },
+   { EFL_ACCESS_STATE_OPAQUE, ATSPI_STATE_OPAQUE, "opaque" },
+   { EFL_ACCESS_STATE_PRESSED, ATSPI_STATE_PRESSED, "pressed" },
+   { EFL_ACCESS_STATE_RESIZABLE, ATSPI_STATE_RESIZABLE, "resizable" },
+   { EFL_ACCESS_STATE_SELECTABLE, ATSPI_STATE_SELECTABLE, "selectable" },
+   { EFL_ACCESS_STATE_SELECTED, ATSPI_STATE_SELECTED, "selected" },
+   { EFL_ACCESS_STATE_SENSITIVE, ATSPI_STATE_SENSITIVE, "sensitive" },
+   { EFL_ACCESS_STATE_SHOWING, ATSPI_STATE_SHOWING, "showing" },
+   { EFL_ACCESS_STATE_SINGLE_LINE, ATSPI_STATE_SINGLE_LINE, "single-line" },
+   { EFL_ACCESS_STATE_STALE, ATSPI_STATE_STALE, "stale" },
+   { EFL_ACCESS_STATE_TRANSIENT, ATSPI_STATE_TRANSIENT, "transient" },
+   { EFL_ACCESS_STATE_VERTICAL, ATSPI_STATE_VERTICAL, "vertical" },
+   { EFL_ACCESS_STATE_VISIBLE, ATSPI_STATE_VISIBLE, "visible" },
+   { EFL_ACCESS_STATE_MANAGES_DESCENDANTS, ATSPI_STATE_MANAGES_DESCENDANTS, "manages-descendants" },
+   { EFL_ACCESS_STATE_INDETERMINATE, ATSPI_STATE_INDETERMINATE, "indeterminate" },
+   { EFL_ACCESS_STATE_REQUIRED, ATSPI_STATE_REQUIRED, "required" },
+   { EFL_ACCESS_STATE_TRUNCATED, ATSPI_STATE_TRUNCATED, "truncated" },
+   { EFL_ACCESS_STATE_ANIMATED, ATSPI_STATE_ANIMATED, "animated" },
+   { EFL_ACCESS_STATE_INVALID_ENTRY, ATSPI_STATE_INVALID_ENTRY, "invalid-entry" },
+   { EFL_ACCESS_STATE_SUPPORTS_AUTOCOMPLETION, ATSPI_STATE_SUPPORTS_AUTOCOMPLETION, "supports-autocompletion" },
+   { EFL_ACCESS_STATE_SELECTABLE_TEXT, ATSPI_STATE_SELECTABLE_TEXT, "selectable-text" },
+   { EFL_ACCESS_STATE_IS_DEFAULT, ATSPI_STATE_IS_DEFAULT, "is-default" },
+   { EFL_ACCESS_STATE_VISITED, ATSPI_STATE_VISITED, "visited" },
+   { EFL_ACCESS_STATE_LAST_DEFINED, ATSPI_STATE_LAST_DEFINED, "last-defined" },
 };
 
 static const int elm_relation_to_atspi_relation_mapping[] = {
-   [ELM_ATSPI_RELATION_NULL] =  ATSPI_RELATION_NULL,
-   [ELM_ATSPI_RELATION_LABEL_FOR] =  ATSPI_RELATION_LABEL_FOR,
-   [ELM_ATSPI_RELATION_LABELLED_BY] = ATSPI_RELATION_LABELLED_BY,
-   [ELM_ATSPI_RELATION_CONTROLLER_FOR] = ATSPI_RELATION_CONTROLLER_FOR,
-   [ELM_ATSPI_RELATION_CONTROLLED_BY] = ATSPI_RELATION_CONTROLLED_BY,
-   [ELM_ATSPI_RELATION_MEMBER_OF] = ATSPI_RELATION_MEMBER_OF,
-   [ELM_ATSPI_RELATION_TOOLTIP_FOR] = ATSPI_RELATION_TOOLTIP_FOR,
-   [ELM_ATSPI_RELATION_NODE_CHILD_OF] = ATSPI_RELATION_NODE_CHILD_OF,
-   [ELM_ATSPI_RELATION_NODE_PARENT_OF] = ATSPI_RELATION_NODE_PARENT_OF,
-   [ELM_ATSPI_RELATION_EXTENDED] = ATSPI_RELATION_EXTENDED,
-   [ELM_ATSPI_RELATION_FLOWS_TO] = ATSPI_RELATION_FLOWS_TO,
-   [ELM_ATSPI_RELATION_FLOWS_FROM] = ATSPI_RELATION_FLOWS_FROM,
-   [ELM_ATSPI_RELATION_SUBWINDOW_OF] = ATSPI_RELATION_SUBWINDOW_OF,
-   [ELM_ATSPI_RELATION_EMBEDS] = ATSPI_RELATION_EMBEDS,
-   [ELM_ATSPI_RELATION_EMBEDDED_BY] = ATSPI_RELATION_EMBEDDED_BY,
-   [ELM_ATSPI_RELATION_POPUP_FOR] = ATSPI_RELATION_POPUP_FOR,
-   [ELM_ATSPI_RELATION_PARENT_WINDOW_OF] = ATSPI_RELATION_PARENT_WINDOW_OF,
-   [ELM_ATSPI_RELATION_DESCRIPTION_FOR] = ATSPI_RELATION_DESCRIPTION_FOR,
-   [ELM_ATSPI_RELATION_DESCRIBED_BY] = ATSPI_RELATION_DESCRIBED_BY,
-   [ELM_ATSPI_RELATION_LAST_DEFINED] = ATSPI_RELATION_LAST_DEFINED,
+   [EFL_ACCESS_RELATION_NULL] =  ATSPI_RELATION_NULL,
+   [EFL_ACCESS_RELATION_LABEL_FOR] =  ATSPI_RELATION_LABEL_FOR,
+   [EFL_ACCESS_RELATION_LABELLED_BY] = ATSPI_RELATION_LABELLED_BY,
+   [EFL_ACCESS_RELATION_CONTROLLER_FOR] = ATSPI_RELATION_CONTROLLER_FOR,
+   [EFL_ACCESS_RELATION_CONTROLLED_BY] = ATSPI_RELATION_CONTROLLED_BY,
+   [EFL_ACCESS_RELATION_MEMBER_OF] = ATSPI_RELATION_MEMBER_OF,
+   [EFL_ACCESS_RELATION_TOOLTIP_FOR] = ATSPI_RELATION_TOOLTIP_FOR,
+   [EFL_ACCESS_RELATION_NODE_CHILD_OF] = ATSPI_RELATION_NODE_CHILD_OF,
+   [EFL_ACCESS_RELATION_NODE_PARENT_OF] = ATSPI_RELATION_NODE_PARENT_OF,
+   [EFL_ACCESS_RELATION_EXTENDED] = ATSPI_RELATION_EXTENDED,
+   [EFL_ACCESS_RELATION_FLOWS_TO] = ATSPI_RELATION_FLOWS_TO,
+   [EFL_ACCESS_RELATION_FLOWS_FROM] = ATSPI_RELATION_FLOWS_FROM,
+   [EFL_ACCESS_RELATION_SUBWINDOW_OF] = ATSPI_RELATION_SUBWINDOW_OF,
+   [EFL_ACCESS_RELATION_EMBEDS] = ATSPI_RELATION_EMBEDS,
+   [EFL_ACCESS_RELATION_EMBEDDED_BY] = ATSPI_RELATION_EMBEDDED_BY,
+   [EFL_ACCESS_RELATION_POPUP_FOR] = ATSPI_RELATION_POPUP_FOR,
+   [EFL_ACCESS_RELATION_PARENT_WINDOW_OF] = ATSPI_RELATION_PARENT_WINDOW_OF,
+   [EFL_ACCESS_RELATION_DESCRIPTION_FOR] = ATSPI_RELATION_DESCRIPTION_FOR,
+   [EFL_ACCESS_RELATION_DESCRIBED_BY] = ATSPI_RELATION_DESCRIBED_BY,
+   [EFL_ACCESS_RELATION_LAST_DEFINED] = ATSPI_RELATION_LAST_DEFINED,
 };
 
 static inline Eldbus_Message *_dbus_invalid_ref_error_new(const Eldbus_Message *msg)
@@ -469,9 +469,9 @@ static inline Eldbus_Message *_dbus_invalid_ref_error_new(const Eldbus_Message *
   return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.UnknownObject", "Path is not valid accessible object reference.");
 }
 
-static AtspiRelationType _elm_relation_to_atspi_relation(Elm_Atspi_Relation_Type type)
+static AtspiRelationType _elm_relation_to_atspi_relation(Efl_Access_Relation_Type type)
 {
-   if ((type < ELM_ATSPI_RELATION_LAST_DEFINED) && (type > ELM_ATSPI_RELATION_NULL))
+   if ((type < EFL_ACCESS_RELATION_LAST_DEFINED) && (type > EFL_ACCESS_RELATION_NULL))
      return elm_relation_to_atspi_relation_mapping[type];
    return ATSPI_RELATION_NULL;
 }
@@ -483,16 +483,16 @@ _accessible_get_role(const Eldbus_Service_Interface *iface, const Eldbus_Message
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
    AtspiRole atspi_role = ATSPI_ROLE_INVALID;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
-   role = elm_interface_atspi_accessible_role_get(obj);
+   role = efl_access_role_get(obj);
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   atspi_role = role > ELM_ATSPI_ROLE_LAST_DEFINED ? ATSPI_ROLE_LAST_DEFINED : elm_roles_to_atspi_roles[role][1];
+   atspi_role = role > EFL_ACCESS_ROLE_LAST_DEFINED ? ATSPI_ROLE_LAST_DEFINED : elm_roles_to_atspi_roles[role][1];
    eldbus_message_arguments_append(ret, "u", atspi_role);
    return ret;
 }
@@ -504,9 +504,9 @@ _accessible_get_role_name(const Eldbus_Service_Interface *iface, const Eldbus_Me
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
-   role_name = elm_interface_atspi_accessible_role_name_get(obj);
+   role_name = efl_access_role_name_get(obj);
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -522,9 +522,9 @@ _accessible_get_localized_role_name(const Eldbus_Service_Interface *iface, const
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
-   l_role_name = elm_interface_atspi_accessible_localized_role_name_get(obj);
+   l_role_name = efl_access_localized_role_name_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(l_role_name, NULL);
 
    Eldbus_Message *ret = eldbus_message_method_return_new(msg);
@@ -545,9 +545,9 @@ _accessible_get_children(const Eldbus_Service_Interface *iface, const Eldbus_Mes
    Eldbus_Message_Iter *iter, *iter_array;
    Eo *children;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
-   children_list = elm_interface_atspi_accessible_children_get(obj);
+   children_list = efl_access_children_get(obj);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -580,13 +580,13 @@ _accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *root, *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
    _bridge_iter_object_reference_append(bridge, iter, root);
 
    return ret;
@@ -596,7 +596,7 @@ static Eldbus_Message *
 _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    Eina_List *attrs = NULL, *l;
-   Elm_Atspi_Attribute *attr;
+   Efl_Access_Attribute *attr;
    Eldbus_Message_Iter *iter, *iter_dict = NULL, *iter_entry;
    Eldbus_Message *ret;
 
@@ -604,12 +604,12 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    if (!ret) goto error;
 
-   attrs = elm_interface_atspi_accessible_attributes_get(obj);
+   attrs = efl_access_attributes_get(obj);
 
    iter = eldbus_message_iter_get(ret);
    if (!iter) goto error;
@@ -627,13 +627,13 @@ _accessible_attributes_get(const Eldbus_Service_Interface *iface, const Eldbus_M
      }
 
    eldbus_message_iter_container_close(iter, iter_dict);
-   elm_atspi_attributes_list_free(attrs);
+   efl_access_attributes_list_free(attrs);
    return ret;
 
 error:
    if (iter_dict) eldbus_message_iter_container_close(iter, iter_dict);
    if (ret) eldbus_message_unref(ret);
-   elm_atspi_attributes_list_free(attrs);
+   efl_access_attributes_list_free(attrs);
    return NULL;
 }
 
@@ -646,7 +646,7 @@ _accessible_interfaces_get(const Eldbus_Service_Interface *iface, const Eldbus_M
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -658,7 +658,7 @@ _accessible_interfaces_get(const Eldbus_Service_Interface *iface, const Eldbus_M
 }
 
 static uint64_t
-_elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
+_elm_atspi_state_set_to_atspi_state_set(Efl_Access_State_Set states)
 {
    uint64_t ret = 0;
    unsigned int i = 0;
@@ -671,12 +671,12 @@ _elm_atspi_state_set_to_atspi_state_set(Elm_Atspi_State_Set states)
    return ret;
 }
 
-static Elm_Atspi_State_Set
+static Efl_Access_State_Set
 _atspi_state_set_to_elm_atspi_state_set(uint64_t states)
 {
    //Currently Elm_Atspi_State and Atspi_State_Set are binary compatible,
    //implement proper coversion when it will be needed.
-   Elm_Atspi_State_Set ret = states;
+   Efl_Access_State_Set ret = states;
    return ret;
 }
 
@@ -709,14 +709,14 @@ _accessible_get_state(const Eldbus_Service_Interface *iface, const Eldbus_Messag
 {
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter, *iter_array;
-   Elm_Atspi_State_Set states;
+   Efl_Access_State_Set states;
    uint64_t atspi_states = 0;
 
    const char *obj_path = eldbus_message_path_get(msg);
    Eo *bridge = eldbus_service_object_data_get(iface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -725,7 +725,7 @@ _accessible_get_state(const Eldbus_Service_Interface *iface, const Eldbus_Messag
    iter_array = eldbus_message_iter_container_new(iter, 'a', "u");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   states = elm_interface_atspi_accessible_state_set_get(obj);
+   states = efl_access_state_set_get(obj);
 
    atspi_states = _elm_atspi_state_set_to_atspi_state_set(states);
 
@@ -752,12 +752,12 @@ _accessible_get_index_in_parent(const Eldbus_Service_Interface *iface EINA_UNUSE
    Eldbus_Message *ret;
    int idx = -1;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
-   idx = elm_interface_atspi_accessible_index_in_parent_get(obj);
+   idx = efl_access_index_in_parent_get(obj);
 
    eldbus_message_arguments_append(ret, "i", idx);
 
@@ -776,7 +776,7 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    Eldbus_Message *ret;
    Eldbus_Message_Iter *iter;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    if (!eldbus_message_arguments_get(msg, "i", &idx))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Invalid index type.");
@@ -785,7 +785,7 @@ _accessible_child_at_index(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    iter = eldbus_message_iter_get(ret);
-   children = elm_interface_atspi_accessible_children_get(obj);
+   children = efl_access_children_get(obj);
 
    child = eina_list_nth(children, idx);
    _bridge_iter_object_reference_append(bridge, iter, child);
@@ -803,11 +803,11 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    Eo *rel_obj, *obj = _bridge_object_from_path(bridge, obj_path);
    Eldbus_Message *ret = NULL;
    Eldbus_Message_Iter *iter = NULL, *iter_array = NULL, *iter_array2 = NULL, *iter_struct;
-   Elm_Atspi_Relation *rel;
+   Efl_Access_Relation *rel;
    Eina_List *l, *l2;
-   Elm_Atspi_Relation_Set rels;
+   Efl_Access_Relation_Set rels;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
@@ -816,7 +816,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    iter_array = eldbus_message_iter_container_new(iter, 'a', "(ua(so))");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   rels = elm_interface_atspi_accessible_relation_set_get(obj);
+   rels = efl_access_relation_set_get(obj);
 
    EINA_LIST_FOREACH(rels, l, rel)
      {
@@ -832,7 +832,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
         eldbus_message_iter_container_close(iter_struct, iter_array2);
         eldbus_message_iter_container_close(iter_array, iter_struct);
      }
-   elm_atspi_relation_set_free(rels);
+   efl_access_relation_set_free(rels);
    eldbus_message_iter_container_close(iter, iter_array);
 
    return ret;
@@ -2026,7 +2026,7 @@ _bridge_object_from_path(Eo *bridge, const char *path)
    tmp = path + len; /* Skip over the prefix */
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
      {
-        root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+        root = efl_access_root_get(EFL_ACCESS_MIXIN);
         return root;
      }
 
@@ -2040,7 +2040,7 @@ _bridge_object_from_path(Eo *bridge, const char *path)
         return NULL;
      }
 
-   ret = efl_isa(eo, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN) ? eo : NULL;
+   ret = efl_isa(eo, EFL_ACCESS_MIXIN) ? eo : NULL;
 
    return ret;
 }
@@ -2053,7 +2053,7 @@ _path_from_object(const Eo *eo)
 
    if (!eo)
      return ATSPI_DBUS_PATH_NULL;
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
 
    if (eo == root)
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
@@ -2071,11 +2071,11 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
    Eo *bridge = eldbus_service_object_data_get(interface, ELM_ATSPI_BRIDGE_CLASS_NAME);
    Eo *ret_obj = NULL, *obj = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, request_msg, error);
+   ELM_ATSPI_PROPERTY_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, request_msg, error);
 
    if (!strcmp(property, "Name"))
      {
-        ret = elm_interface_atspi_accessible_name_get(obj);
+        ret = efl_access_name_get(obj);
         if (!ret)
           ret = "";
         eldbus_message_iter_basic_append(iter, 's', ret);
@@ -2083,7 +2083,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
      }
    else if (!strcmp(property, "Description"))
      {
-        ret = elm_interface_atspi_accessible_description_get(obj);
+        ret = efl_access_description_get(obj);
         if (!ret)
           ret = "";
         eldbus_message_iter_basic_append(iter, 's', ret);
@@ -2091,10 +2091,10 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
      }
    else if (!strcmp(property, "Parent"))
      {
-       ret_obj = elm_interface_atspi_accessible_parent_get(obj);
-       Elm_Atspi_Role role = ELM_ATSPI_ROLE_INVALID;
-       role = elm_interface_atspi_accessible_role_get(obj);
-       if ((!ret_obj) && (ELM_ATSPI_ROLE_APPLICATION == role))
+       ret_obj = efl_access_parent_get(obj);
+       Efl_Access_Role role = EFL_ACCESS_ROLE_INVALID;
+       role = efl_access_role_get(obj);
+       if ((!ret_obj) && (EFL_ACCESS_ROLE_APPLICATION == role))
          _object_desktop_reference_append(iter);
        else
          _bridge_iter_object_reference_append(bridge, iter, ret_obj);
@@ -2103,7 +2103,7 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
    else if (!strcmp(property, "ChildCount"))
      {
         Eina_List *l = NULL;
-        l = elm_interface_atspi_accessible_children_get(obj);
+        l = efl_access_children_get(obj);
         eldbus_message_iter_basic_append(iter, 'i', eina_list_count(l));
         eina_list_free(l);
         return EINA_TRUE;
@@ -2416,7 +2416,7 @@ static const Eldbus_Service_Interface_Desc application_iface_desc = {
 void
 _collection_match_rule_free(struct collection_match_rule *rule)
 {
-   Elm_Atspi_Attribute *attr;
+   Efl_Access_Attribute *attr;
    eina_list_free(rule->ifaces);
    EINA_LIST_FREE(rule->attributes, attr)
      {
@@ -2488,7 +2488,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
         const char *key, *value;
         if (eldbus_message_iter_arguments_get(iter_arg, "ss", &key, &value))
           {
-             Elm_Atspi_Attribute *attrib = calloc(1, sizeof(Elm_Atspi_Attribute));
+             Efl_Access_Attribute *attrib = calloc(1, sizeof(Efl_Access_Attribute));
              attrib->key = eina_stringshare_add(key);
              attrib->value = eina_stringshare_add(value);
              rule->attributes = eina_list_append(rule->attributes, attrib);
@@ -2570,9 +2570,9 @@ static Eina_Bool
 _collection_match_states_lookup(Eo *obj, struct collection_match_rule *rule)
 {
    Eina_Bool ret = EINA_FALSE;
-   Elm_Atspi_State_Set ss;
+   Efl_Access_State_Set ss;
 
-   ss = elm_interface_atspi_accessible_state_set_get(obj);
+   ss = efl_access_state_set_get(obj);
 
    switch (rule->statematchtype)
      {
@@ -2599,10 +2599,10 @@ static Eina_Bool
 _collection_match_roles_lookup(Eo *obj, struct collection_match_rule *rule)
 {
    Eina_Bool ret = EINA_FALSE;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
    int64_t role_set;
 
-   role = elm_interface_atspi_accessible_role_get(obj);
+   role = efl_access_role_get(obj);
 
    if (role >= 64)
      {
@@ -2614,7 +2614,7 @@ _collection_match_roles_lookup(Eo *obj, struct collection_match_rule *rule)
 
    if (role >= 64)
      {
-        ERR("Elm_Atspi_Role enum value exceeds 127. Unable to compare with roles bit field.");
+        ERR("Efl_Access_Role enum value exceeds 127. Unable to compare with roles bit field.");
         return EINA_FALSE;
      }
 
@@ -2641,7 +2641,7 @@ static Eina_Bool
 _collection_match_attributes_helper(Eina_List *obj_attribs, Eina_List *attribs, Eina_Bool compare, Eina_Bool ret_if_compare, Eina_Bool ret_default)
 {
    Eina_List *l, *l2;
-   Elm_Atspi_Attribute *attr, *attr2;
+   Efl_Access_Attribute *attr, *attr2;
 
    EINA_LIST_FOREACH(attribs, l, attr)
      {
@@ -2666,7 +2666,7 @@ _collection_match_attributes_lookup(Eo *obj, struct collection_match_rule *rule)
    Eina_Bool ret = EINA_FALSE;
    Eina_List *obj_attribs;
 
-   obj_attribs = elm_interface_atspi_accessible_attributes_get(obj);
+   obj_attribs = efl_access_attributes_get(obj);
 
    switch (rule->attributematchtype)
      {
@@ -2689,7 +2689,7 @@ _collection_match_attributes_lookup(Eo *obj, struct collection_match_rule *rule)
            break;
      }
 
-   elm_atspi_attributes_list_free(obj_attribs);
+   efl_access_attributes_list_free(obj_attribs);
 
    return ret;
 }
@@ -2702,7 +2702,7 @@ _collection_sort_order_canonical(struct collection_match_rule *rule, Eina_List *
 {
    int i = index;
    Eina_List *children;
-   children = elm_interface_atspi_accessible_children_get(obj);
+   children = efl_access_children_get(obj);
    long acount = eina_list_count(children);
    Eina_Bool prev = pobj ? EINA_TRUE : EINA_FALSE;
 
@@ -2766,21 +2766,21 @@ _collection_sort_order_reverse_canonical(struct collection_match_rule *rule, Ein
     flag = EINA_TRUE;
 
   /* Get the current nodes index in it's parent and the parent object. */
-  indexinparent = elm_interface_atspi_accessible_index_in_parent_get(obj);
-  parent = elm_interface_atspi_accessible_parent_get(obj);
+  indexinparent = efl_access_index_in_parent_get(obj);
+  parent = efl_access_parent_get(obj);
 
   if ((indexinparent > 0) && ((max == 0) || (count < max)))
     {
        /* there are still some siblings to visit so get the previous sibling
           and get it's last descendant.
           First, get the previous sibling */
-       children = elm_interface_atspi_accessible_children_get(parent);
+       children = efl_access_children_get(parent);
        nextobj = eina_list_nth(children, indexinparent - 1);
        eina_list_free(children);
 
        /* Now, drill down the right side to the last descendant */
        do {
-            children = elm_interface_atspi_accessible_children_get(nextobj);
+            children = efl_access_children_get(nextobj);
             if (children) nextobj = eina_list_last_data_get(children);
             eina_list_free(children);
        } while (children);
@@ -2823,8 +2823,8 @@ _collection_inorder(Eo *collection, struct collection_match_rule *rule, Eina_Lis
   while ((max == 0 || count < max) && obj && obj != collection)
     {
        Eo *parent;
-       parent = elm_interface_atspi_accessible_parent_get(obj);
-       idx = elm_interface_atspi_accessible_index_in_parent_get(obj);
+       parent = efl_access_parent_get(obj);
+       idx = efl_access_index_in_parent_get(obj);
        count = _collection_sort_order_canonical(rule, list, count, max, parent,
                                      idx + 1, EINA_TRUE, NULL, EINA_TRUE, traverse);
        obj = parent;
@@ -2900,8 +2900,8 @@ _collection_get_matches_from_handle(Eo *collection, Eo *current, struct collecti
            result = eina_list_reverse(result);
          break;
       case ATSPI_Collection_TREE_RESTRICT_CHILDREN:
-         idx = elm_interface_atspi_accessible_index_in_parent_get(current);
-         parent = elm_interface_atspi_accessible_parent_get(current);
+         idx = efl_access_index_in_parent_get(current);
+         parent = efl_access_parent_get(current);
          _collection_query(rule, sortby, &result, 0, max, parent, idx, EINA_FALSE, NULL, EINA_TRUE, traverse);
          break;
       case ATSPI_Collection_TREE_RESTRICT_SIBLING:
@@ -2929,7 +2929,7 @@ _collection_get_matches_from(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    AtspiCollectionSortOrder sortby;
    Eina_List *result = NULL;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    iter = eldbus_message_iter_get(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
@@ -2941,7 +2941,7 @@ _collection_get_matches_from(const Eldbus_Service_Interface *iface EINA_UNUSED, 
 
    current = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, EFL_ACCESS_MIXIN, msg);
 
    if (!_collection_iter_match_rule_get(rule_iter, &rule))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Invalid match rule parameters.");
@@ -2962,7 +2962,7 @@ _collection_get_matches_to_handle(Eo *obj, Eo *current, struct collection_match_
    Eo *collection = obj;
 
    if (limit)
-     collection = elm_interface_atspi_accessible_parent_get(obj);
+     collection = efl_access_parent_get(obj);
 
    switch (tree)
      {
@@ -3001,7 +3001,7 @@ _collection_get_matches_to(const Eldbus_Service_Interface *iface EINA_UNUSED, co
    Eina_List *result = NULL;
    Eina_Bool limit;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    iter = eldbus_message_iter_get(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
@@ -3013,7 +3013,7 @@ _collection_get_matches_to(const Eldbus_Service_Interface *iface EINA_UNUSED, co
 
    current = _bridge_object_from_path(bridge, obj_path);
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(current, EFL_ACCESS_MIXIN, msg);
 
    if (!_collection_iter_match_rule_get(rule_iter, &rule))
      return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Invalid match rule parameters.");
@@ -3041,7 +3041,7 @@ _collection_get_matches(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    AtspiCollectionSortOrder sortby;
    Eina_List *result = NULL;
 
-   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, msg);
+   ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_MIXIN, msg);
 
    iter = eldbus_message_iter_get(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
@@ -3115,7 +3115,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
   iter_array = eldbus_message_iter_container_new(iter, 'a', "s");
   if (!iter_array) return;
 
-  if (efl_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+  if (efl_isa(obj, EFL_ACCESS_MIXIN))
     {
        eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_ACCESSIBLE);
        eldbus_message_iter_basic_append(iter_array, 's', ATSPI_DBUS_INTERFACE_COLLECTION);
@@ -3147,12 +3147,12 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
     return EINA_TRUE;
 
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
-  Elm_Atspi_State_Set states;
-  Elm_Atspi_Role role;
+  Efl_Access_State_Set states;
+  Efl_Access_Role role;
   Eo *root;
-  root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+  root = efl_access_root_get(EFL_ACCESS_MIXIN);
 
-  role = elm_interface_atspi_accessible_role_get(data);
+  role = efl_access_role_get(data);
 
   iter_struct = eldbus_message_iter_container_new(iter_array, 'r', NULL);
   EINA_SAFETY_ON_NULL_RETURN_VAL(iter_struct, EINA_TRUE);
@@ -3164,9 +3164,9 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   _bridge_iter_object_reference_append(bridge, iter_struct, root);
 
   Eo *parent = NULL;
-  parent = elm_interface_atspi_accessible_parent_get(data);
+  parent = efl_access_parent_get(data);
   /* Marshall parent */
-  if ((!parent) && (ELM_ATSPI_ROLE_APPLICATION == role))
+  if ((!parent) && (EFL_ACCESS_ROLE_APPLICATION == role))
     _object_desktop_reference_append(iter_struct);
   else
     _bridge_iter_object_reference_append(bridge, iter_struct, parent);
@@ -3175,7 +3175,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   Eina_List *children_list = NULL, *l;
   Eo *child;
 
-  children_list = elm_interface_atspi_accessible_children_get(data);
+  children_list = efl_access_children_get(data);
   iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "(so)");
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
@@ -3190,7 +3190,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
 
   /* Marshall name */
   const char *name = NULL;
-  name = elm_interface_atspi_accessible_name_get(data);
+  name = efl_access_name_get(data);
   if (!name)
     name = "";
 
@@ -3201,7 +3201,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
 
   /* Marshall description */
   const char* descritpion = NULL;
-  descritpion = elm_interface_atspi_accessible_description_get(data);
+  descritpion = efl_access_description_get(data);
   if (!descritpion)
     descritpion = "";
   eldbus_message_iter_basic_append(iter_struct, 's', descritpion);
@@ -3210,7 +3210,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "u");
   EINA_SAFETY_ON_NULL_GOTO(iter_sub_array, fail);
 
-  states = elm_interface_atspi_accessible_state_set_get(data);
+  states = efl_access_state_set_get(data);
 
   unsigned int s1 = states & 0xFFFFFFFF;
   unsigned int s2 = (states >> 32) & 0xFFFFFFFF;
@@ -3247,7 +3247,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
    to_process = eina_list_append(NULL, root);
 
    while (to_process)
@@ -3258,7 +3258,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
         _bridge_object_register(bridge, obj);
 
         Eina_List *children;
-        children = elm_interface_atspi_accessible_children_get(obj);
+        children = efl_access_children_get(obj);
         to_process = eina_list_merge(to_process, children);
      }
 
@@ -3630,7 +3630,7 @@ _elm_atspi_bridge_app_register(Eo *bridge)
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
    _bridge_iter_object_reference_append(bridge, iter, root);
    eldbus_connection_send(pd->a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
 
@@ -3643,7 +3643,7 @@ _elm_atspi_bridge_app_unregister(Eo *bridge)
    Eo *root;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_FALSE);
 
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
 
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
@@ -3814,7 +3814,7 @@ _handle_listener_change(void *data, const Eldbus_Message *msg EINA_UNUSED)
 static void
 _state_changed_signal_send(void *data, const Efl_Event *event)
 {
-   Elm_Atspi_Event_State_Changed_Data *state_data = event->info;
+   Efl_Access_Event_State_Changed_Data *state_data = event->info;
    const char *type_desc;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
@@ -3824,7 +3824,7 @@ _state_changed_signal_send(void *data, const Efl_Event *event)
         return;
      }
 
-   if ((state_data->type > ELM_ATSPI_STATE_LAST_DEFINED) ||
+   if ((state_data->type > EFL_ACCESS_STATE_LAST_DEFINED) ||
         (int)state_data->type < 0)
      {
         efl_event_callback_stop(event->object);
@@ -3840,7 +3840,7 @@ _state_changed_signal_send(void *data, const Efl_Event *event)
 static void
 _bounds_changed_signal_send(void *data, const Efl_Event *event)
 {
-   Elm_Atspi_Event_Geometry_Changed_Data *geo_data = event->info;
+   Efl_Access_Event_Geometry_Changed_Data *geo_data = event->info;
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_BOUNDS_CHANGED], "", 0, 0, "(iiii)",
@@ -3928,7 +3928,7 @@ _active_descendant_changed_signal_send(void *data, const Efl_Event *event)
         return;
      }
 
-   idx = elm_interface_atspi_accessible_index_in_parent_get(child);
+   idx = efl_access_index_in_parent_get(child);
 
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED], "",
@@ -3939,7 +3939,7 @@ static void
 _children_changed_signal_send(void *data, const Efl_Event *event)
 {
    const char *atspi_desc = NULL;
-   Elm_Atspi_Event_Children_Changed_Data *ev_data = event->info;
+   Efl_Access_Event_Children_Changed_Data *ev_data = event->info;
    int idx;
    enum _Atspi_Object_Child_Event_Type type;
 
@@ -3962,7 +3962,7 @@ _children_changed_signal_send(void *data, const Efl_Event *event)
         return;
      }
 
-   idx = elm_interface_atspi_accessible_index_in_parent_get(ev_data->child);
+   idx = efl_access_index_in_parent_get(ev_data->child);
    _bridge_signal_send(data, event->object, ATSPI_DBUS_INTERFACE_EVENT_OBJECT,
                        &_event_obj_signals[ATSPI_OBJECT_EVENT_CHILDREN_CHANGED], atspi_desc,
                        idx, 0, "(so)", eldbus_connection_unique_name_get(pd->a11y_bus), ev_data->child);
@@ -4043,7 +4043,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    path = _path_from_object(obj);
-   root = elm_interface_atspi_accessible_root_get(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN);
+   root = efl_access_root_get(EFL_ACCESS_MIXIN);
 
    msg = eldbus_message_signal_new(path, infc, signal->name);
    if (!msg) return;
@@ -4293,7 +4293,7 @@ _a11y_connection_shutdown(Eo *bridge)
    if (pd->event_hash) eina_hash_free(pd->event_hash);
    pd->event_hash = NULL;
 
-   elm_interface_atspi_accessible_event_handler_del(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, pd->event_hdlr);
+   efl_access_event_handler_del(EFL_ACCESS_MIXIN, pd->event_hdlr);
    pd->event_hdlr = NULL;
 
    efl_event_callback_legacy_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
@@ -4385,7 +4385,7 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    _elm_atspi_bridge_app_register(obj);
 
    // register accesible object event listener
-   pd->event_hdlr = elm_interface_atspi_accessible_event_handler_add(ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN, _bridge_accessible_event_dispatch, obj);
+   pd->event_hdlr = efl_access_event_handler_add(EFL_ACCESS_MIXIN, _bridge_accessible_event_dispatch, obj);
 }
 
 static void
@@ -4463,9 +4463,9 @@ static void _bridge_object_register(Eo *bridge, Eo *obj)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
-   if (!efl_isa(obj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+   if (!efl_isa(obj, EFL_ACCESS_MIXIN))
      {
-        WRN("Unable to register class w/o Elm_Interface_Atspi_Accessible!");
+        WRN("Unable to register class w/o Efl_Access!");
         return;
      }
 
@@ -4499,7 +4499,7 @@ _elm_atspi_bridge_shutdown(void)
         efl_del(_instance);
         _init_count = 0;
      }
-   _elm_interface_atspi_shutdown();
+   _efl_access_shutdown();
 }
 
 static Key_Event_Info*

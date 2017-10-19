@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -71,7 +71,7 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
           {
              if (sd->state)
                {
-                  elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_CHECKED, EINA_TRUE);
+                  efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_CHECKED, EINA_TRUE);
                }
           }
      }
@@ -254,7 +254,7 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_RADIO_BUTTON);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
 
    return obj;
 }
@@ -371,14 +371,14 @@ _efl_ui_radio_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
    return &atspi_actions[0];
 }
 
-EOLIAN Elm_Atspi_State_Set
-_efl_ui_radio_elm_interface_atspi_accessible_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
+EOLIAN Efl_Access_State_Set
+_efl_ui_radio_efl_access_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
-   Elm_Atspi_State_Set ret;
+   Efl_Access_State_Set ret;
 
-   ret = elm_interface_atspi_accessible_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
+   ret = efl_access_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
-     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
 
    return ret;
 }

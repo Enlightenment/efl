@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
@@ -64,14 +64,14 @@ _timer_fail_flag_cb(void *data)
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
 
-   role = elm_interface_atspi_accessible_role_get(win);
+   role = efl_access_role_get(win);
 
-   ck_assert(role == ELM_ATSPI_ROLE_WINDOW);
+   ck_assert(role == EFL_ACCESS_ROLE_WINDOW);
 
    elm_shutdown();
 }

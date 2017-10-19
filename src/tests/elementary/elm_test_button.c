@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_ACTION_PROTECTED
 #include <Elementary.h>
@@ -11,15 +11,15 @@
 START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *button;
-   Elm_Atspi_Role role;
+   Efl_Access_Role role;
 
    elm_init(1, NULL);
    win = elm_win_add(NULL, "button", ELM_WIN_BASIC);
 
    button = elm_button_add(win);
-   role = elm_interface_atspi_accessible_role_get(button);
+   role = efl_access_role_get(button);
 
-   ck_assert(role == ELM_ATSPI_ROLE_PUSH_BUTTON);
+   ck_assert(role == EFL_ACCESS_ROLE_PUSH_BUTTON);
 
    elm_shutdown();
 }
@@ -34,7 +34,7 @@ START_TEST (elm_atspi_interfaces_check)
 
    button = elm_button_add(win);
 
-   ck_assert(efl_isa(button, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN));
+   ck_assert(efl_isa(button, EFL_ACCESS_MIXIN));
    ck_assert(efl_isa(button, EFL_ACCESS_COMPONENT_MIXIN));
    ck_assert(efl_isa(button, EFL_ACCESS_ACTION_MIXIN));
 

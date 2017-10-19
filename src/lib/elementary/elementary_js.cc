@@ -35,7 +35,7 @@
 #endif /* ! _WIN32 */
 
 EAPI void register_elm_atspi_app_object(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI void register_elm_interface_atspi_accessible(v8::Handle<v8::Object> global, v8::Isolate* isolate);
+EAPI void register_efl_access(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_efl_access_action(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_efl_access_component(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI void register_elm_interface_atspi_text_editable(v8::Handle<v8::Object> global, v8::Isolate* isolate);
@@ -200,7 +200,7 @@ void init(v8::Handle<v8::Object> exports)
       elm::register_icon(exports, v8::Isolate::GetCurrent());
       elm::register_image(exports, v8::Isolate::GetCurrent());
       elm::register_index(exports, v8::Isolate::GetCurrent());
-      ::register_elm_interface_atspi_accessible(exports, v8::Isolate::GetCurrent());
+      ::register_efl_access(exports, v8::Isolate::GetCurrent());
       ::register_efl_access_action(exports, v8::Isolate::GetCurrent());
       ::register_efl_access_component(exports, v8::Isolate::GetCurrent());
       ::register_elm_interface_atspi_text_editable(exports, v8::Isolate::GetCurrent());
