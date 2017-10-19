@@ -49,14 +49,19 @@ dist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
 nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.eo.hh
 
 installed_evascxxcanvasheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
-nodist_installed_evascxxcanvasheaders_DATA = $(evas_eolian_cxx_hh) $(evas_eolian_cxx_impl_hh)
+nodist_installed_evascxxcanvasheaders_DATA = $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh)
 
-lib/evas/Evas.eo.hh: $(evas_eolian_pub_files) $(_EOLIAN_CXX_DEP)
+installed_evascxxgestureheadersdir = $(includedir)/evas-cxx-@VMAJ@/gesture
+nodist_installed_evascxxgestureheaders_DATA = $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh)
+
+lib/evas/Evas.eo.hh: $(evas_canvas_eolian_pub_files) $(evas_gesture_eolian_pub_files) $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
 
-CLEANFILES += $(evas_eolian_cxx_hh) $(evas_eolian_cxx_impl_hh) lib/evas/Evas.eo.hh
+CLEANFILES += $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh) \
+              $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh) \
+              lib/evas/Evas.eo.hh
 
 ### Eldbus C++
 installed_eldbuscxxmainheadersdir = $(includedir)/eldbus_cxx-@VMAJ@
