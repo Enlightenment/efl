@@ -32,9 +32,6 @@ extern "C" {
 #endif
 
 #include <Eina.h>
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
 
 /**
  * @page eolian_main Eolian (BETA)
