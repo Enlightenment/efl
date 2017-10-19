@@ -1288,8 +1288,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    node = node_get(obj, pd, focus);
    if (!node) return;
 
-   F_DBG("Manager: %p focusing object %p %s", obj, focus, efl_class_name_get(focus));
-
    if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager)
      {
         Node *target = NULL;
@@ -1324,6 +1322,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
              return;
           }
      }
+
+   F_DBG("Manager: %p focusing object %p %s", obj, node->focusable, efl_class_name_get(node->focusable));
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
@@ -1443,11 +1443,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
      {
         candidate = efl_ui_focus_manager_request_move(obj, direction);
 
+        F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
+
         if (candidate)
           efl_ui_focus_manager_focus_set(obj, candidate);
      }
 
-   F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
 
    return candidate;
 }
