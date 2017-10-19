@@ -199,6 +199,12 @@ struct _Ecore_Wl2_Window
       Eina_Bool set : 1;
    } aspect;
 
+   struct
+   {
+      int w, h;
+      Eina_Bool set : 1;
+   } weight;
+
    Eina_Inlist *subsurfs;
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
@@ -548,6 +554,8 @@ void _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window);
 
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 Eina_Bool _ecore_wl2_display_sync_get(void);
+
+EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
 
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
