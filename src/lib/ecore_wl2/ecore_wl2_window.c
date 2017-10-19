@@ -486,6 +486,12 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
              if (window->fullscreen)
                zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+             if (window->aspect.set && window->display->wl.efl_hints)
+               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
+                 window->aspect.w, window->aspect.h, window->aspect.aspect);
+             if (window->weight.set && window->display->wl.efl_hints)
+               efl_hints_set_weight(window->display->wl.efl_hints, window->zxdg_toplevel,
+                 window->weight.w, window->weight.h);
           }
 
         wl_surface_commit(window->surface);
@@ -1549,4 +1555,44 @@ ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
    return window->floating;
+}
+
+EAPI void
+ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   EINA_SAFETY_ON_TRUE_RETURN(w < 1);
+   EINA_SAFETY_ON_TRUE_RETURN(h < 1);
+
+   if ((window->aspect.aspect == aspect) && (window->aspect.w == w) &&
+       (window->aspect.h == h))
+     return;
+
+   window->aspect.w = w;
+   window->aspect.h = h;
+   window->aspect.aspect = aspect;
+   window->aspect.set = 1;
+   if (window->display->wl.efl_hints && window->zxdg_toplevel)
+     efl_hints_set_aspect(window->display->wl.efl_hints,
+                          window->zxdg_toplevel, w, h, aspect);
+}
+
+EAPI void
+ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h)
+{
+   int ww, hh;
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   ww = lround(w * 100);
+   hh = lround(h * 100);
+
+   if ((window->weight.w == ww) && (window->weight.h == hh))
+     return;
+
+   window->weight.w = ww;
+   window->weight.h = hh;
+   window->weight.set = 1;
+   if (window->display->wl.efl_hints && window->zxdg_toplevel)
+     efl_hints_set_weight(window->display->wl.efl_hints,
+                          window->zxdg_toplevel, ww, hh);
 }

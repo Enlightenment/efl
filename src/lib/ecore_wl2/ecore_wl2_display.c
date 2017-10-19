@@ -336,6 +336,16 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
      _ecore_wl2_input_add(ewd, id, version);
+   else if (!strcmp(interface, "efl_hints"))
+     {
+        Ecore_Wl2_Window *window;
+
+        ewd->wl.efl_hints = wl_registry_bind(registry, id, &efl_hints_interface, MIN(version, 2));
+        EINA_INLIST_FOREACH(ewd->windows, window)
+          if (window->zxdg_toplevel && window->aspect.set)
+            efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
+              window->aspect.w, window->aspect.h, window->aspect.aspect);
+     }
 
 event:
    /* allocate space for event structure */
