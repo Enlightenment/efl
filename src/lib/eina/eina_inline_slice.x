@@ -19,6 +19,10 @@
 #ifndef _EINA_INLINE_SLICE_H
 #define _EINA_INLINE_SLICE_H
 
+#ifdef _WIN32
+# include <Evil.h>
+#endif
+
 #include <string.h>
 
 static inline Eina_Slice
