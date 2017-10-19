@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2012-12-19 15:58+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -240,7 +240,7 @@ msgstr "Μουσική"
 msgid "Pictures"
 msgstr "Εικόνες"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Βίντεο"
 
@@ -286,7 +286,7 @@ msgstr ""
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr ""
 
@@ -433,7 +433,7 @@ msgstr "παλέτα επιλογής χρώματος"
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 #, fuzzy
 msgid "day selector item"
 msgstr "επιλογή δίσκου"

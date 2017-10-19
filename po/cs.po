@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -239,7 +239,7 @@ msgstr "Hudba"
 msgid "Pictures"
 msgstr "Obrázky"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Videa"
 
@@ -285,7 +285,7 @@ msgstr "popisek vícetlačítkového vstupu"
 msgid "multi button entry item"
 msgstr "položka vícetlačítkového vstupu"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "vícetlačítkový vstup"
 
@@ -424,7 +424,7 @@ msgstr "položka výběru barvy z palety"
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "položka výběru dne"
 

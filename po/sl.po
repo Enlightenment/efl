@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2016-09-21 17:00+0200\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -234,7 +234,7 @@ msgstr "Glasba"
 msgid "Pictures"
 msgstr "Slike"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Videi"
 
@@ -280,7 +280,7 @@ msgstr "oznaka vnosa večkratnih gumbov"
 msgid "multi button entry item"
 msgstr "predmet vnosa večkratnih gumbov"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "vnos večkratnih gumbov"
 
@@ -419,7 +419,7 @@ msgstr "izbirnik s paleto barve"
 msgid "default:LTR"
 msgstr "privzeto:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "izbirnik dneva"
 

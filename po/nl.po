@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -238,7 +238,7 @@ msgstr ""
 msgid "Pictures"
 msgstr ""
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr ""
 
@@ -284,7 +284,7 @@ msgstr ""
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr ""
 
@@ -423,7 +423,7 @@ msgstr ""
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr ""
 

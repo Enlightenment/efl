@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -236,7 +236,7 @@ msgstr "Музыка"
 msgid "Pictures"
 msgstr "Изображения"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Видео"
 
@@ -282,7 +282,7 @@ msgstr "метка многокопочного элемента"
 msgid "multi button entry item"
 msgstr "кнопка многокопочного элемента"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "многокнопочный элемент"
 
@@ -421,7 +421,7 @@ msgstr "элемент выбора цвета палитры"
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "элемент выбора дня"
 

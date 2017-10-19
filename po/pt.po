@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2013-11-05 14:11-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: General\n"
@@ -235,7 +235,7 @@ msgstr "Música"
 msgid "Pictures"
 msgstr "Imagens"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Vídeos"
 
@@ -281,7 +281,7 @@ msgstr "texto da entrada de botão múltiplo"
 msgid "multi button entry item"
 msgstr "item da entrada de botão múltiplo"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "entrada do botão múltiplo"
 
@@ -420,7 +420,7 @@ msgstr "item do seletor de cor"
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "item do seletor de dia"
 

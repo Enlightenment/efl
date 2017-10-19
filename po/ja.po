@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Daichi Fukui<when.a.cat.sits.beside.you@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -234,7 +234,7 @@ msgstr "Music"
 msgid "Pictures"
 msgstr "Pictures"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Videos"
 
@@ -280,7 +280,7 @@ msgstr ""
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr ""
 
@@ -420,7 +420,7 @@ msgstr ""
 msgid "default:LTR"
 msgstr "Default:"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr ""
 

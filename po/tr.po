@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -235,7 +235,7 @@ msgstr "Müzik"
 msgid "Pictures"
 msgstr "Resimler"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Videolar"
 
@@ -281,7 +281,7 @@ msgstr "çoklu düğme giriş etiketi"
 msgid "multi button entry item"
 msgstr "çoklu düğme giriş öğesi"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "çoklu düğme girişi"
 
@@ -420,7 +420,7 @@ msgstr "renk seçici paleti öğesi"
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "gün seçici ögesi"
 

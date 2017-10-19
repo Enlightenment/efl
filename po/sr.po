@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: а\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-07-11 17:19+0900\n"
+"POT-Creation-Date: 2017-10-19 10:46-0700\n"
 "PO-Revision-Date: 2015-01-31 14:06+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -238,7 +238,7 @@ msgstr "Музика"
 msgid "Pictures"
 msgstr "Слике"
 
-#: src/lib/efreet/efreet_base.c:186
+#: src/lib/efreet/efreet_base.c:185
 msgid "Videos"
 msgstr "Видео снимци"
 
@@ -284,7 +284,7 @@ msgstr "ознака улаза са више дугмади"
 msgid "multi button entry item"
 msgstr "ставка улаза са више дугмади"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1625
+#: src/lib/elementary/elc_multibuttonentry.c:1624
 msgid "multi button entry"
 msgstr "улаз са више дугмади"
 
@@ -423,7 +423,7 @@ msgstr "ставка избирача палете боја"
 msgid "default:LTR"
 msgstr "задато:слева на десно"
 
-#: src/lib/elementary/elm_dayselector.c:405
+#: src/lib/elementary/elm_dayselector.c:403
 msgid "day selector item"
 msgstr "ставка одабирач дана"
 
