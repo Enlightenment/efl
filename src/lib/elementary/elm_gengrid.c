@@ -5711,6 +5711,14 @@ _elm_gengrid_elm_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNU
    return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
+EOLIAN static void
+_elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
+{
+   efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   _item_realize(pd);
+}
+
+
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_gengrid, Elm_Gengrid_Data)
