@@ -1617,7 +1617,7 @@ evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
    if (obj->size_hints->dispmode == dispmode) return;
    obj->size_hints->dispmode = dispmode;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static Eina_Size2D
@@ -1643,7 +1643,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Ob
    if ((obj->size_hints->min.w == sz.w) && (obj->size_hints->min.h == sz.h)) return;
    obj->size_hints->min = sz;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static Eina_Size2D
@@ -1684,7 +1684,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protec
    obj->size_hints->max.w = sz.w;
    obj->size_hints->max.h = sz.h;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EAPI void
@@ -1719,7 +1719,7 @@ evas_object_size_hint_request_set(Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    obj->size_hints->request.w = w;
    obj->size_hints->request.h = h;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static Eina_Size2D
@@ -1746,7 +1746,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protec
    if ((obj->size_hints->user_min.w == sz.w) && (obj->size_hints->user_min.h == sz.h)) return;
    obj->size_hints->user_min = sz;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -1784,7 +1784,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Pro
    obj->size_hints->aspect.mode = aspect;
    obj->size_hints->aspect.size = sz;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -1818,7 +1818,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
    obj->size_hints->align.x = x;
    obj->size_hints->align.y = y;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -1852,7 +1852,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
    obj->size_hints->weight.x = x;
    obj->size_hints->weight.y = y;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -1889,7 +1889,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_margin_set(Eo *eo_obj, Evas_Object_Pro
    obj->size_hints->padding.t = t;
    obj->size_hints->padding.b = b;
 
-   evas_object_inform_call_changed_size_hints(eo_obj);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
 EAPI void
