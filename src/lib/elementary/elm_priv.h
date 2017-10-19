@@ -219,12 +219,108 @@ struct _Elm_Config_Flags
    Eina_Bool scroll_smooth_amount : 1;
    Eina_Bool scroll_smooth_time_window : 1;
    Eina_Bool scale : 1;
-   // ...
+   Eina_Bool bgpixmap : 1; // unused
+   Eina_Bool compositing : 1; // unused
+   Eina_Bool font_dirs : 1; // unused
+   Eina_Bool font_overlays : 1;
+   Eina_Bool font_hinting : 1;
+   Eina_Bool cache_flush_poll_interval : 1;
+   Eina_Bool cache_flush_enable : 1;
+   Eina_Bool image_cache : 1;
+   Eina_Bool font_cache : 1;
+   Eina_Bool edje_cache : 1;
+   Eina_Bool edje_collection_cache : 1;
+   Eina_Bool finger_size : 1;
+   Eina_Bool fps : 1; // unused
+   Eina_Bool theme : 1; // unused
+   Eina_Bool modules : 1; // unused
+   Eina_Bool tooltip_delay : 1;
+   Eina_Bool cursor_engine_only : 1;
+   Eina_Bool focus_highlight_enable : 1;
+   Eina_Bool focus_highlight_animate : 1;
+   Eina_Bool focus_highlight_clip_disable : 1;
+   Eina_Bool focus_move_policy : 1;
+   Eina_Bool item_select_on_focus_disable : 1;
+   Eina_Bool first_item_focus_on_first_focus_in : 1;
+   Eina_Bool focus_autoscroll_mode : 1;
+   Eina_Bool slider_indicator_visible_mode : 1;
+   Eina_Bool popup_horizontal_align : 1; // unused
+   Eina_Bool popup_vertical_align : 1; // unused
+   Eina_Bool popup_scrollable : 1;
+   Eina_Bool toolbar_shrink_mode : 1; // unused
+   Eina_Bool fileselector_expand_enable : 1; // unused
+   Eina_Bool fileselector_double_tap_navigation_enable : 1; // unused
+   Eina_Bool inwin_dialogs_enable : 1; // unused
+   Eina_Bool icon_size : 1; // unused
+   Eina_Bool longpress_timeout : 1;
+   Eina_Bool effect_enable : 1; // unused
+   Eina_Bool desktop_entry : 1; // unused
+   Eina_Bool context_menu_disabled : 1;
+   Eina_Bool password_show_last : 1;
+   Eina_Bool password_show_last_timeout : 1;
+   Eina_Bool glayer_zoom_finger_enable : 1; // unused
+   Eina_Bool glayer_zoom_finger_factor : 1; // unused
+   Eina_Bool glayer_zoom_wheel_factor : 1; // unused
+   Eina_Bool glayer_zoom_distance_tolerance : 1; // unused
+   Eina_Bool glayer_rotate_finger_enable : 1; // unused
+   Eina_Bool glayer_rotate_angular_tolerance : 1; // unused
+   Eina_Bool glayer_line_min_length : 1; // unused
+   Eina_Bool glayer_line_distance_tolerance : 1; // unused
+   Eina_Bool glayer_line_angular_tolerance : 1; // unused
+   Eina_Bool glayer_flick_time_limit_ms : 1; // unused
+   Eina_Bool glayer_long_tap_start_timeout : 1;
+   Eina_Bool glayer_double_tap_timeout : 1;
+   Eina_Bool access_mode : 1;
+   Eina_Bool glayer_continues_enable : 1; // unused
+   Eina_Bool week_start : 1; // unused
+   Eina_Bool weekend_start : 1; // unused
+   Eina_Bool weekend_len : 1; // unused
+   Eina_Bool year_min : 1; // unused
+   Eina_Bool year_max : 1; // unused
+   Eina_Bool color_overlays : 1;
+   Eina_Bool color_palette : 1; // unused
+   Eina_Bool softcursor_mode : 1;
+   Eina_Bool auto_norender_withdrawn : 1; // unused
+   Eina_Bool auto_norender_iconified_same_as_withdrawn : 1; // unused
+   Eina_Bool auto_flush_withdrawn : 1; // unused
+   Eina_Bool auto_dump_withdrawn : 1; // unused
+   Eina_Bool auto_throttle : 1; // unused
+   Eina_Bool auto_throttle_amount : 1; // unused
+   Eina_Bool indicator_service_0 : 1; // unused
+   Eina_Bool indicator_service_90 : 1; // unused
+   Eina_Bool indicator_service_180 : 1; // unused
+   Eina_Bool indicator_service_270 : 1; // unused
+   Eina_Bool selection_clear_enable : 1;
+   Eina_Bool disable_external_menu : 1;
+   Eina_Bool clouseau_enable : 1;
+   Eina_Bool magnifier_enable : 1;
+   Eina_Bool magnifier_scale : 1;
+   Eina_Bool audio_mute_effect : 1;
+   Eina_Bool audio_mute_background : 1;
+   Eina_Bool audio_mute_music : 1;
+   Eina_Bool audio_mute_foreground : 1;
+   Eina_Bool audio_mute_interface : 1;
+   Eina_Bool audio_mute_input : 1;
+   Eina_Bool audio_mute_alert : 1;
+   Eina_Bool audio_mute_all : 1;
+   Eina_Bool win_auto_focus_enable : 1;
+   Eina_Bool win_auto_focus_animate : 1;
+   Eina_Bool transition_duration_factor : 1;
+   Eina_Bool naviframe_prev_btn_auto_pushed : 1; // unused
+   Eina_Bool spinner_min_max_filter_enable : 1; // unused
+   Eina_Bool bindings : 1; // unused
+   Eina_Bool atspi_mode : 1;
+   Eina_Bool gl_depth : 1;
+   Eina_Bool gl_stencil : 1;
+   Eina_Bool gl_msaa : 1;
+   Eina_Bool icon_theme : 1;
+   Eina_Bool entry_select_allow : 1; // unused
 };
 
 struct _Elm_Config
 {
    int           config_version;
+
    const char   *engine;
    const char   *accel;
    const char   *web_backend;
