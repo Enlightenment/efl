@@ -1948,7 +1948,7 @@ _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
           }
      }
    evas_object_update_bounding_box(eo_obj, obj, NULL);
-   evas_object_inform_call_show(eo_obj);
+   evas_object_inform_call_show(eo_obj, obj);
 
    Event_Animation *event_anim = _event_animation_find(obj, EFL_GFX_EVENT_SHOW);
    if (event_anim)

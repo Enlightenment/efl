@@ -5,9 +5,8 @@
 /* local calls */
 
 void
-evas_object_inform_call_show(Evas_Object *eo_obj)
+evas_object_inform_call_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int event_id = _evas_object_event_new();
 
    evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, NULL, event_id, EFL_GFX_EVENT_SHOW);
