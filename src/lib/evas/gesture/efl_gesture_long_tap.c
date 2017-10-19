@@ -3,19 +3,6 @@
 #define MY_CLASS EFL_GESTURE_LONG_TAP_CLASS
 
 
-EOLIAN static void
-_efl_gesture_long_tap_position_set(Eo *obj EINA_UNUSED, Efl_Gesture_Long_Tap_Data *pd,
-                                   Eina_Vector2 pos)
-{
-   pd->pos = pos;
-}
-
-EOLIAN static Eina_Vector2
-_efl_gesture_long_tap_position_get(Eo *obj EINA_UNUSED, Efl_Gesture_Long_Tap_Data *pd)
-{
-   return pd->pos;
-}
-
 EOLIAN static Efl_Object *
 _efl_gesture_long_tap_efl_object_constructor(Eo *obj, Efl_Gesture_Long_Tap_Data *pd EINA_UNUSED)
 {

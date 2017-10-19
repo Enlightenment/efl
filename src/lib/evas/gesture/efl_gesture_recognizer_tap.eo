@@ -1,10 +1,8 @@
-class Efl.Gesture.Recognizer.Tap(Efl.Gesture.Recognizer)
+class Efl.Gesture.Recognizer_Tap (Efl.Gesture.Recognizer)
 {
+   data: null;
    implements {
-      Efl.Object.constructor;
-      Efl.Object.destructor;
       Efl.Gesture.Recognizer.create;
       Efl.Gesture.Recognizer.recognize;
-      Efl.Gesture.Recognizer.reset;
    }
 }

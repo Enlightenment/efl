@@ -107,7 +107,6 @@ _efl_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Desc
         // add it to the gesture context.
         eina_hash_list_append(pd->m_gesture_contex, &target, type);
      }
-
 }
 
 void
@@ -142,18 +141,14 @@ _efl_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
      {
         // get the touch event for this particular widget
         touch_event = eina_hash_find(pd->m_object_events, &target);
-        if (touch_event)
-          {
-             efl_gesture_touch_point_record(touch_event, pointer_data->tool, pointer_data->cur.x, pointer_data->cur.y,
-                                          pointer_data->timestamp, pointer_data->action);
-          }
-        else
+        if (!touch_event)
           {
              touch_event = efl_add(EFL_GESTURE_TOUCH_CLASS, NULL);
-             efl_gesture_touch_point_record(touch_event, pointer_data->tool, pointer_data->cur.x, pointer_data->cur.y,
-                                          pointer_data->timestamp, pointer_data->action);
              eina_hash_add(pd->m_object_events, &target, touch_event);
           }
+
+        efl_gesture_touch_point_record(touch_event, pointer_data->tool, pointer_data->cur,
+                                       pointer_data->timestamp, pointer_data->action);
 
         if (efl_gesture_touch_state_get(touch_event) == EFL_GESTURE_TOUCH_UNKNOWN)
           return;

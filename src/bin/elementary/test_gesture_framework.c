@@ -175,7 +175,7 @@ _color_and_icon_set(infra_data *infra, char *name, int n, int max,
 static void
 finger_tap_start(void *data , Efl_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_tap_position_get(tap);
+   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, START_COLOR);
    printf("Tap Gesture started x,y=<%f,%f> \n", pos.x, pos.y);
@@ -190,7 +190,7 @@ finger_tap_update(void *data , Efl_Gesture *tap EINA_UNUSED)
 static void
 finger_tap_end(void *data , Efl_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_tap_position_get(tap);
+   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, END_COLOR);
    printf("Tap Gesture ended x,y=<%f,%f> \n", pos.x, pos.y);
@@ -206,7 +206,7 @@ finger_tap_abort(void *data , Efl_Gesture *tap EINA_UNUSED)
 static void
 finger_long_tap_start(void *data , Efl_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_long_tap_position_get(tap);
+   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, START_COLOR);
    printf("Long Tap Gesture started x,y=<%f,%f> \n", pos.x, pos.y);
@@ -222,7 +222,7 @@ finger_long_tap_update(void *data , Efl_Gesture *tap EINA_UNUSED)
 static void
 finger_long_tap_end(void *data , Efl_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_long_tap_position_get(tap);
+   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, END_COLOR);
    printf("Long Tap Gesture ended x,y=<%f,%f> \n",pos.x, pos.y);
@@ -322,7 +322,7 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    infra_data *infra = _infra_data_alloc();
 
-   win = elm_win_util_standard_add("gesture-layer2", "Gesture Layer 2");
+   win = elm_win_util_standard_add("gesture-layer2", "Gesture (EO)");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_smart_callback_add(win, "delete,request", my_win_del, infra);
 

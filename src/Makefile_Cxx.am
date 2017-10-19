@@ -339,6 +339,7 @@ tests_evas_cxx_cxx_compile_test_SOURCES = tests/evas_cxx/cxx_compile_test.cc
 tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
  -I$(top_builddir)/src/lib/efl/interfaces/ \
  -I$(top_builddir)/src/lib/evas/canvas/ \
+ -I$(top_builddir)/src/lib/evas/gesture/ \
  -I$(top_builddir)/src/lib/evas/include/ \
  -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas_cxx\" \
  -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas_cxx\" \

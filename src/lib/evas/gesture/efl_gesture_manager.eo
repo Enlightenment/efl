@@ -1,24 +1,22 @@
 import efl_gesture_types;
 
-class Efl.Gesture.Manager(Efl.Object)
+class Efl.Gesture.Manager (Efl.Object)
 {
    methods {
       recognizer_register {
          [[This function is called to register a new Efl.Gesture.Recognizer]]
-
          params {
             @in recognizer: Efl.Gesture.Recognizer; [[The gesture recognizer object]]
          }
          return: ptr(const(Efl.Event.Description)); [[Returns the Efl.Event.Description type the recognizer supports]]
       }
       recognizer_unregister {
-         [[This function is called to unregister a Efl.Gesture.Recognizer ]]
-
+         [[This function is called to unregister a Efl.Gesture.Recognizer]]
          params {
             @in recognizer: Efl.Gesture.Recognizer; [[The gesture recognizer object]]
          }
       }
-      @property config{
+      @property config {
          [[This property holds the config value for the recognizer]]
          set {
          }
@@ -28,7 +26,7 @@ class Efl.Gesture.Manager(Efl.Object)
             name: string; [[propery name]]
          }
          values {
-            value: ptr(any_value); [[value of the property]]
+            value: any_value_ptr; [[value of the property]]
          }
       }
    }
