@@ -812,7 +812,7 @@ eina_file_open(const char *path, Eina_Bool shared)
  close_handle:
    CloseHandle(handle);
  free_file:
-   ERR("Could not open file [%s].", filename);
+   WRN("Could not open file [%s].", filename);
    eina_stringshare_del(filename);
 
    return NULL;
