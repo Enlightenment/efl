@@ -1740,7 +1740,7 @@ void evas_object_event_callback_all_del(Evas_Object *obj);
 void evas_object_event_callback_cleanup(Evas_Object *obj);
 void evas_event_callback_all_del(Evas *e);
 void evas_event_callback_cleanup(Evas *e);
-void evas_object_inform_call_show(Evas_Object *obj);
+void evas_object_inform_call_show(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_inform_call_hide(Evas_Object *obj);
 void evas_object_inform_call_move(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_inform_call_resize(Evas_Object *obj);
