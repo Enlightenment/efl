@@ -9,7 +9,7 @@
 
 static Eina_Rbtree_Direction _rbtree_compare(Eina_Rbtree const* left, Eina_Rbtree const* right)
 {
-   Efl_Ui_List_SegArray_Node *nl = left, *nr = right;
+   Efl_Ui_List_SegArray_Node const *nl = left, *nr = right;
    return !nl ? EINA_RBTREE_LEFT :
      (
        !nr ? EINA_RBTREE_RIGHT :
@@ -39,11 +39,17 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
    segarray->array_initial_size = initial_step_size;
 }
 
+static Efl_Ui_List_Item* _create_item(Efl_Model* model, unsigned int index)
+{
+   Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
+   item->model = model;
+   item->index = index;
+}
+
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
 {
    int i;
    Efl_Model* children;
-   Efl_Ui_List_SegArray_Node* node = NULL;
    Efl_Ui_List_SegArray_Node* first_node = NULL;
    int array_first = 0;
 
@@ -56,11 +62,14 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
 
    EINA_ACCESSOR_FOREACH(accessor, i, children)
      {
+        // if prefix'ing
         if((first + i < array_first) || !efl_ui_list_segarray_count(segarray))
           {
-             if(!node)
+             // if no first_node
+             if(!first_node)
                {
-                  node = _alloc_node(segarray, i + first, segarray->array_initial_size);
+                  first_node = _alloc_node(segarray, i + first, segarray->array_initial_size);
+                  first_node->pointers[0] = _create_item(children, first + i);
                }
              else
                {
@@ -83,23 +92,55 @@ int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray)
 typedef struct _Efl_Ui_List_Segarray_Eina_Accessor
 {
    Eina_Accessor vtable;
-   
+   Efl_Ui_List_SegArray* segarray;
+   //Eina_Accessor* pre_accessor;
 } Efl_Ui_List_Segarray_Eina_Accessor;
+
+static int _lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length, void* data)
+{
+  Efl_Ui_List_SegArray_Node const* node = rbtree;
+  int index = *(int*)key;
+  if(node->first < index)
+    {
+      return -1;
+    }
+  else if(node->first + node->length < index)
+    {
+      return 0;
+    }
+  else
+    return 1;
+}
 
 static Eina_Bool
 _efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
                                       unsigned int idx, void** data)
 {
+   Efl_Ui_List_SegArray_Node* node;
+   node = eina_rbtree_inline_lookup(acc->segarray->root, &idx, sizeof(idx), &_lookup_cb, NULL);
+   if(node)
+     {
+        if(node->first >= idx && node->first + node->length < idx)
+          {
+             int i = idx - node->first;
+             Efl_Ui_List* item = node->pointers[i];
+             *data = item;
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
 }
 
 static void*
 _efl_ui_list_segarray_accessor_get_container(Efl_Ui_List_Segarray_Eina_Accessor* acc)
 {
+  return NULL;
 }
 
 static void
 _efl_ui_list_segarray_accessor_free(Efl_Ui_List_Segarray_Eina_Accessor* acc)
 {
+   free(acc);
 }
 
 static void
@@ -119,22 +160,23 @@ _efl_ui_list_segarray_accessor_clone(Efl_Ui_List_Segarray_Eina_Accessor* acc)
 }
 
 static void
-_efl_ui_list_segarray_accessor_setup(Efl_Ui_List_Segarray_Eina_Accessor* acc)
+_efl_ui_list_segarray_accessor_setup(Efl_Ui_List_Segarray_Eina_Accessor* acc, Efl_Ui_List_SegArray* segarray)
 {
    EINA_MAGIC_SET(&acc->vtable, EINA_MAGIC_ACCESSOR);
    acc->vtable.version = EINA_ACCESSOR_VERSION;
    acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_at);
-   acc->vtable.get_container = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_get_container);
-   acc->vtable.free = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_free);
-   acc->vtable.lock = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_lock);
-   acc->vtable.unlock = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_unlock);
-   acc->vtable.clone = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_accessor_clone);
+   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_list_segarray_accessor_get_container);
+   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_list_segarray_accessor_free);
+   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_list_segarray_accessor_lock);
+   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_list_segarray_accessor_unlock);
+   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_list_segarray_accessor_clone);
+   acc->segarray = segarray;
 }
 
 Eina_Accessor* efl_ui_list_segarray_accessor_get(Efl_Ui_List_SegArray* segarray)
 {
    Efl_Ui_List_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_Segarray_Eina_Accessor));
-   _efl_ui_list_segarray_accessor_setup(acc);
+   _efl_ui_list_segarray_accessor_setup(acc, segarray);
    return &acc->vtable;
 }
 

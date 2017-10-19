@@ -1090,7 +1090,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    elm_interface_atspi_accessible_role_set(obj, ELM_ATSPI_ROLE_LIST);
 
-   efl_ui_list_segarray_setup(&pd->segarray);
+   efl_ui_list_segarray_setup(&pd->segarray, 32);
 
    manager = elm_obj_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, manager);
