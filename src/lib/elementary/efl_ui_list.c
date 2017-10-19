@@ -1416,8 +1416,8 @@ _efl_ui_list_elm_widget_widget_event(Eo *obj, Efl_Ui_List_Data *pd, Efl_Event co
 EOLIAN static Efl_Ui_List_LayoutItem *
 _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
-    /* TODO */
-    return NULL;
+   DBG("model_realize");
+   return NULL;
 }
 
 Eina_Bool

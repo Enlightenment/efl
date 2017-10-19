@@ -6,6 +6,8 @@
 
 #include <assert.h>
 
+#include "elm_priv.h"
+
 #define MY_CLASS EFL_UI_LIST_PRECISE_LAYOUTER_CLASS
 
 typedef struct _Efl_Ui_List_Precise_Layouter_Data
@@ -105,6 +107,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    // cache size of new items
    EINA_ACCESSOR_FOREACH(items, i, layout_item)
      {
+        DBG("size %d", size);
         size = eina_hash_find(pd->size_information, &layout_item);
         if(!size)
         {
