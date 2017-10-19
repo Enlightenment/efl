@@ -237,7 +237,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Dat
    evas_object_change(eo_obj, obj);
    if (obj->clip.clipees)
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    evas_object_change(eo_obj, obj);
@@ -258,7 +258,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Dat
             _evas_object_layer_set_child(member, obj, l);
           }
      }
-   evas_object_inform_call_restack(eo_obj);
+   evas_object_inform_call_restack(eo_obj, obj);
 }
 
 EAPI short

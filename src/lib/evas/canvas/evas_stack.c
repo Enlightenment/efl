@@ -51,7 +51,7 @@ _efl_canvas_object_efl_gfx_stack_raise(Eo *eo_obj, Evas_Object_Protected_Data *o
 
    if (!((EINA_INLIST_GET(obj))->next))
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->smart.parent)
@@ -63,13 +63,13 @@ _efl_canvas_object_efl_gfx_stack_raise(Eo *eo_obj, Evas_Object_Protected_Data *o
      }
    if (obj->clip.clipees)
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->layer) evas_render_invalidate(obj->layer->evas->evas);
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
-   evas_object_inform_call_restack(eo_obj);
+   evas_object_inform_call_restack(eo_obj, obj);
    if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
@@ -100,7 +100,7 @@ _efl_canvas_object_efl_gfx_stack_lower(Eo *eo_obj, Evas_Object_Protected_Data *o
 
    if (!((EINA_INLIST_GET(obj))->prev))
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->smart.parent)
@@ -113,13 +113,13 @@ _efl_canvas_object_efl_gfx_stack_lower(Eo *eo_obj, Evas_Object_Protected_Data *o
      }
    if (obj->clip.clipees)
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->layer) evas_render_invalidate(obj->layer->evas->evas);
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
-   evas_object_inform_call_restack(eo_obj);
+   evas_object_inform_call_restack(eo_obj, obj);
    if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
@@ -157,7 +157,7 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
    Evas_Object_Protected_Data *above = efl_data_scope_get(eo_above, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->prev == EINA_INLIST_GET(above))
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->smart.parent)
@@ -205,13 +205,13 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
      }
    if (obj->clip.clipees)
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->layer) evas_render_invalidate(obj->layer->evas->evas);
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
-   evas_object_inform_call_restack(eo_obj);
+   evas_object_inform_call_restack(eo_obj, obj);
    if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
@@ -247,7 +247,7 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
    Evas_Object_Protected_Data *below = efl_data_scope_get(eo_below, EFL_CANVAS_OBJECT_CLASS);
    if ((EINA_INLIST_GET(obj))->next == EINA_INLIST_GET(below))
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->smart.parent)
@@ -295,13 +295,13 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
      }
    if (obj->clip.clipees)
      {
-        evas_object_inform_call_restack(eo_obj);
+        evas_object_inform_call_restack(eo_obj, obj);
         return;
      }
    if (obj->layer) evas_render_invalidate(obj->layer->evas->evas);
    obj->restack = EINA_TRUE;
    evas_object_change(eo_obj, obj);
-   evas_object_inform_call_restack(eo_obj);
+   evas_object_inform_call_restack(eo_obj, obj);
    if (!obj->layer || obj->layer->evas->is_frozen) return;
    if ((!evas_event_passes_through(eo_obj, obj)) &&
        (!evas_event_freezes_through(eo_obj, obj)) &&
