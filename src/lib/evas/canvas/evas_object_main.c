@@ -2077,7 +2077,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
  */
      }
    evas_object_update_bounding_box(eo_obj, obj, NULL);
-   evas_object_inform_call_hide(eo_obj);
+   evas_object_inform_call_hide(eo_obj, obj);
 }
 
 EOLIAN static void
