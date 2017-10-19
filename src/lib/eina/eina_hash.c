@@ -493,7 +493,7 @@ _eina_hash_del_by_key(Eina_Hash *hash, const void *key, const void *data)
 static int
 _eina_stringshared_hash(const void *key, int key_length EINA_UNUSED)
 {
-   return eina_hash_superfast(&key, sizeof (void*));
+   return eina_hash_superfast((const void*) &key, sizeof (void*));
 }
 
 static unsigned int
