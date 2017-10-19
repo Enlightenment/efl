@@ -2521,7 +2521,8 @@ tests/evas/images/train.j2k.png
 
 if HAVE_ELUA
 
-evas_eolian_lua = $(evas_eolian_pub_files:%.eo=%.eo.lua)
+evas_eolian_lua = $(evas_canvas_eolian_pub_files:%.eo=%.eo.lua) \
+                  $(evas_gesture_eolian_pub_files:%.eo=%.eo.lua)
 
 generated_evas_lua_all = $(evas_eolian_lua)
 
@@ -2542,7 +2543,8 @@ dist_installed_evasfilters_DATA = $(evas_filters_lua)
 
 if HAVE_JS
 
-generated_evas_js_bindings = $(evas_eolian_pub_files:%.eo=%.eo.js.cc)
+generated_evas_js_bindings = $(evas_canvas_eolian_pub_files:%.eo=%.eo.js.cc) \
+                             $(evas_gesture_eolian_pub_files:%.eo=%.eo.js.cc)
 
 GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
 
