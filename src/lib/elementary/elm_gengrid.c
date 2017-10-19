@@ -1062,6 +1062,7 @@ _item_content_realize(Elm_Gen_Item *it,
              evas_object_del(content);
              goto out;
           }
+        elm_widget_sub_object_del(WIDGET(it), content);
         elm_widget_sub_object_add(WIDGET(it), content);
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           elm_widget_disabled_set(content, EINA_TRUE);
