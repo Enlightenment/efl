@@ -19,7 +19,7 @@ enum Efl.Gesture.State
    canceled,    [[A gesture was canceled.]]
 }
 
-enum Efl.Gesture.Recognizer.Result
+enum Efl.Gesture.Recognizer_Result
 {
    [[ This enum type describes the state of a gesture recognizer. ]]
    legacy: efl_gesture;

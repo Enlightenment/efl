@@ -1,36 +1,39 @@
 import efl_gesture_types;
 import efl_input_types;
 
+/* FIXME: This class lacks a lot of useful helpers. */
+
 class Efl.Gesture.Touch(Efl.Object)
 {
    methods {
       point_record {
          params {
             @in tool       : int; [[The finger id ]]
-            @in x          : double; [[The x co-ordinate of the event]]
-            @in y          : double; [[The y co-ordinate of the event]]
+            @in pos        : Eina.Vector2; [[Position of the event]]
             @in timestamp  : double; [[The timestamp of the event]]
             @in action     : Efl.Pointer.Action; [[action of the event]]
          }
       }
-      delta {
+      /* FIXME: This is most likely not useful (without timestamps). */
+      delta @const {
+         [[Compute the distance between the last two events]]
          params {
             @in tool        : int; [[The finger id ]]
-            @out x          : double; [[The x co-ordinate of the event]]
-            @out y          : double; [[The y co-ordinate of the event]]
          }
+         return: Eina.Vector2; [[The distance vector.]]
       }
-      distance {
+      distance @const {
+         [[Compute the distance between the first touch and the last event.]]
          params {
             @in tool        : int; [[The finger id ]]
-            @out x          : double; [[The x co-ordinate of the event]]
-            @out y          : double; [[The y co-ordinate of the event]]
          }
+         return: Eina.Vector2; [[The distance vector.]]
       }
-      start_point {
-         params {
-            @out x          : double; [[The x co-ordinate of the event]]
-            @out y          : double; [[The y co-ordinate of the event]]
+      @property start_point {
+         [[Returns the first touch point.]]
+         get {}
+         values {
+            pos: Eina.Vector2; [[The start position.]]
          }
       }
       @property multi_touch {
@@ -45,14 +48,7 @@ class Efl.Gesture.Touch(Efl.Object)
             return : Efl.Gesture.Touch.State; [[touch event state]]
          }
       }
-      @property finger_list {
-         get {
-            [[Get the list of finger id .]]
-         }
-         values {
-            ret: const(list<int>); [[List of finger id]]
-         }
-      }
+      /* FIXME: finger_list was broken by design - TODO */
    }
    implements {
       Efl.Object.constructor;

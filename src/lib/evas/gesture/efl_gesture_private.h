@@ -31,12 +31,10 @@ struct _Efl_Gesture_Data
 
 struct _Efl_Gesture_Tap_Data
 {
-   Eina_Vector2   pos;
 };
 
 struct _Efl_Gesture_Long_Tap_Data
 {
-   Eina_Vector2      pos;
    Ecore_Timer      *timeout;
    Eina_Bool         is_timeout;
 };
