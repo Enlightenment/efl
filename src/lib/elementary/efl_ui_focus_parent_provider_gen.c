@@ -49,9 +49,19 @@ EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *widget)
 {
    //first check if this item is in the map
-   Elm_Widget_Item *item;
+   Elm_Widget_Item *item, *above_gengrid = widget;
 
-   item = eina_hash_find(pd->map, &widget);
+   if (elm_widget_parent_widget_get(widget) != pd->container)
+     {
+        Elm_Widget *parent = elm_widget_parent_widget_get(widget);
+        //move forward so we get the last widget above the gengrid level, this may be the widget out of the map
+        do {
+          above_gengrid = parent;
+          parent = elm_widget_parent_widget_get(above_gengrid);
+        } while(parent && parent != pd->container);
+     }
+
+   item = eina_hash_find(pd->map, &above_gengrid);
 
    efl_ui_focus_composition_elements_flush(pd->container);
 
