@@ -2549,8 +2549,12 @@ GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
 endif
 
 if HAVE_CXX11
-evas_eolian_cxx_hh = $(evas_eolian_pub_files:%.eo=%.eo.hh) $(evas_eolian_legacy_files:%.eo=%.eo.hh)
-evas_eolian_cxx_impl_hh = $(evas_eolian_pub_files:%.eo=%.eo.impl.hh) $(evas_eolian_legacy_files:%.eo=%.eo.impl.hh)
+evas_canvas_eolian_cxx_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.hh) \
+                            $(evas_eolian_legacy_files:%.eo=%.eo.hh)
+evas_canvas_eolian_cxx_impl_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.impl.hh) \
+                                 $(evas_eolian_legacy_files:%.eo=%.eo.impl.hh)
+evas_gesture_eolian_cxx_hh = $(evas_gesture_eolian_pub_files:%.eo=%.eo.hh)
+evas_gesture_eolian_cxx_impl_hh = $(evas_gesture_eolian_pub_files:%.eo=%.eo.impl.hh)
 endif
 
 EXTRA_DIST2 += \
