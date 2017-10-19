@@ -851,6 +851,34 @@ elm_scroller_add(Evas_Object *parent)
    return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
+static void
+_focused_element(void *data, const Efl_Event *event)
+{
+   Eina_Rect geom;
+   Efl_Ui_Focus_Object *obj = data;
+   Efl_Ui_Focus_Object *focus = event->info;
+   Elm_Scrollable_Smart_Interface_Data *pd;
+   Eina_Position2D pos;
+   int pan_x, pan_y;
+
+   pd = efl_data_scope_get(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
+
+   if (!focus) return;
+
+   geom = efl_ui_focus_object_focus_geometry_get(focus);
+   pos = efl_gfx_position_get(obj);
+   elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
+   geom.x = geom.x + pan_x - pos.x;
+   geom.y = geom.y + pan_y - pos.y;
+
+   elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
+
+   geom = efl_gfx_geometry_get(obj);
+   geom.x = geom.y = 0;
+   elm_widget_show_region_set(obj, geom, EINA_TRUE);
+
+}
+
 EOLIAN static Eo *
 _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED)
 {
@@ -858,7 +886,7 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
-
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, obj);
    return obj;
 }
 
