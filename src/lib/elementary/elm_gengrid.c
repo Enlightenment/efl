@@ -4230,6 +4230,20 @@ elm_gengrid_add(Evas_Object *parent)
    return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
+static void
+_gengrid_element_focused(void *data, const Efl_Event *ev)
+{
+   ELM_GENGRID_DATA_GET(data, pd);
+   Elm_Widget_Item *item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, ev->info);
+   if (efl_isa(item, ELM_GENGRID_ITEM_CLASS))
+     {
+        _elm_gengrid_item_focused(item);
+        _all_items_deselect(pd);
+        elm_gengrid_item_selected_set(item, EINA_TRUE);
+        elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+     }
+}
+
 EOLIAN static Eo *
 _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 {
@@ -4247,6 +4261,8 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
+
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _gengrid_element_focused, obj);
 
    return obj;
 }
