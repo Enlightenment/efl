@@ -980,6 +980,7 @@ static Eina_Bool _elm_config_atspi_mode_get(void)
 
 static void _elm_config_atspi_mode_set(Eina_Bool is_enabled)
 {
+   _elm_config->priv.atspi_mode = EINA_TRUE;
    is_enabled = !!is_enabled;
    if (_elm_config->atspi_mode == is_enabled) return;
    _elm_config->atspi_mode = is_enabled;
@@ -1838,6 +1839,14 @@ _elm_config_reload_do(void)
    if (prev_config->priv.xxx) { \
       eina_stringshare_replace(&(_elm_config->xxx), prev_config->xxx); \
    }
+        Elm_Font_Overlay *fo;
+        Elm_Color_Overlay *co;
+        Elm_Custom_Palette *palette;
+        Elm_Color_RGBA *color;
+        Elm_Config_Bindings_Widget *wb;
+        Elm_Config_Binding_Key *kb;
+        Elm_Config_Binding_Modifier *mb;
+
         KEEP_STR(engine);
         KEEP_STR(accel);
         KEEP_STR(web_backend);
@@ -1867,6 +1876,148 @@ _elm_config_reload_do(void)
         KEEP_VAL(scroll_smooth_amount);
         KEEP_VAL(scroll_smooth_time_window);
         KEEP_VAL(scale);
+        if (prev_config->priv.font_overlays)
+          {
+             EINA_LIST_FREE(_elm_config->font_overlays, fo)
+               {
+                  eina_stringshare_del(fo->text_class);
+                  eina_stringshare_del(fo->font);
+                  free(fo);
+               }
+             _elm_config->font_overlays = prev_config->font_overlays;
+             prev_config->font_overlays = NULL;
+          }
+        KEEP_VAL(font_hinting);
+        KEEP_VAL(cache_flush_poll_interval);
+
+        KEEP_VAL(cache_flush_enable);
+        KEEP_VAL(image_cache);
+        KEEP_VAL(font_cache);
+        KEEP_VAL(edje_cache);
+        KEEP_VAL(edje_collection_cache);
+        KEEP_VAL(finger_size);
+        KEEP_VAL(tooltip_delay);
+        KEEP_VAL(cursor_engine_only);
+        KEEP_VAL(focus_highlight_enable);
+        KEEP_VAL(focus_highlight_animate);
+        KEEP_VAL(focus_highlight_clip_disable);
+        KEEP_VAL(focus_move_policy);
+        KEEP_VAL(item_select_on_focus_disable);
+        KEEP_VAL(first_item_focus_on_first_focus_in);
+        KEEP_VAL(focus_autoscroll_mode);
+        KEEP_VAL(slider_indicator_visible_mode);
+        KEEP_VAL(popup_horizontal_align);
+        KEEP_VAL(popup_vertical_align);
+        KEEP_VAL(popup_scrollable);
+        KEEP_VAL(toolbar_shrink_mode);
+        KEEP_VAL(fileselector_expand_enable);
+        KEEP_VAL(fileselector_double_tap_navigation_enable);
+        KEEP_VAL(inwin_dialogs_enable);
+        KEEP_VAL(icon_size);
+        KEEP_VAL(longpress_timeout);
+        KEEP_VAL(effect_enable);
+        KEEP_VAL(desktop_entry);
+        KEEP_VAL(context_menu_disabled);
+        KEEP_VAL(password_show_last);
+        KEEP_VAL(password_show_last_timeout);
+        KEEP_VAL(glayer_zoom_finger_enable);
+        KEEP_VAL(glayer_zoom_finger_factor);
+        KEEP_VAL(glayer_zoom_wheel_factor);
+        KEEP_VAL(glayer_zoom_distance_tolerance);
+        KEEP_VAL(glayer_rotate_finger_enable);
+        KEEP_VAL(glayer_rotate_angular_tolerance);
+        KEEP_VAL(glayer_line_min_length);
+        KEEP_VAL(glayer_line_distance_tolerance);
+        KEEP_VAL(glayer_line_angular_tolerance);
+        KEEP_VAL(glayer_flick_time_limit_ms);
+        KEEP_VAL(glayer_long_tap_start_timeout);
+        KEEP_VAL(glayer_double_tap_timeout);
+        KEEP_VAL(access_mode);
+        KEEP_VAL(glayer_continues_enable);
+        KEEP_VAL(week_start);
+        KEEP_VAL(weekend_start);
+        KEEP_VAL(weekend_len);
+        KEEP_VAL(year_min);
+        KEEP_VAL(year_max);
+        if (prev_config->priv.color_overlays)
+          {
+             EINA_LIST_FREE(_elm_config->color_overlays, co)
+               {
+                  if (co->color_class) eina_stringshare_del(co->color_class);
+                  free(co);
+               }
+             _elm_config->color_overlays = prev_config->color_overlays;
+             prev_config->color_overlays = NULL;
+          }
+        if (prev_config->priv.color_palette)
+          {
+             EINA_LIST_FREE(_elm_config->color_palette, palette)
+               {
+                  eina_stringshare_del(palette->palette_name);
+                  EINA_LIST_FREE(palette->color_list, color) free(color);
+                  free(palette);
+               }
+             _elm_config->color_palette = prev_config->color_palette;
+             prev_config->color_palette = NULL;
+          }
+
+        KEEP_VAL(softcursor_mode);
+        KEEP_VAL(auto_norender_withdrawn);
+        KEEP_VAL(auto_norender_iconified_same_as_withdrawn);
+        KEEP_VAL(auto_flush_withdrawn);
+        KEEP_VAL(auto_dump_withdrawn);
+        KEEP_VAL(auto_throttle);
+        KEEP_VAL(auto_throttle_amount);
+        KEEP_STR(indicator_service_0);
+        KEEP_STR(indicator_service_90);
+        KEEP_STR(indicator_service_180);
+        KEEP_STR(indicator_service_270);
+        KEEP_VAL(selection_clear_enable);
+        KEEP_VAL(disable_external_menu);
+        KEEP_VAL(clouseau_enable);
+        KEEP_VAL(magnifier_enable);
+        KEEP_VAL(magnifier_scale);
+        KEEP_VAL(audio_mute_effect);
+        KEEP_VAL(audio_mute_background);
+        KEEP_VAL(audio_mute_music);
+        KEEP_VAL(audio_mute_foreground);
+        KEEP_VAL(audio_mute_interface);
+        KEEP_VAL(audio_mute_input);
+        KEEP_VAL(audio_mute_alert);
+        KEEP_VAL(audio_mute_all);
+        KEEP_VAL(win_auto_focus_enable);
+        KEEP_VAL(win_auto_focus_animate);
+        KEEP_VAL(transition_duration_factor);
+        KEEP_VAL(naviframe_prev_btn_auto_pushed);
+        KEEP_VAL(spinner_min_max_filter_enable);
+        if (prev_config->priv.bindings)
+          {
+             EINA_LIST_FREE(_elm_config->bindings, wb)
+               {
+                  eina_stringshare_del(wb->name);
+                  EINA_LIST_FREE(wb->key_bindings, kb)
+                    {
+                       eina_stringshare_del(kb->key);
+                       eina_stringshare_del(kb->action);
+                       eina_stringshare_del(kb->params);
+                       EINA_LIST_FREE(kb->modifiers, mb)
+                         {
+                            eina_stringshare_del(mb->mod);
+                            free(mb);
+                         }
+                       free(kb);
+                    }
+                  free(wb);
+               }
+             _elm_config->bindings = prev_config->bindings;
+             prev_config->bindings = NULL;
+          }
+        KEEP_VAL(atspi_mode);
+        KEEP_VAL(gl_depth);
+        KEEP_VAL(gl_stencil);
+        KEEP_VAL(gl_msaa);
+        KEEP_STR(icon_theme);
+        KEEP_VAL(entry_select_allow);
 
         _elm_config->priv = prev_config->priv;
         _config_free(prev_config);
@@ -2737,6 +2888,7 @@ elm_config_cursor_engine_only_get(void)
 EAPI void
 elm_config_cursor_engine_only_set(Eina_Bool engine_only)
 {
+   _elm_config->priv.cursor_engine_only = EINA_TRUE;
    engine_only = !!engine_only;
    _elm_config->cursor_engine_only = engine_only;
 }
@@ -2750,6 +2902,7 @@ elm_config_tooltip_delay_get(void)
 EAPI void
 elm_config_tooltip_delay_set(double delay)
 {
+   _elm_config->priv.tooltip_delay = EINA_TRUE;
    if (delay < 0.0) return;
    _elm_config->tooltip_delay = delay;
 }
@@ -2782,6 +2935,7 @@ elm_config_icon_theme_get(void)
 EAPI void
 elm_config_icon_theme_set(const char *theme)
 {
+   _elm_config->priv.icon_theme = EINA_TRUE;
    eina_stringshare_del(_elm_config->icon_theme);
 
    if (theme)
@@ -2799,6 +2953,7 @@ elm_config_password_show_last_get(void)
 EAPI void
 elm_config_password_show_last_set(Eina_Bool password_show_last)
 {
+   _elm_config->priv.password_show_last = EINA_TRUE;
    if (_elm_config->password_show_last == password_show_last) return;
    _elm_config->password_show_last = password_show_last;
    edje_password_show_last_set(_elm_config->password_show_last);
@@ -2813,6 +2968,7 @@ elm_config_password_show_last_timeout_get(void)
 EAPI void
 elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 {
+   _elm_config->priv.password_show_last_timeout = EINA_TRUE;
    if (password_show_last_timeout < 0.0) return;
    if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
    _elm_config->password_show_last_timeout = password_show_last_timeout;
@@ -2946,6 +3102,7 @@ elm_config_access_get(void)
 EAPI void
 elm_config_access_set(Eina_Bool is_access)
 {
+   _elm_config->priv.access_mode = EINA_TRUE;
    _elm_config_access_set(is_access);
 }
 
@@ -2970,6 +3127,7 @@ elm_config_selection_unfocused_clear_get(void)
 EAPI void
 elm_config_selection_unfocused_clear_set(Eina_Bool enabled)
 {
+   _elm_config->priv.selection_clear_enable = EINA_TRUE;
    _elm_config_selection_unfocused_clear_set(enabled);
 }
 
@@ -2978,6 +3136,7 @@ elm_config_font_overlay_set(const char    *text_class,
                      const char    *font,
                      Evas_Font_Size size)
 {
+   _elm_config->priv.font_overlays = EINA_TRUE;
    EINA_SAFETY_ON_NULL_RETURN(text_class);
    _elm_config_font_overlay_set(text_class, font, size);
 }
@@ -2985,6 +3144,7 @@ elm_config_font_overlay_set(const char    *text_class,
 EAPI void
 elm_config_font_overlay_unset(const char *text_class)
 {
+   _elm_config->priv.font_overlays = EINA_TRUE;
    EINA_SAFETY_ON_NULL_RETURN(text_class);
    _elm_config_font_overlay_remove(text_class);
 }
@@ -3020,6 +3180,7 @@ elm_config_color_overlay_set(const char *color_class,
                              int r2, int g2, int b2, int a2,
                              int r3, int g3, int b3, int a3)
 {
+   _elm_config->priv.color_overlays = EINA_TRUE;
    EINA_SAFETY_ON_NULL_RETURN(color_class);
    _elm_config_color_overlay_set(color_class,
                                  r, g, b, a,
@@ -3030,6 +3191,7 @@ elm_config_color_overlay_set(const char *color_class,
 EAPI void
 elm_config_color_overlay_unset(const char *color_class)
 {
+   _elm_config->priv.color_overlays = EINA_TRUE;
    EINA_SAFETY_ON_NULL_RETURN(color_class);
    _elm_config_color_overlay_remove(color_class);
 }
@@ -3049,6 +3211,7 @@ elm_config_finger_size_get(void)
 EAPI void
 elm_config_finger_size_set(Evas_Coord size)
 {
+   _elm_config->priv.finger_size = EINA_TRUE;
    if (size < 0) return;
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
@@ -3064,6 +3227,7 @@ elm_config_cache_flush_interval_get(void)
 EAPI void
 elm_config_cache_flush_interval_set(int size)
 {
+   _elm_config->priv.cache_flush_poll_interval = EINA_TRUE;
    EINA_SAFETY_ON_FALSE_RETURN(size > 0);
    if (_elm_config->cache_flush_poll_interval == size) return;
    _elm_config->cache_flush_poll_interval = size;
@@ -3080,6 +3244,7 @@ elm_config_cache_flush_enabled_get(void)
 EAPI void
 elm_config_cache_flush_enabled_set(Eina_Bool enabled)
 {
+   _elm_config->priv.cache_flush_enable = EINA_TRUE;
    enabled = !!enabled;
    if (_elm_config->cache_flush_enable == enabled) return;
    _elm_config->cache_flush_enable = enabled;
@@ -3096,6 +3261,7 @@ elm_config_cache_font_cache_size_get(void)
 EAPI void
 elm_config_cache_font_cache_size_set(int size)
 {
+   _elm_config->priv.font_cache = EINA_TRUE;
    if (size < 0) return;
    if (_elm_config->font_cache == size) return;
    _elm_config->font_cache = size;
@@ -3112,6 +3278,7 @@ elm_config_cache_image_cache_size_get(void)
 EAPI void
 elm_config_cache_image_cache_size_set(int size)
 {
+   _elm_config->priv.image_cache = EINA_TRUE;
    if (size < 0) return;
    if (_elm_config->image_cache == size) return;
    _elm_config->image_cache = size;
@@ -3125,6 +3292,7 @@ elm_config_font_hint_type_set(int type)
    Eina_List *l;
    Evas_Object *win;
 
+   _elm_config->priv.font_hinting = EINA_TRUE;
    if ((type < 0) || (type > 2)) return;
    _elm_config->font_hinting = type;
 
@@ -3150,6 +3318,7 @@ elm_config_cache_edje_file_cache_size_get()
 EAPI void
 elm_config_cache_edje_file_cache_size_set(int size)
 {
+   _elm_config->priv.edje_cache = EINA_TRUE;
    if (size < 0) return;
    if (_elm_config->edje_cache == size) return;
    _elm_config->edje_cache = size;
@@ -3166,6 +3335,7 @@ elm_config_cache_edje_collection_cache_size_get(void)
 EAPI void
 elm_config_cache_edje_collection_cache_size_set(int size)
 {
+   _elm_config->priv.edje_collection_cache = EINA_TRUE;
    if (_elm_config->edje_collection_cache == size) return;
    _elm_config->edje_collection_cache = size;
 
@@ -3207,6 +3377,7 @@ elm_config_focus_highlight_enabled_get(void)
 EAPI void
 elm_config_focus_highlight_enabled_set(Eina_Bool enable)
 {
+   _elm_config->priv.focus_highlight_enable = EINA_TRUE;
    _elm_config->focus_highlight_enable = !!enable;
 }
 
@@ -3219,6 +3390,7 @@ elm_config_focus_highlight_animate_get(void)
 EAPI void
 elm_config_focus_highlight_animate_set(Eina_Bool animate)
 {
+   _elm_config->priv.focus_highlight_animate = EINA_TRUE;
    _elm_config->focus_highlight_animate = !!animate;
 }
 
@@ -3231,6 +3403,7 @@ elm_config_focus_highlight_clip_disabled_get(void)
 EAPI void
 elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable)
 {
+   _elm_config->priv.focus_highlight_clip_disable = EINA_TRUE;
    _elm_config->focus_highlight_clip_disable = !!disable;
 }
 
@@ -3243,6 +3416,7 @@ elm_config_focus_move_policy_get(void)
 EAPI void
 elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy)
 {
+   _elm_config->priv.focus_move_policy = EINA_TRUE;
    _elm_config->focus_move_policy = policy;
    _elm_win_focus_reconfigure();
 }
@@ -3256,6 +3430,7 @@ elm_config_item_select_on_focus_disabled_get(void)
 EAPI void
 elm_config_item_select_on_focus_disabled_set(Eina_Bool disable)
 {
+   _elm_config->priv.item_select_on_focus_disable = EINA_TRUE;
    _elm_config->item_select_on_focus_disable = !!disable;
 }
 
@@ -3268,6 +3443,7 @@ elm_config_first_item_focus_on_first_focusin_get(void)
 EAPI void
 elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enable)
 {
+   _elm_config->priv.first_item_focus_on_first_focus_in = EINA_TRUE;
    _elm_config->first_item_focus_on_first_focus_in = !!enable;
 }
 
@@ -3469,6 +3645,7 @@ elm_config_context_menu_disabled_get(void)
 EAPI void
 elm_config_context_menu_disabled_set(Eina_Bool disabled)
 {
+   _elm_config->priv.context_menu_disabled = EINA_TRUE;
    _elm_config->context_menu_disabled = !!disabled;
 }
 
@@ -3600,6 +3777,7 @@ elm_config_focus_autoscroll_mode_get(void)
 EAPI void
 elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode)
 {
+   _elm_config->priv.slider_indicator_visible_mode = EINA_TRUE;
    _elm_config->slider_indicator_visible_mode = mode;
 }
 
@@ -3612,12 +3790,14 @@ elm_config_slider_indicator_visible_mode_get(void)
 EAPI void
 elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode)
 {
+   _elm_config->priv.focus_autoscroll_mode = EINA_TRUE;
    _elm_config->focus_autoscroll_mode = mode;
 }
 
 EAPI void
 elm_config_longpress_timeout_set(double longpress_timeout)
 {
+   _elm_config->priv.longpress_timeout = EINA_TRUE;
    _elm_config->longpress_timeout = longpress_timeout;
 }
 
@@ -3630,6 +3810,7 @@ elm_config_longpress_timeout_get(void)
 EAPI void
 elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode)
 {
+   _elm_config->priv.softcursor_mode = EINA_TRUE;
    _elm_config->softcursor_mode = mode;
 }
 
@@ -3648,6 +3829,7 @@ elm_config_disable_external_menu_get(void)
 EAPI void
 elm_config_disable_external_menu_set(Eina_Bool disable)
 {
+   _elm_config->priv.disable_external_menu = EINA_TRUE;
    _elm_config->disable_external_menu = !!disable;
 }
 
@@ -3660,6 +3842,7 @@ elm_config_clouseau_enabled_get(void)
 EAPI void
 elm_config_clouseau_enabled_set(Eina_Bool enable)
 {
+   _elm_config->priv.clouseau_enable = EINA_TRUE;
    _elm_config->clouseau_enable = !!enable;
    _elm_clouseau_reload();
 }
@@ -3673,6 +3856,7 @@ elm_config_glayer_long_tap_start_timeout_get(void)
 EAPI void
 elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout)
 {
+   _elm_config->priv.glayer_long_tap_start_timeout = EINA_TRUE;
    _elm_config->glayer_long_tap_start_timeout = long_tap_timeout;
 }
 
@@ -3685,6 +3869,7 @@ elm_config_glayer_double_tap_timeout_get(void)
 EAPI void
 elm_config_glayer_double_tap_timeout_set(double double_tap_timeout)
 {
+   _elm_config->priv.glayer_double_tap_timeout = EINA_TRUE;
    _elm_config->glayer_double_tap_timeout = double_tap_timeout;
 }
 
@@ -3697,6 +3882,7 @@ elm_config_magnifier_enable_get(void)
 EAPI void
 elm_config_magnifier_enable_set(Eina_Bool enable)
 {
+   _elm_config->priv.magnifier_enable = EINA_TRUE;
    _elm_config->magnifier_enable = !!enable;
 }
 
@@ -3709,6 +3895,7 @@ elm_config_magnifier_scale_get(void)
 EAPI void
 elm_config_magnifier_scale_set(double scale)
 {
+   _elm_config->priv.magnifier_scale = EINA_TRUE;
    _elm_config->magnifier_scale = scale;
 }
 
@@ -3753,27 +3940,35 @@ elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute)
    switch (channel)
      {
       case EDJE_CHANNEL_EFFECT:
+        _elm_config->priv.audio_mute_effect = EINA_TRUE;
         _elm_config->audio_mute_effect = mute;
         break;
       case EDJE_CHANNEL_BACKGROUND:
+        _elm_config->priv.audio_mute_background = EINA_TRUE;
         _elm_config->audio_mute_background = mute;
         break;
       case EDJE_CHANNEL_MUSIC:
+        _elm_config->priv.audio_mute_music = EINA_TRUE;
         _elm_config->audio_mute_music = mute;
         break;
       case EDJE_CHANNEL_FOREGROUND:
+        _elm_config->priv.audio_mute_foreground = EINA_TRUE;
         _elm_config->audio_mute_foreground = mute;
         break;
       case EDJE_CHANNEL_INTERFACE:
+        _elm_config->priv.audio_mute_interface = EINA_TRUE;
         _elm_config->audio_mute_interface = mute;
         break;
       case EDJE_CHANNEL_INPUT:
+        _elm_config->priv.audio_mute_input = EINA_TRUE;
         _elm_config->audio_mute_input = mute;
         break;
       case EDJE_CHANNEL_ALERT:
+        _elm_config->priv.audio_mute_alert = EINA_TRUE;
         _elm_config->audio_mute_alert = mute;
         break;
       case EDJE_CHANNEL_ALL:
+        _elm_config->priv.audio_mute_all = EINA_TRUE;
         _elm_config->audio_mute_all = mute;
         break;
       default:
@@ -3791,6 +3986,7 @@ elm_config_window_auto_focus_enable_get(void)
 EAPI void
 elm_config_window_auto_focus_enable_set(Eina_Bool enable)
 {
+   _elm_config->priv.win_auto_focus_enable = EINA_TRUE;
    _elm_config->win_auto_focus_enable = enable;
 }
 
@@ -3803,6 +3999,7 @@ elm_config_window_auto_focus_animate_get(void)
 EAPI void
 elm_config_window_auto_focus_animate_set(Eina_Bool enable)
 {
+   _elm_config->priv.win_auto_focus_animate = EINA_TRUE;
    _elm_config->win_auto_focus_animate = enable;
 }
 
@@ -3815,6 +4012,7 @@ elm_config_popup_scrollable_get(void)
 EAPI void
 elm_config_popup_scrollable_set(Eina_Bool scrollable)
 {
+   _elm_config->priv.popup_scrollable = EINA_TRUE;
    _elm_config->popup_scrollable = scrollable;
 }
 
@@ -4308,6 +4506,9 @@ EAPI void
 elm_config_accel_preference_set(const char *pref)
 {
    _elm_config->priv.accel = EINA_TRUE;
+   _elm_config->priv.gl_depth = EINA_TRUE;
+   _elm_config->priv.gl_stencil = EINA_TRUE;
+   _elm_config->priv.gl_msaa = EINA_TRUE;
    if (pref)
      {
         Eina_Bool hw;
@@ -4360,6 +4561,7 @@ elm_config_indicator_service_get(int rotation)
 EAPI void
 elm_config_transition_duration_factor_set(double factor)
 {
+    _elm_config->priv.transition_duration_factor = EINA_TRUE;
     if (factor < 0.0) return;
     if (_elm_config->transition_duration_factor == factor) return;
     _elm_config->transition_duration_factor = factor;
@@ -4375,7 +4577,7 @@ elm_config_transition_duration_factor_get(void)
 EAPI void
 elm_config_web_backend_set(const char *backend)
 {
-     _elm_config->priv.web_backend = EINA_TRUE;
+   _elm_config->priv.web_backend = EINA_TRUE;
    if (_elm_web_init(backend))
      _elm_config->web_backend = backend;
 }
