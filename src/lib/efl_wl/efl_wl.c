@@ -326,6 +326,7 @@ struct Comp_Surface
    Eina_Bool dead : 1;
    Eina_Bool commit : 1;
    Eina_Bool extracted : 1;
+   Eina_Bool hint_set_weight : 1;
 };
 
 struct Comp_Subsurface
@@ -4997,9 +4998,18 @@ hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct 
      shell_surface_aspect_update(cs);
 }
 
+static void
+hints_set_weight(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, int w, int h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface);
+   cs->hint_set_weight = 1;
+   evas_object_size_hint_weight_set(cs->obj, w / 100., h / 100.);
+}
+
 static const struct efl_hints_interface hints_interface =
 {
    hints_set_aspect,
+   hints_set_weight,
 };
 
 static void
@@ -5496,7 +5506,7 @@ efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
      }
 }
 
-EAPI void *
+void *
 efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb)
 {
    Comp *c;
@@ -5543,7 +5553,7 @@ extracted_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    shell_surface_send_configure(data);
 }
 
-EAPI Eina_Bool
+Eina_Bool
 efl_wl_surface_extract(Evas_Object *surface)
 {
    Comp_Surface *cs;

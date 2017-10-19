@@ -14,6 +14,11 @@
       <arg name="height" type="uint"/>
       <arg name="aspect" type="uint" enum="aspect"/>
     </request>
+    <request name="set_weight">
+      <arg name="surface" type="object" interface="zxdg_toplevel_v6"/>
+      <arg name="width" type="int"/>
+      <arg name="height" type="int"/>
+    </request>
   </interface>
 
 </protocol>
