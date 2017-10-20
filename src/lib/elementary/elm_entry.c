@@ -1255,7 +1255,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (elm_widget_focus_get(obj) && sd->editable)
+   if (efl_ui_focus_object_focus_get(obj) && sd->editable)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");

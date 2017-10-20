@@ -5434,9 +5434,10 @@ EOLIAN static void
 _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool focus)
 {
    pd->focused = focus;
-   elm_obj_widget_on_focus_update(obj, NULL);
 
    efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
+
+   elm_obj_widget_on_focus_update(obj, NULL);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
