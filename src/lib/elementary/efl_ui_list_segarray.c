@@ -9,6 +9,13 @@
 
 #include <assert.h>
 
+#undef DBG
+#define DBG(...) do { \
+    fprintf(stderr, __FILE__ ":" "%d %s ", __LINE__, __PRETTY_FUNCTION__); \
+    fprintf(stderr,  __VA_ARGS__);                                     \
+    fprintf(stderr, "\n"); fflush(stderr);                              \
+  } while(0)
+
 static Eina_Rbtree_Direction _rbtree_compare(Eina_Rbtree const* left, Eina_Rbtree const* right, void* data EINA_UNUSED)
 {
    Efl_Ui_List_SegArray_Node const *nl = (void const*)left, *nr = (void const*)right;
@@ -64,12 +71,14 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
              first_node = NULL;
            else
              array_first = first_node->first;
+           eina_iterator_free(pre_iterator);
         }
-        {
-           Eina_Iterator* post_iterator = eina_rbtree_iterator_postfix(segarray->root);
-           if(!eina_iterator_next(post_iterator, (void**)&last_node))
-             last_node = NULL;
-        }
+        /* { */
+        /*    Eina_Iterator* post_iterator = eina_rbtree_iterator_postfix(segarray->root); */
+        /*    if(!eina_iterator_next(post_iterator, (void**)&last_node)) */
+        /*      last_node = NULL; */
+        /*    eina_iterator_free(post_iterator); */
+        /* } */
      }
 
    EINA_ACCESSOR_FOREACH(accessor, i, children)
@@ -77,11 +86,19 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         // if prefix'ing
         if((first + i < array_first) || !efl_ui_list_segarray_count(segarray))
           {
+             // count is zero
+             DBG("prefixing count: %d", efl_ui_list_segarray_count(segarray));
              // if no first_node
              if(!first_node)
                {
                   first_node = _alloc_node(segarray, i + first, segarray->array_initial_size);
                   first_node->pointers[0] = _create_item(children, first + i);
+                  first_node->length++;
+                  segarray->count++;
+               }
+             else
+               {
+                  DBG("there is a first node");
                }
              /* else if() */
              /*   { */
@@ -90,16 +107,21 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
           }
         else if(first + i < array_first + efl_ui_list_segarray_count(segarray))
           {
-             
+            DBG("insert is in the middle");
+
+            
           }
-        else // suffix'ing
-          {
-             assert(last_node);
-             if(last_node->max < last_node->length)
-               {
-                  last_node->pointers[last_node->length++] = _create_item(children, first + i);
-               }
-          }
+        /* else // suffix'ing */
+        /*   { */
+        /*      DBG("suffixing"); */
+        /*      assert(!!last_node == !!first_node); */
+        /*      if(last_node->max < last_node->length) */
+        /*        { */
+        /*           last_node->pointers[last_node->length++] = _create_item(children, first + i); */
+        /*           ++last_node->length; */
+        /*           segarray->count++; */
+        /*        } */
+        /*   } */
      }
 }
 
