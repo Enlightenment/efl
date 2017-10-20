@@ -15,12 +15,11 @@
 EOLIAN static void
 _efl_ui_pageindicator_efl_gfx_size_set(Eo *obj,
                                        Efl_Ui_Pageindicator_Data *sd,
-                                       Evas_Coord w,
-                                       Evas_Coord h)
+                                       Eina_Size2D sz)
 {
-   efl_gfx_size_set(sd->box, w, h);
+   efl_gfx_size_set(sd->box, sz);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 static void

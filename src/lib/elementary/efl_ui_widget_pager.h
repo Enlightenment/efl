@@ -65,7 +65,7 @@ typedef struct _Efl_Ui_Pager_Data
       Eina_Bool             jump;
    } change;
 
-   Efl_Orient               orientation;
+   Efl_Ui_Dir               dir;
    Efl_Page_Transition     *transition;
 
    Eina_Bool                move_started : 1;

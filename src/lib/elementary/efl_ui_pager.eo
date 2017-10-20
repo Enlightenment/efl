@@ -1,4 +1,4 @@
-class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Orientation)
+class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
 {
    [[Efl ui pager class]]
    event_prefix: efl_ui_pager;
@@ -47,7 +47,7 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Orientation)
       Efl.Pack.Linear.pack_end;
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Orientation.orientation { set; get; }
+      Efl.Ui.Direction.direction { set; get; }
    }
    events {
       updated; [[Called when pager is scrolled]]

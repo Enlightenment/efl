@@ -35,25 +35,24 @@ _efl_ui_pagecontrol_efl_canvas_group_group_add(Eo *obj,
    sd->cnt = 0;
    sd->page = 0;
    sd->ratio = 0.0;
-   sd->orientation = EFL_ORIENT_HORIZONTAL;
+   sd->dir = EFL_UI_DIR_HORIZONTAL;
 }
 
 EOLIAN static void
 _efl_ui_pagecontrol_efl_gfx_size_set(Eo *obj,
                                      Efl_Ui_Pagecontrol_Data *sd,
-                                     Evas_Coord w,
-                                     Evas_Coord h)
+                                     Eina_Size2D sz)
 {
-   if ((sd->w == w) && (sd->h == h)) return;
+   if ((sd->w == sz.w) && (sd->h == sz.h)) return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 
-   sd->w = w;
-   sd->h = h;
+   sd->w = sz.w;
+   sd->h = sz.h;
 
-   efl_gfx_size_set(sd->event, w, h);
-   efl_gfx_size_set(sd->viewport.foreclip, w, h);
-   efl_gfx_size_set(sd->viewport.backclip, w, h);
+   efl_gfx_size_set(sd->event, sz);
+   efl_gfx_size_set(sd->viewport.foreclip, sz);
+   efl_gfx_size_set(sd->viewport.backclip, sz);
 
    efl_ui_pagecontrol_update(obj);
 }
@@ -61,19 +60,18 @@ _efl_ui_pagecontrol_efl_gfx_size_set(Eo *obj,
 EOLIAN static void
 _efl_ui_pagecontrol_efl_gfx_position_set(Eo *obj,
                                          Efl_Ui_Pagecontrol_Data *sd,
-                                         Evas_Coord x,
-                                         Evas_Coord y)
+                                         Eina_Position2D pos)
 {
-   if ((sd->x == x) && (sd->y == y)) return;
+   if ((sd->x == pos.x) && (sd->y == pos.y)) return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
-   sd->x = x;
-   sd->y = y;
+   sd->x = pos.x;
+   sd->y = pos.y;
 
-   efl_gfx_position_set(sd->event, x, y);
-   efl_gfx_position_set(sd->viewport.foreclip, x, y);
-   efl_gfx_position_set(sd->viewport.backclip, x, y);
+   efl_gfx_position_set(sd->event, pos);
+   efl_gfx_position_set(sd->viewport.foreclip, pos);
+   efl_gfx_position_set(sd->viewport.backclip, pos);
 }
 
 EOLIAN static int

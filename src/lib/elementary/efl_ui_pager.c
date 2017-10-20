@@ -43,7 +43,7 @@ _job(void *data)
 
    sd->job = NULL;
 
-   if (sd->orientation == EFL_ORIENT_HORIZONTAL)
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
      t = ((double)sd->mouse_down.x - (double)sd->mouse_x) / (double)sd->w;
    else
      t = ((double)sd->mouse_down.y - (double)sd->mouse_y) / (double)sd->h;
@@ -275,8 +275,6 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *sd)
    sd->event = evas_object_rectangle_add(evas_object_evas_get(obj));
 
    evas_object_color_set(sd->event, 0, 0, 0, 0);
-   efl_gfx_position_set(sd->event, sd->x, sd->y);
-   efl_gfx_size_set(sd->event, sd->w, sd->h);
    efl_gfx_visible_set(sd->event, EINA_TRUE);
 
    evas_object_event_callback_add(sd->event, EVAS_CALLBACK_MOUSE_DOWN,
@@ -298,7 +296,7 @@ _efl_ui_pager_efl_canvas_group_group_add(Eo *obj,
    pd->cnt = 0;
    pd->page_info_num = 5; //TEMP
    pd->move = 0.0;
-   pd->orientation = EFL_ORIENT_HORIZONTAL;
+   pd->dir = EFL_UI_DIR_HORIZONTAL;
 
    pd->viewport.foreclip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(pd->viewport.foreclip, EINA_TRUE);
@@ -330,19 +328,18 @@ _page_info_job(void *data)
 EOLIAN static void
 _efl_ui_pager_efl_gfx_size_set(Eo *obj,
                                Efl_Ui_Pager_Data *sd,
-                               Evas_Coord w,
-                               Evas_Coord h)
+                               Eina_Size2D sz)
 {
-   if ((sd->w == w) && (sd->h == h)) return;
+   if ((sd->w == sz.w) && (sd->h == sz.h)) return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
 
-   sd->w = w;
-   sd->h = h;
+   sd->w = sz.w;
+   sd->h = sz.h;
 
-   efl_gfx_size_set(sd->event, w, h);
-   efl_gfx_size_set(sd->viewport.foreclip, w, h);
-   efl_gfx_size_set(sd->viewport.backclip, w, h);
+   efl_gfx_size_set(sd->event, sz);
+   efl_gfx_size_set(sd->viewport.foreclip, sz);
+   efl_gfx_size_set(sd->viewport.backclip, sz);
 
    if (sd->page_info_job) ecore_job_del(sd->page_info_job);
    sd->page_info_job = ecore_job_add(_page_info_job, sd);
@@ -351,19 +348,18 @@ _efl_ui_pager_efl_gfx_size_set(Eo *obj,
 EOLIAN static void
 _efl_ui_pager_efl_gfx_position_set(Eo *obj,
                                    Efl_Ui_Pager_Data *sd,
-                                   Evas_Coord x,
-                                   Evas_Coord y)
+                                   Eina_Position2D pos)
 {
-   if ((sd->x == x) && (sd->y == y)) return;
+   if ((sd->x == pos.x) && (sd->y == pos.y)) return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), x, y);
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
 
-   sd->x = x;
-   sd->y = y;
+   sd->x = pos.x;
+   sd->y = pos.y;
 
-   efl_gfx_position_set(sd->event, x, y);
-   efl_gfx_position_set(sd->viewport.foreclip, x, y);
-   efl_gfx_position_set(sd->viewport.backclip, x, y);
+   efl_gfx_position_set(sd->event, pos);
+   efl_gfx_position_set(sd->viewport.foreclip, pos);
+   efl_gfx_position_set(sd->viewport.backclip, pos);
 
    if (sd->page_info_job) ecore_job_del(sd->page_info_job);
    sd->page_info_job = ecore_job_add(_page_info_job, sd);
@@ -494,23 +490,23 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
    sd->transition = transition;
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_pager_efl_orientation_orientation_get(Eo *obj EINA_UNUSED,
-                                              Efl_Ui_Pager_Data *sd)
+EOLIAN static Efl_Ui_Dir
+_efl_ui_pager_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Pager_Data *sd)
 {
-   return sd->orientation;
+   return sd->dir;
 }
 
 EOLIAN static void
-_efl_ui_pager_efl_orientation_orientation_set(Eo *obj EINA_UNUSED,
-                                              Efl_Ui_Pager_Data *sd,
-                                              Efl_Orient dir)
+_efl_ui_pager_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Pager_Data *sd,
+                                             Efl_Ui_Dir dir)
 {
-   if (dir != EFL_ORIENT_VERTICAL &&
-       dir != EFL_ORIENT_HORIZONTAL)
+   if (dir != EFL_UI_DIR_VERTICAL &&
+       dir != EFL_UI_DIR_HORIZONTAL)
      return;
 
-   sd->orientation = dir;
+   sd->dir = dir;
 }
 
 EOLIAN static void

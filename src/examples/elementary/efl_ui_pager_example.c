@@ -29,11 +29,11 @@ elm_main(int argc,
 
    // Window
    win = efl_add(efl_ui_win_class_get(), NULL, "test", ELM_WIN_BASIC);
-   efl_gfx_size_set(win, WIN_WIDTH, WIN_HEIGHT);
+   efl_gfx_size_set(win, EINA_SIZE2D(WIN_WIDTH, WIN_HEIGHT));
    efl_gfx_visible_set(win, EINA_TRUE);
   
    // Layout
-   layout = efl_add(ELM_LAYOUT_CLASS, win);
+   layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    efl_gfx_size_hint_weight_set(layout, 1, 1);
    efl_file_set(layout, "pagecontrol.edj", "pagecontrol_example");
    efl_content_set(win, layout);

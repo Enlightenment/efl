@@ -76,8 +76,8 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
      {
         if (pd->move == 0.0)
           {
-             efl_gfx_position_set(pi->obj, pi->x, pi->y);
-             efl_gfx_size_set(pi->obj, pi->w, pi->h);
+             efl_gfx_position_set(pi->obj, EINA_POSITION2D(pi->x, pi->y));
+             efl_gfx_size_set(pi->obj, EINA_SIZE2D(pi->w, pi->h));
           }
         else
           {
@@ -93,8 +93,8 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
              pi->tw = tpi->w * t + pi->w * (1 - t);
              pi->th = tpi->h * t + pi->h * (1 - t);
 
-             efl_gfx_position_set(pi->obj, pi->tx, pi->ty);
-             efl_gfx_size_set(pi->obj, pi->tw, pi->th);
+             efl_gfx_position_set(pi->obj, EINA_POSITION2D(pi->tx, pi->ty));
+             efl_gfx_size_set(pi->obj, EINA_SIZE2D(pi->tw, pi->th));
 
              if (((pd->move < 0) && (tpi->id > pi->id))
                  || ((pd->move > 0) && (tpi->id < pi->id)))
