@@ -92,7 +92,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 {
    Efl_Ui_List_LayoutItem* layout_item;
    Efl_Ui_List_Precise_Layouter_Size* size;
-   int i;
+   int i = 0;
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
    Evas_Coord ow, oh, want, minw, minh;
    int boxx, boxy, boxw, boxh, length, /*pad, */extra = 0, rounding = 0;
@@ -105,10 +105,11 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    DBG("layout_do");
    
    EINA_SAFETY_ON_NULL_RETURN(items);
+   printf("** >>> %s first %d count %d\n", __FUNCTION__, first, count);
 
    if(!pd->initialized)
      {
-       efl_ui_list_model_load_range_set(modeler, 0, -1); // load all
+       efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
        pd->size_information = eina_hash_pointer_new(&free);
        pd->initialized = EINA_TRUE;
      }
@@ -117,6 +118,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    EINA_ACCESSOR_FOREACH(items, i, layout_item)
      {
         DBG("size %d", size);
+        printf("item %d\n", i);
         size = eina_hash_find(pd->size_information, &layout_item);
         if(!size)
         {
@@ -141,8 +143,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
              pd->width = size->min_width;
 
            eina_hash_add(pd->size_information, &layout_item, size);
-           /* pd->weight.x += item->wx; */
-           /* pd->weight.y += item->wy; */
         }
      }
 
@@ -203,7 +203,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
      {
         int pad;
         length = boxh;
-        want = 100;//pd->realized.h;
+        want = pd->height;
         pad = 1;//pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
 
         // padding can not be squeezed (note: could make it an option)
@@ -251,15 +251,12 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    // cache size of new items
    EINA_ACCESSOR_FOREACH(items, i, layout_item)
      {
-/*    EINA_INARRAY_FOREACH(&pd->items.array, it) */
-/*      { */
-/*         litem = *it; */
         double cx, cy, cw, ch, x, y, w, h;
         double align[2];
         int item_pad[4];
         Eina_Size2D max;
         int pad = 1;
-        
+
         size = eina_hash_find(pd->size_information, &layout_item);
 
         assert(layout_item->layout != NULL);
