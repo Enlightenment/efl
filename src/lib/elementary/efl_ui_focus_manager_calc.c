@@ -1097,12 +1097,9 @@ _prev_item(Node *node)
 }
 
 static Node*
-_next(Node *node)
+_next_unprepare_node(Node *node)
 {
    Node *n;
-
-   //prepare the node itself so if there are probebly no children, then they are here.
-   efl_ui_focus_object_prepare_logical(node->focusable);
 
    //Case 1 we are having children
    //But only enter the children if it does NOT have a redirect manager
@@ -1142,6 +1139,15 @@ _next(Node *node)
 
    //this is then the root again
    return NULL;
+}
+
+static Node*
+_next(Node *node)
+{
+   //prepare the node itself so if there are probebly no children, then they are here.
+   efl_ui_focus_object_prepare_logical(node->focusable);
+
+   return _next_unprepare_node(node);
 }
 
 static Node*
@@ -1272,7 +1278,32 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED
      }
 }
 
+static Node*
+_request_subchild(Node *node)
+{
+   //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
+   Node *target = NULL;
 
+   if (node->tree.children)
+     {
+        target = node;
+
+        //try to find a child that is not logical or has a redirect manager
+        while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
+          {
+             if (target != node)
+               efl_ui_focus_object_prepare_logical(target->focusable);
+
+             target = _next_unprepare_node(target);
+             //abort if we are exceeding the childrens of node
+             if (target == node) target = NULL;
+          }
+
+        F_DBG("Found node %p", target);
+     }
+
+   return target;
+}
 
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
@@ -1296,20 +1327,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
         //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
         efl_ui_focus_object_prepare_logical(node->focusable);
-        if (node->tree.children)
-          {
-             target = node;
 
-             //try to find a child that is not logical or has a redirect manager
-             while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
-               {
-                  target = _next(target);
-                  //abort if we are exceeding the childrens of node
-                  if (target == node) target = NULL;
-               }
-
-             F_DBG("Found node %p", target);
-          }
+        target = _request_subchild(node);
 
         //check if we have found anything
         if (target)
@@ -1617,6 +1636,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_U
   //get now the highest, and unfocus that!
   last = eina_list_last_data_get(pd->focus_stack);
   if (last) efl_ui_focus_object_focus_set(last->focusable, EINA_TRUE);
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_request_subchild(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child_obj)
+{
+   Node *child, *target;
+
+   child = node_get(obj, pd, child_obj);
+   target = _request_subchild(child);
+
+   if (target) return target->focusable;
+   return NULL;
 }
 
 

@@ -106,6 +106,18 @@ interface Efl.Ui.Focus.Manager {
                     this manager object.]]
             }
         }
+        request_subchild {
+            [[Returns a widget that can receive focus
+
+              The returned widget is in a child of the passed param.
+              Its garanteed that child will not be prepared once again,
+              so you can call this function out of a prepare call.
+            ]]
+              params {
+                 child : Efl.Ui.Focus.Object;
+              }
+              return : Efl.Ui.Focus.Object;
+        }
         fetch {
             [[This will fetch the data from a registered node.
 
