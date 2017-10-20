@@ -1695,6 +1695,7 @@ _config_load(void)
    // why are these here? well if they are, it means you can make a gui
    // config recovery app i guess...
    _elm_config = ELM_NEW(Elm_Config);
+   if (!_elm_config) return;
    _elm_config->config_version = ELM_CONFIG_VERSION;
    _elm_config->engine = NULL;
    _elm_config->accel = NULL;
@@ -1829,7 +1830,7 @@ _elm_config_reload_do(void)
    prev_config = _elm_config;
    _elm_config = NULL;
    _config_load();
-   if (prev_config)
+   if ((prev_config) && (_elm_config))
      {
 #define KEEP_VAL(xxx) \
    if (prev_config->priv.xxx) { \
@@ -2022,7 +2023,7 @@ _elm_config_reload_do(void)
         _elm_config->priv = prev_config->priv;
         _config_free(prev_config);
      }
-   _env_get();
+   if (_elm_config) _env_get();
 }
 
 static void
@@ -4100,7 +4101,7 @@ _elm_config_init(void)
    _elm_config_profile_derived_init();
    _profile_fetch_from_conf();
    _config_load();
-   _env_get();
+   if (_elm_config) _env_get();
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_gl_preference, eina_stringshare_del);
    _translation_init();
