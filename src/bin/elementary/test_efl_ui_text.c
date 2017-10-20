@@ -53,11 +53,11 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    efl_text_set(en, "This is a\t small label");
    //                012345678901234567890
    _apply_style(en, 0, 21, "font_size=12 font_weight=bold");
-   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
+   efl_text_halign_set(en, 0.5);
    efl_text_font_weight_set(en, EFL_TEXT_FONT_WEIGHT_BOLD);
 
    en = _create_label(win, bx);
-   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
+   efl_text_halign_set(en, 0.5);
    efl_text_set(en, "This is a text. Is also has\n"
          "newlines. There are several styles applied.");
    _apply_style(en, 40, 45, "font_weight=bold color=#ff0");
@@ -65,7 +65,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    efl_text_multiline_set(en, EINA_TRUE);
 
    en = _create_label(win, bx);
-   efl_text_halign_set(en, EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER);
+   efl_text_halign_set(en, 0.5);
    efl_text_set(en, "By default 'multiline' is disabled.\n"
          "So, \\n would only work if you enable it.");
 

@@ -7,23 +7,13 @@ enum Efl.Text.Format.Wrap {
    hyphenation [[Wrap mode hyphenation]]
 }
 
-enum Efl.Text.Format.Horizontal_Alignment_Type {
-   [[Horizontal alignment of the text]]
-   legacy: efl_text_horizontal_alignment;
-   auto,    [[Respects LTR/RTL (bidirectional) settings]]
-   locale,  [[Respects locale's langauge settings]]
-   left,    [[Text is placed at the left end of the line]]
-   right,   [[Text is placed at the right end of the line]]
-   center,  [[Text is places at the center of the line]]
-   end      [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
-}
-
-enum Efl.Text.Format.Vertical_Alignment_Type {
-   [[Horizontal alignment of the text]]
-   legacy: efl_text_vertical_alignment;
-   top,    [[Text is placed at the top]]
-   center, [[Text is placed at the center]]
-   bottom  [[Text is placed at the bottom]]
+enum Efl.Text.Format.Horizontal_Alignment_Auto_Type {
+   [[Auto-horizontal alignment of the text]]
+   legacy: efl_text_horizontal_alignment_auto;
+   none,   [[No auto-alignment rule]]
+   normal, [[Respects LTR/RTL (bidirectional) settings]]
+   locale, [[Respects locale's langauge settings]]
+   end     [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
 }
 
 interface Efl.Text.Format {
@@ -58,17 +48,24 @@ interface Efl.Text.Format {
          }
       }
 
+      @property halign_auto_type {
+         [[Horizontal alignment of text]]
+         values {
+            value: Efl.Text.Format.Horizontal_Alignment_Auto_Type; [[Alignment type]]
+         }
+      }
+
       @property halign {
          [[Horizontal alignment of text]]
          values {
-            value: Efl.Text.Format.Horizontal_Alignment_Type; [[Alignment type]]
+            value: double; [[Horizontal alignment value]]
          }
       }
 
       @property valign {
          [[Vertical alignment of text]]
          values {
-            value: Efl.Text.Format.Vertical_Alignment_Type; [[Allignment type]]
+            value: double; [[Vertical alignment value]]
          }
       }
 

@@ -308,6 +308,7 @@ Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
       Efl.Text.Format.wrap { get; set; }
       Efl.Text.Format.multiline { get; set; }
       Efl.Text.Format.halign { get; set; }
+      Efl.Text.Format.halign_auto_type { get; set; }
       Efl.Text.Format.valign { get; set; }
       Efl.Text.Format.linegap { get; set; }
       Efl.Text.Format.linerelgap { get; set; }
