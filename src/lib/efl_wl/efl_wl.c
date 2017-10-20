@@ -1413,11 +1413,6 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
      {
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
-        if (cs->shell.popup)
-          {
-             evas_object_size_hint_min_set(cs->obj, buffer->w, buffer->h);
-             evas_object_size_hint_max_set(cs->obj, buffer->w, buffer->h);
-          }
      }
    else if (cs->shell.new)
      shell_surface_init(cs);
