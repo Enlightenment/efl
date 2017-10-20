@@ -14,6 +14,7 @@
 #include "elm_widget_gengrid.h"
 #include "elm_interface_scrollable.h"
 #include "efl_ui_focus_parent_provider_gen.eo.h"
+#include "efl_ui_focus_composition_adapter.eo.h"
 
 #define MY_PAN_CLASS ELM_GENGRID_PAN_CLASS
 
@@ -4234,7 +4235,13 @@ static void
 _gengrid_element_focused(void *data, const Efl_Event *ev)
 {
    ELM_GENGRID_DATA_GET(data, pd);
-   Elm_Widget_Item *item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, ev->info);
+   Elm_Widget_Item *item;
+
+   if (efl_isa(ev->info, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+     item = efl_parent_get(ev->info);
+   else
+     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, ev->info);
+
    if (efl_isa(item, ELM_GENGRID_ITEM_CLASS))
      {
         _elm_gengrid_item_focused(item);
@@ -5733,6 +5740,13 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
 {
    efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
    _item_realize(pd);
+
+   if (!efl_ui_focus_manager_request_subchild(WIDGET(pd), obj))
+     {
+        Eo *adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, VIEW(pd) , efl_ui_focus_composition_adapter_canvas_object_set(efl_added,  VIEW(pd)));
+
+        efl_ui_focus_manager_calc_register(WIDGET(pd), adapter, obj, NULL);
+     }
 }
 
 
