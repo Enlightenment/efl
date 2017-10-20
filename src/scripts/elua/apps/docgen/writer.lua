@@ -42,7 +42,33 @@ local allowed_incflags = {
     aftereach = ""
 }
 
-M.Writer = util.Object:clone {
+local writers = {}
+
+local Buffer = {
+    __ctor = function(self)
+        self.buf = {}
+    end,
+
+    write_raw = function(self, ...)
+        for i, v in ipairs({ ... }) do
+            self.buf[#self.buf + 1] = v
+        end
+        return self
+    end,
+
+    finish = function(self)
+        self.result = table.concat(self.buf)
+        self.buf = {}
+        return self.result
+    end
+}
+
+M.set_backend = function(bend)
+    M.Writer = assert(writers[bend], "invalid generation backend")
+    M.Buffer = M.Writer:clone(Buffer)
+end
+
+writers["dokuwiki"] = util.Object:clone {
     INCLUDE_PAGE = 0,
     INCLUDE_SECTION = 1,
     INCLUDE_NAMESPACE = 2,
@@ -429,25 +455,6 @@ M.Writer = util.Object:clone {
 
     finish = function(self)
         self.file:close()
-    end
-}
-
-M.Buffer = M.Writer:clone {
-    __ctor = function(self)
-        self.buf = {}
-    end,
-
-    write_raw = function(self, ...)
-        for i, v in ipairs({ ... }) do
-            self.buf[#self.buf + 1] = v
-        end
-        return self
-    end,
-
-    finish = function(self)
-        self.result = table.concat(self.buf)
-        self.buf = {}
-        return self.result
     end
 }
 
