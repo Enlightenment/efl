@@ -1578,6 +1578,8 @@ getopt.parse {
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
         { nil, "disable-folded", false, help = "Disable folded plugin usage." },
         { nil, "disable-title", false, help = "Disable title plugin usage." },
+        { "m", "use-markdown", false,
+            help = "Generate Markdown instead of DokuWiki syntax." },
         { nil, "pass", true, help = "The pass to run (optional) "
             .. "(rm, ref, clist, classes, types, vars, stats or class name)." }
     },
@@ -1608,6 +1610,7 @@ getopt.parse {
         end
         dr = dutil.path_join(dr, dutil.nspace_to_path(rootns))
         dutil.init(dr, rootns)
+        writer.set_backend("dokuwiki")
         if #args == 0 then
             dtree.scan_directory()
         else
