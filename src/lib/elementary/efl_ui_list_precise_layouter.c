@@ -8,6 +8,13 @@
 
 #include "elm_priv.h"
 
+#undef DBG
+#define DBG(...) do { \
+    fprintf(stderr, __FILE__ ":" "%d %s ", __LINE__, __PRETTY_FUNCTION__); \
+    fprintf(stderr,  __VA_ARGS__);                                     \
+    fprintf(stderr, "\n"); fflush(stderr);                              \
+  } while(0)
+
 #define MY_CLASS EFL_UI_LIST_PRECISE_LAYOUTER_CLASS
 
 typedef struct _Efl_Ui_List_Precise_Layouter_Data
@@ -95,6 +102,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Eina_List *order = NULL;
    int pad[4];
 
+   DBG("layout_do");
+   
    EINA_SAFETY_ON_NULL_RETURN(items);
 
    if(!pd->initialized)
