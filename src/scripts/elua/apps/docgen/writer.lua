@@ -63,6 +63,79 @@ local Buffer = {
     end
 }
 
+local write_include = function(self, tp, name, flags)
+    local it_to_tp = {
+        [self.INCLUDE_PAGE] = "page",
+        [self.INCLUDE_SECTION] = "section",
+        [self.INCLUDE_NAMESPACE] = "namespace",
+        [self.INCLUDE_TAG] = "tagtopic"
+    }
+    if type(name) == "table" then
+        if name[#name] == true then
+            name[#name] = nil
+            name = ":" .. root_nspace .. ":auto:"
+                       .. table.concat(name, ":")
+        elseif name[#name] == false then
+            name[#name] = nil
+            name = ":" .. root_nspace .. ":user:"
+                       .. table.concat(name, ":")
+        else
+            name = table.concat(name, ":")
+        end
+    end
+    self:write_raw("{{", it_to_tp[tp], ">", name);
+    if flags then
+        if tp == self.INCLUDE_SECTION and flags.section then
+            self:write_raw("#", flags.section)
+        end
+        flags.section = nil
+        local flstr = {}
+        for k, v in pairs(flags) do
+            local allow = allowed_incflags[k]
+            if allow ~= nil then
+                if type(allow) == "boolean" then
+                    flstr[#flstr + 1] = k
+                elseif type(allow) == "number" or type(allow) == "string" then
+                    if type(v) ~= type(allow) then
+                        error("invalid value type for flag " .. k)
+                    end
+                    flstr[#flstr + 1] = k .. "=" .. v
+                elseif type(allow) == "table" then
+                    if type(allow[1]) == "table" then
+                        local valid = false
+                        for i, vv in ipairs(allow[1]) do
+                            if v == vv then
+                                flstr[#flstr + 1] = k .. "=" .. v
+                                valid = true
+                                break
+                            end
+                        end
+                        if not valid then
+                            error("invalid value " .. v .. " for flag " .. k)
+                        end
+                    elseif type(allow[1]) == "string" and
+                           type(allow[2]) == "string" then
+                        if v then
+                            flstr[#flstr + 1] = allow[1]
+                        else
+                            flstr[#flstr + 1] = allow[2]
+                        end
+                    end
+                end
+            else
+                error("invalid include flag: " .. tostring(k))
+            end
+        end
+        flstr = table.concat(flstr, "&")
+        if #flstr > 0 then
+            self:write_raw("&", flstr)
+        end
+    end
+    self:write_raw("}}")
+    self:write_nl()
+    return self
+end
+
 M.set_backend = function(bend)
     M.Writer = assert(writers[bend], "invalid generation backend")
     M.Buffer = M.Writer:clone(Buffer)
@@ -82,7 +155,7 @@ writers["dokuwiki"] = util.Object:clone {
             subs = dutil.nspace_to_path(path)
         end
         dutil.mkdir_p(subs)
-        self.file = assert(io.open(dutil.make_page(subs), "w"))
+        self.file = assert(io.open(dutil.make_page(subs, "txt"), "w"))
         if title then
             if M.has_feature("title") then
                 self:write_raw("<title>", title, "</title>")
@@ -112,79 +185,8 @@ writers["dokuwiki"] = util.Object:clone {
         return self
     end,
 
-    write_include = function(self, tp, name, flags, nonl)
-        local it_to_tp = {
-            [self.INCLUDE_PAGE] = "page",
-            [self.INCLUDE_SECTION] = "section",
-            [self.INCLUDE_NAMESPACE] = "namespace",
-            [self.INCLUDE_TAG] = "tagtopic"
-        }
-        if type(name) == "table" then
-            if name[#name] == true then
-                name[#name] = nil
-                name = ":" .. root_nspace .. ":auto:"
-                           .. table.concat(name, ":")
-            elseif name[#name] == false then
-                name[#name] = nil
-                name = ":" .. root_nspace .. ":user:"
-                           .. table.concat(name, ":")
-            else
-                name = table.concat(name, ":")
-            end
-        end
-        self:write_raw("{{", it_to_tp[tp], ">", name);
-        if flags then
-            if tp == self.INCLUDE_SECTION and flags.section then
-                self:write_raw("#", flags.section)
-            end
-            flags.section = nil
-            local flstr = {}
-            for k, v in pairs(flags) do
-                local allow = allowed_incflags[k]
-                if allow ~= nil then
-                    if type(allow) == "boolean" then
-                        flstr[#flstr + 1] = k
-                    elseif type(allow) == "number" or type(allow) == "string" then
-                        if type(v) ~= type(allow) then
-                            error("invalid value type for flag " .. k)
-                        end
-                        flstr[#flstr + 1] = k .. "=" .. v
-                    elseif type(allow) == "table" then
-                        if type(allow[1]) == "table" then
-                            local valid = false
-                            for i, vv in ipairs(allow[1]) do
-                                if v == vv then
-                                    flstr[#flstr + 1] = k .. "=" .. v
-                                    valid = true
-                                    break
-                                end
-                            end
-                            if not valid then
-                                error("invalid value " .. v .. " for flag " .. k)
-                            end
-                        elseif type(allow[1]) == "string" and
-                               type(allow[2]) == "string" then
-                            if v then
-                                flstr[#flstr + 1] = allow[1]
-                            else
-                                flstr[#flstr + 1] = allow[2]
-                            end
-                        end
-                    end
-                else
-                    error("invalid include flag: " .. tostring(k))
-                end
-            end
-            flstr = table.concat(flstr, "&")
-            if #flstr > 0 then
-                self:write_raw("&", flstr)
-            end
-        end
-        self:write_raw("}}")
-        if not nonl then
-            self:write_nl()
-        end
-        return self
+    write_include = function(self, tp, name, flags)
+        return write_include(self, tp, name, flags)
     end,
 
     write_editable = function(self, ns, name)
