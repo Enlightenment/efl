@@ -17,7 +17,6 @@
 #define RECT_INTERSECT(x1, y1, w1, h1, x2, y2, w2, h2) \
    ((INTERSECT(x1, w1, x2, w2)) && (INTERSECT(y1, h1, y2, h2)))
 
-#define DEBUG 0
 
 static void
 _efl_ui_pager_update(Eo *obj)
@@ -74,8 +73,6 @@ static Eina_Bool
 _animator(void *data, double pos)
 {
    Evas_Object *obj = data;
-   Eina_List *list;
-   Page_Info *pi;
    double p;
 
    EFL_UI_PAGER_DATA_GET(obj, sd);
@@ -101,6 +98,9 @@ _animator(void *data, double pos)
 
    if (pos < 1.0) return ECORE_CALLBACK_RENEW;
 
+   if (sd->move == 1.0 || sd->move == -1.0)
+     efl_page_transition_finish(sd->transition);
+
    sd->animator = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
@@ -117,6 +117,8 @@ _mouse_down_cb(void *data,
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+
+   if (sd->move != 0.0) return; //FIXME
 
    ELM_SAFE_FREE(sd->animator, ecore_animator_del);
 
@@ -184,7 +186,10 @@ _mouse_up_cb(void *data,
    ELM_SAFE_FREE(sd->job, ecore_job_del);
 
    if (sd->move == 1.0 || sd->move == -1.0)
-     return;
+     {
+        efl_page_transition_finish(sd->transition);
+        return;
+     }
 
    if (sd->move < 0.0)
      {
@@ -221,35 +226,14 @@ _page_info_set(Eo *obj, Efl_Ui_Pager_Data *pd)
    Page_Info *pi;
    int i, tmp;
 
-#if DEBUG
-   int rgba[5][4] = {
-      {255, 0, 0, 255},
-      {0, 255, 0, 255},
-      {0, 0, 255, 255},
-      {255, 255, 0, 255},
-      {255, 0, 255, 255}
-   };
-#endif
    for (i = 0; i < pd->page_info_num; i++)
      {
         page_info = (Page_Info *)malloc(sizeof(Page_Info));
         page_info->id = i;
         page_info->pos = i - 2;
 
-#if DEBUG
-        page_info->obj = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                                efl_provider_find(obj, EVAS_CANVAS_CLASS));
-        efl_gfx_visible_set(page_info->obj, EINA_TRUE);
-
-        efl_gfx_color_set(page_info->obj,
-                          rgba[i][0],
-                          rgba[i][1],
-                          rgba[i][2],
-                          rgba[i][3]);
-#else
         page_info->obj = efl_add(EFL_UI_BOX_CLASS, obj);
         efl_gfx_visible_set(page_info->obj, EINA_TRUE);
-#endif
 
         pd->page_infos = eina_list_append(pd->page_infos, page_info);
 
@@ -294,7 +278,8 @@ _efl_ui_pager_efl_canvas_group_group_add(Eo *obj,
    elm_widget_sub_object_parent_add(obj);
 
    pd->cnt = 0;
-   pd->page_info_num = 5; //TEMP
+   pd->current_page = -1;
+   pd->page_info_num = 5; //FIXME
    pd->move = 0.0;
    pd->dir = EFL_UI_DIR_HORIZONTAL;
 
@@ -304,9 +289,6 @@ _efl_ui_pager_efl_canvas_group_group_add(Eo *obj,
 
    pd->viewport.backclip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(pd->viewport.backclip, EINA_TRUE);
-
-   pd->hidden_clip = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_static_clip_set(pd->hidden_clip, EINA_TRUE);
 
    _page_info_set(obj, pd);
    _event_handler_create(obj, pd);
@@ -384,14 +366,37 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
    pd->content_list = eina_list_append(pd->content_list, subobj);
    efl_gfx_stack_raise(pd->event);
 
-   pi = eina_list_nth(pd->page_infos, pd->cnt);
-   if (pi)
+   if (pd->cnt == 0)
      {
+        pd->current_page = 0;
+        pi = eina_list_nth(pd->page_infos, (pd->current_page + 2));
         efl_pack(pi->obj, subobj);
+        pi->content_num = 0;
+        pi->filled = EINA_TRUE;
+        evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   else if (pd->cnt == (pd->current_page + 1))
+     {
+        pi = eina_list_nth(pd->page_infos, (pd->cnt + 2));
+        efl_pack(pi->obj, subobj);
+        pi->content_num = pd->current_page + 1;
+        pi->filled = EINA_TRUE;
+        evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   else
+     {
+        pi = eina_list_nth(pd->page_infos, 1);
+        if (pi->filled) efl_pack_unpack_all(pi->obj);
+        efl_pack(pi->obj, subobj);
+        pi->content_num = pd->cnt;
+        pi->filled = EINA_TRUE;
         evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
    pd->cnt += 1;
+
    _efl_ui_pager_update(obj);
 
    return EINA_TRUE;

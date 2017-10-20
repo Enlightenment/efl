@@ -66,6 +66,8 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
 
    EFL_UI_PAGER_DATA_GET(pager, pd);
 
+   int tmp_id;
+   Eo *tmp;
    Eina_List *list;
    Page_Info *pi, *tpi;
 
@@ -85,9 +87,7 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
                tpi = pi->next;
              else
                tpi = pi->prev;
-#if 0
-             ERR("pi %d tpi %d", pi->id, tpi->id);
-#endif
+
              pi->tx = tpi->x * t + pi->x * (1 - t);
              pi->ty = tpi->y * t + pi->y * (1 - t);
              pi->tw = tpi->w * t + pi->w * (1 - t);
@@ -101,18 +101,51 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
                {
                   if (RECT_INTERSECT(pi->tx, pi->ty, pi->tw, pi->th,
                                      pd->x, pd->y, pd->w, pd->h))
-                    efl_canvas_object_clip_set(pi->obj, pd->viewport.foreclip);
+                    {
+                       if (pi->pos == 2)
+                         {
+                            tmp_id = (pd->current_page + 2) % pd->cnt;
+                            tmp = eina_list_nth(pd->content_list, tmp_id);
+                            if (pi->filled) efl_pack_unpack_all(pi->obj);
+                            efl_pack(pi->obj, tmp);
+                            pi->content_num = tmp_id;
+                            pi->filled = EINA_TRUE;
+                         }
+                       else if (pi->pos == -2)
+                         {
+                            tmp_id = (pd->current_page - 2 + pd->cnt) % pd->cnt;
+                            tmp = eina_list_nth(pd->content_list, tmp_id);
+                            if (pi->filled) efl_pack_unpack_all(pi->obj);
+                            efl_pack(pi->obj, tmp);
+                            pi->content_num = tmp_id;
+                            pi->filled = EINA_TRUE;
+                         }
+                       efl_canvas_object_clip_set(pi->obj, pd->viewport.foreclip);
+                    }
+                  else
+                    efl_canvas_object_clip_set(pi->obj, pd->viewport.backclip);
                }
 
           }
      }
+}
 
-   //FIXME if the mouse pointer goes out of the screen and come back,
-   //      pd->move should be adjusted
-   //      the current code breaks the behavior
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
+EOLIAN static void
+_efl_page_transition_scroll_efl_page_transition_finish(Eo *obj EINA_UNUSED,
+                                                       Efl_Page_Transition_Scroll_Data *_pd EINA_UNUSED)
+{
+   Evas_Object *pager = _pd->pager;
+
+   if (!pager) return;
+
+   EFL_UI_PAGER_DATA_GET(pager, pd);
+
+   Eina_List *list;
+   Page_Info *pi, *tpi;
+
+   if (pd->move == 1.0)
      {
-        if (pd->move == 1.0)
+        EINA_LIST_FOREACH(pd->page_infos, list, pi)
           {
              pi->id = (pi->id - 1 + pd->page_info_num) % pd->page_info_num;
              pi->pos = pi->id - 2;
@@ -125,7 +158,11 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
              if (pi->id == 0 || pi->id == 4)
                efl_canvas_object_clip_set(pi->obj, pd->viewport.backclip);
           }
-        else if (pd->move == -1.0)
+        pd->current_page += 1;
+     }
+   else if (pd->move == -1.0)
+     {
+        EINA_LIST_FOREACH(pd->page_infos, list, pi)
           {
              pi->id = (pi->id + 1) % pd->page_info_num;
              pi->pos = pi->id - 2;
@@ -138,7 +175,10 @@ _efl_page_transition_scroll_efl_page_transition_update(Eo *obj EINA_UNUSED,
              if (pi->id == 0 || pi->id == 4)
                efl_canvas_object_clip_set(pi->obj, pd->viewport.backclip);
           }
+        pd->current_page -= 1;
      }
+
+   pd->move = 0.0;
 }
 
 #include "efl_page_transition_scroll.eo.c"

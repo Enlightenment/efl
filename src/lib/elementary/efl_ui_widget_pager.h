@@ -8,14 +8,15 @@
 
 typedef struct _Page_Info
 {
-   Evas_Map *map;
-   int id;
-   int pos;
-   Eo *obj;
-   Evas_Coord x, y, w, h;
-   Evas_Coord tx, ty, tw, th;
-   struct _Page_Info *prev, *next;
-   int a;
+   Evas_Map                *map;
+   int                      id;
+   int                      pos;
+   int                      content_num;
+   Eo                      *obj;
+   Evas_Coord               x, y, w, h;
+   Evas_Coord               tx, ty, tw, th;
+   struct _Page_Info       *prev, *next;
+   Eina_Bool                filled;
 
 } Page_Info;
 
@@ -24,8 +25,8 @@ typedef struct _Efl_Ui_Pager_Data
    Eo                      *obj;
    Eina_List               *page_infos;
    Eina_List               *content_list;
+
    Evas_Object             *event;
-   Evas_Object             *hidden_clip;
    Ecore_Animator          *animator;
    Ecore_Job               *job;
    Ecore_Job               *page_info_job;
@@ -53,6 +54,7 @@ typedef struct _Efl_Ui_Pager_Data
 
    int                      cnt;
    int                      page;
+   int                      current_page;
    int                      page_info_num;
    double                   ratio;
    double                   move;

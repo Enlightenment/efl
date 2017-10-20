@@ -24,8 +24,10 @@ EAPI_MAIN int
 elm_main(int argc,
          char **argv)
 {
-   Eo *win, *layout, *obj, *ind, *rect, *btn;
+   Eo *win, *layout, *obj, *ind, *page, *rect, *btn;
    Efl_Page_Transition *tran;
+   char buf[16];
+   int i;
 
    // Window
    win = efl_add(efl_ui_win_class_get(), NULL, "test", ELM_WIN_BASIC);
@@ -58,35 +60,14 @@ elm_main(int argc,
 #endif
 
    // Pages
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                  efl_provider_find(obj, EVAS_CANVAS_CLASS));
-   efl_gfx_visible_set(rect, EINA_TRUE);
-   efl_gfx_color_set(rect, 255, 0, 0, 255);
-   efl_pack_end(obj, rect);
-
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                  efl_provider_find(obj, EVAS_CANVAS_CLASS));
-   efl_gfx_visible_set(rect, EINA_TRUE);
-   efl_gfx_color_set(rect, 0, 255, 0, 255);
-   efl_pack_end(obj, rect);
-
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                  efl_provider_find(obj, EVAS_CANVAS_CLASS));
-   efl_gfx_visible_set(rect, EINA_TRUE);
-   efl_gfx_color_set(rect, 0, 0, 255, 255);
-   efl_pack_end(obj, rect);
-
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                  efl_provider_find(obj, EVAS_CANVAS_CLASS));
-   efl_gfx_visible_set(rect, EINA_TRUE);
-   efl_gfx_color_set(rect, 255, 255, 0, 255);
-   efl_pack_end(obj, rect);
-
-   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
-                  efl_provider_find(obj, EVAS_CANVAS_CLASS));
-   efl_gfx_visible_set(rect, EINA_TRUE);
-   efl_gfx_color_set(rect, 0, 255, 255, 255);
-   efl_pack_end(obj, rect);
+   for (i = 1; i <= 10; i++) {
+      page = efl_add(EFL_UI_LAYOUT_CLASS, obj);
+      efl_file_set(page, "pagecontrol.edj", "page");
+      snprintf(buf, 16, "Page %d", i);
+      efl_text_set(efl_part(page, "text"), buf);
+      efl_gfx_visible_set(page, EINA_TRUE);
+      efl_pack_end(obj, page);
+   }
 
    elm_run();
 

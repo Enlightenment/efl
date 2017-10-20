@@ -26,8 +26,12 @@ _efl_page_transition_init(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_page_transition_update(Eo *obj EINA_UNUSED,
                             Efl_Page_Transition_Data *_pd EINA_UNUSED)
-                            //Efl_Canvas_Object *target EINA_UNUSED,
-                            //double position EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_efl_page_transition_finish(Eo *obj EINA_UNUSED,
+                            Efl_Page_Transition_Data *_pd EINA_UNUSED)
 {
 }
 
