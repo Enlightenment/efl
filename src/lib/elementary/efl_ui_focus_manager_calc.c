@@ -1345,12 +1345,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    type = node->type;
    focusable = node->focusable;
 
+   _focus_stack_unfocus_last(pd);
+
    if (node->type == NODE_TYPE_NORMAL)
      {
         Eo *node_focusable;
-
-        _focus_stack_unfocus_last(pd);
-
 
         //save fields we later need
         node_focusable = node->focusable;
