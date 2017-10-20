@@ -5559,11 +5559,9 @@ efl_wl_surface_extract(Evas_Object *surface)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->extracted, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, EINA_FALSE);
    cs->extracted = 1;
+   evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_RESIZE, extracted_changed, cs);
    if (!cs->shell.popup)
-     {
-        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_RESIZE, extracted_changed, cs);
-        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_OUT, extracted_unfocus, cs);
-     }
+     evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_OUT, extracted_unfocus, cs);
    evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_IN, extracted_focus, cs);
    evas_object_smart_member_del(surface);
    return EINA_TRUE;
