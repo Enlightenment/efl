@@ -22,8 +22,8 @@ M.nspace_to_path = function(ns)
     return ns:gsub(":", path_sep):gsub(rep_sep, path_sep):lower()
 end
 
-M.make_page = function(path)
-    return M.path_join(doc_root, "auto", path .. ".txt")
+M.make_page = function(path, ext)
+    return M.path_join(doc_root, "auto", path .. "." .. ext)
 end
 
 M.get_root_ns = function()
