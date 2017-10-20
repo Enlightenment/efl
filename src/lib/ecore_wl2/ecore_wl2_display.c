@@ -332,9 +332,15 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
 
         ewd->wl.efl_hints = wl_registry_bind(registry, id, &efl_hints_interface, MIN(version, 2));
         EINA_INLIST_FOREACH(ewd->windows, window)
-          if (window->zxdg_toplevel && window->aspect.set)
-            efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
-              window->aspect.w, window->aspect.h, window->aspect.aspect);
+          {
+             if (!window->zxdg_surface) continue;
+             if (window->aspect.set)
+               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_surface,
+                 window->aspect.w, window->aspect.h, window->aspect.aspect);
+             if (window->weight.set)
+               efl_hints_set_weight(window->display->wl.efl_hints,
+                 window->zxdg_surface, window->weight.w, window->weight.h);
+          }
      }
 
 event:

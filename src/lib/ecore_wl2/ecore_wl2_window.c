@@ -323,6 +323,15 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
         window->zxdg_configure_ack = zxdg_surface_v6_ack_configure;
         window->pending.configure = EINA_TRUE;
+        if (window->display->wl.efl_hints)
+          {
+             if (window->aspect.set)
+               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_surface,
+                 window->aspect.w, window->aspect.h, window->aspect.aspect);
+             if (window->weight.set)
+               efl_hints_set_weight(window->display->wl.efl_hints, window->zxdg_surface,
+                 window->weight.w, window->weight.h);
+          }
 
         if (window->type == ECORE_WL2_WINDOW_TYPE_MENU)
           _ecore_wl2_window_zxdg_popup_create(window);
@@ -355,12 +364,6 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 
              if (window->set_config.fullscreen)
                zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
-             if (window->aspect.set && window->display->wl.efl_hints)
-               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_toplevel,
-                 window->aspect.w, window->aspect.h, window->aspect.aspect);
-             if (window->weight.set && window->display->wl.efl_hints)
-               efl_hints_set_weight(window->display->wl.efl_hints, window->zxdg_toplevel,
-                 window->weight.w, window->weight.h);
           }
 
         ecore_wl2_window_commit(window, EINA_TRUE);
@@ -1342,9 +1345,10 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
    window->aspect.h = h;
    window->aspect.aspect = aspect;
    window->aspect.set = 1;
-   if (window->display->wl.efl_hints && window->zxdg_toplevel)
+   if (!window->display->wl.efl_hints) return;
+   if (window->zxdg_surface)
      efl_hints_set_aspect(window->display->wl.efl_hints,
-                          window->zxdg_toplevel, w, h, aspect);
+                          window->zxdg_surface, w, h, aspect);
 }
 
 EAPI void
@@ -1362,9 +1366,10 @@ ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h)
    window->weight.w = ww;
    window->weight.h = hh;
    window->weight.set = 1;
-   if (window->display->wl.efl_hints && window->zxdg_toplevel)
+   if (!window->display->wl.efl_hints) return;
+   if (window->zxdg_surface)
      efl_hints_set_weight(window->display->wl.efl_hints,
-                          window->zxdg_toplevel, ww, hh);
+                          window->zxdg_surface, ww, hh);
 }
 
 static void
