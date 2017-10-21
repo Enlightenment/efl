@@ -463,6 +463,19 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
 }
 
 static void
+_elm_code_widget_clear(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Evas_Object *grid;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   EINA_LIST_FREE(pd->grids, grid)
+     {
+        evas_object_del(grid);
+     }
+}
+
+static void
 _elm_code_widget_fill(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -492,10 +505,16 @@ static void
 _elm_code_widget_file_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
 
-   _elm_code_widget_fill(widget);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (elm_code_file_lines_get(pd->code->file))
+     _elm_code_widget_fill(widget);
+   else
+     _elm_code_widget_clear(widget);
 }
 
 static void
