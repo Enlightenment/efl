@@ -21,6 +21,10 @@
 
 #include <stdarg.h>
 
+#ifdef _WIN32
+# include <Evil.h>
+#endif
+
 #include "eina_magic.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
