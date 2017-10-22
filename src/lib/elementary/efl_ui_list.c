@@ -85,6 +85,7 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd 
                                  Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    DBG("x: %d y: %d", (int)x, (int)y);
+   _layout(psd->wpd);
 }
 /* EOLIAN static void */
 /* _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord x, Evas_Coord y) */
