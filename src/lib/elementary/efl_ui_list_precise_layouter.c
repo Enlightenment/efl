@@ -137,7 +137,10 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
            /*   } */
 
            size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
-           edje_object_size_min_calc(layout_item->layout, &size->min_width, &size->min_height);
+           Eina_Size2D min = efl_gfx_size_hint_combined_min_get(layout_item->layout);
+           //edje_object_size_min_calc(layout_item->layout, &size->min_width, &size->min_height);
+           size->min_width = min.w;
+           size->min_height = min.h;
 
            if(size->min_width && size->min_height)
              {
