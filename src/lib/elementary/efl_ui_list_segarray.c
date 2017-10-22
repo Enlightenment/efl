@@ -16,6 +16,46 @@
     fprintf(stderr, "\n"); fflush(stderr);                              \
   } while(0)
 
+static int _search_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length EINA_UNUSED, void* data EINA_UNUSED)
+{
+  Efl_Ui_List_SegArray_Node const* node = (void const*)rbtree;
+  int index = *(int*)key;
+  DBG("searching for %d", index);
+  if(index < node->first)
+    {
+      DBG("index is less than index");
+      return -1;
+    }
+  else if(index < node->first + node->length)
+    {
+      DBG("index is within bounds, found it");
+      return 0;
+    }
+  else
+    {
+      DBG("we're after first %d max %d index %d", node->first, node->max, index);
+      return 1;
+    }
+}
+
+static int _insert_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length EINA_UNUSED, void* data EINA_UNUSED)
+{
+  Efl_Ui_List_SegArray_Node const* node = (void const*)rbtree;
+  int index = *(int*)key;
+  if(index < node->first)
+    {
+      return -1;
+    }
+  else if(index < node->first + node->max)
+    {
+      return 0;
+    }
+  else
+    {
+       return 1;
+    }
+}
+
 static Eina_Rbtree_Direction _rbtree_compare(Eina_Rbtree const* left, Eina_Rbtree const* right, void* data EINA_UNUSED)
 {
    Efl_Ui_List_SegArray_Node const *nl = (void const*)left, *nr = (void const*)right;
@@ -31,8 +71,10 @@ static Eina_Rbtree_Direction _rbtree_compare(Eina_Rbtree const* left, Eina_Rbtre
 static Efl_Ui_List_SegArray_Node*
 _alloc_node(Efl_Ui_List_SegArray* segarray, int first, int max)
 {
+   DBG("alloc'ing and inserting node with first index: %d", first);
+  
    Efl_Ui_List_SegArray_Node* node;
-   node = malloc(sizeof(Efl_Ui_List_SegArray_Node) + max*sizeof(Efl_Ui_List_Item*));
+   node = calloc(1, sizeof(Efl_Ui_List_SegArray_Node) + max*sizeof(Efl_Ui_List_Item*));
    node->first = first;
    node->max = max;
    segarray->root = eina_rbtree_inline_insert(segarray->root, EINA_RBTREE_GET(node), &_rbtree_compare, NULL);
@@ -60,7 +102,7 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
 {
    int i;
    Efl_Model* children;
-   Efl_Ui_List_SegArray_Node *first_node = NULL, *last_node = NULL;
+   Efl_Ui_List_SegArray_Node *first_node = NULL/*, *last_node = NULL*/;
    int array_first = 0;
 
    if(segarray->root)
@@ -105,11 +147,25 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
                   
              /*   } */
           }
-        else if(first + i < array_first + efl_ui_list_segarray_count(segarray))
+        else if(first + i <= array_first + efl_ui_list_segarray_count(segarray))
           {
+            Efl_Ui_List_SegArray_Node *node;
+            int idx = first + i;
+
             DBG("insert is in the middle");
 
-            
+            node = (void*)eina_rbtree_inline_lookup(segarray->root, &idx, sizeof(idx), &_insert_lookup_cb, NULL);
+            if(node)
+              {
+                 assert(node->length < node->max);
+                 node->pointers[node->length] = _create_item(children, first + i);
+                 node->length++;
+                 segarray->count++;
+              }
+            else
+              {
+                 DBG("no node to add item!");
+              }
           }
         /* else // suffix'ing */
         /*   { */
@@ -138,38 +194,28 @@ typedef struct _Efl_Ui_List_Segarray_Eina_Accessor
    Efl_Ui_List_SegArray* segarray;
 } Efl_Ui_List_Segarray_Eina_Accessor;
 
-static int _lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length EINA_UNUSED, void* data EINA_UNUSED)
-{
-  Efl_Ui_List_SegArray_Node const* node = (void const*)rbtree;
-  int index = *(int*)key;
-  if(node->first < index)
-    {
-      return -1;
-    }
-  else if(node->first + node->length < index)
-    {
-      return 0;
-    }
-  else
-    return 1;
-}
-
 static Eina_Bool
 _efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
                                       int idx, void** data)
 {
    Efl_Ui_List_SegArray_Node* node;
-   node = (void*)eina_rbtree_inline_lookup(acc->segarray->root, &idx, sizeof(idx), &_lookup_cb, NULL);
+   node = (void*)eina_rbtree_inline_lookup(acc->segarray->root, &idx, sizeof(idx), &_search_lookup_cb, NULL);
    if(node)
      {
-        if(node->first >= idx && node->first + node->length < idx)
+        if(node->first <= idx && node->first + node->length > idx)
           {
              int i = idx - node->first;
              Efl_Ui_List_Item* item = node->pointers[i];
              *data = item;
              return EINA_TRUE;
           }
+        else
+          {
+            DBG("node found is not within bounds first %d length %d idx %d", node->first, node->length, idx);
+          }
      }
+   else
+     DBG("no node found with index %d", idx);
    printf(">> NOOO %s - idx:%d\n", __FUNCTION__, idx);
    return EINA_FALSE;
 }
