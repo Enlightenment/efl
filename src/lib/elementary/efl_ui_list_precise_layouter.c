@@ -117,32 +117,50 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    // cache size of new items
    EINA_ACCESSOR_FOREACH(items, i, layout_item)
      {
-        DBG("size %d", size);
         printf("item %d\n", i);
         size = eina_hash_find(pd->size_information, &layout_item);
+        DBG("size %p", size);
         if(!size)
         {
            if(!layout_item->layout)
-             efl_ui_list_model_realize(modeler, layout_item);
-           if(!layout_item->layout)
              {
-               // error
-               continue;
+               DBG("no layout, realizing");
+               efl_ui_list_model_realize(modeler, layout_item);
              }
+           else
+             {
+               DBG("already realized");
+           /* if(!layout_item->layout) */
+           /*   { */
+           /*     // error */
+           /*     continue; */
+           /*   } */
 
            size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
            edje_object_size_min_calc(layout_item->layout, &size->min_width, &size->min_height);
-           efl_gfx_size_hint_margin_get(layout_item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
-           efl_gfx_size_hint_weight_get(layout_item->layout, &size->weight_x, &size->weight_y);
 
-           size->min_width += pad[0] + pad[1];
-           size->min_height += pad[2] + pad[3];
-           pd->height += size->min_height;
+           if(size->min_width && size->min_height)
+             {
+                DBG("size was calculated");
+                efl_gfx_size_hint_margin_get(layout_item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
+                efl_gfx_size_hint_weight_get(layout_item->layout, &size->weight_x, &size->weight_y);
 
-           if (pd->width < size->min_width)
-             pd->width = size->min_width;
+                size->min_width += pad[0] + pad[1];
+                size->min_height += pad[2] + pad[3];
+                pd->height += size->min_height;
 
-           eina_hash_add(pd->size_information, &layout_item, size);
+                if (pd->width < size->min_width)
+                  pd->width = size->min_width;
+
+                eina_hash_add(pd->size_information, &layout_item, size);
+                DBG("size information for item %d width %d height %d", i, size->min_width, size->min_height);
+             }
+           else
+             {
+               DBG("size was NOT calculated, not loaded yet probably");
+               free(size);
+             }
+             }
         }
      }
 
@@ -259,6 +277,10 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
         size = eina_hash_find(pd->size_information, &layout_item);
 
+        if(size)
+          {
+        DBG("size information for item %d width %d height %d", i, size->min_width, size->min_height);
+
         assert(layout_item->layout != NULL);
         efl_gfx_size_hint_align_get(layout_item->layout, &align[0], &align[1]);
         max = efl_gfx_size_hint_max_get(layout_item->layout);
@@ -365,6 +387,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 /* //               , (float)litem->x, (float)litem->y, (float)litem->w, (float)litem->h); fflush(stderr); */
 /* //        printf("obj=%d currpos=%.2f moved to X=%.2f, Y=%.2f average_item_size %d\n", litem->index, cur_pos, x, y */
 /* //               , eina_inarray_count(&pd->items.array) ? (/\*horz*\/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT); */
+          }
      }
   
 }
