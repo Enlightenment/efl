@@ -12,14 +12,17 @@ typedef struct _Evas_VG_Data      Evas_VG_Data;
 
 struct _Evas_VG_Data
 {
-   void   *engine_data;
-   Efl_VG *root;
+   void     *engine_data;
+   Efl_VG   *root;
+   Efl_VG   *vg_tree;
 
    Eina_Rect fill;
 
    unsigned int width, height;
 
    Eina_Array cleanup;
+
+   Eina_Bool  changed;
 };
 
 struct _Efl_VG_Data

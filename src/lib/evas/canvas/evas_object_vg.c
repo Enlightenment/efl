@@ -2,7 +2,6 @@
 #include "evas_private.h"
 
 #include "evas_vg_private.h"
-#include "efl_vg_root_node.eo.h"
 
 #define MY_CLASS EVAS_VG_CLASS
 
@@ -61,6 +60,19 @@ static const Evas_Object_Func object_func =
      NULL
 };
 
+static void
+_evas_vg_tree_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Evas_Object_Protected_Data *obj = data;
+   Evas_VG_Data *pd = efl_data_scope_get(obj->object, MY_CLASS);
+
+   if (pd->changed) return;
+
+   pd->changed = EINA_TRUE;
+
+   evas_object_change(obj->object, obj);
+}
+
 /* the actual api call to add a vector graphic object */
 EAPI Evas_Object *
 evas_object_vg_add(Evas *e)
@@ -75,7 +87,32 @@ evas_object_vg_add(Evas *e)
 Efl_VG *
 _evas_vg_root_node_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 {
-   return pd->root;
+   return pd->vg_tree;
+}
+
+void
+_evas_vg_root_node_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd, Efl_VG *root_node)
+{
+   // if the same root is already set
+   if (pd->vg_tree == root_node)
+     return;
+
+   // detach/free the old root_node
+   if (pd->vg_tree)
+     efl_parent_set(pd->vg_tree, NULL);
+
+   pd->vg_tree = root_node;
+   
+   if (pd->vg_tree)
+     {
+        // set the parent so that vg canvas can render it.
+        efl_parent_set(pd->vg_tree, pd->root);
+     }
+   
+   // force a redraw
+   pd->changed = EINA_TRUE;
+   
+   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
 }
 
 static void
@@ -101,7 +138,7 @@ _evas_vg_efl_object_destructor(Eo *eo_obj, Evas_VG_Data *pd)
 
    efl_event_callback_del(e, EFL_CANVAS_EVENT_RENDER_POST, _cleanup_reference, pd);
 
-   efl_unref(pd->root);
+   efl_del(pd->root);
    pd->root = NULL;
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -119,10 +156,11 @@ _evas_vg_efl_object_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    obj->type = o_type;
 
    /* root node */
-   pd->root = efl_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
-   efl_ref(pd->root);
-
+   pd->root = efl_add(EFL_VG_CONTAINER_CLASS, NULL);
+   
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
+
+   efl_event_callback_add(pd->root, EFL_GFX_EVENT_CHANGED, _evas_vg_tree_changed, obj);
 
    return eo_obj;
 }
@@ -212,6 +250,8 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                    vd->root, NULL,
                    do_async);
    obj->layer->evas->engine.func->ector_end(engine, context, ector, surface, vd->engine_data, do_async);
+
+   vd->changed = EINA_FALSE;
 }
 
 static void
@@ -220,7 +260,6 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
                           void *type_private_data)
 {
    Evas_VG_Data *vd = type_private_data;
-   Efl_VG_Data *rnd;
    int is_v, was_v;
    Ector_Surface *s;
 
@@ -254,20 +293,8 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
    was_v = evas_object_was_visible(eo_obj,obj);
    if (!(is_v | was_v)) goto done;
 
-   // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
-   // So just forcing it here if necessary
-   rnd = efl_data_scope_get(vd->root, EFL_VG_CLASS);
-
-   // Once the destructor has been called, root node will be zero
-   // and a full redraw is still necessary.
-   if (!rnd)
+   if (vd->changed)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
-        goto done;
-     }
-   else if (rnd->changed)
-     {
-        rnd->changed = EINA_FALSE;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
         goto done;
      }
