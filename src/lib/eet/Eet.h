@@ -288,7 +288,7 @@ eet_shutdown(void);
 
 /**
  * @ingroup Eet_Group
- * @Clears eet cache.
+ * @brief Clears eet cache.
  *
  * For a faster access to previously accessed data, Eet keeps an internal
  * cache of files. These files will be freed automatically only when
@@ -959,7 +959,7 @@ eet_num_entries(Eet_File *ef);
 
 /**
  * @ingroup Eet_File_Cipher_Group
- * @brif Reads a specified entry from an eet file and return data using a cipher.
+ * @brief Reads a specified entry from an eet file and return data using a cipher.
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".
  * @param size_ret Number of bytes read from entry and returned.
@@ -1652,9 +1652,9 @@ eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
 /**
  * @ingroup Eet_File_Image_Cipher_Group
  * @brief Reads image data from the named key in the eet file using a cipher.
- * @param ef A valid eet file handle opened for reading.
- * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param data The encoded pixel data.
  * @param cipher_key The key to use as cipher.
+ * @param size The size, in bytes, of the encoded pixel data.
  * @param src_x The starting x coordinate from where to dump the stream.
  * @param src_y The starting y coordinate from where to dump the stream.
  * @param d A pointer to the pixel surface.
@@ -2035,7 +2035,7 @@ eet_identity_close(Eet_Key *key);
 
 /**
  * @ingroup Eet_Cipher_Group
- * @breif Sets a key to sign a file.
+ * @brief Sets a key to sign a file.
  *
  * @param ef the file to set the identity.
  * @param key the key handle to set as identity.
@@ -2327,7 +2327,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
  *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "sub.other_num",
  *                                  sub.other_num, EET_T_INT);
  *    EET_DATA_DESCRIPTOR_ADD_BASIC(my_desc, some_struct, "sub.one_more",
- *                                  sub.one_more", EET_T_INT);
+ *                                  sub.one_more, EET_T_INT);
  *    ...
  * }
  * @endcode
@@ -3083,6 +3083,8 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd);
 /**
  * @ingroup Eet_Data_Group
  * @brief This function returns the name of a data descriptor.
+ * @param edd The data descriptor to get name.
+ * @return The name of the data descriptor.
  *
  * @since 1.8.0
  */
@@ -4469,10 +4471,11 @@ eet_node_var_array_new(const char *name,
  */
 /**
  * @ingroup Eet_Node_Group
- * @brief Creates a new short node.
+ * @brief Creates a new hash node.
  * @param name Name of the node.
- * @param s Short value.
- * @return A new short node.
+ * @param key Key of the node.
+ * @param node The node.
+ * @return A new hash node.
  */
 EAPI Eet_Node *
 eet_node_hash_new(const char *name,
@@ -4496,10 +4499,10 @@ eet_node_struct_new(const char *name,
  */
 /**
  * @ingroup Eet_Node_Group
- * @brief Creates a new short node.
- * @param name Name of the node.
- * @param s Short value.
- * @return A new short node.
+ * @brief Creates a new struct child node.
+ * @param parent The name of parent node.
+ * @param child The child node.
+ * @return A new struct child node.
  */
 EAPI Eet_Node *
 eet_node_struct_child_new(const char *parent,
@@ -4537,6 +4540,9 @@ eet_node_parent_get(Eet_Node *node);
 /**
  * @ingroup Eet_Node_Group
  * @brief Appends a "list" node TODO FIX ME.
+ * @param parent The parent node.
+ * @param name The name of new node.
+ * @param child The child node.
  */
 EAPI void
 eet_node_list_append(Eet_Node *parent,
@@ -4546,6 +4552,10 @@ eet_node_list_append(Eet_Node *parent,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Appends a struct node.
+ * @param parent The parent node.
+ * @param name The name of new node.
+ * @param child The child node.
  */
 EAPI void
 eet_node_struct_append(Eet_Node *parent,
@@ -4555,6 +4565,11 @@ eet_node_struct_append(Eet_Node *parent,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Adds a hash node.
+ * @param parent The parent node.
+ * @param name Name of the node.
+ * @param key Key of the node.
+ * @param child The child node.
  */
 EAPI void
 eet_node_hash_add(Eet_Node *parent,
@@ -4565,6 +4580,12 @@ eet_node_hash_add(Eet_Node *parent,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Dumps a node from an eet encoded data structure into ascii text.
+ * @param n The node.
+ * @param dumplevel The dump level.
+ * @param dumpfunc dumpfunc The function to call passed a string when new
+ *        data is converted to text.
+ * @param dumpdata The data to pass to the @p dumpfunc callback.
  */
 EAPI void
 eet_node_dump(Eet_Node *n,
@@ -4593,6 +4614,8 @@ eet_node_value_get(Eet_Node *node);
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Deletes the given node.
+ * @param n The node.
  */
 EAPI void
 eet_node_del(Eet_Node *n);
@@ -4600,6 +4623,10 @@ eet_node_del(Eet_Node *n);
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Encodes node data using a cipher.
+ * @param node The node.
+ * @param cipher_key The key to use as cipher.
+ * @param size_ret Number of bytes read from entry and returned.
  */
 EAPI void *
 eet_data_node_encode_cipher(Eet_Node *node,
@@ -4609,6 +4636,11 @@ eet_data_node_encode_cipher(Eet_Node *node,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Decodes node data using a cipher.
+ * @param data_in The pointer to the data to decode into a struct.
+ * @param cipher_key The key to use as cipher.
+ * @param size_in The size of the data pointed to in bytes.
+ * @return The decoded node.
  */
 EAPI Eet_Node *
 eet_data_node_decode_cipher(const void *data_in,
@@ -4618,6 +4650,11 @@ eet_data_node_decode_cipher(const void *data_in,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Reads a node data from an eet file and decodes it using a cipher.
+ * @param ef The eet file handle to read from.
+ * @param name The key the data is stored under in the eet file.
+ * @param cipher_key The key to use as cipher.
+ * @return A node to the decoded data structure.
  */
 EAPI Eet_Node *
 eet_data_node_read_cipher(Eet_File *ef,
@@ -4627,6 +4664,13 @@ eet_data_node_read_cipher(Eet_File *ef,
 /**
  * TODO FIX ME
  * @ingroup Eet_Node_Group
+ * @brief Writes node data to the named key in an eet file using a cipher.
+ * @param ef The eet file handle to write to.
+ * @param name The key to store the data under in the eet file.
+ * @param cipher_key The key to use as cipher.
+ * @param node The node.
+ * @param compress Compression flags for storage.
+ * @return bytes written on successful write, 0 on failure.
  */
 EAPI int
 eet_data_node_write_cipher(Eet_File *ef,
