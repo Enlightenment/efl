@@ -9,8 +9,6 @@ _efl_animation_object_rotate_rotate_set(Eo *eo_obj,
                                         double cx,
                                         double cy)
 {
-   EFL_ANIMATION_OBJECT_ROTATE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.degree = from_degree;
    pd->to.degree = to_degree;
 
@@ -48,8 +46,6 @@ _efl_animation_object_rotate_rotate_get(Eo *eo_obj,
                                         double *cx,
                                         double *cy)
 {
-   EFL_ANIMATION_OBJECT_ROTATE_CHECK_OR_RETURN(eo_obj);
-
    //Update relative pivot based on absolute pivot
    if (!pd->use_rel_pivot)
      {
@@ -97,8 +93,6 @@ _efl_animation_object_rotate_rotate_absolute_set(Eo *eo_obj,
                                                  Evas_Coord cx,
                                                  Evas_Coord cy)
 {
-   EFL_ANIMATION_OBJECT_ROTATE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.degree = from_degree;
    pd->to.degree = to_degree;
 
@@ -138,8 +132,6 @@ _efl_animation_object_rotate_rotate_absolute_get(Eo *eo_obj,
                                                  Evas_Coord *cx,
                                                  Evas_Coord *cy)
 {
-   EFL_ANIMATION_OBJECT_ROTATE_CHECK_OR_RETURN(eo_obj);
-
    //Update absolute pivot based on relative pivot
    if (pd->use_rel_pivot)
      {
@@ -206,8 +198,6 @@ _efl_animation_object_rotate_efl_animation_object_progress_set(Eo *eo_obj,
                                                                Efl_Animation_Object_Rotate_Data *pd EINA_UNUSED,
                                                                double progress)
 {
-   EFL_ANIMATION_OBJECT_ROTATE_CHECK_OR_RETURN(eo_obj);
-
    if ((progress < 0.0) || (progress > 1.0)) return;
 
    _progress_set(eo_obj, progress);

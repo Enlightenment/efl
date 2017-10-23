@@ -11,8 +11,6 @@ _efl_animation_scale_scale_set(Eo *eo_obj,
                                double cx,
                                double cy)
 {
-   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.scale_x = from_scale_x;
    pd->from.scale_y = from_scale_y;
 
@@ -55,8 +53,6 @@ _efl_animation_scale_scale_get(Eo *eo_obj,
                                double *cx,
                                double *cy)
 {
-   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj);
-
    //Update relative pivot based on absolute pivot
    if (!pd->use_rel_pivot)
      {
@@ -112,8 +108,6 @@ _efl_animation_scale_scale_absolute_set(Eo *eo_obj,
                                         Evas_Coord cx,
                                         Evas_Coord cy)
 {
-   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.scale_x = from_scale_x;
    pd->from.scale_y = from_scale_y;
 
@@ -158,8 +152,6 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj,
                                         Evas_Coord *cx,
                                         Evas_Coord *cy)
 {
-   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj);
-
    //Update absolute pivot based on relative pivot
    if (pd->use_rel_pivot)
      {
@@ -204,8 +196,6 @@ EOLIAN static Efl_Animation_Object *
 _efl_animation_scale_efl_animation_object_create(Eo *eo_obj,
                                                  Efl_Animation_Scale_Data *pd)
 {
-   EFL_ANIMATION_SCALE_CHECK_OR_RETURN(eo_obj, NULL);
-
    Efl_Animation_Object_Scale *anim_obj
       = efl_add(EFL_ANIMATION_OBJECT_SCALE_CLASS, NULL);
 

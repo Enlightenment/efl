@@ -1,21 +1,17 @@
 #include "efl_animation_object_private.h"
 
 EOLIAN static void
-_efl_animation_object_auto_del_set(Eo *eo_obj,
+_efl_animation_object_auto_del_set(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Object_Data *pd,
                                    Eina_Bool auto_del)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    pd->auto_del = auto_del;
 }
 
 EOLIAN static Eina_Bool
-_efl_animation_object_auto_del_get(Eo *eo_obj,
+_efl_animation_object_auto_del_get(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, EINA_TRUE);
-
    return pd->auto_del;
 }
 
@@ -24,7 +20,6 @@ _target_del_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *eo_obj = data;
 
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
    EFL_ANIMATION_OBJECT_DATA_GET(eo_obj, pd);
 
    pd->target = NULL;
@@ -36,8 +31,6 @@ _efl_animation_object_target_set(Eo *eo_obj,
                                  Efl_Animation_Object_Data *pd,
                                  Efl_Canvas_Object *target)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (pd->target == target) return;
 
    if (pd->target)
@@ -49,10 +42,9 @@ _efl_animation_object_target_set(Eo *eo_obj,
 }
 
 EOLIAN static Efl_Canvas_Object *
-_efl_animation_object_target_get(Eo *eo_obj, Efl_Animation_Object_Data *pd)
+_efl_animation_object_target_get(Eo *eo_obj EINA_UNUSED,
+                                 Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj, NULL);
-
    return pd->target;
 }
 
@@ -61,79 +53,63 @@ _efl_animation_object_duration_set(Eo *eo_obj,
                                    Efl_Animation_Object_Data *pd,
                                    double duration)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    efl_animation_object_total_duration_set(eo_obj, duration);
 
    pd->duration = duration;
 }
 
 EOLIAN static double
-_efl_animation_object_duration_get(Eo *eo_obj,
+_efl_animation_object_duration_get(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj, 0.0);
-
    return pd->duration;
 }
 
 EOLIAN static void
-_efl_animation_object_duration_only_set(Eo *eo_obj,
+_efl_animation_object_duration_only_set(Eo *eo_obj EINA_UNUSED,
                                         Efl_Animation_Object_Data *pd,
                                         double duration)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    pd->duration = duration;
 }
 
 EOLIAN static void
-_efl_animation_object_total_duration_set(Eo *eo_obj,
+_efl_animation_object_total_duration_set(Eo *eo_obj EINA_UNUSED,
                                          Efl_Animation_Object_Data *pd,
                                          double total_duration)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    pd->total_duration = total_duration;
 }
 
 EOLIAN static double
-_efl_animation_object_total_duration_get(Eo *eo_obj, Efl_Animation_Object_Data *pd)
+_efl_animation_object_total_duration_get(Eo *eo_obj EINA_UNUSED,
+                                         Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, 0.0);
-
    return pd->total_duration;
 }
 
 EOLIAN static void
-_efl_animation_object_repeat_mode_set(Eo *eo_obj,
+_efl_animation_object_repeat_mode_set(Eo *eo_obj EINA_UNUSED,
                                       Efl_Animation_Object_Data *pd,
                                       Efl_Animation_Object_Repeat_Mode mode)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if ((mode == EFL_ANIMATION_OBJECT_REPEAT_MODE_RESTART) ||
        (mode == EFL_ANIMATION_OBJECT_REPEAT_MODE_REVERSE))
      pd->repeat_mode = mode;
 }
 
 EOLIAN static Efl_Animation_Object_Repeat_Mode
-_efl_animation_object_repeat_mode_get(const Eo *eo_obj,
+_efl_animation_object_repeat_mode_get(const Eo *eo_obj EINA_UNUSED,
                                       Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj,
-                                        EFL_ANIMATION_OBJECT_REPEAT_MODE_RESTART);
-
    return pd->repeat_mode;
 }
 
 EOLIAN static void
-_efl_animation_object_repeat_count_set(Eo *eo_obj,
+_efl_animation_object_repeat_count_set(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Data *pd,
                                        int count)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    //EFL_ANIMATION_OBJECT_REPEAT_INFINITE repeats animation infinitely
    if ((count < 0) && (count != EFL_ANIMATION_OBJECT_REPEAT_INFINITE)) return;
 
@@ -141,69 +117,48 @@ _efl_animation_object_repeat_count_set(Eo *eo_obj,
 }
 
 EOLIAN static int
-_efl_animation_object_repeat_count_get(const Eo *eo_obj,
+_efl_animation_object_repeat_count_get(const Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj, 0);
-
    return pd->repeat_count;
 }
 
 EOLIAN static void
-_efl_animation_object_start_delay_set(Eo *eo_obj,
+_efl_animation_object_start_delay_set(Eo *eo_obj EINA_UNUSED,
                                       Efl_Animation_Object_Data *pd,
                                       double delay_time)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (delay_time < 0.0) return;
 
    pd->start_delay_time = delay_time;
 }
 
 EOLIAN static double
-_efl_animation_object_start_delay_get(Eo *eo_obj,
+_efl_animation_object_start_delay_get(Eo *eo_obj EINA_UNUSED,
                                       Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, 0.0);
-
    return pd->start_delay_time;
 }
 
 EOLIAN static void
-_efl_animation_object_interpolator_set(Eo *eo_obj,
+_efl_animation_object_interpolator_set(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Data *pd,
                                        Efl_Interpolator *interpolator)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    pd->interpolator = interpolator;
 }
 
 EOLIAN static Efl_Interpolator *
-_efl_animation_object_interpolator_get(Eo *eo_obj,
+_efl_animation_object_interpolator_get(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj, NULL);
-
    return pd->interpolator;
 }
 
-EOLIAN static Eina_Bool
-_efl_animation_object_is_deleted(Eo *eo_obj,
-                                 Efl_Animation_Object_Data *pd)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EINA_TRUE);
-
-   return pd->is_deleted;
-}
-
 EOLIAN static void
-_efl_animation_object_target_state_save(Eo *eo_obj,
+_efl_animation_object_target_state_save(Eo *eo_obj EINA_UNUSED,
                                         Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (!pd->target || !pd->target_state) return;
 
    Evas_Coord x, y, w, h;
@@ -230,11 +185,9 @@ _efl_animation_object_target_state_save(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_target_state_reset(Eo *eo_obj,
+_efl_animation_object_target_state_reset(Eo *eo_obj EINA_UNUSED,
                                          Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (!pd->target) return;
 
    if (efl_gfx_map_has(pd->target))
@@ -267,11 +220,9 @@ _efl_animation_object_target_state_reset(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_target_map_reset(Eo *eo_obj,
+_efl_animation_object_target_map_reset(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (!pd->target) return;
 
    if (efl_gfx_map_has(pd->target))
@@ -279,23 +230,19 @@ _efl_animation_object_target_map_reset(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_final_state_keep_set(Eo *eo_obj,
+_efl_animation_object_final_state_keep_set(Eo *eo_obj EINA_UNUSED,
                                            Efl_Animation_Object_Data *pd,
                                            Eina_Bool keep_final_state)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (pd->keep_final_state == keep_final_state) return;
 
    pd->keep_final_state = !!keep_final_state;
 }
 
 EOLIAN static Eina_Bool
-_efl_animation_object_final_state_keep_get(Eo *eo_obj,
+_efl_animation_object_final_state_keep_get(Eo *eo_obj EINA_UNUSED,
                                            Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN((Eo *)eo_obj, EINA_FALSE);
-
    return pd->keep_final_state;
 }
 
@@ -451,8 +398,6 @@ EOLIAN static void
 _efl_animation_object_start(Eo *eo_obj,
                             Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (pd->start_delay_timer) return;
 
    if (pd->start_delay_time > 0.0)
@@ -469,8 +414,6 @@ EOLIAN static void
 _efl_animation_object_cancel(Eo *eo_obj,
                              Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    ecore_timer_del(pd->start_delay_timer);
    pd->start_delay_timer = NULL;
 
@@ -497,8 +440,6 @@ _efl_animation_object_progress_set(Eo *eo_obj,
                                    Efl_Animation_Object_Data *pd EINA_UNUSED,
                                    double progress)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if ((progress < 0.0) || (progress > 1.0)) return;
 
    if (!pd->is_direction_forward)
@@ -519,11 +460,9 @@ _efl_animation_object_progress_set(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_pause(Eo *eo_obj,
+_efl_animation_object_pause(Eo *eo_obj EINA_UNUSED,
                             Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (!pd->is_started) return;
    if (pd->is_ended) return;
    if (pd->is_paused) return;
@@ -542,8 +481,6 @@ EOLIAN static void
 _efl_animation_object_resume(Eo *eo_obj,
                              Efl_Animation_Object_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(eo_obj);
-
    if (!pd->is_started) return;
    if (pd->is_ended) return;
    if (!pd->is_paused) return;
@@ -580,7 +517,6 @@ _efl_animation_object_efl_object_constructor(Eo *eo_obj,
    pd->repeat_count = 0;
 
    pd->auto_del = EINA_TRUE;
-   pd->is_deleted = EINA_FALSE;
    pd->is_cancelled = EINA_FALSE;
    pd->keep_final_state = EINA_FALSE;
 
@@ -591,8 +527,6 @@ EOLIAN static void
 _efl_animation_object_efl_object_destructor(Eo *eo_obj,
                                             Efl_Animation_Object_Data *pd)
 {
-   pd->is_deleted = EINA_TRUE;
-
    if (pd->animator)
      {
         ecore_animator_del(pd->animator);
