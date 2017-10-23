@@ -1,13 +1,11 @@
 #include "efl_animation_alpha_private.h"
 
 EOLIAN static void
-_efl_animation_alpha_alpha_set(Eo *eo_obj,
+_efl_animation_alpha_alpha_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Animation_Alpha_Data *pd,
                                double from_alpha,
                                double to_alpha)
 {
-   EFL_ANIMATION_ALPHA_CHECK_OR_RETURN(eo_obj);
-
    pd->from.alpha = from_alpha;
    pd->to.alpha = to_alpha;
 }
@@ -18,8 +16,6 @@ _efl_animation_alpha_alpha_get(Eo *eo_obj EINA_UNUSED,
                                double *from_alpha,
                                double *to_alpha)
 {
-   EFL_ANIMATION_ALPHA_CHECK_OR_RETURN(eo_obj);
-
    if (from_alpha)
      *from_alpha = pd->from.alpha;
    if (to_alpha)
@@ -30,8 +26,6 @@ EOLIAN static Efl_Animation_Object *
 _efl_animation_alpha_efl_animation_object_create(Eo *eo_obj,
                                                  Efl_Animation_Alpha_Data *pd)
 {
-   EFL_ANIMATION_ALPHA_CHECK_OR_RETURN(eo_obj, NULL);
-
    Efl_Animation_Object_Alpha *anim_obj
       = efl_add(EFL_ANIMATION_OBJECT_ALPHA_CLASS, NULL);
 

@@ -44,7 +44,6 @@ typedef struct _Efl_Animation_Object_Data
    Efl_Interpolator                *interpolator;
 
    Eina_Bool                        auto_del : 1;
-   Eina_Bool                        is_deleted : 1;
    Eina_Bool                        is_started : 1;
    Eina_Bool                        is_cancelled : 1;
    Eina_Bool                        is_ended : 1;
@@ -53,18 +52,6 @@ typedef struct _Efl_Animation_Object_Data
    Eina_Bool                        is_direction_forward : 1;
    Eina_Bool                        is_direction_changed : 1;
 } Efl_Animation_Object_Data;
-
-#define EFL_ANIMATION_OBJECT_CHECK_OR_RETURN(anim_obj, ...) \
-   do { \
-      if (!anim_obj) { \
-         CRI("Efl_Animation_Object " # anim_obj " is NULL!"); \
-         return __VA_ARGS__; \
-      } \
-      if (efl_animation_object_is_deleted(anim_obj)) { \
-         ERR("Efl_Animation_Object " # anim_obj " has already been deleted!"); \
-         return __VA_ARGS__; \
-      } \
-   } while (0)
 
 #define EFL_ANIMATION_OBJECT_DATA_GET(o, pd) \
    Efl_Animation_Object_Data *pd = efl_data_scope_get(o, EFL_ANIMATION_OBJECT_CLASS)

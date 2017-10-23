@@ -5,8 +5,6 @@ _efl_animation_object_group_object_add(Eo *eo_obj,
                                        Efl_Animation_Object_Group_Data *pd,
                                        Efl_Animation_Object *anim_obj)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    if (!anim_obj) return;
 
    Efl_Canvas_Object *target = efl_animation_object_target_get(eo_obj);
@@ -26,23 +24,19 @@ _efl_animation_object_group_object_add(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_group_object_del(Eo *eo_obj,
+_efl_animation_object_group_object_del(Eo *eo_obj EINA_UNUSED,
                                        Efl_Animation_Object_Group_Data *pd,
                                        Efl_Animation_Object *anim_obj)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    if (!anim_obj) return;
 
    pd->anim_objs = eina_list_remove(pd->anim_objs, anim_obj);
 }
 
 EOLIAN static Eina_List *
-_efl_animation_object_group_objects_get(Eo *eo_obj,
+_efl_animation_object_group_objects_get(Eo *eo_obj EINA_UNUSED,
                                         Efl_Animation_Object_Group_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj, NULL);
-
    return pd->anim_objs;
 }
 
@@ -51,8 +45,6 @@ _efl_animation_object_group_efl_animation_object_target_set(Eo *eo_obj,
                                                             Efl_Animation_Object_Group_Data *pd,
                                                             Efl_Canvas_Object *target)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 
@@ -69,8 +61,6 @@ _efl_animation_object_group_efl_animation_object_duration_set(Eo *eo_obj,
                                                               Efl_Animation_Object_Group_Data *pd,
                                                               double duration)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    if (duration == EFL_ANIMATION_OBJECT_GROUP_DURATION_NONE) goto end;
 
    if (duration < 0.0) return;
@@ -98,8 +88,6 @@ _efl_animation_object_group_efl_animation_object_final_state_keep_set(Eo *eo_obj
                                                                       Efl_Animation_Object_Group_Data *pd,
                                                                       Eina_Bool state_keep)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 
@@ -117,8 +105,6 @@ _efl_animation_object_group_efl_animation_object_interpolator_set(Eo *eo_obj,
                                                                   Efl_Animation_Object_Group_Data *pd,
                                                                   Efl_Interpolator *interpolator)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 
@@ -159,11 +145,9 @@ _efl_animation_object_group_efl_object_destructor(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_group_efl_animation_object_target_state_save(Eo *eo_obj,
+_efl_animation_object_group_efl_animation_object_target_state_save(Eo *eo_obj EINA_UNUSED,
                                                                    Efl_Animation_Object_Group_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 
@@ -174,11 +158,9 @@ _efl_animation_object_group_efl_animation_object_target_state_save(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_group_efl_animation_object_target_state_reset(Eo *eo_obj,
+_efl_animation_object_group_efl_animation_object_target_state_reset(Eo *eo_obj EINA_UNUSED,
                                                                     Efl_Animation_Object_Group_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 
@@ -189,11 +171,9 @@ _efl_animation_object_group_efl_animation_object_target_state_reset(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_object_group_efl_animation_object_target_map_reset(Eo *eo_obj,
+_efl_animation_object_group_efl_animation_object_target_map_reset(Eo *eo_obj EINA_UNUSED,
                                                                   Efl_Animation_Object_Group_Data *pd)
 {
-   EFL_ANIMATION_OBJECT_GROUP_CHECK_OR_RETURN(eo_obj);
-
    Eina_List *l;
    Efl_Animation_Object *anim_obj;
 

@@ -8,8 +8,6 @@ _efl_animation_object_translate_translate_set(Eo *eo_obj,
                                               Evas_Coord to_x,
                                               Evas_Coord to_y)
 {
-   EFL_ANIMATION_OBJECT_TRANSLATE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.move_x = from_x;
    pd->from.move_y = from_y;
 
@@ -41,8 +39,6 @@ _efl_animation_object_translate_translate_get(Eo *eo_obj,
                                               Evas_Coord *to_x,
                                               Evas_Coord *to_y)
 {
-   EFL_ANIMATION_OBJECT_TRANSLATE_CHECK_OR_RETURN(eo_obj);
-
    //Update relative move based on absolute coordinate
    if (!pd->use_rel_move)
      {
@@ -79,8 +75,6 @@ _efl_animation_object_translate_translate_absolute_set(Eo *eo_obj,
                                                        Evas_Coord to_x,
                                                        Evas_Coord to_y)
 {
-   EFL_ANIMATION_OBJECT_TRANSLATE_CHECK_OR_RETURN(eo_obj);
-
    pd->from.x = from_x;
    pd->from.y = from_y;
 
@@ -112,8 +106,6 @@ _efl_animation_object_translate_translate_absolute_get(Eo *eo_obj,
                                                        Evas_Coord *to_x,
                                                        Evas_Coord *to_y)
 {
-   EFL_ANIMATION_OBJECT_TRANSLATE_CHECK_OR_RETURN(eo_obj);
-
    //Update absolute coordinate based on relative move
    if (pd->use_rel_move)
      {
@@ -196,8 +188,6 @@ _efl_animation_object_translate_efl_animation_object_progress_set(Eo *eo_obj,
                                                                   Efl_Animation_Object_Translate_Data *pd EINA_UNUSED,
                                                                   double progress)
 {
-   EFL_ANIMATION_OBJECT_TRANSLATE_CHECK_OR_RETURN(eo_obj);
-
    if ((progress < 0.0) || (progress > 1.0)) return;
 
    _progress_set(eo_obj, progress);

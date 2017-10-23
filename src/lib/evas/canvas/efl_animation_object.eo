@@ -26,9 +26,6 @@ class Efl.Animation.Object (Efl.Object)
       resume {
          [[Resume animation.]]
       }
-      is_deleted @protected {
-         return: bool; [[$true if animation object is deleted, $false otherwise.]]
-      }
       target_state_save @protected {
          [[Save the state of the target.]]
       }

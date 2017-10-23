@@ -83,9 +83,6 @@ class Efl.Animation (Efl.Object)
             interpolator: Efl.Object; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
          }
       }
-      is_deleted @protected {
-         return: bool; [[$true if animation is deleted, $false otherwise.]]
-      }
       object_create {
          [[Create object of the animation.]]
          return: Efl.Animation.Object; [[Created object of the animation]]

@@ -61,8 +61,6 @@ _efl_animation_object_group_sequential_efl_animation_object_group_object_add(Eo 
                                                                              Efl_Animation_Object_Group_Sequential_Data *pd EINA_UNUSED,
                                                                              Efl_Animation_Object *anim_obj)
 {
-   EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_CHECK_OR_RETURN(eo_obj);
-
    if (!anim_obj) return;
 
    efl_animation_object_group_object_add(efl_super(eo_obj, MY_CLASS), anim_obj);
@@ -85,8 +83,6 @@ _efl_animation_object_group_sequential_efl_animation_object_group_object_del(Eo 
                                                                              Efl_Animation_Object_Group_Sequential_Data *pd EINA_UNUSED,
                                                                              Efl_Animation_Object *anim_obj)
 {
-   EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_CHECK_OR_RETURN(eo_obj);
-
    if (!anim_obj) return;
 
    efl_animation_object_group_object_del(efl_super(eo_obj, MY_CLASS), anim_obj);
@@ -108,8 +104,6 @@ EOLIAN static double
 _efl_animation_object_group_sequential_efl_animation_object_total_duration_get(Eo *eo_obj,
                                                                                Efl_Animation_Object_Group_Sequential_Data *pd EINA_UNUSED)
 {
-   EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_CHECK_OR_RETURN(eo_obj, 0.0);
-
    Eina_List *anim_objs = efl_animation_object_group_objects_get(eo_obj);
    if (!anim_objs) return 0.0;
 

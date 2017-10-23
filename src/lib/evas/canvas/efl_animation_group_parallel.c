@@ -5,8 +5,6 @@ _efl_animation_group_parallel_efl_animation_group_animation_add(Eo *eo_obj,
                                                                 Efl_Animation_Group_Parallel_Data *pd EINA_UNUSED,
                                                                 Efl_Animation *animation)
 {
-   EFL_ANIMATION_GROUP_PARALLEL_CHECK_OR_RETURN(eo_obj);
-
    if (!animation) return;
 
    efl_animation_group_animation_add(efl_super(eo_obj, MY_CLASS),
@@ -26,8 +24,6 @@ _efl_animation_group_parallel_efl_animation_group_animation_del(Eo *eo_obj,
                                                                 Efl_Animation_Group_Parallel_Data *pd EINA_UNUSED,
                                                                 Efl_Animation *animation)
 {
-   EFL_ANIMATION_GROUP_PARALLEL_CHECK_OR_RETURN(eo_obj);
-
    if (!animation) return;
 
    efl_animation_group_animation_del(efl_super(eo_obj, MY_CLASS),
@@ -46,8 +42,6 @@ EOLIAN static double
 _efl_animation_group_parallel_efl_animation_total_duration_get(Eo *eo_obj,
                                                                Efl_Animation_Group_Parallel_Data *pd EINA_UNUSED)
 {
-   EFL_ANIMATION_GROUP_PARALLEL_CHECK_OR_RETURN(eo_obj, 0.0);
-
    Eina_List *animations =
       efl_animation_group_animations_get(eo_obj);
    if (!animations) return 0.0;
@@ -77,8 +71,6 @@ EOLIAN static Efl_Animation_Object *
 _efl_animation_group_parallel_efl_animation_object_create(Eo *eo_obj,
                                                           Efl_Animation_Group_Parallel_Data *pd EINA_UNUSED)
 {
-   EFL_ANIMATION_GROUP_PARALLEL_CHECK_OR_RETURN(eo_obj, NULL);
-
    Efl_Animation_Object_Group_Parallel *group_anim_obj
       = efl_add(EFL_ANIMATION_OBJECT_GROUP_PARALLEL_CLASS, NULL);
 
