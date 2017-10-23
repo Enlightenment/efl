@@ -2,7 +2,6 @@
 #include "evas_private.h"
 
 #include "evas_vg_private.h"
-#include "efl_vg_root_node.eo.h"
 
 #include <string.h>
 #include <math.h>
@@ -503,12 +502,9 @@ _efl_vg_root_parent_get(Eo *obj)
 {
    Eo *parent;
 
-   if (efl_isa(obj, EFL_VG_ROOT_NODE_CLASS))
-     return obj;
-
    parent = efl_parent_get(obj);
 
-   if (!parent) return NULL;
+   if (!parent) return obj;
    return _efl_vg_root_parent_get(parent);
 }
 

@@ -23,7 +23,6 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_vg.eo \
 	lib/evas/canvas/efl_vg_container.eo \
 	lib/evas/canvas/efl_vg_shape.eo \
-	lib/evas/canvas/efl_vg_root_node.eo \
 	lib/evas/canvas/efl_vg_gradient.eo \
 	lib/evas/canvas/efl_vg_gradient_radial.eo \
 	lib/evas/canvas/efl_vg_gradient_linear.eo \
@@ -394,7 +393,6 @@ lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/evas_object_vg.c \
 lib/evas/canvas/evas_vg_node.c \
 lib/evas/canvas/evas_vg_container.c \
-lib/evas/canvas/evas_vg_root_node.c \
 lib/evas/canvas/evas_vg_gradient.c \
 lib/evas/canvas/evas_vg_gradient_linear.c \
 lib/evas/canvas/evas_vg_gradient_radial.c \

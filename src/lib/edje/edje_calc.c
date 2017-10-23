@@ -3695,15 +3695,12 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 {
    int w, h;
    int new_svg = -1;
-   Efl_VG *root_vg;
    Eina_Matrix3 matrix;
    Edje_Vector_Data *start, *end;
 
    evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
 
    if( (w == 0) || (h == 0)) return;
-
-   root_vg = evas_object_vg_root_node_get(ep->object);
 
    if (ep->param2)
      {
@@ -3751,7 +3748,7 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 
              _edje_dupe_vector_data(ed, chosen_desc->vg.id, w, h, &ep->typedata.vector->cur);
 
-             efl_parent_set(ep->typedata.vector->cur.vg, root_vg);
+             evas_object_vg_root_node_set(ep->object, ep->typedata.vector->cur.vg);
           }
      }
 }

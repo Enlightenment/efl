@@ -57,6 +57,7 @@ static const char *batmans_path[] = {
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
+   ecore_animator_del(animation);
    ecore_main_loop_quit();
 }
 
@@ -141,7 +142,9 @@ main(void)
 
    animation = ecore_animator_timeline_add(1, _animator, NULL);
 
-   root = evas_object_vg_root_node_get(vg);
+   root = evas_vg_container_add(NULL);
+
+   evas_object_vg_root_node_set(vg, root);
 
    Eina_Matrix3 matrix;
    eina_matrix3_identity(&matrix);

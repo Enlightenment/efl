@@ -309,7 +309,7 @@ _1_basic_shape_test()
   evas_object_event_callback_add(d.vg, EVAS_CALLBACK_KEY_DOWN, _basic_shape_key_handle, NULL);
   puts(basic_shape_menu);
 
-  container = evas_vg_container_add(evas_object_vg_root_node_get(d.vg));
+  container = evas_vg_container_add(NULL);
 
   // Line
   shape = evas_vg_shape_add(container);
@@ -406,6 +406,8 @@ _1_basic_shape_test()
   evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
   evas_vg_node_origin_set(new_shape, 350, 450);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
+
+  evas_object_vg_root_node_set(d.vg, container);
 }
 
 // 2. Basic shape  Test Case END
@@ -487,9 +489,11 @@ _2_interpolation_test()
   evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
-  shape = evas_vg_shape_add(evas_object_vg_root_node_get(d.vg));
+  shape = evas_vg_shape_add(NULL);
   evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
+
+  evas_object_vg_root_node_set(d.vg, shape);
 }
 
 // 2. Interpolation Test Case END
@@ -513,11 +517,13 @@ _main_menu()
    // create the initial screen
    d.vg = evas_object_vg_add(d.evas);
    evas_object_show(d.vg);
-   shape = evas_vg_shape_add(evas_object_vg_root_node_get(d.vg));
+   shape = evas_vg_shape_add(NULL);
    evas_vg_shape_append_svg_path(shape, batman);
    evas_vg_node_color_set(shape, 10, 0, 0, 10);
    evas_vg_node_origin_set(shape, 0, 100);
 
+   evas_object_vg_root_node_set(d.vg, shape);
+   
    _canvas_resize_cb(d.ee);
    puts(main_menu);
 }
