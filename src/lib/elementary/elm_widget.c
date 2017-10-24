@@ -5557,22 +5557,7 @@ elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source
 EOLIAN static Efl_Object *
 _elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
 {
-   Elm_Part_Data *pd;
-   Eo *proxy;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
-
-   // Generic parts for every kind of widget
-   proxy = efl_add(EFL_UI_WIDGET_PART_CLASS, (Eo *) obj);
-   pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
-   if (pd)
-     {
-        pd->obj  = (Eo *) obj;
-        pd->part = eina_tmpstr_add(part);
-        pd->temp = 1;
-     }
-
-   return proxy;
+   return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_CLASS, obj, part);
 }
 
 EOLIAN static void \

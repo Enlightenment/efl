@@ -2401,14 +2401,14 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
         return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_TEXT:
       case EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK:
-        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS);
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
-        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS);
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
         DBG("No such part '%s' in group '%s'", part, sd->group);
         return NULL;
       default:
-        return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS);
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
      }
 }
 
@@ -2437,7 +2437,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, con
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_layout_part_cursor_set(sd, pd->part, cursor));
+   return _efl_ui_layout_part_cursor_set(sd, pd->part, cursor);
 }
 
 EOLIAN static const char *
@@ -2445,7 +2445,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_get(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_layout_part_cursor_get(sd, pd->part));
+   return _efl_ui_layout_part_cursor_get(sd, pd->part);
 }
 
 EOLIAN static Eina_Bool
@@ -2453,7 +2453,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_style_set(Eo *obj, void *_pd EINA_UNUSE
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_layout_part_cursor_style_set(sd, pd->part, style));
+   return _efl_ui_layout_part_cursor_style_set(sd, pd->part, style);
 }
 
 EOLIAN static const char *
@@ -2461,7 +2461,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_style_get(Eo *obj, void *_pd EINA_UNUSE
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_layout_part_cursor_style_get(sd, pd->part));
+   return _efl_ui_layout_part_cursor_style_get(sd, pd->part);
 }
 
 EOLIAN static Eina_Bool
@@ -2469,7 +2469,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_set(Eo *obj, void 
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(_efl_ui_layout_part_cursor_engine_only_set(sd, pd->part, !allow));
+   return _efl_ui_layout_part_cursor_engine_only_set(sd, pd->part, !allow);
 }
 
 EOLIAN static Eina_Bool
@@ -2477,7 +2477,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(Eo *obj, void 
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_PART_RETURN_VAL(!_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part));
+   return !_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part);
 }
 
 /* Efl.Ui.Layout.Part_Content */
