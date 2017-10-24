@@ -13,53 +13,52 @@
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert.Scroll"
 
 static void
-_scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Evas_Coord minw, Evas_Coord minh)
+_scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D min)
 {
-   Evas_Coord w, h;
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   Eina_Rect geom = efl_gfx_geometry_get(obj);
 
    pd->is_sizing_eval = EINA_TRUE;
 
    if (pd->is_expandable_w && !pd->is_expandable_h)
      {
-        if ((pd->max_scroll_w > -1) && (minw > pd->max_scroll_w))
+        if ((pd->max_scroll.w > -1) && (min.w > pd->max_scroll.w))
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-             evas_object_resize(obj, pd->max_scroll_w, h);
+             efl_gfx_size_set(obj, EINA_SIZE2D(pd->max_scroll.w, geom.h));
           }
      }
    else if (!pd->is_expandable_w && pd->is_expandable_h)
      {
-        if ((pd->max_scroll_h > -1) && (minh > pd->max_scroll_h))
+        if ((pd->max_scroll.h > -1) && (min.h > pd->max_scroll.h))
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-             evas_object_resize(obj, w, pd->max_scroll_h);
+             efl_gfx_size_set(obj, EINA_SIZE2D(geom.w, pd->max_scroll.h));
           }
-      }
+     }
    else if (pd->is_expandable_w && pd->is_expandable_h)
-      {
-         Eina_Bool wdir, hdir;
-         wdir = hdir = EINA_FALSE;
+     {
+        Eina_Bool wdir, hdir;
+        wdir = hdir = EINA_FALSE;
 
-         if ((pd->max_scroll_w > -1) && (minw > pd->max_scroll_w))
-              wdir = 1;
-         if ((pd->max_scroll_h > -1) && (minh > pd->max_scroll_h))
-              hdir = 1;
-         if (wdir && !hdir)
-           {
-              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-              evas_object_resize(obj, pd->max_scroll_w, h);
-           }
-         else if (!wdir && hdir)
-           {
+        if ((pd->max_scroll.w > -1) && (min.w > pd->max_scroll.w))
+          wdir = 1;
+        if ((pd->max_scroll.h > -1) && (min.h > pd->max_scroll.h))
+          hdir = 1;
+        if (wdir && !hdir)
+          {
+             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
+             efl_gfx_size_set(obj, EINA_SIZE2D(pd->max_scroll.w, geom.h));
+          }
+        else if (!wdir && hdir)
+          {
              elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-             evas_object_resize(obj, w, pd->max_scroll_h);
-           }
-         else if(wdir && hdir)
-           {
+             efl_gfx_size_set(obj, EINA_SIZE2D(geom.w, pd->max_scroll.h));
+          }
+        else if(wdir && hdir)
+          {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-             evas_object_resize(obj, pd->max_scroll_w, pd->max_scroll_h);
-           }
+             efl_gfx_size_set(obj, pd->max_scroll);
+          }
      }
 
    pd->is_sizing_eval = EINA_FALSE;
@@ -77,14 +76,14 @@ _efl_ui_popup_alert_scroll_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Sc
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+      (wd->resize_obj, &minw, &minh, minw, minh);
+   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
 
-   _scroller_sizing_eval(obj, pd, minw, minh);
+   _scroller_sizing_eval(obj, pd, EINA_SIZE2D(minw, minh));
 }
 
 static Eina_Bool
-_efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part, Evas_Object *content)
+_efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part, Eo *content)
 {
    //For efl_content_set()
    if (part && !strcmp(part, "elm.swallow.content"))
@@ -92,8 +91,8 @@ _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
         pd->content = content;
 
         //Content should have expand propeties since the scroller is not layout layer
-        evas_object_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(pd->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        efl_gfx_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        efl_gfx_size_hint_align_set(pd->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
         efl_content_set(efl_part(pd->scroller, "default"), pd->content);
      }
@@ -105,7 +104,7 @@ _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
    return EINA_TRUE;
 }
 
-Evas_Object *
+Eo *
 _efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
@@ -115,13 +114,13 @@ _efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
-static Evas_Object *
+static Eo *
 _efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
    if (part && !strcmp(part, "elm.swallow.content"))
      {
-        Evas_Object *content = pd->content;
+        Eo *content = pd->content;
         if (!content) return content;
 
         pd->content = NULL;
@@ -179,8 +178,7 @@ static void
 _efl_ui_popup_alert_scroll_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D size)
 {
    efl_gfx_size_hint_max_set(efl_super(obj, MY_CLASS), size);
-   pd->max_scroll_w = size.w;
-   pd->max_scroll_h = size.h;
+   pd->max_scroll = size;
    elm_layout_sizing_eval(obj);
 }
 
@@ -198,20 +196,13 @@ _efl_ui_popup_alert_scroll_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Aler
 
    efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), pd->scroller);
 
-   pd->max_scroll_w = -1;
-   pd->max_scroll_h = -1;
+   pd->max_scroll = EINA_SIZE2D(-1, -1);
 }
 
 EOLIAN static void
 _efl_ui_popup_alert_scroll_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd EINA_UNUSED)
 {
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_popup_alert_scroll_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 /* Efl.Part begin */
