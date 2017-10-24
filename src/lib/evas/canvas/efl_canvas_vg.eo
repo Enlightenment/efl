@@ -1,4 +1,4 @@
-class Evas.VG (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
+class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
