@@ -17,6 +17,7 @@ class Efl.Ui.Popup.Alert.Scroll(Efl.Ui.Popup.Alert)
        }
    }
    implements {
+      Efl.Object.constructor;
       Efl.Gfx.Size.Hint.hint_max { set; }
       Efl.Part.part;
    }

@@ -21,6 +21,8 @@ class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
       }
    }
    implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Part.part;
    }
    events {
