@@ -246,11 +246,11 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         /*   minh = pd->item_count * average_item_size; */
      }
 
-   if (pd->min.h != minh || pd->min.w != minw)
-     {
-        pd->min.w = minw;
-        pd->min.h = minh;
-     }
+//   if (pd->min.h != minh || pd->min.w != minw)
+//     {
+//        pd->min.w = minw;
+//        pd->min.h = minh;
+//     }
 
    DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
    efl_ui_list_model_min_size_set(modeler, pd->min);
