@@ -235,7 +235,7 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
    char buf[1024];
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    style = elm_widget_style_get(obj);
@@ -2393,7 +2393,7 @@ _elm_fileselector_elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_
 
    sd->mode = mode;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
    if (sd->model)
      {
         _schedule_populate(obj, sd, sd->model, NULL);
@@ -3067,7 +3067,7 @@ _elm_fileselector_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED
 EOLIAN static Eina_Bool
 _elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
-   Eina_Bool ret = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
+   Eina_Bool ret = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    _focus_chain_update(obj, pd);
 

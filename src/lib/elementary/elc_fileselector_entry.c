@@ -168,7 +168,7 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    style = elm_widget_style_get(obj);
@@ -193,7 +193,7 @@ _elm_fileselector_entry_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_D
 EOLIAN static Eina_Bool
 _elm_fileselector_entry_elm_widget_on_disabled_update(Eo *obj, Elm_Fileselector_Entry_Data *sd, Eina_Bool disabled)
 {
-   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
    elm_widget_disabled_set(sd->button, disabled);

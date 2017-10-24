@@ -609,7 +609,7 @@ _elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _time_update(obj, EINA_TRUE);

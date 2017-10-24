@@ -241,7 +241,7 @@ _elm_menu_elm_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    const char *s;
    char style[1024];
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->menu_bar)
@@ -793,7 +793,7 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
           }
      }
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EAPI Evas_Object *
@@ -821,7 +821,7 @@ _elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
    Eo *parent = NULL;
    Efl_Ui_Focus_Manager *manager;
 
-   manager = elm_obj_widget_focus_manager_create(obj, obj);
+   manager = efl_ui_widget_focus_manager_create(obj, obj);
    efl_composite_attach(obj, manager);
    _efl_ui_focus_manager_redirect_events_add(manager, obj);
 
@@ -863,7 +863,7 @@ elm_menu_parent_set(Evas_Object *obj,
                     Evas_Object *parent)
 {
    ELM_MENU_CHECK(obj);
-   elm_obj_widget_parent_set(obj, parent);
+   efl_ui_widget_parent_set(obj, parent);
 }
 
 EOLIAN static void
@@ -913,7 +913,7 @@ EAPI Evas_Object *
 elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;
-   return elm_obj_widget_parent_get(obj);
+   return efl_ui_widget_parent_get(obj);
 }
 
 EAPI Elm_Widget_Item *

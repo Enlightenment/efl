@@ -177,7 +177,7 @@ _icon_signal_emit(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _efl_ui_progressbar_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
 {
-   if (!elm_obj_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj))
+   if (!efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj))
      return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -187,7 +187,7 @@ _efl_ui_progressbar_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Progressbar
 static Eina_Bool
 _efl_ui_progressbar_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED, Evas_Object *sobj)
 {
-   if (!elm_obj_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj))
+   if (!efl_ui_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj))
      return EINA_FALSE;
 
    _icon_signal_emit(obj);
@@ -205,7 +205,7 @@ _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
      eina_stringshare_replace(&ld->group, "horizontal");
    else eina_stringshare_replace(&ld->group, "vertical");
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->pulse)
@@ -366,7 +366,7 @@ _efl_ui_progressbar_pulse_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data 
 
    sd->pulse = pulse;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -380,7 +380,7 @@ _efl_ui_progressbar_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Progressbar_D
 {
    sd->dir = dir;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Efl_Ui_Dir

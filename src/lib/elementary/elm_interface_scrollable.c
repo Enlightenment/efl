@@ -4672,7 +4672,7 @@ _elm_interface_scrollable_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, E
 EOLIAN static Efl_Object*
 _elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
-   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
+   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 

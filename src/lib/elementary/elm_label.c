@@ -190,7 +190,7 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _elm_label_horizontal_size_policy_update(obj, sd);

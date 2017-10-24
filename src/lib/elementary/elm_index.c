@@ -451,7 +451,7 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    else
      eina_stringshare_replace(&ld->group, "base/vertical");
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
@@ -1583,7 +1583,7 @@ _elm_index_efl_ui_direction_direction_set(Eo *obj, Elm_Index_Data *sd, Efl_Ui_Di
 
    sd->dir = dir;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Efl_Ui_Dir

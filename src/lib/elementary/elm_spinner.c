@@ -934,7 +934,7 @@ _elm_spinner_elm_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd, Elm_Objec
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (!elm_widget_focus_get(obj))

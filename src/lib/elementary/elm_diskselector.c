@@ -821,7 +821,7 @@ _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    evas = evas_object_evas_get(obj);
@@ -902,7 +902,7 @@ _elm_diskselector_elm_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -1248,7 +1248,7 @@ _elm_diskselector_efl_canvas_group_group_add(Eo *obj, Elm_Diskselector_Data *pri
    priv->len_side = 3;
 
    elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
    elm_interface_scrollable_policy_set(obj, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_interface_scrollable_bounce_allow_set(obj, EINA_TRUE, EINA_FALSE);
    elm_interface_scrollable_animate_start_cb_set(obj, _scroll_animate_start_cb);

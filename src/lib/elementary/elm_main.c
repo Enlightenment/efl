@@ -1880,28 +1880,28 @@ elm_object_focus_move_policy_set(Evas_Object *obj,
                                  Elm_Focus_Move_Policy policy)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_obj_widget_focus_move_policy_set(obj, policy);
+   efl_ui_widget_focus_move_policy_set(obj, policy);
 }
 
 EAPI Elm_Focus_Move_Policy
 elm_object_focus_move_policy_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_obj_widget_focus_move_policy_get(obj);
+   return efl_ui_widget_focus_move_policy_get(obj);
 }
 
 EAPI Eina_Bool
 elm_object_focus_move_policy_automatic_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_obj_widget_focus_move_policy_automatic_get(obj);
+   return efl_ui_widget_focus_move_policy_automatic_get(obj);
 }
 
 EAPI void
 elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   return elm_obj_widget_focus_move_policy_automatic_set(obj, automatic);
+   return efl_ui_widget_focus_move_policy_automatic_set(obj, automatic);
 }
 
 EAPI void
@@ -2150,7 +2150,7 @@ EAPI Elm_Object_Item *
 elm_object_focused_item_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_obj_widget_focused_item_get(obj);
+   return efl_ui_widget_focused_item_get(obj);
 }
 
 EAPI void

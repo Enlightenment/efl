@@ -866,7 +866,7 @@ _efl_ui_image_zoomable_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj))
@@ -894,7 +894,7 @@ _efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Dat
    if (sd->stdicon)
      _internal_efl_ui_image_zoomable_icon_set(obj, sd->stdicon, &fdo, EINA_TRUE);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _sizing_eval(obj);

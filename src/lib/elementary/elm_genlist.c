@@ -2887,7 +2887,7 @@ _elm_genlist_item_content_focus_set(Elm_Gen_Item *it, Elm_Focus_Direction dir)
      {
         Evas_Object *nextfocus;
         Elm_Object_Item *nextfocus_item;
-        if (elm_obj_widget_focus_next_get(focused_obj, dir, &nextfocus, &nextfocus_item))
+        if (efl_ui_widget_focus_next_get(focused_obj, dir, &nextfocus, &nextfocus_item))
           {
              if (nextfocus_item)
                elm_object_item_focus_set(nextfocus_item, EINA_TRUE);
@@ -3301,7 +3301,7 @@ _elm_genlist_elm_widget_on_focus_update(Eo *obj, Elm_Genlist_Data *sd, Elm_Objec
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->items) && (sd->selected) &&
@@ -3375,7 +3375,7 @@ _elm_genlist_elm_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
    Eina_List *l;
    Elm_Gen_Item *it;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));

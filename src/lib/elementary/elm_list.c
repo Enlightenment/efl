@@ -296,7 +296,7 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
      {
         Evas_Object *nextfocus;
         Elm_Object_Item *nextfocus_item;
-        if (elm_obj_widget_focus_next_get(focused, dir, &nextfocus, &nextfocus_item))
+        if (efl_ui_widget_focus_next_get(focused, dir, &nextfocus, &nextfocus_item))
           {
              if (nextfocus_item)
                elm_object_item_focus_set(nextfocus_item, EINA_TRUE);
@@ -1035,7 +1035,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 EOLIAN static Eina_Bool
 _elm_list_elm_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
 {
-   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
    if (disabled)
@@ -1080,7 +1080,7 @@ _elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
    Eina_List *n;
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -1242,7 +1242,7 @@ _elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && sd->selected && !sd->last_selected_item)

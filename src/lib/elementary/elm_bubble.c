@@ -215,7 +215,7 @@ _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
    eina_stringshare_replace
      (&ld->group, corner_string[sd->pos]);
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Elm_Bubble_Pos

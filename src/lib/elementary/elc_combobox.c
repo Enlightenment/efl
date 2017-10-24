@@ -73,7 +73,7 @@ _elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    /* combobox's style has no extra bit for orientation but could have... */
    eina_stringshare_replace(&(wd->style), buf);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -295,7 +295,7 @@ _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNU
    efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 
    //What are you doing here?
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static void
@@ -368,7 +368,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    //hover
    sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
                        _hover_ctor(obj, efl_added),
-                       elm_obj_widget_style_set(efl_added, buf));
+                       efl_ui_widget_style_set(efl_added, buf));
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
@@ -393,7 +393,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    // This is the genlist object that will take over the genlist call
    sd->genlist = gl = efl_add(ELM_GENLIST_CLASS, obj,
-                              elm_obj_widget_style_set(efl_added, buf));
+                              efl_ui_widget_style_set(efl_added, buf));
    elm_genlist_filter_set(gl, NULL);
    efl_ui_mirrored_automatic_set(gl, EINA_FALSE);
    efl_ui_mirrored_set(gl, efl_ui_mirrored_get(obj));
@@ -408,7 +408,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    // This is the entry object that will take over the entry call
    sd->entry = entry = efl_add(ELM_ENTRY_CLASS, obj,
-                               elm_obj_widget_style_set(efl_added, buf));
+                               efl_ui_widget_style_set(efl_added, buf));
    efl_ui_mirrored_automatic_set(entry, EINA_FALSE);
    efl_ui_mirrored_set(entry, efl_ui_mirrored_get(obj));
    elm_scroller_policy_set(entry, ELM_SCROLLER_POLICY_OFF,

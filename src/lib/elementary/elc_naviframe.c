@@ -74,7 +74,7 @@ _elm_naviframe_elm_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA
    wd->resize_obj = NULL;
 
 super:
-   elm_obj_widget_resize_object_set(efl_super(obj, MY_CLASS), sobj);
+   efl_ui_widget_resize_object_set(efl_super(obj, MY_CLASS), sobj);
 }
 
 static void
@@ -397,11 +397,11 @@ _elm_naviframe_elm_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
    Elm_Naviframe_Item_Data *it;
    const char *style = NULL, *sstyle = NULL;
 
-   style = elm_obj_widget_style_get(obj);
+   style = efl_ui_widget_style_get(obj);
 
    EINA_INLIST_FOREACH(sd->stack, it)
      {
-        sstyle = elm_obj_widget_style_get(VIEW(it));
+        sstyle = efl_ui_widget_style_get(VIEW(it));
         if ((style && sstyle) && strcmp(style, sstyle))
           _item_style_set(it, it->style);
         _item_signals_emit(it);

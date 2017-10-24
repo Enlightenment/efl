@@ -223,7 +223,7 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -811,7 +811,7 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
 
    priv->panel_edje = wd->resize_obj;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 
    priv->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_box_layout_set(priv->bx, _box_layout_cb, priv, NULL);
@@ -1222,7 +1222,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
 EOLIAN static Eina_Bool
 _elm_panel_elm_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
 {
-   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
    if (sd->scrollable)
