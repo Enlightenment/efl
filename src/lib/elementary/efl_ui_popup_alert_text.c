@@ -131,27 +131,28 @@ _efl_ui_popup_alert_text_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Popup_Al
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static void
-_efl_ui_popup_alert_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
+EOLIAN static Eo *
+_efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
+                                                Efl_Ui_Popup_Alert_Text_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+
    elm_widget_sub_object_parent_add(obj);
 
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
-   elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+   elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF,
+                           ELM_SCROLLER_POLICY_AUTO);
 
-   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), pd->scroller);
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"),
+                   pd->scroller);
 
    pd->max_scroll_h = -1;
-}
 
-EOLIAN static void
-_efl_ui_popup_alert_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED)
-{
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 /* Efl.Part begin */
@@ -169,7 +170,6 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert_text, EFL_UI_POPUP_ALERT_TEXT, Efl
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_POPUP_ALERT_TEXT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_popup_alert_text), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_alert_text)
 
 #include "efl_ui_popup_alert_text.eo.c"

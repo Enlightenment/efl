@@ -346,12 +346,15 @@ _efl_ui_popup_anchor_efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_An
    return pd->align;
 }
 
-EOLIAN static void
-_efl_ui_popup_anchor_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd EINA_UNUSED)
+EOLIAN static Eo *
+_efl_ui_popup_anchor_efl_object_constructor(Eo *obj,
+                                            Efl_Ui_Popup_Anchor_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+
    elm_widget_sub_object_parent_add(obj);
 
    pd->priority[0] = EFL_UI_POPUP_ALIGN_TOP;
@@ -359,16 +362,11 @@ _efl_ui_popup_anchor_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Anchor_Dat
    pd->priority[2] = EFL_UI_POPUP_ALIGN_RIGHT;
    pd->priority[3] = EFL_UI_POPUP_ALIGN_BOTTOM;
    pd->priority[4] = EFL_UI_POPUP_ALIGN_CENTER;
-}
 
-EOLIAN static void
-_efl_ui_popup_anchor_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd EINA_UNUSED)
-{
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 #define EFL_UI_POPUP_ANCHOR_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_popup_anchor), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_anchor)
 
 #include "efl_ui_popup_anchor.eo.c"

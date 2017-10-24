@@ -212,19 +212,24 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static void
-_efl_ui_popup_alert_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED)
+EOLIAN static Eo *
+_efl_ui_popup_alert_efl_object_constructor(Eo *obj,
+                                           Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+
    elm_widget_sub_object_parent_add(obj);
 
    elm_layout_theme_set(efl_super(obj, MY_CLASS), "popup", "base", "alert");
+
+   return obj;
 }
 
 EOLIAN static void
-_efl_ui_popup_alert_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
+_efl_ui_popup_alert_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
 {
    if (pd->title_text)
      {
@@ -232,7 +237,7 @@ _efl_ui_popup_alert_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Data 
         pd->title_text = NULL;
      }
 
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 /* Efl.Part begin */
@@ -248,7 +253,6 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_
 /* Efl.Part end */
 
 #define EFL_UI_POPUP_ALERT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_popup_alert), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_alert)
 
 #include "efl_ui_popup_alert.eo.c"
