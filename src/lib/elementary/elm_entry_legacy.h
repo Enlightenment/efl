@@ -53,6 +53,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Entry
  *
+ * @param[in] obj The entry object
  * @param[in] file The path to the file to load and save
  * @param[in] format The file format
  */
@@ -67,6 +68,7 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  *
  * @ingroup Elm_Entry
  *
+ * @param[in] obj The entry object
  * @param[out] file The path to the file to load and save
  * @param[out] format The file format
  */

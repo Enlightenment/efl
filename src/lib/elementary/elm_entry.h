@@ -27,12 +27,12 @@
  * elm_entry_markup_filter_append() and related functions, inline "items" and
  * formatted markup text.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for entry objects (since 1.8).
  *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base
- * @ref Scroller widget also work for entries (since 1.8).
+ * @ref Elm_Scroller widget also work for entries (since 1.8).
  *
  * Some calls on the entry's API are marked as @b deprecated, as they
  * just wrap the scrollable widgets counterpart functions. Use the
@@ -231,7 +231,7 @@
  * @section entry-signals Emitted signals
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li "aborted": The escape key was pressed on a single line entry. (since 1.7)
  * @li "activated": The enter key was pressed on a single line entry.
  * @li "anchor,clicked": An anchor has been clicked. The event_info

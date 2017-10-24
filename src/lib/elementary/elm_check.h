@@ -23,11 +23,11 @@
  * like the radio objects, you can set a pointer to a boolean directly
  * with elm_check_state_pointer_set() for it to modify.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for check objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - This is called whenever the user changes the state of
  *             the check objects (@p event_info is always @c NULL).
  * - @c "focused" - When the check has received focus. (since 1.8)
