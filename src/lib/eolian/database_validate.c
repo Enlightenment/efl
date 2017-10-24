@@ -7,6 +7,13 @@
 #include "eo_lexer.h"
 
 static Eina_Bool
+_validate(Eolian_Object *obj)
+{
+   obj->validated = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
 {
    if (!str || !str[0]) return EINA_TRUE;
@@ -38,20 +45,21 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
 }
 
 static Eina_Bool
-_validate_doc(const Eolian_Documentation *doc)
+_validate_doc(Eolian_Documentation *doc)
 {
-   if (!doc) return EINA_TRUE;
+   if (!doc || doc->base.validated)
+     return EINA_TRUE;
 
    if (!_validate_docstr(doc->summary, &doc->base))
      return EINA_FALSE;
    if (!_validate_docstr(doc->description, &doc->base))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&doc->base);
 }
 
 static Eina_Bool _validate_type(Eolian_Type *tp);
-static Eina_Bool _validate_expr(const Eolian_Expression *expr,
+static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
 
@@ -97,6 +105,9 @@ _type_error(const Eolian_Type *tp, const char *msg)
 static Eina_Bool
 _validate_typedecl(Eolian_Typedecl *tp)
 {
+   if (tp->base.validated)
+     return EINA_TRUE;
+
    if (!_validate_doc(tp->doc))
      return EINA_FALSE;
 
@@ -107,28 +118,32 @@ _validate_typedecl(Eolian_Typedecl *tp)
           return EINA_FALSE;
         if (!tp->freefunc && tp->base_type->freefunc)
           tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
-        return EINA_TRUE;
+        return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
         {
            Eina_Bool succ = EINA_TRUE;
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_sf_map_cb, &succ);
-           return succ;
+           if (!succ)
+             return EINA_FALSE;
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
-        return EINA_TRUE;
+        return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
            Eina_Bool succ = EINA_TRUE;
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &succ);
-           return succ;
+           if (!succ)
+             return EINA_FALSE;
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
         // FIXME validate functions here
-        return EINA_TRUE;
+        return _validate(&tp->base);
       default:
         return EINA_FALSE;
      }
-   return EINA_TRUE;
+   return _validate(&tp->base);
 }
 
 static const char * const eo_complex_frees[] =
@@ -150,6 +165,9 @@ _validate_type(Eolian_Type *tp)
 {
    char buf[256];
 
+   if (tp->base.validated)
+     return EINA_TRUE;
+
    if (tp->owned && !database_type_is_ownable(tp))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
@@ -160,7 +178,7 @@ _validate_type(Eolian_Type *tp)
      {
       case EOLIAN_TYPE_VOID:
       case EOLIAN_TYPE_UNDEFINED:
-        return EINA_TRUE;
+        return _validate(&tp->base);
       case EOLIAN_TYPE_REGULAR:
         {
            if (tp->base_type)
@@ -178,7 +196,7 @@ _validate_type(Eolian_Type *tp)
                        return EINA_FALSE;
                      itp = itp->next_type;
                   }
-                return EINA_TRUE;
+                return _validate(&tp->base);
              }
            Eolian_Typedecl *tpp;
            /* builtins */
@@ -205,7 +223,7 @@ _validate_type(Eolian_Type *tp)
                      default:
                        break;
                     }
-                return EINA_TRUE;
+                return _validate(&tp->base);
              }
            /* user defined */
            tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(tp);
@@ -218,7 +236,7 @@ _validate_type(Eolian_Type *tp)
              return EINA_FALSE;
            if (tpp->freefunc && !tp->freefunc)
              tp->freefunc = eina_stringshare_ref(tpp->freefunc);
-           return EINA_TRUE;
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPE_CLASS:
         {
@@ -231,16 +249,16 @@ _validate_type(Eolian_Type *tp)
              }
            if (!tp->freefunc)
              tp->freefunc = eina_stringshare_add(eo_obj_free);
-           return EINA_TRUE;
+           return _validate(&tp->base);
         }
       default:
         return EINA_FALSE;
      }
-   return EINA_TRUE;
+   return _validate(&tp->base);
 }
 
 static Eina_Bool
-_validate_expr(const Eolian_Expression *expr,
+_validate_expr(Eolian_Expression *expr,
                const Eolian_Type *tp, Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
@@ -249,11 +267,15 @@ _validate_expr(const Eolian_Expression *expr,
      val = eolian_expression_eval_type(NULL, expr, tp);
    else
      val = eolian_expression_eval(NULL, expr, msk);
-   return (val.type != EOLIAN_EXPR_UNKNOWN);
+
+   if (val.type == EOLIAN_EXPR_UNKNOWN)
+     return EINA_FALSE;
+
+   return _validate(&expr->base);
 }
 
 static Eina_Bool
-_validate_param(const Eolian_Function_Parameter *param)
+_validate_param(Eolian_Function_Parameter *param)
 {
    if (!_validate_type(param->type))
      return EINA_FALSE;
@@ -261,14 +283,17 @@ _validate_param(const Eolian_Function_Parameter *param)
    if (!_validate_doc(param->doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&param->base);
 }
 
 static Eina_Bool
-_validate_function(const Eolian_Function *func)
+_validate_function(Eolian_Function *func)
 {
    Eina_List *l;
-   const Eolian_Function_Parameter *param;
+   Eolian_Function_Parameter *param;
+
+   if (func->base.validated)
+     return EINA_TRUE;
 
    if (func->get_ret_type && !_validate_type(func->get_ret_type))
      return EINA_FALSE;
@@ -303,24 +328,30 @@ _validate_function(const Eolian_Function *func)
    if (!_validate_doc(func->set_return_doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&func->base);
 }
 
 static Eina_Bool
-_validate_event(const Eolian_Event *event)
+_validate_event(Eolian_Event *event)
 {
+   if (event->base.validated)
+     return EINA_TRUE;
+
    if (event->type && !_validate_type(event->type))
      return EINA_FALSE;
 
    if (!_validate_doc(event->doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&event->base);
 }
 
 static Eina_Bool
-_validate_implement(const Eolian_Implement *impl)
+_validate_implement(Eolian_Implement *impl)
 {
+   if (impl->base.validated)
+     return EINA_TRUE;
+
    if (!_validate_doc(impl->common_doc))
      return EINA_FALSE;
    if (!_validate_doc(impl->get_doc))
@@ -328,16 +359,19 @@ _validate_implement(const Eolian_Implement *impl)
    if (!_validate_doc(impl->set_doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&impl->base);
 }
 
 static Eina_Bool
-_validate_class(const Eolian_Class *cl)
+_validate_class(Eolian_Class *cl)
 {
    Eina_List *l;
-   const Eolian_Function *func;
-   const Eolian_Event *event;
-   const Eolian_Implement *impl;
+   Eolian_Function *func;
+   Eolian_Event *event;
+   Eolian_Implement *impl;
+
+   if (cl->base.validated)
+     return EINA_TRUE;
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(func))
@@ -358,12 +392,15 @@ _validate_class(const Eolian_Class *cl)
    if (!_validate_doc(cl->doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&cl->base);
 }
 
 static Eina_Bool
-_validate_variable(const Eolian_Variable *var)
+_validate_variable(Eolian_Variable *var)
 {
+   if (var->base.validated)
+     return EINA_TRUE;
+
    if (!_validate_type(var->base_type))
      return EINA_FALSE;
 
@@ -373,7 +410,7 @@ _validate_variable(const Eolian_Variable *var)
    if (!_validate_doc(var->doc))
      return EINA_FALSE;
 
-   return EINA_TRUE;
+   return _validate(&var->base);
 }
 
 static Eina_Bool
@@ -385,7 +422,7 @@ _typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 
 static Eina_Bool
 _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-             const Eolian_Variable *var, Eina_Bool *sc)
+             Eolian_Variable *var, Eina_Bool *sc)
 {
    return (*sc = _validate_variable(var));
 }
@@ -393,7 +430,7 @@ _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 Eina_Bool
 database_validate()
 {
-   const Eolian_Class *cl;
+   Eolian_Class *cl;
 
    /* FIXME: pass unit properly */
    Eina_Iterator *iter = eolian_all_classes_get(NULL);
