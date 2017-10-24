@@ -57,6 +57,8 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
       }
    }
    implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Gfx.position { set; }
       Efl.Gfx.visible { set; }
       Elm.Widget.widget_parent { set; }
