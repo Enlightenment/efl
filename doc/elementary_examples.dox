@@ -396,7 +396,7 @@
  *
  * To be able to create our actionsliders we need to do some setup, but this
  * isn't really relevant here, so if you want to know about that go @ref
- * Win "here".
+ * Elm_Win "here".
  *
  * With all that boring stuff out of the way we can proceed to creating some
  * actionsliders.@n
@@ -915,7 +915,7 @@
   *
   * Keeping any of those four buttons pressed will trigger their autorepeat
   * callback, where we move the button doing some size hint magic. To
-  * understand how that works better, refer to the @ref Box documentation.
+  * understand how that works better, refer to the @ref Elm_Box documentation.
   * Also, the first time the function is called, we change the icon in the
   * middle button, using elm_object_content_unset() first to keep the reference
   * to the previous one, so we don't need to recreate it when we are done
@@ -3170,7 +3170,7 @@
 /**
  * @page layout_example_01 Layout - Content, Table and Box
  *
- * This example shows how one can use the @ref Layout widget to create a
+ * This example shows how one can use the @ref Elm_Layout widget to create a
  * customized distribution of widgets on the screen, controlled by an Edje theme.
  * The full source code for this example can be found at @ref
  * layout_example_01_c.
@@ -3247,7 +3247,7 @@
  * of putting them in row, column, both, or any other available layout. This is
  * also described in the Edje documentation.
  *
- * This box area is similar to the @ref Box widget of elementary, with the
+ * This box area is similar to the @ref Elm_Box widget of elementary, with the
  * difference that its position and properties are controlled by the theme of the
  * layout. It also contains more than one API to add items to it, since the
  * items position now is defined in terms of a list of items, not a matrix.
@@ -3314,7 +3314,7 @@
 /**
  * @page layout_example_02 Layout - Predefined Layout
  *
- * This example shows how one can use the @ref Layout with a predefined theme
+ * This example shows how one can use the @ref Elm_Layout with a predefined theme
  * layout to add a back and next button to a simple window. The full source code
  * for this example can be found at @ref layout_example_02_c.
  *
@@ -3424,7 +3424,7 @@
  * middle positions. In the middle position we are placing a button that when
  * clicked will hide the hover. We are also going to use a non-default theme
  * for our hover. We won't explain the functioning of button for that see @ref
- * Button.
+ * Elm_Button.
  *
  * We start our example with a couple of callbacks that show and hide the data
  * they're given(which we'll see later on is the hover widget):
@@ -3479,7 +3479,7 @@
   * green). Our example will allow the user to choose the animation the flip
   * uses and to interact with it. To allow the user to choose the interaction
   * mode we use radio buttons, we will however not explain them, if you would
-  * like to know more about radio buttons see @ref Radio.
+  * like to know more about radio buttons see @ref Elm_Radio.
   *
   * We start our example with the usual setup and then create the 2 rectangles
   * we will use in our flip:
@@ -4430,11 +4430,11 @@
 /**
  * @page entry_example Entry - Example of simple editing
  *
- * As a general overview of @ref Entry we are going to write an, albeit simple,
+ * As a general overview of @ref Elm_Entry we are going to write an, albeit simple,
  * functional editor. Although intended to show how elm_entry works, this
  * example also makes extensive use of several other widgets. The full code
  * can be found in @ref entry_example.c "entry_example.c" and in the following
- * lines we'll go through the parts especific to the @ref Entry widget.
+ * lines we'll go through the parts especific to the @ref Elm_Entry widget.
  *
  * The program itself is a simple editor, with a file already set to it, that
  * can be set to autosave or not and allows insertion of emoticons and some
@@ -4463,7 +4463,7 @@
  * @skip static void
  * @until }
  *
- * One of the buttons on the top will trigger an @ref Inwin to open and show
+ * One of the buttons on the top will trigger an @ref Elm_Inwin to open and show
  * us several icons we can insert into the text. We'll jump over most of these
  * functions, but when all the options are chosen, we insert the special
  * markup text that will show the chosen icon in place.
@@ -4503,7 +4503,7 @@
  * just that, a box that holds text, and in order to have some frame around it
  * or a background color, another widget needs to provide this. When an entry
  * is scrollable, the same scroller used internally does this.
- * We are using @ref Frame "frames" here to provide some decoration around,
+ * We are using @ref Elm_Frame "frames" here to provide some decoration around,
  * then creating our entries, set them to single line, add our two filters and
  * the callback for when their value change.
  * @until _height_changed_cb
@@ -4884,7 +4884,7 @@
 /**
  * @page genlist_example_05 Genlist - working with subitems
  *
- * This is probably the most complex example of elementary @ref Genlist. We
+ * This is probably the most complex example of elementary @ref Elm_Genlist. We
  * create a tree of items, using the subitems properties of the items, and keep
  * it in memory to be able to expand/hide subitems of an item. The full source
  * code can be found at @ref genlist_example_05_c
@@ -5457,7 +5457,7 @@
  * @until evas_object_show
  *
  * Next, we define the <b>item class</b> for our slideshow
- * items. Slideshow images are going to be Elementary @ref Photo "photo"
+ * items. Slideshow images are going to be Elementary @ref Elm_Photo "photo"
  * widgets, here, as pointed by our @c get class
  * function. We'll let the Elementary infrastructure to delete those
  * objects for us, and, as there's no additional data attached to our
@@ -5666,7 +5666,7 @@
  * it will work kind of like a modal window, blocking any other widget from
  * receiving events until the window is manually dismissed by pressing some
  * button to close it or having blocking task signalling its completion so
- * normal operations can be resumed. This is unlike the @ref Hover widget,
+ * normal operations can be resumed. This is unlike the @ref Elm_Hover widget,
  * that would show its content on top of the designated target, but clicking
  * anywhere else would dismiss it automatically.
  *
@@ -5842,7 +5842,7 @@
 /**
  * @page win_example_01 Win - General API overview
  *
- * For most users of the Elementary API, the @ref Win widget has a lot more
+ * For most users of the Elementary API, the @ref Elm_Win widget has a lot more
  * functions than what they need.
  *
  * In general, a developer will create a window, set some content on it and
