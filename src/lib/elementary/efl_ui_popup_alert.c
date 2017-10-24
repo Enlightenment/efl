@@ -6,6 +6,8 @@
 
 #include "elm_priv.h"
 #include "efl_ui_popup_alert_private.h"
+#include "efl_ui_popup_alert_part.eo.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_POPUP_ALERT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert"
@@ -27,30 +29,61 @@ _efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
 }
 
-EOLIAN static void
-_efl_ui_popup_alert_title_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *text)
+static Eina_Bool
+_efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *part, const char *label)
 {
-   if (pd->title_text)
+   if (part && !strcmp(part, "title"))
      {
-        eina_stringshare_del(pd->title_text);
-        pd->title_text = NULL;
+        if (pd->title_text)
+          {
+             eina_stringshare_del(pd->title_text);
+             pd->title_text = NULL;
+          }
+
+        pd->title_text = eina_stringshare_add(label);
+        elm_object_part_text_set(obj, "elm.text.title", label);
+        elm_layout_signal_emit(obj, "elm,title,show", "elm");
+
+        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+        edje_object_message_signal_process(wd->resize_obj);
+        elm_layout_sizing_eval(obj);
      }
+   else
+     efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
-   pd->title_text = eina_stringshare_add(text);
-   elm_object_part_text_set(obj, "elm.text.title", text);
-   elm_layout_signal_emit(obj, "elm,title,show", "elm");
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   edje_object_message_signal_process(wd->resize_obj);
-   elm_layout_sizing_eval(obj);
+   return EINA_TRUE;
 }
 
-EOLIAN static const char *
-_efl_ui_popup_alert_title_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd)
+const char *
+_efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, const char *part)
 {
-   if (pd->title_text)
-    return pd->title_text;
-   return NULL;
+   if (part && !strcmp(part, "title"))
+     {
+        if (pd->title_text)
+          return pd->title_text;
+
+        return NULL;
+     }
+
+   return efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
+}
+
+static Eina_Bool
+_efl_ui_popup_alert_content_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part, Evas_Object *content)
+{
+   return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
+}
+
+Evas_Object *
+_efl_ui_popup_alert_content_get(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
+{
+   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
+}
+
+static Evas_Object *
+_efl_ui_popup_alert_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
+{
+   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
 static void
@@ -210,6 +243,18 @@ _efl_ui_popup_alert_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_TEXT_SET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+#include "efl_ui_popup_alert_part.eo.c"
+
+/* Efl.Part end */
 
 #define EFL_UI_POPUP_ALERT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_popup_alert), \
