@@ -1136,7 +1136,7 @@ test_efl_ui_popup_alert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_CLASS, win);
 
-   efl_ui_popup_alert_title_set(efl_ui_popup, "title");
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
    evas_object_resize(efl_ui_popup, 160, 160);
    evas_object_show(efl_ui_popup);
@@ -1168,7 +1168,7 @@ test_efl_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
 
-   efl_ui_popup_alert_title_set(efl_ui_popup, "title");
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
    evas_object_resize(efl_ui_popup, 160, 160);
    evas_object_show(efl_ui_popup);
@@ -1203,7 +1203,7 @@ test_efl_ui_popup_alert_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    Evas_Object *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
 
-   efl_ui_popup_alert_title_set(efl_ui_popup, "title");
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
    evas_object_resize(efl_ui_popup, 160, 160);
    evas_object_show(efl_ui_popup);
