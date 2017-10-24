@@ -96,10 +96,9 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 static Eina_Bool
-_type_error(const Eolian_Type *tp, const char *msg)
+_obj_error(const Eolian_Object *o, const char *msg)
 {
-   fprintf(stderr, "eolian:%s:%d:%d: %s\n", tp->base.file, tp->base.line,
-           tp->base.column, msg);
+   fprintf(stderr, "eolian:%s:%d:%d: %s\n", o->file, o->line, o->column, msg);
    return EINA_FALSE;
 }
 
@@ -172,7 +171,7 @@ _validate_type(Eolian_Type *tp)
    if (tp->owned && !database_type_is_ownable(tp))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
-        return _type_error(tp, buf);
+        return _obj_error(&tp->base, buf);
      }
 
    switch (tp->type)
@@ -231,7 +230,7 @@ _validate_type(Eolian_Type *tp)
            if (!tpp)
              {
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
-                return _type_error(tp, buf);
+                return _obj_error(&tp->base, buf);
              }
            if (!_validate_typedecl(tpp))
              return EINA_FALSE;
@@ -246,7 +245,7 @@ _validate_type(Eolian_Type *tp)
              {
                 snprintf(buf, sizeof(buf), "undefined class %s "
                          "(likely wrong namespacing)", tp->full_name);
-                return _type_error(tp, buf);
+                return _obj_error(&tp->base, buf);
              }
            if (!tp->freefunc)
              tp->freefunc = eina_stringshare_add(eo_obj_free);
@@ -288,13 +287,24 @@ _validate_param(Eolian_Function_Parameter *param)
 }
 
 static Eina_Bool
-_validate_function(Eolian_Function *func)
+_validate_function(Eolian_Function *func, Eina_Hash *nhash)
 {
    Eina_List *l;
    Eolian_Function_Parameter *param;
+   char buf[512];
 
    if (func->base.validated)
      return EINA_TRUE;
+
+   const Eolian_Function *ofunc = eina_hash_find(nhash, func->name);
+   if (ofunc)
+     {
+        snprintf(buf, sizeof(buf),
+                 "function '%s' redefined (originally at %s:%d:%d)",
+                 func->name, ofunc->base.file,
+                 ofunc->base.line, ofunc->base.column);
+        return _obj_error(&func->base, buf);
+     }
 
    if (func->get_ret_type && !_validate_type(func->get_ret_type))
      return EINA_FALSE;
@@ -364,13 +374,14 @@ _validate_implement(Eolian_Implement *impl)
 }
 
 static Eina_Bool
-_validate_class(Eolian_Class *cl)
+_validate_class(Eolian_Class *cl, Eina_Hash *nhash)
 {
    Eina_List *l;
    Eolian_Function *func;
    Eolian_Event *event;
    Eolian_Implement *impl;
    const char *iname;
+   Eina_Bool res = EINA_TRUE;
 
    if (!cl)
      return EINA_FALSE; /* if this happens something is very wrong though */
@@ -378,31 +389,40 @@ _validate_class(Eolian_Class *cl)
    if (cl->base.validated)
      return EINA_TRUE;
 
+   Eina_Bool ahash = (nhash == NULL);
+   if (ahash)
+     nhash = eina_hash_string_small_new(NULL);
+
    EINA_LIST_FOREACH(cl->inherits, l, iname)
      {
-        if (!_validate_class(eina_hash_find(_classes, iname)))
-          return EINA_FALSE;
+        if (!(res = _validate_class(eina_hash_find(_classes, iname), nhash)))
+          goto freehash;
      }
 
    EINA_LIST_FOREACH(cl->properties, l, func)
-     if (!_validate_function(func))
-       return EINA_FALSE;
+     if (!(res = _validate_function(func, nhash)))
+       goto freehash;
 
    EINA_LIST_FOREACH(cl->methods, l, func)
-     if (!_validate_function(func))
-       return EINA_FALSE;
+     if (!(res = _validate_function(func, nhash)))
+       goto freehash;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!_validate_event(event))
-       return EINA_FALSE;
+     if (!(res = _validate_event(event)))
+       goto freehash;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_validate_implement(impl))
-       return EINA_FALSE;
+     if (!(res = _validate_implement(impl)))
+       goto freehash;
 
-   if (!_validate_doc(cl->doc))
+   if (!(res = _validate_doc(cl->doc)))
+     goto freehash;
+
+freehash:
+   if (ahash)
+     eina_hash_free(nhash);
+   if (!res)
      return EINA_FALSE;
-
    return _validate(&cl->base);
 }
 
@@ -446,7 +466,7 @@ database_validate()
    /* FIXME: pass unit properly */
    Eina_Iterator *iter = eolian_all_classes_get(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
-     if (cl->toplevel && !_validate_class(cl))
+     if (cl->toplevel && !_validate_class(cl, NULL))
        {
           eina_iterator_free(iter);
           return EINA_FALSE;
