@@ -624,7 +624,7 @@ _efl_ui_progressbar_efl_part_part(const Eo *obj, Efl_Ui_Progressbar_Data *sd EIN
 
    // Progress bars are dragable types
    if (edje_object_part_drag_dir_get(wd->resize_obj, part) != EFL_UI_DRAG_DIR_NONE)
-     return ELM_PART_OVERRIDE_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS);
+     return ELM_PART_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS, obj, part);
 
    return efl_part(efl_super(obj, MY_CLASS), part);
 }
@@ -636,7 +636,6 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UN
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
   _progressbar_part_value_set(pd->obj, sd, pd->part, val);
-  ELM_PART_RETURN_VOID;
 }
 
 EOLIAN static double
@@ -645,7 +644,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UN
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
-   ELM_PART_RETURN_VAL(_progressbar_part_value_get(sd, pd->part));
+   return _progressbar_part_value_get(sd, pd->part);
 }
 
 #include "efl_ui_progressbar_part.eo.c"
