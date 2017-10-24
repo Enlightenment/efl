@@ -1479,6 +1479,19 @@ end:
 }
 
 static void
+parse_part(Eo_Lexer *ls)
+{
+   check_next(ls, TOK_VALUE);
+   check_next(ls, ':');
+   Eina_Strbuf *buf = push_strbuf(ls);
+   parse_name(ls, buf);
+   check_next(ls, ';');
+   if (ls->t.token == TOK_DOC)
+     eo_lexer_get(ls);
+   pop_strbuf(ls);
+}
+
+static void
 parse_implement(Eo_Lexer *ls, Eina_Bool iface)
 {
    Eina_Strbuf *buf = NULL;
@@ -1784,6 +1797,18 @@ parse_methods(Eo_Lexer *ls)
 }
 
 static void
+parse_parts(Eo_Lexer *ls)
+{
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_part(ls);
+   check_match(ls, '}', '{', line, col);
+}
+
+static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
    int line, col;
@@ -1853,6 +1878,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
              has_event_prefix  = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
+             has_parts         = EINA_FALSE,
              has_implements    = EINA_FALSE,
              has_constructors  = EINA_FALSE,
              has_events        = EINA_FALSE;
@@ -1903,6 +1929,10 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
       case KW_methods:
         CASE_LOCK(ls, methods, "methods definition")
         parse_methods(ls);
+        break;
+      case KW_parts:
+        CASE_LOCK(ls, parts, "parts definition")
+        parse_parts(ls);
         break;
       case KW_implements:
         CASE_LOCK(ls, implements, "implements definition")
