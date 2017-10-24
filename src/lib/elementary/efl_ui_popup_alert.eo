@@ -5,6 +5,11 @@ enum Efl.Ui.Popup.Alert.Button {
    user [[Button having user-defined meaning. e.g. "Cancel"]]
 }
 
+struct Efl.Ui.Popup.Alert.Clicked_Event {
+   [[Information of clicked event]]
+   button_type: Efl.Ui.Popup.Alert.Button; [[Clicked button type]]
+}
+
 class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
 {
    methods {
@@ -26,6 +31,6 @@ class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
       Efl.Part.part;
    }
    events {
-      clicked;
+      clicked: Efl.Ui.Popup.Alert.Clicked_Event;
    }
 }
