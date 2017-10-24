@@ -8,17 +8,6 @@ enum Efl.Ui.Popup.Alert.Button {
 class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
 {
    methods {
-      @property title {
-         set {
-            [[Set the title of popup.]]
-         }
-         get {
-            [[Get the title of popup.]]
-         }
-         values {
-            text: string;
-         }
-      }
       @property button {
          set {
             [[Set popup buttons.]]
@@ -33,6 +22,7 @@ class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
    }
    implements {
       class.constructor;
+      Efl.Part.part;
    }
    events {
       clicked;
