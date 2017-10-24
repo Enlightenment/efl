@@ -29,5 +29,15 @@ interface Efl.Ui.List.Model (Efl.Interface)
             s: int;
          }
       }
+      @property min_size {
+         [[Minimal content size.]]
+         set {}
+         get {}
+         values {
+            min: Eina.Size2D;
+         }
+      }
+
+
    }
 }

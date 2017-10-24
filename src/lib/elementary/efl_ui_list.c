@@ -62,87 +62,73 @@ _horiz(Efl_Orient dir)
 }
 
 EOLIAN static void
-_efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data *pd)
+_efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data *psd)
 {
    DBG("");
    /* if (pd->recalc) return; */
 
    /* _efl_ui_list_custom_layout(obj); */
+   evas_object_smart_changed(psd->wobj);
 }
 
-EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Data *pd)
-{
-   DBG("");
-   /* if (pd->recalc) return; */
-
-   _layout(pd);
-   /* _efl_ui_list_custom_layout(obj); */
-}
 
 EOLIAN static void
-_efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd EINA_UNUSED,
-                                 Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
 {
+   Evas_Coord ox, oy, ow, oh, cw;
+
    DBG("x: %d y: %d", (int)x, (int)y);
-   _layout(psd->wpd);
+   if ((x == psd->x) && (y == psd->y)) return;
+
+//   evas_object_geometry_get(pd->obj, &ox, &oy, &ow, &oh);
+//   if (_horiz(pd->orient))
+//     {
+//        pd->pan.move_diff += x - pd->pan.x;
+//        cw = ow / 4;
+//     }
+//   else
+//     {
+//        pd->pan.move_diff += y - pd->pan.y;
+//        cw = oh / 4;
+//     }
+
+   psd->x = x;
+   psd->y = y;
+
+//   if (abs(pd->pan.move_diff) > cw)
+//     {
+//        pd->pan.move_diff = 0;
+//        _update_items(obj, pd);
+//     }
+//   else
+//     {
+//        EINA_INARRAY_FOREACH(&pd->items.array, litem)
+//          evas_object_move((*litem)->layout, ((*litem)->x + 0 - pd->pan.x), ((*litem)->y + 0 - pd->pan.y));
+//     }
+//
+   evas_object_smart_changed(psd->wobj);
 }
-/* EOLIAN static void */
-/* _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord x, Evas_Coord y) */
-/* { */
-/*    Evas_Coord ox, oy, ow, oh, cw; */
-/*    Efl_Ui_List_Data *pd = psd->wpd; */
-/*    Efl_Ui_List_Item **litem; */
-
-/*    EINA_SAFETY_ON_NULL_RETURN(pd); */
-/*    if (((x == pd->pan.x) && (y == pd->pan.y))) return; */
-
-/*    evas_object_geometry_get(pd->obj, &ox, &oy, &ow, &oh); */
-/*    if (_horiz(pd->orient)) */
-/*      { */
-/*         pd->pan.move_diff += x - pd->pan.x; */
-/*         cw = ow / 4; */
-/*      } */
-/*    else */
-/*      { */
-/*         pd->pan.move_diff += y - pd->pan.y; */
-/*         cw = oh / 4; */
-/*      } */
-
-/*    pd->pan.x = x; */
-/*    pd->pan.y = y; */
-
-/*    if (abs(pd->pan.move_diff) > cw) */
-/*      { */
-/*         pd->pan.move_diff = 0; */
-/*         _update_items(obj, pd); */
-/*      } */
-/*    else */
-/*      { */
-/*         EINA_INARRAY_FOREACH(&pd->items.array, litem) */
-/*           evas_object_move((*litem)->layout, ((*litem)->x + 0 - pd->pan.x), ((*litem)->y + 0 - pd->pan.y)); */
-/*      } */
-/* } */
 
 EOLIAN static void
 _efl_ui_list_pan_elm_pan_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
-   Efl_Ui_List_Data *pd = psd->wpd;
-
-   if (x) *x = pd->pan.x;
-   if (y) *y = pd->pan.y;
+   if (x) *x = psd->x;
+   if (y) *y = psd->y;
 }
 
 EOLIAN static void
 _efl_ui_list_pan_elm_pan_pos_max_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord ow, oh;
+   Eina_Size2D min;
 
    elm_interface_scrollable_content_viewport_geometry_get
               (psd->wobj, NULL, NULL, &ow, &oh);
-   ow = psd->wpd->minw - ow;
+
+   min = efl_ui_list_model_min_size_get(psd->wobj);
+   ow = min.w - ow;
    if (ow < 0) ow = 0;
-   oh = psd->wpd->minh - oh;
+   oh = min.h - oh;
    if (oh < 0) oh = 0;
 
    if (x) *x = ow;
@@ -159,17 +145,18 @@ _efl_ui_list_pan_elm_pan_pos_min_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *
 EOLIAN static void
 _efl_ui_list_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord *w, Evas_Coord *h)
 {
-   Efl_Ui_List_Data *pd = psd->wpd;
-   EINA_SAFETY_ON_NULL_RETURN(pd);
+   Eina_Size2D min;
+   min = efl_ui_list_model_min_size_get(psd->wobj);
 
-   if (w) *w = pd->minw;
-   if (h) *h = pd->minh;
+   if (w) *w = min.w;
+   if (h) *h = min.h;
+
+   DBG("w: %d h: %d", *w, *h);
 }
 
 EOLIAN static void
 _efl_ui_list_pan_efl_object_destructor(Eo *obj, Efl_Ui_List_Pan_Data *psd)
 {
-   efl_data_unref(psd->wobj, psd->wpd);
    efl_destructor(efl_super(obj, MY_PAN_CLASS));
 }
 
@@ -809,8 +796,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj)
 {
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
    Eina_Rect r = elm_obj_widget_show_region_get(obj);
-   r.x += pd->pan.x;
-   r.y += pd->pan.y;
+   elm_pan_pos_get(pd->pan_obj, &r.x, &r.y);
    elm_interface_scrollable_content_region_show(obj, r.x, r.y, r.w, r.h);
 }
 
@@ -887,20 +873,24 @@ _efl_ui_list_elm_widget_theme_apply(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_list_efl_gfx_position_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Position2D p)
 {
+   int pan_x, pan_y;
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, p.x, p.y))
      return;
 
    efl_gfx_position_set(efl_super(obj, MY_CLASS), p);
 
+   elm_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
    evas_object_move(pd->hit_rect, p.x, p.y);
-   evas_object_move(pd->pan.obj, p.x - pd->pan.x, p.y - pd->pan.y);
+   evas_object_move(pd->pan_obj, p.x - pan_x, p.y - pan_y);
    evas_object_smart_changed(pd->obj);
 }
 
 EOLIAN static void
 _efl_ui_list_elm_interface_scrollable_region_bring_in(Eo *obj, Efl_Ui_List_Data *pd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-    elm_interface_scrollable_region_bring_in(efl_super(obj, MY_CLASS), x + pd->pan.x, y + pd->pan.y, w, h);
+   int pan_x, pan_y;
+   elm_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
+   elm_interface_scrollable_region_bring_in(efl_super(obj, MY_CLASS), x + pan_x, y + pan_y, w, h);
 }
 
 EOLIAN static void
@@ -931,6 +921,16 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
    /*   return; */
 
    evas_object_smart_changed(pd->obj);
+}
+
+EOLIAN static void
+_efl_ui_list_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Data *pd)
+{
+   DBG("");
+   /* if (pd->recalc) return; */
+
+   _layout(pd);
+   /* _efl_ui_list_custom_layout(obj); */
 }
 
 EOLIAN static void
@@ -1001,16 +1001,12 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSE
    pd->mode = ELM_LIST_COMPRESS;
 
    elm_interface_atspi_accessible_type_set(obj, ELM_ATSPI_TYPE_DISABLED);
-   pd->pan.obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
-   pan_data = efl_data_scope_get(pd->pan.obj, MY_PAN_CLASS);
-   efl_data_ref(obj, MY_CLASS);
+   pd->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   pan_data = efl_data_scope_get(pd->pan_obj, MY_PAN_CLASS);
    pan_data->wobj = obj;
-   pan_data->wpd = pd;
-   pd->pan.x = 0;
-   pd->pan.y = 0;
 
-   elm_interface_scrollable_extern_pan_set(obj, pd->pan.obj);
-   evas_object_show(pd->pan.obj);
+   elm_interface_scrollable_extern_pan_set(obj, pd->pan_obj);
+   evas_object_show(pd->pan_obj);
 
    edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -1023,7 +1019,7 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 {
    //_efl_ui_list_children_free(obj, pd);
 
-   ELM_SAFE_FREE(pd->pan.obj, evas_object_del);
+   ELM_SAFE_FREE(pd->pan_obj, evas_object_del);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -1070,6 +1066,8 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    pd->orient = EFL_ORIENT_DOWN;
    pd->align.h = 0;
    pd->align.v = 0;
+   pd->min.w = 0;
+   pd->min.h = 0;
 
    return obj;
 }
@@ -1381,27 +1379,6 @@ _efl_ui_list_elm_widget_widget_event(Eo *obj, Efl_Ui_List_Data *pd, Efl_Event co
    return EINA_TRUE;
 }
 
-
-EOLIAN static Efl_Ui_List_LayoutItem *
-_efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
-{
-   DBG("model_realize");
-   Efl_Ui_List_Item_Event evt;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
-
-   item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
-//   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
-   efl_ui_view_model_set(item->layout, item->children);
-
-   evt.child = item->children;
-   evt.layout = item->layout;
-   evt.index = item->index;
-   efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
-
-   evas_object_show(item->layout);
-   return item;
-}
-
 Eina_Bool
 _efl_ui_list_item_select_clear(Eo *obj)
 {
@@ -1511,11 +1488,52 @@ _children_slice_then(void * data, Efl_Event const* event)
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
 }
 
+
+/* EFL UI LIST MODEL INTERFACE */
+EOLIAN static Eina_Size2D
+_efl_ui_list_efl_ui_list_model_min_size_get(Eo *obj, Efl_Ui_List_Data *pd)
+{
+   return pd->min;
+}
+
+EOLIAN static void
+_efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D min)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   pd->min.w = min.w;
+   pd->min.h = min.h;
+
+   evas_object_size_hint_min_set(wd->resize_obj, pd->min.w, pd->min.h);
+   DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
+
+   efl_event_callback_legacy_call(pd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
+}
+
+EOLIAN static Efl_Ui_List_LayoutItem *
+_efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
+{
+   DBG("model_realize");
+   Efl_Ui_List_Item_Event evt;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
+
+   item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
+//   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
+   efl_ui_view_model_set(item->layout, item->children);
+
+   evt.child = item->children;
+   evt.layout = item->layout;
+   evt.index = item->index;
+   efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
+
+   evas_object_show(item->layout);
+   return item;
+}
+
 EOLIAN static void
 _efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Data* pd, int first, int count)
 {
    // slice
-   printf(">>> range_set %d %d\n", first, count);
    if(!pd->slice_future)
      {
         pd->slice_future = efl_model_children_slice_get(pd->model, first, count);

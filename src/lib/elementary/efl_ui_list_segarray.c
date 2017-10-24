@@ -179,8 +179,6 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         /*        } */
         /*   } */
      }
-
-   printf("** accessor count %d **\n", i);
 }
 
 int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray)
@@ -216,7 +214,6 @@ _efl_ui_list_segarray_accessor_get_at(Efl_Ui_List_Segarray_Eina_Accessor* acc,
      }
    else
      DBG("no node found with index %d", idx);
-   printf(">> NOOO %s - idx:%d\n", __FUNCTION__, idx);
    return EINA_FALSE;
 }
 

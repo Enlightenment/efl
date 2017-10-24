@@ -21,12 +21,12 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Data
 {
    Eina_Bool initialized;
    Eina_Hash* size_information;
-   Evas_Coord width, height;
+   Eina_Size2D min;
 } Efl_Ui_List_Precise_Layouter_Data;
 
 typedef struct _Efl_Ui_List_Precise_Layouter_Size
 {
-  Evas_Coord min_width, min_height;
+  Eina_Size2D min;
   double weight_x, weight_y;
 } Efl_Ui_List_Precise_Layouter_Size;
 
@@ -60,13 +60,13 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layout
 //   else
 //     {
 
-        pd->height += new_h - size->min_height;
+        pd->min.h += new_h - size->min.h;
 
-        if(pd->width <= new_w)
-          pd->width = new_w;
-        else if (pd->width == size->min_width)
+        if(pd->min.w <= new_w)
+          pd->min.w = new_w;
+        else if (pd->min.w == size->min.w)
           {
-             pd->width = new_w;
+             pd->min.w = new_w;
              /*EINA_INARRAY_FOREACH(&pd->items.array, it) //find new minimal width
                {
                   litem = *it;
@@ -81,11 +81,21 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layout
           }
 //     }
 
-   size->min_width  = new_w;
-   size->min_height = new_h;
+   size->min.w  = new_w;
+   size->min.h = new_h;
 }
 
-static void
+
+EOLIAN static Efl_Object *
+_efl_ui_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
+{
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   pd->initialized = EINA_FALSE;
+
+   return obj;
+}
+
+EOLIAN static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
    , Efl_Ui_List_Model *modeler, int first, int count, Eina_Accessor *items)
@@ -94,7 +104,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Efl_Ui_List_Precise_Layouter_Size* size;
    int i = 0;
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
-   Evas_Coord ow, oh, want, minw, minh;
+   Evas_Coord ow, oh, want, minw, minh, scr_x, scr_y;
    int boxx, boxy, boxw, boxh, length, /*pad, */extra = 0, rounding = 0;
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
@@ -102,34 +112,34 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Eina_List *order = NULL;
    int pad[4];
 
-   DBG("layout_do");
-   
+   DBG("layout_do first %d count %d", first, count);
    EINA_SAFETY_ON_NULL_RETURN(items);
-   printf("** >>> %s first %d count %d\n", __FUNCTION__, first, count);
 
    if(!pd->initialized)
      {
        efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
        pd->size_information = eina_hash_pointer_new(&free);
        pd->initialized = EINA_TRUE;
+       pd->min.w = 0;
+       pd->min.h = 0;
+       DBG("************ w:%d h:%d", pd->min.w, pd->min.h);
      }
 
    // cache size of new items
    EINA_ACCESSOR_FOREACH(items, i, layout_item)
      {
-        printf("item %d\n", i);
         size = eina_hash_find(pd->size_information, &layout_item);
-        DBG("size %p", size);
+//        DBG("size %p", size);
         if(!size)
         {
            if(!layout_item->layout)
              {
-               DBG("no layout, realizing");
+//               DBG("no layout, realizing");
                efl_ui_list_model_realize(modeler, layout_item);
              }
            else
              {
-               DBG("already realized");
+//               DBG("already realized");
            /* if(!layout_item->layout) */
            /*   { */
            /*     // error */
@@ -138,29 +148,29 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
            size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
            Eina_Size2D min = efl_gfx_size_hint_combined_min_get(layout_item->layout);
-           //edje_object_size_min_calc(layout_item->layout, &size->min_width, &size->min_height);
-           size->min_width = min.w;
-           size->min_height = min.h;
+           //edje_object_size_min_calc(layout_item->layout, &size->min.w, &size->min.h);
+           size->min.w = min.w;
+           size->min.h = min.h;
 
-           if(size->min_width && size->min_height)
+           if(size->min.w && size->min.h)
              {
-                DBG("size was calculated");
+//                DBG("size was calculated");
                 efl_gfx_size_hint_margin_get(layout_item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
                 efl_gfx_size_hint_weight_get(layout_item->layout, &size->weight_x, &size->weight_y);
 
-                size->min_width += pad[0] + pad[1];
-                size->min_height += pad[2] + pad[3];
-                pd->height += size->min_height;
+                size->min.w += pad[0] + pad[1];
+                size->min.h += pad[2] + pad[3];
+                pd->min.h += size->min.h;
 
-                if (pd->width < size->min_width)
-                  pd->width = size->min_width;
+                if (pd->min.w < size->min.w)
+                  pd->min.w = size->min.w;
 
                 eina_hash_add(pd->size_information, &layout_item, size);
-                DBG("size information for item %d width %d height %d", i, size->min_width, size->min_height);
+//                DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
              }
            else
              {
-               DBG("size was NOT calculated, not loaded yet probably");
+//               DBG("size was NOT calculated, not loaded yet probably");
                free(size);
              }
              }
@@ -189,8 +199,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    //count = 1;
 /*    count = eina_inarray_count(&pd->items.array); */
 
-   elm_interface_scrollable_content_viewport_geometry_get
-              (modeler, NULL, NULL, &ow, &oh);
    // box outer margin
    boxw -= boxl + boxr;
    boxh -= boxt + boxb;
@@ -224,7 +232,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
      {
         int pad;
         length = boxh;
-        want = pd->height;
+        want = pd->min.h;
         pad = 1;//pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
 
         // padding can not be squeezed (note: could make it an option)
@@ -232,21 +240,20 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         // available space. if <0 we overflow
         extra = length - want;
 
-        minw = pd->width + boxl + boxr;
-        minh = 100;//pd->height + pad * (count - 1) + boxt + boxb;
+        minw = pd->min.w + boxl + boxr;
+        minh = pd->min.h + pad * (count - 1) + boxt + boxb;
         /* if (pd->item_count > count) */
         /*   minh = pd->item_count * average_item_size; */
      }
 
-   /* if (pd->minh != minh || pd->minw != minw) */
-   /*   { */
-   /*      pd->minw = minw; */
-   /*      pd->minh = minh; */
+   if (pd->min.h != minh || pd->min.w != minw)
+     {
+        pd->min.w = minw;
+        pd->min.h = minh;
+     }
 
-   /*      efl_event_callback_legacy_call(pd->pan.obj, ELM_PAN_EVENT_CHANGED, NULL); */
-   /*   } */
-
-   /* evas_object_size_hint_min_set(wd->resize_obj, pd->minw, pd->minh); */
+   DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
+   efl_ui_list_model_min_size_set(modeler, pd->min);
 
    if (extra < 0) extra = 0;
 
@@ -267,6 +274,10 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         weight[!horiz] = count;
      }
 
+   elm_interface_scrollable_content_viewport_geometry_get
+              (modeler, NULL, NULL, &ow, &oh);
+
+   elm_interface_scrollable_content_pos_get(modeler, &scr_x, &scr_y);
 /*    cur_pos += average_item_size * pd->realized.start; */
 /*    // scan all items, get their properties, calculate total weight & min size */
    // cache size of new items
@@ -282,7 +293,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
         if(size)
           {
-        DBG("size information for item %d width %d height %d", i, size->min_width, size->min_height);
+//        DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
 
         assert(layout_item->layout != NULL);
         efl_gfx_size_hint_align_get(layout_item->layout, &align[0], &align[1]);
@@ -296,8 +307,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
         if (max.w <= 0) max.w = INT_MAX;
         if (max.h <= 0) max.h = INT_MAX;
-        if (max.w < size->min_width) max.w = size->min_width;
-        if (max.h < size->min_height) max.h = size->min_height;
+        if (max.w < size->min.w) max.w = size->min.w;
+        if (max.h < size->min.h) max.h = size->min.h;
 
         /* // extra rounding up (compensate cumulative error) */
         /* if ((id == (count - 1)) && (cur_pos - floor(cur_pos) >= 0.5)) */
@@ -307,7 +318,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
           {
              cx = boxx + cur_pos;
              cy = boxy;
-             cw = size->min_width + rounding + (zeroweight ? 1.0 : size->weight_x) * extra / weight[0];
+             cw = size->min.w + rounding + (zeroweight ? 1.0 : size->weight_x) * extra / weight[0];
              ch = boxh;
              cur_pos += cw + pad;
           }
@@ -316,14 +327,14 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
              cx = boxx;
              cy = boxy + cur_pos;
              cw = boxw;
-             ch = size->min_height + rounding + (zeroweight ? 1.0 : size->weight_y) * extra / weight[1];
+             ch = size->min.h + rounding + (zeroweight ? 1.0 : size->weight_y) * extra / weight[1];
              cur_pos += ch + pad;
           }
 
         // horizontally
         if (max.w < INT_MAX)
           {
-             w = MIN(MAX(size->min_width - item_pad[0] - item_pad[1], max.w), cw);
+             w = MIN(MAX(size->min.w - item_pad[0] - item_pad[1], max.w), cw);
              if (align[0] < 0)
                {
                   // bad case: fill+max are not good together
@@ -340,14 +351,14 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
           }
         else
           {
-             w = size->min_width - item_pad[0] - item_pad[1];
+             w = size->min.w - item_pad[0] - item_pad[1];
              x = cx + ((cw - w) * align[0]) + item_pad[0];
           }
 
         // vertically
         if (max.h < INT_MAX)
           {
-             h = MIN(MAX(size->min_height - item_pad[2] - item_pad[3], max.h), ch);
+             h = MIN(MAX(size->min.h - item_pad[2] - item_pad[3], max.h), ch);
              if (align[1] < 0)
                {
                   // bad case: fill+max are not good together
@@ -364,22 +375,22 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
           }
         else
           {
-             h = size->min_height - item_pad[2] - item_pad[3];
+             h = size->min.h - item_pad[2] - item_pad[3];
              y = cy + ((ch - h) * align[1]) + item_pad[2];
           }
 
-        /* if (horiz) */
-        /*   { */
-        /*      if (h < pd->minh) h = pd->minh; */
-        /*      if (h > oh) h = oh; */
-        /*   } */
-        /* else */
-        /*   { */
-        /*      if (w < pd->minw) w = pd->minw; */
-        /*      if (w > ow) w = ow; */
-        /*   } */
+        if (horiz)
+          {
+             if (h < pd->min.h) h = pd->min.h;
+             if (h > oh) h = oh;
+          }
+        else
+          {
+             if (w < pd->min.w) w = pd->min.w;
+             if (w > ow) w = ow;
+          }
 
-        evas_object_geometry_set(layout_item->layout, (x + 0 - /*pd->pan.x*/0), (y + 0 - /*pd->pan.y*/0), w, h);
+        evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
 
         /* layout_item->x = x; */
         /* layout_item->y = y; */
@@ -392,7 +403,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 /* //               , eina_inarray_count(&pd->items.array) ? (/\*horz*\/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT); */
           }
      }
-  
 }
 
 #include "efl_ui_list_precise_layouter.eo.c"
