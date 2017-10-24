@@ -19,11 +19,11 @@
  * space required for such stuff, and when they popup, as a keyboard
  * shows when an entry is selected, conformant content won't change.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for conformant objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li "virtualkeypad,state,on": if virtualkeypad state is switched to "on".
  * (since 1.8)
  * @li "virtualkeypad,state,off": if virtualkeypad state is switched to "off".

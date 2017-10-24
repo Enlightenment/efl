@@ -15,11 +15,11 @@
  * This is a push-button. Press it and run some function. It can contain
  * a simple label and icon object and it also has an autorepeat feature.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for button objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * @li "clicked": the user clicked the button (press/release).
  * @li "repeated": the user pressed the button without releasing it.
  * @li "pressed": button was pressed.
@@ -34,11 +34,11 @@
  * @li default: a normal button.
  * @li anchor: Like default, but the button fades away when the mouse is not
  * over it, leaving only the text or icon.
- * @li hoversel_vertical: Internally used by @ref Hoversel to give a
+ * @li hoversel_vertical: Internally used by @ref Elm_Hoversel to give a
  * continuous look across its options.
- * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
- * @li naviframe: Internally used by @ref Naviframe for its back button.
- * @li colorselector: Internally used by @ref Colorselector
+ * @li hoversel_vertical_entry: Another internal for @ref Elm_Hoversel.
+ * @li naviframe: Internally used by @ref Elm_Naviframe for its back button.
+ * @li colorselector: Internally used by @ref Elm_Colorselector
  * for its left and right buttons.
  *
  * Default content parts of the button widget that you can use for are:

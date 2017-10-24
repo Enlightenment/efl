@@ -301,6 +301,9 @@ EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
  * Get enable status of context menu disabled.
  *
  * @see elm_config_context_menu_disabled_set()
+ *
+ * @return @c EINA_TRUE if context menu is disabled, otherwise @c EINA_FALSE.
+ *
  * @ingroup Elm_Entry
  * @since 1.17
  */

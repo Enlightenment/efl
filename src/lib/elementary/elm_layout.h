@@ -21,7 +21,7 @@
  * the Edje documentation and the EDC reference to get more
  * information about what can be done with Edje.
  *
- * Just like @ref List, @ref Box, and other container widgets, any
+ * Just like @ref Elm_List, @ref Elm_Box, and other container widgets, any
  * object added to the Layout will become its child, meaning that it
  * will be deleted if the Layout is deleted, moved if the Layout is
  * moved, and so on.
@@ -68,7 +68,7 @@
  *
  * @section secBox Box (@c BOX part)
  *
- * An Edje @c BOX part is very similar to the Elementary @ref Box
+ * An Edje @c BOX part is very similar to the Elementary @ref Elm_Box
  * widget. It allows one to add objects to the box and have them
  * distributed along its area, accordingly to the specified @c layout
  * property (now by @c layout we mean the chosen layouting design of
@@ -76,14 +76,14 @@
  *
  * A similar effect for having a box with its position, size and other
  * things controlled by the layout theme would be to create an
- * Elementary @ref Box widget and add it as content in a @c SWALLOW part.
+ * Elementary @ref Elm_Box widget and add it as content in a @c SWALLOW part.
  *
  * The main difference to that, by using the layout box instead, is
  * that its behavior, like layouting format, padding, align, etc.,
  * will <b>all be controlled by the theme</b>. This means, for
  * example, that a signal could be sent to the layout's theme (with
  * elm_layout_signal_emit()) and the signal be handled by changing the
- * box's padding, or alignment, or both. Using the Elementary @ref Box
+ * box's padding, or alignment, or both. Using the Elementary @ref Elm_Box
  * widget is not necessarily harder or easier, it just depends on the
  * circumstances and requirements.
  *
@@ -99,14 +99,14 @@
  * @section secTable Table (@c TABLE part)
  *
  * Just like the @ref secBox, the layout table is very similar to the
- * Elementary @ref Table widget. It allows one to add objects to the
+ * Elementary @ref Elm_Table widget. It allows one to add objects to the
  * table by specifying the row and column where the object should be
  * added, and any column or row span, if necessary.
  *
- * Again, we could have this design by adding a @ref table widget to a
+ * Again, we could have this design by adding a @ref Elm_Table widget to a
  * @c SWALLOW part, using elm_layout_content_set(). The same
  * difference happens here when choosing to use the layout table (a
- * @c TABLE part) instead of the @ref table in a @c SWALLOW part. It's
+ * @c TABLE part) instead of the @ref Elm_Table in a @c SWALLOW part. It's
  * just a matter of convenience.
  *
  * The layout table can be used through the @c elm_layout_table_* set of
