@@ -201,6 +201,9 @@ struct _Elm_Genlist_Data
    Eina_Bool                             item_looping_on : 1;
 
    Eina_Bool                             tree_effect_animator : 1;
+
+   // If true, use insane legacy item order: item, item, parent
+   Eina_Bool                             legacy_order_insane : 1;
 };
 
 typedef struct _Item_Block Item_Block;
