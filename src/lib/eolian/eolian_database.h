@@ -61,6 +61,7 @@ typedef struct _Eolian_Object
    const char *file;
    int line;
    int column;
+   Eina_Bool validated;
 } Eolian_Object;
 
 struct _Eolian_Documentation
