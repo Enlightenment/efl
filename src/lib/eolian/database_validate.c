@@ -48,7 +48,7 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
 static Eina_Bool
 _validate_doc(Eolian_Documentation *doc)
 {
-   if (!doc || doc->base.validated)
+   if (!doc)
      return EINA_TRUE;
 
    if (!_validate_docstr(doc->summary, &doc->base))
@@ -164,9 +164,6 @@ static Eina_Bool
 _validate_type(Eolian_Type *tp)
 {
    char buf[256];
-
-   if (tp->base.validated)
-     return EINA_TRUE;
 
    if (tp->owned && !database_type_is_ownable(tp))
      {
@@ -293,9 +290,6 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
    Eolian_Function_Parameter *param;
    char buf[512];
 
-   if (func->base.validated)
-     return EINA_TRUE;
-
    const Eolian_Function *ofunc = eina_hash_find(nhash, func->name);
    if (ofunc)
      {
@@ -345,9 +339,6 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
 static Eina_Bool
 _validate_event(Eolian_Event *event)
 {
-   if (event->base.validated)
-     return EINA_TRUE;
-
    if (event->type && !_validate_type(event->type))
      return EINA_FALSE;
 
@@ -360,9 +351,6 @@ _validate_event(Eolian_Event *event)
 static Eina_Bool
 _validate_implement(Eolian_Implement *impl)
 {
-   if (impl->base.validated)
-     return EINA_TRUE;
-
    if (!_validate_doc(impl->common_doc))
      return EINA_FALSE;
    if (!_validate_doc(impl->get_doc))
