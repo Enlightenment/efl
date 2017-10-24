@@ -239,7 +239,7 @@ _elm_widget_focus_highlight_style_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    Evas_Object *win = elm_widget_top_get(obj);
 
    if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-     return elm_obj_widget_focus_highlight_style_set(win, style);
+     return efl_ui_widget_focus_highlight_style_set(win, style);
 
    return EINA_FALSE;
 }
@@ -454,7 +454,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Boo
         configuration.logical = EINA_FALSE;
      }
 
-   if (!elm_obj_widget_focus_state_apply(obj, pd->focus, &configuration, NULL))
+   if (!efl_ui_widget_focus_state_apply(obj, pd->focus, &configuration, NULL))
      {
         //things went wrong or this thing is unregistered. Purge the current configuration.
         pd->focus.manager = NULL;
@@ -1173,7 +1173,7 @@ elm_widget_access(Evas_Object *obj,
           ret &= elm_widget_access(child, is_access);
      }
 
-   elm_obj_widget_on_access_update(obj, is_access);
+   efl_ui_widget_on_access_update(obj, is_access);
    efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL);
 
    return ret;
@@ -1206,7 +1206,7 @@ elm_widget_theme(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
 
-   ret &= elm_obj_widget_theme_apply(obj);
+   ret &= efl_ui_widget_theme_apply(obj);
 
    return ret;
 }
@@ -1253,7 +1253,7 @@ elm_widget_theme_specific(Evas_Object *obj,
      elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
@@ -1419,7 +1419,7 @@ _elm_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Objec
         _full_eval(sobj, sdc);
 
         if (!sdc->on_create)
-          elm_obj_widget_on_orientation_update(sobj, sd->orient_mode);
+          efl_ui_widget_on_orientation_update(sobj, sd->orient_mode);
         else
           sdc->orient_mode = sd->orient_mode;
 
@@ -1427,7 +1427,7 @@ _elm_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Objec
           {
              if (!sdc->disabled && (elm_widget_disabled_get(obj)))
                {
-                  elm_obj_widget_on_disabled_update(sobj, EINA_TRUE);
+                  efl_ui_widget_on_disabled_update(sobj, EINA_TRUE);
                }
           }
 
@@ -1919,7 +1919,7 @@ _elm_widget_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd)
    if (sd->parent_obj)
      {
         if (!efl_isa(sd->parent_obj, ELM_WIDGET_CLASS)) return NULL;
-        return elm_obj_widget_top_get(sd->parent_obj);
+        return efl_ui_widget_top_get(sd->parent_obj);
      }
    return obj;
 }
@@ -2017,7 +2017,7 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *eo_event)
              continue;
           }
 
-        if (elm_obj_widget_event(parent, eo_event, obj))
+        if (efl_ui_widget_event(parent, eo_event, obj))
           return;
 
         EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
@@ -2373,7 +2373,7 @@ _elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
         focus_order++;
         sd->focus_order = focus_order;
         sd->focused = EINA_TRUE;
-        elm_obj_widget_on_focus_update(obj, NULL);
+        efl_ui_widget_on_focus_update(obj, NULL);
      }
 
    if (focus)
@@ -2448,7 +2448,7 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
    sd->top_win_focused = top_win_focused;
 
    if (sd->focused && !sd->top_win_focused)
-     elm_obj_widget_on_focus_update(obj, NULL);
+     efl_ui_widget_on_focus_update(obj, NULL);
 }
 
 Eina_Bool
@@ -2469,7 +2469,7 @@ _elm_widget_disabled_eval(const Evas_Object *obj, Eina_Bool disabled)
      {
         if (elm_widget_is(child))
           {
-             elm_obj_widget_on_disabled_update(child, disabled);
+             efl_ui_widget_on_disabled_update(child, disabled);
              _elm_widget_disabled_eval(child, disabled);
           }
      }
@@ -2481,7 +2481,7 @@ elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled)
    if (!disabled && elm_widget_disabled_get(elm_widget_parent_get(obj)))
      return;
 
-   elm_obj_widget_on_disabled_update(obj, disabled);
+   efl_ui_widget_on_disabled_update(obj, disabled);
    _elm_widget_disabled_eval(obj, disabled);
 }
 
@@ -2600,7 +2600,7 @@ _elm_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
                }
           }
      }
-   if (sd->parent_obj) elm_obj_widget_scroll_hold_push(sd->parent_obj);
+   if (sd->parent_obj) efl_ui_widget_scroll_hold_push(sd->parent_obj);
    // FIXME: on delete/reparent hold pop
 }
 
@@ -2624,7 +2624,7 @@ _elm_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
                }
           }
      }
-   if (sd->parent_obj) elm_obj_widget_scroll_hold_pop(sd->parent_obj);
+   if (sd->parent_obj) efl_ui_widget_scroll_hold_pop(sd->parent_obj);
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
 }
 
@@ -2657,7 +2657,7 @@ _elm_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
                }
           }
      }
-   if (sd->parent_obj) elm_obj_widget_scroll_freeze_push(sd->parent_obj);
+   if (sd->parent_obj) efl_ui_widget_scroll_freeze_push(sd->parent_obj);
    // FIXME: on delete/reparent freeze pop
 }
 
@@ -2681,7 +2681,7 @@ _elm_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
                }
           }
      }
-   if (sd->parent_obj) elm_obj_widget_scroll_freeze_pop(sd->parent_obj);
+   if (sd->parent_obj) efl_ui_widget_scroll_freeze_pop(sd->parent_obj);
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
 }
 
@@ -2741,7 +2741,7 @@ _elm_widget_theme_set(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Theme *th)
 EAPI void
 elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
 {
-   elm_obj_widget_theme_set(obj, th);
+   efl_ui_widget_theme_set(obj, th);
 }
 
 EAPI void
@@ -2961,7 +2961,7 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 EAPI Elm_Theme *
 elm_widget_theme_get(const Evas_Object *obj)
 {
-   return elm_obj_widget_theme_get(obj);
+   return efl_ui_widget_theme_get(obj);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
@@ -3098,7 +3098,7 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
 EAPI Efl_Ui_Theme_Apply
 elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
-   return elm_obj_widget_theme_object_set(obj, edj, wname, welement, wstyle);
+   return efl_ui_widget_theme_object_set(obj, edj, wname, welement, wstyle);
 }
 
 static void
@@ -3512,7 +3512,7 @@ elm_widget_activate(Evas_Object *obj, Efl_Ui_Activate act)
 
    ret = EINA_FALSE;
 
-   ret = elm_obj_widget_on_access_activate(obj, act);
+   ret = efl_ui_widget_on_access_activate(obj, act);
 
    if (ret) return;
 
@@ -3573,7 +3573,7 @@ _elm_widget_orientation_mode_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Ei
         if (!sd_parent) orient_mode = 0;
         else orient_mode = sd_parent->orient_mode;
      }
-   elm_obj_widget_on_orientation_update(obj, orient_mode);
+   efl_ui_widget_on_orientation_update(obj, orient_mode);
 }
 
 EOLIAN static Eina_Bool
@@ -3594,7 +3594,7 @@ _elm_widget_on_orientation_update(Eo *obj, Elm_Widget_Smart_Data *sd, int orient
    EINA_LIST_FOREACH (sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          elm_obj_widget_on_orientation_update(child, orient_mode);
+          efl_ui_widget_on_orientation_update(child, orient_mode);
      }
 
    if (orient_mode != -1)
@@ -3667,7 +3667,7 @@ _elm_widget_focus_move_policy_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, 
 
         if (automatic)
           {
-             elm_obj_widget_focus_move_policy_set(obj, elm_config_focus_move_policy_get());
+             efl_ui_widget_focus_move_policy_set(obj, elm_config_focus_move_policy_get());
           }
      }
 }
@@ -5121,7 +5121,7 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    parent = efl_parent_get(obj);
-   elm_obj_widget_parent_set(obj, parent);
+   efl_ui_widget_parent_set(obj, parent);
    sd->on_create = EINA_FALSE;
 
    efl_access_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
@@ -5176,7 +5176,7 @@ _elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EI
 {
    const char *focus = "";
 
-   if (elm_obj_widget_focus_get(obj)) focus = ":focused";
+   if (efl_ui_widget_focus_get(obj)) focus = ":focused";
    efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, "%s", focus);
 }
@@ -5437,7 +5437,7 @@ _elm_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
 
    efl_ui_focus_object_focus_set(efl_super(obj, MY_CLASS), focus);
 
-   elm_obj_widget_on_focus_update(obj, NULL);
+   efl_ui_widget_on_focus_update(obj, NULL);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*

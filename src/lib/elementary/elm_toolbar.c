@@ -751,7 +751,7 @@ _elm_toolbar_elm_widget_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd, Elm_Objec
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
@@ -1470,7 +1470,7 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
    if (sd->delete_me) return EFL_UI_THEME_APPLY_SUCCESS;
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_widget_theme_object_set
@@ -2309,7 +2309,7 @@ _elm_toolbar_item_efl_object_destructor(Eo *eo_item, Elm_Toolbar_Item_Data *item
    _item_del(item);
 
    if (item != sd->more_item)
-      elm_obj_widget_theme_apply(obj);
+      efl_ui_widget_theme_apply(obj);
 
    efl_destructor(efl_super(eo_item, ELM_TOOLBAR_ITEM_CLASS));
 }
@@ -2955,7 +2955,7 @@ EOLIAN static Eina_Bool
 _elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    configured_state->logical = EINA_TRUE;
-   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 EOLIAN static Eo *
@@ -2980,7 +2980,7 @@ _elm_toolbar_icon_size_set(Eo *obj, Elm_Toolbar_Data *sd, int icon_size)
    if (sd->priv_icon_size) sd->icon_size = sd->priv_icon_size;
    else sd->icon_size = sd->theme_icon_size;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static int

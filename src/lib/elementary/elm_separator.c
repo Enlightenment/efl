@@ -27,7 +27,7 @@ _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    else
      eina_stringshare_replace(&ld->group, "vertical");
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    return int_ret;
@@ -84,7 +84,7 @@ _elm_separator_horizontal_set(Eo *obj, Elm_Separator_Data *sd, Eina_Bool horizon
 
    sd->horizontal = horizontal;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool

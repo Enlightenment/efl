@@ -325,7 +325,7 @@ _visuals_refresh(Evas_Object *obj,
 
    _efl_ui_layout_highlight_in_theme(obj);
 
-   ret = elm_obj_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
+   ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
    elm_layout_sizing_eval(obj);
 
@@ -378,7 +378,7 @@ _efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Efl_Ui_Theme_Apply theme_apply = EFL_UI_THEME_APPLY_FAILED;
 
-   theme_apply = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    theme_apply &= _efl_ui_layout_theme_internal(obj, sd);

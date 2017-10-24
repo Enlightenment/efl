@@ -71,7 +71,7 @@ _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    size = elm_panes_content_left_size_get(obj);
@@ -434,7 +434,7 @@ _efl_ui_panes_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Panes_Data *sd, Efl
      dir = EFL_UI_DIR_VERTICAL;
 
    sd->dir = dir;
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
    if (elm_widget_is_legacy(obj)) _update_fixed_sides(obj);
    else _set_min_size_new(obj);
 

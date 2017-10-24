@@ -24,7 +24,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
-   eo_prefix: elm_obj_widget;
+   eo_prefix: efl_ui_widget;
    event_prefix: elm_widget;
    data: Elm_Widget_Smart_Data;
    methods {

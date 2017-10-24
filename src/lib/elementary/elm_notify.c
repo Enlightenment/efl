@@ -144,7 +144,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -489,7 +489,7 @@ elm_notify_parent_set(Evas_Object *obj,
                       Evas_Object *parent)
 {
    ELM_NOTIFY_CHECK(obj);
-   elm_obj_widget_parent_set(obj, parent);
+   efl_ui_widget_parent_set(obj, parent);
 }
 
 EOLIAN static void
@@ -535,7 +535,7 @@ elm_notify_parent_get(const Evas_Object *obj)
 {
    ELM_NOTIFY_CHECK(obj) NULL;
    Evas_Object *ret = NULL;
-   ret = elm_obj_widget_parent_get((Eo *) obj);
+   ret = efl_ui_widget_parent_get((Eo *) obj);
    return ret;
 }
 

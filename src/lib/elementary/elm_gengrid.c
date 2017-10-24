@@ -3501,7 +3501,7 @@ _elm_gengrid_elm_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Objec
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
    if (elm_widget_focus_get(obj) && (sd->selected) &&
@@ -3571,7 +3571,7 @@ _elm_gengrid_elm_widget_interest_region_get(Eo *obj, Elm_Gengrid_Data *sd)
      }
 
 end:
-   return elm_obj_widget_interest_region_get(efl_super(obj, MY_CLASS));
+   return efl_ui_widget_interest_region_get(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool _elm_gengrid_smart_focus_next_enable = EINA_FALSE;
@@ -3602,7 +3602,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_gengrid_elm_widget_theme_apply(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -5732,7 +5732,7 @@ _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd)
 EOLIAN static Eina_Bool
 _elm_gengrid_elm_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
-   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 EOLIAN static void

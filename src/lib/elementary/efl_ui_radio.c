@@ -151,7 +151,7 @@ _efl_ui_radio_elm_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");

@@ -83,7 +83,7 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    /* hoversel's style has an extra bit: orientation */
    eina_stringshare_replace(&(wd->style), buf);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    eina_stringshare_replace(&(wd->style), style);
@@ -630,7 +630,7 @@ _elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *pd)
    efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 
    //What are you doing here?
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_geometry_changed, pd);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_geometry_changed, pd);
@@ -752,7 +752,7 @@ _elm_hoversel_horizontal_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool horizonta
           }
      }
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1004,7 +1004,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
 EOLIAN static Eina_Bool
 _elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
-   if (elm_obj_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
+   if (efl_ui_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
      return EINA_TRUE; // note: this was FALSE but likely wrong
 
    return _hoversel_elm_widget_widget_event(obj, sd, eo_event, src);

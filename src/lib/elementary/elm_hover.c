@@ -301,7 +301,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
@@ -706,7 +706,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
 
-   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
+   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
 
    efl_composite_attach(obj, pd->manager);
 
@@ -747,7 +747,7 @@ elm_hover_parent_set(Evas_Object *obj,
                      Evas_Object *parent)
 {
    ELM_HOVER_CHECK(obj);
-   elm_obj_widget_parent_set(obj, parent);
+   efl_ui_widget_parent_set(obj, parent);
 }
 
 EOLIAN static void
@@ -783,7 +783,7 @@ EAPI Evas_Object *
 elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;
-   return elm_obj_widget_parent_get((Eo *) obj);
+   return efl_ui_widget_parent_get((Eo *) obj);
 }
 
 EOLIAN static Evas_Object*

@@ -36,7 +36,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_table_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -95,7 +95,7 @@ _elm_table_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static void

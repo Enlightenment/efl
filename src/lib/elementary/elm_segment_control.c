@@ -224,7 +224,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
    Elm_Object_Item *eo_item;
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    rtl = efl_ui_mirrored_get(obj);
@@ -248,7 +248,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
 EOLIAN static Eina_Bool
 _elm_segment_control_elm_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
 {
-   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
    _update_list(sd);
@@ -281,7 +281,7 @@ _elm_segment_control_elm_widget_focus_next(Eo *obj, Elm_Segment_Control_Data *sd
    void *(*list_data_get)(const Eina_List *list);
 
    /* Focus chain */
-   if ((items = elm_obj_widget_focus_custom_chain_get(obj)))
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
      list_data_get = eina_list_data_get;
    else
      {

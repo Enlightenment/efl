@@ -131,7 +131,7 @@ _elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
    char buf[1024];
    Elm_Dayselector_Item_Data *it;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    EINA_LIST_FOREACH(sd->items, l, it)

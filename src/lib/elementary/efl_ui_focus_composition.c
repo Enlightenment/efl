@@ -136,7 +136,7 @@ _efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Com
        configured_state->parent == current_state.parent)
      return !!current_state.manager;
 
-   registered = elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
+   registered = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    if (registered)
      pd->registered = configured_state->manager;

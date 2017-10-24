@@ -1231,7 +1231,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
           }
 
         Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
-        elm_obj_widget_on_focus_update(focused, NULL);
+        efl_ui_widget_on_focus_update(focused, NULL);
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
@@ -1618,7 +1618,7 @@ _elm_win_state_change(Ecore_Evas *ee)
         _elm_win_xwin_update(sd);
 #endif
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-        elm_obj_widget_on_orientation_update(obj, sd->rot);
+        efl_ui_widget_on_orientation_update(obj, sd->rot);
         efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
         efl_event_callback_legacy_call
@@ -1629,7 +1629,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 EOLIAN static Eina_Bool
 _efl_ui_win_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
-   if (!elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL))
+   if (!efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL))
      return EINA_TRUE;
 
    if (sd->img_obj)
@@ -5369,7 +5369,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
-   pd->manager = elm_obj_widget_focus_manager_create(obj, obj);
+   pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
    pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
@@ -6084,7 +6084,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    _elm_win_xwin_update(sd);
 #endif
    _elm_win_frame_obj_update(sd);
-   elm_obj_widget_on_orientation_update(obj, rotation);
+   efl_ui_widget_on_orientation_update(obj, rotation);
    efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
 }
@@ -6352,7 +6352,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
                          efl_ui_scale_get(obj) * elm_config_scale_get());
 
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
-   ret = elm_obj_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
+   ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
    if (!ret) int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -6369,7 +6369,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_win_elm_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
@@ -8208,7 +8208,7 @@ elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Boo
 EAPI Eina_Bool
 elm_win_focus_get(const Efl_Ui_Win *obj)
 {
-   return elm_obj_widget_focus_get(obj);
+   return efl_ui_widget_focus_get(obj);
 }
 
 EAPI void
@@ -8232,19 +8232,19 @@ elm_win_focus_highlight_enabled_get(const Efl_Ui_Win *obj)
 EAPI void
 elm_win_focus_highlight_enabled_set(Efl_Ui_Win *obj, Eina_Bool enabled)
 {
-   elm_obj_widget_focus_highlight_enabled_set(obj, enabled);
+   efl_ui_widget_focus_highlight_enabled_set(obj, enabled);
 }
 
 EAPI void
 elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate)
 {
-   elm_obj_widget_focus_highlight_animate_set(obj, animate);
+   efl_ui_widget_focus_highlight_animate_set(obj, animate);
 }
 
 EAPI Eina_Bool
 elm_win_focus_highlight_animate_get(const Elm_Win *obj)
 {
-   return elm_obj_widget_focus_highlight_animate_get(obj);
+   return efl_ui_widget_focus_highlight_animate_get(obj);
 }
 
 EAPI Eina_Bool

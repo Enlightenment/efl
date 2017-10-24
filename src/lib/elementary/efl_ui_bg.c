@@ -124,7 +124,7 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
 
-   elm_obj_widget_focus_allow_set(obj, EINA_FALSE);
+   efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
    return obj;
 }

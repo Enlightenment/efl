@@ -542,7 +542,7 @@ _efl_ui_textpath_elm_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_FAILED;
 
-   ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",

@@ -863,7 +863,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
-   theme_apply = elm_obj_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
    if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -4047,7 +4047,7 @@ EOLIAN static void
 _elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *sd, const char *style)
 {
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", style);
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static void
@@ -4055,7 +4055,7 @@ _elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *sd)
 {
    edje_object_part_text_style_user_pop(sd->entry_edje, "elm.text");
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static const char*
@@ -4082,7 +4082,7 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
      {
         elm_entry_markup_filter_remove(obj, _entry_new_line_filter_cb, NULL);
      }
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 
    if (sd->scroll)
      {
@@ -4137,7 +4137,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
         efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -4237,7 +4237,7 @@ _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
    sd->line_wrap = wrap;
    if (wrap == ELM_WRAP_NONE)
      ELM_SAFE_FREE(sd->deferred_recalc_job, ecore_job_del);
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Elm_Wrap_Type
@@ -4251,7 +4251,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 {
    if (sd->editable == editable) return;
    sd->editable = editable;
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
    _elm_entry_focus_update(obj, sd);
 
    elm_drop_target_del(obj, sd->drop_format,
@@ -5049,7 +5049,7 @@ _elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool scroll)
         elm_widget_on_show_region_hook_set(obj, NULL, NULL, NULL);
      }
    sd->last_w = -1;
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool

@@ -656,7 +656,7 @@ _elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    elm_widget_theme_object_set
@@ -1014,7 +1014,7 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
 EOLIAN static Eina_Bool
 _elm_ctxpopup_elm_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
 {
-   if (!elm_obj_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
+   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
 
    if (sd->list)

@@ -390,7 +390,7 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -901,7 +901,7 @@ _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *_pd EINA_
 
    if (eina_stringshare_replace(&(ld->klass), klass) ||
        eina_stringshare_replace(&(ld->group), group))
-      elm_obj_widget_theme_apply(obj);
+      efl_ui_widget_theme_apply(obj);
 }
 
 EAPI void
@@ -1341,7 +1341,7 @@ _elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_U
 {
    //undepended from logical or not we always reigster as full with ourself as redirect
    configured_state->logical = EINA_TRUE;
-   return elm_obj_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 

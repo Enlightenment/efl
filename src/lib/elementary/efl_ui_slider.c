@@ -771,7 +771,7 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
                          elm_widget_style_get(obj));
      }
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->popup)
@@ -1223,7 +1223,7 @@ _efl_ui_slider_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Slider_Data *sd, E
 {
    sd->dir = dir;
 
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Efl_Ui_Dir
@@ -1372,7 +1372,7 @@ _efl_ui_slider_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_U
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = elm_obj_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
 
    if ((sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS) && elm_widget_focus_get(obj))
      _popup_show(obj, NULL, NULL, NULL);
@@ -1614,7 +1614,7 @@ elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable)
    if (sd->intvl_enable == enable) return;
 
    sd->intvl_enable = enable;
-   elm_obj_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(obj);
    if (sd->intvl_enable)
      {
         elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");

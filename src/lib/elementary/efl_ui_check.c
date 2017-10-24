@@ -156,7 +156,7 @@ _efl_ui_check_elm_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
-   int_ret = elm_obj_widget_theme_apply(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
 
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
