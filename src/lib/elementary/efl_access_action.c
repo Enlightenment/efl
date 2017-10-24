@@ -3,13 +3,14 @@
 #endif
 
 #define EFL_ACCESS_ACTION_PROTECTED
+#define EFL_ACCESS_ACTION_BETA
 
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
 
 EOLIAN const char *
-_efl_access_action_localized_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
+_efl_access_action_action_localized_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
 {
    const char *ret = NULL;
 

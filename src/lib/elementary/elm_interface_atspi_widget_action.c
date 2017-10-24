@@ -4,6 +4,7 @@
 
 #define EFL_ACCESS_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_ACTION_BETA
 
 #include <Elementary.h>
 #include "elm_widget.h"
@@ -40,7 +41,7 @@ _elm_interface_atspi_widget_action_efl_access_action_action_do(Eo *obj, void *pd
 }
 
 EOLIAN static char*
-_elm_interface_atspi_widget_action_efl_access_action_keybinding_get(Eo *obj, void *pd EINA_UNUSED, int id)
+_elm_interface_atspi_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void *pd EINA_UNUSED, int id)
 {
    const Elm_Atspi_Action *actions = NULL;
    Eina_List *l1, *binding_list;
@@ -93,7 +94,7 @@ _elm_interface_atspi_widget_action_efl_access_action_keybinding_get(Eo *obj, voi
 }
 
 EOLIAN static const char *
-_elm_interface_atspi_widget_action_efl_access_action_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
+_elm_interface_atspi_widget_action_efl_access_action_action_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
 {
    const Elm_Atspi_Action *actions = NULL;
    int tmp = 0;
@@ -110,13 +111,13 @@ _elm_interface_atspi_widget_action_efl_access_action_name_get(Eo *obj, void *pd 
 }
 
 EOLIAN static Eina_Bool
-_elm_interface_atspi_widget_action_efl_access_action_description_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED, const char *description EINA_UNUSED)
+_elm_interface_atspi_widget_action_efl_access_action_action_description_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED, const char *description EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static const char *
-_elm_interface_atspi_widget_action_efl_access_action_description_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED)
+_elm_interface_atspi_widget_action_efl_access_action_action_description_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED)
 {
    return NULL;
 }
