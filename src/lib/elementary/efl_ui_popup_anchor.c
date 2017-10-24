@@ -24,7 +24,12 @@ _anchor_calc(Evas_Object *obj)
    Evas_Coord_Size parent_size = {0, 0};
    Eina_Position2D pos = {0, 0};
 
-   Evas_Object *parent = efl_ui_popup_parent_window_get(obj);
+   Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+   if (!parent)
+     {
+        ERR("Cannot find window parent");
+        return;
+     }
 
    evas_object_geometry_get(sd->anchor, &anchor_geom.x, &anchor_geom.y, &anchor_geom.w, &anchor_geom.h);
    evas_object_geometry_get(obj, NULL, NULL, &popup_size.w, &popup_size.h);
@@ -209,7 +214,14 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_POPUP_ANCHOR_DATA_GET(data, sd);
 
-   efl_event_callback_del(efl_ui_popup_parent_window_get(data), EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, data);
+   Evas_Object *parent = efl_provider_find(data, EFL_UI_WIN_CLASS);
+   if (!parent)
+     {
+        ERR("Cannot find window parent");
+        return;
+     }
+
+   efl_event_callback_del(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, data);
 
    sd->anchor = NULL;
    efl_ui_popup_align_set(efl_super(data, MY_CLASS), sd->align);
@@ -222,7 +234,14 @@ _anchor_detach(Evas_Object *obj)
 
    if (sd->anchor == NULL) return;
 
-   efl_event_callback_del(efl_ui_popup_parent_window_get(obj), EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
+   Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+   if (!parent)
+     {
+        ERR("Cannot find window parent");
+        return;
+     }
+
+   efl_event_callback_del(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
    efl_event_callback_del(sd->anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
    efl_event_callback_del(sd->anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
    efl_event_callback_del(sd->anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
@@ -242,7 +261,14 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Evas_Obje
 
         _anchor_calc(obj);
 
-        efl_event_callback_add(efl_ui_popup_parent_window_get(obj), EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
+        Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+        if (!parent)
+          {
+              ERR("Cannot find window parent");
+              return;
+          }
+
+        efl_event_callback_add(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
