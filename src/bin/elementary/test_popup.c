@@ -1113,13 +1113,14 @@ test_efl_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 static void
 efl_ui_popup_alert_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-    Efl_Ui_Popup_Alert_Button type = (Efl_Ui_Popup_Alert_Button)ev->info;
-    if (type == EFL_UI_POPUP_ALERT_BUTTON_POSITIVE)
-      printf("Positive Button is clicked\n");
-    else if(type == EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE)
-      printf("Negative Button is clicked\n");
-    else if(type == EFL_UI_POPUP_ALERT_BUTTON_USER)
-      printf("User Button is clicked\n");
+   Efl_Ui_Popup_Alert_Clicked_Event *event = ev->info;
+
+   if (event->button_type == EFL_UI_POPUP_ALERT_BUTTON_POSITIVE)
+     printf("Positive Button is clicked\n");
+   else if(event->button_type == EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE)
+     printf("Negative Button is clicked\n");
+   else if(event->button_type == EFL_UI_POPUP_ALERT_BUTTON_USER)
+     printf("User Button is clicked\n");
 }
 
 void
