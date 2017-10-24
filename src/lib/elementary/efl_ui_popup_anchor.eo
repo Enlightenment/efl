@@ -33,7 +33,6 @@ class Efl.Ui.Popup.Anchor(Efl.Ui.Popup)
       }
    }
    implements {
-      class.constructor;
       Efl.Gfx.position { set; }
       Efl.Ui.Popup.align { set; get; }
    }
