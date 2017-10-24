@@ -18,10 +18,6 @@ typedef struct
    int state;
 } Efl_Ui_Nstate_Data;
 
-static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {NULL, NULL}
-};
-
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static void _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd);
 
@@ -30,12 +26,33 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+static void
+_on_state_changed(void *data,
+                  Evas_Object *o EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
+{
+   efl_ui_nstate_activate(data);
+}
+
 EOLIAN static Efl_Object *
-_efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
+_efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_widget_sub_object_parent_add(obj);
+
+   pd->state = 0;
+   // Default: 2 states
+   pd->nstate = 2;
+
+   if (!elm_layout_theme_set(obj, "nstate", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   efl_canvas_layout_signal_callback_add
+     (wd->resize_obj, "elm,action,state,changed", "*", _on_state_changed, obj);
+
    //TODO: Add ATSPI call here
 
    return obj;
@@ -58,44 +75,6 @@ _state_active(Evas_Object *obj, Efl_Ui_Nstate_Data *sd)
    edje_object_message_signal_process(elm_layout_edje_get(obj));
    elm_layout_sizing_eval(obj);
    efl_event_callback_legacy_call(obj, EFL_UI_NSTATE_EVENT_STATE_CHANGED, NULL);
-}
-
-static void
-_on_state_changed(void *data,
-                  Evas_Object *o EINA_UNUSED,
-                  const char *emission EINA_UNUSED,
-                  const char *source EINA_UNUSED)
-{
-   efl_ui_nstate_activate(data);
-}
-
-EOLIAN static void
-_efl_ui_nstate_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Nstate_Data *pd)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
-
-   pd->state = 0;
-   // Default: 2 states
-   pd->nstate = 2;
-
-   if (!elm_layout_theme_set(obj, "nstate", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   edje_object_signal_callback_add(wd->resize_obj, "elm,action,state,changed",
-                                   "*", _on_state_changed, obj);
-}
-
-EOLIAN static void
-_efl_ui_nstate_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Nstate_Data *pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_signal_callback_del_full(wd->resize_obj, "elm,action,state,changed",
-                                        "*", _on_state_changed, obj);
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
@@ -173,10 +152,5 @@ _efl_ui_nstate_class_constructor(Efl_Class *klass)
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_nstate, Efl_Ui_Nstate_Data)
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_NSTATE_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_nstate)
 
 #include "efl_ui_nstate.eo.c"
