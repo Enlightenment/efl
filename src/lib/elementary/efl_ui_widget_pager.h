@@ -13,10 +13,14 @@ typedef struct _Page_Info
    int                      pos;
    int                      content_num;
    Eo                      *obj;
+   Eo                      *content;
    Evas_Coord               x, y, w, h;
    Evas_Coord               tx, ty, tw, th;
    struct _Page_Info       *prev, *next;
+
    Eina_Bool                filled;
+   Eina_Bool                visible;
+   Eina_Bool                vis_page;
 
 } Page_Info;
 

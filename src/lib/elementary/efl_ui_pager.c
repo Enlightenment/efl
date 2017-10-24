@@ -221,26 +221,22 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
 static void
 _page_info_set(Eo *obj, Efl_Ui_Pager_Data *pd)
 {
-   Page_Info *page_info;
    Eina_List *list;
    Page_Info *pi;
    int i, tmp;
 
    for (i = 0; i < pd->page_info_num; i++)
      {
-        page_info = (Page_Info *)malloc(sizeof(Page_Info));
-        page_info->id = i;
-        page_info->pos = i - 2;
+        pi = (Page_Info *)malloc(sizeof(Page_Info));
+        pi->id = i;
+        pi->pos = i - 2;
+        pi->content_num = -1;
+        pi->content = NULL;
 
-        page_info->obj = efl_add(EFL_UI_BOX_CLASS, obj);
-        efl_gfx_visible_set(page_info->obj, EINA_TRUE);
+        pi->obj = efl_add(EFL_UI_BOX_CLASS, obj);
+        efl_gfx_visible_set(pi->obj, EINA_TRUE);
 
-        pd->page_infos = eina_list_append(pd->page_infos, page_info);
-
-        if (i == 0 || i == 4)
-          efl_canvas_object_clip_set(page_info->obj, pd->viewport.backclip);
-        else
-          efl_canvas_object_clip_set(page_info->obj, pd->viewport.foreclip);
+        pd->page_infos = eina_list_append(pd->page_infos, pi);
      }
 
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
@@ -366,35 +362,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
    pd->content_list = eina_list_append(pd->content_list, subobj);
    efl_gfx_stack_raise(pd->event);
 
-   if (pd->cnt == 0)
-     {
-        pd->current_page = 0;
-        pi = eina_list_nth(pd->page_infos, (pd->current_page + 2));
-        efl_pack(pi->obj, subobj);
-        pi->content_num = 0;
-        pi->filled = EINA_TRUE;
-        evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-   else if (pd->cnt == (pd->current_page + 1))
-     {
-        pi = eina_list_nth(pd->page_infos, (pd->cnt + 2));
-        efl_pack(pi->obj, subobj);
-        pi->content_num = pd->current_page + 1;
-        pi->filled = EINA_TRUE;
-        evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-   else
-     {
-        pi = eina_list_nth(pd->page_infos, 1);
-        if (pi->filled) efl_pack_unpack_all(pi->obj);
-        efl_pack(pi->obj, subobj);
-        pi->content_num = pd->cnt;
-        pi->filled = EINA_TRUE;
-        evas_object_size_hint_weight_set(subobj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(subobj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
+   if (pd->cnt == 0) pd->current_page = 0;
    pd->cnt += 1;
 
    _efl_ui_pager_update(obj);
