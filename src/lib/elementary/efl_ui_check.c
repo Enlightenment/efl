@@ -274,39 +274,6 @@ _on_check_toggle(void *data,
    _activate(data);
 }
 
-EOLIAN static void
-_efl_ui_check_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
-
-   if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,on", "*",
-     _on_check_on, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,off", "*",
-     _on_check_off, obj);
-   edje_object_signal_callback_add
-     (wd->resize_obj, "elm,action,check,toggle", "*",
-     _on_check_toggle, obj);
-
-   _elm_access_object_register(obj, wd->resize_obj);
-   _elm_access_text_set
-     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Check"));
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
-
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_layout_sizing_eval(obj);
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_check_selected_get(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
@@ -351,12 +318,34 @@ elm_check_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED)
+_efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   elm_widget_sub_object_parent_add(obj);
+
+   if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   efl_canvas_layout_signal_callback_add
+     (wd->resize_obj, "elm,action,check,on", "*", _on_check_on, obj);
+   efl_canvas_layout_signal_callback_add
+     (wd->resize_obj, "elm,action,check,off", "*", _on_check_off, obj);
+   efl_canvas_layout_signal_callback_add
+     (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
+
    efl_access_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
+   _elm_access_object_register(obj, wd->resize_obj);
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Check"));
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    return obj;
 }
@@ -419,7 +408,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
 ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_CHECK_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_OPS(efl_ui_check), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_check.eo.c"
