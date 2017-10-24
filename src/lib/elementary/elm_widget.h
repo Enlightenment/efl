@@ -462,6 +462,8 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     legacy : 1; /**< Widget was created with a legacy API, not efl_add() */
 } Elm_Widget_Smart_Data;
 
+typedef Elm_Widget_Smart_Data Efl_Ui_Widget_Data;
+
 /**
  * @}
  */

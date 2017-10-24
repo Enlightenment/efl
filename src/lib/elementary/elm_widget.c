@@ -1174,7 +1174,7 @@ elm_widget_access(Evas_Object *obj,
      }
 
    efl_ui_widget_on_access_update(obj, is_access);
-   efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_ACCESS_CHANGED, NULL);
 
    return ret;
 }
@@ -2930,7 +2930,7 @@ _elm_widget_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Widg
         sd->on_translate = EINA_FALSE;
      }
 #endif
-   efl_event_callback_legacy_call(obj, ELM_WIDGET_EVENT_LANGUAGE_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_LANGUAGE_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -5191,7 +5191,7 @@ _elm_widget_on_focus_update(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item 
      return EINA_FALSE;
 
    focused = elm_widget_focus_get(obj);
-   desc = focused ? ELM_WIDGET_EVENT_FOCUSED : ELM_WIDGET_EVENT_UNFOCUSED;
+   desc = focused ? EFL_UI_WIDGET_EVENT_FOCUSED : EFL_UI_WIDGET_EVENT_UNFOCUSED;
 
    if (!sd->resize_obj)
      evas_object_focus_set(obj, focused);

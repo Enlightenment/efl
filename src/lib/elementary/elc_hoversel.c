@@ -865,8 +865,8 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, ELM_WIDGET_EVENT_FOCUSED, _item_focused_cb, item);
-    efl_event_callback_add(bt, ELM_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item);
+    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_FOCUSED, _item_focused_cb, item);
+    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 

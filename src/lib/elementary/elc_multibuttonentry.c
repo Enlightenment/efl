@@ -59,8 +59,8 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { ELM_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
-   { ELM_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
+   { EFL_UI_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
+   { EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -370,7 +370,7 @@ _elm_multibuttonentry_elm_widget_on_focus_update(Eo *obj, Elm_Multibuttonentry_D
                }
           }
         efl_event_callback_legacy_call
-          (obj, ELM_WIDGET_EVENT_FOCUSED, NULL);
+          (obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
      }
    else
      {
@@ -387,7 +387,7 @@ _elm_multibuttonentry_elm_widget_on_focus_update(Eo *obj, Elm_Multibuttonentry_D
           elm_layout_signal_emit(VIEW(sd->selected_it), "elm,state,unfocused", "elm");
 
         efl_event_callback_legacy_call
-          (obj, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
+          (obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
      }
 
 end:

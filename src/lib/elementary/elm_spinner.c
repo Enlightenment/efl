@@ -408,7 +408,7 @@ _entry_value_apply(Evas_Object *obj)
    if (!sd->entry_visible) return;
 
    efl_event_callback_del
-    (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+    (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -647,7 +647,7 @@ _toggle_entry(Evas_Object *obj)
           }
 
         efl_event_callback_add
-           (sd->ent, ELM_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+           (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
@@ -1214,7 +1214,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
         efl_event_callback_add
-          (priv->text_button, ELM_WIDGET_EVENT_FOCUSED, _text_button_focused_cb, obj);
+          (priv->text_button, EFL_UI_WIDGET_EVENT_FOCUSED, _text_button_focused_cb, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);

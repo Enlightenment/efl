@@ -17,6 +17,7 @@ struct Elm.Widget.Focus_State {
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
+/* ATTENTION: Rename to Efl.Ui.Widget is imminent. */
 abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
                      Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
                      Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
@@ -25,8 +26,8 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
    eo_prefix: efl_ui_widget;
-   event_prefix: elm_widget;
-   data: Elm_Widget_Smart_Data;
+   event_prefix: efl_ui_widget;
+   data: Efl_Ui_Widget_Data;
    methods {
       @property resize_object @protected {
          [[This is the internal canvas object managed by a widget.
