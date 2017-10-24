@@ -7,6 +7,9 @@
 #define ELM_GEN_ITEM_FROM_INLIST(it) \
   ((it) ? EINA_INLIST_CONTAINER_GET(it, Elm_Gen_Item) : NULL)
 
+#define ELM_GEN_ITEM_PREV(_it) ((_it) ? ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(_it)->prev) : NULL)
+#define ELM_GEN_ITEM_NEXT(_it) ((_it) ? ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(_it)->next) : NULL)
+
 #define SWIPE_MOVES 12
 
 /* common item handles for genlist/gengrid */
