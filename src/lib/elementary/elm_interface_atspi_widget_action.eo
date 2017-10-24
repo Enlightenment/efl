@@ -17,9 +17,9 @@ mixin Elm.Interface.Atspi_Widget_Action (Efl.Access.Action)
    }
    implements {
       Efl.Access.Action.action_do;
-      Efl.Access.Action.keybinding_get;
-      Efl.Access.Action.name { get; }
-      Efl.Access.Action.description { get; set; }
+      Efl.Access.Action.action_keybinding_get;
+      Efl.Access.Action.action_name { get; }
+      Efl.Access.Action.action_description { get; set; }
       Efl.Access.Action.actions { get; }
    }
 }

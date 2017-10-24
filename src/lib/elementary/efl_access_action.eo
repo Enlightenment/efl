@@ -6,7 +6,7 @@ mixin Efl.Access.Action ()
    [[Accessible action mixin]]
    data: null;
    methods {
-      @property name @protected @pure_virtual {
+      @property action_name @protected @pure_virtual @beta {
          [[Gets action name for given id]]
          get {
          }
@@ -17,7 +17,7 @@ mixin Efl.Access.Action ()
             id: int; [[ID to get action name for]]
          }
       }
-      @property localized_name @protected {
+      @property action_localized_name @protected @beta {
          [[Gets localized action name for given id]]
          get {
          }
@@ -28,7 +28,7 @@ mixin Efl.Access.Action ()
             id: int; [[ID to get localized name for]]
          }
       }
-      @property description @protected @pure_virtual {
+      @property action_description @protected @pure_virtual @beta {
          [[Action description for given id]]
          get {
          }
@@ -42,7 +42,7 @@ mixin Efl.Access.Action ()
             id: int; [[ID to set or get description for]]
          }
       }
-      @property actions @protected {
+      @property actions @protected @beta {
          [[Get list of available widget actions]]
          get @pure_virtual {
          }
@@ -50,14 +50,14 @@ mixin Efl.Access.Action ()
             actions: list<Elm_Atspi_Action>; [[Contains statically allocated strings]]
          }
       }
-      action_do @protected @pure_virtual {
+      action_do @protected @pure_virtual @beta {
          [[Performs action on given widget.]]
          params {
             @in id: int; [[ID for widget]]
          }
          return: bool; [[$true if action was performed, $false otherwise]]
       }
-      keybinding_get @protected @pure_virtual {
+      action_keybinding_get @protected @pure_virtual @beta {
          [[Gets configured keybinding for specific action and widget.]]
          params {
             @in id: int; [[ID for widget]]
