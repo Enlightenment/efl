@@ -112,12 +112,6 @@ _efl_ui_popup_efl_container_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UN
    return efl_content_unset(efl_part(obj, "elm.swallow.content"));
 }
 
-EOLIAN static Efl_Canvas_Object *
-_efl_ui_popup_parent_window_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
-{
-   return pd->win_parent;
-}
-
 EOLIAN static void
 _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup_Align type)
 {
