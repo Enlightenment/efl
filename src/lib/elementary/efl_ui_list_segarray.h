@@ -18,7 +18,7 @@ typedef struct _Efl_Ui_List_SegArray_Node
 
 typedef struct _Efl_Ui_List_SegArray
 {
-   Eina_Rbtree *root; // of Efl_Ui_List_SegArray_Nodea
+   Efl_Ui_List_SegArray_Node *root; // of Efl_Ui_List_SegArray_Nodea
 
    int array_initial_size;
    int node_count;
