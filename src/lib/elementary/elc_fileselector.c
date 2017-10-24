@@ -1967,9 +1967,9 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
    efl_event_callback_add
-     (en, ELM_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
+     (en, EFL_UI_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
    efl_event_callback_add
-     (en, ELM_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
+     (en, EFL_UI_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
 
