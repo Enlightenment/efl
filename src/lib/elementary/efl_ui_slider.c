@@ -216,30 +216,29 @@ _units_set(Evas_Object *obj)
 {
    EFL_UI_SLIDER_DATA_GET(obj, sd);
 
-   if (sd->units_format_func)
+   if (sd->format_cb)
      {
-        char *buf;
+        Eina_Value val;
 
-        buf = sd->units_format_func(sd->val);
-        if (buf)
+        eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+        eina_value_set(&val, sd->val);
+
+        eina_strbuf_reset(sd->format_strbuf);
+
+        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+
+        elm_layout_text_set(obj, "elm.units", eina_strbuf_string_get(sd->format_strbuf));
+        if (!sd->units_show)
           {
-             elm_layout_text_set(obj, "elm.units", buf);
-             if (!sd->units_show)
-               {
-                  elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
-                  sd->units_show = EINA_TRUE;
-               }
+             elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
+             sd->units_show = EINA_TRUE;
           }
         else
           {
-             elm_layout_text_set(obj, "elm.units", NULL);
-             if (sd->units_show)
-               {
-                  elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
-                  sd->units_show = EINA_FALSE;
-               }
+             elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
+             sd->units_show = EINA_FALSE;
           }
-        if (sd->units_format_free) sd->units_format_free(buf);
+        if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
      }
    else if (sd->units)
      {
@@ -1204,6 +1203,9 @@ _efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
    evas_object_del(sd->popup);
    evas_object_del(sd->popup2);
 
+   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+   eina_strbuf_free(sd->format_strbuf);
+
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -1462,6 +1464,23 @@ _efl_ui_slider_efl_ui_format_format_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Slide
    return sd->units;
 }
 
+EOLIAN static void
+_efl_ui_slider_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Slider_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+{
+   if (sd->format_cb_data == func_data && sd->format_cb == func)
+     return;
+
+   if (sd->format_cb_data && sd->format_free_cb)
+     sd->format_free_cb(sd->format_cb_data);
+
+   sd->format_cb = func;
+   sd->format_cb_data = func_data;
+   sd->format_free_cb = func_free_cb;
+   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
+
+   efl_canvas_group_change(obj);
+}
+
 EOLIAN const Elm_Atspi_Action *
 _efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
@@ -1595,6 +1614,18 @@ elm_slider_inverted_get(const Evas_Object *obj)
    return _is_inverted(dir);
 }
 
+static void
+_format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value EINA_UNUSED)
+{
+   Efl_Ui_Slider_Data *sd = data;
+   char *buf;
+
+   buf = sd->units_format_func(sd->val);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   if (sd->units_format_free) sd->units_format_free(buf);
+}
+
 EAPI void
 elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func)
 {
@@ -1602,6 +1633,8 @@ elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, sl
 
    sd->units_format_func = func;
    sd->units_format_free = free_func;
+
+   efl_ui_format_cb_set(obj, sd, _format_legacy_to_format_eo_cb, NULL);
 
    evas_object_smart_changed(obj);
 }
