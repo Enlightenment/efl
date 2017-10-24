@@ -880,6 +880,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
    if (pd->redirect)
      efl_wref_add(pd->redirect, &pd->redirect);
 
+   efl_ui_focus_manager_reset_history(old_manager);
+
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED , old_manager);
 }
 
