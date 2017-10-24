@@ -20,7 +20,6 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    printf("current time: %s\n", eina_strbuf_string_get(buf));
    eina_strbuf_reset(buf);
 
-   buf = eina_strbuf_new();
    eina_strbuf_append(buf, "Hours: Minutes");
    //insert hour at ^Hours: Minutes where ^ is the position
    eina_strbuf_prepend_strftime(buf, "%I ", info);
