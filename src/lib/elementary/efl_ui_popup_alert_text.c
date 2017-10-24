@@ -15,16 +15,15 @@
 static void
 _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Evas_Coord minh)
 {
-   Evas_Coord w, h;
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   Eina_Rect geom = efl_gfx_geometry_get(obj);
 
    if (pd->is_expandable_h)
      {
-       if ((pd->max_scroll_h > -1) && (minh > pd->max_scroll_h))
-         {
-            elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-            evas_object_resize(obj, w, pd->max_scroll_h);
-         }
+        if ((pd->max_scroll_h > -1) && (minh > pd->max_scroll_h))
+          {
+             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+             efl_gfx_size_set(obj, EINA_SIZE2D(geom.w, pd->max_scroll_h));
+          }
      }
 }
 
@@ -38,24 +37,24 @@ _efl_ui_popup_alert_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
 
    _scroller_sizing_eval(obj, pd, minh);
 }
 
 static Eina_Bool
-_efl_ui_popup_alert_text_content_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED, const char *part, Evas_Object *content)
+_efl_ui_popup_alert_text_content_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED, const char *part, Eo *content)
 {
    return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
 }
 
-Evas_Object *
+Eo *
 _efl_ui_popup_alert_text_content_get(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED, const char *part)
 {
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
-static Evas_Object *
+static Eo *
 _efl_ui_popup_alert_text_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED, const char *part)
 {
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
@@ -70,8 +69,8 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
           {
              pd->message = elm_label_add(obj);
              elm_label_line_wrap_set(pd->message, ELM_WRAP_MIXED);
-             evas_object_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
-                                              EVAS_HINT_EXPAND);
+             efl_gfx_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
+                                          EVAS_HINT_EXPAND);
              efl_content_set(efl_part(pd->scroller, "default"), pd->message);
           }
         elm_object_text_set(pd->message, label);
@@ -153,12 +152,6 @@ EOLIAN static void
 _efl_ui_popup_alert_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED)
 {
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_popup_alert_text_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 /* Efl.Part begin */

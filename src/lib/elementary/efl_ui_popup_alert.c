@@ -22,11 +22,8 @@ _efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd 
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-
-   Evas_Coord w, h;
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+      (wd->resize_obj, &minw, &minh, minw, minh);
+   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
 }
 
 static Eina_Bool
@@ -69,33 +66,33 @@ _efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, c
 }
 
 static Eina_Bool
-_efl_ui_popup_alert_content_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part, Evas_Object *content)
+_efl_ui_popup_alert_content_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part, Eo *content)
 {
    return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
 }
 
-Evas_Object *
+Eo *
 _efl_ui_popup_alert_content_get(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
 {
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
-static Evas_Object *
+static Eo *
 _efl_ui_popup_alert_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
 {
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
 static void
-_positive_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+_positive_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
                             void *event_info EINA_UNUSED)
 {
-    Eo *popup_obj = data;
-    efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_CLICKED, (void *)(uintptr_t)EFL_UI_POPUP_ALERT_BUTTON_POSITIVE);
+   Eo *popup_obj = data;
+   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_CLICKED, (void *)(uintptr_t)EFL_UI_POPUP_ALERT_BUTTON_POSITIVE);
 }
 
 static void
-_negative_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+_negative_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
                             void *event_info EINA_UNUSED)
 {
    Eo *popup_obj = data;
@@ -103,7 +100,7 @@ _negative_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_user_button_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
+_user_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
                         void *event_info EINA_UNUSED)
 {
    Eo *popup_obj = data;
@@ -115,7 +112,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
 {
    if (pd->button[type])
      {
-        evas_object_del(pd->button[type]);
+        efl_del(pd->button[type]);
         pd->button[type] = NULL;
      }
    pd->button[type] = elm_button_add(obj);
@@ -123,32 +120,32 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
 
    switch (type)
      {
-        case EFL_UI_POPUP_ALERT_BUTTON_POSITIVE:
-           evas_object_smart_callback_add(pd->button[type], "clicked",
-                                          _positive_button_clicked_cb,
-                                          obj);
-        break;
-        case EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE:
-           evas_object_smart_callback_add(pd->button[type], "clicked",
-                                          _negative_button_clicked_cb,
-                                          obj);
-        break;
-        case EFL_UI_POPUP_ALERT_BUTTON_USER:
-           evas_object_smart_callback_add(pd->button[type], "clicked",
-                                          _user_button_clicked_cb,
-                                          obj);
-        break;
-        default:
-        break;
+      case EFL_UI_POPUP_ALERT_BUTTON_POSITIVE:
+         evas_object_smart_callback_add(pd->button[type], "clicked",
+                                        _positive_button_clicked_cb,
+                                        obj);
+         break;
+      case EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE:
+         evas_object_smart_callback_add(pd->button[type], "clicked",
+                                        _negative_button_clicked_cb,
+                                        obj);
+         break;
+      case EFL_UI_POPUP_ALERT_BUTTON_USER:
+         evas_object_smart_callback_add(pd->button[type], "clicked",
+                                        _user_button_clicked_cb,
+                                        obj);
+         break;
+      default:
+         break;
      }
 
-   Evas_Object * cur_content = efl_content_unset(efl_part(obj, "buttons"));
+   Eo *cur_content = efl_content_unset(efl_part(obj, "buttons"));
    if (cur_content)
      {
         efl_content_unset(efl_part(cur_content, "elm.swallow.button1"));
         efl_content_unset(efl_part(cur_content, "elm.swallow.button2"));
         efl_content_unset(efl_part(cur_content, "elm.swallow.button3"));
-        evas_object_del(cur_content);
+        efl_del(cur_content);
      }
 
    if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]
@@ -211,8 +208,8 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
         efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]);
      }
 
-     elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
-     elm_layout_sizing_eval(obj);
+   elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
+   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -236,12 +233,6 @@ _efl_ui_popup_alert_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Alert_Data 
      }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_popup_alert_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 /* Efl.Part begin */
