@@ -220,7 +220,7 @@ _efl_vg_parent_checked_get(Eo *obj,
              goto on_error;
           }
      }
-   else if (efl_isa(*parent, EVAS_VG_CLASS))
+   else if (efl_isa(*parent, EFL_CANVAS_VG_CLASS))
      {
         goto on_error;
      }

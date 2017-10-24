@@ -8,9 +8,9 @@ typedef struct _Efl_VG_Container_Data Efl_VG_Container_Data;
 typedef struct _Efl_VG_Gradient_Data Efl_VG_Gradient_Data;
 typedef struct _Efl_VG_Interpolation Efl_VG_Interpolation;
 
-typedef struct _Evas_VG_Data      Evas_VG_Data;
+typedef struct _Efl_Canvas_Vg_Data      Efl_Canvas_Vg_Data;
 
-struct _Evas_VG_Data
+struct _Efl_Canvas_Vg_Data
 {
    void     *engine_data;
    Efl_VG   *root;
