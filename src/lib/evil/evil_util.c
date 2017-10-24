@@ -90,9 +90,7 @@ evil_utf16_to_utf8(const wchar_t *text16)
    if (!text16)
      return NULL;
 
-#if WINVER >= 0x0600
    flag = WC_ERR_INVALID_CHARS;
-#endif
 
    size8 = WideCharToMultiByte(CP_UTF8, flag, text16, -1, NULL, 0, NULL, NULL);
    if (size8 == 0)

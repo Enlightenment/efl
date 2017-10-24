@@ -31,11 +31,11 @@ AC_MSG_RESULT([${_winver}])
 
 case "${_winver}" in
   vista)
-     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0600"
+     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0600 -DWINVER=0x0600"
      _efl_windows_version="Windows Vista"
      ;;
   win7)
-     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0601"
+     EFL_WINDOWS_VERSION_CFLAGS="-D_WIN32_WINNT=0x0601 -DWINVER=0x0601"
      _efl_windows_version="Windows 7"
      ;;
   *)
