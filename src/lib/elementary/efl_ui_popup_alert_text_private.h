@@ -6,10 +6,10 @@
 typedef struct _Efl_Ui_Popup_Alert_Text_Data Efl_Ui_Popup_Alert_Text_Data;
 struct _Efl_Ui_Popup_Alert_Text_Data
 {
-   Evas_Object *scroller;
-   Evas_Object *message;
+   Eo        *scroller;
+   Eo        *message;
    Evas_Coord max_scroll_h;
-   Eina_Bool is_expandable_h;
+   Eina_Bool  is_expandable_h : 1;
 };
 
 #endif

@@ -16,7 +16,6 @@ class Efl.Ui.Popup.Alert.Text(Efl.Ui.Popup.Alert, Efl.Text)
        }
    }
    implements {
-      class.constructor;
       Efl.Gfx.Size.Hint.hint_max { set;}
       Efl.Text.text { get; set; }
       Efl.Part.part;

@@ -14,26 +14,23 @@
 #define MY_CLASS_NAME "Efl.Ui.Popup.Anchor"
 
 static void
-_anchor_calc(Evas_Object *obj)
+_anchor_calc(Eo *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    EFL_UI_POPUP_ANCHOR_DATA_GET(obj, sd);
 
-   Evas_Coord_Rectangle anchor_geom = {0, 0, 0, 0};
-   Evas_Coord_Size popup_size = {0, 0};
-   Evas_Coord_Size parent_size = {0, 0};
    Eina_Position2D pos = {0, 0};
 
-   Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+   Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!parent)
      {
         ERR("Cannot find window parent");
         return;
      }
 
-   evas_object_geometry_get(sd->anchor, &anchor_geom.x, &anchor_geom.y, &anchor_geom.w, &anchor_geom.h);
-   evas_object_geometry_get(obj, NULL, NULL, &popup_size.w, &popup_size.h);
-   evas_object_geometry_get(parent, NULL, NULL, &parent_size.w, &parent_size.h);
+   Eina_Rect a_geom = efl_gfx_geometry_get(sd->anchor);
+   Eina_Rect o_geom = efl_gfx_geometry_get(obj);
+   Eina_Rect p_geom = efl_gfx_geometry_get(parent);
 
    sd->used_align = EFL_UI_POPUP_ALIGN_NONE;
 
@@ -58,56 +55,56 @@ _anchor_calc(Evas_Object *obj)
 
         switch(cur_align)
           {
-             case EFL_UI_POPUP_ALIGN_TOP:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = (anchor_geom.y - popup_size.h);
+           case EFL_UI_POPUP_ALIGN_TOP:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y - o_geom.h);
 
-               if ((pos.y < 0) ||
-                   ((pos.y + popup_size.h) > parent_size.h) ||
-                   (popup_size.w > parent_size.w))
-                 continue;
-               break;
+              if ((pos.y < 0) ||
+                  ((pos.y + o_geom.h) > p_geom.h) ||
+                  (o_geom.w > p_geom.w))
+                continue;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_LEFT:
-               pos.x = (anchor_geom.x - popup_size.w);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
+           case EFL_UI_POPUP_ALIGN_LEFT:
+              pos.x = (a_geom.x - o_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
 
-               if ((pos.x < 0) ||
-                   ((pos.x + popup_size.w) > parent_size.w) ||
-                   (popup_size.h > parent_size.h))
-                 continue;
-               break;
+              if ((pos.x < 0) ||
+                  ((pos.x + o_geom.w) > p_geom.w) ||
+                  (o_geom.h > p_geom.h))
+                continue;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_RIGHT:
-               pos.x = (anchor_geom.x + anchor_geom.w);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
+           case EFL_UI_POPUP_ALIGN_RIGHT:
+              pos.x = (a_geom.x + a_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
 
-               if ((pos.x < 0) ||
-                   ((pos.x + popup_size.w) > parent_size.w) ||
-                   (popup_size.h > parent_size.h))
-                 continue;
-               break;
+              if ((pos.x < 0) ||
+                  ((pos.x + o_geom.w) > p_geom.w) ||
+                  (o_geom.h > p_geom.h))
+                continue;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_BOTTOM:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = (anchor_geom.y + anchor_geom.h);
+           case EFL_UI_POPUP_ALIGN_BOTTOM:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y + a_geom.h);
 
-               if ((pos.y < 0) ||
-                   ((pos.y + popup_size.h) > parent_size.h) ||
-                   (popup_size.w > parent_size.w))
-                 continue;
-               break;
+              if ((pos.y < 0) ||
+                  ((pos.y + o_geom.h) > p_geom.h) ||
+                  (o_geom.w > p_geom.w))
+                continue;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_CENTER:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
+           case EFL_UI_POPUP_ALIGN_CENTER:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
 
-               if (popup_size.w > parent_size.w || popup_size.h > parent_size.h)
-                 continue;
-               break;
+              if ((o_geom.w > p_geom.w) || (o_geom.h > p_geom.h))
+                continue;
+              break;
 
-             default:
-               continue;
+           default:
+              continue;
           }
 
         if ((cur_align == EFL_UI_POPUP_ALIGN_TOP) ||
@@ -116,11 +113,11 @@ _anchor_calc(Evas_Object *obj)
           {
              if (pos.x < 0)
                pos.x = 0;
-             if ((pos.x + popup_size.w) > parent_size.w)
-               pos.x = parent_size.w - popup_size.w;
+             if ((pos.x + o_geom.w) > p_geom.w)
+               pos.x = p_geom.w - o_geom.w;
 
-             if ((pos.x > (anchor_geom.x + anchor_geom.w)) ||
-                 ((pos.x + popup_size.w) < anchor_geom.x))
+             if ((pos.x > (a_geom.x + a_geom.w)) ||
+                 ((pos.x + o_geom.w) < a_geom.x))
                continue;
           }
 
@@ -130,11 +127,11 @@ _anchor_calc(Evas_Object *obj)
           {
              if (pos.y < 0)
                pos.y = 0;
-             if ((pos.y + popup_size.h) > parent_size.h)
-               pos.y = parent_size.h - popup_size.h;
+             if ((pos.y + o_geom.h) > p_geom.h)
+               pos.y = p_geom.h - o_geom.h;
 
-             if ((pos.y > (anchor_geom.y + anchor_geom.h)) ||
-                 ((pos.y + popup_size.h) < anchor_geom.y))
+             if ((pos.y > (a_geom.y + a_geom.h)) ||
+                 ((pos.y + o_geom.h) < a_geom.y))
                continue;
           }
 
@@ -146,56 +143,56 @@ _anchor_calc(Evas_Object *obj)
 
    for (int idx = 0; idx < 6; idx++)
      {
-         Efl_Ui_Popup_Align cur_align;
+        Efl_Ui_Popup_Align cur_align;
 
-         if (idx == 0)
-           cur_align = sd->align;
-         else
-           cur_align = sd->priority[idx - 1];
+        if (idx == 0)
+          cur_align = sd->align;
+        else
+          cur_align = sd->priority[idx - 1];
 
-         if (cur_align == EFL_UI_POPUP_ALIGN_NONE)
-           continue;
+        if (cur_align == EFL_UI_POPUP_ALIGN_NONE)
+          continue;
 
-         switch(cur_align)
-           {
-             case EFL_UI_POPUP_ALIGN_TOP:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = (anchor_geom.y - popup_size.h);
-               sd->used_align = cur_align;
-               goto end;
-               break;
+        switch(cur_align)
+          {
+           case EFL_UI_POPUP_ALIGN_TOP:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y - o_geom.h);
+              sd->used_align = cur_align;
+              goto end;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_LEFT:
-               pos.x = (anchor_geom.x - popup_size.w);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
-               sd->used_align = cur_align;
-               goto end;
-               break;
+           case EFL_UI_POPUP_ALIGN_LEFT:
+              pos.x = (a_geom.x - o_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              sd->used_align = cur_align;
+              goto end;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_RIGHT:
-               pos.x = (anchor_geom.x + anchor_geom.w);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
-               sd->used_align = cur_align;
-               goto end;
-               break;
+           case EFL_UI_POPUP_ALIGN_RIGHT:
+              pos.x = (a_geom.x + a_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              sd->used_align = cur_align;
+              goto end;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_BOTTOM:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = (anchor_geom.y + anchor_geom.h);
-               sd->used_align = cur_align;
-               goto end;
-               break;
+           case EFL_UI_POPUP_ALIGN_BOTTOM:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y + a_geom.h);
+              sd->used_align = cur_align;
+              goto end;
+              break;
 
-             case EFL_UI_POPUP_ALIGN_CENTER:
-               pos.x = anchor_geom.x + ((anchor_geom.w - popup_size.w) / 2);
-               pos.y = anchor_geom.y + ((anchor_geom.h - popup_size.h) / 2);
-               sd->used_align = cur_align;
-               goto end;
-               break;
+           case EFL_UI_POPUP_ALIGN_CENTER:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              sd->used_align = cur_align;
+              goto end;
+              break;
 
-             default:
-               break;
-           }
+           default:
+              break;
+          }
      }
 
 end:
@@ -214,7 +211,7 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_POPUP_ANCHOR_DATA_GET(data, sd);
 
-   Evas_Object *parent = efl_provider_find(data, EFL_UI_WIN_CLASS);
+   Eo *parent = efl_provider_find(data, EFL_UI_WIN_CLASS);
    if (!parent)
      {
         ERR("Cannot find window parent");
@@ -228,13 +225,13 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_anchor_detach(Evas_Object *obj)
+_anchor_detach(Eo *obj)
 {
    EFL_UI_POPUP_ANCHOR_DATA_GET(obj, sd);
 
    if (sd->anchor == NULL) return;
 
-   Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+   Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!parent)
      {
         ERR("Cannot find window parent");
@@ -248,20 +245,20 @@ _anchor_detach(Evas_Object *obj)
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Evas_Object *anchor)
+_efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *anchor)
 {
    _anchor_detach(obj);
    pd->anchor = anchor;
 
    if (anchor == NULL)
-      efl_ui_popup_align_set(efl_super(obj, MY_CLASS), pd->align);
+     efl_ui_popup_align_set(efl_super(obj, MY_CLASS), pd->align);
    else
      {
         efl_ui_popup_align_set(efl_super(obj, MY_CLASS), EFL_UI_POPUP_ALIGN_NONE);
 
         _anchor_calc(obj);
 
-        Evas_Object *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
+        Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
         if (!parent)
           {
               ERR("Cannot find window parent");
@@ -338,9 +335,9 @@ _efl_ui_popup_anchor_efl_ui_popup_align_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *p
 {
    pd->align = type;
    if (pd->anchor == NULL)
-      efl_ui_popup_align_set(efl_super(obj, MY_CLASS), type);
+     efl_ui_popup_align_set(efl_super(obj, MY_CLASS), type);
    else
-      _anchor_calc(obj);
+     _anchor_calc(obj);
 }
 
 EOLIAN static Efl_Ui_Popup_Align
@@ -368,12 +365,6 @@ EOLIAN static void
 _efl_ui_popup_anchor_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd EINA_UNUSED)
 {
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_popup_anchor_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME, klass);
 }
 
 #define EFL_UI_POPUP_ANCHOR_EXTRA_OPS \
