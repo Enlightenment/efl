@@ -15,11 +15,11 @@
  * can be picked by user from the color set by clicking on individual
  * color item on the palette or by selecting it from selector.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for check objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - When the color value changes on selector
  *   event_info is NULL.
  * - @c "color,item,selected" - When user clicks on color item. The

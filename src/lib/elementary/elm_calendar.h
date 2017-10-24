@@ -17,11 +17,11 @@
  * - setting the day names of the week (e.g. "Thu" or "Thursday")
  * - setting the year and month format.
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for calendar objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - emitted when the date in the calendar is changed.
  * - @c "display,changed" - emitted when the current month displayed in the
  * calendar is changed.
