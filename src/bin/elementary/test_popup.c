@@ -1243,7 +1243,7 @@ test_efl_ui_popup_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Evas_Object *win, *layout, *tbl, *btn;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("Efl UI AnchorPopup", "Efl UI AnchorPopup");
+   win = elm_win_util_standard_add("Efl UI Popup Anchor", "Efl UI Popup Anchor");
    elm_win_autodel_set(win, EINA_TRUE);
 
    evas_object_resize(win, 500, 500);
