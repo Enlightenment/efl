@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <assert.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -369,9 +370,19 @@ _validate_class(Eolian_Class *cl)
    Eolian_Function *func;
    Eolian_Event *event;
    Eolian_Implement *impl;
+   const char *iname;
+
+   if (!cl)
+     return EINA_FALSE; /* if this happens something is very wrong though */
 
    if (cl->base.validated)
      return EINA_TRUE;
+
+   EINA_LIST_FOREACH(cl->inherits, l, iname)
+     {
+        if (!_validate_class(eina_hash_find(_classes, iname)))
+          return EINA_FALSE;
+     }
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(func))
@@ -435,7 +446,7 @@ database_validate()
    /* FIXME: pass unit properly */
    Eina_Iterator *iter = eolian_all_classes_get(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
-     if (!_validate_class(cl))
+     if (cl->toplevel && !_validate_class(cl))
        {
           eina_iterator_free(iter);
           return EINA_FALSE;

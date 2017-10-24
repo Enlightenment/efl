@@ -1985,7 +1985,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
      }
    _parse_dep(ls, fname, iname);
    /* FIXME: pass unit properly */
-   const Eolian_Class *dep = eolian_class_get_by_name(NULL, iname);
+   Eolian_Class *dep = (Eolian_Class *)eolian_class_get_by_name(NULL, iname);
    if (!dep)
      {
         char ebuf[PATH_MAX];
@@ -2023,6 +2023,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
      }
    ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits,
                                             eina_stringshare_add(iname));
+   dep->toplevel = EINA_FALSE;
    eo_lexer_context_pop(ls);
 }
 
@@ -2036,6 +2037,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls = calloc(1, sizeof(Eolian_Class));
+   ls->tmp.kls->toplevel = EINA_TRUE;
    FILL_BASE(ls->tmp.kls->base, ls, ls->line_number, ls->column);
    eo_lexer_get(ls);
    ls->tmp.kls->type = type;
