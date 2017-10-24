@@ -1663,9 +1663,9 @@ elm_object_focus_get(const Evas_Object *obj)
 static void _elm_widget_focus(Evas_Object *obj);
 
 static void
-_manager_changed(void *data EINA_UNUSED, const Efl_Event *event)
+_manager_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   _elm_widget_focus(event->object);
+   _elm_widget_focus(data);
 }
 
 static void
@@ -1678,13 +1678,13 @@ _elm_widget_focus(Evas_Object *obj)
    m2 = efl_ui_focus_user_manager_get(obj);
 
    o = efl_key_data_get(m, "__delayed_focus_set");
-   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
    efl_key_data_set(m, "__delayed_focus_set", NULL);
 
    if (!m2)
      {
         efl_key_data_set(m, "__delayed_focus_set", obj);
-        efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
         return;
      }
 
@@ -1693,6 +1693,14 @@ _elm_widget_focus(Evas_Object *obj)
      {
        Efl_Ui_Focus_Manager *new_manager;;
        new_manager = efl_ui_focus_user_manager_get(m2);
+
+       /* also delay the registeration if we miss a manager half way */
+       if (!new_manager)
+         {
+            efl_event_callback_add(m2, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
+            return;
+         }
+
        //new manager is in a higher hirarchy than m2
        //so we set m2 as redirect in new_manager
        efl_ui_focus_manager_redirect_set(new_manager, m2);
