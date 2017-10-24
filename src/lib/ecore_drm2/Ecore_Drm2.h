@@ -804,11 +804,11 @@ EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rot
 EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 
 /**
- * Get the user data for a given output
+ * Get the user data for the output's page flip handler
  *
- * @param output The output to get user data for
+ * @param output The output to update user data for
  *
- * @return The user data associated with given output
+ * @return The user data associated with this output's page flip handler
  *
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
