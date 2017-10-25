@@ -1695,8 +1695,9 @@ _elm_widget_focus(Evas_Object *obj)
        new_manager = efl_ui_focus_user_manager_get(m2);
 
        /* also delay the registeration if we miss a manager half way */
-       if (!new_manager)
+       if (!new_manager && m2 != elm_widget_top_get(obj))
          {
+            efl_key_data_set(m, "__delayed_focus_set", obj);
             efl_event_callback_add(m2, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
             return;
          }
