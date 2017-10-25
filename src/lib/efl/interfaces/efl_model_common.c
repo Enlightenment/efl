@@ -54,56 +54,28 @@ efl_model_init(void)
    return EINA_TRUE;
 }
 
-EAPI Eina_Accessor*
-efl_model_list_slice(Eina_List *list, unsigned start, unsigned count)
-{
-   if (!list) return NULL;
-
-   if ((start == 0) && (count == 0)) /* this is full data */
-     {
-        /*
-         * children_accessor will be set to NULL by
-         * eina_list_accessor_new if the later fails.
-         */
-       return eina_list_accessor_new(list);
-     }
-
-   Eo *child;
-   Eina_List *l, *ln, *lr = NULL;
-   ln = eina_list_nth_list(list, (start));
-   if (!ln)
-     {
-        return NULL;
-     }
-
-   EINA_LIST_FOREACH(ln, l, child)
-     {
-        efl_ref(child);
-        lr = eina_list_append(lr, child);
-        if (eina_list_count(lr) == count)
-          break;
-     }
-
-   if (!lr) return NULL;
-
-   // This may leak the children Eina_List.
-   return eina_list_accessor_new(lr);
-}
-
 EAPI void
-efl_model_property_changed_notify(Efl_Model *model, const char *property)
+_efl_model_properties_changed_internal(const Efl_Model *model, ...)
 {
-   Eina_Array *changed_properties = eina_array_new(1);
-   EINA_SAFETY_ON_NULL_RETURN(changed_properties);
+   Efl_Model_Property_Event ev = { 0 };
+   Eina_Array *properties = eina_array_new(1);
+   const char *property;
+   va_list args;
 
-   Eina_Bool ret = eina_array_push(changed_properties, property);
-   EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
+   va_start(args, model);
 
-   Efl_Model_Property_Event evt = {.changed_properties = changed_properties};
-   efl_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   while ((property = (const char*) va_arg(args, const char*)))
+     {
+        eina_array_push(properties, property);
+     }
 
-on_error:
-   eina_array_free(changed_properties);
+   va_end(args);
+
+   ev.changed_properties = properties;
+
+   efl_event_callback_call((Efl_Model *) model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &ev);
+
+   eina_array_free(properties);
 }
 
 EAPI void
