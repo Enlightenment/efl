@@ -80,52 +80,6 @@ _button_widget_year_dec_start(void *data,
                               Evas_Object *obj EINA_UNUSED,
                               void *event_info EINA_UNUSED);
 
-/* This two functions should be moved in Eina for next release. */
-#if 0
-static Eina_Tmpstr *
-_eina_tmpstr_strftime(const char *format, const struct tm *tm)
-{
-   const size_t flen = strlen(format);
-   size_t buflen = 16; // An arbitrary starting size
-   char *buf = NULL;
-
-   do {
-      char *tmp;
-      size_t len;
-
-      tmp = realloc(buf, buflen * sizeof(char));
-      if (!tmp) goto on_error;
-      buf = tmp;
-
-      len = strftime(buf, buflen, format, tm);
-      // Check if we have the expected result and return it.
-      if ((len > 0 && len < buflen) || (len == 0 && flen == 0))
-        {
-           Eina_Tmpstr *r;
-
-           r = eina_tmpstr_add_length(buf, len + 1);
-           free(buf);
-           return r;
-        }
-
-      /* Possibly buf overflowed - try again with a bigger buffer */
-      buflen <<= 1; // multiply buffer size by 2
-   } while (buflen < 128 * flen);
-
- on_error:
-   free(buf);
-   return NULL;
-}
-
-static char *
-_eina_tmpstr_steal(Eina_Tmpstr *s)
-{
-   char *r = s ? strdup(s) : NULL;
-   eina_tmpstr_del(s);
-   return r;
-}
-#endif
-
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
