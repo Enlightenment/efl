@@ -984,7 +984,8 @@ _efl_ui_multibuttonentry_elm_widget_widget_event(Eo *obj EINA_UNUSED, Efl_Ui_Mul
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return EINA_FALSE;
 
-   return EINA_TRUE;
+   //lets stop eating all events
+   return EINA_FALSE;
 }
 
 EOLIAN static void
