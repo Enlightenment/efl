@@ -66,14 +66,6 @@ _efl_animation_object_group_parallel_efl_animation_object_group_object_add(Eo *e
    /* Add member object data and append the data to the member object data
     * list. */
    _member_anim_obj_data_add(pd, anim_obj, 0);
-
-   /* Total duration is calculated in
-    * efl_animation_object_total_duration_get() based on the current group
-    * animation object list.
-    * Therefore, the calculated total duration should be set to update total
-    * duration. */
-   double total_duration = efl_animation_object_total_duration_get(eo_obj);
-   efl_animation_object_total_duration_set(eo_obj, total_duration);
 }
 
 EOLIAN static void
@@ -88,14 +80,6 @@ _efl_animation_object_group_parallel_efl_animation_object_group_object_del(Eo *e
    /* Delete member object data and remove the data from the member object
     * data list. */
    _member_anim_obj_data_del(pd, anim_obj);
-
-   /* Total duration is calculated in
-    * efl_animation_object_total_duration_get() based on the current group
-    * animation object list.
-    * Therefore, the calculated total duration should be set to update total
-    * duration. */
-   double total_duration = efl_animation_object_total_duration_get(eo_obj);
-   efl_animation_object_total_duration_set(eo_obj, total_duration);
 }
 
 EOLIAN static double

@@ -27,12 +27,10 @@ _efl_animation_target_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd)
 }
 
 EOLIAN static void
-_efl_animation_duration_set(Eo *eo_obj,
+_efl_animation_duration_set(Eo *eo_obj EINA_UNUSED,
                             Efl_Animation_Data *pd,
                             double duration)
 {
-   efl_animation_total_duration_set(eo_obj, duration);
-
    pd->duration = duration;
 }
 
@@ -42,27 +40,11 @@ _efl_animation_duration_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd)
    return pd->duration;
 }
 
-EOLIAN static void
-_efl_animation_duration_only_set(Eo *eo_obj EINA_UNUSED,
-                                 Efl_Animation_Data *pd,
-                                 double duration)
-{
-   pd->duration = duration;
-}
-
-EOLIAN static void
-_efl_animation_total_duration_set(Eo *eo_obj EINA_UNUSED,
-                                  Efl_Animation_Data *pd,
-                                  double total_duration)
-{
-   pd->total_duration = total_duration;
-}
-
 EOLIAN static double
 _efl_animation_total_duration_get(Eo *eo_obj EINA_UNUSED,
                                   Efl_Animation_Data *pd)
 {
-   return pd->total_duration;
+   return pd->duration;
 }
 
 EOLIAN static void
@@ -96,9 +78,6 @@ _efl_animation_object_create(Eo *eo_obj, Efl_Animation_Data *pd EINA_UNUSED)
 
    double duration = efl_animation_duration_get(eo_obj);
    efl_animation_object_duration_set(anim_obj, duration);
-
-   double total_duration = efl_animation_total_duration_get(eo_obj);
-   efl_animation_object_total_duration_set(anim_obj, total_duration);
 
    int repeat_count = efl_animation_repeat_count_get(eo_obj);
    efl_animation_object_repeat_count_set(anim_obj, repeat_count);

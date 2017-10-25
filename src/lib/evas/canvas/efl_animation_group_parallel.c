@@ -9,14 +9,6 @@ _efl_animation_group_parallel_efl_animation_group_animation_add(Eo *eo_obj,
 
    efl_animation_group_animation_add(efl_super(eo_obj, MY_CLASS),
                                      animation);
-
-   /* Total duration is calculated in efl_animation_total_duration_get() based
-    * on the current group animation list.
-    * Therefore, the calculated total duration should be set to update total
-    * duration. */
-   double total_duration =
-      efl_animation_total_duration_get(eo_obj);
-   efl_animation_total_duration_set(eo_obj, total_duration);
 }
 
 EOLIAN static void
@@ -28,14 +20,6 @@ _efl_animation_group_parallel_efl_animation_group_animation_del(Eo *eo_obj,
 
    efl_animation_group_animation_del(efl_super(eo_obj, MY_CLASS),
                                      animation);
-
-   /* Total duration is calculated in efl_animation_total_duration_get() based
-    * on the current group animation list.
-    * Therefore, the calculated total duration should be set to update total
-    * duration. */
-   double total_duration =
-      efl_animation_total_duration_get(eo_obj);
-   efl_animation_total_duration_set(eo_obj, total_duration);
 }
 
 EOLIAN static double
@@ -94,9 +78,6 @@ _efl_animation_group_parallel_efl_animation_object_create(Eo *eo_obj,
 
    double duration = efl_animation_duration_get(eo_obj);
    efl_animation_object_duration_set(group_anim_obj, duration);
-
-   double total_duration = efl_animation_total_duration_get(eo_obj);
-   efl_animation_object_total_duration_set(group_anim_obj, total_duration);
 
    double start_delay_time = efl_animation_start_delay_get(eo_obj);
    efl_animation_object_start_delay_set(group_anim_obj, start_delay_time);
