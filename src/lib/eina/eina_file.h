@@ -662,7 +662,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @param[in] rule The rule to apply to the mapped memory
  * @param[in] map Memory that was mapped inside of which the memory range is
  * @param[in] offset The offset in bytes from the start of the map address
- * @param [in]length The length in bytes of the memory region to populate
+ * @param[in] length The length in bytes of the memory region to populate
  * 
  * @since 1.8
  */
