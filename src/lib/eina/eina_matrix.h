@@ -551,6 +551,7 @@ EAPI Eina_Bool eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
  *
  * @param m The transformation matrix to create.
  * @param q The source quadrangle.
+ * @return @c EINA_TRUE if matrix could be successfully created, @c EINA_FALSE otherwise.
  *
  * Calculates a matrix @p m that can be used to transform an arbitrary
  * quadrangle @p q into a square.  If @p q is a parallelogram, then a
@@ -778,11 +779,12 @@ EAPI double eina_matrix4_determinant(const Eina_Matrix4 *m);
 /**
  * @brief Returns the determinant of the given matrix.
  *
- * @param m The matrix.
+ * @param out The normalized matrix
+ * @param in The matrix.
  * @return The determinant.
  *
- * This function returns the determinant of the matrix @p m. No check
- * is done on @p m.
+ * This function returns the determinant of the matrix @p in. No check
+ * is done on @p in.
  *
  * @since 1.16
  */
@@ -835,8 +837,8 @@ EAPI void eina_matrix4_identity(Eina_Matrix4 *out);
  * @brief Multiplies two matrix.
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */
@@ -869,8 +871,8 @@ EAPI void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
  * @brief Multiplies two matrix with check.
  *
  * @param out The resulting matrix
- * @param a The first member of the multiplication
- * @param b The second member of the multiplication
+ * @param mat_a The first member of the multiplication
+ * @param mat_b The second member of the multiplication
  *
  * @since 1.17
  */
