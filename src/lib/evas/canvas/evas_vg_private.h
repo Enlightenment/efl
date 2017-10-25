@@ -12,17 +12,16 @@ typedef struct _Efl_Canvas_Vg_Data      Efl_Canvas_Vg_Data;
 
 struct _Efl_Canvas_Vg_Data
 {
-   void     *engine_data;
-   Efl_VG   *root;
-   Efl_VG   *vg_tree;
-
-   Eina_Rect fill;
-
-   unsigned int width, height;
-
-   Eina_Array cleanup;
-
-   Eina_Bool  changed;
+   void                     *engine_data;
+   Efl_VG                   *root;
+   Efl_VG                   *vg_tree;
+   Eina_Rect                 fill;
+   Eina_Rect                 viewbox;
+   unsigned int              width, height;
+   Eina_Array                cleanup;
+   double                    align_x, align_y;
+   Efl_Canvas_Vg_Fill_Mode   fill_mode;
+   Eina_Bool                 changed;
 };
 
 struct _Efl_VG_Data

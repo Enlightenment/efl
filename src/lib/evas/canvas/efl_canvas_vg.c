@@ -73,6 +73,52 @@ _evas_vg_tree_changed(void *data, const Efl_Event *event EINA_UNUSED)
    evas_object_change(obj->object, obj);
 }
 
+static void
+_update_vgtree_viewport(Eo *obj, Efl_Canvas_Vg_Data *pd)
+{
+   double vb_w, vb_h, vp_w, vp_h, scale_w, scale_h, scale;
+   Eina_Size2D sz = efl_gfx_size_get(obj);
+   Eina_Matrix3 m;
+
+   eina_matrix3_identity(&m);
+
+   vb_w = pd->viewbox.w;
+   vb_h = pd->viewbox.h;
+   vp_w = sz.w;
+   vp_h = sz.h;
+
+   scale_w = vp_w / vb_w;
+   scale_h = vp_h / vb_h;
+
+   if (pd->fill_mode == EFL_CANVAS_VG_FILL_MODE_STRETCH)
+     { // Fill the viewport and ignore the aspect ratio
+        eina_matrix3_scale(&m, scale_w, scale_h);
+        eina_matrix3_translate(&m, -pd->viewbox.x, -pd->viewbox.y);
+     }
+   else
+     {
+        if (pd->fill_mode == EFL_CANVAS_VG_FILL_MODE_MEET)
+          scale = scale_w < scale_h ? scale_w : scale_h;
+        else // slice
+          scale = scale_w > scale_h ? scale_w : scale_h;
+        eina_matrix3_translate(&m, (vp_w - vb_w * scale) * pd->align_x, (vp_h - vb_h * scale) * pd->align_y);
+        eina_matrix3_scale(&m, scale, scale);
+        eina_matrix3_translate(&m, -pd->viewbox.x, -pd->viewbox.y);
+     }
+
+   efl_vg_transformation_set(pd->root, &m);
+}
+
+static void
+_evas_vg_resize(void *data, const Efl_Event *ev)
+{
+   Efl_Canvas_Vg_Data *pd = data;
+
+   if (eina_rectangle_is_empty(&pd->viewbox.rect))
+     return;
+   _update_vgtree_viewport(ev->object, pd);
+}
+
 /* the actual api call to add a vector graphic object */
 EAPI Evas_Object *
 evas_object_vg_add(Evas *e)
@@ -84,13 +130,13 @@ evas_object_vg_add(Evas *e)
    return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
-Efl_VG *
+EOLIAN static Efl_VG *
 _efl_canvas_vg_root_node_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
 {
    return pd->vg_tree;
 }
 
-void
+EOLIAN static void
 _efl_canvas_vg_root_node_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Efl_VG *root_node)
 {
    // if the same root is already set
@@ -102,17 +148,82 @@ _efl_canvas_vg_root_node_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Efl_VG
      efl_parent_set(pd->vg_tree, NULL);
 
    pd->vg_tree = root_node;
-   
+
    if (pd->vg_tree)
      {
         // set the parent so that vg canvas can render it.
         efl_parent_set(pd->vg_tree, pd->root);
      }
-   
+
    // force a redraw
    pd->changed = EINA_TRUE;
-   
+
    evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+}
+
+EOLIAN static void
+_efl_canvas_vg_fill_mode_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Efl_Canvas_Vg_Fill_Mode fill_mode)
+{
+   pd->fill_mode = fill_mode;
+}
+
+EOLIAN static Efl_Canvas_Vg_Fill_Mode
+_efl_canvas_vg_fill_mode_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
+{
+   return pd->fill_mode;
+}
+
+EOLIAN static void
+_efl_canvas_vg_viewbox_set(Eo *obj, Efl_Canvas_Vg_Data *pd, Eina_Rect viewbox)
+{
+   // viewbox should be a valid rectangle
+   if (eina_rectangle_is_empty(&viewbox.rect))
+     {
+        // reset the old viewbox if any
+        if (!eina_rectangle_is_empty(&pd->viewbox.rect))
+          {
+             Eina_Matrix3 m;
+
+             pd->viewbox = EINA_RECT_EMPTY();
+             eina_matrix3_identity(&m);
+             efl_vg_transformation_set(pd->root, &m);
+             // un register the resize callback
+             efl_event_callback_del(obj, EFL_GFX_EVENT_RESIZE, _evas_vg_resize, pd);
+          }
+        return;
+     }
+   // register for resize callback if not done yet
+   if (eina_rectangle_is_empty(&pd->viewbox.rect))
+     efl_event_callback_add(obj, EFL_GFX_EVENT_RESIZE, _evas_vg_resize, pd);
+
+   pd->viewbox = viewbox;
+   _update_vgtree_viewport(obj, pd);
+}
+
+EOLIAN static Eina_Rect
+_efl_canvas_vg_viewbox_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
+{
+   return pd->viewbox;
+}
+
+EOLIAN static void
+_efl_canvas_vg_viewbox_align_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, double align_x, double align_y)
+{
+   align_x = align_x < 0 ? 0 : align_x;
+   align_x = align_x > 1 ? 1 : align_x;
+
+   align_y = align_y < 0 ? 0 : align_y;
+   align_y = align_y > 1 ? 1 : align_y;
+
+   pd->align_x = align_x;
+   pd->align_y = align_y;
+}
+
+EOLIAN static void
+_efl_canvas_vg_viewbox_align_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, double *align_x, double *align_y)
+{
+   if (align_x) *align_x = pd->align_x;
+   if (align_y) *align_y = pd->align_y;
 }
 
 static void
@@ -126,7 +237,7 @@ _cleanup_reference(void *data, const Efl_Event *event EINA_UNUSED)
      efl_unref(renderer);
 }
 
-void
+EOLIAN static void
 _efl_canvas_vg_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 {
    Evas_Object_Protected_Data *obj;
@@ -143,7 +254,7 @@ _efl_canvas_vg_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
-Eo *
+EOLIAN static Eo *
 _efl_canvas_vg_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -157,7 +268,7 @@ _efl_canvas_vg_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 
    /* root node */
    pd->root = efl_add(EFL_VG_CONTAINER_CLASS, NULL);
-   
+
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
    efl_event_callback_add(pd->root, EFL_GFX_EVENT_CHANGED, _evas_vg_tree_changed, obj);
@@ -426,31 +537,6 @@ _efl_canvas_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                           void *type_private_data EINA_UNUSED)
 {
    return 0;
-}
-
-EOLIAN static Eina_Size2D
-_efl_canvas_vg_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
-{
-   return EINA_SIZE2D(pd->width, pd->height);
-}
-
-EOLIAN static void
-_efl_canvas_vg_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Eina_Size2D sz)
-{
-   pd->width = sz.w;
-   pd->height = sz.h;
-}
-
-void
-_efl_canvas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Eina_Rect fill)
-{
-   pd->fill = fill;
-}
-
-Eina_Rect
-_efl_canvas_vg_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
-{
-   return pd->fill;
 }
 
 #include "efl_canvas_vg.eo.c"

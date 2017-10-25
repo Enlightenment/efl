@@ -1,9 +1,56 @@
-class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
+enum Efl.Canvas.Vg.Fill_Mode
+{
+   [[Enumeration that defines how viewbox will be filled int the vg canvs's viewport.
+     default Fill_Mode is $none]]
+   none,         [[Don't scale the viewbox. Placed it inside viewport taking
+                  align property into account]]
+   stretch,     [[Scale the viewbox so that it matches
+                  the canvas viewport.
+                  Aaspect ratio might be changed.]]
+   meet,        [[Scale the viewbox
+                  so that it fits inside canvas viewport
+                  while maintaining the aspect ratio.
+                  At least one of the dimensions of the viewbox
+                  should be equal to the corresponding dimension
+                  of the viewport.]]
+   slice       [[Scale the viewbox
+                  so that it covers the entire canvas viewport
+                  while maintaining the aspect ratio.
+                  At least one of the dimensions of the viewbox
+                  should be equal to the corresponding
+                  dimension of the viewport.]]
+}
+
+class Efl.Canvas.Vg (Efl.Canvas.Object)
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
-   eo_prefix: evas_obj_vg;
    methods {
+      @property fill_mode {
+         [[Control how the viewbox is mapped to the vg canvas's viewport.]]
+         values {
+            fill_mode: Efl.Canvas.Vg.Fill_Mode; [[Fill mode type]]
+         }
+      }
+      @property viewbox {
+         get {
+            [[Get the current viewbox from the  evas_object_vg]]
+         }
+         set {
+            [[Sets the viewbox for the evas vg canvas.
+              viewbox if set should be mapped to the canvas geometry when rendering the vg tree.]]
+         }
+         values {
+            viewbox: Eina.Rect; [[viewbox for the vg canvas]]
+         }
+      }
+      @property viewbox_align {
+         [[Control how the viewbox is positioned inside the viewport.]]
+         values {
+            align_x: double(0); [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
+            align_y: double(0); [[Alignment in the vertical axis (0 <= align_y <= 1).]]
+         }
+      }
       @property root_node {
          get {
             [[Get the root node of the evas_object_vg.
@@ -26,7 +73,5 @@ class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Gfx.Fill.fill { get; set; }
-      Efl.Gfx.View.view_size { get; set; }
    }
 }
