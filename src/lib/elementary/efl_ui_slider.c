@@ -238,7 +238,6 @@ _units_set(Evas_Object *obj)
              elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
              sd->units_show = EINA_FALSE;
           }
-        if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
      }
    else if (sd->units)
      {
@@ -1203,6 +1202,7 @@ _efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
    evas_object_del(sd->popup);
    evas_object_del(sd->popup2);
 
+   if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
    efl_ui_format_cb_set(obj, NULL, NULL, NULL);
    eina_strbuf_free(sd->format_strbuf);
 
