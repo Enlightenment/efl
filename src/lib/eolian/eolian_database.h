@@ -91,7 +91,7 @@ struct _Eolian_Class
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
-   Eina_List *inherits; /* List Eina_Stringshare * */
+   Eina_List *inherits; /* List Eolian_Class * */
    Eina_List *properties; /* List prop_name -> Eolian_Function */
    Eina_List *methods; /* List meth_name -> Eolian_Function */
    Eina_List *implements; /* List implements name -> Eolian_Implement */

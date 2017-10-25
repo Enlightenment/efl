@@ -12,11 +12,12 @@
 
 START_TEST(eolian_namespaces)
 {
-   const Eolian_Class *class11, *class112, *class21, *class_no, *impl_class;
+   const Eolian_Class *class11, *class112, *class21, *class_no, *impl_class,
+                      *iclass;
    const Eolian_Function *fid;
    Eina_Iterator *iter;
    Eolian_Function_Type func_type;
-   const char *class_name, *val1, *val2;
+   const char *val1, *val2;
    const Eolian_Implement *impl;
    const Eolian_Unit *unit;
    void *dummy;
@@ -61,12 +62,12 @@ START_TEST(eolian_namespaces)
 
    /* Inherits */
    fail_if(!(iter = eolian_class_inherits_get(class11)));
-   fail_if(!(eina_iterator_next(iter, (void**)&class_name)));
-   fail_if(eolian_class_get_by_name(unit, class_name) != class112);
-   fail_if(!(eina_iterator_next(iter, (void**)&class_name)));
-   fail_if(eolian_class_get_by_name(unit, class_name) != class21);
-   fail_if(!(eina_iterator_next(iter, (void**)&class_name)));
-   fail_if(eolian_class_get_by_name(unit, class_name) != class_no);
+   fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
+   fail_if(iclass != class112);
+   fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
+   fail_if(iclass != class21);
+   fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
+   fail_if(iclass != class_no);
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
 

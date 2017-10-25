@@ -965,14 +965,13 @@ eo_gen_source_gen(const Eolian_Unit *src,
 
    /* inherits in EFL_DEFINE_CLASS */
    {
-      const char *iname;
+      const Eolian_Class *icl;
       Eina_Iterator *itr = eolian_class_inherits_get(cl);
       /* no inherits, NULL parent */
       if (!itr)
         eina_strbuf_append(buf, ", NULL");
-      EINA_ITERATOR_FOREACH(itr, iname)
+      EINA_ITERATOR_FOREACH(itr, icl)
         {
-           const Eolian_Class *icl = eolian_class_get_by_name(src, iname);
            Eina_Stringshare *mname = eolian_class_c_name_get(icl);
            eina_strbuf_append_printf(buf, ", %s", mname);
            eina_stringshare_del(mname);
