@@ -16,7 +16,7 @@ typedef struct _Efl_Ui_Pageindicator_Data
 
 
    Eina_List               *items;
-   Evas_VG                 *on, *off;
+   Efl_VG                  *on, *off;
 
 } Efl_Ui_Pageindicator_Data;
 

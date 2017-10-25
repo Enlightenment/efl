@@ -64,7 +64,7 @@ _efl_ui_pageindicator_bind(Eo *obj,
    pd->target.obj = target;
    pd->target.cnt = efl_content_count(target);
    EFL_UI_PAGESCROLLER_DATA_GET(pd->target.obj, pcd);
-
+#if 0
    //FIXME use efl_content_iterate
    for (i = 0; i < pd->target.cnt; i++)
      {
@@ -86,7 +86,7 @@ _efl_ui_pageindicator_bind(Eo *obj,
 
         efl_pack_end(pd->box, item->object);
      }
-
+#endif
    efl_event_callback_add(pd->target.obj, EFL_UI_PAGESCROLLER_EVENT_UPDATED,
                           _updated, obj); 
 }
@@ -99,7 +99,7 @@ _efl_ui_pageindicator_efl_canvas_group_group_add(Eo *obj,
    efl_gfx_visible_set(sd->box, EINA_TRUE);
 
    efl_pack_padding_set(sd->box, 10, 10, EINA_TRUE);
-
+#if 0
    sd->on = efl_add(EFL_VG_SHAPE_CLASS, NULL);
    evas_vg_shape_append_circle(sd->on, 5, 5, 5);
    evas_vg_node_color_set(sd->on, 255, 255, 255, 255);
@@ -107,7 +107,7 @@ _efl_ui_pageindicator_efl_canvas_group_group_add(Eo *obj,
    sd->off = efl_add(EFL_VG_SHAPE_CLASS, NULL);
    evas_vg_shape_append_circle(sd->off, 5, 5, 3);
    evas_vg_node_color_set(sd->off, 255, 255, 255, 255);
-
+#endif
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 }
 
