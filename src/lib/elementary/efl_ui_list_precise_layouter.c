@@ -22,6 +22,9 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Data
    Eina_Bool initialized;
    Eina_Hash* size_information;
    Eina_Size2D min;
+   Efl_Model* model;
+   unsigned int count_total;
+   Efl_Future *count_future;
 } Efl_Ui_List_Precise_Layouter_Data;
 
 typedef struct _Efl_Ui_List_Precise_Layouter_Size
@@ -85,14 +88,61 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layout
    size->min.h = new_h;
 }
 
+static void
+_count_then(void * data, Efl_Event const* event)
+{
+   Efl_Ui_List_Precise_Layouter_Data *pd = data;
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+   pd->count_future = NULL;
+
+   pd->count_total = *(int*)((Efl_Future_Event_Success*)event->info)->value;
+}
+
+static void
+_count_error(void * data, Efl_Event const* event EINA_UNUSED)
+{
+   Efl_Ui_List_Precise_Layouter_Data *pd = data;
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+   pd->count_future = NULL;
+}
 
 EOLIAN static Efl_Object *
 _efl_ui_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->initialized = EINA_FALSE;
+   pd->count_future = NULL;
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_list_precise_layouter_efl_ui_list_relayout_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Model *model)
+{
+   if (pd->model == model)
+     return;
+
+   pd->count_total = 0;
+
+   if (pd->count_future)
+     {
+        efl_future_cancel(pd->count_future);
+        pd->count_future = NULL;
+     }
+
+   if (pd->model)
+     {
+        efl_unref(pd->model);
+        pd->model = NULL;
+     }
+
+   if (model)
+     {
+        pd->model = model;
+        efl_ref(pd->model);
+        pd->count_future = efl_model_children_count_get(pd->model);
+        efl_future_then(pd->count_future, &_count_then, &_count_error, NULL, pd);
+     }
 }
 
 EOLIAN static void
@@ -109,7 +159,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
-   Eina_List *order = NULL;
    int pad[4];
 
    DBG("layout_do first %d count %d", first, count);
@@ -122,7 +171,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
        pd->initialized = EINA_TRUE;
        pd->min.w = 0;
        pd->min.h = 0;
-       DBG("************ w:%d h:%d", pd->min.w, pd->min.h);
      }
 
    // cache size of new items
@@ -183,20 +231,19 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    scale = evas_object_scale_get(modeler);
 /*    // Box align: used if "item has max size and fill" or "no item has a weight" */
 /*    // Note: cells always expand on the orthogonal direction */
-//   box_align[0] = 0;/*pd->align.h;*/
-//   box_align[1] = 0;/*pd->align.v;*/
-//   if (box_align[0] < 0)
-//     {
-//        box_fill[0] = EINA_TRUE;
-//        box_align[0] = 0.5;
-//     }
-//   if (box_align[1] < 0)
-//     {
-//        box_fill[1] = EINA_TRUE;
-//        box_align[1] = 0.5;
-//     }
-//
-   //count = 1;
+   box_align[0] = 0;/*pd->align.h;*/
+   box_align[1] = 0;/*pd->align.v;*/
+   if (box_align[0] < 0)
+     {
+        box_fill[0] = EINA_TRUE;
+        box_align[0] = 0.5;
+     }
+   if (box_align[1] < 0)
+     {
+        box_fill[1] = EINA_TRUE;
+        box_align[1] = 0.5;
+     }
+
 /*    count = eina_inarray_count(&pd->items.array); */
 
    // box outer margin
@@ -216,7 +263,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         length = boxw;
         want = 100;//pd->realized.w;
         //pad = pd->pad.scalable ? (pd->pad.h * scale) : pd->pad.h;
-        pad = 1;
+        pad = 0;
 
         // padding can not be squeezed (note: could make it an option)
         length -= pad * (count - 1);
@@ -233,17 +280,19 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         int pad;
         length = boxh;
         want = pd->min.h;
-        pad = 1;//pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
+        pad = 0;//pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
 
+        //FIXME?? use eina_hash_population(pd->size_information) or count
+        int population = eina_hash_population(pd->size_information);
         // padding can not be squeezed (note: could make it an option)
-        length -= pad * (count - 1);
+        length -= pad * (population - 1); //(count - 1);
         // available space. if <0 we overflow
         extra = length - want;
 
         minw = pd->min.w + boxl + boxr;
-        minh = pd->min.h + pad * (count - 1) + boxt + boxb;
-        /* if (pd->item_count > count) */
-        /*   minh = pd->item_count * average_item_size; */
+        minh = pd->min.h + pad * (/*count*/ population - 1) + boxt + boxb;
+        if (pd->count_total > population) //count)
+          minh *= (pd->count_total / population); //count);
      }
 
 //   if (pd->min.h != minh || pd->min.w != minw)
@@ -252,9 +301,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 //        pd->min.h = minh;
 //     }
 
-   DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
    efl_ui_list_model_min_size_set(modeler, pd->min);
-
    if (extra < 0) extra = 0;
 
    weight[0] = 1;//pd->weight.x;
@@ -287,7 +334,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         double align[2];
         int item_pad[4];
         Eina_Size2D max;
-        int pad = 1;
+        int pad = 0;
 
         size = eina_hash_find(pd->size_information, &layout_item);
 
@@ -311,8 +358,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         if (max.h < size->min.h) max.h = size->min.h;
 
         /* // extra rounding up (compensate cumulative error) */
-        /* if ((id == (count - 1)) && (cur_pos - floor(cur_pos) >= 0.5)) */
-        /*   rounding = 1; */
+        if ((i == (count - 1)) && (cur_pos - floor(cur_pos) >= 0.5))
+           rounding = 1;
 
         if (horiz)
           {
@@ -390,11 +437,11 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
              if (w > ow) w = ow;
           }
 
+//        DBG("------- size_h:%d -- h:%.2f --- ", size->min.h, h);
         evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
 
         /* layout_item->x = x; */
         /* layout_item->y = y; */
-/*         order = eina_list_append(order, litem->layout); */
 
 /* //        fprintf(stderr, "x: %.2f y: %.2f w: %.2f h: %.2f old x: %.2f old y: %.2f old w: %.2f old h: %.2f\n" */
 /* //                , (x + 0 - pd->pan.x), (y + 0 - pd->pan.y), (float)w, (float)h */

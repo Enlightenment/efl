@@ -1094,6 +1094,9 @@ _efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_U
 EOLIAN static void
 _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *model)
 {
+   if (pd->relayout)
+      efl_ui_list_relayout_model_set(pd->relayout, model);
+
    if (pd->model == model)
      return;
 
@@ -1502,7 +1505,7 @@ _efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    pd->min.w = min.w;
-   pd->min.h = min.h;
+   pd->min.h = min.h;// + 200;
 
    evas_object_size_hint_min_set(wd->resize_obj, pd->min.w, pd->min.h);
    DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
