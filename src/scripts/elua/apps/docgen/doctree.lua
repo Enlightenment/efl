@@ -223,9 +223,7 @@ M.Class = Node:clone {
             return ret
         end
         ret = {}
-        for cln in self.class:inherits_get() do
-            local cl = self.by_name_get(cln)
-            assert(cl)
+        for cl in self.class:inherits_get() do
             ret[#ret + 1] = cl
         end
         self._cache_inhc = ret

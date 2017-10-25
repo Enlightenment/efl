@@ -373,7 +373,7 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
    Eolian_Function *func;
    Eolian_Event *event;
    Eolian_Implement *impl;
-   const char *iname;
+   Eolian_Class *icl;
    Eina_Bool res = EINA_TRUE;
 
    if (!cl)
@@ -386,9 +386,9 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
    if (ahash)
      nhash = eina_hash_string_small_new(NULL);
 
-   EINA_LIST_FOREACH(cl->inherits, l, iname)
+   EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
-        if (!(res = _validate_class(eina_hash_find(_classes, iname), nhash)))
+        if (!(res = _validate_class(icl, nhash)))
           goto freehash;
      }
 

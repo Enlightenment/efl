@@ -670,8 +670,7 @@ local gen_class = function(klass)
     local parents = {}
     local mixins  = {} -- also includes ifaces, they're separated later
     for i = 1, #inherits do
-        local v = inherits[i]
-        local tp = eolian.class_get_by_name(gen_unit, v):type_get()
+        local tp = inherits[i]:type_get()
         if tp == class_type.REGULAR or tp == class_type.ABSTRACT then
             parents[#parents + 1] = v
         elseif tp == class_type.INTERFACE or tp == class_type.MIXIN then

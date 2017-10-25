@@ -2021,8 +2021,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
       default:
         break;
      }
-   ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits,
-                                            eina_stringshare_add(iname));
+   ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits, dep);
    dep->toplevel = EINA_FALSE;
    eo_lexer_context_pop(ls);
 }
@@ -2245,14 +2244,13 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
    if (!cl || !strcmp(cl->full_name, cln))
      return cl;
    Eina_List *l;
-   const char *s;
-   EINA_LIST_FOREACH(cl->inherits, l, s)
+   Eolian_Class *icl;
+   EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
         /* we can do a depth first search, it's easier and doesn't matter
          * which part of the inheritance tree we find the class in
          */
-        /* FIXME: pass unit properly */
-        const Eolian_Class *fcl = _get_impl_class(eolian_class_get_by_name(NULL, s), cln);
+        const Eolian_Class *fcl = _get_impl_class(icl, cln);
         if (fcl)
           return fcl;
      }

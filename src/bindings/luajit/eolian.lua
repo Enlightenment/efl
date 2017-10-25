@@ -1239,7 +1239,7 @@ M.Class = ffi.metatype("Eolian_Class", {
         end,
 
         inherits_get = function(self)
-            return iterator.String_Iterator(
+            return Ptr_Iterator("const Eolian_Class*",
                 eolian.eolian_class_inherits_get(self))
         end,
 
