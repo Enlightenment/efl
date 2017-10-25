@@ -11,5 +11,12 @@ interface Efl.Ui.List.Relayout (Efl.Interface)
             children: accessor<Efl.Ui.List.LayoutItem>;
          }
       }
+      @property model {
+         [[Model that is/will be ]]
+         set {}
+         values {
+            model: Efl.Model; [[Efl model]]
+         }
+      }
    }
 }
