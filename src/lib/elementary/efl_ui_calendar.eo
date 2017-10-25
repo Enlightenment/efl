@@ -1,0 +1,149 @@
+import efl_types;
+
+type Efl_Ui_Calendar_Format_Cb: __undefined_type; [[Elementary calendar format callback type]]
+
+enum Efl.Ui.Calendar.Weekday
+{
+   [[A weekday
+
+   See also @Efl.Ui.Calendar.first_day_of_week.set.
+   ]]
+   sunday, [[Sunday weekday]]
+   monday, [[Monday weekday]]
+   tuesday, [[Tusday weekday]]
+   wednesday, [[Wednesday weekday]]
+   thursday, [[Thursday weekday]]
+   friday, [[Friday weekday]]
+   saturday, [[Saturday weekday]]
+   last  [[Sentinel value to indicate last enum field during iteration]]
+}
+
+class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action)
+{
+   [[Calendar widget
+
+   It helps applications to flexibly display a calendar with day of the week,
+   date, year and month. Applications are able to set specific dates to be
+   reported back, when selected, in the smart callbacks of the calendar widget.
+   ]]
+   methods {
+      @property first_day_of_week {
+         [[The first day of week to use on calendar widgets'.]]
+         set {
+         }
+         get {
+         }
+         values {
+            day: Efl.Ui.Calendar.Weekday(Efl.Ui.Calendar.Weekday.sunday); [[Weekday enum value, see @Elm.Calendar.Weekday]]
+         }
+      }
+      @property format_function {
+         set {
+            [[Set a function to format the string that will be used to display
+              month and year;
+
+              By default it uses strftime with "%B %Y" format string.
+              It should allocate the memory that will be used by the string,
+              that will be freed by the widget after usage.
+              A pointer to the string and a pointer to the time struct will be provided.
+            ]]
+              /* FIXME-doc
+               * Example:
+               * @code
+               * static char
+               * _format_month_year(struct tm *selected_time)
+               * {
+               * char buf[32];
+               * if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
+               *   return strdup(buf);
+               * }
+               *
+               * efl_ui_calendar_format_function_set(calendar, _format_month_year);
+               * @endcode
+               */
+         }
+         values {
+            format_function: Efl_Ui_Calendar_Format_Cb; [[Function to set the month-year string given
+            the selected date.]]
+         }
+      }
+      @property date_min {
+         [[Minimum date on calendar.]]
+         set {
+            [[Set the minimum date on calendar.
+
+              Set the minimum date, changing the displayed month or year if needed.
+              Displayed day also to be disabled if it is smaller than minimum date.
+              If the minimum date is greater than current maximum date, the minimum
+              date would be changed to the maximum date with returning $false.
+            ]]
+            return: bool; [[$true, on success, $false otherwise]]
+         }
+         get {
+            [[Get the minimum date.
+
+              Default value is 1 JAN,1902.
+            ]]
+         }
+         values {
+            min: Efl.Time; [[Time structure containing the minmum date.]]
+         }
+      }
+      @property date_max {
+         [[Maximum date on calendar.]]
+         set {
+            [[Set the maximum date on calendar.
+
+              Set the maximum date, changing the displayed month or year if needed.
+              Displayed day also to be disabled if it is bigger than maximum date.
+              If the maximum date is less than current minimum date, the maximum date
+              would be changed to the minimum date with returning $false.
+            ]]
+            return: bool; [[$true, on success, $false otherwise]]
+         }
+         get {
+            [[Get the maximum date.
+
+              Default maximum year is -1.
+              Default maximum day and month are 31 and DEC.
+
+              If the maximum year is a negative value, it will be limited depending
+              on the platform architecture (year 2037 for 32 bits);
+            ]]
+         }
+         values {
+            max: Efl.Time; [[Time structure containing the maximum date.]]
+         }
+      }
+      @property date {
+         [[The selected date on calendar.]]
+         set {
+            [[Set the selected date. If the date is greater than the maximum date,
+              the date would be changed to the maximum date with returning $false.
+              In the opposite case with the minimum date,
+			  this would give the same result.
+            ]]
+             return: bool; [[$true, on success, $false otherwise]]
+         }
+         get {
+         }
+         values {
+            date: Efl.Time; [[Time structure containing the selected date.]]
+         }
+      }
+   }
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_access_update;
+      Elm.Widget.on_focus_update;
+      Elm.Widget.widget_event;
+      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+   }
+   events {
+      changed; [[Emitted when the selected date in the calendar is changed]]
+   }
+}

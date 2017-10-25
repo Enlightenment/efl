@@ -379,3 +379,59 @@ test_calendar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    evas_object_show(win);
 }
+
+static void
+_cal_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   struct tm selected_date;
+   struct tm max_date;
+   struct tm min_date;
+
+   selected_date = efl_ui_calendar_date_get(ev->object);
+   min_date = efl_ui_calendar_date_min_get(ev->object);
+   max_date = efl_ui_calendar_date_max_get(ev->object);
+   printf("Selected Date is %i/%i/%i\n",
+          selected_date.tm_mday,
+          selected_date.tm_mon + 1,
+          selected_date.tm_year + 1900);
+   printf("Minimum Date is %i/%i/%i\n",
+          min_date.tm_mday,
+          min_date.tm_mon + 1,
+          min_date.tm_year + 1900);
+   printf("Max Date is %i/%i/%i\n",
+          max_date.tm_mday,
+          max_date.tm_mon + 1,
+          max_date.tm_year + 1900);
+}
+
+void
+test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box;
+   struct tm selected_date, min_date, max_date;
+   time_t current_date;
+
+   current_date = time(NULL) + SEC_PER_DAY;
+   localtime_r(&current_date, &selected_date);
+   current_date = time(NULL) - SEC_PER_YEAR;
+   localtime_r(&current_date, &min_date);
+   current_date = time(NULL) + SEC_PER_YEAR;
+   localtime_r(&current_date, &max_date);
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_text_set(efl_added, "Efl Ui Calendar"),
+                efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_content_set(win, efl_added));
+
+   efl_add(EFL_UI_CALENDAR_CLASS, win,
+           efl_ui_calendar_date_set(efl_added, selected_date),
+           efl_ui_calendar_date_min_set(efl_added, min_date),
+           efl_ui_calendar_date_max_set(efl_added, max_date),
+           efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
+           efl_pack(box, efl_added));
+
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+}
