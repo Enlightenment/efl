@@ -72,11 +72,7 @@ _efl_animation_group_efl_animation_duration_set(Eo *eo_obj,
      }
 
 end:
-   efl_animation_duration_only_set(efl_super(eo_obj, MY_CLASS), duration);
-
-   //efl_animation_total_duration_get() should calculate the new total duration.
-   double total_duration = efl_animation_total_duration_get(eo_obj);
-   efl_animation_total_duration_set(eo_obj, total_duration);
+   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS), duration);
 }
 
 EOLIAN static void
@@ -118,8 +114,8 @@ _efl_animation_group_efl_object_constructor(Eo *eo_obj,
    pd->animations = NULL;
 
    //group animation does not affect its child duration by default.
-   efl_animation_duration_only_set(efl_super(eo_obj, MY_CLASS),
-                                   EFL_ANIMATION_GROUP_DURATION_NONE);
+   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS),
+                              EFL_ANIMATION_GROUP_DURATION_NONE);
 
    return eo_obj;
 }

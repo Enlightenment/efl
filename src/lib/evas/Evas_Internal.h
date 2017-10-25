@@ -93,9 +93,6 @@ EOAPI Eina_Bool efl_animation_object_final_state_keep_get(const Eo *obj);
 EOAPI void efl_animation_object_duration_set(Eo *obj, double duration);
 EOAPI double efl_animation_object_duration_get(const Eo *obj);
 
-EOAPI void efl_animation_object_duration_only_set(Eo *obj, double duration);
-
-EOAPI void efl_animation_object_total_duration_set(Eo *obj, double total_duration);
 EOAPI double efl_animation_object_total_duration_get(const Eo *obj);
 
 EOAPI void efl_animation_object_start_delay_set(Eo *obj, double delay_time);

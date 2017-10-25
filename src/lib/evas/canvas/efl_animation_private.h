@@ -11,7 +11,6 @@ typedef struct _Efl_Animation_Data
    Efl_Canvas_Object        *target;
 
    double                    duration;
-   double                    total_duration;
 
    double                    start_delay_time;
 

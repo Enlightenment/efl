@@ -32,15 +32,7 @@ class Efl.Animation (Efl.Object)
             duration: double; [[Duration value.]]
          }
       }
-      duration_only_set @protected {
-         [[Set duration only without setting total duration.]]
-         params {
-            @in duration: double; [[Duration value.]]
-         }
-      }
       @property total_duration {
-         set @protected {
-         }
          get {
          }
          values {

@@ -34,7 +34,6 @@ typedef struct _Efl_Animation_Object_Data
    double                           progress;
 
    double                           duration;
-   double                           total_duration;
    double                           paused_time;
 
    Efl_Animation_Object_Repeat_Mode repeat_mode;
