@@ -29,18 +29,22 @@ typedef struct _Efl_Ui_Progress_Status Efl_Ui_Progress_Status;
 struct _Efl_Ui_Progressbar_Data
 {
    Evas_Object          *spacer; /**< The rect actual progressbar area, gets the progressbar size and gets the events */
-   const char           *units; /**< The units will be displayed on progressbar */
 
    Evas_Coord            size; /**< Width or height of progressbar */
    double                val; /**< Value of progressbar */
 
-   Efl_Ui_Dir            dir; /**< Orientation of the progressbar  */
-   Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
-   Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
    Eina_List            *progress_status; /**< The list of _Elm_Progress_Status. To save the progress value(in percentage) each part of given progress bar */
 
-   char                 *(*unit_format_func)(double val); /**< The function pointer will be called when user wants to set a customized unit format */
-   void                  (*unit_format_free)(char *str); /**< The freeing function for the format string */
+   Efl_Ui_Format_Func_Cb format_cb;
+   Eina_Free_Cb          format_free_cb;
+   void                  *format_cb_data;
+   Eina_Strbuf           *format_strbuf;
+
+   Efl_Ui_Dir            dir; /**< Orientation of the progressbar  */
+
+   Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
+   Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
+   Eina_Bool             is_legacy_format : 1;
 };
 
 struct _Efl_Ui_Progress_Status

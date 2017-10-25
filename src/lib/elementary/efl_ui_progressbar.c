@@ -104,22 +104,22 @@ _units_set(Evas_Object *obj)
 {
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
-   if (sd->unit_format_func)
+   if (sd->format_cb)
      {
-        char *buf;
+        Eina_Value val;
 
-        buf = sd->unit_format_func(sd->val);
-        elm_layout_text_set(obj, "elm.text.status", buf);
-        if (sd->unit_format_free) sd->unit_format_free(buf);
-     }
-   else if (sd->units)
-     {
-        char buf[1024];
+        eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+        if (!sd->is_legacy_format)
+          eina_value_set(&val, sd->val);
+        else // Keeping this bug since the legacy code was like that.
+          eina_value_set(&val, 100 * sd->val);
 
-        snprintf(buf, sizeof(buf), sd->units, 100 * sd->val);
-        elm_layout_text_set(obj, "elm.text.status", buf);
+        eina_strbuf_reset(sd->format_strbuf);
+        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+        elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
      }
-   else elm_layout_text_set(obj, "elm.text.status", NULL);
+   else
+     elm_layout_text_set(obj, "elm.text.status", NULL);
 }
 
 static void
@@ -216,7 +216,7 @@ _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
    if (sd->pulse_state)
      elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
 
-   if (((sd->units) || (sd->unit_format_func)) && (!sd->pulse))
+   if (sd->format_cb && (!sd->pulse))
      elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
 
    if (_is_horizontal(sd->dir))
@@ -292,12 +292,13 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    elm_widget_sub_object_parent_add(obj);
 
    priv->dir = EFL_UI_DIR_RIGHT;
-   priv->units = eina_stringshare_add("%.0f %%");
    priv->val = MIN_RATIO_LVL;
 
    if (!elm_layout_theme_set
        (obj, "progressbar", "horizontal", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
+
+   efl_ui_format_string_set(obj, "%.0f %%");
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
@@ -327,8 +328,6 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
 {
    Efl_Ui_Progress_Status *progress_obj;
 
-   eina_stringshare_del(sd->units);
-   sd->units = NULL;
    if (sd->progress_status)
       {
          EINA_LIST_FREE(sd->progress_status, progress_obj)
@@ -337,6 +336,9 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
            }
       }
 
+   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+   eina_strbuf_free(sd->format_strbuf);
+
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -344,7 +346,10 @@ EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Eo *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   elm_progressbar_unit_format_set(obj, "%.0f %%");
+
+   return obj;
 }
 
 EOLIAN static Eo *
@@ -473,24 +478,26 @@ _efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Pro
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *units)
+_efl_ui_progressbar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
 {
-   const char *sig;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   eina_stringshare_replace(&sd->units, units);
-   sig = (units) ? "elm,state,units,visible" : "elm,state,units,hidden";
-   elm_layout_signal_emit(obj, sig, "elm");
+   if (sd->format_cb_data == func_data && sd->format_cb == func)
+     return;
+
+   if (sd->format_cb_data && sd->format_free_cb)
+     sd->format_free_cb(sd->format_cb_data);
+
+   sd->format_cb = func;
+   sd->format_cb_data = func_data;
+   sd->format_free_cb = func_free_cb;
+   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
+
+   elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
    edje_object_message_signal_process(wd->resize_obj);
 
    _units_set(obj);
    elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static const char *
-_efl_ui_progressbar_efl_ui_format_format_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
-{
-   return sd->units;
 }
 
 EOLIAN static void
@@ -542,6 +549,10 @@ elm_progressbar_span_size_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
+  EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+
+  sd->is_legacy_format = EINA_TRUE;
+
    efl_ui_format_string_set(obj, units);
 }
 
@@ -551,21 +562,47 @@ elm_progressbar_unit_format_get(const Evas_Object *obj)
    return efl_ui_format_string_get(obj);
 }
 
+typedef struct
+{
+   progressbar_func_type format_cb;
+   progressbar_freefunc_type format_free_cb;
+} Pb_Format_Wrapper_Data;
+
+static void
+_format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Pb_Format_Wrapper_Data *pfwd = data;
+   char *buf = NULL;
+   double val = 0;
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+
+   if (type == EINA_VALUE_TYPE_DOUBLE)
+     eina_value_get(&value, &val);
+
+   if (pfwd->format_cb)
+     buf = pfwd->format_cb(val);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
+}
+
+static void
+_format_legacy_to_format_eo_free_cb(void *data)
+{
+   Pb_Format_Wrapper_Data *pfwd = data;
+   free(pfwd);
+}
+
 EAPI void
 elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
 {
-   const char *sig;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
 
-   sd->unit_format_func = func;
-   sd->unit_format_free = free_func;
-   sig = (func) ? "elm,state,units,visible" : "elm,state,units,hidden";
-   elm_layout_signal_emit(obj, sig, "elm");
-   edje_object_message_signal_process(wd->resize_obj);
+   pfwd->format_cb = func;
+   pfwd->format_free_cb = free_func;
 
-   _units_set(obj);
-   elm_layout_sizing_eval(obj);
+   efl_ui_format_cb_set(obj, pfwd, _format_legacy_to_format_eo_cb,
+                        _format_legacy_to_format_eo_free_cb);
 }
 
 EAPI void
