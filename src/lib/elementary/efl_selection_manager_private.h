@@ -92,6 +92,14 @@ struct _X11_Cnp_Selection
    Eina_Free_Cb data_func_free_cb;
 };
 
+typedef struct _Seat_Selection Seat_Selection;
+
+struct _Seat_Selection
+{
+   const char *seat_name;
+   X11_Cnp_Selection *sellist;
+};
+
 
 struct _Efl_Selection_Manager_Atom
 {
@@ -129,6 +137,7 @@ struct _Efl_Selection_Manager_Data
 #endif
 
    Eina_Bool has_sel;
+   const char *request_seat;
    Efl_Selection_Type active_type;
    Efl_Selection_Format active_format;
    Efl_Selection_Manager_Atom atom;
@@ -136,6 +145,7 @@ struct _Efl_Selection_Manager_Data
    Efl_Sel_Manager_Atom *atomlist;
    //Efl_Sel_Manager_Selection *sellist;
    X11_Cnp_Selection *sellist;
+   Eina_List *seat_list; //Seat_Selection list: seat0 (selection types) -> seat1 (selection types)
    Saved_Type *savedtypes;
 };
 

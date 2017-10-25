@@ -24,6 +24,31 @@
 //FIXME: data in selection_set and converter: pd???
 
 
+static void _set_selection_list(X11_Cnp_Selection *sellist);
+
+
+static Seat_Selection *
+_get_seat_selection(Efl_Selection_Manager_Data *pd)
+{
+   Eina_List *l = NULL;
+   Seat_Selection *sl = NULL;
+   EINA_LIST_FOREACH(pd->seat_list, l, sl)
+     {
+        if (!strcmp(sl->seat_name, pd->request_seat))
+          {
+             ERR("Request seat: %s", sl->seat_name);
+             break;
+          }
+     }
+   if (!sl)
+     {
+        ERR("Could not find request seat");
+     }
+
+   return sl;
+}
+
+
 /* TODO: this should not be an actual tempfile, but rather encode the object
  * as http://dataurl.net/ if it's an image or similar. Evas should support
  * decoding it as memfile. */
@@ -389,22 +414,27 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
    Efl_Selection_Manager_Data *pd = udata;
    Ecore_X_Event_Selection_Notify *ev = event;
    X11_Cnp_Selection *sel;
+   Seat_Selection *sl = NULL;
    int i;
+
+   sl =  _get_seat_selection(pd);
+   if (!sl)
+     return EINA_FALSE;
 
    sel_debug("selection notify callback: %d",ev->selection);
    switch (ev->selection)
      {
       case ECORE_X_SELECTION_PRIMARY:
-        sel = pd->sellist + EFL_SELECTION_TYPE_PRIMARY;
+        sel = sl->sellist + EFL_SELECTION_TYPE_PRIMARY;
         break;
       case ECORE_X_SELECTION_SECONDARY:
-        sel = pd->sellist + EFL_SELECTION_TYPE_SECONDARY;
+        sel = sl->sellist + EFL_SELECTION_TYPE_SECONDARY;
         break;
       case ECORE_X_SELECTION_XDND:
-        sel = pd->sellist + EFL_SELECTION_TYPE_DND;
+        sel = sl->sellist + EFL_SELECTION_TYPE_DND;
         break;
       case ECORE_X_SELECTION_CLIPBOARD:
-        sel = pd->sellist + EFL_SELECTION_TYPE_CLIPBOARD;
+        sel = sl->sellist + EFL_SELECTION_TYPE_CLIPBOARD;
         break;
       default:
         return ECORE_CALLBACK_PASS_ON;
@@ -488,8 +518,11 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
    Efl_Selection_Manager_Data *pd = data;
    Ecore_X_Event_Selection_Clear *ev = event;
    X11_Cnp_Selection *sel;
+   Seat_Selection *sl = NULL;
    unsigned int i;
    ERR("In");
+
+
    /*if (pd->promise)
      {
         Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
@@ -497,15 +530,20 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
         efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);
         pd->promise = NULL;
      }*/
+
+   sl = _get_seat_selection(pd);
+   if (!sl)
+     return EINA_FALSE;
+
    for (i = ELM_SEL_TYPE_PRIMARY; i <= ELM_SEL_TYPE_CLIPBOARD; i++)
      {
-        if (pd->sellist[i].ecore_sel == ev->selection) break;
+        if (sl->sellist[i].ecore_sel == ev->selection) break;
      }
    sel_debug("selection %d clear", i);
    /* Not me... Don't care */
    if (i > ELM_SEL_TYPE_CLIPBOARD) return ECORE_CALLBACK_PASS_ON;
 
-   sel = pd->sellist + i;
+   sel = sl->sellist + i;
 
    efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOSS, NULL);
    sel->owner = NULL;
@@ -518,7 +556,7 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
 
 
 static Efl_Selection_Format
-_get_selection_type(void *data)
+_get_selection_type(void *data, Seat_Selection *sl)
 {
    Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
    if (pd->has_sel)
@@ -527,9 +565,9 @@ _get_selection_type(void *data)
         if (pd->active_type > EFL_SELECTION_TYPE_CLIPBOARD)
           return EFL_SELECTION_FORMAT_NONE;
         sel_debug("has active type: %d, pd active_format: %d", pd->active_type, pd->active_format);
-        if ((pd->sellist[pd->active_type].format >= EFL_SELECTION_FORMAT_TARGETS) &&
-            (pd->sellist[pd->active_type].format <= EFL_SELECTION_FORMAT_HTML))
-          return pd->sellist[pd->active_type].format;
+        if ((sl->sellist[pd->active_type].format >= EFL_SELECTION_FORMAT_TARGETS) &&
+            (sl->sellist[pd->active_type].format <= EFL_SELECTION_FORMAT_HTML))
+          return sl->sellist[pd->active_type].format;
      }
    sel_debug("has no sel");
    return EFL_SELECTION_FORMAT_NONE;
@@ -539,7 +577,8 @@ static Eina_Bool
 _x11_general_converter(char *target EINA_UNUSED, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype EINA_UNUSED, int *typesize EINA_UNUSED)
 {
    Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
-   if (_get_selection_type(data) == EFL_SELECTION_FORMAT_NONE)
+   Seat_Selection *sl = _get_seat_selection(pd);
+   if (_get_selection_type(data, sl) == EFL_SELECTION_FORMAT_NONE)
      {
         //FIXME: Check this case: remove or not
         if (data_ret)
@@ -553,7 +592,7 @@ _x11_general_converter(char *target EINA_UNUSED, void *data, int size, void **da
      }
    else
      {
-        X11_Cnp_Selection *sel = pd->sellist + pd->active_type;
+        X11_Cnp_Selection *sel = sl->sellist + pd->active_type;
         if (sel->selbuf)
           {
              if (data_ret) *data_ret = strdup(sel->selbuf);
@@ -626,8 +665,9 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
    X11_Cnp_Selection *sel;
    Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
 
+   Seat_Selection *sl = _get_seat_selection(pd);
    sel_debug("text converter");
-   if (_get_selection_type(data) == EFL_SELECTION_FORMAT_NONE)
+   if (_get_selection_type(data, sl) == EFL_SELECTION_FORMAT_NONE)
      {
         sel_debug("none");
         if (data_ret)
@@ -642,14 +682,14 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
      }
    //sel = _x11_selections + *((int *)data);
 
-   sel = &pd->sellist[pd->active_type];
+   sel = &sl->sellist[pd->active_type];
 
    if ((sel->format & EFL_SELECTION_FORMAT_MARKUP) ||
        (sel->format & EFL_SELECTION_FORMAT_HTML))
      {
         *data_ret = _elm_util_mkup_to_text(sel->selbuf);
         if (size_ret && *data_ret) *size_ret = strlen(*data_ret);
-        sel_debug("markup or html");
+        sel_debug("markup or html: %s", (const char *)*data_ret);
      }
    else if (sel->format & EFL_SELECTION_FORMAT_TEXT)
      {
@@ -685,29 +725,30 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
 static void
 _x11_efl_sel_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
                                    Efl_Selection_Type type, Efl_Selection_Format format,
-                                   const void *buf, int len, Efl_Input_Device *seat)
+                                   //const void *buf, int len, Efl_Input_Device *seat)
+                                   const void *buf, int len, Seat_Selection *seat_sel)
 {
    Ecore_X_Window xwin = _x11_xwin_get(obj);
 
    pd->active_type = type;
    sel_debug("pd active_type: %d, active_format: %d", pd->active_type, pd->active_format);
    pd->active_format = format;
-   if (pd->sellist[type].selbuf)
+   if (seat_sel->sellist[type].selbuf)
      {
-        free(pd->sellist[type].selbuf);
+        free(seat_sel->sellist[type].selbuf);
      }
-   pd->sellist[type].selbuf = malloc(len);
-   if (!pd->sellist[type].selbuf)
+   seat_sel->sellist[type].selbuf = malloc(len);
+   if (!seat_sel->sellist[type].selbuf)
      {
         ERR("failed to allocate buf");
         return;
      }
-   pd->sellist[type].selbuf = memcpy(pd->sellist[type].selbuf, buf, len);
-   pd->sellist[type].len = len;
-   pd->sellist[type].format = format;
+   seat_sel->sellist[type].selbuf = memcpy(seat_sel->sellist[type].selbuf, buf, len);
+   seat_sel->sellist[type].len = len;
+   seat_sel->sellist[type].format = format;
 
    //set selection
-   pd->sellist[type].set(xwin, &pd, sizeof(&pd));
+   seat_sel->sellist[type].set(xwin, &pd, sizeof(&pd));
    sel_debug("data: %p (%ld)", &pd, sizeof(&pd));
 }
 #endif
@@ -726,8 +767,53 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
      }
    Eina_Bool same_win = EINA_FALSE;
 
+   const char *seat_name = NULL;
+
+   if (!seat)
+     {
+        seat_name = "default";
+     }
+   else
+     {
+        seat_name = efl_name_get(seat);
+        if (!seat_name) seat_name = "default";
+     }
+   ERR("seat name: %s", seat_name);
+
+   Seat_Selection *seat_sel = NULL;
+   Eina_List *l = NULL;
+   EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
+     {
+        if (!strcmp(seat_sel->seat_name, seat_name))
+          {
+             break;
+          }
+     }
+   if (!seat_sel)
+     {
+        seat_sel = malloc(sizeof(Seat_Selection));
+        if (!seat_sel)
+          {
+             ERR("Failed to allocate seat");
+             return;
+          }
+        seat_sel->seat_name = seat_name;
+        pd->seat_list = eina_list_append(pd->seat_list, seat_sel);
+     }
+   if (!seat_sel->sellist)
+     {
+        seat_sel->sellist = calloc(1, (EFL_SELECTION_TYPE_CLIPBOARD + 1) * sizeof(X11_Cnp_Selection));
+        if (!seat_sel->sellist)
+          {
+             ERR("failed to allocate selection list");
+             return;
+          }
+        _set_selection_list(seat_sel->sellist);
+     }
+
 #ifdef HAVE_ELEMENTARY_X
-   X11_Cnp_Selection *sel = pd->sellist + type;
+   //X11_Cnp_Selection *sel = pd->sellist + type;
+   X11_Cnp_Selection *sel = seat_sel->sellist + type;
    Ecore_X_Window xwin = _x11_xwin_get(owner);
    //support 1 app with multiple window, 1 selection manager
    if (sel->xwin == xwin)
@@ -750,7 +836,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
 #ifdef HAVE_ELEMENTARY_X
    sel->xwin = xwin;
 
-   return _x11_efl_sel_manager_selection_set(obj, pd, type, format, buf, len, seat);
+   return _x11_efl_sel_manager_selection_set(obj, pd, type, format, buf, len, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
 #endif
@@ -762,12 +848,14 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
 
 static void
 _x11_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
-                                   Efl_Selection_Type type, Efl_Selection_Format format, Efl_Input_Device *seat)
+                                   //Efl_Selection_Type type, Efl_Selection_Format format, Efl_Input_Device *seat)
+                                   Efl_Selection_Type type, Efl_Selection_Format format, Seat_Selection *seat_sel)
 {
    Ecore_X_Window xwin = _x11_xwin_get(obj);
    ERR("xwin: %d", xwin);
    //FIXME: use each sel or just pd
-   X11_Cnp_Selection *sel = pd->sellist + type;
+   //X11_Cnp_Selection *sel = pd->sellist + type;
+   X11_Cnp_Selection *sel = seat_sel->sellist + type;
    sel->request_format = format;
    sel->xwin = xwin;
 
@@ -799,14 +887,59 @@ _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
                                      Efl_Input_Device *seat)
 {
    ERR("In");
-   X11_Cnp_Selection *sel = pd->sellist + type;
+   const char *seat_name = NULL;
+
+   if (!seat)
+     {
+        seat_name = "default";
+     }
+   else
+     {
+        seat_name = efl_name_get(seat);
+        if (!seat_name) seat_name = "default";
+     }
+   pd->request_seat = seat_name;
+
+   Seat_Selection *seat_sel = NULL;
+   Eina_List *l = NULL;
+   EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
+     {
+        if (!strcmp(seat_sel->seat_name, seat_name))
+          {
+             break;
+          }
+     }
+   if (!seat_sel)
+     {
+        seat_sel = malloc(sizeof(Seat_Selection));
+        if (!seat_sel)
+          {
+             ERR("Failed to allocate seat");
+             return;
+          }
+        seat_sel->seat_name = seat_name;
+        pd->seat_list = eina_list_append(pd->seat_list, seat_sel);
+     }
+   if (!seat_sel->sellist)
+     {
+        seat_sel->sellist = calloc(1, (EFL_SELECTION_TYPE_CLIPBOARD + 1) * sizeof(X11_Cnp_Selection));
+        if (!seat_sel->sellist)
+          {
+             ERR("failed to allocate selection list");
+             return;
+          }
+     }
+
+
+   //X11_Cnp_Selection *sel = pd->sellist + type;
+   X11_Cnp_Selection *sel = seat_sel->sellist + type;
 
    sel->request_obj = obj;
    sel->data_func_data = data_func_data;
    sel->data_func = data_func;
    sel->data_func_free_cb = data_func_free_cb;
 
-   _x11_efl_sel_manager_selection_get(obj, pd, type, format, seat);
+   _x11_efl_sel_manager_selection_get(obj, pd, type, format, seat_sel);
 }
 
 
@@ -822,16 +955,61 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
         ERR("Not supported type: %d", type);
         return;
      }
-   X11_Cnp_Selection *sel = pd->sellist + type;
+
+   const char *seat_name = NULL;
+
+   if (!seat)
+     {
+        seat_name = "default";
+     }
+   else
+     {
+        seat_name = efl_name_get(seat);
+        if (!seat_name) seat_name = "default";
+     }
+
+   Seat_Selection *seat_sel = NULL;
+   Eina_List *l = NULL;
+   EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
+     {
+        if (!strcmp(seat_sel->seat_name, seat_name))
+          {
+             break;
+          }
+     }
+   if (!seat_sel)
+     {
+        seat_sel = malloc(sizeof(Seat_Selection));
+        if (!seat_sel)
+          {
+             ERR("Failed to allocate seat");
+             return;
+          }
+        seat_sel->seat_name = seat_name;
+        pd->seat_list = eina_list_append(pd->seat_list, seat_sel);
+     }
+   if (!seat_sel->sellist)
+     {
+        seat_sel->sellist = calloc(1, (EFL_SELECTION_TYPE_CLIPBOARD + 1) * sizeof(X11_Cnp_Selection));
+        if (!seat_sel->sellist)
+          {
+             ERR("failed to allocate selection list");
+             return;
+          }
+     }
+
+
+   //X11_Cnp_Selection *sel = pd->sellist + type;
+   X11_Cnp_Selection *sel = seat_sel->sellist + type;
    if (sel->owner != owner)
      {
         return;
      }
-   pd->sellist[type].len = 0;
-   if (pd->sellist[type].selbuf)
+   seat_sel->sellist[type].len = 0;
+   if (seat_sel->sellist[type].selbuf)
      {
-        free(pd->sellist[type].selbuf);
-        pd->sellist[type].selbuf = NULL;
+        free(seat_sel->sellist[type].selbuf);
+        seat_sel->sellist[type].selbuf = NULL;
      }
 #ifdef HAVE_ELEMENTARY_X
    if (sel->xwin != 0)
@@ -839,12 +1017,12 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
 #endif
    if (!local)
      {
-        pd->sellist[type].clear();
+        seat_sel->sellist[type].clear();
      }
    else
      {
         efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOSS, NULL);
-        pd->sellist[type].owner = NULL;
+        seat_sel->sellist[type].owner = NULL;
      }
 }
 
@@ -1096,7 +1274,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
       }
 #endif
 
-   pd->sellist = calloc(1, (EFL_SELECTION_TYPE_CLIPBOARD + 1) * sizeof(X11_Cnp_Selection));
+   /*pd->sellist = calloc(1, (EFL_SELECTION_TYPE_CLIPBOARD + 1) * sizeof(X11_Cnp_Selection));
    if (!pd->sellist)
      {
         ERR("cannot allocate sellist");
@@ -1123,6 +1301,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
    pd->sellist[EFL_SELECTION_TYPE_CLIPBOARD].set = ecore_x_selection_clipboard_set;
    pd->sellist[EFL_SELECTION_TYPE_CLIPBOARD].clear = ecore_x_selection_clipboard_clear;
    pd->sellist[EFL_SELECTION_TYPE_CLIPBOARD].request = ecore_x_selection_clipboard_request;
+   */
 
    pd->savedtypes = calloc(1, sizeof(Saved_Type));
 
@@ -1143,6 +1322,33 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
    free(pd->savedtypes);
 
    efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+
+static void
+_set_selection_list(X11_Cnp_Selection *sellist)
+{
+   sellist[EFL_SELECTION_TYPE_PRIMARY].debug = "Primary";
+   sellist[EFL_SELECTION_TYPE_PRIMARY].ecore_sel = ECORE_X_SELECTION_PRIMARY;
+   sellist[EFL_SELECTION_TYPE_PRIMARY].set = ecore_x_selection_primary_set;
+   sellist[EFL_SELECTION_TYPE_PRIMARY].clear = ecore_x_selection_primary_clear;
+   sellist[EFL_SELECTION_TYPE_PRIMARY].request = ecore_x_selection_primary_request;
+
+   sellist[EFL_SELECTION_TYPE_SECONDARY].debug = "Secondary";
+   sellist[EFL_SELECTION_TYPE_SECONDARY].ecore_sel = ECORE_X_SELECTION_SECONDARY;
+   sellist[EFL_SELECTION_TYPE_SECONDARY].set = ecore_x_selection_secondary_set;
+   sellist[EFL_SELECTION_TYPE_SECONDARY].clear = ecore_x_selection_secondary_clear;
+   sellist[EFL_SELECTION_TYPE_SECONDARY].request = ecore_x_selection_secondary_request;
+
+   sellist[EFL_SELECTION_TYPE_DND].debug = "DnD";
+   sellist[EFL_SELECTION_TYPE_DND].ecore_sel = ECORE_X_SELECTION_PRIMARY;
+   sellist[EFL_SELECTION_TYPE_DND].request = ecore_x_selection_xdnd_request;
+
+   sellist[EFL_SELECTION_TYPE_CLIPBOARD].debug = "Clipboard";
+   sellist[EFL_SELECTION_TYPE_CLIPBOARD].ecore_sel = ECORE_X_SELECTION_CLIPBOARD;
+   sellist[EFL_SELECTION_TYPE_CLIPBOARD].set = ecore_x_selection_clipboard_set;
+   sellist[EFL_SELECTION_TYPE_CLIPBOARD].clear = ecore_x_selection_clipboard_clear;
+   sellist[EFL_SELECTION_TYPE_CLIPBOARD].request = ecore_x_selection_clipboard_request;
 }
 
 
