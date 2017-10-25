@@ -227,7 +227,7 @@ _efl_page_transition_scroll_efl_page_transition_finish(Eo *obj EINA_UNUSED,
                   efl_canvas_object_clip_set(pi->obj, pd->viewport.backclip);
                }
           }
-        pd->current_page += 1;
+        pd->current_page = (pd->current_page + 1) % pd->cnt;
      }
    else if (pd->move == -1.0)
      {
@@ -255,7 +255,7 @@ _efl_page_transition_scroll_efl_page_transition_finish(Eo *obj EINA_UNUSED,
                   efl_canvas_object_clip_set(pi->obj, pd->viewport.backclip);
                }
           }
-        pd->current_page -= 1;
+        pd->current_page = (pd->current_page - 1 + pd->cnt) % pd->cnt;
      }
 
    pd->move = 0.0;
