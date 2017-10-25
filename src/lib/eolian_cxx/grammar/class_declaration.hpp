@@ -21,6 +21,19 @@ struct class_declaration_generator
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
      std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
+
+     std::string guard_symbol;
+
+     if(!as_generator(*(string << "_") << string << "_FWD_GUARD")
+        .generate(std::back_inserter(guard_symbol)
+                  , std::make_tuple(cpp_namespaces, cls.cxx_name), add_upper_case_context(context)))
+       return false;
+
+     if(!as_generator(   "#ifndef " << guard_symbol << "\n"
+                      << "#define " << guard_symbol << "\n")
+        .generate(sink, std::make_tuple(), context))
+       return false;
+     
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
 
@@ -32,7 +45,7 @@ struct class_declaration_generator
      auto close_namespace = *(lit("} ")) << "\n";
      if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
 
-     if(type_traits)
+     // if(type_traits)
        if(!as_generator
           (
            "namespace efl { namespace eo { template<> struct is_eolian_object< "
@@ -48,6 +61,10 @@ struct class_declaration_generator
                        cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name
                        , cpp_namespaces, cls.cxx_name, cpp_namespaces, cls.cxx_name
                       ), context)) return false;
+
+     if(!as_generator("#endif\n")
+        .generate(sink, std::make_tuple(), context))
+       return false;
 
      
      return true;
