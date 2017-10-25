@@ -128,7 +128,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
-      Efl.Ui.Format.format_string { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }

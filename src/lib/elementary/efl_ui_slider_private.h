@@ -29,14 +29,10 @@ struct _Efl_Ui_Slider_Data
    Evas_Object          *spacer, *popup, *popup2, *track, *track2;
    Ecore_Timer          *delay;
 
-   const char           *units;
    const char           *indicator;
 
    char                 *(*indicator_format_func)(double val);
    void                  (*indicator_format_free)(char *str);
-
-   char                 *(*units_format_func)(double val);
-   void                  (*units_format_free)(char *str);
 
    double                val, val_min, val_max, val2, step;
 
