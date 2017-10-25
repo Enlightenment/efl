@@ -73,7 +73,7 @@ local write_include = function(self, tp, name, flags)
     if type(name) == "table" then
         if name[#name] == true then
             name[#name] = nil
-            name = ":" .. root_nspace .. ":auto:"
+            name = ":" .. root_nspace .. ":"
                        .. table.concat(name, ":")
         elseif name[#name] == false then
             name[#name] = nil
@@ -272,7 +272,7 @@ writers["dokuwiki"] = util.Object:clone {
         if type(target) == "table" then
             if target[#target] == true then
                 target[#target] = nil
-                target = ":" .. root_nspace .. ":auto:"
+                target = ":" .. root_nspace .. ":"
                              .. table.concat(target, ":")
             elseif target[#target] == false then
                 target[#target] = nil
