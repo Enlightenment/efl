@@ -1043,13 +1043,13 @@ _efl_ui_clock_field_limit_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Type 
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->curr_time;
 }
 
 EOLIAN static void
-_efl_ui_clock_value_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time newtime)
+_efl_ui_clock_time_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time newtime)
 {
    if (_date_cmp(&sd->curr_time, &newtime)) return;
    sd->curr_time = newtime;
@@ -1064,13 +1064,13 @@ _efl_ui_clock_value_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time newtime)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_value_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->min_limit;
 }
 
 EOLIAN static void
-_efl_ui_clock_value_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time mintime)
+_efl_ui_clock_time_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time mintime)
 {
    struct tm old_time;
 
@@ -1089,13 +1089,13 @@ _efl_ui_clock_value_min_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time mintime)
 }
 
 EOLIAN static Efl_Time
-_efl_ui_clock_value_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_time_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 {
    return sd->max_limit;
 }
 
 EOLIAN static void
-_efl_ui_clock_value_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
+_efl_ui_clock_time_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
 {
    struct tm old_time;
 

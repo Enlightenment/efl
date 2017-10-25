@@ -145,7 +145,7 @@
  *
  *  __________                                          __________
  * |          |                                        |          |
- * |  Clock   |<<<----------efl_ui_clock_value_set()---|          |
+ * |  Clock   |<<<----------efl_ui_clock_time_set()----|          |
  * |  widget  |                                        |  Module  |
  * |   base   |----display_field_value()------------>>>|          |
  * |__________|                                        |__________|
