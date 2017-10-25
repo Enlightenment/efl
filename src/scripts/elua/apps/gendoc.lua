@@ -327,7 +327,7 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
 end
 
 local build_ref = function()
-    local f = writer.Writer("reference", "EFL Reference")
+    local f = writer.Writer("start", "EFL Reference")
     printgen("Generating reference...")
 
     f:write_editable({ "reference" }, "general")
@@ -1601,7 +1601,7 @@ getopt.parse {
             set_theme(opts["graph-theme"])
         end
         local rootns = (not opts["n"] or opts["n"] == "")
-            and "develop:efl" or opts["n"]
+            and "develop:api" or opts["n"]
         local dr
         if not opts["r"] or opts["r"] == "" then
             dr = "dokuwiki/data/pages"
