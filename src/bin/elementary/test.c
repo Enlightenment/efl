@@ -200,6 +200,7 @@ void test_panes_minsize(void *data, Evas_Object *obj, void *event_info);
 void test_calendar(void *data, Evas_Object *obj, void *event_info);
 void test_calendar2(void *data, Evas_Object *obj, void *event_info);
 void test_calendar3(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_calendar(void *data, Evas_Object *obj, void *event_info);
 void test_map(void *data, Evas_Object *obj, void *event_info);
 void test_weather(void *data, Evas_Object *obj, void *event_info);
 void test_flip(void *data, Evas_Object *obj, void *event_info);
@@ -1002,6 +1003,7 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
    ADD_TEST(NULL, "Times & Dates", "Calendar 2", test_calendar2);
    ADD_TEST(NULL, "Times & Dates", "Calendar 3", test_calendar3);
+   ADD_TEST(NULL, "Times & Dates", "Efl Ui Calendar", test_efl_ui_calendar);
    ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
    ADD_TEST(NULL, "Times & Dates", "Clock Edit", test_clock_edit);
    ADD_TEST(NULL, "Times & Dates", "Clock Edit 2", test_clock_edit2);

@@ -197,6 +197,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
+#include <efl_ui_calendar.h>
 #include <elm_check.h>
 #include <elm_clock.h>
 #include <elm_cnp.h>

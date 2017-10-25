@@ -7,6 +7,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_bg.eo \
 	lib/elementary/efl_ui_button.eo \
 	lib/elementary/elm_calendar.eo \
+	lib/elementary/efl_ui_calendar.eo \
 	lib/elementary/efl_ui_check.eo \
 	lib/elementary/elm_clock.eo \
 	lib/elementary/elm_colorselector.eo \
@@ -247,6 +248,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_button_private.h \
 	lib/elementary/efl_ui_bg_private.h \
 	lib/elementary/elm_widget_calendar.h \
+	lib/elementary/efl_ui_calendar_private.h \
 	lib/elementary/efl_ui_check_private.h \
 	lib/elementary/elm_widget_clock.h \
 	lib/elementary/elm_widget_colorselector.h \
@@ -370,6 +372,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_calendar_eo.h \
 	lib/elementary/elm_calendar_legacy.h \
 	lib/elementary/elm_calendar_common.h \
+	lib/elementary/efl_ui_calendar.h \
+	lib/elementary/efl_ui_calendar_common.h \
 	lib/elementary/elm_check.h \
 	lib/elementary/efl_ui_check_eo.h \
 	lib/elementary/elm_check_legacy.h \
@@ -584,6 +588,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_bubble.c \
 	lib/elementary/efl_ui_button.c \
 	lib/elementary/elm_calendar.c \
+	lib/elementary/efl_ui_calendar.c \
 	lib/elementary/efl_ui_check.c \
 	lib/elementary/elm_clock.c \
 	lib/elementary/elm_cnp.c \
