@@ -1634,7 +1634,7 @@ _efl_ui_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Multibuttone
        (obj, "multibuttonentry", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->last_it_select = EINA_TRUE;
    priv->editable = EINA_TRUE;
