@@ -96,6 +96,12 @@ typedef struct _Eolian_Class Eolian_Class;
  */
 typedef struct _Eolian_Function Eolian_Function;
 
+/* Part information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Part Eolian_Part;
+
 /* Parameter/return type.
  *
  * @ingroup Eolian

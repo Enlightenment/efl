@@ -141,6 +141,13 @@ struct _Eolian_Function
    Eolian_Class *klass;
 };
 
+struct _Eolian_Part
+{
+   Eolian_Object base;
+   Eina_Stringshare *name;
+   Eolian_Class *klass;
+};
+
 struct _Eolian_Function_Parameter
 {
    Eolian_Object base;
