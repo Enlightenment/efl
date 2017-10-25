@@ -115,7 +115,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
             value: bool; [[$true to set edit mode, $false otherwise]]
          }
       }
-      @property value_min {
+      @property time_min {
          [[The lower boundary of a field.
 
            Year: years since 1900. Negative value represents year below 1900
@@ -135,7 +135,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
             mintime: Efl.Time; [[Time structure containing the minimum time value.]]
          }
       }
-      @property value_max {
+      @property time_max {
          [[The upper boundary of a field.
 
            Year: years since 1900. Negative value represents year below 1900
@@ -155,7 +155,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout)
             maxtime: Efl.Time; [[Time structure containing the maximum time value.]]
          }
       }
-      @property value {
+      @property time {
          [[The current value of a clock object.
 
            Year: years since 1900. Negative value represents year below 1900
