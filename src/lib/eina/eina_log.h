@@ -533,6 +533,8 @@ EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Determines if a given @p level should be logged.
  *
+ * @param level The log level to check
+ *
  * @return #EINA_TRUE if the @p level should be logged, else #EINA_FALSE.
  *
  * @see eina_log_level_set()
