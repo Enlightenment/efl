@@ -297,7 +297,8 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
                  "function '%s' redefined (originally at %s:%d:%d)",
                  func->name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
-        return _obj_error(&func->base, buf);
+        if (getenv("EOLIAN_WARN_FUNC_DUPLICATES"))
+          _obj_error(&func->base, buf);
      }
 
    if (func->get_ret_type && !_validate_type(func->get_ret_type))
@@ -332,6 +333,10 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
      return EINA_FALSE;
    if (!_validate_doc(func->set_return_doc))
      return EINA_FALSE;
+
+   /* just for now, when dups become errors there will be no need to check */
+   if (!ofunc)
+     eina_hash_add(nhash, func->name, func);
 
    return _validate(&func->base);
 }
