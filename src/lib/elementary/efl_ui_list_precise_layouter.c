@@ -33,12 +33,27 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Size
   double weight_x, weight_y;
 } Efl_Ui_List_Precise_Layouter_Size;
 
+
+typedef struct _Efl_Ui_List_Precise_Layouter_Callback_Data
+{
+  Efl_Ui_List_Precise_Layouter_Data* pd;
+  Efl_Ui_List_Precise_Layouter_Size* size;
+} Efl_Ui_List_Precise_Layouter_Callback_Data;
+
 #include "efl_ui_list_precise_layouter.eo.h"
 
 
 static void
-_item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layouter_Size *size, Evas_Coord new_w, Evas_Coord new_h)
+_item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Evas_Object *layout, Efl_Ui_List_Precise_Layouter_Size *size, Eina_Size2D min)
 {
+   int pad[4];
+   efl_gfx_size_hint_margin_get(layout, &pad[0], &pad[1], &pad[2], &pad[3]);
+   efl_gfx_size_hint_weight_get(layout, &size->weight_x, &size->weight_y);
+
+   min.w += pad[0] + pad[1];
+   min.h += pad[2] + pad[3];
+
+//                DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
 //   if(_horiz(pd->orient))
 //     {
 //        pdp->realized.w -= item->minw;
@@ -63,29 +78,29 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Precise_Layout
 //   else
 //     {
 
-        pd->min.h += new_h - size->min.h;
+      pd->min.h += min.h - size->min.h;
 
-        if(pd->min.w <= new_w)
-          pd->min.w = new_w;
-        else if (pd->min.w == size->min.w)
-          {
-             pd->min.w = new_w;
-             /*EINA_INARRAY_FOREACH(&pd->items.array, it) //find new minimal width
-               {
-                  litem = *it;
-                  if (!litem) continue;
-                  if (pd->realized.w < litem->minw)
-                    pd->realized.w = litem->minw;
+      if(pd->min.w <= min.w)
+        pd->min.w = min.w;
+      else if (pd->min.w == size->min.w)
+        {
+           pd->min.w = min.w;
+           /*EINA_INARRAY_FOREACH(&pd->items.array, it) //find new minimal width
+             {
+                litem = *it;
+                if (!litem) continue;
+                if (pd->realized.w < litem->minw)
+                  pd->realized.w = litem->minw;
 
-                  if (litem != item && litem->minw == item->minw)
-                    break;
-               }
-            */
-          }
+                if (litem != item && litem->minw == item->minw)
+                  break;
+             }
+          */
+        }
 //     }
 
-   size->min.w  = new_w;
-   size->min.h = new_h;
+   size->min.w = min.w;
+   size->min.h = min.h;
 }
 
 static void
@@ -104,6 +119,15 @@ _count_error(void * data, Efl_Event const* event EINA_UNUSED)
    Efl_Ui_List_Precise_Layouter_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
    pd->count_future = NULL;
+}
+
+static void
+_on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
+                    Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data = data;
+   Eina_Size2D min = efl_gfx_size_hint_combined_min_get(obj);
+   _item_min_calc(cb_data->pd, obj, cb_data->size, min);
 }
 
 EOLIAN static Efl_Object *
@@ -159,7 +183,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
-   int pad[4];
 
    DBG("layout_do first %d count %d", first, count);
    EINA_SAFETY_ON_NULL_RETURN(items);
@@ -196,25 +219,15 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
            size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
            Eina_Size2D min = efl_gfx_size_hint_combined_min_get(layout_item->layout);
-           //edje_object_size_min_calc(layout_item->layout, &size->min.w, &size->min.h);
-           size->min.w = min.w;
-           size->min.h = min.h;
-
-           if(size->min.w && size->min.h)
+           if(min.w && min.h)
              {
 //                DBG("size was calculated");
-                efl_gfx_size_hint_margin_get(layout_item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
-                efl_gfx_size_hint_weight_get(layout_item->layout, &size->weight_x, &size->weight_y);
-
-                size->min.w += pad[0] + pad[1];
-                size->min.h += pad[2] + pad[3];
-                pd->min.h += size->min.h;
-
-                if (pd->min.w < size->min.w)
-                  pd->min.w = size->min.w;
-
+                Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Callback_Data));
+                _item_min_calc(pd, layout_item->layout, size, min);
                 eina_hash_add(pd->size_information, &layout_item, size);
-//                DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
+                cb_data->pd = pd;
+                cb_data->size = size;
+                evas_object_event_callback_add(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);
              }
            else
              {
