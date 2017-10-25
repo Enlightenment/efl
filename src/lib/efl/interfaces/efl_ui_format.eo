@@ -8,12 +8,12 @@ function Efl.Ui.Format_Func_Cb {
    }
 };
 
-interface Efl.Ui.Format
+mixin Efl.Ui.Format
 {
    [[interface class for format_func]]
    methods {
       @property format_cb {
-         set {
+         set @pure_virtual {
             [[Set the format function pointer to format the string.
             ]]
          }
