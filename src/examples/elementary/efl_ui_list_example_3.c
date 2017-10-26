@@ -81,17 +81,17 @@ _bt_del_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Efl_Object *l = NULL;
    Eo *child = NULL;
 
-   l = elm_interface_atspi_selection_selected_child_get(priv->list1, 0);
-   printf("selection %p\n", l);
-   if(l)
-     {
-       child = efl_ui_view_model_get(l);
-       efl_model_child_del(priv->model, child);
-     }
-   else
-     {
-       printf("no selection\n");
-     }
+//   l = elm_interface_atspi_selection_selected_child_get(priv->list1, 0);
+//   printf("selection %p\n", l);
+//   if(l)
+//     {
+//       child = efl_ui_view_model_get(l);
+//       efl_model_child_del(priv->model, child);
+//     }
+//   else
+//     {
+//       printf("no selection\n");
+//     }
 }
 
 static void
@@ -132,7 +132,6 @@ static void
 _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
-   elm_layout_theme_set(ie->layout, "list", "item", "default");
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -144,8 +143,7 @@ static void
 _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
-//   printf("relized 2\n");
-   elm_layout_theme_set(ie->layout, "list", "item", "default");
+   printf("relized 2\n");
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -189,6 +187,7 @@ elm_main(int argc, char **argv)
 {
    Priv_Data *priv;
    Evas_Object *win, *bx, *vbx, *bt;
+   Efl_Ui_Layout_Factory *factory;
 
    priv = alloca(sizeof(Priv_Data));
    memset(priv, 0, sizeof(Priv_Data));
@@ -204,16 +203,22 @@ elm_main(int argc, char **argv)
    evas_object_show(bx);
 
    priv->model = _make_model();
+   factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
+   efl_ui_model_connect(factory, "elm.text", "filename");
+   efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
+
    priv->list1 = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list1, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
    evas_object_size_hint_weight_set(priv->list1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list1, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, priv->list1);
+   efl_ui_list_layout_factory_set(priv->list1, factory);
 
    priv->list2 = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list2, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
    evas_object_size_hint_weight_set(priv->list2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_ui_list_layout_factory_set(priv->list2, factory);
 
    vbx = elm_box_add(win);
    elm_box_pack_end(bx, vbx);
@@ -284,8 +289,6 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(bt, "clicked", _bt_unset_clicked, priv->list2);
    evas_object_show(bt);
    elm_box_pack_end(vbx, bt);
-
-
 
    elm_box_pack_end(bx, priv->list2);
 

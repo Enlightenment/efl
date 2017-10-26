@@ -16,6 +16,11 @@ interface Efl.Ui.List.Model (Efl.Interface)
          }
          return: ptr(Efl.Ui.List.LayoutItem);
       }
+      unrealize {
+         params {
+            item: ptr(Efl.Ui.List.LayoutItem);
+         }
+      }
       // @property visible_range {
       //    set {}
       //    values {
