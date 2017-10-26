@@ -900,7 +900,6 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
    Eina_Bool load = EINA_FALSE;
 
    DBG("w: %d h: %d", size.w, size.h);
-   
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
 
@@ -1432,29 +1431,6 @@ _efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
    /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_UNSELECTED, item); */
 }
 
-/* static void */
-/* _item_calc(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item) */
-/* { */
-/*    int pad[4]; */
-/*    Eina_Size2D min; */
-
-/*    min = efl_gfx_size_hint_combined_min_get(item->layout); */
-/*    efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]); */
-/*    efl_gfx_size_hint_weight_get(item->layout, &item->wx, &item->wy); */
-
-/*    if (item->wx < 0) item->wx = 0; */
-/*    if (item->wy < 0) item->wy = 0; */
-
-/*    min.w += pad[0] + pad[1]; */
-/*    min.h += pad[2] + pad[3]; */
-
-/*    pd->weight.x += item->wx; */
-/*    pd->weight.y += item->wy; */
-
-/*    _item_min_calc(pd, item, min.h, min.w); */
-/*    evas_object_size_hint_min_set(item->layout, min.w, min.h); */
-/* } */
-
 static void
 _efl_ui_list_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_List_Relayout *object)
 {
@@ -1505,11 +1481,9 @@ _efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    pd->min.w = min.w;
-   pd->min.h = min.h;// + 200;
+   pd->min.h = min.h;
 
    evas_object_size_hint_min_set(wd->resize_obj, pd->min.w, pd->min.h);
-   DBG("min_size_set w:%d h:%d", pd->min.w, pd->min.h);
-
    efl_event_callback_legacy_call(pd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
 }
 
