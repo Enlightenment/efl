@@ -245,6 +245,8 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    new_size.w = (minw > size.w ? minw : size.w);
    new_size.h = (minh > size.h ? minh : size.h);
    efl_gfx_size_set(obj, new_size);
+
+   _calc_align(obj);
 }
 
 EOLIAN static void
