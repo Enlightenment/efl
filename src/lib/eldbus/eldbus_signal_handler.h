@@ -18,17 +18,25 @@
  * @param member name of the signal
  * @param cb callback that will be called when this signal is received
  * @param cb_data data that will be passed to callback
+ *
+ * @return signal handler
  */
 EAPI Eldbus_Signal_Handler *eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 6);
 
 /**
  * @brief Increase signal handler reference.
+ *
+ * @param handler signal handler
+ *
+ * @return the same signal handler, @p handler
  */
 EAPI Eldbus_Signal_Handler *eldbus_signal_handler_ref(Eldbus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Decrease signal handler reference.
  * If reference == 0 signal handler will be freed.
+ *
+ * @param handler signal handler
  */
 EAPI void                  eldbus_signal_handler_unref(Eldbus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
 
@@ -36,6 +44,8 @@ EAPI void                  eldbus_signal_handler_unref(Eldbus_Signal_Handler *ha
  * @brief Decrease signal handler reference like eldbus_signal_handler_unref()
  * but if reference > 0 this signal handler will stop listening to signals. In other
  * words it will be canceled but memory will not be freed.
+ *
+ * @param handler signal handler to delete
  */
 EAPI void                  eldbus_signal_handler_del(Eldbus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
 
@@ -51,6 +61,8 @@ EAPI void                  eldbus_signal_handler_del(Eldbus_Signal_Handler *hand
  *
  * @param sh signal handler
  * @param ... variadic of key and value and must be ended with a NULL
+ *
+ * @return EINA_TRUE if success
  *
  * @note For more information:
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
@@ -70,6 +82,8 @@ EAPI Eina_Bool             eldbus_signal_handler_match_extra_set(Eldbus_Signal_H
  * @param sh signal handler
  * @param ap va_list with the keys and values, must be ended with a NULL
  *
+ * @return EINA_TRUE if success
+ *
  * @note To information:
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
  */
@@ -77,11 +91,19 @@ EAPI Eina_Bool             eldbus_signal_handler_match_extra_vset(Eldbus_Signal_
 
 /**
  * @brief Add a callback function to be called when signal handler will be freed.
+ *
+ * @param handler signal handler
+ * @param cb callback that will be called when this signal handler is freed
+ * @param data data that will be passed to callback
  */
 EAPI void                  eldbus_signal_handler_free_cb_add(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Remove callback registered in eldbus_signal_handler_free_cb_add().
+ *
+ * @param handler signal handler
+ * @param cb registered callback to remove
+ * @param data data that will be passed to callback
  */
 EAPI void                  eldbus_signal_handler_free_cb_del(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
