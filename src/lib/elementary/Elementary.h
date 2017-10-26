@@ -341,6 +341,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
 # include <efl_ui_stack.eo.h>
+# include <efl_page_transition.eo.h>
+# include <efl_page_transition_scroll.eo.h>
+# include <efl_ui_pager.eo.h>
 #endif
 
 /* include deprecated calls last of all */

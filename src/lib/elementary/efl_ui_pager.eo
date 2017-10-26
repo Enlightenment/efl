@@ -1,0 +1,60 @@
+class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
+{
+   [[Efl ui pager class]]
+   event_prefix: efl_ui_pager;
+   eo_prefix: efl_ui_pager;
+   methods {
+      @property transition {
+         [[Page transition effect]]
+         values {
+            transition: Efl.Page.Transition; [[transition effect]]
+         }
+      }
+      @property current_page {
+         [[Set the currently selected page]]
+         values {
+            index: int;
+         }
+      }
+      @property scroll_block {
+         values {
+            prev: bool;
+            next: bool;
+         }
+      }
+      @property loop {
+         values {
+            loop_enabled: bool;
+         }
+      }
+      @property page_size {
+         values {
+            width: int;
+            height: int;
+         }
+      }
+      @property padding {
+         values {
+            padding: int;
+         }
+      }
+      @property side_page_num {
+         values {
+            side_page_num: int;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Gfx.size { set; }
+      Efl.Gfx.position { set; }
+      Efl.Container.content_count;
+      Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_content_get;
+      Efl.Pack.Linear.pack_index_get;
+      Efl.Ui.Direction.direction { set; get; }
+   }
+   events {
+      updated; [[Called when pager is scrolled]]
+   }
+}

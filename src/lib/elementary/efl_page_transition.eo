@@ -1,0 +1,24 @@
+class Efl.Page.Transition (Efl.Object)
+{
+   [[Efl ui pagescroller transition effect class]]
+   methods {
+      bind {
+         [[set object]]
+         params {
+            @in pager: Efl.Object; [[pager object]]
+         }
+      }
+      init {
+         [[set up initial variables]]
+      }
+      update {
+         [[transition effect update]]
+      }
+      finish {
+         [[After page moving is done]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}

@@ -105,6 +105,9 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_dnd.eo \
 	lib/elementary/efl_ui_dnd_container.eo \
 	lib/elementary/efl_ui_focus_manager_window_root.eo \
+	lib/elementary/efl_ui_pager.eo \
+	lib/elementary/efl_page_transition.eo \
+	lib/elementary/efl_page_transition_scroll.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -401,6 +404,9 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_widget_pan.h \
 	lib/elementary/efl_ui_nstate_private.h \
 	lib/elementary/Efl_Ui.h
+	lib/elementary/efl_ui_widget_pager.h \
+	lib/elementary/efl_page_transition.h \
+	lib/elementary/efl_page_transition_scroll.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -805,6 +811,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_dnd.c \
   static_libs/buildsystem/buildsystem.h \
   static_libs/buildsystem/buildsystem_autotools.c \
+	lib/elementary/efl_ui_pager.c \
+	lib/elementary/efl_page_transition.c \
+	lib/elementary/efl_page_transition_scroll.c \
 	$(NULL)
 
 
