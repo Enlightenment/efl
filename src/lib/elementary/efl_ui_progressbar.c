@@ -342,16 +342,6 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
-elm_progressbar_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Eo *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
-   elm_progressbar_unit_format_set(obj, "%.0f %%");
-
-   return obj;
-}
-
 EOLIAN static Eo *
 _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
 {
@@ -520,131 +510,6 @@ _efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
    return (sd->pulse_state && sd->pulse);
 }
 
-EAPI void
-elm_progressbar_value_set(Evas_Object *obj, double val)
-{
-   efl_ui_range_value_set(obj, val);
-}
-
-EAPI double
-elm_progressbar_value_get(const Evas_Object *obj)
-{
-   return efl_ui_range_value_get(obj);
-}
-
-EAPI void
-elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
-{
-   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
-   _progressbar_span_size_set(obj, sd, size);
-}
-
-EAPI Evas_Coord
-elm_progressbar_span_size_get(const Evas_Object *obj)
-{
-   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, 0);
-   return sd->size;
-}
-
-EAPI void
-elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
-{
-  EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
-
-  sd->is_legacy_format = EINA_TRUE;
-
-   efl_ui_format_string_set(obj, units);
-}
-
-EAPI const char *
-elm_progressbar_unit_format_get(const Evas_Object *obj)
-{
-   return efl_ui_format_string_get(obj);
-}
-
-typedef struct
-{
-   progressbar_func_type format_cb;
-   progressbar_freefunc_type format_free_cb;
-} Pb_Format_Wrapper_Data;
-
-static void
-_format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
-{
-   Pb_Format_Wrapper_Data *pfwd = data;
-   char *buf = NULL;
-   double val = 0;
-   const Eina_Value_Type *type = eina_value_type_get(&value);
-
-   if (type == EINA_VALUE_TYPE_DOUBLE)
-     eina_value_get(&value, &val);
-
-   if (pfwd->format_cb)
-     buf = pfwd->format_cb(val);
-   if (buf)
-     eina_strbuf_append(str, buf);
-   if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
-}
-
-static void
-_format_legacy_to_format_eo_free_cb(void *data)
-{
-   Pb_Format_Wrapper_Data *pfwd = data;
-   free(pfwd);
-}
-
-EAPI void
-elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
-{
-   Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
-
-   pfwd->format_cb = func;
-   pfwd->format_free_cb = free_func;
-
-   efl_ui_format_cb_set(obj, pfwd, _format_legacy_to_format_eo_cb,
-                        _format_legacy_to_format_eo_free_cb);
-}
-
-EAPI void
-elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
-{
-   Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
-
-   dir = _direction_get(horizontal, _is_inverted(sd->dir));
-
-   efl_ui_direction_set(obj, dir);
-}
-
-EAPI Eina_Bool
-elm_progressbar_horizontal_get(const Evas_Object *obj)
-{
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
-
-   return _is_horizontal(dir);
-}
-
-EAPI void
-elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
-{
-   Efl_Ui_Dir dir;
-   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
-
-   dir = _direction_get(_is_horizontal(sd->dir), inverted);
-
-   efl_ui_direction_set(obj, dir);
-}
-
-EAPI Eina_Bool
-elm_progressbar_inverted_get(const Evas_Object *obj)
-{
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
-
-   return _is_inverted(dir);
-}
-
 EOLIAN static void
 _efl_ui_progressbar_class_constructor(Efl_Class *klass)
 {
@@ -701,6 +566,18 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
 
+/* Legacy APIs */
+
+EAPI Evas_Object *
+elm_progressbar_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   Eo *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   elm_progressbar_unit_format_set(obj, "%.0f %%");
+
+   return obj;
+}
+
 EAPI void
 elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse)
 {
@@ -736,4 +613,129 @@ EAPI double
 elm_progressbar_part_value_get(const Evas_Object *obj, const char *part)
 {
    return efl_ui_range_value_get(efl_part(obj, part));
+}
+
+EAPI Eina_Bool
+elm_progressbar_horizontal_get(const Evas_Object *obj)
+{
+   Efl_Ui_Dir dir;
+   dir = efl_ui_direction_get(obj);
+
+   return _is_horizontal(dir);
+}
+
+EAPI void
+elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted)
+{
+   Efl_Ui_Dir dir;
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+
+   dir = _direction_get(_is_horizontal(sd->dir), inverted);
+
+   efl_ui_direction_set(obj, dir);
+}
+
+EAPI Eina_Bool
+elm_progressbar_inverted_get(const Evas_Object *obj)
+{
+   Efl_Ui_Dir dir;
+   dir = efl_ui_direction_get(obj);
+
+   return _is_inverted(dir);
+}
+
+EAPI void
+elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   Efl_Ui_Dir dir;
+   EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
+
+   dir = _direction_get(horizontal, _is_inverted(sd->dir));
+
+   efl_ui_direction_set(obj, dir);
+}
+
+typedef struct
+{
+   progressbar_func_type format_cb;
+   progressbar_freefunc_type format_free_cb;
+} Pb_Format_Wrapper_Data;
+
+static void
+_format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Pb_Format_Wrapper_Data *pfwd = data;
+   char *buf = NULL;
+   double val = 0;
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+
+   if (type == EINA_VALUE_TYPE_DOUBLE)
+     eina_value_get(&value, &val);
+
+   if (pfwd->format_cb)
+     buf = pfwd->format_cb(val);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
+}
+
+static void
+_format_legacy_to_format_eo_free_cb(void *data)
+{
+   Pb_Format_Wrapper_Data *pfwd = data;
+   free(pfwd);
+}
+
+EAPI void
+elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
+{
+   Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
+
+   pfwd->format_cb = func;
+   pfwd->format_free_cb = free_func;
+
+   efl_ui_format_cb_set(obj, pfwd, _format_legacy_to_format_eo_cb,
+                        _format_legacy_to_format_eo_free_cb);
+}
+
+EAPI void
+elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
+{
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   _progressbar_span_size_set(obj, sd, size);
+}
+
+EAPI Evas_Coord
+elm_progressbar_span_size_get(const Evas_Object *obj)
+{
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd, 0);
+   return sd->size;
+}
+
+EAPI void
+elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
+{
+  EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+
+  sd->is_legacy_format = EINA_TRUE;
+
+   efl_ui_format_string_set(obj, units);
+}
+
+EAPI const char *
+elm_progressbar_unit_format_get(const Evas_Object *obj)
+{
+   return efl_ui_format_string_get(obj);
+}
+
+EAPI void
+elm_progressbar_value_set(Evas_Object *obj, double val)
+{
+   efl_ui_range_value_set(obj, val);
+}
+
+EAPI double
+elm_progressbar_value_get(const Evas_Object *obj)
+{
+   return efl_ui_range_value_get(obj);
 }
