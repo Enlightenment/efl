@@ -17,6 +17,7 @@
 
 #define MY_CLASS EFL_UI_LIST_PRECISE_LAYOUTER_CLASS
 
+
 typedef struct _Efl_Ui_List_Precise_Layouter_Data
 {
    Eina_Bool initialized;
@@ -42,6 +43,8 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Callback_Data
 
 #include "efl_ui_list_precise_layouter.eo.h"
 
+static void _initilize(Eo *, Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_Model*);
+static void _finalize(Eo *, Efl_Ui_List_Precise_Layouter_Data*);
 
 static void
 _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Evas_Object *layout, Efl_Ui_List_Precise_Layouter_Size *size, Eina_Size2D min)
@@ -130,6 +133,42 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
    _item_min_calc(cb_data->pd, obj, cb_data->size, min);
 }
 
+static void
+_initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler)
+{
+   if(pd->initialized)
+     return;
+
+   pd->initialized = EINA_TRUE;
+   efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
+   pd->size_information = eina_hash_pointer_new(&free);
+   pd->min.w = 0;
+   pd->min.h = 0;
+}
+
+static Eina_Bool
+_size_clear_fn(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data EINA_UNUSED, void *fdata EINA_UNUSED)
+{
+   Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data;
+   Efl_Ui_List_LayoutItem* layout_item = data;
+
+   cb_data = evas_object_event_callback_del(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change);
+   free(cb_data);
+}
+
+static void
+_finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
+{
+   pd->initialized = EINA_FALSE;
+
+   eina_hash_foreach(pd->size_information, _size_clear_fn, pd);
+
+   eina_hash_free(pd->size_information);
+   pd->size_information = NULL;
+   pd->min.w = 0;
+   pd->min.h = 0;
+}
+
 EOLIAN static Efl_Object *
 _efl_ui_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
 {
@@ -157,6 +196,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_model_set(Eo *obj EINA_UNUSED
    if (pd->model)
      {
         efl_unref(pd->model);
+        _finalize(obj, pd);
         pd->model = NULL;
      }
 
@@ -187,14 +227,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    DBG("layout_do first %d count %d", first, count);
    EINA_SAFETY_ON_NULL_RETURN(items);
 
-   if(!pd->initialized)
-     {
-       efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
-       pd->size_information = eina_hash_pointer_new(&free);
-       pd->initialized = EINA_TRUE;
-       pd->min.w = 0;
-       pd->min.h = 0;
-     }
+    _initilize(obj, pd, modeler);
 
    // cache size of new items
    EINA_ACCESSOR_FOREACH(items, i, layout_item)

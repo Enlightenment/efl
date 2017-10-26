@@ -1109,8 +1109,8 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
      {
         /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj); */
         /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj); */
+        //TODO: SegArray Clear
         efl_unref(pd->model);
-        //_efl_ui_list_children_free(obj, pd);
         pd->model = NULL;
         pd->item_count = 0;
      }
@@ -1462,7 +1462,6 @@ _children_slice_then(void * data, Efl_Event const* event)
 
    efl_ui_list_segarray_insert_accessor(&pd->segarray, pd->outstanding_slice.slice_start, acc);
 
-
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
 }
@@ -1490,8 +1489,8 @@ _efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_
 EOLIAN static Efl_Ui_List_LayoutItem *
 _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
-   DBG("model_realize");
    Efl_Ui_List_Item_Event evt;
+   DBG("model_realize");
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
@@ -1505,6 +1504,25 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    evas_object_show(item->layout);
    return item;
+}
+
+EOLIAN static void
+_efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
+{
+   Efl_Ui_List_Item_Event evt;
+   DBG("model_unrealize item:%p", item);
+   EINA_SAFETY_ON_NULL_RETURN(item->layout);
+
+   evas_object_hide(item->layout);
+
+   evt.child = item->children;
+   evt.layout = item->layout;
+   evt.index = item->index;
+   efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
+
+   efl_ui_view_model_set(item->layout, NULL);
+   efl_ui_factory_release(pd->factory, item->layout);
+   item->layout = NULL;
 }
 
 EOLIAN static void
