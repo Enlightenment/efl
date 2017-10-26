@@ -34,6 +34,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/canvas \
 -I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/evas/gesture \
+-I$(top_builddir)/src/lib/evas/gesture \
 -I$(top_srcdir)/src/lib/elementary \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR="\"$(datadir)/elementary\"" \
