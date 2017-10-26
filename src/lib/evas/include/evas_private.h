@@ -1336,6 +1336,8 @@ struct _Efl_Canvas_Output
 
    int info_magic;
 
+   unsigned short lock;
+
    Eina_Bool changed : 1;
 };
 
