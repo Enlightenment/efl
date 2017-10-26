@@ -3319,6 +3319,9 @@ evas_render_updates_internal(Evas *eo_e,
      {
         // Avoid processing not ready output until they are
         if (!out->output) continue ;
+        // Locked output are output that should not yet be rendered
+        // because the tick/vsync for it doesn't allow it yet.
+        if (out->lock > 0) continue ;
 
         /* phase 6. Initialize output */
         if (out->changed)

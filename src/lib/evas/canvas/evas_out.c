@@ -172,13 +172,14 @@ efl_canvas_output_engine_info_get(Efl_Canvas_Output *output)
 }
 
 EAPI Eina_Bool
-efl_canvas_output_lock(Efl_Canvas_Output *output EINA_UNUSED)
+efl_canvas_output_lock(Efl_Canvas_Output *output)
 {
-   return EINA_FALSE;
+   output->lock++;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 efl_canvas_output_unlock(Efl_Canvas_Output *output EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return !!(--output->lock);
 }
