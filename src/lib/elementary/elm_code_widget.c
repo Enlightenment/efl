@@ -609,6 +609,32 @@ _elm_code_widget_update_focus_directions(Elm_Code_Widget *obj)
 }
 
 static void
+_elm_code_widget_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget *widget = (Elm_Code_Widget *) data;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->cursor_rect)
+     evas_object_show(pd->cursor_rect);
+}
+
+static void
+_elm_code_widget_hidden_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Widget *widget = (Elm_Code_Widget *) data;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->cursor_rect)
+     evas_object_hide(pd->cursor_rect);
+}
+
+static void
 _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 {
    Evas_Coord viewx, viewy, vieww, viewh, cellw = 0, cellh = 0;
@@ -2254,6 +2280,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_code_widget_hidden_cb, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_code_widget_show_cb, obj);
 
    evas_object_smart_callback_add(obj, "focused", _elm_code_widget_focused_event_cb, obj);
    evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
