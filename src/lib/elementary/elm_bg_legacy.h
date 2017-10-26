@@ -91,6 +91,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  *
  * @ingroup Elm_Bg
  *
+ * @param[in] obj The background object handle
  * @param[in] file The file path
  * @param[in] group Optional key (group in Edje) within the file
  */
@@ -105,6 +106,7 @@ EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
  *
  * @ingroup Elm_Bg
  *
+ * @param[in] obj The background object handle
  * @param[out] file The file path
  * @param[out] group Optional key (group in Edje) within the file
  */
