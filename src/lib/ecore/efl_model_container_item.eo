@@ -21,13 +21,13 @@ class Efl.Model_Container_Item (Efl.Object, Efl.Model)
       }
    }
    implements {
+      Efl.Object.finalize;
       Efl.Model.properties { get; }
-      Efl.Model.property_set;
-      Efl.Model.property_get;
+      Efl.Model.property { set; get; }
       Efl.Model.child_add;
       Efl.Model.child_del;
       Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
+      Efl.Model.children_count { get; }
       Efl.Object.invalidate;
    }
    constructors {

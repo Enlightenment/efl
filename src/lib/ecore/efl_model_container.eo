@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Model_Container (Efl.Object, Efl.Model)
+class Efl.Model_Container (Efl.Loop_Consumer, Efl.Model)
 {
    [[
      Class used to create data models from Eina containers.
@@ -50,11 +50,10 @@ class Efl.Model_Container (Efl.Object, Efl.Model)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Model.properties { get; }
-      Efl.Model.property_set;
-      Efl.Model.property_get;
+      Efl.Model.property { set; get; }
       Efl.Model.child_add;
       Efl.Model.child_del;
       Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
+      Efl.Model.children_count { get; }
    }
 }
