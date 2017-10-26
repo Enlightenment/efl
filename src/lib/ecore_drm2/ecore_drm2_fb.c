@@ -522,6 +522,7 @@ _fb_flip(Ecore_Drm2_Output *output)
    do
      {
         static Eina_Bool bugged_about_bug = EINA_FALSE;
+
         repeat = EINA_FALSE;
         ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
                                   DRM_MODE_PAGE_FLIP_EVENT, output);
