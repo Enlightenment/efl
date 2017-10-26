@@ -425,7 +425,8 @@ typedef enum _Evas_Textblock_Align_Auto
 {
    EVAS_TEXTBLOCK_ALIGN_AUTO_NONE,
    EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL,
-   EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE
+   EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE,
+   EVAS_TEXTBLOCK_ALIGN_AUTO_END
 } Evas_Textblock_Align_Auto;
 
 struct _Evas_Object_Textblock_Item
@@ -1957,6 +1958,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * @li "middle" - Alias for "center"
          * @li "left" - Puts the text at the left of the line
          * @li "right" - Puts the text at the right of the line
+         * @li "start" - Respects LTR/RTL settings. It is same with "auto"
+         * @li "end" - Puts the text at the opposite side of LTR/RTL settings
          * @li <number> - A number between 0.0 and 1.0 where 0.0 represents
          * "left" and 1.0 represents "right"
          * @li <number>% - A percentage between 0% and 100% where 0%
@@ -1965,11 +1968,16 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * align=<value or preset>
          * @endcode
          */
-        if (len == 4 && !strcmp(param, "auto"))
+        if ((len == 4 && !strcmp(param, "auto")) ||
+            (len == 5 && !strcmp(param, "start")))
           {
              fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL;
           }
-        if (len == 6 && !strcmp(param, "locale"))
+        else if (len == 3 && !strcmp(param, "end"))
+          {
+             fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_END;
+          }
+        else if (len == 6 && !strcmp(param, "locale"))
           {
              fmt->halign_auto = EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE;
           }
@@ -3535,6 +3543,20 @@ _layout_line_align_get(Ctxt *c)
           {
              /* Align left */
              return 0.0;
+          }
+     }
+   else if ((c->align_auto == EVAS_TEXTBLOCK_ALIGN_AUTO_END) && c->ln)
+     {
+        if (c->ln->items && c->ln->items->text_node &&
+              (c->ln->par->direction == EVAS_BIDI_DIRECTION_RTL))
+          {
+             /* Align left*/
+             return 0.0;
+          }
+        else
+          {
+             /* Align right */
+             return 1.0;
           }
      }
    else if (c->align_auto == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
@@ -15614,6 +15636,10 @@ _efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o, Ef
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL);
      }
+   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_END)
+     {
+        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
+     }
    else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_LOCALE)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
@@ -15644,6 +15670,10 @@ _efl_canvas_text_efl_text_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text
    if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL)
      {
         ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO;
+     }
+   else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_END)
+     {
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_END;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
      {

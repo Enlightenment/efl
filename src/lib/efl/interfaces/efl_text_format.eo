@@ -14,7 +14,8 @@ enum Efl.Text.Format.Horizontal_Alignment_Type {
    locale,  [[Respects locale's langauge settings]]
    left,    [[Text is placed at the left end of the line]]
    right,   [[Text is placed at the right end of the line]]
-   center   [[Text is places at the center of the line]]
+   center,  [[Text is places at the center of the line]]
+   end      [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
 }
 
 enum Efl.Text.Format.Vertical_Alignment_Type {
