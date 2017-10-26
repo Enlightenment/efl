@@ -491,6 +491,11 @@ typedef Emile_Image_Encoding Eet_Image_Encoding;
 #define EET_IMAGE_ETC2_RGBA  EMILE_IMAGE_ETC2_RGBA
 #define EET_IMAGE_ETC1_ALPHA EMILE_IMAGE_ETC1_ALPHA
 
+/**
+ * @enum Eet_Colorspace
+ * Specify colorspace for image
+ * @since 1.10
+ */
 typedef Emile_Colorspace Eet_Colorspace;
 
 #define EET_COLORSPACE_ARGB8888 EMILE_COLORSPACE_ARGB8888
