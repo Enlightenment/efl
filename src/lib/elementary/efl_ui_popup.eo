@@ -67,5 +67,6 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
    }
    events {
       bg,clicked; [[This is called whenever the user click background of popup.]]
+      timeout; [[This is called when popup times out.]]
    }
 }
