@@ -5127,6 +5127,7 @@ _profile_iterator_get_container(Profile_Iterator *it)
 static void
 _profile_iterator_free(Profile_Iterator *it)
 {
+   efl_wref_del(it->object, &it->object);
    eina_iterator_free(it->real_iterator);
    elm_config_profile_list_free(it->list);
    free(it);
