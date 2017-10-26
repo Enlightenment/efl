@@ -216,25 +216,20 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
            /*     // error */
            /*     continue; */
            /*   } */
+            }
 
            size = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Size));
+           eina_hash_add(pd->size_information, &layout_item, size);
            Eina_Size2D min = efl_gfx_size_hint_combined_min_get(layout_item->layout);
            if(min.w && min.h)
              {
 //                DBG("size was calculated");
-                Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Callback_Data));
                 _item_min_calc(pd, layout_item->layout, size, min);
-                eina_hash_add(pd->size_information, &layout_item, size);
-                cb_data->pd = pd;
-                cb_data->size = size;
-                evas_object_event_callback_add(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);
              }
-           else
-             {
-//               DBG("size was NOT calculated, not loaded yet probably");
-               free(size);
-             }
-             }
+           Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data = calloc(1, sizeof(Efl_Ui_List_Precise_Layouter_Callback_Data));
+           cb_data->pd = pd;
+           cb_data->size = size;
+           evas_object_event_callback_add(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);
         }
      }
 
