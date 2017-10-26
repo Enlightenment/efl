@@ -88,9 +88,6 @@ struct _Efl_Ui_Multibuttonentry_Data
    Elm_Multibuttonentry_Item_Data     *selected_it; /* selected item */
    Elm_Multibuttonentry_Item_Data     *focused_it;
 
-   Efl_Ui_Multibuttonentry_Format_Cb  format_func;
-   const void                         *format_func_data;
-
    const char                         *label_str, *guide_text_str;
 
    int                                 n_str;
@@ -101,13 +98,17 @@ struct _Efl_Ui_Multibuttonentry_Data
 
    Elm_Multibuttonentry_Item_Filter_Cb add_callback;
    void                               *add_callback_data;
+   Ecore_Timer                        *longpress_timer;
+
+   Efl_Ui_Format_Func_Cb               format_cb;
+   Eina_Free_Cb                        format_free_cb;
+   void                               *format_cb_data;
+   Eina_Strbuf                        *format_strbuf;
 
    Eina_Bool                           last_it_select : 1;
    Eina_Bool                           editable : 1;
    Eina_Bool                           focused : 1;
    Eina_Bool                           label_packed : 1;
-
-   Ecore_Timer                         *longpress_timer;
 };
 
 /**

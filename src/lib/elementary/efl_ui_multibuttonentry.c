@@ -191,6 +191,7 @@ _shrink_mode_set(Evas_Object *obj,
      {
         Evas_Coord w = 0;
         Evas_Coord box_inner_item_width_padding = 0;
+        Eina_Value val;
 
         elm_box_padding_get(sd->box, &box_inner_item_width_padding, NULL);
         // unpack all items and entry
@@ -219,7 +220,6 @@ _shrink_mode_set(Evas_Object *obj,
         EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
              Evas_Coord w_label_count = 0, h = 0;
-             char *buf;
 
              ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
              elm_box_pack_end(sd->box, VIEW(item));
@@ -233,15 +233,15 @@ _shrink_mode_set(Evas_Object *obj,
              w -= box_inner_item_width_padding;
              count--;
 
+             eina_value_setup(&val, EINA_VALUE_TYPE_INT);
+
              if (count > 0)
                {
-                  buf = sd->format_func(count, (void *)sd->format_func_data);
-                  if (buf)
-                    {
-                       edje_object_part_text_escaped_set
-                           (sd->end, "elm.text", buf);
-                       free(buf);
-                    }
+                  eina_strbuf_reset(sd->format_strbuf);
+                  eina_value_set(&val, count);
+                  sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+                  edje_object_part_text_escaped_set(sd->end, "elm.text",
+                                                    eina_strbuf_string_get(sd->format_strbuf));
 
                   edje_object_size_min_calc(sd->end, &w_label_count, NULL);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, NULL);
@@ -254,13 +254,12 @@ _shrink_mode_set(Evas_Object *obj,
                   item->visible = EINA_FALSE;
                   count++;
 
-                  buf = sd->format_func(count, (void *)sd->format_func_data);
-                  if (buf)
-                    {
-                       edje_object_part_text_escaped_set
-                           (sd->end, "elm.text", buf);
-                       free(buf);
-                    }
+                  eina_strbuf_reset(sd->format_strbuf);
+
+                  eina_value_set(&val, count);
+                  sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+                  edje_object_part_text_escaped_set(sd->end, "elm.text",
+                                                    eina_strbuf_string_get(sd->format_strbuf));
 
                   edje_object_size_min_calc(sd->end, &w_label_count, &h);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, &h);
@@ -1639,7 +1638,8 @@ _efl_ui_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Multibuttone
    priv->last_it_select = EINA_TRUE;
    priv->editable = EINA_TRUE;
    priv->parent = obj;
-   priv->format_func = _format_count;
+
+   efl_ui_format_string_set(obj, "+%d");
 
    _view_init(obj, priv);
    _callbacks_register(obj);
@@ -1674,6 +1674,10 @@ _efl_ui_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Multibuttone
    evas_object_del(sd->guide_text);
    evas_object_del(sd->end);
    ecore_timer_del(sd->longpress_timer);
+
+   if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
+   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+   eina_strbuf_free(sd->format_strbuf);
 
    EINA_LIST_FREE(sd->filter_list, _item_filter)
      _filter_free(_item_filter);
@@ -1733,17 +1737,6 @@ _efl_ui_multibuttonentry_expanded_get(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonent
 {
    return sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ?
           EINA_FALSE : EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_multibuttonentry_format_function_set(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd, Efl_Ui_Multibuttonentry_Format_Cb f_func, const void *data)
-{
-   sd->format_func = f_func;
-   if (!sd->format_func) sd->format_func = _format_count;
-
-   sd->format_func_data = data;
-
-   _view_update(sd);
 }
 
 EOLIAN static void
@@ -1998,6 +1991,23 @@ _efl_ui_multibuttonentry_item_filter_remove(Eo *obj EINA_UNUSED, Efl_Ui_Multibut
      }
 }
 
+EOLIAN static void
+_efl_ui_multibuttonentry_efl_ui_format_format_cb_set(Eo *obj EINA_UNUSED, Efl_Ui_Multibuttonentry_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+{
+   if (sd->format_cb_data == func_data && sd->format_cb == func)
+     return;
+
+   if (sd->format_cb_data && sd->format_free_cb)
+     sd->format_free_cb(sd->format_cb_data);
+
+   sd->format_cb = func;
+   sd->format_cb_data = func_data;
+   sd->format_free_cb = func_free_cb;
+   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
+
+   _view_update(sd);
+}
+
 static void
 _efl_ui_multibuttonentry_class_constructor(Efl_Class *klass)
 {
@@ -2100,3 +2110,50 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl
 
 #include "elm_multibuttonentry_item.eo.c"
 #include "efl_ui_multibuttonentry.eo.c"
+
+/* Legacy APIs */
+
+typedef struct
+{
+   Efl_Ui_Multibuttonentry_Format_Cb format_cb;
+   void *data;
+} Mbe_Format_Wrapper_Data ;
+
+static void
+_format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Mbe_Format_Wrapper_Data *mfwd = data;
+   char *buf;
+   int count = 0;
+
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+
+   if (type == EINA_VALUE_TYPE_INT)
+     eina_value_get(&value, &count);
+
+   buf = mfwd->format_cb(count, mfwd->data);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   free(buf);
+}
+
+static void
+_format_legacy_to_format_eo_free_cb(void *data)
+{
+   Mbe_Format_Wrapper_Data *mfwd = data;
+
+   free(mfwd);
+}
+
+EAPI void
+elm_multibuttonentry_format_function_set(Eo *obj, Efl_Ui_Multibuttonentry_Format_Cb format_function, const void *data)
+{
+   Mbe_Format_Wrapper_Data *mfwd = malloc(sizeof(Mbe_Format_Wrapper_Data));
+
+   mfwd->format_cb = format_function;
+   if (!mfwd->format_cb) mfwd->format_cb = _format_count;
+
+   mfwd->data = (void *)data;
+
+   efl_ui_format_cb_set(obj, mfwd, _format_legacy_to_format_eo_cb, _format_legacy_to_format_eo_free_cb);
+}
