@@ -182,12 +182,16 @@ eldbus_service_interface_fallback_register2(Eldbus_Connection *conn, const char 
  * @brief Unregister a interface.
  * Note: This doesn't unregister the object path if interface count reaches 0.
  * Use eldbus_service_object_unregister() to unregister the object.
+ *
+ * @param iface interface to unregister
  */
 EAPI void eldbus_service_interface_unregister(Eldbus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Unregister all interfaces of the object path that this interface belongs
  * and the object path.
+ *
+ * @param iface interface to unregister
  */
 EAPI void eldbus_service_object_unregister(Eldbus_Service_Interface *iface) EINA_ARG_NONNULL(1);
 EAPI Eldbus_Connection *eldbus_service_connection_get(const Eldbus_Service_Interface *iface) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -201,6 +205,8 @@ EAPI const char *eldbus_service_object_path_get(const Eldbus_Service_Interface *
  * @param iface interface of the signal
  * @param signal_id id of signal
  * @param ... values that will be send on signal
+ *
+ * @return EINA_TRUE if success
  */
 EAPI Eina_Bool eldbus_service_signal_emit(const Eldbus_Service_Interface *iface, unsigned int signal_id, ...) EINA_ARG_NONNULL(1);
 
@@ -212,15 +218,22 @@ EAPI Eina_Bool eldbus_service_signal_emit(const Eldbus_Service_Interface *iface,
  *
  * @param iface interface of the signal
  * @param signal_id id of signal
+ *
+ * @return EINA_TRUE if success
  */
 EAPI Eldbus_Message *eldbus_service_signal_new(const Eldbus_Service_Interface *iface, unsigned int signal_id) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Send a signal message.
  *
- * On success this will call eldbus_message_unref() on the @param signal_msg,
+ * On success this will call eldbus_message_unref() on the @p signal_msg,
  * which is the intended behavior in 99% of the cases. Remember to increment
  * the refcount if you want to keep it alive.
+ *
+ * @param iface interface of the signal
+ * @param signal_msg message of signal
+ *
+ * @return EINA_TRUE if success
  */
 EAPI Eina_Bool eldbus_service_signal_send(const Eldbus_Service_Interface *iface, Eldbus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
 
@@ -262,6 +275,8 @@ EAPI void *eldbus_service_object_data_del(Eldbus_Service_Interface *iface, const
  *
  * @param iface Interface containing the changed property
  * @param name Property name
+ *
+ * @return EINA_TRUE if success
  */
 EAPI Eina_Bool eldbus_service_property_changed(const Eldbus_Service_Interface *iface, const char *name) EINA_ARG_NONNULL(1, 2);
 
