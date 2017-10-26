@@ -373,26 +373,41 @@ typedef enum
    ECORE_IMF_INPUT_HINT_MULTILINE           = 1 << 2,   /**< Multiline text @since 1.18 */
 } Ecore_IMF_Input_Hints;
 
-enum
+/**
+ * @typedef Ecore_IMF_Input_Panel_Layout_Normal_Variation
+ * @brief Enumeration for defining the types of Ecore_IMF Input Panel layout for normal variation.
+ * @since 1.12
+ */
+typedef enum
 {
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_NORMAL,            /**< The plain normal layout @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_FILENAME,          /**< Filename layout. Symbols such as '/' should be disabled. @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME        /**< The name of a person. @since 1.12 */
-};
+} Ecore_IMF_Input_Layout_Normal_Variation;
 
-enum
+/**
+ * @typedef Ecore_IMF_Input_Panel_Layout_Numberonly_Variation
+ * @brief Enumeration for defining the types of Ecore_IMF Input Panel layout for numberonly variation
+ * @since 1.18
+ */
+typedef enum
 {
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,            /**< The plain normal number layout @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,            /**< The number layout to allow a positive or negative sign at the start @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,           /**< The number layout to allow decimal point to provide fractional value @since 1.8 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL /**< The number layout to allow decimal point and negative sign @since 1.8 */
-};
+} Ecore_IMF_Input_Panel_Layout_Numberonly_Variation;
 
-enum
+/**
+ * @typedef Ecore_IMF_Input_Panel_Layout_Password_Variation
+ * @brief Enumeration for defining the types of Ecore_IMF Input Panel layout for password variation
+ * @since 1.12
+ */
+typedef enum
 {
    ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NORMAL,          /**< The normal password layout @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY       /**< The password layout to allow only number @since 1.12 */
-};
+} Ecore_IMF_Input_Panel_Layout_Password_Variation;
 
 /**
  * @typedef Ecore_IMF_BiDi_Direction
@@ -406,6 +421,11 @@ typedef enum
    ECORE_IMF_BIDI_DIRECTION_RTL         /**< The Right to Left mode @since 1.12 */
 } Ecore_IMF_BiDi_Direction;
 
+/**
+ * @enum _Ecore_IMF_Device_Class
+ * @brief Enumeration for defining the types of Ecore_IMF_Device_Class
+ * @since 1.14
+ */
 typedef enum _Ecore_IMF_Device_Class
 {
    ECORE_IMF_DEVICE_CLASS_NONE, /**< Not a device @since 1.14 */
@@ -418,6 +438,11 @@ typedef enum _Ecore_IMF_Device_Class
    ECORE_IMF_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.14 */
 } Ecore_IMF_Device_Class; /**< A general class of device @since 1.14 */
 
+/**
+ * @enum _Ecore_IMF_Device_Subclass
+ * @brief Enumeration for defining the types of Ecore_IMF_Device_Subclass
+ * @since 1.14
+ */
 typedef enum _Ecore_IMF_Device_Subclass
 {
    ECORE_IMF_DEVICE_SUBCLASS_NONE, /**< Not a device @since 1.14 */
