@@ -14,21 +14,21 @@
  *
  * Index widgets are by default hidden and just appear when the
  * user clicks over it's reserved area in the canvas. In its
- * default theme, it's an area one @ref Fingers "finger" wide on
+ * default theme, it's an area one @ref Elm_Fingers "finger" wide on
  * the right side of the index widget's container.
  *
  * When items on the index are selected, smart callbacks get
  * called, so that its user can make other container objects to
  * show a given area or child object depending on the index item
  * selected. You'd probably be using an index together with @ref
- * List "lists", @ref Genlist "generic lists" or @ref Gengrid
+ * Elm_List "lists", @ref Elm_Genlist "generic lists" or @ref Elm_Gengrid
  * "general grids".
  *
- * This widget inherits from the @ref Layout one, so that all the
+ * This widget inherits from the @ref Elm_Layout one, so that all the
  * functions acting on it also work for index objects.
  *
  * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * @ref Elm_Layout :
  * - @c "changed" - When the selected index item changes. @c
  *      event_info is the selected item's data pointer.
  * - @c "delay,changed" - When the selected index item changes, but
