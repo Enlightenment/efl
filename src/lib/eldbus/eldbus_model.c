@@ -75,6 +75,15 @@ _eldbus_model_efl_object_finalize(Eo *obj, Eldbus_Model_Data *pd)
 }
 
 static void
+_eldbus_model_efl_object_invalidate(Eo *obj, Eldbus_Model_Data *pd)
+{
+   if (pd->connection) eldbus_connection_unref(pd->connection);
+   pd->connection = NULL;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+static void
 _eldbus_model_efl_object_destructor(Eo *obj, Eldbus_Model_Data *pd)
 {
    eina_stringshare_del(pd->unique_name);
@@ -82,9 +91,6 @@ _eldbus_model_efl_object_destructor(Eo *obj, Eldbus_Model_Data *pd)
 
    eina_stringshare_del(pd->address);
    pd->address = NULL;
-
-   eldbus_connection_unref(pd->connection);
-   pd->connection = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -115,7 +121,7 @@ _eldbus_model_efl_model_property_set(Eo *obj,
 {
    Eina_Error err = EFL_MODEL_ERROR_READ_ONLY;
 
-   if (!strcmp(property, UNIQUE_NAME_PROPERTY))
+   if (strcmp(property, UNIQUE_NAME_PROPERTY))
      err = EFL_MODEL_ERROR_NOT_FOUND;
    return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
 }
@@ -153,7 +159,7 @@ _eldbus_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
    Eina_Array *r;
 
    r = eina_array_new(1);
-   eina_array_push(r, UNIQUE_NAME_PROPERTY);
+   eina_array_push(r, eina_stringshare_add(UNIQUE_NAME_PROPERTY));
 
    return r;
 }

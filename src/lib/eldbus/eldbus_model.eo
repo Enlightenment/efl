@@ -46,6 +46,7 @@ class Eldbus.Model (Efl.Object, Efl.Model) {
     }
     implements {
         Efl.Object.finalize;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Model.property { get; set; }
         Efl.Model.properties { get; }

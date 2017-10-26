@@ -11,8 +11,10 @@ typedef struct _Eldbus_Model_Method_Data Eldbus_Model_Method_Data;
 struct _Eldbus_Model_Method_Data
 {
    Eo *obj;
+
    const Eldbus_Introspection_Method *method;
+
+   Eldbus_Proxy *proxy;
 };
 
 #endif
-
