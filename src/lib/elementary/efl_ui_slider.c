@@ -1174,7 +1174,6 @@ _efl_ui_slider_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Slider_Data *sd)
    evas_object_del(sd->popup);
    evas_object_del(sd->popup2);
 
-   if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
    efl_ui_format_cb_set(obj, NULL, NULL, NULL);
    eina_strbuf_free(sd->format_strbuf);
 
@@ -1407,7 +1406,7 @@ EOLIAN static void
 _efl_ui_slider_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Slider_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-  
+
    if (sd->format_cb_data == func_data && sd->format_cb == func)
      return;
 
