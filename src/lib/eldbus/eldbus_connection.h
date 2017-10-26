@@ -94,13 +94,17 @@ EAPI void              eldbus_connection_unref(Eldbus_Connection *conn) EINA_ARG
  * @brief Add a callback function to be called when connection is freed
  *
  * @param conn The connection object to add the callback to.
- * @param cb callback to be called
- * @param data data passed to callback
+ * @param cb The callback to be called when the connection is free.
+ * @param data The data passed to the callback.
  */
 EAPI void              eldbus_connection_free_cb_add(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Remove callback registered in eldbus_connection_free_cb_add().
+ *
+ * @param conn The connection object to delete the callback from.
+ * @param cb The callback that was called when the connection was free.
+ * @param data The data that was passed to the callback.
  */
 EAPI void              eldbus_connection_free_cb_del(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
@@ -154,11 +158,21 @@ typedef void (*Eldbus_Connection_Event_Cb)(void *data, Eldbus_Connection *conn, 
 /**
  * @brief Add a callback function to be called when an event occurs of the
  * type passed.
+ *
+ * @param conn The connection object to add the callback to.
+ * @param type The type of event that will trigger the callback.
+ * @param cb The callback to be called when the event is triggered.
+ * @param cb_data The data passed to the callback.
  */
 EAPI void                  eldbus_connection_event_callback_add(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @brief Remove callback registered in eldbus_connection_event_callback_add().
+ *
+ * @param conn The connection object to delete the callback from.
+ * @param type The type of event that was triggered the callback.
+ * @param cb The callback that was called when the event was triggered.
+ * @param cb_data The data that was passed to the callback.
  */
 EAPI void                  eldbus_connection_event_callback_del(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
