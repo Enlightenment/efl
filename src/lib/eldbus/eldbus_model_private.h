@@ -23,6 +23,8 @@ struct _Eldbus_Property_Promise
   Efl_Promise* promise;
 };
 
+#define UNIQUE_NAME_PROPERTY "unique_name"
+
 /* logging support */
 extern int eldbus_model_log_dom;
 

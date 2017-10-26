@@ -10,7 +10,8 @@ eldbus_eolian_files = \
 	lib/eldbus/eldbus_model_proxy.eo \
 	lib/eldbus/eldbus_model_method.eo \
 	lib/eldbus/eldbus_model_arguments.eo \
-	lib/eldbus/eldbus_model_signal.eo
+	lib/eldbus/eldbus_model_signal.eo \
+	lib/eldbus/eldbus_model.eo
 
 eldbus_eolian_c = $(eldbus_eolian_files:%.eo=%.eo.c)
 eldbus_eolian_h = $(eldbus_eolian_files:%.eo=%.eo.h) \
@@ -74,6 +75,7 @@ lib/eldbus/eldbus_model_proxy.c \
 lib/eldbus/eldbus_model_method.c \
 lib/eldbus/eldbus_model_arguments.c \
 lib/eldbus/eldbus_model_signal.c \
+lib/eldbus/eldbus_model.c \
 lib/eldbus/eldbus_introspection.c
 
 lib_eldbus_libeldbus_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
