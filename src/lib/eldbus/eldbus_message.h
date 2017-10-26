@@ -90,7 +90,7 @@ EAPI Eldbus_Message        *eldbus_message_method_call_new(const char *dest, con
  * @brief Create a new signal message.
  *
  * @param path object path
- * @param iface interface name
+ * @param interface interface name
  * @param name name of the signal to be broadcasted
  *
  * @return a new Eldbus_Message, free with eldbus_message_unref()
@@ -226,6 +226,12 @@ EAPI Eldbus_Message_Iter *eldbus_message_iter_container_new(Eldbus_Message_Iter 
 
 /**
  * @brief Append a basic type into an Eldbus_Iterator.
+ *
+ * @param iter The iterator in which basic type will be appended.
+ * @param type The basic type that will be appended.
+ * @param ... The values for the basic type.
+ *
+ * @return EINA_TRUE on success, else EINA_FALSE.
  */
 EAPI Eina_Bool               eldbus_message_iter_basic_append(Eldbus_Message_Iter *iter, int type, ...) EINA_ARG_NONNULL(1, 3);
 
@@ -299,11 +305,18 @@ EAPI Eina_Bool               eldbus_message_iter_container_close(Eldbus_Message_
 
 /**
  * @brief Get the main Eldbus_Message_Iter from the Eldbus_Message.
+ *
+ * @param msg The message to get the iterator from.
+ *
+ * @return The iterator of the message.
  */
 EAPI Eldbus_Message_Iter *eldbus_message_iter_get(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get a basic type from Eldbus_Iterator.
+ *
+ * @param iter The iterator to get the basic type from.
+ * @param value The basic type of the iterator.
  */
 EAPI void                    eldbus_message_iter_basic_get(Eldbus_Message_Iter *iter, void *value) EINA_ARG_NONNULL(1, 2);
 
