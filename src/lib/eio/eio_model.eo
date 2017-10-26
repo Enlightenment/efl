@@ -1,4 +1,13 @@
-type @extern Eio_Filter_Direct_Cb: __undefined_type; [[Eio filter direct callback type]]
+import eina_types;
+
+function EflIoFilter {
+  [[EflIoFilter function]]
+  params {
+    @in model: Eio.Model;
+    @in entry: ptr(Eina.File.Direct.Info);
+  }
+  return: int;
+};
 
 class Eio.Model (Efl.Object, Efl.Model)
 {
@@ -19,31 +28,30 @@ class Eio.Model (Efl.Object, Efl.Model)
             @since 1.11
           ]]
           params {
-             filter_cb: Eio_Filter_Direct_Cb; [[Filter callback]]
-             userdata: void_ptr; [[User's private data]]
+             filter: EflIoFilter; [[Filter callback]]
           }
        }
-       path_set {
-          [[Custom Eio_Model constructor.
+       @property path {
+          [[ Define the root path of a model.
 
             @since 1.11
           ]]
-          params {
-             @in path: string; [[Root path provided by caller]]
+	  set { [[ Only possible during construction. ]] }
+	  get { }
+	  values {
+             path: string; [[ Root path of the model. ]]
           }
        }
     }
     implements {
-      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
-      Efl.Object.parent { get; }
-      Efl.Object.provider_find;
       Efl.Model.properties { get; }
-      Efl.Model.property_set;
-      Efl.Model.property_get;
+      Efl.Model.property { set; get; }
       Efl.Model.child_add;
       Efl.Model.child_del;
       Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
+      Efl.Model.children_count { get; }
     }
 }
