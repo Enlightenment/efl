@@ -131,6 +131,7 @@ static Eina_Bool
 _timer_cb(void *data)
 {
    Eo *popup = data;
+   efl_event_callback_call(popup, EFL_UI_POPUP_EVENT_TIMEOUT, NULL);
    efl_del(popup);
 
    return ECORE_CALLBACK_CANCEL;
