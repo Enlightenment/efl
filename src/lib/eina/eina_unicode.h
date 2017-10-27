@@ -56,6 +56,9 @@ EAPI size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_AR
 
 /**
  * @brief Same as the standard strdup just with Eina_Unicode instead of char.
+ *
+ * @param text The text to duplicate.
+ * @return The duplicated string.
  */
 EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
@@ -78,24 +81,42 @@ EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA
 
 /**
  * @brief Same as the standard strcmp just with Eina_Unicode instead of char.
+ *
+ * @param a The text to be compared.
+ * @param b The text to be compared.
+ * @return An integer value indicating the ordinal relation of @p a to @p b.
  */
 EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 
 /**
  * @brief Same as the standard strcpy just with Eina_Unicode instead of char.
+ *
+ * @param dest The text which @p source is to be copied.
+ * @param source The text to copy from.
+ * @return @p dest is returned.
  */
 EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source) EINA_ARG_NONNULL(1, 2);
 
 
 /**
  * @brief Same as the standard strstr just with Eina_Unicode instead of char.
+ *
+ * @param haystack The text to be searched.
+ * @param needle The text to search for
+ * @return The substring of @p haystack which starts with @p needle
+ *         when @p needle is founded in @p haystack, or NULL is returned.
  */
 EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 
 /**
  * @brief Same as the standard strncpy just with Eina_Unicode instead of char.
+ *
+ * @param dest The text which @p source is to be copied.
+ * @param source The text to copy from.
+ * @param n Maximum number of characters to be copied from @p source.
+ * @return @p dest is returned.
  */
 EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n) EINA_ARG_NONNULL(1, 2);
 
