@@ -9352,7 +9352,7 @@ st_collections_group_parts_part_description_color(void)
     @parameters
         [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text shadow color.
+        Sets the text outline color.
 
         Format:
         @li [red] [green] [blue] [alpha]: one integer [0-255] for each
@@ -9386,7 +9386,7 @@ st_collections_group_parts_part_description_color2(void)
     @parameters
         [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text outline color.
+        Sets the text shadow color.
 
         Format:
         @li [red] [green] [blue] [alpha]: one integer [0-255] for each
