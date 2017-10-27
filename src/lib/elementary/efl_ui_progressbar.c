@@ -109,9 +109,10 @@ _units_set(Evas_Object *obj)
         Eina_Value val;
 
         eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
-        if (!sd->is_legacy_format)
-          eina_value_set(&val, sd->val);
-        else // Keeping this bug since the legacy code was like that.
+        eina_value_set(&val, sd->val);
+
+        // Keeping this bug since the legacy code was like that.
+        if (sd->is_legacy_format_string && !sd->is_legacy_format_cb)
           eina_value_set(&val, 100 * sd->val);
 
         eina_strbuf_reset(sd->format_strbuf);
@@ -689,10 +690,12 @@ _format_legacy_to_format_eo_free_cb(void *data)
 EAPI void
 elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
 {
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
    Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
 
    pfwd->format_cb = func;
    pfwd->format_free_cb = free_func;
+   sd->is_legacy_format_cb = EINA_TRUE;
 
    efl_ui_format_cb_set(obj, pfwd, _format_legacy_to_format_eo_cb,
                         _format_legacy_to_format_eo_free_cb);
@@ -715,10 +718,9 @@ elm_progressbar_span_size_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 {
-  EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
-  sd->is_legacy_format = EINA_TRUE;
-
+   sd->is_legacy_format_string = EINA_TRUE;
    efl_ui_format_string_set(obj, units);
 }
 
