@@ -168,13 +168,6 @@ struct _Sound_Write
    int i;
 };
 
-struct _Vector_Write
-{
-   Eet_File *ef;
-   Svg_Node *root;
-   int i;
-};
-
 struct _Mo_Write
 {
    Eet_File *ef;
@@ -1270,19 +1263,25 @@ static void
 data_write_vectors(Eet_File *ef, int *vector_num)
 {
    unsigned int i;
-   Svg_Node *root;
-   Eet_Data_Descriptor *svg_node_eet;
    Eina_List *ll;
    char *s;
    Eina_File *f = NULL;
    Edje_Vector_Directory_Entry *vector;
-   Eina_Strbuf *buf;
+   char buf[100];
    Eina_Bool found = EINA_FALSE;
+   Ecore_Evas *ee;
+   Evas *evas;
+   Evas_Object *vg;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
-   svg_node_eet = _edje_svg_node_eet();
-   buf = eina_strbuf_new();
+   ecore_evas_init();
+   ee = ecore_evas_buffer_new(1, 1);
+   if (!ee)
+     error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
+   evas = ecore_evas_get(ee);
+   vg = evas_object_vg_add(evas);
+
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
      {
         if (!beta)
@@ -1291,29 +1290,28 @@ data_write_vectors(Eet_File *ef, int *vector_num)
         vector = &edje_file->image_dir->vectors[i];
         EINA_LIST_FOREACH(img_dirs, ll, s)
           {
-             eina_strbuf_reset(buf);
-             eina_strbuf_append_printf(buf, "%s/%s", s, vector->entry);
-             f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
+             sprintf(buf, "%s/%s", s, vector->entry);
+
+             f = eina_file_open(buf, EINA_FALSE);
              if (!f) continue;
-             root = _svg_load(f, NULL);
-             if(!root)
-               error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
-             eina_strbuf_reset(buf);
-             eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
-             if(!eet_data_write(ef, svg_node_eet, eina_strbuf_string_get(buf), root, compress_mode))
-               error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
-             *vector_num += 1;
              eina_file_close(f);
+
+             if (!efl_file_set(vg, buf, NULL))
+               error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
+
+             sprintf(buf, "edje/vectors/%i", vector->id);
+
+             if(!efl_file_save(vg, eet_file_get(ef), buf, NULL))
+               error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
+
+             *vector_num += 1;
              found = EINA_TRUE;
-             _edje_svg_node_free(root);
              break;
           }
         if (!found)
           error_and_abort(ef, "Unable to find the svg :%s", vector->entry);
         found = EINA_FALSE;
      }
-   eina_strbuf_free(buf);
-
 }
 
 static void
