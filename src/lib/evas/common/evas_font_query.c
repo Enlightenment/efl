@@ -816,6 +816,7 @@ end:
  * @param text_props the string object.
  * @param x the x boundary.
  * @param y the y boundary.
+ * @param width_offset the additional width only for allowing glyph's.
  * @return the position found, -1 on failure.
  */
 EAPI int
