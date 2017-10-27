@@ -8425,8 +8425,8 @@ ob_collections_group_parts_part_description(void)
    ed->persp.zplane = 0;
    ed->persp.focal = 1000;
    ed->minmul.have = 1;
-   ed->minmul.w = FROM_INT(1);
-   ed->minmul.h = FROM_INT(1);
+   ed->minmul.w = FROM_DOUBLE(1.0);
+   ed->minmul.h = FROM_DOUBLE(1.0);
    ed->align_3d.x = FROM_DOUBLE(0.5);
    ed->align_3d.y = FROM_DOUBLE(0.5);
    ed->align_3d.z = FROM_DOUBLE(0.5);
