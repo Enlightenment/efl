@@ -27,9 +27,9 @@
  * @page tutorial_benchmark_page Benchmark Tutorial
  *
  * The Benchmark module allows you to write easily benchmarks
- * framework in a project for timing critical part and detect slow
+ * framework to a project for timing critical parts and detecting slow
  * parts of code. In addition it automatically creates data files of
- * these benchmark, as well as a gnuplot file which can display the
+ * these benchmarks, as well as a gnuplot file which can display the
  * comparison curves of the benchmarks.
  *
  * @section tutorial_benchmark_basic_usage Basic Usage
@@ -116,7 +116,7 @@
  * The first column (specimen) is the integer passed to the work1()
  * function when the test is run. The second column (experiment time)
  * is the time, in nanosecond, that work1() takes. The third and
- * fourth column are self-explicit.
+ * fourth columns are self-explicit.
  *
  * You can see that the integer passed work1() starts from 200 and
  * finishes at 290, with a step of 10. These values are computed withe
@@ -297,8 +297,8 @@
 /**
  * @addtogroup Eina_Benchmark_Group Benchmark
  *
- * These functions allow you to add benchmark framework in a project
- * for timing critical part and detect slow parts of code. It is used
+ * These functions allow you to add a benchmark framework to a project
+ * for timing critical parts and detecting slow parts of code. It is used
  * in Eina to compare the time used by eina, glib, evas and ecore data
  * types.
  *
@@ -364,9 +364,9 @@ typedef void (*Eina_Benchmark_Specimens)(int request);
  * This function creates a new benchmark. @p name and @p run are used
  * to name the gnuplot file that eina_benchmark_run() will create.
  *
- * This function return a valid benchmark on success, or @c NULL if
+ * This function returns a valid benchmark on success, or @c NULL if
  * memory allocation fails.
- * 
+ *
  * When the new module is not needed anymore, use
  * eina_benchmark_free() to free the allocated memory.
  */
@@ -418,8 +418,8 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
  * @param bench The benchmark.
  * @return The list of names of the test files.
  *
- * This function runs all the tests that as been registered with
- * eina_benchmark_register() and save the result in a gnuplot
+ * This function runs all the tests that have been registered with
+ * eina_benchmark_register() and saves the result in a gnuplot
  * file. The name of the file has the following format:
  *
  * @code

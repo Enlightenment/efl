@@ -138,7 +138,7 @@ struct _Eina_Lines_Iterator
    const char *map; /**< A pointer to the head of the file that has been mapped with mmap(2). */
    const char *end; /**< A pointer to the end of the file that has been mapped with mmap(2). */
 
-   int boundary;    /**< Curretnly hard coded to 4096. */
+   int boundary;    /**< Currently hard coded to 4096. */
 
    Eina_File_Line current;  /**< The current line */
 };
@@ -175,7 +175,7 @@ struct _Eina_Lines_Iterator
 
 /**
  * @brief Determines if a path is relative or absolute.
- * The implementation simply chekcs if the fist char in the path is '/'.  If it
+ * The implementation simply chekcs if the first char in the path is '/'.  If it
  * is not, the path is considered relative.
  *
  * @param path The path to check.
@@ -299,7 +299,7 @@ void eina_file_virtual_map_free(Eina_File *file, void *map);
  * @warning This function is not yet implemented.  At present it ony returns
  * @code sizeof (unsigned long int) * 2 @endcode
  *
- * @param key The key for which length will be calcualted.
+ * @param key The key for which length will be calculated.
  *
  * @return The length of the key.
  *

@@ -9,7 +9,7 @@
 /**
  * @addtogroup Eina_Binary_Buffer_Group Binary Buffer
  *
- * @brief These functions provide string buffers management.
+ * @brief These functions provide string buffer management.
  *
  * The Binary Buffer data type is designed to be a mutable string,
  * allowing to append, prepend or insert a string to a buffer.
@@ -124,8 +124,8 @@ EAPI void eina_binbuf_free(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
  *
  * @param buf The string buffer to reset.
  *
- * This function reset @p buf: the buffer len is set to 0, and the
- * string is set to '\\0'. No memory is free'd.
+ * This function resets @p buf: the buffer len is set to 0, and the
+ * string is set to '\\0'. No memory is freed.
  */
 EAPI void eina_binbuf_reset(Eina_Binbuf *buf) EINA_ARG_NONNULL(1);
 
@@ -192,7 +192,7 @@ EAPI Eina_Bool eina_binbuf_use(Eina_Binbuf *buf, size_t extra_bytes) EINA_ARG_NO
  * This function appends @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_binbuf_append() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_strngshare. If @p buf
+ * with strings of known size, such as eina_stringshare. If @p buf
  * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  *
@@ -260,7 +260,7 @@ EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_A
  * This function inserts @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_binbuf_insert() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_strngshare. If @p buf
+ * with strings of known size, such as eina_stringshare. If @p buf
  * can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  *

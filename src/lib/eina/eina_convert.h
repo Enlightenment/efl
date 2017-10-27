@@ -312,7 +312,7 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
  * [-]0xh.hhhhhp[+-]e
  * @endcode
  *
- * where the h are the hexadecimal cyphers of the mantissas and e the
+ * where the h's are the hexadecimal cyphers of the mantissas and e the
  * exponent (a decimal number). If n is the number of cyphers after the
  * point, the returned mantissas and exponents are:
  *

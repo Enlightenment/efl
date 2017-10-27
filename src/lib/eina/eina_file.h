@@ -34,7 +34,7 @@
  * @page eina_file_example_01_page
  * @dontinclude eina_file_01.c
  *
- * To include brevity, variable declarations and initialization is omitted
+ * For brevity, variable declarations and initialization are omitted
  * from this page, however the full source code can be seen @ref
  * eina_file_example_01 "here".
  *
@@ -512,7 +512,7 @@ EAPI Eina_File *
 eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Tells if a file is a real file or only exist in memory.
+ * @brief Tells if a file is a real file or only exists in memory.
  *
  * @param file The file to test
  * @return #EINA_TRUE if the file is a virtual file
