@@ -1222,13 +1222,13 @@ efl_main(void *data EINA_UNUSED,
      {
         if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
           {
-             printf("Usages:\n"
-                    "$ elementary_test\n"
-                    "$ elementary_test --test-win-only [TEST_NAME]\n"
-                    "$ elementary_test -to [TEST_NAME]\n\n"
-                    "Examples:\n"
-                    "$ elementary_test -to Button\n\n");
-             efl_loop_quit(ev->object, 1);
+             efl_loop_quit(ev->object,
+                           eina_value_string_init("Usages:\n"
+                                                  "$ elementary_test\n"
+                                                  "$ elementary_test --test-win-only [TEST_NAME]\n"
+                                                  "$ elementary_test -to [TEST_NAME]\n\n"
+                                                  "Examples:\n"
+                                                  "$ elementary_test -to Button\n\n"));
              return ;
           }
         autorun = eina_array_data_get(arge->argv, 0);
