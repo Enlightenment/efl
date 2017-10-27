@@ -1377,11 +1377,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    if (node->type == NODE_TYPE_NORMAL)
      {
-        Eo *node_focusable;
-
-        //save fields we later need
-        node_focusable = node->focusable;
-
         //populate the new change
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
      }
@@ -1426,7 +1421,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 }
 
 static void
-_followup_previous_direction(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_followup_previous_direction(Eo *obj)
 {
    Efl_Ui_Focus_Manager *rec_manager;
    rec_manager = efl_ui_focus_manager_redirect_get(obj);
@@ -1472,7 +1467,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                     efl_ui_focus_manager_focus_set(obj, new_candidate);
 
                   if (direction == ELM_FOCUS_PREVIOUS)
-                    _followup_previous_direction(obj, pd);
+                    _followup_previous_direction(obj);
 
                   candidate = new_candidate;
                }
@@ -1506,7 +1501,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
           {
              efl_ui_focus_manager_focus_set(obj, candidate);
              if (direction == ELM_FOCUS_PREVIOUS)
-               _followup_previous_direction(obj, pd);
+               _followup_previous_direction(obj);
           }
      }
 
