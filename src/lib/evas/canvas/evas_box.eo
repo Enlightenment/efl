@@ -521,7 +521,7 @@ class Evas.Box (Efl.Canvas.Group.Clipped)
          legacy: null;
          return: ptr(Evas_Object_Box_Option); [[Box option]]
          params {
-            @in child: Efl.Canvas.Object; [[Object top be inserted]]
+            @in child: Efl.Canvas.Object; [[Object to be inserted]]
             @in reference: const(Efl.Canvas.Object); [[Reference where the object will be inserted]]
          }
       }

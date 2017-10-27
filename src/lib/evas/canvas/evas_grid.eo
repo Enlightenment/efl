@@ -68,7 +68,7 @@ class Evas.Grid (Efl.Canvas.Group.Clipped)
            @since 1.1]]
 
          params {
-            @in clear: bool; [[if $true, it will delete just removed children.]]
+            @in clear: bool; [[If $true, it will delete just removed children.]]
          }
       }
       iterator_new @const {

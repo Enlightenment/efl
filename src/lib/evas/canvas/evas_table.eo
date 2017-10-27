@@ -110,7 +110,7 @@ class Evas.Table (Efl.Canvas.Group.Clipped)
               accounted proportionally.]]
          }
          values {
-            cols: int; [[Columns in Table]]
+            cols: int; [[Columns in table]]
             rows: int; [[Rows in table]]
          }
       }
