@@ -8866,13 +8866,13 @@ st_collections_group_parts_part_description_hid(void)
 /**
     @page edcref
     @property
-        visible
+        no_render
     @parameters
         [0 or 1]
     @effect
-        Takes a boolean value specifying whether part is visible (1) or not
-        (0). Non-visible parts do not emit signals. The default value is 1.
+        Same as setting no_render in part, but can be changed in different states.
 
+        Defaults: 0
     @since 1.19
     @endproperty
 */
