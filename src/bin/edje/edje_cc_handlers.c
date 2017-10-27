@@ -8995,8 +8995,8 @@ st_collections_group_parts_part_description_fixed(void)
    check_has_anchors();
    check_arg_count(2);
 
-   current_desc->fixed.w = parse_float_range(0, 0, 1);
-   current_desc->fixed.h = parse_float_range(1, 0, 1);
+   current_desc->fixed.w = parse_bool(0);
+   current_desc->fixed.h = parse_bool(1);
 }
 
 /**
