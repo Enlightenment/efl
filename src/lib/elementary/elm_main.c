@@ -1285,23 +1285,6 @@ elm_quicklaunch_fallback(int    argc,
    return ret;
 }
 
-EAPI Eina_Value *
-efl_quicklaunch_fallback(int    argc,
-                         char **argv)
-{
-   /* int ret; */
-   char cwd[PATH_MAX];
-   elm_quicklaunch_init(argc, argv);
-   elm_quicklaunch_sub_init(argc, argv);
-   if (efl_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd))))
-     {
-        efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
-        return efl_loop_begin(ecore_main_loop_get());
-     }
-
-   return eina_value_uchar_new(255);
-}
-
 EAPI char *
 elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
 {
