@@ -38,6 +38,8 @@ extern "C" {
 
 #include "efl_loop.eo.h"
 
+EAPI int efl_loop_exit_code_process(Eina_Value *value);
+
 #include "efl_loop_user.eo.h"
 
 EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);

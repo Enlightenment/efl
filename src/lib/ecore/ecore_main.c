@@ -2880,6 +2880,52 @@ _efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object 
    return efl_provider_find(efl_super(obj, EFL_LOOP_CLASS), klass);
 }
 
+EAPI int
+efl_loop_exit_code_process(Eina_Value *value)
+{
+   const Eina_Value_Type *t = eina_value_type_get(value);
+   int r = 0;
+
+   if (t == EINA_VALUE_TYPE_UCHAR ||
+       t == EINA_VALUE_TYPE_USHORT ||
+       t == EINA_VALUE_TYPE_UINT ||
+       t == EINA_VALUE_TYPE_ULONG ||
+       t == EINA_VALUE_TYPE_UINT64 ||
+       t == EINA_VALUE_TYPE_CHAR ||
+       t == EINA_VALUE_TYPE_SHORT ||
+       t == EINA_VALUE_TYPE_INT ||
+       t == EINA_VALUE_TYPE_LONG ||
+       t == EINA_VALUE_TYPE_INT64 ||
+       t == EINA_VALUE_TYPE_FLOAT ||
+       t == EINA_VALUE_TYPE_DOUBLE)
+     {
+        Eina_Value v = EINA_VALUE_EMPTY;
+
+        eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+        if (!eina_value_convert(&v, value))
+          r = -1;
+        else
+          eina_value_get(&v, &v);
+     }
+   else
+     {
+        FILE *out = stdout;
+        char *msg;
+
+        msg = eina_value_to_string(value);
+
+        if (t == EINA_VALUE_TYPE_ERROR)
+          {
+             r = -1;
+             out = stderr;
+          }
+
+        fprintf(out, "%s\n", msg);
+     }
+
+   return r;
+}
+
 static void
 _poll_trigger(void *data, const Efl_Event *event)
 {
