@@ -163,7 +163,7 @@ static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
 static Eina_List *current_program_lookups = NULL;
 Eina_Bool current_group_inherit = EINA_FALSE;
-Eina_Bool script_override = EINA_FALSE;
+Eina_Bool script_is_replaceable = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
 static int *anonymous_delete = NULL;
@@ -268,6 +268,7 @@ static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
 static void st_collections_group_mouse_events(void);
 static void st_collections_group_use_custom_seat_names(void);
+static void st_collections_group_inherit_script(void);
 
 static void st_collections_group_limits_vertical(void);
 static void st_collections_group_limits_horizontal(void);
@@ -550,6 +551,7 @@ static void st_collections_group_mouse(void);
 static void st_collections_group_nomouse(void);
 static void st_collections_group_broadcast(void);
 static void st_collections_group_nobroadcast(void);
+static void st_collections_group_noinherit_script(void);
 
 static void st_images_vector(void);
 static void _handle_vector_image(void);
@@ -746,6 +748,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
      {"collections.group.orientation", st_collections_group_orientation},
      {"collections.group.mouse_events", st_collections_group_mouse_events},
+     {"collections.group.inherit_script", st_collections_group_inherit_script},
      {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
      {"collections.group.limits.vertical", st_collections_group_limits_vertical},
@@ -1143,6 +1146,8 @@ New_Statement_Handler statement_handlers_short[] =
        nobroadcast; -> broadcast_signal: 0;
        mouse; -> mouse_events: 1;
        nomouse; -> mouse_events: 0;
+       inherit_script; -> inherit_script: 1;
+       noinherit_script; -> inherit_script: 0;
        parts {
           part {
              mouse; -> mouse_events: 1;
@@ -1191,6 +1196,8 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.nomouse", st_collections_group_nomouse},
      {"collections.group.broadcast", st_collections_group_broadcast},
      {"collections.group.nobroadcast", st_collections_group_nobroadcast},
+     {"collections.group.inherit_script", st_collections_group_inherit_script},
+     {"collections.group.noinherit_script", st_collections_group_noinherit_script},
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
 };
 
@@ -4238,7 +4245,7 @@ ob_collections_group(void)
    current_desc = NULL;
 
    current_group_inherit = EINA_FALSE;
-   script_override = EINA_FALSE;
+   script_is_replaceable = EINA_FALSE;
 
    current_de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    current_de->id = eina_list_count(edje_collections);
@@ -4257,6 +4264,7 @@ ob_collections_group(void)
 
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp->default_mouse_events = 1;
+   pcp->inherit_script = EINA_FALSE;
 
    pc->scene_size.width = 0;
    pc->scene_size.height = 0;
@@ -4835,6 +4843,7 @@ st_collections_group_inherit(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
+   pcp->inherit_script = pcp2->inherit_script;
 
    /* as of 7 April 2014, target groups cannot be modified and are not freed.
     * this code will break if that ever changes.
@@ -4961,6 +4970,9 @@ st_collections_group_inherit(void)
    cd = eina_list_data_get(eina_list_last(codes));
 
    cd->is_lua = cd2->is_lua;
+   if (!cd2->is_lua)
+     pcp->base_codes = eina_list_append(pcp->base_codes, cd2);
+
    if (cd2->shared)
      {
         if (cd->shared)
@@ -4975,7 +4987,7 @@ st_collections_group_inherit(void)
         cd->shared = STRDUP(cd2->shared);
         cd->original = STRDUP(cd2->original);
 
-        script_override = EINA_TRUE;
+        script_is_replaceable = EINA_TRUE;
      }
 
    EINA_LIST_FOREACH(cd2->programs, l, cp2)
@@ -5271,6 +5283,76 @@ st_collections_group_nomouse(void)
 /**
     @page edcref
     @property
+        inherit_script
+    @parameters
+        [1 or 0]
+    @effect
+        Determine whether to inherit script block from parent group.
+        If it is set to 0, script from parent group will be replaced with
+        new script block.
+        Defaults to 0 if not set, to maintain compatibility.
+    @endproperty
+ */
+static void
+st_collections_group_inherit_script(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   pcp = eina_list_last_data_get(edje_collections);
+
+   if (get_arg_count() == 1)
+     pcp->inherit_script = parse_bool(0);
+   else
+     pcp->inherit_script = EINA_TRUE;
+}
+
+static void
+st_collections_group_noinherit_script(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+
+   check_arg_count(0);
+
+   pcp = eina_list_last_data_get(edje_collections);
+   pcp->inherit_script = EINA_FALSE;
+}
+
+static void
+_script_flush(void)
+{
+   Edje_Part_Collection_Parser *pcp;
+   Code *code;
+
+   pcp = eina_list_last_data_get(edje_collections);
+   code = eina_list_last_data_get(codes);
+
+   if (!pcp->inherit_script || code->is_lua) return;
+
+   // If script is replaceable and overridable, code->shared will be inherited
+   // script. Free it to avoid duplication.
+   if (script_is_replaceable)
+     {
+        if (code->shared)
+          {
+             free(code->shared);
+             code->shared = NULL;
+          }
+        if (code->original)
+          {
+             free(code->original);
+             code->original = NULL;
+          }
+     }
+
+   script_rewrite(code);
+
+   eina_list_free(pcp->base_codes);
+}
+
+
+/**
+    @page edcref
+    @property
         program_source
     @parameters
         [source name]
@@ -5327,10 +5409,8 @@ st_collections_group_program_source(void)
 static void
 ob_collections_group_script(void)
 {
-   Edje_Part_Collection *pc;
    Code *cd;
 
-   pc = eina_list_last_data_get(edje_collections);
    cd = eina_list_data_get(eina_list_last(codes));
 
    if (!is_verbatim()) track_verbatim(1);
@@ -5345,14 +5425,11 @@ ob_collections_group_script(void)
 	     cd->l2 = get_verbatim_line2();
 	     if (cd->shared)
 	       {
-                  if (script_override)
+                  if (script_is_replaceable)
                     {
                        free(cd->shared);
                        free(cd->original);
-                       script_override = EINA_FALSE;
-
-                       WRN("%s:%i. Inherited script block in group \"%s\" is redefined. "
-                           "This can break inherited edje programs.", file_in, line - 1, pc->part);
+                       script_is_replaceable = EINA_FALSE;
                     }
                   else
                     {
@@ -15825,7 +15902,10 @@ edje_cc_handlers_pop_notify(const char *token)
    else if (current_program && (!strcmp(token, "link")))
      current_program = NULL;
    else if (current_de && (!strcmp(token, "group")))
-     _link_combine();
+     {
+        _link_combine();
+        _script_flush();
+     }
    else if (current_desc && (!strcmp(token, "description")))
      free_anchors();
 }
