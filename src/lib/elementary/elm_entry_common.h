@@ -177,6 +177,10 @@ struct _Elm_Entry_Filter_Limit_Size
  * The function works on the UTF-8 representation of the string, converting
  * it from the set markup, thus not accounting for any format in it.
  *
+ * @param[in] data The data passed to this function.
+ * @param[in] entry The object.
+ * @param[in,out] text The entry's text to limit size
+ *
  * The user must create an #Elm_Entry_Filter_Limit_Size structure and pass
  * it as data when setting the filter. In it, it's possible to set limits
  * by character count or bytes (any of them is disabled if 0), and both can
@@ -217,6 +221,10 @@ struct _Elm_Entry_Filter_Accept_Set
  * This structure contains both accepted and rejected sets, but they are
  * mutually exclusive. This structure must be available for as long as
  * the entry is alive AND the elm_entry_filter_accept_set is being used.
+ *
+ * @param[in] data The data passed to this function.
+ * @param[in] entry The object.
+ * @param[in,out] text The entry's text to accept or reject filter
  *
  * The @c accepted set takes preference, so if it is set, the filter will
  * only work based on the accepted characters, ignoring anything in the
