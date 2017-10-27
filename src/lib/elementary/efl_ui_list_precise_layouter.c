@@ -24,6 +24,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Data
    Eina_Hash* size_information;
    Eina_Size2D min;
    Efl_Model* model;
+   Efl_Ui_List_Model *modeler;
    unsigned int count_total;
    Efl_Future *count_future;
 } Efl_Ui_List_Precise_Layouter_Data;
@@ -56,7 +57,6 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Evas_Object *layout, Efl_U
    min.w += pad[0] + pad[1];
    min.h += pad[2] + pad[3];
 
-//                DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
 //   if(_horiz(pd->orient))
 //     {
 //        pdp->realized.w -= item->minw;
@@ -87,18 +87,20 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Evas_Object *layout, Efl_U
         pd->min.w = min.w;
       else if (pd->min.w == size->min.w)
         {
-           pd->min.w = min.w;
-           /*EINA_INARRAY_FOREACH(&pd->items.array, it) //find new minimal width
-             {
-                litem = *it;
-                if (!litem) continue;
-                if (pd->realized.w < litem->minw)
-                  pd->realized.w = litem->minw;
+           Efl_Ui_List_Precise_Layouter_Size *size_item;
+           Eina_Iterator *size_iterator;
 
-                if (litem != item && litem->minw == item->minw)
+           pd->min.w = min.w;
+           size_iterator = eina_hash_iterator_data_new(pd->size_information);
+           EINA_ITERATOR_FOREACH(size_iterator, size_item)
+             {
+                if (pd->min.w < size_item->min.w)
+                  pd->min.w = size_item->min.w;
+
+                if (size->min.w == size_item->min.w)
                   break;
              }
-          */
+           eina_iterator_free(size_iterator);
         }
 //     }
 
@@ -139,40 +141,44 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_Li
    if(pd->initialized)
      return;
 
+   pd->modeler = modeler;
    pd->initialized = EINA_TRUE;
    efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
-   pd->size_information = eina_hash_pointer_new(&free);
    pd->min.w = 0;
    pd->min.h = 0;
-}
-
-static Eina_Bool
-_size_clear_fn(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data EINA_UNUSED, void *fdata EINA_UNUSED)
-{
-   Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data;
-   Efl_Ui_List_LayoutItem* layout_item = data;
-
-   cb_data = evas_object_event_callback_del(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change);
-   free(cb_data);
 }
 
 static void
 _finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
 {
-   pd->initialized = EINA_FALSE;
+   Efl_Ui_List_Precise_Layouter_Callback_Data *cb_data;
+   Efl_Ui_List_LayoutItem *layout_item;
+   Eina_Iterator *item_iterator;
+   void *data;
 
-   eina_hash_foreach(pd->size_information, _size_clear_fn, pd);
+   item_iterator = eina_hash_iterator_key_new(pd->size_information);
+   while(eina_iterator_next(item_iterator, &data))
+     {
+        layout_item = *(Efl_Ui_List_LayoutItem **)data;
+        cb_data = evas_object_event_callback_del(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change);
+        efl_ui_list_model_unrealize(pd->modeler, layout_item);
+        free(cb_data);
+     }
+   eina_iterator_free(item_iterator);
 
-   eina_hash_free(pd->size_information);
-   pd->size_information = NULL;
+   eina_hash_free_buckets(pd->size_information);
+   pd->modeler = NULL;
    pd->min.w = 0;
    pd->min.h = 0;
+
+   pd->initialized = EINA_FALSE;
 }
 
 EOLIAN static Efl_Object *
 _efl_ui_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   pd->size_information = eina_hash_pointer_new(&free);
    pd->initialized = EINA_FALSE;
    pd->count_future = NULL;
 
@@ -195,8 +201,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_model_set(Eo *obj EINA_UNUSED
 
    if (pd->model)
      {
-        efl_unref(pd->model);
         _finalize(obj, pd);
+        efl_unref(pd->model);
         pd->model = NULL;
      }
 

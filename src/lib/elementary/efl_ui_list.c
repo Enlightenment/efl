@@ -325,7 +325,6 @@ _count_then(void * data, Efl_Event const* event)
    int *count = ((Efl_Future_Event_Success*)event->info)->value;
 
    pd->item_count = *count;
-   printf("item count %d\n", pd->item_count);
    pd->count_future = NULL;
 
    _layout(pd);
@@ -1038,6 +1037,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj, Efl_Ui_List_Data *pd)
    if(!pd->relayout)
      {
         pd->relayout = efl_add(EFL_UI_LIST_PRECISE_LAYOUTER_CLASS, obj);
+        efl_ui_list_relayout_model_set(pd->relayout, pd->model);
      }
    return obj;
 }
@@ -1093,9 +1093,6 @@ _efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_U
 EOLIAN static void
 _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *model)
 {
-   if (pd->relayout)
-      efl_ui_list_relayout_model_set(pd->relayout, model);
-
    if (pd->model == model)
      return;
 
@@ -1109,7 +1106,8 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
      {
         /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, obj); */
         /* efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, obj); */
-        //TODO: SegArray Clear
+        //TODO: FIXME: XXX: SegArray Clear
+        efl_ui_list_segarray_setup(&pd->segarray, 32);
         efl_unref(pd->model);
         pd->model = NULL;
         pd->item_count = 0;
@@ -1127,6 +1125,9 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
         pd->count_future = efl_model_children_count_get(pd->model);
         efl_future_then(pd->count_future, &_count_then, &_count_error, NULL, pd);
      }
+
+   if (pd->relayout)
+      efl_ui_list_relayout_model_set(pd->relayout, model);
 
    evas_object_smart_changed(pd->obj);
 }
@@ -1448,6 +1449,9 @@ _efl_ui_list_relayout_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
 static void
 _layout(Efl_Ui_List_Data *pd)
 {
+   if (!pd->model)
+     return;
+
    Eina_Accessor* accessor = efl_ui_list_segarray_accessor_get(&pd->segarray);
 
    efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first,
@@ -1464,8 +1468,8 @@ _children_slice_then(void * data, Efl_Event const* event)
 
    pd->segarray_first = pd->outstanding_slice.slice_start;
    pd->outstanding_slice.slice_start = pd->outstanding_slice.slice_count = 0;
+   pd->slice_future = NULL;
 }
-
 
 /* EFL UI LIST MODEL INTERFACE */
 EOLIAN static Eina_Size2D
@@ -1514,6 +1518,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
    evas_object_hide(item->layout);
+   evas_object_move(item->layout, -9999, -9999);
 
    evt.child = item->children;
    evt.layout = item->layout;
@@ -1528,7 +1533,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 EOLIAN static void
 _efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Data* pd, int first, int count)
 {
-   // slice
+   //FIXME?? slice cancel??
    if(!pd->slice_future)
      {
         pd->slice_future = efl_model_children_slice_get(pd->model, first, count);
