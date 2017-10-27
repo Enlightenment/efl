@@ -856,7 +856,7 @@ _focused_element(void *data, const Efl_Event *event)
 {
    Eina_Rect geom;
    Efl_Ui_Focus_Object *obj = data;
-   Efl_Ui_Focus_Object *focus = event->info;
+   Efl_Ui_Focus_Object *focus = efl_ui_focus_manager_focus_get(event->object);
    Elm_Scrollable_Smart_Interface_Data *pd;
    Eina_Position2D pos;
    int pan_x, pan_y;
