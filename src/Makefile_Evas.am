@@ -311,6 +311,11 @@ lib/evas/canvas/render2/evas_render2_th_main.c \
 lib/evas/canvas/render2/region.c \
 lib/evas/canvas/render2/region.h
 
+ # Vg
+ lib_evas_libevas_la_SOURCES += \
+ lib/evas/vg/evas_vg_cache.c
+
+
 # Cache
 lib_evas_libevas_la_SOURCES += \
 lib/evas/cache/evas_cache_image.c \

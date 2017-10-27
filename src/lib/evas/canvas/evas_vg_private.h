@@ -3,18 +3,41 @@
 
 #include <Ector.h>
 
-typedef struct _Efl_VG_Data Efl_VG_Data;
-typedef struct _Efl_VG_Container_Data Efl_VG_Container_Data;
-typedef struct _Efl_VG_Gradient_Data Efl_VG_Gradient_Data;
-typedef struct _Efl_VG_Interpolation Efl_VG_Interpolation;
+typedef struct _Efl_VG_Data                  Efl_VG_Data;
+typedef struct _Efl_VG_Container_Data        Efl_VG_Container_Data;
+typedef struct _Efl_VG_Gradient_Data         Efl_VG_Gradient_Data;
+typedef struct _Efl_VG_Interpolation         Efl_VG_Interpolation;
 
-typedef struct _Efl_Canvas_Vg_Data      Efl_Canvas_Vg_Data;
+
+typedef struct _Efl_Canvas_Vg_Data           Efl_Canvas_Vg_Data;
+
+typedef struct _Evas_Cache_Vg_Entry          Evas_Cache_Vg_Entry;
+typedef struct _Evas_Cache_Vg                Evas_Cache_Vg;
+
+struct _Evas_Cache_Vg
+{
+   Eina_Hash             *vg_hash;
+   Eina_Hash             *active;
+   int                    ref;
+};
+
+struct _Evas_Cache_Vg_Entry
+{
+   char                 *hash_key;
+   Eina_Stringshare     *file;
+   Eina_Stringshare     *key;
+   int                   w;
+   int                   h;
+   Efl_VG               *root;
+   int                   ref;
+};
 
 struct _Efl_Canvas_Vg_Data
 {
    void                     *engine_data;
    Efl_VG                   *root;
    Efl_VG                   *vg_tree;
+   Evas_Cache_Vg_Entry      *vg_entry;
    Eina_Rect                 fill;
    Eina_Rect                 viewbox;
    unsigned int              width, height;
@@ -69,6 +92,16 @@ struct _Efl_VG_Interpolation
    Eina_Point_3D scale;
    Eina_Point_3D skew;
 };
+
+
+void                        evas_cache_vg_init(void);
+void                        evas_cache_vg_shutdown(void);
+Evas_Cache_Vg_Entry*        evas_cache_vg_entry_find(const char *file, const char *key, int w, int h);
+Efl_VG*                     evas_cache_vg_tree_get(Evas_Cache_Vg_Entry *svg_entry);
+void                        evas_cache_vg_entry_del(Evas_Cache_Vg_Entry *svg_entry);
+Vg_File_Data *              evas_cache_vg_file_info(const char *file, const char *key);
+
+Eina_Bool                   evas_vg_save_to_file(Vg_File_Data *evg_data, const char *file, const char *key, const char *flags);
 
 static inline Efl_VG_Data *
 _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)

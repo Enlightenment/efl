@@ -84,6 +84,7 @@ evas_init(void)
 #endif
    _evas_preload_thread_init();
    evas_filter_init();
+   evas_cache_vg_init();
 
    if (!evas_thread_init())
      goto shutdown_filter;
@@ -146,6 +147,7 @@ evas_shutdown(void)
    if (evas_cserve2_use_get())
      evas_cserve2_shutdown();
 #endif
+   evas_cache_vg_shutdown();
 
    _efl_gfx_map_shutdown();
 
