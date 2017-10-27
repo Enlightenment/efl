@@ -196,7 +196,6 @@ _add_multibuttonentry(Evas_Object *parent)
    evas_object_show(scr);
 
    mbe = elm_multibuttonentry_add(parent);
-   elm_object_focus_allow_set(mbe, EINA_TRUE);
    elm_object_text_set(mbe, "To: ");
    elm_object_part_text_set(mbe, "guide", "Tap to add recipient");
    evas_object_size_hint_weight_set(mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -275,7 +274,6 @@ _add_multibuttonentry_shrink(Evas_Object *parent)
    evas_object_show(scr);
 
    mbe = elm_multibuttonentry_add(parent);
-   elm_object_focus_allow_set(mbe, EINA_TRUE);
    elm_object_text_set(mbe, "To: ");
    elm_object_part_text_set(mbe, "guide", "Tap to add recipient");
    evas_object_size_hint_weight_set(mbe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
