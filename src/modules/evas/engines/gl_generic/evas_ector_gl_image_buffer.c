@@ -10,7 +10,7 @@
 #include "evas_gl_private.h"
 
 #include <software/Ector_Software.h>
-#include <gl/Ector_GL.h>
+#include <gl/Ector_Gl.h>
 #include "Evas_Engine_GL_Generic.h"
 #include "evas_ector_gl.h"
 #include "evas_gl_private.h"

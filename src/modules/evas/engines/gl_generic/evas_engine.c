@@ -3,7 +3,7 @@
 
 #include "software/Ector_Software.h"
 #include "cairo/Ector_Cairo.h"
-#include "gl/Ector_GL.h"
+#include "gl/Ector_Gl.h"
 #include "evas_ector_gl.h"
 #include "filters/gl_engine_filter.h"
 

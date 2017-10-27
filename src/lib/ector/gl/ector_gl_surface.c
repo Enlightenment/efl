@@ -3,7 +3,7 @@
 #endif
 
 #include <Ector.h>
-#include <gl/Ector_Gl.h>
+#include "Ector_Gl.h"
 #include "ector_private.h"
 #include "ector_gl_private.h"
 #include "draw.h"
