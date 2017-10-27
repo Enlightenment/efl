@@ -61,13 +61,13 @@ class Efl.Loop (Efl.Object)
       }
       begin {
          [[Runs the application main loop.]]
-         return: ubyte; [[Value set by quit()]]
+         return: any_value_ptr; [[Value set by quit()]]
       }
       quit {
          [[Quits the main loop once all the events currently on the queue have
          been processed.]]
          params {
-            @in exit_code: ubyte; [[Returned value by begin()]]
+            @in exit_code: any_value; [[Returned value by begin()]]
          }
       }
       Eina_FutureXXX_job {
