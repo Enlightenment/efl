@@ -2867,6 +2867,16 @@ _efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, Eina_Value ex
    _ecore_exit_code = exit_code;
 }
 
+EAPI void
+efl_exit(int exit_code)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+   eina_value_set(&v, &exit_code);
+   efl_loop_quit(ecore_main_loop_get(), v);
+}
+
 EOLIAN static Efl_Object *
 _efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
 {

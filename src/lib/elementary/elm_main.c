@@ -1355,16 +1355,6 @@ _on_terminate(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 }
 
 EAPI void
-efl_exit(int exit_code)
-{
-   Eina_Value v = EINA_VALUE_EMPTY;
-
-   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-   eina_value_set(&v, &exit_code);
-   efl_loop_quit(ecore_main_loop_get(), v);
-}
-
-EAPI void
 elm_exit(void)
 {
    efl_exit(0);
