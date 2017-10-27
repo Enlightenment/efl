@@ -1168,13 +1168,13 @@ _prev(Node *node)
      efl_ui_focus_object_prepare_logical(n->focusable);
 
    //case 1 there is a item in the parent previous to node, which has children
-   if (n && T(n).children)
+   if (n && T(n).children && !n->redirect_manager)
      {
         do
           {
               n = eina_list_last_data_get(T(n).children);
           }
-        while (T(n).children);
+        while (T(n).children && !n->redirect_manager);
 
         return n;
      }
