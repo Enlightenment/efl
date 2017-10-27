@@ -3059,9 +3059,9 @@ ob_color_tree(void)
         color_classes {
             color_class {
                 name:  "colorclassname";
-                color:  [0-255] [0-255] [0-255] [0-255];
-                color2: [0-255] [0-255] [0-255] [0-255];
-                color3: [0-255] [0-255] [0-255] [0-255]
+                color:  255 0 0 255;
+                color2: "#0F0F";
+                color3: "#0000FFFF";
             }
             ..
         }
@@ -3179,9 +3179,20 @@ parse_color(void *base)
     @property
         color
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         The main color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void
@@ -3199,9 +3210,20 @@ st_color_class_color(void)
     @property
         color2
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Used as outline in text and textblock parts.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void
@@ -3219,9 +3241,20 @@ st_color_class_color2(void)
     @property
         color3
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Used as shadow in text and textblock parts.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void
@@ -3820,7 +3853,7 @@ st_collections_group_sound_tone(void)
         Valid types are:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0.0 to 1.0.
+        @li LOSSY [45.0  - 1000.0]: Lossy compression with quality from 45.0 to 1000.0.
         @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
 
     @since 1.1
@@ -5148,7 +5181,7 @@ st_collections_group_max(void)
 /**
     @page edcref
     @property
-        scne_size
+        scene_size
     @parameters
         [width] [height]
     @effect
@@ -9077,7 +9110,7 @@ st_collections_group_parts_part_description_size_class(void)
     @parameters
         [width] [height]
     @effect
-        Restricts resizing of each dimension to values divisibles by its value.
+        Restricts resizing of each dimension to values divisible by its value.
         This causes the part to jump from value to value while resizing. The
         default value is "0 0" disabling stepping.
     @endproperty
@@ -9147,7 +9180,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
         [color class name]
     @effect
         The part will use the color values of the named color_class, these
-        values can be overrided by the "color", "color2" and "color3"
+        values can be overridden by the "color", "color2" and "color3"
         properties set below.
     @endproperty
 */
@@ -9171,9 +9204,20 @@ st_collections_group_parts_part_description_color_class(void)
     @property
         color
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the main color to the specified values (between 0 and 255).
+        Sets the main color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -9194,9 +9238,20 @@ st_collections_group_parts_part_description_color(void)
     @property
         color2
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text shadow color to the specified values (0 to 255).
+        Sets the text shadow color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 0 0 0 255
     @endproperty
 */
 static void
@@ -9217,9 +9272,20 @@ st_collections_group_parts_part_description_color2(void)
     @property
         color3
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text outline color to the specified values (0 to 255).
+        Sets the text outline color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 0 0 0 128
     @endproperty
 */
 static void
@@ -9252,7 +9318,7 @@ st_collections_group_parts_part_description_color3(void)
     @effect
         Overrides the 'clip_to' property of this part. This allows switching
         clippers (or masks) at runtime by changing this part's state. When
-        transitionning between two states, the switch of the clipper shall
+        transitioning between two states, the switch of the clipper shall
         happen at the end of the animation, when the new state is finally set
         (this is similar to the 'visible' flag).
     @endproperty
@@ -10992,7 +11058,7 @@ st_collections_group_parts_part_description_text_text_class(void)
         [font alias]
     @effect
         This sets the font family to one of the aliases set up in the "fonts"
-        block. Can be overrided by the application.
+        block. Can be overridden by the application.
     @endproperty
 */
 static void
@@ -11088,7 +11154,7 @@ st_collections_group_parts_part_description_text_repch(void)
     @parameters
         [font size in points (pt)]
     @effect
-        Sets the default font size for the text part. Can be overrided by the
+        Sets the default font size for the text part. Can be overridden by the
         application.
     @endproperty
 */
@@ -13926,7 +13992,7 @@ st_collections_group_parts_part_description_map_color(void)
 /**
     @page edcref
     @property
-        x
+        zoom.x
     @parameters
         [X horizontal zoom to use]
     @effect
@@ -13944,7 +14010,7 @@ st_collections_group_parts_part_description_map_zoom_x(void)
 /**
     @page edcref
     @property
-        y
+        zoom.y
     @parameters
         [Y vertical zoom to use]
     @effect
