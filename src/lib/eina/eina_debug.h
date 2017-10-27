@@ -216,7 +216,7 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
 /**
  * @brief Dispatch a given packet according to its header.
  *
- * This function checks the header contained into the packet and invokes
+ * This function checks the header contained in the packet and invokes
  * the correct callback according to the opcode.
  * This is the default dispatcher.
  *

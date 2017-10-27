@@ -33,7 +33,7 @@
  * eina_counter_free().
  *
  * To time a part of a code, call eina_counter_start() just before it,
- * and eina_counter_stop() just after it. Each time you start to time
+ * and eina_counter_stop() just after it. Each time you start timing
  * a code, a clock is added to a list. You can give the number of that
  * clock with the second argument of eina_counter_stop(). To send all
  * the registered clocks to a stream (like stdout, for a file), use
@@ -121,7 +121,7 @@ typedef struct _Eina_Counter Eina_Counter;
  * @param[in] name The name of the counter
  * @return A newly allocated counter
  *
- * @note Whe the new counter is not needed anymore, use eina_counter_free() to
+ * @note When the new counter is not needed anymore, use eina_counter_free() to
  *       free the allocated memory.
  */
 EAPI Eina_Counter *eina_counter_new(const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -145,8 +145,8 @@ EAPI void          eina_counter_free(Eina_Counter *counter) EINA_ARG_NONNULL(1);
  *
  * @param[in] counter The counter
  *
- * @note This function adds the clock associated to @p counter in a list. If
- *       the memory needed by that clock can not be allocated, the function
+ * @note This function adds the clock associated with @p counter in a list. If
+ *       the memory needed by that clock cannot be allocated, the function
  *       returns and nothing is done.
  *
  * @note To stop the timing, eina_counter_stop() must be called with the
