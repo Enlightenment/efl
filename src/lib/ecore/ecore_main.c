@@ -285,7 +285,7 @@ int in_main_loop = 0;
 
 static Eina_List *_pending_futures = NULL;
 static Eina_List *_pending_promises = NULL;
-static unsigned char _ecore_exit_code = 0;
+static Eina_Value _ecore_exit_code = EINA_VALUE_EMPTY;
 static int do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static Ecore_Fd_Handler *fd_handler_current = NULL;
@@ -2852,15 +2852,16 @@ EOLIAN static int _efl_loop_iterate_may_block(Eo *obj EINA_UNUSED, Efl_Loop_Data
    return ecore_main_loop_iterate_may_block(may_block);
 }
 
-EOLIAN static unsigned char
+// FIXME: This should return an Eina_Value, but that doesn't work at the moment
+EOLIAN static Eina_Value *
 _efl_loop_begin(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
    ecore_main_loop_begin();
-   return _ecore_exit_code;
+   return &_ecore_exit_code;
 }
 
 EOLIAN static void
-_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, unsigned char exit_code)
+_efl_loop_quit(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED, Eina_Value exit_code)
 {
    ecore_main_loop_quit();
    _ecore_exit_code = exit_code;
