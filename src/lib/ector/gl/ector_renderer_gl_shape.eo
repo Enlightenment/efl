@@ -1,13 +1,12 @@
-class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape)
+class Ector.Renderer.Gl.Shape (Ector.Renderer.Gl, Ector.Renderer.Shape)
 {
-   [[Ector GL renderer shape class]]
+   [[Ector Gl renderer shape class]]
    eo_prefix: ector_renderer_gl_shape;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
-      Ector.Renderer.crc { get; }
-      Ector.Renderer.GL.fill;
+      Efl.Gfx.Path.path { set; }
+      Ector.Renderer.Gl.fill;
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

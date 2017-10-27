@@ -1,13 +1,12 @@
-class Ector.Renderer.GL.Gradient.Radial (Ector.Renderer.GL, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
+class Ector.Renderer.Gl.Gradient.Radial (Ector.Renderer.Gl, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
 {
-   [[Ector GL renderer gradient radial]]
+   [[Ector Gl renderer gradient radial]]
    eo_prefix: ector_renderer_gl_gradient_radial;
+   data: Ector_Renderer_Gl_Gradient_Data;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
-      Ector.Renderer.crc { get; }
-      Ector.Renderer.GL.fill;
+      Ector.Renderer.Gl.fill;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.Gradient.stop { set; }

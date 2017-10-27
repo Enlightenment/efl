@@ -1,39 +1,38 @@
 import ector_types;
 
-class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
+class Ector.Gl.Surface (Ector.GL.Buffer, Ector.Surface)
 {
-   [[Ector GL surface class]]
+   [[Ector Gl surface class]]
    eo_prefix: ector_gl_surface;
    methods {
-      shader_get {
-         [[Get shader]]
-         return: uint; [[Shader count]]
+      context_info_set {
          params {
-            @in flags: uint64; [[Flags]]
+            width:          int;
+            height:         int;
+            rotation:       int;
+            clip:           ptr(Eina.Rect);
+            clear:          bool;
          }
       }
-      push {
-      	 [[Push surface to GPU]]
-         return: bool; [[$true on success, $false otherwise]]
-	 params {
-	    @in flags: uint64; [[GL flags]]
-	    @in vertex: ptr(GLshort); [[GL vertex]]
-	    @in vertex_count: uint; [[GL vertex count]]
-	    @in mul_col: uint; [[Premultiplied color]]
-	 }
+      vg_info_set {
+         params {
+            geom:    ptr(Eina.Rect);
+            color:   int;
+         }
       }
-      state_define {
-      	 [[Define state]]
-         return: bool; [[$true on success, $false otherwise]]
-	 params {
-            @in op: Efl.Gfx.Render_Op; [[Render operation]]
-	    @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
-	 }
+
+       draw_begin {
+         params {
+         }
+      }
+       draw_end {
+         params {
+         }
       }
    }
+
    implements {
       Ector.Surface.renderer_factory_new;
-      Ector.Surface.reference_point { set; }
       Efl.Object.destructor;
       Efl.Object.constructor;
    }

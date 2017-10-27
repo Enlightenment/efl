@@ -1,73 +1,221 @@
 #ifndef ECTOR_GL_PRIVATE_H_
-# define ECTOR_GL_PRIVATE_H_
-
-#define EVAS_GL_NO_HEADERS
+#define ECTOR_GL_PRIVATE_H_
 
 #include "ector_private.h"
+#include <Eina.h>
 
-#define SHADER_FLAG_SAM_BITSHIFT 3
-#define SHADER_FLAG_MASKSAM_BITSHIFT 6
+#define ECTOR_SHAD_VERTEX 0
+#define ECTOR_SHAD_TEXUV  1
 
-typedef enum {
-  SHADER_FLAG_TEX               = (1 << 0),
-  SHADER_FLAG_BGRA              = (1 << 1),
-  SHADER_FLAG_MASK              = (1 << 2),
-  SHADER_FLAG_SAM12             = (1 << (SHADER_FLAG_SAM_BITSHIFT + 0)),
-  SHADER_FLAG_SAM21             = (1 << (SHADER_FLAG_SAM_BITSHIFT + 1)),
-  SHADER_FLAG_SAM22             = (1 << (SHADER_FLAG_SAM_BITSHIFT + 2)),
-  SHADER_FLAG_MASKSAM12         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 0)),
-  SHADER_FLAG_MASKSAM21         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 1)),
-  SHADER_FLAG_MASKSAM22         = (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + 2)),
-  SHADER_FLAG_IMG               = (1 << 9),
-  SHADER_FLAG_BIGENDIAN         = (1 << 10),
-  SHADER_FLAG_YUV               = (1 << 11),
-  SHADER_FLAG_YUY2              = (1 << 12),
-  SHADER_FLAG_NV12              = (1 << 13),
-  SHADER_FLAG_YUV_709           = (1 << 14),
-  SHADER_FLAG_EXTERNAL          = (1 << 15),
-  SHADER_FLAG_AFILL             = (1 << 16),
-  SHADER_FLAG_NOMUL             = (1 << 17),
-  SHADER_FLAG_ALPHA             = (1 << 18),
-  SHADER_FLAG_RGB_A_PAIR        = (1 << 19),
-} Shader_Flag;
-#define SHADER_FLAG_COUNT 20
+#define GL_STENCIL_HIGH_BIT  0x80
 
-#define SHAD_VERTEX 0
-#define SHAD_COLOR  1
-#define SHAD_TEXUV  2
-#define SHAD_TEXUV2 3
-#define SHAD_TEXUV3 4
-#define SHAD_TEXA   5
-#define SHAD_TEXSAM 6
-#define SHAD_MASK   7
-#define SHAD_MASKSAM 8
+typedef struct _Ector_Renderer_Gl_Gradient_Data    Ector_Renderer_Gl_Gradient_Data;
+typedef struct _Ector_Gl_Surface_Data              Ector_Gl_Surface_Data;
+typedef struct _Ector_Renderer_Gl_Gradient_Data    Ector_Renderer_Gl_Gradient_Data;
 
-static inline void
-gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
+typedef struct _Shader_Program                     Shader_Program;
+
+struct _Shader_Program
 {
-   int loglen = 0, chars = 0;
-   char *logtxt;
+  GLuint program;
+  GLuint v_shader;
+  GLuint f_shader;
+  GLuint u_color;
+  GLuint u_mvp;
+  GLuint u_pos;
+  GLuint u_texture;
 
-   if (is_shader)
-     /* Shader info log */
-     GL.glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
-   else
-     /* Program info log */
-     GL.glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
+  GLuint u_half_viewport_size;
+  struct {
+    GLuint u_linear_data;
+  }linear;
+  struct {
+    GLuint u_fmp;
+    GLuint u_bradius;
+    GLuint u_fmp2_m_radius2;
+    GLuint u_inverse_2_fmp2_m_radius2;
+    GLuint u_sqrfr;
+  }radial;
+};
 
-   if (loglen > 0)
-     {
-        logtxt = calloc(loglen, sizeof(char));
-        if (logtxt)
-          {
-             if (is_shader) GL.glGetShaderInfoLog(target, loglen, &chars, logtxt);
-             else GL.glGetProgramInfoLog(target, loglen, &chars, logtxt);
-             ERR("Failed to %s: %s", action, logtxt);
-             free(logtxt);
-          }
-     }
-}
 
-GLuint ector_gl_shader_compile(uint64_t flags);
+struct _Ector_Gl_Surface_Data
+{
+   struct {
+     GLuint         fbo;
+     int            w;
+     int            h;
+     int            rotation;
+     Eina_Bool      flip;
+     Eina_Bool      clear;
+     Eina_Bool      stencil;
+     Eina_Rectangle clip;
+   }context;
+
+   struct {
+     Eina_Rectangle  geom;
+     int             color;
+   }vg;
+
+   struct {
+      int x, y;
+   } ref_point;
+
+   struct {
+      int        w, h;
+      GLuint     fbo;
+      Eina_Bool  flip;
+      int        rotation;
+      Eina_Bool  clear;
+   } dest_fbo;
+
+   int vg_width;
+   int vg_height;
+
+   Eina_Rectangle clip;
+
+   Eina_Bool  direct_draw;
+};
+
+// GRADIENT
+
+#define GRADIENT_ARRAY_SIZE 512
+
+typedef struct _Gl_Gradient_Linear_Data
+{
+   float x1, y1, x2, y2;
+   float dx, dy, l;
+} Gl_Gradient_Linear_Data;
+
+typedef struct _Gl_Gradient_Radial_Data
+{
+   float cx, cy, fx, fy, cradius, fradius;
+   float dx, dy, dr, sqrfr, a, inv2a;
+   Eina_Bool extended;
+} Gl_Gradient_Radial_Data;
+
+// Gradient related structure
+struct _Ector_Renderer_Gl_Gradient_Data
+{
+   Ector_Renderer_Gradient_Data *gd;
+   union {
+      Ector_Renderer_Gradient_Linear_Data *gld;
+      Ector_Renderer_Gradient_Radial_Data *grd;
+   };
+   union {
+      Gl_Gradient_Linear_Data linear;
+      Gl_Gradient_Radial_Data radial;
+   };
+   Eina_Bool      alpha;
+   unsigned int*  color_table;
+   GLuint         texture;
+};
+
+void update_gradient_texture(Ector_Renderer_Gl_Gradient_Data *gdata);
+void destroy_gradient_texture(Ector_Renderer_Gl_Gradient_Data *gdata);
+
+
+// Ector Gl Engine
+typedef struct _Ector_Gl_Engine_Data      Ector_Gl_Engine_Data;
+
+typedef enum _Brush_Type {
+  Solid,
+  LinearGradient,
+  RadialGradient,
+} Brush_Type;
+
+struct _Ector_Gl_Engine_Data
+{
+   struct {
+     Shader_Program *simple;
+     Shader_Program *tex;
+     Shader_Program *lg;
+     Shader_Program *rg;
+   }shader;
+
+   struct {
+      int         w, h;
+      struct {
+        int       w, h;
+        GLuint    id;
+        GLuint    texture;
+        GLuint    rbo_color;
+        GLuint    rbo_stencil;
+      }fbo;
+
+      struct {
+        Eina_Bool multisample;
+        Eina_Bool ext_multisample;
+        int       multisample_size;
+        int       max_multisample;
+      }capability;
+   } surface;
+
+   struct {
+     Eina_Bool direct_draw; // draw directly to bounded fbo
+     Eina_Bool stencil; // whether stencil buffer available in the bounded fbo
+     Eina_Bool clear_surface; // whether to clear the bounded fbo
+     Eina_Bool flip;
+     int       rotation;
+     int       color;
+   }info;
+
+   struct {
+      unsigned int                      color;
+      Ector_Renderer_Gl_Gradient_Data  *g;
+      Brush_Type                        type;
+   }brush;
+
+   struct{
+     Shader_Program *program;
+     unsigned int    u_color;
+     int             u_pos_x;
+     int             u_pos_y;
+   }state;
+
+   struct {
+     int x;
+     int y;
+   }offset;
+
+   struct {
+     Eina_Rectangle clip;
+     struct {
+       int x;
+       int y;
+     }offset;
+   }master;
+
+   float *mvp;
+
+   int ref;
+};
+
+
+void ector_gl_engine_init();
+void ector_gl_engine_shutdown();
+void ector_gl_engine_info_set(Eina_Bool direct_draw, Eina_Bool stencil, Eina_Bool clear_surface, Eina_Bool flip, int rotation);
+Eina_Bool ector_gl_engine_begin();
+void ector_gl_engine_end();
+void ector_gl_engine_surface_size_set(int width, int height);
+void ector_gl_engine_master_clip_set(Eina_Rectangle *clip);
+void ector_gl_engine_master_offset_set(int x, int y);
+void ector_gl_engine_mul_color_set(int mul_color);
+void ector_gl_engine_surface_copy(GLuint dst_surface, int dst_surface_w, int dst_surface_h,
+                                  Eina_Rectangle *dst);
+
+void ector_gl_engine_param_offset(int x, int y);
+void ector_gl_engine_param_matrix(Eina_Matrix3 *m);
+void ector_gl_engine_param_color(unsigned int color);
+
+void ector_gl_engine_param_linear_gradient(Ector_Renderer_Gl_Gradient_Data* lg);
+void ector_gl_engine_param_radial_gradient(Ector_Renderer_Gl_Gradient_Data* rg);
+
+void ector_gl_engine_fill_set();
+
+void ector_gl_engine_path_fill(float *vertex, unsigned int vertex_count,
+                               int *stops, unsigned int stop_count);
+
+void ector_gl_engine_path_stroke(float *vertex, int count);
 
 #endif

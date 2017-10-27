@@ -1,13 +1,12 @@
-class Ector.Renderer.GL.Gradient.Linear (Ector.Renderer.GL, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear)
+class Ector.Renderer.Gl.Gradient.Linear (Ector.Renderer.Gl, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear)
 {
-   [[Ector GL renderer gradient linear]]
+   [[Ector Gl renderer gradient linear]]
    eo_prefix: ector_renderer_gl_gradient_linear;
+   data: Ector_Renderer_Gl_Gradient_Data;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
-      Ector.Renderer.crc { get; }
-      Ector.Renderer.GL.fill;
+      Ector.Renderer.Gl.fill;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.Gradient.stop { set; }
