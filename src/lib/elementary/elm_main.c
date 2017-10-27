@@ -1285,7 +1285,7 @@ elm_quicklaunch_fallback(int    argc,
    return ret;
 }
 
-EAPI int
+EAPI Eina_Value *
 efl_quicklaunch_fallback(int    argc,
                          char **argv)
 {
@@ -1299,7 +1299,7 @@ efl_quicklaunch_fallback(int    argc,
         return efl_loop_begin(ecore_main_loop_get());
      }
 
-   return 255;
+   return eina_value_uchar_new(255);
 }
 
 EAPI char *

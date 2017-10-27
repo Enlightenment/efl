@@ -158,6 +158,12 @@ extern EAPI double _elm_startup_time;
  */
 EAPI void efl_exit(int exit_code);
 
+/**
+ * Exposed symbol used only by macros and should not be used by apps
+ * @since 1.18 (as beta)
+ */
+EAPI Eina_Value *efl_quicklaunch_fallback(int argc, char **argv);
+
 #endif /* EFL_BETA_API_SUPPORT */
 
 
@@ -310,14 +316,6 @@ EAPI void      elm_quicklaunch_cleanup(void);
  * Exposed symbol used only by macros and should not be used by apps
  */
 EAPI int       elm_quicklaunch_fallback(int argc, char **argv);
-
-#ifdef EFL_BETA_API_SUPPORT
-/**
- * Exposed symbol used only by macros and should not be used by apps
- * @since 1.18 (as beta)
- */
-EAPI int       efl_quicklaunch_fallback(int argc, char **argv);
-#endif
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
