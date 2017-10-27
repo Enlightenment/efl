@@ -38,6 +38,18 @@ extern "C" {
 
 #include "efl_loop.eo.h"
 
+/**
+ * @brief Quits the main loop once all the events currently on the queue have
+ * been processed.
+ *
+ * @param[in] exit_code Returned value by begin()
+ *
+ * @note This function can only be called from the main loop.
+ *
+ * @ingroup Efl_Loop
+ */
+EAPI void efl_exit(int exit_code);
+
 EAPI int efl_loop_exit_code_process(Eina_Value *value);
 
 #include "efl_loop_user.eo.h"
