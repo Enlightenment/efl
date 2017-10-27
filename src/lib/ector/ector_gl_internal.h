@@ -846,6 +846,8 @@ struct _Ector_GL_API {
    // Struct is same as Evas_GL_API version 1 without extensions
 
    int            init;
+   int            version;
+   int            ext_ms_render_to_tex;
 
    void         (*glActiveTexture) (GLenum texture);
    void         (*glAttachShader) (GLuint program, GLuint shader);
@@ -992,6 +994,21 @@ struct _Ector_GL_API {
    void         (*glVertexAttrib4fv) (GLuint indx, const GLfloat* values);
    void         (*glVertexAttribPointer) (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr);
    void         (*glViewport) (GLint x, GLint y, GLsizei width, GLsizei height);
+   void*        (*glXGetProcAddress)(char const * procname);
+   void*        (*eglGetProcAddress)(char const * procname);
+
+   // openGL ES 2 MSAA extension GL_EXT_multisampled_render_to_texture
+   void         (*glRenderbufferStorageMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+   void         (*glFramebufferTexture2DMultisampleEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, int level, GLsizei samples);
+
+   // openGL ES 3
+   void         (*glRenderbufferStorageMultisample) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+   void         (*glBlitFramebuffer) (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+
+
+   // custom function
+   Eina_Bool    (*glFuncExist) (void* gl_func);
+   void         (*finalize)(void);
 };
 
 #endif

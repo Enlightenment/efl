@@ -57,19 +57,101 @@ ector_init(void)
    return 0;
 }
 
-static void
-donothing(void)
+static int
+_gl_version()
 {
+   char *str;
+
+   str = (char *)GL.glGetString(GL_VERSION);
+   if (!str)
+     {
+        return 0;
+     }
+
+   if (strstr(str, "OpenGL ES 3"))
+     {
+        return 3;
+     }
+
+   if (strstr(str, "OpenGL ES 2"))
+     {
+        return 2;
+     }
+
+    if (strstr(str, "3.") || strstr(str, "4."))
+     {
+        return 3;
+     }
+
+    if (strstr(str, "2."))
+     {
+        return 2;
+     }
+   return 0;
+}
+
+static int
+_gl_extension(const char * extension)
+{
+   char *extensions;
+   extensions = (char *)GL.glGetString(GL_EXTENSIONS);
+   if (strstr(extensions, extension))
+      return 1;
+   return 0;
+}
+
+static Eina_Bool
+gl_func_exist(void *fp)
+{
+   if (!fp) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static void
+_gl_finalize()
+{
+   if (GL.init) return;
+   GL.init = EINA_TRUE;
+   GL.version = _gl_version();
+
+   if (GL.version == 2)
+     {
+        GL.glRenderbufferStorageMultisample = NULL;
+        GL.glBlitFramebuffer = NULL;
+        GL.glRenderbufferStorageMultisampleEXT = NULL;
+        GL.glFramebufferTexture2DMultisampleEXT = NULL;
+        if (_gl_extension("GL_EXT_multisampled_render_to_texture"))
+          {
+             if (GL.eglGetProcAddress)
+               {
+                  GL.glRenderbufferStorageMultisampleEXT = GL.eglGetProcAddress("glRenderbufferStorageMultisampleEXT");
+                  GL.glFramebufferTexture2DMultisampleEXT = GL.eglGetProcAddress("glFramebufferTexture2DMultisampleEXT");
+               }
+             if (GL.glXGetProcAddress)
+               {
+                  GL.glRenderbufferStorageMultisampleEXT = GL.glXGetProcAddress("glRenderbufferStorageMultisampleEXT");
+                  GL.glFramebufferTexture2DMultisampleEXT = GL.glXGetProcAddress("glFramebufferTexture2DMultisampleEXT");
+               }
+             GL.ext_ms_render_to_tex = 1;
+          }
+     }
+   if (GL.version == 3)
+     {
+        GL.glRenderbufferStorageMultisampleEXT = 0;
+        GL.glFramebufferTexture2DMultisampleEXT = 0;
+     }
+
 }
 
 EAPI Eina_Bool
 ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib)
 {
-   Eina_Bool r = EINA_TRUE;
+   GL.init = 0;
 
    if (!glsym) return EINA_FALSE;
 
-#define ORD(a) do { GL.a = glsym(lib, #a); if (!GL.a) { GL.a = (void*) donothing; r = EINA_FALSE; } } while (0)
+#define ORD(a) GL.a = glsym(lib, #a);
 
    ORD(glActiveTexture);
    ORD(glAttachShader);
@@ -216,9 +298,16 @@ ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib)
    ORD(glVertexAttrib4fv);
    ORD(glVertexAttribPointer);
    ORD(glViewport);
+   ORD(eglGetProcAddress);
+   ORD(glXGetProcAddress);
 
-   GL.init = r;
-   return r;
+   ORD(glRenderbufferStorageMultisample);
+   ORD(glBlitFramebuffer);
+   GL.finalize = _gl_finalize;
+   GL.glFuncExist = gl_func_exist;
+   GL.ext_ms_render_to_tex = 0;
+
+   return EINA_TRUE;
 }
 
 EAPI int
