@@ -2623,6 +2623,65 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *data, void *context, voi
    eina_array_free(c);
 }
 
+// Ector functions start
+static void*
+eng_ector_surface_create(void *engine, int width, int height, int *error)
+{
+   void *surface;
+
+   *error = EINA_FALSE;
+
+   if (use_gl)
+     {
+        surface = evas_gl_common_image_surface_new(gl_generic_context_get(engine, EINA_TRUE),
+                                                   width, height, EINA_TRUE, EINA_FALSE);
+        if (!surface) *error = EINA_TRUE;
+     }
+   else
+     {
+        surface = eng_image_new_from_copied_data(engine, width, height, NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+        if (!surface)
+             *error = EINA_TRUE;
+        else  //Use this hint for ZERO COPY texture upload.
+          eng_image_content_hint_set(engine, surface, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+     }
+
+   return surface;
+}
+
+static void
+eng_ector_surface_destroy(void *engine, void *surface)
+{
+   if (!surface) return;
+   eng_image_free(engine, surface);
+}
+
+static void
+eng_ector_surface_cache_set(void *engine, void *key , void *surface)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   generic_cache_data_set(e->software.surface_cache, key, surface);
+
+}
+
+static void *
+eng_ector_surface_cache_get(void *engine, void *key)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   return generic_cache_data_get(e->software.surface_cache, key);
+}
+
+static void
+eng_ector_surface_cache_drop(void *engine, void *key)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   generic_cache_data_drop(e->software.surface_cache, key);
+}
+
+
 typedef struct _Evas_GL_Ector Evas_GL_Ector;
 struct _Evas_GL_Ector
 {
@@ -3305,7 +3364,11 @@ module_open(Evas_Module *em)
    ORD(ector_end);
    ORD(ector_new);
    ORD(ector_free);
-
+   ORD(ector_surface_create);
+   ORD(ector_surface_destroy);
+   ORD(ector_surface_cache_set);
+   ORD(ector_surface_cache_get);
+   ORD(ector_surface_cache_drop);
    ORD(gfx_filter_supports);
    ORD(gfx_filter_process);
 

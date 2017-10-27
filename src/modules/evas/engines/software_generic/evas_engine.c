@@ -4294,6 +4294,8 @@ eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
    if (re->outbuf_idle_flush) re->outbuf_idle_flush(re->ob);
 }
 
+// Ector functions
+
 static Eina_Bool use_cairo;
 
 static Ector_Surface *
@@ -4317,6 +4319,52 @@ eng_ector_create(void *engine EINA_UNUSED)
    efl_domain_current_pop();
    return ector;
 }
+
+static void*
+eng_ector_surface_create(void *engine, int width, int height, int *error)
+{
+   void *surface;
+
+   *error = EINA_FALSE;
+
+   surface = eng_image_new_from_copied_data(engine, width, height, NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+   if (!surface) *error = EINA_TRUE;
+
+   return surface;
+}
+
+static void
+eng_ector_surface_destroy(void *engine, void *surface)
+{
+   if (!surface) return;
+   eng_image_free(engine, surface);
+}
+
+static void
+eng_ector_surface_cache_set(void *engine, void *key , void *surface)
+{
+   Render_Engine_Software_Generic *e = engine;
+
+   generic_cache_data_set(e->surface_cache, key, surface);
+
+}
+
+static void *
+eng_ector_surface_cache_get(void *engine, void *key)
+{
+   Render_Engine_Software_Generic *e = engine;
+
+   return generic_cache_data_get(e->surface_cache, key);
+}
+
+static void
+eng_ector_surface_cache_drop(void *engine, void *key)
+{
+   Render_Engine_Software_Generic *e = engine;
+
+   generic_cache_data_drop(e->surface_cache, key);
+}
+
 
 static void
 eng_ector_output_set(void *engine EINA_UNUSED,
@@ -4846,6 +4894,11 @@ static Evas_Func func =
      eng_ector_end,
      eng_ector_new,
      eng_ector_free,
+     eng_ector_surface_create,
+     eng_ector_surface_destroy,
+     eng_ector_surface_cache_set,
+     eng_ector_surface_cache_get,
+     eng_ector_surface_cache_drop,
      eng_gfx_filter_supports,
      eng_gfx_filter_process,
    /* FUTURE software generic calls go here */

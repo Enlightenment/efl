@@ -1513,6 +1513,12 @@ struct _Evas_Func
    void* (*ector_new)                    (void *engine, void *context, Ector_Surface *ector, void *surface);
    void  (*ector_free)                   (void *engine_data);
 
+   void *(*ector_surface_create)         (void *engine, int w, int h, int *error);
+   void  (*ector_surface_destroy)        (void *engine, void *surface);
+   void  (*ector_surface_cache_set)      (void *engine, void *key, void *surface);
+   void *(*ector_surface_cache_get)      (void *engine, void *key);
+   void  (*ector_surface_cache_drop)     (void *engine, void *key);
+
    Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
    Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
 

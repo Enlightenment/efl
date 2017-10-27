@@ -34,7 +34,7 @@ generic_cache_dump(Generic_Cache *cache)
 }
 
 EAPI void
-generic_cache_set(Generic_Cache *cache, void *key, void *surface)
+generic_cache_data_set(Generic_Cache *cache, void *key, void *surface)
 {
    Generic_Cache_Entry *entry = NULL;
    int count;
@@ -59,7 +59,7 @@ generic_cache_set(Generic_Cache *cache, void *key, void *surface)
 }
 
 EAPI void *
-generic_cache_get(Generic_Cache *cache, void *key)
+generic_cache_data_get(Generic_Cache *cache, void *key)
 {
    Generic_Cache_Entry *entry = NULL, *lru_data;
    Eina_List *l;
@@ -84,7 +84,7 @@ generic_cache_get(Generic_Cache *cache, void *key)
 }
 
 EAPI void
-generic_cache_drop(Generic_Cache *cache, void *key)
+generic_cache_data_drop(Generic_Cache *cache, void *key)
 {
    Generic_Cache_Entry *entry = NULL;
 
