@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg (Efl.Canvas.Object)
+class Efl.Canvas.Vg (Efl.Canvas.Object, Efl.File)
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -73,5 +73,7 @@ class Efl.Canvas.Vg (Efl.Canvas.Object)
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
+      Efl.File.file { get; set; }
+      Efl.File.save;
    }
 }
