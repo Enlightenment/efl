@@ -17,6 +17,7 @@
 
 # include "xdg-shell-unstable-v6-client-protocol.h"
 # include "efl-aux-hints-client-protocol.h"
+# include "efl-hints-client-protocol.h"
 
 extern int _ecore_wl2_log_dom;
 extern Eina_Bool no_session_recovery;
@@ -95,6 +96,7 @@ struct _Ecore_Wl2_Display
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
+        struct efl_hints *efl_hints;
         struct zwp_teamwork *teamwork;
         int compositor_version;
      } wl;

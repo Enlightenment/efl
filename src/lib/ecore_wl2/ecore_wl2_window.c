@@ -271,8 +271,8 @@ static void
 _zxdg_popup_cb_configure(void *data, struct zxdg_popup_v6 *zxdg_popup EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t width, int32_t height)
 {
    Ecore_Wl2_Window *win = data;
-   win->def_config.geometry.w = width;
-   win->def_config.geometry.h = height;
+   win->geometry.w = width;
+   win->geometry.h = height;
 }
 
 static void
