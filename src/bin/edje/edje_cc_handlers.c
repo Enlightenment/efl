@@ -9211,7 +9211,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
         [color class name]
     @effect
         The part will use the color values of the named color_class, these
-        values can be overridden by the "color", "color2" and "color3"
+        values can be modified by the "color", "color2" and "color3"
         properties set below.
     @endproperty
 */
@@ -9248,6 +9248,8 @@ st_collections_group_parts_part_description_color_class(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
+        If color_class is set resulting color channel values will be (color * color_class / 255)
+
         Defaults: 255 255 255 255
     @endproperty
 */
@@ -9282,6 +9284,8 @@ st_collections_group_parts_part_description_color(void)
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
 
+        If color_class is set resulting color channel values will be (color * color_class / 255)
+
         Defaults: 0 0 0 255
     @endproperty
 */
@@ -9315,6 +9319,8 @@ st_collections_group_parts_part_description_color2(void)
         @li "#[R][G][B](A)": string with one hex value per RGBA channel,
         i.e "#F00F" or "#F00".\n
         In string format you can omit alpha channel and it will be set to FF.
+
+        If color_class is set resulting color channel values will be (color * color_class / 255)
 
         Defaults: 0 0 0 128
     @endproperty
