@@ -28,11 +28,6 @@ static int _focus_log_domain = -1;
 
 #define DIRECTION_ACCESS(V, ID) ((V)->graph.directions[(ID) - 2])
 
-typedef struct {
-    Eina_Bool positive;
-    Efl_Ui_Focus_Object *anchor;
-} Anchor;
-
 typedef enum {
     DIMENSION_X = 0,
     DIMENSION_Y = 1,
