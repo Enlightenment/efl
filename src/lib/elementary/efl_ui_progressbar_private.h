@@ -44,7 +44,8 @@ struct _Efl_Ui_Progressbar_Data
 
    Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
    Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
-   Eina_Bool             is_legacy_format : 1;
+   Eina_Bool             is_legacy_format_string : 1;
+   Eina_Bool             is_legacy_format_cb : 1;
 };
 
 struct _Efl_Ui_Progress_Status
