@@ -1362,9 +1362,13 @@ elm_run(void)
 }
 
 EAPI void
-efl_exit(unsigned char exit_code)
+efl_exit(int exit_code)
 {
-   efl_loop_quit(ecore_main_loop_get(), exit_code);
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+   eina_value_set(&v, &exit_code);
+   efl_loop_quit(ecore_main_loop_get(), v);
 
    if (elm_policy_get(ELM_POLICY_EXIT) == ELM_POLICY_EXIT_WINDOWS_DEL)
      {
