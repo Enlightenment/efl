@@ -1,3 +1,5 @@
+#define EVAS_VG_BETA
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -133,6 +135,10 @@ evas_object_vg_add(Evas *e)
 EOLIAN static Efl_VG *
 _efl_canvas_vg_root_node_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd)
 {
+   if (pd->vg_entry)
+     {
+        return evas_cache_vg_tree_get(pd->vg_entry);
+     }
    return pd->vg_tree;
 }
 
@@ -142,6 +148,13 @@ _efl_canvas_vg_root_node_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, Efl_VG
    // if the same root is already set
    if (pd->vg_tree == root_node)
      return;
+
+   // check if a file has been already set
+   if (pd->vg_entry)
+     {
+        evas_cache_vg_entry_del(pd->vg_entry);
+        pd->vg_entry = NULL;
+     }
 
    // detach/free the old root_node
    if (pd->vg_tree)
@@ -224,6 +237,62 @@ _efl_canvas_vg_viewbox_align_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, do
 {
    if (align_x) *align_x = pd->align_x;
    if (align_y) *align_y = pd->align_y;
+}
+
+// file set and save api implementation
+
+EOLIAN static Eina_Bool
+_efl_canvas_vg_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Data *pd, const char *file, const char *key)
+{
+   int w, h;
+   Evas_Cache_Vg_Entry *entry;
+
+   if (!file) return EINA_FALSE;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   entry = evas_cache_vg_entry_find(file, key, w, h);
+   if (entry != pd->vg_entry)
+     {
+        if (pd->vg_entry)
+          {
+             evas_cache_vg_entry_del(pd->vg_entry);
+          }
+        pd->vg_entry = entry;
+     }
+   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_efl_canvas_vg_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, const char **file, const char **key)
+{
+   if (pd->vg_entry)
+     {
+        if (file) *file = pd->vg_entry->file;
+        if (key)  *key = pd->vg_entry->key;
+     }
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_vg_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Data *pd, const char *file, const char *key, const char *flags)
+{
+   Vg_File_Data tmp;
+   Vg_File_Data *info = &tmp;
+
+   if (pd->vg_entry && pd->vg_entry->file)
+     {
+        info = evas_cache_vg_file_info(pd->vg_entry->file, pd->vg_entry->key);
+     }
+   else
+     {
+        info->view_box.x = 0;
+        info->view_box.y = 0;
+        evas_object_geometry_get(obj, NULL, NULL, &info->view_box.w, &info->view_box.h);
+        info->root = pd->root;
+        info->preserve_aspect = EINA_FALSE;
+     }
+   evas_vg_save_to_file(info, file, key, flags);
+   return EINA_TRUE;
 }
 
 static void
@@ -327,6 +396,7 @@ _efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                       int x, int y, Eina_Bool do_async)
 {
    Efl_Canvas_Vg_Data *vd = type_private_data;
+   Efl_VG *root = NULL;
    Ector_Surface *ector = evas_ector_get(obj->layer->evas);
 
    obj->layer->evas->engine.func->ector_output_set(engine, surface, output);
@@ -351,6 +421,17 @@ _efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                          obj->cur->anti_alias);
    obj->layer->evas->engine.func->context_render_op_set(engine, context,
                                                         obj->cur->render_op);
+   if (vd->vg_entry)
+     {
+        root = evas_cache_vg_tree_get(vd->vg_entry);
+        if (!root) return;
+        _evas_vg_render_pre(root, ector, NULL);
+     }
+   else
+     {
+        root = vd->root;
+     }
+   //obj->layer->evas->engine.func->ector_begin(output, context,
    obj->layer->evas->engine.func->ector_begin(engine, context,
                                               ector, surface,
                                               vd->engine_data,
@@ -358,7 +439,7 @@ _efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                               do_async);
    _evas_vg_render(obj, vd,
                    engine, output, context, surface,
-                   vd->root, NULL,
+                   root, NULL,
                    do_async);
    obj->layer->evas->engine.func->ector_end(engine, context, ector, surface, vd->engine_data, do_async);
 
