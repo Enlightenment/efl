@@ -19,6 +19,10 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
 /**
  * Special layout function that animates the transition from one layout to another
  *
+ * @param obj The object.
+ * @param priv The smart object instance data.
+ * @param data Data will be passed to function.
+ *
  * Normally, when switching the layout function for a box, this will be
  * reflected immediately on screen on the next render, but it's also
  * possible to do this through an animated transition.
@@ -36,7 +40,7 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
  *                            NULL, // data for final layout
  *                            NULL, // free function for final data
  *                            anim_end, // will be called when animation ends
- *                            NULL); // data for anim_end function\
+ *                            NULL); // data for anim_end function
  * elm_box_layout_set(box, elm_box_layout_transition, t,
  *                    elm_box_transition_free);
  * @endcode
