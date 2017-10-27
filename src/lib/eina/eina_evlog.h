@@ -52,14 +52,14 @@ struct _Eina_Evlog_Buf
    unsigned char *buf; // current buffer we fill with event logs
    unsigned int size; // the max size of the evlog buffer
    unsigned int top; // the current top byte for a new evlog item
-   unsigned int overflow; // how many times this buffer has overflown
+   unsigned int overflow; // how many times this buffer has overflowed
 };
 
 /**
  * @brief Logs an event in our event log for profiling data.
  *
  * Log some interesting event inside of EFL, eg a wakeup (and why etc.).
- * The @p event string must alwasy be provided and be of the form:
+ * The @p event string must always be provided and be of the form:
  *
  * "+eventname"
  * "-eventname"
@@ -72,12 +72,12 @@ struct _Eina_Evlog_Buf
  * events logged are really children of this event). The "-" char means an
  * event is ending and so all child events SHOULD have ended by now. A "!"
  * character means the event is a one-off with no beginning or end. A"*"
- * Means this is special metadata and the defail field may need special
- * parsing based on the eventname, so ignroe unless known.  A ">"
+ * means this is special metadata and the detail field may need special
+ * parsing based on the eventname, so ignore unless known.  A ">"
  * character means we begin this "state" of the process (these are separate
- * to "+" and "-" events and don't nest - arenot related to a thread or
+ * to "+" and "-" events and don't nest - are not related to a thread or
  * any other event, but just a state). "<" Ends the given state given by
- * the "eventname" spart of the string.  Any string following this initial
+ * the "eventname" part of the string.  Any string following this initial
  * character is the event or state name (and must be provided in the exact
  * same string at both "+", "<" and "-", ">" events). This is what will be
  * displayed in a debugger (and may be a well known string thus given a nice
@@ -89,11 +89,11 @@ struct _Eina_Evlog_Buf
  * The @p object is optional, and if not used, pass in NULL. If it is used,
  * it can be a pointer to anything. It is intended simply to be of use to
  * indicate an event happens on object A vs object B. What this points to
- * is irrelevant as the pointer is never de-references or used other than
+ * is irrelevant as the pointer is never de-referenced or used other than
  * as a label to differentiate an event on 2 different objects.
  *
  * The @p srctime parameter is 0.0 if not used, or if used, contains a
- * timepoint for an event that triggered this one. For example, if a device
+ * timepoint for an event that triggered this once. For example, if a device
  * or hardware interrupt causes this event, that device may provide a
  * timestamp/timepoint as part of the device information to indicate the
  * exact time the hardware interrupt happened. This can be useful to have

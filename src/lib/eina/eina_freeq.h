@@ -25,7 +25,7 @@
  * it to 0 to force the free queue to work and delay freeing of items.
  * Note that you can override this by setting count or mem max by
  * eina_freeq_count_max_set() or eina_freeq_mem_max_set() which will
- * disable bypass for that specific free queue. once bypass is disabled
+ * disable bypass for that specific free queue. Once bypass is disabled
  * it cannot be re-enabled.
  *
  * EINA_FREEQ_FILL_MAX=N
@@ -50,7 +50,7 @@
  *
  * EINA_FREEQ_FILL=N
  *
- * This sets the buyte value to write to every byte of an allocation that
+ * This sets the byte value to write to every byte of an allocation that
  * is added to the free queue when it is added to mark the data as invalid.
  * The default value is 0x55 (85). Memory is only filled if the size of
  * the allocation is less than the max that you can adjust with

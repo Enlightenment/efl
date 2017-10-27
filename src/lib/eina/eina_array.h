@@ -43,7 +43,7 @@
  * Here we have a callback that prints the element given to it:
  * @until }
  *
- * Now we create our entry point and declare some variables, nothing especial:
+ * Now we create our entry point and declare some variables, nothing special:
  * @until unsigned
  *
  * Before we can start using any array function we need to initialize eina:
@@ -262,7 +262,7 @@ EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_
  * @param array The array to free.
  *
  * This function frees @p array. It calls first eina_array_flush() then
- * free the memory of the pointer. It does not free the memory
+ * frees the memory of the pointer. It does not free the memory
  * allocated for the elements of @p array. To free them, walk the array with
  * #EINA_ARRAY_ITER_NEXT.
  */
@@ -316,7 +316,7 @@ EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
  * @param gdata The data to pass to the function keep.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This function rebuilds @p array be specifying the elements to keep with the
+ * This function rebuilds @p array by specifying the elements to keep with the
  * function @p keep. No empty/invalid fields are left in the array. @p gdata is
  * an additional data to pass to @p keep. For performance reasons, there is no
  * check of @p array. If it is @c NULL or invalid, the program may crash.
@@ -414,7 +414,7 @@ static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_AR
 static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Gets a new iterator associated to an array.
+ * @brief Gets a new iterator associated with an array.
  *
  * @param array The array.
  * @return A new iterator.
@@ -427,7 +427,7 @@ static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NO
 EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Gets a new accessor associated to an array.
+ * @brief Gets a new accessor associated with an array.
  *
  * @param array The array.
  * @return A new accessor.
@@ -445,7 +445,7 @@ EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA
  * @param array The array to iterate over.
  * @param cb The callback to call for each item.
  * @param fdata The user data to pass to the callback.
- * @return #EINA_TRUE if it successfully iterate all items of the array.
+ * @return #EINA_TRUE if it successfully iterated all items of the array.
  *
  * This function provides a safe way to iterate over an array. @p cb should
  * return #EINA_TRUE as long as you want the function to continue iterating.
