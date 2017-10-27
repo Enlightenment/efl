@@ -1267,7 +1267,7 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    char *s;
    Eina_File *f = NULL;
    Edje_Vector_Directory_Entry *vector;
-   char buf[100];
+   Eina_Strbuf *buf;
    Eina_Bool found = EINA_FALSE;
    Ecore_Evas *ee;
    Evas *evas;
@@ -1281,7 +1281,7 @@ data_write_vectors(Eet_File *ef, int *vector_num)
      error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
    evas = ecore_evas_get(ee);
    vg = evas_object_vg_add(evas);
-
+   buf = eina_strbuf_new();
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
      {
         if (!beta)
@@ -1290,18 +1290,18 @@ data_write_vectors(Eet_File *ef, int *vector_num)
         vector = &edje_file->image_dir->vectors[i];
         EINA_LIST_FOREACH(img_dirs, ll, s)
           {
-             sprintf(buf, "%s/%s", s, vector->entry);
-
-             f = eina_file_open(buf, EINA_FALSE);
+             eina_strbuf_reset(buf);
+             eina_strbuf_append_printf(buf, "%s" EINA_PATH_SEP_S "%s", s, vector->entry);
+             f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
              if (!f) continue;
              eina_file_close(f);
 
-             if (!efl_file_set(vg, buf, NULL))
+             if (!efl_file_set(vg, eina_strbuf_string_get(buf), NULL))
                error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
 
-             sprintf(buf, "edje/vectors/%i", vector->id);
-
-             if(!efl_file_save(vg, eet_file_get(ef), buf, NULL))
+             eina_strbuf_reset(buf);
+             eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
+             if (!efl_file_save(vg, eet_file_get(ef), eina_strbuf_string_get(buf), NULL))
                error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
 
              *vector_num += 1;
@@ -1312,6 +1312,7 @@ data_write_vectors(Eet_File *ef, int *vector_num)
           error_and_abort(ef, "Unable to find the svg :%s", vector->entry);
         found = EINA_FALSE;
      }
+   eina_strbuf_free(buf);
 }
 
 static void

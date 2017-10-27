@@ -3696,13 +3696,13 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 {
    int new_svg = -1; //invalid svg
    int w, h;
-   char src_key[20], dest_key[20];
+   char src_key[32], dest_key[32];
    Efl_VG *src_root, *dest_root, *root;
 
    evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
    if( (w == 0) || (h == 0)) return;
 
-   sprintf(src_key, "edje/vectors/%i", chosen_desc->vg.id);
+   snprintf(src_key, sizeof(src_key), "edje/vectors/%i", chosen_desc->vg.id);
 
    if (ep->param2)
      {
@@ -3719,22 +3719,27 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
      }
    else
      {
-        sprintf(dest_key, "edje/vectors/%i", new_svg);
+        snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_svg);
 
         efl_file_set(ep->object, ed->file->path, src_key);
         src_root = efl_canvas_vg_root_node_get(ep->object);
+        efl_ref(src_root);
 
         efl_file_set(ep->object, ed->file->path, dest_key);
         dest_root = efl_canvas_vg_root_node_get(ep->object);
+        efl_ref(dest_root);
 
+        // FIXME: root = dup(), root.interpolate(dest).
         root = evas_vg_container_add(NULL);
         evas_vg_node_dup(root, src_root);
 
         if (!evas_vg_node_interpolate(root, src_root, dest_root, pos))
           {
-             ERR(" Can't interpolate check the svg file \n");
+             ERR("Can't interpolate check the svg file");
           }
         efl_canvas_vg_root_node_set(ep->object, root);
+        efl_unref(src_root);
+        efl_unref(dest_root);
      }
 }
 

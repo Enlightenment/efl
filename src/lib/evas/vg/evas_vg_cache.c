@@ -324,5 +324,6 @@ evas_cache_vg_entry_del(Evas_Cache_Vg_Entry *svg_entry)
    if (!svg_entry) return;
 
    svg_entry->ref--;
+   // FIXME implement delete logic (LRU)
 }
 
