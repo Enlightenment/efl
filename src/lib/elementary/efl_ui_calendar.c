@@ -165,27 +165,40 @@ _disable(Efl_Ui_Calendar_Data *sd,
    elm_layout_signal_emit(sd->obj, emission, "elm");
 }
 
-static char *
-_format_month_year(struct tm *date)
-{
-   return eina_strftime(E_("%B %Y"), date);
-}
-
 static void
 _set_month_year(Efl_Ui_Calendar_Data *sd)
 {
-   char *buf;
 
    sd->filling = EINA_TRUE;
 
-   buf = sd->format_func(&sd->shown_date);
-
-   if (buf)
+   if (sd->format_cb)
      {
-        elm_layout_text_set(sd->obj, "month_text", buf);
-        free(buf);
+        Eina_Value val;
+        const char *buf;
+
+		eina_value_setup(&val, EINA_VALUE_TYPE_TM);
+        eina_value_set(&val, sd->shown_date);
+        eina_strbuf_reset(sd->format_strbuf);
+        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+        buf = eina_strbuf_string_get(sd->format_strbuf);
+		eina_value_flush(&val);
+
+        if (buf)
+          elm_layout_text_set(sd->obj, "month_text", buf);
+        else
+          elm_layout_text_set(sd->obj, "month_text", "");
      }
-   else elm_layout_text_set(sd->obj, "month_text", "");
+   else
+     {
+        char *buf;
+        buf = eina_strftime(E_("%B %Y"), &sd->shown_date);
+        if (buf)
+          {
+             elm_layout_text_set(sd->obj, "month_text", buf);
+             free(buf);
+          }
+        else elm_layout_text_set(sd->obj, "month_text", "");
+     }
 
    sd->filling = EINA_FALSE;
 }
@@ -504,7 +517,7 @@ _efl_ui_calendar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Calendar_Data *sd)
 static inline Eina_Bool
 _fix_date(Efl_Ui_Calendar_Data *sd)
 {
-   Eina_Bool fixed = EINA_FALSE;
+   Eina_Bool no_change = EINA_TRUE;
 
    if ((sd->date.tm_year < sd->date_min.tm_year) ||
        ((sd->date.tm_year == sd->date_min.tm_year) &&
@@ -516,7 +529,7 @@ _fix_date(Efl_Ui_Calendar_Data *sd)
         sd->date.tm_year = sd->shown_date.tm_year = sd->date_min.tm_year;
         sd->date.tm_mon = sd->shown_date.tm_mon = sd->date_min.tm_mon;
         sd->date.tm_mday = sd->shown_date.tm_mday = sd->date_min.tm_mday;
-        fixed = EINA_TRUE;
+        no_change = EINA_FALSE;
      }
    else if ((sd->date_max.tm_year != -1) &&
             ((sd->date.tm_year > sd->date_max.tm_year) ||
@@ -529,7 +542,7 @@ _fix_date(Efl_Ui_Calendar_Data *sd)
         sd->date.tm_year = sd->shown_date.tm_year = sd->date_max.tm_year;
         sd->date.tm_mon = sd->shown_date.tm_mon = sd->date_max.tm_mon;
         sd->date.tm_mday = sd->shown_date.tm_mday = sd->date_max.tm_mday;
-        fixed = EINA_TRUE;
+        no_change = EINA_FALSE;
      }
    else
      {
@@ -539,7 +552,7 @@ _fix_date(Efl_Ui_Calendar_Data *sd)
           sd->date.tm_year = sd->shown_date.tm_year;
      }
 
-   return fixed;
+   return no_change;
 }
 
 static Eina_Bool
@@ -865,6 +878,9 @@ _efl_ui_calendar_efl_object_destructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    ecore_timer_del(sd->spin_year);
    ecore_timer_del(sd->update_timer);
 
+   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+   eina_strbuf_free(sd->format_strbuf);
+
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
@@ -943,7 +959,7 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    priv->today_it = -1;
    priv->selected_it = -1;
    priv->first_day_it = -1;
-   priv->format_func = _format_month_year;
+   priv->format_cb = NULL;
 
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,selected", "*",
@@ -1161,9 +1177,20 @@ _efl_ui_calendar_date_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_calendar_format_function_set(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd, Efl_Ui_Calendar_Format_Cb format_function)
+_efl_ui_calendar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Calendar_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
 {
-   sd->format_func = format_function;
+   if ((sd->format_cb_data == func_data) && (sd->format_cb == func))
+     return;
+
+   if (sd->format_cb_data && sd->format_free_cb)
+     sd->format_free_cb(sd->format_cb_data);
+
+   sd->format_cb = func;
+   sd->format_cb_data = func_data;
+   sd->format_free_cb = func_free_cb;
+   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
+
+   evas_object_smart_changed(obj);
 }
 
 EOLIAN static void

@@ -404,10 +404,24 @@ _cal_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
           max_date.tm_year + 1900);
 }
 
+static void
+_cal_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
+{
+   char buf[128];
+   struct tm current_time;
+
+   if (eina_value_type_get(&value) == EINA_VALUE_TYPE_TM)
+     {
+        eina_value_get(&value, &current_time);
+        strftime(buf, sizeof(buf), "%b %y", &current_time);
+        eina_strbuf_append_printf(str, "<< %s >>", buf);
+     }
+}
+
 void
 test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box;
+   Evas_Object *win, *box, *cal;
    struct tm selected_date, min_date, max_date;
    time_t current_date;
 
@@ -426,12 +440,14 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                  efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_CALENDAR_CLASS, win,
-           efl_ui_calendar_date_set(efl_added, selected_date),
-           efl_ui_calendar_date_min_set(efl_added, min_date),
-           efl_ui_calendar_date_max_set(efl_added, max_date),
-           efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
-           efl_pack(box, efl_added));
+   cal = efl_add(EFL_UI_CALENDAR_CLASS, win,
+                 efl_ui_calendar_date_min_set(efl_added, min_date),
+                 efl_ui_calendar_date_max_set(efl_added, max_date),
+                 efl_ui_calendar_date_set(efl_added, selected_date),
+                 efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
+                 efl_pack(box, efl_added));
+
+   efl_ui_format_cb_set(cal, NULL, _cal_format_cb, NULL);
 
    efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
 }

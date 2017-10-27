@@ -32,7 +32,6 @@ struct _Efl_Ui_Calendar_Data
    int                      spin_speed;
    int                      today_it, selected_it, focused_it;
    Ecore_Timer             *spin_month, *spin_year, *update_timer;
-   Efl_Ui_Calendar_Format_Cb   format_func;
    const char              *weekdays[ELM_DAY_LAST];
    struct tm                current_date, shown_date, date, date_min, date_max;
    Evas_Object             *inc_btn_month;
@@ -44,8 +43,12 @@ struct _Efl_Ui_Calendar_Data
    Eo                      *items[42];
 
    Efl_Ui_Calendar_Weekday     first_week_day;
-
    unsigned char            first_day_it;
+
+   Efl_Ui_Format_Func_Cb    format_cb;
+   Eina_Free_Cb             format_free_cb;
+   void                    *format_cb_data;
+   Eina_Strbuf             *format_strbuf;
 
    Eina_Bool                selected : 1;
    Eina_Bool                double_spinners : 1;

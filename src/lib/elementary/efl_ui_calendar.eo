@@ -18,7 +18,7 @@ enum Efl.Ui.Calendar.Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action, Efl.Ui.Format)
 {
    [[Calendar widget
 
@@ -35,36 +35,6 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.At
          }
          values {
             day: Efl.Ui.Calendar.Weekday(Efl.Ui.Calendar.Weekday.sunday); [[Weekday enum value, see @Elm.Calendar.Weekday]]
-         }
-      }
-      @property format_function {
-         set {
-            [[Set a function to format the string that will be used to display
-              month and year;
-
-              By default it uses strftime with "%B %Y" format string.
-              It should allocate the memory that will be used by the string,
-              that will be freed by the widget after usage.
-              A pointer to the string and a pointer to the time struct will be provided.
-            ]]
-              /* FIXME-doc
-               * Example:
-               * @code
-               * static char
-               * _format_month_year(struct tm *selected_time)
-               * {
-               * char buf[32];
-               * if (!strftime(buf, sizeof(buf), "%B %Y", selected_time)) return NULL;
-               *   return strdup(buf);
-               * }
-               *
-               * efl_ui_calendar_format_function_set(calendar, _format_month_year);
-               * @endcode
-               */
-         }
-         values {
-            format_function: Efl_Ui_Calendar_Format_Cb; [[Function to set the month-year string given
-            the selected date.]]
          }
       }
       @property date_min {
@@ -121,9 +91,9 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.At
             [[Set the selected date. If the date is greater than the maximum date,
               the date would be changed to the maximum date with returning $false.
               In the opposite case with the minimum date,
-			  this would give the same result.
+              this would give the same result.
             ]]
-             return: bool; [[$true, on success, $false otherwise]]
+            return: bool; [[$true, on success, $false otherwise]]
          }
          get {
          }
@@ -142,6 +112,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.At
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Ui.Format.format_cb { set; }
    }
    events {
       changed; [[Emitted when the selected date in the calendar is changed]]
