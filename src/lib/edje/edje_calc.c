@@ -1,5 +1,6 @@
 #define EFL_GFX_FILTER_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
+#define EVAS_VG_BETA
 
 #include "edje_private.h"
 
@@ -3693,63 +3694,47 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 static void
 _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
 {
+   int new_svg = -1; //invalid svg
    int w, h;
-   int new_svg = -1;
-   Eina_Matrix3 matrix;
-   Edje_Vector_Data *start, *end;
+   char src_key[20], dest_key[20];
+   Efl_VG *src_root, *dest_root, *root;
 
    evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
-
    if( (w == 0) || (h == 0)) return;
+
+   sprintf(src_key, "edje/vectors/%i", chosen_desc->vg.id);
 
    if (ep->param2)
      {
         Edje_Part_Description_Vector *next_state = (Edje_Part_Description_Vector *)ep->param2->description;
         if (chosen_desc->vg.id != next_state->vg.id)
-          {
-             new_svg = next_state->vg.id;
-          }
+          new_svg = next_state->vg.id;
+        else
+          pos = 0;
      }
-   if (new_svg >= 0) // animation with svg id change
+
+   if (new_svg < 0)
      {
-        start = _edje_ref_vector_data(ed, chosen_desc->vg.id);
-        end = _edje_ref_vector_data(ed, new_svg);
+        efl_file_set(ep->object, ed->file->path, src_key);
+     }
+   else
+     {
+        sprintf(dest_key, "edje/vectors/%i", new_svg);
 
-        // for start vector
-        _apply_transformation(start->vg, w, h, start);
+        efl_file_set(ep->object, ed->file->path, src_key);
+        src_root = efl_canvas_vg_root_node_get(ep->object);
 
-        // for end vector
-        _apply_transformation(end->vg, w, h, end);
+        efl_file_set(ep->object, ed->file->path, dest_key);
+        dest_root = efl_canvas_vg_root_node_get(ep->object);
 
-        // do the interpolation
-        if (!evas_vg_node_interpolate(ep->typedata.vector->cur.vg, start->vg, end->vg, pos))
+        root = evas_vg_container_add(NULL);
+        evas_vg_node_dup(root, src_root);
+
+        if (!evas_vg_node_interpolate(root, src_root, dest_root, pos))
           {
              ERR(" Can't interpolate check the svg file \n");
           }
-        // performance hack
-        // instead of duplicating the tree and applying the transformation
-        // i just updated the transformation matrix and reset it back to null.
-        // assumption is that the root vg will never have a transformation
-        eina_matrix3_identity(&matrix);
-        evas_vg_node_transformation_set(start->vg, &matrix);
-        evas_vg_node_transformation_set(end->vg, &matrix);
-     }
-   else 
-     {
-        if (ep->typedata.vector->cur.svg_id == chosen_desc->vg.id) // no svg file change
-          {
-             _apply_transformation(ep->typedata.vector->cur.vg, w, h, &ep->typedata.vector->cur);
-             return;
-          }
-        else
-          {
-             if (ep->typedata.vector->cur.vg)
-               efl_del(ep->typedata.vector->cur.vg);
-
-             _edje_dupe_vector_data(ed, chosen_desc->vg.id, w, h, &ep->typedata.vector->cur);
-
-             evas_object_vg_root_node_set(ep->object, ep->typedata.vector->cur.vg);
-          }
+        efl_canvas_vg_root_node_set(ep->object, root);
      }
 }
 
