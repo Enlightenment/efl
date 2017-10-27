@@ -1,6 +1,6 @@
 <protocol name="efl_hints">
 
-  <interface name="efl_hints" version="1">
+  <interface name="efl_hints" version="2">
     <enum name="aspect">
       <entry name="none" value="0"/>
       <entry name="neither" value="1"/>
@@ -13,6 +13,11 @@
       <arg name="width" type="uint"/>
       <arg name="height" type="uint"/>
       <arg name="aspect" type="uint" enum="aspect"/>
+    </request>
+    <request name="set_weight">
+      <arg name="surface" type="object" interface="zxdg_toplevel_v6"/>
+      <arg name="width" type="double"/>
+      <arg name="height" type="double"/>
     </request>
   </interface>
 

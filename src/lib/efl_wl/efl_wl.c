@@ -326,6 +326,7 @@ struct Comp_Surface
    Eina_Bool dead : 1;
    Eina_Bool commit : 1;
    Eina_Bool extracted : 1;
+   Eina_Bool hint_set_weight : 1;
 };
 
 struct Comp_Subsurface
@@ -1180,6 +1181,7 @@ shell_surface_minmax_update(Comp_Surface *cs)
    if (!cs) return;
    if (!cs->c->minmax) return;
    if (cs->extracted) return;
+   if (cs->parent) return;
    evas_object_size_hint_min_get(cs->obj, &w, &h);
    evas_object_size_hint_min_set(cs->c->obj, w, h);
    evas_object_size_hint_max_get(cs->obj, &w, &h);
@@ -1197,6 +1199,7 @@ shell_surface_aspect_update(Comp_Surface *cs)
    if (!cs) return;
    if (!cs->c->aspect) return;
    if (cs->extracted) return;
+   if (cs->parent) return;
    evas_object_size_hint_aspect_get(cs->obj, &aspect, &w, &h);
    evas_object_size_hint_aspect_set(cs->c->obj, aspect, w, h);
 }
@@ -1298,7 +1301,7 @@ comp_surface_buffer_detach(Comp_Buffer **pbuffer)
    wl_list_remove(&buffer->destroy_listener.link);
    //if (buffer->dbg) fprintf(stderr, "BUFFER(%d) RELEASE\n", wl_resource_get_id(buffer->res));
    if (buffer->pool) wl_shm_pool_unref(buffer->pool);
-   wl_resource_queue_event(buffer->res, WL_BUFFER_RELEASE);
+   wl_buffer_send_release(buffer->res);
    free(buffer);
    *pbuffer = NULL;
 }
@@ -1410,11 +1413,6 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
      {
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
-        if (cs->shell.popup)
-          {
-             evas_object_size_hint_min_set(cs->obj, buffer->w, buffer->h);
-             evas_object_size_hint_max_set(cs->obj, buffer->w, buffer->h);
-          }
      }
    else if (cs->shell.new)
      shell_surface_init(cs);
@@ -4997,9 +4995,18 @@ hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct 
      shell_surface_aspect_update(cs);
 }
 
+static void
+hints_set_weight(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, int w, int h)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface);
+   cs->hint_set_weight = 1;
+   evas_object_size_hint_weight_set(cs->obj, w / 100., h / 100.);
+}
+
 static const struct efl_hints_interface hints_interface =
 {
    hints_set_aspect,
+   hints_set_weight,
 };
 
 static void
@@ -5496,7 +5503,7 @@ efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set)
      }
 }
 
-EAPI void *
+void *
 efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb)
 {
    Comp *c;
@@ -5543,7 +5550,7 @@ extracted_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event
    shell_surface_send_configure(data);
 }
 
-EAPI Eina_Bool
+Eina_Bool
 efl_wl_surface_extract(Evas_Object *surface)
 {
    Comp_Surface *cs;
@@ -5552,12 +5559,22 @@ efl_wl_surface_extract(Evas_Object *surface)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->extracted, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, EINA_FALSE);
    cs->extracted = 1;
+   evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_RESIZE, extracted_changed, cs);
    if (!cs->shell.popup)
-     {
-        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_RESIZE, extracted_changed, cs);
-        evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_OUT, extracted_unfocus, cs);
-     }
+     evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_OUT, extracted_unfocus, cs);
    evas_object_event_callback_add(cs->obj, EVAS_CALLBACK_FOCUS_IN, extracted_focus, cs);
    evas_object_smart_member_del(surface);
    return EINA_TRUE;
+}
+
+Evas_Object *
+efl_wl_extracted_surface_object_find(void *surface_resource)
+{
+   Comp_Surface *cs = wl_resource_get_user_data(surface_resource);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cs, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!cs->extracted, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, NULL);
+
+   return cs->obj;
 }
