@@ -244,22 +244,18 @@ _efl_canvas_vg_viewbox_align_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, do
 EOLIAN static Eina_Bool
 _efl_canvas_vg_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Data *pd, const char *file, const char *key)
 {
+   Evas_Cache_Vg_Entry *old_entry;
    int w, h;
-   Evas_Cache_Vg_Entry *entry;
 
    if (!file) return EINA_FALSE;
 
+   old_entry = pd->vg_entry;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   entry = evas_cache_vg_entry_find(file, key, w, h);
-   if (entry != pd->vg_entry)
-     {
-        if (pd->vg_entry)
-          {
-             evas_cache_vg_entry_del(pd->vg_entry);
-          }
-        pd->vg_entry = entry;
-     }
-   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+   pd->vg_entry = evas_cache_vg_entry_find(file, key, w, h);
+   if (pd->vg_entry != old_entry)
+     evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+   evas_cache_vg_entry_del(old_entry);
+
    return EINA_TRUE;
 }
 
@@ -276,7 +272,7 @@ _efl_canvas_vg_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Data *pd, co
 EOLIAN static Eina_Bool
 _efl_canvas_vg_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Data *pd, const char *file, const char *key, const char *flags)
 {
-   Vg_File_Data tmp;
+   Vg_File_Data tmp = {};
    Vg_File_Data *info = &tmp;
 
    if (pd->vg_entry && pd->vg_entry->file)
@@ -291,8 +287,7 @@ _efl_canvas_vg_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Data *pd, const char *
         info->root = pd->root;
         info->preserve_aspect = EINA_FALSE;
      }
-   evas_vg_save_to_file(info, file, key, flags);
-   return EINA_TRUE;
+   return evas_vg_save_to_file(info, file, key, flags);
 }
 
 static void
@@ -431,7 +426,6 @@ _efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         root = vd->root;
      }
-   //obj->layer->evas->engine.func->ector_begin(output, context,
    obj->layer->evas->engine.func->ector_begin(engine, context,
                                               ector, surface,
                                               vd->engine_data,
