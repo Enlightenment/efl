@@ -196,6 +196,9 @@ static void edje_cc_handlers_hierarchy_pop(void);
 static void _program_target_add(char *name);
 static void _program_after(const char *name);
 static void _program_free(Edje_Program *pr);
+static Eina_Bool _program_remove(const char *name, Edje_Program **pgrms, unsigned int count);
+
+static void * _part_free(Edje_Part_Collection *pc, Edje_Part *ep);
 
 static void check_has_anchors(void);
 
@@ -4710,6 +4713,135 @@ st_collections_group_use_custom_seat_names(void)
 /**
     @page edcref
     @property
+        part_remove
+    @parameters
+        [part name] (part name) (part name) ...
+    @effect
+        Removes the listed parts from an inherited group. Removing nonexistent
+        parts is not allowed.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_part_remove(void)
+{
+   unsigned int n, argc, orig_count, part_type;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove parts from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+   orig_count = pc->parts_count;
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        unsigned int j, cur_count = pc->parts_count;
+
+        name = parse_str(n);
+
+        for (j = 0; j < pc->parts_count; j++)
+          {
+             unsigned int i;
+
+             if (strcmp(pc->parts[j]->name, name)) continue;
+
+             part_type = pc->parts[j]->type;
+             pc->parts[j] = _part_free(pc, pc->parts[j]);
+             for (i = j; i < pc->parts_count - 1; i++)
+               {
+                  if (!pc->parts[i + 1]) break;
+                  pc->parts[i] = pc->parts[i + 1];
+               }
+             pc->parts_count--;
+             _parts_count_update(part_type, -1);
+             break;
+          }
+        if (cur_count == pc->parts_count)
+          {
+             ERR("Attempted removal of nonexistent part '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
+   if (orig_count == pc->parts_count) return;
+   if (pc->parts_count)
+     pc->parts = realloc(pc->parts, pc->parts_count * sizeof(Edje_Part *));
+   else
+     {
+        free(pc->parts);
+        pc->parts = NULL;
+     }
+}
+
+/**
+    @page edcref
+    @property
+        program_remove
+    @parameters
+        [program name] (program name) (program name) ...
+    @effect
+        Removes the listed programs from an inherited group. Removing nonexistent
+        programs is not allowed.
+        This will break program sequences if a program in the middle of the sequence is removed.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_program_remove(void)
+{
+   unsigned int n, argc;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove programs from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        Eina_Bool success = EINA_FALSE;
+
+        name = parse_str(n);
+
+        success |= _program_remove(name, pc->programs.fnmatch, pc->programs.fnmatch_count);
+        success |= _program_remove(name, pc->programs.strcmp, pc->programs.strcmp_count);
+        success |= _program_remove(name, pc->programs.strncmp, pc->programs.strncmp_count);
+        success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
+        success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
+
+        if (anonymous_delete)
+          {
+             copied_program_anonymous_lookup_delete(pc, anonymous_delete);
+             anonymous_delete = NULL;
+          }
+        if (!success)
+          {
+             ERR("Attempted removal of nonexistent program '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
+}
+
+
+/**
+    @page edcref
+    @property
         target_group
     @parameters
         [name] [part or program] (part or program) (part or program) ...
@@ -6383,62 +6515,6 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
    return EINA_FALSE;
 }
 
-/**
-    @page edcref
-    @property
-        program_remove
-    @parameters
-        [program name] (program name) (program name) ...
-    @effect
-        Removes the listed programs from an inherited group. Removing nonexistent
-        programs is not allowed.
-        This will break program sequences if a program in the middle of the sequence is removed.
-    @since 1.10
-    @endproperty
-*/
-static void
-st_collections_group_program_remove(void)
-{
-   unsigned int n, argc;
-   Edje_Part_Collection *pc;
-
-   check_min_arg_count(1);
-
-   if (!current_group_inherit)
-     {
-        ERR("Cannot remove programs from non-inherited group '%s'", current_de->entry);
-        exit(-1);
-     }
-
-   pc = eina_list_last_data_get(edje_collections);
-
-   for (n = 0, argc = get_arg_count(); n < argc; n++)
-     {
-        char *name;
-        Eina_Bool success = EINA_FALSE;
-
-        name = parse_str(n);
-
-        success |= _program_remove(name, pc->programs.fnmatch, pc->programs.fnmatch_count);
-        success |= _program_remove(name, pc->programs.strcmp, pc->programs.strcmp_count);
-        success |= _program_remove(name, pc->programs.strncmp, pc->programs.strncmp_count);
-        success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
-        success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
-
-        if (anonymous_delete)
-          {
-             copied_program_anonymous_lookup_delete(pc, anonymous_delete);
-             anonymous_delete = NULL;
-          }
-        if (!success)
-          {
-             ERR("Attempted removal of nonexistent program '%s' in group '%s'.",
-                 name, current_de->entry);
-             exit(-1);
-          }
-        free(name);
-     }
-}
 
 static Eina_Bool
 _part_name_check(void)
@@ -6479,77 +6555,6 @@ _part_name_check(void)
           }
      }
    return EINA_TRUE;
-}
-
-/**
-    @page edcref
-    @property
-        part_remove
-    @parameters
-        [part name] (part name) (part name) ...
-    @effect
-        Removes the listed parts from an inherited group. Removing nonexistent
-        parts is not allowed.
-    @since 1.10
-    @endproperty
-*/
-static void
-st_collections_group_part_remove(void)
-{
-   unsigned int n, argc, orig_count, part_type;
-   Edje_Part_Collection *pc;
-
-   check_min_arg_count(1);
-
-   if (!current_group_inherit)
-     {
-        ERR("Cannot remove parts from non-inherited group '%s'", current_de->entry);
-        exit(-1);
-     }
-
-   pc = eina_list_last_data_get(edje_collections);
-   orig_count = pc->parts_count;
-
-   for (n = 0, argc = get_arg_count(); n < argc; n++)
-     {
-        char *name;
-        unsigned int j, cur_count = pc->parts_count;
-
-        name = parse_str(n);
-
-        for (j = 0; j < pc->parts_count; j++)
-          {
-             unsigned int i;
-
-             if (strcmp(pc->parts[j]->name, name)) continue;
-
-             part_type = pc->parts[j]->type;
-             pc->parts[j] = _part_free(pc, pc->parts[j]);
-             for (i = j; i < pc->parts_count - 1; i++)
-               {
-                  if (!pc->parts[i + 1]) break;
-                  pc->parts[i] = pc->parts[i + 1];
-               }
-             pc->parts_count--;
-             _parts_count_update(part_type, -1);
-             break;
-          }
-        if (cur_count == pc->parts_count)
-          {
-             ERR("Attempted removal of nonexistent part '%s' in group '%s'.",
-                 name, current_de->entry);
-             exit(-1);
-          }
-        free(name);
-     }
-   if (orig_count == pc->parts_count) return;
-   if (pc->parts_count)
-     pc->parts = realloc(pc->parts, pc->parts_count * sizeof(Edje_Part *));
-   else
-     {
-        free(pc->parts);
-        pc->parts = NULL;
-     }
 }
 
 /**
