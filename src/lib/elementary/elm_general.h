@@ -146,15 +146,6 @@ extern EAPI double _elm_startup_time;
      return ret__;                                                      \
   }
 
-#else
-/** @deprecated macro to be used after the elm_main() function.
- * Do not define ELM_LIB_QUICKLAUNCH
- * Compile your programs with -fpie and -pie -rdynamic instead, to generate a single binary (linkable executable).
- */
-#define EFL_MAIN() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; (void) efl_main(NULL, NULL); return 0; }
-#define EFL_MAIN_EX() int main(int argc, char **argv) { int ret__; _EFL_APP_VERSION_SET(); _elm_startup_time = ecore_time_unix_get(); ret__ = efl_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; (void) efl_main(NULL, NULL);  (void) efl_pause(NULL, NULL);  (void) efl_resume(NULL, NULL); (void) efl_terminate(NULL, NULL); return 0; }
-#endif
-
 /**
  * @brief Quits the main loop once all the events currently on the queue have
  * been processed.
