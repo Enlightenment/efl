@@ -1715,6 +1715,43 @@ elm_multibuttonentry_add(Evas_Object *parent)
    return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
 }
 
+static void
+_legacy_focused(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Focus_Object *new_focus;
+   Eina_Bool meaningfull_focus_in = EINA_FALSE, meaningfull_focus_out = EINA_FALSE;
+   EFL_UI_MULTIBUTTONENTRY_DATA_GET(data, pd);
+
+   new_focus = efl_ui_focus_manager_focus_get(ev->object);
+
+   if (efl_isa(ev->info, ELM_WIDGET_CLASS) && elm_widget_parent_get(ev->info) == pd->box)
+     {
+        meaningfull_focus_out = EINA_TRUE;
+     }
+
+   if (efl_isa(new_focus, ELM_WIDGET_CLASS) && elm_widget_parent_get(new_focus) == pd->box)
+     {
+        meaningfull_focus_in = EINA_TRUE;
+     }
+
+   if (meaningfull_focus_in && !meaningfull_focus_out)
+     {
+        efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
+     }
+
+   if (!meaningfull_focus_in && meaningfull_focus_out)
+     {
+        efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
+     }
+}
+
+static void
+_legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focus_user_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+}
+
 EOLIAN static Eo *
 _efl_ui_multibuttonentry_efl_object_constructor(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd EINA_UNUSED)
 {
@@ -1722,6 +1759,9 @@ _efl_ui_multibuttonentry_efl_object_constructor(Eo *obj, Efl_Ui_Multibuttonentry
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
+
+   //listen to manager changes here
+   efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }
