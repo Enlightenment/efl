@@ -1422,6 +1422,26 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
      }
 }
 
+static void
+_followup_previous_direction(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+   Efl_Ui_Focus_Manager *rec_manager;
+   rec_manager = efl_ui_focus_manager_redirect_get(obj);
+   if (rec_manager)
+     {
+        Efl_Ui_Focus_Manager_Logical_End_Detail last;
+        efl_ui_focus_manager_reset_history(rec_manager);
+
+        do {
+          last = efl_ui_focus_manager_logical_end(rec_manager);
+          EINA_SAFETY_ON_NULL_RETURN(last.element);
+          efl_ui_focus_manager_focus_set(rec_manager, last.element);
+
+          rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
+        } while (!last.is_regular_end);
+     }
+}
+
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction)
 {
@@ -1441,10 +1461,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
              if (DIRECTION_IS_LOGICAL(direction))
                {
                   // lets just take the last
+
                   Node *n = eina_list_last_data_get(pd->focus_stack);
                   new_candidate = _request_move(obj, pd, direction, n);
+
                   if (new_candidate)
                     efl_ui_focus_manager_focus_set(obj, new_candidate);
+
+                  if (direction == ELM_FOCUS_PREVIOUS)
+                    _followup_previous_direction(obj, pd);
+
                   candidate = new_candidate;
                }
              else
@@ -1474,7 +1500,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
 
         if (candidate)
-          efl_ui_focus_manager_focus_set(obj, candidate);
+          {
+             efl_ui_focus_manager_focus_set(obj, candidate);
+             if (direction == ELM_FOCUS_PREVIOUS)
+               _followup_previous_direction(obj, pd);
+          }
      }
 
 
