@@ -1344,6 +1344,16 @@ elm_run(void)
    ecore_main_loop_begin();
 }
 
+static void
+_on_terminate(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   Eina_List *l, *l_next;
+   Evas_Object *win;
+
+   EINA_LIST_FOREACH_SAFE(_elm_win_list, l, l_next, win)
+     evas_object_del(win);
+}
+
 EAPI void
 efl_exit(int exit_code)
 {
@@ -1352,15 +1362,6 @@ efl_exit(int exit_code)
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
    eina_value_set(&v, &exit_code);
    efl_loop_quit(ecore_main_loop_get(), v);
-
-   if (elm_policy_get(ELM_POLICY_EXIT) == ELM_POLICY_EXIT_WINDOWS_DEL)
-     {
-        Eina_List *l, *l_next;
-        Evas_Object *win;
-
-        EINA_LIST_FOREACH_SAFE(_elm_win_list, l, l_next, win)
-          evas_object_del(win);
-     }
 }
 
 EAPI void
@@ -1381,6 +1382,20 @@ elm_policy_set(unsigned int policy,
 
    if (value == _elm_policies[policy])
      return EINA_TRUE;
+
+   if (policy == ELM_POLICY_EXIT)
+     {
+        if (value == ELM_POLICY_EXIT_WINDOWS_DEL)
+          {
+             efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+                                    _on_terminate, NULL);
+          }
+        else
+          {
+             efl_event_callback_del(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+                                    _on_terminate, NULL);
+          }
+     }
 
    /* TODO: validate policy? */
 
