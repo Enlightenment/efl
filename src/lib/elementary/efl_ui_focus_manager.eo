@@ -154,6 +154,6 @@ interface Efl.Ui.Focus.Manager {
         coords,dirty; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
         focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
-            object]]
+            object, the passed focus object is the last focused object]]
     }
 }

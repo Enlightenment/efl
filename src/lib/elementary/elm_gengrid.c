@@ -4235,12 +4235,13 @@ static void
 _gengrid_element_focused(void *data, const Efl_Event *ev)
 {
    ELM_GENGRID_DATA_GET(data, pd);
+   Elm_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
    Elm_Widget_Item *item;
 
-   if (efl_isa(ev->info, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
-     item = efl_parent_get(ev->info);
+   if (efl_isa(focused, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+     item = efl_parent_get(focused);
    else
-     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, ev->info);
+     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, focused);
 
    if (efl_isa(item, ELM_GENGRID_ITEM_CLASS))
      {
