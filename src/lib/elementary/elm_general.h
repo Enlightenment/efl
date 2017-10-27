@@ -156,7 +156,7 @@ extern EAPI double _elm_startup_time;
  *
  * @ingroup Efl_Loop
  */
-EAPI void efl_exit(unsigned char exit_code);
+EAPI void efl_exit(int exit_code);
 
 #endif /* EFL_BETA_API_SUPPORT */
 
