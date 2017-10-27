@@ -697,7 +697,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
  * is determined by this parameter. 0.0 means to not smooth at all and
  * 1.0 is to smoth as much as possible.
  * 
- * @param the amount to smooth from 0.0 to 1.0 with 0.0 being none
+ * @param amount the amount to smooth from 0.0 to 1.0 with 0.0 being none
  *
  * @see elm_config_thumbscroll_acceleration_threshold_set()
  * 
@@ -725,7 +725,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
  * to look at is determined by this config. The value is in seconds and
  * is from 0.0 to 1.0
  * 
- * @param the time window in seconds (between 0.0 and 1.0)
+ * @param amount the time window in seconds (between 0.0 and 1.0)
  *
  * @see elm_config_scroll_thumbscroll_smooth_time_window_get()
  * 
@@ -1836,6 +1836,7 @@ EAPI Eina_List *elm_config_color_classes_list_get(void);
 /**
  * Free Elementary's list of supported color classes.
  *
+ * @param list The list of color classes to freed
  * @ingroup Colors
  * @since 1.10
  *
@@ -2041,7 +2042,7 @@ EAPI Eina_Bool elm_config_popup_scrollable_get(void);
  * If scrollable is true, popup's contents is wrapped in a scroller container
  * in order to popup shouldn't be larger than its parent.
  *
- * @param enable the popup scroll
+ * @param scrollable enable the popup scroll
  * @since 1.18
  */
 EAPI void      elm_config_popup_scrollable_set(Eina_Bool scrollable);
