@@ -5648,6 +5648,7 @@ pc/efl.pc
 pc/efl-cxx.pc
 pc/efl-wl.pc
 pc/efl-core.pc
+pc/efl-net.pc
 pc/evas-fb.pc
 pc/evas-eglfs.pc
 pc/evas-opengl-x11.pc
