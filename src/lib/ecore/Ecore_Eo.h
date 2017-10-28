@@ -1,9 +1,8 @@
+#ifndef _ECORE_EO_H
+#define _ECORE_EO_H
+
 /* This include has been added to support Eo in Ecore */
 #include <Eo.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * @ingroup Ecore_Timer_Group
@@ -148,7 +147,4 @@ EAPI Efl_Future *efl_future_iterator_race(Eina_Iterator *it);
  * @}
  */
 
-
-#ifdef __cplusplus
-}
 #endif
