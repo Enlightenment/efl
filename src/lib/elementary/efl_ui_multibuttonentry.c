@@ -1675,7 +1675,6 @@ _efl_ui_multibuttonentry_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Multibuttone
    evas_object_del(sd->end);
    ecore_timer_del(sd->longpress_timer);
 
-   if (sd->format_free_cb) sd->format_free_cb(sd->format_cb_data);
    efl_ui_format_cb_set(obj, NULL, NULL, NULL);
    eina_strbuf_free(sd->format_strbuf);
 
