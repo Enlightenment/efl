@@ -5646,6 +5646,8 @@ pc/eolian-js.pc
 pc/eo-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
+pc/efl-wl.pc
+pc/efl-core.pc
 pc/evas-fb.pc
 pc/evas-eglfs.pc
 pc/evas-opengl-x11.pc
@@ -5674,7 +5676,6 @@ pc/ecore-fb.pc
 pc/ecore-sdl.pc
 pc/ecore-wayland.pc
 pc/ecore-wl2.pc
-pc/efl-wl.pc
 pc/ecore-win32.pc
 pc/ecore-x.pc
 pc/ecore-evas.pc
