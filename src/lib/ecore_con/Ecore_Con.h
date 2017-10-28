@@ -11,6 +11,10 @@
 #include <Eina.h>
 #include <Eo.h>
 
+#ifdef EFL_BETA_API_SUPPORT
+#include "Efl_Net.h"
+#endif
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -298,10 +302,6 @@ typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
                                  void *data);
 
 /** @} */
-
-#ifdef EFL_BETA_API_SUPPORT
-#include "Ecore_Con_Eo.h"
-#endif
 
 /**
  * @struct _Ecore_Con_Server
@@ -1778,7 +1778,7 @@ typedef enum _Ecore_Con_Url_Http_Version
  * @see ecore_con_url_pipeline_get()
  */
 EAPI Eina_Bool         ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version);
-   
+
 /**
  * @brief Initializes the Ecore_Con_Url library.
  * @return Number of times the library has been initialised without being
