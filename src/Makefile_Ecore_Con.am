@@ -74,7 +74,7 @@ lib_LTLIBRARIES += lib/ecore_con/libecore_con.la
 installed_ecoreconmainheadersdir = $(includedir)/ecore-con-@VMAJ@
 dist_installed_ecoreconmainheaders_DATA = \
 lib/ecore_con/Ecore_Con.h \
-lib/ecore_con/Ecore_Con_Eo.h \
+lib/ecore_con/Efl_Net.h \
 lib/ecore_con/Ecore_Con_Eet.h \
 lib/ecore_con/Ecore_Con_Eet_Legacy.h \
 lib/ecore_con/Ecore_Con_Eet_Eo.h
