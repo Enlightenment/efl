@@ -1,6 +1,5 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef _ECORE_COMMON_H
+#define _ECORE_COMMON_H
 
 #include <Efl_Config.h>
 
@@ -3183,6 +3182,4 @@ EAPI Efl_Future *ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const voi
 
 #endif
 
-#ifdef __cplusplus
-}
 #endif

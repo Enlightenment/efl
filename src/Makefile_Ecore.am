@@ -64,6 +64,7 @@ lib/ecore/Ecore.h \
 lib/ecore/Ecore_Common.h \
 lib/ecore/Ecore_Legacy.h \
 lib/ecore/Ecore_Eo.h \
+lib/ecore/Efl_Core.h \
 lib/ecore/Ecore_Getopt.h
 
 nodist_installed_ecoremainheaders_DATA = \
