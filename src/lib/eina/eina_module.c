@@ -499,7 +499,7 @@ EAPI Eina_Array *eina_module_arch_list_get(Eina_Array *array,
    list_get_cb_data.cb = NULL;
    list_get_cb_data.data = (void *)arch;
 
-   eina_file_dir_list(path, 0, &_dir_arch_list_cb, &list_get_cb_data);
+   eina_file_dir_list(path, EINA_FALSE, &_dir_arch_list_cb, &list_get_cb_data);
 
    return list_get_cb_data.array;
 }
