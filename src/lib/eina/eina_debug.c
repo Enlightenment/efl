@@ -514,6 +514,7 @@ eina_debug_local_connect(Eina_Bool is_master)
                   sizeof(curstate)) < 0)
      goto err;
    // sa that it's a unix socket and where the path is
+   memset(&socket_unix, 0, sizeof(socket_unix));
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
