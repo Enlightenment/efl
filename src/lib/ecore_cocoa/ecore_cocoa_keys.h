@@ -9,9 +9,9 @@
 
 struct _ecore_cocoa_keys_s
 {
-   int         code;
-   const char  *name;
-   const char  *compose;
+   const int         code;
+   const char *const name;
+   const char *const compose;
 };
 
 static const struct _ecore_cocoa_keys_s keystable[] =
