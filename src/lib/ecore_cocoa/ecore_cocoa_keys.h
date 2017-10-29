@@ -121,7 +121,7 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { 123,                       "braceleft",    "{" },
 { 124,                       "pipe",         "|" },
 { 125,                       "braceright",   "}" },
-{ 127,                       "BackSpace",    "\177" },
+{ 127,                       "BackSpace",    "\x08" },
 { 126,                       "asciitilde",   "~" },
 
 { 160,                       "w0",           "" }, 
