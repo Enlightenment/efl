@@ -622,6 +622,20 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
 
+/**
+ * @var EINA_VALUE_TYPE_TM
+ * manages 'struct tm' type
+ *
+ * eina_value_set() takes a "struct tm" from time.h.
+ * eina_value_pset() takes a pointer to "struct tm".
+ *
+ * eina_value_get() and eina_value_pget() takes a pointer to "struct
+ * tm" and it's an exact copy of value.
+ *
+ * @since 1.21
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TM;
+
 EAPI extern Eina_Error EINA_ERROR_VALUE_FAILED;
 
 /**
@@ -779,6 +793,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -842,6 +857,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -947,6 +963,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1015,6 +1032,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -1242,6 +1260,7 @@ static inline Eina_Bool eina_value_array_remove(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1305,6 +1324,7 @@ static inline Eina_Bool eina_value_array_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1356,6 +1376,7 @@ static inline Eina_Bool eina_value_array_get(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1413,6 +1434,7 @@ static inline Eina_Bool eina_value_array_insert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1556,6 +1578,7 @@ static inline Eina_Bool eina_value_array_vappend(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1623,6 +1646,7 @@ static inline Eina_Bool eina_value_array_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1675,6 +1699,7 @@ static inline Eina_Bool eina_value_array_pget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1735,6 +1760,7 @@ static inline Eina_Bool eina_value_array_pinsert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1950,6 +1976,7 @@ static inline Eina_Bool eina_value_list_remove(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -2012,6 +2039,7 @@ static inline Eina_Bool eina_value_list_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -2062,6 +2090,7 @@ static inline Eina_Bool eina_value_list_get(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -2118,6 +2147,7 @@ static inline Eina_Bool eina_value_list_insert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -2260,6 +2290,7 @@ static inline Eina_Bool eina_value_list_vappend(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2326,6 +2357,7 @@ static inline Eina_Bool eina_value_list_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -2377,6 +2409,7 @@ static inline Eina_Bool eina_value_list_pget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2436,6 +2469,7 @@ static inline Eina_Bool eina_value_list_pinsert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2592,6 +2626,7 @@ static inline Eina_Bool eina_value_hash_del(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -2647,6 +2682,7 @@ static inline Eina_Bool eina_value_hash_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -2735,6 +2771,7 @@ static inline Eina_Bool eina_value_hash_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2793,6 +2830,7 @@ static inline Eina_Bool eina_value_hash_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -3172,6 +3210,7 @@ static inline const Eina_Value_Struct_Desc *eina_value_struct_desc_get(const Ein
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     struct myst {
@@ -3242,6 +3281,7 @@ static inline Eina_Bool eina_value_struct_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     struct myst {
@@ -3346,7 +3386,8 @@ static inline Eina_Bool eina_value_struct_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
- *
+ * @li EINA_VALUE_TYPE_TM: struct tm*
+ * 
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
  *
@@ -3420,6 +3461,7 @@ static inline Eina_Bool eina_value_struct_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
  *     struct myst {
