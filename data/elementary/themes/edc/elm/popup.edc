@@ -626,7 +626,7 @@ group { "elm/popup/base/alert";
    }
 }
 
-group { "elm/popup/base/event_bg";
+group { "elm/popup/base/backwall";
    parts {
       rect { "base";
          desc { "default";
