@@ -3390,22 +3390,12 @@ _eo_value_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
    return EINA_TRUE;
 }
 
-static void
-_eo_value_replace(Eo **dst, Eo * const *src)
-{
-   if (*src == *dst) return;
-   //ref *src first, since efl_unref(*dst) may trigger *src unref()
-   efl_ref(*src);
-   efl_unref(*dst);
-   *dst = *src;
-}
-
 static Eina_Bool
 _eo_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
 {
    Eo **dst = mem;
    Eo **src = va_arg(args, Eo **);
-   _eo_value_replace(dst, src);
+   efl_replace(dst, *src);
    return EINA_TRUE;
 }
 
@@ -3415,7 +3405,7 @@ _eo_value_pset(const Eina_Value_Type *type EINA_UNUSED,
 {
    Eo **dst = mem;
    Eo * const *src = ptr;
-   _eo_value_replace(dst, src);
+   efl_replace(dst, *src);
    return EINA_TRUE;
 }
 
