@@ -11487,7 +11487,9 @@ st_collections_group_parts_part_description_text_max(void)
     @parameters
         [horizontal] [vertical]
     @effect
-        Change the position of the point of balance inside the container [-1.0 - 1.0].
+        Change the alignment of the text [0.0(left) - 1.0(right)].
+        You can set horizontal alignment to -1.0 to use bidirectional based alignment(
+        0.0 for LTR content or 1.0 for RTL)
 
         Defaults: 0.5 0.5
     @endproperty
