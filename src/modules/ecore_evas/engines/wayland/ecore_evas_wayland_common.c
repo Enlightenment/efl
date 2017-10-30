@@ -595,6 +595,7 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    Ecore_Evas *ee;
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
    Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -611,6 +612,8 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
+   wdata = ee->engine.data;
+   if (wdata->frame) ecore_evas_manual_render(ee);
    ecore_evas_manual_render_set(ee, 0);
 
    return ECORE_CALLBACK_PASS_ON;
