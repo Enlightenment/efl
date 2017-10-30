@@ -196,6 +196,9 @@ static void edje_cc_handlers_hierarchy_pop(void);
 static void _program_target_add(char *name);
 static void _program_after(const char *name);
 static void _program_free(Edje_Program *pr);
+static Eina_Bool _program_remove(const char *name, Edje_Program **pgrms, unsigned int count);
+
+static void * _part_free(Edje_Part_Collection *pc, Edje_Part *ep);
 
 static void check_has_anchors(void);
 
@@ -2292,6 +2295,8 @@ st_externals_external(void)
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
+
+        Defaults: compression level for lossy methods is 90.
     @endproperty
  */
 static void
@@ -2675,6 +2680,8 @@ ob_images_set_image(void)
         @li LOSSY_ETC1 [0-100]: ETC1 lossy texture compression with quality from 0 to 100.
         @li LOSSY_ETC2 [0-100]: ETC2 lossy texture compression with quality from 0 to 100 (supports alpha).
         @li USER: Do not embed the file, refer to the external file instead.
+
+        Defaults: compression level for lossy methods is 90.
     @endproperty
 **/
 static void
@@ -2709,6 +2716,8 @@ st_images_set_image_image(void)
         [minw] [minh] [maxw] [maxh]
     @effect
         Define the minimal and maximal size that will select the specified image.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void
@@ -2746,6 +2755,8 @@ st_images_set_image_size(void)
         If set, the area (in pixels) of each side of the image will be
         displayed as a fixed size border, from the side -> inwards, preventing
         the corners from being changed on a resize.
+
+        Defaults: 0 0 0 0
     @since 1.8
     @endproperty
 */
@@ -2781,6 +2792,8 @@ st_images_set_image_border(void)
         the highest resolution artwork and then runtime scaling it down.
 
         Valid values are: 0.0 or bigger (0.0 or 1.0 to turn it off)
+
+        Defaults: 0.0
     @since 1.8
     @endproperty
 */
@@ -2921,7 +2934,7 @@ st_data_item(void)
         [parameter name] [parameter filename]
     @effect
         Defines a new parameter, the value will be the contents of the
-        specified file formated as a single string of text. This property only
+        specified file formatted as a single string of text. This property only
         works with plain text files.
     @endproperty
  */
@@ -3059,9 +3072,9 @@ ob_color_tree(void)
         color_classes {
             color_class {
                 name:  "colorclassname";
-                color:  [0-255] [0-255] [0-255] [0-255];
-                color2: [0-255] [0-255] [0-255] [0-255];
-                color3: [0-255] [0-255] [0-255] [0-255]
+                color:  255 0 0 255;
+                color2: "#0F0F";
+                color3: "#0000FFFF";
             }
             ..
         }
@@ -3080,18 +3093,18 @@ ob_color_class(void)
    cc = mem_alloc(SZ(Edje_Color_Class));
    edje_file->color_classes = eina_list_append(edje_file->color_classes, cc);
 
-   cc->r = 0;
-   cc->g = 0;
-   cc->b = 0;
-   cc->a = 0;
-   cc->r2 = 0;
-   cc->g2 = 0;
-   cc->b2 = 0;
-   cc->a2 = 0;
-   cc->r3 = 0;
-   cc->g3 = 0;
-   cc->b3 = 0;
-   cc->a3 = 0;
+   cc->r = 255;
+   cc->g = 255;
+   cc->b = 255;
+   cc->a = 255;
+   cc->r2 = 255;
+   cc->g2 = 255;
+   cc->b2 = 255;
+   cc->a2 = 255;
+   cc->r3 = 255;
+   cc->g3 = 255;
+   cc->b3 = 255;
+   cc->a3 = 255;
 }
 
 static void
@@ -3145,16 +3158,16 @@ st_color_class_name(void)
 }
 
 static void
-parse_color(void *base)
+parse_color(unsigned int first_arg, void *base)
 {
    Edje_Color *color = (Edje_Color *)base;
    int r, g, b, a;
    char *str;
 
-   switch (get_arg_count())
+   switch (get_arg_count() - first_arg)
      {
       case 1:
-         str = parse_str(0);
+         str = parse_str(first_arg);
          convert_color_code(str, &r, &g, &b, &a);
          color->r = r;
          color->g = g;
@@ -3162,10 +3175,10 @@ parse_color(void *base)
          color->a = a;
          break;
       case 4:
-         color->r = parse_int_range(0, 0, 255);
-         color->g = parse_int_range(1, 0, 255);
-         color->b = parse_int_range(2, 0, 255);
-         color->a = parse_int_range(3, 0, 255);
+         color->r = parse_int_range(first_arg + 0, 0, 255);
+         color->g = parse_int_range(first_arg + 1, 0, 255);
+         color->b = parse_int_range(first_arg + 2, 0, 255);
+         color->a = parse_int_range(first_arg + 3, 0, 255);
          break;
       default:
          ERR("%s:%i. color code should be a string or a set of 4 integers.",
@@ -3179,9 +3192,20 @@ parse_color(void *base)
     @property
         color
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         The main color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -3191,7 +3215,7 @@ st_color_class_color(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r));
+   parse_color(0, &(cc->r));
 }
 
 /**
@@ -3199,9 +3223,20 @@ st_color_class_color(void)
     @property
         color2
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Used as outline in text and textblock parts.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -3211,7 +3246,7 @@ st_color_class_color2(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r2));
+   parse_color(0, &(cc->r2));
 }
 
 /**
@@ -3219,9 +3254,20 @@ st_color_class_color2(void)
     @property
         color3
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Used as shadow in text and textblock parts.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -3231,7 +3277,7 @@ st_color_class_color3(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r3));
+   parse_color(0, &(cc->r3));
 }
 
 /**
@@ -3497,6 +3543,8 @@ st_text_class_font(void)
         [font size in points (pt)]
     @effect
         Sets the font size for the text class.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -3605,6 +3653,8 @@ st_size_class_name(void)
         [width] [height]
     @effect
         The minimum size.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -3627,6 +3677,8 @@ st_size_class_min(void)
         [width] [height]
     @effect
         The maximum size.
+
+        Defaults: -1 -1
     @endproperty
 */
 static void
@@ -3689,6 +3741,8 @@ ob_collections(void)
         which is same with a desktop(The monitor has 96 dpi).
         If you make a collection in another environment(ex: 115 dpi), you have to
         set the base_scale(ex: 1.2). Then it will be shown same size in the desktop.
+
+        Defaults: 1.0
     @since 1.11
     @endproperty
 */
@@ -3820,7 +3874,7 @@ st_collections_group_sound_tone(void)
         Valid types are:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0.0 to 1.0.
+        @li LOSSY [45.0  - 1000.0]: Lossy compression with quality from 45.0 to 1000.0.
         @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
 
     @since 1.1
@@ -4613,6 +4667,8 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
         will inhibit edje_cc resolving of programs and parts that may
         not exist in this group, but are located in the group which is inheriting
         this group.
+
+        Defaults: 0
     @since 1.10
     @endproperty
 */
@@ -4650,6 +4706,8 @@ st_collections_group_inherit_only(void)
         system, as seat names, or when the application
         sets the devices names to guarantee they'll match
         seat names on EDC.
+
+        Defaults: 0
     @since 1.19
     @endproperty
 */
@@ -4663,6 +4721,135 @@ st_collections_group_use_custom_seat_names(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->use_custom_seat_names = parse_bool(0);
 }
+
+/**
+    @page edcref
+    @property
+        part_remove
+    @parameters
+        [part name] (part name) (part name) ...
+    @effect
+        Removes the listed parts from an inherited group. Removing nonexistent
+        parts is not allowed.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_part_remove(void)
+{
+   unsigned int n, argc, orig_count, part_type;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove parts from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+   orig_count = pc->parts_count;
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        unsigned int j, cur_count = pc->parts_count;
+
+        name = parse_str(n);
+
+        for (j = 0; j < pc->parts_count; j++)
+          {
+             unsigned int i;
+
+             if (strcmp(pc->parts[j]->name, name)) continue;
+
+             part_type = pc->parts[j]->type;
+             pc->parts[j] = _part_free(pc, pc->parts[j]);
+             for (i = j; i < pc->parts_count - 1; i++)
+               {
+                  if (!pc->parts[i + 1]) break;
+                  pc->parts[i] = pc->parts[i + 1];
+               }
+             pc->parts_count--;
+             _parts_count_update(part_type, -1);
+             break;
+          }
+        if (cur_count == pc->parts_count)
+          {
+             ERR("Attempted removal of nonexistent part '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
+   if (orig_count == pc->parts_count) return;
+   if (pc->parts_count)
+     pc->parts = realloc(pc->parts, pc->parts_count * sizeof(Edje_Part *));
+   else
+     {
+        free(pc->parts);
+        pc->parts = NULL;
+     }
+}
+
+/**
+    @page edcref
+    @property
+        program_remove
+    @parameters
+        [program name] (program name) (program name) ...
+    @effect
+        Removes the listed programs from an inherited group. Removing nonexistent
+        programs is not allowed.
+        This will break program sequences if a program in the middle of the sequence is removed.
+    @since 1.10
+    @endproperty
+*/
+static void
+st_collections_group_program_remove(void)
+{
+   unsigned int n, argc;
+   Edje_Part_Collection *pc;
+
+   check_min_arg_count(1);
+
+   if (!current_group_inherit)
+     {
+        ERR("Cannot remove programs from non-inherited group '%s'", current_de->entry);
+        exit(-1);
+     }
+
+   pc = eina_list_last_data_get(edje_collections);
+
+   for (n = 0, argc = get_arg_count(); n < argc; n++)
+     {
+        char *name;
+        Eina_Bool success = EINA_FALSE;
+
+        name = parse_str(n);
+
+        success |= _program_remove(name, pc->programs.fnmatch, pc->programs.fnmatch_count);
+        success |= _program_remove(name, pc->programs.strcmp, pc->programs.strcmp_count);
+        success |= _program_remove(name, pc->programs.strncmp, pc->programs.strncmp_count);
+        success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
+        success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
+
+        if (anonymous_delete)
+          {
+             copied_program_anonymous_lookup_delete(pc, anonymous_delete);
+             anonymous_delete = NULL;
+          }
+        if (!success)
+          {
+             ERR("Attempted removal of nonexistent program '%s' in group '%s'.",
+                 name, current_de->entry);
+             exit(-1);
+          }
+        free(name);
+     }
+}
+
 
 /**
     @page edcref
@@ -5018,6 +5205,8 @@ st_collections_group_inherit(void)
     @effect
         The flag (on/off) as to if this group is defined ONLY by script
         callbacks such as init(), resize() and shutdown()
+
+        Defaults: off
     @endproperty
 */
 static void
@@ -5043,6 +5232,8 @@ st_collections_group_lua_script_only(void)
         For example, running an Embryo script which calls EDC which has a
         script{} block is unsafe, and the outer-most (first) Embryo stack is GUARANTEED
         to be corrupted. Only use this flag if you are sure that you know what you are doing.
+
+        Defaults: 0
     @since 1.10
     @endproperty
 */
@@ -5108,6 +5299,8 @@ st_collections_group_alias(void)
     @effect
         The minimum size for the container defined by the composition of the
         parts. It is not enforced.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -5131,6 +5324,8 @@ st_collections_group_min(void)
     @effect
         The maximum size for the container defined by the totality of the
         parts. It is not enforced.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -5148,11 +5343,13 @@ st_collections_group_max(void)
 /**
     @page edcref
     @property
-        scne_size
+        scene_size
     @parameters
         [width] [height]
     @effect
         Size of scene.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void
@@ -5174,8 +5371,10 @@ st_collections_group_scene_size(void)
    @parameters
        [on/off]
    @effect
-       Signal got automatically broadcasted to all sub group part. Default to
-       true since 1.1.
+       Signal got automatically broadcasted to all sub group part.
+
+       Defaults: true
+   @since 1.1
    @endproperty
 */
 static void
@@ -5223,6 +5422,8 @@ st_collections_group_nobroadcast(void)
         @li AUTO  - Follow system defs.
         @li LTR  - suitable for Left To Right Languages (latin)
         @li RTL - suitable for Right To Left Languages (Hebrew, Arabic interface)
+
+        Defaults: AUTO
     @endproperty
 */
 static void
@@ -5248,7 +5449,8 @@ st_collections_group_orientation(void)
         [1 or 0]
     @effect
         Change the default value of mouse_events for every part in this group.
-        Defaults to 1 if not set, to maintain compatibility.
+
+        Defaults: 1 (to maintain compatibility)
     @endproperty
  */
 static void
@@ -5363,7 +5565,8 @@ _script_flush(void)
     @effect
         Change the default value of source for every program in the current group
         which is declared after this value is set.
-        Defaults to an unset value to maintain compatibility.
+
+        Defaults: an unset value (to maintain compatibility)
     @since 1.10
     @endproperty
  */
@@ -5883,7 +6086,7 @@ st_collections_group_limits_vertical(void)
         It will send a signal: "limit,name,over" when the object is resized and pass
         the limit by growing over it. And it will send: "limit,name,below" when
         it pass below that limit.
-        This limit will be applied on the x absis and is expressed in pixels.
+        This limit will be applied on the x axis and is expressed in pixels.
     @endproperty
 */
 static void
@@ -6393,62 +6596,6 @@ _program_remove(const char *name, Edje_Program **pgrms, unsigned int count)
    return EINA_FALSE;
 }
 
-/**
-    @page edcref
-    @property
-        program_remove
-    @parameters
-        [program name] (program name) (program name) ...
-    @effect
-        Removes the listed programs from an inherited group. Removing nonexistent
-        programs is not allowed.
-        This will break program sequences if a program in the middle of the sequence is removed.
-    @since 1.10
-    @endproperty
-*/
-static void
-st_collections_group_program_remove(void)
-{
-   unsigned int n, argc;
-   Edje_Part_Collection *pc;
-
-   check_min_arg_count(1);
-
-   if (!current_group_inherit)
-     {
-        ERR("Cannot remove programs from non-inherited group '%s'", current_de->entry);
-        exit(-1);
-     }
-
-   pc = eina_list_last_data_get(edje_collections);
-
-   for (n = 0, argc = get_arg_count(); n < argc; n++)
-     {
-        char *name;
-        Eina_Bool success = EINA_FALSE;
-
-        name = parse_str(n);
-
-        success |= _program_remove(name, pc->programs.fnmatch, pc->programs.fnmatch_count);
-        success |= _program_remove(name, pc->programs.strcmp, pc->programs.strcmp_count);
-        success |= _program_remove(name, pc->programs.strncmp, pc->programs.strncmp_count);
-        success |= _program_remove(name, pc->programs.strrncmp, pc->programs.strrncmp_count);
-        success |= _program_remove(name, pc->programs.nocmp, pc->programs.nocmp_count);
-
-        if (anonymous_delete)
-          {
-             copied_program_anonymous_lookup_delete(pc, anonymous_delete);
-             anonymous_delete = NULL;
-          }
-        if (!success)
-          {
-             ERR("Attempted removal of nonexistent program '%s' in group '%s'.",
-                 name, current_de->entry);
-             exit(-1);
-          }
-        free(name);
-     }
-}
 
 static Eina_Bool
 _part_name_check(void)
@@ -6489,77 +6636,6 @@ _part_name_check(void)
           }
      }
    return EINA_TRUE;
-}
-
-/**
-    @page edcref
-    @property
-        part_remove
-    @parameters
-        [part name] (part name) (part name) ...
-    @effect
-        Removes the listed parts from an inherited group. Removing nonexistent
-        parts is not allowed.
-    @since 1.10
-    @endproperty
-*/
-static void
-st_collections_group_part_remove(void)
-{
-   unsigned int n, argc, orig_count, part_type;
-   Edje_Part_Collection *pc;
-
-   check_min_arg_count(1);
-
-   if (!current_group_inherit)
-     {
-        ERR("Cannot remove parts from non-inherited group '%s'", current_de->entry);
-        exit(-1);
-     }
-
-   pc = eina_list_last_data_get(edje_collections);
-   orig_count = pc->parts_count;
-
-   for (n = 0, argc = get_arg_count(); n < argc; n++)
-     {
-        char *name;
-        unsigned int j, cur_count = pc->parts_count;
-
-        name = parse_str(n);
-
-        for (j = 0; j < pc->parts_count; j++)
-          {
-             unsigned int i;
-
-             if (strcmp(pc->parts[j]->name, name)) continue;
-
-             part_type = pc->parts[j]->type;
-             pc->parts[j] = _part_free(pc, pc->parts[j]);
-             for (i = j; i < pc->parts_count - 1; i++)
-               {
-                  if (!pc->parts[i + 1]) break;
-                  pc->parts[i] = pc->parts[i + 1];
-               }
-             pc->parts_count--;
-             _parts_count_update(part_type, -1);
-             break;
-          }
-        if (cur_count == pc->parts_count)
-          {
-             ERR("Attempted removal of nonexistent part '%s' in group '%s'.",
-                 name, current_de->entry);
-             exit(-1);
-          }
-        free(name);
-     }
-   if (orig_count == pc->parts_count) return;
-   if (pc->parts_count)
-     pc->parts = realloc(pc->parts, pc->parts_count * sizeof(Edje_Part *));
-   else
-     {
-        free(pc->parts);
-        pc->parts = NULL;
-     }
 }
 
 /**
@@ -6610,6 +6686,8 @@ st_collections_group_parts_part_name(void)
             @li PROXY
             @li SPACER
             @li SNAPSHOT
+
+         Defaults: IMAGE
     @endproperty
 */
 static void
@@ -6686,6 +6764,7 @@ st_collections_group_parts_part_type(void)
             @li BOUNDARY_FRONT
             @li BOUNDARY_BACK
 
+        Defaults: NONE
     @since 1.8
     @endproperty
 */
@@ -6814,8 +6893,9 @@ st_collections_group_parts_part_insert_after(void)
     @effect
         Specifies whether the part will emit signals, although it is named
         "mouse_events", disabling it (0) will prevent the part from emitting
-        any type of signal at all. It's set to 1 by default, or to the value
-        set to "mouse_events" at the group level, if any.
+        any type of signal at all.
+
+        Defaults: group.mouse_events
     @endproperty
 */
 static void
@@ -6847,8 +6927,9 @@ st_collections_group_parts_part_nomouse(void)
     @parameters
         [1 or 0]
     @effect
-        Takes a boolean value specifying whether part is anti_alias (1) or not
-        (0). The default value is 1.
+        Takes a boolean value specifying whether part is anti_alias (1) or not (0).
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -6866,7 +6947,9 @@ st_collections_group_parts_part_anti_alias(void)
         [1 or 0]
     @effect
         Specifies whether a part echoes a mouse event to other parts below the
-        pointer (1), or not (0). It's set to 0 by default.
+        pointer (1), or not (0)
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -6905,8 +6988,10 @@ st_collections_group_parts_part_norepeat(void)
         must be separated by spaces, the effect will be ignoring all events
         with one of the flags specified.
         Possible flags:
-            @li NONE (default value, no event will be ignored)
+            @li NONE (no event will be ignored)
             @li ON_HOLD
+
+        Defaults: NONE
     @endproperty
 */
 static void
@@ -6930,8 +7015,10 @@ st_collections_group_parts_part_ignore_flags(void)
         Masks event flags with the given value, so that the event can be repeated
         to the lower object along with masked event flags.
         Possible flags:
-            @li NONE (default value, no event will be masked)
+            @li NONE (no event will be masked)
             @li ON_HOLD
+
+        Defaults: NONE
     @endproperty
 */
 static void
@@ -6960,6 +7047,8 @@ st_collections_group_parts_part_mask_flags(void)
         is that some things work well being scaled, others do not, so the
         designer gets to choose what works best. For MESH_NODE parts three
         parameters specify how much the part will stretched along each axis.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -6985,13 +7074,14 @@ st_collections_group_parts_part_noscale(void)
     @parameters
         [MODE]
     @effect
-        Sets the mouse pointer behavior for a given part. The default value is
-        AUTOGRAB. Aviable modes:
+        Sets the mouse pointer behavior for a given part. Aviable modes:
             @li AUTOGRAB, when the part is clicked and the button remains
                 pressed, the part will be the source of all future mouse
                 signals emitted, even outside the object, until the button is
                 released.
             @li NOGRAB, the effect will be limited to the part's container.
+
+        Defaults: AUTOGRAB
     @endproperty
 */
 static void
@@ -7013,7 +7103,9 @@ st_collections_group_parts_part_pointer_mode(void)
         [1 or 0]
     @effect
         Enables precise point collision detection for the part, which is more
-        resource intensive. Disabled by default.
+        resource intensive.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -7050,6 +7142,8 @@ st_collections_group_parts_part_noprecise(void)
         Only affects text and textblock parts, when enabled Edje will use
         different size measurement functions. Disabled by default. (note from
         the author: I don't know what this is exactly useful for?)
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -7102,6 +7196,8 @@ st_collections_group_parts_part_clip_to_id(void)
         required if it is a proxy source or a mask (clipper).
         Strongly recommended for use with mask objects and proxy sources
         (instead of setting "source_visible" on the proxy itself).
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -7128,6 +7224,8 @@ st_collections_group_parts_part_render(void)
     @effect
         If the required flag is set, this part will be considered
         stable and it is safe to use by any application."
+
+        Defaults: 0
     @since 1.18
     @endproperty
 */
@@ -7310,6 +7408,8 @@ st_collections_group_parts_part_source6(void)
         @li TOP
         @li TOP_RIGHT
         @li RIGHT
+
+        Defaults: PLAIN
     @endproperty
 */
 static void
@@ -7360,11 +7460,14 @@ st_collections_group_parts_part_effect(void)
         @li PLAIN
         @li EDITABLE
         @li PASSWORD
+
         It causes the part be editable if the edje object has the keyboard
         focus AND the part has the edje focus (or selectable always
         regardless of focus) and in the event of password mode, not
         selectable and all text chars replaced with *'s but editable and
         pastable.
+
+        Defaults: NONE
     @endproperty
 */
 static void
@@ -7392,7 +7495,7 @@ st_collections_group_parts_part_entry_mode(void)
         mouse, drag and release to end.
         @li EXPLICIT mode requires the application
         controlling the edje object has to explicitly begin and end selection
-        modes, and the selection itself is dragable at both ends.
+        modes, and the selection itself is draggable at both ends.
     @endproperty
 */
 static void
@@ -7414,10 +7517,11 @@ st_collections_group_parts_part_select_mode(void)
         [mode]
     @effect
         Sets the cursor mode for a textblock part to one of:
-        @li UNDER cursor mode means the cursor will draw below the character pointed
-        at. That's the default.
+        @li UNDER cursor mode means the cursor will draw below the character pointed at.
         @li BEFORE cursor mode means the cursor is drawn as a vertical line before
         the current character, just like many other GUI toolkits handle it.
+
+        Defaults: UNDER
     @endproperty
 */
 static void
@@ -7440,6 +7544,8 @@ st_collections_group_parts_part_cursor_mode(void)
     @effect
         It causes a textblock that is editable to allow multiple lines for
         editing.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -7457,8 +7563,9 @@ st_collections_group_parts_part_multiline(void)
     @parameters
         [1 or 0]
     @effect
-        Specifies whether the part will use accessibility feature (1),
-        or not (0). It's set to 0 by default.
+        Specifies whether the part will use accessibility feature (1), or not (0).
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -7509,6 +7616,8 @@ st_collections_group_parts_part_access(void)
         divisible by it, causing the part to jump from position to position.
         If step is set to 0 it is calculated as width of confine part divided by
         count.
+
+        Defaults: 0 0 0
     @endproperty
 */
 static void
@@ -7532,9 +7641,11 @@ st_collections_group_parts_part_dragable_x(void)
         used to enable (1 or -1) and disable (0) dragging along the axis. When
         enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
         parameter takes any integer and will limit movement to values
-        divisibles by it, causing the part to jump from position to position.
+        divisible by it, causing the part to jump from position to position.
         If step is set to 0 it is calculated as height of confine part divided by
         count.
+
+        Defaults: 0 0 0
     @endproperty
 */
 static void
@@ -7895,6 +8006,8 @@ static void st_collections_group_parts_part_box_items_item_source(void)
         [width] [height]
     @effect
         Sets the minimum size hints for this object.
+
+        Defaults: 0 0
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_min(void)
@@ -7917,7 +8030,7 @@ static void st_collections_group_parts_part_box_items_item_min(void)
        Will replicate the item in a rectangle of size width x height
        box starting from the defined position of this item.
 
-       default value will be 1 1;
+       Defaults: 1 1
    @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_spread(void)
@@ -7926,8 +8039,8 @@ static void st_collections_group_parts_part_box_items_item_spread(void)
 
    check_arg_count(2);
 
-   current_item->spread.w = parse_int_range(0, 0, 0x7ffffff);
-   current_item->spread.h = parse_int_range(1, 0, 0x7ffffff);
+   current_item->spread.w = parse_int_range(0, 1, 0x7ffffff);
+   current_item->spread.h = parse_int_range(1, 1, 0x7ffffff);
 }
 
 /**
@@ -7938,6 +8051,8 @@ static void st_collections_group_parts_part_box_items_item_spread(void)
         [width] [height]
     @effect
         Sets the preferred size hints for this object.
+
+        Defaults: 0 0
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_prefer(void)
@@ -7957,6 +8072,8 @@ static void st_collections_group_parts_part_box_items_item_prefer(void)
         [width] [height]
     @effect
         Sets the maximum size hints for this object.
+
+        Defaults: -1 -1
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_max(void)
@@ -7965,8 +8082,8 @@ static void st_collections_group_parts_part_box_items_item_max(void)
 
    check_arg_count(2);
 
-   current_item->max.w = parse_int_range(0, 0, 0x7ffffff);
-   current_item->max.h = parse_int_range(1, 0, 0x7ffffff);
+   current_item->max.w = parse_int_range(0, -1, 0x7ffffff);
+   current_item->max.h = parse_int_range(1, -1, 0x7ffffff);
 }
 
 /**
@@ -7977,6 +8094,8 @@ static void st_collections_group_parts_part_box_items_item_max(void)
         [left] [right] [top] [bottom]
     @effect
         Sets the padding hints for this object.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_padding(void)
@@ -7998,7 +8117,9 @@ static void st_collections_group_parts_part_box_items_item_padding(void)
     @parameters
         [x] [y]
     @effect
-        Sets the alignment hints for this object.
+        Sets the alignment [-1.0 - 1.0] hints for this object.
+
+        Defaults: 0.5
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_align(void)
@@ -8019,6 +8140,8 @@ static void st_collections_group_parts_part_box_items_item_align(void)
         [x] [y]
     @effect
         Sets the weight hints for this object.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_weight(void)
@@ -8039,6 +8162,8 @@ static void st_collections_group_parts_part_box_items_item_weight(void)
         [w] [h]
     @effect
         Sets the aspect width and height hints for this object.
+
+        Defaults: 0 0
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_aspect(void)
@@ -8064,6 +8189,8 @@ static void st_collections_group_parts_part_box_items_item_aspect(void)
         @li HORIZONTAL
         @li VERTICAL
         @li BOTH
+
+        Defaults: NONE
     @endproperty
 */
 static void st_collections_group_parts_part_box_items_item_aspect_mode(void)
@@ -8136,7 +8263,8 @@ static void st_collections_group_parts_part_table_items_item_position(void)
         [col] [row]
     @effect
         Sets how many columns/rows this item will use.
-        Defaults to 1 1.
+
+        Defaults: 1 1
     @endproperty
 */
 static void st_collections_group_parts_part_table_items_item_span(void)
@@ -8302,8 +8430,8 @@ ob_collections_group_parts_part_description(void)
    ed->persp.zplane = 0;
    ed->persp.focal = 1000;
    ed->minmul.have = 1;
-   ed->minmul.w = FROM_INT(1);
-   ed->minmul.h = FROM_INT(1);
+   ed->minmul.w = FROM_DOUBLE(1.0);
+   ed->minmul.h = FROM_DOUBLE(1.0);
    ed->align_3d.x = FROM_DOUBLE(0.5);
    ed->align_3d.y = FROM_DOUBLE(0.5);
    ed->align_3d.z = FROM_DOUBLE(0.5);
@@ -8714,8 +8842,12 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
         Sets a name used to identify a description inside a given part.
         Multiple descriptions are used to declare different states of the same
         part, like "clicked" or "invisible". All states declarations are also
-        coupled with an index number between 0.0 and 1.0. All parts must have
-        at least one description named "default 0.0".
+        coupled with an index number between 0.0 and 1.0.
+        First description in part must always be "default" 0.0.
+
+        @warning state name "custom" is reserved and can't be used in edc.
+
+        Defaults: "default" 0.0
     @endproperty
 */
 static void
@@ -8767,7 +8899,9 @@ st_collections_group_parts_part_description_state(void)
         [0 or 1]
     @effect
         Takes a boolean value specifying whether part is visible (1) or not
-        (0). Non-visible parts do not emit signals. The default value is 1.
+        (0). Non-visible parts do not emit signals.
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -8818,13 +8952,13 @@ st_collections_group_parts_part_description_hid(void)
 /**
     @page edcref
     @property
-        visible
+        no_render
     @parameters
         [0 or 1]
     @effect
-        Takes a boolean value specifying whether part is visible (1) or not
-        (0). Non-visible parts do not emit signals. The default value is 1.
+        Same as setting no_render in part, but can be changed in different states.
 
+        Defaults: 0
     @since 1.19
     @endproperty
 */
@@ -8859,6 +8993,7 @@ st_collections_group_parts_part_description_no_render(void)
         @li HEIGHT
         @li BOTH
 
+        Defaults: NONE
     @since 1.7
     @endproperty
 */
@@ -8900,9 +9035,10 @@ st_collections_group_parts_part_description_limit(void)
         axis inside its container. @c "0.0" means left/top edges of
         the object touching container's respective ones, while @c
         "1.0" stands for right/bottom edges of the object (on
-        horizonal/vertical axis, respectively). The default value is
-        @c "0.5 0.5". There is one more parametr for Z axis in case
-        of MESH_NODE.
+        horizontal/vertical axis, respectively).
+        There is one more parameter for Z axis in case of MESH_NODE.
+
+        Defaults: 0.5 0.5 (0.5)
     @endproperty
 */
 static void
@@ -8935,6 +9071,8 @@ st_collections_group_parts_part_description_align(void)
         This tells the min size calculation routine that this part does not
         change size in width or height (1 for it doesn't, 0 for it does), so
         the routine should not try and expand or contract the part.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -8943,8 +9081,8 @@ st_collections_group_parts_part_description_fixed(void)
    check_has_anchors();
    check_arg_count(2);
 
-   current_desc->fixed.w = parse_float_range(0, 0, 1);
-   current_desc->fixed.h = parse_float_range(1, 0, 1);
+   current_desc->fixed.w = parse_bool(0);
+   current_desc->fixed.h = parse_bool(1);
 }
 
 /**
@@ -8959,6 +9097,8 @@ st_collections_group_parts_part_description_fixed(void)
         When min is defined to SOURCE, it will look at the original
         image size and enforce it minimal size to match at least the
         original one. The part must be an IMAGE or a GROUP part.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -8993,10 +9133,12 @@ st_collections_group_parts_part_description_min(void)
     @property
         minmul
     @parameters
-        [width multipler] [height multiplier]
+        [width multiplier] [height multiplier]
     @effect
         A multiplier FORCIBLY applied to whatever minimum size is only during
         minimum size calculation.
+
+        Defaults: 1.0 1.0
     @since 1.2
     @endproperty
 */
@@ -9016,11 +9158,13 @@ st_collections_group_parts_part_description_minmul(void)
     @parameters
         [width] [height] or SOURCE
     @effect
-        The maximum size of the state. A size of -1.0 means that it will be ignored in one direction.
+        The maximum size of the state. A size of -1 means that it will be ignored in one direction.
 
         When max is set to SOURCE, edje will enforce the part to be
         not more than the original image size. The part must be an
         IMAGE part.
+
+        Defaults: -1 -1
     @endproperty
 */
 static void
@@ -9077,9 +9221,11 @@ st_collections_group_parts_part_description_size_class(void)
     @parameters
         [width] [height]
     @effect
-        Restricts resizing of each dimension to values divisibles by its value.
+        Restricts resizing of each dimension to values divisible by its value.
         This causes the part to jump from value to value while resizing. The
         default value is "0 0" disabling stepping.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void
@@ -9103,6 +9249,8 @@ st_collections_group_parts_part_description_step(void)
         the minimum and maximum set. For example, "1.0 1.0" will increase the
         width a pixel for every pixel added to height. The default value is
         "0.0 0.0" disabling aspect.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void
@@ -9123,6 +9271,8 @@ st_collections_group_parts_part_description_aspect(void)
     @effect
         Sets the scope of the "aspect" property to a given dimension. Available
         options are BOTH, VERTICAL, HORIZONTAL, SOURCE and NONE
+
+        Defaults: NONE
     @endproperty
 */
 static void
@@ -9147,7 +9297,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
         [color class name]
     @effect
         The part will use the color values of the named color_class, these
-        values can be overrided by the "color", "color2" and "color3"
+        values can be modified by the "color", "color2" and "color3"
         properties set below.
     @endproperty
 */
@@ -9171,9 +9321,22 @@ st_collections_group_parts_part_description_color_class(void)
     @property
         color
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the main color to the specified values (between 0 and 255).
+        Sets the main color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        If color_class is set resulting color channel values will be (color * color_class / 255)
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -9186,7 +9349,7 @@ st_collections_group_parts_part_description_color(void)
        exit(-1);
      }
 
-   parse_color(&(current_desc->color.r));
+   parse_color(0, &(current_desc->color.r));
 }
 
 /**
@@ -9194,9 +9357,22 @@ st_collections_group_parts_part_description_color(void)
     @property
         color2
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text shadow color to the specified values (0 to 255).
+        Sets the text outline color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        If color_class is set resulting color channel values will be (color * color_class / 255)
+
+        Defaults: 0 0 0 255
     @endproperty
 */
 static void
@@ -9209,7 +9385,7 @@ st_collections_group_parts_part_description_color2(void)
        exit(-1);
      }
 
-   parse_color(&(current_desc->color2.r));
+   parse_color(0, &(current_desc->color2.r));
 }
 
 /**
@@ -9217,9 +9393,22 @@ st_collections_group_parts_part_description_color2(void)
     @property
         color3
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the text outline color to the specified values (0 to 255).
+        Sets the text shadow color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        If color_class is set resulting color channel values will be (color * color_class / 255)
+
+        Defaults: 0 0 0 128
     @endproperty
 */
 static void
@@ -9240,7 +9429,7 @@ st_collections_group_parts_part_description_color3(void)
 
    ed = (Edje_Part_Description_Text*)current_desc;
 
-   parse_color(&(ed->text.color3.r));
+   parse_color(0, &(ed->text.color3.r));
 }
 
 /**
@@ -9252,7 +9441,7 @@ st_collections_group_parts_part_description_color3(void)
     @effect
         Overrides the 'clip_to' property of this part. This allows switching
         clippers (or masks) at runtime by changing this part's state. When
-        transitionning between two states, the switch of the clipper shall
+        transitioning between two states, the switch of the clipper shall
         happen at the end of the animation, when the new state is finally set
         (this is similar to the 'visible' flag).
     @endproperty
@@ -9314,6 +9503,10 @@ st_collections_group_parts_part_description_clip_to_id(void)
         Moves a corner to a relative position inside the container of the
         relative "to" part. Values from 0.0 (0%, beginning) to 1.0 (100%, end)
         of each axis.
+
+        Defaults:
+        @li rel1.relative: 0.0 0.0
+        @li rel2.relative: 1.0 1.0
     @endproperty
 */
 static void
@@ -9334,6 +9527,10 @@ st_collections_group_parts_part_description_rel1_relative(void)
         [X axis] [Y axis]
     @effect
         Affects the corner position a fixed number of pixels along each axis.
+
+        Defaults:
+        @li rel1.offset: 0 0
+        @li rel2.offset: -1 -1
     @endproperty
 */
 static void
@@ -9354,7 +9551,7 @@ st_collections_group_parts_part_description_rel1_offset(void)
         [another part's name]
     @effect
         Causes a corner to be positioned relatively to another part's
-        container. Setting to "" will un-set this value for inherited
+        container. Setting to "" will unset this value for inherited
         parts.
     @endproperty
 */
@@ -9405,7 +9602,7 @@ st_collections_group_parts_part_description_rel1_to(void)
     @effect
         Causes a corner to be positioned relatively to the X axis of another
         part's container. Simply put affects the first parameter of "relative".
-        Setting to "" will un-set this value for inherited parts.
+        Setting to "" will unset this value for inherited parts.
     @endproperty
 */
 static void
@@ -9456,7 +9653,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
     @effect
         Causes a corner to be positioned relatively to the Y axis of another
         part's container. Simply put, affects the second parameter of
-        "relative". Setting to "" will un-set this value for inherited parts.
+        "relative". Setting to "" will unset this value for inherited parts.
     @endproperty
 */
 static void
@@ -10280,6 +10477,8 @@ st_collections_group_parts_part_description_image_tween(void)
         If set, the area (in pixels) of each side of the image will be
         displayed as a fixed size border, from the side -> inwards, preventing
         the corners from being changed on a resize.
+
+        Defaults: 0 0 0 0
     @endproperty
 */
 static void
@@ -10362,6 +10561,8 @@ st_collections_group_parts_part_description_image_middle(void)
         the highest resolution artwork and then runtime scaling it down.
 
         value can be: 0.0 or bigger (0.0 or 1.0 to turn it off)
+
+        Defaults: 0.0
     @endproperty
 */
 static void
@@ -10392,6 +10593,8 @@ st_collections_group_parts_part_description_image_border_scale_by(void)
     @effect
         If border is set, this value tells Edje if the border should be scaled
         by the object/global edje scale factors
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -10410,10 +10613,7 @@ st_collections_group_parts_part_description_image_border_scale(void)
 
    ed = (Edje_Part_Description_Image*) current_desc;
 
-   ed->image.border.scale =  parse_enum(0,
-					"0", 0,
-					"1", 1,
-					NULL);
+   ed->image.border.scale =  parse_bool(0);
 }
 
 /**
@@ -10429,6 +10629,8 @@ st_collections_group_parts_part_description_image_border_scale(void)
         @li 0 or NONE
         @li DYNAMIC
         @li STATIC
+
+        Defaults: NONE
     @endproperty
 */
 static void
@@ -10490,7 +10692,9 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         [0 or 1]
     @effect
         The smooth property takes a boolean value to decide if the image will
-        be smoothed on scaling (1) or not (0). The default value is 1.
+        be smoothed on scaling (1) or not (0).
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -10545,11 +10749,12 @@ st_collections_group_parts_part_description_fill_smooth(void)
         'offset' from 'origin' and 'size' blocks. Important: the part parameter
         'min' must be setted, it's size of tiled image. If parameter 'max' setted
         tiled area will has the size accordingly 'max' values.
-        SCALE is default type.
 
         Valid values are:
         @li SCALE
         @li TILE
+
+        Defaults: SCALE
     @endproperty
 */
 static void
@@ -10626,6 +10831,8 @@ st_collections_group_parts_part_description_fill_type(void)
         [X axis] [Y axis]
     @effect
         Sets the starting point relatively to displayed element's content.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void
@@ -10676,6 +10883,8 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
         [X axis] [Y axis]
     @effect
         Affects the starting point a fixed number of pixels along each axis.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -10750,8 +10959,9 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
     @effect
         Takes a pair of decimal values that represent the percentual value
         of the original size of the element. For example, "0.5 0.5" represents
-        half the size, while "2.0 2.0" represents the double. The default
-        value is "1.0 1.0".
+        half the size, while "2.0 2.0" represents the double.
+
+        Defaults: 1.0 1.0
     @endproperty
 */
 static void
@@ -10802,6 +11012,8 @@ st_collections_group_parts_part_description_fill_size_relative(void)
         [X axis] [Y axis]
     @effect
         Affects the size of the tile a fixed number of pixels along each axis.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -10992,7 +11204,7 @@ st_collections_group_parts_part_description_text_text_class(void)
         [font alias]
     @effect
         This sets the font family to one of the aliases set up in the "fonts"
-        block. Can be overrided by the application.
+        block. Can be overridden by the application.
     @endproperty
 */
 static void
@@ -11086,10 +11298,12 @@ st_collections_group_parts_part_description_text_repch(void)
     @property
         size
     @parameters
-        [font size in points (pt)]
+        [font size in points (pt) 0 - 255]
     @effect
-        Sets the default font size for the text part. Can be overrided by the
+        Sets the default font size for the text part. Can be overridden by the
         application.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -11118,10 +11332,12 @@ st_collections_group_parts_part_description_text_size(void)
     @property
         size_range
     @parameters
-        [font min size in points (pt)] [font max size in points (pt)]
+        [font min size in points (pt) 0 - 255] [font max size in points (pt) 0 - 255]
     @effect
         Sets the allowed font size for the text part. Setting min and max to 0
-        means we won't restrict the sizing (default).
+        means we won't restrict the sizing.
+
+        Defaults: 0 0
     @since 1.1
     @endproperty
 */
@@ -11162,6 +11378,8 @@ st_collections_group_parts_part_description_text_size_range(void)
     @effect
         When any of the parameters is set to 1 edje will resize the text for it
         to fit in it's container. Both are disabled by default.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -11194,8 +11412,9 @@ st_collections_group_parts_part_description_text_fit(void)
         [horizontal] [vertical]
     @effect
         When any of the parameters is enabled (1) it forces the minimum size of
-        the container to be equal to the minimum size of the text. The default
-        value is "0 0".
+        the container to be equal to the minimum size of the text.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -11231,8 +11450,9 @@ st_collections_group_parts_part_description_text_min(void)
         [horizontal] [vertical]
     @effect
         When any of the parameters is enabled (1) it forces the maximum size of
-        the container to be equal to the maximum size of the text. The default
-        value is "0 0".
+        the container to be equal to the maximum size of the text.
+
+        Defaults: 0 0
     @endproperty
 */
 static void
@@ -11267,8 +11487,11 @@ st_collections_group_parts_part_description_text_max(void)
     @parameters
         [horizontal] [vertical]
     @effect
-        Change the position of the point of balance inside the container. The
-        default value is 0.5 0.5.
+        Change the alignment of the text [0.0(left) - 1.0(right)].
+        You can set horizontal alignment to -1.0 to use bidirectional based alignment(
+        0.0 for LTR content or 1.0 for RTL)
+
+        Defaults: 0.5 0.5
     @endproperty
 */
 static void
@@ -11384,7 +11607,10 @@ st_collections_group_parts_part_description_text_text_source(void)
     @effect
         Used to balance the text in a relative point from 0.0 to 1.0, this
         point is the last section of the string to be cut out in case of a
-        resize that is smaller than the text itself. The default value is 0.0.
+        resize that is smaller than the text itself.
+        Setting -1.0 will disable text cutting.
+
+        Defaults: 0.0
     @endproperty
 */
 static void
@@ -11440,7 +11666,7 @@ st_collections_group_parts_part_description_text_ellipsis(void)
         [primary layout] (fallback layout)
     @effect
         Sets the layout for the box:
-            @li horizontal (default)
+            @li horizontal
             @li vertical
             @li horizontal_homogeneous
             @li vertical_homogeneous
@@ -11453,33 +11679,8 @@ st_collections_group_parts_part_description_text_ellipsis(void)
         You could set a custom layout as fallback, it makes very
         very little sense though, and if that one fails, it will
         default to horizontal.
-    @endproperty
 
-    @property
-        align
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Change the position of the point of balance inside the container. The
-        default value is 0.5 0.5.
-    @endproperty
-
-    @property
-        padding
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Sets the space between cells in pixels. Defaults to 0 0.
-    @endproperty
-
-    @property
-        min
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        When any of the parameters is enabled (1) it forces the minimum size of
-        the box to be equal to the minimum size of the items. The default
-        value is "0 0".
+        Defaults: "horizontal"
     @endproperty
 */
 static void st_collections_group_parts_part_description_box_layout(void)
@@ -11502,6 +11703,18 @@ static void st_collections_group_parts_part_description_box_layout(void)
      ed->box.alt_layout = parse_str(1);
 }
 
+/**
+    @page edcref
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the box [-1.0 - 1.0].
+
+        Defaults: 0.5 0.5
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_box_align(void)
 {
    Edje_Part_Description_Box *ed;
@@ -11521,6 +11734,18 @@ static void st_collections_group_parts_part_description_box_align(void)
    ed->box.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
+/**
+    @page edcref
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between box items in pixels.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_box_padding(void)
 {
    Edje_Part_Description_Box *ed;
@@ -11540,6 +11765,19 @@ static void st_collections_group_parts_part_description_box_padding(void)
    ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the box to be equal to the minimum size of the items.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_box_min(void)
 {
@@ -11594,36 +11832,11 @@ st_collections_group_parts_part_description_box_min(void)
         [homogeneous mode]
     @effect
         Sets the homogeneous mode for the table:
-            @li NONE (default)
+            @li NONE
             @li TABLE
             @li ITEM
-    @endproperty
 
-    @property
-        align
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Change the position of the point of balance inside the container. The
-        default value is 0.5 0.5.
-    @endproperty
-
-    @property
-        padding
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Sets the space between cells in pixels. Defaults to 0 0.
-    @endproperty
-
-    @property
-        min
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        When any of the parameters is enabled (1) it forces the minimum size of
-        the table to be equal to the minimum size of the items. The default
-        value is "0 0".
+        Defaults: NONE
     @endproperty
 */
 static void st_collections_group_parts_part_description_table_homogeneous(void)
@@ -11648,6 +11861,18 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
 				     NULL);
 }
 
+/**
+    @page edcref
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the table [-1.0 - 1.0].
+
+        Defaults: 0.5 0.5
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_table_align(void)
 {
    Edje_Part_Description_Table *ed;
@@ -11667,6 +11892,18 @@ static void st_collections_group_parts_part_description_table_align(void)
    ed->table.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
+/**
+    @page edcref
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between table cells in pixels.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_table_padding(void)
 {
    Edje_Part_Description_Table *ed;
@@ -11684,6 +11921,39 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the table to be equal to the minimum size of the items.
+
+        Defaults: 0 0
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_table_min(void)
+{
+   Edje_Part_Description_Table *ed;
+
+   check_arg_count(2);
+
+   if (current_part->type != EDJE_PART_TYPE_TABLE)
+     {
+        ERR("parse error %s:%i. table attributes in non-TABLE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Table*) current_desc;
+
+   ed->table.min.h = parse_bool(0);
+   ed->table.min.v = parse_bool(1);
 }
 
 /**
@@ -11719,6 +11989,8 @@ static void st_collections_group_parts_part_description_table_padding(void)
         Sets the 'source_clip' property on this PROXY object. True by default,
         this means the proxy will be clipped by its source clipper. False
         means the source clipper is ignored when rendering the proxy.
+
+        Defaults: 1
     @endproperty
 
     @property
@@ -11730,6 +12002,8 @@ static void st_collections_group_parts_part_description_table_padding(void)
         default, meaning both the proxy and its source object will be visible.
         If false, the source object will not be visible. False is equivalent
         to setting the 'no_render' flag on the source object itself.
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -11769,7 +12043,7 @@ st_collections_group_parts_part_description_proxy_source_visible(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_positon,
+   @edcsubsection{collections_group_parts_description_position,
                   Group.Parts.Part.Description.Position}
  */
 
@@ -12010,15 +12284,26 @@ st_collections_group_parts_part_description_camera_properties(void)
             }
         }
     @description
-        A properties block defines main lighting atributes of LIGHT and MESH_NODE.
+        A properties block defines main lighting attributes of LIGHT and MESH_NODE.
     @endblock
 
     @property
         ambient
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Sets the components of the ambient color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 50 50 50 255
     @endproperty
 */
 static void
@@ -12034,10 +12319,7 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->light.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->light.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->light.properties.ambient.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.ambient));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12046,10 +12328,7 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.ambient.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.ambient));
            break;
         }
       default:
@@ -12066,9 +12345,20 @@ st_collections_group_parts_part_description_properties_ambient(void)
     @property
         diffuse
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the components of the ambient color.
+        Sets the components of the diffuse color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -12084,10 +12374,7 @@ st_collections_group_parts_part_description_properties_diffuse(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.diffuse.r = parse_int_range(0, 0, 255);
-           ed->light.properties.diffuse.g = parse_int_range(1, 0, 255);
-           ed->light.properties.diffuse.b = parse_int_range(2, 0, 255);
-           ed->light.properties.diffuse.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.diffuse));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12096,10 +12383,7 @@ st_collections_group_parts_part_description_properties_diffuse(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.diffuse.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.diffuse.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.diffuse.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.diffuse.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.diffuse));
            break;
         }
       default:
@@ -12116,9 +12400,20 @@ st_collections_group_parts_part_description_properties_diffuse(void)
     @property
         specular
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the components of the ambient color.
+        Sets the components of the specular color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -12134,10 +12429,7 @@ st_collections_group_parts_part_description_properties_specular(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->light.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->light.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->light.properties.specular.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.specular));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12146,10 +12438,7 @@ st_collections_group_parts_part_description_properties_specular(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.specular.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.specular));
            break;
         }
       default:
@@ -12551,7 +12840,7 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
     @parameters
         [scale_x] [scale_y] [scale_z]
     @effect
-        Specifies the scale parametr for MESH_NODE.
+        Specifies the scale parameter for MESH_NODE.
     @endproperty
 */
 static void
@@ -12906,7 +13195,7 @@ st_collections_group_parts_part_description_texture_filter2(void)
     @parameters
         [PRIMITIVE]
     @effect
-        Specifies the the type of primitive model to be used.
+        Specifies the type of primitive model to be used.
         Valid primitives:
             @li NONE
             @li CUBE
@@ -13055,26 +13344,6 @@ st_collections_group_parts_part_description_mesh_frame(void)
             file_in, line - 1);
         exit(-1);
      }
-}
-
-static void
-st_collections_group_parts_part_description_table_min(void)
-{
-   Edje_Part_Description_Table *ed;
-
-   check_arg_count(2);
-
-   if (current_part->type != EDJE_PART_TYPE_TABLE)
-     {
-        ERR("parse error %s:%i. table attributes in non-TABLE part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Table*) current_desc;
-
-   ed->table.min.h = parse_bool(0);
-   ed->table.min.v = parse_bool(1);
 }
 
 /** @edcsubsection{collections_group_parts_description_physics,
@@ -13353,7 +13622,7 @@ st_collections_group_parts_part_description_physics_density(void)
     @property
         hardness
     @parameters
-        [soft bodie or cloth hardness]
+        [soft body or cloth hardness]
     @effect
         The hardness is set with a double value (0.0 - 1.0), defining
         how the soft body is supposed to deform.
@@ -13774,7 +14043,9 @@ st_collections_group_parts_part_description_map_light(void)
     @parameters
         [1 or 0]
     @effect
-        This enables mapping for the part. Default is 0.
+        This enables mapping for the part.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -13795,7 +14066,9 @@ st_collections_group_parts_part_description_map_on(void)
         This enable smooth map rendering. This may be linear interpolation,
         anisotropic filtering or anything the engine decides is "smooth".
         This is a best-effort hint and may not produce precisely the same
-        results in all engines and situations. Default is 1
+        results in all engines and situations.
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -13813,7 +14086,9 @@ st_collections_group_parts_part_description_map_smooth(void)
     @parameters
         [1 or 0]
     @effect
-        This enable alpha channel when map rendering. Default is 1.
+        This enable alpha channel when map rendering.
+
+        Defaults: 1
     @endproperty
 */
 static void
@@ -13834,6 +14109,8 @@ st_collections_group_parts_part_description_map_alpha(void)
         This enables backface culling (when the rotated part that normally
         faces the camera is facing away after being rotated etc.). This means
         that the object will be hidden when "backface culled".
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -13855,6 +14132,8 @@ st_collections_group_parts_part_description_map_backface_cull(void)
         This would use perspective set for the object itself or for the
         canvas as a whole as the global perspective with
         edje_perspective_set() and edje_perspective_global_set().
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -13870,17 +14149,29 @@ st_collections_group_parts_part_description_map_perspective_on(void)
     @property
         color
     @parameters
-        [point] [red] [green] [blue] [alpha]
+        [point] [red] [green] [blue] [alpha] or
+        [point] "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Set the color of a vertex in the map.
         Colors will be linearly interpolated between vertex points through the map.
         The default color of a vertex in a map is white solid (255, 255, 255, 255)
         which means it will have no affect on modifying the part pixels.
         Currently only four points are supported:
-         0 - Left-Top point of a part.
-         1 - Right-Top point of a part.
-         2 - Left-Bottom point of a part.
-         3 - Right-Bottom point of a part.
+        @li 0 - Left-Top point of a part.
+        @li 1 - Right-Top point of a part.
+        @li 2 - Left-Bottom point of a part.
+        @li 3 - Right-Bottom point of a part.
+
+        Color format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -13890,13 +14181,10 @@ st_collections_group_parts_part_description_map_color(void)
    Edje_Map_Color tmp;
    int i;
 
-   check_arg_count(5);
+   check_min_arg_count(2);
 
    tmp.idx = parse_int(0);
-   tmp.r = parse_int_range(1, 0, 255);
-   tmp.g = parse_int_range(2, 0, 255);
-   tmp.b = parse_int_range(3, 0, 255);
-   tmp.a = parse_int_range(4, 0, 255);
+   parse_color(1, &tmp.r);
 
    for (i = 0; i < (int)current_desc->map.colors_count; i++)
      {
@@ -13926,11 +14214,13 @@ st_collections_group_parts_part_description_map_color(void)
 /**
     @page edcref
     @property
-        x
+        zoom.x
     @parameters
         [X horizontal zoom to use]
     @effect
         This sets the zoom rate of the horizontal
+
+        Defaults: 1.0
     @endproperty
 */
 static void
@@ -13938,17 +14228,19 @@ st_collections_group_parts_part_description_map_zoom_x(void)
 {
    check_arg_count(1);
 
-   current_desc->map.zoom.x = FROM_DOUBLE(parse_float(0));
+   current_desc->map.zoom.x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /**
     @page edcref
     @property
-        y
+        zoom.y
     @parameters
         [Y vertical zoom to use]
     @effect
         This sets the zoom rate of vertical
+
+        Defaults: 1.0
     @endproperty
 */
 static void
@@ -13956,7 +14248,7 @@ st_collections_group_parts_part_description_map_zoom_y(void)
 {
    check_arg_count(1);
 
-   current_desc->map.zoom.y = FROM_DOUBLE(parse_float(0));
+   current_desc->map.zoom.y = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /** @edcsubsection{collections_group_parts_description_map_rotation,
@@ -14020,6 +14312,8 @@ st_collections_group_parts_part_description_map_rotation_center(void)
     @effect
         This sets the rotation around the x axis of the part considering
         the center set. In degrees.
+
+        Defaults: 0.0
     @endproperty
 */
 static void
@@ -14039,6 +14333,8 @@ st_collections_group_parts_part_description_map_rotation_x(void)
     @effect
         This sets the rotation around the y axis of the part considering
         the center set. In degrees.
+
+        Defaults: 0.0
     @endproperty
 */
 static void
@@ -14058,6 +14354,8 @@ st_collections_group_parts_part_description_map_rotation_y(void)
     @effect
         This sets the rotation around the z axis of the part considering
         the center set. In degrees.
+
+        Defaults: 0.0
     @endproperty
 */
 static void
@@ -14096,6 +14394,8 @@ st_collections_group_parts_part_description_map_rotation_z(void)
     @effect
         This sets the z value that will not be scaled. Normally this is 0 as
         that is the z distance that all objects are at normally.
+
+        Defaults: 0
     @endproperty
 */
 static void
@@ -14116,6 +14416,8 @@ st_collections_group_parts_part_description_perspective_zplane(void)
     @effect
         This sets the distance from the focal z plane (zplane) and the
         camera - i.e. very much equating to focal length of the camera
+
+        Defaults: 1000
     @endproperty
 */
 static void
@@ -14428,6 +14730,8 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
    switch (type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	 param->i = parse_bool(1);
+	 break;
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
 	 param->i = parse_int(1);
 	 break;
@@ -14503,7 +14807,7 @@ st_collections_group_parts_part_description_params_string(void)
     @parameters
         [param_name] [bool_value]
     @effect
-        Adds an boolean parameter for an external object. Value must be 0 or 1.
+        Adds an boolean parameter for an external object.
     @endproperty
 */
 static void
@@ -14909,7 +15213,7 @@ st_collections_group_programs_program_source(void)
         [part] [state]
     @effect
         Filter signals to be only accepted if the part [part] is in state named [state].
-        Only one filter per program can be used. If [state] is not given, the source of
+        Only one filter per program can be used. If [part] is not given, the source of
         the event will be used instead.
     @endproperty
 */
@@ -14937,6 +15241,8 @@ st_collections_group_programs_program_filter(void)
     @effect
         Wait 'from' seconds before executing the program. And add a random
         number of seconds (from 0 to 'range') to the total waiting time.
+
+        Defaults: 0.0 0.0
     @endproperty
 */
 static void
