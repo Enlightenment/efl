@@ -14226,7 +14226,7 @@ st_collections_group_parts_part_description_map_zoom_x(void)
 {
    check_arg_count(1);
 
-   current_desc->map.zoom.x = FROM_DOUBLE(parse_float(0));
+   current_desc->map.zoom.x = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /**
@@ -14246,7 +14246,7 @@ st_collections_group_parts_part_description_map_zoom_y(void)
 {
    check_arg_count(1);
 
-   current_desc->map.zoom.y = FROM_DOUBLE(parse_float(0));
+   current_desc->map.zoom.y = FROM_DOUBLE(parse_float_range(0, 0.0, 999999999.0));
 }
 
 /** @edcsubsection{collections_group_parts_description_map_rotation,
