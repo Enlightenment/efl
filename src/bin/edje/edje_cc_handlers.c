@@ -2923,7 +2923,7 @@ st_data_item(void)
         [parameter name] [parameter filename]
     @effect
         Defines a new parameter, the value will be the contents of the
-        specified file formated as a single string of text. This property only
+        specified file formatted as a single string of text. This property only
         works with plain text files.
     @endproperty
  */
@@ -6005,7 +6005,7 @@ st_collections_group_limits_vertical(void)
         It will send a signal: "limit,name,over" when the object is resized and pass
         the limit by growing over it. And it will send: "limit,name,below" when
         it pass below that limit.
-        This limit will be applied on the x absis and is expressed in pixels.
+        This limit will be applied on the x axis and is expressed in pixels.
     @endproperty
 */
 static void
@@ -7414,7 +7414,7 @@ st_collections_group_parts_part_entry_mode(void)
         mouse, drag and release to end.
         @li EXPLICIT mode requires the application
         controlling the edje object has to explicitly begin and end selection
-        modes, and the selection itself is dragable at both ends.
+        modes, and the selection itself is draggable at both ends.
     @endproperty
 */
 static void
@@ -7560,7 +7560,7 @@ st_collections_group_parts_part_dragable_x(void)
         used to enable (1 or -1) and disable (0) dragging along the axis. When
         enabled, 1 will set the starting point at 0.0 and -1 at 1.0. The second
         parameter takes any integer and will limit movement to values
-        divisibles by it, causing the part to jump from position to position.
+        divisible by it, causing the part to jump from position to position.
         If step is set to 0 it is calculated as height of confine part divided by
         count.
 
@@ -8954,8 +8954,8 @@ st_collections_group_parts_part_description_limit(void)
         axis inside its container. @c "0.0" means left/top edges of
         the object touching container's respective ones, while @c
         "1.0" stands for right/bottom edges of the object (on
-        horizonal/vertical axis, respectively).
-        There is one more parametr for Z axis in case of MESH_NODE.
+        horizontal/vertical axis, respectively).
+        There is one more parameter for Z axis in case of MESH_NODE.
 
         Defaults: 0.5 0.5 (0.5)
     @endproperty
@@ -9052,7 +9052,7 @@ st_collections_group_parts_part_description_min(void)
     @property
         minmul
     @parameters
-        [width multipler] [height multiplier]
+        [width multiplier] [height multiplier]
     @effect
         A multiplier FORCIBLY applied to whatever minimum size is only during
         minimum size calculation.
@@ -9470,7 +9470,7 @@ st_collections_group_parts_part_description_rel1_offset(void)
         [another part's name]
     @effect
         Causes a corner to be positioned relatively to another part's
-        container. Setting to "" will un-set this value for inherited
+        container. Setting to "" will unset this value for inherited
         parts.
     @endproperty
 */
@@ -9521,7 +9521,7 @@ st_collections_group_parts_part_description_rel1_to(void)
     @effect
         Causes a corner to be positioned relatively to the X axis of another
         part's container. Simply put affects the first parameter of "relative".
-        Setting to "" will un-set this value for inherited parts.
+        Setting to "" will unset this value for inherited parts.
     @endproperty
 */
 static void
@@ -9572,7 +9572,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
     @effect
         Causes a corner to be positioned relatively to the Y axis of another
         part's container. Simply put, affects the second parameter of
-        "relative". Setting to "" will un-set this value for inherited parts.
+        "relative". Setting to "" will unset this value for inherited parts.
     @endproperty
 */
 static void
@@ -11931,7 +11931,7 @@ st_collections_group_parts_part_description_proxy_source_visible(void)
 }
 
 /**
-   @edcsubsection{collections_group_parts_description_positon,
+   @edcsubsection{collections_group_parts_description_position,
                   Group.Parts.Part.Description.Position}
  */
 
@@ -12713,7 +12713,7 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
     @parameters
         [scale_x] [scale_y] [scale_z]
     @effect
-        Specifies the scale parametr for MESH_NODE.
+        Specifies the scale parameter for MESH_NODE.
     @endproperty
 */
 static void
@@ -13043,7 +13043,7 @@ st_collections_group_parts_part_description_texture_filter2(void)
     @parameters
         [PRIMITIVE]
     @effect
-        Specifies the the type of primitive model to be used.
+        Specifies the type of primitive model to be used.
         Valid primitives:
             @li NONE
             @li CUBE
@@ -13490,7 +13490,7 @@ st_collections_group_parts_part_description_physics_density(void)
     @property
         hardness
     @parameters
-        [soft bodie or cloth hardness]
+        [soft body or cloth hardness]
     @effect
         The hardness is set with a double value (0.0 - 1.0), defining
         how the soft body is supposed to deform.
