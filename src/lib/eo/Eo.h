@@ -2070,6 +2070,38 @@ efl_replace(Eo **storage, Eo *new_obj)
 EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
 
 /**
+ * @brief Create a new #Eina_Value containing the passed parameter
+ * @param obj The object to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value *
+eina_value_object_new(Eo *obj)
+{
+   Eina_Value *v;
+
+   v = eina_value_new(EINA_VALUE_TYPE_OBJECT);
+   if (v) eina_value_set(v, obj);
+   return v;
+}
+
+/**
+ * @brief Create a new #EinaInitializeining the passed parameter
+ * @param obj The object to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_object_init(Eo *obj)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (eina_value_setup(&v, EINA_VALUE_TYPE_OBJECT))
+     eina_value_set(&v, obj);
+   return v;
+}
+
+/**
  * @}
  */
 
