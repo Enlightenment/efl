@@ -13,13 +13,13 @@
 #define MY_CLASS_NAME "Efl.Ui.Popup"
 
 static void
-_bg_clicked_cb(void *data,
-               Eo *o EINA_UNUSED,
-               const char *emission EINA_UNUSED,
-               const char *source EINA_UNUSED)
+_backwall_clicked_cb(void *data,
+                     Eo *o EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
 {
    Eo *obj = data;
-   efl_event_callback_call(obj, EFL_UI_POPUP_EVENT_BG_CLICKED, NULL);
+   efl_event_callback_call(obj, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, NULL);
 }
 
 EOLIAN static void
@@ -36,8 +36,8 @@ _calc_align(Eo *obj)
 
    Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
 
-   efl_gfx_position_set(pd->event_bg, EINA_POSITION2D(0, 0));
-   efl_gfx_size_set(pd->event_bg, EINA_SIZE2D(p_geom.w, p_geom.h));
+   efl_gfx_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+   efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
    Eina_Rect o_geom = efl_gfx_geometry_get(obj);
 
@@ -89,8 +89,8 @@ _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_U
 
    Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
 
-   efl_gfx_position_set(pd->event_bg, EINA_POSITION2D(p_geom.x, p_geom.y));
-   efl_gfx_size_set(pd->event_bg, EINA_SIZE2D(p_geom.w, p_geom.h));
+   efl_gfx_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
+   efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
    efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, obj);
    efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, obj);
@@ -202,13 +202,13 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_layout_theme_set(obj, "popup", "base", "view");
 
-   pd->event_bg = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set(obj, pd->event_bg, "popup", "base", "event_bg");
-   evas_object_smart_member_add(pd->event_bg, obj);
-   evas_object_stack_below(pd->event_bg, wd->resize_obj);
+   pd->backwall = edje_object_add(evas_object_evas_get(obj));
+   elm_widget_theme_object_set(obj, pd->backwall, "popup", "base", "backwall");
+   evas_object_smart_member_add(pd->backwall, obj);
+   evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->event_bg, "elm,action,clicked", "*",
-                                   _bg_clicked_cb, obj);
+   edje_object_signal_callback_add(pd->backwall, "elm,action,clicked", "*",
+                                   _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
 
@@ -218,7 +218,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
-   ELM_SAFE_DEL(pd->event_bg);
+   ELM_SAFE_DEL(pd->backwall);
 
    efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb,
                           obj);
@@ -250,12 +250,12 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_bg_set(Eo *obj, Efl_Ui_Popup_Data *pd, const char* file, const char* group)
+_efl_ui_popup_backwall_set(Eo *obj, Efl_Ui_Popup_Data *pd, const char* file, const char* group)
 {
-   Eo *prev_obj = edje_object_part_swallow_get(pd->event_bg, "elm.swallow.image");
+   Eo *prev_obj = edje_object_part_swallow_get(pd->backwall, "elm.swallow.image");
    if (prev_obj)
      {
-        edje_object_part_unswallow(pd->event_bg, prev_obj);
+        edje_object_part_unswallow(pd->backwall, prev_obj);
         efl_del(prev_obj);
      }
 
@@ -263,26 +263,26 @@ _efl_ui_popup_bg_set(Eo *obj, Efl_Ui_Popup_Data *pd, const char* file, const cha
    Eina_Bool ret = elm_image_file_set(image, file, group);
    if (!ret)
      {
-        edje_object_signal_emit(pd->event_bg, "elm,state,image,hidden", "elm");
+        edje_object_signal_emit(pd->backwall, "elm,state,image,hidden", "elm");
         efl_del(image);
         return;
      }
-   edje_object_part_swallow(pd->event_bg, "elm.swallow.image", image);
-   edje_object_signal_emit(pd->event_bg, "elm,state,image,visible", "elm");
+   edje_object_part_swallow(pd->backwall, "elm.swallow.image", image);
+   edje_object_signal_emit(pd->backwall, "elm,state,image,visible", "elm");
 }
 
 EOLIAN static void
-_efl_ui_popup_bg_repeat_events_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Eina_Bool repeat)
+_efl_ui_popup_backwall_repeat_events_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Eina_Bool repeat)
 {
-   pd->bg_repeat_events = repeat;
+   pd->backwall_repeat_events = repeat;
 
-   efl_canvas_object_repeat_events_set(pd->event_bg, repeat);
+   efl_canvas_object_repeat_events_set(pd->backwall, repeat);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_popup_bg_repeat_events_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_backwall_repeat_events_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
-   return pd->bg_repeat_events;
+   return pd->backwall_repeat_events;
 }
 
 /* Internal EO APIs and hidden overrides */
