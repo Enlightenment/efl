@@ -8001,8 +8001,8 @@ static void st_collections_group_parts_part_box_items_item_max(void)
 
    check_arg_count(2);
 
-   current_item->max.w = parse_int_range(0, 0, 0x7ffffff);
-   current_item->max.h = parse_int_range(1, 0, 0x7ffffff);
+   current_item->max.w = parse_int_range(0, -1, 0x7ffffff);
+   current_item->max.h = parse_int_range(1, -1, 0x7ffffff);
 }
 
 /**
