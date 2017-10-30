@@ -10,14 +10,14 @@ enum Efl.Ui.Popup.Align {
 class Efl.Ui.Popup(Efl.Ui.Layout)
 {
    methods {
-      bg_set {
+      backwall_set {
          params {
             @in file: string; [[The image file path.]]
             @in group: string; [[The image key in $file (if its an Eet one), or
                                  $null, otherwise.]]
          }
       }
-      @property bg_repeat_events {
+      @property backwall_repeat_events {
          set {
             [[Sets whether events should be passed to by a click outside.
 
@@ -25,7 +25,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
             ]]
          }
          get {
-            [[Returns value indicating whether bg repeat events is enabled or not.]]
+            [[Returns value indicating whether backwall repeat events is enabled or not.]]
          }
          values {
             repeat: bool; [[If $true, events are passed to lower objects.]]
@@ -66,7 +66,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
       Efl.Container.content_unset;
    }
    events {
-      bg,clicked; [[This is called whenever the user click background of popup.]]
+      backwall,clicked; [[This is called whenever the user clicks back wall of popup.]]
       timeout; [[This is called when popup times out.]]
    }
 }
