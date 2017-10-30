@@ -226,8 +226,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Efl_Ui_List_Precise_Layouter_Size* size;
    int i = 0, j = 0;
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
-   Evas_Coord ow, oh, want, minw, minh, scr_x, scr_y;
-   int boxx, boxy, boxw, boxh, length, /*pad, */extra = 0, rounding = 0;
+   Evas_Coord ow, oh, want, scr_x, scr_y;
+   int boxx, boxy, boxw, boxh, length, pad, extra = 0, rounding = 0;
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
@@ -283,8 +283,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    efl_gfx_size_hint_margin_get(modeler, &boxl, &boxr, &boxt, &boxb);
 
    scale = evas_object_scale_get(modeler);
-/*    // Box align: used if "item has max size and fill" or "no item has a weight" */
-/*    // Note: cells always expand on the orthogonal direction */
+   // Box align: used if "item has max size and fill" or "no item has a weight"
+   // Note: cells always expand on the orthogonal direction
    box_align[0] = 0;/*pd->align.h;*/
    box_align[1] = 0;/*pd->align.v;*/
    if (box_align[0] < 0)
@@ -298,62 +298,33 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         box_align[1] = 0.5;
      }
 
-/*    count = eina_inarray_count(&pd->items.array); */
-
    // box outer margin
    boxw -= boxl + boxr;
    boxh -= boxt + boxb;
    boxx += boxl;
    boxy += boxt;
 
-   int average_item_size = 10; //eina_inarray_count(&pd->items.array) ? (/*horz*/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT;
-   if(!average_item_size)
-     average_item_size = 10;//AVERAGE_SIZE_INIT;
-
    // total space & available space
    if (horiz)
      {
-        int pad;
         length = boxw;
-        want = 100;//pd->realized.w;
-        //pad = pd->pad.scalable ? (pd->pad.h * scale) : pd->pad.h;
-        pad = 0;
-
-        // padding can not be squeezed (note: could make it an option)
-        length -= pad * (count - 1);
-        // available space. if <0 we overflow
-        extra = length - want;
-
-        minw = 100;//pd->realized.w + boxl + boxr + pad * (count - 1);
-        minh = 100;//pd->realized.h + boxt + boxb;
-        /* if (pd->item_count > count) */
-        /*   minw = pd->item_count * average_item_size; */
+        want = pd->min.w;
+        pad = 0;//pd->pad.scalable ? (pd->pad.h * scale) : pd->pad.h;
      }
    else
      {
-        int pad;
         length = boxh;
         want = pd->min.h;
         pad = 0;//pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
-
-        //FIXME?? use eina_hash_population(pd->size_information) or count
-        int population = eina_hash_population(pd->size_information);
-        // padding can not be squeezed (note: could make it an option)
-        length -= pad * (population - 1); //(count - 1);
-        // available space. if <0 we overflow
-        extra = length - want;
-
-        minw = pd->min.w + boxl + boxr;
-        minh = pd->min.h + pad * (/*count*/ population - 1) + boxt + boxb;
-        if (pd->count_total > population) //count)
-          minh *= (pd->count_total / population); //count);
      }
 
-//   if (pd->min.h != minh || pd->min.w != minw)
-//     {
-//        pd->min.w = minw;
-//        pd->min.h = minh;
-//     }
+   // padding can not be squeezed (note: could make it an option)
+   length -= pad * (eina_hash_population(pd->size_information) - 1);
+   // available space. if <0 we overflow
+   extra = length - want;
+
+   /* Evas_Coord minw = pd->min.w + boxl + boxr; */
+   /* Evas_Coord minh = pd->min.h + boxt + boxb; */
 
    efl_ui_list_model_min_size_set(modeler, pd->min);
    if (extra < 0) extra = 0;
@@ -379,8 +350,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
               (modeler, NULL, NULL, &ow, &oh);
 
    elm_interface_scrollable_content_pos_get(modeler, &scr_x, &scr_y);
-/*    cur_pos += average_item_size * pd->realized.start; */
-/*    // scan all items, get their properties, calculate total weight & min size */
+   // scan all items, get their properties, calculate total weight & min size
    // cache size of new items
    /* EINA_ACCESSOR_FOREACH(items, i, layout_item) */
    EINA_ACCESSOR_FOREACH(nodes, i, items_node)
@@ -415,7 +385,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
         if (max.w < size->min.w) max.w = size->min.w;
         if (max.h < size->min.h) max.h = size->min.h;
 
-        /* // extra rounding up (compensate cumulative error) */
+        // extra rounding up (compensate cumulative error)
         if ((i == (count - 1)) && (cur_pos - floor(cur_pos) >= 0.5))
            rounding = 1;
 
@@ -500,12 +470,6 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 
         /* layout_item->x = x; */
         /* layout_item->y = y; */
-
-/* //        fprintf(stderr, "x: %.2f y: %.2f w: %.2f h: %.2f old x: %.2f old y: %.2f old w: %.2f old h: %.2f\n" */
-/* //                , (x + 0 - pd->pan.x), (y + 0 - pd->pan.y), (float)w, (float)h */
-/* //               , (float)litem->x, (float)litem->y, (float)litem->w, (float)litem->h); fflush(stderr); */
-/* //        printf("obj=%d currpos=%.2f moved to X=%.2f, Y=%.2f average_item_size %d\n", litem->index, cur_pos, x, y */
-/* //               , eina_inarray_count(&pd->items.array) ? (/\*horz*\/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT); */
           }
         }
      }
