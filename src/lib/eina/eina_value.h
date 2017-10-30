@@ -1031,7 +1031,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
- * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  * @li EINA_VALUE_TYPE_TM: struct tm*
  *
  * @code
