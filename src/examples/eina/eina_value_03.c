@@ -169,6 +169,7 @@ int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    printf("timezone: %s\n", s);
    free(s);
 
-   eina_value_flush(&vtz);
-   eina_value_flush(&vtv);
+   eina_value_free(&vtz);
+   eina_value_free(&vtv);
+   eina_shutdown();
 }
