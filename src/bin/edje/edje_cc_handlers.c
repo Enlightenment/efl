@@ -10532,10 +10532,7 @@ st_collections_group_parts_part_description_image_border_scale(void)
 
    ed = (Edje_Part_Description_Image*) current_desc;
 
-   ed->image.border.scale =  parse_enum(0,
-					"0", 0,
-					"1", 1,
-					NULL);
+   ed->image.border.scale =  parse_bool(0);
 }
 
 /**
@@ -14589,6 +14586,8 @@ _st_collections_group_parts_part_description_params(Edje_External_Param_Type typ
    switch (type)
      {
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	 param->i = parse_bool(1);
+	 break;
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
 	 param->i = parse_int(1);
 	 break;
@@ -14664,7 +14663,7 @@ st_collections_group_parts_part_description_params_string(void)
     @parameters
         [param_name] [bool_value]
     @effect
-        Adds an boolean parameter for an external object. Value must be 0 or 1.
+        Adds an boolean parameter for an external object.
     @endproperty
 */
 static void
