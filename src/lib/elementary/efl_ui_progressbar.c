@@ -118,6 +118,8 @@ _units_set(Evas_Object *obj)
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
         elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+
+        eina_value_flush(&val);
      }
    else
      elm_layout_text_set(obj, "elm.text.status", NULL);

@@ -241,6 +241,8 @@ _units_set(Evas_Object *obj)
              elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
              sd->units_show = EINA_TRUE;
           }
+
+        eina_value_flush(&val);
      }
    else
      {

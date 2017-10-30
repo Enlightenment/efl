@@ -278,6 +278,8 @@ _shrink_mode_set(Evas_Object *obj,
              efl_event_callback_legacy_call
                (obj, EFL_UI_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1);
           }
+
+        eina_value_flush(&val);
      }
    else
      {
