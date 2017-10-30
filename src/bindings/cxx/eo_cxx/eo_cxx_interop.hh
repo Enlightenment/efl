@@ -292,7 +292,7 @@ template <typename T, typename U, bool Own = false, typename V>
 T convert_to_c(V&& object);
 
 template <typename F, typename T>
-void* data_function_ptr_to_c(T function)
+void* data_function_ptr_to_c(T)
 {
   return nullptr;
 }
@@ -436,6 +436,10 @@ inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view& v, tag<Eina_Value
 inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value*, in_traits<eina::value_view const&>::type>)
 {
   return const_cast<Eina_Value*>(v.native_handle());
+}
+inline Eina_Value const& convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value, in_traits<eina::value_view const&>::type>)
+{
+  return *v.native_handle();
 }
 inline Eina_Bool convert_to_c_impl( bool b, tag<Eina_Bool, bool>)
 {
