@@ -65,7 +65,7 @@
    tag: "success" "+ color=#00ff00";                                       \
    tag: "warning" "+ color=#ff7c00";                                       \
    tag: "failure" "+ color=#ff0000";                                       \
-   tag: "code" "+ font=Mono style=plain color=#ffffff";                    \
+   tag: "code" "+ font=Mono color=#ffffff";                                \
    tag: "comment" "+ color=#00B000";                                       \
    tag: "string" "+ color=#ff3a35";                                        \
    tag: "number" "+ color=#D4D42A font_weight=Bold";                       \
@@ -83,7 +83,7 @@
 #define DISABLED_TEXTBLOCK_TAGS                                            \
    tag: "em" "+ font_style=Oblique";                                       \
    tag: "hilight" "+ font_weight=Bold color=#3399ff";                      \
-   tag: "link" "+ color=#101820 underline=on underline_color=#101820";     \
+   tag: "link" "+ color=#607080 underline=on underline_color=#3399ff";     \
    tag: "preedit" "+ underline=on underline_color=#3399ff88";              \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#888888";  \
    tag: "title" "+ font_size=26";                                          \
@@ -98,7 +98,7 @@
    tag: "success" "+ color=#00ff0060";                                     \
    tag: "warning" "+ color=#ff7c0060";                                     \
    tag: "failure" "+ color=#ff000060";                                     \
-   tag: "code" "+ style=shadow,bottom font=Mono color=#151515";            \
+   tag: "code" "+ font=Mono color=#505050";                                \
    tag: "comment" "+ color=#002800";                                       \
    tag: "string" "+ color=#300504";                                        \
    tag: "number" "+ color=#202008 font_weight=Bold";                       \
