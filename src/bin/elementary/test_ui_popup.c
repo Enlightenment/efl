@@ -16,7 +16,7 @@ typedef struct
 } efl_ui_popup_data;
 
 static void
-_bg_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+_backwall_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    printf("Popup's background is clicked.\n");
 }
@@ -55,7 +55,7 @@ _create_popup(efl_ui_popup_data *p_data)
 
    Eo *efl_ui_popup = efl_add(EFL_UI_POPUP_CLASS, p_data->win);
 
-   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_EVENT_BG_CLICKED, _bg_clicked, NULL);
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, _backwall_clicked, NULL);
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_EVENT_TIMEOUT, _timeout_cb, p_data);
    efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
 
@@ -75,7 +75,7 @@ _create_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_bg_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+_backwall_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    static int k = 0;
    efl_ui_popup_data *p_data = data;
@@ -84,13 +84,13 @@ _bg_cb(void *data EINA_UNUSED, const Efl_Event *ev)
      {
         char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
-        efl_ui_popup_bg_set(p_data->efl_ui_popup, buf, NULL);
-        efl_text_set(ev->object, "Bg UnSet");
+        efl_ui_popup_backwall_set(p_data->efl_ui_popup, buf, NULL);
+        efl_text_set(ev->object, "Backwall UnSet");
      }
    else
      {
-        efl_ui_popup_bg_set(p_data->efl_ui_popup, NULL, NULL);
-        efl_text_set(ev->object, "Bg Set");
+        efl_ui_popup_backwall_set(p_data->efl_ui_popup, NULL, NULL);
+        efl_text_set(ev->object, "Backwall Set");
      }
    k = !k;
 }
@@ -100,14 +100,14 @@ _repeat_event_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_ui_popup_data *p_data = data;
    if (!p_data->efl_ui_popup) return;
-   if (!efl_ui_popup_bg_repeat_events_get(p_data->efl_ui_popup))
+   if (!efl_ui_popup_backwall_repeat_events_get(p_data->efl_ui_popup))
      {
-        efl_ui_popup_bg_repeat_events_set(p_data->efl_ui_popup, EINA_TRUE);
+        efl_ui_popup_backwall_repeat_events_set(p_data->efl_ui_popup, EINA_TRUE);
         efl_text_set(ev->object, "Repeat Event UnSet");
      }
    else
      {
-        efl_ui_popup_bg_repeat_events_set(p_data->efl_ui_popup, EINA_FALSE);
+        efl_ui_popup_backwall_repeat_events_set(p_data->efl_ui_popup, EINA_FALSE);
         efl_text_set(ev->object, "Repeat Event Set");
      }
 }
@@ -265,11 +265,11 @@ test_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_set(dummy_btn, EINA_SIZE2D(150, 50));
    efl_event_callback_add(dummy_btn, EFL_UI_EVENT_CLICKED, _dummy_cb, p_data);
 
-   Eo *bg_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
-   efl_gfx_position_set(bg_btn, EINA_POSITION2D(0, 100));
-   efl_gfx_size_set(bg_btn, EINA_SIZE2D(150, 50));
-   efl_text_set(bg_btn, "Bg Set");
-   efl_event_callback_add(bg_btn, EFL_UI_EVENT_CLICKED, _bg_cb, p_data);
+   Eo *backwall_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
+   efl_gfx_position_set(backwall_btn, EINA_POSITION2D(0, 100));
+   efl_gfx_size_set(backwall_btn, EINA_SIZE2D(150, 50));
+   efl_text_set(backwall_btn, "Backwall Set");
+   efl_event_callback_add(backwall_btn, EFL_UI_EVENT_CLICKED, _backwall_cb, p_data);
 
    Eo *timeout_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(timeout_btn, "Timeout Set");
@@ -453,7 +453,7 @@ test_ui_popup_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    Eo *efl_ui_popup = efl_add(EFL_UI_POPUP_ANCHOR_CLASS, win);
 
-   efl_ui_popup_bg_repeat_events_set(efl_ui_popup, EINA_TRUE);
+   efl_ui_popup_backwall_repeat_events_set(efl_ui_popup, EINA_TRUE);
 
    //Default align priority order is top, left, right, bottom, center.
    efl_ui_popup_anchor_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,
