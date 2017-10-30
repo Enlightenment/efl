@@ -11599,37 +11599,6 @@ st_collections_group_parts_part_description_text_ellipsis(void)
 
         Defaults: "horizontal"
     @endproperty
-
-    @property
-        align
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Change the position of the point of balance inside the container [-1.0 - 1.0].
-
-        Defaults: 0.5 0.5
-    @endproperty
-
-    @property
-        padding
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Sets the space between cells in pixels.
-
-        Defaults: 0 0
-    @endproperty
-
-    @property
-        min
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        When any of the parameters is enabled (1) it forces the minimum size of
-        the box to be equal to the minimum size of the items.
-
-        Defaults: 0 0
-    @endproperty
 */
 static void st_collections_group_parts_part_description_box_layout(void)
 {
@@ -11651,6 +11620,18 @@ static void st_collections_group_parts_part_description_box_layout(void)
      ed->box.alt_layout = parse_str(1);
 }
 
+/**
+    @page edcref
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the box [-1.0 - 1.0].
+
+        Defaults: 0.5 0.5
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_box_align(void)
 {
    Edje_Part_Description_Box *ed;
@@ -11670,6 +11651,18 @@ static void st_collections_group_parts_part_description_box_align(void)
    ed->box.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
+/**
+    @page edcref
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between box items in pixels.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_box_padding(void)
 {
    Edje_Part_Description_Box *ed;
@@ -11689,6 +11682,19 @@ static void st_collections_group_parts_part_description_box_padding(void)
    ed->box.padding.y = parse_int_range(1, 0, 0x7fffffff);
 }
 
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the box to be equal to the minimum size of the items.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void
 st_collections_group_parts_part_description_box_min(void)
 {
@@ -11749,37 +11755,6 @@ st_collections_group_parts_part_description_box_min(void)
 
         Defaults: NONE
     @endproperty
-
-    @property
-        align
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Change the position of the point of balance inside the container [-1.0 - 1.0].
-
-        Defaults: 0.5 0.5
-    @endproperty
-
-    @property
-        padding
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        Sets the space between cells in pixels.
-
-        Defaults: 0 0
-    @endproperty
-
-    @property
-        min
-    @parameters
-        [horizontal] [vertical]
-    @effect
-        When any of the parameters is enabled (1) it forces the minimum size of
-        the table to be equal to the minimum size of the items.
-
-        Defaults: 0 0
-    @endproperty
 */
 static void st_collections_group_parts_part_description_table_homogeneous(void)
 {
@@ -11803,6 +11778,18 @@ static void st_collections_group_parts_part_description_table_homogeneous(void)
 				     NULL);
 }
 
+/**
+    @page edcref
+    @property
+        align
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Change the position of the point of balance inside the table [-1.0 - 1.0].
+
+        Defaults: 0.5 0.5
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_table_align(void)
 {
    Edje_Part_Description_Table *ed;
@@ -11822,6 +11809,18 @@ static void st_collections_group_parts_part_description_table_align(void)
    ed->table.align.y = FROM_DOUBLE(parse_float_range(1, -1.0, 1.0));
 }
 
+/**
+    @page edcref
+    @property
+        padding
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        Sets the space between table cells in pixels.
+
+        Defaults: 0 0
+    @endproperty
+*/
 static void st_collections_group_parts_part_description_table_padding(void)
 {
    Edje_Part_Description_Table *ed;
@@ -11839,6 +11838,39 @@ static void st_collections_group_parts_part_description_table_padding(void)
 
    ed->table.padding.x = parse_int_range(0, 0, 0x7fffffff);
    ed->table.padding.y = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        min
+    @parameters
+        [horizontal] [vertical]
+    @effect
+        When any of the parameters is enabled (1) it forces the minimum size of
+        the table to be equal to the minimum size of the items.
+
+        Defaults: 0 0
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_table_min(void)
+{
+   Edje_Part_Description_Table *ed;
+
+   check_arg_count(2);
+
+   if (current_part->type != EDJE_PART_TYPE_TABLE)
+     {
+        ERR("parse error %s:%i. table attributes in non-TABLE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Table*) current_desc;
+
+   ed->table.min.h = parse_bool(0);
+   ed->table.min.v = parse_bool(1);
 }
 
 /**
@@ -13204,26 +13236,6 @@ st_collections_group_parts_part_description_mesh_frame(void)
             file_in, line - 1);
         exit(-1);
      }
-}
-
-static void
-st_collections_group_parts_part_description_table_min(void)
-{
-   Edje_Part_Description_Table *ed;
-
-   check_arg_count(2);
-
-   if (current_part->type != EDJE_PART_TYPE_TABLE)
-     {
-        ERR("parse error %s:%i. table attributes in non-TABLE part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Table*) current_desc;
-
-   ed->table.min.h = parse_bool(0);
-   ed->table.min.v = parse_bool(1);
 }
 
 /** @edcsubsection{collections_group_parts_description_physics,
