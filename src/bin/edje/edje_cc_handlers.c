@@ -15106,7 +15106,7 @@ st_collections_group_programs_program_source(void)
         [part] [state]
     @effect
         Filter signals to be only accepted if the part [part] is in state named [state].
-        Only one filter per program can be used. If [state] is not given, the source of
+        Only one filter per program can be used. If [part] is not given, the source of
         the event will be used instead.
     @endproperty
 */
