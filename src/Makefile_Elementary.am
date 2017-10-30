@@ -917,6 +917,7 @@ bin/elementary/test_transit_bezier.c \
 bin/elementary/test_ui_box.c \
 bin/elementary/test_ui_clock.c \
 bin/elementary/test_ui_grid.c \
+bin/elementary/test_ui_popup.c \
 bin/elementary/test_ui_textpath.c \
 bin/elementary/test_video.c \
 bin/elementary/test_weather.c \
