@@ -11,7 +11,7 @@ typedef struct _Efl_Ui_List_SegArray_Node
    int max;
    int first;
 
-   // Eina_Position2D initial_position;
+   void* layout_data;
 
    Efl_Ui_List_Item* pointers[0];
 } Efl_Ui_List_SegArray_Node;
@@ -26,6 +26,7 @@ typedef struct _Efl_Ui_List_SegArray
 } Efl_Ui_List_SegArray;
 
 Eina_Accessor* efl_ui_list_segarray_accessor_get(Efl_Ui_List_SegArray* segarray);
+Eina_Accessor* efl_ui_list_segarray_node_accessor_get(Efl_Ui_List_SegArray* segarray);
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor);
 int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray);
 void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_size,

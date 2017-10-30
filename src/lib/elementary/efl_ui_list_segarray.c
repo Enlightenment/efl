@@ -101,20 +101,6 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
 {
    int i;
    Efl_Model* children;
-   Efl_Ui_List_SegArray_Node *first_node = NULL/*, *last_node = NULL*/;
-   int array_first = 0;
-
-   if(segarray->root)
-     {
-        {
-           Eina_Iterator* pre_iterator = eina_rbtree_iterator_prefix(EINA_RBTREE_GET(segarray->root));
-           if(!eina_iterator_next(pre_iterator, (void**)&first_node))
-             first_node = NULL;
-           else
-             array_first = first_node->first;
-           eina_iterator_free(pre_iterator);
-        }
-     }
 
    EINA_ACCESSOR_FOREACH(accessor, i, children)
      {
@@ -226,5 +212,100 @@ Eina_Accessor* efl_ui_list_segarray_accessor_get(Efl_Ui_List_SegArray* segarray)
 {
    Efl_Ui_List_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_Segarray_Eina_Accessor));
    _efl_ui_list_segarray_accessor_setup(acc, segarray);
+   return &acc->vtable;
+}
+
+typedef struct _Efl_Ui_List_Segarray_Node_Accessor
+{
+   Eina_Accessor vtable;
+   Efl_Ui_List_SegArray* segarray;
+   Eina_Iterator* pre_iterator;
+   Efl_Ui_List_SegArray_Node* current_node;
+   int current_index;
+} Efl_Ui_List_Segarray_Node_Accessor;
+
+static Eina_Bool
+_efl_ui_list_segarray_node_accessor_get_at(Efl_Ui_List_Segarray_Node_Accessor* acc,
+                                      int idx, void** data)
+{
+   if(idx == acc->current_index && acc->current_node)
+     {
+        (*data) = acc->current_node;
+     }
+   else
+     {
+       if(acc->current_index > idx && acc->current_node)
+         {
+            eina_iterator_free(acc->pre_iterator);
+            acc->pre_iterator = NULL;
+            acc->current_node = NULL;
+            acc->current_index = -1;
+         }
+
+       if(!acc->pre_iterator) // && acc->current_index <= idx
+         acc->pre_iterator = eina_rbtree_iterator_prefix((void*)acc->segarray->root);
+
+
+       for(;acc->current_index < idx;++acc->current_index)
+         if(!eina_iterator_next(acc->pre_iterator, (void**)&acc->current_node))
+           {
+             --acc->current_index;
+             return EINA_FALSE;
+           }
+       (*data) = acc->current_node;
+       return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static void*
+_efl_ui_list_segarray_node_accessor_get_container(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+{
+  return NULL;
+}
+
+static void
+_efl_ui_list_segarray_node_accessor_free(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+{
+   free(acc);
+}
+
+static void
+_efl_ui_list_segarray_node_accessor_lock(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+{
+}
+
+static void
+_efl_ui_list_segarray_node_accessor_unlock(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+{
+}
+
+static Eina_Accessor*
+_efl_ui_list_segarray_node_accessor_clone(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+{
+   return &acc->vtable;
+}
+
+static void
+_efl_ui_list_segarray_node_accessor_setup(Efl_Ui_List_Segarray_Node_Accessor* acc, Efl_Ui_List_SegArray* segarray)
+{
+   EINA_MAGIC_SET(&acc->vtable, EINA_MAGIC_ACCESSOR);
+   acc->vtable.version = EINA_ACCESSOR_VERSION;
+   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_segarray_node_accessor_get_at);
+   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_list_segarray_node_accessor_get_container);
+   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_list_segarray_node_accessor_free);
+   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_list_segarray_node_accessor_lock);
+   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_list_segarray_node_accessor_unlock);
+   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_list_segarray_node_accessor_clone);
+   acc->segarray = segarray;
+   acc->pre_iterator = NULL;
+   acc->current_index = -1;
+   acc->current_node = NULL;
+}
+
+Eina_Accessor* efl_ui_list_segarray_node_accessor_get(Efl_Ui_List_SegArray* segarray)
+{
+   Efl_Ui_List_Segarray_Node_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_Segarray_Node_Accessor));
+   _efl_ui_list_segarray_node_accessor_setup(acc, segarray);
    return &acc->vtable;
 }
