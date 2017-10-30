@@ -3158,16 +3158,16 @@ st_color_class_name(void)
 }
 
 static void
-parse_color(void *base)
+parse_color(unsigned int first_arg, void *base)
 {
    Edje_Color *color = (Edje_Color *)base;
    int r, g, b, a;
    char *str;
 
-   switch (get_arg_count())
+   switch (get_arg_count() - first_arg)
      {
       case 1:
-         str = parse_str(0);
+         str = parse_str(first_arg);
          convert_color_code(str, &r, &g, &b, &a);
          color->r = r;
          color->g = g;
@@ -3175,10 +3175,10 @@ parse_color(void *base)
          color->a = a;
          break;
       case 4:
-         color->r = parse_int_range(0, 0, 255);
-         color->g = parse_int_range(1, 0, 255);
-         color->b = parse_int_range(2, 0, 255);
-         color->a = parse_int_range(3, 0, 255);
+         color->r = parse_int_range(first_arg + 0, 0, 255);
+         color->g = parse_int_range(first_arg + 1, 0, 255);
+         color->b = parse_int_range(first_arg + 2, 0, 255);
+         color->a = parse_int_range(first_arg + 3, 0, 255);
          break;
       default:
          ERR("%s:%i. color code should be a string or a set of 4 integers.",
@@ -3215,7 +3215,7 @@ st_color_class_color(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r));
+   parse_color(0, &(cc->r));
 }
 
 /**
@@ -3246,7 +3246,7 @@ st_color_class_color2(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r2));
+   parse_color(0, &(cc->r2));
 }
 
 /**
@@ -3277,7 +3277,7 @@ st_color_class_color3(void)
 
    cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
 
-   parse_color(&(cc->r3));
+   parse_color(0, &(cc->r3));
 }
 
 /**
@@ -9349,7 +9349,7 @@ st_collections_group_parts_part_description_color(void)
        exit(-1);
      }
 
-   parse_color(&(current_desc->color.r));
+   parse_color(0, &(current_desc->color.r));
 }
 
 /**
@@ -9385,7 +9385,7 @@ st_collections_group_parts_part_description_color2(void)
        exit(-1);
      }
 
-   parse_color(&(current_desc->color2.r));
+   parse_color(0, &(current_desc->color2.r));
 }
 
 /**
@@ -9429,7 +9429,7 @@ st_collections_group_parts_part_description_color3(void)
 
    ed = (Edje_Part_Description_Text*)current_desc;
 
-   parse_color(&(ed->text.color3.r));
+   parse_color(0, &(ed->text.color3.r));
 }
 
 /**
@@ -12250,15 +12250,26 @@ st_collections_group_parts_part_description_camera_properties(void)
             }
         }
     @description
-        A properties block defines main lighting atributes of LIGHT and MESH_NODE.
+        A properties block defines main lighting attributes of LIGHT and MESH_NODE.
     @endblock
 
     @property
         ambient
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Sets the components of the ambient color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 50 50 50 255
     @endproperty
 */
 static void
@@ -12274,10 +12285,7 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->light.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->light.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->light.properties.ambient.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.ambient));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12286,10 +12294,7 @@ st_collections_group_parts_part_description_properties_ambient(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.ambient.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.ambient.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.ambient.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.ambient.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.ambient));
            break;
         }
       default:
@@ -12306,9 +12311,20 @@ st_collections_group_parts_part_description_properties_ambient(void)
     @property
         diffuse
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the components of the ambient color.
+        Sets the components of the diffuse color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -12324,10 +12340,7 @@ st_collections_group_parts_part_description_properties_diffuse(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.diffuse.r = parse_int_range(0, 0, 255);
-           ed->light.properties.diffuse.g = parse_int_range(1, 0, 255);
-           ed->light.properties.diffuse.b = parse_int_range(2, 0, 255);
-           ed->light.properties.diffuse.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.diffuse));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12336,10 +12349,7 @@ st_collections_group_parts_part_description_properties_diffuse(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.diffuse.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.diffuse.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.diffuse.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.diffuse.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.diffuse));
            break;
         }
       default:
@@ -12356,9 +12366,20 @@ st_collections_group_parts_part_description_properties_diffuse(void)
     @property
         specular
     @parameters
-        [red] [green] [blue] [alpha]
+        [red] [green] [blue] [alpha] or "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
-        Sets the components of the ambient color.
+        Sets the components of the specular color.
+
+        Format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -12374,10 +12395,7 @@ st_collections_group_parts_part_description_properties_specular(void)
 
            ed = (Edje_Part_Description_Light*) current_desc;
 
-           ed->light.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->light.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->light.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->light.properties.specular.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->light.properties.specular));
            break;
         }
       case EDJE_PART_TYPE_MESH_NODE:
@@ -12386,10 +12404,7 @@ st_collections_group_parts_part_description_properties_specular(void)
 
            ed = (Edje_Part_Description_Mesh_Node*) current_desc;
 
-           ed->mesh_node.properties.specular.r = parse_int_range(0, 0, 255);
-           ed->mesh_node.properties.specular.g = parse_int_range(1, 0, 255);
-           ed->mesh_node.properties.specular.b = parse_int_range(2, 0, 255);
-           ed->mesh_node.properties.specular.a = parse_int_range(3, 0, 255);
+           parse_color(0, &(ed->mesh_node.properties.specular));
            break;
         }
       default:
@@ -14120,17 +14135,29 @@ st_collections_group_parts_part_description_map_perspective_on(void)
     @property
         color
     @parameters
-        [point] [red] [green] [blue] [alpha]
+        [point] [red] [green] [blue] [alpha] or
+        [point] "#[RR][GG][BB](AA)" or "#[R][G][B](A)"
     @effect
         Set the color of a vertex in the map.
         Colors will be linearly interpolated between vertex points through the map.
         The default color of a vertex in a map is white solid (255, 255, 255, 255)
         which means it will have no affect on modifying the part pixels.
         Currently only four points are supported:
-         0 - Left-Top point of a part.
-         1 - Right-Top point of a part.
-         2 - Left-Bottom point of a part.
-         3 - Right-Bottom point of a part.
+        @li 0 - Left-Top point of a part.
+        @li 1 - Right-Top point of a part.
+        @li 2 - Left-Bottom point of a part.
+        @li 3 - Right-Bottom point of a part.
+
+        Color format:
+        @li [red] [green] [blue] [alpha]: one integer [0-255] for each
+        RGBA channel, i.e. 255 0 0 255
+        @li "#[RR][GG][BB](AA)": string with two hex values per RGBA channel,
+        i.e "#FF0000FF" or "#FF0000"
+        @li "#[R][G][B](A)": string with one hex value per RGBA channel,
+        i.e "#F00F" or "#F00".\n
+        In string format you can omit alpha channel and it will be set to FF.
+
+        Defaults: 255 255 255 255
     @endproperty
 */
 static void
@@ -14140,13 +14167,10 @@ st_collections_group_parts_part_description_map_color(void)
    Edje_Map_Color tmp;
    int i;
 
-   check_arg_count(5);
+   check_min_arg_count(2);
 
    tmp.idx = parse_int(0);
-   tmp.r = parse_int_range(1, 0, 255);
-   tmp.g = parse_int_range(2, 0, 255);
-   tmp.b = parse_int_range(3, 0, 255);
-   tmp.a = parse_int_range(4, 0, 255);
+   parse_color(1, &tmp.r);
 
    for (i = 0; i < (int)current_desc->map.colors_count; i++)
      {
