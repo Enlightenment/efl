@@ -442,6 +442,7 @@ static void st_collections_group_parts_part_description_orientation_look_to(void
 static void st_collections_group_parts_part_description_orientation_angle_axis(void);
 static void st_collections_group_parts_part_description_orientation_quaternion(void);
 static void st_collections_group_parts_part_description_scale(void);
+static void st_collections_group_parts_part_description_offset_scale(void);
 static void st_collections_group_parts_part_description_mesh_primitive(void);
 static void ob_collections_group_parts_part_description_texture(void);
 static void st_collections_group_parts_part_description_texture_image(void);
@@ -875,6 +876,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
      {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
      {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
+     {"collections.group.parts.part.description.offset_scale", st_collections_group_parts_part_description_offset_scale},
      {"collections.group.parts.part.description.anchors.top", st_collections_group_parts_part_description_anchors_top},
      {"collections.group.parts.part.description.anchors.bottom", st_collections_group_parts_part_description_anchors_bottom},
      {"collections.group.parts.part.description.anchors.left", st_collections_group_parts_part_description_anchors_left},
@@ -1165,6 +1167,7 @@ New_Statement_Handler statement_handlers_short[] =
              desc {
                 vis; -> visible: 1;
                 hid; -> visible: 0;
+                offscale; -> offset_scale: 1;
              }
           }
        }
@@ -1192,6 +1195,7 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.parts.part.norequired", st_collections_group_parts_part_norequired},
      {"collections.group.parts.part.description.vis", st_collections_group_parts_part_description_vis},
      {"collections.group.parts.part.description.hid", st_collections_group_parts_part_description_hid},
+     {"collections.group.parts.part.description.offscale", st_collections_group_parts_part_description_offset_scale},
      {"collections.group.mouse", st_collections_group_mouse},
      {"collections.group.nomouse", st_collections_group_nomouse},
      {"collections.group.broadcast", st_collections_group_broadcast},
@@ -12569,6 +12573,31 @@ st_collections_group_parts_part_description_scale(void)
             file_in, line - 1);
         exit(-1);
      }
+}
+
+/**
+    @page edcref
+    @property
+        offset_scale
+    @parameters
+        [1 or 0]
+    @effect
+        Makes rel1/2 offset values scale by scale factor like min/max if set
+        to 1, otherwise 0 means they will not scale. 0 is the default. Note
+        that the part as a whole has to be set to scale too like:
+
+            part { name: "partname"; scale: 1;
+            ...
+
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_offset_scale(void)
+{
+   if (get_arg_count() == 1)
+     current_desc->offset_is_scaled = parse_bool(0);
+   else
+     current_desc->offset_is_scaled = EINA_TRUE;
 }
 
 /**
