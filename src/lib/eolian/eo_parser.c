@@ -1482,14 +1482,42 @@ end:
 static void
 parse_part(Eo_Lexer *ls)
 {
-   check_next(ls, TOK_VALUE);
+   Eolian_Part *part = calloc(1, sizeof(Eolian_Part));
+   ls->tmp.kls->parts = eina_list_append(ls->tmp.kls->parts, part);
+   check(ls, TOK_VALUE);
+   part->name = eina_stringshare_ref(ls->t.value.s);
+   eo_lexer_get(ls);
    check_next(ls, ':');
    Eina_Strbuf *buf = push_strbuf(ls);
+   eo_lexer_context_push(ls);
    parse_name(ls, buf);
-   check_next(ls, ';');
-   if (ls->t.token == TOK_DOC)
-     eo_lexer_get(ls);
+   const char *nm = eina_strbuf_string_get(buf);
+   const char *bnm = eina_stringshare_ref(ls->filename);
+   char *fnm = database_class_to_filename(nm);
+   if (!compare_class_file(bnm, fnm))
+     {
+        const char *fname = eina_hash_find(_filenames, fnm);
+        eina_stringshare_del(bnm);
+        free(fnm);
+        if (fname)
+          _parse_dep(ls, fname, nm);
+        /* FIXME: pass unit properly */
+        Eolian_Class *dep = (Eolian_Class *)eolian_class_get_by_name(NULL, nm);
+        if (!dep)
+          {
+             char ebuf[PATH_MAX];
+             eo_lexer_context_restore(ls);
+             snprintf(ebuf, sizeof(ebuf), "unknown class '%s'", nm);
+             eo_lexer_syntax_error(ls, ebuf);
+             return;
+          }
+        part->klass = dep;
+     }
+   else
+     part->klass = ls->tmp.kls;
    pop_strbuf(ls);
+   check_next(ls, ';');
+   FILL_DOC(ls, part, doc);
 }
 
 static void
