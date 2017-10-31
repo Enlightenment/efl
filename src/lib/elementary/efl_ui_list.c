@@ -76,7 +76,7 @@ _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd,
 {
    Evas_Coord ox, oy, ow, oh, cw;
 
-   DBG("x: %d y: %d", (int)x, (int)y);
+   //DBG("x: %d y: %d", (int)x, (int)y);
    if ((x == psd->x) && (y == psd->y)) return;
 
 //   evas_object_geometry_get(pd->obj, &ox, &oy, &ow, &oh);
@@ -150,7 +150,7 @@ _efl_ui_list_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_D
    if (w) *w = min.w;
    if (h) *h = min.h;
 
-   DBG("w: %d h: %d", *w, *h);
+   //DBG("w: %d h: %d", *w, *h);
 }
 
 EOLIAN static void
