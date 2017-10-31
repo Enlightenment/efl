@@ -10,6 +10,7 @@ database_class_del(Eolian_Class *cl)
 {
    Eolian_Function *fid;
    Eolian_Event *ev;
+   Eolian_Part *pt;
    Eolian_Implement *impl;
    Eolian_Constructor *ctor;
    const char *s;
@@ -27,6 +28,7 @@ database_class_del(Eolian_Class *cl)
    EINA_LIST_FREE(cl->methods, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->properties, fid) database_function_del(fid);
    EINA_LIST_FREE(cl->events, ev) database_event_del(ev);
+   EINA_LIST_FREE(cl->parts, pt) database_part_del(pt);
 
    if (cl->name) eina_stringshare_del(cl->name);
    if (cl->full_name) eina_stringshare_del(cl->full_name);

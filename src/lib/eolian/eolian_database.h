@@ -358,5 +358,7 @@ void database_constructor_del(Eolian_Constructor *ctor);
 /* events */
 void database_event_del(Eolian_Event *event);
 
+/* parts */
+void database_part_del(Eolian_Part *part);
 
 #endif
