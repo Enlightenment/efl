@@ -1,6 +1,8 @@
 #ifndef EFL_DND_PRIVATE_H
 #define EFL_DND_PRIVATE_H
 
+#include "efl_selection_private.h"
+
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif

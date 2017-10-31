@@ -313,8 +313,8 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_cnp.eo.h>
-//# include <efl_ui_dnd_drag.eo.h>
-//# include <efl_ui_dnd_drop.eo.h>
+# include <efl_ui_dnd_drag.eo.h>
+# include <efl_ui_dnd_drop.eo.h>
 # include <efl_selection_manager.eo.h>
 #endif
 

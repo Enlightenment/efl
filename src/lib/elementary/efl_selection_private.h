@@ -1,7 +1,9 @@
-#ifndef EFL_SELECTION_MANAGER_PRIVATE_H
-#define EFL_SELECTION_MANAGER_PRIVATE_H
+#ifndef EFL_SELECTION_PRIVATE_H
+#define EFL_SELECTION_PRIVATE_H
 
-//#include "efl_selection_private.h"
+
+//try to make common stuff for selection & dnd, so that we can separate them
+#if 0
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -36,7 +38,6 @@ enum
    SELECTION_N_ATOMS,
 };
 
-typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
 typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
@@ -45,10 +46,7 @@ typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
 typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Efl_Selection_Manager_Data *pd, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
 
-typedef struct _Efl_Selection_Manager_Atom Efl_Selection_Manager_Atom;
-typedef struct _Efl_Sel_Manager_Atom Efl_Sel_Manager_Atom;
-
-typedef struct _Dropable Dropable;
+typedef struct _Efl_Sel_Atom Efl_Sel_Atom;
 
 struct _Tmp_Info
 {
@@ -86,7 +84,6 @@ struct _X11_Cnp_Selection
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
    //Elm_Xdnd_Action    action;
-   Efl_Dnd_Drag_Action action; //FIXME: check type and var name, usage
 
    Eo *owner;
 
@@ -105,21 +102,15 @@ struct _Seat_Selection
 };
 
 
-struct _Efl_Selection_Manager_Atom
-{
-   const char *name;
-   Ecore_X_Atom x_atom;
-};
-
-struct _Efl_Sel_Manager_Atom
+struct _Efl_Sel_Atom
 {
    const char              *name;
    Efl_Selection_Format           format;
 #ifdef HAVE_ELEMENTARY_X
-   // Called by ecore to do conversion
+   /* Called by ecore to do conversion */
    X11_Converter_Fn_Cb      x_converter;
    X11_Data_Preparer_Cb     x_data_preparer;
-   // Atom
+   /* Atom */
    Ecore_X_Atom             x_atom;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
@@ -129,56 +120,8 @@ struct _Efl_Sel_Manager_Atom
 
    void                    *_term;
 };
-
-
-struct _Dropable
-{
-   Evas_Object    *obj;
-   /* FIXME: Cache window */
-   Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
-   struct {
-      Evas_Coord      x, y;
-      Eina_Bool       in : 1;
-      const char     *type;
-      Elm_Sel_Format  format;
-   } last;
-};
-
-//typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
-
-struct _Efl_Selection_Manager_Data
-{
-   Ecore_Event_Handler *notify_handler;
-   Ecore_Event_Handler *clear_handler;
-   Efl_Promise *promise;
-   Efl_Selection_Type loss_type;
-#ifdef HAVE_ELEMENTARY_X
 #endif
 
-   Eina_Bool has_sel;
-   const char *request_seat;
-   Efl_Selection_Type active_type;
-   Efl_Selection_Format active_format;
-   //Efl_Selection_Manager_Atom atom;
 
-   Efl_Sel_Manager_Atom *atomlist;
-   //Efl_Sel_Manager_Selection *sellist;
-   X11_Cnp_Selection *sellist;
-   Eina_List *seat_list; //Seat_Selection list: seat0 (selection types) -> seat1 (selection types)
-   Saved_Type *savedtypes;
-
-
-   //drag
-   Eo *drag_obj;
-   Efl_Dnd_Drag_Action drag_action;
-   Eo *drag_win;
-   Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
-   Eina_Bool accept;
-   Ecore_X_Window xwin;
-   int dragx, dragy; //change to EVASRECT2
-   int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
-   int drag_win_x_end, drag_win_y_end;
-   Eina_List *drops; //Dropable list
-};
 
 #endif

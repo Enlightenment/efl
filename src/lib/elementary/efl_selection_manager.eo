@@ -1,4 +1,4 @@
-class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
+class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
    methods {
       selection_set {
          params {
@@ -12,7 +12,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
       }
       selection_get {
          params {
-            @in owner: Efl.Object; [[Seleciton owner]]
+            @in request: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in data_func: Efl.Selection.Data_Ready; [[Data ready function pointer]]
@@ -32,6 +32,50 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection) {
             @in type: Efl.Selection.Type; [[Selection type]]
          }
          return: future<generic_value>; [[Future of selection that is ready]]
+      }*/
+      drag_start {
+         [[This starts a drag and drop process at the drag side.
+           During dragging, there are three events emitted as belows:
+              - EFL_DND_EVENT_DRAG_POS
+              - EFL_DND_EVENT_DRAG_ACCEPT
+              - EFL_DND_EVENT_DRAG_DONE
+         ]]
+         params {
+            @in drag_obj: Efl.Object; [[Seleciton owner]]
+            @in format: Efl.Selection.Format; [[The data format]]
+            @in buf: const(void_ptr);
+            @in len: int; [[The data's length.]]
+            @in action: Efl.Dnd.Drag_Action; [[Action when data is transferred]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_action_set {
+         [[This sets the action for the drag]]
+         params {
+            @in action: Efl.Dnd.Drag_Action; [[Drag action]]
+         }
+      }
+      drag_cancel {
+         [[This cancels the on-going drag]]
+      }
+      /*drag_item_container_add {
+         [[This registers a drag for items in a container. Many items can be
+           dragged at a time. During dragging, there are three events emitted:
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
+         params {
+            @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
+            @in anim_durataion: double; [[animation duration]]
+            @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
+            @in item_func: Efl.Dnd.Drag_Item_Get; [[Item to determine drag start]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+         }
+      }
+      drag_item_container_del {
+         [[Remove drag function of items in the container object.]]
+         params {
+         }
       }*/
    }
    implements {
