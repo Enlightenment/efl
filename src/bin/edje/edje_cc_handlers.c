@@ -8331,6 +8331,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
             aspect: 1 1;
             clip_to: "clip_override_part_name";
             no_render: 0;
+            offset_scale: 0;
 
             rel1 {
                 ..
@@ -9461,6 +9462,32 @@ st_collections_group_parts_part_description_clip_to_id(void)
         data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
         free(name);
      }
+}
+
+/**
+    @page edcref
+    @property
+        offset_scale
+    @parameters
+        [1 or 0]
+    @effect
+        Makes rel1/2 offset values scale by scale factor like min/max if set
+        to 1, otherwise 0 means they will not scale. Note that the part
+        as a whole has to be set to scale too like:
+
+            part { name: "partname"; scale: 1;
+            ...
+
+        Defaults: 0
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_offset_scale(void)
+{
+   if (get_arg_count() == 1)
+     current_desc->offset_is_scaled = parse_bool(0);
+   else
+     current_desc->offset_is_scaled = EINA_TRUE;
 }
 
 /** @edcsubsection{collections_group_parts_description_relatives,
@@ -12862,31 +12889,6 @@ st_collections_group_parts_part_description_scale(void)
             file_in, line - 1);
         exit(-1);
      }
-}
-
-/**
-    @page edcref
-    @property
-        offset_scale
-    @parameters
-        [1 or 0]
-    @effect
-        Makes rel1/2 offset values scale by scale factor like min/max if set
-        to 1, otherwise 0 means they will not scale. 0 is the default. Note
-        that the part as a whole has to be set to scale too like:
-
-            part { name: "partname"; scale: 1;
-            ...
-
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_offset_scale(void)
-{
-   if (get_arg_count() == 1)
-     current_desc->offset_is_scaled = parse_bool(0);
-   else
-     current_desc->offset_is_scaled = EINA_TRUE;
 }
 
 /**
