@@ -7,8 +7,5 @@ abstract Efl.Animation.Object.Group (Efl.Animation.Object)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Animation.Object.target_state_save;
-      Efl.Animation.Object.target_state_reset;
-      Efl.Animation.Object.target_map_reset;
    }
 }

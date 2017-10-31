@@ -113,6 +113,10 @@ EOAPI int efl_animation_object_repeat_count_get(const Eo *obj);
 EOAPI void efl_animation_object_interpolator_set(Eo *obj, Efl_Object *interpolator);
 EOAPI Efl_Object *efl_animation_object_interpolator_get(const Eo *obj);
 
+EOAPI void efl_animation_object_target_state_save(Eo *obj);
+EOAPI void efl_animation_object_target_state_reset(Eo *obj);
+EOAPI void efl_animation_object_target_map_reset(Eo *obj);
+
 EWAPI extern const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED;
 #define EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED (&(_EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED))
 /* Efl.Animation.Object END */
