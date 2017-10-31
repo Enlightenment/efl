@@ -33,7 +33,7 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
    efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   ed->base.evas = efl_provider_find(obj, EVAS_CANVAS_CLASS);
+   ed->base.evas = evas_object_evas_get(obj);
    ed->base.clipper = (Evas_Object *) efl_canvas_group_clipper_get(obj);
    ed->duration_scale = 1.0;
    _edje_lib_ref();

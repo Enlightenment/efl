@@ -503,7 +503,7 @@ video_obj_signal_frame_move_start_cb(void *data EINA_UNUSED, Evas_Object *o, con
    fd = efl_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->moving = 1;
-   evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
    efl_gfx_stack_raise(o);
@@ -528,7 +528,7 @@ video_obj_signal_frame_resize_start_cb(void *data EINA_UNUSED, Evas_Object *o, c
    fd = efl_key_data_get(o, "frame_data");
    if (!fd) return;
    fd->resizing = 1;
-   evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
    efl_gfx_stack_raise(o);
@@ -556,7 +556,7 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
         Evas_Coord x, y;
         Eina_Position2D pos;
 
-        evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
         pos = efl_gfx_position_get(o);
         pos.x += (x - fd->x);
         pos.y += (y - fd->y);
@@ -569,7 +569,7 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
         Evas_Coord x, y;
         Eina_Size2D sz;
 
-        evas_canvas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
+        evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
         sz = efl_gfx_size_get(o);
         evas_object_resize(o, sz.w + (x - fd->x), sz.h + (y - fd->y));
         fd->x = x;

@@ -544,14 +544,14 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
                                 &basex, &basey, &cw, &ch);
         elm_win_screen_position_get(elm_widget_top_get(tt->owner),
                                     &cx, &cy);
-        evas_canvas_pointer_canvas_xy_get(tt->evas, &px, &py);
+        evas_pointer_canvas_xy_get(tt->evas, &px, &py);
         cx -= basex;
         cy -= basey;
      }
    else
      {
         evas_output_size_get(tt->evas, &cw, &ch);
-        evas_canvas_pointer_canvas_xy_get(tt->evas, &px, &py);
+        evas_pointer_canvas_xy_get(tt->evas, &px, &py);
      }
    TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
 

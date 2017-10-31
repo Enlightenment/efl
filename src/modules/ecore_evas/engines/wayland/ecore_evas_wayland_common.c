@@ -1772,7 +1772,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
         einfo->y_rel = wdata->y_rel;
      }
    einfo->timestamp = wdata->timestamp;
-   evas_canvas_pointer_canvas_xy_get(evas, &einfo->x_cursor, &einfo->y_cursor);
+   evas_pointer_canvas_xy_get(evas, &einfo->x_cursor, &einfo->y_cursor);
    evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
    einfo->x_cursor -= fx;
    einfo->y_cursor -= fy;

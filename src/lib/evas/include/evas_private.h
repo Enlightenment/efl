@@ -50,6 +50,7 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENC  _evas_engine_context(obj->layer->evas)
 
+#include "canvas/evas_canvas.eo.h"
 #include "canvas/evas_text.eo.h"
 #include "canvas/evas_textgrid.eo.h"
 #include "canvas/evas_line.eo.h"

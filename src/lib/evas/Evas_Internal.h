@@ -63,6 +63,10 @@ EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
 EOAPI void efl_canvas_group_add(Eo *obj);
 EOAPI void efl_canvas_group_del(Eo *obj);
 EOAPI void efl_canvas_group_clipped_set(Eo *obj, Eina_Bool unclipped);
+EOAPI void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
+EOAPI void evas_canvas_seat_focus_in(Eo *obj, Efl_Input_Device *seat);
+EOAPI void evas_canvas_seat_focus_out(Eo *obj, Efl_Input_Device *seat);
+EOAPI Eo* evas_canvas_seat_focus_get(const Eo *obj, Efl_Input_Device *seat);
 
 EOAPI void *efl_input_legacy_info_get(const Eo *obj);
 EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);

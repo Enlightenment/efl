@@ -4138,7 +4138,7 @@ _elm_win_frame_cb_menu(void *data,
    int x, y, wx, wy;
 
    if (!sd->wl.win) return;
-   evas_canvas_pointer_canvas_xy_get(sd->evas, &x, &y);
+   evas_pointer_canvas_xy_get(sd->evas, &x, &y);
    ecore_wl2_window_geometry_get(sd->wl.win, &wx, &wy, NULL, NULL);
    if (x < 0) x += wx;
    if (y < 0) y += wy;
