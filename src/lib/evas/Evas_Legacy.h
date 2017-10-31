@@ -1033,6 +1033,20 @@ EAPI const Evas_Lock *evas_key_lock_get(const Evas *obj) EINA_WARN_UNUSED_RESULT
  */
 
 /**
+ * @brief Returns whether the mouse pointer is logically inside the canvas.
+ *
+ * @param[in] obj The object.
+ * @param[in] dev The pointer device.
+ *
+ * @return @c true if the pointer is inside, @c false otherwise.
+ *
+ * @since 1.19
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_pointer_inside_by_device_get(const Evas *obj, Efl_Input_Device *dev);
+
+/**
  * @brief Returns whether the default mouse pointer is logically inside the
  * canvas.
  *

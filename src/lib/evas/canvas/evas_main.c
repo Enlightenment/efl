@@ -634,9 +634,9 @@ _evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_pointer_inside_by_device_get(Eo *eo_e EINA_UNUSED,
-                                          Evas_Public_Data *e,
-                                          Efl_Input_Device *dev)
+_evas_canvas_efl_canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED,
+                                           Evas_Public_Data *e,
+                                           Eo *dev)
 {
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
    if (!pdata) return EINA_FALSE;
@@ -659,12 +659,6 @@ EOLIAN static unsigned int
 _evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_pointer_button_down_mask_by_device_get(eo_e, e, NULL);
-}
-
-EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
-{
-   return _evas_canvas_pointer_inside_by_device_get(eo_e, e, NULL);
 }
 
 EOLIAN static void
@@ -1300,7 +1294,13 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
 EAPI Eina_Bool
 evas_pointer_inside_get(const Evas *obj)
 {
-   return efl_canvas_pointer_inside_get(obj);
+   return efl_canvas_pointer_inside_get(obj, NULL);
+}
+
+EAPI Eina_Bool
+evas_pointer_inside_by_device_get(const Evas *obj, Eo *dev)
+{
+   return efl_canvas_pointer_inside_get(obj, dev);
 }
 
 /* Internal EO APIs */

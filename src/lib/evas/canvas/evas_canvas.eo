@@ -269,17 +269,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             y: int; [[The pointer to an integer to be filled in.]]
          }
       }
-      @property pointer_inside_by_device {
-         [[Returns whether the mouse pointer is logically inside the
-           canvas. @since 1.19]]
-         keys {
-            dev: Efl.Input.Device; [[The pointer device.]]
-         }
-         get {}
-         values {
-            in: bool; [[$true if the pointer is inside, $false otherwise.]]
-         }
-      }
       @property image_max_size {
          get {
             [[Get the maximum image size evas can possibly handle.
