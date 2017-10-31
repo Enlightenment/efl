@@ -5,6 +5,7 @@
 #endif
 
 #include "eo_parser.h"
+#include "eolian_priv.h"
 
 #define CASE_LOCK(ls, var, msg) \
    if (has_##var) \
@@ -1118,10 +1119,10 @@ parse_accessor:
      {
         if (getenv("EOLIAN_PROPERTY_DOC_WARN"))
           {
-             fprintf(stderr, "eolian:%s:%d:%d: %s doc without property "
-                             "doc for '%s.%s'\n",
-                     prop->base.file, line, col, is_get ? "getter" : "setter",
-                     ls->tmp.kls->full_name, prop->name);
+             _eolian_log_line(prop->base.file, line, col,
+                              "%s doc without property doc for '%s.%s'",
+                              is_get ? "getter" : "setter",
+                              ls->tmp.kls->full_name, prop->name);
           }
      }
    if (is_get)
@@ -2257,11 +2258,8 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
    return NULL;
 }
 
-static void
-_print_linecol(const Eolian_Object *base)
-{
-   fprintf(stderr, "eolian:%s:%d:%d: ", base->file, base->line, base->column);
-}
+#define _eo_parser_log(_base, ...) \
+   _eolian_log_line((_base)->file, (_base)->line, (_base)->column, __VA_ARGS__)
 
 static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
@@ -2290,9 +2288,8 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    const Eolian_Class *tcl = _get_impl_class(cl, clname);
    if (!tcl)
      {
-        _print_linecol(&impl->base);
-        fprintf(stderr, "class '%s' not found within the inheritance tree of '%s'\n",
-                clname, cl->full_name);
+        _eo_parser_log(&impl->base, "class '%s' not found within the inheritance tree of '%s'",
+                       clname, cl->full_name);
         return EINA_FALSE;
      }
 
@@ -2301,8 +2298,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
    const Eolian_Function *fid = eolian_class_function_get_by_name(tcl, fnname, EOLIAN_UNRESOLVED);
    if (!fid)
      {
-        _print_linecol(&impl->base);
-        fprintf(stderr, "function '%s' not known in class '%s'\n", fnname, clname);
+        _eo_parser_log(&impl->base, "function '%s' not known in class '%s'", fnname, clname);
         return EINA_FALSE;
      }
 
@@ -2316,8 +2312,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         /* property */
         if (aftype != EOLIAN_PROPERTY)
           {
-             _print_linecol(&impl->base);
-             fprintf(stderr, "function '%s' is not a complete property", fnname);
+             _eo_parser_log(&impl->base, "function '%s' is not a complete property", fnname);
              return EINA_FALSE;
           }
         auto_empty = auto_empty && (impl->set_auto || impl->set_empty);
@@ -2327,8 +2322,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         /* setter */
         if ((aftype != EOLIAN_PROP_SET) && (aftype != EOLIAN_PROPERTY))
           {
-             _print_linecol(&impl->base);
-             fprintf(stderr, "function '%s' doesn't have a setter\n", fnname);
+             _eo_parser_log(&impl->base, "function '%s' doesn't have a setter", fnname);
              return EINA_FALSE;
           }
         auto_empty = (impl->set_auto || impl->set_empty);
@@ -2338,15 +2332,13 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         /* getter */
         if ((aftype != EOLIAN_PROP_GET) && (aftype != EOLIAN_PROPERTY))
           {
-             _print_linecol(&impl->base);
-             fprintf(stderr, "function '%s' doesn't have a getter\n", fnname);
+             _eo_parser_log(&impl->base, "function '%s' doesn't have a getter", fnname);
              return EINA_FALSE;
           }
      }
    else if (aftype != EOLIAN_METHOD)
      {
-        _print_linecol(&impl->base);
-        fprintf(stderr, "function '%s' is not a method\n", fnname);
+        _eo_parser_log(&impl->base, "function '%s' is not a method", fnname);
         return EINA_FALSE;
      }
 
@@ -2355,8 +2347,7 @@ _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
         /* only allow explicit implements from other classes, besides auto and
          * empty... also prevents pure virtuals from being implemented
          */
-        _print_linecol(&impl->base);
-        fprintf(stderr, "invalid implement '%s'\n", impl->full_name);
+        _eo_parser_log(&impl->base, "invalid implement '%s'", impl->full_name);
         return EINA_FALSE;
      }
 
@@ -2380,8 +2371,7 @@ _db_fill_implements(Eolian_Class *cl)
         Eina_Bool prop = (impl->is_prop_get || impl->is_prop_set);
         if (eina_hash_find(prop ? pth : th, impl->full_name))
           {
-             _print_linecol(&impl->base);
-             fprintf(stderr, "duplicate implement '%s'\n", impl->full_name);
+             _eo_parser_log(&impl->base, "duplicate implement '%s'", impl->full_name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -2422,8 +2412,7 @@ _db_fill_ctors(Eolian_Class *cl)
      {
         if (eina_hash_find(th, ctor->full_name))
           {
-             _print_linecol(&ctor->base);
-             fprintf(stderr, "duplicate ctor '%s'\n", ctor->full_name);
+             _eo_parser_log(&ctor->base, "duplicate ctor '%s'", ctor->full_name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -2439,9 +2428,8 @@ _db_fill_ctors(Eolian_Class *cl)
         const Eolian_Class *tcl = _get_impl_class(cl, cnbuf);
         if (!tcl)
           {
-             _print_linecol(&ctor->base);
-             fprintf(stderr, "class '%s' not found within the inheritance "
-                             "tree of '%s'\n", cnbuf, cl->full_name);
+             _eo_parser_log(&ctor->base, "class '%s' not found within the inheritance tree of '%s'",
+                            cnbuf, cl->full_name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -2449,8 +2437,7 @@ _db_fill_ctors(Eolian_Class *cl)
         const Eolian_Function *cfunc = eolian_constructor_function_get(ctor);
         if (!cfunc)
           {
-             _print_linecol(&ctor->base);
-             fprintf(stderr, "unable to find function '%s'\n", ctor->full_name);
+             _eo_parser_log(&ctor->base, "unable to find function '%s'", ctor->full_name);
              ret = EINA_FALSE;
              goto end;
           }
@@ -2474,7 +2461,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
      {
-        fprintf(stderr, "eolian: unable to create lexer for file '%s'\n", filename);
+        _eolian_log("unable to create lexer for file '%s'", filename);
         goto error;
      }
 
@@ -2491,7 +2478,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (!(cl = ls->tmp.kls))
      {
-        fprintf(stderr, "eolian: no class for file '%s'\n", filename);
+        _eolian_log("eolian: no class for file '%s'", filename);
         goto error;
      }
    ls->tmp.kls = NULL;

@@ -12,6 +12,7 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eo_parser.c \
                                   lib/eolian/eo_parser.h \
                                   lib/eolian/eolian.c \
+                                  lib/eolian/eolian_priv.h \
                                   lib/eolian/eolian_database.c \
                                   lib/eolian/eolian_database.h \
                                   lib/eolian/database_class.c \

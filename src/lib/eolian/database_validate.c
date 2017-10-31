@@ -6,6 +6,7 @@
 #endif
 
 #include "eo_lexer.h"
+#include "eolian_priv.h"
 
 static Eina_Bool
 _validate(Eolian_Object *obj)
@@ -33,8 +34,8 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
             if (eolian_doc_token_ref_get(NULL, &tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
-                 fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
-                         info->file, info->line, info->column, refn);
+                 _eolian_log_line(info->file, info->line, info->column,
+                                  "failed validating reference '%s'", refn);
                  free(refn);
                  ret = EINA_FALSE;
                  break;
@@ -98,7 +99,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 static Eina_Bool
 _obj_error(const Eolian_Object *o, const char *msg)
 {
-   fprintf(stderr, "eolian:%s:%d:%d: %s\n", o->file, o->line, o->column, msg);
+   _eolian_log_line(o->file, o->line, o->column, "%s", msg);
    return EINA_FALSE;
 }
 

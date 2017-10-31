@@ -6,6 +6,7 @@
 #include <Eina.h>
 #include "eo_parser.h"
 #include "eolian_database.h"
+#include "eolian_priv.h"
 
 Eina_Hash *_classes    = NULL;
 Eina_Hash *_aliases    = NULL;
@@ -675,7 +676,7 @@ _eolian_file_parse_nodep(const char *filepath)
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
      {
-        fprintf(stderr, "eolian: file '%s' doesn't have a correct extension\n", filepath);
+        _eolian_log("file '%s' doesn't have a correct extension", filepath);
         return EINA_FALSE;
      }
    if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))

@@ -10,6 +10,7 @@
 #include <assert.h>
 
 #include "eo_lexer.h"
+#include "eolian_priv.h"
 
 static int lastbytes = 0;
 
@@ -107,8 +108,8 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    for (i = 0; i < ls->column; ++i)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
-   fprintf(stderr, "eolian:%s:%d:%d: %s\n", ls->source, ls->line_number,
-           ls->column, eina_strbuf_string_get(buf));
+   _eolian_log_line(ls->source, ls->line_number, ls->column,
+                    "%s", eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
@@ -1018,7 +1019,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
      {
-        fprintf(stderr, "eolian: %s\n", strerror(errno));
+        _eolian_log("%s", strerror(errno));
         longjmp(ls->err_jmp, EINA_TRUE);
      }
    ls->lookahead.token = -1;
@@ -1255,7 +1256,7 @@ eo_lexer_context_push(Eo_Lexer *ls)
    Lexer_Ctx *ctx = malloc(sizeof(Lexer_Ctx));
    if (!ctx)
      {
-        fprintf(stderr, "eolian: out of memory pushing context\n");
+        _eolian_log("out of memory pushing context");
         longjmp(ls->err_jmp, EINA_TRUE);
      }
    ctx->line = ls->line_number;
