@@ -656,7 +656,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @brief Asks the OS to populate or otherwise pages of memory in file mapping.
  * @details This advises the operating system as to what to do with the memory mapped
  *          to the given @p file. This affects a specific range of memory and may not
- *          be honoured if the system chooses to ignore the request.
+ *          be honored if the system chooses to ignore the request.
  * 
  * @param[in] file The file handle from which the map comes
  * @param[in] rule The rule to apply to the mapped memory

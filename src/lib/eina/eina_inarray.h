@@ -28,7 +28,7 @@
  * @dontinclude eina_inarray_01.c
  *
  * This example creates an inline array of chars, adds some elements, prints
- * them, re-purposes the array to store ints, adds some elements and print that.
+ * them, re-purposes the array to store ints, adds some elements and prints that.
  *
  * We are going to start with a function to compare ints. We need this because the '>'
  * operator is not a function and can't be used where Eina_Compare_Cb is needed.
@@ -48,7 +48,7 @@
  *
  * Once we have an array we can start adding elements to it. Because the
  * insertion function expects a memory address we have to put the value we want
- * to store in a variable(this should be no problem since in the real world usage
+ * to store in a variable (this should be no problem since in the real world usage
  * that's usually where the value is anyways):
  * @until push
  * @note Because the inline array copies the value given to it we can later
@@ -80,7 +80,7 @@
  * because we're storing a different type, but because our types have
  * different sizes. Eina inline arrays don't actually know anything about types,
  * they only deal with blocks of memory of a given size.
- * @note Since eina_inarray_step_set() receives already allocated memory, you can(and
+ * @note Since eina_inarray_step_set() receives already allocated memory, you can (and
  * it is in fact a good practice) use inline arrays that are not declared as pointers:
  * @code
  * Eina_Inarray arr;
@@ -164,9 +164,9 @@
  * We then create the array much like we did on @ref eina_inarray_example_01 :
  * @until inarray_new
  *
- * We then add element using eina_inarray_insert and print. Then remove that
- * element and add again using eina_inarray_insert_sorted and prints. This
- * shows the 2 different positions the element gets added. Then searches an
+ * We then add an element using eina_inarray_insert and print. Then remove that
+ * element and add it again using eina_inarray_insert_sorted and print. This
+ * shows the 2 different positions the element gets added. Then search for an
  * element in the unsorted array using eina_inarray_search, then sorts the
  * array and then searches the same element using eina_inarray_search_sorted.
  * @until }
@@ -187,7 +187,7 @@
  *
  * @brief Inline array is a container that stores the data itself, not the pointers to the data.
  *
- * This means there is no memory fragmentation, also for small data types(such
+ * This means there is no memory fragmentation, also for small data types (such
  * as char, short, int, and so on) it's more memory efficient.
  *
  * Usage of the inline array is very similar to that of other

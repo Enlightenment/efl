@@ -29,7 +29,7 @@
  * @ingroup Eina_Tools_Group
  * @brief This group provides thread locking and synchronization capabilities.
  *
- * Similar to POISIX threads (pthreads), but it takes care of the platform specific
+ * Similar to POSIX threads (pthreads), but it takes care of the platform specific
  * details so you don't have to.
  *
  * If you know how @c pthreads work, this library will look familiar to you.
@@ -334,7 +334,7 @@ static inline void eina_rwlock_free(Eina_RWLock *mutex);
  *
  * @return Returns #EINA_LOCK_SUCCEED on success, #EINA_LOCK_FAIL on failure.
  *
- * @note This function never return #EINA_LOCK_DEADLOCK.
+ * @note This function never returns #EINA_LOCK_DEADLOCK.
  *
  * @see eina_rwlock_release()
  */
@@ -350,7 +350,7 @@ static inline Eina_Lock_Result eina_rwlock_take_read(Eina_RWLock *mutex);
  *
  * @return Returns #EINA_LOCK_SUCCEED on success, #EINA_LOCK_FAIL on failure.
  *
- * @note This function never return #EINA_LOCK_DEADLOCK.
+ * @note This function never returns #EINA_LOCK_DEADLOCK.
  *
  * @see eina_rwlock_release()
  */
