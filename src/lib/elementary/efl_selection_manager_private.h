@@ -47,6 +47,7 @@ typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Efl_Selection_Manager_Data *pd, Ec
 
 typedef struct _Efl_Selection_Manager_Atom Efl_Selection_Manager_Atom;
 typedef struct _Efl_Sel_Manager_Atom Efl_Sel_Manager_Atom;
+typedef struct _Seat_Selection Seat_Selection;
 
 typedef struct _Dropable Dropable;
 
@@ -94,14 +95,17 @@ struct _X11_Cnp_Selection
    void *data_func_data;
    Efl_Selection_Data_Ready data_func;
    Eina_Free_Cb data_func_free_cb;
+
+   Seat_Selection *seat_sel;
 };
 
-typedef struct _Seat_Selection Seat_Selection;
 
 struct _Seat_Selection
 {
    const char *seat_name;
    X11_Cnp_Selection *sellist;
+
+   Efl_Selection_Manager_Data *pd;
 };
 
 
@@ -156,7 +160,7 @@ struct _Efl_Selection_Manager_Data
 #endif
 
    Eina_Bool has_sel;
-   const char *request_seat;
+   const char *seat;
    Efl_Selection_Type active_type;
    Efl_Selection_Format active_format;
    //Efl_Selection_Manager_Atom atom;
