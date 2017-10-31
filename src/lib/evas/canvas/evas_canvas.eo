@@ -280,36 +280,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             in: bool; [[$true if the pointer is inside, $false otherwise.]]
          }
       }
-      @property pointer_inside {
-         get {
-            [[Returns whether the default mouse pointer is logically inside the
-              canvas.
-
-              When this function is called it will return a value of either
-              $false or $true, depending on if event_feed_mouse_in or
-              event_feed_mouse_out have been called to feed in a  mouse
-              enter event into the canvas.
-
-              A return value of $true indicates the mouse is logically
-              inside the canvas, and $false implies it is logically
-              outside the canvas.
-
-              A canvas begins with the mouse being assumed outside ($false).
-
-              If $e is not a valid canvas, the return value is undefined.
-            ]]
-            /* FIXME-doc
-            Example:
-            @code
-            extern Evas *evas;
-
-            if (evas_pointer_inside_get(evas)) printf("Mouse is in!\n");
-            else printf("Mouse is out!\n");
-            @endcode
-            */
-            return: bool @warn_unused; [[$true if the mouse pointer is inside the canvas, $false otherwise]]
-         }
-      }
       @property image_max_size {
          get {
             [[Get the maximum image size evas can possibly handle.
@@ -1170,6 +1140,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       Efl.Object.provider_find;
       Efl.Loop_User.loop { get; }
       //Efl.Canvas.seats;
+      Efl.Canvas.pointer_inside { get; }
       Efl.Canvas.device { get; }
       Efl.Canvas.seat { get; }
    }

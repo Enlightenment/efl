@@ -209,7 +209,10 @@ interface Efl.Canvas ()
               A canvas begins with the mouse being assumed outside ($false).
             ]]
          }
-         /* FIXME: missing keys { seat } */
+         /* keys {
+            seat: Efl.Input.Device @optional; [[The seat to consider, if $null
+               then the default seat will be used.]]
+         } */
          values {
             inside: bool; [[$true if the mouse pointer is inside the canvas,
                             $false otherwise]]

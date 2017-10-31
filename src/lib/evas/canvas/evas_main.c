@@ -662,7 +662,7 @@ _evas_canvas_pointer_button_down_mask_get(Eo *eo_e, Evas_Public_Data *e)
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
+_evas_canvas_efl_canvas_pointer_inside_get(Eo *eo_e, Evas_Public_Data *e)
 {
    return _evas_canvas_pointer_inside_by_device_get(eo_e, e, NULL);
 }
@@ -1293,6 +1293,14 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
      }
 
    return list;
+}
+
+/* Legacy EAPI */
+
+EAPI Eina_Bool
+evas_pointer_inside_get(const Evas *obj)
+{
+   return efl_canvas_pointer_inside_get(obj);
 }
 
 /* Internal EO APIs */
