@@ -407,14 +407,12 @@ _cal_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _cal_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 {
-   char buf[128];
    struct tm current_time;
 
    if (eina_value_type_get(&value) == EINA_VALUE_TYPE_TM)
      {
         eina_value_get(&value, &current_time);
-        strftime(buf, sizeof(buf), "%b %y", &current_time);
-        eina_strbuf_append_printf(str, "<< %s >>", buf);
+        eina_strbuf_append_strftime(str, "<< %b %y >>", &current_time);
      }
 }
 
