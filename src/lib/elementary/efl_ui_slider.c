@@ -1035,6 +1035,7 @@ _min_max_set(Evas_Object *obj)
    elm_layout_text_set(obj, "elm.units.max", eina_strbuf_string_get(str));
 
    eina_strbuf_free(str);
+   eina_value_flush(&val);
 }
 
 EOLIAN static void
