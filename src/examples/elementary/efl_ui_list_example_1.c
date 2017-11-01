@@ -12,7 +12,7 @@
 #include <Eio.h>
 #include <stdio.h>
 
-#define NUM_ITEMS 200
+#define NUM_ITEMS 400
 
 const char *styles[] = {
         "odd",
