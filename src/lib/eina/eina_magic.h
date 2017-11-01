@@ -133,7 +133,7 @@
 typedef unsigned int Eina_Magic;
 
 /**
- * @brief Gets the string associated to the given magic identifier.
+ * @brief Gets the string associated with the given magic identifier.
  * @details This function returns the string associated to @p magic. Even if none are
  *          found this function still returns non @c NULL, in this case an identifier
  *          such as "(none)", "(undefined)", or "(unknown)".
@@ -152,13 +152,13 @@ typedef unsigned int Eina_Magic;
  */
 EAPI const char *eina_magic_string_get(Eina_Magic magic) EINA_WARN_UNUSED_RESULT;
 /**
- * @brief Sets the string associated to the given magic identifier.
+ * @brief Sets the string associated with the given magic identifier.
  * @details This function sets the string @p magic_name to @p magic. It is not
  *          checked if number or string are already set, in which case you end with
  *          duplicates. Internally, eina makes a copy of @p magic_name.
  *
  * @param[in] magic The magic identifier
- * @param[in] magic_name The string associated to the identifier, must not
+ * @param[in] magic_name The string associated with the identifier, must not
  *                       be @c NULL
  *
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE on failure
@@ -169,14 +169,14 @@ EAPI Eina_Bool   eina_magic_string_set(Eina_Magic  magic,
                                        const char *magic_name) EINA_ARG_NONNULL(2);
 
 /**
- * @brief Sets the string associated to the given magic identifier.
+ * @brief Sets the string associated with the given magic identifier.
  * @details This function sets the string @p magic_name to @p magic. It is not checked if
  *          number or string are already set, in which case you might end with
  *          duplicates. Eina does @b not make a copy of @p magic_name, this means that
  *          @p magic_name has to be a valid pointer for as long as @p magic is used.
  *
  * @param[in] magic The magic identifier
- * @param[in] magic_name The string associated to the identifier, must not be
+ * @param[in] magic_name The string associated with the identifier, must not be
  *                       @c NULL
  *
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE on failure

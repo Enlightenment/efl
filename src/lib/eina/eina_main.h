@@ -26,7 +26,7 @@
 /**
  * @addtogroup Eina_Main_Group Main
  *
- * @brief These functions provide general initialisation and shut down
+ * @brief These functions provide general initialization and shut down
  * functions.
  */
 
@@ -183,10 +183,10 @@ EAPI int eina_init(void);
  *
  * This function shuts down the Eina library. It returns 0 when it has
  * been called the same number of times than eina_init(). In that case
- * it shut down all the Eina modules.
+ * it shuts down all the Eina modules.
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
- * not call any of the Eina function anymore. You must call
+ * not call any of the Eina functions anymore. You must call
  * eina_init() again to use the Eina functions again.
  */
 EAPI int eina_shutdown(void);
@@ -219,7 +219,7 @@ EAPI int eina_threads_init(void);
  * it shut down all the mutexes.
  *
  * Once this function succeeds (that is, @c 0 is returned), you must
- * not call any of the Eina function in a thread anymore. You must call
+ * not call any of the Eina functions in a thread anymore. You must call
  * eina_threads_init() again to use the Eina functions in a thread again.
  *
  * This function should never be called outside of the main loop.
@@ -233,14 +233,14 @@ EAPI int eina_threads_shutdown(void);
  *
  * @since 1.1.0
  *
- * Most EFL function are not thread safe and all the call need to happen in
+ * Most EFL functions are not thread safe and all the calls need to happen in
  * the main loop. With this call you could know if you can call an EFL
  * function or not.
  */
 EAPI Eina_Bool eina_main_loop_is(void);
 
 /**
- * @brief You should never use that function except if you really really know what your are doing.
+ * @brief You should never use this function except if you really really know what your are doing.
  * @since 1.1.0
  *
  * If you are reading this documentation, that certainly means you don't know what is the purpose of

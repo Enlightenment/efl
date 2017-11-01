@@ -253,7 +253,7 @@ EAPI Eina_Matrix_Type eina_matrix3_type_get(const Eina_Matrix3 *m);
  * @param yy The fifth coefficient value.
  * @param yz The sixth coefficient value.
  * @param zx The seventh coefficient value.
- * @param zy The heighth coefficient value.
+ * @param zy The eighth coefficient value.
  * @param zz The nineth coefficient value.
  *
  * This function sets the values of the coefficients of the matrix
@@ -280,7 +280,7 @@ EAPI void eina_matrix3_values_set(Eina_Matrix3 *m,
  * @param yy The fifth coefficient value.
  * @param yz The sixth coefficient value.
  * @param zx The seventh coefficient value.
- * @param zy The heighth coefficient value.
+ * @param zy The eighth coefficient value.
  * @param zz The nineth coefficient value.
  *
  * This function gets the values of the coefficients of the matrix
@@ -307,7 +307,7 @@ EAPI void eina_matrix3_values_get(const Eina_Matrix3 *m,
  * @param yy The fifth coefficient value.
  * @param yz The sixth coefficient value.
  * @param zx The seventh coefficient value.
- * @param zy The heighth coefficient value.
+ * @param zy The eighth coefficient value.
  * @param zz The nineth coefficient value.
  *
  * This function gets the values of the coefficients of the matrix
@@ -345,7 +345,7 @@ EAPI void eina_matrix3_matrix3_f16p16_to(const Eina_Matrix3 *m,
  * @param m2 The second matrix.
  * @return EINA_TRUE if the two matrices are equal, @c 0 otherwise.
  *
- * This function return EINA_TRUE if thematrices @p m1 and @p m2 are
+ * This function return EINA_TRUE if the matrices @p m1 and @p m2 are
  * equal, EINA_FALSE otherwise. No check is done on the matrices.
  *
  * @since 1.14
@@ -604,7 +604,7 @@ EAPI void eina_matrix3_array_set(Eina_Matrix3 *m, const double *v);
 EAPI void eina_matrix3_copy(Eina_Matrix3 *dst, const Eina_Matrix3 *src);
 
 /**
- * @brief Multiplies two matrix.
+ * @brief Multiplies two matrices.
  *
  * @param out The resulting matrix
  * @param mat_a The first member of the multiplication
@@ -616,7 +616,7 @@ EAPI void eina_matrix3_multiply(Eina_Matrix3 *out, const Eina_Matrix3 *mat_a,
                                 const Eina_Matrix3 *mat_b);
 
 /**
- * @brief Multiplies two matrix.
+ * @brief Multiplies two matrices.
  *
  * @param out The resulting matrix
  * @param mat_a The first member of the multiplication
@@ -705,7 +705,7 @@ EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
  * @param yx The fifth coefficient value.
  * @param yy The sixth coefficient value.
  * @param yz The seventh coefficient value.
- * @param yw The heighth coefficient value.
+ * @param yw The eighth coefficient value.
  * @param zx The nineth coefficient value.
  * @param zy The tenth coefficient value.
  * @param zz The eleventh coefficient value.
@@ -740,7 +740,7 @@ EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
  * @param yx The fifth coefficient value.
  * @param yy The sixth coefficient value.
  * @param yz The seventh coefficient value.
- * @param yw The heighth coefficient value.
+ * @param yw The eighth coefficient value.
  * @param zx The nineth coefficient value.
  * @param zy The tenth coefficient value.
  * @param zz The eleventh coefficient value.
@@ -868,7 +868,7 @@ EAPI void eina_matrix4_array_set(Eina_Matrix4 *m, const double *v);
 EAPI void eina_matrix4_copy(Eina_Matrix4 *dst, const Eina_Matrix4 *src);
 
 /**
- * @brief Multiplies two matrix with check.
+ * @brief Multiplies two matrices with check.
  *
  * @param out The resulting matrix
  * @param mat_a The first member of the multiplication
@@ -1016,7 +1016,7 @@ EAPI void eina_matrix2_array_set(Eina_Matrix2 *m, const double *v);
 EAPI void eina_matrix2_copy(Eina_Matrix2 *dst, const Eina_Matrix2 *src);
 
 /**
- * @brief Multiplies two matrix.
+ * @brief Multiplies two matrices.
  *
  * @param out The resulting matrix
  * @param mat_a The first member of the multiplication
@@ -1028,7 +1028,7 @@ EAPI void eina_matrix2_multiply(Eina_Matrix2 *out, const Eina_Matrix2 *mat_a,
                                 const Eina_Matrix2 *mat_b);
 
 /**
- * @brief Multiplies two matrix with check.
+ * @brief Multiplies two matrices with check.
  *
  * @param out The resulting matrix
  * @param mat_a The first member of the multiplication
