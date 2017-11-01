@@ -346,7 +346,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in before_it: Elm.Widget.Item; [[The item to place this new one before.]]
@@ -374,7 +374,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in after_it: Elm.Widget.Item; [[The item to place this new one after.]]
@@ -454,7 +454,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to prepended item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
@@ -476,7 +476,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to appended item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
@@ -493,7 +493,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]

@@ -566,7 +566,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
-            @in route: ptr(const(Elm_Map_Route)); [[The route object to make a overlay.]]
+            @cref route: Elm_Map_Route; [[The route object to make a overlay.]]
          }
       }
       overlay_scale_add {

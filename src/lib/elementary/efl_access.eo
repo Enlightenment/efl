@@ -356,7 +356,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
       	 [[Emit event]]
          params {
             @in accessible: Efl.Access; [[Accessibility object.]]
-            @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
+            @cref event: Efl.Event.Description; [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }

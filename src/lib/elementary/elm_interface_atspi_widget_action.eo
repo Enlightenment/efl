@@ -11,7 +11,7 @@ mixin Elm.Interface.Atspi_Widget_Action (Efl.Access.Action)
          get @pure_virtual {
          }
          values {
-            actions: ptr(const(Elm_Atspi_Action)); [[NULL-terminated array of Elm_Atspi_Action]]
+            @cref actions: Elm_Atspi_Action; [[NULL-terminated array of Elm_Atspi_Action]]
          }
       }
    }

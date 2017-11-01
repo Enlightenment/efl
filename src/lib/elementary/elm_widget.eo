@@ -108,7 +108,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
            makes sure other widgets will not also process this input event.
          ]]
          params {
-            @in eo_event: const(ptr(Efl.Event));
+            @cref eo_event: Efl.Event;
                [[EO event struct with an Efl.Input.Event as info.]]
             @in source: Efl.Canvas.Object;
                [[Source object where the event originated. Often same as this.]]
