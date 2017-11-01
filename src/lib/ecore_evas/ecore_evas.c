@@ -157,7 +157,7 @@ ecore_evas_render(Ecore_Evas *ee)
    if (ee->in_async_render)
      {
         DBG("ee=%p is rendering, skip.", ee);
-        return EINA_TRUE;
+        return EINA_FALSE;
      }
 
    if (ee->engine.func->fn_prepare)
