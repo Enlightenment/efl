@@ -847,7 +847,7 @@ inline void do_eo_add(Eo*& object, P const& parent
                       , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
-  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
+  object = ::_efl_add_end(object, EINA_TRUE, EINA_FALSE);
 }
 
 template <typename T>
@@ -873,7 +873,7 @@ void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass
 {
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
   ::efl::eolian::call_lambda(std::forward<F>(f), proxy);
-  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
+  object = ::_efl_add_end(object, EINA_TRUE, EINA_FALSE);
 }
 
 template <typename D, typename T>
