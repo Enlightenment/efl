@@ -1100,7 +1100,7 @@ _prev_item(Node *node)
 }
 
 static Node*
-_next_unprepare_node(Node *node)
+_next(Node *node)
 {
    Node *n;
 
@@ -1142,15 +1142,6 @@ _next_unprepare_node(Node *node)
 
    //this is then the root again
    return NULL;
-}
-
-static Node*
-_next(Node *node)
-{
-   //prepare the node itself so if there are probebly no children, then they are here.
-   efl_ui_focus_object_prepare_logical(node->focusable);
-
-   return _next_unprepare_node(node);
 }
 
 static Node*
@@ -1216,6 +1207,10 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
           }
 
         stack = eina_list_append(stack, result);
+
+        if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
+          efl_ui_focus_object_prepare_logical(result->focusable);
+
         result = deliver(result);
    } while(result && result->type != NODE_TYPE_NORMAL && !result->redirect_manager);
 
@@ -1297,7 +1292,7 @@ _request_subchild(Node *node)
              if (target != node)
                efl_ui_focus_object_prepare_logical(target->focusable);
 
-             target = _next_unprepare_node(target);
+             target = _next(target);
              //abort if we are exceeding the childrens of node
              if (target == node) target = NULL;
           }
@@ -1588,6 +1583,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
    //make sure to prepare_logical so next and prev are correctly
    if (n->tree.parent)
      efl_ui_focus_object_prepare_logical(n->tree.parent->focusable);
+   efl_ui_focus_object_prepare_logical(n->focusable);
 
 #define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir).partners);
 
