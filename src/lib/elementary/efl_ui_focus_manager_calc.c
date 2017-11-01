@@ -1597,16 +1597,13 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
    res->down = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_DOWN);
    res->next = (tmp = _next(n)) ? tmp->focusable : NULL;
    res->prev = (tmp = _prev(n)) ? tmp->focusable : NULL;
-   switch(n->type)
-     {
-        case NODE_TYPE_ONLY_LOGICAL:
-          res->type = "logical";
-        break;
-        case NODE_TYPE_NORMAL:
-          res->type = "normal";
-        break;
-     }
-   res->parent = T(n).parent->focusable;
+   res->position_in_history = eina_list_data_idx(pd->focus_stack, n);
+   res->node = child;
+
+   res->logical = (n->type == NODE_TYPE_ONLY_LOGICAL);
+
+   if (T(n).parent)
+     res->parent = T(n).parent->focusable;
    res->redirect = n->redirect_manager;
 #undef DIR_CLONE
 
@@ -1690,5 +1687,28 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_subchild(Eo *obj, Efl_Ui
    return NULL;
 }
 
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_object_dbg_info_get(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Dbg_Info *root)
+{
+   efl_dbg_info_get(efl_super(obj, MY_CLASS), root);
+   Efl_Dbg_Info *append, *group = EFL_DBG_INFO_LIST_APPEND(root, "Efl.Ui.Focus.Manager");
+   Eina_Iterator *iter;
+   Eina_Value *list;
+   Node *node;
+
+   list = eina_value_list_new(EINA_VALUE_TYPE_UINT64);
+
+   append = EFL_DBG_INFO_LIST_APPEND(group, "children");
+
+   iter = eina_hash_iterator_data_new(pd->node_hash);
+   EINA_ITERATOR_FOREACH(iter, node)
+     {
+        EFL_DBG_INFO_APPEND(append, "-", EINA_VALUE_TYPE_UINT64, node->focusable);
+     }
+   eina_iterator_free(iter);
+}
+
+#define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)
 
 #include "efl_ui_focus_manager_calc.eo.c"

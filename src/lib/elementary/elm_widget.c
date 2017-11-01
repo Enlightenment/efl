@@ -3152,7 +3152,7 @@ _elm_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EINA_
      {
         focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
 
-        EFL_DBG_INFO_APPEND(focus, "type", EINA_VALUE_TYPE_STRING, rel->type);
+        EFL_DBG_INFO_APPEND(focus, "logical", EINA_VALUE_TYPE_CHAR, rel->logical );
         EFL_DBG_INFO_APPEND(focus, "manager", EINA_VALUE_TYPE_UINT64, _pd->focus.manager);
         EFL_DBG_INFO_APPEND(focus, "parent", EINA_VALUE_TYPE_UINT64, rel->parent);
         EFL_DBG_INFO_APPEND(focus, "next", EINA_VALUE_TYPE_UINT64 , rel->next);

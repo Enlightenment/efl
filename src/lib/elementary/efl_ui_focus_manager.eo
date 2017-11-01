@@ -11,9 +11,11 @@ struct Efl.Ui.Focus.Relations {
     down : list<Efl.Ui.Focus.Object>; [[[List of objects below]]
     next : Efl.Ui.Focus.Object; [[[Next object]]
     prev : Efl.Ui.Focus.Object; [[Previous object]]
-    type : string; [[Object type]]
     parent : Efl.Ui.Focus.Object; [[Parent object]]
     redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
+    node : Efl.Ui.Focus.Object; [[The node where this is the information from]]
+    logical : bool; [[true if this node is only logical]]
+    position_in_history : int; [[The position in the history stack]]
 }
 
 struct Efl.Ui.Focus.Manager.Logical_End_Detail {
