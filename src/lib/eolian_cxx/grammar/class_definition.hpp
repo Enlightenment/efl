@@ -87,7 +87,7 @@ struct class_definition_generator
          // << scope_tab << scope_tab << ": ::efl::eo::concrete( ::efl::eo::do_eo_add( ::efl::eo::concrete{nullptr}, f)) {}\n"
         ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
      
-     if(!as_generator(*(scope_tab << function_declaration))
+     if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
                                              
      // static Efl_Class const* _eo_class();
