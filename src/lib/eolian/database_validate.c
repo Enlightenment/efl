@@ -351,6 +351,26 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
 }
 
 static Eina_Bool
+_validate_part(Eolian_Part *part, Eina_Hash *nhash)
+{
+   if (!_validate_doc(part->doc))
+     return EINA_FALSE;
+
+   const Eolian_Function *ofunc = eina_hash_find(nhash, part->name);
+   if (ofunc)
+     {
+        char buf[512];
+        snprintf(buf, sizeof(buf),
+                 "part '%s' conflicts with a function (defined at %s:%d:%d)",
+                 part->name, ofunc->base.file,
+                 ofunc->base.line, ofunc->base.column);
+        _obj_error(&part->base, buf);
+     }
+
+   return _validate(&part->base);
+}
+
+static Eina_Bool
 _validate_event(Eolian_Event *event)
 {
    if (event->type && !_validate_type(event->type))
@@ -381,6 +401,7 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
    Eina_List *l;
    Eolian_Function *func;
    Eolian_Event *event;
+   Eolian_Part *part;
    Eolian_Implement *impl;
    Eolian_Class *icl;
    Eina_Bool res = EINA_TRUE;
@@ -411,6 +432,10 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
 
    EINA_LIST_FOREACH(cl->events, l, event)
      if (!(res = _validate_event(event)))
+       goto freehash;
+
+   EINA_LIST_FOREACH(cl->parts, l, part)
+     if (!(res = _validate_part(part, nhash)))
        goto freehash;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
