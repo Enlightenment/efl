@@ -6,26 +6,43 @@
  *
  * @{
  */
-enum
+
+/**
+ * @typedef Elm_Input_Panel_Layout_Normal_Variation
+ * @brief Enumeration for defining the types of Elm Input Panel Layout for normal variation.
+ * @since 1.12
+ */
+typedef enum
 {
    ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_NORMAL,          /**< The plain normal layout @since 1.12 */
    ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_FILENAME,        /**< Filename layout. Symbols such as '/' should be disabled. @since 1.12 */
    ELM_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME      /**< The name of a person. @since 1.12 */
-};
+} Elm_Input_Panel_Layout_Normal_Variation;
 
-enum
+/**
+ * @typedef Elm_Input_Panel_Layout_Numberonly_Variation
+ * @brief Enumeration for defining the types of Elm Input Panel Layout for number only variation.
+ * @since 1.8
+ */
+typedef enum
 {
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_NORMAL,              /**< The plain normal number layout @since 1.8 */
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED,              /**< The number layout to allow a positive or negative sign at the start @since 1.8 */
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_DECIMAL,             /**< The number layout to allow decimal point to provide fractional value @since 1.8 */
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY_VARIATION_SIGNED_AND_DECIMAL   /**< The number layout to allow decimal point and negative sign @since 1.8 */
-};
+} Elm_Input_Panel_Layout_Numberonly_Variation;
 
-enum
+/**
+ * @typedef Elm_Input_Panel_Layout_Password_Variation
+ * @brief Enumeration for defining the types of Elm Input Panel Layout for password variation.
+ * @since 1.12
+ */
+typedef enum
 {
    ELM_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NORMAL,    /**< The normal password layout @since 1.12 */
    ELM_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY /**< The password layout to allow only number @since 1.12 */
-};
+} Elm_Input_Panel_Layout_Password_Variation;
+
 /**
  * The info sent in the callback for the "anchor,clicked" signals emitted
  * by entries.
