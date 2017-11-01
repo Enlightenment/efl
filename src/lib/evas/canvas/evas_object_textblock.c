@@ -3921,6 +3921,12 @@ loop_advance:
              c->ln->y += c->o->style_pad.t;
              c->y += c->o->style_pad.t;
           }
+
+        if ((c->position == TEXTBLOCK_POSITION_END) ||
+              (c->position == TEXTBLOCK_POSITION_SINGLE))
+          {
+             c->ln->h += c->o->style_pad.b;
+          }
      }
 
    /* Check current line's height is acceptable or not */
