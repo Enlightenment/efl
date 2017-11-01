@@ -323,7 +323,6 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");

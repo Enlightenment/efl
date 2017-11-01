@@ -26,7 +26,7 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
-   {SIG_CHANGED, ""},
+   {SIG_CHANGED, ""}, /**< handled by efl_ui_check */
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
@@ -202,45 +202,6 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return strdup(E_("State: Off"));
 }
 
-EOLIAN static void
-_efl_ui_radio_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Radio_Data *priv)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   efl_canvas_group_add(efl_super(obj, EFL_UI_CHECK_CLASS));
-   elm_widget_sub_object_parent_add(obj);
-
-   if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   elm_layout_signal_callback_add
-     (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
-
-   priv->group = calloc(1, sizeof(Group));
-   priv->group->radios = eina_list_append(priv->group->radios, obj);
-
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   elm_layout_sizing_eval(obj);
-
-   _elm_access_object_register(obj, wd->resize_obj);
-   _elm_access_text_set
-     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
-}
-
-EOLIAN static void
-_efl_ui_radio_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Radio_Data *sd)
-{
-   sd->group->radios = eina_list_remove(sd->group->radios, obj);
-   if (!sd->group->radios) free(sd->group);
-
-   efl_canvas_group_del(efl_super(obj, EFL_UI_CHECK_CLASS));
-}
-
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
@@ -249,14 +210,42 @@ elm_radio_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
-_efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED)
+_efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+
+   if (!elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
+
+   pd->group = calloc(1, sizeof(Group));
+   pd->group->radios = eina_list_append(pd->group->radios, obj);
+
+   elm_layout_sizing_eval(obj);
+
    efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_radio_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd)
+{
+   pd->group->radios = eina_list_remove(pd->group->radios, obj);
+   if (!pd->group->radios) free(pd->group);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -392,7 +381,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
 ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_RADIO_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_radio), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"

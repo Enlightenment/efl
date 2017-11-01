@@ -77,6 +77,7 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_activate;
       Elm.Widget.widget_event;
