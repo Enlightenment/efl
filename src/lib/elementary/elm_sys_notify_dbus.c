@@ -6,6 +6,8 @@
 
 #include "elm_priv.h"
 
+#include "elm_sys_notify_interface.eo.h"
+#include "elm_sys_notify.eo.h"
 #include "elm_sys_notify_dbus.eo.h"
 #include "elm_sys_notify_dbus.eo.legacy.h"
 

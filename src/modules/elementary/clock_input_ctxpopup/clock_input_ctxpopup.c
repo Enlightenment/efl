@@ -5,6 +5,8 @@
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "efl_ui_clock_private.h"
+#include "elm_ctxpopup_item.eo.h"
+#include "elm_ctxpopup.eo.h"
 #include "elm_module_helper.h"
 
 #define CLOCK_FIELD_COUNT       8

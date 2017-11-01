@@ -12,8 +12,6 @@
 #include "elm_priv.h"
 #include "elm_widget_popup.h"
 
-#include "elm_popup_item.eo.h"
-
 #include "elm_popup_part.eo.h"
 #include "elm_part_helper.h"
 

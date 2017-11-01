@@ -10,8 +10,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_multibuttonentry_private.h"
-
 #include "efl_ui_multibuttonentry_part.eo.h"
+#include "elm_entry.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_MULTIBUTTONENTRY_CLASS

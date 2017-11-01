@@ -27,9 +27,6 @@
  */
 
 #include "elm_glview_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_glview_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_glview_legacy.h"
 #endif

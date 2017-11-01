@@ -4,6 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_gesture_layer.eo.h"
 
 #define MY_CLASS ELM_GESTURE_LAYER_CLASS
 

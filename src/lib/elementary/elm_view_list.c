@@ -6,6 +6,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "elm_genlist.eo.h"
+
 #include <assert.h>
 
 #define MY_CLASS ELM_VIEW_LIST_CLASS

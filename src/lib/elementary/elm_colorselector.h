@@ -37,9 +37,6 @@
  */
 
 #include "elm_colorselector_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_colorselector_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_colorselector_legacy.h"
 #endif

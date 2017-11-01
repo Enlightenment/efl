@@ -125,9 +125,6 @@
  * @li @ref popup_example_03_c
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elc_popup_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elc_popup_legacy.h"
 #endif

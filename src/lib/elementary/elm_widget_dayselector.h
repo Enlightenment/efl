@@ -3,6 +3,7 @@
 
 #include "Elementary.h"
 #include "elm_dayselector_item.eo.h"
+#include "elm_dayselector.eo.h"
 
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR

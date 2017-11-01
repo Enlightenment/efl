@@ -10,6 +10,7 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
+#include "elm_fileselector.eo.h"
 
 #define MY_CLASS ELM_FILESELECTOR_BUTTON_CLASS
 

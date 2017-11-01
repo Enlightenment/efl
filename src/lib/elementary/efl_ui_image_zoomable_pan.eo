@@ -2,8 +2,6 @@ class Efl.Ui.Image_Zoomable_Pan (Elm.Pan)
 {
    [[Elementary photocom pan class]]
    legacy_prefix: elm_photocam_pan;
-   //eo_prefix: elm_obj_photocam_pan;
-   //event_prefix: elm_photocam_pan;
    implements {
       class.constructor;
       Efl.Object.destructor;

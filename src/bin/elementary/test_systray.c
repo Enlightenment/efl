@@ -1,7 +1,12 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
 #include <Elementary.h>
+
+// FIXME: systray has no proper legacy API and clearly isn't ready for prime
+// time with EO either.
+#include "elm_systray.eo.h"
 
 #define WIDTH  320
 #define HEIGHT 160

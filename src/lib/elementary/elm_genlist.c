@@ -15,6 +15,9 @@
 #include "elm_priv.h"
 #include "elm_widget_genlist.h"
 #include "elm_interface_scrollable.h"
+#include "elm_genlist_item.eo.h"
+#include "elm_genlist_pan.eo.h"
+#include "elm_genlist.eo.h"
 
 #define MY_PAN_CLASS ELM_GENLIST_PAN_CLASS
 

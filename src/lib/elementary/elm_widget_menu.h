@@ -3,6 +3,10 @@
 
 #include "Elementary.h"
 
+#include "elm_menu.eo.h"
+#include "elm_menu_item.eo.h"
+#include "elm_hover.eo.h"
+
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
  * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK

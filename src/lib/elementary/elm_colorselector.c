@@ -10,6 +10,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_colorselector.h"
+#include "elm_widget_spinner.h"
 
 #define MY_CLASS ELM_COLORSELECTOR_CLASS
 

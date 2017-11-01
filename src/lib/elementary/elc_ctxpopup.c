@@ -12,6 +12,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
+#include "elm_ctxpopup_item.eo.h"
+#include "elm_ctxpopup.eo.h"
 
 #include "elm_ctxpopup_part.eo.h"
 #include "elm_part_helper.h"

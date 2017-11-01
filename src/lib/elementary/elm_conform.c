@@ -10,6 +10,10 @@
 #include "elm_priv.h"
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
+#include "elm_widget_plug.h"
+#include "elm_scroller.eo.h"
+#include "elm_genlist.eo.h"
+#include "elm_conformant.eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
 #define MY_CLASS_PFX elm_conformant

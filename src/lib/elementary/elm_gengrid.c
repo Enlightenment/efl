@@ -15,6 +15,9 @@
 #include "elm_interface_scrollable.h"
 #include "efl_ui_focus_parent_provider_gen.eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
+#include "elm_gengrid_item.eo.h"
+#include "elm_gengrid_pan.eo.h"
+#include "elm_gengrid.eo.h"
 
 #define MY_PAN_CLASS ELM_GENGRID_PAN_CLASS
 

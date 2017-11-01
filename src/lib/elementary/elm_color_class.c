@@ -5,6 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_color_class.h"
+#include "elm_colorselector.eo.h"
 
 //static Eldbus_Proxy *cc_proxy;
 //static Ecore_Event_Handler *h1;

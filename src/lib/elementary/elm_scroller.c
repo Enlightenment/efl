@@ -12,6 +12,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
+#include "elm_scroller.eo.h"
 #include "elm_scroller_part.eo.h"
 #include "elm_part_helper.h"
 

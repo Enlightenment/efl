@@ -19,6 +19,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "ecore_internal.h"
+#include "elm_interface_scrollable.h"
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 

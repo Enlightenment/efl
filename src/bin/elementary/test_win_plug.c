@@ -1,7 +1,10 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
 #include <Elementary.h>
+// FIXME: use smart cb
+#include "elm_notify.eo.h"
 
 #define MAX_TRY 40
 

@@ -16,6 +16,7 @@
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
 #include "elm_part_helper.h"
+#include "elm_combobox.eo.h"
 
 /* FIXME: remove this when we don't rely on evas event structs anymore */
 #define EFL_INTERNAL_UNSTABLE

@@ -1,7 +1,9 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
 #include <Elementary.h>
+#include "elm_colorselector.eo.h"
 
 const int default_font_size = 48;
 
