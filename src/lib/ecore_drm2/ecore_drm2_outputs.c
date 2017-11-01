@@ -1361,7 +1361,7 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
                buffer = output->ocrtc->buffer_id;
 
              if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer,
-                                    x, y, &output->conn_id, 1, &mode->info) < 0)
+                                    0, 0, &output->conn_id, 1, &mode->info) < 0)
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
                       mode->width, mode->height, output->name);
