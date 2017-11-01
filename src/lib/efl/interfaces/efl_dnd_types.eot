@@ -1,4 +1,6 @@
-enum Efl.Dnd.Drag_Action {
+import efl_selection_types;
+
+/*enum Efl.Dnd.Action {
    unknown, [[Action type is unknown]]
    copy, [[Copy the data]]
    move, [[Move the data]]
@@ -7,7 +9,7 @@ enum Efl.Dnd.Drag_Action {
    list, [[List the data]]
    link, [[Link the data]]
    description [[Describe the data]]
-}
+}*/
 
 function Efl.Dnd.Drag_Icon_Create {
    [[Function pointer for creating icon at the drag side.]]
@@ -56,7 +58,8 @@ struct Efl.Dnd.Drag_Accept {
 struct Efl.Dnd.Drag_Pos {
    x: int; [[Evas Coordinate]]
    y: int; [[Evas Coordinate]]
-   action: Efl.Dnd.Drag_Action;
+   action: Efl.Selection.Action;
+   format: Efl.Selection.Format;
 }
 
 function Efl.Dnd.Drop_Item_Get {

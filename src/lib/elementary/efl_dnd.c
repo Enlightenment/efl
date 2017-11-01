@@ -35,57 +35,8 @@ _selection_manager_get(Eo *obj)
    return sel_man;
 }
 
-
-
-static Ecore_X_Window
-_x11_xwin_get(Evas_Object *obj)
-{
-   if (!obj) return 0;
-
-   Ecore_X_Window xwin = 0;
-   //get top
-   Evas_Object *top = obj;
-   Evas_Object *parent = obj;
-   while(parent)
-     {
-        top = parent;
-        parent = efl_parent_get(parent);
-     }
-   if (efl_isa(top, EFL_UI_WIN_CLASS))
-     {
-        xwin = elm_win_xwindow_get(top);
-     }
-   if (!xwin)
-     {
-        Ecore_Evas *ee;
-        Evas *evas = evas_object_evas_get(obj);
-        if (!evas) return 0;
-        ee = ecore_evas_ecore_evas_get(evas);
-        if (!ee) return 0;
-
-        while(!xwin)
-          {
-             const char *engine_name = ecore_evas_engine_name_get(ee);
-             if (!strcmp(engine_name, ELM_BUFFER))
-               {
-                  ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
-                  if (!ee) return 0;
-                  xwin = _elm_ee_xwin_get(ee);
-               }
-             else
-               {
-                  xwin = _elm_ee_xwin_get(ee);
-                  if (!xwin) return 0;
-               }
-          }
-     }
-
-   return xwin;
-}
-
-
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Dnd_Drag_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
+_efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
 {
    ERR("In");
    Efl_Dnd_Drag_Accept da;
@@ -100,7 +51,7 @@ _efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selec
    Efl_Dnd_Drag_Pos dp;
    dp.x = 0;
    dp.y = 0;
-   dp.action = EFL_DND_DRAG_ACTION_COPY;
+   dp.action = EFL_SELECTION_ACTION_COPY;
    efl_event_callback_call(obj, EFL_DND_DRAG_EVENT_DRAG_POS, &dp); //event_info??
 
    efl_event_callback_call(obj, EFL_DND_DRAG_EVENT_DRAG_DONE, &da);
@@ -117,7 +68,7 @@ _efl_ui_dnd_drag_efl_dnd_drag_cancel(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd , Efl_Dnd_Drag_Action action)
+_efl_ui_dnd_drag_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd , Efl_Selection_Action action)
 {
    ERR("In");
    pd->action = action;

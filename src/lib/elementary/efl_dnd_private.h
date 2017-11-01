@@ -26,7 +26,7 @@ struct _Efl_Ui_Dnd_Drag_Data
    void *icon_create_data;
    Eina_Free_Cb icon_create_free_cb;
    //
-   Efl_Dnd_Drag_Action action;
+   Efl_Selection_Action action;
 };
 
 struct _Efl_Ui_Dnd_Drop_Data

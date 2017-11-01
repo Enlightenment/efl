@@ -59,7 +59,7 @@ struct Efl.Dnd.Drag_Accept {
 struct Efl.Dnd.Drag_Pos {
    x: int; [[Evas Coordinate]]
    y: int; [[Evas Coordinate]]
-   action: Efl.Dnd.Drag_Action;
+   action: Efl.Selection.Action;
 }*/
 
 interface Efl.Dnd.Drag (Efl.Selection) {
@@ -76,14 +76,14 @@ interface Efl.Dnd.Drag (Efl.Selection) {
             @in format: Efl.Selection.Format; [[The data format]]
             @in buf: const(void_ptr);
             @in len: int; [[The data's length.]]
-            @in action: Efl.Dnd.Drag_Action; [[Action when data is transferred]]
+            @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
          }
       }
       action_set {
          [[This sets the action for the drag]]
          params {
-            @in action: Efl.Dnd.Drag_Action; [[Drag action]]
+            @in action: Efl.Selection.Action; [[Drag action]]
          }
       }
       cancel {

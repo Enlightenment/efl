@@ -87,7 +87,7 @@ struct _X11_Cnp_Selection
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
    //Elm_Xdnd_Action    action;
-   Efl_Dnd_Drag_Action action; //FIXME: check type and var name, usage
+   Efl_Selection_Action action; //FIXME: check type and var name, usage
 
    Eo *owner;
 
@@ -118,7 +118,7 @@ struct _Efl_Selection_Manager_Atom
 struct _Efl_Sel_Manager_Atom
 {
    const char              *name;
-   Efl_Selection_Format           format;
+   Efl_Selection_Format     format;
 #ifdef HAVE_ELEMENTARY_X
    // Called by ecore to do conversion
    X11_Converter_Fn_Cb      x_converter;
@@ -134,17 +134,25 @@ struct _Efl_Sel_Manager_Atom
    void                    *_term;
 };
 
+typedef struct _Drop_Format Drop_Format;
+struct _Drop_Format
+{
+   EINA_INLIST;
+   Efl_Selection_Format format;
+};
+
 
 struct _Dropable
 {
    Evas_Object    *obj;
    /* FIXME: Cache window */
-   Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
+   //Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
+   Eina_Inlist   *format_list;
    struct {
       Evas_Coord      x, y;
       Eina_Bool       in : 1;
       const char     *type;
-      Elm_Sel_Format  format;
+      Efl_Selection_Format  format;
    } last;
 };
 
@@ -174,7 +182,7 @@ struct _Efl_Selection_Manager_Data
 
    //drag
    Eo *drag_obj;
-   Efl_Dnd_Drag_Action drag_action;
+   Efl_Selection_Action drag_action;
    Eo *drag_win;
    Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
    Eina_Bool accept;
@@ -183,6 +191,15 @@ struct _Efl_Selection_Manager_Data
    int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
    int drag_win_x_end, drag_win_y_end;
    Eina_List *drops; //Dropable list
+
+
+   //drop
+   Eina_Hash *types_hash;
+   Ecore_Event_Handler *enter_handler;
+   Ecore_Event_Handler *leave_handler;
+   Ecore_Event_Handler *pos_handler;
+   Ecore_Event_Handler *drop_handler;
+   const char *text_uri;
 };
 
 #endif

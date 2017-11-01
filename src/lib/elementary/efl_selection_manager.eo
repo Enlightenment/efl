@@ -41,11 +41,11 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
               - EFL_DND_EVENT_DRAG_DONE
          ]]
          params {
-            @in drag_obj: Efl.Object; [[Seleciton owner]]
+            @in drag_obj: Efl.Object; [[The drag object]]
             @in format: Efl.Selection.Format; [[The data format]]
             @in buf: const(void_ptr);
             @in len: int; [[The data's length.]]
-            @in action: Efl.Dnd.Drag_Action; [[Action when data is transferred]]
+            @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
@@ -53,7 +53,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
       drag_action_set {
          [[This sets the action for the drag]]
          params {
-            @in action: Efl.Dnd.Drag_Action; [[Drag action]]
+            @in action: Efl.Selection.Action; [[Drag action]]
          }
       }
       drag_cancel {
@@ -77,6 +77,31 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
          params {
          }
       }*/
+      drop_target_add {
+         [[There are four events emitted: EFL_DND_DROP_DRAG_ENTER, EFL_DND_DROP_DRAG_LEAVE,
+           EFL_DND_DROP_DRAG_POS, EFL_DND_DROP_DRAG_DROP.]]
+         params {
+            @in target_obj: Efl.Object; [[The drop target]]
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+      }
+      drop_target_del {
+         params {
+            @in target_obj: Efl.Object; [[The drop target]]
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      /*item_container_add {
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data formats]]
+            @in item_func: Efl.Dnd.Drop_Item_Get; [[Get item at specific position]]
+         }
+      }
+      item_container_del {
+      }*/
    }
    implements {
       Efl.Object.constructor;
@@ -88,5 +113,10 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
    }
    events {
       selection,loss; [[Called when seleciton is lost]]
+      //for drop
+      drag,enter; [[called when the drag object enters this object]]
+      drag,leave; [[called when the drag object leaves this object]]
+      drag,pos; [[called when the drag object changes drag position]]
+      drag,drop; [[called when the drag object dropped on this object]]
    }
 }
