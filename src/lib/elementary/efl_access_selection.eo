@@ -2,13 +2,13 @@ interface Efl.Access.Selection ()
 {
    [[Elementary access selection interface]]
    methods {
-      @property selected_children_count @protected {
+      @property selected_children_count @protected @beta {
          get {
             [[Gets the number of currently selected children]]
             return: int; [[Number of currently selected children]]
          }
       }
-      @property selected_child @protected {
+      @property selected_child @protected @beta {
          [[Gets child for given child index]]
          get {
             return: Efl.Object; [[Child object]]
@@ -17,36 +17,36 @@ interface Efl.Access.Selection ()
             selected_child_index: int; [[Index of child]]
          }
       }
-      child_select @protected {
+      child_select @protected @beta {
          [[Adds selection for given child index]]
          params {
             @in child_index: int; [[Index of child]]
          }
          return: bool; [[$true if selection was added, $false otherwise]]
       }
-      selected_child_deselect @protected {
+      selected_child_deselect @protected @beta {
          [[Removes selection for given child index]]
          params {
             @in child_index: int; [[Index of child]]
          }
          return: bool; [[$true if selection was removed, $false otherwise]]
       }
-      is_child_selected @protected {
+      is_child_selected @protected @beta {
          [[Determines if child specified by index is selected]]
          params {
             @in child_index: int; [[Index of child]]
          }
          return: bool; [[$true if child is selected, $false otherwise]]
       }
-      all_children_select @protected {
+      all_children_select @protected @beta {
          [[Adds selection for all children]]
          return: bool; [[$true if selection was added to all children, $false otherwise]]
       }
-      clear @protected {
+      clear @protected @beta {
          [[Clears the current selection]]
          return: bool; [[$true if selection was cleared, $false otherwise]]
       }
-      child_deselect @protected {
+      child_deselect @protected @beta {
          [[Removes selection for given child index]]
          params {
             @in child_index: int; [[Index of child]]

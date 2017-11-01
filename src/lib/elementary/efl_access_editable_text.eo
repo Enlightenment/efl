@@ -2,7 +2,7 @@ interface Efl.Access.Editable.Text ()
 {
    [[Elementary editable text interface]]
    methods {
-      @property content @protected {
+      @property content @protected @beta {
          [[Editable content property]]
          set {
             return: bool; [[$true if setting the value succeeded, $false otherwise]]
@@ -11,7 +11,7 @@ interface Efl.Access.Editable.Text ()
             string: string; [[Content]]
          }
       }
-      insert @protected {
+      insert @protected @beta {
       [[Insert text at given position]]
          params {
             @in string: string; [[String to be inserted]]
@@ -19,7 +19,7 @@ interface Efl.Access.Editable.Text ()
          }
          return: bool; [[$true if insert succeeded, $false otherwise]]
       }
-      copy @protected {
+      copy @protected @beta {
       [[Copy text between start and end parameter]]
          params {
             @in start: int; [[Start position to copy]]
@@ -27,7 +27,7 @@ interface Efl.Access.Editable.Text ()
          }
          return: bool; [[$true if copy succeeded, $false otherwise]]
       }
-      cut @protected {
+      cut @protected @beta {
       [[Cut text between start and end parameter]]
          params {
             @in start: int; [[Start position to cut]]
@@ -35,7 +35,7 @@ interface Efl.Access.Editable.Text ()
          }
          return: bool; [[$true if cut succeeded, $false otherwise]]
       }
-      delete @protected {
+      delete @protected @beta {
       [[Delete text between start and end parameter]]
          params {
             @in start: int; [[Start position to delete]]
@@ -43,7 +43,7 @@ interface Efl.Access.Editable.Text ()
          }
          return: bool; [[$true if delete succeeded, $false otherwise]]
       }
-      paste @protected {
+      paste @protected @beta {
       [[Paste text at given position]]
          params {
             @in position: int; [[Position to insert text]]

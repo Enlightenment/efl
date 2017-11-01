@@ -3,7 +3,7 @@ mixin Efl.Access.Image ()
    [[Accessible image mixin]]
    data: null;
    methods {
-      @property extents @protected {
+      @property extents @protected @beta {
          [[Gets an image extents.]]
          get @pure_virtual {
          }
@@ -17,7 +17,7 @@ mixin Efl.Access.Image ()
             height: int; [[Image height]]
          }
       }
-      @property description @protected {
+      @property description @protected @beta {
          [[Textual description of image]]
          get {
          }
@@ -27,7 +27,7 @@ mixin Efl.Access.Image ()
             description: string; [[Textual image description]]
          }
       }
-      @property locale @protected {
+      @property locale @protected @beta {
          [[Gets locale of the image description.]]
          get {
          }
