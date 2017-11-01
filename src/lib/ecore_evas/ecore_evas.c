@@ -164,7 +164,7 @@ ecore_evas_render(Ecore_Evas *ee)
      if (!ee->engine.func->fn_prepare(ee))
        return EINA_FALSE;
 
-   rend = ecore_evas_render_prepare(ee);
+   ecore_evas_render_prepare(ee);
 
    ee->in_async_render = 1;
 
