@@ -287,6 +287,11 @@ static void
 _gl_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("double clicked: %p\n", event_info);
+   Elm_Object_Item *it = event_info;
+   if (!elm_genlist_item_pin_get(it))
+     elm_genlist_item_pin_set(it, EINA_TRUE);
+   else
+     elm_genlist_item_pin_set(it, EINA_FALSE);
 }
 
 static void
@@ -750,6 +755,7 @@ test_genlist2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    api->gl = gl;
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    evas_object_show(gl);
 
    api->itc1 = elm_genlist_item_class_new();
@@ -2439,6 +2445,7 @@ test_genlist_reorder(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_text_set(tg, "Reorder Mode:");
    elm_check_state_set(tg, elm_config_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed_cb, gl);
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 

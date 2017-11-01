@@ -270,6 +270,23 @@ class Elm.Genlist.Item(Elm.Widget.Item)
                      type: Elm.Genlist.Item.Type(Elm.Genlist.Item.Type.max); [[Item type.]]
                 }
            }
+           @property pin {
+                get {
+                     [[Get whether a given genlist item is pinned or not.]]
+                }
+                set {
+                     [[Set whether a given genlist item is pinned or not
+
+                      This sets a genlist item as pinned so that it will be always available in
+                      the viewport available for user interaction. Group items cannot be pinned.
+                      Also when a new item is pinned, the current pinned item will get unpinned.
+                      Item pinning cannot be done in reorder mode too.
+                     ]]
+                }
+                values {
+                     pin: bool; [[The item pin state state ($true pin item, $false unpin item).]]
+                }
+           }
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;
