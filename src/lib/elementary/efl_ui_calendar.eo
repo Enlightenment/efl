@@ -1,7 +1,5 @@
 import efl_types;
 
-type Efl_Ui_Calendar_Format_Cb: __undefined_type; [[Elementary calendar format callback type]]
-
 enum Efl.Ui.Calendar.Weekday
 {
    [[A weekday

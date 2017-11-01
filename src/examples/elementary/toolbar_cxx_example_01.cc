@@ -5,8 +5,9 @@
 #include "config.h"
 #endif
 
+#warning This example requires yet unfinished EO APIs
+
 #include <Elementary.hh>
-#include <Evas.hh>
 
 EAPI int
 elm_main(int argc, char* argv[])
@@ -25,6 +26,8 @@ elm_main(int argc, char* argv[])
       });
 
    win_1.autodel_set(true);
+
+#if 0
    win_1.eo_cxx::efl::Gfx::size_set({320, 300});
 
    efl::ui::Box box_1(instantiate, win_1);
@@ -128,6 +131,8 @@ elm_main(int argc, char* argv[])
      });
 
    efl::eolian::event_add(efl::ui::Selectable::selected_event, item_5, _item_5_selected_cb);
+
+#endif
    
    elm_run();
    return 0;

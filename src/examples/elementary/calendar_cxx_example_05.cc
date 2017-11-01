@@ -3,6 +3,8 @@
 #include "elementary_config.h"
 #endif
 
+#warning This example can't be implemented with EO APIs... FIXME
+
 #include <Elementary.hh>
 
 EAPI_MAIN int
@@ -13,13 +15,12 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    using efl::eo::instantiate;
 
    efl::ui::Win win(instantiate);
-   //win.title_set("Calendar Getters Example");
+   win.text_set("Calendar Getters Example");
    win.autohide_set(true);
 
-   elm::Calendar cal(instantiate, win);
-   //cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //win.resize_object_add(cal);
-   cal.eo_cxx::efl::Gfx::size_set({135,135});
+   efl::ui::Calendar cal(instantiate, win);
+   win.content_set(cal);
+   cal.size_set({135,135});
 
    // auto print_cal_info = std::bind([] (::elm::Calendar obj)
    //                       {
@@ -48,10 +49,8 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    //                       } , std::placeholders::_1 );
 
    // cal.callback_changed_add(print_cal_info);
-   cal.visible_set(true);
 
-   win.eo_cxx::efl::Gfx::size_set({135,135});
-   win.visible_set(true);
+   win.size_set({135,135});
 
    elm_run();
    return 0;
