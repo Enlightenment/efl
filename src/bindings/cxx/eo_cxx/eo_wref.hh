@@ -79,7 +79,7 @@ struct wref
    /// strong reference to the <em>EO Object</em>. Otherwise it returns
    /// an empty eina::optional.
    ///
-   eina::optional<T> lock()
+   eina::optional<T> lock() const
    {
       if(_eo_wref) // XXX eo_ref() should work on multi-threaded environments
         {
