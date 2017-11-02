@@ -407,7 +407,8 @@ writers["dokuwiki"] = util.Object:clone {
         local hasraw, hasnote = false, false
         while tokp:tokenize() do
             local tp = tokp:type_get()
-            if notetypes[tp] then
+            local tag = notetypes[tp]
+            if tag then
                 self:write_raw(tag)
                 hasnote = true
             else

@@ -224,7 +224,7 @@ M.Class = Node:clone {
         end
         ret = {}
         for cl in self.class:inherits_get() do
-            ret[#ret + 1] = cl
+            ret[#ret + 1] = M.Class(cl)
         end
         self._cache_inhc = ret
         return ret
