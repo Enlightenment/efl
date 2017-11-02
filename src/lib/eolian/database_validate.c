@@ -181,10 +181,11 @@ _validate_type(Eolian_Type *tp)
         {
            if (tp->base_type)
              {
+                int kwid = eo_lexer_keyword_str_to_id(tp->full_name);
                 if (!tp->freefunc)
                   {
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
-                       eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
+                       kwid - KW_accessor]);
                   }
                 Eolian_Type *itp = tp->base_type;
                 /* validate types in brackets so freefuncs get written... */
@@ -192,6 +193,16 @@ _validate_type(Eolian_Type *tp)
                   {
                      if (!_validate_type(itp))
                        return EINA_FALSE;
+                     if ((kwid >= KW_accessor) && (kwid <= KW_list))
+                       {
+                          if (!database_type_is_ownable(itp))
+                            {
+                               snprintf(buf, sizeof(buf),
+                                        "%s cannot contain value types (%s)",
+                                        tp->full_name, itp->full_name);
+                               return _obj_error(&itp->base, buf);
+                            }
+                       }
                      itp = itp->next_type;
                   }
                 return _validate(&tp->base);
