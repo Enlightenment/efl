@@ -444,7 +444,7 @@ START_TEST(eolian_complex_type)
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
    fail_if(eolian_type_is_owned(type));
-   fail_if(strcmp(type_name, "int"));
+   fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
 
    /* Methods return type */
