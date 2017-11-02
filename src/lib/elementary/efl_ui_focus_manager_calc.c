@@ -1689,10 +1689,7 @@ _efl_ui_focus_manager_calc_efl_object_dbg_info_get(Eo *obj, Efl_Ui_Focus_Manager
    efl_dbg_info_get(efl_super(obj, MY_CLASS), root);
    Efl_Dbg_Info *append, *group = EFL_DBG_INFO_LIST_APPEND(root, "Efl.Ui.Focus.Manager");
    Eina_Iterator *iter;
-   Eina_Value *list;
    Node *node;
-
-   list = eina_value_list_new(EINA_VALUE_TYPE_UINT64);
 
    append = EFL_DBG_INFO_LIST_APPEND(group, "children");
 
