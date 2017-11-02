@@ -20,22 +20,6 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
             value: int; [[The value to use if this radio object is selected]]
          }
       }
-      @property value {
-         set {
-            [[Set the value of the radio group.
-
-              This sets the value of the radio group and will also set the
-              value if pointed to, to the value supplied, but will not call
-              any callbacks.
-            ]]
-         }
-         get {
-            [[Get the value of the radio group]]
-         }
-         values {
-            value: int; [[The value to use for the group]]
-         }
-      }
       @property value_pointer {
          set {
             [[Set a convenience pointer to a integer to change when radio group
@@ -83,6 +67,7 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.widget_event;
       Efl.Access.state_set { get; }
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Ui.Nstate.value { set; get; }
    }
    events {
       changed; [[Called when radio changed]]

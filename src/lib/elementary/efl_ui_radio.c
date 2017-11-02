@@ -202,13 +202,6 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    return strdup(E_("State: Off"));
 }
 
-EAPI Evas_Object *
-elm_radio_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
-}
-
 EOLIAN static Eo *
 _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 {
@@ -288,7 +281,7 @@ _efl_ui_radio_state_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_radio_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
+_efl_ui_radio_efl_ui_nstate_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
 {
    if (value == sd->group->value) return;
    sd->group->value = value;
@@ -297,7 +290,7 @@ _efl_ui_radio_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
 }
 
 EOLIAN static int
-_efl_ui_radio_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_efl_ui_nstate_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->group->value;
 }
@@ -384,3 +377,24 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
+
+/* Legacy APIs */
+
+EAPI Evas_Object *
+elm_radio_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+}
+
+EAPI void
+elm_radio_value_set(Evas_Object *obj, int value)
+{
+   efl_ui_nstate_value_set(obj, value);
+}
+
+EAPI int
+elm_radio_value_get(const Evas_Object *obj)
+{
+   return efl_ui_nstate_value_get(obj);
+}

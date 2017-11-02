@@ -374,7 +374,7 @@ _cb_radio_changed_scale_type(void *data, const Efl_Event *ev)
 {
    Evas_Object *o_bg = data;
 
-   efl_ui_image_scale_type_set(o_bg, efl_ui_radio_value_get(ev->object));
+   efl_ui_image_scale_type_set(o_bg, efl_ui_nstate_value_get(ev->object));
 }
 
 static void
@@ -464,7 +464,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   efl_ui_radio_value_set(rdg, EFL_UI_IMAGE_SCALE_TYPE_FILL);
+   efl_ui_nstate_value_set(rdg, EFL_UI_IMAGE_SCALE_TYPE_FILL);
 
    efl_add(EFL_UI_CHECK_CLASS, hbox,
                 efl_text_set(efl_added, "Bg Color"),
