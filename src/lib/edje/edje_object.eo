@@ -60,7 +60,7 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
 
               See also @.perspective.set()]]
             values {
-                ps: ptr(const(Edje.Perspective)); [[The perspective object that will be used.]]
+                @cref ps: Edje.Perspective; [[The perspective object that will be used.]]
             }
          }
       }

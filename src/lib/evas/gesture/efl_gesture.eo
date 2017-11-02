@@ -8,7 +8,7 @@ abstract Efl.Gesture(Efl.Object)
          get {
          }
          values {
-            type: ptr(const(Efl.Event.Description)); [[gesture type]]
+            @cref type: Efl.Event.Description; [[gesture type]]
          }
       }
       @property state {

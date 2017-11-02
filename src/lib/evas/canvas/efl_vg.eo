@@ -42,7 +42,7 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
               @since 1.14]]
          }
          values {
-            m: ptr(const(Eina.Matrix3)); [[Transformation matrix.]]
+            @cref m: Eina.Matrix3; [[Transformation matrix.]]
          }
       }
       @property origin {
