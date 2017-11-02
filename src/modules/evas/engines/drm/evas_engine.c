@@ -5,7 +5,7 @@ typedef struct _Render_Engine
 {
    Render_Output_Software_Generic generic;
 
-   Ecore_Drm2_Device *dev;
+   Evas_Engine_Info_Drm *einfo;
 } Render_Engine;
 
 struct scanout_handle
@@ -31,8 +31,6 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
    ob = _outbuf_setup(info, w, h);
    if (!ob) goto err;
 
-   re->dev = info->info.dev;
-
    if (!evas_render_engine_software_generic_init(engine, &re->generic, ob,
                                                  _outbuf_state_get,
                                                  _outbuf_rotation_get,
@@ -51,7 +49,7 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
 
    evas_render_engine_software_generic_merge_mode_set(&re->generic);
 
-   re->generic.ob->info = einfo;
+   re->einfo = einfo;
 
    return re;
 
@@ -76,7 +74,7 @@ eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
    Render_Engine *re = data;
    Evas_Engine_Info_Drm *info;
 
-   info = re->generic.ob->info;
+   info = re->einfo;
    if (!info) return;
 
    _outbuf_reconfigure(re->generic.ob, w, h,
@@ -113,7 +111,7 @@ eng_output_free(void *engine, void *data)
 }
 
 static Ecore_Drm2_Fb *
-drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attributes)
+drm_import_simple_dmabuf(Outbuf *ob, struct dmabuf_attributes *attributes)
 {
    unsigned int stride[4] = { 0 };
    int dmabuf_fd[4] = { 0 };
@@ -125,8 +123,8 @@ drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attri
         dmabuf_fd[i] = attributes->fd[i];
      }
 
-   return ecore_drm2_fb_dmabuf_import(dev, attributes->width,
-                                      attributes->height, 32, 32,
+   return ecore_drm2_fb_dmabuf_import(ob->dev, attributes->width,
+                                      attributes->height, ob->depth, ob->bpp,
                                       attributes->format, stride,
                                       dmabuf_fd, attributes->n_planes);
 }
@@ -190,7 +188,7 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
     * sticking to this one for now */
    if (n->ns.type != EVAS_NATIVE_SURFACE_WL_DMABUF) return NULL;
 
-   fb = drm_import_simple_dmabuf(re->dev, &n->ns_data.wl_surface_dmabuf.attr);
+   fb = drm_import_simple_dmabuf(ob, &n->ns_data.wl_surface_dmabuf.attr);
    if (!fb) return NULL;
 
    g = calloc(1, sizeof(struct scanout_handle));
@@ -203,7 +201,7 @@ eng_image_plane_assign(void *data, void *image, int x, int y)
    /* Fail or not, we're going to drop that fb and let refcounting get rid of
     * it later
     */
-   plane = ecore_drm2_plane_assign(ob->priv.output, fb, x, y);
+   plane = ecore_drm2_plane_assign(ob->output, fb, x, y);
 
 out:
    ecore_drm2_fb_discard(fb);

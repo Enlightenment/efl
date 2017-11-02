@@ -12,10 +12,11 @@ typedef struct _Evas_Engine_Info_Drm
    struct
      {
         Ecore_Drm2_Device *dev;
-        int depth, bpp;
-        unsigned int format, rotation;
-
         Ecore_Drm2_Output *output;
+
+        int rotation, bpp;
+        unsigned int depth, format;
+
         Eina_Bool alpha : 1;
         Eina_Bool vsync : 1;
      } info;

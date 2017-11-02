@@ -5,41 +5,14 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-#define MAX_BUFFERS 10
-#define QUEUE_TRIM_DURATION 100
-
-static void
-_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
+static Eina_Bool
+_outbuf_fb_create(Outbuf *ob, Outbuf_Fb *ofb, int w, int h)
 {
-   /* Ecore_Drm2_Plane *plane; */
-   Outbuf_Fb *ofb;
+   fprintf(stdout, "Evas Drm: Creating Framebuffer: %dx%d\n", w, h);
 
-   ofb = ob->priv.draw;
-   if (!ofb) return;
-
-   ecore_drm2_fb_dirty(ofb->fb, rects, count);
-
-   if (!ob->priv.plane)
-     ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb, 0, 0);
-   else ecore_drm2_plane_fb_set(ob->priv.plane, ofb->fb);
-
-   ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
-   ofb->drawn = EINA_TRUE;
-   ofb->age = 0;
-}
-
-static Outbuf_Fb *
-_outbuf_fb_create(Outbuf *ob, int w, int h)
-{
-   Outbuf_Fb *out;
-
-   out = calloc(1, sizeof(Outbuf_Fb));
-   if (!out) return NULL;
-
-   out->fb =
-     ecore_drm2_fb_create(ob->dev, w, h,
-                          ob->depth, ob->bpp, ob->format);
-   if (!out->fb)
+   ofb->fb =
+     ecore_drm2_fb_create(ob->dev, w, h, ob->depth, ob->bpp, ob->format);
+   if (!ofb->fb)
      {
         WRN("Failed To Create FB: %d %d", w, h);
         free(out);
@@ -69,6 +42,8 @@ Outbuf *
 _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
 {
    Outbuf *ob;
+   char *num;
+   int i = 0, fw, fh;
 
    ob = calloc(1, sizeof(Outbuf));
    if (!ob) return NULL;
@@ -77,13 +52,43 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->h = h;
    ob->dev = info->info.dev;
    ob->alpha = info->info.alpha;
-   ob->rotation = info->info.rotation;
 
    ob->bpp = info->info.bpp;
    ob->depth = info->info.depth;
    ob->format = info->info.format;
+   ob->rotation = info->info.rotation;
+   ob->output = info->info.output;
 
-   ob->priv.output = info->info.output;
+   ob->num_buffers = 3;
+   num = getenv("EVAS_DRM_BUFFERS");
+   if (num)
+     {
+        ob->num_buffers = atoi(num);
+        if (ob->num_buffers <= 0) ob->num_buffers = 3;
+        else if (ob->num_buffers > 4) ob->num_buffers = 4;
+     }
+
+   if ((!w) || (!h)) return ob;
+
+   if ((ob->rotation == 0) || (ob->rotation == 180))
+     {
+        fw = w;
+        fh = h;
+     }
+   else if ((ob->rotation == 90) || (ob->rotation == 270))
+     {
+        fw = h;
+        fh = w;
+     }
+
+   for (i = 0; i < ob->num_buffers; i++)
+     {
+        if (!_outbuf_fb_create(ob, &(ob->ofb[i]), fw, fh))
+          {
+             WRN("Failed to create framebuffer %d", i);
+             continue;
+          }
+     }
 
    return ob;
 }
@@ -93,14 +98,14 @@ _outbuf_free(Outbuf *ob)
 {
    Outbuf_Fb *ofb;
 
-   while (ob->priv.pending)
+   while (ob->pending)
      {
         RGBA_Image *img;
         Eina_Rectangle *rect;
 
-        img = ob->priv.pending->data;
-        ob->priv.pending =
-          eina_list_remove_list(ob->priv.pending, ob->priv.pending);
+        img = ob->pending->data;
+        ob->pending =
+          eina_list_remove_list(ob->pending, ob->pending);
 
         rect = img->extended_info;
 
@@ -109,12 +114,11 @@ _outbuf_free(Outbuf *ob)
         eina_rectangle_free(rect);
      }
 
+   _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    /* TODO: idle flush */
 
-   _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
-
-   EINA_LIST_FREE(ob->priv.fb_list, ofb)
-     _outbuf_fb_destroy(ofb);
+   for (; i < ob->num_buffers; i++)
+     _outbuf_fb_destroy(&ob->ofb[i]);
 
    free(ob);
 }
@@ -128,7 +132,7 @@ _outbuf_rotation_get(Outbuf *ob)
 void
 _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 {
-   Outbuf_Fb *ofb;
+   int i = 0, fw, fh;
    unsigned int format = DRM_FORMAT_ARGB8888;
 
    switch (depth)
@@ -181,10 +185,32 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->rotation = rotation;
    ob->priv.unused_duration = 0;
 
-   EINA_LIST_FREE(ob->priv.fb_list, ofb)
-     _outbuf_fb_destroy(ofb);
+   for (; i < ob->num_buffers; i++)
+     _outbuf_fb_destroy(&ob->ofb[i]);
 
-   /* TODO: idle flush */
+   if ((!w) || (!h)) return;
+
+   if ((ob->rotation == 0) || (ob->rotation == 180))
+     {
+        fw = w;
+        fh = h;
+     }
+   else if ((ob->rotation == 90) || (ob->rotation == 270))
+     {
+        fw = h;
+        fh = w;
+     }
+
+   for (i = 0; i < ob->num_buffers; i++)
+     {
+        if (!_outbuf_fb_create(ob, &(ob->ofb[i]), fw, fh))
+          {
+             WRN("Failed to create framebuffer %d", i);
+             continue;
+          }
+     }
+
+   /* TODO: idle_flush */
 }
 
 static Outbuf_Fb *
@@ -194,16 +220,22 @@ _outbuf_fb_wait(Outbuf *ob)
    Outbuf_Fb *ofb, *best = NULL;
    int best_age = -1, num_required = 1, num_allocated = 0;
 
+   fprintf(stderr, "FB Wait on Output %s\n",
+           ecore_drm2_output_name_get(ob->output));
+
    /* We pick the oldest available buffer to avoid using the same two
-    * repeatedly and then having the third be stale when we need it
-    */
-   EINA_LIST_FOREACH(ob->priv.fb_list, l, ofb)
+    * repeatedly and then having the third be stale when we need it */
+   for (i = 0; i < ob->num_buffers; i++)
      {
-        num_allocated++;
-        if (ecore_drm2_fb_busy_get(ofb->fb))
+        if (ecore_drm2_fb_busy_get(ob->ofb[i].fb))
           {
-             num_required++;
+             fprintf(stderr, "\t FB %d Busy\n", i);
              continue;
+          }
+        if (ob->ofb[i].valid && (ob->ofb[i].age > best_age))
+          {
+             best = i;
+             best_age = ob->ofb[i].age;
           }
         if (ofb->valid && (ofb->age > best_age))
           {
@@ -229,7 +261,8 @@ _outbuf_fb_wait(Outbuf *ob)
         best = _outbuf_fb_wait(ob);
      }
 
-   return best;
+   if (best >= 0) return &(ob->ofb[best]);
+   return NULL;
 }
 
 static Eina_Bool
@@ -239,41 +272,25 @@ _outbuf_fb_assign(Outbuf *ob)
    Outbuf_Fb *ofb;
    Eina_List *l;
 
-   ob->priv.draw = _outbuf_fb_wait(ob);
-   if (!ob->priv.draw)
-     {
-        EINA_SAFETY_ON_TRUE_RETURN_VAL(eina_list_count(ob->priv.fb_list) >= MAX_BUFFERS, EINA_FALSE);
+   fprintf(stderr, "FB Assign on Output %s\n",
+           ecore_drm2_output_name_get(ob->output));
 
-        if ((ob->rotation == 0) || (ob->rotation == 180))
-          {
-             fw = ob->w;
-             fh = ob->h;
-          }
-        else if ((ob->rotation == 90) || (ob->rotation == 270))
-          {
-             fw = ob->h;
-             fh = ob->w;
-          }
-        ob->priv.draw = _outbuf_fb_create(ob, fw, fh);
-        if (ob->priv.draw)
-          ob->priv.fb_list = eina_list_append(ob->priv.fb_list, ob->priv.draw);
+   ob->draw = _outbuf_fb_wait(ob);
+   while (!ob->draw)
+     {
+        ecore_drm2_fb_release(ob->output, EINA_TRUE);
+        ob->draw = _outbuf_fb_wait(ob);
      }
 
-   while (!ob->priv.draw)
+   for (i = 0; i < ob->num_buffers; i++)
      {
-        ecore_drm2_fb_release(ob->priv.output, EINA_TRUE);
-        ob->priv.draw = _outbuf_fb_wait(ob);
-     }
-
-   EINA_LIST_FOREACH(ob->priv.fb_list, l, ofb)
-     {
-        if ((ofb->valid) && (ofb->drawn))
+        if ((ob->ofb[i].valid) && (ob->ofb[i].drawn))
           {
-             ofb->age++;
-             if (ofb->age > 4)
+             ob->ofb[i].age++;
+             if (ob->ofb[i].age > 4)
                {
-                  ofb->age = 0;
-                  ofb->drawn = EINA_FALSE;
+                  ob->ofb[i].age = 0;
+                  ob->ofb[i].drawn = EINA_FALSE;
                }
           }
      }
@@ -284,12 +301,13 @@ _outbuf_fb_assign(Outbuf *ob)
 Render_Output_Swap_Mode
 _outbuf_state_get(Outbuf *ob)
 {
-   int age;
+   int age = 0;
 
    if (!_outbuf_fb_assign(ob)) return MODE_FULL;
 
-   age = ob->priv.draw->age;
-   if (age > 4) return MODE_FULL;
+   if (ob->draw) age = ob->draw->age;
+
+   if (age > ob->num_buffers) return MODE_FULL;
    else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
    else if (age == 3) return MODE_TRIPLE;
@@ -331,8 +349,8 @@ _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *
    if (ch) *ch = h;
 
    /* add this cached image data to pending writes */
-   ob->priv.pending =
-     eina_list_append(ob->priv.pending, img);
+   ob->pending =
+     eina_list_append(ob->pending, img);
 
    return img;
 }
@@ -344,7 +362,6 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    Eina_Rectangle rect = {0, 0, 0, 0}, pr;
    DATA32 *src;
    DATA8 *dst;
-   Ecore_Drm2_Fb *buff;
    int bpp = 0, bpl = 0;
    int rx = 0, ry = 0;
    int bw = 0, bh = 0;
@@ -353,16 +370,15 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    if (!ob) return;
 
    /* check for pending writes */
-   if (!ob->priv.pending) return;
+   if (!ob->pending) return;
 
    /* check for valid source data */
    if (!(src = update->image.data)) return;
 
    /* check for valid desination data */
-   if (!ob->priv.draw) return;
-   buff = ob->priv.draw->fb;
+   if (!ob->draw) return;
 
-   dst = ecore_drm2_fb_data_get(buff);
+   dst = ecore_drm2_fb_data_get(ob->draw->fb);
    if (!dst) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
@@ -423,7 +439,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    /* bpp = (ob->depth / 8); */
    /* if (bpp <= 0) return; */
 
-   bpl = ecore_drm2_fb_stride_get(buff);
+   bpl = ecore_drm2_fb_stride_get(ob->draw->fb);
 
    if (ob->rotation == 0)
      {
@@ -476,19 +492,20 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
 
-   if (ob->priv.rect_count) free(ob->priv.rects);
+   if (ob->count) free(ob->rects);
 
    /* get number of pending writes */
-   ob->priv.rect_count = eina_list_count(ob->priv.pending);
-   if (ob->priv.rect_count == 0) return;
+   ob->count = eina_list_count(ob->pending);
+   if (ob->count == 0) return;
 
    /* allocate rectangles */
-   ob->priv.rects = malloc(ob->priv.rect_count * sizeof(Eina_Rectangle));
-   if (!ob->priv.rects) return;
-   r = ob->priv.rects;
+   ob->rects = malloc(ob->count * sizeof(Eina_Rectangle));
+   if (!ob->rects) return;
+
+   r = ob->rects;
 
    /* loop the pending writes */
-   EINA_LIST_FREE(ob->priv.pending, img)
+   EINA_LIST_FREE(ob->pending, img)
      {
         Eina_Rectangle *rect;
         int x = 0, y = 0, w = 0, h = 0;
@@ -540,12 +557,32 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
      }
 }
 
+static void
+_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
+{
+   Outbuf_Fb *ofb;
+
+   ofb = ob->draw;
+   if (!ofb) return;
+
+   ecore_drm2_fb_dirty(ofb->fb, rects, count);
+
+   if (!ob->plane)
+     ob->plane = ecore_drm2_plane_assign(ob->output, ofb->fb, 0, 0);
+   else
+     ecore_drm2_plane_fb_set(ob->plane, ofb->fb);
+
+   ecore_drm2_fb_flip(ofb->fb, ob->output);
+   ofb->drawn = EINA_TRUE;
+   ofb->age = 0;
+}
+
 void
 _outbuf_redraws_clear(Outbuf *ob)
 {
-   if (!ob->priv.rect_count) return;
+   if (!ob->count) return;
 
-   _outbuf_buffer_swap(ob, ob->priv.rects, ob->priv.rect_count);
-   free(ob->priv.rects);
-   ob->priv.rect_count = 0;
+   _outbuf_buffer_swap(ob, ob->rects, ob->count);
+   free(ob->rects);
+   ob->count = 0;
 }

@@ -9,8 +9,6 @@
 # include <Ecore.h>
 # include <Ecore_Drm2.h>
 # include <drm_fourcc.h>
-# include <xf86drm.h>
-# include <xf86drmMode.h>
 
 # include "../software_generic/Evas_Engine_Software_Generic.h"
 
@@ -53,28 +51,24 @@ typedef struct _Outbuf_Fb
 struct _Outbuf
 {
    Ecore_Drm2_Device *dev;
-   int w, h, bpp, rotation;
+   Ecore_Drm2_Output *output;
+   Ecore_Drm2_Plane *plane;
+
+   Outbuf_Fb ofb[4], *draw;
+
+   int num_buffers;
+   int w, h, rotation, bpp;
    unsigned int depth, format;
 
-   Evas_Engine_Info_Drm *info;
-
-   struct
-     {
-        Eina_List *fb_list;
-        Outbuf_Fb *draw;
-        Ecore_Drm2_Output *output;
-        Ecore_Drm2_Plane *plane;
-        Eina_List *pending;
-        Eina_Rectangle *rects;
-        unsigned int rect_count;
-        int unused_duration;
-     } priv;
+   Eina_List *pending;
+   Eina_Rectangle *rects;
+   unsigned int count;
 
    Eina_Bool alpha : 1;
    Eina_Bool vsync : 1;
 };
 
-Outbuf *_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
+Outbuf *_outbuf_setup(Evas_Engine_Info_Drm *einfo, int w, int h);
 void _outbuf_free(Outbuf *ob);
 int _outbuf_rotation_get(Outbuf *ob);
 void _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth);
