@@ -123,6 +123,18 @@ struct wref
       return *this;
    }
 
+#ifdef EFL_CXX_WREF_EASY
+   T operator->() const {
+      if (!_eo_wref) return T(nullptr);
+      return T(detail::ref(_eo_wref));
+   }
+
+   T operator*() const {
+      if (!_eo_wref) return T(nullptr);
+      return T(detail::ref(_eo_wref));
+   }
+#endif
+
 private:
    void _add()
    {

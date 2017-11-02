@@ -174,6 +174,13 @@ struct class_definition_generator
                          "return ::efl::eo::wref<" << string << ">(*this); }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
 
+     if(!as_generator("#ifdef EFL_CXX_WREF_EASY\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+     if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+          if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
                       << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"
                      ).generate(sink, attributes::unused, context)) return false;
