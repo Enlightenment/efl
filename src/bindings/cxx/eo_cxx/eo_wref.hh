@@ -27,6 +27,14 @@ struct wref
    wref() : _eo_wref(nullptr)
    {
    }
+
+   /// @brief Empty constructor on nullptr.
+   ///
+   /// Create a empty weak reference.
+   ///
+   wref(std::nullptr_t) : _eo_wref(nullptr)
+   {
+   }
   
    /// @brief Class constructor.
    ///
