@@ -27,6 +27,6 @@ EAPI void                       elm_radio_value_set(Evas_Object *obj, int value)
  *
  * @ingroup Elm_Radio
  */
-EAPI int                        elm_radio_value_get(const Efl_Ui_Radio *obj);
+EAPI int                        elm_radio_value_get(const Evas_Object *obj);
 
 #include "efl_ui_radio.eo.legacy.h"
