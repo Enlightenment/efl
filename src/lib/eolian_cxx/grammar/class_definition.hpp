@@ -170,6 +170,10 @@ struct class_definition_generator
      // /// @endcond
      if(!as_generator(scope_tab << "/// @endcond\n").generate(sink, attributes::unused, context)) return false;
 
+     if(!as_generator(   scope_tab << "::efl::eo::wref<" << string << "> _get_wref() const { "
+                         "return ::efl::eo::wref<" << string << ">(*this); }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
                       << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"
                      ).generate(sink, attributes::unused, context)) return false;
