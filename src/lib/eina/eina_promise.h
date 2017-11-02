@@ -1430,7 +1430,8 @@ EAPI Eina_Promise *eina_promise_all_array(Eina_Future *array[]) EINA_ARG_NONNULL
 EAPI Eina_Promise *eina_promise_race_array(Eina_Future *array[]) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @struct The struct that is used to store the race result.
+ * @struct _Eina_Future_Race_Result
+ * The struct that is used to store the race result.
  *
  * When using eina_promise_race_array() and friends, the future result
  * will be reported as a struct. The values can be obtained using
