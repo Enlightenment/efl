@@ -172,6 +172,17 @@ _validate_type(Eolian_Type *tp)
         return _obj_error(&tp->base, buf);
      }
 
+   if (tp->is_ptr && !tp->legacy)
+     {
+        tp->is_ptr = EINA_FALSE;
+        Eina_Bool still_ownable = database_type_is_ownable(tp);
+        tp->is_ptr = EINA_TRUE;
+        if (still_ownable)
+          {
+             return _obj_error(&tp->base, "cannot take a pointer to pointer type");
+          }
+     }
+
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:

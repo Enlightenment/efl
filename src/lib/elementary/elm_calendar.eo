@@ -169,7 +169,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
          get {
          }
          values {
-            weekdays: ptr(string); [[Array of seven strings to be used as weekday names.
+            weekdays: legacy(ptr(string)); [[Array of seven strings to be used as weekday names.
             Warning: It must have 7 elements, or it will access invalid memory.
             Warning: The strings must be $null terminated ('@\0').]]
          }

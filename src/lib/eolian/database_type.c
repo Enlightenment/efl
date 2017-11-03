@@ -67,18 +67,6 @@ database_enum_add(Eolian_Typedecl *tp)
    database_decl_add(tp->full_name, EOLIAN_DECL_ENUM, tp->base.file, tp);
 }
 
-static const Eina_Bool _ownable_types[] = {
-    EINA_FALSE, /* unknown */
-    EINA_FALSE, /* void */
-    EINA_FALSE, /* regular */
-    EINA_TRUE,  /* complex */
-    EINA_TRUE,  /* pointer */
-    EINA_TRUE,  /* class */
-    EINA_TRUE,  /* static array */
-    EINA_TRUE,  /* terminated array */
-    EINA_FALSE  /* undefined */
-};
-
 Eina_Bool
 database_type_is_ownable(const Eolian_Type *tp)
 {
@@ -101,7 +89,7 @@ database_type_is_ownable(const Eolian_Type *tp)
           }
         return (ct[strlen(ct) - 1] == '*');
      }
-   return _ownable_types[tp->type];
+   return (tp->type == EOLIAN_TYPE_CLASS);
 }
 
 static void

@@ -431,7 +431,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
 
            At least available sources of name type are "Nominatim".
          ]]
-         return: ptr(string); [[The char pointer array of source names.]]
+         return: legacy(ptr(string)); [[The char pointer array of source names.]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
          }
