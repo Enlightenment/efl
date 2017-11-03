@@ -995,6 +995,22 @@ eina_value_dup(const Eina_Value *val)
 }
 
 /**
+ * @brief Return a reference to #Eina_Value containing a copy of the passed parameter
+ * @param val The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_reference_copy(const Eina_Value *val)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   eina_value_setup(&v, eina_value_type_get(val));
+   eina_value_copy(val, &v);
+   return v;
+}
+
+/**
  * @brief Copy the stringshare in the passed #Eina_Value
  * @param val The value to copy
  * @param str The pointer to copy the stringshare to
