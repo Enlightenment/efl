@@ -80,6 +80,16 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
     "implements", "constructors", "get", "set", "keys", "values", "true", "false", "null"}
 };
 
+static Elm_Code_Syntax _elm_code_syntax_md =
+{
+   "()[]*+-_=#.>!:\\`",
+   "",
+   NULL,
+   NULL,
+   "<!--",
+   "-->",
+   {}
+};
 
 EAPI Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
@@ -94,6 +104,8 @@ elm_code_syntax_for_mime_get(const char *mime)
      return &_elm_code_syntax_py;
    if (!strcmp("text/x-eolian", mime))
      return &_elm_code_syntax_eo;
+   if (!strcmp("text/markdown", mime))
+     return &_elm_code_syntax_md;
 
    return NULL;
 }
