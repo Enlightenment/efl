@@ -248,7 +248,17 @@ _ector_software_surface_ector_surface_clip_push(Eo *obj EINA_UNUSED,
                                                 Ector_Software_Surface_Data *pd EINA_UNUSED,
                                                 const Ector_Renderer *clip EINA_UNUSED)
 {
+   Ector_Software_Clip_info *clip_info;
+   if (!clip) return;
 
+   if (!pd->clip_info)
+     pd->clip_info = eina_array_new(8);
+
+   clip_info = malloc(sizeof(clip_info));
+   clip_info->clipper = clip;
+   // @TODO generate the RLE data and intersect with the previous value and
+   // store it.
+   eina_array_push(pd->clip_info, clip_info);
 }
 
 
@@ -257,7 +267,22 @@ _ector_software_surface_ector_surface_clip_pop(Eo *obj EINA_UNUSED,
                                                Ector_Software_Surface_Data *pd EINA_UNUSED,
                                                const Ector_Renderer *clip EINA_UNUSED)
 {
+   Ector_Software_Clip_info *clip_info;
 
+   if (!pd->clip_info)
+     {
+        ERR("ector_surface_clip_pop is not matched by ector_surface_clip_push");
+        return;
+     }
+
+   clip_info = eina_array_pop(pd->clip_info);
+
+   if(clip_info->clipper != clip)
+     ERR("Incorrect handling of clip object = %p", clip);
+
+   if (clip_info->clip_data)
+     ector_software_rasterizer_destroy_rle_data(clip_info->clip_data);
+   free(clip_info);
 }
 
 #include "ector_software_surface.eo.c"

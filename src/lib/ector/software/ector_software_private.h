@@ -8,6 +8,7 @@
 
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
 typedef struct _Ector_Software_Thread Ector_Software_Thread;
+typedef struct _Ector_Software_Clip_info    Ector_Software_Clip_info;
 
 struct _Ector_Software_Thread
 {
@@ -102,9 +103,17 @@ typedef struct _Software_Rasterizer
    Eina_Rectangle   system_clip;
 } Software_Rasterizer;
 
+struct
+_Ector_Software_Clip_info
+{
+   const Ector_Renderer *clipper;
+   Shape_Rle_Data *clip_data;
+};
+
 struct _Ector_Software_Surface_Data
 {
    Software_Rasterizer *rasterizer;
+   Eina_Array *clip_info; // Ector_Software_Clip_info stack
    int x;
    int y;
 };
