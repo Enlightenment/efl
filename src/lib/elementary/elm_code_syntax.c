@@ -82,7 +82,7 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
 
 static Elm_Code_Syntax _elm_code_syntax_md =
 {
-   "()[]*+-_=#.>!:\\`",
+   "()[]*+-_=#.>!:\\`~|",
    "",
    NULL,
    NULL,
