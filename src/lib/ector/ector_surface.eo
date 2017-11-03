@@ -21,5 +21,18 @@ mixin Ector.Surface (Ector.Buffer)
             @in type: const(Efl.Class) @nonull; [[Efl class]] /* FIXME: Should probably be a more restricted type */
          }
       }
+      clip_push @pure_virtual{
+         [[Push a clip object to the surface context
+           All the ector drawing will be affected by this clip until pop_clip is called]]
+         params {
+            @in clip: const(Ector.Renderer); [[the clip object]]
+         }
+      }
+      clip_pop @pure_virtual{
+         [[Pop a clip object from the surface context]]
+         params {
+            @in clip: const(Ector.Renderer); [[the clip object]]
+         }
+      }
    }
 }

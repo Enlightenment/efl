@@ -243,5 +243,22 @@ _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
    pd->y = y;
 }
 
+EOLIAN static void
+_ector_software_surface_ector_surface_clip_push(Eo *obj EINA_UNUSED,
+                                                Ector_Software_Surface_Data *pd EINA_UNUSED,
+                                                const Ector_Renderer *clip EINA_UNUSED)
+{
+
+}
+
+
+EOLIAN static void
+_ector_software_surface_ector_surface_clip_pop(Eo *obj EINA_UNUSED,
+                                               Ector_Software_Surface_Data *pd EINA_UNUSED,
+                                               const Ector_Renderer *clip EINA_UNUSED)
+{
+
+}
+
 #include "ector_software_surface.eo.c"
 #include "ector_renderer_software.eo.c"

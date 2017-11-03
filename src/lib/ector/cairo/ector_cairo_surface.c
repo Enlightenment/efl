@@ -114,6 +114,23 @@ _ector_cairo_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
    pd->current.y = y;
 }
 
+EOLIAN static void
+_ector_cairo_surface_ector_surface_clip_push(Eo *obj EINA_UNUSED,
+                                             Ector_Cairo_Surface_Data *pd EINA_UNUSED,
+                                             const Ector_Renderer *clip EINA_UNUSED)
+{
+
+}
+
+EOLIAN static void
+_ector_cairo_surface_ector_surface_clip_pop(Eo *obj EINA_UNUSED,
+                                            Ector_Cairo_Surface_Data *pd EINA_UNUSED,
+                                            const Ector_Renderer *clip EINA_UNUSED)
+{
+
+}
+
+
 static Eo *
 _ector_cairo_surface_efl_object_constructor(Eo *obj,
                                          Ector_Cairo_Surface_Data *pd)
