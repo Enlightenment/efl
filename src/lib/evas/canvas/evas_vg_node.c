@@ -184,6 +184,25 @@ _efl_vg_mask_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
    return pd->mask;
 }
 
+EOLIAN static void
+_efl_vg_clip_set(Eo *obj EINA_UNUSED,
+                 Efl_VG_Data *pd,
+                 Efl_VG *clip)
+{
+   Efl_VG *tmp = pd->clip;
+
+   pd->clip = efl_ref(clip);
+   efl_unref(tmp);
+
+   _efl_vg_changed(obj);
+}
+
+EOLIAN static Efl_VG*
+_efl_vg_clip_get(Eo *obj EINA_UNUSED, Efl_VG_Data *pd)
+{
+   return pd->mask;
+}
+
 static Eina_Size2D
 _efl_vg_efl_gfx_size_get(Eo *obj, Efl_VG_Data *pd EINA_UNUSED)
 {

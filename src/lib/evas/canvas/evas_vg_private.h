@@ -55,6 +55,7 @@ struct _Efl_VG_Data
    Efl_VG_Interpolation *intp;
 
    Efl_VG *mask;
+   Efl_VG *clip;
    Ector_Renderer *renderer;
 
    void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Efl_VG_Data *nd);
