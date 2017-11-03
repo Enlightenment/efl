@@ -64,7 +64,7 @@ _horiz(Efl_Orient dir)
 EOLIAN static void
 _efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data *psd)
 {
-   DBG("");
+  //DBG("");
    /* if (pd->recalc) return; */
 
    /* _efl_ui_list_custom_layout(obj); */
@@ -235,8 +235,8 @@ _long_press_cb(void *data)
 
    item->long_timer = NULL;
    item->longpressed = EINA_TRUE;
-   if (item->layout)
-     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_LONGPRESSED, item);
+   if (item->item.layout)
+     efl_event_callback_legacy_call(item->item.layout, EFL_UI_EVENT_LONGPRESSED, item);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -352,7 +352,7 @@ _item_style_property_then(void * data, Efl_Event const* event)
    if (vtype == EINA_VALUE_TYPE_STRING || vtype == EINA_VALUE_TYPE_STRINGSHARE)
      eina_value_get(value, &style);
 
-   elm_object_style_set(item->layout, style);
+   elm_object_style_set(item->item.layout, style);
 }
 
 static void
@@ -381,7 +381,7 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
      {
         if (prop == sprop)
           {
-             item->future = efl_model_property_get(item->model, sprop);
+             item->future = efl_model_property_get(item->item.children, sprop);
              efl_future_then(item->future, &_item_selected_then, &_item_property_error, NULL, item);
           }
      }
@@ -467,14 +467,14 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
    /* TODO:calculate new min */
    //_item_min_calc(pd, item, 0, 0);
 
-   evt.child = item->model;
-   evt.layout = item->layout;
-   evt.index = item->index;
+   evt.child = item->item.children;
+   evt.layout = item->item.layout;
+   evt.index = item->item.index;
    efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
-   efl_ui_view_model_set(item->layout, NULL);
+   efl_ui_view_model_set(item->item.layout, NULL);
 
-   evas_object_hide(item->layout);
-   evas_object_move(item->layout, -9999, -9999);
+   evas_object_hide(item->item.layout);
+   evas_object_move(item->item.layout, -9999, -9999);
 }
 
 /* static Efl_Ui_List_Item* */
@@ -1183,7 +1183,7 @@ _efl_ui_list_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Efl_Ui
    if(child_index <  (int) eina_list_count(pd->selected_items))
      {
         Efl_Ui_List_Item* items = eina_list_nth(pd->selected_items, child_index);
-        return items[child_index].layout;
+        return items[child_index].item.layout;
      }
    else
      return NULL;
@@ -1452,7 +1452,7 @@ _layout(Efl_Ui_List_Data *pd)
    if (!pd->model)
      return;
 
-   Eina_Accessor* accessor = efl_ui_list_segarray_accessor_get(&pd->segarray);
+   Eina_Accessor* accessor = efl_ui_list_segarray_node_accessor_get(&pd->segarray);
 
    efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first,
                                   efl_ui_list_segarray_count(&pd->segarray), accessor);

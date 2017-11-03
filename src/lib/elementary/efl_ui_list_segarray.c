@@ -92,8 +92,8 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
 static Efl_Ui_List_Item* _create_item(Efl_Model* model, unsigned int index)
 {
    Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
-   item->model = model;
-   item->index = index;
+   item->item.children = model;
+   item->item.index = index;
    return item;
 }
 
@@ -234,7 +234,7 @@ _efl_ui_list_segarray_node_accessor_get_at(Efl_Ui_List_Segarray_Node_Accessor* a
      }
    else
      {
-       if(acc->current_index > idx && acc->current_node)
+       if(acc->current_index >= idx || !acc->current_node)
          {
             eina_iterator_free(acc->pre_iterator);
             acc->pre_iterator = NULL;
@@ -242,16 +242,19 @@ _efl_ui_list_segarray_node_accessor_get_at(Efl_Ui_List_Segarray_Node_Accessor* a
             acc->current_index = -1;
          }
 
-       if(!acc->pre_iterator) // && acc->current_index <= idx
-         acc->pre_iterator = eina_rbtree_iterator_prefix((void*)acc->segarray->root);
+       if(!acc->pre_iterator)
+         acc->pre_iterator = eina_rbtree_iterator_infix((void*)acc->segarray->root);
 
-
-       for(;acc->current_index < idx;++acc->current_index)
+       for(;acc->current_index != idx;++acc->current_index)
+         {
+           DBG("for current_index: %d idx: %d", acc->current_index, idx);
          if(!eina_iterator_next(acc->pre_iterator, (void**)&acc->current_node))
            {
              --acc->current_index;
              return EINA_FALSE;
            }
+         }
+       DBG("out of loop");
        (*data) = acc->current_node;
        return EINA_TRUE;
      }
