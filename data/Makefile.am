@@ -226,6 +226,7 @@ elementary/objects/test_prefs.edj \
 elementary/objects/test_prefs.epb \
 elementary/objects/test_focus_style.edj \
 elementary/objects/test_tooltip.edj \
+elementary/objects/test_pager.edj \
 $(NULL)
 
 CLEANFILES += $(elementaryobjects_DATA)
@@ -286,6 +287,11 @@ elementary/objects/test_tooltip.edj: elementary/objects/test_tooltip.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(top_srcdir)/data/elementary/themes/img $< $@
+
+elementary/objects/test_pager.edj: elementary/objects/test_pager.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 elementary/objects/test_prefs.epb: elementary/objects/test_prefs.epc
 	$(AM_V_EPB) \
