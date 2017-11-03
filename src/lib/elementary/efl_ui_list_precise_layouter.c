@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "elm_priv.h"
+#include "efl_ui_list_segarray.h"
 
 #undef DBG
 #define DBG(...) do { \
@@ -218,11 +219,12 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_model_set(Eo *obj EINA_UNUSED
 EOLIAN static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
-   , Efl_Ui_List_Model *modeler, int first, int count, Eina_Accessor *items)
+   , Efl_Ui_List_Model *modeler, int first, int count, Eina_Accessor *nodes)
 {
    Efl_Ui_List_LayoutItem* layout_item;
+   Efl_Ui_List_SegArray_Node* items_node;
    Efl_Ui_List_Precise_Layouter_Size* size;
-   int i = 0;
+   int i = 0, j = 0;
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
    Evas_Coord ow, oh, want, minw, minh, scr_x, scr_y;
    int boxx, boxy, boxw, boxh, length, /*pad, */extra = 0, rounding = 0;
@@ -231,25 +233,29 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
 
    DBG("layout_do first %d count %d", first, count);
-   EINA_SAFETY_ON_NULL_RETURN(items);
+   /* EINA_SAFETY_ON_NULL_RETURN(items); */
 
     _initilize(obj, pd, modeler);
 
    // cache size of new items
-   EINA_ACCESSOR_FOREACH(items, i, layout_item)
+   EINA_ACCESSOR_FOREACH(nodes, i, items_node)
      {
+        DBG("node first %d", items_node->first);
+        for(j = 0; j != items_node->length; ++j)
+          {
+            layout_item = items_node->pointers[j];
+
         size = eina_hash_find(pd->size_information, &layout_item);
-//        DBG("size %p", size);
         if(!size)
         {
            if(!layout_item->layout)
              {
-//               DBG("no layout, realizing");
+              DBG("no layout, realizing");
                efl_ui_list_model_realize(modeler, layout_item);
              }
            else
              {
-//               DBG("already realized");
+              DBG("already realized");
            /* if(!layout_item->layout) */
            /*   { */
            /*     // error */
@@ -270,6 +276,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
            cb_data->size = size;
            evas_object_event_callback_add(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);
         }
+          }
      }
 
    evas_object_geometry_get(modeler, &boxx, &boxy, &boxw, &boxh);
@@ -375,8 +382,12 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 /*    cur_pos += average_item_size * pd->realized.start; */
 /*    // scan all items, get their properties, calculate total weight & min size */
    // cache size of new items
-   EINA_ACCESSOR_FOREACH(items, i, layout_item)
+   /* EINA_ACCESSOR_FOREACH(items, i, layout_item) */
+   EINA_ACCESSOR_FOREACH(nodes, i, items_node)
      {
+        for(j = 0; j != items_node->length;++j)
+        {
+          layout_item = items_node->pointers[j];
         double cx, cy, cw, ch, x, y, w, h;
         double align[2];
         int item_pad[4];
@@ -496,6 +507,7 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
 /* //        printf("obj=%d currpos=%.2f moved to X=%.2f, Y=%.2f average_item_size %d\n", litem->index, cur_pos, x, y */
 /* //               , eina_inarray_count(&pd->items.array) ? (/\*horz*\/ EINA_FALSE ? pd->realized.w : pd->realized.h) / eina_inarray_count(&pd->items.array) : AVERAGE_SIZE_INIT); */
           }
+        }
      }
 }
 

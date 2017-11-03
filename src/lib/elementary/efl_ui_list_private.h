@@ -17,11 +17,9 @@ typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 
 struct _Efl_Ui_List_Item
 {
-   Efl_Ui_List          *list;
-   Efl_Model            *model;
-   Efl_Ui_Layout        *layout;
+   Efl_Ui_List_LayoutItem item;
    Efl_Future           *future;
-   unsigned int         index;
+   Efl_Ui_List          *list;
    // Evas_Coord           x, y, minw, minh, w, h;
    // // double               h, v, wx, wy;
    // double               wx, wy;
