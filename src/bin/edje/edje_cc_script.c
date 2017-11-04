@@ -66,7 +66,7 @@ code_parse(Code *code)
 static void
 code_parse_internal(Code *code)
 {
-   Code_Symbol *sym = NULL, *func;
+   Code_Symbol *sym = NULL, *func = NULL;
    Token *token, *tmp;
    char *begin = code->shared;
    char *end = begin + strlen(begin);
