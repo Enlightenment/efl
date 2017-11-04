@@ -2086,7 +2086,7 @@ eina_value_object_new(Eo *obj)
 }
 
 /**
- * @brief Create a new #EinaInitializeining the passed parameter
+ * @brief Create a new #Eina_Value initialized with the passed parameter
  * @param obj The object to use
  * @return The #Eina_Value
  * @since 1.21
