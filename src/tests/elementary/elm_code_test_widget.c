@@ -1,8 +1,8 @@
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-
-#define ELM_INTERNAL_API_ARGESFSDFEFC
 
 #include "elm_suite.h"
 #include "Elementary.h"
