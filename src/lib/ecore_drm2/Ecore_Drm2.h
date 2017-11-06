@@ -782,6 +782,16 @@ EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rot
 EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 
 /**
+ * Get the user data for the output's page flip handler
+ *
+ * @param output The output to get the user data for
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.19
+ */
+EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *o);
+
+/**
  * Get the subpixel state of the output
  * @param output the output
  * @return The state value

@@ -764,12 +764,6 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    if (!eina_list_count(dev->outputs))
      output->primary = EINA_TRUE;
-   else
-     {
-        /* temporarily disable other outputs which are not primary */
-        output->connected = EINA_FALSE;
-        output->enabled = EINA_FALSE;
-     }
 
    dev->outputs = eina_list_append(dev->outputs, output);
 
@@ -1292,7 +1286,7 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
      }
 
    ret = sym_drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
-                                 output->user_data);
+                                 output);
    if (ret < 0)
      {
         ERR("Failed to commit atomic Mode: %m");
@@ -1456,6 +1450,13 @@ ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data)
    o->user_data = data;
 }
 
+EAPI void *
+ecore_drm2_output_user_data_get(Ecore_Drm2_Output *o)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(o, NULL);
+   return o->user_data;
+}
+
 EAPI void
 ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue)
 {
@@ -1530,8 +1531,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
                                                 pstate->rotation.id, rotation);
              if (res < 0) goto err;
 
-             res = sym_drmModeAtomicCommit(output->fd, req, flags,
-                                           output->user_data);
+             res = sym_drmModeAtomicCommit(output->fd, req, flags, output);
              if (res < 0)
                goto err;
              else
