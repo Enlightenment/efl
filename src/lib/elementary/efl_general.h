@@ -35,8 +35,8 @@
   {                                                                     \
      Eina_Value *ret__;                                                 \
      int real__;                                                        \
+     _efl_startup_time = ecore_time_unix_get();                         \
      _EFL_APP_VERSION_SET();                                            \
-     _elm_startup_time = ecore_time_unix_get();                         \
      elm_init(argc, argv);                                              \
      efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \
@@ -55,8 +55,8 @@
   {                                                                     \
      Eina_Value *ret__;                                                 \
      int real__;                                                        \
+     _efl_startup_time = ecore_time_unix_get();                         \
      _EFL_APP_VERSION_SET();                                            \
-     _elm_startup_time = ecore_time_unix_get();                         \
      elm_init(argc, argv);                                              \
      efl_event_callback_array_add(ecore_main_loop_get(), _efl_main_ex(), NULL); \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \

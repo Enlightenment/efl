@@ -96,6 +96,7 @@ extern EAPI double _elm_startup_time;
 #define ELM_MAIN() int main(int argc, char **argv) { int ret__; _elm_startup_time = ecore_time_unix_get(); ret__ = elm_quicklaunch_fallback(argc, argv); elm_shutdown(); return ret__; }
 #endif
 
+#include "Efl_Core.h"
 #include "efl_general.h"
 
 /**************************************************************************/

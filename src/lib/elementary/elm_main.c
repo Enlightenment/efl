@@ -424,6 +424,14 @@ elm_init(int argc, char **argv)
      _elm_config->web_backend = "none";
    _elm_code_parse_setup();
 
+   // For backward compability, EFL startup time and ELM startup time are made
+   // identical. It is fine to do it here as we are finishing initialisation
+   // and the startup time should have been accounted earlier.
+   if (_elm_startup_time >= 0)
+     if (_efl_startup_time <= 0)
+       _efl_startup_time = _elm_startup_time;
+   _elm_startup_time = _efl_startup_time;
+
    return _elm_init_count;
 }
 

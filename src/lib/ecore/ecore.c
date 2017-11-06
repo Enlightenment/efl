@@ -30,6 +30,7 @@
 #include <Efl.h>
 
 #include "Ecore.h"
+#include "Efl_Core.h"
 #include "ecore_private.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
@@ -42,6 +43,8 @@
 
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
+
+EAPI double _efl_startup_time = 0;
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #define KEEP_MAX(Global, Local) \
