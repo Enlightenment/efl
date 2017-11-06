@@ -1,56 +1,73 @@
 group { name: "e/widgets/border/volume";
+   images.image: "shadow_circle_vert.png" COMP;
    parts {
-      part { name: "base";
-         type: RECT;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 0 0 0 0;
          }
       }
-      part { name: "clip";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.volume";
-            rel1.relative: -1.0 0.0;
-            rel2.to: "e.swallow.volume";
-            rel2.relative: 0.0 1.0;
+            fixed: 1 1;
+            rel.to: "e.swallow.volume";
+            rel2.to_x: "clip";
+            color: 64 64 64 255;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 32 32 32 255;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "e.swallow.volume";
+            align: 0.0 0.5;
+            max: 0 999999;
             color: 255 255 255 255;
          }
          description { state: "show" 0.0;
-            rel1.to: "e.swallow.volume";
-            rel1.relative: 0.0 0.0;
-            rel2.to: "e.swallow.volume";
-            rel2.relative: 1.0 1.0;
+            rel.to: "e.swallow.volume";
+            max: 999999 999999;
+            rel2.offset: 3 -1;
+            offscale;
          }
       }
-      part { name: "e.swallow.volume_icon";
-         type: SWALLOW;
+      part { name: "e.swallow.volume_icon"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.relative: 0.15 0.15;
-            rel2.to: "base";
             rel2.relative: 0.85 0.85;
          }
       }
-      part { name: "e.swallow.volume";
-         type: SWALLOW;
+      part { name: "e.swallow.volume"; type: SWALLOW;
          clip_to: "clip";
          description { state: "default" 0.0;
             fixed: 1 0;
+            rel1.to_x: "e.swallow.volume_icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 0;
-            rel1.to_x: "e.swallow.volume_icon";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: 1 -1;
-            rel2.to: "e.swallow.volume_icon";
+            rel2.to_x: "e.swallow.volume_icon";
             align: 0.0 0.5;
          }
       }
-      part { name: "event";
-         type: RECT;
-         repeat_events: 1;
+      part { name: "sh_right"; mouse_events: 0;
+         scale: 1;
+         clip_to: "clip";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
+            fixed: 1 1;
+            color: 255 255 255 128;
+            rel.to: "bg";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -16 0;
+            rel2.offset: 15 -1;
+            image.normal: "shadow_circle_vert.png";
+            offscale;
+         }
+      }
+      part { name: "event"; type: RECT; repeat_events: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
             color: 255 255 255 0;
          }
          description { state: "large" 0.0;
@@ -60,45 +77,44 @@ group { name: "e/widgets/border/volume";
          }
       }
       programs {
-         program {
-            signal: "mouse,in";
-            source: "event";
+         program { signal: "e,state,focused"; source: "e";
+            action: STATE_SET "focused" 0.0;
+           target: "bg";
+         }
+         program { signal: "e,state,unfocused"; source: "e";
+            action: STATE_SET "default" 0.0;
+            target: "bg";
+         }
+         program { signal: "mouse,in"; source: "event";
             action: ACTION_STOP;
             target: "hide_volume1";
             target: "hide_volume2";
             after: "show_volume1";
          }
-         program {
-            name: "show_volume1";
+         program { name: "show_volume1";
             action: STATE_SET "large" 0.0;
             target: "event";
             after: "show_volume2";
          }
-         program {
-            name: "show_volume2";
+         program { name: "show_volume2";
             action: STATE_SET "show" 0.0;
-            transition: SIN 0.25;
+            transition: SINUSOIDAL 0.3;
             target: "clip";
          }
 
-         program {
-            name: "hide_volume";
-            signal: "mouse,out";
-            source: "event";
+         program { signal: "mouse,out"; source: "event";
             action: ACTION_STOP;
             target: "show_volume1";
             target: "show_volume2";
             after: "hide_volume1";
          }
-         program {
-            name: "hide_volume1";
+         program { name: "hide_volume1";
             action: STATE_SET "default" 0.0;
-            transition: SIN 0.25;
+            transition: SINUSOIDAL 0.5;
             target: "clip";
             after: "hide_volume2";
          }
-         program {
-            name: "hide_volume2";
+         program { name: "hide_volume2";
             action: STATE_SET "default" 0.0;
             target: "event";
          }

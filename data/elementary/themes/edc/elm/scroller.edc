@@ -693,13 +693,27 @@ group { name: "elm/scroller/base/default";
       }
 
       //////////////////////////////////////////////////////////////////////
-
-      part { name: "base_vbar"; type: RECT; mouse_events: 0;
-         scale: 1;
+      part { name: "color_vbar"; type: RECT; mouse_events: 0;
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
             color: 51 153 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 80 80 80 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+
+      part { name: "base_vbar"; type: RECT; mouse_events: 0;
+         scale: 1;
+         clip_to: "color_vbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
             rel.to: "elm.dragable.vbar";
             min: 5 15;
             max: 5 999999;
@@ -713,13 +727,27 @@ group { name: "elm/scroller/base/default";
       }
 
       //////////////////////////////////////////////////////////////////////
-
-      part { name: "base_hbar"; type: RECT; mouse_events: 0;
-         scale: 1;
+      part { name: "color_hbar"; type: RECT; mouse_events: 0;
          clip_to: "sb_hbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
             color: 51 153 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 80 80 80 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+
+      part { name: "base_hbar"; type: RECT; mouse_events: 0;
+         scale: 1;
+         clip_to: "color_hbar";
+         description { state: "default" 0.0;
+            fixed: 1 1;
             rel.to: "elm.dragable.hbar";
             min: 15 5;
             max: 999999 5;
@@ -739,15 +767,28 @@ group { name: "elm/scroller/base/default";
             color: 0 0 0 0;
          }
          description { state: "effect" 0.0;
-            color: 50 50 50 255;
+            color: 32 32 32 255;
          }
       }
    }
    programs {
       program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "color_hbar";
+         target: "color_vbar";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "color_hbar";
+         target: "color_vbar";
+      }
+      program {
          signal: "mouse,down,1*"; source: "elm.dragable.vbar";
          action: STATE_SET "clicked" 0.0;
          target: "elm.dragable.vbar";
+         target: "color_vbar";
       }
       program {
          signal: "mouse,down,*"; source: "elm.dragable.vbar";
@@ -757,6 +798,7 @@ group { name: "elm/scroller/base/default";
          signal: "mouse,up,1"; source: "elm.dragable.vbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.vbar";
+         target: "color_vbar";
       }
       program {
          signal: "mouse,up,*"; source: "elm.dragable.vbar";
@@ -767,6 +809,7 @@ group { name: "elm/scroller/base/default";
          signal: "mouse,down,1*"; source: "elm.dragable.hbar";
          action: STATE_SET "clicked" 0.0;
          target: "elm.dragable.hbar";
+         target: "color_hbar";
       }
       program {
          signal: "mouse,down,*"; source: "elm.dragable.hbar";
@@ -776,6 +819,7 @@ group { name: "elm/scroller/base/default";
          signal: "mouse,up,1"; source: "elm.dragable.hbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.hbar";
+         target: "color_hbar";
       }
       program {
          signal: "mouse,up,*"; source: "elm.dragable.hbar";
