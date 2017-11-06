@@ -98,6 +98,8 @@ static void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
+static struct wl_buffer * _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *disp, Dmabuf_Buffer *db);
+
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
 {
@@ -645,14 +647,29 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
 }
 
-static Dmabuf_Buffer *
-_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
+static struct wl_buffer *
+_evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
 {
    struct wl_buffer *buf;
-   Dmabuf_Buffer *out;
    struct zwp_linux_dmabuf_v1 *dmabuf;
    struct zwp_linux_buffer_params_v1 *dp;
    uint32_t flags = 0;
+
+   dmabuf = ecore_wl2_display_dmabuf_get(ewd);
+   dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
+   zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride, 0, 0);
+   buf = zwp_linux_buffer_params_v1_create_immed(dp, db->w, db->h,
+                                                 DRM_FORMAT_ARGB8888, flags);
+   wl_buffer_add_listener(buf, &buffer_listener, db);
+   zwp_linux_buffer_params_v1_destroy(dp);
+
+   return buf;
+}
+
+static Dmabuf_Buffer *
+_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
+{
+   Dmabuf_Buffer *out;
 
    out = calloc(1, sizeof(Dmabuf_Buffer));
    if (!out) return NULL;
@@ -669,14 +686,8 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->w = w;
    out->h = h;
 
-   dmabuf = ecore_wl2_display_dmabuf_get(s->surface->ob->ewd);
-   dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
-   zwp_linux_buffer_params_v1_add(dp, out->fd, 0, 0, out->stride, 0, 0);
-   buf = zwp_linux_buffer_params_v1_create_immed(dp, out->w, out->h,
-                                                 DRM_FORMAT_ARGB8888, flags);
-   wl_buffer_add_listener(buf, &buffer_listener, out);
-   zwp_linux_buffer_params_v1_destroy(dp);
-   out->wl_buffer = buf;
+   out->wl_buffer = _evas_dmabuf_wl_buffer_from_dmabuf(s->surface->ob->ewd,
+                                                       out);
 
    ecore_wl2_display_flush(s->surface->info->info.wl2_display);
    return out;
