@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_ACCESS_SELECTION_PROTECTED
+#define EFL_ACCESS_BETA
 #define EFL_ACCESS_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
