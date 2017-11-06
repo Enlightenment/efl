@@ -50,7 +50,7 @@ eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
                                                  NULL,
                                                  _evas_outbuf_update_region_new,
                                                  _evas_outbuf_update_region_push,
-                                                 _evas_outbuf_update_region_free,
+                                                 NULL,
                                                  _evas_outbuf_idle_flush,
                                                  _evas_outbuf_flush,
                                                  _evas_outbuf_redraws_clear,

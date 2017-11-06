@@ -623,12 +623,6 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
         rect.w, rect.h, x + rx, y + ry, NULL);
 }
 
-void 
-_evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-}
-
 void
 _evas_outbuf_redraws_clear(Outbuf *ob)
 {
