@@ -39,22 +39,9 @@ EOLIAN static void
 _efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
 {
    ERR("In");
-   Efl_Dnd_Drag_Accept da;
-   da.accepted = EINA_FALSE;
-
    pd->icon_create = icon_func;
    pd->icon_create_data = icon_func_data;
    pd->icon_create_free_cb = icon_func_free_cb;
-
-   efl_event_callback_call(obj, EFL_DND_DRAG_EVENT_DRAG_ACCEPT, &da);
-
-   Efl_Dnd_Drag_Pos dp;
-   dp.x = 0;
-   dp.y = 0;
-   dp.action = EFL_SELECTION_ACTION_COPY;
-   efl_event_callback_call(obj, EFL_DND_DRAG_EVENT_DRAG_POS, &dp); //event_info??
-
-   efl_event_callback_call(obj, EFL_DND_DRAG_EVENT_DRAG_DONE, &da);
 
    //TODO: check seat
    Eo *sel_man = _selection_manager_get(obj);
@@ -96,11 +83,8 @@ _efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_
    ERR("In");
    pd->format = format;
 
-   //fixme: event_info for event callbacks
-   efl_event_callback_call(obj, EFL_DND_DROP_EVENT_DRAG_ENTER, NULL);
-   efl_event_callback_call(obj, EFL_DND_DROP_EVENT_DRAG_LEAVE, NULL);
-   efl_event_callback_call(obj, EFL_DND_DROP_EVENT_DRAG_POS, NULL);
-   efl_event_callback_call(obj, EFL_DND_DROP_EVENT_DRAG_DROP, NULL);
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drop_target_add(sel_man, obj, format, NULL);
 }
 
 EOLIAN static void

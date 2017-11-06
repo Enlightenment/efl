@@ -25,7 +25,7 @@ enum
    SELECTION_ATOM_IMAGE_XPM,
    SELECTION_ATOM_IMAGE_TGA,
    SELECTION_ATOM_IMAGE_PPM,
-   SELECTION_ATOM_XELM,
+   SELECTION_ATOM_ELM,
    SELECTION_ATOM_UTF8STRING,
    SELECTION_ATOM_STRING,
    SELECTION_ATOM_COMPOUND_TEXT,
@@ -45,7 +45,6 @@ typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
 typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Efl_Selection_Manager_Data *pd, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
 
-typedef struct _Efl_Selection_Manager_Atom Efl_Selection_Manager_Atom;
 typedef struct _Efl_Sel_Manager_Atom Efl_Sel_Manager_Atom;
 typedef struct _Seat_Selection Seat_Selection;
 
@@ -72,7 +71,6 @@ struct _Saved_Type
 struct _X11_Cnp_Selection
 {
    const char        *debug;
-   Evas_Object       *widget;
    char              *selbuf;
    unsigned int       len;
    Efl_Selection_Format     request_format;
@@ -86,7 +84,6 @@ struct _X11_Cnp_Selection
    Efl_Selection_Format     format;
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
-   //Elm_Xdnd_Action    action;
    Efl_Selection_Action action; //FIXME: check type and var name, usage
 
    Eo *owner;
@@ -102,17 +99,10 @@ struct _X11_Cnp_Selection
 
 struct _Seat_Selection
 {
-   const char *seat_name;
+   unsigned int seat_id;
    X11_Cnp_Selection *sellist;
 
    Efl_Selection_Manager_Data *pd;
-};
-
-
-struct _Efl_Selection_Manager_Atom
-{
-   const char *name;
-   Ecore_X_Atom x_atom;
 };
 
 struct _Efl_Sel_Manager_Atom
@@ -148,6 +138,7 @@ struct _Dropable
    /* FIXME: Cache window */
    //Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
    Eina_Inlist   *format_list;
+   Efl_Input_Device *seat;
    struct {
       Evas_Coord      x, y;
       Eina_Bool       in : 1;
@@ -155,8 +146,6 @@ struct _Dropable
       Efl_Selection_Format  format;
    } last;
 };
-
-//typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
 
 struct _Efl_Selection_Manager_Data
 {
@@ -168,10 +157,9 @@ struct _Efl_Selection_Manager_Data
 #endif
 
    Eina_Bool has_sel;
-   const char *seat;
+   unsigned int seat_id;
    Efl_Selection_Type active_type;
    Efl_Selection_Format active_format;
-   //Efl_Selection_Manager_Atom atom;
 
    Efl_Sel_Manager_Atom *atomlist;
    //Efl_Sel_Manager_Selection *sellist;

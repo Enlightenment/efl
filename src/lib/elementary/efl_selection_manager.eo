@@ -1,4 +1,4 @@
-class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
+class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag, Efl.Dnd.Drop) {
    methods {
       selection_set {
          params {
@@ -112,11 +112,5 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag) {
       //Efl.Selection.selection_loss_feedback;
    }
    events {
-      selection,loss; [[Called when seleciton is lost]]
-      //for drop
-      drag,enter; [[called when the drag object enters this object]]
-      drag,leave; [[called when the drag object leaves this object]]
-      drag,pos; [[called when the drag object changes drag position]]
-      drag,drop; [[called when the drag object dropped on this object]]
    }
 }
