@@ -6,6 +6,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_bg.eo \
 	lib/elementary/efl_ui_button.eo \
 	lib/elementary/efl_ui_calendar.eo \
+	lib/elementary/efl_ui_calendar_item.eo \
 	lib/elementary/efl_ui_check.eo \
 	lib/elementary/efl_ui_flip.eo \
 	lib/elementary/efl_ui_frame.eo \

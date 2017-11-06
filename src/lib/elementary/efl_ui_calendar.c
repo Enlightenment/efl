@@ -4,10 +4,12 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_calendar_private.h"
+#include "efl_ui_calendar_item.eo.h"
 
 #define MY_CLASS EFL_UI_CALENDAR_CLASS
 
@@ -294,6 +296,28 @@ _access_calendar_register(Evas_Object *obj)
 }
 
 static void
+_flush_calendar_composite_elements(Evas_Object *obj, Efl_Ui_Calendar_Data *sd)
+{
+   Eina_List *items = NULL;
+   int max_day = _maxdays_get(&sd->shown_date, 0);
+
+#define EXTEND(v) \
+    if (v) items = eina_list_append(items, v); \
+
+    EXTEND(sd->month_access);
+    EXTEND(sd->dec_btn_month);
+    EXTEND(sd->inc_btn_month);
+    EXTEND(sd->year_access);
+
+#undef EXTEND
+
+   for (int i = sd->first_day_it; i <= max_day; ++i)
+     items = eina_list_append(items, sd->items[i]);
+
+   efl_ui_focus_composition_elements_set(obj, items);
+}
+
+static void
 _populate(Evas_Object *obj)
 {
    int maxdays, prev_month_maxdays, day, mon, yr, i;
@@ -381,6 +405,8 @@ _populate(Evas_Object *obj)
 
    elm_layout_thaw(obj);
    edje_object_message_signal_process(elm_layout_edje_get(obj));
+
+   _flush_calendar_composite_elements(obj, sd);
 }
 
 static void
@@ -986,6 +1012,13 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    if ((_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
       _access_calendar_spinner_register(obj);
 
+   // Items for composition
+   for (int i = 0; i < 42; ++i)
+     {
+        priv->items[i] = efl_add(EFL_UI_CALENDAR_ITEM_CLASS, obj,
+                                 efl_ui_calendar_item_day_number_set(efl_added, i));
+     }
+
    return obj;
 }
 
@@ -1239,3 +1272,51 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_calendar, Efl_Ui_Calendar_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_calendar)
 
 #include "efl_ui_calendar.eo.c"
+
+typedef struct {
+   int v;
+   Evas_Object *part;
+}  Efl_Ui_Calendar_Item_Data;
+
+EOLIAN static void
+_efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int i)
+{
+   char pname[14];
+   Evas_Object *po;
+
+   pd->v = i;
+   snprintf(pname, sizeof(pname), "cit_%i.access", i);
+
+   po = (Evas_Object *)edje_object_part_object_get
+          (elm_layout_edje_get(efl_parent_get(obj)), pname);
+
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
+     pd->part = po;
+   else
+     pd->part = evas_object_data_get(po, "_part_access_obj");
+
+   EINA_SAFETY_ON_NULL_RETURN(pd->part);
+}
+
+EOLIAN static int
+_efl_ui_calendar_item_day_number_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
+{
+   return pd->v;
+}
+
+EOLIAN static void
+_efl_ui_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, Eina_Bool focus)
+{
+   efl_ui_focus_object_focus_set(efl_super(obj, EFL_UI_CALENDAR_ITEM_CLASS), focus);
+
+   _update_focused_it(efl_parent_get(obj), pd->v);
+   evas_object_focus_set(pd->part, efl_ui_focus_object_focus_get(obj));
+}
+
+EOLIAN static Eina_Rect
+_efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
+{
+   return efl_gfx_geometry_get(pd->part);
+}
+
+#include "efl_ui_calendar_item.eo.c"
