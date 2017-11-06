@@ -489,6 +489,31 @@ ecore_shutdown(void)
      return _ecore_init_count;
 }
 
+static unsigned int _ecore_init_ex = 0;
+
+EAPI unsigned int
+ecore_init_ex(int argc, char **argv)
+{
+   if (_ecore_init_ex++ != 0) return _ecore_init_ex;
+
+   ecore_init();
+   ecore_loop_arguments_send(argc - 1,
+                             (argc > 1) ? ((const char **) argv + 1) : NULL);
+   ecore_app_args_set(argc, (const char**) argv);
+
+   return _ecore_init_ex;
+}
+
+EAPI unsigned int
+ecore_shutdown_ex(void)
+{
+   if (--_ecore_init_ex != 0) return _ecore_init_ex;
+
+   ecore_shutdown();
+
+   return _ecore_init_ex;
+}
+
 struct _Ecore_Fork_Cb
 {
    Ecore_Cb func;
@@ -543,7 +568,7 @@ ecore_fork_reset(void)
 {
    Eina_List *l, *ln;
    Ecore_Fork_Cb *fcb;
-   
+
    eina_main_loop_define();
    eina_lock_take(&_thread_safety);
 
@@ -555,7 +580,6 @@ ecore_fork_reset(void)
    eina_lock_release(&_thread_safety);
 
    // should this be done withing the eina lock stuff?
-   
    fork_cbs_walking++;
    EINA_LIST_FOREACH(fork_cbs, l, fcb)
      {

@@ -37,11 +37,15 @@
      int real__;                                                        \
      _efl_startup_time = ecore_time_unix_get();                         \
      _EFL_APP_VERSION_SET();                                            \
-     elm_init(argc, argv);                                              \
+     ecore_init();                                                      \
      efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); \
+     ecore_init_ex(argc, argv);                                         \
+     elm_init(argc, argv);                                              \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \
      real__ = efl_loop_exit_code_process(ret__);                        \
      elm_shutdown();                                                    \
+     ecore_shutdown_ex();                                               \
+     ecore_shutdown();                                                  \
      return real__;                                                     \
   }
 
@@ -57,11 +61,15 @@
      int real__;                                                        \
      _efl_startup_time = ecore_time_unix_get();                         \
      _EFL_APP_VERSION_SET();                                            \
-     elm_init(argc, argv);                                              \
+     ecore_init();                                                      \
      efl_event_callback_array_add(ecore_main_loop_get(), _efl_main_ex(), NULL); \
+     ecore_init_ex(argc, argv);                                         \
+     elm_init(argc, argv);                                              \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \
      real__ = efl_loop_exit_code_process(ret__);                        \
      elm_shutdown();                                                    \
+     ecore_shutdown_ex();                                               \
+     ecore_shutdown();                                                  \
      return real__;                                                     \
   }
 

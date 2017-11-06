@@ -406,9 +406,6 @@ elm_init(int argc, char **argv)
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
 
-   ecore_loop_arguments_send(argc - 1,
-                             (argc > 1) ? ((const char **)argv + 1) : NULL);
-
    _prefix_shutdown();
 
    system_handlers[0] =
@@ -752,7 +749,6 @@ elm_quicklaunch_init(int    argc,
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_init();
 #endif
-   ecore_app_args_set(argc, (const char **)argv);
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
    if (!ELM_EVENT_POLICY_CHANGED)
@@ -812,7 +808,6 @@ elm_quicklaunch_sub_init(int    argc,
 
    if (!quicklaunch_on)
      {
-        ecore_app_args_set(argc, (const char **)argv);
         ecore_evas_init(); // FIXME: check errors
         edje_init();
         elm_color_class_init();
@@ -824,6 +819,8 @@ elm_quicklaunch_sub_init(int    argc,
         ecore_con_url_init();
         _elm_prefs_initted = _elm_prefs_init();
         _elm_ews_wm_init();
+
+        ecore_init_ex(argc, argv);
      }
    return _elm_sub_init_count;
 }
@@ -1189,7 +1186,6 @@ elm_quicklaunch_fork(int    argc,
           _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
 #ifdef SEMI_BROKEN_QUICKLAUNCH
-        ecore_app_args_set(argc, (const char **)argv);
         evas_init();
         _elm_module_init();
         _elm_config_sub_init();
@@ -1233,7 +1229,6 @@ elm_quicklaunch_fork(int    argc,
 
    setsid();
    if (chdir(cwd) != 0) perror("could not chdir");
-   ecore_app_args_set(argc, (const char **)argv);
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
 
@@ -1247,15 +1242,21 @@ elm_quicklaunch_fork(int    argc,
           {
              efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
           }
+
+        ecore_init_ex(argc, argv);
+
         ret = efl_loop_exit_code_process(efl_loop_begin(ecore_main_loop_get()));
         elm_shutdown();
         exit(ret);
      }
    else
      {
+        ecore_init_ex(argc, argv);
+
         ret = qr_main(argc, argv);
         exit(ret);
      }
+
    return EINA_TRUE;
 #else
    return EINA_FALSE;
