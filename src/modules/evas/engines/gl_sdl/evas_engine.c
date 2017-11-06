@@ -50,11 +50,6 @@ _outbuf_push_updated_region(Outbuf *ob EINA_UNUSED,
 }
 
 static void
-_outbuf_free_region_for_update(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-}
-
-static void
 _outbuf_free(Outbuf *ob)
 {
    evas_common_font_ext_clear();
@@ -289,7 +284,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
                                            NULL,
                                            _outbuf_new_region_for_update,
                                            _outbuf_push_updated_region,
-                                           _outbuf_free_region_for_update,
+                                           NULL,
                                            NULL,
                                            _outbuf_flush,
                                            NULL,
