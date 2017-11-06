@@ -193,7 +193,6 @@ Eina_Bool eng_outbuf_region_first_rect(Outbuf *ob);
 void *eng_outbuf_new_region_for_update(Outbuf *ob,
                                        int x, int y, int w, int h,
                                        int *cx, int *cy, int *cw, int *ch);
-void eng_outbuf_push_free_region_for_update(Outbuf *ob, RGBA_Image *update);
 void eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update,
                                     int x, int y, int w, int h);
 void eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);

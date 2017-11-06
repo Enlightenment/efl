@@ -1651,7 +1651,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 #endif
                                            eng_outbuf_new_region_for_update,
                                            eng_outbuf_push_updated_region,
-                                           eng_outbuf_push_free_region_for_update,
+                                           NULL,
                                            eng_outbuf_idle_flush,
                                            eng_outbuf_flush,
                                            NULL,
