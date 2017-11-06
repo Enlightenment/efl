@@ -49,19 +49,9 @@ class Name1.Name2.Type_Generation (Efl.Object)
          @in v: string;
        }
      }
-     instringptr {
-       params {
-         @in v: ptr(string);
-       }
-     }
      instringown {
        params {
          @in v: mstring @owned;
-       }
-     }
-     instringptrown {
-       params {
-         @in v: ptr(string) @owned;
        }
      }
      instringshare {
@@ -98,14 +88,8 @@ class Name1.Name2.Type_Generation (Efl.Object)
      returnstring {
        return: string;
      }
-     returnstringptr {
-       return: ptr(string);
-     }
      returnstringown {
        return: mstring @owned;
-     }
-     returnstringownptr {
-       return: ptr(string) @owned;
      }
      returnstringshare {
         return: stringshare;
