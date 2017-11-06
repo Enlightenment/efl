@@ -2069,6 +2069,15 @@ START_TEST(evas_textblock_wrapping)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
 
+   /* Vertical ellipsis when text includes "br" tags */
+   evas_object_textblock_text_markup_set(tb, "AAAA<br/>BBBB<br/>CCCC<br/>DDDD<br/>EEEE<br/>FFFF<br/>");
+   evas_textblock_cursor_format_prepend(cur, "+ font_size=20 ellipsis=1.0");
+   evas_object_resize(tb, 500, 500);
+   evas_object_textblock_size_formatted_get(tb, &bw, &bh);
+   evas_object_resize(tb, bw * 10, bh / 2);
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   ck_assert_int_le(h, (bh / 2));
+
    evas_object_textblock_text_markup_set(tb, "<item absize=100x100 href=item1></item><item absize=100x100 href=item2></item>");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
    evas_object_resize(tb, 101, 100);

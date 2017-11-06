@@ -2904,6 +2904,7 @@ struct _Ctxt
    Evas_Textblock_Align_Auto align_auto : 2;
    Eina_Bool width_changed : 1;
    Eina_Bool handle_obstacles : 1;
+   Eina_Bool vertical_ellipsis : 1;  /**<EINA_TRUE if needs vertical ellipsis, else EINA_FALSE. */
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
@@ -3922,6 +3923,35 @@ loop_advance:
           }
      }
 
+   /* Check current line's height is acceptable or not */
+   if ((fmt->ellipsis == 1.0) &&
+       (c->h > 0) && (c->y + c->ln->h > c->h))
+     {
+        /* No text is shown when the object height is smaller than actual font size's height.
+         * Vertical ellipsis is not handled if the object has only one line. */
+        if ((EINA_INLIST_GET(c->paragraphs) != EINA_INLIST_GET(c->par)) ||
+            EINA_INLIST_GET(c->par->lines) != EINA_INLIST_GET(c->ln))
+          {
+             if (((c->position == TEXTBLOCK_POSITION_START) ||
+                  (c->position == TEXTBLOCK_POSITION_SINGLE))
+                 && (c->maxascent > c->ascent))
+               c->y -= c->o->style_pad.t;
+
+             /* Remove current line */
+             c->par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(
+                EINA_INLIST_GET(c->par->lines), EINA_INLIST_GET(c->ln));
+
+             if (c->o->ellip_ti && (_ITEM(c->o->ellip_ti)->ln == c->ln))
+               _ITEM(c->o->ellip_ti)->ln = NULL;
+
+             _line_free(c->ln);
+             c->ln = NULL;
+             c->vertical_ellipsis = EINA_TRUE;
+
+             return;
+          }
+     }
+
    c->ln->baseline = c->ascent;
    /* FIXME: Actually needs to be adjusted using the actual font value.
     * Also, underline_extend is actually not being used. */
@@ -3997,7 +4027,9 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         last_fmt = _ITEM(EINA_INLIST_GET(c->ln->items)->last)->format;
      }
    _layout_line_finalize(c, last_fmt);
-   _layout_line_new(c, fmt);
+
+   if (!c->vertical_ellipsis)
+     _layout_line_new(c, fmt);
 }
 
 /**
@@ -5903,6 +5935,13 @@ _layout_par(Ctxt *c)
                        else
                          {
                             _layout_line_advance(c, it->format);
+
+                            if (c->vertical_ellipsis)
+                              {
+                                 ret = 1;
+                                 goto end;
+                              }
+
                             item_preadv = EINA_FALSE;
                          }
                     }
@@ -5954,6 +5993,12 @@ _layout_par(Ctxt *c)
                   it = _ITEM(eina_list_data_get(i));
                }
              _layout_line_advance(c, it->format);
+
+             if (c->vertical_ellipsis)
+               {
+                  ret = 1;
+                  goto end;
+               }
           }
      }
 
@@ -5967,6 +6012,9 @@ _layout_par(Ctxt *c)
 
         /* Here 'it' is the last format used */
         _layout_line_finalize(c, it->format);
+
+        if (c->vertical_ellipsis)
+          ret = 1;
      }
 
 end:
@@ -6401,6 +6449,59 @@ _layout_visual(Ctxt *c)
       /* Clear the rest of the paragraphs and mark as invisible */
       if (c->par)
         {
+           if (c->vertical_ellipsis)
+             {
+                c->vertical_ellipsis = EINA_FALSE;
+
+                /* If there is no lines, go to the previous paragraph */
+                if (!c->par->lines)
+                  c->par = (Evas_Object_Textblock_Paragraph *)EINA_INLIST_GET(c->par)->prev;
+
+                if (c->par)
+                  {
+                     if (c->par->lines)
+                       c->ln = (Evas_Object_Textblock_Line *)EINA_INLIST_GET(c->par->lines)->last;
+
+                     if (c->ln && c->ln->items)
+                       {
+                          /* Ellipsize previous line */
+                          Evas_Object_Textblock_Item *last_it, *it;
+                          Eina_List *i;
+
+                          last_it = _ITEM(EINA_INLIST_GET(c->ln->items)->last);
+                          c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_remove(
+                             EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(last_it));
+                          EINA_LIST_FOREACH(c->par->logical_items, i, it)
+                            {
+                               if (last_it == it)
+                                 break;
+                            }
+
+                          /* Reset previous data before ellipsis */
+                          c->y -= c->ln->h;
+                          c->ln->x = c->ln->y = c->ln->w = c->ln->h = 0;
+                          c->ascent = c->descent = 0;
+                          c->maxascent = c->maxdescent = 0;
+                          c->x = last_it->x;
+#ifdef BIDI_SUPPORT
+                          if (c->par->is_bidi)
+                               _layout_update_bidi_props(c->o, c->par);
+#endif
+
+                          _layout_handle_ellipsis(c, last_it, i);
+
+#ifdef BIDI_SUPPORT
+                          if (c->par->bidi_props)
+                            {
+                               evas_bidi_paragraph_props_unref(c->par->bidi_props);
+                               c->par->bidi_props = NULL;
+                            }
+#endif
+                       }
+                     last_vis_par = c->par;
+                  }
+             }
+
            c->par = (Evas_Object_Textblock_Paragraph *)
               EINA_INLIST_GET(c->par)->next;
            while (c->par)
@@ -6502,6 +6603,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    c->w = w;
    c->h = h;
    c->style_pad.r = c->style_pad.l = c->style_pad.t = c->style_pad.b = 0;
+   c->vertical_ellipsis = EINA_FALSE;
 
    /* Update all obstacles */
    if (c->o->obstacle_changed || c->width_changed)
