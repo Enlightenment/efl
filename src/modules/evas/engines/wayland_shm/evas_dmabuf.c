@@ -101,6 +101,20 @@ static void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
 static struct wl_buffer * _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *disp, Dmabuf_Buffer *db);
 
+static void
+buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
+{
+   Dmabuf_Buffer *b = data;
+
+   b->busy = EINA_FALSE;
+   if (b->orphaned) _evas_dmabuf_buffer_destroy(b);
+}
+
+static const struct wl_buffer_listener buffer_listener =
+{
+   buffer_release
+};
+
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
 {
@@ -409,20 +423,6 @@ _buffer_manager_discard(Dmabuf_Buffer *buf)
    buffer_manager->discard(buf);
    _buffer_manager_deref();
 }
-
-static void
-buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
-{
-   Dmabuf_Buffer *b = data;
-
-   b->busy = EINA_FALSE;
-   if (b->orphaned) _evas_dmabuf_buffer_destroy(b);
-}
-
-static const struct wl_buffer_listener buffer_listener =
-{
-   buffer_release
-};
 
 static void
 _fallback(Dmabuf_Surface *s, int w, int h)
