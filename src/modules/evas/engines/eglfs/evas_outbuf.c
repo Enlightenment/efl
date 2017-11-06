@@ -607,12 +607,6 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x
 }
 
 void
-evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-   /* Nothing to do here as we don't really create an image per area */
-}
-
-void
 evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) goto end;
