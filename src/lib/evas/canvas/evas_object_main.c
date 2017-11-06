@@ -209,7 +209,7 @@ _animation_intercept_hide(void *data, Evas_Object *eo_obj)
      {
         event_anim->hide_anim_started = EINA_TRUE;
 
-        _all_animation_objects_cancel(obj);
+        if (obj) _all_animation_objects_cancel(obj);
 
         //Create animation object to start animation
         event_anim->anim_obj = efl_animation_object_create(event_anim->anim);
