@@ -519,7 +519,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
         buf = _evas_dmabuf_buffer_init(surface, w, h);
         if (!buf)
            {
-              _fallback(surface, w, h);
+              if (surface) _fallback(surface, w, h);
               s->surf.dmabuf = NULL;
               return;
            }
