@@ -165,7 +165,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
                                             NULL,
                                             evas_outbuf_update_region_new,
                                             evas_outbuf_update_region_push,
-                                            evas_outbuf_update_region_free,
+                                            NULL,
                                             NULL,
                                             evas_outbuf_flush,
                                             NULL,

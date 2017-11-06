@@ -226,13 +226,6 @@ evas_outbuf_update_region_push(Outbuf     *ob,
    glsym_evas_gl_common_context_flush(ob->gl_context);
 }
 
-void
-evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-   TRC("");
-   /* Nothing to do here as we don't really create an image per area */
-}
-
 void *
 evas_outbuf_update_region_new(Outbuf *ob,
                               int     x,
