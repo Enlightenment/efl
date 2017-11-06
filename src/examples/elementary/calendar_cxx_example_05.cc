@@ -1,11 +1,6 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "elementary_config.h"
-#endif
+#include <Elementary.hh>
 
 #warning This example can't be implemented with EO APIs... FIXME
-
-#include <Elementary.hh>
 
 EAPI_MAIN int
 elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)

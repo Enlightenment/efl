@@ -11,31 +11,31 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   auto win = efl::ui::Win(instantiate);
+   efl::ui::Win win(instantiate);
    win.text_set("Button Example");
    win.autohide_set(true);
 
-   auto box = efl::ui::Box(instantiate, win);
+   efl::ui::Box box(instantiate, win);
    win.content_set(box);
 
-   auto bt = efl::ui::Button(instantiate, win);
+   efl::ui::Button bt(instantiate, win);
    bt.text_set("Hello world!");
    box.pack(bt);
 
-   auto wbt = bt._get_wref();
-   auto cb = std::bind([wbt]() {
+   auto wbt(bt._get_wref());
+   auto cb(std::bind([wbt]() {
         std::cout << wbt->text_get() << std::endl;
-     });
+     }));
    efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt, cb);
 
-   auto bt2 = efl::ui::Button(instantiate, win);
+   efl::ui::Button bt2(instantiate, win);
    bt2.text_set("Click to quit");
    box.pack(bt2);
 
-   auto wwin = win._get_wref();
-   auto cb2 = std::bind([wwin]() {
+   auto wwin(win._get_wref());
+   auto cb2(std::bind([wwin]() {
         ::efl_del(wwin->_eo_ptr()); // FIXME: No proper C++ API to delete win
-     });
+     }));
    efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt2, cb2);
 
    win.size_set({320,160});

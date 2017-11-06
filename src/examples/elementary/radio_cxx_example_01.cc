@@ -1,79 +1,62 @@
-#include <Elementary.hh>
+// g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` radio_cxx_example_01.cc -o radio_cxx_example_01
 
-EAPI_MAIN int
-elm_main (int argc, char *argv[])
+#define EFL_CXX_WREF_EASY
+#include <Elementary.hh>
+#include <iostream>
+
+using efl::eo::instantiate;
+
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   static int val = 1;
-
-   ::elm::win_standard win;
-   win.title_set("Radio");
+   efl::ui::Win win(instantiate);
+   win.text_set("Radio Example");
    win.autohide_set(true);
 
-   ::efl::ui::Box bx(efl::eo::parent = win);
-   bx.horizontal_set(true);
-   bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(bx);
-   bx.visible_set(true);
+   efl::ui::Box bx(instantiate, win);
+   bx.direction_set(EFL_UI_DIR_HORIZONTAL);
+   win.content_set(bx);
 
-   ::elm::radio radio(efl::eo::parent = win);
-   ::elm::radio group(efl::eo::parent = win);
-   group = radio;
-   radio.text_set("elm.text", "Radio 1");
+   efl::ui::Radio radio(instantiate, win);
+   efl::ui::Radio group = radio;
+   radio.text_set("Radio 1");
    radio.state_value_set(1);
-   radio.value_pointer_set(&val);
-   ::elm::icon ic(efl::eo::parent = win);
-   ic.standard_set("home");
-   radio.content_set("icon", ic);
+
+   efl::ui::Image ic(instantiate, win);
+   ic.icon_set("home");
+   radio.content_set(ic);
    bx.pack_end(radio);
-   radio.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   radio.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-   radio.visible_set(true);
 
-   auto cb_val = std::bind([] () { std::cout << "val is now: " << val << std::endl; });
+   auto cb_val = std::bind([] (efl::ui::Radio &obj)
+   { std::cout << "val is now: " << obj.value_get() << std::endl; },
+         std::placeholders::_1);
+   efl::eolian::event_add(efl::ui::Radio::changed_event, radio, cb_val);
 
-   radio.callback_changed_add(cb_val);
-
-   ::elm::radio radio2(efl::eo::parent = win);
-   radio2.text_set("elm.text", "Radio 2");
+   efl::ui::Radio radio2(instantiate, win);
+   radio2.text_set("Radio 2");
    radio2.state_value_set(2);
-   radio2.value_pointer_set(&val);
    radio2.group_add(group);
-   ::elm::icon ic2(efl::eo::parent = win);
-   ic2.standard_set("file");
-   radio2.content_set("icon", ic2);
-   bx.pack_end(radio2);
-   radio2.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   radio2.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-   radio2.visible_set(true);
-   radio2.callback_changed_add(cb_val);
 
-   ::elm::radio radio3(efl::eo::parent = win);
-   radio3.text_set("elm.text", "Radio 3");
+   efl::ui::Image ic2(instantiate, win);
+   ic2.icon_set("file");
+   radio2.content_set(ic2);
+   bx.pack_end(radio2);
+   efl::eolian::event_add(efl::ui::Radio::changed_event, radio2, cb_val);
+
+   efl::ui::Radio radio3(instantiate, win);
+   radio3.text_set("Radio 3");
    radio3.state_value_set(3);
-   radio3.value_pointer_set(&val);
    radio3.group_add(group);
    bx.pack_end(radio3);
-   radio3.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   radio3.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-   radio3.visible_set(true);
-   radio3.callback_changed_add(cb_val);
+   efl::eolian::event_add(efl::ui::Radio::changed_event, radio3, cb_val);
 
-   ::elm::radio radio4(efl::eo::parent = win);
-   radio4.text_set("elm.text", "Radio 4");
+   efl::ui::Radio radio4(instantiate, win);
+   radio4.text_set("Radio 4");
    radio4.state_value_set(4);
-   radio4.value_pointer_set(&val);
    radio4.group_add(group);
    bx.pack_end(radio4);
-   radio4.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   radio4.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-   radio4.visible_set(true);
-   radio4.callback_changed_add(cb_val);
-
-   win.visible_set(true);
-
-   elm_run();
-   return 0;
+   efl::eolian::event_add(efl::ui::Radio::changed_event, radio4, cb_val);
 }
-ELM_MAIN()
+EFL_MAIN()

@@ -1,11 +1,6 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "elementary_config.h"
-#endif
+#include <Elementary.hh>
 
 #warning This example can't be implemented with EO APIs... FIXME
-
-#include <Elementary.hh>
 
 using efl::eo::instantiate;
 

@@ -107,7 +107,6 @@ genlist_example_02.c \
 genlist_example_03.c \
 genlist_example_04.c \
 genlist_example_05.c \
-glview_example_01.c \
 hover_example_01.c \
 hoversel_example_01.c \
 icon_example_01.c \
@@ -179,6 +178,9 @@ if HAVE_CXX11
 SRCS += \
 bg_cxx_example_01.cc \
 bg_cxx_example_02.cc \
+box_cxx_example_02.cc \
+button_cxx_example_00.cc \
+button_cxx_example_01.cc \
 calendar_cxx_example_01.cc \
 calendar_cxx_example_02.cc \
 calendar_cxx_example_03.cc \
@@ -186,27 +188,15 @@ calendar_cxx_example_04.cc \
 calendar_cxx_example_05.cc \
 clock_cxx_example.cc \
 icon_cxx_example_01.cc \
-button_cxx_example_00.cc
-endif
-#table_cxx_example_02.cc \
-table_cxx_example_01.cc \
-spinner_cxx_example.cc \
-slider_cxx_example.cc \
-radio_cxx_example_01.cc \
-popup_cxx_example_01.cc \
 menu_cxx_example_01.cc \
-location_cxx_example_01.cc \
-hoversel_cxx_example_01.cc \
-glview_cxx_example_01.cc \
-calendar_cxx_example_05.cc \
-calendar_cxx_example_04.cc \
-calendar_cxx_example_03.cc \
-calendar_cxx_example_02.cc \
-calendar_cxx_example_01.cc \
-button_cxx_example_01.cc \
-box_cxx_example_02.cc \
-bg_cxx_example_02.cc \
-bg_cxx_example_01.cc 
+radio_cxx_example_01.cc \
+slider_cxx_example.cc \
+spinner_cxx_example.cc \
+table_cxx_example_01.cc \
+table_cxx_example_02.cc \
+toolbar_cxx_example_01.cc \
+$(NULL)
+endif
 
 EDCS = \
 twitter_example_01.edc \
@@ -305,7 +295,6 @@ genlist_example_02 \
 genlist_example_03 \
 genlist_example_04 \
 genlist_example_05 \
-glview_example_01 \
 hover_example_01 \
 hoversel_example_01 \
 icon_example_01 \
@@ -402,6 +391,9 @@ if HAVE_CXX11
 examples_PROGRAMS += \
 bg_cxx_example_01 \
 bg_cxx_example_02 \
+box_cxx_example_02 \
+button_cxx_example_00 \
+button_cxx_example_01 \
 calendar_cxx_example_01 \
 calendar_cxx_example_02 \
 calendar_cxx_example_03 \
@@ -409,31 +401,14 @@ calendar_cxx_example_04 \
 calendar_cxx_example_05 \
 clock_cxx_example \
 icon_cxx_example_01 \
+menu_cxx_example_01 \
+radio_cxx_example_01 \
+slider_cxx_example \
+spinner_cxx_example \
+table_cxx_example_01 \
+table_cxx_example_02 \
 toolbar_cxx_example_01 \
-button_cxx_example_00
-# examples_PROGRAMS += \
-# table_cxx_example_02 \
-# table_cxx_example_01 \
-# spinner_cxx_example \
-# slider_cxx_example \
-# radio_cxx_example_01 \
-# popup_cxx_example_01 \
-# menu_cxx_example_01 \
-# location_cxx_example_01 \
-# icon_cxx_example_01 \
-# hoversel_cxx_example_01 \
-# glview_cxx_example_01 \
-# clock_cxx_example \
-# calendar_cxx_example_05 \
-# calendar_cxx_example_04 \
-# calendar_cxx_example_03 \
-# calendar_cxx_example_02 \
-# calendar_cxx_example_01 \
-# button_cxx_example_01 \
-# button_cxx_example_00 \
-# box_cxx_example_02 \
-# bg_cxx_example_02 \
-# bg_cxx_example_01
+$(NULL)
 endif
 
 efl_thread_1_SOURCES = efl_thread_1.c
@@ -442,39 +417,25 @@ efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
 
 if HAVE_CXX11
-icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
-clock_cxx_example_SOURCES = clock_cxx_example.cc
-calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
-calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
-calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
-calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
-calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
-bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
+bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
+box_cxx_example_02_SOURCES = box_cxx_example_02.cc
 button_cxx_example_00_SOURCES = button_cxx_example_00.cc
+button_cxx_example_01_SOURCES = button_cxx_example_01.cc
+calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
+calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
+calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
+calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
+calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
+clock_cxx_example_SOURCES = clock_cxx_example.cc
+icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
+menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
+radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+slider_cxx_example_SOURCES = slider_cxx_example.cc
+spinner_cxx_example_SOURCES = spinner_cxx_example.cc
+table_cxx_example_01_SOURCES = table_cxx_example_01.cc
+table_cxx_example_02_SOURCES = table_cxx_example_02.cc
 toolbar_cxx_example_01_SOURCES = toolbar_cxx_example_01.cc
-# table_cxx_example_02_SOURCES = table_cxx_example_02.cc
-# table_cxx_example_01_SOURCES = table_cxx_example_01.cc
-# spinner_cxx_example_SOURCES = spinner_cxx_example.cc
-# slider_cxx_example_SOURCES = slider_cxx_example.cc
-# radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
-# popup_cxx_example_01_SOURCES = popup_cxx_example_01.cc
-# menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
-# location_cxx_example_01_SOURCES = location_cxx_example_01.cc
-# icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
-# hoversel_cxx_example_01_SOURCES = hoversel_cxx_example_01.cc
-# glview_cxx_example_01_SOURCES = glview_cxx_example_01.cc
-# clock_cxx_example_SOURCES = clock_cxx_example.cc
-# calendar_cxx_example_05_SOURCES = calendar_cxx_example_05.cc
-# calendar_cxx_example_04_SOURCES = calendar_cxx_example_04.cc
-# calendar_cxx_example_03_SOURCES = calendar_cxx_example_03.cc
-# calendar_cxx_example_02_SOURCES = calendar_cxx_example_02.cc
-# calendar_cxx_example_01_SOURCES = calendar_cxx_example_01.cc
-# button_cxx_example_01_SOURCES = button_cxx_example_01.cc
-# button_cxx_example_00_SOURCES = button_cxx_example_00.cc
-# box_cxx_example_02_SOURCES = box_cxx_example_02.cc
-# bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
-# bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
 endif
 
 # This variable will hold the list of screenshots that will be made
@@ -565,6 +526,7 @@ menu_example_01:menu_example_01.png:0.5
 
 if HAVE_CXX11
 SCREENSHOTS += \
+ bg_cxx_example_01:bg_cxx_example_01.png:0.0 \
  bg_cxx_example_02:bg_cxx_example_02.png:0.0 \
  box_cxx_example_02:box_cxx_example_02.png:1.3 \
  button_cxx_example_00:button_cxx_example_00.png:0.0 \
@@ -575,17 +537,16 @@ SCREENSHOTS += \
  calendar_cxx_example_04:calendar_cxx_example_04.png:0.0 \
  calendar_cxx_example_05:calendar_cxx_example_05.png:0.0 \
  clock_cxx_example:clock_cxx_example.png:0.5 \
- datetime_cxx_example:datetime_cxx_example.png:0.0 \
- hoversel_cxx_example_01:hoversel_cxx_example_01.png:0.0 \
  icon_cxx_example_01:icon_cxx_example_01.png:0.0 \
  menu_cxx_example_01:menu_cxx_example_01.png:0.5 \
- popup_cxx_example_01:popup_cxx_example_01.png:1.0 \
  popup_cxx_example_01:popup_cxx_example_01_a.png:6.0 \
  radio_cxx_example_01:radio_cxx_example_01.png:0.0 \
  slider_cxx_example:slider_cxx_example.png:0.0 \
  spinner_cxx_example:spinner_cxx_example.png:0.0 \
  table_cxx_example_01:table_cxx_example_01.png:0.0 \
- table_cxx_example_02:table_cxx_example_02.png:0.0
+ table_cxx_example_02:table_cxx_example_02.png:0.0 \
+ toolbar_cxx_example_01:toolbar_cxx_example_01.png:0.0 \
+$(NULL)
 endif
 
 HTML_SS_DIR=$(top_builddir)/doc/html/screenshots

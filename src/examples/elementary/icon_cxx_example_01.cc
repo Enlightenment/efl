@@ -1,8 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "elementary_config.h"
-#endif
-
 #include <Elementary.hh>
 
 EAPI_MAIN int
@@ -30,13 +25,8 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    //icon.smooth_set(false);
    //icon.fill_outside_set(true);
 
-   // icon.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //win.resize_object_add(icon);
-   icon.eo_cxx::efl::Gfx::size_set({320,320});
-   icon.visible_set(true);
-
-   win.eo_cxx::efl::Gfx::size_set({320, 320});
-   win.visible_set(true);
+   win.content_set(icon);
+   win.size_set({320, 320});
 
    elm_run();
    return 0;
