@@ -491,12 +491,6 @@ eng_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx EIN
 }
 
 void 
-eng_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-
-}
-
-void 
 eng_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    if (!_re_wincheck(ob)) return;

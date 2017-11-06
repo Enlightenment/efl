@@ -584,7 +584,7 @@ eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
                                            eng_outbuf_damage_region_set,
                                            eng_outbuf_update_region_new,
                                            eng_outbuf_update_region_push,
-                                           eng_outbuf_update_region_free,
+                                           NULL,
                                            NULL,
                                            eng_outbuf_flush,
                                            NULL,
