@@ -53,6 +53,7 @@ struct _Dmabuf_Buffer
 {
    Dmabuf_Surface *surface;
    struct wl_buffer *wl_buffer;
+   int size;
    int w, h;
    int age;
    unsigned long stride;
@@ -694,6 +695,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
      }
    out->w = w;
    out->h = h;
+   out->size = out->stride * h;
 
    out->wl_buffer = _buffer_manager_buf_to_wl_buffer(s->surface->ob->ewd, out);
 
