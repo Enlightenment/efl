@@ -1,9 +1,23 @@
-#ifndef EFL_EVAS_HH
-#define EFL_EVAS_HH
-#ifdef EFL_BETA_API_SUPPORT
+#ifndef EVAS_HH
+#define EVAS_HH
+
+#if defined(EVAS_H)
+#error "Do not include Evas C API headers before including Evas.hh"
+#endif
+
+#ifndef EFL_BETA_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
+#endif
+#ifndef EFL_EO_API_SUPPORT
+#define EFL_EO_API_SUPPORT
+#endif
+
+#include <Efl.hh>
+
+extern "C" {
+#include "Evas.h"
+}
 
 #include "Evas.eo.hh"
 
 #endif
-#endif
-
