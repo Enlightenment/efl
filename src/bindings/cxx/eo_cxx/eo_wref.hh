@@ -135,6 +135,18 @@ struct wref
    }
 #endif
 
+   template <typename U>
+   bool operator == (U const &other) const
+   {
+      return other._eo_ptr() == _eo_wref;
+   }
+
+   template <typename U>
+   friend bool operator == (U const &other, wref<T> const &thiz)
+   {
+      return other._eo_ptr() == thiz._eo_wref;
+   }
+
 private:
    void _add()
    {
