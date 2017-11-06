@@ -2829,6 +2829,8 @@ _efl_canvas_object_event_animation_is_running(Eo *eo_obj,
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
+   if (!obj) return EINA_FALSE;
+
    if (_event_animation_object_get(obj, desc))
      return EINA_TRUE;
 
