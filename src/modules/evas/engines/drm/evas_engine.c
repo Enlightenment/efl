@@ -41,7 +41,7 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
                                                  NULL,
                                                  _outbuf_update_region_new,
                                                  _outbuf_update_region_push,
-                                                 _outbuf_update_region_free,
+                                                 NULL,
                                                  NULL,
                                                  _outbuf_flush,
                                                  _outbuf_redraws_clear,
