@@ -3274,7 +3274,7 @@ EOLIAN Eina_Rectangle
 _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
-   Evas_Coord xx2 = 0, yy2 = 0;
+   Evas_Coord xx2 = 0, yy2 = 0, w = 0, h = 0;
    unsigned short i;
 
    ed->calc_only = EINA_TRUE;
@@ -3304,7 +3304,10 @@ _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje
 
    ed->calc_only = EINA_FALSE;
 
-   return (Eina_Rectangle) { xx1, yy1, xx2 - xx1, yy2 - yy1 };
+   if ((xx2 - xx1) > 0) w = xx2 - xx1;
+   if ((yy2 - yy1) > 0) h = yy2 - yy1;
+
+   return (Eina_Rectangle) { xx1, yy1, w, h };
 }
 
 EOLIAN Eina_Size2D
