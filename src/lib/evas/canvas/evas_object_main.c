@@ -2840,7 +2840,7 @@ _efl_canvas_object_event_animation_cancel(Eo *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
-   _all_animation_objects_cancel(obj);
+   if (obj) _all_animation_objects_cancel(obj);
 }
 
 
