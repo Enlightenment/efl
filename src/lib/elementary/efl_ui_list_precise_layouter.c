@@ -133,7 +133,6 @@ _count_error(void * data, Efl_Event const* event EINA_UNUSED)
    EINA_SAFETY_ON_NULL_RETURN(pd);
    pd->count_future = NULL;
 }
-
 static void
 _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
                     Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -142,7 +141,6 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
    Eina_Size2D min = efl_gfx_size_hint_combined_min_get(obj);
    _item_min_calc(cb_data->pd, obj, cb_data->size, min);
 }
-
 
 static void
 _on_modeler_resize(void *data, Evas *e EINA_UNUSED,
@@ -215,7 +213,7 @@ _calc_size_job(void *data)
         DBG("node first %d", items_node->first);
         for(i = 0; i != items_node->length; ++i)
           {
-            layout_item = items_node->pointers[i];
+            layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[i];
             DBG("layout_do first %d count %d", pd->first, pd->count);
             /* EINA_SAFETY_ON_NULL_RETURN(items); */
 
@@ -250,16 +248,16 @@ _calc_size_job(void *data)
                 cb_data->pd = pd;
                 cb_data->size = size;
                 evas_object_event_callback_add(layout_item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);
-                if ( (ecore_time_get() - start_time ) > 0.01 )
-                  {
-                    DBG(" <><><> RECALC JOB SPLIT <><><> ");
-                    ecore_job_del(pd->calc_job);
-                    pd->calc_job = ecore_job_add(_calc_size_job, obj);
-                    _efl_ui_list_relayout_layout_do(pd);
-                    return;
-                 }
               }
           }
+        if ( (ecore_time_get() - start_time ) > 0.01 )
+          {
+            DBG(" <><><> RECALC JOB SPLIT <><><> ");
+            ecore_job_del(pd->calc_job);
+            pd->calc_job = ecore_job_add(_calc_size_job, obj);
+            _efl_ui_list_relayout_layout_do(pd);
+            return;
+         }
      }
    pd->calc_progress = 0;
    pd->recalc = EINA_FALSE;
@@ -402,7 +400,7 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
      {
    for(j = 0; j != items_node->length;++j)
      {
-        layout_item = items_node->pointers[j];
+        layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
         double cx, cy, cw, ch, x, y, w, h;
         double align[2];
         int item_pad[4];
