@@ -322,6 +322,89 @@ err:
    return EINA_FALSE;
 }
 
+static Buffer_Handle *
+_wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+{
+   Efl_Vpath_File *file_obj;
+   Eina_Tmpstr *fullname;
+   size_t size = w * h * 4;
+   void *out = NULL;
+
+   file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
+                                      "(:run:)/evas-wayland_shm-XXXXXX");
+   *fd = eina_file_mkstemp(efl_vpath_file_result_get(file_obj), &fullname);
+   efl_del(file_obj);
+   if (*fd < 0) return NULL;
+
+   unlink(fullname);
+   eina_tmpstr_del(fullname);
+
+   *stride = w * 4;
+   if (ftruncate(*fd, size) < 0) goto err;
+
+   out = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, *fd, 0);
+   if (out == MAP_FAILED) goto err;
+
+   return out;
+
+err:
+   close(*fd);
+   return NULL;
+}
+
+static void *
+_wl_shm_map(Dmabuf_Buffer *buf)
+{
+   return buf->bh;
+}
+
+static void
+_wl_shm_unmap(Dmabuf_Buffer *buf EINA_UNUSED)
+{
+   /* wl_shm is mapped for its lifetime */
+}
+
+static void
+_wl_shm_discard(Dmabuf_Buffer *buf)
+{
+   munmap(buf->bh, buf->size);
+}
+
+static void
+_wl_shm_manager_destroy()
+{
+   /* Nop. */
+}
+
+static struct wl_buffer *
+_wl_shm_to_buffer(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
+{
+   struct wl_buffer *buf;
+   struct wl_shm_pool *pool;
+   struct wl_shm *shm;
+
+   shm = ecore_wl2_display_shm_get(ewd);
+   pool = wl_shm_create_pool(shm, db->fd, db->size);
+   buf = wl_shm_pool_create_buffer(pool, 0, db->w, db->h, db->stride, 0);
+   wl_shm_pool_destroy(pool);
+   close(db->fd);
+   db->fd = -1;
+   wl_buffer_add_listener(buf, &buffer_listener, db);
+   return buf;
+}
+
+static Eina_Bool
+_wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
+{
+   buffer_manager->alloc = _wl_shm_alloc;
+   buffer_manager->to_buffer = _wl_shm_to_buffer;
+   buffer_manager->map = _wl_shm_map;
+   buffer_manager->unmap = _wl_shm_unmap;
+   buffer_manager->discard = _wl_shm_discard;
+   buffer_manager->manager_destroy = _wl_shm_manager_destroy;
+   return EINA_TRUE;
+}
+
 static Buffer_Manager *
 _buffer_manager_get(void)
 {
@@ -342,6 +425,7 @@ _buffer_manager_get(void)
 
    success = _intel_buffer_manager_setup(fd);
    if (!success) success = _exynos_buffer_manager_setup(fd);
+   if (!success) success = _wl_shm_buffer_manager_setup(fd);
    if (!success) goto err_bm;
 
    drm_fd = fd;
