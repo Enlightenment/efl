@@ -36,6 +36,7 @@ typedef struct _Buffer_Manager Buffer_Manager;
 struct _Buffer_Manager
 {
    Buffer_Handle *(*alloc)(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd);
+   struct wl_buffer *(*to_buffer)(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db);
    void *(*map)(Dmabuf_Buffer *buf);
    void (*unmap)(Dmabuf_Buffer *buf);
    void (*discard)(Dmabuf_Buffer *buf);
@@ -187,6 +188,7 @@ _intel_buffer_manager_setup(int fd)
    if (!buffer_manager->priv) goto err;
 
    buffer_manager->alloc = _intel_alloc;
+   buffer_manager->to_buffer = _evas_dmabuf_wl_buffer_from_dmabuf;
    buffer_manager->map = _intel_map;
    buffer_manager->unmap = _intel_unmap;
    buffer_manager->discard = _intel_discard;
@@ -292,6 +294,7 @@ _exynos_buffer_manager_setup(int fd)
    sym_exynos_bo_destroy(bo);
 
    buffer_manager->alloc = _exynos_alloc;
+   buffer_manager->to_buffer = _evas_dmabuf_wl_buffer_from_dmabuf;
    buffer_manager->map = _exynos_map;
    buffer_manager->unmap = _exynos_unmap;
    buffer_manager->discard = _exynos_discard;
@@ -375,6 +378,12 @@ _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int
    out = buffer_manager->alloc(buffer_manager, name, w, h, stride, fd);
    if (!out) _buffer_manager_deref();
    return out;
+}
+
+static struct wl_buffer *
+_buffer_manager_buf_to_wl_buffer(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *buf)
+{
+   return buffer_manager->to_buffer(ewd, buf);
 }
 
 static void *
@@ -686,8 +695,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->w = w;
    out->h = h;
 
-   out->wl_buffer = _evas_dmabuf_wl_buffer_from_dmabuf(s->surface->ob->ewd,
-                                                       out);
+   out->wl_buffer = _buffer_manager_buf_to_wl_buffer(s->surface->ob->ewd, out);
 
    ecore_wl2_display_flush(s->surface->info->info.wl2_display);
    return out;
