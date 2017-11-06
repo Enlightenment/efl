@@ -15,7 +15,7 @@ typedef struct _Evas_Engine_Info_Drm
         int depth, bpp;
         unsigned int format, rotation;
 
-        void *output;
+        Ecore_Drm2_Output *output;
         Eina_Bool alpha : 1;
         Eina_Bool vsync : 1;
      } info;
