@@ -1,7 +1,7 @@
 #ifndef _EVAS_FONT_DRAW_H
 #define _EVAS_FONT_DRAW_H
 
-#include "evas_common_private.h"
+#include "../include/evas_common_private.h"
 
 /* draw */
 typedef Eina_Bool (*Evas_Common_Font_Draw_Cb)(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, int ext_h, int im_w, int im_h);
