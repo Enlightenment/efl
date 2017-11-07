@@ -1007,7 +1007,7 @@ _format_unref_free(Evas_Object_Protected_Data *evas_o, Evas_Object_Textblock_For
         fmt->gfx_filter = NULL;
      }
    if ((obj->layer) && (obj->layer->evas))
-     evas_font_free(obj->layer->evas->evas, fmt->font.font);
+     evas_font_free(fmt->font.font);
    free(fmt);
 }
 
@@ -2835,8 +2835,12 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
    if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
    /* FIXME: just ref the font here... */
-   fmt2->font.font = evas_font_load(obj->layer->evas->evas, fmt2->font.fdesc,
-         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale), fmt2->font.bitmap_scalable);
+   fmt2->font.font = evas_font_load(obj->layer->evas->font_path,
+                                    obj->layer->evas->hinting,
+                                    fmt2->font.fdesc,
+                                    fmt2->font.source,
+                                    (int)(((double) fmt2->font.size) * obj->cur->scale),
+                                    fmt2->font.bitmap_scalable);
 
    if (fmt->gfx_filter)
      {
@@ -3392,8 +3396,12 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->slant = _FMT_INFO(font_slant);
              fmt->font.fdesc->width = _FMT_INFO(font_width);
              fmt->font.fdesc->lang = _FMT_INFO(font_lang);
-             fmt->font.font = evas_font_load(evas_obj->layer->evas->evas, fmt->font.fdesc,
-                   fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale), fmt->font.bitmap_scalable);
+             fmt->font.font = evas_font_load(evas_obj->layer->evas->font_path,
+                                             evas_obj->layer->evas->hinting,
+                                             fmt->font.fdesc,
+                                             fmt->font.source,
+                                             (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale),
+                                             fmt->font.bitmap_scalable);
           }
         if (_FMT_INFO(gfx_filter_name))
           {
@@ -4276,7 +4284,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    if (shx1 < minx) minx = shx1;
    if (shx2 > maxx) maxx = shx2;
    ti->x_adjustment = maxx - minx;
-   
+
    ti->parent.w = tw + ti->x_adjustment;
    ti->parent.h = th;
    ti->parent.adv = advw;
@@ -4538,9 +4546,13 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
 
    of = fmt->font.font;
 
-   fmt->font.font = evas_font_load(obj->layer->evas->evas, fmt->font.fdesc,
-         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur->scale), fmt->font.bitmap_scalable);
-   if (of) evas_font_free(obj->layer->evas->evas, of);
+   fmt->font.font = evas_font_load(obj->layer->evas->font_path,
+                                   obj->layer->evas->hinting,
+                                   fmt->font.fdesc,
+                                   fmt->font.source,
+                                   (int)(((double) fmt->font.size) * obj->cur->scale),
+                                   fmt->font.bitmap_scalable);
+   if (of) evas_font_free(of);
 }
 
 static Efl_Canvas_Text_Filter_Program *
@@ -4666,11 +4678,11 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         //   item size=20x10 href=name
         //   item relsize=20x10 href=name
         //   item abssize=20x10 href=name
-        // 
+        //
         // optional arguments:
         //   vsize=full
         //   vsize=ascent
-        // 
+        //
         // size == item size (modifies line size) - can be multiplied by
         //   scale factor
         // relsize == relative size (height is current font height, width
@@ -5424,7 +5436,7 @@ _item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x, Evas_Coo
  * that don't intersect in whole) will be split, and the rest are set to be
  * visually-deleted.
  * Note that a special case for visible format items does not
- * split them, but instead just visually-deletes them (because there are no 
+ * split them, but instead just visually-deletes them (because there are no
  * characters to split).
  */
 static inline void
@@ -7903,7 +7915,7 @@ _evas_object_textblock_text_markup_get(Eo *eo_obj, Efl_Canvas_Text_Data *o)
           {
              Eina_Unicode tmp_ch;
              off += fnode->offset;
-             
+
              if (off > len) break;
              /* No need to skip on the first run */
              tmp_ch = text[off];
@@ -14597,9 +14609,8 @@ _evas_object_textblock_rehint(Evas_Object *eo_obj)
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        if (ti->parent.format->font.font)
                          {
-                            evas_font_load_hinting_set(obj->layer->evas->evas,
-                                  ti->parent.format->font.font,
-                                  obj->layer->evas->hinting);
+                            evas_font_load_hinting_set(ti->parent.format->font.font,
+                                                       obj->layer->evas->hinting);
                          }
                     }
                }

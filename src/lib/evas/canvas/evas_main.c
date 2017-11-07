@@ -384,7 +384,7 @@ next_zombie:
    EINA_LIST_FREE(e->obscures, r)
       eina_rectangle_free(r);
 
-   evas_fonts_zero_free(eo_e);
+   evas_fonts_zero_free();
 
    evas_event_callback_all_del(eo_e);
    evas_event_callback_cleanup(eo_e);
@@ -1288,6 +1288,139 @@ _evas_pointer_list_in_rect_get(Evas_Public_Data *edata, Evas_Object *obj,
 
    return list;
 }
+
+/* font related api */
+
+EOLIAN static void
+_evas_canvas_font_path_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *evas)
+{
+   evas_canvas_async_block(evas);
+   while (evas->font_path)
+     {
+  eina_stringshare_del(evas->font_path->data);
+  evas->font_path = eina_list_remove(evas->font_path, evas->font_path->data);
+     }
+}
+
+EOLIAN static void
+_evas_canvas_font_path_append(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
+{
+   if (!path) return;
+   evas_canvas_async_block(e);
+   e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
+}
+
+EOLIAN static void
+_evas_canvas_font_path_prepend(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
+{
+   if (!path) return;
+   evas_canvas_async_block(e);
+   e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
+}
+
+EOLIAN static const Eina_List*
+_evas_canvas_font_path_list(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return e->font_path;
+}
+
+EOLIAN static void
+_evas_canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   evas_canvas_async_block(e);
+   evas_render_rendering_wait(e);
+   if (_evas_engine_context(e))
+     e->engine.func->font_cache_flush(_evas_engine_context(e));
+}
+
+EOLIAN static void
+_evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
+{
+   if (size < 0) size = 0;
+   evas_canvas_async_block(e);
+   evas_render_rendering_wait(e);
+   if (_evas_engine_context(e))
+     e->engine.func->font_cache_set(_evas_engine_context(e), size);
+}
+
+EOLIAN static int
+_evas_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   if (_evas_engine_context(e))
+     return e->engine.func->font_cache_get(_evas_engine_context(e));
+   return -1;
+}
+
+EOLIAN static Eina_List*
+_evas_canvas_font_available_list(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *pd)
+{
+   return evas_font_dir_available_list(pd->font_path);
+}
+
+static void
+evas_font_object_rehint(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   if (obj->is_smart)
+     {
+  EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)
+    evas_font_object_rehint(obj->object);
+     }
+   else
+     {
+  if (!strcmp(obj->type, "text"))
+    _evas_object_text_rehint(eo_obj);
+  if (!strcmp(obj->type, "textblock"))
+    _evas_object_textblock_rehint(eo_obj);
+     }
+}
+
+EAPI void
+evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
+{
+   Evas_Layer *lay;
+
+   EVAS_LEGACY_API(eo_e, e);
+   evas_canvas_async_block(e);
+   if (e->hinting == hinting) return;
+   e->hinting = hinting;
+
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+  Evas_Object_Protected_Data *obj;
+
+  EINA_INLIST_FOREACH(lay->objects, obj)
+    evas_font_object_rehint(obj->object);
+     }
+}
+
+EAPI Evas_Font_Hinting_Flags
+evas_font_hinting_get(const Evas *eo_e)
+{
+   EVAS_LEGACY_API(eo_e, e, EVAS_FONT_HINTING_NONE);
+   return e->hinting;
+}
+
+EAPI Eina_Bool
+evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
+{
+   EVAS_LEGACY_API(eo_e, e, EINA_FALSE);
+   if (e->engine.func->font_hinting_can_hint && _evas_engine_context(e))
+     return e->engine.func->font_hinting_can_hint(_evas_engine_context(e),
+                                                  hinting);
+   else return EINA_FALSE;
+}
+
+EAPI void
+evas_font_available_list_free(Evas *eo_e, Eina_List *available)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   evas_font_dir_available_list_free(available);
+}
+
 
 /* Legacy EAPI */
 

@@ -1,6 +1,10 @@
 #ifndef _EVAS_FONT_OT_H
 # define _EVAS_FONT_OT_H
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 # ifdef HAVE_HARFBUZZ
 #  define OT_SUPPORT
 #  define USE_HARFBUZZ
@@ -17,8 +21,8 @@ typedef void *Evas_Font_OT_Info;
 struct _Evas_Font_OT_Info
 {
    size_t source_cluster;
-   Evas_Coord x_offset;
-   Evas_Coord y_offset;
+   int x_offset;
+   int y_offset;
 };
 # endif
 
@@ -28,7 +32,8 @@ struct _Evas_Font_OT_Info
 #  define EVAS_FONT_OT_POS_GET(a)   ((a).source_cluster)
 # endif
 
-# include "evas_text_utils.h"
+#include "evas_font.h"
+
 EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index);
 

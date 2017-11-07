@@ -1,22 +1,8 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <assert.h>
-
-#include "evas_common_private.h"
-#include "evas_private.h"
-
 #include "evas_font_private.h"
-#include "evas_blend_private.h"
-#include "draw.h"
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
 #endif
-
-#include FT_OUTLINE_H
-#include FT_SYNTHESIS_H
 
 // XXX:
 // XXX: adapt cserve2 to this!
@@ -128,7 +114,7 @@ alpha8to4(int a8)
 // [char] second byte of RLE data
 // ...
 // [char] last byte of RLE data
-// 
+//
 static DATA8 *
 compress_rle4(DATA8 *src, int pitch, int w, int h, int *size_ret)
 {
@@ -247,7 +233,7 @@ static void
 decompress_full_row(DATA8 *src, int start, int end, DATA8 *dst)
 {
    DATA8 *p = src + start, *e = src + end, *d = dst, len, val;
-   
+
    while (p < e)
      {
         // length is upper 4 bits + 1
@@ -377,7 +363,7 @@ decompress_bpp4(DATA8 *src, DATA8 *dst, int pitch, int w, int h)
 {
    int pitch2, x, y;
    DATA8 *d, *s, val;
-   
+
    // deal with source pixel to round up for odd length rows
    pitch2 = (w + 1) / 2;
    // skip header int
@@ -462,7 +448,7 @@ evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret)
    RGBA_Font_Glyph_Out *fgo = fg->glyph_out;
    DATA8 *buf = calloc(1, fgo->bitmap.width * fgo->bitmap.rows);
    int *iptr;
-   
+
    if (!buf) return NULL;
    if (wret) *wret = fgo->bitmap.width;
    if (hret) *hret = fgo->bitmap.rows;
@@ -474,155 +460,4 @@ evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret)
      decompress_bpp4(fgo->rle, buf, fgo->bitmap.width,
                      fgo->bitmap.width, fgo->bitmap.rows);
    return buf;
-}
-
-// this draws a compressed font glyph and decompresses on the fly as it
-// draws, saving memory bandwidth and providing speedups
-EAPI void
-evas_common_font_glyph_draw(RGBA_Font_Glyph *fg, 
-                            RGBA_Draw_Context *dc,
-                            RGBA_Image *dst_image, int dst_pitch,
-                            int dx, int dy, int dw, int dh, int cx, int cy, int cw, int ch)
-{
-   RGBA_Font_Glyph_Out *fgo = fg->glyph_out;
-   int x, y, w, h, x1, x2, y1, y2, i, *iptr;
-   DATA32 *dst = dst_image->image.data;
-   DATA32 coltab[16], col;
-   DATA16 mtab[16], v;
-
-   // FIXME: Use dw, dh for scaling glyphs...
-   (void) dw;
-   (void) dh;
-   x = dx;
-   y = dy;
-   w = fgo->bitmap.width; h = fgo->bitmap.rows;
-   // skip if totally clipped out
-   if ((y >= (cy + ch)) || ((y + h) <= cy) ||
-       (x >= (cx + cw)) || ((x + w) <= cx)) return;
-   // figure y1/y2 limit range
-   y1 = 0; y2 = h;
-   if ((y + y1) < cy) y1 = cy - y;
-   if ((y + y2) > (cy + ch)) y2 = cy + ch - y;
-   // figure x1/x2 limit range
-   x1 = 0; x2 = w;
-   if ((x + x1) < cx) x1 = cx - x;
-   if ((x + x2) > (cx + cw)) x2 = cx + cw - x;
-   col = dc->col.col;
-   if (dst_image->cache_entry.space == EVAS_COLORSPACE_GRY8)
-     {
-        // FIXME: Font draw not optimized for Alpha targets! SLOW!
-        // This is not pretty :)
-
-        DATA8 *src8, *dst8;
-        Draw_Func_Alpha func;
-        int row;
-
-        if (EINA_UNLIKELY(x < 0))
-          {
-             x1 += (-x);
-             x = 0;
-             if ((x2 - x1) <= 0) return;
-          }
-        if (EINA_UNLIKELY(y < 0))
-          {
-             y1 += (-y);
-             y = 0;
-             if ((y2 - y1) <= 0) return;
-          }
-
-        dst8 = dst_image->image.data8 + x + (y * dst_pitch);
-        func = efl_draw_alpha_func_get(dc->render_op, EINA_FALSE);
-        src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
-        if (!src8) return;
-
-        for (row = y1; row < y2; row++)
-          {
-             DATA8 *d = dst8 + ((row - y1) * dst_pitch);
-             DATA8 *s = src8 + (row * w) + x1;
-             func(d, s, x2 - x1);
-          }
-        free(src8);
-     }
-   else if (dc->clip.mask)
-     {
-        RGBA_Gfx_Func func;
-        DATA8 *src8, *mask;
-        DATA32 *buf, *ptr, *buf_ptr;
-        RGBA_Image *im = dc->clip.mask;
-        int row;
-
-        buf = alloca(sizeof(DATA32) * w * h);
-
-        // Adjust clipping info
-        if (EINA_UNLIKELY((x + x1) < dc->clip.mask_x))
-          x1 = dc->clip.mask_x - x;
-        if (EINA_UNLIKELY((y + y1) < dc->clip.mask_y))
-          y1 = dc->clip.mask_y - y;
-        if (EINA_UNLIKELY((x + x2) > (int)(x + x1 + im->cache_entry.w)))
-          x2 = x1 + im->cache_entry.w;
-        if (EINA_UNLIKELY((y + y2) > (int)(y + y1 + im->cache_entry.h)))
-          y2 = y1 + im->cache_entry.h;
-
-        // Step 1: alpha glyph drawing
-        src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
-        if (!src8) return;
-
-        // Step 2: color blending to buffer
-        func = evas_common_gfx_func_composite_mask_color_span_get(col, dst_image->cache_entry.flags.alpha, 1, EVAS_RENDER_COPY);
-        for (row = y1; row < y2; row++)
-          {
-             buf_ptr = buf + (row * w) + x1;
-             DATA8 *s = src8 + (row * w) + x1;
-             func(NULL, s, col, buf_ptr, x2 - x1);
-          }
-        free(src8);
-
-        // Step 3: masking to destination
-        func = evas_common_gfx_func_composite_pixel_mask_span_get(im->cache_entry.flags.alpha, im->cache_entry.flags.alpha_sparse, dst_image->cache_entry.flags.alpha, dst_pitch, dc->render_op);
-        for (row = y1; row < y2; row++)
-          {
-             mask = im->image.data8
-                + (y + row - dc->clip.mask_y) * im->cache_entry.w
-                + (x + x1 - dc->clip.mask_x);
-
-             ptr = dst + (x + x1) + ((y + row) * dst_pitch);
-             buf_ptr = buf + (row * w) + x1;
-             func(buf_ptr, mask, 0, ptr, w);
-          }
-     }
-   else
-     {
-        // build fast multiply + mask color tables to avoid compute. this works
-        // because of our very limited 4bit range of alpha values
-        for (i = 0; i <= 0xf; i++)
-          {
-             v = (i << 4) | i;
-             coltab[i] = MUL_SYM(v, col);
-             mtab[i] = 256 - (coltab[i] >> 24);
-          }
-#ifdef BUILD_MMX
-        if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-          {
-#define MMX 1
-#include "evas_font_compress_draw.c"
-#undef MMX
-          }
-        else
-#endif
-
-#ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-          {
-#define NEON 1
-#include "evas_font_compress_draw.c"
-#undef NEON
-          }
-        else
-#endif
-
-          // Plain C
-          {
-#include "evas_font_compress_draw.c"
-          }
-     }
 }

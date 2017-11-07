@@ -493,7 +493,8 @@ lib/evas/common/language/evas_bidi_utils.h \
 lib/evas/common/language/evas_language_utils.h \
 lib/evas/common/language/evas_script_table.h \
 lib/evas/common/evas_text_utils.h \
-lib/evas/common/evas_font_ot.h
+lib/evas/common/evas_font_ot.h \
+lib/evas/common/evas_font_draw.h
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/canvas \
@@ -1608,7 +1609,7 @@ if BUILD_VG_LOADER_SVG
 if EVAS_STATIC_BUILD_VG_SVG
 lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c \
 static_libs/vg_common/vg_common.c \
-static_libs/vg_common/vg_common.h 
+static_libs/vg_common/vg_common.h
 lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/vg_common \
 @evas_vg_loader_svg_cflags@
 lib_evas_libevas_la_LIBADD += @evas_vg_loader_svg_libs@

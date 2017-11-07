@@ -1,11 +1,9 @@
-#include "evas_common_private.h"
+#include "evas_font_private.h"
 
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
 #endif
-
-#include "evas_font_private.h"
 
 #ifdef USE_HARFBUZZ
 static const hb_script_t

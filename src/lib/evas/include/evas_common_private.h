@@ -63,6 +63,8 @@
 
 #include "Evas_Internal.h"
 
+#include "../common/evas_font.h"
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -223,20 +225,6 @@ extern EAPI int _evas_log_dom_global;
 # define TH(x)  pthread_t x
 # define THI(x) int x
 # define TH_MAX 8
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_SIZES_H
-#include FT_MODULE_H
-
-#ifndef FT_HAS_COLOR
-# define FT_HAS_COLOR(face) 0
-#endif
-
-#ifndef FT_LOAD_COLOR
-# define FT_LOAD_COLOR FT_LOAD_DEFAULT
-#endif
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
@@ -430,11 +418,6 @@ typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Map_Point        RGBA_Map_Point;
 typedef struct _RGBA_Map              RGBA_Map;
-typedef struct _RGBA_Font             RGBA_Font;
-typedef struct _RGBA_Font_Int         RGBA_Font_Int;
-typedef struct _RGBA_Font_Source      RGBA_Font_Source;
-typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
-typedef struct _RGBA_Font_Glyph_Out   RGBA_Font_Glyph_Out;
 typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
 typedef struct _RGBA_Image_Data_Map   RGBA_Image_Data_Map;
 
@@ -477,6 +460,8 @@ typedef void (*Evas_Engine_Thread_Task_Cb)(void *engine_data, Image_Entry *ie, v
 #ifdef EVAS_CSERVE2
 #include "../cache2/evas_cache2.h"
 #endif
+
+#include "../common/evas_font_draw.h"
 
 /*****************************************************************************/
 
@@ -535,20 +520,6 @@ typedef enum _CPU_Features
    CPU_FEATURE_NEON    = (1 << 6),
    CPU_FEATURE_SSE3    = (1 << 7)
 } CPU_Features;
-
-typedef enum _Font_Hint_Flags
-{
-   FONT_NO_HINT,
-   FONT_AUTO_HINT,
-   FONT_BYTECODE_HINT
-} Font_Hint_Flags;
-
-typedef enum _Font_Rend_Flags
-{
-   FONT_REND_REGULAR   = 0,
-   FONT_REND_SLANT     = (1 << 0),
-   FONT_REND_WEIGHT    = (1 << 1),
-} Font_Rend_Flags;
 
 /*****************************************************************************/
 
@@ -792,7 +763,6 @@ struct _RGBA_Draw_Context
 
 #ifdef BUILD_PIPE_RENDER
 #include "../common/evas_map_image.h"
-#include "../common/evas_text_utils.h"
 
 struct _RGBA_Pipe_Op
 {
@@ -945,146 +915,6 @@ struct _RGBA_Map
    int count;
 
    RGBA_Map_Point pts[1];
-};
-
-// for fonts...
-/////
-typedef struct _Fash_Item_Index_Map Fash_Item_Index_Map;
-typedef struct _Fash_Int_Map        Fash_Int_Map;
-typedef struct _Fash_Int_Map2       Fash_Int_Map2;
-typedef struct _Fash_Int            Fash_Int;
-struct _Fash_Item_Index_Map
-{
-   RGBA_Font_Int *fint;
-   int            index;
-};
-struct _Fash_Int_Map
-{
-  Fash_Item_Index_Map item[256];
-};
-struct _Fash_Int_Map2
-{
-   Fash_Int_Map *bucket[256];
-};
-struct _Fash_Int
-{
-   Fash_Int_Map2 *bucket[256];
-   void (*freeme) (Fash_Int *fash);
-};
-
-/////
-typedef struct _Fash_Glyph_Map  Fash_Glyph_Map;
-typedef struct _Fash_Glyph_Map2 Fash_Glyph_Map2;
-typedef struct _Fash_Glyph      Fash_Glyph;
-struct _Fash_Glyph_Map
-{
-   RGBA_Font_Glyph *item[256];
-};
-struct _Fash_Glyph_Map2
-{
-   Fash_Glyph_Map *bucket[256];
-};
-struct _Fash_Glyph
-{
-   Fash_Glyph_Map2 *bucket[256];
-   void (*freeme) (Fash_Glyph *fash);
-};
-/////
-
-struct _RGBA_Font
-{
-   Eina_List       *fonts;
-   Fash_Int        *fash;
-   Font_Hint_Flags  hinting;
-   int              references;
-   LK(lock);
-   unsigned char    sizeok : 1;
-};
-
-#include "../common/evas_font_ot.h"
-
-struct _RGBA_Font_Int
-{
-   EINA_INLIST;
-   RGBA_Font_Source *src;
-   Eina_Hash        *kerning;
-   Fash_Glyph       *fash;
-   unsigned int      size;
-   float             scale_factor;
-   int               real_size;
-   int               max_h;
-   int               references;
-   int               usage;
-   struct {
-      FT_Size       size;
-#ifdef USE_HARFBUZZ
-      void         *hb_font;
-#endif
-   } ft;
-   LK(ft_mutex);
-   Font_Hint_Flags  hinting;
-   Font_Rend_Flags  wanted_rend; /* The wanted rendering style */
-   Font_Rend_Flags  runtime_rend; /* The rendering we need to do on runtime
-                                     in order to comply with the wanted_rend. */
-
-   Eina_List       *task;
-#ifdef EVAS_CSERVE2
-   void            *cs2_handler;
-#endif
-
-   int              generation;
-
-   Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
-
-   unsigned char    sizeok : 1;
-   unsigned char    inuse : 1;
-};
-
-struct _RGBA_Font_Source
-{
-   const char       *name;
-   const char       *file;
-   void             *data;
-   unsigned int      current_size;
-   int               data_size;
-   int               references;
-   struct {
-      int            orig_upem;
-      FT_Face        face;
-   } ft;
-};
-
-/*
- * laziness wins for now. The parts used from the freetpye struct are
- * kept intact to avoid changing the code using it until we know exactly
- * what needs to be changed
- */
-struct _RGBA_Font_Glyph_Out
-{
-   unsigned char *rle;
-   struct {
-      unsigned char *buffer;
-      unsigned short rows;
-      unsigned short width;
-      unsigned short pitch;
-      unsigned short rle_alloc : 1;
-      unsigned short no_free_glout : 1;
-   } bitmap;
-   int rle_size;
-};
-
-struct _RGBA_Font_Glyph
-{
-   FT_UInt         index;
-   Evas_Coord      width;
-   Evas_Coord      x_bear;
-   Evas_Coord      y_bear;
-   FT_Glyph        glyph;
-   RGBA_Font_Glyph_Out *glyph_out;
-   /* this is a problem - only 1 engine at a time can extend such a font... grrr */
-   void           *ext_dat;
-   void           (*ext_dat_free) (void *ext_dat);
-   RGBA_Font_Int   *fi;
 };
 
 struct _RGBA_Gfx_Compositor
@@ -1287,7 +1117,6 @@ EAPI void     evas_common_blit_init               (void);
 EAPI void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
-#include "../common/evas_font.h"
 
 /****/
 EAPI void          evas_common_tilebuf_init               (void);
@@ -1320,8 +1149,6 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 
 /****/
 #include "../common/evas_pipe.h"
-
-void              evas_font_dir_cache_free(void);
 
 EAPI void         evas_thread_queue_wait(void);
 

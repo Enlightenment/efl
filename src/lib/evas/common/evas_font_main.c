@@ -1,12 +1,3 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <assert.h>
-
-#include "evas_common_private.h"
-#include "evas_private.h"
-
 #include "evas_font_private.h"
 
 #ifdef EVAS_CSERVE2
@@ -25,6 +16,8 @@ LK(lock_font_draw); // for freetype2 API calls
 LK(lock_bidi); // for evas bidi internal usage.
 LK(lock_ot); // for evas bidi internal usage.
 
+int _evas_font_log_dom_global = -1;
+
 EAPI void
 evas_common_font_init(void)
 {
@@ -36,6 +29,12 @@ evas_common_font_init(void)
 #else
    35;
 #endif
+   _evas_font_log_dom_global = eina_log_domain_register
+     ("evas_font_main", EVAS_FONT_DEFAULT_LOG_COLOR);
+   if (_evas_font_log_dom_global < 0)
+     {
+        EINA_LOG_ERR("Can not create a module log domain.");
+     }
 
    initialised++;
    if (initialised != 1) return;
@@ -77,6 +76,7 @@ evas_common_font_shutdown(void)
    LKD(lock_font_draw);
    LKD(lock_bidi);
    LKD(lock_ot);
+   eina_log_domain_unregister(_evas_font_log_dom_global);
 }
 
 EAPI void
@@ -681,7 +681,7 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
    fg->glyph_out->bitmap.pitch = fbg->bitmap.pitch;
    fg->glyph_out->bitmap.buffer = fbg->bitmap.buffer;
    fg->glyph_out->bitmap.rle_alloc = EINA_TRUE;
-   
+
    /* This '+ 100' is just an estimation of how much memory freetype will use
     * on it's size. This value is not really used anywhere in code - it's
     * only for statistics. */
@@ -709,7 +709,7 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
         fg->glyph_out->rle = NULL;
         fg->glyph_out->bitmap.rle_alloc = EINA_FALSE;
      }
-   
+
    return EINA_TRUE;
 }
 
@@ -805,11 +805,11 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
         // codepoints with a guess that bitmap font is playing the old
         // game of putting line drawing chars in specific ranges
         max = sizeof(mapfix) / (sizeof(mapfix[0]) * 2);
-        i = (min + max) / 2;                                          
+        i = (min + max) / 2;
         for (;;)
           {
              unsigned short v;
-             
+
              v = mapfix[i << 1];
              if (gl == v)
                {
@@ -867,7 +867,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
         fi = l->data;
 
 #if 0 /* FIXME: charmap user is disabled and use a deprecated data type. */
-/*        
+/*
 	if (fi->src->charmap) // Charmap loaded, FI/FS blank
 	  {
 	     idx = evas_array_hash_search(fi->src->charmap, gl);

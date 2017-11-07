@@ -210,7 +210,7 @@ evas_object_textgrid_rows_clear(Evas_Object *eo_obj)
 }
 
 static void
-evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
    Evas_Object_Textgrid_Color *c;
    Evas_Textgrid_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
@@ -223,10 +223,10 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 
    if (o->cur.font_description_normal)
      evas_font_desc_unref(o->cur.font_description_normal);
-   if (o->font_normal) evas_font_free(obj->layer->evas->evas, o->font_normal);
-   if (o->font_bold) evas_font_free(obj->layer->evas->evas, o->font_bold);
-   if (o->font_italic) evas_font_free(obj->layer->evas->evas, o->font_italic);
-   if (o->font_bolditalic) evas_font_free(obj->layer->evas->evas, o->font_bolditalic);
+   if (o->font_normal) evas_font_free(o->font_normal);
+   if (o->font_bold) evas_font_free(o->font_bold);
+   if (o->font_italic) evas_font_free(o->font_italic);
+   if (o->font_bolditalic) evas_font_free(o->font_bolditalic);
 
    if (o->cur.cells) free(o->cur.cells);
    while ((c = eina_array_pop(&o->cur.palette_standard)))
@@ -784,17 +784,17 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
                   if (r->ch1 >= 0)
                     {
                        Evas_Coord chx, chy, chw, chh;
-                       
+
                        chx = r->ch1 * o->cur.char_width;
                        chy = i * o->cur.char_height;
                        chw = (r->ch2 - r->ch1 + 1) * o->cur.char_width;
                        chh = o->cur.char_height;
-                       
+
                        chx -= o->cur.char_width;
                        chy -= o->cur.char_height;
                        chw += o->cur.char_width * 2;
                        chh += o->cur.char_height * 2;
-                       
+
                        chx += obj->cur->geometry.x;
                        chy += obj->cur->geometry.y;
                        RECTS_CLIP_TO_RECT(chx, chy, chw, chh,
@@ -808,7 +808,7 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj,
                }
           }
      }
-   
+
    done:
    o->core_change = 0;
    o->row_change = 0;
@@ -1003,11 +1003,12 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
    int ret = -1;
    Evas_Font_Set *font;
 
-   font = evas_font_load(obj->layer->evas->evas,
+   font = evas_font_load(obj->layer->evas->font_path,
+                         obj->layer->evas->hinting,
                          fdesc,
                          o->cur.font_source,
                          (int)(((double) o->cur.font_size) *
-                               obj->cur->scale),
+                         obj->cur->scale),
                          o->cur.bitmap_scalable);
    if (font)
      {
@@ -1040,7 +1041,7 @@ _alternate_font_weight_slant(Evas_Object_Protected_Data *obj,
             (o->cur.char_height != vadvance) ||
             (o->ascent != ascent))
           {
-             evas_font_free(obj->layer->evas->evas, font);
+             evas_font_free(font);
           }
         else
           {
@@ -1080,16 +1081,17 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
 
    if (o->font_normal)
      {
-        evas_font_free(obj->layer->evas->evas, o->font_normal);
+        evas_font_free(o->font_normal);
         o->font_normal = NULL;
      }
 
-   o->font_normal = evas_font_load(obj->layer->evas->evas,
-                            o->cur.font_description_normal,
-                            o->cur.font_source,
-                            (int)(((double) o->cur.font_size) *
-                                  obj->cur->scale),
-                            o->cur.bitmap_scalable);
+   o->font_normal = evas_font_load(obj->layer->evas->font_path,
+                                   obj->layer->evas->hinting,
+                                   o->cur.font_description_normal,
+                                   o->cur.font_source,
+                                   (int)(((double) o->cur.font_size) *
+                                   obj->cur->scale),
+                                   o->cur.bitmap_scalable);
    if (o->font_normal)
      {
         Eina_Unicode W[2] = { 'O', 0 };
@@ -1133,7 +1135,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    /* Bold */
    if (o->font_bold)
      {
-        evas_font_free(obj->layer->evas->evas, o->font_bold);
+        evas_font_free(o->font_bold);
         o->font_bold = NULL;
      }
    if ((fdesc->weight == EVAS_FONT_WEIGHT_NORMAL) ||
@@ -1153,7 +1155,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    /* Italic */
    if (o->font_italic)
      {
-        evas_font_free(obj->layer->evas->evas, o->font_italic);
+        evas_font_free(o->font_italic);
         o->font_italic = NULL;
      }
    if (fdesc->slant == EVAS_FONT_SLANT_NORMAL)
@@ -1180,7 +1182,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    /* BoldItalic */
    if (o->font_bolditalic)
      {
-        evas_font_free(obj->layer->evas->evas, o->font_bolditalic);
+        evas_font_free(o->font_bolditalic);
         o->font_bolditalic = NULL;
      }
    if (fdesc->slant == EVAS_FONT_SLANT_NORMAL &&
@@ -1384,7 +1386,7 @@ _evas_textgrid_palette_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, 
       default:
         return;
      }
-   
+
    if (idx >= (int)eina_array_count(palette)) return;
    color = eina_array_data_get(palette, idx);
    if (!color) return;
@@ -1437,16 +1439,16 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int i, x2;
-   
+
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur.w, o->cur.h);
    if ((w <= 0) || (h <= 0)) return;
-   
+
    evas_object_async_block(obj);
    x2 = x + w - 1;
    for (i = 0; i < h; i++)
      {
         Evas_Object_Textgrid_Row *r = &(o->cur.rows[y + i]);
-        
+
         if (r->ch1 < 0)
           {
              evas_object_textgrid_row_clear(o, r);

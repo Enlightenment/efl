@@ -433,7 +433,7 @@ _evas_render2_idle_flush(Eo *eo_e)
    // wait for rendering to finish so we don't mess up shared resources
    _evas_render2_wait(eo_e);
    // clean fonts
-   evas_fonts_zero_pressure(eo_e);
+   evas_fonts_zero_pressure();
    // call engine idle flush call
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
        (e->engine.data.output))

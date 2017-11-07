@@ -439,12 +439,15 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
    /* DO IT */
    if (o->font)
      {
-        evas_font_free(obj->layer->evas->evas, o->font);
+        evas_font_free(o->font);
         o->font = NULL;
      }
 
-   o->font = evas_font_load(obj->layer->evas->evas, o->cur.fdesc, o->cur.source,
-         (int)(((double) o->cur.size) * obj->cur->scale), o->cur.bitmap_scalable);
+   o->font = evas_font_load(obj->layer->evas->font_path,
+                            obj->layer->evas->hinting,
+                            o->cur.fdesc, o->cur.source,
+                            (int)(((double) o->cur.size) * obj->cur->scale),
+                            o->cur.bitmap_scalable);
      {
         o->ascent = 0;
         o->descent = 0;
@@ -1657,7 +1660,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
    if (o->cur.text) free(o->cur.text);
    if (o->font && obj->layer && obj->layer->evas)
-      evas_font_free(obj->layer->evas->evas, o->font);
+      evas_font_free(o->font);
    o->font = NULL;
    o->cur.utf8_text = NULL;
    o->cur.font = NULL;
@@ -2241,8 +2244,7 @@ _evas_object_text_rehint(Evas_Object *eo_obj)
    Eina_List *was = NULL;
 
    if (!o->font) return;
-   evas_font_load_hinting_set(obj->layer->evas->evas, o->font,
-                  obj->layer->evas->hinting);
+   evas_font_load_hinting_set(o->font, obj->layer->evas->hinting);
    was = _evas_pointer_list_in_rect_get(obj->layer->evas, eo_obj, obj, 1, 1);
    /* DO II */
    _evas_object_text_recalc(eo_obj, o->cur.text);
