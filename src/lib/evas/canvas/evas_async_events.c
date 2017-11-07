@@ -50,7 +50,6 @@ static int _thread_id_update = 0;
 
 static Eina_Bool _write_error = EINA_TRUE;
 static Eina_Bool _read_error = EINA_TRUE;
-static pid_t _fd_pid = 0;
 
 static Eina_Spinlock async_lock;
 static Eina_Inarray async_queue;
@@ -105,6 +104,14 @@ _async_events_pipe_read_cb(void *data EINA_UNUSED, void *buf, unsigned int len)
    _evas_async_events_fd_blocking_set(EINA_FALSE);
 }
 
+static void
+_evas_async_events_fork_handle(void *data EINA_UNUSED)
+{
+   ecore_pipe_del(_async_pipe);
+   _async_pipe = ecore_pipe_add(_async_events_pipe_read_cb, NULL);
+   ecore_pipe_freeze(_async_pipe);
+}
+
 int
 evas_async_events_init(void)
 {
@@ -117,7 +124,7 @@ evas_async_events_init(void)
         return 0;
      }
 
-   _fd_pid = getpid();
+   ecore_fork_reset_callback_add(_evas_async_events_fork_handle, NULL);
 
    _async_pipe = ecore_pipe_add(_async_events_pipe_read_cb, NULL);
    if ( !_async_pipe )
@@ -163,6 +170,8 @@ evas_async_events_shutdown(void)
    eina_spinlock_free(&async_lock);
    eina_inarray_flush(&async_queue);
 
+   ecore_fork_reset_callback_del(_evas_async_events_fork_handle, NULL);
+
    ecore_pipe_del(_async_pipe);
    _read_error = EINA_TRUE;
    _write_error = EINA_TRUE;
@@ -171,20 +180,9 @@ evas_async_events_shutdown(void)
    return _init_evas_event;
 }
 
-static void
-_evas_async_events_fork_handle(void)
-{
-   int i, count = _init_evas_event;
-
-   if (getpid() == _fd_pid) return;
-   for (i = 0; i < count; i++) evas_async_events_shutdown();
-   for (i = 0; i < count; i++) evas_async_events_init();
-}
-
 EAPI int
 evas_async_events_fd_get(void)
 {
-   _evas_async_events_fork_handle();
    return ecore_pipe_read_fd(_async_pipe);
 }
 
@@ -192,8 +190,8 @@ EAPI int
 evas_async_events_process(void)
 {
    int count = 0;
+
    if (_read_error) return -1;
-   _evas_async_events_fork_handle();
 
    _event_count = 0;
    while (ecore_pipe_wait(_async_pipe, 1, 0.0))
@@ -224,8 +222,6 @@ evas_async_events_process_blocking(void)
    int ret;
    if (_read_error) return -1;
 
-   _evas_async_events_fork_handle();
-
    _evas_async_events_fd_blocking_set(EINA_TRUE);
 
    _event_count = 0;
@@ -246,8 +242,6 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    if (!func) return EINA_FALSE;
    if (_write_error) return EINA_FALSE;
-
-   _evas_async_events_fork_handle();
 
    eina_spinlock_take(&async_lock);
 
