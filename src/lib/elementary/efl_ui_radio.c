@@ -157,8 +157,6 @@ _efl_ui_radio_elm_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
    if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
 
-   if (sd->state) _state_set(obj, EINA_FALSE, EINA_FALSE);
-
    edje_object_message_signal_process(wd->resize_obj);
 
    /* FIXME: replicated from elm_layout just because radio's icon
