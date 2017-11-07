@@ -730,7 +730,7 @@ elm_quicklaunch_mode_get(void)
 }
 
 EAPI int
-elm_quicklaunch_init(int    argc,
+elm_quicklaunch_init(int    argc EINA_UNUSED,
                      char **argv)
 {
    _elm_ql_init_count++;
@@ -745,6 +745,8 @@ elm_quicklaunch_init(int    argc,
 
    eet_init();
    ecore_init();
+   edje_init();
+   eio_init();
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_init();
@@ -760,7 +762,6 @@ elm_quicklaunch_init(int    argc,
 
    if (!ecore_file_init())
      ERR("Elementary cannot init ecore_file");
-   eio_init();
 
    _elm_exit_handler =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
@@ -798,21 +799,14 @@ elm_quicklaunch_sub_init(int    argc,
 {
    _elm_sub_init_count++;
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
-   if (quicklaunch_on)
-     {
-//        _elm_config_init();
-//#ifdef SEMI_BROKEN_QUICKLAUNCH
-//        return _elm_sub_init_count;
-//#endif
-     }
+   _elm_config_init();
+   ecore_main_loop_iterate();
 
    if (!quicklaunch_on)
      {
         ecore_evas_init(); // FIXME: check errors
-        edje_init();
         elm_color_class_init();
         _elm_module_init();
-        _elm_config_init();
         _elm_config_sub_init();
         ecore_imf_init();
         ecore_con_init();
@@ -830,12 +824,6 @@ elm_quicklaunch_sub_shutdown(void)
 {
    _elm_sub_init_count--;
    if (_elm_sub_init_count > 0) return _elm_sub_init_count;
-   if (quicklaunch_on)
-     {
-//#ifdef SEMI_BROKEN_QUICKLAUNCH
-//        return _elm_sub_init_count;
-//#endif
-     }
    if (!quicklaunch_on)
      {
         _elm_win_shutdown();
@@ -846,12 +834,15 @@ elm_quicklaunch_sub_shutdown(void)
         edje_shutdown();
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
-        _elm_config_shutdown();
         _elm_module_shutdown();
         if (_elm_prefs_initted)
           _elm_prefs_shutdown();
         elm_color_class_shutdown();
      }
+
+   _elm_config_shutdown();
+   ecore_main_loop_iterate();
+
    return _elm_sub_init_count;
 }
 
@@ -1111,6 +1102,7 @@ elm_quicklaunch_fork(int    argc,
         int i;
         char **args;
 
+        WRN("No main function found.");
         child = fork();
         if (child > 0) return EINA_TRUE;
         else if (child < 0)
@@ -1128,6 +1120,8 @@ elm_quicklaunch_fork(int    argc,
         ERR("failed to execute '%s': %s", argv[0], strerror(errno));
         exit(-1);
      }
+   INF("Main function found (legacy: %p, efl: %p)",
+       qr_main, qre_main);
    child = fork();
    if (child > 0) return EINA_TRUE;
    else if (child < 0)
@@ -1137,8 +1131,8 @@ elm_quicklaunch_fork(int    argc,
      }
    if (postfork_func) postfork_func(postfork_data);
 
-   ecore_fork_reset();
    eina_main_loop_define();
+   ecore_fork_reset();
 
    if (quicklaunch_on)
      {
