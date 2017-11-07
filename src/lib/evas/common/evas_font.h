@@ -18,6 +18,8 @@ typedef unsigned long long    DATA64;
 # define FT_LOAD_COLOR FT_LOAD_DEFAULT
 #endif
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -43,8 +45,6 @@ typedef unsigned long long    DATA64;
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
-
-#include <Eina.h>
 
 #define LK(x)  Eina_Lock x
 #define LKI(x) eina_lock_new(&(x))
