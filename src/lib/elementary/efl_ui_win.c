@@ -5612,6 +5612,9 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
                }
 #endif
 // XXX: what to do with wayland?
+// XXX: what to do with win32?
+// XXX: what to do with osx/coca?
+// etc.
              return;
           }
         // not e - fall back to manually placing on what we think the screen
@@ -5632,6 +5635,9 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
           }
 #endif
 // XXX: what to do with wayland?
+// XXX: what to do with win32?
+// XXX: what to do with osx/coca?
+// etc.
      }
 
    ecore_evas_screen_geometry_get(sd->ee,
