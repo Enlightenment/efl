@@ -1882,9 +1882,8 @@ _palette_colors_load(Evas_Object *obj)
 }
 
 static inline void
-_palette_box_prepare(Eo *o, Eina_Bool legacy)
+_palette_box_prepare(Eo *o)
 {
-   if (legacy) efl_canvas_object_legacy_ctor(o);
    efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1903,8 +1902,16 @@ _create_colorpalette(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->palette_box) return;
-   sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
-                             _palette_box_prepare(efl_added, wd->legacy));
+   if (elm_widget_is_legacy(obj))
+     {
+        sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj,
+                                         _palette_box_prepare(efl_added));
+     }
+   else
+     {
+        sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
+                                  _palette_box_prepare(efl_added));
+     }
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
@@ -2259,7 +2266,7 @@ EAPI Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

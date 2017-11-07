@@ -61,8 +61,7 @@ EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code),
-                  efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
 }
 
 EOLIAN static Eo *

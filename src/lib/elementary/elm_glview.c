@@ -339,18 +339,16 @@ EAPI Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent,
-                  elm_obj_glview_version_constructor(efl_added, EVAS_GL_GLES_2_X),
-                  efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent,
+                         elm_obj_glview_version_constructor(efl_added, EVAS_GL_GLES_2_X));
 }
 
 EAPI Evas_Object *
 elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent,
-                  elm_obj_glview_version_constructor(efl_added, version),
-                  efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent,
+                         elm_obj_glview_version_constructor(efl_added, version));
 }
 
 EOLIAN static void

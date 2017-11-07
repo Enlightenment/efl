@@ -53,6 +53,8 @@ typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
+Eina_Bool _elm_legacy_add = EINA_FALSE;
+
 struct _Elm_Event_Cb_Data
 {
    Elm_Event_Cb func;
@@ -2968,7 +2970,7 @@ elm_widget_theme_get(const Evas_Object *obj)
 EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
-   if (!sd->legacy && efl_finalized_get(obj))
+   if (!elm_widget_is_legacy(obj) && efl_finalized_get(obj))
      {
         ERR("Efl.Ui.Widget.style can only be set before finalize!");
         return EFL_UI_THEME_APPLY_FAILED;
@@ -5117,6 +5119,8 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
+   sd->legacy = _elm_legacy_add;
+   _elm_legacy_add = EINA_FALSE;
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
@@ -5170,6 +5174,7 @@ _elm_widget_legacy_ctor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    efl_canvas_object_legacy_ctor(efl_super(obj, MY_CLASS));
    sd->legacy = EINA_TRUE;
+   _elm_legacy_add = EINA_FALSE;
 }
 
 EOLIAN static void

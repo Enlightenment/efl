@@ -575,7 +575,7 @@ EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Eo *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Eo *obj = elm_legacy_add(MY_CLASS, parent);
    elm_progressbar_unit_format_set(obj, "%.0f %%");
 
    return obj;

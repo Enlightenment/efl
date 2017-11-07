@@ -809,11 +809,19 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
    return ret;
 }
 
+/* Internal hack to mark legacy objects as such before construction.
+ * No need for TLS: Only UI objects created in the main loop matter. */
+extern Eina_Bool _elm_legacy_add;
+#define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
+   efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
+
 static inline Eina_Bool
 elm_widget_is_legacy(const Eo *obj)
 {
-   Elm_Widget_Smart_Data *sd = (Elm_Widget_Smart_Data *)
-         efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *sd;
+
+   if (_elm_legacy_add) return EINA_TRUE;
+   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
    return sd ? sd->legacy : EINA_FALSE;
 }
 
