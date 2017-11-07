@@ -38,6 +38,7 @@ typedef enum
    ELPUT_DEVICE_CAPS_TABLET_TOOL = (1 << 3),
    ELPUT_DEVICE_CAPS_TABLET_PAD = (1 << 4),
    ELPUT_DEVICE_CAPS_GESTURE = (1 << 5),
+   ELPUT_DEVICE_CAPS_SWITCH = (1 << 6),
 } Elput_Device_Caps;
 
 /* opaque structure to represent an input manager */
@@ -112,6 +113,29 @@ typedef struct Elput_Event_Pointer_Motion
    double dy_unaccel;
 } Elput_Event_Pointer_Motion;
 
+/** @since 1.21 */
+typedef enum
+{
+   ELPUT_SWITCH_TYPE_LID = 1,
+   ELPUT_SWITCH_TYPE_TABLET_MODE,
+} Elput_Switch_Type;
+
+/** @since 1.21 */
+typedef enum
+{
+   ELPUT_SWITCH_STATE_OFF = 0,
+   ELPUT_SWITCH_STATE_ON = 1,
+} Elput_Switch_State;
+
+/** @since 1.21 */
+typedef struct _Elput_Event_Switch
+{
+   Elput_Device *device;
+   uint64_t time_usec;
+   Elput_Switch_Type type;
+   Elput_Switch_State state;
+} Elput_Event_Switch;
+
 
 EAPI extern int ELPUT_EVENT_SEAT_CAPS;
 EAPI extern int ELPUT_EVENT_SEAT_FRAME;
@@ -121,6 +145,9 @@ EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
 
 /** @since 1.19 */
 EAPI extern int ELPUT_EVENT_POINTER_MOTION;
+
+/** @since 1.21 */
+EAPI extern int ELPUT_EVENT_SWITCH;
 
 /**
  * @file
