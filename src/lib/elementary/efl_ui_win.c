@@ -5585,6 +5585,52 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
    if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
+   if (!efl_gfx_visible_get(obj))
+     {
+        // Chose to use env var so this will also translate more easily
+        // to wayland. yes - we can get x atoms to figure out if wm is
+        // enlightenment, but this works just as well. for wl we'd need
+        // an alternate wl specific way... this below works better IMHO
+        const char *s = getenv("DESKTOP");
+
+        if ((s) && (!strcasecmp(s, "Enlightenment")))
+          {
+#ifdef HAVE_ELEMENTARY_X
+             if (sd->x.xwin)
+               {
+                  static Ecore_X_Atom state = 0;
+                  static Ecore_X_Atom centered = 0;
+
+                  if (!centered) centered = ecore_x_atom_get
+                    ("__E_ATOM_WINDOW_STATE_CENTERED");
+                  if (!state) state = ecore_x_atom_get
+                    ("__E_ATOM_WINDOW_STATE");
+                  ecore_x_window_prop_card32_set(sd->x.xwin, state, &centered, 1);
+               }
+#endif
+// XXX: what to do with wayland?
+             return;
+          }
+        // not e - fall back to manually placing on what we think the screen
+        // is/will be... to do this move window to where pointer is first
+#ifdef HAVE_ELEMENTARY_X
+        if (sd->x.xwin)
+          {
+             int x = 0, y = 0;
+
+             if (sd->req_wh)
+               {
+                  win_w = sd->req_w;
+                  win_h = sd->req_h;
+               }
+             else evas_object_geometry_get(obj, NULL, NULL, &win_w, &win_h);
+             ecore_x_pointer_root_xy_get(&x, &y);
+             ecore_evas_move(sd->ee, x - (win_w / 2), y - (win_h / 2));
+          }
+#endif
+// XXX: what to do with wayland?
+     }
+
    ecore_evas_screen_geometry_get(sd->ee,
                                   &screen_x, &screen_y,
                                   &screen_w, &screen_h);
