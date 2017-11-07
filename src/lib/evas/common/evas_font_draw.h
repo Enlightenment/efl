@@ -1,5 +1,5 @@
 #ifndef _EVAS_FONT_DRAW_H
-#define _EVAS_FONT_DRAW_
+#define _EVAS_FONT_DRAW_H
 
 #include "evas_common_private.h"
 
