@@ -12,8 +12,6 @@
 #include "elm_priv.h"
 #include "efl_ui_slider_private.h"
 #include "elm_widget_layout.h"
-
-#include "efl_ui_slider_part.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_SLIDER_CLASS
