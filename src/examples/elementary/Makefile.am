@@ -36,6 +36,8 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_srcdir)/src/lib/elementary \
 -I$(top_builddir)/src/lib/elementary \
+-I$(top_srcdir)/src/lib/elocation\
+-I$(top_builddir)/src/lib/elocation\
 -DPACKAGE_DATA_DIR="\"$(datadir)/elementary\"" \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -61,7 +63,8 @@ $(top_builddir)/src/lib/ecore_imf_evas/libecore_imf_evas.la \
 $(top_builddir)/src/lib/embryo/libembryo.la \
 $(top_builddir)/src/lib/edje/libedje.la \
 $(top_builddir)/src/lib/elementary/libelementary.la \
-$(top_builddir)/src/lib/ethumb_client/libethumb_client.la
+$(top_builddir)/src/lib/ethumb_client/libethumb_client.la \
+$(top_builddir)/src/lib/elocation/libelocation.la
 
 SRCS = \
 actionslider_example_01.c \
