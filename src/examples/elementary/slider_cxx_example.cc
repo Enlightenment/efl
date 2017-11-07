@@ -30,7 +30,9 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::ui::Image ic2(instantiate, win);
    ic2.icon_set("folder");
    ic2.scalable_set(false, false);
-   efl::eo::downcast<efl::Container>(sl2.part("end")).content_set(ic2);
+   // FIXME: C++ part API needs special reference handling! This will show ERR!
+   efl::eo::downcast<efl::Container>(sl2.part("elm.swallow.end"))
+         .content_set(ic2);
 
    sl2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl2);
@@ -48,8 +50,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl4);
 
    efl::ui::Slider sl5(instantiate, win);
-   sl5.indicator_format_set("%1.2f");
-   sl4.direction_set(EFL_UI_DIR_UP);
+
+   // FIXME: C++ part API needs special reference handling! This will show ERR!
+   efl::eo::downcast<efl::ui::slider::Part>(sl5.part("indicator"))
+         .format_string_set("%1.2f");
+
+   sl5.direction_set(EFL_UI_DIR_UP);
    sl5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl5);
 
