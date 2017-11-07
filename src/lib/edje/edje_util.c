@@ -1909,9 +1909,10 @@ edje_object_part_object_get(const Eo *obj, const char *part)
    return rp->object;
 }
 
-EOLIAN void
-_edje_object_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
+EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data)
 {
+   Edje *ed = _edje_fetch(obj);
+   if (!ed) return;
    ed->item_provider.func = func;
    ed->item_provider.data = data;
 }
