@@ -13,31 +13,9 @@ static int _evas_vg_loader_svg_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_vg_loader_svg_log_dom, __VA_ARGS__)
 
-typedef Svg_Node *(*Factory_Method)(Svg_Node *parent, const char *buf, unsigned buflen);
-
-typedef Svg_Style_Gradient *(*Gradient_Factory_Method)(const char *buf, unsigned buflen);
-
-typedef struct _Evas_SVG_Loader Evas_SVG_Loader;
-struct _Evas_SVG_Loader
-{
-   Eina_Array *stack;
-   Svg_Node *doc;
-   Svg_Node *def;
-   Svg_Style_Gradient *gradient;
-   int level;
-   Eina_Bool result:1;
-};
-
-/* length type to recalculate %, pt, pc, mm, cm etc*/
-typedef enum {
-   SVG_PARSER_LENGTH_VERTICAL,
-   SVG_PARSER_LENGTH_HORIZONTAL,
-   /* in case of, for example, radius of radial gradient */
-   SVG_PARSER_LENGTH_OTHER
-} SVG_Parser_Length_Type;
-
 /* Global struct for working global cases during the parse */
-typedef struct {
+typedef struct _Evas_SVG_Parser Evas_SVG_Parser;
+struct _Evas_SVG_Parser {
    struct {
       int x, y, width, height;
    } global;
@@ -46,8 +24,36 @@ typedef struct {
       Eina_Bool fx_parsed;
       Eina_Bool fy_parsed;
    } gradient;
-} Evas_SVG_Parsing;
-static Evas_SVG_Parsing svg_parse;
+
+   Svg_Node *node;
+   Svg_Style_Gradient *style_grad;
+   Efl_Gfx_Gradient_Stop *grad_stop;
+};
+
+typedef struct _Evas_SVG_Loader Evas_SVG_Loader;
+struct _Evas_SVG_Loader
+{
+   Eina_Array *stack;
+   Svg_Node *doc;
+   Svg_Node *def;
+   Svg_Style_Gradient *gradient;
+   Evas_SVG_Parser *svg_parse;
+   int level;
+   Eina_Bool result:1;
+};
+
+
+typedef Svg_Node *(*Factory_Method)(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen);
+
+typedef Svg_Style_Gradient *(*Gradient_Factory_Method)(Evas_SVG_Loader *loader, const char *buf, unsigned buflen);
+
+/* length type to recalculate %, pt, pc, mm, cm etc*/
+typedef enum {
+   SVG_PARSER_LENGTH_VERTICAL,
+   SVG_PARSER_LENGTH_HORIZONTAL,
+   /* in case of, for example, radius of radial gradient */
+   SVG_PARSER_LENGTH_OTHER
+} SVG_Parser_Length_Type;
 
 char *
 _skip_space(const char *str, const char *end)
@@ -94,7 +100,7 @@ _parse_number(const char **content, double *number)
  * is required, but for now default w3 constants would be used
  */
 static inline double
-_to_double(const char *str, SVG_Parser_Length_Type type)
+_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Length_Type type)
 {
    double parsed_value = strtod(str, NULL);
 
@@ -111,13 +117,13 @@ _to_double(const char *str, SVG_Parser_Length_Type type)
    else if (strstr(str, "%"))
      {
         if (type == SVG_PARSER_LENGTH_VERTICAL)
-          parsed_value = (parsed_value / 100.0) * svg_parse.global.height;
+          parsed_value = (parsed_value / 100.0) * svg_parse->global.height;
         else if (type == SVG_PARSER_LENGTH_HORIZONTAL)
-          parsed_value = (parsed_value / 100.0) * svg_parse.global.width;
+          parsed_value = (parsed_value / 100.0) * svg_parse->global.width;
         else // if other then it's radius
           {
-             double max = svg_parse.global.width;
-             if (max < svg_parse.global.height) max = svg_parse.global.height;
+             double max = svg_parse->global.width;
+             if (max < svg_parse->global.height) max = svg_parse->global.height;
              parsed_value = (parsed_value / 100.0) * max;
           }
      }
@@ -131,7 +137,7 @@ _to_double(const char *str, SVG_Parser_Length_Type type)
  * Turn gradient variables into percentages
  */
 static inline double
-_gradient_to_double(const char *str, SVG_Parser_Length_Type type)
+_gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Length_Type type)
 {
    char *end = NULL;
 
@@ -151,12 +157,12 @@ _gradient_to_double(const char *str, SVG_Parser_Length_Type type)
     * https://www.w3.org/TR/2015/WD-SVG2-20150915/coords.html
     */
    if (type == SVG_PARSER_LENGTH_VERTICAL)
-     max = svg_parse.global.height;
+     max = svg_parse->global.height;
    else if (type == SVG_PARSER_LENGTH_HORIZONTAL)
-     max = svg_parse.global.width;
+     max = svg_parse->global.width;
    else if (type == SVG_PARSER_LENGTH_OTHER)
-     max = sqrt(pow(svg_parse.global.height, 2) +
-                pow(svg_parse.global.width, 2)) / sqrt(2.0);
+     max = sqrt(pow(svg_parse->global.height, 2) +
+                pow(svg_parse->global.width, 2)) / sqrt(2.0);
 
    if (strstr(str, "cm"))
      parsed_value = parsed_value * 35.43307;
@@ -763,7 +769,8 @@ static Eina_Bool _attr_style_node(void *data, const char *str);
 static Eina_Bool
 _attr_parse_svg_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node *node = loader->svg_parse->node;
    Svg_Doc_Node *doc = &(node->node.doc);
    Svg_Length_Type type;
 
@@ -785,13 +792,13 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
                   if (_parse_number(&value, &doc->vw))
                     {
                        _parse_number(&value, &doc->vh);
-                       svg_parse.global.height = doc->vh;
+                       loader->svg_parse->global.height = doc->vh;
                     }
-                  svg_parse.global.width = doc->vw;
+                  loader->svg_parse->global.width = doc->vw;
                }
-             svg_parse.global.y = doc->vy;
+             loader->svg_parse->global.y = doc->vy;
           }
-        svg_parse.global.x = doc->vx;
+        loader->svg_parse->global.x = doc->vx;
      }
    else if (!strcmp(key, "preserveAspectRatio"))
      {
@@ -800,18 +807,18 @@ _attr_parse_svg_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 //https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
 static void
-_handle_paint_attr(Svg_Paint* paint, const char *value)
+_handle_paint_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Paint* paint, const char *value)
 {
    if (!strcmp(value, "none"))
      {
@@ -829,78 +836,78 @@ _handle_paint_attr(Svg_Paint* paint, const char *value)
 }
 
 static void
-_handle_color_attr(Svg_Node* node, const char *value)
+_handle_color_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
    _to_color(value, &style->r, &style->g, &style->b, NULL);
 }
 
 static void
-_handle_fill_attr(Svg_Node* node, const char *value)
+_handle_fill_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
    style->fill.flags |= SVG_FILL_FLAGS_PAINT;
-   _handle_paint_attr(&style->fill.paint, value);
+   _handle_paint_attr(loader, &style->fill.paint, value);
 }
 
 static void
-_handle_stroke_attr(Svg_Node* node, const char *value)
+_handle_stroke_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    Svg_Style_Property *style = node->style;
    style->stroke.flags |= SVG_STROKE_FLAGS_PAINT;
-   _handle_paint_attr(&style->stroke.paint, value);
+   _handle_paint_attr(loader, &style->stroke.paint, value);
 }
 
 static void
-_handle_stroke_opacity_attr(Svg_Node* node, const char *value)
+_handle_stroke_opacity_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_OPACITY;
    node->style->stroke.opacity = _to_opacity(value);
 }
 
 static void
-_handle_stroke_width_attr(Svg_Node* node, const char *value)
+_handle_stroke_width_attr(Evas_SVG_Loader *loader, Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_WIDTH;
-   node->style->stroke.width = _to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   node->style->stroke.width = _to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
 }
 
 static void
-_handle_stroke_linecap_attr(Svg_Node* node, const char *value)
+_handle_stroke_linecap_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_CAP;
    node->style->stroke.cap = _to_line_cap(value);
 }
 
 static void
-_handle_stroke_linejoin_attr(Svg_Node* node, const char *value)
+_handle_stroke_linejoin_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_JOIN;
    node->style->stroke.join = _to_line_join(value);
 }
 
 static void
-_handle_fill_rule_attr(Svg_Node* node, const char *value)
+_handle_fill_rule_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->fill.flags |= SVG_FILL_FLAGS_FILL_RULE;
    node->style->fill.fill_rule = _to_fill_rule(value);
 }
 
 static void
-_handle_fill_opacity_attr(Svg_Node* node, const char *value)
+_handle_fill_opacity_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->fill.flags |= SVG_FILL_FLAGS_OPACITY;
    node->style->fill.opacity = _to_opacity(value);
 }
 
 static void
-_handle_transform_attr(Svg_Node* node, const char *value)
+_handle_transform_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->transform = _parse_transformation_matrix(value);
 }
 
 
-typedef void (*Style_Method)(Svg_Node *node, const char *value);
+typedef void (*Style_Method)(Evas_SVG_Loader *loader, Svg_Node *node, const char *value);
 
 #define STYLE_DEF(Name, Name1)       \
   { #Name, sizeof (#Name), _handle_##Name1##_attr}
@@ -925,7 +932,8 @@ static const struct {
 static Eina_Bool
 _parse_style_attr(void *data, const char *key, const char *value)
 {
-   Svg_Node* node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node* node = loader->svg_parse->node;
    unsigned int i;
    int sz;
 
@@ -938,7 +946,7 @@ _parse_style_attr(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (style_tags) / sizeof(style_tags[0]); i++)
      if (style_tags[i].sz - 1 == sz && !strncmp(style_tags[i].tag, key, sz))
        {
-          style_tags[i].tag_handler(node, value);
+          style_tags[i].tag_handler(loader, node, value);
           return EINA_TRUE;
        }
 
@@ -959,11 +967,12 @@ _attr_style_node(void *data, const char *str)
 static Eina_Bool
 _attr_parse_g_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node* node = loader->svg_parse->node;
 
    if (!strcmp(key, "style"))
      {
-        return _attr_style_node(node, value);
+        return _attr_style_node(loader, value);
      }
    else if (!strcmp(key, "transform"))
      {
@@ -975,7 +984,7 @@ _attr_parse_g_node(void *data, const char *key, const char *value)
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
@@ -1024,7 +1033,7 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
 }
 
 static Svg_Node *
-_create_defs_node(Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
+_create_defs_node(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
 {
    Svg_Node *node = _create_node(NULL, SVG_NODE_DEFS);
    eina_simple_xml_attributes_parse(buf, buflen,
@@ -1033,29 +1042,30 @@ _create_defs_node(Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, uns
 }
 
 static Svg_Node *
-_create_g_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_g_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_G);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_G);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_g_node, node);
-   return node;
+                                    _attr_parse_g_node, loader);
+   return loader->svg_parse->node;
 }
 
 static Svg_Node *
-_create_svg_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_svg_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_DOC);
-   Svg_Doc_Node *doc = &(node->node.doc);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_DOC);
+   Svg_Doc_Node *doc = &(loader->svg_parse->node->node.doc);
 
    doc->preserve_aspect = EINA_TRUE;
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_svg_node, node);
-   return node;
+                                    _attr_parse_svg_node, loader);
+
+   return loader->svg_parse->node;
 }
 
 static Svg_Node *
-_create_switch_node(Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
+_create_switch_node(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
 {
    return NULL;
 }
@@ -1063,7 +1073,8 @@ _create_switch_node(Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, u
 static Eina_Bool
 _attr_parse_path_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node* node = loader->svg_parse->node;
    Svg_Path_Node *path = &(node->node.path);
 
    if (!strcmp(key, "d"))
@@ -1072,7 +1083,7 @@ _attr_parse_path_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -1080,19 +1091,20 @@ _attr_parse_path_node(void *data, const char *key, const char *value)
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 static Svg_Node *
-_create_path_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_path_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_PATH);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_PATH);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_path_node, node);
-   return node;
+                                    _attr_parse_path_node, loader);
+
+   return loader->svg_parse->node;
 }
 
 #define CIRCLE_DEF(Name, Field, Type)       \
@@ -1115,7 +1127,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_circle_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node* node = loader->svg_parse->node;
    Svg_Circle_Node *circle = &(node->node.circle);
    unsigned int i;
    unsigned char *array;
@@ -1125,13 +1138,14 @@ _attr_parse_circle_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (circle_tags) / sizeof(circle_tags[0]); i++)
      if (circle_tags[i].sz - 1 == sz && !strncmp(circle_tags[i].tag, key, sz))
        {
-          *((double*) (array + circle_tags[i].offset)) = _to_double(value, circle_tags[i].type);
+          *((double*) (array + circle_tags[i].offset)) =
+             _to_double(loader->svg_parse, value, circle_tags[i].type);
           return EINA_TRUE;
        }
 
    if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -1139,19 +1153,19 @@ _attr_parse_circle_node(void *data, const char *key, const char *value)
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 static Svg_Node *
-_create_circle_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_circle_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_CIRCLE);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_CIRCLE);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_circle_node, node);
-   return node;
+                                    _attr_parse_circle_node, loader);
+   return loader->svg_parse->node;
 }
 
 #define ELLIPSE_DEF(Name, Field, Type)       \
@@ -1175,7 +1189,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_ellipse_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node* node = loader->svg_parse->node;
    Svg_Ellipse_Node *ellipse = &(node->node.ellipse);
    unsigned int i;
    unsigned char *array;
@@ -1185,7 +1200,8 @@ _attr_parse_ellipse_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (ellipse_tags) / sizeof(ellipse_tags[0]); i++)
      if (ellipse_tags[i].sz - 1 == sz && !strncmp(ellipse_tags[i].tag, key, sz))
        {
-          *((double*) (array + ellipse_tags[i].offset)) = _to_double(value, ellipse_tags[i].type);
+          *((double*) (array + ellipse_tags[i].offset)) =
+             _to_double(loader->svg_parse, value, ellipse_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1195,23 +1211,23 @@ _attr_parse_ellipse_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 static Svg_Node *
-_create_ellipse_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_ellipse_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_ELLIPSE);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_ELLIPSE);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_ellipse_node, node);
-   return node;
+                                    _attr_parse_ellipse_node, loader);
+   return loader->svg_parse->node;
 }
 
 static void
@@ -1260,7 +1276,8 @@ error_alloc:
 static Eina_Bool
 _attr_parse_polygon_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node *node = loader->svg_parse->node;
    Svg_Polygon_Node *polygon = NULL;
 
    if (node->type == SVG_NODE_POLYGON)
@@ -1275,7 +1292,7 @@ _attr_parse_polygon_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else if (!strcmp(key, "id"))
      {
@@ -1283,29 +1300,29 @@ _attr_parse_polygon_node(void *data, const char *key, const char *value)
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 static Svg_Node *
-_create_polygon_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_polygon_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_POLYGON);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_POLYGON);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_polygon_node, node);
-   return node;
+                                    _attr_parse_polygon_node, loader);
+   return loader->svg_parse->node;
 }
 
 static Svg_Node *
-_create_polyline_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_polyline_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_POLYLINE);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_POLYLINE);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_polygon_node, node);
-   return node;
+                                    _attr_parse_polygon_node, loader);
+   return loader->svg_parse->node;
 }
 
 #define RECT_DEF(Name, Field, Type)       \
@@ -1331,7 +1348,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_rect_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node *node = loader->svg_parse->node;
    Svg_Rect_Node *rect = & (node->node.rect);
    unsigned int i;
    unsigned char *array;
@@ -1341,7 +1359,7 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (rect_tags) / sizeof(rect_tags[0]); i++)
      if (rect_tags[i].sz - 1 == sz && !strncmp(rect_tags[i].tag, key, sz))
        {
-          *((double*) (array + rect_tags[i].offset)) = _to_double(value, rect_tags[i].type);
+          *((double*) (array + rect_tags[i].offset)) = _to_double(loader->svg_parse, value, rect_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1351,11 +1369,11 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
 
    if (!EINA_DBL_EQ(rect->rx, 0) && EINA_DBL_EQ(rect->ry, 0)) rect->ry = rect->rx;
@@ -1365,13 +1383,13 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
 }
 
 static Svg_Node *
-_create_rect_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_rect_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_RECT);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_RECT);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_rect_node, node);
-   return node;
+                                    _attr_parse_rect_node, loader);
+   return loader->svg_parse->node;
 }
 
 #define LINE_DEF(Name, Field, Type)       \
@@ -1395,7 +1413,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_line_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node *node = loader->svg_parse->node;
    Svg_Line_Node *line = & (node->node.line);
    unsigned int i;
    unsigned char *array;
@@ -1405,7 +1424,7 @@ _attr_parse_line_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (line_tags) / sizeof(line_tags[0]); i++)
      if (line_tags[i].sz - 1 == sz && !strncmp(line_tags[i].tag, key, sz))
        {
-          *((double*) (array + line_tags[i].offset)) = _to_double(value, line_tags[i].type);
+          *((double*) (array + line_tags[i].offset)) = _to_double(loader->svg_parse, value, line_tags[i].type);
           return EINA_TRUE;
        }
 
@@ -1415,23 +1434,23 @@ _attr_parse_line_node(void *data, const char *key, const char *value)
      }
    else if (!strcmp(key, "style"))
      {
-        _attr_style_node(node, value);
+        _attr_style_node(loader, value);
      }
    else
      {
-        _parse_style_attr(node, key, value);
+        _parse_style_attr(loader, key, value);
      }
    return EINA_TRUE;
 }
 
 static Svg_Node *
-_create_line_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_line_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_LINE);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_LINE);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_line_node, node);
-   return node;
+                                    _attr_parse_line_node, loader);
+   return loader->svg_parse->node;
 }
 
 static Eina_Stringshare *
@@ -1601,7 +1620,8 @@ _clone_node(Svg_Node *from, Svg_Node *parent)
 static Eina_Bool
 _attr_parse_use_node(void *data, const char *key, const char *value)
 {
-   Svg_Node *defs, *node_from, *node = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Node *defs, *node_from, *node = loader->svg_parse->node;
    Eina_Stringshare *id;
 
    if (!strcmp(key, "xlink:href"))
@@ -1620,13 +1640,13 @@ _attr_parse_use_node(void *data, const char *key, const char *value)
 }
 
 static Svg_Node *
-_create_use_node(Svg_Node *parent, const char *buf, unsigned buflen)
+_create_use_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
-   Svg_Node *node = _create_node(parent, SVG_NODE_G);
+   loader->svg_parse->node = _create_node(parent, SVG_NODE_G);
 
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_use_node, node);
-   return node;
+                                    _attr_parse_use_node, loader);
+   return loader->svg_parse->node;
 }
 
 #define TAG_DEF(Name)                                   \
@@ -1695,42 +1715,42 @@ _parse_spread_value(const char *value)
 }
 
 static void
-_handle_radial_cx_attr(Svg_Radial_Gradient* radial, const char *value)
+_handle_radial_cx_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->cx = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
-   if (!svg_parse.gradient.fx_parsed)
+   radial->cx = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
+   if (!loader->svg_parse->gradient.fx_parsed)
      radial->fx = radial->cx;
 }
 
 static void
-_handle_radial_cy_attr(Svg_Radial_Gradient* radial, const char *value)
+_handle_radial_cy_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->cy = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
-   if (!svg_parse.gradient.fy_parsed)
+   radial->cy = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
+   if (!loader->svg_parse->gradient.fy_parsed)
      radial->fy = radial->cy;
 }
 
 static void
-_handle_radial_fx_attr(Svg_Radial_Gradient* radial, const char *value)
+_handle_radial_fx_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->fx = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
-   svg_parse.gradient.fx_parsed = EINA_TRUE;
+   radial->fx = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
+   loader->svg_parse->gradient.fx_parsed = EINA_TRUE;
 }
 
 static void
-_handle_radial_fy_attr(Svg_Radial_Gradient* radial, const char *value)
+_handle_radial_fy_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->fy = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
-   svg_parse.gradient.fy_parsed = EINA_TRUE;
+   radial->fy = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
+   loader->svg_parse->gradient.fy_parsed = EINA_TRUE;
 }
 
 static void
-_handle_radial_r_attr(Svg_Radial_Gradient* radial, const char *value)
+_handle_radial_r_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, const char *value)
 {
-   radial->r = _gradient_to_double(value, SVG_PARSER_LENGTH_OTHER);
+   radial->r = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_OTHER);
 }
 
-typedef void (*Radial_Method)(Svg_Radial_Gradient *radial, const char *value);
+typedef void (*Radial_Method)(Evas_SVG_Loader *loader, Svg_Radial_Gradient *radial, const char *value);
 
 #define RADIAL_DEF(Name)       \
   { #Name, sizeof (#Name), _handle_radial_##Name##_attr}
@@ -1750,7 +1770,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
 {
-   Svg_Style_Gradient *grad = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Style_Gradient *grad = loader->svg_parse->style_grad;
    Svg_Radial_Gradient *radial = grad->radial;
    unsigned int i;
    int sz = strlen(key);
@@ -1758,7 +1779,7 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (radial_tags) / sizeof(radial_tags[0]); i++)
      if (radial_tags[i].sz - 1 == sz && !strncmp(radial_tags[i].tag, key, sz))
        {
-          radial_tags[i].tag_handler(radial, value);
+          radial_tags[i].tag_handler(loader, radial, value);
           return EINA_TRUE;
        }
 
@@ -1783,9 +1804,10 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
 }
 
 static Svg_Style_Gradient *
-_create_radialGradient(const char *buf, unsigned buflen)
+_create_radialGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen)
 {
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
+   loader->svg_parse->style_grad = grad;
 
    grad->type = SVG_RADIAL_GRADIENT;
    grad->user_space = EINA_TRUE;
@@ -1799,19 +1821,19 @@ _create_radialGradient(const char *buf, unsigned buflen)
    grad->radial->fy = 0.5;
    grad->radial->r = 0.5;
 
-   svg_parse.gradient.fx_parsed = EINA_FALSE;
-   svg_parse.gradient.fy_parsed = EINA_FALSE;
+   loader->svg_parse->gradient.fx_parsed = EINA_FALSE;
+   loader->svg_parse->gradient.fy_parsed = EINA_FALSE;
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_radial_gradient_node, grad);
+                                    _attr_parse_radial_gradient_node, loader);
 
-   return grad;
-
+   return loader->svg_parse->style_grad;
 }
 
 static Eina_Bool
 _attr_parse_stops(void *data, const char *key, const char *value)
 {
-   Efl_Gfx_Gradient_Stop *stop = data;
+   Evas_SVG_Loader *loader = data;
+   Efl_Gfx_Gradient_Stop *stop = loader->svg_parse->grad_stop;
 
    if (!strcmp(key, "offset"))
      {
@@ -1835,89 +1857,89 @@ _attr_parse_stops(void *data, const char *key, const char *value)
 }
 
 static void
-_handle_linear_x1_attr(Svg_Linear_Gradient* linear, const char *value)
+_handle_linear_x1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x1 = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   linear->x1 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
    if (strstr(value, "%"))
-     svg_parse.gradient.x1_percent = EINA_TRUE;
+     loader->svg_parse->gradient.x1_percent = EINA_TRUE;
 }
 
 static void
-_handle_linear_y1_attr(Svg_Linear_Gradient* linear, const char *value)
+_handle_linear_y1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y1 = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   linear->y1 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
    if (strstr(value, "%"))
-     svg_parse.gradient.y1_percent = EINA_TRUE;
+     loader->svg_parse->gradient.y1_percent = EINA_TRUE;
 }
 
 static void
-_handle_linear_x2_attr(Svg_Linear_Gradient* linear, const char *value)
+_handle_linear_x2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->x2 = _gradient_to_double(value, SVG_PARSER_LENGTH_HORIZONTAL);
+   linear->x2 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
    /* checking if there are no percentage because x2 have default value
     * already set in percentages (100%) */
    if (!strstr(value, "%"))
-     svg_parse.gradient.x2_percent = EINA_FALSE;
+     loader->svg_parse->gradient.x2_percent = EINA_FALSE;
 }
 
 static void
-_handle_linear_y2_attr(Svg_Linear_Gradient* linear, const char *value)
+_handle_linear_y2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
-   linear->y2 = _gradient_to_double(value, SVG_PARSER_LENGTH_VERTICAL);
+   linear->y2 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
    if (strstr(value, "%"))
-     svg_parse.gradient.y2_percent = EINA_TRUE;
+     loader->svg_parse->gradient.y2_percent = EINA_TRUE;
 }
 
 static void
-_recalc_linear_x1_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+_recalc_linear_x1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
 {
-   if (!svg_parse.gradient.x1_percent && !user_space)
+   if (!loader->svg_parse->gradient.x1_percent && !user_space)
      {
         /* Since previous percentage is not required (it was already percent)
          * so oops and make it all back */
-        linear->x1 = linear->x1 * svg_parse.global.width;
+        linear->x1 = linear->x1 * loader->svg_parse->global.width;
      }
-   svg_parse.gradient.x1_percent = EINA_FALSE;
+   loader->svg_parse->gradient.x1_percent = EINA_FALSE;
 }
 
 static void
-_recalc_linear_y1_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+_recalc_linear_y1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
 {
-   if (!svg_parse.gradient.y1_percent && !user_space)
+   if (!loader->svg_parse->gradient.y1_percent && !user_space)
      {
         /* Since previous percentage is not required (it was already percent)
          * so oops and make it all back */
-        linear->y1 = linear->y1 * svg_parse.global.height;
+        linear->y1 = linear->y1 * loader->svg_parse->global.height;
      }
-   svg_parse.gradient.y1_percent = EINA_FALSE;
+   loader->svg_parse->gradient.y1_percent = EINA_FALSE;
 }
 
 static void
-_recalc_linear_x2_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+_recalc_linear_x2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
 {
-   if (!svg_parse.gradient.x2_percent && !user_space)
+   if (!loader->svg_parse->gradient.x2_percent && !user_space)
      {
         /* Since previous percentage is not required (it was already percent)
          * so oops and make it all back */
-        linear->x2 = linear->x2 * svg_parse.global.width;
+        linear->x2 = linear->x2 * loader->svg_parse->global.width;
      }
-   svg_parse.gradient.x2_percent = EINA_FALSE;
+   loader->svg_parse->gradient.x2_percent = EINA_FALSE;
 }
 
 static void
-_recalc_linear_y2_attr(Svg_Linear_Gradient* linear, Eina_Bool user_space)
+_recalc_linear_y2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
 {
-   if (!svg_parse.gradient.y2_percent && !user_space)
+   if (!loader->svg_parse->gradient.y2_percent && !user_space)
      {
         /* Since previous percentage is not required (it was already percent)
          * so oops and make it all back */
-        linear->y2 = linear->y2 * svg_parse.global.height;
+        linear->y2 = linear->y2 * loader->svg_parse->global.height;
      }
-   svg_parse.gradient.y2_percent = EINA_FALSE;
+   loader->svg_parse->gradient.y2_percent = EINA_FALSE;
 }
 
-typedef void (*Linear_Method)(Svg_Linear_Gradient *linear, const char *value);
-typedef void (*Linear_Method_Recalc)(Svg_Linear_Gradient *linear, Eina_Bool user_space);
+typedef void (*Linear_Method)(Evas_SVG_Loader *loader, Svg_Linear_Gradient *linear, const char *value);
+typedef void (*Linear_Method_Recalc)(Evas_SVG_Loader *loader, Svg_Linear_Gradient *linear, Eina_Bool user_space);
 
 #define LINEAR_DEF(Name)       \
   { #Name, sizeof (#Name), _handle_linear_##Name##_attr, _recalc_linear_##Name##_attr}
@@ -1937,7 +1959,8 @@ static const struct {
 static Eina_Bool
 _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
 {
-   Svg_Style_Gradient *grad = data;
+   Evas_SVG_Loader *loader = data;
+   Svg_Style_Gradient *grad = loader->svg_parse->style_grad;
    Svg_Linear_Gradient *linear = grad->linear;
    unsigned int i;
    int sz = strlen(key);
@@ -1945,7 +1968,7 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
    for (i = 0; i < sizeof (linear_tags) / sizeof(linear_tags[0]); i++)
      if (linear_tags[i].sz - 1 == sz && !strncmp(linear_tags[i].tag, key, sz))
        {
-          linear_tags[i].tag_handler(linear, value);
+          linear_tags[i].tag_handler(loader, linear, value);
           return EINA_TRUE;
        }
 
@@ -1970,9 +1993,11 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
 }
 
 static Svg_Style_Gradient *
-_create_linearGradient(const char *buf, unsigned buflen)
+_create_linearGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen)
 {
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
+   loader->svg_parse->style_grad = grad;
+
    unsigned int i;
 
    grad->type = SVG_LINEAR_GRADIENT;
@@ -1982,14 +2007,14 @@ _create_linearGradient(const char *buf, unsigned buflen)
     * Default value of x2 is 100%
     */
    grad->linear->x2 = 1;
-   svg_parse.gradient.x2_percent = EINA_TRUE;
+   loader->svg_parse->gradient.x2_percent = EINA_TRUE;
    eina_simple_xml_attributes_parse(buf, buflen,
-                                    _attr_parse_linear_gradient_node, grad);
+                                    _attr_parse_linear_gradient_node, loader);
 
    for (i = 0; i < sizeof (linear_tags) / sizeof(linear_tags[0]); i++)
-     linear_tags[i].tag_recalc(grad->linear, grad->user_space);
+     linear_tags[i].tag_recalc(loader, grad->linear, grad->user_space);
 
-   return grad;
+   return loader->svg_parse->style_grad;
 }
 
 #define GRADIENT_DEF(Name)                                   \
@@ -2064,13 +2089,13 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
           {
              if (strcmp(tag_name, "svg"))
                return; // Not a valid svg document
-             node = method(NULL, attrs, attrs_length);
+             node = method(loader, NULL, attrs, attrs_length);
              loader->doc = node;
           }
         else
           {
              parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
-             node = method(parent, attrs, attrs_length);
+             node = method(loader, parent, attrs, attrs_length);
           }
         eina_array_push(loader->stack, node);
 
@@ -2083,12 +2108,12 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
    else if ((method = _find_graphics_factory(tag_name)))
      {
         parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
-        node = method(parent, attrs, attrs_length);
+        node = method(loader, parent, attrs, attrs_length);
      }
    else if ((gradient_method = _find_gradient_factory(tag_name)))
      {
         Svg_Style_Gradient *gradient;
-        gradient = gradient_method(attrs, attrs_length);
+        gradient = gradient_method(loader, attrs, attrs_length);
         if (loader->doc->node.doc.defs)
           {
              loader->def->node.defs.gradients = eina_list_append(loader->def->node.defs.gradients, gradient);
@@ -2098,10 +2123,11 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
    else if (!strcmp(tag_name, "stop"))
      {
         Efl_Gfx_Gradient_Stop *stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
+        loader->svg_parse->grad_stop = stop;
         /* default value for opacity */
         stop->a = 255;
         eina_simple_xml_attributes_parse(attrs, attrs_length,
-                                    _attr_parse_stops, stop);
+                                    _attr_parse_stops, loader);
         if (loader->gradient)
           loader->gradient->stops = eina_list_append(loader->gradient->stops, stop);
      }
@@ -2304,7 +2330,7 @@ static Vg_File_Data*
 evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *error EINA_UNUSED)
 {
    Evas_SVG_Loader loader = {
-     NULL, NULL, NULL, NULL, 0, EINA_FALSE
+     NULL, NULL, NULL, NULL, NULL, 0, EINA_FALSE
    };
    const char   *content;
    unsigned int  length;
@@ -2318,6 +2344,7 @@ evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *e
         return NULL;
      }
 
+   loader.svg_parse = calloc(1, sizeof(Evas_SVG_Parser));
    length = eina_file_size_get(f);
    content = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (content)
@@ -2343,7 +2370,8 @@ evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *e
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
      }
-     return vg_common_create_vg_node(loader.doc);
+   free(loader.svg_parse);
+   return vg_common_create_vg_node(loader.doc);
 }
 
 static Evas_Vg_Load_Func evas_vg_load_svg_func =
