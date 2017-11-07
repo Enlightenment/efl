@@ -25,6 +25,7 @@ typedef struct {
    char              **proxies;
    int                 id;
    int                 busy;
+   int                 fails;
 } Efl_Net_Proxy_Helper_Req;
 
 typedef struct {
@@ -205,6 +206,7 @@ static Eina_Bool
 _efl_net_proxy_helper_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *info)
 {
    Ecore_Exe_Event_Del *event = info;
+   int min_fails = 0;
 
    if (!_efl_net_proxy_helper_exe) return EINA_TRUE;
    if (event->exe == _efl_net_proxy_helper_exe)
@@ -222,10 +224,22 @@ _efl_net_proxy_helper_cb_exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, v
                {
                   if ((t - last_respawn) > 5.0) respawn = EINA_TRUE;
                }
+             if (respawn)
+               {
+                  Eina_List *l;
+                  Efl_Net_Proxy_Helper_Req *req;
+
+                  EINA_LIST_FOREACH(_efl_net_proxy_helper_queue, l, req)
+                    {
+                       req->fails++;
+                       if (req->fails > min_fails) min_fails = req->fails;
+                    }
+               }
              locks--;
           }
         eina_spinlock_release(&_efl_net_proxy_helper_queue_lock);
-        if (respawn)
+        if (min_fails >= 5) _efl_net_proxy_helper_cancel();
+        else if (respawn)
           {
              last_respawn = t;
              _efl_net_proxy_helper_spawn();
