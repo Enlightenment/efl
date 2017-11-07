@@ -53,7 +53,8 @@ typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
-Eina_Bool _elm_legacy_add = EINA_FALSE;
+/* FIXME: EAPI because of elm_code_widget test case */
+EAPI Eina_Bool _elm_legacy_add = EINA_FALSE;
 
 struct _Elm_Event_Cb_Data
 {
