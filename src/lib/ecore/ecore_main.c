@@ -285,7 +285,12 @@ int in_main_loop = 0;
 
 static Eina_List *_pending_futures = NULL;
 static Eina_List *_pending_promises = NULL;
+#if (defined __GNUC__) && (__GNUC__ <= 4)
+// GCC 4 does not support compound literal for statics initializers in C99
+static Eina_Value _ecore_exit_code = {0};
+# else
 static Eina_Value _ecore_exit_code = EINA_VALUE_EMPTY;
+#endif
 static int do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static Ecore_Fd_Handler *fd_handler_current = NULL;
