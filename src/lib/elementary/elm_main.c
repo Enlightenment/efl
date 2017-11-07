@@ -1014,7 +1014,6 @@ elm_quicklaunch_prepare(int    argc,
    qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
-        fprintf(stderr, "dlerr: %s\n", dlerror());
         WRN("dlopen('%s') failed: %s", exe2, dlerror());
         free(exe2);
         return EINA_FALSE;
@@ -1046,8 +1045,7 @@ efl_quicklaunch_prepare(int    argc,
                         const char *cwd)
 {
 #ifdef HAVE_FORK
-   char *exe, *exe2, *p;
-   char *exename;
+   char *exe, *exe2;
 
    if (argc <= 0 || argv == NULL) return EINA_FALSE;
 
@@ -1058,74 +1056,37 @@ efl_quicklaunch_prepare(int    argc,
         return EINA_FALSE;
      }
 
-   exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
-   strcpy(exe2, exe);
-   p = strrchr(exe2, '/');
-   if (p) p++;
-   else p = exe2;
-   exename = alloca(strlen(p) + 1);
-   strcpy(exename, p);
-   *p = 0;
-   strcat(p, "../lib/");
-   strcat(p, exename);
-   strcat(p, LIBEXT);
-   if (access(exe2, R_OK | X_OK) != 0)
-     ELM_SAFE_FREE(exe2, free);
+   exe2 = eina_file_path_sanitize(exe);
+
+   ELM_SAFE_FREE(exe, free);
+
    /* Try linking to executable first. Works with PIE files. */
-   qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
-   if (qr_handle)
-     {
-        INF("dlopen('%s') = %p", exe, qr_handle);
-        qre_main = dlsym(qr_handle, "efl_main");
-        qre_pause = dlsym(qr_handle, "efl_pause");
-        qre_resume = dlsym(qr_handle, "efl_resume");
-        qre_terminate = dlsym(qr_handle, "efl_terminate");
-        if (qre_main)
-          {
-             INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
-             free(exe2);
-             free(exe);
-             return EINA_TRUE;
-          }
-        dlclose(qr_handle);
-        qr_handle = NULL;
-     }
-
-   if (!exe2)
-     {
-        WRN("not quicklauncher capable: '%s'", exe);
-        free(exe);
-        return EINA_FALSE;
-     }
-   free(exe);
-
-   /* Open companion .so file.
-    * Support for legacy quicklaunch apps with separate library.
-    */
    qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
-        fprintf(stderr, "dlerr: %s\n", dlerror());
-        WRN("dlopen('%s') failed: %s", exe2, dlerror());
+        ERR("dlopen('%s') failed: %s", exe2, dlerror());
         free(exe2);
         return EINA_FALSE;
      }
+
    INF("dlopen('%s') = %p", exe2, qr_handle);
    qre_main = dlsym(qr_handle, "efl_main");
-   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
+   INF("dlsym(%p, 'efl_main') = %p", qr_handle, qre_main);
    qre_pause = dlsym(qr_handle, "efl_pause");
    qre_resume = dlsym(qr_handle, "efl_resume");
    qre_terminate = dlsym(qr_handle, "efl_terminate");
-   if (!qre_main)
+   if (qre_main)
      {
-        WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
-        dlclose(qr_handle);
-        qr_handle = NULL;
         free(exe2);
-        return EINA_FALSE;
+        return EINA_TRUE;
      }
+
+   WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
+   dlclose(qr_handle);
+   qr_handle = NULL;
    free(exe2);
-   return EINA_TRUE;
+
+   return EINA_FALSE;
 #else
    (void)argc;
    (void)argv;
