@@ -47,9 +47,12 @@ typedef unsigned long long    DATA64;
 #include <Eina.h>
 
 #define LK(x)  Eina_Lock x
-#define LKU(x) eina_lock_release(&(x))
-#define LKL(x) eina_lock_take(&(x))
+#define LKI(x) eina_lock_new(&(x))
 #define LKD(x) eina_lock_free(&(x))
+#define LKL(x) eina_lock_take(&(x))
+#define LKT(x) eina_lock_take_try(&(x))
+#define LKU(x) eina_lock_release(&(x))
+#define LKDBG(x) eina_lock_debug(&(x))
 
 #include "evas_text_utils.h"
 
