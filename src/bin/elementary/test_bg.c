@@ -272,13 +272,13 @@ test_bg_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 }
 
 static void
-_colorsel_cb(void *data, const Efl_Event *ev)
+_colorsel_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Efl_Ui_Win *win = data;
    int r, g, b, a;
 
    // Solid color API
-   elm_colorselector_color_get(ev->object, &r, &g, &b, &a);
+   elm_colorselector_color_get(obj, &r, &g, &b, &a);
    efl_gfx_color_set(efl_part(win, "background"), r, g, b, a);
    efl_gfx_color_get(efl_part(win, "background"), &r, &g, &b, &a);
    printf("bg color: %d %d %d %d\n", r, g, b, a);
@@ -327,7 +327,7 @@ _image_cb(void *data, const Efl_Event *ev)
 void
 test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box;
+   Evas_Object *win, *box, *cs;
    char buf[PATH_MAX];
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
@@ -340,15 +340,16 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
                  efl_content_set(win, efl_added));
 
-   efl_add(ELM_COLORSELECTOR_CLASS, win,
-           elm_colorselector_mode_set(efl_added, ELM_COLORSELECTOR_PALETTE),
-           elm_colorselector_palette_color_add(efl_added, 64, 64, 64, 255),
-           elm_colorselector_palette_color_add(efl_added, 255, 128, 128, 255),
-           elm_colorselector_palette_color_add(efl_added, 0, 64, 64, 64),
-           elm_colorselector_palette_color_add(efl_added, 0, 0, 0, 0),
-           efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, _colorsel_cb, win),
-           efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
-           efl_pack(box, efl_added));
+   cs = elm_colorselector_add(win);
+   elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_PALETTE);
+   elm_colorselector_palette_color_add(cs, 64, 64, 64, 255);
+   elm_colorselector_palette_color_add(cs, 255, 128, 128, 255);
+   elm_colorselector_palette_color_add(cs, 0, 64, 64, 64);
+   elm_colorselector_palette_color_add(cs, 0, 0, 0, 0);
+   evas_object_smart_callback_add(cs, "color,item,selected", _colorsel_cb, win);
+   evas_object_size_hint_align_set(cs, 0.5, 0.5);
+   evas_object_show(cs);
+   efl_pack(box, cs);
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
