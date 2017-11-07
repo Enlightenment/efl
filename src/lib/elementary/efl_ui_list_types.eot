@@ -2,4 +2,5 @@ struct Efl.Ui.List.LayoutItem {
    layout: Efl.Ui.Layout;
    children: Efl.Model;
    index: int;
+   min: Eina.Size2D;
 }
