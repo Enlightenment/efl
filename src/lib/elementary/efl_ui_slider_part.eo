@@ -1,0 +1,9 @@
+class Efl.Ui.Slider.Part (Efl.Ui.Layout.Part, Efl.Ui.Format)
+{
+   [[Elementary slider internal part class]]
+   data: null;
+   implements {
+      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.format_string { set; get; }
+   }
+}

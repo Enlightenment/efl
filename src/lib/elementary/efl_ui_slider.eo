@@ -8,46 +8,12 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
    methods {
-      @property indicator_format {
-         set {
-            [[Set the format string for the indicator label.
-
-              The slider may display its value somewhere else then unit label,
-              for example, above the slider knob that is dragged around. This
-              function sets the format string used for this.
-
-              If $null, indicator label won't be visible. If not it sets the
-              format string for the label text. To the label text is provided
-              a floating point value, so the label text can display up to 1
-              floating point value. Note that this is optional.
-
-              Use a format string such as "%1.2f meters" for example, and it
-              will display values like: "3.14 meters" for a value equal to
-              3.14159.
-
-              Default is indicator label disabled.
-            ]]
-         }
-         get {
-            [[Get the indicator label format of the slider.
-
-              The slider may display its value somewhere else then unit label,
-              for example, above the slider knob that is dragged around. This
-              function gets the format string used for this.
-            ]]
-         }
-         values {
-            indicator: string @nullable; [[The format string for the indicator display.]]
-         }
-      }
       @property indicator_show {
          set {
             [[Set whether to enlarge slider indicator (augmented knob) or not.
 
               By default, indicator will be bigger while dragged by the user.
 
-              Warning: It won't display values set with @.indicator_format.set
-              if you disable indicator.
             ]]
          }
          get {
@@ -98,18 +64,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
             indicator_visible_mode: Efl.Ui.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
          }
       }
-      @property indicator_format_function {
-         set {
-            [[Set the format function pointer for the indicator label
-
-              Set the callback function to format the indicator string.
-            ]]
-         }
-         values {
-            func: slider_func_type @nullable; [[The indicator format function.]]
-            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
-         }
-      }
    }
    implements {
       class.constructor;
@@ -130,6 +84,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Part.part;
    }
    events {
       changed; [[Called when slider changed]]

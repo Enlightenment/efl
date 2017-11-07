@@ -29,11 +29,6 @@ struct _Efl_Ui_Slider_Data
    Evas_Object          *spacer, *popup, *popup2, *track, *track2;
    Ecore_Timer          *delay;
 
-   const char           *indicator;
-
-   char                 *(*indicator_format_func)(double val);
-   void                  (*indicator_format_free)(char *str);
-
    double                val, val_min, val_max, val2, step;
 
    Ecore_Timer           *wheel_indicator_timer;
@@ -51,6 +46,13 @@ struct _Efl_Ui_Slider_Data
    Eina_Free_Cb          format_free_cb;
    void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
+
+   Efl_Ui_Format_Func_Cb indi_format_cb;
+   Eina_Free_Cb          indi_format_free_cb;
+   void                  *indi_format_cb_data;
+   Eina_Strbuf           *indi_format_strbuf;
+   const char            *indi_template;
+
 
    Eina_Bool             indicator_show : 1;
    Eina_Bool             spacer_down : 1;

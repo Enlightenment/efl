@@ -231,4 +231,56 @@ EAPI void elm_slider_range_set(Evas_Object *obj, double from, double to);
  */
 EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to);
 
+/**
+ * @brief Set the format string for the indicator label.
+ *
+ * The slider may display its value somewhere else then unit label, for
+ * example, above the slider knob that is dragged around. This function sets
+ * the format string used for this.
+ *
+ * If @c null, indicator label won't be visible. If not it sets the format
+ * string for the label text. To the label text is provided a floating point
+ * value, so the label text can display up to 1 floating point value. Note that
+ * this is optional.
+ *
+ * Use a format string such as "%1.2f meters" for example, and it will display
+ * values like: "3.14 meters" for a value equal to 3.14159.
+ *
+ * Default is indicator label disabled.
+ *
+ * @param[in] obj The object.
+ * @param[in] indicator The format string for the indicator display.
+ *
+ * @ingroup Elm_Slider
+ */
+ EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+ 
+ /**
+  * @brief Get the indicator label format of the slider.
+  *
+  * The slider may display its value somewhere else then unit label, for
+  * example, above the slider knob that is dragged around. This function gets
+  * the format string used for this.
+  *
+  * @param[in] obj The object.
+  *
+  * @return The format string for the indicator display.
+  *
+  * @ingroup Elm_Slider
+  */
+ EAPI const char *elm_slider_indicator_format_get(const Evas_Object *obj);
+
+ /**
+ * @brief Set the format function pointer for the indicator label
+ *
+ * Set the callback function to format the indicator string.
+ *
+ * @param[in] obj The object.
+ * @param[in] func The indicator format function.
+ * @param[in] free_func The freeing function for the format string.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+
 #include "efl_ui_slider.eo.legacy.h"

@@ -38,7 +38,7 @@ _default_format_free_cb(void *data)
 {
    Efl_Ui_Format_Data *sd = data;
 
-   if (sd->template)
+   if (sd && sd->template)
      {
         eina_stringshare_del(sd->template);
         sd->template = NULL;
