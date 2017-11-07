@@ -572,7 +572,11 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
     * You can also set the title of the window at the same time.
     *   ex) win = elm_win_util_standard_add("main", "Elementary Tests"); */
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
-   if (!win) exit(1);
+   if (!win)
+     {
+        efl_exit(1);
+        return ;
+     }
 
    explode_win_enable(win);
    /* Set the title of the window - This is in the titlebar. */
