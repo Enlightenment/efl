@@ -120,9 +120,9 @@ elm_bg_add(Evas_Object *parent)
 EOLIAN static Eo *
 _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED)
 {
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
