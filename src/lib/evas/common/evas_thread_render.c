@@ -1,5 +1,6 @@
 #include "evas_common_private.h"
 
+#include "Ecore.h"
 #include <assert.h>
 
 static Eina_Thread evas_thread_worker;
@@ -180,6 +181,43 @@ out:
    return NULL;
 }
 
+static void
+evas_thread_fork_reset(void *data EINA_UNUSED)
+{
+   if (!eina_lock_new(&evas_thread_queue_lock))
+     {
+        CRI("Could not create draw thread lock (%m)");
+        goto on_error;
+     }
+   if (!eina_condition_new(&evas_thread_queue_condition, &evas_thread_queue_lock))
+     {
+        CRI("Could not create draw thread condition (%m)");
+        goto on_error;
+     }
+
+   if (!eina_thread_create(&evas_thread_worker, EINA_THREAD_NORMAL, -1,
+                           evas_thread_worker_func, NULL))
+     {
+        CRI("Could not recreate draw thread.");
+        goto on_error;
+     }
+
+   return ;
+
+ on_error:
+   eina_lock_free(&evas_thread_queue_lock);
+   eina_condition_free(&evas_thread_queue_condition);
+
+   evas_thread_worker = 0;
+
+   free(evas_thread_queue_cache);
+   evas_thread_queue_cache = NULL;
+   evas_thread_queue_cache_max = 0;
+   eina_inarray_flush(&evas_thread_queue);
+
+   eina_threads_shutdown();
+}
+
 int
 evas_thread_init(void)
 {
@@ -188,6 +226,8 @@ evas_thread_init(void)
 
    exit_thread = EINA_FALSE;
    evas_thread_exited = 0;
+
+   ecore_init();
 
    if(!eina_threads_init())
      {
@@ -215,6 +255,8 @@ evas_thread_init(void)
         goto fail_on_thread_creation;
      }
 
+   ecore_fork_reset_callback_add(evas_thread_fork_reset, NULL);
+
    return init_count;
 
 fail_on_thread_creation:
@@ -227,6 +269,7 @@ fail_on_lock_creation:
 fail_on_eina_thread_init:
    exit_thread = EINA_TRUE;
    evas_thread_exited = 1;
+   ecore_shutdown();
    return --init_count;
 }
 
@@ -244,7 +287,12 @@ evas_thread_shutdown(void)
    if (--init_count)
      return init_count;
 
+   if (!evas_thread_worker)
+     return init_count;
+
    eina_lock_take(&evas_thread_queue_lock);
+
+   ecore_fork_reset_callback_del(evas_thread_fork_reset, NULL);
 
    exit_thread = EINA_TRUE;
    eina_condition_signal(&evas_thread_queue_condition);
@@ -274,6 +322,8 @@ timeout_shutdown:
    eina_inarray_flush(&evas_thread_queue);
 
    eina_threads_shutdown();
+
+   ecore_shutdown();
 
    return 0;
 }
