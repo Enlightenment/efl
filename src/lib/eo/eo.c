@@ -1188,7 +1188,7 @@ static void
 _vtable_free(Eo_Vtable *vtable)
 {
    if (!vtable) return;
-   eina_freeq_ptr_main_add(vtable, EINA_FREE_CB(_vtable_func_clean_all), 0);
+   _vtable_func_clean_all(vtable);
    eina_freeq_ptr_main_add(vtable, free, sizeof(*vtable));
 }
 
