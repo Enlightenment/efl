@@ -8,8 +8,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_web.h"
-#include "elm_web_none.eo.h"
 #include "elm_module_helper.h"
+#include "elm_web_none.eo.h"
 
 #define MY_CLASS ELM_WEB_CLASS
 
