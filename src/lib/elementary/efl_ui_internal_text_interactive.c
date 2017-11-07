@@ -1312,9 +1312,10 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
 EOLIAN static Efl_Object *
 _efl_ui_internal_text_interactive_efl_object_constructor(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    en->select_allow = EINA_TRUE;
    en->editable = EINA_TRUE;
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 EOLIAN static Efl_Object *

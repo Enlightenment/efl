@@ -5397,13 +5397,6 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_text.eo.c"
 
-EOLIAN static Eo *
-_efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
-   return obj;
-}
-
 EOLIAN static void
 _efl_ui_text_async_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {

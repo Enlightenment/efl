@@ -73,14 +73,12 @@ _efl_ui_focus_layer_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Foc
 EOLIAN static Efl_Object*
 _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-
    efl_composite_attach(obj, pd->manager);
-
    pd->enable_on_visible = EINA_TRUE;
    pd->cycle = EINA_TRUE;
-
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 EOLIAN static void

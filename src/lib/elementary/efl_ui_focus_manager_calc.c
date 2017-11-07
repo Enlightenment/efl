@@ -909,8 +909,9 @@ _free_node(void *data)
 EOLIAN static Efl_Object *
 _efl_ui_focus_manager_calc_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->node_hash = eina_hash_pointer_new(_free_node);
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 EOLIAN static Efl_Object *
