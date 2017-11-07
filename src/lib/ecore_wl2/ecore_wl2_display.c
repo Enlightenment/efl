@@ -553,6 +553,12 @@ _cb_connect_idle(void *data)
    code = errno;
    if (ret < 0) goto err;
 
+   ret = wl_display_flush(ewd->wl.display);
+   code = errno;
+   if ((ret < 0) && (code == EAGAIN))
+     ecore_main_fd_handler_active_set(ewd->fd_hdl,
+                                      (ECORE_FD_READ | ECORE_FD_WRITE));
+
    return ECORE_CALLBACK_RENEW;
 
 err:
