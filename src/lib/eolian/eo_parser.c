@@ -672,18 +672,20 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
      }
 }
 
-static void
+static Eolian_Class *
 _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 {
    if (eina_hash_find(_parsingeos, fname))
-     return;
-   if (!eo_parser_database_fill(fname, EINA_FALSE))
+     return NULL;
+   Eolian_Class *cl = NULL;
+   if (!eo_parser_database_fill(fname, EINA_FALSE, &cl) || !cl)
      {
         char buf[PATH_MAX];
         eo_lexer_context_restore(ls);
         snprintf(buf, sizeof(buf), "error parsing dependency '%s'", name);
         eo_lexer_syntax_error(ls, buf);
      }
+   return cl;
 }
 
 static Eolian_Type *
@@ -1515,13 +1517,12 @@ parse_part(Eo_Lexer *ls)
    char *fnm = database_class_to_filename(nm);
    if (!compare_class_file(bnm, fnm))
      {
+        Eolian_Class *dep = NULL;
         const char *fname = eina_hash_find(_filenames, fnm);
         eina_stringshare_del(bnm);
         free(fnm);
         if (fname)
-          _parse_dep(ls, fname, nm);
-        /* FIXME: pass unit properly */
-        Eolian_Class *dep = (Eolian_Class *)eolian_class_get_by_name(NULL, nm);
+          dep = _parse_dep(ls, fname, nm);
         if (!dep)
           {
              char ebuf[PATH_MAX];
@@ -2031,9 +2032,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
         eo_lexer_syntax_error(ls, ebuf);
      }
-   _parse_dep(ls, fname, iname);
-   /* FIXME: pass unit properly */
-   Eolian_Class *dep = (Eolian_Class *)eolian_class_get_by_name(NULL, iname);
+   Eolian_Class *dep = _parse_dep(ls, fname, iname);
    if (!dep)
      {
         char ebuf[PATH_MAX];
@@ -2185,7 +2184,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_syntax_error(ls, errbuf);
              }
            pop_strbuf(ls);
-           if (!eo_parser_database_fill(found, !is_eo))
+           if (!eo_parser_database_fill(found, !is_eo, NULL))
              {
                 pop_strbuf(ls);
                 snprintf(errbuf, sizeof(errbuf),
@@ -2498,10 +2497,14 @@ end:
 }
 
 Eina_Bool
-eo_parser_database_fill(const char *filename, Eina_Bool eot)
+eo_parser_database_fill(const char *filename, Eina_Bool eot, Eolian_Class **fcl)
 {
-   if (eina_hash_find(_parsedeos, filename))
-     return EINA_TRUE;
+   Eolian_Class *cl = eina_hash_find(_parsedeos, filename);
+   if (cl)
+     {
+        if (!eot && fcl) *fcl = cl;
+        return EINA_TRUE;
+     }
 
    eina_hash_set(_parsingeos, filename, (void *)EINA_TRUE);
 
@@ -2521,8 +2524,6 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    parse_chunk(ls, eot);
    if (eot) goto done;
 
-   Eolian_Class *cl;
-
    if (!(cl = ls->tmp.kls))
      {
         _eolian_log("eolian: no class for file '%s'", filename);
@@ -2539,8 +2540,10 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    eina_hash_set(_classes, cl->full_name, cl);
    eina_hash_set(_classesf, cl->base.file, cl);
 
+   if (fcl) *fcl = cl;
+
 done:
-   eina_hash_set(_parsedeos, filename, (void *)EINA_TRUE);
+   eina_hash_set(_parsedeos, filename, eot ? (void *)EINA_TRUE : cl);
    eina_hash_set(_parsingeos, filename, (void *)EINA_FALSE);
 
    eo_lexer_free(ls);
