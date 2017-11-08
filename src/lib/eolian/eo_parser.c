@@ -2176,21 +2176,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                   }
                 else is_eo = EINA_TRUE;
              }
-           if (eina_hash_find(_parsingeos, found))
-             {
-                pop_strbuf(ls);
-                snprintf(errbuf, sizeof(errbuf),
-                         "cyclic import '%s'", ls->t.value.s);
-                eo_lexer_syntax_error(ls, errbuf);
-             }
-           pop_strbuf(ls);
-           if (!eo_parser_database_fill(found, !is_eo, NULL))
-             {
-                pop_strbuf(ls);
-                snprintf(errbuf, sizeof(errbuf),
-                         "error while parsing import '%s'", ls->t.value.s);
-                eo_lexer_syntax_error(ls, errbuf);
-             }
+           eina_hash_set(_defereos, eina_strbuf_string_get(buf), found);
            pop_strbuf(ls);
            eo_lexer_get(ls);
            check_next(ls, ';');
