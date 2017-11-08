@@ -9,12 +9,6 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-Eina_Bool
-_evas_surface_init(Surface *s, int w, int h, int num_buf)
-{
-   return _evas_dmabuf_surface_create(s, w, h, num_buf);
-}
-
 static Surface *
 _evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
 {
@@ -26,7 +20,7 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
    out->info = info;
    out->ob = ob;
 
-   if (_evas_surface_init(out, w, h, ob->num_buff)) return out;
+   if (_evas_dmabuf_surface_create(out, w, h, ob->num_buff)) return out;
 
    free(out);
    return NULL;

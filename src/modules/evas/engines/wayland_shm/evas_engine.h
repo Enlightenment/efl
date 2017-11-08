@@ -155,6 +155,4 @@ void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int 
 void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
 
-Eina_Bool _evas_surface_init(Surface *s, int w, int h, int num_buf);
-
 #endif
