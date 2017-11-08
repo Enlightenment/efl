@@ -5226,19 +5226,6 @@ AC_ARG_ENABLE([always-build-examples],
    [want_always_build_examples="no"])
 AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
 
-BARF_OK="xno"
-# Harfbuzz
-AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb],
-   [ You will be told when this is needed ],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       BARF_OK=""
-    else
-       BARF_OK="xno"
-    fi
-   ],
-   [ BARF_OK="xno" ])
-
 #### Ecore_Buffer
 build_ecore_buffer_x11_dri2="no"
 build_ecore_buffer_x11_dri3="no"
@@ -6111,14 +6098,6 @@ if test -n "$CFOPT_WARNING"; then
   echo "==-- WARNING --=="
   echo ""
   echo "_____________________________________________________________________"
-  if test -n "$BARF_OK"; then
-    echo "Please add the following option to acknowledge this:"
-    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb"
-    echo "_____________________________________________________________________"
-    rm -f Makefile
-    exit 1
-  fi
-  sleep 10
 fi
 
 if test "x$prefix" != "x/usr"; then
