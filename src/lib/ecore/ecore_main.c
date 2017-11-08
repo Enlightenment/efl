@@ -3056,7 +3056,7 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 
    efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
-   pd->providers = eina_hash_pointer_new((void*) efl_unref);
+   pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
 
    return obj;
 }

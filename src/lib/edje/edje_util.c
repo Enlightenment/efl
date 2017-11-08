@@ -16,8 +16,6 @@ struct _Edje_Box_Layout
    char                   name[];
 };
 
-Edje_Global *_edje_global_obj = NULL;
-
 static Eina_Hash *_edje_color_class_hash = NULL;
 static Eina_Hash *_edje_text_class_hash = NULL;
 static Eina_Hash *_edje_size_class_hash = NULL;
@@ -648,9 +646,9 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 {
    Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
-   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
-   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
@@ -678,9 +676,9 @@ edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, in
 {
    Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
-   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
-   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_get(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_get(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_get(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
@@ -702,7 +700,7 @@ _edje_global_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, void *pd E
 EAPI void
 edje_color_class_del(const char *color_class)
 {
-   efl_gfx_color_class_del(_edje_global_obj, color_class);
+   efl_gfx_color_class_del(_edje_global(), color_class);
 }
 
 EOLIAN void
@@ -1080,7 +1078,7 @@ on_error:
 EAPI Eina_Bool
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
-   return efl_gfx_text_class_set(_edje_global_obj, text_class, font, (Efl_Font_Size)size);
+   return efl_gfx_text_class_set(_edje_global(), text_class, font, (Efl_Font_Size)size);
 }
 
 EOLIAN Eina_Bool
@@ -1131,7 +1129,7 @@ _edje_global_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, void *pd EIN
 EAPI Eina_Bool
 edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *size)
 {
-   return efl_gfx_text_class_get(_edje_global_obj, text_class, font, (Efl_Font_Size *)size);
+   return efl_gfx_text_class_get(_edje_global(), text_class, font, (Efl_Font_Size *)size);
 }
 
 EOLIAN Eina_Bool
@@ -1162,7 +1160,7 @@ _edje_global_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, void *pd EIN
 EAPI void
 edje_text_class_del(const char *text_class)
 {
-   efl_gfx_text_class_del(_edje_global_obj, text_class);
+   efl_gfx_text_class_del(_edje_global(), text_class);
 }
 
 EOLIAN void
@@ -1484,7 +1482,7 @@ on_error:
 EAPI Eina_Bool
 edje_size_class_set(const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
-   return efl_gfx_size_class_set(_edje_global_obj, size_class, minw, minh, maxw, maxh);
+   return efl_gfx_size_class_set(_edje_global(), size_class, minw, minh, maxw, maxh);
 }
 
 EOLIAN Eina_Bool
@@ -1538,7 +1536,7 @@ _edje_global_efl_gfx_size_class_size_class_set(Eo *obj EINA_UNUSED, void *pd EIN
 EAPI Eina_Bool
 edje_size_class_get(const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
-   return efl_gfx_size_class_get(_edje_global_obj, size_class, minw, minh, maxw, maxh);
+   return efl_gfx_size_class_get(_edje_global(), size_class, minw, minh, maxw, maxh);
 }
 
 EOLIAN Eina_Bool
@@ -1573,7 +1571,7 @@ _edje_global_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, void *pd EIN
 EAPI void
 edje_size_class_del(const char *size_class)
 {
-   efl_gfx_size_class_del(_edje_global_obj, size_class);
+   efl_gfx_size_class_del(_edje_global(), size_class);
 }
 
 EOLIAN void

@@ -5,7 +5,6 @@ edje_eolian_files = \
 	lib/edje/efl_canvas_layout_calc.eo \
 	lib/edje/efl_canvas_layout_signal.eo \
 	lib/edje/efl_canvas_layout_group.eo \
-	lib/edje/edje_global.eo \
 	lib/edje/edje_object.eo \
 	lib/edje/efl_canvas_layout_part.eo \
 	lib/edje/efl_canvas_layout_part_box.eo \
@@ -19,6 +18,7 @@ edje_eolian_type_files = \
     lib/edje/edje_types.eot
 
 edje_eolian_priv_files = \
+	lib/edje/edje_global.eo \
 	$(NULL)
 
 edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)

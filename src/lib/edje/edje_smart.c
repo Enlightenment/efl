@@ -536,15 +536,6 @@ _edje_object_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
    return 1.0/pd->duration_scale;
 }
 
-EOLIAN static Efl_Object *
-_edje_object_efl_object_provider_find(Eo *obj, Edje *ed EINA_UNUSED, const Efl_Class *klass)
-{
-   if (klass == EDJE_GLOBAL_CLASS)
-     return _edje_global_obj;
-
-   return efl_provider_find(efl_super(obj, EDJE_OBJECT_CLASS), klass);
-}
-
 /* Internal EO APIs and hidden overrides */
 
 #define EDJE_OBJECT_EXTRA_OPS \

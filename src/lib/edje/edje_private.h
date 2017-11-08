@@ -98,6 +98,9 @@
 # endif
 #endif
 
+// This object is internal, only the interface needs to be exposed.
+#include "edje_global.eo.h"
+
 EAPI extern int _edje_default_log_dom ;
 
 #ifdef EDJE_DEFAULT_LOG_COLOR
@@ -2348,8 +2351,6 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
 
-extern Edje_Global *_edje_global_obj;
-
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
 EAPI void _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd, Eet_Data_Descriptor **_font_edd);
@@ -2398,6 +2399,17 @@ EAPI extern Eina_Mempool *_emp_CAMERA;
 EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
 EAPI extern Eina_Mempool *_emp_VECTOR;
+
+static inline Edje_Global *
+_edje_global(void)
+{
+#ifndef NDEBUG
+   return efl_provider_find(ecore_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE);
+#else
+   extern Edje_Global *_edje_global_obj;
+   return _edje_global_obj;
+#endif
+}
 
 static inline void
 _edje_calc_params_need_type_common(Edje_Calc_Params *p)
