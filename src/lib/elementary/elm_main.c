@@ -800,7 +800,6 @@ elm_quicklaunch_sub_init(int    argc,
    _elm_sub_init_count++;
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
    _elm_config_init();
-   ecore_main_loop_iterate();
 
    if (!quicklaunch_on)
      {
