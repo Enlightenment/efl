@@ -600,29 +600,19 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 static Dmabuf_Buffer *
 _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
 {
-   int iterations = 0, i;
-   struct wl_display *disp;
+   int i = 0, best = -1, best_age = -1;
 
-   disp = ecore_wl2_display_get(s->surface->info->info.wl2_display);
-
-   while (iterations++ < 10)
+   for (i = 0; i < s->nbuf; i++)
      {
-        for (i = 0; i < s->nbuf; i++)
-          if (!s->buffer[i]->locked &&
-              !s->buffer[i]->busy)
-            return s->buffer[i];
-
-        wl_display_dispatch_pending(disp);
+        if (s->buffer[i]->locked || s->buffer[i]->busy) continue;
+        if (s->buffer[i]->age > best_age)
+          {
+             best = i;
+             best_age = s->buffer[i]->age;
+          }
      }
 
-   /* May be we have a possible render target that just hasn't been
-    * given a wl_buffer yet - draw there and let the success handler
-    * figure it out.
-    */
-   for (i = 0; i < s->nbuf; i++)
-     if (!s->buffer[i]->locked && !s->buffer[i]->busy)
-       return s->buffer[i];
-
+   if (best >= 0) return s->buffer[best];
    return NULL;
 }
 
