@@ -462,6 +462,7 @@ _buffer_manager_deref(void)
    close(drm_fd);
 }
 
+/* Currently no callers, but that will change...
 static void
 _buffer_manager_destroy(void)
 {
@@ -469,7 +470,7 @@ _buffer_manager_destroy(void)
    buffer_manager->destroyed = EINA_TRUE;
    _buffer_manager_deref();
 }
-
+*/
 
 static Buffer_Handle *
 _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int32_t *fd)
@@ -510,57 +511,6 @@ _buffer_manager_discard(Dmabuf_Buffer *buf)
 {
    buffer_manager->discard(buf);
    _buffer_manager_deref();
-}
-
-static void
-_fallback(Dmabuf_Surface *s, int w, int h)
-{
-   Dmabuf_Buffer *b;
-   Surface *surf;
-   Eina_Bool recovered;
-   unsigned char *new_data, *old_data;
-   int y;
-
-   dmabuf_totally_hosed = EINA_TRUE;
-   surf = s->surface;
-   if (!surf) goto out;
-
-   recovered = _evas_surface_init(surf, w, h, s->nbuf);
-   if (!recovered)
-     {
-        ERR("Fallback from dmabuf to shm attempted and failed.");
-        abort();
-     }
-
-   /* Since a buffer may have been filled before we realized we can't
-    * display it, we need to make sure any async render on it is finished,
-    * then copy the contents into one of the newly allocated shm buffers
-    */
-
-   b = s->pre;
-   if (!b) b = s->current;
-   if (!b) goto out;
-
-   if (!b->mapping) b->mapping = _buffer_manager_map(b);
-
-   b->busy = EINA_FALSE;
-
-   if (!b->mapping) goto out;
-
-   evas_thread_queue_wait();
-
-   old_data = b->mapping;
-   surf->funcs.assign(surf);
-   new_data = surf->funcs.data_get(surf, NULL, NULL);
-   for (y = 0; y < h; y++)
-     memcpy(new_data + y * w * 4, old_data + y * b->stride, w * 4);
-   surf->funcs.post(surf, NULL, 0);
-   _buffer_manager_unmap(b);
-   b->mapping = NULL;
-
-out:
-   _internal_evas_dmabuf_surface_destroy(s);
-   _buffer_manager_destroy();
 }
 
 static void
@@ -616,12 +566,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
              _evas_dmabuf_buffer_destroy(b);
           }
         buf = _evas_dmabuf_buffer_init(surface, w, h);
-        if (!buf)
-           {
-              if (surface) _fallback(surface, w, h);
-              s->surf.dmabuf = NULL;
-              return;
-           }
+        if (!buf)  return;
         surface->buffer[i] = buf;
      }
 }
@@ -777,7 +722,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    if (!out->bh)
      {
         free(out);
-        _fallback(s, w, h);
         return NULL;
      }
    out->w = w;
