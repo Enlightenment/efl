@@ -423,8 +423,11 @@ _buffer_manager_get(void)
    fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
    if (fd < 0) goto err_drm;
 
-   success = _intel_buffer_manager_setup(fd);
-   if (!success) success = _exynos_buffer_manager_setup(fd);
+   if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF"))
+     {
+        success = _intel_buffer_manager_setup(fd);
+        if (!success) success = _exynos_buffer_manager_setup(fd);
+     }
    if (!success) success = _wl_shm_buffer_manager_setup(fd);
    if (!success) goto err_bm;
 
