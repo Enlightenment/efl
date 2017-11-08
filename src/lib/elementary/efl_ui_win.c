@@ -5342,6 +5342,13 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_win_efl_canvas_object_legacy_ctor(Eo *obj, Efl_Ui_Win_Data *sd)
+{
+   efl_canvas_object_legacy_ctor(efl_super(obj, MY_CLASS));
+   sd->legacy.ctor = EINA_TRUE;
+}
+
 EOLIAN static Efl_Ui_Focus_Manager*
 _efl_ui_win_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
@@ -8422,6 +8429,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
 
 #define EFL_UI_WIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_win), \
-   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_win)
+   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_win), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_ui_win_efl_canvas_object_legacy_ctor)
 
 #include "efl_ui_win.eo.c"
