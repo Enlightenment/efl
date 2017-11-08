@@ -1049,7 +1049,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
 
         if (eina_list_data_find(DIRECTION_ACCESS(upper, direction).partners, candidate))
           {
-             //this is the next accessable part
+             //this is the next accessible part
              return candidate;
           }
      }

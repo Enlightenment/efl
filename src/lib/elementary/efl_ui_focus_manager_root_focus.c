@@ -149,7 +149,7 @@ _efl_ui_focus_manager_root_focus_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manag
 
 
 #include "efl_ui_focus_manager_root_focus.eo.c"
-/* focus rectnangle implementation */
+/* focus rectangle implementation */
 typedef struct {
   Eina_Bool focus;
 } Efl_Ui_Focus_Rectangle_Data;
