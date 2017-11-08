@@ -5,6 +5,8 @@
 
 #include <strings.h>
 
+#define MY_CLASS EFL_VG_GRADIENT_CLASS
+
 static void
 _efl_vg_gradient_efl_gfx_gradient_stop_set(Eo *obj EINA_UNUSED,
                                                 Efl_VG_Gradient_Data *pd,
@@ -94,19 +96,16 @@ _efl_vg_gradient_efl_vg_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
-static void
-_efl_vg_gradient_efl_vg_dup(Eo *obj,
-                                 Efl_VG_Gradient_Data *pd EINA_UNUSED,
-                                 const Efl_VG *from)
+EOLIAN static Efl_VG *
+_efl_vg_gradient_efl_vg_dup(const Eo *obj, Efl_VG_Gradient_Data *pd)
+
 {
-   Efl_VG_Gradient_Data *fromd;
+   Efl_VG *cn = NULL;
 
-   efl_vg_dup(efl_super(obj, EFL_VG_GRADIENT_CLASS), from);
-
-   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
-
-   efl_gfx_gradient_stop_set(obj, fromd->colors, fromd->colors_count);
-   efl_gfx_gradient_spread_set(obj, fromd->s);
+   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   efl_gfx_gradient_stop_set(cn, pd->colors, pd->colors_count);
+   efl_gfx_gradient_spread_set(cn, pd->s);
+   return cn;
 }
 
 EAPI void

@@ -3729,9 +3729,7 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         dest_root = efl_canvas_vg_root_node_get(ep->object);
         efl_ref(dest_root);
 
-        // FIXME: root = dup(), root.interpolate(dest).
-        root = evas_vg_container_add(NULL);
-        evas_vg_node_dup(root, src_root);
+        root = evas_vg_node_dup(src_root);
 
         if (!evas_vg_node_interpolate(root, src_root, dest_root, pos))
           {

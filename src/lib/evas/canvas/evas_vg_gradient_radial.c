@@ -172,20 +172,18 @@ _efl_vg_gradient_radial_efl_vg_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
-static void
-_efl_vg_gradient_radial_efl_vg_dup(Eo *obj,
-                                        Efl_VG_Gradient_Radial_Data *pd EINA_UNUSED,
-                                        const Efl_VG *from)
+
+EOLIAN static Efl_VG *
+_efl_vg_gradient_radial_efl_vg_dup(const Eo *obj, Efl_VG_Gradient_Radial_Data *pd)
+
 {
-   Efl_VG_Gradient_Radial_Data *fromd;
+   Efl_VG *cn = NULL;
 
-   efl_vg_dup(efl_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS), from);
-
-   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
-
-   efl_gfx_gradient_radial_focal_set(obj, fromd->focal.x, fromd->focal.y);
-   efl_gfx_gradient_radial_center_set(obj, fromd->center.x, fromd->center.y);
-   efl_gfx_gradient_radial_radius_set(obj, fromd->radius);
+   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   efl_gfx_gradient_radial_focal_set(cn, pd->focal.x, pd->focal.y);
+   efl_gfx_gradient_radial_center_set(cn, pd->center.x, pd->center.y);
+   efl_gfx_gradient_radial_radius_set(cn, pd->radius);
+   return cn;
 }
 
 EAPI void

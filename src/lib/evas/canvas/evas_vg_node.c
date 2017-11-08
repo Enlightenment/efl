@@ -715,61 +715,35 @@ _efl_vg_interpolate(Eo *obj,
    return r;
 }
 
-static void
-_efl_vg_dup(Eo *obj, Efl_VG_Data *pd, const Efl_VG *from)
+EOLIAN static Efl_VG *
+_efl_vg_dup(const Eo *obj, Efl_VG_Data *pd)
 {
-   Efl_VG_Container_Data *cd = NULL;
-   Efl_VG_Data *fromd;
-   Eo *parent = NULL;
+   Efl_VG *cn;
+   Efl_VG_Data *cd;
 
-   fromd = efl_data_scope_get(from, EFL_VG_CLASS);
-   if (pd->name != fromd->name)
+   cn = efl_add(efl_class_get(obj), NULL);
+   cd = efl_data_scope_get(cn, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cd, NULL);
+   if (pd->name)
+     cd->name = eina_stringshare_ref(pd->name);
+   if (pd->m)
      {
-        eina_stringshare_del(pd->name);
-        pd->name = eina_stringshare_ref(fromd->name);
+        cd->m = malloc(sizeof (Eina_Matrix3)) ;
+        if (cd->m) memcpy(cd->m, pd->m, sizeof (Eina_Matrix3));
      }
 
-   _efl_vg_parent_checked_get(obj, &parent, &cd);
-   if (cd) _efl_vg_name_insert(obj, pd, cd);
+   if (pd->mask)
+     cd->mask = efl_vg_dup(pd->mask);
 
-   if (pd->intp)
-     {
-        free(pd->intp);
-        pd->intp = NULL;
-     }
+   cd->x = pd->x;
+   cd->y = pd->y;
+   cd->r = pd->r;
+   cd->g = pd->g;
+   cd->b = pd->b;
+   cd->a = pd->a;
+   cd->visibility = pd->visibility;
 
-   if (pd->renderer)
-     {
-        efl_del(pd->renderer);
-        pd->renderer = NULL;
-     }
-
-   if (fromd->m)
-     {
-        pd->m = pd->m ? pd->m : malloc(sizeof (Eina_Matrix3)) ;
-        if (pd->m) memcpy(pd->m, fromd->m, sizeof (Eina_Matrix3));
-     }
-   else
-     {
-        free(pd->m);
-     }
-
-   // We may come from an already duped/initialized node, clean it first
-   _efl_vg_clean_object(&pd->mask);
-   if (fromd->mask)
-     {
-        pd->mask = efl_add(efl_class_get(fromd->mask), obj, efl_vg_dup(efl_added, pd->mask));
-     }
-
-   pd->x = fromd->x;
-   pd->y = fromd->y;
-   pd->r = fromd->r;
-   pd->g = fromd->g;
-   pd->b = fromd->b;
-   pd->a = fromd->a;
-   pd->visibility = fromd->visibility;
-
-   _efl_vg_changed(obj);
+   return cn;
 }
 
 EAPI Eina_Bool

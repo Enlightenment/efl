@@ -103,11 +103,9 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
           @in pos_map: double; [[Interpolate mapping]]
         }
       }
-      dup {
+      dup @const {
         [[Duplicate vector graphics object]]
-        params {
-          @in from: const(Efl.VG); [[Source object]]
-        }
+        return: Efl.VG @owned;
       }
    }
    implements {
