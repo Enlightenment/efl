@@ -2,9 +2,9 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_ACCESS_BETA
 #define EFL_ACCESS_TEXT_BETA
 #define EFL_ACCESS_TEXT_PROTECTED
-#define EFL_ACCESS_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
