@@ -5,7 +5,8 @@ import edje_types;
 class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
                    Efl.Canvas.Layout_Signal, Efl.Canvas.Layout_Group,
-                   Efl.Player)
+                   Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
+                   Efl.Gfx.Size_Class)
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
@@ -101,221 +102,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
          }
       }
 
-      /* CLASS APIS BEGIN -------------------------------------------------- */
-      @property global_color_class @class {
-         set {
-            [[Sets Edje color class.
-
-              This function sets the color values for a process level color
-              class.  This will cause all edje parts in the current process that
-              have the specified color class to have their colors multiplied by
-              these values.  (Object level color classes set by
-              edje_object_color_class_set() will override the values set by this
-              function).
-
-              Setting color emits a signal "color_class,set" with source being
-              the given color class in all objects.
-
-              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
-              half-transparent white is 255 255 255 128.]]
-            legacy: null;
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            [[Gets Edje color class.
-
-              This function gets the color values for a process level color
-              class. This value is the globally set and not per-object, that is,
-              the value that would be used by objects if they did not override with
-              @.color_class.set().
-
-              See also, @.global_color_class.set()
-
-              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
-              half-transparent white is 255 255 255 128.]]
-            legacy: null;
-            return: bool; [[$true if found or $false if not found and all values
-                            are zeored.]]
-         }
-         keys {
-            color_class: string; [[The name of color class]]
-            mode: Edje.Color_Class.Mode; [[Edje color class mode]]
-         }
-         values {
-            r: int; [[Object Red value]]
-            g: int; [[Object Green value]]
-            b: int; [[Object Blue value]]
-            a: int; [[Object Alpha value]]
-         }
-      }
-      @property color_class {
-         set {
-            [[Sets the object color class.
-
-              This function sets the color values for an object level color
-              class. This will cause all edje parts in the specified object that
-              have the specified color class to have their colors multiplied by
-              these values.
-
-              The first color is the object, the second is the text outline, and
-              the third is the text shadow. (Note that the second two only apply
-              to text parts).
-
-              Setting color emits a signal "color_class,set" with source being
-              the given color.
-
-              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
-              half-transparent white is 255 255 255 128.]]
-            legacy: null;
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {
-            [[Gets the object color class.
-
-              This function gets the color values for an object level color
-              class. If no explicit object color is set, then global values will
-              be used.
-
-              The first color is the object, the second is the text outline, and
-              the third is the text shadow. (Note that the second two only apply
-              to text parts).
-
-              Note: unlike Evas, Edje colors are not pre-multiplied. That is,
-              half-transparent white is 255 255 255 128.]]
-            legacy: null;
-            return: bool; [[$true if found or $false if not found and all
-                            values are zeroed.]]
-         }
-         keys {
-            color_class: string; [[The name of color class]]
-            mode: Edje.Color_Class.Mode; [[Edje color class mode]]
-         }
-         values {
-            r: int; [[Object Red value]]
-            g: int; [[Object Green value]]
-            b: int; [[Object Blue value]]
-            a: int; [[Object Alpha value]]
-         }
-      }
-      @property color_class_description {
-         get {
-            [[Gets the description of an object color class.
-
-              This function gets the description of a color class in use by an object.]]
-            return: string; [[The description of the target color class or $null if not found]]
-         }
-         keys {
-            color_class: string; [[Color class description]]
-         }
-      }
-      color_class_clear @const {
-         [[Clears object color classes.
-
-           @since 1.17.0]]
-         return: bool; [[$true on success, or $false on error]]
-      }
-      color_class_del {
-         [[Deletes the object color class.
-
-           This function deletes any values at the object level for the
-           specified object and color class.
-
-           Deleting the color class will revert it to the values
-           defined by edje_color_class_set() or the color class
-           defined in the theme file.
-
-           Deleting the color class will emit the signal "color_class,del"
-           for the given Edje object.]]
-         params {
-            @in color_class: string; [[The color class to be deleted.]]
-         }
-      }
-      @property text_class {
-         set {
-            [[Sets Edje text class.
-
-              This function sets the text class for the Edje.]]
-            return: bool; [[$true on success, or $false on error]]
-         }
-         get {
-            [[Gets font and font size from edje text class.
-
-              This function gets the font and the font size from the object
-              text class. The font string will only be valid until the text
-              class is changed or the edje object is deleted.]]
-            return: bool; [[$true on success, or $false on error]]
-         }
-         keys {
-            text_class: string; [[The text class name]]
-         }
-         values {
-            font: string; [[Font name]]
-            size: int; [[Font Size]]
-         }
-      }
-      text_class_del {
-         [[Deletes the object text class.
-
-           This function deletes any values at the object level for the
-           specified object and text class.
-
-           Deleting the text class will revert it to the values
-           defined by edje_text_class_set() or the text class
-           defined in the theme file.
-
-           @since 1.17]]
-         params {
-            @in text_class: string; [[The color class to be deleted.]]
-         }
-      }
-      @property size_class {
-         set {
-            [[Sets the object size class.
-
-              This function sets the min and max values for an object level size
-              class. This will make all edje parts in the specified object that
-              have the specified size class update their min and max size with given values.
-
-              @since 1.17]]
-            return: bool; [[$true on success, or $false on error]]
-         }
-         get {
-            [[Gets the object size class.
-
-              This function gets the min and max values for an object level size
-              class. These values will only be valid until the size class is changed
-              or the edje object is deleted.
-
-              @since 1.17]]
-            return: bool; [[$true on success, or $false on error]]
-         }
-         keys {
-            size_class: string; [[The size class name]]
-         }
-         values {
-            minw: int; [[The min width]]
-            minh: int; [[The min height]]
-            maxw: int; [[The max width]]
-            maxh: int; [[The max height]]
-         }
-      }
-      size_class_del {
-         [[Deletes the object size class.
-
-           This function deletes any values at the object level for the
-           specified object and size class.
-
-           Deleting the size class will revert it to the values
-           defined by edje_size_class_set() or the color class
-           defined in the theme file.
-
-           @since 1.17]]
-         params {
-            @in size_class: string; [[Size class name]]
-         }
-      }
-      /* CLASS APIS END ---------------------------------------------------- */
-
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
          legacy: null;
@@ -391,6 +177,14 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Object.debug_name_override;
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { set; }
+      Efl.Gfx.Color_Class.color_class { get; set; }
+      Efl.Gfx.Color_Class.color_class_description { get; }
+      Efl.Gfx.Color_Class.color_class_del;
+      Efl.Gfx.Color_Class.color_class_clear;
+      Efl.Gfx.Text_Class.text_class { get; set; }
+      Efl.Gfx.Text_Class.text_class_del;
+      Efl.Gfx.Size_Class.size_class { get; set; }
+      Efl.Gfx.Size_Class.size_class_del;
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Layout_Calc.calc_auto_update_hints { get; set; }
       Efl.Canvas.Layout_Calc.calc_size_min;

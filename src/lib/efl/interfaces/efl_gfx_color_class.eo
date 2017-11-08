@@ -1,0 +1,85 @@
+import efl_gfx_types;
+
+interface Efl.Gfx.Color_Class
+{
+   methods {
+      @property color_class {
+         set {
+            [[Set the color of color class.
+
+              This function sets the color values for a color class. This will
+              cause all edje parts in the specified object that have the specified
+              color class to have their colors multiplied by these values.
+
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
+
+              Setting color emits a signal "color_class,set" with source being
+              the given color.
+
+              Note: These color values are expected to be premultiplied by \@p a.]]
+            return: bool;
+         }
+         get {
+            [[Get the color of color class.
+
+              This function gets the color values for a color class. If no explicit
+              object color is set, then global values will be used.
+
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
+
+              Note: These color values are expected to be premultiplied by \@p a.]]
+            return: bool;
+         }
+         keys {
+            color_class: string; [[The name of color class]]
+            layer: Efl.Gfx.Color_Class.Layer @optional; [[The layer to set the color]]
+         }
+         values {
+            r: int; [[The intensity of the red color]]
+            g: int; [[The intensity of the green color]]
+            b: int; [[The intensity of the blue color]]
+            a: int; [[The alpha value]]
+         }
+      }
+      @property color_class_description {
+         get {
+            [[Get the description of a color class.
+
+              This function gets the description of a color class in use by an object.]]
+         }
+         keys {
+            color_class: string; [[The name of color class]]
+         }
+         values {
+            description: string; [[The description of the target color class or $null if not found]]
+         }
+      }
+      color_class_del {
+         [[Delete the color class.
+
+           This function deletes any values for the specified color class.
+
+           Deleting the color class will revert it to the values defined
+           by @.color_class.set() or the color class defined in the theme file.
+
+           Deleting the color class will emit the signal "color_class,del"
+           for the given Edje object.]]
+         params {
+            @in color_class: string; [[The name of color_class]]
+         }
+      }
+      color_class_clear {
+         [[Delete all color classes defined in object level.
+
+           This function deletes any color classes defined in object level.
+           Clearing color classes will revert the color of all edje parts to
+           the values defined in global level or theme file.
+
+           @since 1.17.0]]
+      }
+   }
+}

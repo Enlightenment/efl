@@ -2348,6 +2348,8 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
 
+extern Edje_Global *_edje_global_obj;
+
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
 EAPI void _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd, Eet_Data_Descriptor **_font_edd);

@@ -16,6 +16,8 @@ struct _Edje_Box_Layout
    char                   name[];
 };
 
+Edje_Global *_edje_global_obj = NULL;
+
 static Eina_Hash *_edje_color_class_hash = NULL;
 static Eina_Hash *_edje_text_class_hash = NULL;
 static Eina_Hash *_edje_size_class_hash = NULL;
@@ -500,7 +502,7 @@ _edje_object_efl_canvas_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 static Eina_Bool
-_edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a, Eina_Bool *need_update)
+_edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a, Eina_Bool *need_update)
 {
    Edje_Color_Class *cc;
 
@@ -523,9 +525,9 @@ _edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Co
    cc = eina_hash_find(hash, color_class);
    if (cc)
      {
-        switch (mode)
+        switch (layer)
           {
-           case EDJE_COLOR_CLASS_MODE_COLOR:
+           case EFL_GFX_COLOR_CLASS_LAYER_NORMAL:
              if ((cc->r == r) && (cc->g == g) &&
                  (cc->b == b) && (cc->a == a))
                {
@@ -534,7 +536,7 @@ _edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Co
                }
              break;
 
-           case EDJE_COLOR_CLASS_MODE_COLOR2:
+           case EFL_GFX_COLOR_CLASS_LAYER_OUTLINE:
              if ((cc->r2 == r) && (cc->g2 == g) &&
                  (cc->b2 == b) && (cc->a2 == a))
                {
@@ -543,7 +545,7 @@ _edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Co
                }
              break;
 
-           case EDJE_COLOR_CLASS_MODE_COLOR3:
+           case EFL_GFX_COLOR_CLASS_LAYER_SHADOW:
              if ((cc->r3 == r) && (cc->g3 == g) &&
                  (cc->b3 == b) && (cc->a3 == a))
                {
@@ -571,23 +573,23 @@ _edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Co
         eina_hash_direct_add(hash, cc->name, cc);
      }
 
-   switch (mode)
+   switch (layer)
      {
-      case EDJE_COLOR_CLASS_MODE_COLOR:
+      case EFL_GFX_COLOR_CLASS_LAYER_NORMAL:
         cc->r = r;
         cc->g = g;
         cc->b = b;
         cc->a = a;
         break;
 
-      case EDJE_COLOR_CLASS_MODE_COLOR2:
+      case EFL_GFX_COLOR_CLASS_LAYER_OUTLINE:
         cc->r2 = r;
         cc->g2 = g;
         cc->b2 = b;
         cc->a2 = a;
         break;
 
-      case EDJE_COLOR_CLASS_MODE_COLOR3:
+      case EFL_GFX_COLOR_CLASS_LAYER_SHADOW:
         cc->r3 = r;
         cc->g3 = g;
         cc->b3 = b;
@@ -601,27 +603,27 @@ _edje_color_class_set_internal(Eina_Hash *hash, const char *color_class, Edje_Co
 }
 
 static Eina_Bool
-_edje_color_class_get_internal(Edje_Color_Class *cc, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
+_edje_color_class_get_internal(Edje_Color_Class *cc, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    if (cc)
      {
-        switch (mode)
+        switch (layer)
           {
-           case EDJE_COLOR_CLASS_MODE_COLOR:
+           case EFL_GFX_COLOR_CLASS_LAYER_NORMAL:
              if (r) *r = cc->r;
              if (g) *g = cc->g;
              if (b) *b = cc->b;
              if (a) *a = cc->a;
              break;
 
-           case EDJE_COLOR_CLASS_MODE_COLOR2:
+           case EFL_GFX_COLOR_CLASS_LAYER_OUTLINE:
              if (r) *r = cc->r2;
              if (g) *g = cc->g2;
              if (b) *b = cc->b2;
              if (a) *a = cc->a2;
              break;
 
-           case EDJE_COLOR_CLASS_MODE_COLOR3:
+           case EFL_GFX_COLOR_CLASS_LAYER_SHADOW:
              if (r) *r = cc->r3;
              if (g) *g = cc->g3;
              if (b) *b = cc->b3;
@@ -644,18 +646,18 @@ _edje_color_class_get_internal(Edje_Color_Class *cc, Edje_Color_Class_Mode mode,
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret = edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
-   int_ret &= edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
-   int_ret &= edje_obj_global_color_class_set(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_set(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
 
 EOLIAN Eina_Bool
-_edje_object_global_color_class_set(Efl_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
-                                    const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a)
+_edje_global_efl_gfx_color_class_color_class_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                                                 const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a)
 {
    Eina_Bool int_ret;
    Eina_Bool need_update = EINA_FALSE;
@@ -663,7 +665,7 @@ _edje_object_global_color_class_set(Efl_Class *klass EINA_UNUSED, void *pd EINA_
    if (!_edje_color_class_hash)
      _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
 
-   int_ret = _edje_color_class_set_internal(_edje_color_class_hash, color_class, mode, r, g, b, a, &need_update);
+   int_ret = _edje_color_class_set_internal(_edje_color_class_hash, color_class, layer, r, g, b, a, &need_update);
 
    if ((int_ret) && (need_update))
      efl_observable_observers_update(_edje_color_class_member, color_class, "color_class,set");
@@ -674,18 +676,18 @@ _edje_object_global_color_class_set(Efl_Class *klass EINA_UNUSED, void *pd EINA_
 EAPI Eina_Bool
 edje_color_class_get(const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret = edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
-   int_ret &= edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
-   int_ret &= edje_obj_global_color_class_get(EDJE_OBJECT_CLASS, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_get(_edje_global_obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
 
 EOLIAN Eina_Bool
-_edje_object_global_color_class_get(Efl_Class *klass EINA_UNUSED, void *pd EINA_UNUSED,
-                                    const char *color_class, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
+_edje_global_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                                                 const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
 
@@ -694,11 +696,17 @@ _edje_object_global_color_class_get(Efl_Class *klass EINA_UNUSED, void *pd EINA_
    else
      cc = eina_hash_find(_edje_color_class_hash, color_class);
 
-   return _edje_color_class_get_internal(cc, mode, r, g, b, a);
+   return _edje_color_class_get_internal(cc, layer, r, g, b, a);
 }
 
 EAPI void
 edje_color_class_del(const char *color_class)
+{
+   efl_gfx_color_class_del(_edje_global_obj, color_class);
+}
+
+EOLIAN void
+_edje_global_efl_gfx_color_class_color_class_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *color_class)
 {
    Edje_Color_Class *cc;
 
@@ -826,22 +834,22 @@ _edje_color_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *ke
 EAPI Eina_Bool
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret = edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
-   int_ret &= edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
-   int_ret &= edje_obj_color_class_set(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_set(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_set(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_set(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
 
 EOLIAN Eina_Bool
-_edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Edje_Color_Class_Mode mode, int r, int g, int b, int a)
+_edje_object_efl_gfx_color_class_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a)
 {
    Eina_Bool int_ret;
    Eina_Bool need_update;
 
-   int_ret = _edje_color_class_set_internal(ed->color_classes, color_class, mode, r, g, b, a, &need_update);
+   int_ret = _edje_color_class_set_internal(ed->color_classes, color_class, layer, r, g, b, a, &need_update);
 
    if ((int_ret) && (need_update))
      {
@@ -860,8 +868,8 @@ _edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
                  ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                   (rp->typedata.swallow)) &&
                  (rp->typedata.swallow->swallowed_object))
-               edje_obj_color_class_set(rp->typedata.swallow->swallowed_object,
-                                        color_class, mode, r, g, b, a);
+               efl_gfx_color_class_set(rp->typedata.swallow->swallowed_object,
+                                       color_class, layer, r, g, b, a);
           }
 
         _edje_recalc(ed);
@@ -874,17 +882,17 @@ _edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
 EAPI Eina_Bool
 edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3)
 {
-   Eina_Bool int_ret;
+   Eina_Bool int_ret = EINA_TRUE;
 
-   int_ret = edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR, r, g, b, a);
-   int_ret &= edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR2, r2, g2, b2, a2);
-   int_ret &= edje_obj_color_class_get(obj, color_class, EDJE_COLOR_CLASS_MODE_COLOR3, r3, g3, b3, a3);
+   int_ret &= efl_gfx_color_class_get(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
+   int_ret &= efl_gfx_color_class_get(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
+   int_ret &= efl_gfx_color_class_get(obj, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
 
    return int_ret;
 }
 
 EOLIAN Eina_Bool
-_edje_object_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Edje_Color_Class_Mode mode, int *r, int *g, int *b, int *a)
+_edje_object_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
 
@@ -893,18 +901,30 @@ _edje_object_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
    else
      cc = _edje_color_class_find(ed, color_class);
 
-   return _edje_color_class_get_internal(cc, mode, r, g, b, a);
+   return _edje_color_class_get_internal(cc, layer, r, g, b, a);
 }
 
-EOLIAN Eina_Stringshare *
-_edje_object_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+EAPI const char *
+edje_objcet_color_class_description_get(const Evas_Object *obj, const char *color_class)
+{
+   return efl_gfx_color_class_description_get(obj, color_class);
+}
+
+EOLIAN const char *
+_edje_object_efl_gfx_color_class_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
    return cc ? cc->desc : NULL;
 }
 
+EAPI void
+edje_object_color_class_del(Evas_Object *obj, const char *color_class)
+{
+   efl_gfx_color_class_del(obj, color_class);
+}
+
 EOLIAN void
-_edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+_edje_object_efl_gfx_color_class_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = NULL;
    unsigned short i;
@@ -922,7 +942,7 @@ _edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_color_class_del(rp->typedata.swallow->swallowed_object, color_class);
+          efl_gfx_color_class_del(rp->typedata.swallow->swallowed_object, color_class);
      }
 
    ed->dirty = EINA_TRUE;
@@ -934,17 +954,22 @@ _edje_object_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
    _edje_emit(ed, "color_class,del", color_class);
 }
 
-EOLIAN Eina_Bool
-_edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
+EAPI Eina_Bool
+edje_object_color_class_clear(const Evas_Object *obj)
+{
+   efl_gfx_color_class_clear((Eo *)obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN void
+_edje_object_efl_gfx_color_class_color_class_clear(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Edje_List_Foreach_Data fdata;
    Edje_Color_Class *cc = NULL;
    Eina_List *l;
    char *color_class;
    unsigned short i;
-   Eina_Bool int_ret = EINA_TRUE;
-
-   if (!ed) return EINA_FALSE;
 
    memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
    eina_hash_foreach(ed->color_classes, _edje_color_class_list_foreach, &fdata);
@@ -961,7 +986,7 @@ _edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          int_ret &= edje_object_color_class_clear(rp->typedata.swallow->swallowed_object);
+          efl_gfx_color_class_clear(rp->typedata.swallow->swallowed_object);
      }
 
    ed->dirty = EINA_TRUE;
@@ -976,8 +1001,6 @@ _edje_object_color_class_clear(const Eo *obj EINA_UNUSED, Edje *ed)
         _edje_emit(ed, "color_class,del", color_class);
         free(color_class);
      }
-
-   return int_ret;
 }
 
 typedef struct _Edje_File_Color_Class_Iterator Edje_File_Color_Class_Iterator;
@@ -1057,6 +1080,13 @@ on_error:
 EAPI Eina_Bool
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
+   return efl_gfx_text_class_set(_edje_global_obj, text_class, font, (Efl_Font_Size)size);
+}
+
+EOLIAN Eina_Bool
+_edje_global_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                                               const char *text_class, const char *font, Efl_Font_Size size)
+{
    Edje_Text_Class *tc;
 
    if (!text_class) return EINA_FALSE;
@@ -1101,6 +1131,13 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 EAPI Eina_Bool
 edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *size)
 {
+   return efl_gfx_text_class_get(_edje_global_obj, text_class, font, (Efl_Font_Size *)size);
+}
+
+EOLIAN Eina_Bool
+_edje_global_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+                                               const char *text_class, const char **font, Efl_Font_Size *size)
+{
    Edje_Text_Class *tc;
 
    if (!text_class) return EINA_FALSE;
@@ -1124,6 +1161,12 @@ edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *s
 
 EAPI void
 edje_text_class_del(const char *text_class)
+{
+   efl_gfx_text_class_del(_edje_global_obj, text_class);
+}
+
+EOLIAN void
+_edje_global_efl_gfx_text_class_text_class_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *text_class)
 {
    Edje_Text_Class *tc;
 
@@ -1237,8 +1280,14 @@ _edje_text_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
+{
+   return efl_gfx_text_class_set(obj, text_class, font, (Efl_Font_Size)size);
+}
+
 EOLIAN Eina_Bool
-_edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Evas_Font_Size size)
+_edje_object_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Efl_Font_Size size)
 {
    Edje_Text_Class *tc = NULL;
    unsigned short i;
@@ -1292,8 +1341,8 @@ _edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_text_class_set(rp->typedata.swallow->swallowed_object,
-                                     text_class, font, size);
+          efl_gfx_text_class_set(rp->typedata.swallow->swallowed_object,
+                                 text_class, font, size);
      }
 
    efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
@@ -1301,8 +1350,14 @@ _edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_object_text_class_get(const Evas_Object *obj, const char *text_class, const char **font, Evas_Font_Size *size)
+{
+   return efl_gfx_text_class_get(obj, text_class, font, (Efl_Font_Size *)size);
+}
+
 EOLIAN Eina_Bool
-_edje_object_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Evas_Font_Size *size)
+_edje_object_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Efl_Font_Size *size)
 {
    Edje_Text_Class *tc = _edje_text_class_find(ed, text_class);
 
@@ -1321,8 +1376,14 @@ _edje_object_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
    return EINA_TRUE;
 }
 
+EAPI void
+edje_object_text_class_del(Evas_Object *obj, const char *text_class)
+{
+   efl_gfx_text_class_del(obj, text_class);
+}
+
 EOLIAN void
-_edje_object_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
+_edje_object_efl_gfx_text_class_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
 {
    Edje_Text_Class *tc = NULL;
    unsigned short i;
@@ -1340,7 +1401,7 @@ _edje_object_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_text_class_del(rp->typedata.swallow->swallowed_object, text_class);
+          efl_gfx_text_class_del(rp->typedata.swallow->swallowed_object, text_class);
      }
 
    efl_observer_update(obj, _edje_text_class_member, text_class, NULL);
@@ -1423,6 +1484,13 @@ on_error:
 EAPI Eina_Bool
 edje_size_class_set(const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
+   return efl_gfx_size_class_set(_edje_global_obj, size_class, minw, minh, maxw, maxh);
+}
+
+EOLIAN Eina_Bool
+_edje_global_efl_gfx_size_class_size_class_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *size_class,
+                                               Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
+{
    Edje_Size_Class *sc;
 
    if (!size_class) return EINA_FALSE;
@@ -1470,6 +1538,13 @@ edje_size_class_set(const char *size_class, Evas_Coord minw, Evas_Coord minh, Ev
 EAPI Eina_Bool
 edje_size_class_get(const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
+   return efl_gfx_size_class_get(_edje_global_obj, size_class, minw, minh, maxw, maxh);
+}
+
+EOLIAN Eina_Bool
+_edje_global_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *size_class,
+                                               Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
+{
    Edje_Size_Class *sc;
 
    if (!size_class) return EINA_FALSE;
@@ -1497,6 +1572,12 @@ edje_size_class_get(const char *size_class, Evas_Coord *minw, Evas_Coord *minh, 
 
 EAPI void
 edje_size_class_del(const char *size_class)
+{
+   efl_gfx_size_class_del(_edje_global_obj, size_class);
+}
+
+EOLIAN void
+_edje_global_efl_gfx_size_class_size_class_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const char *size_class)
 {
    Edje_Size_Class *sc;
 
@@ -1609,8 +1690,14 @@ _edje_size_class_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_object_size_class_set(Evas_Object *obj, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
+{
+   return efl_gfx_size_class_set(obj, size_class, minw, minh, maxw, maxh);
+}
+
 EOLIAN Eina_Bool
-_edje_object_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
+_edje_object_efl_gfx_size_class_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
    Edje_Size_Class *sc = NULL;
    unsigned short i;
@@ -1662,8 +1749,8 @@ _edje_object_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_size_class_set(rp->typedata.swallow->swallowed_object,
-                                     size_class, minw, minh, maxw, maxh);
+          efl_gfx_size_class_set(rp->typedata.swallow->swallowed_object,
+                                 size_class, minw, minh, maxw, maxh);
      }
 
    efl_observable_observers_update(_edje_size_class_member, size_class, NULL);
@@ -1671,8 +1758,14 @@ _edje_object_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_object_size_class_get(const Evas_Object *obj, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
+{
+   return efl_gfx_size_class_get(obj, size_class, minw, minh, maxw, maxh);
+}
+
 EOLIAN Eina_Bool
-_edje_object_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
+_edje_object_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje_Size_Class *sc = _edje_size_class_find(ed, size_class);
 
@@ -1695,8 +1788,14 @@ _edje_object_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
    return EINA_TRUE;
 }
 
+EAPI void
+edje_object_size_class_del(Evas_Object *obj, const char *size_class)
+{
+   efl_gfx_size_class_del(obj, size_class);
+}
+
 EOLIAN void
-_edje_object_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
+_edje_object_efl_gfx_size_class_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
 {
    Edje_Size_Class *sc = NULL;
    unsigned short i;
@@ -1714,7 +1813,7 @@ _edje_object_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_clas
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_size_class_del(rp->typedata.swallow->swallowed_object, size_class);
+          efl_gfx_size_class_del(rp->typedata.swallow->swallowed_object, size_class);
      }
 
    efl_observable_observers_update(_edje_size_class_member, size_class, NULL);

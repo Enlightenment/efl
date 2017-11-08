@@ -1213,6 +1213,147 @@ EAPI Eina_Bool edje_object_color_class_set(Evas_Object *obj, const char * color_
 EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
 /**
+ * @brief Delete the object color class.
+ *
+ * This function deletes any values at the object level for the specified
+ * object and color class.
+ *
+ * Deleting the color class will revert it to the values defined by
+ * edje_color_class_set() or the color class defined in the theme file.
+ *
+ * Deleting the color class will emit the signal "color_class,del" for the
+ * given Edje object.
+ *
+ * @param[in] color_class The color class to be deleted.
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_color_class_del(Evas_Object *obj, const char *color_class);
+
+/**
+ * @brief Delete all color classes defined in object level.
+ *
+ * This function deletes any color classes defined in object level.
+ * Clearing color classes will revert the color of all edje parts to
+ * the values defined in global level or theme file.
+ *
+ * @return @c true, on success or @c false, on error
+ *
+ * @since 1.17.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_color_class_clear(const Evas_Object *obj);
+
+/**
+ * @brief Sets Edje text class.
+ *
+ * This function sets the text class for the Edje.
+ *
+ * @param[in] text_class The text class name
+ * @param[in] font Font name
+ * @param[in] size Font Size
+ *
+ * @return @c true, on success or @c false, on error
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_text_class_set(Evas_Object *obj, const char * text_class, const char *font, Evas_Font_Size size);
+
+/**
+ * @brief Gets font and font size from edje text class.
+ *
+ * This function gets the font and the font size from the object text class.
+ * The font string will only be valid until the text class is changed or the
+ * edje object is deleted.
+ *
+ * @param[in] text_class The text class name
+ * @param[out] font Font name
+ * @param[out] size Font Size
+ *
+ * @return @c true, on success or @c false, on error
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_text_class_get(const Evas_Object *obj, const char * text_class, const char **font, Evas_Font_Size *size);
+
+/**
+ * @brief Delete the object text class.
+ *
+ * This function deletes any values at the object level for the specified
+ * object and text class.
+ *
+ * Deleting the text class will revert it to the values defined by
+ * edje_text_class_set() or the text class defined in the theme file.
+ *
+ * @param[in] text_class The color class to be deleted.
+ *
+ * @since 1.17
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_text_class_del(Evas_Object *obj, const char *text_class);
+
+/**
+ * @brief Sets the object size class.
+ *
+ * This function sets the min and max values for an object level size class.
+ * This will make all edje parts in the specified object that have the
+ * specified size class update their min and max size with given values.
+ *
+ * @param[in] size_class The size class name
+ * @param[in] minw The min width
+ * @param[in] minh The min height
+ * @param[in] maxw The max width
+ * @param[in] maxh The max height
+ *
+ * @return @c true, on success or @c false, on error
+ *
+ * @since 1.17
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_size_class_set(Evas_Object *obj, const char * size_class, int minw, int minh, int maxw, int maxh);
+
+/**
+ * @brief Gets the object size class.
+ *
+ * This function gets the min and max values for an object level size class.
+ * These values will only be valid until the size class is changed or the edje
+ * object is deleted.
+ *
+ * @param[in] size_class The size class name
+ * @param[out] minw The min width
+ * @param[out] minh The min height
+ * @param[out] maxw The max width
+ * @param[out] maxh The max height
+ *
+ * @return @c true, on success or @c false, on error
+ *
+ * @since 1.17
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_size_class_get(const Evas_Object *obj, const char * size_class, int *minw, int *minh, int *maxw, int *maxh);
+
+/**
+ * @brief Delete the object size class.
+ *
+ * This function deletes any values at the object level for the specified
+ * object and size class.
+ *
+ * Deleting the size class will revert it to the values defined by
+ * edje_size_class_set() or the color class defined in the theme file.
+ *
+ * @param[in] size_class Size class name
+ *
+ * @since 1.17
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_size_class_del(Evas_Object *obj, const char *size_class);
+
+/**
  * @brief Enables selection if the entry is an EXPLICIT selection mode type.
  *
  * The default is to  not allow selection. This function only affects user
@@ -1224,7 +1365,7 @@ EAPI Eina_Bool edje_object_color_class_get(const Evas_Object *obj, const char * 
  *
  * @ingroup Edje_Object
  */
-EAPI void edje_object_part_text_select_allow_set(const Edje_Object *obj, const char *part, Eina_Bool allow);
+EAPI void edje_object_part_text_select_allow_set(const Evas_Object *obj, const char *part, Eina_Bool allow);
 
 /**
  * @brief Sets the RTL orientation for this object.

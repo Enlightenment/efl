@@ -81,6 +81,7 @@ edje_init(void)
      }
 
    _edje_scale = FROM_DOUBLE(1.0);
+   _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, NULL);
 
    _edje_edd_init();
    _edje_text_init();
@@ -140,6 +141,8 @@ shutdown_all:
    _edje_text_class_hash_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
+   efl_del(_edje_global_obj);
+   _edje_global_obj = NULL;
    efreet_shutdown();
 shutdown_evas:
    evas_shutdown();
@@ -192,6 +195,8 @@ _edje_shutdown_core(void)
    _edje_text_class_hash_free();
    _edje_size_class_hash_free();
    _edje_edd_shutdown();
+   efl_del(_edje_global_obj);
+   _edje_global_obj = NULL;
 
    eina_cow_del(_edje_calc_params_map_cow);
    eina_cow_del(_edje_calc_params_physics_cow);

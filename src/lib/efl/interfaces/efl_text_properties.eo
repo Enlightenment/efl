@@ -1,4 +1,4 @@
-type Efl_Font_Size: int; [[Efl font size type]]
+import efl_gfx_types;
 
 interface Efl.Text.Properties
 {
@@ -31,7 +31,7 @@ interface Efl.Text.Properties
          }
          values {
             font: string; [[The font family name or filename.]]
-            size: Efl_Font_Size; [[The font size, in points.]]
+            size: Efl.Font.Size; [[The font size, in points.]]
          }
       }
       @property font_source {

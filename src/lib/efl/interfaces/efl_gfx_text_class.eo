@@ -1,0 +1,43 @@
+import efl_gfx_types;
+
+interface Efl.Gfx.Text_Class
+{
+   methods {
+      @property text_class {
+         set {
+            [[Set Edje text class.
+
+              This function sets the text class for the Edje.]]
+            return: bool; [[$true, on success or $false, on error]]
+         }
+         get {
+            [[Get font and font size from edje text class.
+
+              This function gets the font and the font size from text class.
+              The font string will only be valid until the text class is changed
+              or the edje object is deleted.]]
+            return: bool; [[$true, on success or $false, on error]]
+         }
+         keys {
+            text_class: string; [[The text class name]]
+         }
+         values {
+            font: string; [[Font name]]
+            size: Efl.Font.Size; [[Font Size]]
+         }
+      }
+      text_class_del {
+         [[Delete the text class.
+
+           This function deletes any values for the specified text class.
+
+           Deleting the text class will revert it to the values defined
+           by @.text_class.set() or the text class defined in the theme file.
+
+           @since 1.17]]
+         params {
+            @in text_class: string; [[The text class to be deleted.]]
+         }
+      }
+   }
+}

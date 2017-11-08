@@ -196,3 +196,11 @@ enum Efl.Image.Load.Error
    unknown_collection = 9,         [[(Edje only) The group/collection set to load from was not found in the file]]
    recursive_reference = 10        [[(Edje only) The group/collection set to load from had recursive references on its components]]
 }
+
+enum Efl.Gfx.Color_Class.Layer {
+   normal = 0, [[Default color]]
+   outline, [[Outline color]]
+   shadow [[Shadow color]]
+}
+
+type Efl.Font.Size: int; [[Efl font size type]]
