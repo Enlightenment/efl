@@ -46,7 +46,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * that they need to load. A very primitive application ASSUMES a fixed install
  * location at compile-time, but this disallows the ability to re-locate
  * the application (or library) somewhere else after compilation (if you run
- * out of space on a given disk, partition etc. for example), or necessitate
+ * out of space on a given disk, partition, etc. for example), or necessitate
  * the need for having to maintain environment variables for every piece of
  * software to let it know its location, or have to use large sets of
  * symlinks pointing from the compiled location to the new one.
@@ -69,7 +69,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * information. It uses the first argument, being the executable itself,
  * to look in absolute directories, relative paths, and PATH to see if it
  * finds the right executable to determine just where the actual binary is
- * installed and being run from. If you develop a share library, just pass
+ * installed and being run from. If you develop a shared library, just pass
  * @c NULL as @a argv0.
  *
  * @note It would prefer to use the @a symbol function to determine the location as
@@ -78,7 +78,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *       as this avoids more expensive searches via @a argv0. It uses this
  *       symbol if given in preference to @a argv0.
  *
- * @note The @a envprefix parameter, provides a string prefix to prepend before
+ * @note The @a envprefix parameter provides a string prefix to prepend before
  *       environment variables to allow a fallback to specific environment variables
  *       to locate the software. For example, if "MYAPP" is provided as the prefix,
  *       then it uses "MYAPP_PREFIX" as a master environment variable to specify
@@ -99,7 +99,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *       example, your app installs a wallpaper image as
  *       /usr/local/share/appname/images/wallpaper.jpg and so to check that this
  *       worked, provide "images/wallpaper.jpg" as the @a magicsharefile string
- *        so detection can know if it worked or not.
+ *       so detection can know if it worked or not.
  *
  * @note The @a pkg_bin, @a pkg_lib, @a pkg_data, and @a pkg_locale are compile-time
  *       strings (the kind standard autoconf/automake define) to be passed in
@@ -120,7 +120,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * locale dir is optional. If you don't need it, provide data dir as the
  * locale dir. Also note that the magicsharefile is optional for testing and
  * ensuring that the prefix check is correct. This file must be installed
- * in the application data dir (eg /usr/local/share/appname) and be referred
+ * in the application data dir (e.g. /usr/local/share/appname) and be referred
  * to using a unix-style relative path from that dir, eg directory/filename.png)
  *
  * @code
@@ -174,7 +174,7 @@ EAPI void eina_prefix_free(Eina_Prefix *pfx) EINA_ARG_NONNULL(1);
  *
  * @param[in] pfx The prefix object
  * @return The base prefix (eg "/usr/local", "/usr", "/opt/appname" or
- *         "/home/user/myapps/appname" etc.) that the software resides in at runtime
+ *         "/home/user/myapps/appname", etc.) that the software resides in at runtime
  *
  * @since 1.1.0
  */
