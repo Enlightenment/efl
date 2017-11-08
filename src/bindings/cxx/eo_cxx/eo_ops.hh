@@ -42,7 +42,7 @@ unref(const Eo *obj)
 inline int
 ref_get(const Eo *obj)
 {
-   return ::efl_ref_get(obj);
+   return ::efl_ref_count(obj);
 }
 
 inline Eina_Bool

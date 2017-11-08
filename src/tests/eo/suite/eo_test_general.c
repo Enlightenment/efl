@@ -575,27 +575,27 @@ START_TEST(efl_refs)
    Eo *obj3 = efl_add(SIMPLE_CLASS, NULL);
 
    efl_xref(obj, obj2);
-   fail_if(efl_ref_get(obj) != 2);
+   fail_if(efl_ref_count(obj) != 2);
    efl_xref(obj, obj3);
-   fail_if(efl_ref_get(obj) != 3);
+   fail_if(efl_ref_count(obj) != 3);
 
    efl_xunref(obj, obj2);
-   fail_if(efl_ref_get(obj) != 2);
+   fail_if(efl_ref_count(obj) != 2);
    efl_xunref(obj, obj3);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
 
 #ifdef EO_DEBUG
    efl_xunref(obj, obj3);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
 
    efl_xref(obj, obj2);
-   fail_if(efl_ref_get(obj) != 2);
+   fail_if(efl_ref_count(obj) != 2);
 
    efl_xunref(obj, obj3);
-   fail_if(efl_ref_get(obj) != 2);
+   fail_if(efl_ref_count(obj) != 2);
 
    efl_xunref(obj, obj2);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
 #endif
 
    /* Check we don't seg if there's an extra xref. */
@@ -627,9 +627,9 @@ START_TEST(efl_refs)
    obj2 = efl_add(SIMPLE_CLASS, obj);
    obj3 = efl_add_ref(SIMPLE_CLASS, obj);
 
-   ck_assert_int_eq(efl_ref_get(obj), 1);
-   ck_assert_int_eq(efl_ref_get(obj2), 1);
-   ck_assert_int_eq(efl_ref_get(obj3), 2);
+   ck_assert_int_eq(efl_ref_count(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj2), 1);
+   ck_assert_int_eq(efl_ref_count(obj3), 2);
 
    efl_del(obj);
    efl_del(obj2);
@@ -643,18 +643,18 @@ START_TEST(efl_refs)
 
    efl_parent_set(obj2, obj3);
    efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_get(obj2), 2);
-   ck_assert_int_eq(efl_ref_get(obj3), 2);
+   ck_assert_int_eq(efl_ref_count(obj2), 2);
+   ck_assert_int_eq(efl_ref_count(obj3), 2);
 
    efl_parent_set(obj2, NULL);
    efl_parent_set(obj3, NULL);
-   ck_assert_int_eq(efl_ref_get(obj2), 1);
-   ck_assert_int_eq(efl_ref_get(obj3), 1);
+   ck_assert_int_eq(efl_ref_count(obj2), 1);
+   ck_assert_int_eq(efl_ref_count(obj3), 1);
 
    efl_parent_set(obj2, obj);
    efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_get(obj2), 2);
-   ck_assert_int_eq(efl_ref_get(obj3), 2);
+   ck_assert_int_eq(efl_ref_count(obj2), 2);
+   ck_assert_int_eq(efl_ref_count(obj3), 2);
 
    efl_del(obj);
    efl_del(obj2);
@@ -665,23 +665,23 @@ START_TEST(efl_refs)
    obj2 = efl_add_ref(SIMPLE_CLASS, obj);
    obj3 = efl_add_ref(SIMPLE_CLASS, NULL);
 
-   ck_assert_int_eq(efl_ref_get(obj2), 2);
-   ck_assert_int_eq(efl_ref_get(obj3), 1);
+   ck_assert_int_eq(efl_ref_count(obj2), 2);
+   ck_assert_int_eq(efl_ref_count(obj3), 1);
 
    efl_parent_set(obj2, obj3);
    efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_get(obj2), 2);
-   ck_assert_int_eq(efl_ref_get(obj3), 2);
+   ck_assert_int_eq(efl_ref_count(obj2), 2);
+   ck_assert_int_eq(efl_ref_count(obj3), 2);
 
    efl_parent_set(obj2, NULL);
    efl_parent_set(obj3, NULL);
-   ck_assert_int_eq(efl_ref_get(obj2), 1);
-   ck_assert_int_eq(efl_ref_get(obj3), 1);
+   ck_assert_int_eq(efl_ref_count(obj2), 1);
+   ck_assert_int_eq(efl_ref_count(obj3), 1);
 
    efl_parent_set(obj2, obj);
    efl_parent_set(obj3, obj);
-   ck_assert_int_eq(efl_ref_get(obj2), 2);
-   ck_assert_int_eq(efl_ref_get(obj3), 2);
+   ck_assert_int_eq(efl_ref_count(obj2), 2);
+   ck_assert_int_eq(efl_ref_count(obj3), 2);
 
    efl_del(obj);
    efl_del(obj2);
@@ -829,10 +829,10 @@ START_TEST(eo_generic_data)
    fail_if(objtmp);
 
    efl_key_ref_set(obj, "test1", obj2);
-   fail_if(efl_ref_get(obj2) != 2);
+   fail_if(efl_ref_count(obj2) != 2);
 
    efl_key_ref_set(obj, "test2", obj3);
-   fail_if(efl_ref_get(obj3) != 2);
+   fail_if(efl_ref_count(obj3) != 2);
 
    objtmp = efl_key_ref_get(obj, "test1");
    fail_if(obj2 != objtmp);
@@ -844,7 +844,7 @@ START_TEST(eo_generic_data)
    fail_if(obj3 != objtmp);
 
    efl_key_ref_set(obj, "test2", NULL);
-   fail_if(efl_ref_get(obj3) != 1);
+   fail_if(efl_ref_count(obj3) != 1);
 
    objtmp = efl_key_ref_get(obj, "test2");
    fail_if(objtmp);
@@ -853,7 +853,7 @@ START_TEST(eo_generic_data)
    fail_if(obj2 != objtmp);
 
    efl_key_ref_set(obj, "test1", NULL);
-   fail_if(efl_ref_get(obj2) != 1);
+   fail_if(efl_ref_count(obj2) != 1);
 
    objtmp = efl_key_ref_get(obj, "test1");
    fail_if(objtmp);
@@ -884,10 +884,10 @@ START_TEST(eo_generic_data)
    fail_if(objtmp);
 
    efl_key_wref_set(obj, "test1", obj2);
-   fail_if(efl_ref_get(obj2) != 1);
+   fail_if(efl_ref_count(obj2) != 1);
 
    efl_key_wref_set(obj, "test2", obj3);
-   fail_if(efl_ref_get(obj3) != 1);
+   fail_if(efl_ref_count(obj3) != 1);
 
    objtmp = efl_key_wref_get(obj, "test1");
    fail_if(obj2 != objtmp);
@@ -899,7 +899,7 @@ START_TEST(eo_generic_data)
    fail_if(obj3 != objtmp);
 
    efl_key_wref_set(obj, "test2", NULL);
-   fail_if(efl_ref_get(obj3) != 1);
+   fail_if(efl_ref_count(obj3) != 1);
 
    objtmp = efl_key_wref_get(obj, "test2");
    fail_if(objtmp);
@@ -908,7 +908,7 @@ START_TEST(eo_generic_data)
    fail_if(obj2 != objtmp);
 
    efl_key_wref_set(obj, "test1", NULL);
-   fail_if(efl_ref_get(obj2) != 1);
+   fail_if(efl_ref_count(obj2) != 1);
 
    objtmp = efl_key_wref_get(obj, "test1");
    fail_if(objtmp);
@@ -1003,7 +1003,7 @@ START_TEST(eo_magic_checks)
         efl_isa((Eo *) buf, SIMPLE_CLASS);
         efl_isa(obj, (Efl_Class *) buf);
 
-        fail_if(0 != efl_ref_get((Eo *) buf));
+        fail_if(0 != efl_ref_count((Eo *) buf));
 
         efl_wref_add((Eo *) buf, &wref);
         parent = efl_parent_get((Eo *) buf);
@@ -1322,15 +1322,15 @@ START_TEST(efl_del_intercept)
    Eo *parent = efl_add(SIMPLE_CLASS, NULL);
    obj = efl_add(klass, NULL);
    fail_if(!obj);
-   ck_assert_int_eq(efl_ref_get(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_parent_set(obj, parent);
-   ck_assert_int_eq(efl_ref_get(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_del_intercept_set(obj, _del_intercept_reuse);
    efl_del_intercept_set(obj, NULL);
    /* This essentially checks it get unsunk */
-   ck_assert_int_eq(efl_ref_get(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_parent_set(obj, parent);
-   ck_assert_int_eq(efl_ref_get(obj), 1);
+   ck_assert_int_eq(efl_ref_count(obj), 1);
    efl_del(obj);
 
    efl_object_shutdown();
@@ -1738,22 +1738,22 @@ START_TEST(efl_object_auto_unref_test)
    // Test unref after valid call
    _auto_unref_del = 0;
    obj = efl_add(SIMPLE_CLASS, NULL);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
    efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    efl_name_set(obj, "name");
    fail_if(!_auto_unref_del);
 
    // Test unref after invalid call
    _auto_unref_del = 0;
    obj = efl_add(SIMPLE_CLASS, NULL);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
    efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    simple_no_implementation(obj);
    fail_if(!_auto_unref_del);
 
@@ -1761,12 +1761,12 @@ START_TEST(efl_object_auto_unref_test)
    _auto_unref_del = 0;
    parent = efl_add(SIMPLE_CLASS, NULL);
    obj = efl_add(SIMPLE_CLASS, parent);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    efl_allow_parent_unref_set(obj, 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
    efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
-   fail_if(efl_ref_get(obj) != 1);
+   fail_if(efl_ref_count(obj) != 1);
    efl_name_set(obj, "name");
    fail_if(!_auto_unref_del);
    efl_del(parent);

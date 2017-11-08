@@ -1607,7 +1607,7 @@ EAPI void efl_data_xunref_internal(const Eo *obj, void *data, const Eo *ref_obj)
  * what you are doing.
  *
  * @see efl_unref()
- * @see efl_ref_get()
+ * @see efl_ref_count()
  */
 EAPI Eo *efl_ref(const Eo *obj);
 
@@ -1616,7 +1616,7 @@ EAPI Eo *efl_ref(const Eo *obj);
  * @param obj the object to work on.
  *
  * @see efl_ref()
- * @see efl_ref_get()
+ * @see efl_ref_count()
  */
 EAPI void efl_unref(const Eo *obj);
 
@@ -1628,7 +1628,7 @@ EAPI void efl_unref(const Eo *obj);
  * @see efl_ref()
  * @see efl_unref()
  */
-EAPI int efl_ref_get(const Eo *obj);
+EAPI int efl_ref_count(const Eo *obj);
 
 /**
  * @brief Set a deletion interceptor function
@@ -2140,7 +2140,7 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
 
 
    /* Private for EFL internal use only. Do not use these! */
-EAPI int ___efl_ref2_get(const Eo *obj_id);
+EAPI int ___efl_ref2_count(const Eo *obj_id);
 EAPI void ___efl_ref2_reset(const Eo *obj_id);
 
 #endif

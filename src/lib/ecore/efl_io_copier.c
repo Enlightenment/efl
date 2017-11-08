@@ -42,7 +42,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
             DBG("copier={%p %s, refs=%d, closed=%d, done=%d, buf=%zd}", \
                 o, \
                 efl_class_name_get(efl_class_get(o)), \
-                efl_ref_get(o), \
+                efl_ref_count(o), \
                 efl_io_closer_closed_get(o), \
                 pd->done, \
                 pd->buf ? eina_binbuf_length_get(pd->buf): 0); \
@@ -52,7 +52,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
               DBG("source={%p %s, refs=%d, can_read=%d, eos=%d, closed=%d}", \
                   pd->source, \
                   efl_class_name_get(efl_class_get(pd->source)), \
-                  efl_ref_get(pd->source), \
+                  efl_ref_count(pd->source), \
                   efl_io_reader_can_read_get(pd->source), \
                   efl_io_reader_eos_get(pd->source), \
                   efl_isa(pd->source, EFL_IO_CLOSER_MIXIN) ? \
@@ -63,7 +63,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
               DBG("destination={%p %s, refs=%d, can_write=%d, closed=%d}", \
                   pd->destination, \
                   efl_class_name_get(efl_class_get(pd->destination)), \
-                  efl_ref_get(pd->destination), \
+                  efl_ref_count(pd->destination), \
                   efl_io_writer_can_write_get(pd->destination), \
                   efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN) ? \
                   efl_io_closer_closed_get(pd->destination) : 0); \

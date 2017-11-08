@@ -1904,7 +1904,7 @@ efl_unref(const Eo *obj_id)
 }
 
 EAPI int
-efl_ref_get(const Eo *obj_id)
+efl_ref_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
    int ref;
@@ -1914,7 +1914,7 @@ efl_ref_get(const Eo *obj_id)
 }
 
 EAPI int
-___efl_ref2_get(const Eo *obj_id)
+___efl_ref2_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
    int ref;

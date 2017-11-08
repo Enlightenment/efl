@@ -321,12 +321,12 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                {
                   if (!o->delete_me)
                     {
-                       if ((o->ref > 0) || (efl_ref_get(o->object) > 0))
+                       if ((o->ref > 0) || (efl_ref_count(o->object) > 0))
                          {
                             ERR("obj(%s) ref count(%d) is bigger than 0. This "
                                 "object couldn't be deleted",
                                 efl_debug_name_get(o->object),
-                                efl_ref_get(o->object));
+                                efl_ref_count(o->object));
                             continue;
                          }
                        unrefs = eina_list_append(unrefs, o->object);
@@ -342,10 +342,10 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
         EINA_LIST_FREE(unrefs, eo_obj)
           {
              ERR("Killing Zombie Object [%s]. Refs: %i:%i",
-                 efl_debug_name_get(eo_obj), efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+                 efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
              ___efl_ref2_reset(eo_obj);
-             while (efl_ref_get(eo_obj) > 1) efl_unref(eo_obj);
-             while (efl_ref_get(eo_obj) < 1) efl_ref(eo_obj);
+             while (efl_ref_count(eo_obj) > 1) efl_unref(eo_obj);
+             while (efl_ref_count(eo_obj) < 1) efl_ref(eo_obj);
              efl_del(eo_obj);
 
              if (!detach_zombies) continue;
@@ -359,7 +359,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
                           "was deleted but the call to efl_destructor() "
                           "was not propagated to all the parent classes? "
                           "Forcibly removing it. This may leak! Refs: %i:%i",
-                          efl_debug_name_get(eo_obj), efl_ref_get(eo_obj), ___efl_ref2_get(eo_obj));
+                          efl_debug_name_get(eo_obj), efl_ref_count(eo_obj), ___efl_ref2_count(eo_obj));
                       lay->objects = (Evas_Object_Protected_Data *)
                             eina_inlist_remove(EINA_INLIST_GET(lay->objects), EINA_INLIST_GET(o));
                       goto next_zombie;

@@ -161,7 +161,7 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
    visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_get(win) >= 1);
+   ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
    elm_shutdown();
@@ -188,7 +188,7 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_get(win) >= 1);
+   ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
    elm_shutdown();
