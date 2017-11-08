@@ -181,7 +181,7 @@ main(int argc, char **argv)
    struct linger lin;
    char buf[PATH_MAX];
    struct sigaction action;
-   const char *disp;
+   const char *domain;
    int ret = 0;
 
    if (!eina_init())
@@ -197,7 +197,12 @@ main(int argc, char **argv)
         _log_dom = EINA_LOG_DOMAIN_GLOBAL;
      }
 
-   if (!(disp = getenv("DISPLAY"))) disp = "unknown";
+   if (!(domain = getenv("ELM_QUICKLAUNCH_DOMAIN")))
+     {
+        domain = getenv("WAYLAND_DISPLAY");
+        if (!domain) domain = getenv("DISPLAY");
+        if (!domain) domain = "unknown";
+     }
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
    if (stat(buf, &st) < 0)
      {
@@ -208,7 +213,7 @@ main(int argc, char **argv)
              exit(-1);
           }
      }
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
+   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), domain);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
