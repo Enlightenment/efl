@@ -74,7 +74,6 @@ struct _Dmabuf_Surface
    int compositor_version;
 
    Dmabuf_Buffer *current;
-   Dmabuf_Buffer *pre;
    Dmabuf_Buffer **buffer;
    int nbuf;
 
@@ -666,18 +665,6 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    b->busy = EINA_TRUE;
    b->used = EINA_TRUE;
    b->age = 0;
-
-   /* If we don't yet have a buffer assignement we need to track the
-    * most recently filled unassigned buffer and make sure it gets
-    * displayed.
-    */
-   if (surface->pre) surface->pre->busy = EINA_FALSE;
-   if (!b->wl_buffer)
-     {
-        surface->pre = b;
-        return;
-     }
-   surface->pre = NULL;
 
    win = s->info->info.wl2_win;
    wls = ecore_wl2_window_surface_get(win);
