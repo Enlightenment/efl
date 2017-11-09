@@ -27,7 +27,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Data
    Efl_Ui_List_Model *modeler;
    Efl_Future *count_future;
    Ecore_Job *calc_job;
-   Eina_Accessor *nodes;
+   Efl_Ui_List_SegArray *segarray;
    int first;
    unsigned int count;
    unsigned int count_total;
@@ -51,7 +51,7 @@ typedef struct _Efl_Ui_List_Precise_Layouter_Callback_Data
 
 
 static void _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *);
-static void _initilize(Eo *, Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_Model*);
+static void _initilize(Eo *, Efl_Ui_List_Precise_Layouter_Data*, Efl_Ui_List_Model*, Efl_Ui_List_SegArray*);
 static void _finalize(Eo *, Efl_Ui_List_Precise_Layouter_Data*);
 
 static void
@@ -87,9 +87,11 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_LayoutItem* it
      pd->min.w = min.w;
    else if (pd->min.w == item->min.w)
      {
-        pd->min.w = min.w;
         Efl_Ui_List_SegArray_Node *node;
-        EINA_ACCESSOR_FOREACH(pd->nodes, i, node)
+        Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+        pd->min.w = min.w;
+
+        EINA_ACCESSOR_FOREACH(nodes, i, node)
           {
              Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = node->layout_data;
              if (pd->min.w < nodedata->min.w)
@@ -98,6 +100,7 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_LayoutItem* it
              if (item->min.w == nodedata->min.w)
                break;
           }
+       eina_accessor_free(nodes);
      }
 
    item->min.w = min.w;
@@ -165,6 +168,7 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
              _item_min_calc(cb_data->pd, item, min, node);
              if (!nodedata->realized)
                {
+                  //DBG("item size change unrealize");
                   free(evas_object_event_callback_del(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change));
                   efl_ui_list_model_unrealize(pd->modeler, item);
                }
@@ -182,13 +186,17 @@ _on_modeler_resize(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler)
+_initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler, Efl_Ui_List_SegArray *segarray)
 {
    if(pd->initialized)
      return;
 
    pd->recalc = EINA_TRUE;
    pd->initialized = EINA_TRUE;
+
+   pd->modeler = modeler;
+   pd->segarray = segarray;
+
    evas_object_event_callback_add(modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
    efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
 /*
@@ -293,18 +301,17 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata;
    int i;
 
-   DBG("calc_range");
    elm_interface_scrollable_content_viewport_geometry_get
               (pd->modeler, NULL, NULL, &ow, &oh);
    elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
 
+//   DBG("CALC RANGE %d %d", ow, oh);
    ch = 0;
-
-   EINA_ACCESSOR_FOREACH(pd->nodes, i, node)
+   Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+   EINA_ACCESSOR_FOREACH(nodes, i, node)
      {
         nodedata = node->layout_data;
-
-     //   DBG("node %d h:%d ch:%d scr_y:%d oh:%d", node->first, nodedata->min.h, ch, scr_y, oh);
+//        DBG("node %d h:%d ch:%d scr_y:%d oh:%d", node->first, nodedata->min.h, ch, scr_y, oh);
         if (!nodedata->min.h)
           continue;
 
@@ -315,6 +322,7 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
 
         ch += nodedata->min.h;
      }
+   eina_accessor_free(nodes);
 }
 
 static void
@@ -328,14 +336,14 @@ _calc_size_job(void *data)
    int i;
    double start_time = ecore_time_get();
 
-   DBG(" >>>>> CALC JOB <<<<<<< \n");
    EINA_SAFETY_ON_NULL_RETURN(data);
    pd = efl_data_scope_get(obj, MY_CLASS);
    if (EINA_UNLIKELY(!pd)) return;
 
    pd->recalc = EINA_FALSE;
 
-   while (eina_accessor_data_get(pd->nodes, pd->calc_progress, (void **)&node))
+   Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+   while (eina_accessor_data_get(nodes, pd->calc_progress, (void **)&node))
      {
         pd->calc_progress++;
         if (!node->layout_data)
@@ -344,7 +352,6 @@ _calc_size_job(void *data)
         for (i = 0; i != node->length; ++i)
           {
             layout_item = (Efl_Ui_List_LayoutItem *)node->pointers[i];
-//            DBG("layout_do first %d count %d", pd->first, pd->count);
             EINA_SAFETY_ON_NULL_RETURN(layout_item);
 
             // cache size of new items
@@ -352,17 +359,8 @@ _calc_size_job(void *data)
               {
                 if (!layout_item->layout)
                   {
-                    DBG("no layout, realizing");
+                    //DBG("no layout, realizing");
                     efl_ui_list_model_realize(pd->modeler, layout_item);
-                  }
-                else
-                  {
-                    DBG("already realized");
-                    /* if(!layout_item->layout) */
-                    /*   { */
-                    /*     // error */
-                    /*     continue; */
-                    /*   } */
                   }
 
                 min = efl_gfx_size_hint_combined_min_get(layout_item->layout);
@@ -383,13 +381,13 @@ _calc_size_job(void *data)
           }
         if ( (ecore_time_get() - start_time ) > 0.01 )
           {
-            DBG(" <><><> RECALC JOB SPLIT <><><> ");
             ecore_job_del(pd->calc_job);
             pd->calc_job = ecore_job_add(_calc_size_job, obj);
-//            _efl_ui_list_relayout_layout_do(pd);
+            eina_accessor_free(nodes);
             return;
          }
      }
+   eina_accessor_free(nodes);
    pd->calc_progress = 0;
    pd->calc_job = NULL;
 
@@ -525,7 +523,8 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
    elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
    // scan all items, get their properties, calculate total weight & min size
    // cache size of new items
-   EINA_ACCESSOR_FOREACH(pd->nodes, i, items_node)
+   Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+   EINA_ACCESSOR_FOREACH(nodes, i, items_node)
      {
 
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
@@ -547,7 +546,7 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
 
         if(layout_item->min.w && layout_item->min.h)
           {
-//        DBG("size information for item %d width %d height %d", i, size->min.w, size->min.h);
+//        DBG("size information for item %d width %d height %d", j, layout_item->min.w, layout_item->min.h);
 
         assert(layout_item->layout != NULL);
         efl_gfx_size_hint_weight_get(layout_item->layout, &weight_x, &weight_y);
@@ -645,44 +644,27 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
              if (w > ow) w = ow;
           }
 
-//        DBG("------- size_h:%d -- h:%.2f --- ", size->min.h, h);
+//        DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
         evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
 
         /* layout_item->x = x; */
         /* layout_item->y = y; */
         } /* if (size) end */
-        if (pd->calc_progress && i > pd->calc_progress)
-          return;
       }
    } /* EINA ACCESSOR FOREACH END */
-/*
-   if (!pd->calc_progress)
-     {
-       eina_accessor_free(pd->nodes);
-       pd->nodes = NULL;
-     }
-*/
+   eina_accessor_free(nodes);
 }
 
 EOLIAN static void
 _efl_ui_list_precise_layouter_efl_ui_list_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd
-   , Efl_Ui_List_Model *modeler, int first, int count, Eina_Accessor *nodes)
+   , Efl_Ui_List_Model *modeler, int first, Efl_Ui_List_SegArray *segarray)
 {
-   EINA_SAFETY_ON_NULL_RETURN(nodes);
+   _initilize(obj, pd, modeler, segarray);
 
-   _initilize(obj, pd, modeler);
-
-   pd->modeler = modeler;
    pd->first = first;
-   pd->count = count;
 
-//   if (pd->nodes)
-//      eina_accessor_free(pd->nodes);
-//   if (!pd->nodes)
-      pd->nodes = nodes;
-
-   if (pd->recalc) // || pd->count_total > pop)
+   if (pd->recalc)
      {
         // cache size of new items
         pd->calc_progress = 0;
