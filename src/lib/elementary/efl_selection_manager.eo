@@ -54,10 +54,15 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
          [[This sets the action for the drag]]
          params {
             @in action: Efl.Selection.Action; [[Drag action]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drag_cancel {
          [[This cancels the on-going drag]]
+         params {
+            @in drag_obj: Efl.Object; [[The drag object]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+         }
       }
       /*drag_item_container_add {
          [[This registers a drag for items in a container. Many items can be

@@ -52,13 +52,16 @@ EOLIAN static void
 _efl_ui_dnd_efl_dnd_drag_cancel(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drag_cancel(sel_man, obj, NULL);
 }
 
 EOLIAN static void
 _efl_ui_dnd_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Data *pd , Efl_Selection_Action action)
 {
    ERR("In");
-   pd->action = action;
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drag_action_set(sel_man, action, NULL);
 }
 
 EOLIAN static void
@@ -91,7 +94,8 @@ EOLIAN static void
 _efl_ui_dnd_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format)
 {
    ERR("In");
-   pd->format = format;
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drop_target_del(sel_man, obj, format, NULL);
 }
 
 EOLIAN static void

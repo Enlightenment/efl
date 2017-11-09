@@ -1070,7 +1070,8 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                     {
                        Evas_Object *win = elm_widget_top_get(pd->drag_obj);
                        if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, pd->drag_win);
+                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                                                _x11_win_rotation_changed_cb, pd->drag_win);
                     }
                }
 
@@ -1287,7 +1288,8 @@ _efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_O
         if (win && efl_isa(win, EFL_UI_WIN_CLASS))
           {
              elm_win_rotation_set(pd->drag_win, elm_win_rotation_get(win));
-             efl_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _x11_win_rotation_changed_cb, pd->drag_win);
+             efl_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                                    _x11_win_rotation_changed_cb, pd->drag_win);
           }
      }
 
@@ -1356,16 +1358,45 @@ _efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_O
 }
 
 EOLIAN static void
-_efl_selection_manager_drag_cancel(Eo *obj, Efl_Selection_Manager_Data *pd)
+_efl_selection_manager_drag_cancel(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Input_Device *seat)
 {
    ERR("In");
+
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin = _x11_xwin_get(drag_obj);
+   if (xwin)
+     {
+        ecore_x_pointer_ungrab();
+        ELM_SAFE_FREE(pd->mouse_up_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(pd->dnd_status_handler, ecore_event_handler_del);
+        ecore_x_dnd_abort(xwin);
+        if (pd->drag_obj)
+          {
+             if (elm_widget_is(pd->drag_obj))
+               {
+                  Evas_Object *win = elm_widget_top_get(pd->drag_obj);
+                  if (win && efl_isa(win, EFL_UI_WIN_CLASS))
+                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                                            _x11_win_rotation_changed_cb, pd->drag_win);
+               }
+          }
+        pd->drag_obj = NULL;
+     }
+#endif
+
+   ELM_SAFE_FREE(pd->drag_win, evas_object_del);
 }
 
 EOLIAN static void
-_efl_selection_manager_drag_action_set(Eo *obj, Efl_Selection_Manager_Data *pd , Efl_Selection_Action action)
+_efl_selection_manager_drag_action_set(Eo *obj, Efl_Selection_Manager_Data *pd , Efl_Selection_Action action, Efl_Input_Device *seat)
 {
    ERR("In");
-   //pd->action = action;
+   Ecore_X_Atom actx;
+
+   if (pd->drag_action == action) return;
+   pd->drag_action = action;
+   actx = _x11_dnd_action_rev_map(action);
+   ecore_x_dnd_source_action_set(actx);
 }
 
 static void
@@ -1376,7 +1407,6 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
    dropable = efl_key_data_get(obj, "__elm_dropable");
    if (dropable)
      {
-#if 0
         Drop_Format *df;
         while (dropable->format_list)
           {
@@ -1388,7 +1418,6 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
              dropable = efl_key_data_get(obj, "__elm_dropable");
              if (!dropable) break;
           }
-#endif
         /*Dropable_Cbs *cbs;
         while (dropable->cbs_list)
           {
@@ -2112,6 +2141,53 @@ EOLIAN static void
 _efl_selection_manager_drop_target_del(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *target_obj, Efl_Selection_Format format, Efl_Input_Device *seat)
 {
    ERR("In");
+   Eina_List *l;
+   Ecore_X_Window xwin;
+   Eina_Bool have_drops = EINA_FALSE;
+   Dropable *dropable = NULL;
+
+   dropable = efl_key_data_get(target_obj, "__elm_dropable");
+   if (dropable)
+     {
+        Eina_Inlist *itr;
+        Drop_Format *df;
+        EINA_INLIST_FOREACH_SAFE(dropable->format_list, itr, df)
+          {
+             if (df->format == format)
+               {
+                  dropable->format_list = eina_inlist_remove(dropable->format_list,
+                                                             EINA_INLIST_GET(df));
+                  free(df);
+               }
+          }
+        if (!dropable->format_list)
+          {
+             pd->drops = eina_list_remove(pd->drops, dropable);
+             efl_key_data_set(target_obj, "__elm_dropable", NULL);
+             free(dropable);
+             evas_object_event_callback_del(target_obj, EVAS_CALLBACK_DEL,
+                   _all_drop_targets_cbs_del);
+          }
+     }
+
+   if (!pd->drops) return;
+   xwin = _x11_xwin_get(target_obj);
+   EINA_LIST_FOREACH(pd->drops, l, dropable)
+     {
+        if (xwin == _x11_xwin_get(dropable->obj))
+          {
+             have_drops = EINA_TRUE;
+             break;
+          }
+     }
+   if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+   if (!pd->drops)
+     {
+        ELM_SAFE_FREE(pd->pos_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(pd->drop_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(pd->enter_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(pd->leave_handler, ecore_event_handler_del);
+     }
 }
 
 
