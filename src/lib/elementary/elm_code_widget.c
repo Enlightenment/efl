@@ -271,7 +271,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->editable && pd->focussed && pd->cursor_line == number)
+   if (pd->visible && pd->editable && pd->focussed && pd->cursor_line == number)
      {
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
@@ -617,6 +617,7 @@ _elm_code_widget_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   pd->visible = EINA_TRUE;
    if (pd->cursor_rect)
      evas_object_show(pd->cursor_rect);
 }
@@ -630,6 +631,7 @@ _elm_code_widget_hidden_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   pd->visible = EINA_FALSE;
    if (pd->cursor_rect)
      evas_object_hide(pd->cursor_rect);
 }
