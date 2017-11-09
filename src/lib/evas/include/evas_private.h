@@ -1503,15 +1503,12 @@ struct _Evas_Func
    void *(*texture_image_get)            (void *engine, void *texture);
 
    Ector_Surface *(*ector_create)        (void *engine);
-   void  (*ector_output_set)             (void *engine, Ector_Surface *surface, void *output);
    void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
    Ector_Buffer *(*ector_buffer_new)     (void *engine, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
-   void  (*ector_begin)                  (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
-   void  (*ector_renderer_draw)          (void *engine, void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
-   void  (*ector_end)                    (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
-   void* (*ector_new)                    (void *engine, void *context, Ector_Surface *ector, void *surface);
-   void  (*ector_free)                   (void *engine_data);
+   void  (*ector_begin)                  (void *engine, void *output, void *context, void *surface, Ector_Surface *ector, int x, int y, Eina_Bool do_async);
+   void  (*ector_renderer_draw)          (void *engine, void *output, void *context, void *surface, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
+   void  (*ector_end)                    (void *engine, void *output, void *context, void *surface, Ector_Surface *ector, Eina_Bool do_async);
 
    void *(*ector_surface_create)         (void *engine, int w, int h, int *error);
    void  (*ector_surface_destroy)        (void *engine, void *surface);
