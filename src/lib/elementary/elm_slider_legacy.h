@@ -176,7 +176,7 @@ EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_typ
  * @param[in] min The minimum value.
  * @param[in] max The maximum value.
  *
- * @ingroup Efl_Ui_Slider
+ * @ingroup Elm_Slider
  */
 EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
 
@@ -189,7 +189,7 @@ EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
  * @param[out] min The minimum value.
  * @param[out] max The maximum value.
  *
- * @ingroup Efl_Ui_Slider
+ * @ingroup Elm_Slider
  */
 EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
 
