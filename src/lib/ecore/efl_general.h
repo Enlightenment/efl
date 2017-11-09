@@ -10,6 +10,7 @@
 #undef __EFL_MAIN_CONSTRUCTOR
 #undef __EFL_MAIN_DESTRUCTOR
 #undef __EFL_UI
+#undef __EFL_NET
 #undef EFL_MAIN
 #undef EFL_MAIN_EX
 
@@ -38,15 +39,25 @@
 #endif
 
 #define __EFL_MAIN_CONSTRUCTOR                  \
+  __EFL_NET(ecore_con_init();)                  \
+  __EFL_NET(ecore_con_url_init();)              \
   __EFL_UI(elm_init(argc, argv);)
 
 #define __EFL_MAIN_DESTRUCTOR                   \
-  __EFL_UI(elm_shutdown();)
+  __EFL_UI(elm_shutdown();)                     \
+  __EFL_NET(ecore_con_url_shutdown();)          \
+  __EFL_NET(ecore_con_shutdown();)
 
 #ifdef __EFL_UI_IS_REQUIRED
 # define __EFL_UI(...) __VA_ARGS__
 #else
 # define __EFL_UI(...)
+#endif
+
+#ifdef __EFL_NET_IS_REQUIRED
+# define __EFL_NET(...) __VA_ARGS__
+#else
+# define __EFL_NET(...)
 #endif
 
 #define _EFL_APP_VERSION_SET()                                          \
