@@ -263,6 +263,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
+#include "efl_ui_list_segarray.h"
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_layout_part.eo.h>

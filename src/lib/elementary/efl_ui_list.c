@@ -894,28 +894,12 @@ _efl_ui_list_elm_interface_scrollable_region_bring_in(Eo *obj, Efl_Ui_List_Data 
 EOLIAN static void
 _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
 {
-   Evas_Coord oldw, oldh;
-   Eina_Bool load = EINA_FALSE;
-
    DBG("w: %d h: %d", size.w, size.h);
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, size.w, size.h))
      return;
 
-   evas_object_geometry_get(obj, NULL, NULL, &oldw, &oldh);
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
    evas_object_resize(pd->hit_rect, size.w, size.h);
-
-   if (_horiz(pd->orient))
-     {
-        if (size.w != oldw) load = EINA_TRUE;
-     }
-   else
-     {
-        if (size.h != oldh) load = EINA_TRUE;
-     }
-
-   /* if (load && _update_items(obj, pd)) */
-   /*   return; */
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
 
    evas_object_smart_changed(pd->obj);
 }
@@ -1451,10 +1435,7 @@ _layout(Efl_Ui_List_Data *pd)
    if (!pd->model)
      return;
 
-   Eina_Accessor* accessor = efl_ui_list_segarray_node_accessor_get(&pd->segarray);
-
-   efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first,
-                                  efl_ui_list_segarray_count(&pd->segarray), accessor);
+   efl_ui_list_relayout_layout_do(pd->relayout, pd->obj, pd->segarray_first, &pd->segarray);
 }
 
 static void
@@ -1493,7 +1474,7 @@ EOLIAN static Efl_Ui_List_LayoutItem *
 _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
    Efl_Ui_List_Item_Event evt;
-   DBG("model_realize");
+//   DBG("model_realize");
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
@@ -1514,7 +1495,7 @@ EOLIAN static void
 _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
    Efl_Ui_List_Item_Event evt;
-   DBG("model_unrealize item:%p", item);
+//   DBG("model_unrealize item:%p", item);
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
    evas_object_hide(item->layout);
