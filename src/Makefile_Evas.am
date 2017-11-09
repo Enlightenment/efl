@@ -494,7 +494,9 @@ lib/evas/common/language/evas_language_utils.h \
 lib/evas/common/language/evas_script_table.h \
 lib/evas/common/evas_text_utils.h \
 lib/evas/common/evas_font_ot.h \
-lib/evas/common/evas_font_draw.h
+lib/evas/common/evas_font_draw.h \
+lib/evas/common/evas_common_generic_cache.c
+
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/canvas \
