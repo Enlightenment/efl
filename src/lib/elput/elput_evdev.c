@@ -1596,6 +1596,15 @@ _tablet_tool_tip(struct libinput_device *idev, struct libinput_event_tablet_tool
 }
 
 static void
+_switch_event_free(void *data EINA_UNUSED, void *event)
+{
+   Elput_Event_Switch *ev = event;
+
+   _evdev_device_destroy(ev->device);
+   free(ev);
+}
+
+static void
 _switch_toggle(struct libinput_device *idev, struct libinput_event_switch *event)
 {
    Elput_Event_Switch *ev;
@@ -1603,10 +1612,11 @@ _switch_toggle(struct libinput_device *idev, struct libinput_event_switch *event
    ev = calloc(1, sizeof(Elput_Event_Switch));
    if (!ev) return;
    ev->device = libinput_device_get_user_data(idev);
+   ev->device->refs++;
    ev->time_usec = libinput_event_switch_get_time_usec(event);
    ev->type = (Elput_Switch_Type)libinput_event_switch_get_switch(event);
    ev->state = (Elput_Switch_State)libinput_event_switch_get_switch_state(event);
-   ecore_event_add(ELPUT_EVENT_SWITCH, ev, NULL, NULL);
+   ecore_event_add(ELPUT_EVENT_SWITCH, ev, _switch_event_free, NULL);
 }
 
 int
