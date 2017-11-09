@@ -276,7 +276,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.shm =
           wl_registry_bind(registry, id, &wl_shm_interface, 1);
      }
-   else if (!strcmp(interface, "zwp_linux_dmabuf_v1"))
+   else if (!strcmp(interface, "zwp_linux_dmabuf_v1") && (version >= 2))
      {
         ewd->wl.dmabuf =
           wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 2);
