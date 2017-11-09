@@ -4462,7 +4462,6 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
                         void *context, void *remove EINA_UNUSED,
                         Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
 {
-
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;
    Evas_Thread_Command_Ector ector;

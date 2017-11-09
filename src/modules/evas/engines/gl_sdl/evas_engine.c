@@ -341,6 +341,7 @@ gl_symbols(void)
 
 #define LINK2GENERIC(sym)                       \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
+
    LINK2GENERIC(evas_gl_symbols);
    LINK2GENERIC(evas_gl_common_context_new);
    LINK2GENERIC(evas_gl_common_context_free);
