@@ -63,7 +63,8 @@ struct _Efl_Ui_Text_Data
    Eina_List                            *sel;
    Eina_List                            *items; /** context menu item list */
    Item_Obj                             *item_objs;
-   Eina_List                            *item_providers;
+   Efl_Canvas_Text_Item_Factory         *item_factory_fallback;
+   Efl_Canvas_Text_Item_Factory         *item_factory;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;
    Mod_Api                              *api; // module api if supplied
@@ -131,6 +132,7 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;
    Eina_Bool                             anchors_updated : 1;
+   Eina_Bool                             fallback_item_provider_disabled : 1;
 };
 
 struct _Anchor
@@ -2557,43 +2559,22 @@ _entry_mouse_triple_signal_cb(void *data,
 static Evas_Object *
 _item_get(void *data, const char *item)
 {
-   Eina_List *l;
-   Evas_Object *o;
-   Elm_Entry_Item_Provider *ip;
-   const char *style = elm_widget_style_get(data);
+   Evas_Object *o = NULL;
 
    EFL_UI_TEXT_DATA_GET(data, sd);
 
-   EINA_LIST_FOREACH(sd->item_providers, l, ip)
+   if (item)
      {
-        o = ip->func(ip->data, data, item);
-        if (o) return o;
-     }
-   if (item && !strncmp(item, "file://", 7))
-     {
-        const char *fname = item + 7;
-
-        o = evas_object_image_filled_add(evas_object_evas_get(data));
-        evas_object_image_file_set(o, fname, NULL);
-        if (evas_object_image_load_error_get(o) == EVAS_LOAD_ERROR_NONE)
+        if (sd->item_factory)
           {
-             evas_object_show(o);
+             o = efl_canvas_text_item_factory_create(sd->item_factory, data, item);
           }
-        else
+        if (!o && !sd->fallback_item_provider_disabled)
           {
-             evas_object_del(o);
-             o = edje_object_add(evas_object_evas_get(data));
-             elm_widget_theme_object_set
-               (data, o, "entry/emoticon", "wtf", style);
+             o = efl_canvas_text_item_factory_create(sd->item_factory_fallback,
+                   data, item);
           }
-        return o;
      }
-
-   o = edje_object_add(evas_object_evas_get(data));
-   if (!elm_widget_theme_object_set
-         (data, o, "entry", item, style))
-     elm_widget_theme_object_set
-       (data, o, "entry/emoticon", "wtf", style);
    return o;
 }
 
@@ -3182,6 +3163,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
    if (_elm_config->desktop_entry)
      priv->sel_handler_disabled = EINA_TRUE;
 
+   priv->item_factory_fallback = efl_add(EFL_UI_TEXT_FALLBACK_ITEM_FACTORY_CLASS, obj);
    _create_text_cursors(obj, priv);
 }
 
@@ -3264,10 +3246,6 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
         eina_stringshare_del(it->icon_group);
         free(it);
      }
-   EINA_LIST_FREE(sd->item_providers, ip)
-     {
-        free(ip);
-     }
    EINA_LIST_FREE(sd->markup_filters, tf)
      {
         _filter_free(tf);
@@ -3304,6 +3282,7 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    // a specific behavior of SWALLOW parts.
    efl_del(sd->text_obj);
    sd->text_obj = NULL;
+   if (sd->item_factory_fallback) efl_del(sd->item_factory_fallback);
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
@@ -3617,55 +3596,6 @@ EOLIAN static Eina_Bool
 _efl_ui_text_context_menu_disabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return !sd->context_menu;
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_append(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
-   if (!ip) return;
-
-   ip->func = func;
-   ip->data = data;
-   sd->item_providers = eina_list_append(sd->item_providers, ip);
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_prepend(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
-   if (!ip) return;
-
-   ip->func = func;
-   ip->data = data;
-   sd->item_providers = eina_list_prepend(sd->item_providers, ip);
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_remove(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Eina_List *l;
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   EINA_LIST_FOREACH(sd->item_providers, l, ip)
-     {
-        if ((ip->func == func) && ((!data) || (ip->data == data)))
-          {
-             sd->item_providers = eina_list_remove_list(sd->item_providers, l);
-             free(ip);
-             return;
-          }
-     }
 }
 
 EOLIAN static Eina_Bool
@@ -5373,6 +5303,32 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _decoration_defer_all(data);
+}
+
+static void
+_efl_ui_text_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      Efl_Canvas_Text_Item_Factory *item_factory)
+{
+   pd->item_factory = item_factory;
+}
+
+static Eo *
+_efl_ui_text_item_factory_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
+{
+   return pd->item_factory;
+}
+
+static void
+_efl_ui_text_item_provider_fallback_disabled_set(Eo *obj EINA_UNUSED,
+      Efl_Ui_Text_Data *pd, Eina_Bool disabled)
+{
+   pd->fallback_item_provider_disabled = disabled;
+}
+
+static Eina_Bool
+_efl_ui_text_item_provider_fallback_disabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
+{
+   return pd->fallback_item_provider_disabled;
 }
 
 #if 0

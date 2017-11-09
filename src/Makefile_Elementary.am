@@ -33,6 +33,9 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_ui_text_async.eo \
+	lib/elementary/efl_ui_text_image_item_factory.eo \
+	lib/elementary/efl_ui_text_emoticon_item_factory.eo \
+	lib/elementary/efl_ui_text_fallback_item_factory.eo \
 	lib/elementary/efl_ui_textpath.eo \
 	lib/elementary/efl_ui_translatable.eo \
 	lib/elementary/efl_ui_clock.eo \
@@ -689,6 +692,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_grid_static.c \
 	lib/elementary/efl_ui_grid_private.h \
 	lib/elementary/efl_ui_text.c \
+	lib/elementary/efl_ui_text_emoticon_item_factory.c \
+	lib/elementary/efl_ui_text_image_item_factory.c \
+	lib/elementary/efl_ui_text_fallback_item_factory.c \
 	lib/elementary/efl_ui_clock.c \
 	lib/elementary/efl_ui_clock_private.h \
 	lib/elementary/efl_ui_image_factory.c \

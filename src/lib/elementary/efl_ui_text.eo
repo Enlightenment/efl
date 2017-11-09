@@ -232,13 +232,22 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
-      item_provider_prepend {
-         [[This prepends a custom item provider to the list for that entry
+      @property item_factory {
+         [[The factory that provides items for "href" items e.g.
+           "href=emoticon/happy" or "href=file://image.jpg"
+         ]]
+         values {
+            item_factory: Efl.Canvas.Text.Item_Factory; [[Factory to create items]]
+         }
+      }
+      @property item_provider_fallback_disabled {
+         [[Fallback to internal item provider.
 
-           This prepends the given callback.]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
+           This will query the internal item provider for object items, in case
+           there was no result querying the set item_provider.
+         ]]
+         values {
+            disabled: bool;
          }
       }
       input_panel_show {
@@ -250,17 +259,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       selection_copy {
          [[This executes a "copy" action on the selected text in the entry.]]
-      }
-      item_provider_remove {
-         [[This removes a custom item provider to the list for that entry
-
-           This removes the given callback. See @.item_provider_append for
-           more information
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
       }
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
@@ -304,23 +302,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       selection_cut {
          [[This executes a "cut" action on the selected text in the entry.]]
-      }
-      item_provider_append {
-         [[This appends a custom item provider to the list for that entry
-
-           This appends the given callback. The list is walked from beginning to end
-           with each function called given the item href string in the text. If the
-           function returns an object handle other than $null (it should create an
-           object to do this), then this object is used to replace that item. If
-           not the next provider is called until one provides an item object, or the
-           default provider in entry does.
-
-           See also \@ref entry-items.
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
       }
       context_menu_item_add {
          [[This adds an item to the entry's contextual menu.

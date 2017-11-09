@@ -1,0 +1,42 @@
+class Efl.Ui.Text.Image_Item_Factory (Efl.Object, Efl.Canvas.Text.Item_Factory)
+{
+   [[Factory that creates images given key string
+
+     The key can be either a full image path, or associated with one. The
+     factory will fallback if key was not matches with an image, and try
+     to load it as a full path.
+
+     @since 1.21
+   ]]
+   methods {
+      matches_add {
+         [[Associates given name with a filename of an image.
+
+          This can be used for quick retrieval (instead of
+          providing actual filenames.
+         ]]
+         params {
+            name: string; [[the name associated with filename]]
+            filename: string; [[the image filename]]
+            key: string; [[the key to use (in cases of loading an EET file]]
+         }
+         return: bool;
+      }
+      matches_del {
+         [[Associated given name with a filename of an image.
+
+          This can be used for quick retrieval (instead of
+          providing actual filenames.
+         ]]
+         params {
+            key: string; [[the key to use (in cases of loading an EET file]]
+         }
+         return: bool;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Text.Item_Factory.create;
+   }
+}
