@@ -24,23 +24,17 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
       }
       @property loop {
          values {
-            loop_enabled: bool;
+            loop: bool;
          }
       }
       @property page_size {
          values {
-            width: int;
-            height: int;
+            size: Eina.Size2D;
          }
       }
       @property padding {
          values {
             padding: int;
-         }
-      }
-      @property side_page_num {
-         values {
-            side_page_num: int;
          }
       }
    }
@@ -53,8 +47,5 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_index_get;
       Efl.Ui.Direction.direction { set; get; }
-   }
-   events {
-      updated; [[Called when pager is scrolled]]
    }
 }

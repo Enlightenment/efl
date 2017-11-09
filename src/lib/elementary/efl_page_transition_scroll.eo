@@ -1,10 +1,16 @@
 class Efl.Page.Transition.Scroll (Efl.Page.Transition)
 {
    [[Efl ui pagescroller effect scroll class]]
+   methods {
+      @property side_page_num {
+         values {
+            side_page_num: int;
+         }
+      }
+   }
    implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Page.Transition.bind;
-      Efl.Page.Transition.init;
-      Efl.Page.Transition.update;
-      Efl.Page.Transition.finish;
    }
 }

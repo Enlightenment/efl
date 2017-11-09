@@ -8,17 +8,5 @@ class Efl.Page.Transition (Efl.Object)
             @in pager: Efl.Object; [[pager object]]
          }
       }
-      init {
-         [[set up initial variables]]
-      }
-      update {
-         [[transition effect update]]
-      }
-      finish {
-         [[After page moving is done]]
-      }
-   }
-   implements {
-      Efl.Object.constructor;
    }
 }

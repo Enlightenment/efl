@@ -6,26 +6,8 @@
 
 #include "efl_page_transition.h"
 
-typedef struct _Page_Info
-{
-   Evas_Map                *map;
-   int                      id;
-   int                      pos;
-   int                      content_num;
-   Eo                      *obj;
-   Eo                      *content;
-   Evas_Coord               x, y, w, h;
-   Evas_Coord               tx, ty, tw, th;
-   struct _Page_Info       *prev, *next;
-
-   Eina_Bool                visible;
-   Eina_Bool                vis_page;
-
-} Page_Info;
-
 typedef struct _Efl_Ui_Pager_Data
 {
-   Eo                      *obj;
    Eina_List               *page_infos;
    Eina_List               *content_list;
 
@@ -39,18 +21,9 @@ typedef struct _Efl_Ui_Pager_Data
    Evas_Coord               mouse_down_x, mouse_down_y;
 
    struct {
-      Evas_Object          *foreclip;
-      Evas_Object          *backclip;
-
-      Evas_Coord            x, y, w, h;
-   } viewport;
-
-   struct {
-      int                   w, h;
-      int                   padding;
+      Evas_Coord            w, h;
+      Evas_Coord            padding;
    } page_spec;
-
-   Page_Info               *head, *tail;
 
    struct {
       Evas_Coord            x, y;
@@ -59,12 +32,14 @@ typedef struct _Efl_Ui_Pager_Data
       Eina_Bool             enabled;
    } mouse_down;
 
+   struct {
+      int                   index;
+      Eo                   *obj;
+   } packed_page;
+
    int                      cnt;
    int                      page;
    int                      current_page;
-   int                      side_page_num;
-   int                      page_info_num;
-   double                   ratio;
    double                   move;
 
    struct {
@@ -79,7 +54,6 @@ typedef struct _Efl_Ui_Pager_Data
    Efl_Page_Transition     *transition;
 
    Eina_Bool                move_started : 1;
-   Eina_Bool                map_enabled : 1;
    Eina_Bool                prev_block : 1;
    Eina_Bool                next_block: 1;
    Eina_Bool                loop : 1;
