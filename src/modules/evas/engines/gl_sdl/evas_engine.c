@@ -316,11 +316,13 @@ eng_output_free(void *engine, void *data)
 }
 
 static void
-eng_output_dump(void *engine EINA_UNUSED, void *data)
+eng_output_dump(void *engine, void *data)
 {
    Render_Engine *re;
+   Render_Engine_GL_Generic *e = engine;
 
    re = (Render_Engine *)data;
+   generic_cache_dump(e->software.surface_cache);
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(re->generic.software.ob->gl_context);
@@ -339,7 +341,6 @@ gl_symbols(void)
 
 #define LINK2GENERIC(sym)                       \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
-
    LINK2GENERIC(evas_gl_symbols);
    LINK2GENERIC(evas_gl_common_context_new);
    LINK2GENERIC(evas_gl_common_context_free);

@@ -83,7 +83,7 @@ struct _Render_Output_Software_Generic
 struct _Render_Engine_Software_Generic
 {
    Eina_List *outputs;
-
+   Generic_Cache  *surface_cache;
    struct {
       int w, h;
       Eina_Bool strict;

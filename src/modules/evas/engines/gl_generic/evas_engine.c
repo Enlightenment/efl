@@ -152,6 +152,8 @@ egl_display_get(Render_Engine_GL_Generic *engine)
 }
 #endif
 
+void eng_image_free(void *engine, void *image);
+
 static void *
 eng_engine_new(void)
 {
@@ -159,6 +161,7 @@ eng_engine_new(void)
 
    engine = calloc(1, sizeof (Render_Engine_GL_Generic));
    if (!engine) return NULL;
+   engine->software.surface_cache = generic_cache_new(engine, eng_image_free);
 
    return engine;
 }
@@ -168,6 +171,8 @@ eng_engine_free(void *engine)
 {
    Render_Engine_GL_Generic *e = engine;
    Render_Output_GL_Generic *output;
+
+   generic_cache_destroy(e->software.surface_cache);
 
    EINA_LIST_FREE(e->software.outputs, output)
      ERR("Output %p not properly cleaned before engine destruction.", output);

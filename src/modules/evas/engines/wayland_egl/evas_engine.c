@@ -748,9 +748,10 @@ eng_output_dump(void *engine EINA_UNUSED, void *data)
 {
    Outbuf *ob;
    Render_Engine *re;
+   Render_Engine_GL_Generic *e = engine;
 
    if (!(re = (Render_Engine *)data)) return;
-
+   generic_cache_dump(e->software.surface_cache);
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    ob = eng_get_ob(re);

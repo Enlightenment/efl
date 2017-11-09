@@ -1174,6 +1174,34 @@ typedef enum _Evas_Render_Mode
 void evas_common_rgba_image_scalecache_items_ref(Image_Entry *ie, Eina_Array *ret);
 void evas_common_rgba_image_scalecache_item_unref(Image_Entry *ie);
 
+// Generic Cache
+typedef struct _Generic_Cache          Generic_Cache;
+typedef struct _Generic_Cache_Entry    Generic_Cache_Entry;
+
+struct _Generic_Cache_Entry
+{
+   void         *key;     // pointer
+   void         *data; // engine image
+   int           ref;
+};
+
+typedef void (*Generic_Cache_Free)(void *user_data, void *data);
+
+struct _Generic_Cache
+{
+   Eina_Hash          *hash;
+   Eina_List          *lru_list;
+   void               *user_data;
+   Generic_Cache_Free  free_func;
+};
+
+EAPI Generic_Cache* generic_cache_new(void *user_data, Generic_Cache_Free func);
+EAPI void generic_cache_destroy(Generic_Cache *cache);
+EAPI void generic_cache_dump(Generic_Cache *cache);
+EAPI void generic_cache_data_set(Generic_Cache *cache, void *key, void *data);
+EAPI void *generic_cache_data_get(Generic_Cache *cache, void *key);
+EAPI void generic_cache_data_drop(Generic_Cache *cache, void *key);
+
 /*****************************************************************************/
 
 #ifdef __cplusplus

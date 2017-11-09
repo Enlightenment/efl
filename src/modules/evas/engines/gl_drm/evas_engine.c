@@ -1070,13 +1070,14 @@ eng_canvas_alpha_get(void *data)
 }
 
 static void
-eng_output_dump(void *engine EINA_UNUSED, void *data)
+eng_output_dump(void *engine, void *data)
 {
    Render_Engine *re;
+   Render_Engine_GL_Generic *e = engine;
 
    re = (Render_Engine *)data;
    if (!re) return;
-
+   generic_cache_dump(e->software.surface_cache);
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(eng_get_ob(re)->gl_context);
