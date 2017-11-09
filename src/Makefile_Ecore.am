@@ -3,12 +3,17 @@
 
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_exe.eo \
+	lib/ecore/ecore_event_message.eo \
+	lib/ecore/ecore_event_message_handler.eo \
 	lib/ecore/efl_loop_timer.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_loop.eo \
 	lib/ecore/efl_loop_consumer.eo \
 	lib/ecore/efl_loop_fd.eo \
+	lib/ecore/efl_loop_handler.eo \
+	lib/ecore/efl_loop_message.eo \
+	lib/ecore/efl_loop_message_handler.eo \
 	lib/ecore/efl_io_closer_fd.eo \
 	lib/ecore/efl_io_positioner_fd.eo \
 	lib/ecore/efl_io_reader_fd.eo \
@@ -84,8 +89,14 @@ lib/ecore/ecore_idle_exiter.c \
 lib/ecore/ecore_idler.c \
 lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
+lib/ecore/ecore_event_message.c \
+lib/ecore/ecore_event_message_handler.c \
+lib/ecore/efl_loop.c \
 lib/ecore/efl_loop_consumer.c \
 lib/ecore/efl_loop_fd.c \
+lib/ecore/efl_loop_handler.c \
+lib/ecore/efl_loop_message.c \
+lib/ecore/efl_loop_message_handler.c \
 lib/ecore/efl_io_closer_fd.c \
 lib/ecore/efl_io_positioner_fd.c \
 lib/ecore/efl_io_reader_fd.c \
@@ -115,6 +126,7 @@ lib/ecore/efl_interpolator_divisor.c \
 lib/ecore/efl_interpolator_bounce.c \
 lib/ecore/efl_interpolator_spring.c \
 lib/ecore/efl_interpolator_cubic_bezier.c \
+lib/ecore/ecore_main_timechanges.c \
 lib/ecore/ecore_pipe.c \
 lib/ecore/ecore_poller.c \
 lib/ecore/ecore_time.c \
@@ -124,7 +136,9 @@ lib/ecore/ecore_throttle.c \
 lib/ecore/ecore_exe.c \
 lib/ecore/ecore_exe_private.h \
 lib/ecore/ecore_private.h \
-lib/ecore/ecore_internal.h
+lib/ecore/ecore_internal.h \
+lib/ecore/ecore_main_common.h
+
 
 if HAVE_WIN32
 lib_ecore_libecore_la_SOURCES += lib/ecore/ecore_exe_win32.c

@@ -68,10 +68,9 @@ typedef enum
 
 struct _Ecore_Exe_Data
 {
-   pid_t             pid;
    void             *data;
    char             *tag, *cmd;
-   Ecore_Exe_Flags   flags;
+   Eo               *loop;
 
 #ifdef _WIN32
    HANDLE process;
@@ -124,10 +123,11 @@ struct _Ecore_Exe_Data
    int               start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
 
    Ecore_Timer      *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
-   void             *doomsday_clock_dead; /* data for the doomsday clock */
 #endif
 
    Ecore_Exe_Cb      pre_free_cb;
+   pid_t             pid;
+   Ecore_Exe_Flags   flags;
    Eina_Bool         close_stdin : 1;
 };
 
@@ -137,7 +137,6 @@ EAPI extern int ECORE_EXE_EVENT_ADD;
 EAPI extern int ECORE_EXE_EVENT_DEL;
 EAPI extern int ECORE_EXE_EVENT_DATA;
 EAPI extern int ECORE_EXE_EVENT_ERROR;
-extern Eina_List *_ecore_exe_exes;
 
 Ecore_Exe *_ecore_exe_find(pid_t pid);
 void *_ecore_exe_event_del_new(void);

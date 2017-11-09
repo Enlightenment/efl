@@ -1,0 +1,38 @@
+import efl_types;
+import eina_types;
+
+class Efl.Loop.Message.Handler (Efl.Object)
+{
+   [[ ]]
+   methods {
+      message_add {
+         [[ ]]
+         return: Efl.Loop.Message; [[ ]]
+      }
+      message_send {
+         [[ Plase the message on the queue to be called later ]]
+         params {
+            @in message: Efl.Loop.Message; [[ ]]
+         }
+      }
+      message_call {
+         [[ Overide me (implement) then call super after calling the
+            right callback type if you specialize the message type
+         ]]
+         params {
+            @in message: Efl.Loop.Message; [[ Generic message event type ]]
+         }
+      }
+      message_clear {
+         [[ ]]
+         return: bool; [[ ]]
+      }
+   }
+   events {
+      message: Efl.Loop.Message; [[ ]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

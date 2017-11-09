@@ -73,5 +73,6 @@ class Efl.Promise (Efl.Loop.Consumer)
    implements {
       Efl.Object.destructor;
       Efl.Object.constructor;
+      Efl.Object.parent { set; }
    }
 }

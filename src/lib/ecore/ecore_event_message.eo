@@ -1,0 +1,34 @@
+import efl_types;
+import eina_types;
+
+class Ecore.Event.Message (Efl.Loop.Message)
+{
+   [[ For Legacy API usage Only. Legacy Ecore Events ]]
+   methods {
+      @property data {
+         [[ Property of the legacy event - set and get it ]]
+         set { }
+         get { }
+         values {
+            type: int; [[ The event type ]]
+            data: void_ptr; [[ The event data ]]
+            free_func: void_ptr; [[ Being lazy for legacy ]]
+            free_data: void_ptr; [[ Free func data ]]
+         }
+      }
+      data_steal {
+         [[ Steal the data out and set internal values to -1
+            for type and NULL for other vals ]]
+         params {
+            @out type: int; [[ The event type ]]
+            @out data: void_ptr; [[ The event data ]]
+            @out free_func: void_ptr; [[ Being lazy for legacy ]]
+            @out free_data: void_ptr; [[ Free func data ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

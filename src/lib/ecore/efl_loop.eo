@@ -77,7 +77,24 @@ class Efl.Loop (Efl.Object)
            This has higher priority, for low priority use
            @.idle
          ]]
-          return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
+         return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
+      }
+      @property throttle {
+         [[Slow down the loop execution by forcing a sleep for a small
+           period of time every time the loop iterates/loops.]]
+         set {}
+         get {}
+         values {
+           amount : double; [[Time to sleep for each "loop iteration"]]
+         }
+      }
+      @property time {
+         [[The time point when the loop was logically woken up.]]
+         set {}
+         get {}
+         values {
+           timepoint: double; [[Time in seconds since process specfic start point]]
+         }
       }
       idle {
          [[A future promise that will be resolved from a clean main
@@ -85,7 +102,7 @@ class Efl.Loop (Efl.Object)
 
            This is a low priority version of @.job
          ]]
-          return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
+         return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
       }
       timeout {
          [[A future promise that will be resolved from a clean main
@@ -110,6 +127,22 @@ class Efl.Loop (Efl.Object)
             @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
          }
          return: bool; [[$true if successfully unregistered, $false otherwise.]]
+      }
+      message_handler_get @class {
+         [[ ]]
+         params {
+            @in loop: Efl.Loop; [[ ]]
+            @in klass: const(Efl.Class); [[ ]]
+         }
+         return: Efl.Loop.Message.Handler; [[ ]]
+      }
+      message_process {
+         [[ ]]
+         return: bool; [[ ]]
+      }
+      message_exists {
+         [[ ]]
+         return: bool; [[ ]]
       }
    }
    events {

@@ -1,0 +1,86 @@
+import efl_types;
+import eina_types;
+
+class Ecore.Event.Message.Handler (Efl.Loop.Message.Handler)
+{
+   [[ For Legacy API usage Only
+      This class is rather hacky/messy as it's really internal glue
+      to handle legacy ecore events alongside the new loop message
+      stuff merged together. This is ugly as it's internal only
+      to quickly glue things together and is destined for death in
+      EFL 2.0 or when we dump legacy.
+   ]]
+   methods {
+      message_type_add {
+         [[ ]]
+         return: Ecore.Event.Message; [[ ]]
+      }
+      type_new {
+         [[ ]]
+         return: int; [[ ]]
+      }
+      handler_add {
+         [[ Legacy list of callback handlers so they can return false ]]
+         params {
+            type: int;
+            func: void_ptr;
+            data: void_ptr;
+         }
+         return: void_ptr; [[ Lazy return handle ]]
+      }
+      handler_del {
+         params {
+            handler: void_ptr; [[ handler returned from handler_add() ]]
+         }
+         return: void_ptr; [[ handler data ptr ]]
+      }
+      handler_data_get {
+         params {
+            handler: void_ptr; [[ handler returned from handler_add() ]]
+         }
+         return: void_ptr; [[ handler data ptr ]]
+      }
+      handler_data_set {
+         params {
+            handler: void_ptr; [[ handler returned from handler_add() ]]
+            data: void_ptr;
+         }
+         return: void_ptr; [[ prev handler data ptr ]]
+      }
+      filter_add {
+         [[ Legacy event filter ]]
+         params {
+            func_start: void_ptr;
+            func_filter: void_ptr;
+            func_end: void_ptr;
+            data: void_ptr;
+         }
+         return: void_ptr; [[ Lazy return filter handle ]]
+      }
+      filter_del {
+         params {
+            filter: void_ptr; [[ filter returned from filter_add() ]]
+         }
+         return: void_ptr; [[ filter data ptr ]]
+      }
+      current_type_get {
+         return: int; [[ ]]
+      }
+      current_event_get {
+         return: void_ptr; [[ ]]
+      }
+      type_flush {
+         params {
+            type: int; [[ the event type to flush ]]
+         }
+      }
+   }
+   events {
+      message,ecore,event: Ecore.Event.Message; [[ Sample - override this ]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Loop.Message.Handler.message_call; [[ Sample - override this ]]
+   }
+}

@@ -21,6 +21,8 @@ struct _Efl_Promise_Msg
 
 struct _Efl_Promise_Data
 {
+   Eo *loop;
+   Efl_Loop_Data *loop_data;
    Efl_Promise *promise;
    Efl_Promise_Msg *message;
    Eina_List *futures;
@@ -589,7 +591,6 @@ void
 ecore_loop_promise_fulfill(Eo *obj)
 {
    Efl_Promise_Data *pd = efl_data_scope_get(obj, EFL_PROMISE_CLASS);
-
    _efl_promise_propagate(obj, pd);
 }
 
@@ -675,16 +676,8 @@ _efl_promise_progress_set(Eo *obj, Efl_Promise_Data *pd, const void *p)
      }
 }
 
-static Efl_Object *
-_efl_promise_efl_object_constructor(Eo *obj, Efl_Promise_Data *pd)
-{
-   pd->promise = obj;
-
-   return efl_constructor(efl_super(obj, EFL_PROMISE_CLASS));
-}
-
 static void
-_efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
+_efl_promise_loop_clear(Eo *obj, Efl_Promise_Data *pd)
 {
    pd->nodelay = EINA_TRUE;
 
@@ -698,7 +691,7 @@ _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
    if (pd->message &&
        !pd->propagated)
      {
-        ecore_loop_promise_unregister(efl_provider_find(obj, EFL_LOOP_CLASS), obj);
+        ecore_loop_promise_unregister(pd->loop, obj);
         _efl_promise_propagate(obj, pd);
      }
 
@@ -708,7 +701,28 @@ _efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
           _efl_promise_msg_free(pd->message);
         pd->message = NULL;
      }
+}
 
+static void
+_efl_promise_efl_object_parent_set(Eo *obj, Efl_Promise_Data *pd, Efl_Object *parent)
+{
+   if (!parent) _efl_promise_loop_clear(obj, pd);
+   efl_parent_set(efl_super(obj, EFL_PROMISE_CLASS), parent);
+   pd->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
+}
+
+static Efl_Object *
+_efl_promise_efl_object_constructor(Eo *obj, Efl_Promise_Data *pd)
+{
+   pd->promise = obj;
+   return efl_constructor(efl_super(obj, EFL_PROMISE_CLASS));
+}
+
+static void
+_efl_promise_efl_object_destructor(Eo *obj, Efl_Promise_Data *pd)
+{
+   _efl_promise_loop_clear(obj, pd);
    efl_destructor(efl_super(obj, EFL_PROMISE_CLASS));
 }
 

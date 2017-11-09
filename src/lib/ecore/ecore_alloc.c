@@ -33,9 +33,9 @@ struct _Ecore_Mempool
   }
 
 //GENERIC_ALLOC_FREE(Ecore_Animator, ecore_animator);
-GENERIC_ALLOC_FREE(Ecore_Event_Handler, ecore_event_handler);
-GENERIC_ALLOC_FREE(Ecore_Event_Filter, ecore_event_filter);
-GENERIC_ALLOC_FREE(Ecore_Event, ecore_event);
+//GENERIC_ALLOC_FREE(Ecore_Event_Handler, ecore_event_handler);
+//GENERIC_ALLOC_FREE(Ecore_Event_Filter, ecore_event_filter);
+//GENERIC_ALLOC_FREE(Ecore_Event, ecore_event);
 //GENERIC_ALLOC_FREE(Ecore_Idle_Exiter, ecore_idle_exiter);
 //GENERIC_ALLOC_FREE(Ecore_Idle_Enterer, ecore_idle_enterer);
 //GENERIC_ALLOC_FREE(Ecore_Idler, ecore_idler);
@@ -51,9 +51,9 @@ GENERIC_ALLOC_FREE(Ecore_Win32_Handler, ecore_win32_handler);
 
 static Ecore_Mempool *mempool_array[] = {
 //  &ecore_animator_mp,
-  &ecore_event_handler_mp,
-  &ecore_event_filter_mp,
-  &ecore_event_mp,
+//  &ecore_event_handler_mp,
+//  &ecore_event_filter_mp,
+//  &ecore_event_mp,
 //  &ecore_idle_exiter_mp,
 //  &ecore_idle_enterer_mp,
 //  &ecore_idler_mp,
@@ -78,9 +78,9 @@ ecore_mempool_init(void)
    Type##_mp.size = _ecore_sizeof_##TYPE
 
 //   MP_SIZE_INIT(Ecore_Animator, ecore_animator);
-   MP_SIZE_INIT(Ecore_Event_Handler, ecore_event_handler);
-   MP_SIZE_INIT(Ecore_Event_Filter, ecore_event_filter);
-   MP_SIZE_INIT(Ecore_Event, ecore_event);
+//   MP_SIZE_INIT(Ecore_Event_Handler, ecore_event_handler);
+//   MP_SIZE_INIT(Ecore_Event_Filter, ecore_event_filter);
+//   MP_SIZE_INIT(Ecore_Event, ecore_event);
 //   MP_SIZE_INIT(Ecore_Idle_Exiter, ecore_idle_exiter);
 //   MP_SIZE_INIT(Ecore_Idle_Enterer, ecore_idle_enterer);
 //   MP_SIZE_INIT(Ecore_Idler, ecore_idler);

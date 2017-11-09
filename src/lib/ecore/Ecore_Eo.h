@@ -29,11 +29,17 @@
  */
 
 
+#include "ecore_event_message.eo.h"
+#include "ecore_event_message_handler.eo.h"
+
 /**
  * @ingroup Ecore_MainLoop_Group
  *
  * @{
  */
+
+#include "efl_loop_message.eo.h"
+#include "efl_loop_message_handler.eo.h"
 
 #include "efl_loop.eo.h"
 
@@ -56,6 +62,7 @@ EAPI int efl_loop_exit_code_process(Eina_Value *value);
 EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);
 
 #include "efl_loop_fd.eo.h"
+#include "efl_loop_handler.eo.h"
 
 #include "efl_promise.eo.h"
 

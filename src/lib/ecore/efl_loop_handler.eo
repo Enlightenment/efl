@@ -1,0 +1,72 @@
+import eina_types;
+
+enum Efl.Loop.Handler.Flags {
+   [[ A set of flags that can be OR'd together to indicate which are
+   desired ]]
+   none = 0, [[ No I/O is desired (generally useless) ]]
+   read = 1, [[ Reading is desired ]]
+   write = 2, [[ Writing is desired ]]
+   error = 4, [[ Error channel input is desired ]]
+}
+
+class Efl.Loop.Handler (Efl.Object)
+{
+   [[ An object that describes an low-level source of I/O to listen to
+   for available data to be read or written, depending on the OS and data
+   source type. When I/O becomes available various events are produced
+   and the callbacks attached to them will be called. ]]
+   methods {
+      @property active {
+         [[ This sets what kind of I/O should be listened to only when
+         using a fd or fd_file for the handler ]]
+         set { }
+         get { }
+         values {
+            flags: Efl.Loop.Handler.Flags; [[ The flags that indicate what kind of I/O should be listened for like read, write or error channels. ]]
+         }
+      }
+      @property fd {
+         [[ Controls a file desciptor to listen to for I/O that points
+         to a data pipe such as a device, socket or pipe etc. ]]
+         set { }
+         get { }
+         values {
+            fd: int; [[ The file descriptor ]]
+         }
+      }
+      @property fd_file {
+         [[ Controls a file descriptor to listen to for I/O that
+         specifically points to a file in storage and not a device, socket or
+         pipe etc. ]]
+         set { }
+         get { }
+         values {
+            fd: int; [[ The file descriptor ]]
+         }
+      }
+      @property win32 {
+         [[ Controls a windows win32 object handle to listen to for I/O.
+         When it becomes available for any data the read event will be
+         produced. ]]
+         set { }
+         get { }
+         values {
+            handle: void_ptr; [[ A win32 object handle ]]
+         }
+      }
+   }
+   events {
+      read; [[ Called when a read happened on the descriptor ]]
+      write; [[ Called when a write happened on the descriptor ]]
+      error; [[ Called when a error occurred on the descriptor ]]
+      buffer; [[ Called when buffered data already read from the descriptor should be processed ]]
+      prepare; [[ Called when preparing a descriptor for listening ]]
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Object.finalize;
+      Efl.Object.parent { set; }
+   }
+}

@@ -273,13 +273,11 @@ ecore_init(void)
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    if (!ecore_mempool_init()) goto shutdown_mempool;
-   if (!_ecore_event_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
+   if (!_ecore_event_init()) goto shutdown_event;
 
    vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
    if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
-
-   _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
 
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
@@ -359,6 +357,9 @@ ecore_init(void)
 
    return _ecore_init_count;
 
+shutdown_event:
+   _ecore_event_shutdown();
+   _ecore_main_shutdown();
 shutdown_mempool:
    ecore_mempool_shutdown();
    efl_object_shutdown();
@@ -403,9 +404,6 @@ ecore_shutdown(void)
        }
 #endif
 
-     efl_del(_mainloop_singleton);
-     _mainloop_singleton = NULL;
-
      if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
      _ecore_poller_shutdown();
      _ecore_animator_shutdown();
@@ -442,7 +440,6 @@ ecore_shutdown(void)
 #ifndef HAVE_EXOTIC
      _ecore_exe_shutdown();
 #endif
-     _efl_loop_timer_shutdown();
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();

@@ -528,7 +528,9 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
         goto error;
      }
 
-   _ecore_exe_exes = eina_list_append(_ecore_exe_exes, obj);
+   exe->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   Efl_Loop_Data *loop = efl_data_scope_get(exe->loop, EFL_LOOP_CLASS);
+   if (loop) loop->exes = eina_list_append(loop->exes, obj);
 
    e = calloc(1, sizeof(Ecore_Exe_Event_Add));
    if (!e) goto error;
@@ -711,7 +713,8 @@ _impl_ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
 
    IF_FREE(exe->cmd);
 
-   _ecore_exe_exes = eina_list_remove(_ecore_exe_exes, obj);
+   Efl_Loop_Data *loop = efl_data_scope_get(exe->loop, EFL_LOOP_CLASS);
+   if (loop) loop->exes = eina_list_remove(loop->exes, obj);
    IF_FREE(exe->tag);
 }
 
