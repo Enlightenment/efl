@@ -112,6 +112,7 @@ EAPI void efl_wl_scale_set(Evas_Object *obj, double scale);
  *
  * @param obj The compositor widget
  * @param set Whether to enable aspect setting
+ * @since 1.21
  */
 EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
 
@@ -120,6 +121,7 @@ EAPI void efl_wl_aspect_set(Evas_Object *obj, Eina_Bool set);
  *
  * @param obj The compositor widget
  * @param set Whether to enable min/max setting
+ * @since 1.21
  */
 EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
 
