@@ -50,7 +50,8 @@ elementary_images_files = \
 	elementary/images/pm_fill.png \
 	elementary/images/pt.png \
 	elementary/images/earth_normal.png \
-	elementary/images/space.png
+	elementary/images/space.png \
+	elementary/images/image_items.eet
 
 elementary_images_glayer_files = \
 	elementary/images/g_layer/double_tap_1.png \

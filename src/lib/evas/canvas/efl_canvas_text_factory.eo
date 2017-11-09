@@ -1,0 +1,25 @@
+interface Efl.Canvas.Text.Factory ()
+{
+   [[Object factory that creates Efl.Canvas.Object objects.
+
+     Translates a given key to an object (item), to be later placed in a text
+     for higher level usages. The translation implementation is left to be
+     decided by the inheriting class, whether it is by treating the $key as an
+     image path, or a key associated with a real-path in a hashtable
+     or something else entirely.
+
+     @since 1.21
+   ]]
+   methods {
+      create {
+         [[Translates a given $key to an item object, and returns the object.
+           The returned object should be owned by the passed $object.
+         ]]
+         params {
+            object: Efl.Canvas.Object; [[The parent of the created object]]
+            key: string; [[Key that is associated to an item object]]
+         }
+         return: Efl.Canvas.Object @owned;
+      }
+   }
+}

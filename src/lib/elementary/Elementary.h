@@ -311,6 +311,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_popup_alert_scroll.eo.h>
 # include <efl_ui_popup_alert_text.eo.h>
 # include <efl_ui_popup_anchor.eo.h>
+# include <efl_ui_text_factory_images.eo.h>
+# include <efl_ui_text_factory_emoticons.eo.h>
+# include <efl_ui_text_factory_fallback.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>

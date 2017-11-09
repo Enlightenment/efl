@@ -15123,16 +15123,24 @@ _efl_canvas_text_efl_text_annotate_range_annotations_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Text_Annotate_Annotation *
-_efl_canvas_text_efl_text_annotate_cursor_object_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur, const char *format)
+_efl_canvas_text_efl_text_annotate_cursor_item_insert(Eo *eo_obj,
+      Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur,
+      const char *item, const char *format)
 {
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   eina_strbuf_append_printf(buf, "%s href=%s", format, item);
+
    Efl_Text_Annotate_Annotation *ret =
-      _textblock_annotation_insert(cur->obj, o, cur, cur, format, EINA_TRUE);
+      _textblock_annotation_insert(cur->obj, o, cur, cur,
+            eina_strbuf_string_get(buf), EINA_TRUE);
+   eina_strbuf_free(buf);
    efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
 EOLIAN static Efl_Text_Annotate_Annotation *
-_efl_canvas_text_efl_text_annotate_cursor_object_item_annotation_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_cursor_item_annotation_get(Eo *eo_obj EINA_UNUSED,
       Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur)
 {
    Eina_Iterator *it;
@@ -15153,7 +15161,21 @@ _efl_canvas_text_efl_text_annotate_cursor_object_item_annotation_get(Eo *eo_obj 
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_text_efl_text_annotate_object_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
+_efl_canvas_text_efl_text_annotate_annotation_is_item(Eo *eo_obj EINA_UNUSED,
+      Efl_Canvas_Text_Data *o EINA_UNUSED,
+      Efl_Text_Annotate_Annotation *annotation)
+{
+   if (!annotation || (annotation->obj != eo_obj))
+     {
+        ERR("Used invalid handle or of a different object");
+        return EINA_FALSE;
+     }
+
+   return annotation->is_item;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_text_efl_text_annotate_item_geometry_get(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED,
       const Efl_Text_Annotate_Annotation *an, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Efl_Text_Cursor_Cursor cur;
@@ -16264,3 +16286,4 @@ _efl_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 }
 
 #include "canvas/efl_canvas_text.eo.c"
+#include "canvas/efl_canvas_text_factory.eo.c" // interface

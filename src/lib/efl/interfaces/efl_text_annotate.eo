@@ -76,23 +76,6 @@ interface Efl.Text.Annotate {
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
-      object_item_geometry_get {
-         [[Queries a given object item for its geometry.
-
-           Note that the provided annotation should be an object item type.
-
-           @since 1.18
-         ]]
-         legacy: null;
-         params {
-            @in an: ptr(const(Efl.Text.Annotate.Annotation)); [[Given annotation to query]]
-            @out x: int; [[X coordinate of the annotation]]
-            @out y: int; [[Y coordinate of the annotation]]
-            @out w: int; [[Width of the annotation]]
-            @out h: int; [[Height of the annotation]]
-         }
-         return: bool; [[$true if given annotation is an object item, $false otherwise]]
-      }
       annotation_positions_get {
          [[Sets given cursors to the start and end positions of the annotation.
 
@@ -111,8 +94,41 @@ interface Efl.Text.Annotate {
              position of the annotation in the text]]
          }
       }
+      annotation_is_item {
+         [[Whether this is an "item" type of annotation. Should be used before
+           querying the annotation's geometry, as only "item" annotations have
+           a geometry.
+
+           see @.cursor_item_insert
+           see @.item_geometry_get
+
+           @since 1.21
+         ]]
+         legacy: null;
+         params {
+            annotation: ptr(Efl.Text.Annotate.Annotation); [[Given annotation]]
+         }
+         return: bool; [[$true if given annotation is an object item, $false otherwise]]
+      }
+      item_geometry_get {
+         [[Queries a given object item for its geometry.
+
+           Note that the provided annotation should be an object item type.
+
+           @since 1.18
+         ]]
+         legacy: null;
+         params {
+            @in an: ptr(const(Efl.Text.Annotate.Annotation)); [[Given annotation to query]]
+            @out x: int; [[X coordinate of the annotation]]
+            @out y: int; [[Y coordinate of the annotation]]
+            @out w: int; [[Width of the annotation]]
+            @out h: int; [[Height of the annotation]]
+         }
+         return: bool; [[$true if given annotation is an object item, $false otherwise]]
+      }
       // Cursor
-      @property cursor_object_item_annotation {
+      @property cursor_item_annotation {
          [[The object-item annotation at the cursor's position.]]
          get {
             legacy: null;
@@ -124,7 +140,7 @@ interface Efl.Text.Annotate {
             cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
          }
       }
-      cursor_object_item_insert {
+      cursor_item_insert {
          [[Inserts a object item at specified position.
 
            This adds a placeholder to be queried by higher-level code,
@@ -134,8 +150,11 @@ interface Efl.Text.Annotate {
          legacy: null;
          params {
             cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
-            @in format: string; [[Format of the inserted item.
-            See Format styles.]]
+            @in item: string;   [[Item key to be used in higher-up
+                                  code to query and decided what image, emoticon
+                                  etc. to embed.]]
+            @in format: string; [[Size format of the inserted item.
+                                  This hints how to size the item in the text.]]
          }
          return: ptr(Efl.Text.Annotate.Annotation); [[The annotation handle of the
          inserted item.]]
