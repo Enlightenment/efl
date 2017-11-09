@@ -405,9 +405,11 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
 }
 
 static Buffer_Manager *
-_buffer_manager_get(void)
+_buffer_manager_get(Surface_Type types)
 {
    int fd;
+   Eina_Bool dmabuf = types & SURFACE_DMABUF;
+   Eina_Bool shm = types & SURFACE_SHM;
    Eina_Bool success = EINA_FALSE;
 
    if (buffer_manager)
@@ -424,10 +426,10 @@ _buffer_manager_get(void)
 
    if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF"))
      {
-        success = _intel_buffer_manager_setup(fd);
-        if (!success) success = _exynos_buffer_manager_setup(fd);
+        success = dmabuf && _intel_buffer_manager_setup(fd);
+        if (!success) success = dmabuf && _exynos_buffer_manager_setup(fd);
      }
-   if (!success) success = _wl_shm_buffer_manager_setup(fd);
+   if (!success) success = shm && _wl_shm_buffer_manager_setup(fd);
    if (!success) goto err_bm;
 
    drm_fd = fd;
@@ -736,11 +738,15 @@ _evas_dmabuf_surface_destroy(Surface *s)
 Eina_Bool
 _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 {
+   Surface_Type types = 0;
    Dmabuf_Surface *surf = NULL;
    int i = 0;
 
    if (dmabuf_totally_hosed) return EINA_FALSE;
-   if (!ecore_wl2_display_dmabuf_get(s->info->info.wl2_display)) return EINA_FALSE;
+   if (ecore_wl2_display_shm_get(s->info->info.wl2_display))
+     types |= SURFACE_SHM;
+   if (ecore_wl2_display_dmabuf_get(s->info->info.wl2_display))
+     types |= SURFACE_DMABUF;
 
    if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
    surf = s->surf.dmabuf;
@@ -754,7 +760,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->buffer = calloc(surf->nbuf, sizeof(Dmabuf_Buffer *));
    if (!surf->buffer) goto err;
 
-   if (!_buffer_manager_get()) goto err;
+   if (!_buffer_manager_get(types)) goto err;
 
    if (w && h)
      {
