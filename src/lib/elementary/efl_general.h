@@ -24,6 +24,18 @@
 # define _EFL_BUILD_ID NULL
 #endif
 
+#define __EFL_MAIN_CONSTRUCTOR                  \
+  __EFL_UI(elm_init(argc, argv);)
+
+#define __EFL_MAIN_DESTRUCTOR                   \
+  __EFL_UI(elm_shutdown();)
+
+#ifdef __EFL_UI_IS_REQUIRED
+# define __EFL_UI(...) __VA_ARGS__
+#else
+# define __EFL_UI(...)
+#endif
+
 #define _EFL_APP_VERSION_SET()                                          \
   do {                                                                  \
      if (efl_build_version_set)                                         \
@@ -40,10 +52,10 @@
      ecore_init();                                                      \
      efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL); \
      ecore_init_ex(argc, argv);                                         \
-     elm_init(argc, argv);                                              \
+     __EFL_MAIN_CONSTRUCTOR;                                            \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \
      real__ = efl_loop_exit_code_process(ret__);                        \
-     elm_shutdown();                                                    \
+     __EFL_MAIN_DESTRUCTOR;                                             \
      ecore_shutdown_ex();                                               \
      ecore_shutdown();                                                  \
      return real__;                                                     \
@@ -64,10 +76,10 @@
      ecore_init();                                                      \
      efl_event_callback_array_add(ecore_main_loop_get(), _efl_main_ex(), NULL); \
      ecore_init_ex(argc, argv);                                         \
-     elm_init(argc, argv);                                              \
+     __EFL_MAIN_CONSTRUCTOR;                                            \
      ret__ = efl_loop_begin(ecore_main_loop_get());                     \
      real__ = efl_loop_exit_code_process(ret__);                        \
-     elm_shutdown();                                                    \
+     __EFL_MAIN_DESTRUCTOR;                                             \
      ecore_shutdown_ex();                                               \
      ecore_shutdown();                                                  \
      return real__;                                                     \
