@@ -99,7 +99,6 @@ extern EAPI double _elm_startup_time;
 #define __EFL_UI_IS_REQUIRED
 
 #include "Efl_Core.h"
-#include "efl_general.h"
 
 /**************************************************************************/
 /* General calls */
