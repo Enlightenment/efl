@@ -13,8 +13,8 @@
 
 #include "efl_dnd_private.h"
 
-#define MY_CLASS_DRAG EFL_UI_DND_DRAG_MIXIN
-#define MY_CLASS_DROP EFL_UI_DND_DROP_MIXIN
+//#define MY_CLASS_DRAG EFL_UI_DND_DRAG_MIXIN
+//#define MY_CLASS_DROP EFL_UI_DND_DROP_MIXIN
 
 //FIXME: Efl_Selection_Format should be changed to Efl_Data_Format
 
@@ -36,7 +36,7 @@ _selection_manager_get(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
+_efl_ui_dnd_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb)
 {
    ERR("In");
    pd->icon_create = icon_func;
@@ -49,20 +49,20 @@ _efl_ui_dnd_drag_efl_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, Efl_Selec
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_cancel(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd)
+_efl_ui_dnd_efl_dnd_drag_cancel(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd , Efl_Selection_Action action)
+_efl_ui_dnd_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Data *pd , Efl_Selection_Action action)
 {
    ERR("In");
    pd->action = action;
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_efl_dnd_drag_item_container_add(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd, double time_to_drag, double anim_time,
+_efl_ui_dnd_efl_dnd_drag_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, double time_to_drag, double anim_time,
                                  void *data_func_data, Efl_Dnd_Drag_Data_Get data_func, Eina_Free_Cb data_func_free_cb,
                                  void *item_func_data, Efl_Dnd_Drag_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
                                  void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
@@ -72,13 +72,13 @@ _efl_ui_dnd_drag_efl_dnd_drag_item_container_add(Eo *obj, Efl_Ui_Dnd_Drag_Data *
 }
 
 static void
-_efl_ui_dnd_drag_efl_dnd_drag_item_container_del(Eo *obj, Efl_Ui_Dnd_Drag_Data *pd)
+_efl_ui_dnd_efl_dnd_drag_item_container_del(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format)
+_efl_ui_dnd_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format)
 {
    ERR("In");
    pd->format = format;
@@ -88,24 +88,23 @@ _efl_ui_dnd_drop_efl_dnd_drop_target_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format)
+_efl_ui_dnd_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format)
 {
    ERR("In");
    pd->format = format;
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Drop_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
+_efl_ui_dnd_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Drop_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
 {
    ERR("In");
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_efl_dnd_drop_item_container_del(Eo *obj, Efl_Ui_Dnd_Drop_Data *pd)
+_efl_ui_dnd_efl_dnd_drop_item_container_del(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
 }
 
 
-#include "efl_ui_dnd_drag.eo.c"
-#include "efl_ui_dnd_drop.eo.c"
+#include "efl_ui_dnd.eo.c"

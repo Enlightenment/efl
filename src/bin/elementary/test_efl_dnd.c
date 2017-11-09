@@ -130,7 +130,7 @@ _drag_icon_cb(void *data, Eo *win, int *xoff, int *yoff)
 static void
 _dnd_drag_pos_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
    Efl_Dnd_Drag_Pos *pos = (Efl_Dnd_Drag_Pos *)ev->info;
    printf("%s:: pos: %d %d, action: %d\n", __func__, pos->x, pos->y, pos->action);
 }
@@ -138,7 +138,7 @@ _dnd_drag_pos_cb(void *data, const Efl_Event *ev)
 static void
 _dnd_drag_accept_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
    Eina_Bool *accept = (Eina_Bool *)ev->info;
    printf("%s:: accept: %d\n", __func__, *accept);
 }
@@ -146,7 +146,7 @@ _dnd_drag_accept_cb(void *data, const Efl_Event *ev)
 static void
 _dnd_drag_done_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
 }
 
 
@@ -154,25 +154,25 @@ _dnd_drag_done_cb(void *data, const Efl_Event *ev)
 static void
 _dnd_drop_enter_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
 }
 
 static void
 _dnd_drop_leave_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
 }
 
 static void
 _dnd_drop_pos_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
 }
 
 static void
 _dnd_drop_drop_cb(void *data, const Efl_Event *ev)
 {
-   printf("%s:: In\n", __func__);
+   ERR("In");
 }
 
 static void
@@ -180,9 +180,9 @@ _en_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event)
 {
    printf("dnd start\n");
    Evas_Object *en = data;
-   efl_event_callback_add(en, EFL_DND_DRAG_EVENT_DRAG_POS, _dnd_drag_pos_cb, en);
-   efl_event_callback_add(en, EFL_DND_DRAG_EVENT_DRAG_ACCEPT, _dnd_drag_accept_cb, en);
-   efl_event_callback_add(en, EFL_DND_DRAG_EVENT_DRAG_DONE, _dnd_drag_done_cb, en);
+   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_POS, _dnd_drag_pos_cb, en);
+   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_ACCEPT, _dnd_drag_accept_cb, en);
+   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_DONE, _dnd_drag_done_cb, en);
    efl_dnd_drag_start(en, EFL_SELECTION_FORMAT_TEXT, "dnd Text", 9,
                  EFL_SELECTION_ACTION_COPY, en, _drag_icon_cb, NULL);
 }
@@ -226,10 +226,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bt = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(bt, "test sel/drop");
    efl_gfx_visible_set(bt, EINA_TRUE);
-   efl_event_callback_add(bt, EFL_DND_DROP_EVENT_DRAG_ENTER, _dnd_drop_enter_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_DROP_EVENT_DRAG_LEAVE, _dnd_drop_leave_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_DROP_EVENT_DRAG_POS, _dnd_drop_pos_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_DROP_EVENT_DRAG_DROP, _dnd_drop_drop_cb, bt);
+   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_ENTER, _dnd_drop_enter_cb, bt);
+   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_LEAVE, _dnd_drop_leave_cb, bt);
+   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_POS, _dnd_drop_pos_cb, bt);
+   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_DROP, _dnd_drop_drop_cb, bt);
    efl_dnd_drop_target_add(bt, EFL_SELECTION_FORMAT_TEXT);
    elm_box_pack_end(bx, bt);
 

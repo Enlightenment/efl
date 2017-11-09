@@ -1,0 +1,80 @@
+import efl_selection_types;
+import efl_dnd_types;
+
+interface Efl.Dnd (Efl.Selection) {
+   //eo_prefix: efl_dnd;
+   methods {
+      drag_start {
+         [[This starts a drag and drop process at the drag side.
+           During dragging, there are three events emitted as belows:
+              - EFL_DND_EVENT_DRAG_POS
+              - EFL_DND_EVENT_DRAG_ACCEPT
+              - EFL_DND_EVENT_DRAG_DONE
+         ]]
+         params {
+            @in format: Efl.Selection.Format; [[The data format]]
+            @in buf: const(void_ptr);
+            @in len: int; [[The data's length.]]
+            @in action: Efl.Selection.Action; [[Action when data is transferred]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+         }
+      }
+      drag_action_set {
+         [[This sets the action for the drag]]
+         params {
+            @in action: Efl.Selection.Action; [[Drag action]]
+         }
+      }
+      drag_cancel {
+         [[This cancels the on-going drag]]
+      }
+      drag_item_container_add {
+         [[This registers a drag for items in a container. Many items can be
+           dragged at a time. During dragging, there are three events emitted:
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
+         params {
+            @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
+            @in anim_durataion: double; [[animation duration]]
+            @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
+            @in item_func: Efl.Dnd.Drag_Item_Get; [[Item to determine drag start]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+         }
+      }
+      drag_item_container_del {
+         [[Remove drag function of items in the container object.]]
+         params {
+         }
+      }
+      drop_target_add {
+         [[There are four events emitted: EFL_DND_EVENT_DRAG_ENTER, EFL_DND_EVENT_DRAG_LEAVE,
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_DROP.]]
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+         }
+      }
+      drop_target_del {
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+         }
+      }
+      drop_item_container_add {
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data formats]]
+            @in item_func: Efl.Dnd.Drop_Item_Get; [[Get item at specific position]]
+         }
+      }
+      drop_item_container_del {
+      }
+   }
+   implements {
+   }
+   events {
+      drag,accept; [[accept drag data]]
+      drag,done; [[drag is done (mouse up)]]
+      drag,enter; [[called when the drag object enters this object]]
+      drag,leave; [[called when the drag object leaves this object]]
+      drag,pos; [[called when the drag object changes drag position]]
+      drag,drop; [[called when the drag object dropped on this object]]
+   }
+}

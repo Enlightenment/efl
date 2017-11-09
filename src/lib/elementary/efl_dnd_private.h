@@ -12,10 +12,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-typedef struct _Efl_Ui_Dnd_Drag_Data Efl_Ui_Dnd_Drag_Data;
-typedef struct _Efl_Ui_Dnd_Drop_Data Efl_Ui_Dnd_Drop_Data;
+//typedef struct _Efl_Ui_Dnd_Drag_Data Efl_Ui_Dnd_Drag_Data;
+//typedef struct _Efl_Ui_Dnd_Drop_Data Efl_Ui_Dnd_Drop_Data;
+typedef struct _Efl_Ui_Dnd_Data Efl_Ui_Dnd_Data;
 
-struct _Efl_Ui_Dnd_Drag_Data
+struct _Efl_Ui_Dnd_Data
 {
    int type;
    Ecore_Event_Handler *notify_handler;
@@ -27,12 +28,13 @@ struct _Efl_Ui_Dnd_Drag_Data
    Eina_Free_Cb icon_create_free_cb;
    //
    Efl_Selection_Action action;
+   Efl_Selection_Format format;
 };
 
-struct _Efl_Ui_Dnd_Drop_Data
+/*struct _Efl_Ui_Dnd_Drop_Data
 {
    Efl_Promise *promise;
    Efl_Selection_Format format;
-};
+};*/
 
 #endif

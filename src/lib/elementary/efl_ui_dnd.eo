@@ -1,0 +1,16 @@
+import efl_selection_types;
+import efl_dnd_types;
+
+mixin Efl.Ui.Dnd (Efl.Dnd) {
+   implements {
+      Efl.Dnd.drag_start;
+      Efl.Dnd.drag_cancel;
+      Efl.Dnd.drag_action_set;
+      Efl.Dnd.drag_item_container_add;
+      Efl.Dnd.drag_item_container_del;
+      Efl.Dnd.drop_target_add;
+      Efl.Dnd.drop_target_del;
+      Efl.Dnd.drop_item_container_add;
+      Efl.Dnd.drop_item_container_del;
+   }
+}

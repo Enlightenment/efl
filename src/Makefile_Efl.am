@@ -81,10 +81,11 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
       lib/efl/interfaces/efl_selection.eo \
-      lib/efl/interfaces/efl_dnd_drag.eo \
-      lib/efl/interfaces/efl_dnd_drop.eo \
+      lib/efl/interfaces/efl_dnd.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
+#lib/efl/interfaces/efl_dnd_drag.eo 
+#lib/efl/interfaces/efl_dnd_drop.eo 
 
 efl_eolian_type_files = \
 	lib/efl/interfaces/efl_gfx_types.eot \

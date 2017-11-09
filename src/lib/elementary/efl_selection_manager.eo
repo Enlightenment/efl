@@ -1,4 +1,4 @@
-class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd.Drag, Efl.Dnd.Drop) {
+class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
    methods {
       selection_set {
          params {
