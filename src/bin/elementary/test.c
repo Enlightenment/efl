@@ -333,6 +333,7 @@ void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_async(void *data, Evas_Object *obj, void *event_info);
+void test_ui_text_item_factory(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
@@ -834,6 +835,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
+   ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
 
    //------------------------------//
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);
