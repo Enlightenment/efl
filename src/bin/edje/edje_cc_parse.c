@@ -188,6 +188,23 @@ fill_object_statement_hashes(void)
      }
 }
 
+static char *
+stack_dup_wildcard(void)
+{
+   char buf[PATH_MAX] = { 0, };
+   char *end;
+
+   strncpy(buf, stack_id(), sizeof(buf) - 1);
+
+   end = strrchr(buf, '.');
+   if (end) end++;
+   else end = buf;
+
+   strcpy(end, "*");
+
+   return eina_strdup(buf);
+}
+
 static void
 new_object(void)
 {
@@ -219,17 +236,9 @@ new_object(void)
                sh = eina_hash_find(_new_statement_short_single_hash, id);
              if (!sh)
                {
-                  char buf[512] = { 0, };
-                  char *end;
-
-                  strncpy(buf, id, sizeof(buf) - 1);
-                  buf[sizeof(buf) - 1] = 0;
-                  end = strrchr(buf, '.');
-                  if (end) end++;
-                  else end = buf;
-
-                  strcpy(end, "*");
-                  sh = eina_hash_find(_new_statement_hash, buf);
+                  char *tmp = stack_dup_wildcard();
+                  sh = eina_hash_find(_new_statement_hash, tmp);
+                  free(tmp);
                }
              if ((!sh) && (!did_wildcard) && (!had_quote))
                {
@@ -260,17 +269,9 @@ new_statement(void)
      }
    else
      {
-        char buf[512] = { 0, };
-        char *end;
-
-        strncpy(buf, id, sizeof(buf) - 1);
-        buf[sizeof(buf) - 1] = 0;
-        end = strrchr(buf, '.');
-        if (end) end++;
-        else end = buf;
-
-        strcpy(end, "*");
-        sh = eina_hash_find(_new_statement_hash, buf);
+        char *tmp = stack_dup_wildcard();
+        sh = eina_hash_find(_new_statement_hash, tmp);
+        free(tmp);
 
         if (sh)
           {
