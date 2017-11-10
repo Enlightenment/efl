@@ -21,9 +21,14 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ck2.format_set("%I:%M %p");
    bx.pack_end(ck2);
 
+   Efl_Time time;
+   time.tm_hour = 12;
+   time.tm_min = 42;
+   time.tm_sec = 59;
+
    efl::ui::Clock ck3(instantiate, win);
    ck2.format_set("%H:%M:%S");
-   ck3.time_set(Efl_Time({.tm_hour = 12, .tm_min = 42, .tm_sec = 59}));
+   ck3.time_set(time);
    bx.pack_end(ck3);
 
    efl::ui::Clock ck5(instantiate, win);
