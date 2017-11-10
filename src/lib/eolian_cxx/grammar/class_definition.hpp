@@ -156,6 +156,24 @@ struct class_definition_generator
                 << scope_tab << "} const " << string_replace(',', '_') << "_event;\n"
              ))).generate(sink, std::vector<attributes::event_def>{e}, context))
             return false;
+          if (!as_generator(
+                 scope_tab << "template <typename F>\n"
+                 << scope_tab << "typename std::enable_if<std::is_bind_expression<F>::value, ::efl::eolian::signal_connection>::type\n"
+                 << scope_tab << string_replace(',', '_') << "_event_cb_add(F function)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return ::efl::eolian::event_add(" << string_replace(',', '_') << "_event, *this, function);\n"
+                 << scope_tab << "}\n")
+              .generate(sink, std::make_tuple(e.name, e.name), context))
+            return false;
+          if (!as_generator(
+                 scope_tab << "template <typename F>\n"
+                 << scope_tab << "typename std::enable_if<!std::is_bind_expression<F>::value, ::efl::eolian::signal_connection>::type\n"
+                 << scope_tab << string_replace(',', '_') << "_event_cb_add(F function)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return ::efl::eolian::event_add(" << string_replace(',', '_') << "_event, *this, std::bind(function));\n"
+                 << scope_tab << "}\n")
+              .generate(sink, std::make_tuple(e.name, e.name), context))
+            return false;
           if (e.beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
           if (e.protect && !as_generator("#endif\n").generate(sink, attributes::unused, context))
