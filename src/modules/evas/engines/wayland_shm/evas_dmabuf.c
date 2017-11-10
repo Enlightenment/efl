@@ -668,7 +668,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
    ecore_wl2_window_damage(win, rects, count);
 
-   ecore_wl2_window_commit(s->info->info.wl2_win, EINA_TRUE);
+   ecore_wl2_window_commit(win, EINA_TRUE);
 }
 
 static struct wl_buffer *
