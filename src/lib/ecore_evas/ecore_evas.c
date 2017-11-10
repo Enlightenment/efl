@@ -3148,6 +3148,7 @@ _ecore_evas_tick_source_find(void)
    Ecore_Evas *ee;
    Eina_Bool source = EINA_FALSE;
 
+   // Check if we do have a potential tick source for legacy
    EINA_INLIST_FOREACH(ecore_evases, ee)
      if (!ee->deleted &&
          ee->engine.func->fn_animator_register &&
@@ -3157,7 +3158,19 @@ _ecore_evas_tick_source_find(void)
           break;
        }
 
-   // If no source is available for ticking, fallback to timer.
+   // If just one source require fallback, we can't be sure that
+   // we are not running enlightenment and that this source might
+   // actually be the true tick source of all other window. In
+   // that scenario, we have to forcefully fallback.
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     if (!ee->deleted &&
+         (!ee->engine.func->fn_animator_register ||
+          !ee->engine.func->fn_animator_unregister))
+       {
+          source = EINA_FALSE;
+          break;
+       }
+
    if (!source)
      {
         ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
