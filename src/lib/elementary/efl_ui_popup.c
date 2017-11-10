@@ -8,6 +8,8 @@
 
 #include "elm_priv.h"
 #include "efl_ui_popup_private.h"
+#include "efl_ui_popup_part.eo.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_POPUP_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup"
@@ -249,41 +251,100 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    _calc_align(obj);
 }
 
-EOLIAN static void
-_efl_ui_popup_backwall_set(Eo *obj, Efl_Ui_Popup_Data *pd, const char* file, const char* group)
+static Eina_Bool
+_efl_ui_popup_content_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part, Eo *content)
 {
-   Eo *prev_obj = edje_object_part_swallow_get(pd->backwall, "elm.swallow.image");
-   if (prev_obj)
-     {
-        edje_object_part_unswallow(pd->backwall, prev_obj);
-        efl_del(prev_obj);
-     }
+   return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
+}
 
-   Eo *image = elm_image_add(obj);
-   Eina_Bool ret = elm_image_file_set(image, file, group);
-   if (!ret)
-     {
-        edje_object_signal_emit(pd->backwall, "elm,state,image,hidden", "elm");
-        efl_del(image);
-        return;
-     }
-   edje_object_part_swallow(pd->backwall, "elm.swallow.image", image);
-   edje_object_signal_emit(pd->backwall, "elm,state,image,visible", "elm");
+Eo *
+_efl_ui_popup_content_get(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part)
+{
+   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
+}
+
+static Eo *
+_efl_ui_popup_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part)
+{
+   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
+}
+
+/* Efl.Part begin */
+
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
+
+EOLIAN static Eo *
+_efl_ui_popup_efl_part_part(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+
+   if (eina_streq(part, "backwall"))
+     return ELM_PART_IMPLEMENT(EFL_UI_POPUP_PART_CLASS, obj, part);
+
+   return efl_part(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void
-_efl_ui_popup_backwall_repeat_events_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Eina_Bool repeat)
+_efl_ui_popup_part_efl_canvas_object_repeat_events_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool repeat)
 {
-   pd->backwall_repeat_events = repeat;
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
 
-   efl_canvas_object_repeat_events_set(pd->backwall, repeat);
+   if (eina_streq(pd->part, "backwall"))
+     efl_canvas_object_repeat_events_set(sd->backwall, repeat);
+   else
+     efl_canvas_object_repeat_events_set(efl_part(efl_super(pd->obj, MY_CLASS), pd->part), repeat);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_popup_backwall_repeat_events_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_part_efl_canvas_object_repeat_events_get(Eo *obj, void *_pd EINA_UNUSED)
 {
-   return pd->backwall_repeat_events;
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   if (eina_streq(pd->part, "backwall"))
+     return efl_canvas_object_repeat_events_get(sd->backwall);
+
+   return efl_canvas_object_repeat_events_get(efl_part(efl_super(pd->obj, MY_CLASS), pd->part));
 }
+
+EOLIAN static Eina_Bool
+_efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *group)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   if (eina_streq(pd->part, "backwall"))
+     {
+        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "elm.swallow.image");
+        if (prev_obj)
+          {
+             edje_object_part_unswallow(sd->backwall, prev_obj);
+             efl_del(prev_obj);
+          }
+
+        Eo *image = elm_image_add(pd->obj);
+        Eina_Bool ret = elm_image_file_set(image, file, group);
+        if (!ret)
+          {
+             edje_object_signal_emit(sd->backwall, "elm,state,image,hidden", "elm");
+             efl_del(image);
+             return EINA_FALSE;
+          }
+        edje_object_part_swallow(sd->backwall, "elm.swallow.image", image);
+        edje_object_signal_emit(sd->backwall, "elm,state,image,visible", "elm");
+
+        return EINA_TRUE;
+     }
+
+   return efl_file_set(efl_part(efl_super(pd->obj, MY_CLASS), pd->part), file, group);
+}
+
+#include "efl_ui_popup_part.eo.c"
+
+/* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
 
