@@ -1,5 +1,5 @@
-#ifndef _EOLIAN_TYPEDEF_H_
-#define _EOLIAN_TYPEDEF_H_
+#ifndef _EOLIAN_TYPEDEF_EO_H_
+#define _EOLIAN_TYPEDEF_EO_H_
 
 #ifndef _STRUCT_EO_CLASS_TYPE
 #define _STRUCT_EO_CLASS_TYPE
