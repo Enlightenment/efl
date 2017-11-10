@@ -175,9 +175,9 @@ _efl_ui_focus_composition_elements_flush(Eo *obj, Efl_Ui_Focus_Composition_Data 
 EOLIAN static void
 _efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
 {
-   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
-
    efl_ui_focus_composition_elements_flush(obj);
+
+   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
