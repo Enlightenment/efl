@@ -1066,10 +1066,9 @@ _item_content_realize(Elm_Gen_Item *it,
              evas_object_del(content);
              goto out;
           }
-        elm_widget_sub_object_del(WIDGET(it), content);
-        elm_widget_sub_object_add(WIDGET(it), content);
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           elm_widget_disabled_set(content, EINA_TRUE);
+
 out:
         if (old && content != old)
           {
@@ -5742,17 +5741,19 @@ _elm_gengrid_elm_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNU
 EOLIAN static void
 _elm_gengrid_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
 {
-   efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   Eina_List *n;
+   Elm_Widget *wid;
+
    _item_realize(pd);
 
-   if (!efl_ui_focus_manager_request_subchild(WIDGET(pd), obj))
+   EINA_LIST_FOREACH(pd->contents, n, wid)
      {
-        Eo *adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, VIEW(pd) , efl_ui_focus_composition_adapter_canvas_object_set(efl_added,  VIEW(pd)));
-
-        efl_ui_focus_manager_calc_register(WIDGET(pd), adapter, obj, NULL);
+        if (efl_isa(wid, ELM_WIDGET_CLASS))
+          _elm_widget_full_eval(wid);
      }
-}
 
+   efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+}
 
 /* Standard widget overrides */
 
