@@ -41,15 +41,23 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    else if (pd->registered)
      {
         Eina_List *n;
+        Eina_List *safed = NULL;
         Efl_Ui_Focus_Object *o;
+
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
-             efl_ui_focus_manager_calc_unregister(manager, o);
+             if (!!eina_list_data_find(pd->register_target, o))
+               safed = eina_list_append(safed, o);
+             else
+               efl_ui_focus_manager_calc_unregister(manager, o);
           }
+        pd->registered_targets = safed;
 
         EINA_LIST_FOREACH(pd->register_target, n, o)
           {
+             if (!!eina_list_data_find(pd->registered_targets, o)) continue;
+
              if (!pd->logical)
                efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
              else
