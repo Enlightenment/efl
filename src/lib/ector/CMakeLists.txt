@@ -9,6 +9,7 @@ set(LIBRARIES
   support-freetype
   support-rg_etc
   support-triangulator
+  support-scenegraph
 )
 
 set(PUBLIC_LIBRARIES

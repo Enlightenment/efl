@@ -1598,6 +1598,7 @@ EFL_INTERNAL_DEPEND_PKG([ECTOR], [emile])
 EFL_INTERNAL_DEPEND_PKG([ECTOR], [eet])
 EFL_INTERNAL_DEPEND_PKG([ECTOR], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECTOR], [efl])
+EFL_INTERNAL_DEPEND_PKG([ECTOR], [ecore])
 
 EFL_ADD_LIBS([ECTOR], [-lm])
 
@@ -5835,7 +5836,7 @@ echo "Ethumb..........: yes"
 echo "Ethumb_Client...: yes"
 echo "Elua............: $have_elua"
 echo "Elementary......: yes (${features_elementary})"
-echo 
+echo
 
 echo
 

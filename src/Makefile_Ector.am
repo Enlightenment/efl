@@ -112,6 +112,21 @@ static_libs/triangulator/triangulator_simple.c \
 static_libs/triangulator/triangulator_simple.h \
 $(NULL)
 
+# scenegraph  static lib
+scenegraph_sources = \
+static_libs/scenegraph/sg_node.c \
+static_libs/scenegraph/sg_node_updater.c \
+static_libs/scenegraph/sg_renderer.c \
+static_libs/scenegraph/sg_context.c \
+static_libs/scenegraph/sg_node.h \
+static_libs/scenegraph/sg_renderer.h \
+static_libs/scenegraph/sg_context.h \
+static_libs/scenegraph/utils/sg_thread.h \
+static_libs/scenegraph/utils/sg_thread.c \
+static_libs/scenegraph/software/sg_software_context.c \
+static_libs/scenegraph/software/sg_software_context.h \
+$(NULL)
+
 # And the default software backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/software/ector_renderer_software_gradient_linear.c \
@@ -123,8 +138,10 @@ lib/ector/software/ector_software_surface.c \
 lib/ector/software/ector_software_buffer.c \
 static_libs/freetype/sw_ft_math.c \
 static_libs/freetype/sw_ft_raster.c \
-static_libs/freetype/sw_ft_stroker.c \
-$(triangulator_sources)
+static_libs/freetype/sw_ft_stroker.c
+
+lib_ector_libector_la_SOURCES += $(triangulator_sources)
+lib_ector_libector_la_SOURCES += $(scenegraph_sources)
 
 # And now the gl backend
 lib_ector_libector_la_SOURCES += \
@@ -157,6 +174,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/freetype \
 -I$(top_srcdir)/src/static_libs/draw \
 -I$(top_srcdir)/src/static_libs/triangulator \
+-I$(top_srcdir)/src/static_libs/scenegraph \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
