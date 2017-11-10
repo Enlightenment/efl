@@ -117,6 +117,12 @@ _count_then(void * data, Efl_Event const* event)
    pd->count_future = NULL;
 
    pd->count_total = *(int*)((Efl_Future_Event_Success*)event->info)->value;
+
+   if (pd->modeler && pd->count_total != efl_ui_list_segarray_count(pd->segarray))
+     {
+        pd->recalc = EINA_TRUE;
+        efl_ui_list_model_load_range_set(pd->modeler, 0, 0); // load all
+     }
 }
 
 static void
@@ -281,7 +287,7 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
      {
         nodedata = node->layout_data;
 //        DBG("node %d h:%d ch:%d scr_y:%d oh:%d", node->first, nodedata->min.h, ch, scr_y, oh);
-        if (!nodedata->min.h)
+        if (!nodedata || !nodedata->min.h)
           continue;
 
         if ((ch >= scr_y || nodedata->min.h + ch >= scr_y) && (ch <= (scr_y + oh) || nodedata->min.h + ch <= scr_y + oh))
@@ -360,7 +366,8 @@ _calc_size_job(void *data)
    pd->calc_progress = 0;
    pd->calc_job = NULL;
 
-   _efl_ui_list_relayout_layout_do(pd);
+   evas_object_smart_changed(pd->modeler);
+   //_efl_ui_list_relayout_layout_do(pd);
 }
 
 EOLIAN static Efl_Object *
@@ -496,6 +503,8 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
      {
 
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
+   if (!nodedata) continue;
+
    if (!nodedata->realized)
      {
        cur_pos += nodedata->min.h;
