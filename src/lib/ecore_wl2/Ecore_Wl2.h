@@ -1974,6 +1974,8 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
+EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
+
 # endif
 
 # undef EAPI
