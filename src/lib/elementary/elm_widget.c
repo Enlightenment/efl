@@ -577,6 +577,14 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
 }
 
+void
+_elm_widget_full_eval(Eo *obj)
+{
+   ELM_WIDGET_DATA_GET(obj, pd);
+
+   _full_eval(obj, pd);
+}
+
 /**
  * @internal
  *
