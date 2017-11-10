@@ -381,10 +381,16 @@ _wl_shm_to_buffer(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
    struct wl_buffer *buf;
    struct wl_shm_pool *pool;
    struct wl_shm *shm;
+   uint32_t format;
+
+   if (db->surface->alpha)
+     format = WL_SHM_FORMAT_ARGB8888;
+   else
+     format = WL_SHM_FORMAT_XRGB8888;
 
    shm = ecore_wl2_display_shm_get(ewd);
    pool = wl_shm_create_pool(shm, db->fd, db->size);
-   buf = wl_shm_pool_create_buffer(pool, 0, db->w, db->h, db->stride, 0);
+   buf = wl_shm_pool_create_buffer(pool, 0, db->w, db->h, db->stride, format);
    wl_shm_pool_destroy(pool);
    close(db->fd);
    db->fd = -1;
@@ -675,12 +681,18 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
    struct zwp_linux_dmabuf_v1 *dmabuf;
    struct zwp_linux_buffer_params_v1 *dp;
    uint32_t flags = 0;
+   uint32_t format;
+
+   if (db->surface->alpha)
+     format = DRM_FORMAT_ARGB8888;
+   else
+     format = DRM_FORMAT_XRGB8888;
 
    dmabuf = ecore_wl2_display_dmabuf_get(ewd);
    dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
    zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride, 0, 0);
    buf = zwp_linux_buffer_params_v1_create_immed(dp, db->w, db->h,
-                                                 DRM_FORMAT_ARGB8888, flags);
+                                                 format, flags);
    wl_buffer_add_listener(buf, &buffer_listener, db);
    zwp_linux_buffer_params_v1_destroy(dp);
 
