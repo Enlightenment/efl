@@ -25,8 +25,6 @@ elm_main(int argc, char* argv[])
         win_1.type_set(EFL_UI_WIN_BASIC);
       });
 
-   win_1.autodel_set(true);
-
 #if 0
    win_1.eo_cxx::efl::Gfx::size_set({320, 300});
 

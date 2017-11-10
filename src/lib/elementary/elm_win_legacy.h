@@ -180,6 +180,39 @@ EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const cha
 EAPI Evas_Object          *elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title);
 
 /**
+ * @brief Set the window's autodel state.
+ *
+ * When closing the window in any way outside of the program control, like
+ * pressing the X button in the titlebar or using a command from the Window
+ * Manager, a "delete,request" signal is emitted to indicate that this event
+ * occurred and the developer can take any action, which may include, or not,
+ * destroying the window object.
+ *
+ * When the @c autodel parameter is set, the window will be automatically
+ * destroyed when this event occurs, after the signal is emitted. If @c autodel
+ * is @c false, then the window will not be destroyed and is up to the program
+ * to do so when it's required.
+ *
+ * @param[in] obj The object.
+ * @param[in] autodel If @c true, the window will automatically delete itself
+ * when closed.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
+
+/**
+ * @brief Get the window's autodel state.
+ *
+ * @param[in] obj The object.
+ *
+ * @return If @c true, the window will automatically delete itself when closed.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
+
+/**
  * Set the floating mode of a window.
  *
  * @param obj The window object

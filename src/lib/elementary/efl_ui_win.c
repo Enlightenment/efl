@@ -5540,15 +5540,19 @@ _efl_ui_win_icon_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->icon;
 }
 
-EOLIAN static void
-_efl_ui_win_autodel_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool autodel)
+/* Only for C API */
+EAPI void
+elm_win_autodel_set(Eo *obj, Eina_Bool autodel)
 {
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
    sd->autodel = autodel;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_autodel_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+EAPI Eina_Bool
+elm_win_autodel_get(const Eo *obj)
 {
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
    return sd->autodel;
 }
 
