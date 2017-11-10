@@ -31,7 +31,32 @@ namespace efl { namespace eo {
 /// @addtogroup Efl_Cxx_API
 /// @{
 
-struct instantiate_t {} const instantiate = {};
+struct instantiate_t {
+   /// @brief A helper to create objects with a different syntax
+   ///
+   /// @param obj The object to instantiate
+   /// @return obj The newly created object
+   ///
+   /// Consider an object declared by its type T on the stack, like T obj.
+   /// Initially it will be empty (_eo_ptr() is nullptr). It can be created
+   /// in two ways:
+   ///   obj = T(instantiate, obj);
+   /// or:
+   ///   instantiate(obj);
+   ///
+   /// Note that if @c obj is already a valid object, it will be unreferenced.
+   template<typename T> T& operator()(T& obj) const {
+      obj = T(*this);
+      return obj;
+   }
+};
+
+/// @brief The handle to use to create real EFL objects
+///
+/// Use @c instantiate as first argument of any object constructor in order
+/// to trigger a real EFL object creation. The following syntax is preferred:
+///   T obj(instantiate, ...);
+instantiate_t const instantiate = {};
     
 /// @brief Creates concrete versions for <em>Eo</em> wrappers.
 ///
