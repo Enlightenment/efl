@@ -1079,6 +1079,9 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
    if (pd->model == model)
      return;
 
+   if (pd->relayout)
+      efl_ui_list_relayout_model_set(pd->relayout, model);
+
    if (pd->count_future)
      {
         efl_future_cancel(pd->count_future);
@@ -1108,9 +1111,6 @@ _efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *mod
         pd->count_future = efl_model_children_count_get(pd->model);
         efl_future_then(pd->count_future, &_count_then, &_count_error, NULL, pd);
      }
-
-   if (pd->relayout)
-      efl_ui_list_relayout_model_set(pd->relayout, model);
 
    evas_object_smart_changed(pd->obj);
 }
