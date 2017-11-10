@@ -17,7 +17,6 @@ struct _Evas_Engine_Info_Wayland
         Ecore_Wl2_Display *wl2_display;
         Ecore_Wl2_Window *wl2_win;
         int depth, rotation, edges;
-        int compositor_version;
         Eina_Bool destination_alpha : 1;
         Eina_Bool hidden : 1;
      } info;

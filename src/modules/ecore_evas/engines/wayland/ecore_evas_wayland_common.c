@@ -2211,8 +2211,6 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl2_display = wdata->display;
-        einfo->info.compositor_version =
-          ecore_wl2_display_compositor_version_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl2_win = wdata->win;
@@ -2518,8 +2516,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              einfo->info.rotation = ee->rotation;
              einfo->info.depth = 32;
              einfo->info.wl2_win = wdata->win;
-             einfo->info.compositor_version =
-               ecore_wl2_display_compositor_version_get(ewd);
              einfo->info.hidden = EINA_TRUE;
 
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))

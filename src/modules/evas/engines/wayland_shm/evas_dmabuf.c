@@ -71,7 +71,6 @@ struct _Dmabuf_Buffer
 struct _Dmabuf_Surface
 {
    Surface *surface;
-   int compositor_version;
 
    Dmabuf_Buffer *current;
    Dmabuf_Buffer **buffer;
@@ -762,7 +761,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 
    surf->surface = s;
    surf->alpha = s->info->info.destination_alpha;
-   surf->compositor_version = s->info->info.compositor_version;
 
    /* create surface buffers */
    surf->nbuf = num_buff;
