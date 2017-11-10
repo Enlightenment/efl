@@ -1532,7 +1532,8 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
       _ecore_wl2_window_configure_send(window);
 }
 
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
+EAPI void
+ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->surface);
@@ -1607,7 +1608,8 @@ ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window)
    return window->req_config.resizing;
 }
 
-EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
+EAPI void
+ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_TRUE_RETURN(window->updating);
@@ -1615,7 +1617,8 @@ EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
    window->updating = EINA_TRUE;
 }
 
-EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count)
+EAPI void
+ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count)
 {
    void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
    unsigned int k;
