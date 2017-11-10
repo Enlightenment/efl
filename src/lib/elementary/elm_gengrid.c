@@ -4240,6 +4240,8 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
    Elm_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
    Elm_Widget_Item *item;
 
+   if (!focused) return;
+
    if (efl_isa(focused, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
      item = efl_parent_get(focused);
    else
