@@ -61,7 +61,7 @@ set(PUBLIC_HEADERS
 
   cairo/Ector_Cairo.h
 
-  gl/Ector_GL.h
+  gl/Ector_Gl.h
 
   software/Ector_Software.h
 )
@@ -87,13 +87,12 @@ set(SOURCES
   gl/ector_gl_buffer.c
   gl/ector_gl_buffer_base.c
   gl/ector_gl_private.h
-  gl/ector_gl_shader.c
   gl/ector_gl_surface.c
   gl/ector_renderer_gl.c
   gl/ector_renderer_gl_gradient_linear.c
   gl/ector_renderer_gl_gradient_radial.c
   gl/ector_renderer_gl_shape.c
-  gl/shader/ector_gl_shaders.x
+  gl/ector_gl_shaders.x
 
   software/ector_renderer_software_buffer.c
   software/ector_renderer_software_gradient_linear.c
@@ -104,16 +103,3 @@ set(SOURCES
   software/ector_software_rasterizer.c
   software/ector_software_surface.c
 )
-
-add_custom_target(ector-update-shaders
-  COMMAND /bin/sh ${EFL_LIB_SOURCE_DIR}/gl/shader/gen_shaders.sh
-  DEPENDS
-  ${EFL_LIB_SOURCE_DIR}/gl/shader/gen_shaders.sh
-  ${EFL_LIB_SOURCE_DIR}/gl/shader/fragment.glsl
-  ${EFL_LIB_SOURCE_DIR}/gl/shader/vertex.glsl
-  ${EFL_LIB_SOURCE_DIR}/gl/shader/include.glsl
-  WORKING_DIRECTORY "${EFL_LIB_SOURCE_DIR}"
-  COMMENT "SHADERS src/lib/ector/gl/shader/ector_gl_shaders.x (if needed)"
-)
-
-set(DEPENDENCIES ector-update-shaders)

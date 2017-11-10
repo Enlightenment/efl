@@ -138,17 +138,6 @@ lib/ector/gl/ector_gl_engine.c \
 lib/ector/gl/ector_gl_private.h \
 lib/ector/gl/ector_gl_shaders.x
 
-
-ECTOR_GL_SHADERS_GEN = \
-lib/ector/gl/shader/gen_shaders.sh \
-lib/ector/gl/shader/fragment.glsl \
-lib/ector/gl/shader/vertex.glsl \
-lib/ector/gl/shader/include.glsl
-
-lib/ector/gl/shader/ector_gl_shaders.x: $(ECTOR_GL_SHADERS_GEN)
-	@echo "  SHADERS  $@"
-	@sh $(srcdir)/lib/ector/gl/shader/gen_shaders.sh
-
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib \
 -I$(top_builddir)/src/lib/ector \
@@ -209,6 +198,4 @@ static_libs/freetype/sw_ft_raster.h \
 static_libs/freetype/sw_ft_stroker.h \
 static_libs/freetype/sw_ft_types.h \
 static_libs/draw/draw.h \
-static_libs/draw/draw_private.h \
-$(ECTOR_GL_SHADERS_GEN)
-
+static_libs/draw/draw_private.h
