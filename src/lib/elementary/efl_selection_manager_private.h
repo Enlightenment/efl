@@ -147,6 +147,14 @@ struct _Dropable
    } last;
 };
 
+typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
+struct _Item_Container_Drop_Info
+{
+   Efl_Object *obj;
+   void *item_func_data;
+   Efl_Dnd_Item_Get item_func;
+};
+
 struct _Efl_Selection_Manager_Data
 {
    Ecore_Event_Handler *notify_handler;
@@ -188,6 +196,7 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *pos_handler;
    Ecore_Event_Handler *drop_handler;
    const char *text_uri;
+   Eina_List *cont_drop_list;
 };
 
 #endif

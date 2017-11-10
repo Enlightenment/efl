@@ -67,7 +67,7 @@ _efl_ui_dnd_efl_dnd_drag_action_set(Eo *obj, Efl_Ui_Dnd_Data *pd , Efl_Selection
 EOLIAN static void
 _efl_ui_dnd_efl_dnd_drag_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, double time_to_drag, double anim_time,
                                  void *data_func_data, Efl_Dnd_Drag_Data_Get data_func, Eina_Free_Cb data_func_free_cb,
-                                 void *item_func_data, Efl_Dnd_Drag_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
+                                 void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
                                  void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
                                  void *icon_list_func_data, Efl_Dnd_Drag_Icon_List_Create icon_list_func, Eina_Free_Cb icon_list_func_free_cb)
 {
@@ -99,7 +99,7 @@ _efl_ui_dnd_efl_dnd_drop_target_del(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_
 }
 
 EOLIAN static void
-_efl_ui_dnd_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Drop_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
+_efl_ui_dnd_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
 {
    ERR("In");
 }

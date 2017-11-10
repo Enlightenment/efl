@@ -72,7 +72,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
             @in anim_durataion: double; [[animation duration]]
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
-            @in item_func: Efl.Dnd.Drag_Item_Get; [[Item to determine drag start]]
+            @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
             @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
          }
@@ -99,14 +99,20 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      /*item_container_add {
+      drop_item_container_add {
          params {
+            @in cont: Efl.Object; [[Container object]]
             @in format: Efl.Selection.Format; [[Accepted data formats]]
-            @in item_func: Efl.Dnd.Drop_Item_Get; [[Get item at specific position]]
+            @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      item_container_del {
-      }*/
+      drop_item_container_del {
+         params {
+            @in cont: Efl.Object; [[Container object]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

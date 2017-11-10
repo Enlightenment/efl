@@ -32,13 +32,16 @@ function Efl.Dnd.Drag_Data_Get {
 };
 
 //FIXME: This should be general for both drag and drop
-function Efl.Dnd.Drag_Item_Get {
+function Efl.Dnd.Item_Get {
    [[Function pointer to find out which item is under position (x, y)]]
    params {
+      @in obj: ptr(Eo); [[The container object]]
       @in x: int; [[The x coordinate to get item]]
       @in y: int; [[The y coordinate to get item]]
+      @out xret: int; [[x position relative to item (left (-1), middle (0), right (1)]]
+      @out yret: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
    }
-   return: ptr(Eo);
+   return: ptr(Eo); [[Object under x,y coordinates or NULL if not found]]
 };
 
 function Efl.Dnd.Drag_Icon_List_Create {
@@ -62,13 +65,32 @@ struct Efl.Dnd.Drag_Pos {
    format: Efl.Selection.Format;
 }
 
-function Efl.Dnd.Drop_Item_Get {
+
+struct Efl.Dnd.Drag_Item_Container_Pos {
+   item: ptr(Efl.Object); [[The item object]]
+   x: int; [[Evas Coordinate]]
+   y: int; [[Evas Coordinate]]
+   action: Efl.Selection.Action; [[The drag action]]
+   format: Efl.Selection.Format; [[The drag format]]
+}
+
+struct Efl.Dnd.Drag_Item_Container_Drop {
+   item: ptr(Efl.Object); [[The item object]]
+   data: Efl.Selection.Data; [[The selection data]]
+   x: int; [[x position relative to item (left (-1), middle (0), right (1)]]
+   y: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
+}
+
+/*function Efl.Dnd.Drop_Item_Get {
    [[Function pointer to find out which item is under position (x, y)]]
    params {
+      @in obj: ptr(Eo); [[The container object]]
       @in x: int; [[The x coordinate to get item]]
       @in y: int; [[The y coordinate to get item]]
+      @out xret: int; [[x position relative to item (left (-1), middle (0), right (1)]]
+      @out yret: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
    }
    return: ptr(Eo);
 };
-
+*/
 

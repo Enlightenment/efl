@@ -1938,7 +1938,8 @@ _x11_dnd_drop(void *data, int etype EINA_UNUSED, void *ev)
    Efl_Selection_Manager_Data *pd = data;
    Ecore_X_Event_Xdnd_Drop *drop;
    Dropable *dropable = NULL;
-   Elm_Selection_Data ddata;
+   //Elm_Selection_Data ddata;
+   Efl_Selection_Data ddata;
    Evas_Coord x = 0, y = 0;
    Efl_Selection_Action act = EFL_SELECTION_ACTION_UNKNOWN;
    Eina_List *l;
@@ -2188,6 +2189,106 @@ _efl_selection_manager_drop_target_del(Eo *obj, Efl_Selection_Manager_Data *pd, 
         ELM_SAFE_FREE(pd->enter_handler, ecore_event_handler_del);
         ELM_SAFE_FREE(pd->leave_handler, ecore_event_handler_del);
      }
+}
+
+static int
+_drop_item_container_cmp(const void *d1, const void *d2)
+{
+   const Item_Container_Drop_Info *di = d1;
+   return (((uintptr_t)di->obj) - ((uintptr_t)d2));
+}
+
+static Eina_Bool
+_drop_item_container_del(Efl_Selection_Manager_Data *pd, Efl_Object *cont, Eina_Bool full)
+{
+   Item_Container_Drop_Info *di = eina_list_search_unsorted(pd->cont_drop_list,
+                                                            _drop_item_container_cmp, cont);
+
+   if (di)
+     {
+        _all_drop_targets_cbs_del(NULL, NULL, cont, NULL);
+        di->item_func_data = NULL;
+        di->item_func = NULL;
+
+        if (full)
+          {
+             pd->cont_drop_list = eina_list_remove(pd->cont_drop_list, di);
+             free(di);
+          }
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static void
+_item_container_drop_cb(void *data, Efl_Event *ev)
+{
+}
+
+static void
+_item_container_pos_cb(void *data, Efl_Event *ev)
+{
+   Efl_Selection_Manager_Data *pd = data;
+   Item_Container_Drop_Info *di = NULL;
+   Efl_Dnd_Drag_Pos *drag_pos = ev->info;
+   Efl_Object *item = NULL;
+
+   di = eina_list_search_unsorted(pd->cont_drop_list, _drop_item_container_cmp, ev->object);
+   int xret = 0, yret = 0;
+   int xo = 0, yo = 0;
+   evas_object_geometry_get(ev->object, &xo, &yo, NULL, NULL);
+   if (di->item_func)
+     {
+        Efl_Object *it;
+        it = di->item_func(di->item_func_data, ev->object, drag_pos->x + xo, drag_pos->y + yo, &xret, &yret);
+        //Efl_Dnd_Drag_Pos *it_drag_pos = calloc(1, sizeof(Efl_Dnd_Drag_Pos));
+        Efl_Dnd_Drag_Item_Container_Pos *it_drag_pos = calloc(1, sizeof(*it_drag_pos));
+        if (!it_drag_pos) return;
+        it_drag_pos->format = drag_pos->format;
+        it_drag_pos->action = drag_pos->action;
+        it_drag_pos->x = xret;
+        it_drag_pos->y = yret;
+        it_drag_pos->item = it;
+        //FIXME: which event type???
+        //efl_event_callback_call(ev->object, EFL_DND_EVENT_CONTAINER_DRAG_POS, it_drag_pos);
+        efl_event_callback_call(ev->object, EFL_DND_EVENT_DRAG_POS, it_drag_pos);
+     }
+}
+
+EOLIAN static void
+_efl_selection_manager_drop_item_container_add(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *cont, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb, Efl_Input_Device *seat)
+{
+   ERR("In");
+   Item_Container_Drop_Info *di;
+   if (_drop_item_container_del(pd, cont, EINA_FALSE))
+     {
+        di = eina_list_search_unsorted(pd->cont_drop_list, _drop_item_container_cmp, obj);
+        if (!di) return;
+     }
+   else
+     {
+        di = calloc(1, sizeof(Item_Container_Drop_Info));
+        if (!di) return;
+
+        di->obj = obj;
+        pd->cont_drop_list = eina_list_append(pd->cont_drop_list, di);
+     }
+   di->item_func = item_func;
+   di->item_func_data = item_func_data;
+   //TODO: combine container and normal drop event
+   //->need to know which case is container, which case is not
+
+   efl_event_callback_add(cont, EFL_DND_EVENT_DRAG_POS, _item_container_pos_cb, pd);
+   efl_event_callback_add(cont, EFL_DND_EVENT_DRAG_DROP, _item_container_drop_cb, pd);
+   efl_selection_manager_drop_target_add(obj, cont, format, seat);
+}
+
+EOLIAN static void
+_efl_selection_manager_drop_item_container_del(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *cont, Efl_Input_Device *seat)
+{
+   ERR("In");
+   _drop_item_container_del(pd, cont, EINA_TRUE);
 }
 
 
