@@ -149,6 +149,9 @@ struct _Elm_Genlist_Data
    Ecore_Idle_Enterer                   *queue_filter_enterer;
    Eina_Hash                             *size_caches;
 
+   Eina_Hash                            *content_item_map;
+   Eo                                   *provider;
+
    Eina_Bool                             filter;
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;

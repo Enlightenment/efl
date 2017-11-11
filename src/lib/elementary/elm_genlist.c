@@ -8,6 +8,7 @@
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -15,6 +16,8 @@
 #include "elm_priv.h"
 #include "elm_widget_genlist.h"
 #include "elm_interface_scrollable.h"
+#include "efl_ui_focus_parent_provider_gen.eo.h"
+#include "efl_ui_focus_composition_adapter.eo.h"
 #include "elm_genlist_item.eo.h"
 #include "elm_genlist_pan.eo.h"
 #include "elm_genlist.eo.h"
@@ -403,6 +406,8 @@ _item_content_realize(Elm_Gen_Item *it,
    Eina_List *source;
    const char *key;
 
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
    if (!parts)
      {
         EINA_LIST_FREE(*contents, content)
@@ -437,6 +442,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
         if (content != old)
           {
+             eina_hash_add(sd->content_item_map, &content, it->base->eo_obj);
              // FIXME: Genlist item doesn't update its size when the size of
              // content is changed, so deferred calculation for content should
              // be performed before realization.
@@ -472,6 +478,7 @@ out:
           {
              *contents = eina_list_remove(*contents, old);
              evas_object_del(old);
+             eina_hash_del_by_key(sd->content_item_map, &old);
           }
      }
 }
@@ -1684,6 +1691,7 @@ _item_cache_find(Elm_Gen_Item *it)
 static Eina_List *
 _content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
 {
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, pd);
    Evas_Object *content = NULL;
    EINA_LIST_FREE(it->contents, content)
      {
@@ -1691,6 +1699,7 @@ _content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
           elm_widget_disabled_set(content, EINA_FALSE);
 
         *cache = eina_list_append(*cache, content);
+        eina_hash_del_by_key(pd->content_item_map, &content);
      }
 
    return *cache;
@@ -5786,15 +5795,49 @@ elm_genlist_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
+static void
+_genlist_element_focused(void *data, const Efl_Event *ev)
+{
+   ELM_GENLIST_DATA_GET(data, pd);
+   Elm_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Elm_Widget_Item *item;
+
+   if (!focused) return;
+
+   if (efl_isa(focused, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+     item = efl_parent_get(focused);
+   else
+     item = efl_ui_focus_parent_provider_find_logical_parent(pd->provider, focused);
+
+   if (efl_isa(item, ELM_GENLIST_ITEM_CLASS))
+     {
+        _elm_genlist_item_focused(item);
+        _all_items_deselect(pd);
+        elm_genlist_item_selected_set(item, EINA_TRUE);
+        elm_genlist_item_bring_in(item, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+     }
+}
+
 EOLIAN static Eo *
 _elm_genlist_efl_object_constructor(Eo *obj, Elm_Genlist_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+
+   sd->content_item_map = eina_hash_pointer_new(NULL);
+   sd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_GEN_CLASS, obj,
+    efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),
+    efl_ui_focus_parent_provider_gen_content_item_map_set(efl_added, sd->content_item_map));
+
+   efl_ui_focus_composition_custom_manager_set(obj, obj);
+   efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
+
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
+
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _genlist_element_focused, obj);
 
    return obj;
 }
@@ -5924,17 +5967,7 @@ _item_select(Elm_Gen_Item *it)
 
    if (!(sd->focus_on_selection_enabled || _elm_config->item_select_on_focus_disable))
      {
-        Evas_Object *swallow_obj;
-        Eina_List *l;
-        EINA_LIST_FOREACH(it->contents, l, swallow_obj)
-          {
-             if (elm_widget_is(swallow_obj) && elm_object_focus_get(swallow_obj))
-               {
-                  elm_object_focus_set(obj, EINA_FALSE);
-                  elm_object_focus_set(obj, EINA_TRUE);
-                  break;
-               }
-          }
+        efl_ui_focus_manager_focus_set(obj, it->base->eo_obj);
      }
 
    evas_object_unref(obj);
@@ -6190,6 +6223,8 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
      }
    it->item->expanded_depth = depth;
    sd->item_count++;
+
+   efl_ui_focus_composition_dirty(sd->obj);
 
    return it;
 }
@@ -8700,6 +8735,54 @@ _elm_genlist_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlis
           }
      }
    return EINA_FALSE;
+}
+
+EOLIAN static Efl_Object*
+_elm_genlist_efl_object_provider_find(Eo *obj, Elm_Genlist_Data *pd, const Efl_Object *klass)
+{
+   if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
+     return pd->provider;
+   return efl_provider_find(efl_super(obj, ELM_GENLIST_CLASS), klass);
+}
+
+EOLIAN static void 
+_elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
+{
+   Elm_Gen_Item *item;
+   Eina_List *order = NULL;
+
+   EINA_INLIST_FOREACH(pd->items, item)
+     {
+        if (item->base->disabled)
+          continue;
+
+        order = eina_list_append(order, item->base->eo_obj);
+     }
+
+   efl_ui_focus_composition_elements_set(obj, order);
+}
+
+EOLIAN static void 
+_elm_genlist_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
+{
+   Eina_List *n;
+   Elm_Widget *wid;
+
+   _item_realize(pd, pd->item->order_num_in, EINA_FALSE);
+
+   EINA_LIST_FOREACH(pd->contents, n, wid)
+     {
+        if (efl_isa(wid, ELM_WIDGET_CLASS))
+          _elm_widget_full_eval(wid);
+     }
+
+   efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_GENLIST_ITEM_CLASS));
+}
+
+EOLIAN static Eina_Bool 
+_elm_genlist_elm_widget_focus_state_apply(Eo *obj, Elm_Genlist_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+{
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 /* Standard widget overrides */
