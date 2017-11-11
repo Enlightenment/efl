@@ -80,6 +80,32 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
     "implements", "constructors", "get", "set", "keys", "values", "true", "false", "null"}
 };
 
+static Elm_Code_Syntax _elm_code_syntax_go =
+{
+   "{}()[]:;%^/*+&|~!=<->,.",
+   ".",
+   NULL,
+   "//",
+   "/*",
+   "*/",
+   { "break", "case", "chan", "const", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto",  \
+     "if", "import", "interface", "map", "package", "range", "return", "select", "struct", "switch", "type", "var", \
+     "true", "false", "iota", "nil", \
+     "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr", "float32", \
+     "float64", "complex64", "complex128", "bool", "byte", "rune", "string", "error", "make", "len", "cap", "new", "append", \
+     "copy", "close", "delete", "complex", "real", "imag", "panic", "recover", NULL }
+};
+
+static Elm_Code_Syntax _elm_code_syntax_md =
+{
+   "()[]*+-_=#.>!:\\`~|",
+   "",
+   NULL,
+   NULL,
+   "<!--",
+   "-->",
+   {}
+};
 
 EAPI Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
@@ -94,6 +120,10 @@ elm_code_syntax_for_mime_get(const char *mime)
      return &_elm_code_syntax_py;
    if (!strcmp("text/x-eolian", mime))
      return &_elm_code_syntax_eo;
+   if (!strcmp("text/markdown", mime))
+     return &_elm_code_syntax_md;
+   if (!strcmp("text/x-go", mime))
+     return &_elm_code_syntax_go;
 
    return NULL;
 }
