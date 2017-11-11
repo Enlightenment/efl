@@ -247,14 +247,14 @@ _efl_ui_list_segarray_node_accessor_get_at(Efl_Ui_List_Segarray_Node_Accessor* a
 
        for(;acc->current_index != idx;++acc->current_index)
          {
-           DBG("for current_index: %d idx: %d", acc->current_index, idx);
+           /* DBG("for current_index: %d idx: %d", acc->current_index, idx); */
          if(!eina_iterator_next(acc->pre_iterator, (void**)&acc->current_node))
            {
              --acc->current_index;
              return EINA_FALSE;
            }
          }
-       DBG("out of loop");
+       /* DBG("out of loop"); */
        (*data) = acc->current_node;
        return EINA_TRUE;
      }
