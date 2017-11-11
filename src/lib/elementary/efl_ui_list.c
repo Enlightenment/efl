@@ -1474,7 +1474,7 @@ EOLIAN static Efl_Ui_List_LayoutItem *
 _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
    Efl_Ui_List_Item_Event evt;
-//   DBG("model_realize");
+   DBG("model_realize");
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
@@ -1495,7 +1495,7 @@ EOLIAN static void
 _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
    Efl_Ui_List_Item_Event evt;
-//   DBG("model_unrealize item:%p", item);
+   DBG("model_unrealize item:%p", item);
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
    evas_object_hide(item->layout);

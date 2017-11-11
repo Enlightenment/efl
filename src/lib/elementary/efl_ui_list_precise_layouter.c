@@ -496,138 +496,171 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
               (pd->modeler, NULL, NULL, &ow, &oh);
 
    elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
+
+   DBG("scr_x: %d, scr_y: %d\n", (int)scr_x, (int)scr_y);
+   
    // scan all items, get their properties, calculate total weight & min size
    // cache size of new items
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+
+   /* int sum_node_top = 0; */
+   
    EINA_ACCESSOR_FOREACH(nodes, i, items_node)
      {
+       Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
+       if (!nodedata)
+         {
+           DBG("no data in node!");
+           continue;
+         }
 
-   Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
-   if (!nodedata) continue;
+       /* int start_pos = ; */
+       /* if(start_pos < 0) */
+      /*   start_pos = 0; */
+       if(scr_y < cur_pos + nodedata->min.h + boxh
+          && scr_y + boxh + boxh > cur_pos) // start in this node
+         {
+            DBG("cur_pos: %d\n", (int)cur_pos);
 
-   if (!nodedata->realized)
-     {
-       cur_pos += nodedata->min.h;
-       continue;
-     }
+            for(j = 0; j != items_node->length && scr_y + boxh + boxh > cur_pos;++j)
+              {
+                 DBG("cur_pos item by item: %d\n", (int)cur_pos);
+                 layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
+                 double cx, cy, cw, ch, x, y, w, h;
+                 double weight_x, weight_y;
+                 double align[2];
+                 int item_pad[4];
+                 Eina_Size2D max;
+                 int pad = 0;
 
-   for(j = 0; j != items_node->length;++j)
-     {
-        layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
-        double cx, cy, cw, ch, x, y, w, h;
-        double weight_x, weight_y;
-        double align[2];
-        int item_pad[4];
-        Eina_Size2D max;
-        int pad = 0;
-
-        if(layout_item->min.w && layout_item->min.h)
-          {
+                 if(layout_item->min.w && layout_item->min.h)
+                   {
 //        DBG("size information for item %d width %d height %d", j, layout_item->min.w, layout_item->min.h);
+                      if(!layout_item->layout)
+                        {
+                           DBG("realizing showing item\n");
+                           efl_ui_list_model_realize(pd->modeler, layout_item);
+                           assert(layout_item->layout != NULL);
+                        }
+                      efl_gfx_size_hint_weight_get(layout_item->layout, &weight_x, &weight_y);
+                      efl_gfx_size_hint_align_get(layout_item->layout, &align[0], &align[1]);
+                      max = efl_gfx_size_hint_max_get(layout_item->layout);
+                      efl_gfx_size_hint_margin_get(layout_item->layout, &item_pad[0], &item_pad[1], &item_pad[2], &item_pad[3]);
 
-        assert(layout_item->layout != NULL);
-        efl_gfx_size_hint_weight_get(layout_item->layout, &weight_x, &weight_y);
-        efl_gfx_size_hint_align_get(layout_item->layout, &align[0], &align[1]);
-        max = efl_gfx_size_hint_max_get(layout_item->layout);
-        efl_gfx_size_hint_margin_get(layout_item->layout, &item_pad[0], &item_pad[1], &item_pad[2], &item_pad[3]);
+                      if (align[0] < 0) align[0] = -1;
+                      if (align[1] < 0) align[1] = -1;
+                      if (align[0] > 1) align[0] = 1;
+                      if (align[1] > 1) align[1] = 1;
 
-        if (align[0] < 0) align[0] = -1;
-        if (align[1] < 0) align[1] = -1;
-        if (align[0] > 1) align[0] = 1;
-        if (align[1] > 1) align[1] = 1;
+                      if (max.w <= 0) max.w = INT_MAX;
+                      if (max.h <= 0) max.h = INT_MAX;
+                      if (max.w < layout_item->min.w) max.w = layout_item->min.w;
+                      if (max.h < layout_item->min.h) max.h = layout_item->min.h;
 
-        if (max.w <= 0) max.w = INT_MAX;
-        if (max.h <= 0) max.h = INT_MAX;
-        if (max.w < layout_item->min.w) max.w = layout_item->min.w;
-        if (max.h < layout_item->min.h) max.h = layout_item->min.h;
+                      // extra rounding up (compensate cumulative error)
+                      if ((i == (pd->count - 1)) && (cur_pos - floor(cur_pos) >= 0.5))
+                        rounding = 1;
 
-        // extra rounding up (compensate cumulative error)
-        if ((i == (pd->count - 1)) && (cur_pos - floor(cur_pos) >= 0.5))
-           rounding = 1;
+                      if (horiz)
+                        {
+                           cx = boxx + cur_pos;
+                           cy = boxy;
+                           cw = layout_item->min.w + rounding + (zeroweight ? 1.0 : weight_x) * extra / weight[0];
+                           ch = boxh;
+                           cur_pos += cw + pad;
+                        }
+                      else
+                        {
+                           cx = boxx;
+                           cy = boxy + cur_pos;
+                           cw = boxw;
+                           ch = layout_item->min.h + rounding + (zeroweight ? 1.0 : weight_y) * extra / weight[1];
+                           cur_pos += ch + pad;
+                        }
 
-        if (horiz)
-          {
-             cx = boxx + cur_pos;
-             cy = boxy;
-             cw = layout_item->min.w + rounding + (zeroweight ? 1.0 : weight_x) * extra / weight[0];
-             ch = boxh;
-             cur_pos += cw + pad;
-          }
-        else
-          {
-             cx = boxx;
-             cy = boxy + cur_pos;
-             cw = boxw;
-             ch = layout_item->min.h + rounding + (zeroweight ? 1.0 : weight_y) * extra / weight[1];
-             cur_pos += ch + pad;
-          }
+                      // horizontally
+                      if (max.w < INT_MAX)
+                        {
+                           w = MIN(MAX(layout_item->min.w - item_pad[0] - item_pad[1], max.w), cw);
+                           if (align[0] < 0)
+                             {
+                                // bad case: fill+max are not good together
+                               x = cx + ((cw - w) * box_align[0]) + item_pad[0];
+                             }
+                           else
+                             x = cx + ((cw - w) * align[0]) + item_pad[0];
+                        }
+                      else if (align[0] < 0)
+                        {
+                           // fill x
+                          w = cw - item_pad[0] - item_pad[1];
+                          x = cx + item_pad[0];
+                        }
+                      else
+                        {
+                           w = layout_item->min.w - item_pad[0] - item_pad[1];
+                           x = cx + ((cw - w) * align[0]) + item_pad[0];
+                        }
 
-        // horizontally
-        if (max.w < INT_MAX)
-          {
-             w = MIN(MAX(layout_item->min.w - item_pad[0] - item_pad[1], max.w), cw);
-             if (align[0] < 0)
-               {
-                  // bad case: fill+max are not good together
-                  x = cx + ((cw - w) * box_align[0]) + item_pad[0];
-               }
-             else
-               x = cx + ((cw - w) * align[0]) + item_pad[0];
-          }
-        else if (align[0] < 0)
-          {
-             // fill x
-             w = cw - item_pad[0] - item_pad[1];
-             x = cx + item_pad[0];
-          }
-        else
-          {
-             w = layout_item->min.w - item_pad[0] - item_pad[1];
-             x = cx + ((cw - w) * align[0]) + item_pad[0];
-          }
+                      // vertically
+                      if (max.h < INT_MAX)
+                        {
+                           h = MIN(MAX(layout_item->min.h - item_pad[2] - item_pad[3], max.h), ch);
+                           if (align[1] < 0)
+                             {
+                               // bad case: fill+max are not good together
+                               y = cy + ((ch - h) * box_align[1]) + item_pad[2];
+                             }
+                           else
+                             y = cy + ((ch - h) * align[1]) + item_pad[2];
+                        }
+                      else if (align[1] < 0)
+                        {
+                           // fill y
+                          h = ch - item_pad[2] - item_pad[3];
+                          y = cy + item_pad[2];
+                        }
+                      else
+                        {
+                           h = layout_item->min.h - item_pad[2] - item_pad[3];
+                           y = cy + ((ch - h) * align[1]) + item_pad[2];
+                        }
 
-        // vertically
-        if (max.h < INT_MAX)
-          {
-             h = MIN(MAX(layout_item->min.h - item_pad[2] - item_pad[3], max.h), ch);
-             if (align[1] < 0)
-               {
-                  // bad case: fill+max are not good together
-                  y = cy + ((ch - h) * box_align[1]) + item_pad[2];
-               }
-             else
-               y = cy + ((ch - h) * align[1]) + item_pad[2];
-          }
-        else if (align[1] < 0)
-          {
-             // fill y
-             h = ch - item_pad[2] - item_pad[3];
-             y = cy + item_pad[2];
-          }
-        else
-          {
-             h = layout_item->min.h - item_pad[2] - item_pad[3];
-             y = cy + ((ch - h) * align[1]) + item_pad[2];
-          }
+                      if (horiz)
+                        {
+                           if (h < pd->min.h) h = pd->min.h;
+                           if (h > oh) h = oh;
+                        }
+                      else
+                        {
+                           if (w < pd->min.w) w = pd->min.w;
+                           if (w > ow) w = ow;
+                        }
 
-        if (horiz)
-          {
-             if (h < pd->min.h) h = pd->min.h;
-             if (h > oh) h = oh;
-          }
-        else
-          {
-             if (w < pd->min.w) w = pd->min.w;
-             if (w > ow) w = ow;
-          }
+                      //        DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
+                      evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
 
-//        DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
-        evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
+                      // layout_item->x = x;
+                      // layout_item->y = y; 
 
-        /* layout_item->x = x; */
-        /* layout_item->y = y; */
-        } /* if (size) end */
-      }
+                      } /* if (size) end */
+              }
+         }
+       else if (nodedata->realized) // unrealize
+         {
+            for(j = 0; j != items_node->length;++j)
+              {
+                 layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
+                 if(layout_item->layout)
+                   efl_ui_list_model_unrealize(pd->modeler, layout_item);
+              }
+            nodedata->realized = EINA_FALSE;
+            cur_pos += nodedata->min.h;
+         }
+       else
+         {
+            cur_pos += nodedata->min.h;
+         }
    } /* EINA ACCESSOR FOREACH END */
    eina_accessor_free(nodes);
 }
