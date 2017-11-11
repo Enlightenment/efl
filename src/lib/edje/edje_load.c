@@ -1045,20 +1045,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        break;
 
                      case EDJE_PART_TYPE_TEXT:
-                     case EDJE_PART_TYPE_TEXTBLOCK:
-                       _edje_textblock_styles_add(ed, rp);
-                       textblocks = eina_list_append(textblocks, rp);
-                       if (rp->part->type == EDJE_PART_TYPE_TEXT)
-                         {
-                            rp->object = efl_add(EFL_CANVAS_TEXT_CLASS,
-                                  ed->base.evas);
-                         }
-                       else
-                         {
-                            rp->object = evas_object_textblock_add(ed->base.evas);
-                         }
+                       _edje_text_part_on_add(ed, rp);
+                       rp->object = evas_object_text_add(ed->base.evas);
+                       evas_object_text_font_source_set(rp->object, ed->path);
                        break;
-
 
                      case EDJE_PART_TYPE_GROUP:
                        sources = eina_list_append(sources, rp);
@@ -1075,6 +1065,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        evas_object_pass_events_set(rp->object, 1);
                        evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
                        _edje_callbacks_focus_add(rp->object, ed, rp);
+                       break;
+
+                     case EDJE_PART_TYPE_TEXTBLOCK:
+                       _edje_textblock_styles_add(ed, rp);
+                       textblocks = eina_list_append(textblocks, rp);
+                       rp->object = evas_object_textblock_add(ed->base.evas);
                        break;
 
                      case EDJE_PART_TYPE_BOX:
