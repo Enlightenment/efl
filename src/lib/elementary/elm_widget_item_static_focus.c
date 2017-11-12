@@ -15,11 +15,14 @@ typedef struct {
 EOLIAN static void
 _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
+   Eo *logical_child;
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    efl_ui_focus_object_prepare_logical(efl_super(obj, ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS));
+   logical_child = efl_ui_focus_manager_request_subchild(wpd->widget, obj);
 
-   if (!efl_ui_focus_manager_request_subchild(wpd->widget, obj))
+
+   if (!logical_child)
      {
         if (!pd->adapter)
           {
@@ -28,7 +31,7 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_W
              efl_ui_focus_manager_calc_register(wpd->widget, pd->adapter, obj, NULL);
           }
      }
-   else if (pd->adapter)
+   else if (logical_child && logical_child != pd->adapter)
      {
         efl_ui_focus_manager_calc_unregister(wpd->widget, pd->adapter);
         efl_del(pd->adapter);
