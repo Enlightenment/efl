@@ -1191,7 +1191,6 @@ _pointer_axis(struct libinput_device *idevice, struct libinput_event_pointer *ev
    ptr = _evdev_pointer_get(dev->seat);
    if (!ptr) return EINA_FALSE;
 
-#ifdef LIBINPUT_HIGHER_08
    vert =
      libinput_event_pointer_has_axis(event,
                                      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
@@ -1212,12 +1211,6 @@ _pointer_axis(struct libinput_device *idevice, struct libinput_event_pointer *ev
         val = _pointer_axis_value(event, axis);
         dir = 1;
      }
-
-#else
-   axis = libinput_event_pointer_get_axis(event);
-   if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) dir = 1;
-   val = libinput_event_pointer_get_axis_value(event);
-#endif
 
    ptr->timestamp = libinput_event_pointer_get_time(event);
 

@@ -3740,7 +3740,6 @@ EFL_LIB_END([Eldbus])
 
 
 #### Ecore_Drm
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_ecore_drm}" = "yes"])
 
 ### Additional options to configure
@@ -3763,23 +3762,9 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 gbm])
-EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 0.6.0])
+EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 1.6.0])
 
 EFL_ADD_LIBS([ECORE_DRM], [-lm])
-
-# API change from 0.7 to 0.8. So we define this to support both for now.
-PKG_CHECK_EXISTS([libinput >= 0.8.0],
-                 [have_libinput_new="yes"],
-                 [have_libinput_new="no"])
-AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
-AC_MSG_RESULT([${have_libinput_new}])
-if test "x${have_libinput_new}" = "xyes";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
-fi
-if test "x${have_libinput_new}" = "xno";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
-fi
-
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
@@ -3800,7 +3785,6 @@ EFL_LIB_END_OPTIONAL([Ecore_Drm])
 
 
 #### Elput
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Elput], [test "${want_elput}" = "yes"])
 
 ### Additional options to configure
@@ -3821,25 +3805,12 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
-EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0 libudev])
+EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.6.0 xkbcommon >= 0.3.0 libudev])
 
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
 
 EFL_ADD_LIBS([ELPUT], [-lm])
-
-# API change from 0.7 to 0.8. So we define this to support both for now.
-PKG_CHECK_EXISTS([libinput >= 0.8.0],
-                 [have_libinput_new="yes"],
-                 [have_libinput_new="no"])
-AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
-AC_MSG_RESULT([${have_libinput_new}])
-if test "x${have_libinput_new}" = "xyes";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
-fi
-if test "x${have_libinput_new}" = "xno";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
-fi
 
 
 EFL_EVAL_PKGS([ELPUT])
@@ -3860,7 +3831,6 @@ EFL_LIB_END_OPTIONAL([Elput])
 #### End of Elput
 
 #### Ecore_Drm2
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Ecore_Drm2], [test "${want_drm}" = "yes"])
 
 ### Additional options to configure
