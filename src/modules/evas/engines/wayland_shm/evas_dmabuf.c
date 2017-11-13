@@ -30,16 +30,16 @@ static int drm_fd = -1;
 
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
-typedef struct _Dmabuf_Buffer Dmabuf_Buffer;
+typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
 typedef struct _Buffer_Handle Buffer_Handle;
 typedef struct _Buffer_Manager Buffer_Manager;
 struct _Buffer_Manager
 {
    Buffer_Handle *(*alloc)(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd);
-   struct wl_buffer *(*to_buffer)(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db);
-   void *(*map)(Dmabuf_Buffer *buf);
-   void (*unmap)(Dmabuf_Buffer *buf);
-   void (*discard)(Dmabuf_Buffer *buf);
+   struct wl_buffer *(*to_buffer)(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db);
+   void *(*map)(Ecore_Wl2_Buffer *buf);
+   void (*unmap)(Ecore_Wl2_Buffer *buf);
+   void (*discard)(Ecore_Wl2_Buffer *buf);
    void (*manager_destroy)(void);
    void *priv;
    void *dl_handle;
@@ -49,7 +49,7 @@ struct _Buffer_Manager
 
 Buffer_Manager *buffer_manager = NULL;
 
-struct _Dmabuf_Buffer
+struct _Ecore_Wl2_Buffer
 {
    Dmabuf_Surface *surface;
    struct wl_buffer *wl_buffer;
@@ -72,8 +72,8 @@ struct _Dmabuf_Surface
 {
    Surface *surface;
 
-   Dmabuf_Buffer *current;
-   Dmabuf_Buffer **buffer;
+   Ecore_Wl2_Buffer *current;
+   Ecore_Wl2_Buffer **buffer;
    int nbuf;
 
    Eina_Bool alpha : 1;
@@ -81,8 +81,8 @@ struct _Dmabuf_Surface
 
 static void _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface);
 static void _evas_dmabuf_surface_destroy(Surface *s);
-static Dmabuf_Buffer *_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h);
-static void _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b);
+static Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Dmabuf_Surface *s, int w, int h);
+static void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
 
 static drm_intel_bufmgr *(*sym_drm_intel_bufmgr_gem_init)(int fd, int batch_size) = NULL;
 static int (*sym_drm_intel_bo_unmap)(drm_intel_bo *bo) = NULL;
@@ -98,15 +98,15 @@ static void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
-static struct wl_buffer * _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *disp, Dmabuf_Buffer *db);
+static struct wl_buffer * _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *disp, Ecore_Wl2_Buffer *db);
 
 static void
 buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 {
-   Dmabuf_Buffer *b = data;
+   Ecore_Wl2_Buffer *b = data;
 
    b->busy = EINA_FALSE;
-   if (b->orphaned) _evas_dmabuf_buffer_destroy(b);
+   if (b->orphaned) ecore_wl2_buffer_destroy(b);
 }
 
 static const struct wl_buffer_listener buffer_listener =
@@ -145,7 +145,7 @@ err:
 }
 
 static void *
-_intel_map(Dmabuf_Buffer *buf)
+_intel_map(Ecore_Wl2_Buffer *buf)
 {
    drm_intel_bo *bo;
 
@@ -155,7 +155,7 @@ _intel_map(Dmabuf_Buffer *buf)
 }
 
 static void
-_intel_unmap(Dmabuf_Buffer *buf)
+_intel_unmap(Ecore_Wl2_Buffer *buf)
 {
    drm_intel_bo *bo;
 
@@ -164,7 +164,7 @@ _intel_unmap(Dmabuf_Buffer *buf)
 }
 
 static void
-_intel_discard(Dmabuf_Buffer *buf)
+_intel_discard(Ecore_Wl2_Buffer *buf)
 {
    drm_intel_bo *bo;
 
@@ -243,7 +243,7 @@ err:
 }
 
 static void *
-_exynos_map(Dmabuf_Buffer *buf)
+_exynos_map(Ecore_Wl2_Buffer *buf)
 {
    struct exynos_bo *bo;
    void *ptr;
@@ -255,7 +255,7 @@ _exynos_map(Dmabuf_Buffer *buf)
 }
 
 static void
-_exynos_unmap(Dmabuf_Buffer *buf)
+_exynos_unmap(Ecore_Wl2_Buffer *buf)
 {
    struct exynos_bo *bo;
 
@@ -264,7 +264,7 @@ _exynos_unmap(Dmabuf_Buffer *buf)
 }
 
 static void
-_exynos_discard(Dmabuf_Buffer *buf)
+_exynos_discard(Ecore_Wl2_Buffer *buf)
 {
    struct exynos_bo *bo;
 
@@ -351,19 +351,19 @@ err:
 }
 
 static void *
-_wl_shm_map(Dmabuf_Buffer *buf)
+_wl_shm_map(Ecore_Wl2_Buffer *buf)
 {
    return buf->bh;
 }
 
 static void
-_wl_shm_unmap(Dmabuf_Buffer *buf EINA_UNUSED)
+_wl_shm_unmap(Ecore_Wl2_Buffer *buf EINA_UNUSED)
 {
    /* wl_shm is mapped for its lifetime */
 }
 
 static void
-_wl_shm_discard(Dmabuf_Buffer *buf)
+_wl_shm_discard(Ecore_Wl2_Buffer *buf)
 {
    munmap(buf->bh, buf->size);
 }
@@ -375,7 +375,7 @@ _wl_shm_manager_destroy()
 }
 
 static struct wl_buffer *
-_wl_shm_to_buffer(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
+_wl_shm_to_buffer(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
 {
    struct wl_buffer *buf;
    struct wl_shm_pool *pool;
@@ -410,7 +410,7 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
 }
 
 static Buffer_Manager *
-_buffer_manager_get(Surface_Type types)
+ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
 {
    int fd;
    Eina_Bool dmabuf = types & SURFACE_DMABUF;
@@ -490,13 +490,13 @@ _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int
 }
 
 static struct wl_buffer *
-_buffer_manager_buf_to_wl_buffer(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *buf)
+ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf)
 {
    return buffer_manager->to_buffer(ewd, buf);
 }
 
 static void *
-_buffer_manager_map(Dmabuf_Buffer *buf)
+ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf)
 {
    void *out;
 
@@ -507,28 +507,29 @@ _buffer_manager_map(Dmabuf_Buffer *buf)
 }
 
 static void
-_buffer_manager_unmap(Dmabuf_Buffer *buf)
+ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf)
 {
    buffer_manager->unmap(buf);
    _buffer_manager_deref();
 }
+
 static void
-_buffer_manager_discard(Dmabuf_Buffer *buf)
+ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf)
 {
    buffer_manager->discard(buf);
    _buffer_manager_deref();
 }
 
 static void
-_evas_dmabuf_buffer_unlock(Dmabuf_Buffer *b)
+ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b)
 {
-   _buffer_manager_unmap(b);
+   ecore_wl2_buffer_unmap(b);
    b->mapping = NULL;
    b->locked = EINA_FALSE;
 }
 
 static void
-_evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
+ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b)
 {
    if (!b) return;
 
@@ -539,8 +540,8 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
         return;
      }
    if (b->fd != -1) close(b->fd);
-   if (b->mapping) _buffer_manager_unmap(b);
-   _buffer_manager_discard(b);
+   if (b->mapping) ecore_wl2_buffer_unmap(b);
+   ecore_wl2_buffer_discard(b);
    if (b->wl_buffer) wl_buffer_destroy(b->wl_buffer);
    b->wl_buffer = NULL;
    free(b);
@@ -549,7 +550,7 @@ _evas_dmabuf_buffer_destroy(Dmabuf_Buffer *b)
 static void
 _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
-   Dmabuf_Buffer *buf;
+   Ecore_Wl2_Buffer *buf;
    Dmabuf_Surface *surface;
    int i;
 
@@ -559,7 +560,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
      {
         if (surface->buffer[i])
           {
-             Dmabuf_Buffer *b = surface->buffer[i];
+             Ecore_Wl2_Buffer *b = surface->buffer[i];
              int stride = b->stride;
 
              /* If stride is a little bigger than width we still fit */
@@ -569,9 +570,9 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
                   continue;
                }
 
-             _evas_dmabuf_buffer_destroy(b);
+             ecore_wl2_buffer_destroy(b);
           }
-        buf = _evas_dmabuf_buffer_init(surface, w, h);
+        buf = ecore_wl2_buffer_create(surface, w, h);
         if (!buf)  return;
         surface->buffer[i] = buf;
      }
@@ -581,7 +582,7 @@ static void *
 _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 {
    Dmabuf_Surface *surface;
-   Dmabuf_Buffer *b;
+   Ecore_Wl2_Buffer *b;
    void *ptr;
 
    surface = s->surf.dmabuf;
@@ -595,7 +596,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
    if (h) *h = b->h;
    if (b->locked) return b->mapping;
 
-   ptr = _buffer_manager_map(b);
+   ptr = ecore_wl2_buffer_map(b);
    if (!ptr)
      return NULL;
 
@@ -604,7 +605,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
    return b->mapping;
 }
 
-static Dmabuf_Buffer *
+static Ecore_Wl2_Buffer *
 _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
 {
    int i = 0, best = -1, best_age = -1;
@@ -648,14 +649,14 @@ static void
 _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    Dmabuf_Surface *surface;
-   Dmabuf_Buffer *b;
+   Ecore_Wl2_Buffer *b;
    Ecore_Wl2_Window *win;
 
    surface = s->surf.dmabuf;
    b = surface->current;
    if (!b) return;
 
-   _evas_dmabuf_buffer_unlock(b);
+   ecore_wl2_buffer_unlock(b);
 
    surface->current = NULL;
    b->busy = EINA_TRUE;
@@ -671,7 +672,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 }
 
 static struct wl_buffer *
-_evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
+_evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
 {
    struct wl_buffer *buf;
    struct zwp_linux_dmabuf_v1 *dmabuf;
@@ -695,12 +696,12 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Dmabuf_Buffer *db)
    return buf;
 }
 
-static Dmabuf_Buffer *
-_evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
+static Ecore_Wl2_Buffer *
+ecore_wl2_buffer_create(Dmabuf_Surface *s, int w, int h)
 {
-   Dmabuf_Buffer *out;
+   Ecore_Wl2_Buffer *out;
 
-   out = calloc(1, sizeof(Dmabuf_Buffer));
+   out = calloc(1, sizeof(Ecore_Wl2_Buffer));
    if (!out) return NULL;
 
    out->fd = -1;
@@ -715,7 +716,7 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
    out->h = h;
    out->size = out->stride * h;
 
-   out->wl_buffer = _buffer_manager_buf_to_wl_buffer(s->surface->ob->ewd, out);
+   out->wl_buffer = ecore_wl2_buffer_wl_buffer_get(s->surface->ob->ewd, out);
 
    return out;
 }
@@ -726,7 +727,7 @@ _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
    int i;
 
    for (i = 0; i < surface->nbuf; i++)
-      _evas_dmabuf_buffer_destroy(surface->buffer[i]);
+      ecore_wl2_buffer_destroy(surface->buffer[i]);
 
    free(surface->buffer);
    surface->buffer = NULL;
@@ -745,7 +746,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
 Eina_Bool
 _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 {
-   Surface_Type types = 0;
+   Ecore_Wl2_Buffer_Type types = 0;
    Dmabuf_Surface *surf = NULL;
    int i = 0;
 
@@ -763,16 +764,16 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 
    /* create surface buffers */
    surf->nbuf = num_buff;
-   surf->buffer = calloc(surf->nbuf, sizeof(Dmabuf_Buffer *));
+   surf->buffer = calloc(surf->nbuf, sizeof(Ecore_Wl2_Buffer *));
    if (!surf->buffer) goto err;
 
-   if (!_buffer_manager_get(types)) goto err;
+   if (!ecore_wl2_buffer_init(types)) goto err;
 
    if (w && h)
      {
         for (i = 0; i < num_buff; i++)
           {
-             surf->buffer[i] = _evas_dmabuf_buffer_init(surf, w, h);
+             surf->buffer[i] = ecore_wl2_buffer_create(surf, w, h);
              if (!surf->buffer[i])
                {
                   DBG("Could not create buffers");
