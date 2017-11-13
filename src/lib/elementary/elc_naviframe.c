@@ -430,11 +430,14 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 
    buf = eina_strbuf_new();
    eina_strbuf_append(buf, info);
+   eina_strbuf_append_printf(buf, ", %s", N_("Title"));
 
    info = elm_object_part_text_get(layout, SUBTITLE_PART);
    if (!info) goto end;
+   if (!strcmp(info, "")) goto end;
 
    eina_strbuf_append_printf(buf, ", %s", info);
+   eina_strbuf_append_printf(buf, ", %s", N_("Subtitle"));
 
 end:
    ret = eina_strbuf_string_steal(buf);
