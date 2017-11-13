@@ -45,7 +45,7 @@ struct _Buffer_Manager
    Eina_Bool destroyed;
 };
 
-Buffer_Manager *buffer_manager = NULL;
+static Buffer_Manager *buffer_manager = NULL;
 
 struct _Ecore_Wl2_Buffer
 {
