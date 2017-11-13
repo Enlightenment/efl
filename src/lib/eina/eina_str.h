@@ -14,7 +14,7 @@
  * @skipline #include
  * @line #include
  *
- * In our main function we declare(and initialize) some variables and initialize
+ * In our main function we declare (and initialize) some variables and initialize
  * eina:
  * @until eina_init
  *
@@ -31,7 +31,7 @@
  * values:
  * @until Has
  *
- * When strings will be used in a terminal(or a number of other places) it
+ * When strings will be used in a terminal (or a number of other places) it
  * necessary to escape certain characters that appear in them:
  * @until printf
  *
@@ -201,7 +201,7 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  * This function splits @p string into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delimiter. @p delimiter is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
- * @p max_tokens is less than @c 1, the string is splitted as many times as possible. If
+ * @p max_tokens is less than @c 1, the string is split as many times as possible. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
  * newly allocated NULL-terminated array of strings or @c NULL if it fails to

@@ -82,7 +82,7 @@ EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloced.
+ * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
  *
  * @param str The string to manage
  * @return Newly allocated string buffer instance.
@@ -100,7 +100,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloced.
+ * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
  *
  * @param str The string to manage
  * @param length The length of the string.
@@ -117,7 +117,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_M
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloced.
+ * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
  *
  * @param str The string to manage
  * @param length The length of the string.
@@ -411,7 +411,7 @@ EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EIN
  * @param pos The position to insert the string.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function insert a string as described by the format @p fmt to @p buf at
+ * This function inserts a string as described by the format @p fmt to @p buf at
  * the position @p pos. @p fmt must be of a valid format for printf family of
  * functions. If it can't insert it, #EINA_FALSE is returned,
  * otherwise #EINA_TRUE is returned.
@@ -632,11 +632,11 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
 
 
 /**
- * @brief Replaces all strings with an other string.
+ * @brief Replaces all strings with another string.
 
  * @param buf The string buffer to work with.
  * @param str The string to replace.
- * @param with The replacing string.
+ * @param with The replacement string.
  * @return How often the string was replaced.
  *
  * This function replaces all the occurrences of @p str in @p buf with
@@ -650,7 +650,7 @@ EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *
 
  * @param buf The string buffer to work with.
  *
- * This function skips whitespaces in the beginning and the end of the buffer.
+ * This function skips whitespaces at the beginning and the end of the buffer.
  */
 EAPI void eina_strbuf_trim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 

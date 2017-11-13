@@ -52,7 +52,7 @@
  * #include <Ecore.h>
  *
  * #include <eina_safety_checks.h>
- * // all these files below will NOT emit warning from EINA_ARG_NONNULL(),
+ * // all the files below will NOT emit warning from EINA_ARG_NONNULL(),
  * // but this is required to have the functions defined there to be checked
  * // for NULL pointers
  * #include "my_functions1.h"
@@ -68,10 +68,10 @@
  * that should never happen, it is similar in concept to assert(), but
  * will log and return instead of abort() your program.
  *
- * Since these cases should never happen, one may wantto keep safety
+ * Since these cases should never happen, one may want to keep safety
  * checks enabled during tests but disable then during deploy, not
  * doing any checks at all. This is a common requirement for embedded
- * systems. Whenever to check or not should be set during compile time
+ * systems. When to check or not should be set during compile time
  * by using @c --disable-safety-checks or @c --enable-safety-checks
  * options to @c configure script.
  *

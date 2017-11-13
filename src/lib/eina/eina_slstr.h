@@ -20,7 +20,7 @@
  * This set of APIs provide a convenience feature to create and return strings
  * that are meant to be consumed in the local scope of the calling code block.
  * The lifecycle of those strings is bound to the loop of the current thread
- * or until the clear function is called explicitely.
+ * or until the clear function is called explicitly.
  *
  * These strings will be automatically deleted.
  *
