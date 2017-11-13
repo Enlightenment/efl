@@ -30,7 +30,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.text_set("Calendar Layout Formatting Example");
    win.autohide_set(true);
 
-   auto cal = efl::ui::Calendar(instantiate, win);
+   efl::ui::Calendar cal(instantiate, win);
    win.content_set(cal);
 
    // FIXME: Function cb doesn't work (C++ variant)

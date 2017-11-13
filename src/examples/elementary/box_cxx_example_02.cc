@@ -18,7 +18,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    for (int i = 0; i < 5; i++)
      {
-        auto bt = efl::ui::Button(instantiate, win);
+        efl::ui::Button bt(instantiate, win);
         bt.text_set("Button " + std::to_string(i));
         box.pack_end(bt);
      }
