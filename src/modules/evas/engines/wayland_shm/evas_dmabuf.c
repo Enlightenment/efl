@@ -409,7 +409,7 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
    return EINA_TRUE;
 }
 
-static Buffer_Manager *
+static Eina_Bool
 ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
 {
    int fd;
@@ -420,7 +420,7 @@ ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
    if (buffer_manager)
      {
         buffer_manager->refcount++;
-        return buffer_manager;
+        return EINA_TRUE;
      }
 
    buffer_manager = calloc(1, sizeof(Buffer_Manager));
@@ -439,7 +439,7 @@ ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
 
    drm_fd = fd;
    buffer_manager->refcount = 1;
-   return buffer_manager;
+   return EINA_TRUE;
 
 err_bm:
    close(fd);
@@ -447,7 +447,7 @@ err_drm:
    free(buffer_manager);
 err_alloc:
    dmabuf_totally_hosed = EINA_TRUE;
-   return NULL;
+   return EINA_FALSE;
 }
 
 static void
