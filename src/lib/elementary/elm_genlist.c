@@ -8634,6 +8634,9 @@ _elm_genlist_efl_access_state_set_get(Eo *obj, Elm_Genlist_Data *sd EINA_UNUSED)
 
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
 
+   if (elm_genlist_multi_select_get(obj))
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MULTISELECTABLE);
+
    return ret;
 }
 

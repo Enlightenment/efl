@@ -5606,6 +5606,9 @@ _elm_gengrid_efl_access_state_set_get(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
 
+   if (elm_gengrid_multi_select_get(obj))
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MULTISELECTABLE);
+
    return ret;
 }
 
