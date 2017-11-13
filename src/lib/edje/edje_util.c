@@ -5354,6 +5354,15 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
    if (remember_key == key)
      return NULL;
 
+   // It is usually faster to walk the string once to check
+   // if there will be any tokens to process, that to allocate
+   // an array, copy one token, and then just free it.
+   if (strchr(key, '/') == NULL)
+     {
+        remember_key = key;
+        return NULL;
+     }
+
    tokens = eina_str_split_full(key, "/", 0, &tokens_count);
    if ((tokens) && (tokens_count > 1))
      {
