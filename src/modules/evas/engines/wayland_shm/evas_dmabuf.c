@@ -783,7 +783,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
           }
      }
 
-   s->type = SURFACE_DMABUF;
    s->funcs.destroy = _evas_dmabuf_surface_destroy;
    s->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
    s->funcs.data_get = _evas_dmabuf_surface_data_get;

@@ -86,7 +86,6 @@ enum _Ecore_Wl2_Buffer_Type
 typedef struct _Surface Surface;
 struct _Surface
 {
-   Ecore_Wl2_Buffer_Type type;
    Outbuf *ob;
    union
      {

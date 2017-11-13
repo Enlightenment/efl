@@ -16,7 +16,6 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
-   out->type = SURFACE_EMPTY;
    out->info = info;
    out->ob = ob;
 
