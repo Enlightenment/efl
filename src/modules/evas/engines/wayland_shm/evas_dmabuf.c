@@ -717,7 +717,6 @@ _evas_dmabuf_buffer_init(Dmabuf_Surface *s, int w, int h)
 
    out->wl_buffer = _buffer_manager_buf_to_wl_buffer(s->surface->ob->ewd, out);
 
-   ecore_wl2_display_flush(s->surface->info->info.wl2_display);
    return out;
 }
 
