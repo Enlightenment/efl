@@ -22,7 +22,7 @@
 /**
  * @addtogroup Eina_Rbtree_Group Red-Black tree
  *
- * @brief These functions provide Red-Black trees management.
+ * @brief These functions provide Red-Black tree management.
  *
  * @{
  */

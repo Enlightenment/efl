@@ -184,10 +184,21 @@ EAPI Eina_Rbtree          *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbt
  * @param root The root of a valid red black tree.
  * @param func The callback that will free each node.
  * @param data Private data to help the compare function.
- *
  */
 EAPI void                  eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data) EINA_ARG_NONNULL(2);
 
+/**
+ * @brief Searches tree for a key using a comparison function.
+ *
+ * @param root The root of a valid red black tree.
+ * @param key The key value to search for.
+ * @param length The length of the specified key.
+ * @param cmp Callback routine to compare two nodes.
+ * @param data Private data to help the compare function.
+ *
+ * @return The first matching node found in the red black tree, or
+ * @p root if nothing was found.
+ */
 static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, const void *key, int length, Eina_Rbtree_Cmp_Key_Cb cmp, const void *data) EINA_PURE EINA_ARG_NONNULL(2, 4) EINA_WARN_UNUSED_RESULT;
 
 
