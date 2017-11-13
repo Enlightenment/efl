@@ -9,14 +9,15 @@
 
 #include <sstream>
 
-EAPI_MAIN int
-elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
+using efl::eo::instantiate;
+
+efl::ui::Win win;
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-
-   using efl::eo::instantiate;
-
-   efl::ui::Win win(instantiate);
+   instantiate(win);
+   ::efl_ref(win._eo_ptr()); // FIXME: Window is doing BAD THINGS™!
    win.text_set("Bg Image");
    win.autohide_set(true);
 
@@ -29,9 +30,8 @@ elm_main (int argc EINA_UNUSED, char **args EINA_UNUSED)
    bg.file_set("performance/background.png", nullptr);
    win.content_set(bg);
 
-   win.eo_cxx::efl::Gfx::size_set({640, 400});
-
-   elm_run();
-   return 0;
+   win.size_set({640, 400});
+   std::cout << "win " << win._eo_ptr() << std::endl;
+   win.delete_request_event_cb_add([](){ win = nullptr; efl_exit(0); });
 }
-ELM_MAIN()
+EFL_MAIN()
