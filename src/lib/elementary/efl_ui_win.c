@@ -1231,7 +1231,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
           }
 
         Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
-        efl_ui_widget_on_focus_update(focused, NULL);
+        efl_ui_focus_object_focus_set(focused, EINA_TRUE);
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
@@ -1280,6 +1280,17 @@ _elm_win_focus_out(Ecore_Evas *ee)
         efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_FALSE);
      }
 
+   if (sd->type != ELM_WIN_FAKE)
+     {
+        Efl_Ui_Focus_Manager *man = sd->obj;
+        while(efl_ui_focus_manager_redirect_get(man))
+          {
+             man = efl_ui_focus_manager_redirect_get(man);
+          }
+
+        Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
+        efl_ui_focus_object_focus_set(focused, EINA_FALSE);
+     }
    /* do nothing */
    /* if (sd->img_obj) */
    /*   { */
