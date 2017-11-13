@@ -78,9 +78,9 @@ typedef struct _Dmabuf_Surface Dmabuf_Surface;
 typedef enum _Ecore_Wl2_Buffer_Type Ecore_Wl2_Buffer_Type;
 enum _Ecore_Wl2_Buffer_Type
 {
-   SURFACE_EMPTY,
-   SURFACE_SHM,
-   SURFACE_DMABUF
+   ECORE_WL2_BUFFER_NONE = 0,
+   ECORE_WL2_BUFFER_SHM = 1,
+   ECORE_WL2_BUFFER_DMABUF = 2
 };
 
 typedef struct _Surface Surface;

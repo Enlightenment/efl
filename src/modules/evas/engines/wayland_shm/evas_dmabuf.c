@@ -413,8 +413,8 @@ static Eina_Bool
 ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
 {
    int fd;
-   Eina_Bool dmabuf = types & SURFACE_DMABUF;
-   Eina_Bool shm = types & SURFACE_SHM;
+   Eina_Bool dmabuf = types & ECORE_WL2_BUFFER_DMABUF;
+   Eina_Bool shm = types & ECORE_WL2_BUFFER_SHM;
    Eina_Bool success = EINA_FALSE;
 
    if (buffer_manager)
@@ -751,9 +751,9 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 
    if (dmabuf_totally_hosed) return EINA_FALSE;
    if (ecore_wl2_display_shm_get(s->info->info.wl2_display))
-     types |= SURFACE_SHM;
+     types |= ECORE_WL2_BUFFER_SHM;
    if (ecore_wl2_display_dmabuf_get(s->info->info.wl2_display))
-     types |= SURFACE_DMABUF;
+     types |= ECORE_WL2_BUFFER_DMABUF;
 
    if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
    surf = s->surf.dmabuf;
