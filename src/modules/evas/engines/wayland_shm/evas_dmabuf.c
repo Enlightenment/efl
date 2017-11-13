@@ -24,8 +24,6 @@
       }                            \
    } while (0)
 
-static Eina_Bool dmabuf_totally_hosed;
-
 static int drm_fd = -1;
 
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
@@ -446,7 +444,6 @@ err_bm:
 err_drm:
    free(buffer_manager);
 err_alloc:
-   dmabuf_totally_hosed = EINA_TRUE;
    return EINA_FALSE;
 }
 
@@ -749,7 +746,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    Dmabuf_Surface *surf = NULL;
    int i = 0;
 
-   if (dmabuf_totally_hosed) return EINA_FALSE;
    if (ecore_wl2_display_shm_get(s->info->info.wl2_display))
      types |= ECORE_WL2_BUFFER_SHM;
    if (ecore_wl2_display_dmabuf_get(s->info->info.wl2_display))
