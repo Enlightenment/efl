@@ -51,7 +51,6 @@ Buffer_Manager *buffer_manager = NULL;
 
 struct _Ecore_Wl2_Buffer
 {
-   Dmabuf_Surface *surface;
    struct wl_buffer *wl_buffer;
    int size;
    int w, h;
@@ -537,7 +536,6 @@ ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b)
    if (b->locked || b->busy)
      {
         b->orphaned = EINA_TRUE;
-        b->surface = NULL;
         return;
      }
    if (b->fd != -1) close(b->fd);
@@ -706,7 +704,6 @@ ecore_wl2_buffer_create(Dmabuf_Surface *s, int w, int h, Eina_Bool alpha)
    if (!out) return NULL;
 
    out->fd = -1;
-   out->surface = s;
    out->alpha = alpha;
    out->bh = _buffer_manager_alloc("name", w, h, &out->stride, &out->fd);
    if (!out->bh)
