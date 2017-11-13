@@ -359,6 +359,36 @@ typedef struct Ecore_Wl2_Event_Aux_Message
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Aux_Message;
 
+/* THIS WILL BE PRIVATE SHORTLY, DO NOT USE */
+typedef struct _Buffer_Handle Buffer_Handle;
+typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
+struct _Ecore_Wl2_Buffer
+{
+   struct wl_buffer *wl_buffer;
+   int size;
+   int w, h;
+   int age;
+   unsigned long stride;
+   Buffer_Handle *bh;
+   int fd;
+   void *mapping;
+
+   int index;
+   Eina_Bool locked : 1;
+   Eina_Bool busy : 1;
+   Eina_Bool used : 1;
+   Eina_Bool orphaned : 1;
+   Eina_Bool alpha : 1;
+};
+
+typedef enum _Ecore_Wl2_Buffer_Type Ecore_Wl2_Buffer_Type;
+enum _Ecore_Wl2_Buffer_Type
+{
+   ECORE_WL2_BUFFER_NONE = 0,
+   ECORE_WL2_BUFFER_SHM = 1,
+   ECORE_WL2_BUFFER_DMABUF = 2
+};
+
 typedef void (*Ecore_Wl2_Bind_Cb)(struct wl_client *client, void *data, uint32_t version, uint32_t id);
 typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 typedef void (*Ecore_Wl2_Frame_Cb)(Ecore_Wl2_Window *win, uint32_t timestamp, void *data);
@@ -1975,6 +2005,16 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
 EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
+
+EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types);
+EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
+EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf);
+EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf);
+EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
+EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
+EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
+EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
 
 # endif
 

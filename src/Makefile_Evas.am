@@ -1321,15 +1321,7 @@ modules/evas/engines/wayland_common/Evas_Engine_Wayland.h \
 modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
 modules/evas/engines/wayland_shm/evas_dmabuf.c \
-modules/evas/engines/wayland_shm/evas_outbuf.c \
-static_libs/libdrm/drm_fourcc.h \
-static_libs/libdrm/drm.h \
-static_libs/libdrm/drm_mode.h \
-static_libs/libdrm/exynos_drm.h \
-static_libs/libdrm/exynos_drmif.h \
-static_libs/libdrm/i915_drm.h \
-static_libs/libdrm/intel_bufmgr.h \
-static_libs/libdrm/LICENSE
+modules/evas/engines/wayland_shm/evas_outbuf.c
 
 NODIST_WAYLAND_SHM_SOURCES = \
 lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c
@@ -1337,8 +1329,7 @@ lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 nodist_lib_evas_libevas_la_SOURCES = $(NODIST_WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@ \
--I$(top_srcdir)/src/static_libs/libdrm
+lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@
 lib_evas_libevas_la_LIBADD += @evas_engine_wayland_shm_libs@
 else
 enginewaylandshmpkgdir = $(libdir)/evas/modules/engines/wayland_shm/$(MODULE_ARCH)
@@ -1356,7 +1347,6 @@ modules_evas_engines_wayland_shm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/ecore_wl2 \
 -I$(top_builddir)/src/lib/ecore_wl2 \
--I$(top_srcdir)/src/static_libs/libdrm \
 -I$(top_srcdir)/src/modules/evas/engines/wayland_common \
 @EVAS_CFLAGS@ \
 @ECORE_WL2_CFLAGS@ \

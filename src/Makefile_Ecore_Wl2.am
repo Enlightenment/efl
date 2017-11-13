@@ -15,7 +15,17 @@ lib/ecore_wl2/ecore_wl2_input.c \
 lib/ecore_wl2/ecore_wl2_output.c \
 lib/ecore_wl2/ecore_wl2_display.c \
 lib/ecore_wl2/ecore_wl2.c \
-lib/ecore_wl2/ecore_wl2_private.h
+lib/ecore_wl2/ecore_wl2_private.h \
+lib/ecore_wl2/ecore_wl2_buffer.c \
+static_libs/libdrm/drm_fourcc.h \
+static_libs/libdrm/drm.h \
+static_libs/libdrm/drm_mode.h \
+static_libs/libdrm/exynos_drm.h \
+static_libs/libdrm/exynos_drmif.h \
+static_libs/libdrm/i915_drm.h \
+static_libs/libdrm/intel_bufmgr.h \
+static_libs/libdrm/LICENSE
+
 
 nodist_lib_ecore_wl2_libecore_wl2_la_SOURCES = \
 lib/ecore_wl2/efl-aux-hints-protocol.c \
@@ -35,7 +45,7 @@ lib/ecore_wl2/text-input-unstable-v1-protocol.c \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
-lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@
+lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@ -I$(top_srcdir)/src/static_libs/libdrm
 lib_ecore_wl2_libecore_wl2_la_LIBADD = @ECORE_WL2_LIBS@
 lib_ecore_wl2_libecore_wl2_la_DEPENDENCIES = @ECORE_WL2_INTERNAL_LIBS@
 lib_ecore_wl2_libecore_wl2_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

@@ -75,14 +75,6 @@ extern int _evas_engine_way_shm_log_dom;
 typedef struct _Shm_Surface Shm_Surface;
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
-typedef enum _Ecore_Wl2_Buffer_Type Ecore_Wl2_Buffer_Type;
-enum _Ecore_Wl2_Buffer_Type
-{
-   ECORE_WL2_BUFFER_NONE = 0,
-   ECORE_WL2_BUFFER_SHM = 1,
-   ECORE_WL2_BUFFER_DMABUF = 2
-};
-
 typedef struct _Surface Surface;
 struct _Surface
 {
