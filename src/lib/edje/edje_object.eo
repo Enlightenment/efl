@@ -214,5 +214,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
    }
    events {
       recalc; [[Edje re-calculated the object.]]
+      circular,dependency; [[Edje found circular dependencies between parts of the object.]]
    }
 }

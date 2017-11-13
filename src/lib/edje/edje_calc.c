@@ -93,7 +93,6 @@ static void                          _edje_part_recalc_single(Edje *ed, Edje_Rea
                                                  pd_##type->type.orientation.data[2], \
                                                  pd_##type->type.orientation.data[3]);
 
-
 void
 _edje_calc_params_clear(Edje_Calc_Params *p)
 {
@@ -3846,6 +3845,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   strncat(depends_path, part_name,
                           sizeof(depends_path) - strlen(depends_path) - 1);
                }
+             efl_event_callback_legacy_call(ed->obj, EDJE_OBJECT_EVENT_CIRCULAR_DEPENDENCY, clist);
              ERR("Circular dependency in the group '%s' : %s",
                  ed->group, depends_path);
              eina_list_free(clist);
