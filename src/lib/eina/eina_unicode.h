@@ -53,7 +53,6 @@ EAPI size_t        eina_unicode_strlen(const Eina_Unicode *ustr) EINA_ARG_NONNUL
  */
 EAPI size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
-
 /**
  * @brief Same as the standard strdup just with Eina_Unicode instead of char.
  *
@@ -61,7 +60,6 @@ EAPI size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_AR
  * @return The duplicated string.
  */
 EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-
 
 /**
  * @brief Same as strdup but cuts on the given size. Assumes n < len
@@ -78,7 +76,6 @@ EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSE
  */
 EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-
 /**
  * @brief Same as the standard strcmp just with Eina_Unicode instead of char.
  *
@@ -88,7 +85,6 @@ EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA
  */
 EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
-
 /**
  * @brief Same as the standard strcpy just with Eina_Unicode instead of char.
  *
@@ -97,7 +93,6 @@ EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode
  * @return @p dest is returned.
  */
 EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source) EINA_ARG_NONNULL(1, 2);
-
 
 /**
  * @brief Same as the standard strstr just with Eina_Unicode instead of char.
@@ -109,7 +104,6 @@ EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *s
  */
 EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
-
 /**
  * @brief Same as the standard strncpy just with Eina_Unicode instead of char.
  *
@@ -119,7 +113,6 @@ EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_
  * @return @p dest is returned.
  */
 EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n) EINA_ARG_NONNULL(1, 2);
-
 
 /**
  * @see eina_str_escape()
@@ -131,18 +124,19 @@ EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL
 
 /* UTF-8 Handling */
 
-
 /**
  * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
  * the decoded code point at @p iindex offset, and advances @p iindex
  * to the next code point after this. @p iindex is always advanced,
  * unless if the advancement is after the @c NULL.
+ *
  * On error: return a codepoint between DC80 to DCFF where the low 8 bits
  *   are the byte's value.
  *
  * @param buf the string
  * @param iindex the index to look at and return by.
  * @return the codepoint found, 0 if @p buf or @p iindex are NULL
+ *
  * @since 1.8.0
  */
 static inline Eina_Unicode eina_unicode_utf8_next_get(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
@@ -153,27 +147,31 @@ static inline Eina_Unicode eina_unicode_utf8_next_get(const char *buf, int *iind
  * the decoded code point at @p iindex offset, and advances @p iindex
  * to the next code point after this. @p iindex is always advanced,
  * unless if the advancement is after the @c NULL.
+ *
  * On error: return a codepoint between DC80 to DCFF where the low 8 bits
  *   are the byte's value.
  *
  * @param buf the string
  * @param iindex the index to look at and return by.
  * @return the codepoint found, 0 if @p buf or @p iindex are NULL
+ *
  * @since 1.1.0
  */
 EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
 
 /**
  * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
- * the decoded code point at @p iindex offset, and moves  àp iindex
+ * the decoded code point at @p iindex offset, and moves  @p iindex
  * to the previous code point. @p iindex is always moved, as long
  * as it's not past the start of the string.
+ *
  * On error: return a codepoint between DC80 to DCFF where the low 8 bits
  *   are the byte's value.
  *
  * @param buf the string
  * @param iindex the index to look at and return by.
  * @return the codepoint found.
+ *
  * @since 1.1.0
  */
 EAPI Eina_Unicode eina_unicode_utf8_get_prev(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
@@ -185,6 +183,7 @@ EAPI Eina_Unicode eina_unicode_utf8_get_prev(const char *buf, int *iindex) EINA_
  *
  * @param buf the string
  * @return the number of unicode characters (not bytes) in the string
+ *
  * @since 1.1.0
  */
 EAPI int eina_unicode_utf8_get_len(const char *buf) EINA_ARG_NONNULL(1);
@@ -206,6 +205,7 @@ EAPI Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA
  * @param ulen the length in the unicode string to convert.
  * @param _len the length byte length of the return utf8 substring.
  * @return the newly allocated utf-8 substring.
+ *
  * @since 1.17
  */
 EAPI char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
@@ -216,6 +216,7 @@ EAPI char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen
  * @param uni the Eina_Unicode string
  * @param _len the length byte length of the return utf8 string.
  * @return the newly allocated utf-8 string.
+ *
  * @since 1.1.0
  */
 EAPI char * eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;

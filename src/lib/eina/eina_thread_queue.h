@@ -19,7 +19,7 @@
  * designed with the idea of sending large volumes of messages with no
  * copies from one thread to another (or from/to the mainloop). The idea
  * is that a thread queue is created and then one or more threads send
- * messages in one end and fetch messages on the other end. If you set a
+ * messages in one end and fetch messages off the other end. If you set a
  * parent message queue to 1 or more queues, then this parent will wake up
  * with a sub queue message, indicating which child queue woke up. This can
  * be used to implement the ability to listen to multiple queues at once.
@@ -41,6 +41,7 @@ typedef struct _Eina_Thread_Queue Eina_Thread_Queue;
  * @since 1.11
  */
 typedef struct _Eina_Thread_Queue_Msg Eina_Thread_Queue_Msg;
+
 /**
  * @typedef Eina_Thread_Queue_Msg_Sub
  *

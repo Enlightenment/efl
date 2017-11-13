@@ -50,7 +50,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_ustrbuf_string_steal . The passed string must be malloced.
+ * @ref eina_ustrbuf_string_steal . The passed string must be malloc'd.
  *
  * @param str The string to manage
  * @return Newly allocated string buffer instance
@@ -68,7 +68,7 @@ EAPI Eina_UStrbuf *eina_ustrbuf_manage_new(Eina_Unicode *str) EINA_MALLOC EINA_W
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_ustrbuf_string_steal . The passed string must be malloced.
+ * @ref eina_ustrbuf_string_steal . The passed string must be malloc'd.
  *
  * @param str The string to manage
  * @param length The length of the string.
@@ -143,7 +143,7 @@ EAPI Eina_Bool eina_ustrbuf_append_escaped(Eina_UStrbuf *buf, const Eina_Unicode
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function appends at most @p maxlen characters of @p str to
- * @p buf. It can't appends more than the length of @p str. It
+ * @p buf. It can't append more than the length of @p str. It
  * computes the length of @p str, so is slightly slower than
  * eina_ustrbuf_append_length(). If the length is known beforehand,
  * consider using that variant (@p maxlen should then be checked so
@@ -316,7 +316,7 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @param str The string to prepend.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This macro is calling eina_ustrbuf_insert() at position 0.If @p buf
+ * This macro is calling eina_ustrbuf_insert() at position 0. If @p buf
  * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  */

@@ -142,7 +142,7 @@
  * @ingroup Eina
  *
  * @defgroup Eina_Content_Access_Group Content Access
- * @brief Eina provides an uniform way to access elements of a container,
+ * @brief Eina provides a uniform way to access elements of a container,
  *        either sequential or indexed.
  * @ingroup Eina_Data_Types_Group
  *

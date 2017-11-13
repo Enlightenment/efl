@@ -86,7 +86,7 @@
 /**
  * @defgroup Eina_Tiler_Group Tiler
  *
- * @warning This is a very low level tool, in most situations(for example if
+ * @warning This is a very low level tool, in most situations (for example if
  * you're using evas) you won't need this.
  *
  * @section basic Basic usage
@@ -184,6 +184,7 @@ typedef struct _Eina_Tile_Grid_Slicer Eina_Tile_Grid_Slicer;
  * @see eina_tiler_free()
  */
 EAPI Eina_Tiler        *eina_tiler_new(int w, int h);
+
 /**
  * @brief Frees a tiler.
  *
@@ -193,6 +194,7 @@ EAPI Eina_Tiler        *eina_tiler_new(int w, int h);
  * elements of @p t.
  */
 EAPI void               eina_tiler_free(Eina_Tiler *t);
+
 /**
  * @brief Sets the size of tiles for a tiler.
  *
@@ -246,7 +248,7 @@ EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
  * @brief Tells if a tiler is empty or not.
  *
  * @param t The tiler to apply the strict rules to.
- * @return EINA_TRUE when empty, EINA_FALSE when not.
+ * @return #EINA_TRUE when empty, #EINA_FALSE when not.
  *
  * @since 1.8
  */
@@ -262,6 +264,7 @@ EAPI Eina_Bool          eina_tiler_empty(const Eina_Tiler *t);
  * @see eina_tiler_rect_del()
  */
 EAPI Eina_Bool          eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r);
+
 /**
  * @brief Removes a rectangle from a tiler.
  *
@@ -272,6 +275,7 @@ EAPI Eina_Bool          eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle 
  * @see eina_tiler_clear()
  */
 EAPI void               eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r);
+
 /**
  * @brief Removes all rectangles from tiles.
  *
@@ -280,6 +284,7 @@ EAPI void               eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle 
  * @see eina_tiler_rect_del()
  */
 EAPI void               eina_tiler_clear(Eina_Tiler *t);
+
 /**
  * @brief Creates a iterator to access the tilers calculated rectangles.
  *
@@ -316,7 +321,7 @@ EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, 
  * @param   src The second tiler.
  * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This fuction get the union of tilers @p dst and @p src.
+ * This function gets the union of tilers @p dst and @p src.
  * The result is stored in @p dst. It returns #EINA_TRUE if it succeeds.
  * @since 1.11
  */
@@ -329,7 +334,7 @@ EAPI Eina_Bool          eina_tiler_union(Eina_Tiler *dst, Eina_Tiler *src);
  * @param   src The second tiler.
  * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This fuction subtracts two tilers @p dst and @p src.
+ * This function subtracts two tilers @p dst and @p src.
  * The result is stored in @p dst. It returns #EINA_TRUE if it succeeds.
  * @since 1.11
  */
@@ -342,7 +347,7 @@ EAPI Eina_Bool          eina_tiler_subtract(Eina_Tiler *dst, Eina_Tiler *src);
  * @param   t2 The second tiler.
  * @return  A pointer of intersection result. @c NULL if intersection doesn't exist.
  *
- * This fuction gest intersection of two tilers @p t1 and @p t2.
+ * This function gets the intersection of two tilers @p t1 and @p t2.
  * It returns a pointer of result if intersection of two tilers exists., otherwise returns NULL.
  * @since 1.11
  */
@@ -353,9 +358,9 @@ EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
  *
  * @param   t1 The first tiler.
  * @param   t2 The second tiler.
- * @return  #EINA_TRUE is equal, #EINA_FALSE is unequal.
+ * @return  #EINA_TRUE is equal, #EINA_FALSE is inequal.
  *
- * This fuction gets result of comparison for @p t1 and @p t2.
+ * This function gets result of comparison for @p t1 and @p t2.
  * It returns #EINA_TRUE if tilers are equal.
  * @since 1.11
  */
@@ -367,7 +372,7 @@ EAPI Eina_Bool           eina_tiler_equal(const Eina_Tiler *t1, const Eina_Tiler
  * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
  * @param   rect Pointer to a struct Eina_Tile_Grid_Info *.
  * @return  #EINA_TRUE if the current rect is valid. #EINA_FALSE if there
- * is no more rects to iterate over (and thus the current one isn't valid).
+ * are no more rects to iterate over (and thus the current one isn't valid).
  *
  * This functions iterates over each Eina_Tile_Grid_Info *rect of the grid.
  * eina_tile_grid_slicer_setup() must be called first, and *rect is only valid
@@ -376,6 +381,7 @@ EAPI Eina_Bool           eina_tiler_equal(const Eina_Tiler *t1, const Eina_Tiler
  * @note Consider using eina_tile_grid_slicer_iterator_new() instead.
  */
 static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info **rect);
+
 /**
  * @brief Sets up an Eina_Tile_Grid_Slicer struct.
  *
@@ -388,7 +394,7 @@ static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, c
  * @param   tile_h Tile height.
  * @return  A pointer to the Eina_Iterator, @c NULL on failure.
  *
- * The region defined by @a x, @a y, @a w, @a h will be divided in to a grid of
+ * The region defined by @a x, @a y, @a w, @a h will be divided into a grid of
  * tiles of width @a tile_w and height @p tile_h, @p slc can then be used with
  * eina_tile_grid_slicer_next() to access each tile.
  *

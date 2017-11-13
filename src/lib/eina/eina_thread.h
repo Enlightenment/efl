@@ -34,7 +34,7 @@
 /**
  * @defgroup Eina_Thread_Group Thread
  *
- * Abstracts platform threads, providing an uniform API. It's modelled
+ * Abstracts platform threads, providing a uniform API. It's modelled
  * after POSIX THREADS (pthreads), on Linux they are almost 1:1
  * mapping.
  *
@@ -305,7 +305,7 @@ typedef void *(*Eina_Thread_Cancellable_Run_Cb)(void *data);
  *       in the case the thread was already canceled and that was
  *       pending.
  *
- * This helper does exactly the following code. Shall you need a
+ * This helper does exactly the following code. Should you need a
  * slightly different behavior, use the base calls yourself.
  *
  * @code
