@@ -24,8 +24,8 @@
 
 /**
  * @file eina_alloca.h
- * simplifies usage of alloca() by including the proper file
- * depending on the platform.
+ * Check if GCC's alloca() is available.  If it is available via a different spelling,
+ * define alloca to that spelling.
  */
 
 # ifdef EINA_HAVE_ALLOCA_H
@@ -43,8 +43,13 @@
 extern "C"
 #   endif
 /**
- * Allocates memory in the stack frame of the caller, so it's automatically
- * freed when the caller returns. See alloca(3) for details.
+ * @brief Allocates memory in the stack frame of the caller, so that it
+ * is automatically freed when the caller returns.
+ *
+ * @param size Number of bytes of space to allocate.
+ * @return Pointer to beginning of the allocated space.
+ *
+ * @see alloca(3) for more details.
  */
 void *alloca(size_t size);
 #  endif
