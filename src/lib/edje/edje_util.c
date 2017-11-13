@@ -5343,7 +5343,6 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
    int i, j;
    char **tokens;
    unsigned int tokens_count = 0;
-   Eina_Strbuf *buf = NULL;
 
    data = eina_hash_find(hash, key);
    if (data)
@@ -5353,6 +5352,8 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
 
    if ((tokens) && (tokens_count > 1))
      {
+        Eina_Strbuf *buf = NULL;
+
         buf = eina_strbuf_new();
 
         for (i = tokens_count - 2; i >= 0; i--)
@@ -5369,12 +5370,10 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
 
              eina_strbuf_reset(buf);
           }
-     }
 
-   if (buf)
-     {
         eina_strbuf_free(buf);
      }
+
    if (tokens)
      {
         free(tokens[0]);
