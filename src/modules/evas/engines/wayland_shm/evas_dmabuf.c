@@ -96,8 +96,6 @@ static void *(*sym_exynos_bo_map)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_bo_destroy)(struct exynos_bo *bo) = NULL;
 static void (*sym_exynos_device_destroy)(struct exynos_device *) = NULL;
 
-static struct wl_buffer * _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *disp, Ecore_Wl2_Buffer *db);
-
 static void
 buffer_release(void *data, struct wl_buffer *buffer EINA_UNUSED)
 {
@@ -111,6 +109,31 @@ static const struct wl_buffer_listener buffer_listener =
 {
    buffer_release
 };
+
+static struct wl_buffer *
+_evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
+{
+   struct wl_buffer *buf;
+   struct zwp_linux_dmabuf_v1 *dmabuf;
+   struct zwp_linux_buffer_params_v1 *dp;
+   uint32_t flags = 0;
+   uint32_t format;
+
+   if (db->alpha)
+     format = DRM_FORMAT_ARGB8888;
+   else
+     format = DRM_FORMAT_XRGB8888;
+
+   dmabuf = ecore_wl2_display_dmabuf_get(ewd);
+   dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
+   zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride, 0, 0);
+   buf = zwp_linux_buffer_params_v1_create_immed(dp, db->w, db->h,
+                                                 format, flags);
+   wl_buffer_add_listener(buf, &buffer_listener, db);
+   zwp_linux_buffer_params_v1_destroy(dp);
+
+   return buf;
+}
 
 static Buffer_Handle *
 _intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
@@ -665,31 +688,6 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    ecore_wl2_window_damage(win, rects, count);
 
    ecore_wl2_window_commit(win, EINA_TRUE);
-}
-
-static struct wl_buffer *
-_evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
-{
-   struct wl_buffer *buf;
-   struct zwp_linux_dmabuf_v1 *dmabuf;
-   struct zwp_linux_buffer_params_v1 *dp;
-   uint32_t flags = 0;
-   uint32_t format;
-
-   if (db->alpha)
-     format = DRM_FORMAT_ARGB8888;
-   else
-     format = DRM_FORMAT_XRGB8888;
-
-   dmabuf = ecore_wl2_display_dmabuf_get(ewd);
-   dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
-   zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride, 0, 0);
-   buf = zwp_linux_buffer_params_v1_create_immed(dp, db->w, db->h,
-                                                 format, flags);
-   wl_buffer_add_listener(buf, &buffer_listener, db);
-   zwp_linux_buffer_params_v1_destroy(dp);
-
-   return buf;
 }
 
 static Ecore_Wl2_Buffer *
