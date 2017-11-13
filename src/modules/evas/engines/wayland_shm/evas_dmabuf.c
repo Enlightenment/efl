@@ -383,7 +383,7 @@ _wl_shm_to_buffer(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
    struct wl_shm *shm;
    uint32_t format;
 
-   if (db->surface->alpha)
+   if (db->alpha)
      format = WL_SHM_FORMAT_ARGB8888;
    else
      format = WL_SHM_FORMAT_XRGB8888;
@@ -681,7 +681,7 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
    uint32_t flags = 0;
    uint32_t format;
 
-   if (db->surface->alpha)
+   if (db->alpha)
      format = DRM_FORMAT_ARGB8888;
    else
      format = DRM_FORMAT_XRGB8888;
