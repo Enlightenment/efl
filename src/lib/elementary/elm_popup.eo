@@ -177,6 +177,7 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widget_A
       Efl.Canvas.Layout_Signal.signal_emit;
       Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
       Efl.Access.state_set { get; }
+      Efl.Access.name { get; }
       Efl.Part.part;
    }
    events {

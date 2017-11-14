@@ -1808,6 +1808,30 @@ _elm_popup_efl_access_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
    return ret;
 }
 
+EOLIAN static const char*
+_elm_popup_efl_access_name_get(Eo *obj, Elm_Popup_Data *sd)
+{
+   const char *name = NULL;
+   Eina_Strbuf *buf;
+
+   name = efl_access_name_get(efl_super(obj, ELM_POPUP_CLASS));
+   if (name) return name;
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_printf(buf, "%s", E_("Alert"));
+   if (sd->title_text)
+     eina_strbuf_append_printf(buf, ", %s", sd->title_text);
+   else if (sd->text_content_obj)
+     eina_strbuf_append_printf(buf, ", %s", elm_object_text_get(sd->text_content_obj));
+   else if (elm_object_part_text_get(obj, "elm.text"))
+     eina_strbuf_append_printf(buf, ", %s", elm_object_part_text_get(obj, "elm.text"));
+
+   name = _elm_widget_accessible_plain_name_get(obj, eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+
+   return name;
+}
+
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_popup, Elm_Popup_Data)
