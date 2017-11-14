@@ -663,9 +663,9 @@ _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
    *popup = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(*popup, obj);
    if (_is_horizontal(sd->dir))
-     _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
+     efl_ui_widget_theme_object_set(obj, *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
    else
-     _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
+     efl_ui_widget_theme_object_set(obj, *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
    edje_object_scale_set(*popup, efl_gfx_scale_get(obj) *
                          elm_config_scale_get());
    edje_object_signal_callback_add(*popup, "popup,hide,done", "elm", // XXX: for compat
@@ -708,11 +708,11 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
         else
           elm_widget_theme_element_set(obj, "range/horizontal");
         if (sd->popup)
-          _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
+          efl_ui_widget_theme_object_set(obj, sd->popup,
                          "slider", "horizontal/popup",
                          elm_widget_style_get(obj));
         if (sd->popup2)
-          _elm_theme_set(elm_widget_theme_get(obj), sd->popup2,
+          efl_ui_widget_theme_object_set(obj, sd->popup2,
                          "slider", "horizontal/popup",
                          elm_widget_style_get(obj));
      }
@@ -724,11 +724,11 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
           elm_widget_theme_element_set(obj, "range/vertical");
 
         if (sd->popup)
-          _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
+          efl_ui_widget_theme_object_set(obj, sd->popup,
                          "slider", "vertical/popup",
                          elm_widget_style_get(obj));
         if (sd->popup2)
-          _elm_theme_set(elm_widget_theme_get(obj), sd->popup2,
+          efl_ui_widget_theme_object_set(obj, sd->popup2,
                          "slider", "vertical/popup",
                          elm_widget_style_get(obj));
      }

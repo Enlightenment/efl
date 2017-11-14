@@ -1,0 +1,8 @@
+group { "efl/button";
+   inherit: "elm/button/base/default";
+}
+
+group { "efl/button:anchor";
+   inherit: "elm/button/base/anchor";
+}
+

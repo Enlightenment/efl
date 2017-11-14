@@ -658,56 +658,43 @@ _efl_ui_text_theme_group_get(Evas_Object *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
+   if (sd->password) return "password";
    if (sd->editable)
      {
-        if (sd->password) return "base-password";
-        else
+        if (sd->single_line) return "single";
+        switch (sd->line_wrap)
           {
-             if (sd->single_line) return "base-single";
-             else
-               {
-                  switch (sd->line_wrap)
-                    {
-                     case ELM_WRAP_CHAR:
-                       return "base-charwrap";
+            case ELM_WRAP_CHAR:
+              return "charwrap";
 
-                     case ELM_WRAP_WORD:
-                       return "base";
+            case ELM_WRAP_WORD:
+              return "base";
 
-                     case ELM_WRAP_MIXED:
-                       return "base-mixedwrap";
+            case ELM_WRAP_MIXED:
+              return "mixedwrap";
 
-                     case ELM_WRAP_NONE:
-                     default:
-                       return "base-nowrap";
-                    }
-               }
+            case ELM_WRAP_NONE:
+            default:
+              return "nowrap";
           }
      }
    else
      {
-        if (sd->password) return "base-password";
-        else
+        if (sd->single_line) return "single-noedit";
+        switch (sd->line_wrap)
           {
-             if (sd->single_line) return "base-single-noedit";
-             else
-               {
-                  switch (sd->line_wrap)
-                    {
-                     case ELM_WRAP_CHAR:
-                       return "base-noedit-charwrap";
+            case ELM_WRAP_CHAR:
+              return "noedit-charwrap";
 
-                     case ELM_WRAP_WORD:
-                       return "base-noedit";
+            case ELM_WRAP_WORD:
+              return "noedit";
 
-                     case ELM_WRAP_MIXED:
-                       return "base-noedit-mixedwrap";
+            case ELM_WRAP_MIXED:
+              return "noedit-mixedwrap";
 
-                     case ELM_WRAP_NONE:
-                     default:
-                       return "base-nowrap-noedit";
-                    }
-               }
+            case ELM_WRAP_NONE:
+            default:
+              return "nowrap-noedit";
           }
      }
 }
@@ -931,7 +918,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_widget_theme_object_set
-     (obj, sd->entry_edje, "efl_ui_text", _efl_ui_text_theme_group_get(obj), style);
+     (obj, sd->entry_edje, "text", _efl_ui_text_theme_group_get(obj), style);
 
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
@@ -1007,9 +994,9 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    if (sd->start_handler)
      {
         elm_widget_theme_object_set(obj, sd->start_handler,
-                                    "entry", "handler/start", style);
+                                    "text", "handler/start", style);
         elm_widget_theme_object_set(obj, sd->end_handler,
-                                    "entry", "handler/end", style);
+                                    "text", "handler/end", style);
      }
 
    sd->changed = EINA_TRUE;
@@ -1753,7 +1740,7 @@ _magnifier_create(void *data)
 
    //Bg
    sd->mgf_bg = edje_object_add(e);
-   _elm_theme_object_set(data, sd->mgf_bg, "entry", "magnifier", "default");
+   elm_widget_theme_object_set(data, sd->mgf_bg, "text", "magnifier", "default");
    evas_object_show(sd->mgf_bg);
 
    //Proxy
@@ -2582,16 +2569,16 @@ _item_get(void *data, const char *item)
              evas_object_del(o);
              o = edje_object_add(evas_object_evas_get(data));
              elm_widget_theme_object_set
-               (data, o, "entry/emoticon", "wtf", style);
+               (data, o, "text/emoticon", "wtf", style);
           }
         return o;
      }
 
    o = edje_object_add(evas_object_evas_get(data));
    if (!elm_widget_theme_object_set
-         (data, o, "entry", item, style))
+         (data, o, "text", item, style))
      elm_widget_theme_object_set
-       (data, o, "entry/emoticon", "wtf", style);
+       (data, o, "text/emoticon", "wtf", style);
    return o;
 }
 
@@ -3027,7 +3014,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   if (!elm_layout_theme_set(obj, "efl_ui_text", "base", elm_widget_style_get(obj)))
+   if (!elm_layout_theme_set(obj, "text", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
    edje_object_part_swallow(priv->entry_edje, "elm.text", text_obj);
@@ -3189,7 +3176,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd,
 {
    Evas_Object *handle;
 
-   handle = _decoration_create(sd, file, "elm/entry/handler/start", EINA_TRUE);
+   handle = _decoration_create(sd, file, "text/handler/start", EINA_TRUE);
    evas_object_pass_events_set(handle, EINA_FALSE);
    sd->start_handler = handle;
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
@@ -3200,7 +3187,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd,
                                   _start_handler_mouse_up_cb, obj);
    evas_object_show(handle);
 
-   handle = _decoration_create(sd, file, "elm/entry/handler/end", EINA_TRUE);
+   handle = _decoration_create(sd, file, "text/handler/end", EINA_TRUE);
    evas_object_pass_events_set(handle, EINA_FALSE);
    sd->end_handler = handle;
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,

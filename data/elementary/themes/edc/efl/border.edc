@@ -1,0 +1,21 @@
+/* Window client-side decorations and extra slots
+ * Includes swallows for:
+ *  - app content
+ *  - main menu
+ *  - indicator
+ *  - soft key
+ *  - virtual keyboard
+ */
+
+group { "efl/border";
+   inherit: "elm/border/base/default";
+}
+
+group { "efl/border/dialog";
+   inherit: "elm/border/dialog/default";
+}
+
+group { "efl/border/naviframe";
+   inherit: "elm/border/naviframe/default";
+}
+

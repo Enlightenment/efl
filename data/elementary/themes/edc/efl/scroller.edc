@@ -1,0 +1,12 @@
+group { "efl/scroller";
+   inherit: "elm/scroller/base/default";
+}
+
+group { "efl/scroller:noclip";
+   inherit: "elm/scroller/base/noclip";
+}
+
+group { "efl/scroller/contents";
+   inherit: "elm/scroller/contents/default";
+}
+
