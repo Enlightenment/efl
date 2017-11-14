@@ -26,6 +26,12 @@ mixin Efl.Ui.Focus.Object
              The function is emitting the focus state events, if focus is
              different to the previous state.
             ]]
+            get {
+
+            }
+            set @protected {
+
+            }
             values {
                 focus : bool; [[The state in which the object should be put]]
             }
