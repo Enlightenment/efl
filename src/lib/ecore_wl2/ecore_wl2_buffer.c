@@ -398,11 +398,11 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-ecore_wl2_buffer_init(Ecore_Wl2_Buffer_Type types)
+ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 {
    int fd;
-   Eina_Bool dmabuf = types & ECORE_WL2_BUFFER_DMABUF;
-   Eina_Bool shm = types & ECORE_WL2_BUFFER_SHM;
+   Eina_Bool dmabuf = ewd->wl.dmabuf && (types & ECORE_WL2_BUFFER_DMABUF);
+   Eina_Bool shm = ewd->wl.shm && (types & ECORE_WL2_BUFFER_SHM);
    Eina_Bool success = EINA_FALSE;
 
    if (buffer_manager)

@@ -171,13 +171,15 @@ _evas_dmabuf_surface_destroy(Surface *s)
 Eina_Bool
 _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
 {
+   Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
    Dmabuf_Surface *surf = NULL;
    int i = 0;
 
-   if (ecore_wl2_display_shm_get(s->info->info.wl2_display))
+   ewd = s->info->info.wl2_display;
+   if (ecore_wl2_display_shm_get(ewd))
      types |= ECORE_WL2_BUFFER_SHM;
-   if (ecore_wl2_display_dmabuf_get(s->info->info.wl2_display))
+   if (ecore_wl2_display_dmabuf_get(ewd))
      types |= ECORE_WL2_BUFFER_DMABUF;
 
    if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
@@ -191,7 +193,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->buffer = calloc(surf->nbuf, sizeof(Ecore_Wl2_Buffer *));
    if (!surf->buffer) goto err;
 
-   if (!ecore_wl2_buffer_init(types)) goto err;
+   if (!ecore_wl2_buffer_init(ewd, types)) goto err;
 
    if (w && h)
      {
