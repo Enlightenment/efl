@@ -821,9 +821,18 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
 {
    Clock_Field *field;
    int idx;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "uiclock");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
+
+   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
+     CRI("Failed to set layout!");
 
    // module - initialise module for clock
    if (!dt_mod) dt_mod = _dt_mod_init();
@@ -854,9 +863,6 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
    else WRN("Failed to load clock module, clock widget may not show properly!");
 
    priv->freeze_sizing = EINA_TRUE;
-   if (!elm_layout_theme_set(obj, "uiclock", "base",
-                             elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
 
    _field_list_init(obj);
    _reload_format(obj);

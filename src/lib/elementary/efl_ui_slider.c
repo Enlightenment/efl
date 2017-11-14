@@ -1130,6 +1130,8 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "slider");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
@@ -1141,8 +1143,10 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
    priv->wheel_indicator_duration = 0.25;
    priv->step = SLIDER_STEP;
 
-   if (!elm_layout_theme_set
-       (obj, "slider", "horizontal", elm_widget_style_get(obj)))
+   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       _efl_ui_slider_theme_group_get(obj, priv),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    elm_layout_signal_callback_add(obj, "drag", "*", _drag, obj);
