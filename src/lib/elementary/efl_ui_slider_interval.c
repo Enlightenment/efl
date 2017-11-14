@@ -107,6 +107,7 @@ _efl_ui_slider_interval_efl_object_finalize(Eo *obj, void *sd EINA_UNUSED)
 
    pd->intvl_enable = EINA_TRUE;
 
+   elm_widget_theme_klass_set(obj, "slider_interval");
    efl_ui_widget_theme_apply(obj);
 
    elm_layout_signal_emit(obj, "elm,slider,range,enable", "elm");

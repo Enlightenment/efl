@@ -256,7 +256,15 @@ struct _Mod_Api
    void (*obj_longpress)(Evas_Object *obj);
 };
 
-static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd, const char *file);
+static const char PART_NAME_SCROLLER[] = "scroller";
+static const char PART_NAME_HANDLER_START[] = "handler/start";
+static const char PART_NAME_HANDLER_END[] = "handler/end";
+static const char PART_NAME_MAGNIFIER[] = "magnifier";
+static const char PART_NAME_CURSOR[] = "cursor";
+static const char PART_NAME_SELECTION[] = "selection";
+static const char PART_NAME_ANCHOR[] = "anchor";
+
+static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd);
 static void _magnifier_move(void *data);
 static void _update_decorations(Eo *obj);
 static void _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd);
@@ -270,7 +278,7 @@ static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, 
 static const char* _efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
 static void _decoration_defer_all(Eo *obj);
-static inline Eo * _decoration_create(Efl_Ui_Text_Data *sd, const char *file, const char *source, Eina_Bool above);
+static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd, const char *source, Eina_Bool above);
 static void _decoration_defer(Eo *obj);
 static void _anchors_clear_all(Evas_Object *o EINA_UNUSED, Efl_Ui_Text_Data *sd);
 static void _unused_item_objs_free(Efl_Ui_Text_Data *sd);
@@ -573,11 +581,7 @@ _update_selection_handler(Eo *obj)
         efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
         if (!sd->start_handler)
-          {
-             const char *file;
-             efl_file_get(sd->entry_edje, &file, NULL);
-             _create_selection_handlers(obj, sd, file);
-          }
+          _create_selection_handlers(obj, sd);
 
         rect = _viewport_region_get(obj);
 
@@ -896,7 +900,6 @@ EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    const char *str;
-   const char *style = elm_widget_style_get(obj);
    Efl_Ui_Theme_Apply theme_apply;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -917,8 +920,8 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
-   elm_widget_theme_object_set
-     (obj, sd->entry_edje, "text", _efl_ui_text_theme_group_get(obj), style);
+   elm_widget_element_update(obj, sd->entry_edje,
+                                   _efl_ui_text_theme_group_get(obj));
 
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
@@ -964,16 +967,10 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (sd->scroll)
      {
-        Efl_Ui_Theme_Apply ok = EFL_UI_THEME_APPLY_FAILED;
-
         elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
-          ok = elm_widget_theme_object_set
-          (obj, sd->scr_edje, "scroller", "entry_single", style);
-        if (!ok)
-          elm_widget_theme_object_set
-          (obj, sd->scr_edje, "scroller", "entry", style);
+          elm_widget_element_update(obj, sd->scr_edje, PART_NAME_SCROLLER);
 
         _efl_ui_text_background_switch(sd->entry_edje, sd->scr_edje);
 
@@ -993,10 +990,8 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (sd->start_handler)
      {
-        elm_widget_theme_object_set(obj, sd->start_handler,
-                                    "text", "handler/start", style);
-        elm_widget_theme_object_set(obj, sd->end_handler,
-                                    "text", "handler/end", style);
+        elm_widget_element_update(obj, sd->start_handler, PART_NAME_HANDLER_START);
+        elm_widget_element_update(obj, sd->end_handler, PART_NAME_HANDLER_END);
      }
 
    sd->changed = EINA_TRUE;
@@ -1740,7 +1735,7 @@ _magnifier_create(void *data)
 
    //Bg
    sd->mgf_bg = edje_object_add(e);
-   elm_widget_theme_object_set(data, sd->mgf_bg, "text", "magnifier", "default");
+   elm_widget_element_update(data, sd->mgf_bg, PART_NAME_MAGNIFIER);
    evas_object_show(sd->mgf_bg);
 
    //Proxy
@@ -3014,7 +3009,12 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   if (!elm_layout_theme_set(obj, "text", "base", elm_widget_style_get(obj)))
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "text");
+   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       _efl_ui_text_theme_group_get(obj),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    edje_object_part_swallow(priv->entry_edje, "elm.text", text_obj);
@@ -3171,12 +3171,11 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 }
 
 static void
-_create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd,
-      const char *file)
+_create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 {
    Evas_Object *handle;
 
-   handle = _decoration_create(sd, file, "text/handler/start", EINA_TRUE);
+   handle = _decoration_create(obj, sd, PART_NAME_HANDLER_START, EINA_TRUE);
    evas_object_pass_events_set(handle, EINA_FALSE);
    sd->start_handler = handle;
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
@@ -3187,7 +3186,7 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd,
                                   _start_handler_mouse_up_cb, obj);
    evas_object_show(handle);
 
-   handle = _decoration_create(sd, file, "text/handler/end", EINA_TRUE);
+   handle = _decoration_create(obj, sd, PART_NAME_HANDLER_END, EINA_TRUE);
    evas_object_pass_events_set(handle, EINA_FALSE);
    sd->end_handler = handle;
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
@@ -3740,9 +3739,7 @@ _efl_ui_text_scrollable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool scroll)
           {
              sd->scr_edje = edje_object_add(evas_object_evas_get(obj));
 
-             elm_widget_theme_object_set
-               (obj, sd->scr_edje, "scroller", "entry",
-               elm_widget_style_get(obj));
+             elm_widget_element_update(obj, sd->scr_edje, PART_NAME_SCROLLER);
 
              evas_object_size_hint_weight_set
                (sd->scr_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -4626,12 +4623,12 @@ _edje_signal_emit(Efl_Ui_Text_Data *sd, const char *sig, const char *src)
 }
 
 static inline Eo *
-_decoration_create(Efl_Ui_Text_Data *sd, const char *file,
-      const char *source, Eina_Bool above)
+_decoration_create(Eo *obj, Efl_Ui_Text_Data *sd,
+      const char *group_name, Eina_Bool above)
 {
    Eo *ret = efl_add(EFL_CANVAS_LAYOUT_CLASS, sd->entry_edje);
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-   edje_object_file_set(ret, file, source);
+   elm_widget_element_update(obj, ret, group_name);
    evas_object_smart_member_add(ret, sd->entry_edje);
    if (above)
      {
@@ -4653,10 +4650,8 @@ _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
 static void
 _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   const char *file;
-   efl_file_get(sd->entry_edje, &file, NULL);
-   sd->cursor = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
-   sd->cursor_bidi = _decoration_create(sd, file, "elm/entry/cursor/default", EINA_TRUE);
+   sd->cursor = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
+   sd->cursor_bidi = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
 
    if (!efl_ui_text_interactive_editable_get(obj))
      {
@@ -4745,7 +4740,6 @@ _update_text_selection(Eo *obj, Eo *text_obj)
    Eina_Iterator *range;
    Efl_Ui_Text_Rectangle *rect;
    Eina_Rectangle *r;
-   const char *file;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
@@ -4753,8 +4747,6 @@ _update_text_selection(Eo *obj, Eo *text_obj)
    sd->deferred_decoration_selection = EINA_FALSE;
 
    _decoration_calc_offset(sd, &x, &y);
-
-   efl_file_get(sd->entry_edje, &file, NULL);
 
    efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
 
@@ -4770,7 +4762,7 @@ _update_text_selection(Eo *obj, Eo *text_obj)
              rect = calloc(1, sizeof(Efl_Ui_Text_Rectangle));
              sd->sel = eina_list_append(sd->sel, rect);
 
-             rect->obj_bg = _decoration_create(sd, file, "elm/entry/selection/default", EINA_FALSE);
+             rect->obj_bg = _decoration_create(obj, sd, PART_NAME_SELECTION, EINA_FALSE);
              evas_object_show(rect->obj_bg);
           }
         else
@@ -5084,12 +5076,9 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
    Evas_Object *smart, *clip;
    Efl_Ui_Text_Rectangle *rect;
    Anchor *an;
-   const char *file;
    Eo *sw;
 
    sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-
-   efl_file_get(sd->entry_edje, &file, NULL);
 
    if (!sd->deferred_decoration_anchor) return;
    sd->deferred_decoration_anchor = EINA_FALSE;
@@ -5198,7 +5187,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
                        rect = calloc(1, sizeof(Efl_Ui_Text_Rectangle));
                        an->sel = eina_list_append(an->sel, rect);
 
-                       ob = _decoration_create(sd, file, "elm/entry/anchor/default", EINA_TRUE);
+                       ob = _decoration_create(o, sd, PART_NAME_ANCHOR, EINA_TRUE);
                        rect->obj_fg = ob;
 
                        /* Create hit rectangle to catch events */

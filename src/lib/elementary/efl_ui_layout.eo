@@ -45,6 +45,7 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Canvas.Group.group_calculate;

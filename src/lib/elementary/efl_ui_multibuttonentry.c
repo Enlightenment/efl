@@ -35,6 +35,11 @@ static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_EXPANDED[] = "expanded";
 static const char SIG_CONTRACTED[] = "contracted";
 static const char SIG_EXPAND_STATE_CHANGED[] = "expand,state,changed";
+
+static const char PART_NAME_BUTTON[] = "btn";
+static const char PART_NAME_GUIDE_TEXT[] = "guidetext";
+static const char PART_NAME_LABEL[] = "label";
+static const char PART_NAME_CLOSED_BUTTON[] = "closedbutton";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ITEM_SELECTED, ""},
    {SIG_ITEM_ADDED, ""},
@@ -117,20 +122,13 @@ _efl_ui_multibuttonentry_elm_widget_theme_apply(Eo *obj, Efl_Ui_Multibuttonentry
      {
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
         if (VIEW(item))
-          if (!elm_layout_theme_set
-              (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
+          if (!elm_widget_element_update(obj, VIEW(item), PART_NAME_BUTTON))
             CRI("Failed to set layout!");
      }
 
-   elm_widget_theme_object_set
-      (obj, sd->label, "multibuttonentry", "label",
-       elm_widget_style_get(obj));
-   elm_widget_theme_object_set
-      (obj, sd->end, "multibuttonentry", "closedbutton",
-       elm_widget_style_get(obj));
-   elm_widget_theme_object_set
-      (obj,sd->guide_text, "multibuttonentry", "guidetext",
-       elm_widget_style_get(obj));
+   elm_widget_element_update(obj, sd->label, PART_NAME_LABEL);
+   elm_widget_element_update(obj, sd->end, PART_NAME_CLOSED_BUTTON);
+   elm_widget_element_update(obj, sd->guide_text, PART_NAME_GUIDE_TEXT);
 
    elm_layout_sizing_eval(obj);
 
@@ -764,8 +762,7 @@ _item_new(Efl_Ui_Multibuttonentry_Data *sd,
 
    efl_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
 
-   if (!elm_layout_theme_set
-       (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
+   if (!elm_widget_element_update(obj, VIEW(item), PART_NAME_BUTTON))
      CRI("Failed to set layout!");
 
    elm_object_part_text_set(VIEW(item), "elm.btn.text", str);
@@ -1246,8 +1243,7 @@ _guide_text_set(Evas_Object *obj,
 
    if (sd->guide_text)
      {
-        elm_widget_theme_object_set(obj, sd->guide_text, "multibuttonentry",
-                                    "guidetext", elm_widget_style_get(obj));
+        elm_widget_element_update(obj, sd->guide_text, PART_NAME_GUIDE_TEXT);
         evas_object_size_hint_weight_set
           (sd->guide_text, 0.0, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set
@@ -1447,9 +1443,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Multibuttonentry_Data *sd)
 
    sd->label = edje_object_add(evas_object_evas_get(obj));
    if (!sd->label) return;
-   elm_widget_theme_object_set
-     (obj, sd->label, "multibuttonentry", "label",
-     elm_widget_style_get(obj));
+   elm_widget_element_update(obj, sd->label, PART_NAME_LABEL);
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -1477,9 +1471,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Multibuttonentry_Data *sd)
 
         sd->end = edje_object_add(evas_object_evas_get(obj));
         if (!sd->end) return;
-        elm_widget_theme_object_set
-          (obj, sd->end, "multibuttonentry", "closedbutton",
-          elm_widget_style_get(obj));
+        elm_widget_element_update(obj, sd->end, PART_NAME_CLOSED_BUTTON);
 
         edje_object_size_min_calc(sd->end, &button_min_width, &button_min_height);
         elm_coords_finger_size_adjust(1, &button_min_width, 1, &button_min_height);
