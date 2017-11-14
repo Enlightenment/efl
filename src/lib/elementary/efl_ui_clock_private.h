@@ -33,6 +33,15 @@ typedef struct _Format_Map               Format_Map;
 #define EFL_UI_CLOCK_MAX_FORMAT_LEN       64
 #define EFL_UI_CLOCK_MAX_FIELD_FORMAT_LEN 3
 
+const char *PART_NAME_ARRAY[EFL_UI_CLOCK_TYPE_COUNT] = { "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "ampm"};
+
 struct _Efl_Ui_Clock_Module_Data
 {
    Evas_Object *base;

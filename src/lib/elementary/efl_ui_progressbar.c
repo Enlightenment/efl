@@ -198,15 +198,77 @@ _efl_ui_progressbar_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Progressbar
    return EINA_TRUE;
 }
 
+//TODO: efl_ui_slider also use this.
+static const char *
+_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
+{
+   const char *pos = NULL;
+   const char *temp_str = NULL;
+
+   if (is_legacy)
+     return cur_group;
+
+   temp_str = cur_group + len - strlen(search);
+   if (temp_str >= cur_group)
+     {
+         if (!strcmp(temp_str, search))
+           pos = temp_str;
+     }
+
+   return pos;
+}
+
+static char *
+_efl_ui_progressbar_theme_group_get(Evas_Object *obj, Efl_Ui_Progressbar_Data *sd)
+{
+   const char *pos = NULL;
+   const char *cur_group = elm_widget_theme_element_get(obj);
+   Eina_Strbuf *new_group = eina_strbuf_new();
+   Eina_Bool is_legacy = elm_widget_is_legacy(obj);
+   size_t len = 0;
+
+   if (cur_group)
+     {
+        len = strlen(cur_group);
+        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len, is_legacy);
+        if (!pos)
+          pos = _theme_group_modify_pos_get(cur_group, "vertical", len, is_legacy);
+
+
+        // TODO: change separator when it is decided.
+        //       can skip when prev_group == cur_group
+        if (!pos)
+          {
+              eina_strbuf_append(new_group, cur_group);
+              eina_strbuf_append(new_group, "/");
+          }
+        else
+          {
+              eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
+          }
+     }
+
+   if (_is_horizontal(sd->dir))
+     eina_strbuf_append(new_group, "horizontal");
+   else
+     eina_strbuf_append(new_group, "vertical");
+
+   return eina_strbuf_release(new_group);
+}
+
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   char *group;
 
-   if (_is_horizontal(sd->dir))
-     elm_widget_theme_element_set(obj, "horizontal");
-   else elm_widget_theme_element_set(obj, "vertical");
+   group = _efl_ui_progressbar_theme_group_get(obj, sd);
+   if (group)
+     {
+        elm_widget_theme_element_set(obj, group);
+        free(group);
+     }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;

@@ -4570,6 +4570,7 @@ _efl_ui_win_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
+   elm_widget_theme_klass_set(obj, "win");
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);

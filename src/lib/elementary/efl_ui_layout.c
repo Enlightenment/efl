@@ -2071,6 +2071,17 @@ EOLIAN static void _efl_ui_layout_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+EOLIAN static Efl_Object*
+_efl_ui_layout_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
+{
+   Eo *eo;
+
+   eo = efl_finalize(efl_super(obj, MY_CLASS));
+   efl_ui_widget_theme_apply(eo);
+
+   return eo;
+}
+
 EOLIAN static void
 _efl_ui_layout_efl_canvas_layout_signal_message_send(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
 {

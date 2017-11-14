@@ -39,6 +39,8 @@ static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
 static const char SIG_DRAG_START[] = "slider,drag,start";
 static const char SIG_DRAG_STOP[] = "slider,drag,stop";
+
+static const char PART_NAME_POPUP[] = "popup";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DELAY_CHANGED, ""},
@@ -648,6 +650,32 @@ _track2_resize_cb(void *data,
 }
 
 static void
+_popup_update(Evas_Object *obj, Efl_Ui_Slider_Data *sd, Evas_Object *popup)
+{
+   if (elm_widget_is_legacy(obj))
+     {
+        if (_is_horizontal(sd->dir))
+          efl_ui_widget_theme_object_set(obj, popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
+        else
+          efl_ui_widget_theme_object_set(obj, popup, "slider", "vertical/popup", elm_widget_style_get(obj));
+     }
+   else
+     elm_widget_element_update(obj, popup, PART_NAME_POPUP);
+   edje_object_scale_set(popup, efl_ui_scale_get(obj) *
+                         elm_config_scale_get());
+
+   if (!_is_inverted(sd->dir))
+     edje_object_signal_emit(popup, "elm,state,inverted,off", "elm");
+   else
+     edje_object_signal_emit(popup, "elm,state,inverted,on", "elm");
+
+   if (sd->indicator_show)
+     edje_object_signal_emit(popup, "elm,state,val,show", "elm");
+   else
+     edje_object_signal_emit(popup, "elm,state,val,hide", "elm");
+}
+
+static void
 _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
            Evas_Object **track, Eina_Bool is_range)
 {
@@ -662,16 +690,12 @@ _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
    // XXX popup needs to adapt to theme etc.
    *popup = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(*popup, obj);
-   if (_is_horizontal(sd->dir))
-     efl_ui_widget_theme_object_set(obj, *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
-   else
-     efl_ui_widget_theme_object_set(obj, *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
-   edje_object_scale_set(*popup, efl_ui_scale_get(obj) *
-                         elm_config_scale_get());
    edje_object_signal_callback_add(*popup, "popup,hide,done", "elm", // XXX: for compat
                                    _popup_hide_done, obj);
    edje_object_signal_callback_add(*popup, "elm,popup,hide,done", "elm",
                                    _popup_hide_done, obj);
+
+   _popup_update(obj, sd, *popup);
 
    /* create a rectangle to track position+size of the dragable */
    *track = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -695,63 +719,81 @@ _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
      }
 }
 
+static const char *
+_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
+{
+   const char *pos = NULL;
+   const char *temp_str = NULL;
+
+   if (is_legacy)
+     return cur_group;
+
+   temp_str = cur_group + len - strlen(search);
+   if (temp_str >= cur_group)
+     {
+         if (!strcmp(temp_str, search))
+           pos = temp_str;
+     }
+
+   return pos;
+}
+
+static char *
+_efl_ui_slider_theme_group_get(Evas_Object *obj, Efl_Ui_Slider_Data *sd)
+{
+   const char *pos = NULL;
+   const char *cur_group = elm_widget_theme_element_get(obj);
+   Eina_Strbuf *new_group = eina_strbuf_new();
+   Eina_Bool is_legacy = elm_widget_is_legacy(obj);
+   size_t len = 0;
+
+   if (cur_group)
+     {
+        len = strlen(cur_group);
+        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len, is_legacy);
+        if (!pos)
+          pos = _theme_group_modify_pos_get(cur_group, "vertical", len, is_legacy);
+
+
+        // TODO: change separator when it is decided.
+        //       can skip when prev_group == cur_group
+        if (!pos)
+          {
+              eina_strbuf_append(new_group, cur_group);
+              eina_strbuf_append(new_group, "/");
+          }
+        else
+          {
+              eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
+          }
+     }
+
+   if (is_legacy && sd->intvl_enable)
+     eina_strbuf_append(new_group, "range/");
+   if (_is_horizontal(sd->dir))
+     eina_strbuf_append(new_group, "horizontal");
+   else
+     eina_strbuf_append(new_group, "vertical");
+
+   return eina_strbuf_release(new_group);
+}
+
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   char *group;
 
-   if (_is_horizontal(sd->dir))
+   group = _efl_ui_slider_theme_group_get(obj, sd);
+   if (group)
      {
-        if (!sd->intvl_enable)
-          elm_widget_theme_element_set(obj, "horizontal");
-        else
-          elm_widget_theme_element_set(obj, "range/horizontal");
-        if (sd->popup)
-          efl_ui_widget_theme_object_set(obj, sd->popup,
-                         "slider", "horizontal/popup",
-                         elm_widget_style_get(obj));
-        if (sd->popup2)
-          efl_ui_widget_theme_object_set(obj, sd->popup2,
-                         "slider", "horizontal/popup",
-                         elm_widget_style_get(obj));
-     }
-   else
-     {
-        if (!sd->intvl_enable)
-          elm_widget_theme_element_set(obj, "vertical");
-        else
-          elm_widget_theme_element_set(obj, "range/vertical");
-
-        if (sd->popup)
-          efl_ui_widget_theme_object_set(obj, sd->popup,
-                         "slider", "vertical/popup",
-                         elm_widget_style_get(obj));
-        if (sd->popup2)
-          efl_ui_widget_theme_object_set(obj, sd->popup2,
-                         "slider", "vertical/popup",
-                         elm_widget_style_get(obj));
+        elm_widget_theme_element_set(obj, group);
+        free(group);
      }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
-
-   if (sd->popup)
-     {
-        edje_object_scale_set(sd->popup, efl_ui_scale_get(obj) *
-                              elm_config_scale_get());
-        if (sd->intvl_enable && sd->popup2)
-          edje_object_scale_set(sd->popup2, efl_ui_scale_get(obj) *
-                                elm_config_scale_get());
-        else if (sd->intvl_enable && !sd->popup2)
-          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
-     }
-   else
-     {
-        _popup_add(sd, obj, &sd->popup, &sd->track, EINA_FALSE);
-        if (sd->intvl_enable && !sd->popup2)
-          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
-     }
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
@@ -768,27 +810,27 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
      elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
 
    if (_is_inverted(sd->dir))
-     {
-        elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,inverted,on", "elm");
-     }
+     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
    else
-     {
-        elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,inverted,off", "elm");
-     }
+     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
 
    if (sd->indicator_show)
+     elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+   else
+     elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+
+  
+   if (!sd->popup)
+     _popup_add(sd, obj, &sd->popup, &sd->track, sd->intvl_enable);
+   else
+     _popup_update(obj, sd, sd->popup);
+
+   if (sd->intvl_enable)
      {
-        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+        if (!sd->popup2)
+          _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
+        else
+          _popup_update(obj, sd, sd->popup2);
      }
 
    _min_max_set(obj);

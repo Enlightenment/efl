@@ -517,6 +517,8 @@ _efl_ui_clock_elm_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
+        // TODO: Different group name for each field_obj may be needed.
+        elm_widget_element_update(obj, field->item_obj, PART_NAME_ARRAY[idx]);
         if (field->fmt_exist && field->visible)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
