@@ -38,6 +38,8 @@ _on_state_changed(void *data,
 EOLIAN static Efl_Object *
 _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "nstate");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    elm_widget_sub_object_parent_add(obj);
@@ -45,9 +47,6 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
    pd->state = 0;
    // Default: 2 states
    pd->nstate = 2;
-
-   if (!elm_layout_theme_set(obj, "nstate", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_canvas_layout_signal_callback_add

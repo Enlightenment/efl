@@ -2199,6 +2199,18 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    int r, g, b, a;
    unsigned int i;
    Evas_Object *grid, *background;
+   const char *fontname, *fontsize;
+
+   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+     {
+        CRI("Failed to set layout!");
+        return EFL_UI_THEME_APPLY_FAILED;
+     }
+
+   fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
+   fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
+   if (fontname && fontsize)
+     _elm_code_widget_font_set(obj, pd, fontname, atoi(fontsize));
 
    edje = elm_layout_edje_get(obj);
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
@@ -2220,12 +2232,19 @@ EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
-   const char *fontname, *fontsize;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "code");
+   elm_widget_theme_element_set(obj, "layout");
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
-   if (!elm_layout_theme_set(obj, "code", "layout", elm_widget_style_get(obj)))
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    scroller = elm_scroller_add(obj);
@@ -2241,11 +2260,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
    elm_object_part_content_set(scroller, "elm.swallow.background", background);
-
-   fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
-   fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
-   if (fontname && fontsize)
-     _elm_code_widget_font_set(obj, pd, fontname, atoi(fontsize));
 
    gridrows = elm_box_add(scroller);
    evas_object_size_hint_weight_set(gridrows, EVAS_HINT_EXPAND, 0.0);
