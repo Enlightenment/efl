@@ -136,7 +136,9 @@ pc/emile.pc \
 pc/eet.pc \
 pc/evas.pc \
 pc/ecore.pc \
+pc/efl-core.pc \
 pc/ecore-con.pc \
+pc/efl-net.pc \
 pc/ecore-ipc.pc \
 pc/ecore-file.pc \
 pc/ecore-input.pc \
