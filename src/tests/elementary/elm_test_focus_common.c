@@ -1,3 +1,5 @@
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
+
 #include "elm_test_focus_common.h"
 
 #define Q(o,_x,_y,_w,_h) \
@@ -60,6 +62,7 @@ elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
 typedef struct {
     Eina_Rect rect;
     Eina_Bool focus;
+    Eo *manager;
 } Focus_Test_Data;
 
 EOLIAN static Efl_Object*
@@ -95,6 +98,24 @@ EOLIAN static Eina_Rect
 _focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
+}
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_focus_test_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+{
+   return pd->manager;
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_focus_test_efl_ui_focus_user_parent_get(Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
+{
+   return efl_parent_get(obj);
+}
+
+EOLIAN static void
+_focus_test_manager_set(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Efl_Ui_Focus_Manager *manager)
+{
+  pd->manager = manager;
 }
 
 
