@@ -568,3 +568,50 @@ ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
 
    return out;
 }
+
+static void
+_create_succeeded(void *data EINA_UNUSED,
+                 struct zwp_linux_buffer_params_v1 *params,
+                 struct wl_buffer *new_buffer)
+{
+   wl_buffer_destroy(new_buffer);
+   zwp_linux_buffer_params_v1_destroy(params);
+}
+
+static void
+_create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
+{
+   Ecore_Wl2_Display *ewd = data;
+
+   zwp_linux_buffer_params_v1_destroy(params);
+   ewd->wl.dmabuf = NULL;
+}
+
+static const struct zwp_linux_buffer_params_v1_listener params_listener =
+{
+   _create_succeeded,
+   _create_failed
+};
+
+void
+_ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
+{
+   struct zwp_linux_buffer_params_v1 *dp;
+   Ecore_Wl2_Buffer *buf;
+
+   if (!ecore_wl2_buffer_init(ewd, ECORE_WL2_BUFFER_DMABUF)) goto fail;
+
+   buf = _ecore_wl2_buffer_partial_create(1, 1, EINA_TRUE);
+   if (!buf) goto fail;
+
+   dp = zwp_linux_dmabuf_v1_create_params(ewd->wl.dmabuf);
+   zwp_linux_buffer_params_v1_add(dp, buf->fd, 0, 0, buf->stride, 0, 0);
+   zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, buf);
+   zwp_linux_buffer_params_v1_create(dp, buf->w, buf->h,
+                                     DRM_FORMAT_ARGB8888, 0);
+   ecore_wl2_display_flush(ewd);
+
+  return;
+fail:
+  ewd->wl.dmabuf = NULL;
+}

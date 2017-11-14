@@ -557,6 +557,8 @@ void _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window);
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 Eina_Bool _ecore_wl2_display_sync_get(void);
 
+void _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd);
+
 EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
 
 EAPI extern int _ecore_wl2_event_window_www;

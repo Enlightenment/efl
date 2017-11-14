@@ -283,6 +283,7 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.dmabuf =
           wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 2);
         zwp_linux_dmabuf_v1_add_listener(ewd->wl.dmabuf, &_dmabuf_listener, ewd);
+        _ecore_wl2_buffer_test(ewd);
         _ecore_wl2_display_sync_add(ewd);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
