@@ -420,7 +420,7 @@ _cal_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 void
 test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *box, *cal;
+   Evas_Object *win, *box;
    struct tm selected_date, min_date, max_date;
    time_t current_date;
 
@@ -433,20 +433,26 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Efl Ui Calendar"),
-                efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                  efl_content_set(win, efl_added));
 
-   cal = efl_add(EFL_UI_CALENDAR_CLASS, win,
-                 efl_ui_calendar_date_min_set(efl_added, min_date),
-                 efl_ui_calendar_date_max_set(efl_added, max_date),
-                 efl_ui_calendar_date_set(efl_added, selected_date),
-                 efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
-                 efl_pack(box, efl_added));
+   efl_add(EFL_UI_CALENDAR_CLASS, win,
+           efl_ui_calendar_date_min_set(efl_added, min_date),
+           efl_ui_calendar_date_max_set(efl_added, max_date),
+           efl_ui_calendar_date_set(efl_added, selected_date),
+           efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
+           efl_ui_format_string_set(efl_added, "%b"),
+           efl_pack(box, efl_added));
 
-   efl_ui_format_cb_set(cal, NULL, _cal_format_cb, NULL);
+   efl_add(EFL_UI_CALENDAR_CLASS, win,
+           efl_ui_calendar_date_min_set(efl_added, min_date),
+           efl_ui_calendar_date_max_set(efl_added, max_date),
+           efl_ui_calendar_date_set(efl_added, selected_date),
+           efl_event_callback_add(efl_added, EFL_UI_CALENDAR_EVENT_CHANGED, _cal_changed_cb, NULL),
+           efl_ui_format_cb_set(efl_added, NULL, _cal_format_cb, NULL),
+           efl_pack(box, efl_added));
 
    efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
 }
