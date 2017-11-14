@@ -409,11 +409,12 @@ _cal_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 {
    struct tm current_time;
 
-   if (eina_value_type_get(&value) == EINA_VALUE_TYPE_TM)
-     {
-        eina_value_get(&value, &current_time);
-        eina_strbuf_append_strftime(str, "<< %b %y >>", &current_time);
-     }
+   //return if the value type is other than EINA_VALUE_TYPE_TM
+   if (eina_value_type_get(&value) != EINA_VALUE_TYPE_TM)
+     return;
+
+   eina_value_get(&value, &current_time);
+   eina_strbuf_append_strftime(str, "<< %b %y >>", &current_time);
 }
 
 void
