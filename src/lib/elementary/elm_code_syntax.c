@@ -15,8 +15,29 @@ typedef struct _Elm_Code_Syntax
    const char *comment_single;
    const char *comment_start;
    const char *comment_end;
+   int (*scope_change)(Elm_Code_Line *line);
    const char *keywords[];
 } Elm_Code_Syntax;
+
+static int
+_elm_code_syntax_scope_change_braces(Elm_Code_Line *line)
+{
+   unsigned int length, i;
+   const char *content;
+   int change = 0;
+
+   content = elm_code_line_text_get(line, &length);
+
+   for (i = 0; i < length; i++)
+     {
+        if (*(content + i) == '{')
+          change++;
+        else if (*(content + i) == '}')
+          change--;
+     }
+
+   return change;
+}
 
 static Elm_Code_Syntax _elm_code_syntax_c =
 {
@@ -26,6 +47,7 @@ static Elm_Code_Syntax _elm_code_syntax_c =
    "//",
    "/*",
    "*/",
+   _elm_code_syntax_scope_change_braces,
    {"auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",  "enum", "extern", \
       "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", "static", \
       "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", NULL}
@@ -39,6 +61,7 @@ static Elm_Code_Syntax _elm_code_syntax_rust =
    "//",
    NULL,
    NULL,
+   _elm_code_syntax_scope_change_braces,
    {"as", "break", "const", "continue", "create", "else",  "enum", "extern", "false", "fn", "for", "if", \
       "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return", "Self", "self", \
       "static", "struct", "super", "trait", "true", "type", "unsafe", "use", "where", "while",
@@ -53,6 +76,7 @@ static Elm_Code_Syntax _elm_code_syntax_py =
    "#",
    "\"\"\"",
    "\"\"\"",
+   NULL,
    {"False", "None", "True", "and", "as", "assert", "break", "class", \
     "continue", "def", "del", "elif", "else", "except", "finally", "for", \
     "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", "not", \
@@ -67,6 +91,7 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
    "//",
    "[[",
    "]]",
+   _elm_code_syntax_scope_change_braces,
    {"byte", "ubyte", "char", "short", "ushort", "int", "uint", "long", "ulong", \
     "llong", "ullong", "int8", "uint8", "int16", "uint16", "int32", "uint32", \
     "int64", "uint64", "int128", "uint128", "size", "ssize", "intptr", "uintptr", \
@@ -88,6 +113,7 @@ static Elm_Code_Syntax _elm_code_syntax_go =
    "//",
    "/*",
    "*/",
+   _elm_code_syntax_scope_change_braces,
    { "break", "case", "chan", "const", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto",  \
      "if", "import", "interface", "map", "package", "range", "return", "select", "struct", "switch", "type", "var", \
      "true", "false", "iota", "nil", \
@@ -104,6 +130,7 @@ static Elm_Code_Syntax _elm_code_syntax_md =
    NULL,
    "<!--",
    "-->",
+   NULL,
    {}
 };
 
@@ -223,6 +250,21 @@ _previous_line_continue_type(Elm_Code_Line *line)
    return ELM_CODE_TOKEN_TYPE_DEFAULT;
 }
 
+unsigned int
+_previous_line_scope(Elm_Code_Line *line)
+{
+   Elm_Code_Line *prev;
+
+   if (line->number < 2)
+     return 0;
+
+   prev = elm_code_file_line_get(line->file, line->number - 1);
+   if (!prev)
+     return 0;
+
+   return prev->scope;
+}
+
 EAPI void
 elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
 {
@@ -232,6 +274,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
    Elm_Code_Token_Type previous_type;
 
    EINA_SAFETY_ON_NULL_RETURN(syntax);
+   line->scope = _previous_line_scope(line) + _elm_code_syntax_scope_change_braces(line);
 
    i = 0;
    content = elm_code_line_text_get(line, &length);
