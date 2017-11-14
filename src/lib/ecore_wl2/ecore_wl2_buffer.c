@@ -533,8 +533,8 @@ ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b)
    free(b);
 }
 
-EAPI Ecore_Wl2_Buffer *
-ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
+static Ecore_Wl2_Buffer *
+_ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
 {
    Ecore_Wl2_Buffer *out;
 
@@ -552,6 +552,17 @@ ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
    out->w = w;
    out->h = h;
    out->size = out->stride * h;
+
+   return out;
+}
+
+EAPI Ecore_Wl2_Buffer *
+ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
+{
+   Ecore_Wl2_Buffer *out;
+
+   out = _ecore_wl2_buffer_partial_create(w, h, alpha);
+   if (!out) return NULL;
 
    out->wl_buffer = ecore_wl2_buffer_wl_buffer_get(ewd, out);
 
