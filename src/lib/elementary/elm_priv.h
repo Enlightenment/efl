@@ -540,7 +540,8 @@ Efl_Ui_Theme_Apply      _elm_theme_set(Elm_Theme *th,
                                     Evas_Object *o,
                                     const char *clas,
                                     const char *group,
-                                    const char *style);
+                                    const char *style,
+                                    Eina_Bool is_legacy);
 Eina_Bool            _elm_theme_icon_set(Elm_Theme *th,
                                          Evas_Object *o,
                                          const char *group,

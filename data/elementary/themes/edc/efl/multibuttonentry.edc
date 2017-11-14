@@ -1,0 +1,19 @@
+group { "efl/multibuttonentry";
+   inherit: "elm/multibuttonentry/base/default";
+}
+
+group { "efl/multibuttonentry/label";
+   inherit: "elm/multibuttonentry/label/default";
+}
+
+group { "efl/multibuttonentry/guidetext";
+   inherit: "elm/multibuttonentry/guidetext/default";
+}
+
+group { "efl/multibuttonentry/btn";
+   inherit: "elm/multibuttonentry/btn/default";
+}
+
+group { "efl/multibuttonentry/closedbutton";
+   inherit: "elm/multibuttonentry/closedbutton/default";
+}

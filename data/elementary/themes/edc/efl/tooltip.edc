@@ -1,0 +1,15 @@
+group { "efl/label/tooltip";
+   inherit: "elm/label/base/tooltip/default";
+   alias: "efl/label/base/tooltip"; //XXX: Remove it in EFL 2.0
+   alias: "efl/label/base/tooltip/transparent";
+}
+
+group { "efl/tooltip";
+   inherit: "elm/tooltip/base/default";
+}
+
+group { "efl/tooltip:transparent";
+   inherit: "elm/tooltip/base/transparent";
+}
+
+///////////////////////////////////////////////////////////////////////////////

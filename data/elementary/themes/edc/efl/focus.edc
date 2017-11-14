@@ -1,0 +1,7 @@
+group { "efl/focus_highlight/top";
+   inherit: "elm/focus_highlight/top/default";
+}
+
+group { "efl/focus_highlight/top:blank";
+   inherit: "elm/focus_highlight/top/blank";
+}

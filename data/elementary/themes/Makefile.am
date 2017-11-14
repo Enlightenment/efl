@@ -130,7 +130,6 @@ elementary/themes/edc/elm/menu.edc \
 elementary/themes/edc/elm/multibuttonentry.edc \
 elementary/themes/edc/elm/naviframe.edc \
 elementary/themes/edc/elm/notify.edc \
-elementary/themes/edc/elm/nstate.edc \
 elementary/themes/edc/elm/panel.edc \
 elementary/themes/edc/elm/panes.edc \
 elementary/themes/edc/elm/photocam.edc \
@@ -1016,8 +1015,28 @@ elementary/themes/snd/kbd-tap5.wav \
 elementary/themes/snd/kbd-tap.wav
 
 efl_ui_themes_files = \
-elementary/themes/edc/efl/button.edc
-
+elementary/themes/edc/efl/bg.edc \
+elementary/themes/edc/efl/border.edc \
+elementary/themes/edc/efl/button.edc \
+elementary/themes/edc/efl/calendar.edc \
+elementary/themes/edc/efl/check.edc \
+elementary/themes/edc/efl/uiclock.edc \
+elementary/themes/edc/efl/cursor.edc \
+elementary/themes/edc/efl/focus.edc \
+elementary/themes/edc/efl/frame.edc \
+elementary/themes/edc/efl/multibuttonentry.edc \
+elementary/themes/edc/efl/nstate.edc \
+elementary/themes/edc/efl/panes.edc \
+elementary/themes/edc/efl/photocam.edc \
+elementary/themes/edc/efl/progress.edc \
+elementary/themes/edc/efl/radio.edc \
+elementary/themes/edc/efl/scroller.edc \
+elementary/themes/edc/efl/slider.edc \
+elementary/themes/edc/efl/text.edc \
+elementary/themes/edc/efl/textpath.edc \
+elementary/themes/edc/efl/tooltip.edc \
+elementary/themes/edc/efl/video.edc \
+elementary/themes/edc/efl/win.edc
 
 elementary_fdo_actions_128_files = \
 	elementary/themes/fdo/actions/128/address-book-new.png \

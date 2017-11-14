@@ -1293,8 +1293,11 @@ _elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
-   if (!elm_layout_theme_set(obj, "spinner", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
+   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+     {
+        CRI("Failed to set layout!");
+        return EFL_UI_THEME_APPLY_FAILED;
+     }
 
    if (edje_object_part_exists(wd->resize_obj, "elm.swallow.dec_button"))
      sd->button_layout = EINA_TRUE;

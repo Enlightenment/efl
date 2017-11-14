@@ -53,18 +53,78 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 
 static void _set_min_size_new(void *data);
 
+//TODO: efl_ui_slider also use this.
+static const char *
+_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
+{
+   const char *pos = NULL;
+   const char *temp_str = NULL;
+
+   if (is_legacy)
+     return cur_group;
+
+   temp_str = cur_group + len - strlen(search);
+   if (temp_str >= cur_group)
+     {
+         if (!strcmp(temp_str, search))
+           pos = temp_str;
+     }
+
+   return pos;
+}
+
+static char *
+_efl_ui_panes_theme_group_get(Evas_Object *obj, Efl_Ui_Panes_Data *sd)
+{
+   const char *pos = NULL;
+   const char *cur_group = elm_widget_theme_element_get(obj);
+   Eina_Strbuf *new_group = eina_strbuf_new();
+   Eina_Bool is_legacy = elm_widget_is_legacy(obj);
+   size_t len = 0;
+
+   if (cur_group)
+     {
+        len = strlen(cur_group);
+        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len, is_legacy);
+        if (!pos)
+          pos = _theme_group_modify_pos_get(cur_group, "vertical", len, is_legacy);
+
+        // TODO: change separator when it is decided.
+        //       can skip when prev_group == cur_group
+        if (!pos)
+          {
+              eina_strbuf_append(new_group, cur_group);
+              eina_strbuf_append(new_group, "/");
+          }
+        else
+          {
+              eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
+          }
+     }
+
+   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
+     eina_strbuf_append(new_group, "horizontal");
+   else
+     eina_strbuf_append(new_group, "vertical");
+
+   return eina_strbuf_release(new_group);
+}
+
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    double size;
    Evas_Coord minw = 0, minh = 0;
+   char *group;
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   if (sd->dir == EFL_UI_DIR_HORIZONTAL)
-     elm_widget_theme_element_set(obj, "horizontal");
-   else
-     elm_widget_theme_element_set(obj, "vertical");
+   group = _efl_ui_panes_theme_group_get(obj, sd);
+   if (group)
+     {
+        elm_widget_theme_element_set(obj, group);
+        free(group);
+     }
 
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);

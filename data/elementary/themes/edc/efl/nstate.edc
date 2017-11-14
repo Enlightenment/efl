@@ -1,5 +1,5 @@
-group { name: "elm/nstate/base/default";
-   inherit: "elm/button/base/default";
+group { "efl/nstate";
+   inherit: "efl/button";
    programs {
       program {
          signal: "mouse,clicked,1"; source: "event";

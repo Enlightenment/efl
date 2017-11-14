@@ -1,0 +1,328 @@
+group { "efl/text/scroller";
+   inherit: "elm/scroller/entry/default";
+}
+
+group { "efl/text/single/scroller";
+   inherit: "elm/scroller/entry_single/default";
+}
+
+group { "efl/text/cursor";
+   inherit: "elm/entry/cursor/default";
+   alias: "efl/text/single/cursor";
+   alias: "efl/text/charwrap/cursor";
+   alias: "efl/text/mixedwrap/cursor";
+   alias: "efl/text/nowrap/cursor";
+   alias: "efl/text/noedit/cursor";
+   alias: "efl/text/single-noedit/cursor";
+   alias: "efl/text/noedit-charwrap/cursor";
+   alias: "efl/text/noedit-mixedwrap/cursor";
+   alias: "efl/text/nowrap-noedit/cursor";
+}
+
+group { "efl/text/selection";
+   inherit: "elm/entry/selection/default";
+   alias: "efl/text/single/selection";
+   alias: "efl/text/charwrap/selection";
+   alias: "efl/text/mixedwrap/selection";
+   alias: "efl/text/nowrap/selection";
+   alias: "efl/text/noedit/selection";
+   alias: "efl/text/single-noedit/selection";
+   alias: "efl/text/noedit-charwrap/selection";
+   alias: "efl/text/noedit-mixedwrap/selection";
+   alias: "efl/text/nowrap-noedit/selection";
+}
+
+group { "efl/text/anchor";
+   inherit: "elm/entry/anchor/default";
+   alias: "efl/text/single/anchor";
+   alias: "efl/text/charwrap/anchor";
+   alias: "efl/text/mixedwrap/anchor";
+   alias: "efl/text/nowrap/anchor";
+   alias: "efl/text/noedit/anchor";
+   alias: "efl/text/single-noedit/anchor";
+   alias: "efl/text/noedit-charwrap/anchor";
+   alias: "efl/text/noedit-mixedwrap/anchor";
+   alias: "efl/text/nowrap-noedit/anchor";
+}
+
+group { "efl/text";
+   inherit: "elm/entry/base/default";
+   alias: "efl/text/mixedwrap";
+   alias: "efl/text/charwrap";
+   alias: "efl/text/nowrap";
+   alias: "efl/text/single";
+   alias: "efl/text/single-noedit";
+   alias: "efl/text/noedit";
+   alias: "efl/text/noedit-mixedwrap";
+   alias: "efl/text/noedit-charwrap";
+   alias: "efl/text/nowrap-noedit";
+   alias: "efl/text/password";
+   sounds {
+      sample { name: "key-tap1" LOSSY 64;
+         source: "kbd-tap.wav";
+      }
+      sample { name: "key-tap2" LOSSY 64;
+         source: "kbd-tap2.wav";
+      }
+      sample { name: "key-tap3" LOSSY 64;
+         source: "kbd-tap3.wav";
+      }
+      sample { name: "key-tap4" LOSSY 64;
+         source: "kbd-tap4.wav";
+      }
+      sample { name: "key-tap5" LOSSY 64;
+         source: "kbd-tap5.wav";
+      }
+   }
+
+//   data.item: "context_menu_orientation" "horizontal";
+   parts {
+      part { name: "elm.swallow.background"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+         }
+      }
+      part { name: "elm.text"; type: SWALLOW;
+         scale: 1;
+         entry_mode: EDITABLE;
+         select_mode: DEFAULT;
+//         select_mode: EXPLICIT;
+         cursor_mode: BEFORE;
+         multiline: 1;
+         source: "efl/text/selection"; // selection under
+//         source2: "X"; // selection over
+//         source3: "X"; // cursor under
+         source4: "efl/text/cursor"; // cursorover
+//         source5: "efl/text/anchor"; // anchor under
+         source6: "efl/text/anchor"; // anchor over
+         description { state: "default" 0.0;
+            /* we gotta use 0 0 here, because of scrolled entries */
+            fixed: 0 0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "load"; source: "";
+         action: FOCUS_SET;
+         target: "elm.text";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.text";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.text";
+      }
+      #if 0
+      program {
+         signal: "elm,guide,disabled"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "elm.guide";
+      }
+      program {
+         signal: "elm,guide,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.guide";
+      }
+      #endif
+      program { name: "key-down";
+         signal: "entry,keydown"; source: "elm.text";
+         script {
+            new buf[32];
+            snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
+            run_program(get_program_id(buf));
+         }
+      }
+      program { name: "key-down1";
+         action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
+      }
+      program { name: "key-down2";
+         action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
+      }
+      program { name: "key-down3";
+         action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
+      }
+      program { name: "key-down4";
+         action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
+      }
+      program { name: "key-down5";
+         action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
+      }
+   }
+}
+
+group { "efl/text/magnifier";
+   inherit: "elm/entry/magnifier/default";
+   alias: "efl/text/single/magnifier";
+   alias: "efl/text/charwrap/magnifier";
+   alias: "efl/text/mixedwrap/magnifier";
+   alias: "efl/text/nowrap/magnifier";
+   alias: "efl/text/noedit/magnifier";
+   alias: "efl/text/single-noedit/magnifier";
+   alias: "efl/text/noedit-charwrap/magnifier";
+   alias: "efl/text/noedit-mixedwrap/magnifier";
+   alias: "efl/text/nowrap-noedit/magnifier";
+}
+
+group { "efl/text/handler/start";
+   inherit: "elm/entry/handler/start/default";
+   alias: "efl/text/single/handler/start";
+   alias: "efl/text/charwrap/handler/start";
+   alias: "efl/text/mixedwrap/handler/start";
+   alias: "efl/text/nowrap/handler/start";
+   alias: "efl/text/noedit/handler/start";
+   alias: "efl/text/single-noedit/handler/start";
+   alias: "efl/text/noedit-charwrap/handler/start";
+   alias: "efl/text/noedit-mixedwrap/handler/start";
+   alias: "efl/text/nowrap-noedit/handler/start";
+}
+
+group { "efl/text/handler/end";
+   inherit: "elm/entry/handler/end/default";
+   alias: "efl/text/single/handler/end";
+   alias: "efl/text/charwrap/handler/end";
+   alias: "efl/text/mixedwrap/handler/end";
+   alias: "efl/text/nowrap/handler/end";
+   alias: "efl/text/noedit/handler/end";
+   alias: "efl/text/single-noedit/handler/end";
+   alias: "efl/text/noedit-charwrap/handler/end";
+   alias: "efl/text/noedit-mixedwrap/handler/end";
+   alias: "efl/text/nowrap-noedit/handler/end";
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// emoticon images from:
+// Tanya - Latvia
+// http://lazycrazy.deviantart.com/
+// http://lazycrazy.deviantart.com/art/Very-Emotional-Emoticons-144461621
+group { "efl/text/emoticon/angry"; images.image:
+   "emo-angry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-angry.png"; } } } }
+group { "efl/text/emoticon/angry-shout"; images.image:
+   "emo-angry-shout.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-angry-shout.png"; } } } }
+group { "efl/text/emoticon/crazy-laugh"; images.image:
+   "emo-crazy-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-crazy-laugh.png"; } } } }
+group { "efl/text/emoticon/evil-laugh"; images.image:
+   "emo-evil-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-evil-laugh.png"; } } } }
+group { "efl/text/emoticon/evil"; images.image:
+   "emo-evil.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-evil.png"; } } } }
+group { "efl/text/emoticon/goggle-smile"; images.image:
+   "emo-goggle-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-goggle-smile.png"; } } } }
+group { "efl/text/emoticon/grumpy"; images.image:
+   "emo-grumpy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-grumpy.png"; } } } }
+group { "efl/text/emoticon/grumpy-smile"; images.image:
+   "emo-grumpy-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-grumpy-smile.png"; } } } }
+group { "efl/text/emoticon/guilty"; images.image:
+   "emo-guilty.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-guilty.png"; } } } }
+group { "efl/text/emoticon/guilty-smile"; images.image:
+   "emo-guilty-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-guilty-smile.png"; } } } }
+group { "efl/text/emoticon/haha"; images.image:
+   "emo-haha.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-haha.png"; } } } }
+group { "efl/text/emoticon/half-smile"; images.image:
+   "emo-half-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-half-smile.png"; } } } }
+group { "efl/text/emoticon/happy-panting"; images.image:
+   "emo-happy-panting.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-happy-panting.png"; } } } }
+group { "efl/text/emoticon/happy"; images.image:
+   "emo-happy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-happy.png"; } } } }
+group { "efl/text/emoticon/indifferent"; images.image:
+   "emo-indifferent.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-indifferent.png"; } } } }
+group { "efl/text/emoticon/kiss"; images.image:
+   "emo-kiss.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-kiss.png"; } } } }
+group { "efl/text/emoticon/knowing-grin"; images.image:
+   "emo-knowing-grin.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-knowing-grin.png"; } } } }
+group { "efl/text/emoticon/laugh"; images.image:
+   "emo-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-laugh.png"; } } } }
+group { "efl/text/emoticon/little-bit-sorry"; images.image:
+   "emo-little-bit-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-little-bit-sorry.png"; } } } }
+group { "efl/text/emoticon/love-lots"; images.image:
+   "emo-love-lots.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-love-lots.png"; } } } }
+group { "efl/text/emoticon/love"; images.image:
+   "emo-love.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-love.png"; } } } }
+group { "efl/text/emoticon/minimal-smile"; images.image:
+   "emo-minimal-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-minimal-smile.png"; } } } }
+group { "efl/text/emoticon/not-happy"; images.image:
+   "emo-not-happy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-not-happy.png"; } } } }
+group { "efl/text/emoticon/not-impressed"; images.image:
+   "emo-not-impressed.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-not-impressed.png"; } } } }
+group { "efl/text/emoticon/omg"; images.image:
+   "emo-omg.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-omg.png"; } } } }
+group { "efl/text/emoticon/opensmile"; images.image:
+   "emo-opensmile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-opensmile.png"; } } } }
+group { "efl/text/emoticon/smile"; images.image:
+   "emo-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-smile.png"; } } } }
+group { "efl/text/emoticon/sorry"; images.image:
+   "emo-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-sorry.png"; } } } }
+group { "efl/text/emoticon/squint-laugh"; images.image:
+   "emo-squint-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-squint-laugh.png"; } } } }
+group { "efl/text/emoticon/surprised"; images.image:
+   "emo-surprised.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-surprised.png"; } } } }
+group { "efl/text/emoticon/suspicious"; images.image:
+   "emo-suspicious.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-suspicious.png"; } } } }
+group { "efl/text/emoticon/tongue-dangling"; images.image:
+   "emo-tongue-dangling.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-tongue-dangling.png"; } } } }
+group { "efl/text/emoticon/tongue-poke"; images.image:
+   "emo-tongue-poke.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-tongue-poke.png"; } } } }
+group { "efl/text/emoticon/uh"; images.image:
+   "emo-uh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-uh.png"; } } } }
+group { "efl/text/emoticon/unhappy"; images.image:
+   "emo-unhappy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-unhappy.png"; } } } }
+group { "efl/text/emoticon/very-sorry"; images.image:
+   "emo-very-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-very-sorry.png"; } } } }
+group { "efl/text/emoticon/what"; images.image:
+   "emo-what.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-what.png"; } } } }
+group { "efl/text/emoticon/wink"; images.image:
+   "emo-wink.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-wink.png"; } } } }
+group { "efl/text/emoticon/worried"; images.image:
+   "emo-worried.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-worried.png"; } } } }
+group { "efl/text/emoticon/wtf"; images.image:
+   "emo-wtf.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
+            "emo-wtf.png"; } } } }
+//------------------------------------------------------------
