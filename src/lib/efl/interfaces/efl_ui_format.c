@@ -24,7 +24,12 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
         eina_value_get(&value, &v);
         eina_strbuf_append_printf(str, sd->template, v);
      }
-   //XXX: handle other types e.g. struct tm
+   else if (type == EINA_VALUE_TYPE_TM)
+     {
+        struct tm v;
+        eina_value_get(&value, &v);
+        eina_strbuf_append_strftime(str, sd->template, &v);
+     }
    else
      {
         char *v = eina_value_to_string(&value);
