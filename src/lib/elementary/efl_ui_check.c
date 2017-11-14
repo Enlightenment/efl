@@ -320,12 +320,11 @@ elm_check_add(Evas_Object *parent)
 EOLIAN static Eo *
 _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "check");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-
-   if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_layout_signal_callback_add

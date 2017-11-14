@@ -2238,12 +2238,20 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *gridrows, *scroller;
    const char *fontname, *fontsize;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "code");
+   elm_widget_theme_element_set(obj, "layout");
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
-   if (!elm_layout_theme_set(obj, "code", "layout", elm_widget_style_get(obj)))
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    scroller = elm_scroller_add(obj);

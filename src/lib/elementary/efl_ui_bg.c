@@ -97,10 +97,13 @@ _on_resize(void *data,
 EOLIAN static void
 _efl_ui_bg_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Bg_Data *priv)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    priv->rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->rect, 0, 0, 0, 0);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "bg");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -109,7 +112,10 @@ _efl_ui_bg_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Bg_Data *priv)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, obj);
 
-   if (!elm_layout_theme_set(obj, "bg", "base", elm_widget_style_get(obj)))
+   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
    elm_layout_content_set(obj, "elm.swallow.rectangle", priv->rect);
 }
