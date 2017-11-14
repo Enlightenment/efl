@@ -85,7 +85,7 @@ _eolian_gen_execute(const char *eo_filename, const char *options, const char *ou
 {
    char command[PATH_MAX];
    snprintf(command, PATH_MAX,
-         EOLIAN_GEN" %s -I \""PACKAGE_DATA_DIR"/data\" -o %s %s",
+         EOLIAN_GEN" %s -S -I \""PACKAGE_DATA_DIR"/data\" -o %s %s",
          options, output_filename, eo_filename);
    return system(command);
 }

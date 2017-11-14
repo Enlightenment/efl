@@ -37,6 +37,7 @@ _print_usage(const char *progn, FILE *outf)
    fprintf(outf, "Usage: %s [options] [input]\n", progn);
    fprintf(outf, "Options:\n"
                  "  -I inc        include path \"inc\"\n"
+                 "  -S            do not scan system dir for eo files\n"
                  "  -g type       generate file of type \"type\"\n"
                  "  -o name       specify the base name for output\n"
                  "  -o type:name  specify a particular output filename\n"
@@ -50,7 +51,9 @@ _print_usage(const char *progn, FILE *outf)
                  "  c: C source file (.eo.c)\n"
                  "  i: Implementation file (.c, merged with existing)\n"
                  "\n"
-                 "By default, the 'hc' set is used ('h' for .eot files).\n"
+                 "By default, the 'hc' set is used ('h' for .eot files).\n\n"
+                 "The system-wide Eolian directory is scanned for eo files\n"
+                 "by default, together with all specified '-I' flags.\n\n"
                  "Output filenames are determined from input .eo filename.\n"
                  "Default output path is where the input file is.\n\n"
                  "Also, specifying a type-dependent input file automatically\n"
@@ -420,6 +423,10 @@ main(int argc, char **argv)
 {
    int pret = 1;
 
+   char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
+   char *basen = NULL;
+   Eina_List *includes = NULL;
+
    eina_init();
    eolian_init();
 
@@ -433,21 +440,20 @@ main(int argc, char **argv)
 
    eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
-   char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
-   char *basen = NULL;
-
    int gen_what = 0;
-   for (int opt; (opt = getopt(argc, argv, "I:g:o:hv")) != -1;)
+   Eina_Bool scan_system = EINA_TRUE;
+
+   for (int opt; (opt = getopt(argc, argv, "SI:g:o:hv")) != -1;)
      switch (opt)
        {
         case 0:
           break;
+        case 'S':
+          scan_system = EINA_FALSE;
+          break;
         case 'I':
-          if (!eolian_directory_scan(optarg))
-            {
-               fprintf(stderr, "eolian: could not scan '%s'\n", optarg);
-               goto end;
-            }
+          /* just a pointer to argv contents, so it persists */
+          includes = eina_list_append(includes, optarg);
           break;
         case 'g':
           for (const char *wstr = optarg; *wstr; ++wstr)
@@ -522,6 +528,25 @@ main(int argc, char **argv)
         goto end;
      }
 
+   if (scan_system)
+     {
+        if (!eolian_system_directory_scan())
+          {
+             fprintf(stderr, "eolian: could not scan system directory\n");
+             goto end;
+          }
+     }
+
+   const char *inc;
+   EINA_LIST_FREE(includes, inc)
+     {
+        if (!eolian_directory_scan(inc))
+          {
+             fprintf(stderr, "eolian: could not scan '%s'\n", inc);
+             goto end;
+          }
+     }
+
    const Eolian_Unit *src = eolian_file_parse(input);
    if (!src)
      {
@@ -559,6 +584,7 @@ end:
         eina_log_domain_unregister(_eolian_gen_log_dom);
      }
 
+   eina_list_free(includes);
    for (size_t i = 0; i < (sizeof(_dexts) / sizeof(char *)); ++i)
      free(outs[i]);
    free(basen);
