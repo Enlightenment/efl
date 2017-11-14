@@ -895,14 +895,12 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
 EOLIAN static void
 _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, const char *klass, const char *group)
 {
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
-
    EINA_SAFETY_ON_NULL_RETURN(klass);
    EINA_SAFETY_ON_NULL_RETURN(group);
 
-   if (eina_stringshare_replace(&(ld->klass), klass) ||
-       eina_stringshare_replace(&(ld->group), group))
-      efl_ui_widget_theme_apply(obj);
+   if (elm_widget_theme_klass_set(obj, klass) ||
+       elm_widget_theme_element_set(obj, group))
+       efl_ui_widget_theme_apply(obj);
 }
 
 EAPI void

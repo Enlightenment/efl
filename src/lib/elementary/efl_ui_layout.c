@@ -362,8 +362,10 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
    if (!sd->file_set)
      {
         ret = elm_widget_theme_object_set
-                (obj, wd->resize_obj, sd->klass, sd->group,
-                 elm_widget_style_get(obj));
+                (obj, wd->resize_obj,
+                elm_widget_theme_klass_get(obj), 
+                elm_widget_theme_element_get(obj),
+                elm_widget_theme_style_get(obj));
      }
 
    if (ret)
@@ -682,9 +684,6 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    eina_hash_free(sd->factories);
    sd->factories = NULL;
 
-   eina_stringshare_del(sd->klass);
-   eina_stringshare_del(sd->group);
-
    /* let's make our Edje object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
    EINA_LIST_FOREACH(wd->subobjs, l, child)
@@ -799,6 +798,7 @@ _efl_ui_layout_efl_file_mmap_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, co
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
+   Eina_Bool changed = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (!wd->legacy && efl_finalized_get(obj))
@@ -808,11 +808,14 @@ _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, con
      }
 
    if (sd->file_set) sd->file_set = EINA_FALSE;
-   eina_stringshare_replace(&(sd->klass), klass);
-   eina_stringshare_replace(&(sd->group), group);
-   eina_stringshare_replace(&(wd->style), style);
 
-   return _efl_ui_layout_theme_internal(obj, sd);
+   changed |= elm_widget_theme_klass_set(obj, klass);
+   changed |= elm_widget_theme_element_set(obj, group);
+   changed |= elm_widget_theme_style_set(obj, style);
+
+   if (changed)
+     return efl_ui_widget_theme_apply(obj);
+   return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 EOLIAN static void
@@ -2376,7 +2379,7 @@ elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, con
 /* Efl.Part implementation */
 
 EOLIAN static Eo *
-_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
+_efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
    Efl_Canvas_Layout_Part_Type type;
 
@@ -2397,7 +2400,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
                   const char *file = NULL, *key = NULL;
                   efl_file_get(wd->resize_obj, &file, &key);
                   WRN("Layout has a background but it's not a swallow: '%s'",
-                      sd->group);
+                      elm_widget_theme_element_get(obj));
                }
              return efl_part(efl_super(obj, MY_CLASS), part);
           }
@@ -2407,7 +2410,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
 
    if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
      {
-        ERR("Invalid type found for part '%s' in group '%s'", part, sd->group);
+        ERR("Invalid type found for part '%s' in group '%s'", part, elm_widget_theme_element_get(obj));
         return NULL;
      }
 
@@ -2422,7 +2425,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
       case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
-        WRN("No such part '%s' in group '%s'", part, sd->group);
+        WRN("No such part '%s' in group '%s'", part, elm_widget_theme_element_get(obj));
         return NULL;
       default:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);

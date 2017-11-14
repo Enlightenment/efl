@@ -20,12 +20,11 @@ EOLIAN static Efl_Ui_Theme_Apply
 _elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->horizontal)
-     eina_stringshare_replace(&ld->group, "horizontal");
+     elm_widget_theme_element_set(obj, "horizontal");
    else
-     eina_stringshare_replace(&ld->group, "vertical");
+     elm_widget_theme_element_set(obj, "vertical");
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;

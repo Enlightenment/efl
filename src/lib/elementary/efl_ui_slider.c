@@ -699,15 +699,14 @@ EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    if (_is_horizontal(sd->dir))
      {
         if (!sd->intvl_enable)
-          eina_stringshare_replace(&ld->group, "horizontal");
+          elm_widget_theme_element_set(obj, "horizontal");
         else
-          eina_stringshare_replace(&ld->group, "range/horizontal");
+          elm_widget_theme_element_set(obj, "range/horizontal");
         if (sd->popup)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,
                          "slider", "horizontal/popup",
@@ -720,9 +719,9 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
    else
      {
         if (!sd->intvl_enable)
-          eina_stringshare_replace(&ld->group, "vertical");
+          elm_widget_theme_element_set(obj, "vertical");
         else
-          eina_stringshare_replace(&ld->group, "range/vertical");
+          elm_widget_theme_element_set(obj, "range/vertical");
 
         if (sd->popup)
           _elm_theme_set(elm_widget_theme_get(obj), sd->popup,

@@ -794,6 +794,8 @@ _elm_widget_efl_canvas_group_group_del(Eo *obj, Elm_Widget_Smart_Data *sd)
    EINA_LIST_FREE(sd->event_cb, ecb)
       free(ecb);
 
+   eina_stringshare_del(sd->klass);
+   eina_stringshare_del(sd->group);
    eina_stringshare_del(sd->style);
    if (sd->theme) elm_theme_free(sd->theme);
    eina_stringshare_del(sd->access_info);
@@ -3600,6 +3602,137 @@ _elm_widget_focus_move_policy_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, 
              efl_ui_widget_focus_move_policy_set(obj, elm_config_focus_move_policy_get());
           }
      }
+}
+
+/**
+ * @internal
+ *
+ * Sets the klass name of a widget.
+ * @param obj The widget.
+ * @param name Name of the klass to use.
+ * @return Whether the name was different and thus replaced.
+ */
+EAPI Eina_Bool
+elm_widget_theme_klass_set(Evas_Object *obj, const char *name)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   return eina_stringshare_replace(&(pd->klass), name);
+}
+
+/**
+ * @internal
+ *
+ * Gets the klass name of a widget.
+ * @param obj The widget.
+ * @return The current klass name of internal canvas object.
+ */
+EAPI const char *
+elm_widget_theme_klass_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   return (const char *)pd->klass;
+}
+
+/**
+ * @internal
+ *
+ * Sets the element name of a widget.
+ *
+ * @param obj The widget.
+ * @param name Name of the element to use.
+ * @return Whether the name was different and thus replaced.
+ */
+EAPI Eina_Bool
+elm_widget_theme_element_set(Evas_Object *obj, const char *name)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   return eina_stringshare_replace(&(pd->group), name);
+}
+
+/**
+ * @internal
+ *
+ * Gets the element name of a widget.
+ * @param obj The widget.
+ * @return The current element name of internal canvas object.
+ */
+EAPI const char *
+elm_widget_theme_element_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   return (const char *)pd->group;
+}
+
+/**
+ * @internal
+ *
+ * Sets the style name of a widget.
+ *
+ * @param obj The widget.
+ * @param name Name of the style to use.
+ * @return Whether the name was different and thus replaced.
+ */
+EAPI Eina_Bool
+elm_widget_theme_style_set(Evas_Object *obj, const char *name)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   return eina_stringshare_replace(&(pd->style), name);
+}
+
+/**
+ * @internal
+ *
+ * Gets the style name of a widget.
+ * @param obj The widget.
+ * @return The current style name of internal canvas object.
+ */
+EAPI const char *
+elm_widget_theme_style_get(const Evas_Object *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   return (const char *)pd->style;
+}
+
+/**
+ * @internal
+ *
+ * Register sub object as a group of a widget and re-apply its theme.
+ * @param obj The widget.
+ * @param component A sub object to be added as an element of the widget.
+ * @param name An element name of sub object.
+ * @return Whether the style was successfully applied or not.
+ */
+EAPI Efl_Ui_Theme_Apply
+elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name)
+{
+   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_SUCCESS;
+   Eina_Bool changed = EINA_FALSE;
+   const char *obj_group;
+   Eina_Stringshare *group;
+
+   obj_group = elm_widget_theme_element_get(obj);
+   if (!obj_group)
+     group = eina_stringshare_add(name);
+   else
+     group = eina_stringshare_printf("%s/%s", elm_widget_theme_element_get(obj), name);
+   if (efl_isa(component, ELM_WIDGET_CLASS))
+     {
+        changed |= elm_widget_theme_klass_set(component, elm_widget_theme_klass_get(obj));
+        changed |= elm_widget_theme_element_set(component, (const char *)group);
+        changed |= elm_widget_theme_style_set(component, elm_widget_theme_style_get(obj));
+        if (changed)
+          ret = efl_ui_widget_theme_apply(component);
+     }
+   else
+     {
+        ret = efl_ui_widget_theme_object_set(obj, component,
+                                   elm_widget_theme_klass_get(obj),
+                                   (const char *)group,
+                                   elm_widget_theme_style_get(obj));
+     }
+   eina_stringshare_del(group);
+
+   return ret;
 }
 
 static void

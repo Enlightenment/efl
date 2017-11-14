@@ -441,15 +441,14 @@ _elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    _index_box_clear(obj, 0);
    _index_box_clear(obj, 1);
 
    if (efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE))
-     eina_stringshare_replace(&ld->group, "base/horizontal");
+     elm_widget_theme_element_set(obj, "base/horizontal");
    else
-     eina_stringshare_replace(&ld->group, "base/vertical");
+     elm_widget_theme_element_set(obj, "base/vertical");
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
