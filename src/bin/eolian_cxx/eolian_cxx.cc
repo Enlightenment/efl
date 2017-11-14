@@ -72,7 +72,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
 
    efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
    std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
-   std::vector<efl::eolian::grammar::attributes::klass_def> forward_klasses{klass_def};
+   std::vector<efl::eolian::grammar::attributes::klass_def> forward_klasses{};
 
    std::set<std::string> c_headers;
    std::set<std::string> cpp_headers;
