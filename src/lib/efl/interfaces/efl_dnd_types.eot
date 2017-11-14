@@ -61,18 +61,19 @@ struct Efl.Dnd.Drag_Accept {
 struct Efl.Dnd.Drag_Pos {
    x: int; [[Evas Coordinate]]
    y: int; [[Evas Coordinate]]
-   action: Efl.Selection.Action;
-   format: Efl.Selection.Format;
+   action: Efl.Selection.Action; [[The drag action]]
+   format: Efl.Selection.Format; [[The drag format]]
+   item: ptr(Efl.Object); [[The item object. It is only available for container object.]]
 }
 
 
-struct Efl.Dnd.Drag_Item_Container_Pos {
+/*struct Efl.Dnd.Drag_Item_Container_Pos {
    item: ptr(Efl.Object); [[The item object]]
    x: int; [[Evas Coordinate]]
    y: int; [[Evas Coordinate]]
    action: Efl.Selection.Action; [[The drag action]]
    format: Efl.Selection.Format; [[The drag format]]
-}
+}*/
 
 struct Efl.Dnd.Drag_Item_Container_Drop {
    item: ptr(Efl.Object); [[The item object]]

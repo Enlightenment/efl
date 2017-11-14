@@ -50,6 +50,8 @@ struct Efl.Selection.Data
    data: void_ptr; [[The selection data, type determined by format member]]
    len: int; [[The length of the selection data]]
    action: Efl.Selection.Action; [[The action to perform with the data @since 1.8]]
+
+   item: ptr(Efl.Object); [[item of under the drag position. It is only available for container]]
 }
 
 function Efl.Selection.Data_Ready {

@@ -145,6 +145,11 @@ struct _Dropable
       const char     *type;
       Efl_Selection_Format  format;
    } last;
+
+   //for container
+   Efl_Dnd_Item_Get item_func;
+   void *item_func_data;
+   Eina_Bool is_container;
 };
 
 typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
@@ -197,6 +202,11 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *drop_handler;
    const char *text_uri;
    Eina_List *cont_drop_list;
+
+
+   //for container
+   //Eina_Bool drag_container;
+   //Eina_Bool drop_container;
 };
 
 #endif
