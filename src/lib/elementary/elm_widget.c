@@ -3049,6 +3049,10 @@ elm_widget_scroll_child_locked_y_get(const Eo *obj)
 EOLIAN static Efl_Ui_Theme_Apply
 _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
+   if (eina_streq(welement, "base"))
+     welement = NULL;
+   if (eina_streq(wstyle, "default"))
+     wstyle = NULL;
    Efl_Ui_Theme_Apply ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
    if (!ret)
      {
@@ -3646,6 +3650,9 @@ EAPI Eina_Bool
 elm_widget_theme_element_set(Evas_Object *obj, const char *name)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   if (eina_streq(name, "base"))
+     name = NULL;
+
    return eina_stringshare_replace(&(pd->group), name);
 }
 
@@ -3676,6 +3683,9 @@ EAPI Eina_Bool
 elm_widget_theme_style_set(Evas_Object *obj, const char *name)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, EINA_FALSE);
+   if (eina_streq(name, "default"))
+     name = NULL;
+
    return eina_stringshare_replace(&(pd->style), name);
 }
 

@@ -281,7 +281,7 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
    Elm_Theme *th = NULL;
 
    if (parent) th = elm_widget_theme_get(parent);
-   return _elm_theme_set(th, o, clas, group, style);
+   return _elm_theme_set(th, o, clas, group, style, elm_widget_is_legacy(parent));
 }
 
 /* only issued by elm_icon.c */
@@ -296,14 +296,21 @@ _elm_theme_object_icon_set(Evas_Object *o,
 }
 
 Efl_Ui_Theme_Apply
-_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style)
+_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool is_legacy)
 {
    Eina_File *file;
    char buf2[1024];
+   const char *group_sep = "/";
+   const char *style_sep = ":";
 
-   if ((!clas) || (!group) || (!style) || !o) return EFL_UI_THEME_APPLY_FAILED;
+   if ((!clas) || !o) return EFL_UI_THEME_APPLY_FAILED;
    if (!th) th = &(theme_default);
-   snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
+   if (is_legacy)
+     snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, (group) ? group : "base", (style) ? style : "default");
+   else
+     snprintf(buf2, sizeof(buf2), "efl/%s%s%s%s%s", clas,
+            ((group) ? group_sep : "\0"), ((group) ? group : "\0"),
+            ((style) ? style_sep : "\0"), ((style) ? style : "\0"));
    if (!eina_hash_find(th->cache_style_load_failed, buf2))
      {
         file = _elm_theme_group_file_find(th, buf2);
@@ -312,7 +319,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
              if (edje_object_mmap_set(o, file, buf2)) return EFL_UI_THEME_APPLY_SUCCESS;
              else
                {
-                  INF("could not set theme group '%s' from file '%s': %s",
+                  ERR("could not set theme group '%s' from file '%s': %s",
                       buf2,
                       eina_file_filename_get(file),
                       edje_load_error_str(edje_object_load_error_get(o)));
@@ -322,8 +329,15 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         eina_hash_add(th->cache_style_load_failed, buf2, (void *)1);
      }
 
+   if (!style)
+     return EFL_UI_THEME_APPLY_FAILED;
+
    // Use the elementary default style.
-   snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
+   if (is_legacy)
+     snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, (group) ? group : "base", "default");
+   else
+     snprintf(buf2, sizeof(buf2), "efl/%s%s%s", clas,
+            ((group) ? group_sep : "\0"), ((group) ? group : "\0"));
    if (!eina_hash_find(th->cache_style_load_failed, buf2))
      {
         file = _elm_theme_group_file_find(th, buf2);

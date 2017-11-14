@@ -1,0 +1,73 @@
+group { "efl/slider/hidden/limit";
+   inherit: "elm/slider/hidden/limit";
+}
+
+group { "efl/slider/horizontal/indicator";
+   inherit: "elm/slider/horizontal/indicator/default";
+   alias: "efl/slider/horizontal/indicator:disabled";
+   alias: "efl/slider/horizontal/popup";
+   alias: "efl/slider_interval/horizontal/indicator";
+   alias: "efl/slider_interval/horizontal/popup";
+}
+
+group { "efl/slider/vertical/indicator";
+   inherit: "elm/slider/vertical/indicator/default";
+   alias: "efl/slider/vertical/indicator:disabled";
+   alias: "efl/slider/vertical/popup";
+   alias: "efl/slider_interval/vertical/indicator";
+   alias: "efl/slider_interval/vertical/popup";
+}
+
+group { "efl/slider/horizontal";
+   inherit: "elm/slider/horizontal/default";
+   alias: "efl/slider/horizontal:disabled";
+   parts {
+      part { "limits";
+         source: "efl/slider/hidden/limit";
+      }
+      part { "button";
+         source: "efl/slider/horizontal/indicator";
+      }
+   }
+}
+
+group { "efl/slider/vertical";
+   inherit: "elm/slider/vertical/default";
+   alias: "efl/slider/vertical:disabled";
+   parts {
+      part { "limits";
+         source: "efl/slider/hidden/limit";
+      }
+      part { "button";
+         source: "efl/slider/vertical/indicator";
+      }
+   }
+}
+
+//Range
+
+group { "efl/slider_interval/horizontal";
+   inherit: "elm/slider/range/horizontal/default";
+   alias: "efl/slider/horizontal:disabled";
+   parts {
+      part { "limits";
+         source: "efl/slider/hidden/limit";
+      }
+      part { "button";
+         source: "efl/slider_interval/horizontal/indicator";
+      }
+   }
+}
+
+group { "efl/slider_interval/vertical";
+   inherit: "elm/slider/range/vertical/default";
+   alias: "efl/slider/vertical:disabled";
+   parts {
+      part { "limits";
+         source: "efl/slider/hidden/limit";
+      }
+      part { "button";
+         source: "efl/slider_interval/vertical/indicator";
+      }
+   }
+}

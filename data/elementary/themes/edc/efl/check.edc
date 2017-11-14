@@ -1,0 +1,7 @@
+group { "efl/check";
+   inherit: "elm/check/base/default";
+}
+
+group { "efl/check:toggle";
+   inherit: "elm/check/base/toggle";
+}

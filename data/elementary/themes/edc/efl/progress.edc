@@ -1,0 +1,20 @@
+group { "efl/progressbar/horizontal";
+   inherit: "elm/progressbar/horizontal/default";
+}
+
+group { "efl/progressbar/vertical";
+   inherit: "elm/progressbar/vertical/default";
+}
+
+group { "efl/progressbar/horizontal:wheel";
+   inherit: "elm/progressbar/horizontal/wheel";
+   alias: "efl/progressbar/vertical:wheel";
+}
+
+group { "efl/progressbar/horizontal:double";
+   inherit: "elm/progressbar/horizontal/double";
+}
+
+group { "efl/progressbar/vertical:double";
+   inherit: "elm/progressbar/vertical/double";
+}
