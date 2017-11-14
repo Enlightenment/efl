@@ -60,12 +60,11 @@ _efl_ui_panes_elm_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    Evas_Coord minw = 0, minh = 0;
 
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
-     eina_stringshare_replace(&ld->group, "horizontal");
+     elm_widget_theme_element_set(obj, "horizontal");
    else
-     eina_stringshare_replace(&ld->group, "vertical");
+     elm_widget_theme_element_set(obj, "vertical");
 
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
