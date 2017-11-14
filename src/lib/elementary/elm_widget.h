@@ -407,6 +407,8 @@ typedef struct _Elm_Widget_Smart_Data
 
    double                        scale;
    Elm_Theme                    *theme;
+   const char                   *klass; /**< 1st identifier of an edje object group which is used in theme_set. klass and group are used together. */
+   const char                   *group; /**< 2nd identifier of an edje object group which is used in theme_set. klass and group are used together. */
    const char                   *style;
    const char                   *access_info;
    const char                   *accessible_name;
@@ -741,6 +743,14 @@ EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, El
 EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
 const char           *elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const char **domain);
 void                  elm_widget_part_translatable_text_set(Eo *obj, const char *part, const char *label, const char *domain);
+
+EAPI Eina_Bool        elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
+EAPI const char      *elm_widget_theme_klass_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_theme_element_set(Evas_Object *obj, const char *name);
+EAPI const char      *elm_widget_theme_element_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_theme_style_set(Evas_Object *obj, const char *name);
+EAPI const char      *elm_widget_theme_style_get(const Evas_Object *obj);
+EAPI Efl_Ui_Theme_Apply elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);

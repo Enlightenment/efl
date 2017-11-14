@@ -81,12 +81,12 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
      snprintf(buf, sizeof(buf), "hoversel_vertical/%s", style);
 
    /* hoversel's style has an extra bit: orientation */
-   eina_stringshare_replace(&(wd->style), buf);
+   elm_widget_theme_style_set(obj, buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
-   eina_stringshare_replace(&(wd->style), style);
+   elm_widget_theme_style_set(obj, style);
 
    if (sd->hover)
      efl_ui_mirrored_set(sd->hover, efl_ui_mirrored_get(obj));

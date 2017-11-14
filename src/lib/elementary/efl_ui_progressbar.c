@@ -202,12 +202,11 @@ EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_progressbar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    if (_is_horizontal(sd->dir))
-     eina_stringshare_replace(&ld->group, "horizontal");
-   else eina_stringshare_replace(&ld->group, "vertical");
+     elm_widget_theme_element_set(obj, "horizontal");
+   else elm_widget_theme_element_set(obj, "vertical");
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;

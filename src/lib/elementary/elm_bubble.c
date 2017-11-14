@@ -205,15 +205,12 @@ EOLIAN static void
 _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *sd, Elm_Bubble_Pos pos)
 {
    /* FIXME: Why is this dealing with layout data directly? */
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
-
    if (pos < ELM_BUBBLE_POS_TOP_LEFT || pos > ELM_BUBBLE_POS_BOTTOM_RIGHT)
      return;
 
    sd->pos = pos;
 
-   eina_stringshare_replace
-     (&ld->group, corner_string[sd->pos]);
+   elm_widget_theme_element_set(obj, corner_string[sd->pos]);
 
    efl_ui_widget_theme_apply(obj);
 }

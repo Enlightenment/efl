@@ -56,8 +56,6 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_List            *prop_connect; /**< The hash of properties connected to layout parts. */
    Eina_Hash            *factories; /**< The hash with parts connected to factories. */
    Efl_Model            *model; /**< The model */
-   const char           *klass; /**< 1st identifier of an edje object group which is used in theme_set. klass and group are used together. */
-   const char           *group; /**< 2nd identifier of an edje object group which is used in theme_set. klass and group are used together. */
    int                   frozen; /**< Layout freeze counter */
 
    Eina_Bool             needs_size_calc : 1; /**< This flas is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
