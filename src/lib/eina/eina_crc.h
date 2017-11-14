@@ -12,31 +12,43 @@
 #include "eina_magic.h"
 
 /**
- * @brief Generates a crc checksum for the given data using crc-32 algorithm.
+ * @brief Generates a checksum for the given data using the CRC-32 algorithm.
  *
- * @param key The data for which crc checksum has to be generated.
- * @param len The length of the data.
- * @param seed The seed used to calculate crc checksum. The value will be 0xffffffff
- * for the initial data and for the remaining stream data, it will be crc value from the
- * previous call to the eina_crc function.
- * @param start_stream EINA_TRUE for the initial call and EINA_FALSE for the remaining stream data.
- * @return 32 bit crc checksum for the given data.
+ * @param[in] key The data to checksum.
+ * @param[in] len The length of @p key in bytes.
+ * @param[in] seed The seed used to calculate the checksum.
+ * @param[in] start_stream Set as #EINA_TRUE for the initial call and
+ *            #EINA_FALSE for the remaining stream data.
+ * @return A 32-bit CRC checksum for the data given in @p key.
  *
- * This function generates 32 bit crc checksum using crc-32 algorithm and 0xEDB88320 polynomial
- * for the data which is passed to the function. Seed has to be passed which will
- * be used in calculating checksum. For normal data 0xffffffff has to be passed as seed along with
- * EINA_TRUE for start_stream parameter. For streaming data, initial call will be similar to normal
- * data and for the rest of data, seed will be the crc returned from previous call to eina_crc
- * and start_stream parameter will be EINA_FALSE
- * API usage for normal data
+ * This function generates a checksum using the CRC-32 algorithm
+ * with the @c 0xEDB88320 polynomial on the data provided by @p key.
+ * (https://en.wikipedia.org/wiki/Cyclic_redundancy_check#CRC-32_algorithm)
+ *
+ * For streaming data eina_crc() can be called repeatedly, passing the
+ * returned checksum from the prior call as the @p seed to the next, and
+ * setting @p start_stream to #EINA_FALSE.  For the initial call, set
+ * @p seed to @c 0xffffffff and @p start_stream to #EINA_TRUE.
+ *
+ * For normal (non-streaming) data, seed tracking is not needed, so
+ * @p seed should be set to @c 0xffffffff and @p start_stream to
+ * #EINA_TRUE.
+ *
+ * Example usage for normal data:
+ *
+ * @code
  * char *tmp = "hello world";
  * unsigned int crc = eina_crc(tmp, strlen(tmp), 0xffffffff, EINA_TRUE);
+ * @endcode
  *
- * API usage for streaming data
+ * Example usage for streaming data:
+ *
+ * @code
  * char *tmp1 = "hello "
  * char *tmp2 = "world"
  * unsigned int crc = eina_crc(tmp1, strlen(tmp1), 0xffffffff, EINA_TRUE);
  * crc = eina_crc(tmp2, strlen(tmp2), crc, EINA_FALSE);
+ * @endcode
  *
  * @since 1.15
  */
