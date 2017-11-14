@@ -14,6 +14,8 @@ static Eina_Bool _cb_connect_idle(void *data);
 static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
 static Eina_Bool _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync);
 
+static void _ecore_wl2_display_sync_add(Ecore_Wl2_Display *ewd);
+
 void
 _display_event_free(void *d, void *event)
 {
@@ -463,6 +465,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    ewd->fd_hdl = NULL;
 
    ewd->shell_done = EINA_FALSE;
+   ewd->sync_done = EINA_FALSE;
 
    _ecore_wl2_display_globals_cleanup(ewd);
 
@@ -638,6 +641,9 @@ _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
    Ecore_Wl2_Display *ewd;
 
    ewd = data;
+   if (--ewd->syncs) return;
+   if (ewd->sync_done) return;
+
    ewd->sync_done = EINA_TRUE;
 
    _ecore_wl2_shell_bind(ewd);
@@ -657,11 +663,19 @@ static const struct wl_callback_listener _sync_listener =
    _cb_sync_done
 };
 
-static Eina_Bool
-_ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
+static void
+_ecore_wl2_display_sync_add(Ecore_Wl2_Display *ewd)
 {
    struct wl_callback *cb;
 
+   ewd->syncs++;
+   cb = wl_display_sync(ewd->wl.display);
+   wl_callback_add_listener(cb, &_sync_listener, ewd);
+}
+
+static Eina_Bool
+_ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
+{
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display) return EINA_FALSE;
@@ -669,8 +683,7 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
    ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
    wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
 
-   cb = wl_display_sync(ewd->wl.display);
-   wl_callback_add_listener(cb, &_sync_listener, ewd);
+   _ecore_wl2_display_sync_add(ewd);
 
    if (sync)
      {
