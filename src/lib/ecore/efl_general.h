@@ -13,6 +13,23 @@
 #undef __EFL_NET
 #undef EFL_MAIN
 #undef EFL_MAIN_EX
+#undef EAPI_MAIN
+
+#ifdef _WIN32
+// There is no support for quicklaunch on windows, so no needs
+// to export the efl_main symbol
+# define EAPI_MAIN
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI_MAIN __attribute__ ((visibility("default")))
+#  else
+#   define EAPI_MAIN
+#  endif
+# else
+#  define EAPI_MAIN
+# endif
+#endif /* ! _WIN32 */
 
 #ifdef EFL_VERSION_MICRO
 # define _EFL_VERSION_MICRO EFL_VERSION_MICRO
