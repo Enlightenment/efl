@@ -1,6 +1,8 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
+
 
 #include <Elementary.h>
 #include "elm_priv.h"

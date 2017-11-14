@@ -6,6 +6,7 @@
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
