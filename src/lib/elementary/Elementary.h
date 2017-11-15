@@ -292,6 +292,9 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_list_relayout.eo.h>
 # include <efl_ui_list.eo.h>
 # include <efl_ui_list_pan.eo.h>
+# include <efl_ui_scroll_manager.eo.h>
+# include <efl_ui_scroller.eo.h>
+# include <efl_ui_pan.eo.h>
 #endif
 
 /* include deprecated calls last of all */

@@ -1,0 +1,60 @@
+enum Efl.Ui.Scrollbar_Mode
+{
+   auto = 0, [[Visible if necessary]]
+   on, [[Always visible]]
+   off, [[Always invisible]]
+   hidden, [[Visible when user input occurs]]
+   last [[]]
+}
+
+enum Efl.Ui.Scrollbar_Direction
+{
+   horizontal = 0,
+   vertical,
+   last
+}
+interface Efl.Ui.Scrollbar ()
+{
+   methods {
+      @property mode {
+         [[Scrollbar visibility policy]]
+         set {
+         }
+         get {
+         }
+         values {
+            hbar: Efl.Ui.Scrollbar_Mode; [[Horizontal scrollbar]]
+            vbar: Efl.Ui.Scrollbar_Mode; [[Vertical scrollbar]]
+         }
+      }
+	  @property size {
+		 get {
+		 }
+		 values {
+			width: double;
+			height: double;
+		 }
+	  }
+	  @property position {
+		 set {
+		 }
+		 get {
+		 }
+		 values {
+			posx: double;
+			posy: double;
+		 }
+	  }
+	  visibility_update {
+	  }
+   }
+   events {
+      bar,press; [[Called when bar is pressed]]
+      bar,unpress; [[Called when bar is unpressed]]
+      bar,drag; [[Called when bar is dragged]]
+	  bar,size,changed;
+	  bar,pos,changed;
+	  bar,show;
+	  bar,hide;
+   }
+}

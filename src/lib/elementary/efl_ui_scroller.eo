@@ -1,0 +1,22 @@
+class Efl.Ui.Scroller (Efl.Ui.Layout,
+		       Efl.Ui.Scrollable.Interactive,
+		       Efl.Ui.Scrollbar,
+                       Efl.Ui.Drag)
+{
+   [[Efl ui scroller class]]
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Container.content { set; }
+      Elm.Widget.theme_apply;
+      Efl.Ui.Scrollable.Interactive.content_size{ get; }
+      Efl.Ui.Scrollable.Interactive.viewport_geometry{ get; }
+      Efl.Ui.Scrollable.Interactive.bounce_enabled { set; get; }
+      Efl.Ui.Scrollable.Interactive.freeze { get; set; }
+      Efl.Ui.Scrollable.Interactive.hold { get; set; }
+      Efl.Ui.Scrollbar.mode { get; set; }
+      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Ui.Scrollable.Interactive.show;
+   }
+}

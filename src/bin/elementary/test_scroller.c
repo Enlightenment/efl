@@ -1017,3 +1017,48 @@ test_scroller5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 400, 550);
    evas_object_show(win);
 }
+
+void
+test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *win, *scroller, *content;
+   char buf[64];
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL, "TEST", ELM_WIN_BASIC,
+                 efl_text_set(efl_added, "Efl Ui Scroller"),
+		         efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 400));
+
+   scroller = efl_add(EFL_UI_SCROLLER_CLASS, win);
+   efl_content_set(win, scroller);
+
+   content = efl_add(EFL_UI_IMAGE_CLASS, scroller);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   efl_file_set(content, buf, NULL);
+   efl_gfx_size_set(content, EINA_SIZE2D(1000, 1000));
+   efl_content_set(scroller, content);
+}
+
+void
+test_efl_ui_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *win, *scroller, *content;
+   char buf[64];
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL, "TEST", ELM_WIN_BASIC,
+                 efl_text_set(efl_added, "Efl Ui Scroller 2"),
+		         efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 400));
+
+   scroller = efl_add(EFL_UI_SCROLLER_CLASS, win,
+		              elm_object_style_set(efl_added, "hidden_bar"));
+   efl_ui_scrollbar_mode_set(scroller, EFL_UI_SCROLLBAR_MODE_HIDDEN, EFL_UI_SCROLLBAR_MODE_HIDDEN);
+   efl_content_set(win, scroller);
+
+   content = efl_add(EFL_UI_IMAGE_CLASS, scroller);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   efl_file_set(content, buf, NULL);
+   efl_gfx_size_set(content, EINA_SIZE2D(5000, 5000));
+   efl_content_set(scroller, content);
+}
+
