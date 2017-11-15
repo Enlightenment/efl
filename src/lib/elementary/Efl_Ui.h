@@ -101,6 +101,7 @@
 
 #define __EFL_UI_IS_REQUIRED
 
+#include <Efl_Core.h>
 #include <Efl_Net.h>
 
 #include <Evas.h>
