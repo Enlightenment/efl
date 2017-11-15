@@ -1634,6 +1634,19 @@ _elm_win_state_change(Ecore_Evas *ee)
           (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
         efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_WM_ROTATION_CHANGED, NULL);
+        if (_elm_config->atspi_mode)
+          {
+             Evas_Coord x = 0, y = 0, width = 0, height = 0;
+             elm_win_screen_size_get(obj, &x, &y, &width, &height);
+             if ((sd->rot == 0) || (sd->rot == 180))
+               {
+                  efl_access_bounds_changed_signal_emit(obj, x, y, width, height);
+               }
+             else
+               {
+                  efl_access_bounds_changed_signal_emit(obj, x, y, height, width);
+               }
+          }
      }
 }
 
@@ -6178,6 +6191,19 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    efl_ui_widget_on_orientation_update(obj, rotation);
    efl_event_callback_legacy_call
      (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
+   if (_elm_config->atspi_mode)
+     {
+        Evas_Coord x = 0, y = 0, width = 0, height = 0;
+        elm_win_screen_size_get(obj, &x, &y, &width, &height);
+        if ((sd->rot == 0) || (sd->rot == 180))
+          {
+             efl_access_bounds_changed_signal_emit(obj, x, y, width, height);
+          }
+        else
+          {
+             efl_access_bounds_changed_signal_emit(obj, x, y, height, width);
+          }
+     }
 }
 
 EOLIAN static void
