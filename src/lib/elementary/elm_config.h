@@ -1542,6 +1542,26 @@ EAPI Eina_Bool  elm_config_vsync_get(void);
 EAPI void       elm_config_vsync_set(Eina_Bool enabled);
 
 /**
+ * Get the configure flag that will define if a window agressively drop its
+ * ressource when minimized.
+ *
+ * @return if it does.
+ *
+ * @since 1.21
+ */
+EAPI Eina_Bool elm_config_agressive_withdrawn_get(void);
+
+/**
+ * Set the configure flag that will make a window agressively drop its
+ * ressource when minimized.
+ *
+ * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
+ * not.
+ * @since 1.21
+ */
+EAPI void elm_config_agressive_withdrawn_set(Eina_Bool enabled);
+
+/**
  * Get the acceleration override preference flag
  *
  * This gets the acceleration override preference. This is a flag that
