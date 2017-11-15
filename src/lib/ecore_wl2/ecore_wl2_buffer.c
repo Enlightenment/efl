@@ -433,6 +433,7 @@ err_bm:
    close(fd);
 err_drm:
    free(buffer_manager);
+   buffer_manager = NULL;
 err_alloc:
    return EINA_FALSE;
 }
