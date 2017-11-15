@@ -325,6 +325,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_file.h \
 	lib/elementary/elm_code_parse.h \
 	lib/elementary/elm_code_syntax.h \
+	lib/elementary/efl_ui_multibuttonentry.h \
 	lib/elementary/Efl_Ui.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
