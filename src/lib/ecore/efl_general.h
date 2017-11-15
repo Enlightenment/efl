@@ -67,6 +67,7 @@
 
 #ifdef __EFL_UI_IS_REQUIRED
 # define __EFL_UI(...) __VA_ARGS__
+# define __EFL_UI_IS_DEFINED
 #else
 # define __EFL_UI(...)
 #endif
