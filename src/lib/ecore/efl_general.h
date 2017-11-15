@@ -1,4 +1,6 @@
 #undef EAPI_MAIN
+#undef __EFL_UI
+#undef __EFL_NET
 
 #ifdef _WIN32
 // There is no support for quicklaunch on windows, so no needs
@@ -15,6 +17,20 @@
 #  define EAPI_MAIN
 # endif
 #endif /* ! _WIN32 */
+
+#ifdef __EFL_UI_IS_REQUIRED
+# define __EFL_UI(...) __VA_ARGS__
+# define __EFL_UI_IS_DEFINED
+#else
+# define __EFL_UI(...)
+#endif
+
+#ifdef __EFL_NET_IS_REQUIRED
+# define __EFL_NET(...) __VA_ARGS__
+#else
+# define __EFL_NET(...)
+#endif
+
 #ifdef EFL_BETA_API_SUPPORT
 
 // This file is designed to be included again and again
@@ -26,8 +42,6 @@
 #undef _EFL_APP_VERSION_SET
 #undef __EFL_MAIN_CONSTRUCTOR
 #undef __EFL_MAIN_DESTRUCTOR
-#undef __EFL_UI
-#undef __EFL_NET
 #undef EFL_MAIN
 #undef EFL_MAIN_EX
 
@@ -64,19 +78,6 @@
   __EFL_UI(elm_shutdown();)                     \
   __EFL_NET(ecore_con_url_shutdown();)          \
   __EFL_NET(ecore_con_shutdown();)
-
-#ifdef __EFL_UI_IS_REQUIRED
-# define __EFL_UI(...) __VA_ARGS__
-# define __EFL_UI_IS_DEFINED
-#else
-# define __EFL_UI(...)
-#endif
-
-#ifdef __EFL_NET_IS_REQUIRED
-# define __EFL_NET(...) __VA_ARGS__
-#else
-# define __EFL_NET(...)
-#endif
 
 #define _EFL_APP_VERSION_SET()                                          \
   do {                                                                  \
