@@ -885,24 +885,23 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->globals = eina_hash_int32_new(_cb_globals_hash_del);
 
+   ewd->xkb_context = xkb_context_new(0);
+   if (!ewd->xkb_context) goto context_err;
+
    /* check server display hash and match on pid. If match, skip sync */
    if (!_ecore_wl2_display_connect(ewd, _ecore_wl2_display_sync_get()))
      goto connect_err;
-
-   ewd->xkb_context = xkb_context_new(0);
-   if (!ewd->xkb_context) goto context_err;
 
    /* add this new client display to hash */
    eina_hash_add(_client_displays, ewd->name, ewd);
 
    return ewd;
 
-context_err:
-   ecore_main_fd_handler_del(ewd->fd_hdl);
-   wl_registry_destroy(ewd->wl.registry);
-   wl_display_disconnect(ewd->wl.display);
-
 connect_err:
+   xkb_context_unref(ewd->xkb_context);
+   ewd->xkb_context = NULL;
+
+context_err:
    eina_hash_free(ewd->globals);
    free(ewd->name);
    free(ewd);
