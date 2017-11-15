@@ -731,6 +731,19 @@ _parent_detach(Evas_Object *obj)
 }
 
 static void
+_on_content_del(void *data,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   ELM_CTXPOPUP_DATA_GET(data, sd);
+
+   sd->content = NULL;
+   elm_box_recalculate(sd->box);
+   elm_layout_sizing_eval(data);
+}
+
+static void
 _on_content_resized(void *data,
                     Evas *e EINA_UNUSED,
                     Evas_Object *obj EINA_UNUSED,
@@ -799,6 +812,8 @@ _elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas
    sd->content = content;
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
+   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _on_content_del, obj);
+
    if (sd->visible) elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -823,6 +838,8 @@ _elm_ctxpopup_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 
    content = sd->content;
    if (!content) return content;
+
+   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
    elm_box_unpack(sd->box, content);
    sd->content = NULL;
@@ -1138,6 +1155,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 
    evas_object_event_callback_del_full
      (sd->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
+   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    _parent_detach(obj);
 
    elm_ctxpopup_clear(obj);
