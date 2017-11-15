@@ -892,6 +892,25 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 
    efl_ui_focus_manager_reset_history(old_manager);
 
+   //adjust focus property of the most upper element
+   {
+      Node *n = NULL;
+      Eina_List *last;
+      /* focus the upper most element */
+      last = eina_list_last(pd->focus_stack);
+
+      if (last)
+        n = eina_list_data_get(last);
+
+      if (n)
+        {
+           if (!pd->redirect && old_manager)
+             efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
+           else if (pd->redirect && !old_manager)
+             efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
+        }
+   }
+
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED , old_manager);
 }
 
