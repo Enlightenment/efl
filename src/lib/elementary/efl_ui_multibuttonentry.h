@@ -57,6 +57,7 @@
  * @{
  */
 
+#include "efl_ui_multibuttonentry_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_multibuttonentry_eo.h"
 #endif

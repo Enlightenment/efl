@@ -64,7 +64,9 @@ extern "C" {
 extern EAPI double _efl_startup_time;
 
 #include "Ecore_Common.h"
-#include "Ecore_Eo.h"
+#ifdef EFL_OBJECT_BETA
+# include "Ecore_Eo.h"
+#endif
 
 #ifdef __cplusplus
 }

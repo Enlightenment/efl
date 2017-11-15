@@ -85,6 +85,7 @@
 #endif
 
 #ifdef _WIN32
+# define EAPI_MAIN
 # ifdef ELEMENTARY_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
@@ -98,11 +99,14 @@
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_MAIN __attribute__ ((visibility("default")))
 #  else
 #   define EAPI
+#   define EAPI_MAIN
 #  endif
 # else
 #  define EAPI
+#  define EAPI_MAIN
 # endif
 #endif /* ! _WIN32 */
 

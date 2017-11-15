@@ -149,8 +149,7 @@ _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
    _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        if (strcmp(errname, "org.enlightenment.DBus.Canceled"))
-          ERR("Message error %s - %s", errname, errmsg);
+        ERR("Message error %s - %s", errname, errmsg);
         return;
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))
@@ -198,8 +197,7 @@ _on_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
    _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        if (strcmp(errname, "org.enlightenment.DBus.Canceled"))
-          ERR("Message error %s - %s", errname, errmsg);
+        ERR("Message error %s - %s", errname, errmsg);
         return;
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))
@@ -287,8 +285,7 @@ _daemon_version_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
    _eldbus_pending = eina_list_remove(_eldbus_pending, pending);
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        if (strcmp(errname, "org.enlightenment.DBus.Canceled"))
-          ERR("Message error %s - %s", errname, errmsg);
+        ERR("Message error %s - %s", errname, errmsg);
         return;
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))
