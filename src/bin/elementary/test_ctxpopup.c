@@ -447,7 +447,7 @@ _list_item_cb9(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 static void
 _list_item_cb10(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Evas_Object *ctxpopup, *btn, *sc, *bx;
+   Evas_Object *ctxpopup, *btn;
    Evas_Coord x,y;
 
    if (list_mouse_down > 0) return;
