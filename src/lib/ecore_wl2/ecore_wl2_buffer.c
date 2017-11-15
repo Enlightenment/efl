@@ -400,7 +400,7 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
 EAPI Eina_Bool
 ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 {
-   int fd;
+   int fd = -1;
    Eina_Bool dmabuf = ewd->wl.dmabuf && (types & ECORE_WL2_BUFFER_DMABUF);
    Eina_Bool shm = ewd->wl.shm && (types & ECORE_WL2_BUFFER_SHM);
    Eina_Bool success = EINA_FALSE;
@@ -414,15 +414,15 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
    buffer_manager = calloc(1, sizeof(Buffer_Manager));
    if (!buffer_manager) goto err_alloc;
 
-   fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
-   if (fd < 0) goto err_drm;
-
-   if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF"))
+   if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF") && dmabuf)
      {
-        success = dmabuf && _intel_buffer_manager_setup(fd);
-        if (!success) success = dmabuf && _exynos_buffer_manager_setup(fd);
+        fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
+        if (fd < 0) goto err_drm;
+
+        success = _intel_buffer_manager_setup(fd);
+        if (!success) success = _exynos_buffer_manager_setup(fd);
      }
-   if (!success) success = shm && _wl_shm_buffer_manager_setup(fd);
+   if (!success) success = shm && _wl_shm_buffer_manager_setup(0);
    if (!success) goto err_bm;
 
    drm_fd = fd;
@@ -430,7 +430,7 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
    return EINA_TRUE;
 
 err_bm:
-   close(fd);
+   if (fd >= 0) close(fd);
 err_drm:
    free(buffer_manager);
    buffer_manager = NULL;
