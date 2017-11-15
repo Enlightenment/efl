@@ -207,6 +207,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widge
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
+      Elm.Widget.focused_item { get; }
       Efl.Ui.Menu.selected_item { get; }
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }

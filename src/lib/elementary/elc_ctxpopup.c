@@ -1439,6 +1439,14 @@ _elm_ctxpopup_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Da
 }
 
 EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+{
+   if (!sd->list) return NULL;
+
+   return elm_object_focused_item_get(sd->list);
+}
+
+EOLIAN static Elm_Object_Item*
 _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Eo *eo_item;
