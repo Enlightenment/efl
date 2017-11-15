@@ -1,5 +1,5 @@
-#ifndef _EFL_CORE_H
-#define _EFL_CORE_H
+#ifndef _EFL_UI_H
+#define _EFL_UI_H
 
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
