@@ -1681,9 +1681,6 @@ _content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
    Evas_Object *content = NULL;
    EINA_LIST_FREE(it->contents, content)
      {
-        if (efl_isa(content, ELM_WIDGET_CLASS) && elm_widget_disabled_get(content))
-          elm_widget_disabled_set(content, EINA_FALSE);
-
         *cache = eina_list_append(*cache, content);
      }
 

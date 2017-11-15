@@ -5530,23 +5530,43 @@ gl_re2_reusable_content_get(void *data, Evas_Object *obj,
    int num = (int)(uintptr_t)data;
    char buf[64];
 
+   // Returning NULL from this callback means that content_get should be used instead.
+   // In this case if old object is not NULL, it will be deleted by genlist.
    if (!enabled || !old)
      return NULL;
 
+   // Genlist preserves whole state of the old content.
+   // But we don't know for which item it was used before. We know only that
+   // the old item had same item_class, same tree mode and that content was created for "part".
+   // This means that we should apply all item-specific properties to the old object.
    if (!strcmp(part, "elm.swallow.icon"))
      {
         printf("REUSING content (icon) for item # %d\n", num);
-        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        // No need to change color, because all contents for "elm.swallow.icon"
+        // have same red color
+        snprintf(buf, sizeof(buf), "Reused content for item # %d", num);
+        // But we need to set correct text, because it's different for different items
         elm_object_text_set(old, buf);
+        // Object is ready for use.
         return old;
      }
 
    if (!strcmp(part, "elm.swallow.end"))
      {
         printf("REUSING content (end) for item # %d\n", num);
-        snprintf(buf, sizeof(buf), "Content for item # %d", num);
+        // Also not changing color, it's already correct.
+        snprintf(buf, sizeof(buf), "Reused content for item # %d", num);
+        // Updating text.
         elm_object_text_set(old, buf);
-        if ((num % 5) == 0) elm_object_disabled_set(old, EINA_TRUE);
+        // Changing disabled state of content:
+        if ((num % 5) == 0)
+          // disabling every 5th item's content in the same way as in content_get
+          elm_object_disabled_set(old, EINA_TRUE);
+        else
+          // but also explicitly enabling other contents, because the old object
+          // could be disabled if it was used in one of the 5th items previously
+          elm_object_disabled_set(old, EINA_FALSE);
+        // Object is ready for use.
         return old;
      }
 
