@@ -199,6 +199,7 @@ calendar_cxx_example_05.cc \
 clock_cxx_example.cc \
 icon_cxx_example_01.cc \
 menu_cxx_example_01.cc \
+popup_cxx_example.cc \
 radio_cxx_example_01.cc \
 slider_cxx_example.cc \
 spinner_cxx_example.cc \
@@ -418,6 +419,7 @@ calendar_cxx_example_05 \
 clock_cxx_example \
 icon_cxx_example_01 \
 menu_cxx_example_01 \
+popup_cxx_example \
 radio_cxx_example_01 \
 slider_cxx_example \
 spinner_cxx_example \
@@ -447,6 +449,7 @@ clock_cxx_example_SOURCES = clock_cxx_example.cc
 icon_cxx_example_01_SOURCES = icon_cxx_example_01.cc
 menu_cxx_example_01_SOURCES = menu_cxx_example_01.cc
 radio_cxx_example_01_SOURCES = radio_cxx_example_01.cc
+popup_cxx_example_SOURCES = popup_cxx_example.cc
 slider_cxx_example_SOURCES = slider_cxx_example.cc
 spinner_cxx_example_SOURCES = spinner_cxx_example.cc
 table_cxx_example_01_SOURCES = table_cxx_example_01.cc
