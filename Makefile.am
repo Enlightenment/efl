@@ -136,7 +136,9 @@ pc/emile.pc \
 pc/eet.pc \
 pc/evas.pc \
 pc/ecore.pc \
+pc/efl-core.pc \
 pc/ecore-con.pc \
+pc/efl-net.pc \
 pc/ecore-ipc.pc \
 pc/ecore-file.pc \
 pc/ecore-input.pc \
@@ -157,7 +159,8 @@ pc/emotion.pc \
 pc/ethumb.pc \
 pc/ethumb_client.pc \
 pc/elocation.pc \
-pc/elementary.pc
+pc/elementary.pc \
+pc/efl-ui.pc
 
 if HAVE_CXX11
 pkgconfig_DATA += \
