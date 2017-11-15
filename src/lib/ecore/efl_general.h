@@ -1,18 +1,3 @@
-#ifdef EFL_BETA_API_SUPPORT
-
-// This file is designed to be included again and again
-// so cleanup last inclusion before generating this one.
-#undef _EFL_VERSION_MICRO
-#undef _EFL_VERSION_REVISION
-#undef _EFL_VERSION_FLAVOR
-#undef _EFL_BUILD_ID
-#undef _EFL_APP_VERSION_SET
-#undef __EFL_MAIN_CONSTRUCTOR
-#undef __EFL_MAIN_DESTRUCTOR
-#undef __EFL_UI
-#undef __EFL_NET
-#undef EFL_MAIN
-#undef EFL_MAIN_EX
 #undef EAPI_MAIN
 
 #ifdef _WIN32
@@ -30,6 +15,21 @@
 #  define EAPI_MAIN
 # endif
 #endif /* ! _WIN32 */
+#ifdef EFL_BETA_API_SUPPORT
+
+// This file is designed to be included again and again
+// so cleanup last inclusion before generating this one.
+#undef _EFL_VERSION_MICRO
+#undef _EFL_VERSION_REVISION
+#undef _EFL_VERSION_FLAVOR
+#undef _EFL_BUILD_ID
+#undef _EFL_APP_VERSION_SET
+#undef __EFL_MAIN_CONSTRUCTOR
+#undef __EFL_MAIN_DESTRUCTOR
+#undef __EFL_UI
+#undef __EFL_NET
+#undef EFL_MAIN
+#undef EFL_MAIN_EX
 
 #ifdef EFL_VERSION_MICRO
 # define _EFL_VERSION_MICRO EFL_VERSION_MICRO
