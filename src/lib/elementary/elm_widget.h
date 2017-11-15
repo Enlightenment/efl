@@ -297,6 +297,8 @@
  * @image latex elm-widget-tree.eps
  */
 
+#include "elm_object_item.h"
+
 typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
 typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
 typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
