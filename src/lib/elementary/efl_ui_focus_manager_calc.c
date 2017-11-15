@@ -1384,11 +1384,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    if (pd->redirect)
      {
-        //reset the history of that manager
-        efl_ui_focus_manager_reset_history(pd->redirect);
+        Efl_Ui_Focus_Manager *m = obj;
 
-        //first unset the redirect
-        efl_ui_focus_manager_redirect_set(obj, NULL);
+        //completly unset the current redirect chain
+        while (efl_ui_focus_manager_redirect_get(m))
+         {
+            Efl_Ui_Focus_Manager *old = m;
+
+            m = efl_ui_focus_manager_redirect_get(m);
+            efl_ui_focus_manager_redirect_set(old, NULL);
+          }
      }
 
    redirect_manager = node->redirect_manager;
