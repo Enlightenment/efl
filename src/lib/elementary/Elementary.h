@@ -291,6 +291,10 @@ EAPI extern Elm_Version *elm_version;
 
 #include <elm_helper.h>
 
+#if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+# include "Efl_Ui.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif
