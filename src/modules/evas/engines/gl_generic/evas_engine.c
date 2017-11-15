@@ -685,7 +685,6 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
    if ((w * h) <= 0) return NULL;
 
    alpha = eng_image_alpha_get(re, im1);
-   gl_context = gl_generic_context_find(re, 1);
    im2 = evas_gl_common_image_surface_new(gl_context, w, h, alpha, EINA_FALSE);
 
    evas_gl_common_context_target_surface_set(gl_context, im2);
