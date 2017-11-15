@@ -127,6 +127,9 @@ extern "C" {
 
 extern EAPI double _efl_startup_time;
 
+// EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
+#include "efl_ui.eot.h"
+
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
@@ -185,6 +188,56 @@ extern EAPI double _efl_startup_time;
 # include <efl_ui_radio_eo.h>
 # include <efl_ui_bg_eo.h>
 # include <efl_ui_panes_eo.h>
+
+/**
+ * Initialize Elementary
+ *
+ * @param[in] argc System's argument count value
+ * @param[in] argv System's pointer to array of argument strings
+ * @return The init counter value.
+ *
+ * This function initializes Elementary and increments a counter of
+ * the number of calls to it. It returns the new counter's value.
+ *
+ * @warning This call is exported only for use by the @c ELM_MAIN()
+ * macro. There is no need to use this if you use this macro (which
+ * is highly advisable). An elm_main() should contain the entry
+ * point code for your application, having the same prototype as
+ * elm_init(), and @b not being static (putting the @c EAPI_MAIN symbol
+ * in front of its type declaration is advisable). The @c
+ * ELM_MAIN() call should be placed just after it.
+ *
+ * Example:
+ * @dontinclude bg_example_01.c
+ * @skip static void
+ * @until ELM_MAIN
+ *
+ * See the full @ref bg_example_01_c "example".
+ *
+ * @see elm_shutdown().
+ * @ingroup Elm_General
+ */
+EAPI int       elm_init(int argc, char **argv);
+
+/**
+ * Shut down Elementary
+ *
+ * @return The init counter value.
+ *
+ * This should be called at the end of your application, just
+ * before it ceases to do any more processing. This will clean up
+ * any permanent resources your application may have allocated via
+ * Elementary that would otherwise persist.
+ *
+ * @see elm_init() for an example
+ *
+ * @note elm_shutdown() will iterate main loop until all ecore_evas are freed.
+ * There is a possibility to call your ecore callbacks(timer, animator, event,
+ * job, and etc.) in elm_shutdown()
+ *
+ * @ingroup Elm_General
+ */
+EAPI int       elm_shutdown(void);
 
 #ifdef __cplusplus
 }
