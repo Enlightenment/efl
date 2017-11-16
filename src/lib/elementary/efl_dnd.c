@@ -72,12 +72,21 @@ _efl_ui_dnd_efl_dnd_drag_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, double
                                  void *icon_list_func_data, Efl_Dnd_Drag_Icon_List_Create icon_list_func, Eina_Free_Cb icon_list_func_free_cb)
 {
    ERR("In");
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drag_item_container_add(sel_man, obj, time_to_drag, anim_time,
+                                                 data_func_data, data_func, data_func_free_cb,
+                                                 item_func_data, item_func, item_func_free_cb,
+                                                 icon_func_data, icon_func, icon_func_free_cb,
+                                                 icon_list_func_data, icon_list_func, icon_list_func_free_cb,
+                                                 NULL);
 }
 
 static void
 _efl_ui_dnd_efl_dnd_drag_item_container_del(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drag_item_container_del(sel_man, obj, NULL);
 }
 
 EOLIAN static void
@@ -102,12 +111,16 @@ EOLIAN static void
 _efl_ui_dnd_efl_dnd_drop_item_container_add(Eo *obj, Efl_Ui_Dnd_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb)
 {
    ERR("In");
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drop_item_container_add(sel_man, obj, format, item_func_data, item_func, item_func_free_cb, NULL);
 }
 
 EOLIAN static void
 _efl_ui_dnd_efl_dnd_drop_item_container_del(Eo *obj, Efl_Ui_Dnd_Data *pd)
 {
    ERR("In");
+   Eo *sel_man = _selection_manager_get(obj);
+   efl_selection_manager_drop_item_container_del(sel_man, obj, NULL);
 }
 
 

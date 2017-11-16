@@ -26,8 +26,9 @@ function Efl.Dnd.Drag_Data_Get {
    params {
       @in obj: ptr(Eo); [[The container object]]
       @out format: Efl.Selection.Format; [[Data format]]
-      @out buf: const(void_ptr); [[Data]]
+      @out buf: void_ptr; [[Data]]
       @out len: int; [[The data's length]]
+      @out action: Efl.Selection.Action; [[The drag action]]
    }
 };
 
@@ -51,7 +52,7 @@ function Efl.Dnd.Drag_Icon_List_Create {
    params {
       @in obj: ptr(Eo); [[The container object]]
    }
-   return: Eina_List;
+   return: ptr(Eina_List);
 };
 
 struct Efl.Dnd.Drag_Accept {
@@ -63,7 +64,7 @@ struct Efl.Dnd.Drag_Pos {
    y: int; [[Evas Coordinate]]
    action: Efl.Selection.Action; [[The drag action]]
    format: Efl.Selection.Format; [[The drag format]]
-   item: ptr(Efl.Object); [[The item object. It is only available for container object.]]
+   item: Efl.Object; [[The item object. It is only available for container object.]]
 }
 
 
@@ -76,7 +77,7 @@ struct Efl.Dnd.Drag_Pos {
 }*/
 
 struct Efl.Dnd.Drag_Item_Container_Drop {
-   item: ptr(Efl.Object); [[The item object]]
+   item: Efl.Object; [[The item object]]
    data: Efl.Selection.Data; [[The selection data]]
    x: int; [[x position relative to item (left (-1), middle (0), right (1)]]
    y: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]

@@ -483,8 +483,6 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                               {
                                  Drop_Format *df;
                                  Eina_Inlist *itr;
-
-                                 ddata.action = sel->action;
                                  if (!dropable->is_container)
                                    {
                                       sel_debug("has dropable");
@@ -1028,9 +1026,7 @@ _drag_cancel_animate(void *data, double pos)
         Ecore_X_Window xdragwin = _x11_xwin_get(pd->drag_win);
         ecore_x_window_ignore_set(xdragwin, 0);
 #endif
-        ERR("Delete drag_win");
-        evas_object_del(pd->drag_win);
-        pd->drag_win = NULL;
+        evas_object_del(data);
         return ECORE_CALLBACK_CANCEL;
      }
    else
@@ -1038,7 +1034,7 @@ _drag_cancel_animate(void *data, double pos)
         int x, y;
         x = pd->drag_win_x_end - (pos * (pd->drag_win_x_end - pd->drag_win_x_start));
         y = pd->drag_win_y_end - (pos * (pd->drag_win_y_end - pd->drag_win_y_start));
-        evas_object_move(pd->drag_win, x, y);
+        evas_object_move(data, x, y);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -1052,6 +1048,7 @@ _x11_win_rotation_changed_cb(void *data, const Efl_Event *event)
    int rot = elm_win_rotation_get(event->object);
    elm_win_rotation_set(win, rot);
 }
+
 
 static Eina_Bool
 _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
@@ -1109,12 +1106,20 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                   Ecore_X_Window xdragwin = _x11_xwin_get(pd->drag_win);
                   ecore_x_window_ignore_set(xdragwin, 0);
                   evas_object_del(pd->drag_win);
-                  pd->drag_win = NULL;
                }
+
+             pd->drag_win = NULL;  /* if not freed here, free in end of anim */
           }
 
         pd->drag_obj = NULL;
         pd->accept = EINA_FALSE;
+        /*  moved to _drag_cancel_animate
+        if (dragwin)
+          {
+             evas_object_del(dragwin);
+             dragwin = NULL;
+          }
+          */
      }
    return EINA_TRUE;
 }
@@ -1154,6 +1159,7 @@ _x11_drag_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *in
      }
 }
 
+
 static Eina_Bool
 _x11_dnd_status(void *data, int etype EINA_UNUSED, void *ev)
 {
@@ -1177,6 +1183,7 @@ _x11_dnd_status(void *data, int etype EINA_UNUSED, void *ev)
 
    return EINA_TRUE;
 }
+
 
 static Seat_Selection *
 _seat_selection_init(Efl_Selection_Manager_Data *pd, Efl_Input_Device *seat)
@@ -1225,7 +1232,6 @@ _seat_selection_init(Efl_Selection_Manager_Data *pd, Efl_Input_Device *seat)
    return seat_sel;
 }
 
-//TODO: Should we add DRAG_START event???
 EOLIAN static void
 _efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, Efl_Input_Device *seat)
 {
@@ -2334,186 +2340,15 @@ _efl_selection_manager_drop_item_container_del(Eo *obj, Efl_Selection_Manager_Da
    _drop_item_container_del(pd, cont, EINA_TRUE);
 }
 
-static inline Eina_List *
-_anim_icons_make(Drag_Container *dc)
-{
-   Eina_List *list = NULL, *icon_list = NULL;
-   Evas_Object *obj;
-
-   if (dc->icon_list_func)
-     {
-        icon_list = dc->icon_list_func(dc->icon_list_func_data, dc->cont);
-     }
-   EINA_LIST_FREE(icon_list, obj)
-     {
-        ERR("one obj in icon_list");
-        Anim_Icon *ai = calloc(1, sizeof(Anim_Icon));
-        if (!ai)
-          {
-             ERR("Failed to allocate for icon!");
-             continue;
-          }
-
-        evas_object_geometry_get(obj, &ai->start_x, &ai->start_y, &ai->start_w, &ai->start_h);
-        evas_object_show(obj);
-        ai->obj = obj;
-        list = eina_list_append(list, ai);
-     }
-   ERR("made icon list");
-
-   return list;
-}
-
-static void
-_cont_obj_drag_done_cb(void *data, const Efl_Event *ev)
-{
-   Drag_Container *dc = data;
-   elm_widget_scroll_freeze_pop(dc->cont);
-}
-
-static Eina_Bool
-_cont_obj_drag_start(void *data)
-{
-   Seat_Selection *seat_sel = data;
-   Drag_Container *dc = seat_sel->drag_cont;
-
-   dc->timer = NULL;
-   efl_event_callback_add(dc->cont, EFL_DND_EVENT_DRAG_DONE, _cont_obj_drag_done_cb, dc);
-   elm_widget_scroll_freeze_push(dc->cont);
-   efl_selection_manager_drag_start(seat_sel->pd->sel_man, dc->cont, dc->format,
-                                    dc->buf, dc->len, dc->action,
-                                    dc->icon_func_data, dc->icon_func, dc->icon_func_free_cb,
-                                    dc->seat);
-   //ELM_SAFE_FREE(dc->buf, free);
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static Eina_Bool
-_drag_anim_play(void *data, double pos)
-{
-   Seat_Selection *seat_sel = data;
-   Drag_Container *dc = seat_sel->drag_cont;
-
-   ERR("In");
-   if (dc->animator)
-     {
-        Eina_List *l;
-        Anim_Icon *ai;
-        Evas_Coord xm, ym;
-
-        if (pos > 0.99)
-          {
-             dc->animator = NULL;
-             EINA_LIST_FOREACH(dc->icons, l, ai)
-                evas_object_hide(ai->obj);
-
-             _cont_obj_drag_start(seat_sel);
-             return ECORE_CALLBACK_CANCEL;
-          }
-
-        evas_pointer_canvas_xy_get(dc->e, &xm, &ym);
-        EINA_LIST_FOREACH(dc->icons, l, ai)
-          {
-             int x, y, w, h;
-             w = ai->start_w - ((dc->final_icon_w - ai->start_w) * pos);
-             h = ai->start_h - ((dc->final_icon_h - ai->start_h) * pos);
-             x = ai->start_x - (pos * (ai->start_x + (w / 2) - xm));
-             y = ai->start_y - (pos * (ai->start_y + (h / 2) - ym));
-             evas_object_move(ai->obj, x, y);
-             evas_object_resize(ai->obj, w, h);
-          }
-
-        return ECORE_CALLBACK_RENEW;
-     }
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static inline void
-_drag_anim_start(Seat_Selection *seat_sel)
-{
-   ERR("In");
-   Drag_Container *dc = seat_sel->drag_cont;
-
-   dc->timer = NULL;
-   if (dc->icon_func)
-     {
-        Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_DND);
-        Evas_Object *final_icon = dc->icon_func(dc->icon_func_data, temp_win, NULL, NULL);
-        evas_object_geometry_get(final_icon, NULL, NULL, &dc->final_icon_w, &dc->final_icon_h);
-        evas_object_del(final_icon);
-        evas_object_del(temp_win);
-     }
-   dc->animator = ecore_animator_timeline_add(dc->anim_duration, _drag_anim_play, seat_sel);
-}
-
-static Eina_Bool
-_cont_obj_anim_start(void *data)
-{
-   sel_debug("In");
-   Seat_Selection *seat_sel = data;
-   Drag_Container *dc = seat_sel->drag_cont;
-   Efl_Object *it = NULL;
-   int xret, yret; //does not use
-
-   if (dc->item_get_func)
-     {
-        it = dc->item_get_func(dc->item_get_func_data, dc->cont, dc->down_x, dc->down_y, &xret, &yret);
-     }
-   dc->timer = NULL;
-   dc->format = EFL_SELECTION_FORMAT_TARGETS; //default
-   dc->buf = NULL;
-   dc->len = 0;
-   dc->action = EFL_SELECTION_ACTION_COPY; //default
-   dc->icons = NULL;
-
-   //failed to get mouse-down item, abort drag
-   if (!it)
-     return ECORE_CALLBACK_CANCEL;
-
-   if (dc->drag_data_func)
-     {
-        dc->drag_data_func(dc->drag_data_func_data, dc->cont,
-                           &dc->format, &dc->buf, &dc->len, &dc->action);
-        if (EINA_DBL_EQ(dc->anim_duration, 0.0))
-          {
-             _cont_obj_drag_start(seat_sel);
-          }
-        else
-          {
-             dc->icons = _anim_icons_make(dc);
-             if (dc->icons)
-               {
-                  _drag_anim_start(seat_sel);
-               }
-             else
-               {
-                  // even if we don't manage the icons animation, we have
-                  // to wait until it is finished before beginning drag.
-                  dc->timer = ecore_timer_add(dc->anim_duration,
-                                              _cont_obj_drag_start, seat_sel);
-               }
-          }
-     }
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _item_container_del_internal(Seat_Selection *seat_sel, Eina_Bool full);
-static void _anim_data_free(Seat_Selection *seat_sel);
-
 static void
 _abort_drag(Evas_Object *obj, Seat_Selection *seat_sel)
 {
    Drag_Container *dc = seat_sel->drag_cont;
-   evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_del_full(dc->obj, EVAS_CALLBACK_MOUSE_MOVE,
                                        _cont_obj_mouse_move_cb, seat_sel);
-   evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_del_full(dc->obj, EVAS_CALLBACK_MOUSE_UP,
                                        _cont_obj_mouse_up_cb, seat_sel);
-   _item_container_del_internal(seat_sel, EINA_FALSE);
+   _item_container_del_internal(objm EINA_FALSE);
 
    ELM_SAFE_FREE(dc->timer, ecore_timer_del);
    _anim_data_free(seat_sel);
@@ -2523,29 +2358,27 @@ static void
 _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Seat_Selection *seat_sel = data;
-   Drag_Container *dc = seat_sel->drag_cont;
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         _abort_drag(obj, seat_sel);
-        //free(seat_sel->drag_cont);
-        //seat_sel->drag_cont = NULL;
+        free(seat_sel->dc);
+        seat_sel->dc = NULL;
      }
-   if (seat_sel->drag_cont &&
-       (evas_device_class_get(ev->dev) == EVAS_DEVICE_CLASS_TOUCH))
+   if (seat_sel->dc && evas_device_class_get(ev->dev) == EVAS_DEVICE_CLASS_TOUCH)
      {
-        int dx, dy;
+        int dx, dx;
         int fs = elm_config_finger_size_get();
 
-        dx = ev->cur.canvas.x - dc->down_x;
-        dy = ev->cur.canvas.y - dc->down_y;
+        dx = ev->cur.canvas.x - seat_sel->down_x;
+        dy = ev->cur.canvas.y - seat_sel->down_y;
         if ((dx * dx + dy * dy) > (fs * fs))
           {
              sel_debug("mouse moved too much - have to cancel DnD");
              _abort_drag(obj, seat_sel);
-             //free(seat_sel->drag_cont);
-             //seat_sel->drag_cont = NULL;
+             free(seat_sel->dc);
+             seat_sel->dc = NULL;
           }
      }
 }
@@ -2553,21 +2386,21 @@ _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _anim_data_free(Seat_Selection *seat_sel)
 {
-   Drag_Container *dc = seat_sel->drag_cont;
+   Drag_Container *dc = seat_sel->dc;
    if (dc)
      {
-        ELM_SAFE_FREE(dc->animator, ecore_animator_del);
+        ELM_SAFE_FREE(dc->drag_animator, ecore_animator_del);
         Anim_Icon *ai;
         Eo *icon;
 
         EINA_LIST_FREE(dc->icons, ai)
           {
-             evas_object_del(ai->obj);
+             evas_object_del(ai->o);
              free(ai);
           }
         dc->icons = NULL;
-        //free(dc);
-        //seat_sel->drag_cont = NULL;
+        free(dc);
+        seat_sel->dc = NULL;
      }
 }
 
@@ -2575,7 +2408,7 @@ static void
 _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Seat_Selection *seat_sel = data;
-   Drag_Container *dc = seat_sel->drag_cont;
+   Drag_Container *dc = seat_sel->dc;
 
    if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
      return;
@@ -2586,7 +2419,7 @@ _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
                                        _cont_obj_mouse_up_cb, seat_sel);
    ELM_SAFE_FREE(dc->timer, ecore_timer_del);
 
-   _anim_data_free(seat_sel);
+   _anim_data_free(dc);
 }
 
 static void
@@ -2598,7 +2431,6 @@ _cont_obj_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      return;
 
    Drag_Container *dc = seat_sel->drag_cont;
-   dc->e = e;
    dc->down_x = ev->canvas.x;
    dc->down_y = ev->canvas.y;
 
@@ -2614,27 +2446,6 @@ _cont_obj_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    else
      {
         _cont_obj_anim_start(seat_sel);
-     }
-}
-
-static void
-_item_container_del_internal(Seat_Selection *seat_sel, Eina_Bool full)
-{
-   Drag_Container *dc = seat_sel->drag_cont;
-   if (dc)
-     {
-        ELM_SAFE_FREE(dc->timer, ecore_timer_del);
-        if (dc->animator)
-          _anim_data_free(seat_sel);
-        evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_DOWN,
-                                            _cont_obj_mouse_down_cb, seat_sel);
-        if (full)
-          {
-             dc->item_get_func = NULL;
-             dc->item_get_func_data = NULL;
-             free(dc);
-             seat_sel->drag_cont = NULL;
-          }
      }
 }
 
@@ -2660,13 +2471,13 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
    dc->cont = cont;
    dc->time_to_drag = time_to_drag;
    dc->anim_duration = anim_duration;
-   dc->drag_data_func_data = data_func_data;
-   dc->drag_data_func = data_func;
-   dc->drag_data_func_free_cb = data_func_free_cb;
+   dc->data_func_data = data_func_data;
+   dc->data_func = data_func;
+   dc->data_func_free_cb = data_func_free_cb;
    dc->item_get_func_data = item_get_func_data;
    dc->item_get_func = item_get_func;
    dc->item_get_func_free_cb = item_get_func_free_cb;
-   dc->icon_func_data = icon_func_data;
+   dc->icon_func_data = icon_func;
    dc->icon_func = icon_func;
    dc->icon_func_free_cb = icon_func_free_cb;
    dc->icon_list_func_data = icon_list_func_data;
@@ -2674,6 +2485,11 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
    dc->icon_list_func_free_cb = icon_list_func_free_cb;
    dc->seat = seat;
 
+   pd->seat_id = 1;
+   if (seat)
+     {
+        pd->seat_id = efl_input_device_seat_id_get(seat);
+     }
    Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
    seat_sel->drag_cont = dc;
 
@@ -2681,21 +2497,17 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
                                   _cont_obj_mouse_down_cb, seat_sel);
 }
 
-//FIXME: 1 seat can have multiple drag_containers
 EOLIAN static void
-_efl_selection_manager_drag_item_container_del(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *cont, Efl_Input_Device *seat)
+_efl_selection_manager_drag_item_container_del(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
-   Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
-   if (seat_sel)
-     _item_container_del_internal(seat_sel, EINA_TRUE);
 }
+
 
 static Efl_Object *
 _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   pd->sel_man = obj;
    pd->atomlist = calloc(1, SELECTION_N_ATOMS * sizeof(Efl_Sel_Manager_Atom));
    if (!pd->atomlist)
      {

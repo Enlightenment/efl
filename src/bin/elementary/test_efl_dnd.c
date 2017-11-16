@@ -14,7 +14,11 @@
 
 #include <Elementary.h>
 
+#ifdef ERR
+ #undef ERR
+#endif
 #define ERR(fmt, args...) printf("%s %d: " fmt "\n", __func__, __LINE__, ##args)
+
 
 
 Efl_Input_Device *seat = NULL;
@@ -132,7 +136,7 @@ _dnd_drag_pos_cb(void *data, const Efl_Event *ev)
 {
    ERR("In");
    Efl_Dnd_Drag_Pos *pos = (Efl_Dnd_Drag_Pos *)ev->info;
-   printf("%s:: pos: %d %d, action: %d\n", __func__, pos->x, pos->y, pos->action);
+   ERR("pos: %d %d, action: %d\n", pos->x, pos->y, pos->action);
 }
 
 static void
@@ -173,6 +177,8 @@ static void
 _dnd_drop_drop_cb(void *data, const Efl_Event *ev)
 {
    ERR("In");
+   Efl_Selection_Data *sd = ev->info;
+   ERR("x: %d, y: %d, data: %s, len: %d, format: %d, action: %d", sd->x, sd->y, (char *)sd->data, sd->len, sd->format, sd->action);
 }
 
 static void

@@ -64,24 +64,31 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      /*drag_item_container_add {
+      drag_item_container_add {
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
          params {
+            @in cont: Efl.Object; [[Container object]]
+            //@in format: Efl.Selection.Format; [[The data format]]
+            //@in buf: const(void_ptr); [[Drag data]]
+            //@in len: int; [[Drag data's length]]
             @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
-            @in anim_durataion: double; [[animation duration]]
+            @in anim_duration: double; [[animation duration]]
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
             @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case]]
          }
       }
       drag_item_container_del {
          [[Remove drag function of items in the container object.]]
          params {
+            @in cont: Efl.Object; [[Container object]]
+            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case]]
          }
-      }*/
+      }
       drop_target_add {
          [[There are four events emitted: EFL_DND_DROP_DRAG_ENTER, EFL_DND_DROP_DRAG_LEAVE,
            EFL_DND_DROP_DRAG_POS, EFL_DND_DROP_DRAG_DROP.]]

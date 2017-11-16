@@ -96,11 +96,54 @@ struct _X11_Cnp_Selection
    Seat_Selection *seat_sel;
 };
 
+typedef struct _Anim_Icon Anim_Icon;
+struct _Anim_Icon
+{
+   int start_x;
+   int start_y;
+   int start_w;
+   int start_h;
+   Evas_Object *obj;
+};
+
+typedef struct _Drag_Container Drag_Container;
+struct _Drag_Container {
+    Evas *e;
+    Efl_Object *cont;
+    Efl_Selection_Format format;
+    void *buf;
+    int len;
+    Efl_Selection_Action action;
+    Eina_List *icons;
+    Evas_Coord final_icon_w;
+    Evas_Coord final_icon_h;
+    Evas_Coord down_x;
+    Evas_Coord down_y;
+    Ecore_Timer *timer;
+    Ecore_Animator *animator;
+    double time_to_drag;
+    double anim_duration;
+    void *drag_data_func_data;
+    Efl_Dnd_Drag_Data_Get drag_data_func;
+    Eina_Free_Cb drag_data_func_free_cb;
+    void *item_get_func_data;
+    Efl_Dnd_Item_Get item_get_func;
+    Eina_Free_Cb item_get_func_free_cb;
+    void *icon_func_data;
+    Efl_Dnd_Drag_Icon_Create icon_func;
+    Eina_Free_Cb icon_func_free_cb;
+    void *icon_list_func_data;
+    Efl_Dnd_Drag_Icon_List_Create icon_list_func;
+    Eina_Free_Cb icon_list_func_free_cb;
+    Efl_Input_Device *seat;
+};
+
 
 struct _Seat_Selection
 {
    unsigned int seat_id;
    X11_Cnp_Selection *sellist;
+   Drag_Container *drag_cont;
 
    Efl_Selection_Manager_Data *pd;
 };
@@ -162,6 +205,7 @@ struct _Item_Container_Drop_Info
 
 struct _Efl_Selection_Manager_Data
 {
+   Efl_Object *sel_man;
    Ecore_Event_Handler *notify_handler;
    Ecore_Event_Handler *clear_handler;
    Efl_Promise *promise;
@@ -180,8 +224,7 @@ struct _Efl_Selection_Manager_Data
    Eina_List *seat_list; //Seat_Selection list: seat0 (selection types) -> seat1 (selection types)
    Saved_Type *savedtypes;
 
-
-   //drag
+   //drag: TODO: move to each seat
    Eo *drag_obj;
    Efl_Selection_Action drag_action;
    Eo *drag_win;
@@ -193,7 +236,6 @@ struct _Efl_Selection_Manager_Data
    int drag_win_x_end, drag_win_y_end;
    Eina_List *drops; //Dropable list
 
-
    //drop
    Eina_Hash *types_hash;
    Ecore_Event_Handler *enter_handler;
@@ -202,11 +244,6 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *drop_handler;
    const char *text_uri;
    Eina_List *cont_drop_list;
-
-
-   //for container
-   //Eina_Bool drag_container;
-   //Eina_Bool drop_container;
 };
 
 #endif
