@@ -1,0 +1,9 @@
+class Efl.Ui.Focus.Util(Efl.Object) {
+   methods {
+      focus @class {
+         params {
+            focus_elem : Efl.Ui.Focus.Object;
+         }
+      }
+   }
+}

@@ -46,6 +46,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_focus_user.eo \
 	lib/elementary/efl_ui_focus_layer.eo \
 	lib/elementary/efl_ui_focus_composition.eo \
+	lib/elementary/efl_ui_focus_util.eo \
 	lib/elementary/efl_ui_button_part.eo \
 	lib/elementary/efl_ui_flip_part.eo \
 	lib/elementary/efl_ui_layout_part.eo \
@@ -703,6 +704,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_focus_parent_provider.c \
 	lib/elementary/efl_ui_focus_parent_provider_standard.c \
 	lib/elementary/efl_ui_focus_parent_provider_gen.c \
+	lib/elementary/efl_ui_focus_util.c \
 	lib/elementary/elm_widget_item_static_focus.c \
 	$(NULL)
 
