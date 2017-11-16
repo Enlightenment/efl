@@ -387,6 +387,8 @@ ecore_shutdown(void)
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
 
+     efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
+
      ecore_system_modules_unload();
 
      eina_log_timing(_ecore_log_dom,
