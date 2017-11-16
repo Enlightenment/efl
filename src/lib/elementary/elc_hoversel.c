@@ -182,19 +182,18 @@ _on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_item_focused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_item_focus_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-}
-
-static void
-_item_unfocused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   Elm_Hoversel_Item_Data *it = data;
-
-   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+     }
+   else
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+     }
 }
 
 static void
@@ -865,8 +864,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_FOCUSED, _item_focused_cb, item);
-    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item);
+    efl_event_callback_add(bt, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 
