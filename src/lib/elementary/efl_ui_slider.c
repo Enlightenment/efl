@@ -1459,6 +1459,29 @@ _efl_ui_slider_part_efl_ui_format_format_string_get(Eo *obj, void *_pd EINA_UNUS
    return sd->indi_template;
 }
 
+EOLIAN static void
+_efl_ui_slider_part_visible_mode_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Ui_Slider_Indicator_Visible_Mode indicator_visible_mode)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+
+   if (!eina_streq(pd->part, "indicator")) return;
+
+   if (sd->indicator_visible_mode == indicator_visible_mode) return;
+
+   sd->indicator_visible_mode = indicator_visible_mode;
+}
+
+EOLIAN static Efl_Ui_Slider_Indicator_Visible_Mode
+_efl_ui_slider_part_visible_mode_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_SLIDER_CLASS);
+
+   if (!eina_streq(pd->part, "indicator")) return EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE;
+   return sd->indicator_visible_mode;
+}
+
 #include "efl_ui_slider_part.eo.c"
 
 /* Efl.Part end */
@@ -1684,20 +1707,16 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func
 EAPI void
 elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag)
 {
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
-
-   if (flag)
-     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS;
-   else
-     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT;
+   efl_ui_slider_part_visible_mode_set(efl_part(obj, "indicator"),
+                                       flag ? ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS
+                                       : ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT);
 }
 
 EAPI Eina_Bool
 elm_slider_indicator_show_on_focus_get(const Evas_Object *obj)
 {
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
-
-   return (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
+   return (efl_ui_slider_part_visible_mode_get(efl_part(obj, "indicator"))
+           == EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
 }
 
 EAPI void
@@ -1737,18 +1756,13 @@ elm_slider_indicator_show_get(const Evas_Object *obj)
 EAPI void
 elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
 {
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
-
-   if (sd->indicator_visible_mode == indicator_visible_mode) return;
-   sd->indicator_visible_mode = indicator_visible_mode;
+   efl_ui_slider_part_visible_mode_set(efl_part(obj, "indicator"), indicator_visible_mode);
 }
 
 EAPI Elm_Slider_Indicator_Visible_Mode
 elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
 {
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE);
-
-   return sd->indicator_visible_mode;
+   return efl_ui_slider_part_visible_mode_get(efl_part(obj, "indicator"));
 }
 
 /* Internal EO APIs and hidden overrides */

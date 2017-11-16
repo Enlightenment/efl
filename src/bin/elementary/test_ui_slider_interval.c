@@ -42,7 +42,8 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
            efl_text_set(efl_added, "Horizontal"),
-           efl_ui_slider_indicator_visible_mode_set(efl_added, EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE),
+           efl_ui_slider_part_visible_mode_set(efl_part(efl_added, "indicator"),
+                                               EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE),
            efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
            efl_ui_format_string_set(efl_part(efl_added, "indicator"), "%1.5f"),
            efl_ui_slider_interval_value_set(efl_added, 0.4, 0.9),
@@ -95,9 +96,22 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            elm_object_disabled_set(efl_added, EINA_TRUE),
            efl_pack(hbx, efl_added));
 
+   efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
+           efl_text_set(efl_added, "Always Show Indicator:"),
+           efl_ui_slider_part_visible_mode_set(efl_part(efl_added, "indicator"),
+                                               EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS),
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_ui_format_string_set(efl_added, "%1.0f units"),
+           efl_ui_format_string_set(efl_part(efl_added, "indicator"), "%1.0f"),
+           efl_ui_range_min_max_set(efl_added, 10, 145),
+           efl_ui_slider_step_set(efl_added, step),
+           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_pack(hbx, efl_added));
+
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
            efl_text_set(efl_added, "Limited (100-500)"),
-           efl_ui_slider_indicator_visible_mode_set(efl_added, EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS),
+           efl_ui_slider_part_visible_mode_set(efl_part(efl_added, "indicator"),
+                                               EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS),
            efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(260, 0)),
            efl_ui_format_string_set(efl_added, "%1.0f units"),
            efl_ui_format_string_set(efl_part(efl_added, "indicator"), "%1.0f"),
