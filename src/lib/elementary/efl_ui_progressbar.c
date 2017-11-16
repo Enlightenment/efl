@@ -4,6 +4,7 @@
 
 #define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_ACCESS_VALUE_PROTECTED
 
 #include <Elementary.h>
 
@@ -550,6 +551,12 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UN
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
    return _progressbar_part_value_get(sd, pd->part);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd, double *value, const char **text EINA_UNUSED)
+{
+   if (value) *value = _pd->val;
 }
 
 #include "efl_ui_progressbar_part.eo.c"
