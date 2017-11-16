@@ -2378,59 +2378,6 @@ elm_widget_parent_highlight_set(Eo *obj, Eina_Bool highlighted)
    sd->highlighted = highlighted;
 }
 
-EOLIAN static void
-_elm_widget_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
-{
-   if (!sd->focused)
-     {
-        focus_order++;
-        sd->focus_order = focus_order;
-        sd->focused = EINA_TRUE;
-        efl_ui_widget_on_focus_update(obj, NULL);
-     }
-
-   if (focus)
-     {
-        if ((_is_focusable(sd->resize_obj)) &&
-            (!elm_widget_disabled_get(sd->resize_obj)))
-          {
-             elm_widget_focus_set(sd->resize_obj, focus);
-          }
-        else
-          {
-             const Eina_List *l;
-             Evas_Object *child;
-
-             EINA_LIST_FOREACH(sd->subobjs, l, child)
-               {
-                  if (!_elm_widget_is(child)) continue;
-                  if ((_is_focusable(child)) &&
-                      (!elm_widget_disabled_get(child)))
-                    {
-                       elm_widget_focus_set(child, focus);
-                       break;
-                    }
-               }
-          }
-     }
-   else
-     {
-        const Eina_List *l;
-        Evas_Object *child;
-
-        EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
-          {
-             if (!_elm_widget_is(child)) continue;
-             if ((_is_focusable(child)) &&
-                 (!elm_widget_disabled_get(child)))
-               {
-                  elm_widget_focus_set(child, focus);
-                  break;
-               }
-          }
-     }
-}
-
 EOLIAN static Evas_Object*
 _elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {

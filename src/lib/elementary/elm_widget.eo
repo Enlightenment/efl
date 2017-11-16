@@ -143,16 +143,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
 
            Focus can be disabled by setting @.focus_allow to $false.
          ]]
-         set {
-            [[Set or unsets the focus on this widget.
-
-              Note: When you set focus to this object, if it can handle focus,
-              will take the focus away from the one who had it previously and
-              will, for now on, be the one receiving input events. Unsetting
-              focus will remove the focus from this object, passing it back to
-              the previous element as defined by the focus manager policy.
-            ]]
-         }
          get {
             [[Gets whether this object is currently focused.]]
          }
