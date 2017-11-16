@@ -57,6 +57,7 @@ $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/eet/libeet.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_con/libecore_con.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/ecore_file/libecore_file.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
