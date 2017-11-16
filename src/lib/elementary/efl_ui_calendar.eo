@@ -16,7 +16,7 @@ enum Efl.Ui.Calendar.Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action, Efl.Ui.Format)
+class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
 {
    [[Calendar widget
 
@@ -110,7 +110,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.At
       Elm.Widget.on_access_update;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Format.format_cb { set; }
    }
    events {

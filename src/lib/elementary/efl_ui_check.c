@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_NSTATE_PROTECTED
 
@@ -382,10 +382,10 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      }
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_efl_ui_check_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_action[] = {
+   static Elm_Access_Action atspi_action[] = {
           { "activate", "activate", NULL, _key_action_activate },
           { NULL, NULL, NULL, NULL }
    };

@@ -62,7 +62,7 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
       Elm.Interface_Scrollable.region_bring_in;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Flipable.flip { get; set; }

@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 
@@ -5600,10 +5600,10 @@ _elm_map_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_map_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Map_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_elm_map_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Map_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,left", "move", "left", _key_action_move},

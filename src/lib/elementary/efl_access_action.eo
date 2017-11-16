@@ -1,4 +1,4 @@
-/* FIXME: This shouldn't be using undefined Elm_Atspi_Action */
+/* FIXME: This shouldn't be using undefined Elm_Access_Action */
 import elm_general;
 
 mixin Efl.Access.Action ()
@@ -47,7 +47,7 @@ mixin Efl.Access.Action ()
          get @pure_virtual {
          }
          values {
-            actions: list<ptr(Elm_Atspi_Action)>; [[Contains statically allocated strings]]
+            actions: list<ptr(Elm_Access_Action)>; [[Contains statically allocated strings]]
          }
       }
       action_do @protected @pure_virtual @beta {

@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -1998,10 +1998,10 @@ _elm_naviframe_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_elm_naviframe_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "top_item_get", "top_item_get", NULL, _key_action_top_item_get },
           { "item_pop", "item_pop", NULL, _key_action_item_pop },
           { NULL, NULL, NULL, NULL }

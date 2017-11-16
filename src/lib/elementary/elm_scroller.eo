@@ -1,5 +1,5 @@
 class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
-                    Elm.Interface.Atspi_Widget_Action,
+                    Efl.Access.Widget.Action,
                     Efl.Ui.Scrollable, Efl.Container)
 {
    [[Elementary scroller class]]
@@ -54,7 +54,7 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
       Elm.Widget.focus_state_apply;
    }

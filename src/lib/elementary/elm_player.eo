@@ -1,4 +1,4 @@
-class Elm.Player (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Player (Efl.Ui.Layout, Efl.Access.Widget.Action)
 {
    [[Elementary player class]]
    legacy_prefix: elm_player;
@@ -9,7 +9,7 @@ class Elm.Player (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
    }
    events {

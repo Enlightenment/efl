@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 
@@ -513,12 +513,12 @@ _elm_combobox_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_combobox_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
+EOLIAN const Elm_Access_Action *
+_elm_combobox_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
                                                                 Elm_Combobox_Data *pd
                                                                 EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
       {"activate", "activate", "return", _key_action_activate},
       {"move,up", "move", "up", _key_action_move},
       {"move,down", "move", "down", _key_action_move},

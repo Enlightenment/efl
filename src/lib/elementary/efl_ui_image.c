@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_IMAGE_PROTECTED
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_CANVAS_LAYOUT_CALC_PROTECTED
 
 #include <Elementary.h>
@@ -1606,10 +1606,10 @@ _efl_ui_image_efl_access_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_U
    elm_image_object_size_get(obj, w, h);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_efl_ui_image_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
         { "activate", "activate", NULL, _key_action_activate },
         { NULL, NULL, NULL, NULL },
    };

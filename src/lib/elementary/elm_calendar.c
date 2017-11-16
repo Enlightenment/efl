@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 
@@ -2009,10 +2009,10 @@ _elm_calendar_class_constructor(Efl_Class *klass)
       _elm_calendar_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_calendar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
+EOLIAN static const Elm_Access_Action*
+_elm_calendar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
           { NULL, NULL, NULL, NULL }
    };

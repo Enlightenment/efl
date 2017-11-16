@@ -135,4 +135,4 @@ enum Elm.Icon.Type
 
 /* FIXME: shouldn't exist */
 struct @extern Elm_Gen_Item;
-struct @extern Elm_Atspi_Action;
+struct @extern Elm_Access_Action;

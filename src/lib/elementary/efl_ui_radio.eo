@@ -1,4 +1,4 @@
-class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action)
 {
    [[Elementary radio class]]
    legacy_prefix: elm_radio;
@@ -66,7 +66,7 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.on_access_activate;
       Elm.Widget.widget_event;
       Efl.Access.state_set { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Nstate.value { set; get; }
    }
    events {

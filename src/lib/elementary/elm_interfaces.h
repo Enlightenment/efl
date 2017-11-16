@@ -1,6 +1,6 @@
 #include "efl_access.h"
 #include "efl_access_text.h"
-#include "elm_interface_atspi_widget_action.h"
+#include "efl_access_widget_action.h"
 #include "efl_access_window.h"
 
 // FIXME FIXME FIXME -- Still required because of photocam

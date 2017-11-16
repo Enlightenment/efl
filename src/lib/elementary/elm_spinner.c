@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -1645,10 +1645,10 @@ _elm_spinner_class_constructor(Efl_Class *klass)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Atspi_Action *
-_elm_spinner_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+EOLIAN static const Elm_Access_Action *
+_elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},
       { NULL, NULL, NULL, NULL }
    };

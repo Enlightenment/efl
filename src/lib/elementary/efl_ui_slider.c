@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -1393,10 +1393,10 @@ _efl_ui_slider_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Slider_Data *sd, void
    efl_canvas_group_change(obj);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_slider_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_efl_ui_slider_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "drag,left", "drag", "left", _key_action_drag},
           { "drag,right", "drag", "right", _key_action_drag},
           { "drag,up", "drag", "up", _key_action_drag},

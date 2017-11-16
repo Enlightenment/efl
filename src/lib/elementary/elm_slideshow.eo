@@ -1,6 +1,6 @@
 type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item class type]]
 
-class Elm.Slideshow (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
 {
    [[Elementary slideshow class]]
    eo_prefix: elm_obj_slideshow;
@@ -305,7 +305,7 @@ class Elm.Slideshow (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       class.constructor;
       Efl.Object.constructor;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       changed; [[Called when slideshow widget changed]]

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -389,10 +389,10 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED,
    return sd->ar_gap_timeout;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate },
           { NULL, NULL, NULL, NULL}
    };

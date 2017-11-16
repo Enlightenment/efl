@@ -11,7 +11,7 @@ enum Elm.Gengrid.Reorder_Type
 }
 
 class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
-                   Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
+                   Efl.Ui.Clickable, Efl.Access.Widget.Action,
                    Efl.Access.Selection)
 {
    [[Elementary gengrid class]]
@@ -560,7 +560,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Elm.Interface_Scrollable.policy { get; set; }
       Efl.Access.children { get; }
       Efl.Access.state_set { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;

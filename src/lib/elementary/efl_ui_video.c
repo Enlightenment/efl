@@ -5,7 +5,7 @@
 #include <Emotion.h>
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 
@@ -367,10 +367,10 @@ _efl_ui_video_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_video_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "play", "play", NULL, _key_action_play},

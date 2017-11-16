@@ -1,17 +1,16 @@
 import elm_general;
 
-mixin Elm.Interface.Atspi_Widget_Action (Efl.Access.Action)
+mixin Efl.Access.Widget.Action (Efl.Access.Action)
 {
-   [[AT-SPI widget action mixin]]
-   eo_prefix: elm_interface_atspi_widget_action;
+   [[Access widget action mixin]]
    data: null;
    methods {
-      @property elm_actions @protected {
-      	 [[Elementary actions]]
+      @property elm_actions @protected @beta {
+         [[Elementary actions]]
          get @pure_virtual {
          }
          values {
-            @cref actions: Elm_Atspi_Action; [[NULL-terminated array of Elm_Atspi_Action]]
+            @cref actions: ptr(const(Elm_Access_Action)); [[NULL-terminated array of Elm_Atspi_Action]]
          }
       }
    }

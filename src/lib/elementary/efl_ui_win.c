@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
@@ -6822,10 +6822,10 @@ _efl_ui_win_efl_access_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_
    return root;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_efl_ui_win_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+EOLIAN static const Elm_Access_Action*
+_efl_ui_win_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "move,previous", "move", "previous", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,left", "move", "left", _key_action_move},

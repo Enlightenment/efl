@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -1504,10 +1504,10 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
    return ret;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_access_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "highlight", NULL, "highlight", _access_atspi_action_do},
           { "unhighlight", NULL, "unhighlight", _access_atspi_action_do},
           { "highlight,next", NULL, "highlight,next", _access_atspi_action_do},

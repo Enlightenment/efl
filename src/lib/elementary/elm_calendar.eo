@@ -72,7 +72,7 @@ struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
                             with @Elm.Calendar.mark_del.
                           ]]
 
-class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action)
+class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action)
 {
    [[Calendar widget
 
@@ -416,7 +416,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
       Elm.Widget.on_access_update;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       changed; [[Emitted when the date in the calendar is changed]]

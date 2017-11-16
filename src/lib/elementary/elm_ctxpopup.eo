@@ -8,7 +8,7 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widget_Action,
+class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action,
                     Efl.Ui.Menu)
 {
    [[Elementary context popup class]]
@@ -212,7 +212,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widge
       Efl.Ui.Menu.first_item { get; }
       Efl.Ui.Menu.last_item { get; }
       Efl.Ui.Menu.items { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }
       Efl.Part.part;
    }

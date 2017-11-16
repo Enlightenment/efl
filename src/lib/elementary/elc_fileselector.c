@@ -10,7 +10,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -3147,10 +3147,10 @@ _elm_fileselector_class_destructor(Efl_Class *klass EINA_UNUSED)
      }
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
+EOLIAN const Elm_Access_Action *
+_elm_fileselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "select", "select", NULL, _key_action_select },
           { "escape", "escape", NULL, _key_action_escape},
           { "backspace", "backspace", NULL, _key_action_backspace},

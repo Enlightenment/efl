@@ -2,7 +2,7 @@ import elm_general;
 
 class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
-                    Elm.Interface.Atspi_Widget_Action)
+                    Efl.Access.Widget.Action)
 {
    [[Elementary hoversel class]]
    legacy_prefix: elm_hoversel;
@@ -100,7 +100,7 @@ class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       dismissed; [[Called when hoversel is dismissed]]

@@ -1,5 +1,5 @@
 class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
-                   Efl.Access.Value, Elm.Interface.Atspi_Widget_Action)
+                   Efl.Access.Value, Efl.Access.Widget.Action)
 {
    [[Elementary spinner class]]
    legacy_prefix: elm_spinner;
@@ -158,7 +158,7 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       changed; [[Called when spinner changed]]

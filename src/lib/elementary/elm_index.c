@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -1693,10 +1693,10 @@ _elm_index_item_efl_access_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_index_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
+EOLIAN static const Elm_Access_Action*
+_elm_index_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Elm_Access_Action atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
           { NULL, NULL, NULL, NULL }
    };
