@@ -55,9 +55,7 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
 static void
 _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
-_text_button_focused_cb(void *data, const Efl_Event *event);
-static void
-_entry_unfocused_cb(void *data, const Efl_Event *event);
+_entry_focus_change(void *data, const Efl_Event *event);
 static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 
@@ -409,7 +407,7 @@ _entry_value_apply(Evas_Object *obj)
    if (!sd->entry_visible) return;
 
    efl_event_callback_del
-    (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+    (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -648,7 +646,7 @@ _toggle_entry(Evas_Object *obj)
           }
 
         efl_event_callback_add
-           (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+           (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
@@ -876,9 +874,10 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_text_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_text_button_focus_change(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
@@ -887,11 +886,11 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
    _toggle_entry(data);
 }
 
-
 static void
-_entry_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_entry_focus_change(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (!efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
@@ -1214,8 +1213,9 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
+
         efl_event_callback_add
-          (priv->text_button, EFL_UI_WIDGET_EVENT_FOCUSED, _text_button_focused_cb, obj);
+          (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);
