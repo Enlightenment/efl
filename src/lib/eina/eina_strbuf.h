@@ -117,7 +117,9 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_M
 /**
  * @brief Creates a new string buffer using the passed string. The passed
  * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
+ * @ref eina_strbuf_string_steal . The passed string is expected to be static or
+ * otherwise on the stack rather than the malloc'd string required by
+ * @ref eina_strbuf_manage_new_length .
  *
  * @param str The string to manage
  * @param length The length of the string.
@@ -127,6 +129,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_M
  * returned. To free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_manage_new()
+ * @see eina_strbuf_manage_new_length()
  * @since 1.9.0
  */
 EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
