@@ -823,6 +823,8 @@ elm_quicklaunch_sub_shutdown(void)
    if (_elm_sub_init_count > 0) return _elm_sub_init_count;
    if (!quicklaunch_on)
      {
+        ecore_shutdown_ex();
+
         _elm_win_shutdown();
         _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
@@ -1198,6 +1200,9 @@ elm_quicklaunch_fork(int    argc,
         ecore_init_ex(argc, argv);
 
         ret = efl_loop_exit_code_process(efl_loop_begin(ecore_main_loop_get()));
+
+        ecore_shutdown_ex();
+
         elm_shutdown();
         exit(ret);
      }
@@ -1206,6 +1211,8 @@ elm_quicklaunch_fork(int    argc,
         ecore_init_ex(argc, argv);
 
         ret = qr_main(argc, argv);
+
+        ecore_shutdown_ex();
         exit(ret);
      }
 
