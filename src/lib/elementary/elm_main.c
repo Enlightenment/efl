@@ -1590,15 +1590,6 @@ elm_object_focus_get(const Evas_Object *obj)
    //no manager means not registered
    if (!m) return EINA_FALSE;
 
-   //first ensure that the manager where we are registered in is in the redirect chain
-   while(m != elm_widget_top_get(obj))
-     {
-        Efl_Ui_Focus_Manager *m_low = efl_ui_focus_user_manager_get(m);
-
-        if (efl_ui_focus_manager_redirect_get(m_low) != m) return EINA_FALSE;
-
-        m = m_low;
-     }
    //assertion: our redirect manager m is in the redirect chain
    m = efl_ui_focus_user_manager_get(obj);
 
