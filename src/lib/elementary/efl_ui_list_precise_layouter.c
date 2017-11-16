@@ -440,7 +440,6 @@ _calc_size_job(void *data)
    pd->calc_job = NULL;
 
    evas_object_smart_changed(pd->modeler);
-   //_efl_ui_list_relayout_layout_do(pd);
 }
 
 EOLIAN static Efl_Object *
@@ -492,7 +491,6 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
    int i, j = 0;
 
    _calc_range(pd);
-//   _relayout_calc(pd);
 
    int boxx, boxy, boxw, boxh, extra = 0, rounding = 0;
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
@@ -542,13 +540,10 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
                  layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
                  double x, y, w, h;
                  double weight_x, weight_y;
-//                 double align[2];
-//                 int item_pad[4];
-//                 Eina_Size2D max;
 
                  if(layout_item->min.w && layout_item->min.h)
                    {
-//        DBG("size information for item %d width %d height %d", j, layout_item->min.w, layout_item->min.h);
+//                      DBG("size information for item %d width %d height %d", j, layout_item->min.w, layout_item->min.h);
                       if(!layout_item->layout)
                         {
                            DBG("realizing showing item\n");
@@ -565,7 +560,7 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
                         rounding = 1;
 
                       x = layout_item->pos.x;
-                      y = layout_item->pos.x + cur_pos;
+                      y = layout_item->pos.y + cur_pos;
                       w = layout_item->size.w;
                       h = layout_item->size.h + rounding + weight_y * extra;
                       cur_pos += h;
@@ -573,9 +568,9 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
                       if (w < pd->min.w) w = pd->min.w;
                       if (w > ow) w = ow;
 
-                      //        DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
+                      //DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
                       evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
-                      } /* if (size) end */
+                   } /* if (size) end */
               }
          }
        else if (nodedata->realized) // unrealize

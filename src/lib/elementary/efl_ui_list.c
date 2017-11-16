@@ -1479,6 +1479,7 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
 //   elm_widget_sub_object_add(obj, item->layout);
+    evas_object_smart_member_add(item->layout, pd->pan_obj);
 //   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
    efl_ui_view_model_set(item->layout, item->children);
 
