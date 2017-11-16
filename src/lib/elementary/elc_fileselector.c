@@ -1518,19 +1518,19 @@ _anchors_undo(void *data)
 }
 
 static void
-_on_text_focused(void *data, const Efl_Event *event EINA_UNUSED)
+_on_text_focus_changed(void *data, const Efl_Event *event)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (!sd->path_entry_idler)
-       sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
-}
-
-static void
-_on_text_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   ELM_FILESELECTOR_DATA_GET(data, sd);
-   _anchors_do(data, sd->path);
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        if (!sd->path_entry_idler)
+          sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
+     }
+   else
+     {
+        _anchors_do(data, sd->path);
+     }
 }
 
 static void
@@ -1971,9 +1971,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
    efl_event_callback_add
-     (en, EFL_UI_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
-   efl_event_callback_add
-     (en, EFL_UI_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
+   (en, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _on_text_focus_changed, obj);
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
 
