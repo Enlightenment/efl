@@ -1621,59 +1621,6 @@ elm_object_focus_get(const Evas_Object *obj)
    return elm_widget_focus_get(obj);
 }
 
-static void _elm_widget_focus(Evas_Object *obj);
-
-static void
-_manager_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   _elm_widget_focus(data);
-}
-
-static void
-_elm_widget_focus(Evas_Object *obj)
-{
-   Efl_Ui_Focus_Manager *m, *m2 = obj;
-   Efl_Ui_Focus_Object *o;
-
-   m = elm_widget_top_get(obj);
-   m2 = efl_ui_focus_user_manager_get(obj);
-
-   o = efl_key_data_get(m, "__delayed_focus_set");
-   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-   efl_key_data_set(m, "__delayed_focus_set", NULL);
-
-   if (!m2)
-     {
-        efl_key_data_set(m, "__delayed_focus_set", obj);
-        efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-        return;
-     }
-
-   //build the chain of redirects
-   do
-     {
-       Efl_Ui_Focus_Manager *new_manager;;
-       new_manager = efl_ui_focus_user_manager_get(m2);
-
-       /* also delay the registeration if we miss a manager half way */
-       if (!new_manager && m2 != elm_widget_top_get(obj))
-         {
-            efl_key_data_set(m, "__delayed_focus_set", obj);
-            efl_event_callback_add(m2, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-            return;
-         }
-
-       //new manager is in a higher hirarchy than m2
-       //so we set m2 as redirect in new_manager
-       efl_ui_focus_manager_redirect_set(new_manager, m2);
-       m2 = new_manager;
-     }
-   while(m && m2 && m != m2);
-
-   //now set the focus
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), obj);
-}
-
 EAPI void
 elm_object_focus_set(Evas_Object *obj,
                      Eina_Bool    focus)
@@ -1693,7 +1640,7 @@ elm_object_focus_set(Evas_Object *obj,
    else if (elm_widget_is(obj))
      {
         if (focus)
-          _elm_widget_focus(obj);
+          efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
         else
           {
              if (efl_ui_focus_manager_focus_get(efl_ui_focus_user_manager_get(obj)) == obj)
