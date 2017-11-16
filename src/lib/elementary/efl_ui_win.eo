@@ -476,9 +476,16 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
             borderless: bool; [[If $true, the window is borderless.]]
          }
       }
-      @property role {
+      @property win_role {
+         /* FIXME: Do we actually need this? There is only support in X. */
+         [[The role of the window.
+
+           It is a hint of how the Window Manager should handle it. Unlike
+           @.win_type and @.win_name this can be changed at runtime.
+         ]]
          set {
             [[Set the role of the window.]]
+            legacy: elm_win_role_set;
          }
          get {
             [[Get the role of the window.
@@ -487,46 +494,51 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
               freed or modified. It will also be invalid if a new role
               is set or if the window is destroyed.
             ]]
+            legacy: elm_win_role_get;
          }
          values {
             role: string; [[The role to set.]]
          }
       }
-      @property name {
+      @property win_name {
          [[The window name.
 
            The meaning of name depends on the underlying windowing system.
 
-           The window name is a constructing property that need to be set at
-           creation within \@ref eo_add.
+           The window name is a construction property that can only be set at
+           creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it can NOT be modified afterward.
          ]]
          set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
+            [[Name can on be set before finalize.]]
             legacy: null;
          }
-         get { [[ @since 1.18 ]] }
+         get {
+            [[ @since 1.18 ]]
+            legacy: elm_win_name_get;
+         }
          values {
             name: string @nullable; [[Window name]]
          }
       }
-      @property type {
+      @property win_type {
          [[The type of the window.
 
            It is a hint of how the Window Manager should handle it.
 
-           The window type is a constructing property that need to be set at
-           creation within \@ref eo_add.
+           The window type is a construction property that can only be set at
+           creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it can NOT be modified afterward.
          ]]
          set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
+            [[Type can on be set before finalize.]]
             legacy: null;
          }
          get {
-            [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
+            [[If the object is not window object, returns $unknown.]]
+            legacy: elm_win_type_get;
          }
          values {
             type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown); [[Window type]]
@@ -840,8 +852,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Efl.Object.provider_find;
    }
    constructors {
-      .name;
-      .type;
+      .win_name;
+      .win_type;
       .accel_preference;
    }
    events {

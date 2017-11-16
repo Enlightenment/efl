@@ -21,8 +21,8 @@ elm_main(int argc, char* argv[])
       [&]
       {
         win_1.text_set("Toolbar");
-        win_1.name_set("toolbar");
-        win_1.type_set(EFL_UI_WIN_BASIC);
+        win_1.win_name_set("toolbar");
+        win_1.win_type_set(EFL_UI_WIN_BASIC);
       });
 
 #if 0

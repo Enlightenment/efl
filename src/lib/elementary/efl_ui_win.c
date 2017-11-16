@@ -4657,7 +4657,7 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
 }
 
 static Eo *
-_elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Elm_Win_Type type)
+_elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_Ui_Win_Type type)
 {
    Evas_Object *parent = NULL;
    Evas *e;
@@ -5437,7 +5437,7 @@ _efl_ui_win_efl_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Win_Type type)
+_efl_ui_win_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Type type)
 {
    if (efl_finalized_get(obj))
      {
@@ -5448,13 +5448,13 @@ _efl_ui_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Win_Type type)
 }
 
 EOLIAN static Efl_Ui_Win_Type
-_efl_ui_win_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->type;
 }
 
 EOLIAN static void
-_efl_ui_win_name_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *name)
+_efl_ui_win_win_name_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *name)
 {
    if (efl_finalized_get(obj))
      {
@@ -5465,7 +5465,7 @@ _efl_ui_win_name_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *name)
 }
 
 EOLIAN static const char *
-_efl_ui_win_name_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_name_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->name;
 }
@@ -5503,7 +5503,7 @@ _efl_ui_win_noblank_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *role)
+_efl_ui_win_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *role)
 {
    if (!role) return;
    eina_stringshare_replace(&(sd->role), role);
@@ -5513,7 +5513,7 @@ _efl_ui_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *role)
 }
 
 EOLIAN static const char*
-_efl_ui_win_role_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_win_role_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->role;
 }
@@ -8127,7 +8127,7 @@ _fake_canvas_set(Evas_Object *obj, Ecore_Evas *oee)
 }
 
 EAPI Evas_Object *
-elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
+elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
 {
    const Efl_Class *klass = MY_CLASS;
 
