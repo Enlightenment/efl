@@ -607,7 +607,7 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
 
    dp = zwp_linux_dmabuf_v1_create_params(ewd->wl.dmabuf);
    zwp_linux_buffer_params_v1_add(dp, buf->fd, 0, 0, buf->stride, 0, 0);
-   zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, buf);
+   zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, ewd);
    zwp_linux_buffer_params_v1_create(dp, buf->w, buf->h,
                                      DRM_FORMAT_ARGB8888, 0);
    ecore_wl2_display_flush(ewd);
