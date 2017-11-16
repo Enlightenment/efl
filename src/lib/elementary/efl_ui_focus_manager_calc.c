@@ -81,6 +81,8 @@ static void
 _manager_in_chain_set(Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN(pd->root);
+   if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
+     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable));
    efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(pd->root->focusable), pd->root->focusable);
 }
 
