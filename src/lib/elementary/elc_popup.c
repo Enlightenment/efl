@@ -894,19 +894,18 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
 }
 
 static void
-_item_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_item_focus_change(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-}
-
-static void
-_item_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Elm_Popup_Item_Data *it = data;
-
-   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+     }
+   else
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+     }
 }
 
 EOLIAN static Eo *
@@ -937,9 +936,7 @@ _item_new(Elm_Popup_Item_Data *it)
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
         efl_event_callback_add
-              (VIEW(it), EFL_UI_WIDGET_EVENT_FOCUSED, _item_focused_cb, it);
-        efl_event_callback_add
-              (VIEW(it), EFL_UI_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, it);
+              (VIEW(it), EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_change, it);
         evas_object_show(VIEW(it));
      }
 }
