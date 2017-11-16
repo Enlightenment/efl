@@ -329,4 +329,25 @@ EAPI void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
  */
 EAPI Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
 
+/**
+ * @brief Set/Get the visible mode of indicator.
+ *
+ * @param[in] obj The object.
+ * @param[in] indicator_visible_mode The indicator visible mode.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode);
+
+/**
+ * @brief Set/Get the visible mode of indicator.
+ *
+ * @param[in] obj The object.
+ *
+ * @return The indicator visible mode.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(const Evas_Object *obj);
+
 #include "efl_ui_slider.eo.legacy.h"

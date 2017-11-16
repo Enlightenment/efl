@@ -1246,19 +1246,6 @@ _efl_ui_slider_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
    return sd->step;
 }
 
-EOLIAN static void
-_efl_ui_slider_indicator_visible_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
-{
-   if (sd->indicator_visible_mode == indicator_visible_mode) return;
-   sd->indicator_visible_mode = indicator_visible_mode;
-}
-
-EOLIAN static Elm_Slider_Indicator_Visible_Mode
-_efl_ui_slider_indicator_visible_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->indicator_visible_mode;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_slider_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
@@ -1746,6 +1733,24 @@ elm_slider_indicator_show_get(const Evas_Object *obj)
    EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
    return sd->indicator_show;
 }
+
+EAPI void
+elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->indicator_visible_mode == indicator_visible_mode) return;
+   sd->indicator_visible_mode = indicator_visible_mode;
+}
+
+EAPI Elm_Slider_Indicator_Visible_Mode
+elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE);
+
+   return sd->indicator_visible_mode;
+}
+
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)

@@ -30,13 +30,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
             step: double; [[The step value.]]
          }
       }
-      @property indicator_visible_mode {
-         [[Set/Get the visible mode of indicator.
-         ]]
-         values {
-            indicator_visible_mode: Efl.Ui.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
-         }
-      }
    }
    parts {
       indicator: Efl.Ui.Slider.Part; [[A floating indicator above the slider.]]
