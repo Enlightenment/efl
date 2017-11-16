@@ -1230,37 +1230,6 @@ _efl_ui_slider_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_D
 }
 
 EOLIAN static void
-_efl_ui_slider_indicator_show_set(Eo *obj, Efl_Ui_Slider_Data *sd, Eina_Bool show)
-{
-   if (show)
-     {
-        sd->indicator_show = EINA_TRUE;
-        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
-     }
-   else
-     {
-        sd->indicator_show = EINA_FALSE;
-        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
-        if (sd->popup)
-          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
-        if (sd->popup2)
-          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
-     }
-
-   evas_object_smart_changed(obj);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_slider_indicator_show_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return sd->indicator_show;
-}
-
-EOLIAN static void
 _efl_ui_slider_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double step)
 {
    if (sd->step == step) return;
@@ -1275,21 +1244,6 @@ EOLIAN static double
 _efl_ui_slider_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 {
    return sd->step;
-}
-
-EOLIAN static void
-_efl_ui_slider_indicator_show_on_focus_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, Eina_Bool flag)
-{
-   if (flag)
-     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS;
-   else
-     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
-{
-   return (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
 }
 
 EOLIAN static void
@@ -1740,6 +1694,58 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func
                         _format_legacy_to_format_eo_free_cb);
 }
 
+EAPI void
+elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
+
+   if (flag)
+     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS;
+   else
+     sd->indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT;
+}
+
+EAPI Eina_Bool
+elm_slider_indicator_show_on_focus_get(const Evas_Object *obj)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+
+   return (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
+}
+
+EAPI void
+elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd);
+
+   if (show)
+     {
+        sd->indicator_show = EINA_TRUE;
+        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,show", "elm");
+     }
+   else
+     {
+        sd->indicator_show = EINA_FALSE;
+        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+        if (sd->popup2)
+          edje_object_signal_emit(sd->popup2, "elm,state,val,hide", "elm");
+     }
+
+   evas_object_smart_changed(obj);
+}
+
+EAPI Eina_Bool
+elm_slider_indicator_show_get(const Evas_Object *obj)
+{
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd, EINA_FALSE);
+   return sd->indicator_show;
+}
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_slider)

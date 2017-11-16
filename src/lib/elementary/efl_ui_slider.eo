@@ -8,33 +8,6 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
    methods {
-      @property indicator_show {
-         set {
-            [[Set whether to enlarge slider indicator (augmented knob) or not.
-
-              By default, indicator will be bigger while dragged by the user.
-
-            ]]
-         }
-         get {
-            [[Get whether a given slider widget's enlarging indicator or not.]]
-         }
-         values {
-            show: bool; [[$true will make it enlarge, $false will
-                          let the knob always at default size.]]
-         }
-      }
-      @property indicator_show_on_focus {
-         set {
-            [[Show the indicator of slider on focus.]]
-         }
-         get {
-            [[Get whether the indicator of the slider is set or not.]]
-         }
-         values {
-            flag: bool; [[$true if indicator is shown on focus, $false otherwise]]
-         }
-      }
       @property step {
          set {
             [[Set the step by which slider indicator will move.

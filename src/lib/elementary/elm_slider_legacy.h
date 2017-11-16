@@ -283,4 +283,50 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
  */
 EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
 
+/**
+ * @brief Show the indicator of slider on focus.
+ *
+ * @param[in] obj The object.
+ * @param[in] flag @c true if indicator is shown on focus, @c false otherwise
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag);
+
+/**
+ * @brief Get whether the indicator of the slider is set or not.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if indicator is shown on focus, @c false otherwise
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Eina_Bool elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);
+
+/**
+ * @brief Set whether to enlarge slider indicator (augmented knob) or not.
+ *
+ * By default, indicator will be bigger while dragged by the user.
+ *
+ * @param[in] obj The object.
+ * @param[in] show @c true will make it enlarge, @c false will let the knob
+ * always at default size.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
+
+/**
+ * @brief Get whether a given slider widget's enlarging indicator or not.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true will make it enlarge, @c false will let the knob always at
+ * default size.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
+
 #include "efl_ui_slider.eo.legacy.h"
