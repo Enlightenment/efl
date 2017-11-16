@@ -3,7 +3,7 @@
 
 #ifdef EFL_BETA_API_SUPPORT
 
-struct _Elm_Access_Action
+struct _Efl_Access_Action_Data
 {
    const char *name;
    const char *action;
@@ -11,7 +11,7 @@ struct _Elm_Access_Action
    Eina_Bool (*func)(Evas_Object *obj, const char *params);
 };
 
-typedef struct _Elm_Access_Action Elm_Access_Action;
+typedef struct _Efl_Access_Action_Data Efl_Access_Action_Data;
 
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_access_widget_action.eo.h"

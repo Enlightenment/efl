@@ -1693,10 +1693,10 @@ _elm_index_item_efl_access_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_index_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
           { NULL, NULL, NULL, NULL }
    };

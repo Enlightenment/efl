@@ -1606,10 +1606,10 @@ _efl_ui_image_efl_access_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_U
    elm_image_object_size_get(obj, w, h);
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _efl_ui_image_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
         { "activate", "activate", NULL, _key_action_activate },
         { NULL, NULL, NULL, NULL },
    };

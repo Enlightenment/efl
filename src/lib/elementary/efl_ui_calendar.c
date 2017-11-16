@@ -1252,10 +1252,10 @@ _efl_ui_calendar_class_constructor(Efl_Class *klass)
       _efl_ui_calendar_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _efl_ui_calendar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
           { NULL, NULL, NULL, NULL }
    };

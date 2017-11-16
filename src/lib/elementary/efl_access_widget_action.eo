@@ -6,11 +6,13 @@ mixin Efl.Access.Widget.Action (Efl.Access.Action)
    data: null;
    methods {
       @property elm_actions @protected @beta {
+         /* C-only, internal API */
          [[Elementary actions]]
          get @pure_virtual {
          }
          values {
-            @cref actions: ptr(const(Elm_Access_Action)); [[NULL-terminated array of Elm_Atspi_Action]]
+            @cref actions: ptr(const(Efl.Access.Action_Data));
+               [[NULL-terminated array of Efl.Access.Action_Data.]]
          }
       }
    }

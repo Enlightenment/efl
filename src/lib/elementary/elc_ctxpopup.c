@@ -1554,10 +1554,10 @@ _elm_ctxpopup_item_init(Eo *eo_item,
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_ctxpopup_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "escape", "escape", NULL, _key_action_escape},
           { NULL, NULL, NULL, NULL }
    };

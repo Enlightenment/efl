@@ -1645,10 +1645,10 @@ _elm_spinner_class_constructor(Efl_Class *klass)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Access_Action *
+EOLIAN static const Efl_Access_Action_Data *
 _elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},
       { NULL, NULL, NULL, NULL }
    };

@@ -6822,10 +6822,10 @@ _efl_ui_win_efl_access_parent_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_
    return root;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _efl_ui_win_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,previous", "move", "previous", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,left", "move", "left", _key_action_move},

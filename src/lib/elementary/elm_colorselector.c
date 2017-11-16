@@ -2587,10 +2587,10 @@ _elm_colorselector_class_constructor(Efl_Class *klass)
       _elm_colorselector_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_colorselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "move,up", "move", "up", _key_action_move},
@@ -2667,10 +2667,10 @@ _elm_color_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
    return EINA_FALSE;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_color_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
           { NULL, NULL, NULL, NULL }
    };

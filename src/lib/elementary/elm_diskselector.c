@@ -1766,10 +1766,10 @@ _elm_diskselector_class_constructor(Efl_Class *klass)
       _elm_diskselector_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_diskselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,previous", "move", "prev", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,first", "move", "first", _key_action_move},

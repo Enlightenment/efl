@@ -2120,10 +2120,10 @@ _key_action_longpress(Eo *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _elm_multibuttonentry_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Item_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", NULL, NULL, _key_action_activate },
           { "delete", NULL, NULL, _key_action_delete},
           { "longpress", NULL, NULL, _key_action_longpress},

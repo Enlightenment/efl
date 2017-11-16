@@ -1410,10 +1410,10 @@ _elm_panel_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _elm_panel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},
           { NULL, NULL, NULL, NULL }
    };

@@ -1504,10 +1504,10 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
    return ret;
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "highlight", NULL, "highlight", _access_atspi_action_do},
           { "unhighlight", NULL, "unhighlight", _access_atspi_action_do},
           { "highlight,next", NULL, "highlight,next", _access_atspi_action_do},

@@ -382,10 +382,10 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      }
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _efl_ui_check_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_action[] = {
+   static Efl_Access_Action_Data atspi_action[] = {
           { "activate", "activate", NULL, _key_action_activate },
           { NULL, NULL, NULL, NULL }
    };

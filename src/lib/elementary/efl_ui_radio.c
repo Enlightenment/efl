@@ -341,10 +341,10 @@ _efl_ui_radio_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _efl_ui_radio_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
           { NULL, NULL, NULL, NULL }
    };

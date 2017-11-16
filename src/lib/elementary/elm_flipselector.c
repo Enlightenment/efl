@@ -887,10 +887,10 @@ _elm_flipselector_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _elm_flipselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "flip,up", "flip", "up", _key_action_flip},
           { "flip,down", "flip", "down", _key_action_flip},
           { NULL, NULL, NULL, NULL}

@@ -694,10 +694,10 @@ _elm_slideshow_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN static const Elm_Access_Action*
+EOLIAN static const Efl_Access_Action_Data*
 _elm_slideshow_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "pause", "pause", NULL, _key_action_pause},

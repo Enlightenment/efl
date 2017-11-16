@@ -15,7 +15,7 @@ extern Eina_Hash *_elm_key_bindings;
 EOLIAN static Eina_Bool
 _efl_access_widget_action_efl_access_action_action_do(Eo *obj, void *pd EINA_UNUSED, int id)
 {
-   const Elm_Access_Action *actions = NULL;
+   const Efl_Access_Action_Data *actions = NULL;
    const char *param;
    Eina_Bool (*func)(Eo *eo, const char *params) = NULL;
    int tmp = 0;
@@ -43,7 +43,7 @@ _efl_access_widget_action_efl_access_action_action_do(Eo *obj, void *pd EINA_UNU
 EOLIAN static char*
 _efl_access_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void *pd EINA_UNUSED, int id)
 {
-   const Elm_Access_Action *actions = NULL;
+   const Efl_Access_Action_Data *actions = NULL;
    Eina_List *l1, *binding_list;
    const char *action = NULL, *param = NULL;
    Elm_Config_Binding_Key *binding;
@@ -96,7 +96,7 @@ _efl_access_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void 
 EOLIAN static const char *
 _efl_access_widget_action_efl_access_action_action_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
 {
-   const Elm_Access_Action *actions = NULL;
+   const Efl_Access_Action_Data *actions = NULL;
    int tmp = 0;
 
    actions = efl_access_widget_action_elm_actions_get(obj);
@@ -125,7 +125,7 @@ _efl_access_widget_action_efl_access_action_action_description_get(Eo *obj EINA_
 EOLIAN static Eina_List*
 _efl_access_widget_action_efl_access_action_actions_get(Eo *obj, void *pd EINA_UNUSED)
 {
-   const Elm_Access_Action *actions = NULL;
+   const Efl_Access_Action_Data *actions = NULL;
    Eina_List *ret = NULL;
    int tmp = 0;
 

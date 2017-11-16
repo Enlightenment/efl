@@ -1393,10 +1393,10 @@ _efl_ui_slider_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Slider_Data *sd, void
    efl_canvas_group_change(obj);
 }
 
-EOLIAN const Elm_Access_Action *
+EOLIAN const Efl_Access_Action_Data *
 _efl_ui_slider_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
-   static Elm_Access_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "drag,left", "drag", "left", _key_action_drag},
           { "drag,right", "drag", "right", _key_action_drag},
           { "drag,up", "drag", "up", _key_action_drag},
