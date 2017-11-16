@@ -1691,12 +1691,20 @@ _elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Dat
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd)
 {
-   const char *name;
+   const char *name, *ret;
    name = efl_access_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
-   const char *ret = elm_layout_text_get(obj, "elm.text");
+   if (sd->button_layout)
+     {
+        if (sd->entry_visible)
+          ret = elm_object_text_get(sd->ent);
+        else
+          ret = elm_object_text_get(sd->text_button);
+     }
+   else
+     ret = elm_layout_text_get(obj, "elm.text");
    return ret;
 }
 
