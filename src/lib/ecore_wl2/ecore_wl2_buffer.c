@@ -453,7 +453,7 @@ _buffer_manager_deref(void)
    if (buffer_manager->manager_destroy) buffer_manager->manager_destroy();
    free(buffer_manager);
    buffer_manager = NULL;
-   close(drm_fd);
+   if (drm_fd >=0) close(drm_fd);
 }
 
 /* Currently no callers, but that will change...
