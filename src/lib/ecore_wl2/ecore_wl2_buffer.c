@@ -456,7 +456,6 @@ _buffer_manager_deref(void)
    if (drm_fd >=0) close(drm_fd);
 }
 
-/* Currently no callers, but that will change...
 static void
 _buffer_manager_destroy(void)
 {
@@ -464,7 +463,6 @@ _buffer_manager_destroy(void)
    buffer_manager->destroyed = EINA_TRUE;
    _buffer_manager_deref();
 }
-*/
 
 static Buffer_Handle *
 _buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int32_t *fd)
@@ -585,6 +583,8 @@ _create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
    Ecore_Wl2_Display *ewd = data;
 
    zwp_linux_buffer_params_v1_destroy(params);
+   _buffer_manager_deref();
+   _buffer_manager_destroy();
    ewd->wl.dmabuf = NULL;
 }
 
@@ -614,5 +614,6 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
 
   return;
 fail:
+  _buffer_manager_destroy();
   ewd->wl.dmabuf = NULL;
 }
