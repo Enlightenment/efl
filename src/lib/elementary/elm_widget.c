@@ -3287,46 +3287,7 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
 
    if (pd->focus.manager && !pd->focus.logical)
      {
-        Efl_Ui_Focus_Manager *m, *m2 = obj, *old = NULL;
-
-        /*
-         * The object we have clicked could be registered in a submanager.
-         * This means we need to look as long as possible to higher redirect managers.
-         * And set them to the redirect manager.
-         */
-
-        m = elm_widget_top_get(obj);
-        m2 = efl_ui_focus_user_manager_get(obj);
-
-        if (m2 != m)
-          {
-            //first unset all redirect properties
-            old = m;
-            do
-              {
-                 Efl_Ui_Focus_Manager *tmp;
-                 tmp = efl_ui_focus_manager_redirect_get(old);
-                 if (tmp)
-                   efl_ui_focus_manager_redirect_set(old, NULL);
-                 old = tmp;
-              }
-            while(old);
-            //now set the redirect path to the new object
-            do
-              {
-                Efl_Ui_Focus_Manager *new_manager;;
-
-                new_manager = efl_ui_focus_user_manager_get(m2);
-                //new manager is in a higher hirarchy than m2
-                //so we set m2 as redirect in new_manager
-                efl_ui_focus_manager_redirect_set(new_manager, m2);
-                m2 = new_manager;
-              }
-            while(m && m2 && m != m2);
-          }
-
-
-        efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), obj);
+        efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
      }
 }
 
