@@ -512,7 +512,8 @@ _elm_win_state_eval(void *data EINA_UNUSED)
                          }
                     }
 
-                  efl_event_callback_call(obj, EFL_UI_WIN_EVENT_PAUSE, NULL);
+                  if (elm_win_iconified_get(obj))
+                    efl_event_callback_call(obj, EFL_UI_WIN_EVENT_PAUSE, NULL);
                   continue;
                }
           }
