@@ -2661,9 +2661,10 @@ _elm_widget_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->scale;
 }
 
-EOLIAN static void
-_elm_widget_theme_set(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Theme *th)
+EAPI void
+elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
    Eina_Bool apply = EINA_FALSE;
    if (sd->theme != th)
      {
@@ -2673,13 +2674,6 @@ _elm_widget_theme_set(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Theme *th)
         if (th) th->ref++;
         if (apply) elm_widget_theme(obj);
      }
-}
-
-/* beta in eo */
-EAPI void
-elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
-{
-   efl_ui_widget_theme_set(obj, th);
 }
 
 EAPI void
@@ -2883,9 +2877,11 @@ _elm_widget_access_info_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
    return sd->access_info;
 }
 
-EOLIAN static Elm_Theme*
-_elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+EAPI Elm_Theme *
+elm_widget_theme_get(const Evas_Object *obj)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd, NULL);
+
    if (!sd->theme)
      {
         if (sd->parent_obj && elm_widget_is(sd->parent_obj))
@@ -2893,13 +2889,6 @@ _elm_widget_theme_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
         else return NULL;
      }
    return sd->theme;
-}
-
-/* beta in eo */
-EAPI Elm_Theme *
-elm_widget_theme_get(const Evas_Object *obj)
-{
-   return efl_ui_widget_theme_get(obj);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
@@ -3013,9 +3002,11 @@ elm_widget_scroll_child_locked_y_get(const Eo *obj)
    return sd->child_drag_y_locked;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
-_elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
+EAPI Efl_Ui_Theme_Apply
+elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd, EFL_UI_THEME_APPLY_FAILED);
+
    if (eina_streq(welement, "base"))
      welement = NULL;
    if (eina_streq(wstyle, "default"))
@@ -3034,13 +3025,6 @@ _elm_widget_theme_object_set(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *ed
      }
 
    return ret;
-}
-
-/* beta in eo */
-EAPI Efl_Ui_Theme_Apply
-elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
-{
-   return efl_ui_widget_theme_object_set(obj, edj, wname, welement, wstyle);
 }
 
 static void
@@ -3702,7 +3686,7 @@ elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *
      }
    else
      {
-        ret = efl_ui_widget_theme_object_set(obj, component,
+        ret = elm_widget_theme_object_set(obj, component,
                                    elm_widget_theme_klass_get(obj),
                                    (const char *)group,
                                    elm_widget_theme_style_get(obj));
