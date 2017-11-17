@@ -529,10 +529,11 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
            continue;
          }
 
-       if(scr_y < cur_pos + nodedata->min.h + boxh
-          && scr_y + boxh + boxh > cur_pos) // start in this node
+//       if(scr_y < cur_pos + nodedata->min.h + boxh
+//          && scr_y + boxh + boxh > cur_pos) // start in this node
+         if (nodedata->realized)
          {
-            DBG("cur_pos: %d\n", (int)cur_pos);
+            //DBG("cur_pos: %d\n", (int)cur_pos);
 
             for(j = 0; j != items_node->length && scr_y + boxh + boxh > cur_pos;++j)
               {
