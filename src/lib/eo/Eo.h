@@ -1740,6 +1740,8 @@ EOAPI void efl_wref_add(Eo *obj, Efl_Object **wref);
 /**
  * @brief Delete the weak reference passed.
  *
+ * This function will set *wref to NULL after its execution.
+ *
  * @param[in] wref The weak ref
  */
 EOAPI void efl_wref_del(Eo *obj, Efl_Object **wref);
