@@ -62,6 +62,7 @@ ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
 
 EXTRA_DIST2 += $(ectoreolianfiles_DATA) \
+static_libs/scenegraph/Scenegraph.h \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
 lib/ector/ector_surface.h \
@@ -187,6 +188,36 @@ lib_ector_libector_la_DEPENDENCIES = @ECTOR_INTERNAL_LIBS@
 lib_ector_libector_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Unit tests
+
+# for scenegraph static lib
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/scenegraph/suite/scenegraph_suite
+TESTS += tests/scenegraph/suite/scenegraph_suite
+
+tests_scenegraph_suite_scenegraph_suite_SOURCES = \
+tests/scenegraph/suite/scenegraph_suite.c \
+tests/scenegraph/suite/scenegraph_suite.h \
+tests/scenegraph/suite/scenegraph_test_nodes.c \
+$(scenegraph_sources)
+
+
+tests_scenegraph_suite_scenegraph_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/static_libs/scenegraph \
+-I$(top_srcdir)/src/tests/scenegraph \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/scenegraph/suite\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/scenegraph/suite\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@ECTOR_CFLAGS@
+tests_scenegraph_suite_scenegraph_suite_LDADD = @CHECK_LIBS@ @USE_ECTOR_LIBS@
+tests_scenegraph_suite_scenegraph_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+endif
+
+# for ector library
 
 if EFL_ENABLE_TESTS
 
