@@ -1495,7 +1495,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                   if (new_candidate)
                     efl_ui_focus_manager_focus_set(obj, new_candidate);
 
-                  if (direction == ELM_FOCUS_PREVIOUS)
+                  //for the case that this caused a redirect to be set AND we had a candidate, make sure we setup the other direction correctly
+                  if (direction == ELM_FOCUS_PREVIOUS && new_candidate)
                     _followup_previous_direction(obj);
 
                   candidate = new_candidate;
@@ -1529,7 +1530,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         if (candidate)
           {
              efl_ui_focus_manager_focus_set(obj, candidate);
-             if (direction == ELM_FOCUS_PREVIOUS)
+             if (direction == ELM_FOCUS_PREVIOUS && candidate)
                _followup_previous_direction(obj);
           }
      }
