@@ -600,7 +600,7 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
    struct zwp_linux_buffer_params_v1 *dp;
    Ecore_Wl2_Buffer *buf;
 
-   if (!ecore_wl2_buffer_init(ewd, ECORE_WL2_BUFFER_DMABUF)) goto fail;
+   if (!ecore_wl2_buffer_init(ewd, ECORE_WL2_BUFFER_DMABUF)) return;
 
    buf = _ecore_wl2_buffer_partial_create(1, 1, EINA_TRUE);
    if (!buf) goto fail;
