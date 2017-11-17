@@ -218,26 +218,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
          }
       }
 
-      /* Theme API: Not bound to EO */
-      @property theme @beta {
-         [[Widget theme]]
-         values {
-            th: ptr(Elm.Theme) @nullable; [[Elementary theme]]
-         }
-      }
-      @property theme_object @beta {
-         [[Theme object property]]
-         set {
-            return: Efl.Ui.Theme.Apply; [[Theme apply]]
-         }
-         values {
-            edj: Efl.Canvas.Object; [[Edje object]]
-            wname: string; [[Widget name]]
-            welement: string; [[Widget element]]
-            wstyle: string; [[Widget style]]
-         }
-      }
-
       /* Accessibility */
       @property access_info {
          [[Accessibility information.

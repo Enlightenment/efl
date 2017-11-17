@@ -1002,7 +1002,7 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "calendar");
-   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
                                        elm_widget_theme_style_get(obj)))

@@ -295,7 +295,7 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
                                        elm_widget_theme_style_get(obj)))

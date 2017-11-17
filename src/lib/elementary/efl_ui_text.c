@@ -3011,7 +3011,7 @@ _efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
-   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        _efl_ui_text_theme_group_get(obj),
                                        elm_widget_theme_style_get(obj)))
