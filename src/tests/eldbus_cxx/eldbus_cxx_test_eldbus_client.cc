@@ -11,9 +11,9 @@
 
 #include "eldbus_cxx_suite.h"
 
-const char g_bus[] = "org.Enlightenment";
+const char g_bus[] = "org.Enlightenment.TestCxx";
 const char g_path[] = "/org/enlightenment";
-const char g_interface[] = "org.enlightenment.Test";
+const char g_interface[] = "org.enlightenment.FakeServer";
 
 static void
 on_name_request(std::error_code const& ec, efl::eldbus::const_message

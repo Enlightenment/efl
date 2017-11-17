@@ -3,7 +3,7 @@
 
 #include <Eldbus.h>
 
-#define FAKE_SERVER_BUS "org.Enlightenment"
+#define FAKE_SERVER_BUS "org.Enlightenment.Test"
 #define FAKE_SERVER_PATH "/org/enlightenment"
 #define FAKE_SERVER_INTERFACE "org.enlightenment.FakeServer"
 #define FAKE_SERVER_READONLY_PROPERTY "r"
