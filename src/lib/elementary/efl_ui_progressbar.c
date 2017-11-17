@@ -361,7 +361,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    priv->dir = EFL_UI_DIR_RIGHT;
    priv->val = MIN_RATIO_LVL;
 
-   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        _efl_ui_progressbar_theme_group_get(obj, priv),
                                        elm_widget_theme_style_get(obj)))

@@ -655,9 +655,9 @@ _popup_update(Evas_Object *obj, Efl_Ui_Slider_Data *sd, Evas_Object *popup)
    if (elm_widget_is_legacy(obj))
      {
         if (_is_horizontal(sd->dir))
-          efl_ui_widget_theme_object_set(obj, popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
+          elm_widget_theme_object_set(obj, popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
         else
-          efl_ui_widget_theme_object_set(obj, popup, "slider", "vertical/popup", elm_widget_style_get(obj));
+          elm_widget_theme_object_set(obj, popup, "slider", "vertical/popup", elm_widget_style_get(obj));
      }
    else
      elm_widget_element_update(obj, popup, PART_NAME_POPUP);
@@ -1143,7 +1143,7 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
    priv->wheel_indicator_duration = 0.25;
    priv->step = SLIDER_STEP;
 
-   if (!efl_ui_widget_theme_object_set(obj, wd->resize_obj,
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        _efl_ui_slider_theme_group_get(obj, priv),
                                        elm_widget_theme_style_get(obj)))

@@ -1170,7 +1170,7 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
         else
           str = "default";
 
-        efl_ui_widget_theme_object_set
+        elm_widget_theme_object_set
           (sd->obj, fobj, "focus_highlight", "top", str);
         sd->focus_highlight.theme_changed = EINA_FALSE;
 
@@ -3153,15 +3153,15 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
 
         if (cursor)
           {
-             if (!efl_ui_widget_theme_object_set(sd->obj, sd->pointer.obj,
+             if (!elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
                                         "cursor", cursor, "default"))
                {
-                  efl_ui_widget_theme_object_set(sd->obj, sd->pointer.obj,
+                  elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
                                         "pointer", "base", "default");
                }
           }
         else
-          efl_ui_widget_theme_object_set(sd->obj, sd->pointer.obj,
+          elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
                                 "pointer", "base", "default");
 
         edje_object_size_min_get(sd->pointer.obj, &mw, &mh);
@@ -3976,7 +3976,7 @@ _elm_win_frame_cb_resize_show(void *data,
      {
         Efl_Ui_Win_Move_Resize_Mode mode = _move_resize_mode_get(source);
         const resize_info *ri = _resize_info_get(sd->rot, mode);
-        if (ri) efl_ui_widget_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", ri->cursor);
+        if (ri) elm_widget_theme_object_set(sd->obj, sd->pointer.obj, "pointer", "base", ri->cursor);
      }
 #else
    (void)source;
@@ -3996,7 +3996,7 @@ _elm_win_frame_cb_resize_hide(void *data,
 
 #ifdef HAVE_ELEMENTARY_WL2
    if (sd->pointer.obj)
-     efl_ui_widget_theme_object_set(sd->obj, sd->pointer.obj,
+     elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
                            "pointer", "base", "default");
 #endif
 }
@@ -4288,7 +4288,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    v = version ? atoi(version) : 0;
    if (EINA_LIKELY(v >= FRAME_OBJ_THEME_MIN_VERSION))
      {
-        if (!efl_ui_widget_theme_object_set
+        if (!elm_widget_theme_object_set
             (sd->obj, sd->frame_obj, "border", element, style))
           {
              ERR("Failed to set main border theme for the window.");
@@ -5241,7 +5241,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
              Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
              sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
-             efl_ui_widget_theme_object_set(obj, o, "pointer", "base", "default");
+             elm_widget_theme_object_set(obj, o, "pointer", "base", "default");
              edje_object_size_min_calc(o, &mw, &mh);
              evas_object_resize(o, mw, mh);
              edje_object_part_geometry_get(o, "elm.swallow.hotspot",
@@ -6518,7 +6518,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    Eina_Bool ret = EINA_FALSE, prev_alpha;
    const char *s;
 
-   int_ret = efl_ui_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
+   int_ret = elm_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
                                        elm_widget_style_get(obj));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
