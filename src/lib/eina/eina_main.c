@@ -300,6 +300,8 @@ eina_init(void)
 
    eina_cpu_count_internal();
 
+   EINA_ERROR_NOT_MAIN_LOOP = eina_error_msg_static_register("Not in main loop.");
+
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
    _eina_main_count = 1;
