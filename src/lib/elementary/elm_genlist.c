@@ -7691,7 +7691,8 @@ _filter_item_internal(Elm_Gen_Item *it)
                 WIDGET(it), sd->filter_data)))
           {
              it->hide = EINA_TRUE;
-             it->item->block->changed = EINA_TRUE;
+             if (it->item->block)
+               it->item->block->changed = EINA_TRUE;
           }
         else
           sd->filtered_count++;
@@ -7722,7 +7723,8 @@ _item_filtered_get(Elm_Gen_Item *it)
           }
 
         _filter_item_internal(it);
-        it->item->block->changed = EINA_TRUE;
+        if (it->item->block)
+          it->item->block->changed = EINA_TRUE;
         ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
         sd->calc_job = ecore_job_add(_calc_job, sd->obj);
    }
