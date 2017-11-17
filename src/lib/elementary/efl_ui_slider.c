@@ -1146,6 +1146,8 @@ _efl_ui_slider_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Slider_Data *priv)
    _elm_access_callback_set
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
 
+   efl_ui_format_string_set(efl_part(obj, "indicator"), "%0.2f");
+
    evas_object_smart_changed(obj);
 }
 
