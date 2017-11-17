@@ -4785,7 +4785,7 @@ static const struct {
    Efl_Ui_Slider_Indicator_Visible_Mode  val;
    const char                           *str;
 } _enum_map_slider_indicator_visible_mode[] = {
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT, "default" },
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_DRAG, "on_drag" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, "on_focus" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE, "none" },

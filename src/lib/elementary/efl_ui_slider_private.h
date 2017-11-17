@@ -33,7 +33,7 @@ struct _Efl_Ui_Slider_Data
 
    Ecore_Timer           *wheel_indicator_timer;
    double                wheel_indicator_duration;
-   Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /**< indicator_visible_mode of the slider.
+   Efl_Ui_Slider_Indicator_Visible_Mode indicator_visible_mode; /**< indicator_visible_mode of the slider.
                                                                 This indicates when to show an indicator */
 
    Evas_Coord            size;
