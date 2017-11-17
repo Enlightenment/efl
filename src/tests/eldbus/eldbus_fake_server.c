@@ -174,7 +174,27 @@ _fake_server_name_request_cb(void *data EINA_UNUSED,
      ck_abort_msg("error geting arguments on _fake_server_name_request_cb");
 
    if (ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER != reply)
-     ck_abort_msg("error name already in use");
+     {
+        const char *errcode = "Unknown reply";
+        char errmsg[512];
+        switch (reply)
+          {
+           case ELDBUS_NAME_REQUEST_REPLY_IN_QUEUE:
+             errcode = "Service could not become the primary owner and has "
+                       "been placed in the queue";
+             break;
+           case ELDBUS_NAME_REQUEST_REPLY_EXISTS:
+             errcode = "Service is already in the queue";
+             break;
+           case ELDBUS_NAME_REQUEST_REPLY_ALREADY_OWNER:
+             errcode = "Service is already the primary owner";
+             break;
+           default: break;
+          }
+        snprintf(errmsg, sizeof(errmsg), "Failed to start fake server: %s (%u)",
+                 errcode, reply);
+        ck_abort_msg(errmsg);
+     }
 
    ecore_main_loop_quit();
 }
