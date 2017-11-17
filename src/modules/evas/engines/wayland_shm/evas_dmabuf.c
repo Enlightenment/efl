@@ -13,8 +13,7 @@ struct _Dmabuf_Surface
    Surface *surface;
 
    Ecore_Wl2_Buffer *current;
-   Ecore_Wl2_Buffer **buffer;
-   int nbuf;
+   Eina_List *buffers;
 
    Eina_Bool alpha : 1;
 };
@@ -25,31 +24,24 @@ static void _evas_dmabuf_surface_destroy(Surface *s);
 static void
 _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
-   Ecore_Wl2_Buffer *buf;
+   Ecore_Wl2_Buffer *b;
+   Eina_List *l, *tmp;
    Dmabuf_Surface *surface;
-   int i;
 
    if ((!w) || (!h)) return;
    surface = s->surf.dmabuf;
-   for (i = 0; i < surface->nbuf; i++)
+   EINA_LIST_FOREACH_SAFE(surface->buffers, l, tmp, b)
      {
-        if (surface->buffer[i])
+        int stride = b->stride;
+
+        /* If stride is a little bigger than width we still fit */
+        if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
           {
-             Ecore_Wl2_Buffer *b = surface->buffer[i];
-             int stride = b->stride;
-
-             /* If stride is a little bigger than width we still fit */
-             if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
-               {
-                  b->w = w;
-                  continue;
-               }
-
-             ecore_wl2_buffer_destroy(b);
+             b->w = w;
+             continue;
           }
-        buf = ecore_wl2_buffer_create(s->ob->ewd, w, h, surface->alpha);
-        if (!buf)  return;
-        surface->buffer[i] = buf;
+        ecore_wl2_buffer_destroy(b);
+        surface->buffers = eina_list_remove_list(surface->buffers, l);
      }
 }
 
@@ -83,39 +75,48 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 static Ecore_Wl2_Buffer *
 _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
 {
-   int i = 0, best = -1, best_age = -1;
+   Ecore_Wl2_Buffer *b, *best = NULL;
+   Eina_List *l;
+   int best_age = -1;
 
-   for (i = 0; i < s->nbuf; i++)
+   EINA_LIST_FOREACH(s->buffers, l, b)
      {
-        if (s->buffer[i]->locked || s->buffer[i]->busy) continue;
-        if (s->buffer[i]->age > best_age)
+        if (b->locked || b->busy) continue;
+        if (b->age > best_age)
           {
-             best = i;
-             best_age = s->buffer[i]->age;
+             best = b;
+             best_age = b->age;
           }
      }
 
-   if (best >= 0) return s->buffer[best];
-   return NULL;
+   if (!best && (eina_list_count(s->buffers) < MAX_BUFFERS))
+     {
+        Outbuf *ob;
+        ob = s->surface->ob;
+        best = ecore_wl2_buffer_create(ob->ewd, ob->w, ob->h, s->alpha);
+        s->buffers = eina_list_append(s->buffers, best);
+     }
+   return best;
 }
 
 static int
 _evas_dmabuf_surface_assign(Surface *s)
 {
+   Ecore_Wl2_Buffer *b;
+   Eina_List *l;
    Dmabuf_Surface *surface;
-   int i;
 
    surface = s->surf.dmabuf;
    surface->current = _evas_dmabuf_surface_wait(surface);
    if (!surface->current)
      {
         WRN("No free DMAbuf buffers, dropping a frame");
-        for (i = 0; i < surface->nbuf; i++)
-          surface->buffer[i]->age = 0;
+        EINA_LIST_FOREACH(surface->buffers, l, b)
+          b->age = 0;
         return 0;
      }
-   for (i = 0; i < surface->nbuf; i++)
-     if (surface->buffer[i]->used) surface->buffer[i]->age++;
+   EINA_LIST_FOREACH(surface->buffers, l, b)
+     if (b->age) b->age++;
 
    return surface->current->age;
 }
@@ -135,7 +136,6 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 
    surface->current = NULL;
    b->busy = EINA_TRUE;
-   b->used = EINA_TRUE;
    b->age = 0;
 
    win = s->info->info.wl2_win;
@@ -149,14 +149,11 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 static void
 _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
 {
-   int i;
+   Ecore_Wl2_Buffer *b;
 
-   for (i = 0; i < surface->nbuf; i++)
-      ecore_wl2_buffer_destroy(surface->buffer[i]);
+   EINA_LIST_FREE(surface->buffers, b)
+     ecore_wl2_buffer_destroy(b);
 
-   free(surface->buffer);
-   surface->buffer = NULL;
-   surface->nbuf = 0;
    free(surface);
 }
 
@@ -169,12 +166,11 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Eina_Bool
-_evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
+_evas_dmabuf_surface_create(Surface *s)
 {
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
    Dmabuf_Surface *surf = NULL;
-   int i = 0;
 
    ewd = s->info->info.wl2_display;
    if (ecore_wl2_display_shm_get(ewd))
@@ -189,26 +185,7 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    surf->alpha = s->info->info.destination_alpha;
 
    /* create surface buffers */
-   surf->nbuf = num_buff;
-   surf->buffer = calloc(surf->nbuf, sizeof(Ecore_Wl2_Buffer *));
-   if (!surf->buffer) goto err;
-
    if (!ecore_wl2_buffer_init(ewd, types)) goto err;
-
-   if (w && h)
-     {
-        for (i = 0; i < num_buff; i++)
-          {
-             surf->buffer[i] = ecore_wl2_buffer_create(s->ob->ewd,
-                                                       w, h, surf->alpha);
-             if (!surf->buffer[i])
-               {
-                  DBG("Could not create buffers");
-                  /* _init() handled surface cleanup when it failed */
-                  return EINA_FALSE;
-               }
-          }
-     }
 
    s->funcs.destroy = _evas_dmabuf_surface_destroy;
    s->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
@@ -219,7 +196,6 @@ _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff)
    return EINA_TRUE;
 
 err:
-   free(surf->buffer);
    free(surf);
    return EINA_FALSE;
 }

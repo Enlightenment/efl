@@ -100,7 +100,6 @@ struct _Outbuf
    int w, h;
    int rotation;
    int onebuf;
-   int num_buff;
    Outbuf_Depth depth;
 
    Ecore_Wl2_Display *ewd;
@@ -130,8 +129,7 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Eina_Bool _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff);
-Eina_Bool _evas_shm_surface_create(Surface *s, int w, int h, int num_buff);
+Eina_Bool _evas_dmabuf_surface_create(Surface *s);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);

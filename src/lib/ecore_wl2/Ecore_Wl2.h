@@ -376,7 +376,6 @@ struct _Ecore_Wl2_Buffer
    int index;
    Eina_Bool locked : 1;
    Eina_Bool busy : 1;
-   Eina_Bool used : 1;
    Eina_Bool orphaned : 1;
    Eina_Bool alpha : 1;
 };

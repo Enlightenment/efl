@@ -10,7 +10,7 @@
 #define BLUE_MASK 0x0000ff
 
 static Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
+_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
 {
    Surface *out;
 
@@ -19,7 +19,7 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
    out->info = info;
    out->ob = ob;
 
-   if (_evas_dmabuf_surface_create(out, w, h, ob->num_buff)) return out;
+   if (_evas_dmabuf_surface_create(out)) return out;
 
    free(out);
    return NULL;
@@ -29,8 +29,6 @@ Outbuf *
 _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
 {
    Outbuf *ob = NULL;
-   char *num;
-   int sw, sh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -46,39 +44,9 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->priv.destination_alpha = info->info.destination_alpha;
    ob->ewd = info->info.wl2_display;
 
-   /* default to triple buffer */
-   ob->num_buff = 3;
-
-   /* check for any 'number of buffers' override in the environment */
-   if ((num = getenv("EVAS_WAYLAND_SHM_BUFFERS")))
-     {
-        int n = 0;
-
-        n = atoi(num);
-        if (n <= 0) n = 1;
-        if (n > MAX_BUFFERS) n = MAX_BUFFERS;
-
-        ob->num_buff = n;
-     }
-
-   /* try to create the outbuf surface */
-   if ((ob->rotation == 0) || (ob->rotation == 180))
-     {
-        sw = w;
-        sh = h;
-     }
-   else if ((ob->rotation == 90) || (ob->rotation == 270))
-     {
-        sw = h;
-        sh = w;
-     }
-   else
-     goto unhandled_rotation;
-
-   ob->surface = _evas_surface_create(info, sw, sh, ob);
+   ob->surface = _evas_surface_create(info, ob);
    if (!ob->surface) goto surf_err;
 
-unhandled_rotation:
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
 
    return ob;
@@ -295,7 +263,6 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
    age = ob->surface->funcs.assign(ob->surface);
    if (!age) return MODE_FULL;
 
-   if (age > ob->num_buff) return MODE_FULL;
    else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
    else if (age == 3) return MODE_TRIPLE;
