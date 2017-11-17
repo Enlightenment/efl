@@ -544,7 +544,7 @@ _elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *it)
 {
    obj = efl_constructor(efl_super(obj, ELM_INDEX_ITEM_CLASS));
    it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_MENU_ITEM);
 
    return obj;
 }
