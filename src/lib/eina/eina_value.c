@@ -43,6 +43,8 @@
 #include "eina_safety_checks.h"
 #include "eina_value.h"
 
+EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -5472,6 +5474,7 @@ eina_value_init(void)
 
    EINA_VALUE_TYPE_VALUE = &_EINA_VALUE_TYPE_VALUE;
 
+   EINA_ERROR_VALUE_FAILED = eina_error_msg_static_register("Eina_Value failed to copy/convert.");
 
    return EINA_TRUE;
 
@@ -5561,8 +5564,6 @@ EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
-
-EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
 EAPI const unsigned int eina_prime_table[] =
 {
