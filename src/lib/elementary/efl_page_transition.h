@@ -12,11 +12,11 @@ struct _Efl_Page_Transition_Data
    } pager;
 
    struct {
-      Evas_Coord            w, h;
+      Eina_Size2D           sz;
       Evas_Coord            padding;
    } page_spec;
 
-   Eina_Bool                loop : 1;
+   Efl_Ui_Pager_Loop        loop;
 };
 
 #define EFL_PAGE_TRANSITION_DATA_GET(o, pd) \

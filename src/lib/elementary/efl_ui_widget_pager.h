@@ -21,7 +21,7 @@ typedef struct _Efl_Ui_Pager_Data
    Evas_Coord               mouse_down_x, mouse_down_y;
 
    struct {
-      Evas_Coord            w, h;
+      Eina_Size2D           sz;
       Evas_Coord            padding;
    } page_spec;
 
@@ -51,12 +51,12 @@ typedef struct _Efl_Ui_Pager_Data
    } change;
 
    Efl_Ui_Dir               dir;
+   Efl_Ui_Pager_Loop        loop;
    Efl_Page_Transition     *transition;
 
    Eina_Bool                move_started : 1;
    Eina_Bool                prev_block : 1;
    Eina_Bool                next_block: 1;
-   Eina_Bool                loop : 1;
 
 } Efl_Ui_Pager_Data;
 

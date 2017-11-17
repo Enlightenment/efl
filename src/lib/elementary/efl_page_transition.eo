@@ -5,7 +5,7 @@ class Efl.Page.Transition (Efl.Object)
       bind {
          [[set object]]
          params {
-            @in pager: Efl.Object; [[pager object]]
+            @in pager: Efl.Ui.Pager; [[pager object]]
          }
       }
    }

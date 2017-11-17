@@ -1,3 +1,10 @@
+enum Efl.Ui.Pager.Loop
+{
+   [[Efl ui pager loop mode]]
+   disabled,
+   enabled
+}
+
 class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
 {
    [[Efl ui pager class]]
@@ -7,7 +14,7 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
       @property transition {
          [[Page transition effect]]
          values {
-            transition: Efl.Page.Transition; [[transition effect]]
+            transition: Efl.Page.Transition @nonull; [[transition effect]]
          }
       }
       @property current_page {
@@ -24,7 +31,7 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
       }
       @property loop {
          values {
-            loop: bool;
+            loop: Efl.Ui.Pager.Loop;
          }
       }
       @property page_size {

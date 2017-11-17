@@ -26,27 +26,37 @@ typedef struct _Params {
    int w, h;
    int padding;
    int side_page_num;
+   int curr_page;
+   Eina_Bool prev_block, next_block;
 } Params;
+
+typedef struct _Page_Set_Params {
+   Evas_Object *pager;
+   Evas_Object *spinner;
+} Page_Set_Params;
 
 static void page_size_cb(void *data, Evas_Object *obj, void *event_info);
 static void padding_cb(void *data, Evas_Object *obj, void *event_info);
 static void side_page_num_cb(void *data, Evas_Object *obj, void *event_info);
-static void transition_cb(void *data, Evas_Object *obj, void *event_info);
+static void pack_cb(void *data, Evas_Object *obj, void *event_info);
+static void loop_cb(void *data, Evas_Object *obj, void *event_info);
 static void current_page_cb(void *data, Evas_Object *obj, void *event_info);
 static void scroll_block_cb(void *data, Evas_Object *obj, void *event_info);
-static void loop_cb(void *data, Evas_Object *obj, void *event_info);
-static void pack_cb(void *data, Evas_Object *obj, void *event_info);
+//static void transition_cb(void *data, Evas_Object *obj, void *event_info); //TODO
+static void win_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 void
 test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *panes, *navi, *list, *pager, *page;
    Efl_Page_Transition *tran;
+   Params *params = NULL;
    int i;
    char buf[64];
 
    win = elm_win_util_standard_add("pager", "Pager");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, win_del_cb, params);
 
    panes = elm_panes_add(win);
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -78,7 +88,7 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    efl_ui_pager_padding_set(pager, 20);
    elm_object_part_content_set(panes, "right", pager);
 
-   Params *params = (Params *)malloc(sizeof(Params));
+   params = calloc(1, sizeof(Params));
    params->navi = navi;
    params->pager = pager;
    params->transition = tran;
@@ -86,6 +96,9 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    params->h = 300;
    params->padding = 20;
    params->side_page_num = efl_page_transition_scroll_side_page_num_get(tran);
+   params->curr_page = 0;
+   params->prev_block = EINA_FALSE;
+   params->next_block = EINA_FALSE;
 
    elm_list_item_append(list, "Page Size", NULL, NULL, page_size_cb, params);
    elm_list_item_append(list, "Padding", NULL, NULL, padding_cb, params);
@@ -94,10 +107,10 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_list_item_append(list, "Loop", NULL, NULL, loop_cb, params);
    elm_list_item_append(list, "Current Page", NULL, NULL, current_page_cb, params);
    elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
-   elm_list_item_append(list, "Transition", NULL, NULL, transition_cb, params);
+   //elm_list_item_append(list, "Transition", NULL, NULL, transition_cb, params); //TODO
    elm_list_go(list);
 
-   for (i = 1; i <= PAGE_NUM; i++) {
+   for (i = 0; i < PAGE_NUM; i++) {
       page = efl_add(EFL_UI_LAYOUT_CLASS, pager);
       snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj", elm_app_data_dir_get());
       efl_file_set(page, buf, "page");
@@ -108,6 +121,14 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    evas_object_resize(win, 580, 320);
    evas_object_show(win);
+}
+
+static void win_del_cb(void *data,
+                       Evas *e EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   free(data);
 }
 
 static void btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -158,10 +179,18 @@ static void pack_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
    snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj", elm_app_data_dir_get());
    efl_file_set(page, buf, "page");
 
-   index = efl_content_count(pager) + 1;
+   index = efl_content_count(pager);
    snprintf(buf, 16, "Page %d", index);
    efl_text_set(efl_part(page, "text"), buf);
    efl_pack_end(pager, page);
+}
+
+static void page_set_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Page_Set_Params *psp = data;
+
+   efl_ui_pager_current_page_set(psp->pager, elm_spinner_value_get(psp->spinner));
+
 }
 
 static void check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -170,6 +199,36 @@ static void check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Eina_Bool state = elm_check_state_get(obj);
 
    efl_ui_pager_loop_set(pager, state);
+}
+
+static void page_set_btn_del_cb(void *data,
+                                Evas *e EINA_UNUSED,
+                                Evas_Object *obj EINA_UNUSED,
+                                void *event_info EINA_UNUSED)
+{
+   free(data);
+}
+
+static void prev_block_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pager = data;
+   Eina_Bool prev, next;
+
+   prev = elm_check_state_get(obj);
+
+   efl_ui_pager_scroll_block_get(pager, NULL, &next);
+   efl_ui_pager_scroll_block_set(pager, prev, next);
+}
+
+static void next_block_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pager = data;
+   Eina_Bool prev, next;
+
+   next = elm_check_state_get(obj);
+
+   efl_ui_pager_scroll_block_get(pager, &prev, NULL);
+   efl_ui_pager_scroll_block_set(pager, prev, next);
 }
 
 static void page_size_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -225,7 +284,7 @@ static void padding_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
    box = elm_box_add(navi);
    elm_box_padding_set(box, 10, 10);
    evas_object_show(box);
-   elm_naviframe_item_push(navi, "Page Size", btn, NULL, box, NULL);
+   elm_naviframe_item_push(navi, "Padding Size", btn, NULL, box, NULL);
 
    slider = elm_slider_add(box);
    elm_slider_indicator_format_set(slider, "%1.0f");
@@ -253,7 +312,7 @@ static void side_page_num_cb(void *data, Evas_Object *obj EINA_UNUSED, void *eve
    box = elm_box_add(navi);
    elm_box_padding_set(box, 10, 10);
    evas_object_show(box);
-   elm_naviframe_item_push(navi, "Side Page", btn, NULL, box, NULL);
+   elm_naviframe_item_push(navi, "Side Page Num", btn, NULL, box, NULL);
 
    slider = elm_slider_add(box);
    elm_slider_indicator_format_set(slider, "%1.0f");
@@ -283,7 +342,7 @@ static void pack_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    box = elm_box_add(navi);
    elm_box_padding_set(box, 10, 10);
    evas_object_show(box);
-   elm_naviframe_item_push(navi, "Side Page", btn, NULL, box, NULL);
+   elm_naviframe_item_push(navi, "Pack End", btn, NULL, box, NULL);
 
    pack_btn = elm_button_add(navi);
    elm_object_text_set(pack_btn, "Pack End");
@@ -316,18 +375,83 @@ static void loop_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(box, check);
 }
 
-static void current_page_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void current_page_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Params *params = (Params *)data;
+   Evas_Object *navi = params->navi;
+   Evas_Object *pager = params->pager;
+   Evas_Object *btn, *box, *sp, *page_set_btn;
+   Page_Set_Params *psp = calloc(1, sizeof(Page_Set_Params));
+   int max_page;
 
+   btn = elm_button_add(navi);
+   elm_object_text_set(btn, "Back");
+   evas_object_smart_callback_add(btn, "clicked", btn_cb, navi);
+
+   box = elm_box_add(navi);
+   elm_box_padding_set(box, 10, 10);
+   evas_object_show(box);
+   elm_naviframe_item_push(navi, "Current Page", btn, NULL, box, NULL);
+
+   sp = elm_spinner_add(box);
+   elm_spinner_wrap_set(sp, EINA_TRUE);
+   max_page = efl_content_count(pager) - 1;
+   elm_spinner_min_max_set(sp, 0, max_page);
+   elm_spinner_value_set(sp, efl_ui_pager_current_page_get(pager));
+   elm_spinner_label_format_set(sp, "%d");
+   evas_object_show(sp);
+   elm_box_pack_end(box, sp);
+
+   psp->pager = pager;
+   psp->spinner = sp;
+
+   page_set_btn = elm_button_add(navi);
+   elm_object_text_set(page_set_btn, "Curr Page Set");
+   evas_object_smart_callback_add(page_set_btn, "clicked", page_set_btn_cb, psp);
+   evas_object_event_callback_add(page_set_btn, EVAS_CALLBACK_DEL, page_set_btn_del_cb, psp);
+   evas_object_show(page_set_btn);
+   elm_box_pack_end(box, page_set_btn);
 }
 
-static void scroll_block_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void scroll_block_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Params *params = (Params *)data;
+   Evas_Object *navi = params->navi;
+   Evas_Object *pager = params->pager;
+   Evas_Object *btn, *box, *check;
+   Eina_Bool prev, next;
 
+   btn = elm_button_add(navi);
+   elm_object_text_set(btn, "Back");
+   evas_object_smart_callback_add(btn, "clicked", btn_cb, navi);
+
+   box = elm_box_add(navi);
+   elm_box_padding_set(box, 10, 10);
+   evas_object_show(box);
+   elm_naviframe_item_push(navi, "Loop", btn, NULL, box, NULL);
+
+   efl_ui_pager_scroll_block_get(pager, &prev, &next);
+   check = elm_check_add(navi);
+   elm_object_style_set(check, "toggle");
+   elm_object_text_set(check, "Prev Block");
+   elm_check_state_set(check, prev);
+   evas_object_smart_callback_add(check, "changed", prev_block_check_cb, pager);
+   evas_object_show(check);
+   elm_box_pack_end(box, check);
+
+   check = elm_check_add(navi);
+   elm_object_style_set(check, "toggle");
+   elm_object_text_set(check, "Next Block");
+   elm_check_state_set(check, next);
+   evas_object_smart_callback_add(check, "changed", next_block_check_cb, pager);
+   evas_object_show(check);
+   elm_box_pack_end(box, check);
 }
 
+/** TODO
+  *
 static void transition_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
 
 }
-
+*/

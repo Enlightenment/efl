@@ -14,11 +14,9 @@
 EOLIAN static void
 _efl_page_transition_page_size_set(Eo *obj EINA_UNUSED,
                                    Efl_Page_Transition_Data *pd,
-                                   int width,
-                                   int height)
+                                   Eina_Size2D sz)
 {
-   pd->page_spec.w = width;
-   pd->page_spec.h = height;
+   pd->page_spec.sz = sz;
 }
 
 EOLIAN static void
@@ -43,8 +41,7 @@ _efl_page_transition_bind(Eo *obj EINA_UNUSED,
    pd->pager.w = ppd->w;
    pd->pager.h = ppd->h;
 
-   pd->page_spec.w = ppd->page_spec.w;
-   pd->page_spec.h = ppd->page_spec.h;
+   pd->page_spec.sz = ppd->page_spec.sz;
    pd->page_spec.padding = ppd->page_spec.padding;
 
    pd->loop = ppd->loop;
@@ -77,7 +74,7 @@ _efl_page_transition_pack_end(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_page_transition_loop_set(Eo *obj EINA_UNUSED,
                               Efl_Page_Transition_Data *pd,
-                              Eina_Bool loop)
+                              Efl_Ui_Pager_Loop loop)
 {
    pd->loop = loop;
 }
@@ -88,13 +85,13 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_update,
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_curr_page_change,
                           EFL_FUNC_CALL(move), double move)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_page_size_set,
-                          EFL_FUNC_CALL(width, height), int width, int height)
+                          EFL_FUNC_CALL(sz), Eina_Size2D sz)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_padding_size_set,
                           EFL_FUNC_CALL(padding), int padding)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_pack_end,
                           EFL_FUNC_CALL(subobj), Efl_Gfx *subobj)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_loop_set,
-                          EFL_FUNC_CALL(loop), Eina_Bool loop)
+                          EFL_FUNC_CALL(loop), Efl_Ui_Pager_Loop loop)
 
 
 #define EFL_PAGE_TRANSITION_EXTRA_OPS \
