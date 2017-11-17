@@ -883,10 +883,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 
    F_DBG("Manager: %p setting redirect from %p to %p", obj, pd->redirect, redirect);
 
+   old_manager = pd->redirect;
+
    if (pd->redirect)
      efl_wref_del(pd->redirect, &pd->redirect);
 
-   old_manager = pd->redirect;
    pd->redirect = redirect;
 
    if (pd->redirect)
