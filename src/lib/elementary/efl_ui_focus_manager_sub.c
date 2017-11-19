@@ -203,6 +203,8 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
 {
    _border_unregister(obj, pd);
 
+   efl_event_callback_array_del(pd->manager, parent_manager(), obj);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
