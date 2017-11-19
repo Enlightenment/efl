@@ -1274,7 +1274,7 @@ _elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item
                   if (!_elm_config->item_select_on_focus_disable && is_sel)
                     elm_list_item_selected_set(EO_OBJ(it), EINA_TRUE);
                   else
-                    elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
+                    _elm_list_item_focused(EO_OBJ(it));
                }
           }
      }
