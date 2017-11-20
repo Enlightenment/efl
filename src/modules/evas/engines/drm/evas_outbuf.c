@@ -87,7 +87,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
      {
         ob->priv.num = atoi(num);
         if (ob->priv.num <= 0) ob->priv.num = 3;
-        else if (ob->priv.num > 4) ob->priv.num = 4;
+        else if (ob->priv.num > MAX_BUFFERS) ob->priv.num = MAX_BUFFERS;
      }
 
    if ((ob->rotation == 0) || (ob->rotation == 180))

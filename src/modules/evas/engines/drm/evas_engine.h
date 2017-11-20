@@ -41,6 +41,8 @@ extern int _evas_engine_drm_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
+#define MAX_BUFFERS 10
+
 typedef struct _Outbuf_Fb
 {
    int age;
@@ -61,7 +63,7 @@ struct _Outbuf
    struct
      {
         int num;
-        Outbuf_Fb ofb[4], *draw;
+        Outbuf_Fb ofb[MAX_BUFFERS], *draw;
         Ecore_Drm2_Output *output;
         Ecore_Drm2_Plane *plane;
         Eina_List *pending;
