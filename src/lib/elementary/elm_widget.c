@@ -5030,6 +5030,15 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
+static void
+_focus_event_changed(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   if (efl_ui_focus_object_focus_get(event->object))
+     efl_event_callback_legacy_call(event->object, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
+   else
+     efl_event_callback_legacy_call(event->object, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
+}
+
 EOLIAN static Eo *
 _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
@@ -5047,6 +5056,8 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    sd->on_create = EINA_FALSE;
 
    efl_access_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
+
+   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_event_changed, NULL);
 
    return obj;
 }
@@ -5108,17 +5119,14 @@ EOLIAN static Eina_Bool
 _elm_widget_on_focus_update(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool focused;
-   const Efl_Event_Description *desc;
 
    if (!elm_widget_can_focus_get(obj))
      return EINA_FALSE;
 
    focused = elm_widget_focus_get(obj);
-   desc = focused ? EFL_UI_WIDGET_EVENT_FOCUSED : EFL_UI_WIDGET_EVENT_UNFOCUSED;
 
    if (!sd->resize_obj)
      evas_object_focus_set(obj, focused);
-   efl_event_callback_legacy_call(obj, desc, NULL);
 
    if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
      efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, focused);
