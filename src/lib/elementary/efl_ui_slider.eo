@@ -1,6 +1,7 @@
 class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
                      Efl.Access.Value, Efl.Text, Efl.Text.Markup, Efl.Ui.Format,
-                     Efl.Ui.Translatable, Efl.Access.Widget.Action)
+                     Efl.Ui.Translatable, Efl.Access.Widget.Action,
+                     Efl.Content)
 {
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
@@ -50,6 +51,8 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part;
    }
    events {

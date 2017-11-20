@@ -1355,6 +1355,8 @@ _efl_ui_slider_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_slider, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_slider, Efl_Ui_Slider_Data)
 
 static void
 _slider_span_size_set(Eo *obj, Efl_Ui_Slider_Data *sd, int size)
