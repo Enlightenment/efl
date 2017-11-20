@@ -133,7 +133,7 @@ _on_thumb_preloaded(void *data,
 }
 
 /* As we do use stat to check if a thumbnail is available, it's
- * possible that we end up accessing it before the file is completly
+ * possible that we end up accessing it before the file is completely
  * written on disk. By retrying each time a thumbnail is finished we
  * should be fine or not.
  */

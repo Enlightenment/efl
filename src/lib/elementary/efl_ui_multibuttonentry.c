@@ -1720,27 +1720,27 @@ static void
 _legacy_focused(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Focus_Object *new_focus;
-   Eina_Bool meaningfull_focus_in = EINA_FALSE, meaningfull_focus_out = EINA_FALSE;
+   Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
    EFL_UI_MULTIBUTTONENTRY_DATA_GET(data, pd);
 
    new_focus = efl_ui_focus_manager_focus_get(ev->object);
 
    if (efl_isa(ev->info, ELM_WIDGET_CLASS) && elm_widget_parent_get(ev->info) == pd->box)
      {
-        meaningfull_focus_out = EINA_TRUE;
+        meaningful_focus_out = EINA_TRUE;
      }
 
    if (efl_isa(new_focus, ELM_WIDGET_CLASS) && elm_widget_parent_get(new_focus) == pd->box)
      {
-        meaningfull_focus_in = EINA_TRUE;
+        meaningful_focus_in = EINA_TRUE;
      }
 
-   if (meaningfull_focus_in && !meaningfull_focus_out)
+   if (meaningful_focus_in && !meaningful_focus_out)
      {
         efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
      }
 
-   if (!meaningfull_focus_in && meaningfull_focus_out)
+   if (!meaningful_focus_in && meaningful_focus_out)
      {
         efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
      }

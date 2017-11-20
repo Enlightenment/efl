@@ -206,7 +206,7 @@ _val_set(Evas_Object *obj)
      edje_object_part_drag_value_set
         (wd->resize_obj, "elm.dragable2.slider", pos2, pos2);
 
-   // emit accessiblity event also if value was chagend by API
+   // emit accessibility event also if value was changed by API
    if (_elm_config->atspi_mode)
      efl_access_value_changed_signal_emit(obj);
 }

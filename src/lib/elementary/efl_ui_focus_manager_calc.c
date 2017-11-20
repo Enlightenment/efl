@@ -529,7 +529,7 @@ dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty)
 
 
 static void
-_node_new_geometery_cb(void *data, const Efl_Event *event)
+_node_new_geometry_cb(void *data, const Efl_Event *event)
 {
    Node *node;
    FOCUS_DATA(data)
@@ -554,8 +554,8 @@ _object_del_cb(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
-    {EFL_GFX_EVENT_RESIZE, _node_new_geometery_cb},
-    {EFL_GFX_EVENT_MOVE, _node_new_geometery_cb},
+    {EFL_GFX_EVENT_RESIZE, _node_new_geometry_cb},
+    {EFL_GFX_EVENT_MOVE, _node_new_geometry_cb},
     {EFL_EVENT_DEL, _object_del_cb},
 );
 
@@ -1389,7 +1389,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
      {
         Efl_Ui_Focus_Manager *m = obj;
 
-        //completly unset the current redirect chain
+        //completely unset the current redirect chain
         while (efl_ui_focus_manager_redirect_get(m))
          {
             Efl_Ui_Focus_Manager *old = m;
