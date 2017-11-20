@@ -409,6 +409,8 @@ _efl_ui_button_class_constructor(Efl_Class *klass)
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_button, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 
