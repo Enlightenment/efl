@@ -54,14 +54,12 @@ static Eina_Bool _efl_ui_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
 static Eina_Bool _efl_ui_multibuttonentry_smart_focus_direction_enable = EINA_TRUE;
 
 static void _entry_changed_cb(void *data, const Efl_Event *event);
-static void _entry_focus_in_cb(void *data, const Efl_Event *event);
-static void _entry_focus_out_cb(void *data, const Efl_Event *event);
+static void _entry_focus_changed_cb(void *data, const Efl_Event *event);
 static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { EFL_UI_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
-   { EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
+   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -1048,28 +1046,29 @@ _entry_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_focus_in_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
-   Elm_Multibuttonentry_Item_Data *item = NULL;
    EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
-   if (sd->selected_it)
+   if (efl_ui_focus_object_focus_get(event->object))
      {
-        item = sd->selected_it;
-        elm_object_focus_set(sd->entry, EINA_FALSE);
-        elm_object_focus_set(VIEW(item), EINA_TRUE);
+        Elm_Multibuttonentry_Item_Data *item = NULL;
+
+        if (sd->selected_it)
+          {
+             item = sd->selected_it;
+             elm_object_focus_set(sd->entry, EINA_FALSE);
+             elm_object_focus_set(VIEW(item), EINA_TRUE);
+          }
      }
-}
+   else
+     {
+        const char *str;
 
-static void
-_entry_focus_out_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
-   const char *str;
-
-   str = efl_text_get(sd->entry);
-   if (str && str[0])
-     _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
+        str = efl_text_get(sd->entry);
+        if (str && str[0])
+          _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
+     }
 }
 
 static void
