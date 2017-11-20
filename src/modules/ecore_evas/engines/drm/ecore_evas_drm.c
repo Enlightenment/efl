@@ -94,6 +94,7 @@ _drm_gl_canvas_setup(Efl_Canvas_Output *eout, Ecore_Evas_Engine_Drm_Data *edata,
    einfo->info.rotation = rotation;
    einfo->info.output = output;
 
+   einfo->info.vsync = EINA_TRUE;
    num = getenv("EVAS_DRM_VSYNC");
    if ((num) && (!atoi(num)))
      einfo->info.vsync = EINA_FALSE;
@@ -1209,9 +1210,8 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
           {
              etick->output = output;
              etick->offset = 0.0;
+             edata->ticks = eina_list_append(edata->ticks, etick);
           }
-
-        edata->ticks = eina_list_append(edata->ticks, etick);
 
         ecore_drm2_output_user_data_set(output, ee);
 
