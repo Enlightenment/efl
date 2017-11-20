@@ -1401,9 +1401,16 @@ _elm_win_opaque_update(Efl_Ui_Win_Data *sd, Eina_Bool force_alpha)
    int ox, oy, ow, oh;
    Eina_Bool alpha;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   const char *engine_name;
 
    if (!sd->wl.win) return;
    if (!sd->shown) return;
+
+   /* If this isn't a wayland window, BAIL now to avoid destroying
+    * non-wayland engine data structures...
+    */
+   engine_name = ecore_evas_engine_name_get(sd->ee);
+   if (strncmp(engine_name, "wayland", sizeof("wayland") - 1)) return;
 
    wdata = sd->ee->engine.data;
    alpha = ecore_evas_alpha_get(sd->ee) || force_alpha;
