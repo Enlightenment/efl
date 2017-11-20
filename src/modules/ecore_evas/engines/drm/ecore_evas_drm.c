@@ -733,11 +733,15 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
    if (edata->ticking)
      {
         double t;
+        int x, y, w, h;
 
         t = (double)sec + ((double)usec / 1000000);
         if (!edata->once) t = ecore_time_get();
 
-        ecore_evas_animator_tick(ee, NULL, t - edata->offset);
+        ecore_drm2_output_info_get(output, &x, &y, &w, &h, NULL);
+
+        ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                                 t - edata->offset);
      }
    else if (ret)
      ecore_drm2_fb_flip(NULL, output);
@@ -767,13 +771,20 @@ _drm_evas_changed(Ecore_Evas *ee, Eina_Bool changed)
 static void
 _tick_job(void *data)
 {
+   Ecore_Drm2_Output *output;
    Ecore_Evas_Engine_Drm_Data *edata;
    Ecore_Evas *ee;
+   int x, y, w, h;
 
-   ee = data;
+   output = data;
+   ee = ecore_drm2_output_user_data_get(output);
    edata = ee->engine.data;
+
+   ecore_drm2_output_info_get(output, &x, &y, &w, &h, NULL);
+
    edata->tick_job = NULL;
-   ecore_evas_animator_tick(ee, NULL, edata->tick_job_timestamp);
+   ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                            edata->tick_job_timestamp);
 }
 
 static void
@@ -836,7 +847,7 @@ _drm_animator_register(Ecore_Evas *ee)
                     {
                        edata->tick_job_timestamp = (double)sec
                          + ((double)usec / 1000000);
-                       edata->tick_job = ecore_job_add(_tick_job, ee);
+                       edata->tick_job = ecore_job_add(_tick_job, output);
                        break;
                     }
                }
