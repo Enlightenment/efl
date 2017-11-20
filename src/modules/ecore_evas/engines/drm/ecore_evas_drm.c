@@ -1205,6 +1205,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
 
    /* setup vblank handler */
    memset(&edata->ctx, 0, sizeof(edata->ctx));
+   edata->ctx.version = 2;
    edata->ctx.page_flip_handler = _cb_pageflip;
 
    edata->hdlr =
