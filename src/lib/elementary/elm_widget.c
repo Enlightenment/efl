@@ -79,8 +79,6 @@ struct _Elm_Translate_String_Data
 };
 
 /* local subsystem globals */
-static unsigned int focus_order = 0;
-
 static inline Eina_Bool
 _elm_widget_is(const Evas_Object *obj)
 {
