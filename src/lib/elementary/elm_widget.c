@@ -5034,9 +5034,9 @@ static void
 _focus_event_changed(void *data EINA_UNUSED, const Efl_Event *event)
 {
    if (efl_ui_focus_object_focus_get(event->object))
-     efl_event_callback_legacy_call(event->object, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
+     evas_object_smart_callback_call(event->object, "focused", NULL);
    else
-     efl_event_callback_legacy_call(event->object, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
+     evas_object_smart_callback_call(event->object, "unfocused", NULL);
 }
 
 EOLIAN static Eo *

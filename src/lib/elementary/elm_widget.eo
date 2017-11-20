@@ -648,8 +648,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
    }
    events {
       moved; [[Called when widget moved]]
-      focused; [[Called when widget was focused]]
-      unfocused; [[Called when widget was unfocused]]
       language,changed; [[Called when widget language changed]]
       access,changed; [[Called when accessibility changed]]
    }

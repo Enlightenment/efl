@@ -1691,12 +1691,12 @@ _legacy_focused(void *data, const Efl_Event *ev)
 
    if (meaningful_focus_in && !meaningful_focus_out)
      {
-        efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
+        evas_object_smart_callback_call(data, "focused", NULL);
      }
 
    if (!meaningful_focus_in && meaningful_focus_out)
      {
-        efl_event_callback_legacy_call(data, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
+        evas_object_smart_callback_call(data, "unfocused", NULL);
      }
 }
 
