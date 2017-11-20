@@ -89,13 +89,19 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
    segarray->array_initial_size = initial_step_size;
 }
 
-static Efl_Ui_List_Item* _create_item(Efl_Model* model, unsigned int index)
+static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int off_index)
 {
    Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
    item->item.children = model;
-   item->item.index = index;
+   item->item.index_offset = off_index;
+   item->item.tree_node = node;
    return item;
 }
+
+/* void efl_ui_list_segarray_insert(Efl_Ui_List* segarray, int index, Efl_Ui_List_Item* item) */
+/* { */
+  
+/* } */
 
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
 {
@@ -114,7 +120,7 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         if(node)
           {
              assert(node->length < node->max);
-             node->pointers[node->length] = _create_item(children, first + i);
+             node->pointers[node->length] = _create_item(children, node, i);
              node->length++;
              segarray->count++;
           }
@@ -122,7 +128,7 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
           {
              DBG("no node to add item for index %d!", i + first);
              node = _alloc_node(segarray, i + first, segarray->array_initial_size);
-             node->pointers[0] = _create_item(children, first + i);
+             node->pointers[0] = _create_item(children, node, i);
              node->length++;
              segarray->count++;
           }
@@ -312,3 +318,10 @@ Eina_Accessor* efl_ui_list_segarray_node_accessor_get(Efl_Ui_List_SegArray* sega
    _efl_ui_list_segarray_node_accessor_setup(acc, segarray);
    return &acc->vtable;
 }
+
+int efl_ui_list_item_index_get(Efl_Ui_List_Item const* item)
+{
+  Efl_Ui_List_SegArray_Node* node = item->item.tree_node;
+  return item->item.index_offset + node->first;
+}
+

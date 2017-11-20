@@ -29,6 +29,8 @@ struct _Efl_Ui_List_Item
    Eina_Bool            longpressed : 1;
 };
 
+int efl_ui_list_item_index_get(Efl_Ui_List_Item const* item);
+
 typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 
 #include "efl_ui_list_segarray.h"

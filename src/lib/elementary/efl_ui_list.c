@@ -468,7 +468,7 @@ _layout_unrealize(Efl_Ui_List_Data *pd, Efl_Ui_List_Item *item)
 
    evt.child = item->item.children;
    evt.layout = item->item.layout;
-   evt.index = item->item.index;
+   evt.index = efl_ui_list_item_index_get(item);
    efl_event_callback_call(item->list, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
    efl_ui_view_model_set(item->item.layout, NULL);
 
@@ -1485,7 +1485,7 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = item->index;
+   evt.index = efl_ui_list_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
 
    evas_object_show(item->layout);
@@ -1504,7 +1504,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 
    evt.child = item->children;
    evt.layout = item->layout;
-   evt.index = item->index;
+   evt.index = efl_ui_list_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
 
    efl_ui_view_model_set(item->layout, NULL);
