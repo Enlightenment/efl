@@ -79,6 +79,12 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    _calc_align(data);
 }
 
+static void
+_resize_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   _calc_align(ev->object);
+}
+
 EOLIAN static void
 _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
 {
@@ -211,6 +217,8 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 
    edje_object_signal_callback_add(pd->backwall, "elm,action,clicked", "*",
                                    _backwall_clicked_cb, obj);
+
+   efl_event_callback_add(obj, EFL_GFX_EVENT_RESIZE, _resize_cb, NULL);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
 
