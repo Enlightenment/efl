@@ -389,6 +389,359 @@ test_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
 }
 
+static void
+efl_ui_popup_alert_text_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Efl_Ui_Popup_Alert_Clicked_Event *event = ev->info;
+
+   if (event->button_type == EFL_UI_POPUP_ALERT_BUTTON_POSITIVE)
+     efl_text_set(ev->object, "Text is changed");
+   else
+     efl_del(ev->object);
+}
+
+static void
+create_message(Eina_Strbuf *message_buf, const char *message, int iterate_cnt)
+{
+   int i;
+   for (i = 0; i < iterate_cnt; i++)
+      eina_strbuf_append(message_buf, message);
+}
+
+static void
+_alert_text_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, "This is Text Popup");
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+}
+
+static void
+_alert_text_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_TRUE);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, "This is Text Popup");
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+}
+
+static void
+_alert_text_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, "This is Text Popup");
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_FALSE);
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+}
+
+static void
+_alert_text_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, "This is Text Popup");
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_FALSE, EINA_TRUE);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+}
+
+static void
+_alert_text_case6_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_TRUE);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case7_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_FALSE);
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case8_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_FALSE, EINA_TRUE);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case9_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(10, 10));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case10_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 10);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(150, 150));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case11_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 10);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_FALSE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(150, 150));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case12_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 10);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE, EINA_FALSE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(300, 150));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case13_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 20);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_FALSE, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(150, 150));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
+static void
+_alert_text_case14_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+
+   Eina_Strbuf *message_buf = eina_strbuf_new();
+   create_message(message_buf, "This is Text Popup ", 50);
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_FALSE, EINA_TRUE);
+   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(150, 300));
+
+   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
+
+   eina_strbuf_free(message_buf);
+}
+
 void
 test_ui_popup_alert_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -396,27 +749,91 @@ test_ui_popup_alert_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
                      efl_text_set(efl_added, "Efl.Ui.Popup.Alert.Text"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(320, 320));
+   efl_gfx_size_set(win, EINA_SIZE2D(500, 700));
 
-   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_TEXT_CLASS, win);
+   Eo *create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(short), expand(false,false)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 0));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case1_cb, win);
 
-   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(false,false)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 50));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case2_cb, win);
 
-   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(short), expand(true,true)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 100));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case3_cb, win);
 
-   efl_text_set(efl_ui_popup,
-                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup"
-                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup"
-                "This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup This is Text Popup");
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(short), expand(true,false)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 150));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case4_cb, win);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(short), expand(false,true)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 200));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case5_cb, win);
 
-   efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_TRUE);
-   efl_gfx_size_hint_max_set(efl_ui_popup, EINA_SIZE2D(100, 180));
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,true)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 250));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case6_cb, win);
 
-   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,false)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 300));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case7_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(false,true)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 350));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case8_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,true), max(10,10)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 400));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case9_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,true), max(150,150)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 450));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case10_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,false), max(150,150)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 500));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case11_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(true,false), max(300,150)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 550));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case12_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(false,true), max(150, 150)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 600));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case13_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "size(200,200), text(long), expand(false,true), max(150, 300)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 650));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case14_cb, win);
 }
 
 static void

@@ -11,13 +11,15 @@ class Efl.Ui.Popup.Alert.Text(Efl.Ui.Popup.Alert, Efl.Text)
              ]]
            }
            values {
-               is_expandable: bool;
+               is_expandable_w: bool;
+               is_expandable_h: bool;
            }
        }
    }
    implements {
       Efl.Object.constructor;
       Efl.Gfx.Size.Hint.hint_max { set;}
+      Efl.Gfx.size { set;}
       Efl.Text.text { get; set; }
       Efl.Part.part;
    }

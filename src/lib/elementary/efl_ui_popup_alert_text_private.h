@@ -8,8 +8,13 @@ struct _Efl_Ui_Popup_Alert_Text_Data
 {
    Eo        *scroller;
    Eo        *message;
+   Evas_Coord max_minw;
+   Evas_Coord pre_minh;
+   Evas_Coord max_scroll_w;
    Evas_Coord max_scroll_h;
+   Eina_Bool  is_expandable_w : 1;
    Eina_Bool  is_expandable_h : 1;
+   Eina_Bool  is_sizing_eval: 1;
 };
 
 #endif
