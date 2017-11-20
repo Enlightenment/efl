@@ -1217,7 +1217,7 @@ _efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, cons
         if (key) *key = sd->async.key;
         return;
      }
-   evas_object_image_file_get(sd->img, file, key);
+   efl_file_get(sd->img, file, key);
 }
 
 #if 0
