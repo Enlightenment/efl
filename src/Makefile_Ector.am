@@ -124,6 +124,8 @@ static_libs/scenegraph/sg_renderer.h \
 static_libs/scenegraph/sg_context.h \
 static_libs/scenegraph/utils/sg_thread.h \
 static_libs/scenegraph/utils/sg_thread.c \
+static_libs/scenegraph/utils/sg_region.h \
+static_libs/scenegraph/utils/sg_region.c \
 static_libs/scenegraph/software/sg_software_context.c \
 static_libs/scenegraph/software/sg_software_context.h \
 $(NULL)

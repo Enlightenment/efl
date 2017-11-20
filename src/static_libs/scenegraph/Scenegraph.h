@@ -34,8 +34,7 @@ extern "C" {
 #endif
 
 #include "sg_node.h"
-
-
+#include "utils/sg_region.h"
 
 #ifdef __cplusplus
 }
