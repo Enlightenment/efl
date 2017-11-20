@@ -29,7 +29,7 @@ bt = new efl.Efl.Ui.Image(ly);
 bt.setIcon('chat');
 bt.setHintMin(20, 20);
 // elm_layout_icon_set(ly, bt);
-icon_container = ly.part('elm.swallow.icon').cast('Efl.Container');
+icon_container = ly.part('elm.swallow.icon').cast('Efl.Content');
 icon_container.setContent(bt);
 ly.emitSignal('elm,state,icon,visible', 'elm');
 
@@ -37,7 +37,7 @@ bt = new efl.Efl.Ui.Image(ly);
 bt.setIcon('close');
 bt.setHintMin(20, 20);
 // elm_layout_end_set(ly, bt);
-end_container = ly.part('elm.swallow.end').cast('Efl.Container');
+end_container = ly.part('elm.swallow.end').cast('Efl.Content');
 end_container.setContent(bt);
 ly.emitSignal('elm,state,end,visible', 'elm');
 
@@ -56,7 +56,7 @@ ly.setVisible(true);
 bt = new efl.Efl.Ui.Button(ly);
 bt.setPartText(null, "Button 1");
 console.log("Will get part");
-element_container = ly.part('example/custom').cast('Efl.Container');
+element_container = ly.part('example/custom').cast('Efl.Content');
 console.log("Will setcontent on part");
 element_container.setContent(bt);
 

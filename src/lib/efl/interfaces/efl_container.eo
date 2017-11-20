@@ -1,23 +1,13 @@
-interface Efl.Container (Efl.Gfx)
+interface Efl.Container
 {
-   [[API common to all UI container objects.]]
+   [[Common interface for objects that have multiple contents (sub objects).
+
+     APIs in this interface deal with containers of multiple sub objects, not
+     with individual parts.
+   ]]
    eo_prefix: efl_content;
    event_prefix: efl_container;
    methods {
-      @property content {
-         [[Swallowed sub-object contained in this object.]]
-         set {
-            return: bool; [[$true on success, $false otherwise]]
-         }
-         get {}
-         values {
-            content: Efl.Gfx; [[The object to swallow.]]
-         }
-      }
-      content_unset {
-         [[Unswallow the object in the current container and return it.]]
-         return: Efl.Gfx; [[Unswallowed object]]
-      }
       content_remove {
          [[Unswallow an object from this container.]]
          params {

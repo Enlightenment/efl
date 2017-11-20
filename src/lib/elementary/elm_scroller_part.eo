@@ -3,7 +3,7 @@ class Elm.Scroller.Part (Efl.Ui.Layout.Part_Legacy)
    [[Elementary scroller internal part class]]
    data: null;
    implements {
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }

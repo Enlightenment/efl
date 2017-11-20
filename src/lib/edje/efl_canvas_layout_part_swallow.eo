@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout.Part_Swallow (Efl.Canvas.Layout.Part, Efl.Container)
+class Efl.Canvas.Layout.Part_Swallow (Efl.Canvas.Layout.Part, Efl.Content)
 {
    [[Represents a SWALLOW part of an Edje object.
 
@@ -7,7 +7,7 @@ class Efl.Canvas.Layout.Part_Swallow (Efl.Canvas.Layout.Part, Efl.Container)
    ]]
    data: null;
    implements {
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }

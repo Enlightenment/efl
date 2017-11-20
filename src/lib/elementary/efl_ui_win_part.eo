@@ -1,10 +1,10 @@
-class Efl.Ui.Win.Part (Efl.Ui.Widget.Part, Efl.Container, Efl.Gfx, Efl.File)
+class Efl.Ui.Win.Part (Efl.Ui.Widget.Part, Efl.Content, Efl.Gfx, Efl.File)
 {
    [[Efl UI window interal part class]]
    data: null;
    implements {
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Gfx.color { get; set; }
       Efl.File.file { get; set; }
    }

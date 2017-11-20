@@ -58,7 +58,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var entry = new efl.Elm.Entry(win);
         entry.setPartText("elm.text", text);
         entry.setEditable(false);
-        part = layout.part("tweet_text").cast("Efl.Container");
+        part = layout.part("tweet_text").cast("Efl.Content");
         part.setContent(entry);
 
         layout.setHintMin(127, 96);
@@ -68,7 +68,7 @@ twit.get('statuses/user_timeline', {screen_name: user_acount, count:10}, functio
         var icon = new efl.Efl.Ui.Image(win);
         icon.fillInside = true;
         icon_array.push(icon);
-        user_icon = layout.part("user_icon").cast("Efl.Container");
+        user_icon = layout.part("user_icon").cast("Efl.Content");
         user_icon.setContent(icon);
         item = tweet_box.packEnd(layout);
         layout.setVisible(true);

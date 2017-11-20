@@ -3,8 +3,8 @@ class Efl.Ui.Multibuttonentry.Part (Efl.Ui.Layout.Part_Content, Efl.Text)
    [[Elementary multibuttonentry internal part class]]
    data: null;
    implements {
-      Efl.Container.content { set; get; }
-      Efl.Container.content_unset;
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
       Efl.Text.text { set; get; }
    }
 }

@@ -719,19 +719,19 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_efl_container_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
+_elm_scroller_efl_content_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
 {
    return _elm_scroller_content_set(obj, sd, "default", content);
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_container_content_get(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_get(Eo *obj, Elm_Scroller_Data *sd)
 {
    return _elm_scroller_content_get(obj, sd, "default");
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_container_content_unset(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_unset(Eo *obj, Elm_Scroller_Data *sd)
 {
    return _elm_scroller_content_unset(obj, sd, "default");
 }

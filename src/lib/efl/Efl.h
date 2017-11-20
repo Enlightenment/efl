@@ -146,6 +146,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Packing & containers */
 #include "interfaces/efl_container.eo.h"
+#include "interfaces/efl_content.eo.h"
 #include "interfaces/efl_pack.eo.h"
 #include "interfaces/efl_pack_layout.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"

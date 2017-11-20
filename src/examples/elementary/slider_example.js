@@ -24,12 +24,12 @@ sl.setPartText("elm.text", "Counter");
 ic = new efl.Efl.Ui.Image(win);
 ic.setIcon("home");
 // ic.setResizable(false, false);
-sl.part("icon").cast("Efl.Container").setContent(ic);
+sl.part("icon").cast("Efl.Content").setContent(ic);
 
 ic = new efl.Efl.Ui.Image(win);
 ic.setIcon("folder");
 // ic.setResizable(false, false);
-sl.part("end").cast("Efl.Container").setContent(ic);
+sl.part("end").cast("Efl.Content").setContent(ic);
 
 sl.setHintAlign(-1.0, 0.5);
 sl.setHintWeight(1.0, 1.0);

@@ -2907,7 +2907,7 @@ edje_object_part_text_prediction_hint_set(Eo *obj, const char *part, const char 
 }
 
 Eina_Bool
-_edje_efl_container_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow)
+_edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow)
 {
    Edje_Real_Part *rp, *rpcur;
    Edje_User_Defined *eud = NULL;
@@ -3267,7 +3267,7 @@ _edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Ob
 }
 
 Efl_Gfx *
-_edje_efl_container_content_get(Edje *ed, const char *part)
+_edje_efl_content_content_get(Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 

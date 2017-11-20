@@ -159,8 +159,9 @@ enum Efl.Ui.Win.Move_Resize_Mode
 
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
                Efl.Access.Component, Efl.Access.Widget.Action,
-               Efl.Container, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part, Efl.Ui.Focus.Manager )
+               Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
+               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
+               Efl.Ui.Focus.Manager )
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
@@ -846,8 +847,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       //Efl.Canvas.seats;
       Efl.Canvas.device { get; }
       Efl.Canvas.seat { get; }
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part;
       Efl.Object.provider_find;
    }

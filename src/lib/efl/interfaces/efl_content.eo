@@ -1,0 +1,24 @@
+interface Efl.Content
+{
+   [[Common interface for objects that have a (single) content.
+
+     This is used for the default content part of widgets, as well as for
+     individual parts through @Efl.Part.
+   ]]
+   methods {
+      @property content {
+         [[Swallowed sub-object contained in this object.]]
+         set {
+            return: bool; [[$true on success, $false otherwise]]
+         }
+         get {}
+         values {
+            content: Efl.Gfx; [[The object to swallow.]]
+         }
+      }
+      content_unset {
+         [[Unswallow the object in the current container and return it.]]
+         return: Efl.Gfx; [[Unswallowed object]]
+      }
+   }
+}

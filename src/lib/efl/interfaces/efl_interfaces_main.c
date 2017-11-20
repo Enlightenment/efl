@@ -45,6 +45,7 @@
 
 /* Packing & containers */
 #include "interfaces/efl_container.eo.c"
+#include "interfaces/efl_content.eo.c"
 #include "interfaces/efl_pack.eo.c"
 #include "interfaces/efl_pack_layout.eo.c"
 #include "interfaces/efl_pack_linear.eo.c"

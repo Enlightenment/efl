@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Container,
+class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Content,
                                        Efl.Canvas.Object)
 {
    [[Class representing an external part in Edje layouts.
@@ -9,7 +9,7 @@ class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Container,
      is limited to one and only one function call.
 
      An external part contains one object, which can be retrieved with
-     @Efl.Container.content.get(). Do not delete this object. Just like for
+     @Efl.Content.content.get(). Do not delete this object. Just like for
      other parts, Edje is in charge of the visibility, geometry, clip, etc...
 
      Common usage is then, in pseudo-C:
@@ -17,8 +17,8 @@ class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Container,
        efl_text_set(widget, "hello");
 
      Note that as a shortcut the widget's functions can be called directly on
-     this part object. In pseudo-C++:
-       dynamic_cast<efl::Text>(layout.part("title")).text_set("hello");
+     this part object. In C++:
+       efl::eo::downcast<efl::Text>(layout.part("title")).text_set("hello");
      Or in pseudo-C:
        efl_text_set(efl_part(layout, "title"), "hello");
      Or in pseudo-script:
@@ -28,6 +28,6 @@ class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Container,
    ]]
    data: null;
    implements {
-      Efl.Container.content { get; }
+      Efl.Content.content { get; }
    }
 }
