@@ -5,18 +5,19 @@
 #include <Elementary.hh>
 #include <iostream>
 
-#warning This example is using legacy elm_spinner
+#warning FIXME: This example requires proper EO API usage (not legacy spinner)
 
 using efl::eo::instantiate;
 
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
+#if 0
 
    efl::ui::Win win(instantiate);
    win.text_set("Spinner Example");
    win.autohide_set(true);
+
 
    efl::ui::Box bx(instantiate, win);
    win.content_set(bx);
@@ -81,5 +82,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    { std::cout << "Value changed to " << spinner.value_get() << "" << std::endl; },
          std::placeholders::_1);
    efl::eolian::event_add(elm::Spinner::delay_changed_event, sp7, delay);
+
+#endif
 }
 EFL_MAIN()
