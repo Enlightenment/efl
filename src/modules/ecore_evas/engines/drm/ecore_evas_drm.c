@@ -77,6 +77,51 @@ static Eina_List *handlers;
 static Eina_List *canvases;
 static Eina_List *outputs;
 
+static void *
+_drm_gl_canvas_setup(Efl_Canvas_Output *eout, Ecore_Evas_Engine_Drm_Data *edata, Ecore_Drm2_Output *output, int rotation)
+{
+#ifdef BUILD_ECORE_EVAS_GL_DRM
+   Evas_Engine_Info_GL_Drm *einfo;
+   char *num;
+
+   einfo = (Evas_Engine_Info_GL_Drm *)efl_canvas_output_engine_info_get(eout);
+   if (!einfo) return NULL;
+
+   einfo->info.dev = edata->dev;
+   einfo->info.bpp = edata->bpp;
+   einfo->info.depth = edata->depth;
+   einfo->info.format = edata->format;
+   einfo->info.rotation = rotation;
+   einfo->info.output = output;
+
+   num = getenv("EVAS_DRM_VSYNC");
+   if ((num) && (!atoi(num)))
+     einfo->info.vsync = EINA_FALSE;
+
+   return einfo;
+#else
+   return NULL;
+#endif
+}
+
+static void *
+_drm_canvas_setup(Efl_Canvas_Output *eout, Ecore_Evas_Engine_Drm_Data *edata, Ecore_Drm2_Output *output, int rotation)
+{
+   Evas_Engine_Info_Drm *einfo;
+
+   einfo = (Evas_Engine_Info_Drm *)efl_canvas_output_engine_info_get(eout);
+   if (!einfo) return NULL;
+
+   einfo->info.dev = edata->dev;
+   einfo->info.bpp = edata->bpp;
+   einfo->info.depth = edata->depth;
+   einfo->info.format = edata->format;
+   einfo->info.rotation = rotation;
+   einfo->info.output = output;
+
+   return einfo;
+}
+
 static Ecore_Evas_Engine_Drm_Tick *
 _drm_tick_find(Ecore_Evas_Engine_Drm_Data *edata, Ecore_Drm2_Output *output)
 {
@@ -1131,7 +1176,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    EINA_LIST_FOREACH(outs, l, output)
      {
         Efl_Canvas_Output *eout;
-        Evas_Engine_Info_Drm *einfo;
+        void *einfo;
         Ecore_Evas_Engine_Drm_Tick *etick;
         int ox, oy, ow, oh;
 
@@ -1143,27 +1188,15 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
         eout = efl_canvas_output_add(ee->evas);
         if (!eout) continue;
 
-        einfo = (Evas_Engine_Info_Drm *)efl_canvas_output_engine_info_get(eout);
+        if (gl)
+          einfo = _drm_gl_canvas_setup(eout, edata, output, ee->rotation);
+        else
+          einfo = _drm_canvas_setup(eout, edata, output, ee->rotation);
+
         if (!einfo)
           {
              efl_canvas_output_del(eout);
              continue;
-          }
-
-        einfo->info.dev = edata->dev;
-        einfo->info.bpp = edata->bpp;
-        einfo->info.depth = edata->depth;
-        einfo->info.format = edata->format;
-        einfo->info.rotation = ee->rotation;
-        einfo->info.output = output;
-
-        if (gl)
-          {
-             char *num;
-
-             num = getenv("EVAS_DRM_VSYNC");
-             if ((num) && (!atoi(num)))
-               einfo->info.vsync = EINA_FALSE;
           }
 
         ecore_drm2_output_info_get(output, &ox, &oy, &ow, &oh, NULL);
