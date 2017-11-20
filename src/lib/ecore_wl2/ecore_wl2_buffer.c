@@ -612,7 +612,10 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
                                      DRM_FORMAT_ARGB8888, 0);
    ecore_wl2_display_flush(ewd);
 
-  return;
+   ecore_wl2_buffer_destroy(buf);
+
+   return;
+
 fail:
   _buffer_manager_destroy();
   ewd->wl.dmabuf = NULL;
