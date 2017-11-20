@@ -1251,9 +1251,8 @@ elm_ctxpopup_item_next_get(const Evas_Object *obj)
 }
 
 static void
-_item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_item_select(Elm_Ctxpopup_Item_Data *item)
 {
-   Elm_Ctxpopup_Item_Data *item = data;
    Elm_Object_Item *eo_item2;
    Eina_List *l;
 
@@ -1267,6 +1266,13 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 
    if (!item->wcb.org_func_cb) return;
    item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, EO_OBJ(item));
+}
+
+static void
+_item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Ctxpopup_Item_Data *item = data;
+   _item_select(item);
 }
 
 EOLIAN static Eo *
@@ -1573,6 +1579,26 @@ _elm_ctxpopup_efl_access_state_set_get(Eo *obj, Elm_Ctxpopup_Data *sd EINA_UNUSE
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
 
    return ret;
+}
+
+static Eina_Bool
+_item_access_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_CTXPOPUP_ITEM_DATA_GET(obj, it);
+   if (!it) return EINA_FALSE;
+
+   _item_select(it);
+   return EINA_TRUE;
+}
+
+EOLIAN static const Efl_Access_Action_Data*
+_elm_ctxpopup_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Item_Data *sd EINA_UNUSED)
+{
+   static Efl_Access_Action_Data atspi_actions[] = {
+          { "activate", NULL, NULL, _item_access_action_activate},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 /* Internal EO APIs and hidden overrides */
