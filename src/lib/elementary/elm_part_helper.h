@@ -208,7 +208,7 @@ _ ## type ## _efl_text_markup_markup_get(Eo *obj, Type *pd EINA_UNUSED) \
 EOLIAN static void \
 _ ## type ## _efl_text_markup_markup_set(Eo *obj, Type *pd EINA_UNUSED, const char *markup) \
 { \
-  return efl_text_markup_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), markup); \
+  efl_text_markup_set(efl_part(efl_super(obj, MY_CLASS), "elm.text"), markup); \
 } \
 
 #endif
