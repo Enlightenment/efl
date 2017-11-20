@@ -119,52 +119,6 @@ EAPI void elm_spinner_step_set(Evas_Object *obj, double step);
 EAPI double elm_spinner_step_get(const Evas_Object *obj);
 
 /**
- * @brief Control the interval on time updates for an user mouse button hold on
- * spinner widgets' arrows.
- *
- * This interval value is decreased while the user holds the mouse pointer
- * either incrementing or decrementing spinner's value.
- *
- * This helps the user to get to a given value distant from the current one
- * easier/faster, as it will start to change quicker and quicker on mouse
- * button holds.
- *
- * The calculation for the next change interval value, starting from the one
- * set with this call, is the previous interval divided by $1.05, so it
- * decreases a little bit.
- *
- * The default starting interval value for automatic changes is $0.85 seconds.
- *
- * @param[in] interval The (first) interval value in seconds.
- *
- * @ingroup Elm_Spinner
- */
-EAPI void elm_spinner_interval_set(Evas_Object *obj, double interval);
-
-/**
- * @brief Control the interval on time updates for an user mouse button hold on
- * spinner widgets' arrows.
- *
- * This interval value is decreased while the user holds the mouse pointer
- * either incrementing or decrementing spinner's value.
- *
- * This helps the user to get to a given value distant from the current one
- * easier/faster, as it will start to change quicker and quicker on mouse
- * button holds.
- *
- * The calculation for the next change interval value, starting from the one
- * set with this call, is the previous interval divided by $1.05, so it
- * decreases a little bit.
- *
- * The default starting interval value for automatic changes is $0.85 seconds.
- *
- * @return The (first) interval value in seconds.
- *
- * @ingroup Elm_Spinner
- */
-EAPI double elm_spinner_interval_get(const Evas_Object *obj);
-
-/**
  * @brief Control the value the spinner displays.
  *
  * Value will be presented on the label following format specified with

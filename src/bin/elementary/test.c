@@ -176,6 +176,8 @@ void test_scroller3(void *data, Evas_Object *obj, void *event_info);
 void test_scroller4(void *data, Evas_Object *obj, void *event_info);
 void test_scroller5(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
+void test_ui_spin(void *data, Evas_Object *obj, void *event_info);
+void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index3(void *data, Evas_Object *obj, void *event_info);
@@ -1015,6 +1017,8 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
+   ADD_TEST(NULL, "Range Values", "Ui.Spin", test_ui_spin);
+   ADD_TEST(NULL, "Range Values", "Ui.Spin.Button", test_ui_spin_button);
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);

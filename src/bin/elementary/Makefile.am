@@ -127,6 +127,8 @@ test_slider.c \
 test_ui_slider_interval.c \
 test_slideshow.c \
 test_spinner.c \
+test_ui_spinner.c \
+test_ui_buttonspin.c \
 test_store.c \
 test_sys_notify.c \
 test_systray.c \

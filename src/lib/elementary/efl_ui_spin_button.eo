@@ -1,0 +1,80 @@
+class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
+		                  Efl.Access.Value, Efl.Access.Widget.Action)
+{
+   [[A Button Spin.
+
+     This is a widget which allows the user to increase or decrease
+     numeric values using arrow buttons, or edit values directly, clicking
+     over it and typing the new value.
+
+     @since 1.21
+   ]]
+   methods {
+      @property loop {
+         [[Control whether the spin should loop when it reaches its minimum or maximum value.
+
+           Disabled by default. If disabled, when the user tries to increment the
+           value,
+           but displayed value plus step value is bigger than maximum value,
+           the new value will be the maximum value.
+           The same happens when the user tries to decrement it,
+           but the value less step is less than minimum value. In this case,
+           the new displayed value will be the minimum value.
+
+           When loop is enabled, when the user tries to increment the value,
+           but displayed value plus step value is bigger than maximum value,
+           the new value will be the minimum value. When the the user tries to
+           decrement it, but the value less step is less than minimum value,
+           the new displayed value will be the maximum value.
+
+           E.g.:
+           $min = 10
+           $max = 50
+           $step = 20
+           $displayed = 20
+
+           When the user decrement value (using left or bottom arrow), it will
+           displays $50.]]
+         set {
+         }
+         get {
+         }
+         values {
+            loop: bool(false); [[$true to enable loop or $false to disable it.]]
+         }
+      }
+      @property editable {
+         [[Control whether the spin can be directly edited by the user or not.
+
+           Spin objects can have edition disabled, in which state they will
+           be changed only by arrows.
+           Useful for contexts
+           where you don't want your users to interact with it writing the value.
+           Specially
+           when using special values, the user can see real value instead
+           of special label on edition.]]
+         set {
+         }
+         get {
+         }
+         values {
+            editable: bool(false); [[$true to allow users to edit it or $false to don't allow users to edit it directly.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.finalize;
+      Elm.Widget.theme_apply;
+      Elm.Widget.widget_event;
+      Elm.Widget.on_focus_update;
+      Efl.Ui.Range.range_value { set; }
+      Efl.Access.name { get; }
+      Efl.Access.Value.value_and_text { get; set; }
+      Efl.Access.Value.range { get; }
+      Efl.Access.Value.increment { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
+   }
+   events {
+      delay,changed; [[Called when spin delay changed]]
+   }
+}
