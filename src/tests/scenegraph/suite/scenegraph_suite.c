@@ -25,6 +25,8 @@
 
 static const Efl_Test_Case etc[] = {
   { "Scenegraph Node", scenegraph_test_nodes },
+  { "Region Utility", scenegraph_test_region },
+  { "Rle Utility", scenegraph_test_rle },
   { NULL, NULL }
 };
 

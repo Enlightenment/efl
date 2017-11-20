@@ -204,6 +204,8 @@ tests_scenegraph_suite_scenegraph_suite_SOURCES = \
 tests/scenegraph/suite/scenegraph_suite.c \
 tests/scenegraph/suite/scenegraph_suite.h \
 tests/scenegraph/suite/scenegraph_test_nodes.c \
+tests/scenegraph/suite/scenegraph_test_region.c \
+tests/scenegraph/suite/scenegraph_test_rle.c \
 $(scenegraph_sources)
 
 
