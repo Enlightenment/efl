@@ -164,7 +164,6 @@ class Efl.Ui.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Format)
       Efl.Object.constructor;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_update;
-      Elm.Widget.on_focus_update;
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.widget_event;
       Efl.Access.children { get; }

@@ -351,51 +351,6 @@ _view_update(Efl_Ui_Multibuttonentry_Data *sd)
    _visual_guide_text_set(obj);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_multibuttonentry_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
-{
-   if (elm_widget_focus_get(obj))
-     {
-        // ACCESS
-        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) goto end;
-
-        if (sd->editable)
-          {
-             if ((sd->selected_it))
-               {
-                  elm_layout_signal_emit(VIEW(sd->selected_it), "elm,state,focused", "elm");
-                  elm_object_focus_set(VIEW(sd->selected_it), EINA_TRUE);
-                  efl_ui_text_input_panel_show(sd->entry);
-               }
-             else if (((!sd->selected_it) || (!eina_list_count(sd->items))))
-               {
-                  _view_update(sd);
-                  efl_ui_text_input_panel_show(sd->entry);
-               }
-          }
-
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
-     }
-   else
-     {
-        if (sd->editable)
-          {
-             _view_update(sd);
-             efl_ui_text_input_panel_hide(sd->entry);
-          }
-
-        if (sd->selected_it)
-          elm_layout_signal_emit(VIEW(sd->selected_it), "elm,state,unfocused", "elm");
-
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
-     }
-
-end:
-   return EINA_TRUE;
-}
-
 static void
 _item_del(Elm_Multibuttonentry_Item_Data *item)
 {
