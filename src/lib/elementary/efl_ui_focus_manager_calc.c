@@ -1405,18 +1405,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 
    last_focusable = _focus_stack_unfocus_last(pd);
 
-   if (node->type == NODE_TYPE_NORMAL)
-     {
-        //populate the new change
-        efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
-     }
-
    //remove the object from the list and add it again
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
    pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
+   /*
+     Only emit those signals if we are already at the top of the focus stack.
+     Otherwise focus_get in the callback to that signal might return false.
+    */
    if (node->type == NODE_TYPE_NORMAL)
      {
+        //populate the new change
+        efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
 
