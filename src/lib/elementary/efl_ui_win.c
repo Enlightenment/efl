@@ -6209,29 +6209,29 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
 }
 
 EOLIAN static void
-_efl_ui_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const int *rotations, unsigned int count)
+_efl_ui_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
+                                       Eina_Bool allow_0, Eina_Bool allow_90,
+                                       Eina_Bool allow_180, Eina_Bool allow_270)
 {
-   unsigned int i;
-   int r;
+   unsigned cnt = 0;
+   int rots[4];
 
-   if (!sd->wm_rot.use)
-     sd->wm_rot.use = EINA_TRUE;
+   if (allow_0) rots[cnt++] = 0;
+   if (allow_90) rots[cnt++] = 90;
+   if (allow_180) rots[cnt++] = 180;
+   if (allow_270) rots[cnt++] = 270;
+   sd->wm_rot.use = EINA_TRUE;
 
    ELM_SAFE_FREE(sd->wm_rot.rots, free);
    sd->wm_rot.count = 0;
 
-   if (count > 0)
+   if (cnt)
      {
-        sd->wm_rot.rots = calloc(count, sizeof(int));
+        sd->wm_rot.rots = malloc(sizeof(int) * cnt);
         if (!sd->wm_rot.rots) return;
-        for (i = 0; i < count; i++)
-          {
-             r = _win_rotation_degree_check(rotations[i]);
-             sd->wm_rot.rots[i] = r;
-          }
+        memcpy(sd->wm_rot.rots, rots, cnt * sizeof(int));
+        sd->wm_rot.count = cnt;
      }
-
-   sd->wm_rot.count = count;
 
    ecore_evas_wm_rotation_available_rotations_set(sd->ee,
                                                   sd->wm_rot.rots,
@@ -6239,26 +6239,83 @@ _efl_ui_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_wm_available_rotations_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int **rotations, unsigned int *count)
+_efl_ui_win_wm_available_rotations_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
+                                       Eina_Bool *allow_0, Eina_Bool *allow_90,
+                                       Eina_Bool *allow_180, Eina_Bool *allow_270)
 {
-   if (!sd->wm_rot.use) return EINA_FALSE;
+   if (!sd->wm_rot.use) goto end;
 
-   if (sd->wm_rot.count > 0)
+   if (allow_0) *allow_0 = EINA_FALSE;
+   if (allow_90) *allow_90 = EINA_FALSE;
+   if (allow_180) *allow_180 = EINA_FALSE;
+   if (allow_270) *allow_270 = EINA_FALSE;
+
+   for (unsigned k = 0; k < sd->wm_rot.count; k++)
      {
-        if (rotations)
+        switch (sd->wm_rot.rots[k])
           {
-             *rotations = calloc(sd->wm_rot.count, sizeof(int));
-             if (*rotations)
-               {
-                  memcpy(*rotations,
-                         sd->wm_rot.rots,
-                         sizeof(int) * sd->wm_rot.count);
-               }
+           case 0: if (allow_0) *allow_0 = EINA_TRUE; break;
+           case 90: if (allow_90) *allow_90 = EINA_TRUE; break;
+           case 180: if (allow_180) *allow_180 = EINA_TRUE; break;
+           case 270: if (allow_270) *allow_270 = EINA_TRUE; break;
+           default: ERR("Unsupported rotation %d", sd->wm_rot.rots[k]); break;
           }
      }
 
-   if (count) *count = sd->wm_rot.count;
+end:
+   return !!sd->wm_rot.use;
+}
+
+EAPI void
+elm_win_wm_rotation_available_rotations_set(Elm_Win *obj, const int *rotations, unsigned int count)
+{
+   Eina_Bool allow[4] = { 0, };
+   int found = 0;
+
+   if (!rotations || !count) goto end;
+   for (unsigned k = 0; (k < count) && (found < 4); k++)
+     {
+        int rot = (((rotations[k] % 360) + 360) % 360) / 90;
+        if (!allow[rot])
+          {
+             allow[rot] = EINA_TRUE;
+             found++;
+          }
+     }
+
+end:
+   efl_ui_win_wm_available_rotations_set(obj, allow[0], allow[1], allow[2], allow[3]);
+}
+
+EAPI Eina_Bool
+elm_win_wm_rotation_available_rotations_get(const Elm_Win *obj, int **rotations, unsigned int *count)
+{
+   int rots[4] = { 0, };
+   Eina_Bool allow[4] = { 0, };
+   unsigned cnt = 0;
+
+   if (!efl_ui_win_wm_available_rotations_get(obj, &allow[0], &allow[1], &allow[2], &allow[3]))
+     goto none;
+
+   for (int k = 0; k < 4; k++)
+     if (allow[k])
+       rots[cnt++] = k * 90;
+
+   if (!cnt) goto none;
+
+   if (rotations)
+     {
+        *rotations = malloc(sizeof(int) * cnt);
+        if (!*rotations) goto none;
+        memcpy(*rotations, rots, cnt * sizeof(int));
+     }
+   if (count) *count = cnt;
    return EINA_TRUE;
+
+none:
+   if (rotations) *rotations = NULL;
+   if (count) *count = 0;
+   return EINA_FALSE;
 }
 
 EOLIAN static void

@@ -1289,3 +1289,36 @@ EAPI void elm_win_available_profiles_set(Elm_Win *obj, const char **profiles, un
  * @ingroup Efl_Ui_Win
  */
 EAPI Eina_Bool elm_win_available_profiles_get(const Elm_Win *obj, char ***profiles, unsigned int *count);
+
+/**
+ * @brief Set the array of available window rotations.
+ *
+ * This function is used to set the available rotations to give the hints to
+ * WM. WM will refer this hints and set the orientation window properly.
+ *
+ * @param[in] obj The object.
+ * @param[in] rotations The array of rotation value.
+ * @param[in] count The size of the rotations array.
+ *
+ * @since 1.9
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_wm_rotation_available_rotations_set(Elm_Win *obj, const int *rotations, unsigned int count);
+
+/**
+ * @brief Get the array of available window rotations.
+ *
+ * This function is used to get the available rotations.
+ *
+ * @param[in] obj The object.
+ * @param[out] rotations The array of rotation value.
+ * @param[out] count The size of the rotations array.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.9
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_wm_rotation_available_rotations_get(const Elm_Win *obj, int **rotations, unsigned int *count);

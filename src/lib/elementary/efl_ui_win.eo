@@ -218,35 +218,24 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
          }
       }
       @property wm_available_rotations {
+         [[Defines which rotations this window supports.
+
+           The window manager will refer to these hints and rotate the window
+           accordingly, depending on the device orientation, for instance.
+         ]]
+         values {
+            allow_0: bool; [[Normal orientation.]]
+            allow_90: bool; [[Rotated 90 degrees CCW.]]
+            allow_180: bool; [[Rotated 180 degrees.]]
+            allow_270: bool; [[Rotated 270 degrees CCW (i.e. 90 CW).]]
+         }
          set {
-            [[Set the array of available window rotations.
-
-              This function is used to set the available rotations to give
-              the hints to WM. WM will refer this hints and set the
-              orientation window properly.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_set;
-            values {
-               /* FIXME: array */
-               rotations: ptr(const(int)); [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
+            legacy: null;
          }
          get {
-            [[Get the array of available window rotations.
-
-              This function is used to get the available rotations.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_get;
-            values {
-               rotations: ptr(int); [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
-            return: bool; [[$true on success, $false otherwise]]
+            legacy: null;
+            return: bool; [[Returns $false if available rotations were
+                            not specified.]]
          }
       }
       @property wm_available_profiles {
