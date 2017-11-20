@@ -4,14 +4,15 @@
 
 using efl::eo::instantiate;
 
+static efl::ui::Win win;
+
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-
-   efl::ui::Win win(instantiate);
+   win = efl::ui::Win(instantiate);
    win.text_set("Slider example");
-   win.autohide_set(true);
+   efl::eolian::event_add(efl::ui::Win::delete_request_event, win,
+                          std::bind([](){ win = nullptr; ::efl_exit(0); }));
 
    efl::ui::Box bx(instantiate, win);
    win.content_set(bx);
@@ -31,7 +32,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ic2.icon_set("folder");
    ic2.scalable_set(false, false);
    // FIXME: C++ part API needs special reference handling! This will show ERR!
-   efl::eo::downcast<efl::Container>(sl2.part("elm.swallow.end"))
+   efl::eo::downcast<efl::Content>(sl2.part("elm.swallow.end"))
          .content_set(ic2);
 
    sl2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
