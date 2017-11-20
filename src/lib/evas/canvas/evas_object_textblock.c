@@ -361,31 +361,31 @@ static const Evas_Object_Style_Tag_Base default_tags[] = {
 /**
  * @internal
  * @def _NODE_TEXT(x)
- * A convinience macro for casting to a text node.
+ * A convenience macro for casting to a text node.
  */
 #define _NODE_TEXT(x)  ((Evas_Object_Textblock_Node_Text *) (x))
 /**
  * @internal
  * @def _NODE_FORMAT(x)
- * A convinience macro for casting to a format node.
+ * A convenience macro for casting to a format node.
  */
 #define _NODE_FORMAT(x)  ((Evas_Object_Textblock_Node_Format *) (x))
 /**
  * @internal
  * @def _ITEM(x)
- * A convinience macro for casting to a generic item.
+ * A convenience macro for casting to a generic item.
  */
 #define _ITEM(x)  ((Evas_Object_Textblock_Item *) (x))
 /**
  * @internal
  * @def _ITEM_TEXT(x)
- * A convinience macro for casting to a text item.
+ * A convenience macro for casting to a text item.
  */
 #define _ITEM_TEXT(x)  ((Evas_Object_Textblock_Text_Item *) (x))
 /**
  * @internal
  * @def _ITEM_FORMAT(x)
- * A convinience macro for casting to a format item.
+ * A convenience macro for casting to a format item.
  */
 #define _ITEM_FORMAT(x)  ((Evas_Object_Textblock_Format_Item *) (x))
 
@@ -909,7 +909,7 @@ _style_clear(Evas_Textblock_Style *ts)
  * @param ts The ts to be cleared. Must not be NULL.
  * @param s The tag to be matched.
  * @param tag_len the length of the tag string.
- * @param[out] replace_len The length of the replcaement found. - Must not be NULL.
+ * @param[out] replace_len The length of the replacement found. - Must not be NULL.
  * @return The replacement string found.
  */
 static inline const char *
@@ -2669,7 +2669,7 @@ _format_is_param(const char *item)
 /**
  * @internal
  * Parse the format item and populate key and val with the stringshares that
- * corrospond to the formats parsed.
+ * correspond to the formats parsed.
  * It expects item to be of the structure:
  * "key=val"
  *
@@ -4316,7 +4316,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
  *
  * @param c the context
  * @param it the item itself.
- * @param rel item ti will be appened after, NULL = last.
+ * @param rel item ti will be appended after, NULL = last.
  */
 static void
 _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
@@ -4706,7 +4706,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         //   scale factor
         // relsize == relative size (height is current font height, width
         //   modified accordingly keeping aspect)
-        // abssize == absolute size (modifies line size) - never mulitplied by
+        // abssize == absolute size (modifies line size) - never multiplied by
         //   scale factor
         // href == name of item - to be found and matched later and used for
         //   positioning
@@ -7704,7 +7704,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
         /* This loop goes through all of the mark up text until it finds format
          * tags, escape sequences or the terminating NULL. When it finds either
          * of those, it appends the text found up until that point to the textblock
-         * proccesses whatever found. It repeats itself until the termainating
+         * proccesses whatever found. It repeats itself until the terminating
          * NULL is reached. */
         for (;;)
           {
@@ -8005,7 +8005,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
    /* This loop goes through all of the mark up text until it finds format
     * tags, escape sequences or the terminating NULL. When it finds either
     * of those, it appends the text found up until that point to the textblock
-    * proccesses whatever found. It repeats itself until the termainating
+    * proccesses whatever found. It repeats itself until the terminating
     * NULL is reached. */
    for (;;)
      {
@@ -8080,7 +8080,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
              if (*p == 0)
@@ -8101,7 +8101,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
@@ -8128,7 +8128,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
@@ -9617,7 +9617,7 @@ _evas_textblock_node_format_remove_matching(Efl_Canvas_Text_Data *o,
  * @param o the textblock object.
  * @param tnode the text node the format should point to.
  * @param fmt the current format.
- * @param offset the offest to add (may be negative).
+ * @param offset the offset to add (may be negative).
  */
 static void
 _evas_textblock_node_format_adjust_offset(Efl_Canvas_Text_Data *o,
@@ -9696,7 +9696,7 @@ _evas_textblock_node_format_remove(Efl_Canvas_Text_Data *o, Evas_Object_Textbloc
  * If end == -1 end means the end of the string.
  * Assumes there is a prev node or the current node will be preserved.
  *
- * @param n the text node the positinos refer to.
+ * @param n the text node the positions refer to.
  * @param start the start of where to delete from.
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
  * @returns @c EINA_TRUE if removed a PS, @c EINA_FALSE otherwise.
@@ -9794,7 +9794,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl_Canvas_Text_Data *o,
  * n.
  *
  * @param o the textblock object.
- * @param n the text node the positinos refer to.
+ * @param n the text node the positions refer to.
  * @param start the start of where to delete from.
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
  */
@@ -14589,7 +14589,7 @@ evas_object_textblock_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
                                 void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 
@@ -14599,7 +14599,7 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                                  void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 

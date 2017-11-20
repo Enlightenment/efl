@@ -1294,7 +1294,7 @@ evas_object_smart_del(Evas_Object *eo_obj)
    if (s && s->smart_class->del)
      {
         s->smart_class->del(eo_obj);
-        //this is legacy, this will never be called..., smart things dont have inheitence
+        //this is legacy, this will never be called..., smart things dont have inheritance
         sobj->group_del_called = EINA_TRUE;
      }
    else
@@ -1503,9 +1503,9 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
                   if (lay)
                     {
                        // this SHOULD be eina_inlist_append() BUT seemingly
-                       // if we call this this objetc gets magicaly added
-                       // back to o->conmtaind above NOt lay->objects. this
-                       // is utterly bizzarre and the only explanation i
+                       // if we call this this object gets magically added
+                       // back to o->contained above NOT lay->objects. this
+                       // is utterly bizarre and the only explanation i
                        // can come up with right now is a compiler bug.
                        lay->objects = (Evas_Object_Protected_Data *)
                          eina_inlist_prepend(EINA_INLIST_GET(lay->objects),
