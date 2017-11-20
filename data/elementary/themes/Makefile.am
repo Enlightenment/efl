@@ -146,6 +146,8 @@ elementary/themes/edc/elm/separator.edc \
 elementary/themes/edc/elm/slider.edc \
 elementary/themes/edc/elm/slideshow.edc \
 elementary/themes/edc/elm/spinner.edc \
+elementary/themes/edc/elm/spin.edc \
+elementary/themes/edc/elm/spin_button.edc \
 elementary/themes/edc/elm/textpath.edc \
 elementary/themes/edc/elm/thumb.edc \
 elementary/themes/edc/elm/toolbar.edc \

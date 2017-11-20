@@ -470,7 +470,7 @@ _items_add(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_spin_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
+_elm_flipselector_efl_ui_range_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
    if (min > max) return;
    if ((sd->val_min == min) && (sd->val_max == max)) return;
@@ -482,14 +482,14 @@ _elm_flipselector_efl_ui_spin_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, do
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_spin_min_max_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
+_elm_flipselector_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_spin_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
+_elm_flipselector_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
 {
    if (sd->step == step) return;
 
@@ -498,13 +498,13 @@ _elm_flipselector_efl_ui_spin_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Dat
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_spin_step_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_spin_value_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    if (sd->val_min == 0 && sd->val_max == 0)
      {
@@ -516,7 +516,7 @@ _elm_flipselector_efl_ui_spin_value_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Da
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_spin_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double val)
+_elm_flipselector_efl_ui_range_range_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double val)
 {
    Eina_List *l;
    Elm_Object_Item *it;
@@ -655,18 +655,6 @@ elm_flipselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(MY_CLASS, parent);
-}
-
-EAPI void
-elm_flipselector_first_interval_set(Evas_Object *obj, double interval)
-{
-   efl_ui_spin_interval_set(obj, interval);
-}
-
-EAPI double
-elm_flipselector_first_interval_get(const Evas_Object *obj)
-{
-   return efl_ui_spin_interval_get(obj);
 }
 
 EOLIAN static Eo *
@@ -869,14 +857,14 @@ _elm_flipselector_item_next_get(const Eo *eo_item,
    return NULL;
 }
 
-EOLIAN static void
-_elm_flipselector_efl_ui_spin_interval_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double interval)
+EOLIAN void
+_elm_flipselector_first_interval_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double interval)
 {
    sd->first_interval = interval;
 }
 
-EOLIAN static double
-_elm_flipselector_efl_ui_spin_interval_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+EOLIAN double
+_elm_flipselector_first_interval_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->first_interval;
 }

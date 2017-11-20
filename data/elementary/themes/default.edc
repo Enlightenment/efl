@@ -67,6 +67,8 @@ collections {
 #include "edc/elm/border.edc"
 // XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/elm/spinner.edc"
+#include "edc/elm/spin.edc"
+#include "edc/elm/spin_button.edc"
 #include "edc/elm/menu.edc"
 #include "edc/elm/clock.edc"
 #include "edc/elm/gengrid.edc"

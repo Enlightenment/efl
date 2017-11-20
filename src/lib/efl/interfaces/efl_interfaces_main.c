@@ -58,7 +58,6 @@
 #include "interfaces/efl_ui_base.eo.c"
 #include "interfaces/efl_ui_direction.eo.c"
 #include "interfaces/efl_ui_drag.eo.c"
-#include "interfaces/efl_ui_spin.eo.c"
 #include "interfaces/efl_ui_range.eo.c"
 #include "interfaces/efl_ui_menu.eo.c"
 #include "interfaces/efl_ui_autorepeat.eo.c"

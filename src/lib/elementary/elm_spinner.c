@@ -1359,49 +1359,37 @@ elm_spinner_add(Evas_Object *parent)
 EAPI void
 elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_spin_min_max_set(obj, min, max);
+   efl_ui_range_min_max_set(obj, min, max);
 }
 
 EAPI void
 elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_spin_min_max_get(obj, min, max);
+   efl_ui_range_min_max_get(obj, min, max);
 }
 
 EAPI void
 elm_spinner_step_set(Evas_Object *obj, double step)
 {
-   efl_ui_spin_step_set(obj, step);
+   efl_ui_range_step_set(obj, step);
 }
 
 EAPI double
 elm_spinner_step_get(const Evas_Object *obj)
 {
-   return efl_ui_spin_step_get(obj);
-}
-
-EAPI void
-elm_spinner_interval_set(Evas_Object *obj, double interval)
-{
-   efl_ui_spin_interval_set(obj, interval);
-}
-
-EAPI double
-elm_spinner_interval_get(const Evas_Object *obj)
-{
-   return efl_ui_spin_interval_get(obj);
+   return efl_ui_range_step_get(obj);
 }
 
 EAPI void
 elm_spinner_value_set(Evas_Object *obj, double val)
 {
-   efl_ui_spin_value_set(obj, val);
+   efl_ui_range_value_set(obj, val);
 }
 
 EAPI double
 elm_spinner_value_get(const Evas_Object *obj)
 {
-   return efl_ui_spin_value_get(obj);
+   return efl_ui_range_value_get(obj);
 }
 
 EOLIAN static Eo *
@@ -1447,7 +1435,7 @@ _elm_spinner_label_format_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_spin_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
+_elm_spinner_efl_ui_range_range_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -1462,26 +1450,26 @@ _elm_spinner_efl_ui_spin_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, 
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_spin_min_max_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
+_elm_spinner_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_spin_step_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double step)
+_elm_spinner_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double step)
 {
    sd->step = step;
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_spin_step_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_spin_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
+_elm_spinner_efl_ui_range_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 {
    if (sd->val == val) return;
 
@@ -1504,7 +1492,7 @@ _elm_spinner_efl_ui_spin_value_set(Eo *obj, Elm_Spinner_Data *sd, double val)
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_spin_value_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->val;
 }
@@ -1601,13 +1589,13 @@ _elm_spinner_editable_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_spin_interval_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double interval)
+_elm_spinner_interval_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double interval)
 {
    sd->first_interval = interval;
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_spin_interval_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_interval_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->first_interval;
 }

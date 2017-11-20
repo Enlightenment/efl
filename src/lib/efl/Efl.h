@@ -90,7 +90,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_base.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"
-#include "interfaces/efl_ui_spin.eo.h"
 #include "interfaces/efl_ui_range.eo.h"
 #include "interfaces/efl_ui_item.eo.h"
 #include "interfaces/efl_ui_menu.eo.h"

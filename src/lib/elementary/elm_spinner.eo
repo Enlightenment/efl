@@ -1,4 +1,4 @@
-class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
+class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Focus.Composition,
                    Efl.Access.Value, Efl.Access.Widget.Action)
 {
    [[Elementary spinner class]]
@@ -37,6 +37,30 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
          }
          values {
             wrap: bool; [[$true to enable wrap or $false to disable it.]]
+         }
+      }
+      @property interval {
+         [[Control the interval on time updates for an user mouse button hold on spinner widgets' arrows.
+
+           This interval value is decreased while the user holds the
+           mouse pointer either incrementing or decrementing spinner's value.
+
+           This helps the user to get to a given value distant from the
+           current one easier/faster, as it will start to change quicker and
+           quicker on mouse button holds.
+
+           The calculation for the next change interval value, starting from
+           the one set with this call, is the previous interval divided by
+           $1.05, so it decreases a little bit.
+
+           The default starting interval value for automatic changes is
+           $0.85 seconds.]]
+         set {
+         }
+         get {
+         }
+         values {
+           interval: double; [[The (first) interval value in seconds.]]
          }
       }
       @property round {
@@ -150,10 +174,9 @@ class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Elm.Widget.on_access_update;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Efl.Ui.Spin.min_max { get; set; }
-      Efl.Ui.Spin.step { get; set; }
-      Efl.Ui.Spin.value { get; set; }
-      Efl.Ui.Spin.interval { get; set; }
+      Efl.Ui.Range.range_min_max { get; set; }
+      Efl.Ui.Range.range_step { get; set; }
+      Efl.Ui.Range.range_value { get; set; }
       Efl.Access.name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
