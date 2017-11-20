@@ -101,6 +101,7 @@ class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
       Elm.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Access.children { get; }
    }
    events {
       dismissed; [[Called when hoversel is dismissed]]

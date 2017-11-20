@@ -1031,6 +1031,12 @@ _elm_hoversel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_
    return &atspi_actions[0];
 }
 
+EOLIAN Eina_List*
+_elm_hoversel_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
+{
+	return eina_list_clone(pd->items);
+}
+
 EOLIAN void
 _elm_hoversel_auto_update_set(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Eina_Bool auto_update)
 {
