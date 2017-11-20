@@ -1213,7 +1213,6 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
              ecore_drm2_device_window_set(edata->dev, ee->prop.window);
 
              ecore_drm2_device_calibrate(edata->dev, ow, oh);
-             ecore_drm2_device_pointer_max_set(edata->dev, ow, oh);
              ecore_drm2_device_pointer_warp(edata->dev, ow / 2, oh / 2);
           }
      }
