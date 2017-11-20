@@ -1211,7 +1211,6 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 
         if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
         _return_key_enabled_check(obj);
@@ -1228,7 +1227,6 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 
         if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
 

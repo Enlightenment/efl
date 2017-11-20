@@ -1266,7 +1266,6 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
         if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand &&
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
         _return_key_enabled_check(obj);
@@ -1281,7 +1280,6 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
         if (top && top_is_win && sd->input_panel_enable &&
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
 
@@ -4254,6 +4252,12 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
    sd->editable = editable;
    efl_ui_widget_theme_apply(obj);
    _elm_entry_focus_update(obj, sd);
+
+   //legacy focus event emission
+   if (efl_ui_focus_object_focus_get(obj))
+     evas_object_smart_callback_call(obj, "focused", NULL);
+   else
+     evas_object_smart_callback_call(obj, "unfocused", NULL);
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
