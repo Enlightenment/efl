@@ -60,8 +60,6 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    int x, y, w, h;
    int depth, bpp;
    unsigned int format;
-   /* double offset; */
-   /* double tick_job_timestamp; */
    Ecore_Drm2_Context ctx;
    Ecore_Fd_Handler *hdlr;
    Ecore_Drm2_Device *dev;
@@ -69,7 +67,6 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Eina_List *ticks;
    Eina_Bool ticking : 1;
    Eina_Bool once : 1;
-   /* Ecore_Job *tick_job; */
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
@@ -922,26 +919,21 @@ _drm_animator_register(Ecore_Evas *ee)
           }
      }
 
-   /* if (edata->tick_job) */
-   /*   ERR("Double animator register"); */
-   /* else */
+   EINA_LIST_FOREACH(outputs, l, output)
      {
-        EINA_LIST_FOREACH(outputs, l, output)
+        if (!edata->ticking &&
+            !(ecore_drm2_output_pending_get(output) ||
+              ee->in_async_render))
           {
-             if (!edata->ticking &&
-                 !(ecore_drm2_output_pending_get(output) ||
-                   ee->in_async_render))
+             r = ecore_drm2_output_blanktime_get(output, 0, &sec, &usec);
+             if (r)
                {
-                  r = ecore_drm2_output_blanktime_get(output, 0, &sec, &usec);
-                  if (r)
+                  etick = _drm_tick_find(edata, output);
+                  if ((etick) && (!etick->tick_job))
                     {
-                       etick = _drm_tick_find(edata, output);
-                       if ((etick) && (!etick->tick_job))
-                         {
-                            etick->timestamp = (double)sec
-                              + ((double)usec / 1000000);
-                            etick->tick_job = ecore_job_add(_tick_job, output);
-                         }
+                       etick->timestamp = (double)sec
+                         + ((double)usec / 1000000);
+                       etick->tick_job = ecore_job_add(_tick_job, output);
                     }
                }
           }
