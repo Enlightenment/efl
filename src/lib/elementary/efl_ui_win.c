@@ -6066,7 +6066,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_weight_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+_efl_ui_win_efl_gfx_size_hint_hint_weight_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED,
                                               double w, double h)
 {
    efl_gfx_size_hint_weight_set(efl_super(obj, MY_CLASS), w, h);
