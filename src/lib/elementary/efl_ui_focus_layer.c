@@ -88,13 +88,15 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
      {
         pd->registered_manager = elm_widget_top_get(obj);
 
-        efl_ui_focus_manager_redirect_set(pd->registered_manager, obj);
+        efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
         efl_ui_focus_manager_focus_set(pd->manager, obj);
      }
    else
      {
         if (efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
           efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
+
+        efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);
         pd->registered_manager = NULL;
      }
 }
