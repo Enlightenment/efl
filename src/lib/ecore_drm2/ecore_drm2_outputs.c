@@ -1655,3 +1655,17 @@ ecore_drm2_output_pending_get(Ecore_Drm2_Output *output)
 
    return EINA_FALSE;
 }
+
+EAPI void
+ecore_drm2_output_relative_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative relative)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   output->relative.mode = relative;
+}
+
+EAPI Ecore_Drm2_Relative
+ecore_drm2_output_relative_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, ECORE_DRM2_RELATIVE_UNKNOWN);
+   return output->relative.mode;
+}

@@ -39,6 +39,17 @@ typedef enum _Ecore_Drm2_Fb_Status
    ECORE_DRM2_FB_STATUS_PLANE_RELEASE = 32,
 } Ecore_Drm2_Fb_Status;
 
+typedef enum _Ecore_Drm2_Relative
+{
+   ECORE_DRM2_RELATIVE_UNKNOWN,
+   ECORE_DRM2_RELATIVE_NONE,
+   ECORE_DRM2_RELATIVE_CLONE,
+   ECORE_DRM2_RELATIVE_TO_LEFT,
+   ECORE_DRM2_RELATIVE_TO_RIGHT,
+   ECORE_DRM2_RELATIVE_TO_ABOVE,
+   ECORE_DRM2_RELATIVE_TO_BELOW
+} Ecore_Drm2_Relative;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
@@ -799,6 +810,29 @@ EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *o);
  * @since 1.20
  */
 EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
+
+/**
+ * Set the relative state of the output
+ *
+ * @param output The output
+ * @param relative The relative state to set
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI void ecore_drm2_output_relative_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative relative);
+
+/**
+ * Get the relative state of the output
+ *
+ * @param output
+ *
+ * @return The relative state
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.21
+ */
+EAPI Ecore_Drm2_Relative ecore_drm2_output_relative_get(Ecore_Drm2_Output *output);
 
 /**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
