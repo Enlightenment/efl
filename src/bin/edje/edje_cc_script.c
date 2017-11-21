@@ -46,16 +46,13 @@ code_parse(Code *code)
    Eina_List *l;
    int id;
 
-   if (code->is_lua) return;
+   if (code->is_lua || code->parsed) return;
 
    id = eina_list_data_idx(codes, code);
    pcp = eina_list_nth(edje_collections, id);
 
    EINA_LIST_FOREACH(pcp->base_codes, l, base)
-     {
-        if (!base->parsed)
-          code_parse(base);
-     }
+     code_parse(base);
 
    if (code->shared)
      code_parse_internal(code);
@@ -393,21 +390,6 @@ script_rewrite(Code *code)
           }
         if (count)
           eina_strbuf_append(buf, ";\n");
-
-        count = 0;
-        EINA_LIST_FOREACH(vars, l, sym)
-          {
-             if (sym->is_public) continue;
-
-             if (count++)
-               eina_strbuf_append(buf, ", ");
-
-             if (sym->tag)
-               eina_strbuf_append_printf(buf, "%s:", sym->tag);
-             eina_strbuf_append(buf, sym->name);
-          }
-        if (count)
-          eina_strbuf_append(buf, ";\n");
      }
 
    if (func)
@@ -460,6 +442,9 @@ script_rewrite(Code *code)
    code->original = strdup(code->shared);
    eina_strbuf_free(buf);
 
-   eina_list_free(vars);
-   eina_list_free(func);
+   eina_list_free(code->vars);
+   eina_list_free(code->func);
+
+   code->vars = vars;
+   code->func = func;
 }
