@@ -34,6 +34,8 @@ int _extn_have_buffer_age = 1;
 static Eina_Bool initted = EINA_FALSE;
 static Eina_Bool dmabuf_present = EINA_FALSE;
 static int gl_wins = 0;
+static struct gbm_device *gbm_dev = NULL;
+static int gbm_dev_refs = 0;
 
 /* local function prototype types */
 typedef void (*glsym_func_void)();
@@ -125,6 +127,13 @@ eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
    int fd;
    if (!info) return EINA_FALSE;
 
+   if (gbm_dev)
+     {
+        info->info.gbm = gbm_dev;
+        gbm_dev_refs++;
+        return EINA_TRUE;
+     }
+
    fd = ecore_drm2_device_fd_get(info->info.dev);
    if (!(info->info.gbm = gbm_create_device(fd)))
      {
@@ -132,6 +141,8 @@ eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
         return EINA_FALSE;
      }
 
+   gbm_dev = info->info.gbm;
+   gbm_dev_refs = 1;
    return EINA_TRUE;
 }
 
@@ -142,8 +153,13 @@ eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
 
    if (info->info.gbm)
      {
-        gbm_device_destroy(info->info.gbm);
+        gbm_dev_refs--;
         info->info.gbm = NULL;
+        if (!gbm_dev_refs)
+          {
+             gbm_device_destroy(gbm_dev);
+             gbm_dev = NULL;
+          }
      }
 
    return EINA_TRUE;
