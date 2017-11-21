@@ -921,6 +921,12 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
    }
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED , old_manager);
+
+   //just set the root of the new redirect as focused, so it is in a known state
+   if (redirect)
+     {
+        efl_ui_focus_manager_setup_on_first_touch(redirect, EFL_UI_FOCUS_DIRECTION_LAST, NULL);
+     }
 }
 
 EOLIAN static Efl_Ui_Focus_Manager *
@@ -1435,56 +1441,45 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    //now check if this is also a listener object
    if (redirect_manager)
      {
-        efl_ui_focus_manager_reset_history(pd->redirect);
-
-        //first set the redirect
+        //set the redirect
         efl_ui_focus_manager_redirect_set(obj, redirect_manager);
-
-        if (type == NODE_TYPE_ONLY_LOGICAL)
-          {
-             //focus the root to just get the next regular element
-             //FIXME it would be good to make that depending on the focus move directions
-             //so we can take the last regular item in the logical tree for the PREVIOUS move
-             Efl_Ui_Focus_Object *root;
-
-             root = efl_ui_focus_manager_root_get(redirect_manager);
-             efl_ui_focus_manager_focus_set(redirect_manager, root);
-          }
-        else
-          {
-             //or just focus the focusable itself in the other manager
-             efl_ui_focus_manager_focus_set(redirect_manager, focusable);
-          }
-
      }
 }
 
-static void
-_followup_previous_direction(Eo *obj)
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry)
 {
-   Efl_Ui_Focus_Manager *rec_manager;
-   rec_manager = efl_ui_focus_manager_redirect_get(obj);
-   if (rec_manager)
+   printf("SETUP\n");
+   if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS && entry)
      {
         Efl_Ui_Focus_Manager_Logical_End_Detail last;
-        efl_ui_focus_manager_reset_history(rec_manager);
+        Efl_Ui_Focus_Manager *rec_manager = obj;
+        do
+          {
+             last = efl_ui_focus_manager_logical_end(rec_manager);
+             EINA_SAFETY_ON_NULL_RETURN(last.element);
+             efl_ui_focus_manager_focus_set(rec_manager, last.element);
 
-        do {
-          last = efl_ui_focus_manager_logical_end(rec_manager);
-          EINA_SAFETY_ON_NULL_RETURN(last.element);
-          efl_ui_focus_manager_focus_set(rec_manager, last.element);
-
-          rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
-        } while (!last.is_regular_end);
+             rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
+          }
+        while (!last.is_regular_end);
      }
+   else if (DIRECTION_IS_2D(direction) && entry)
+     efl_ui_focus_manager_focus_set(obj, entry);
+   else
+     efl_ui_focus_manager_focus_set(obj, pd->root->focusable);
 }
+
 
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction)
 {
    Efl_Ui_Focus_Object *candidate = NULL;
+   Efl_Ui_Focus_Manager *early, *late;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
+
+   early = efl_ui_focus_manager_redirect_get(obj);
 
    if (pd->redirect)
      {
@@ -1504,10 +1499,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
 
                   if (new_candidate)
                     efl_ui_focus_manager_focus_set(obj, new_candidate);
-
-                  //for the case that this caused a redirect to be set AND we had a candidate, make sure we setup the other direction correctly
-                  if (direction == ELM_FOCUS_PREVIOUS && new_candidate)
-                    _followup_previous_direction(obj);
 
                   candidate = new_candidate;
                }
@@ -1540,11 +1531,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
         if (candidate)
           {
              efl_ui_focus_manager_focus_set(obj, candidate);
-             if (direction == ELM_FOCUS_PREVIOUS && candidate)
-               _followup_previous_direction(obj);
           }
      }
 
+   late = efl_ui_focus_manager_redirect_get(obj);
+
+   if (early != late)
+     {
+        //this is a new manager, we have to init its case!
+        efl_ui_focus_manager_setup_on_first_touch(pd->redirect, direction, candidate);
+     }
 
    return candidate;
 }
