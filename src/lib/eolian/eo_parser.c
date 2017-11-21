@@ -2155,7 +2155,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         goto found_class;
       case KW_import:
         {
-           Eina_Bool is_eo = EINA_FALSE;
            Eina_Strbuf *buf = push_strbuf(ls);
            const char *found = NULL;
            char errbuf[PATH_MAX];
@@ -2174,7 +2173,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                               "unknown import '%s'", ls->t.value.s);
                      eo_lexer_syntax_error(ls, errbuf);
                   }
-                else is_eo = EINA_TRUE;
              }
            eina_hash_set(_defereos, eina_strbuf_string_get(buf), found);
            pop_strbuf(ls);
