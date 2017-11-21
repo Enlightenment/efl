@@ -94,6 +94,8 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
         Outbuf *ob;
         ob = s->surface->ob;
         best = ecore_wl2_buffer_create(ob->ewd, ob->w, ob->h, s->alpha);
+        /* Start at -1 so it's age is incremented to 0 for first draw */
+        best->age = -1;
         s->buffers = eina_list_append(s->buffers, best);
      }
    return best;
@@ -110,13 +112,18 @@ _evas_dmabuf_surface_assign(Surface *s)
    surface->current = _evas_dmabuf_surface_wait(surface);
    if (!surface->current)
      {
+        /* Should be unreachable and will result in graphical
+         * anomalies - we should probably blow away all the
+         * existing buffers and start over if we actually
+         * see this happen...
+         */
         WRN("No free DMAbuf buffers, dropping a frame");
         EINA_LIST_FOREACH(surface->buffers, l, b)
           b->age = 0;
         return 0;
      }
    EINA_LIST_FOREACH(surface->buffers, l, b)
-     if (b->age) b->age++;
+     b->age++;
 
    return surface->current->age;
 }
