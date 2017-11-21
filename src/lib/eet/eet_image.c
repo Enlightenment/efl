@@ -805,6 +805,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
    void *result;
    const char *codec;
 
+   data = NULL;
    r = eina_binbuf_new();
    if (!r) return NULL;
 
