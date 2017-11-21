@@ -3497,60 +3497,6 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    return eo_it;
 }
 
-EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_on_focus_update(Eo *obj, Elm_Gengrid_Data *sd, Elm_Object_Item *item)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-   Elm_Object_Item *eo_it = NULL;
-
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
-   if (!int_ret) return EINA_FALSE;
-
-   if (elm_widget_focus_get(obj) && (sd->selected) &&
-       (!sd->last_selected_item))
-     {
-        Elm_Object_Item *sel = eina_list_data_get(sd->selected);
-        sd->last_selected_item = efl_data_scope_get(sel, ELM_GENGRID_ITEM_CLASS);
-     }
-
-   if (elm_widget_focus_get(obj) && !sd->mouse_down)
-     {
-        if (item) eo_it = item;
-        else
-          {
-             if (sd->last_focused_item)
-               eo_it = sd->last_focused_item;
-             else if (sd->last_selected_item)
-               eo_it = sd->last_selected_item;
-             else if (_elm_config->first_item_focus_on_first_focus_in)
-               eo_it = elm_gengrid_first_item_get(obj);
-          }
-        if (eo_it)
-          {
-             eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
-             if (eo_it)
-               {
-                  if (!_elm_config->item_select_on_focus_disable &&
-                      eo_it != sd->last_selected_item)
-                    elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
-                  else
-                    elm_object_item_focus_set(eo_it, EINA_TRUE);
-                  _elm_widget_focus_highlight_start(obj);
-               }
-          }
-     }
-   else
-     {
-        if (sd->focused_item)
-          {
-             sd->last_focused_item = sd->focused_item;
-             _elm_gengrid_item_unfocused(sd->focused_item);
-          }
-     }
-
-   return EINA_TRUE;
-}
-
 EOLIAN static Eina_Rect
 _elm_gengrid_elm_widget_interest_region_get(Eo *obj, Elm_Gengrid_Data *sd)
 {
