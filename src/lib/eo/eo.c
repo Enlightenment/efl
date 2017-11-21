@@ -1023,6 +1023,7 @@ cleanup:
 EAPI Eo *
 _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 {
+   if (!eo_id) return NULL;
    Eo *ret = efl_finalize(eo_id);
    ret = _efl_add_internal_end(eo_id, ret);
 
