@@ -42,7 +42,7 @@ _setup(void)
 static void
 _teardown(void)
 {
-   efl_unref(fake_server_object);
+   efl_del(fake_server_object);
 
    fake_server_stop(fake_server);
 
