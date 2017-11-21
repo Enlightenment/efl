@@ -5034,7 +5034,8 @@ st_collections_group_inherit(void)
    pcp = (Edje_Part_Collection_Parser *)pc;
    pcp2 = (Edje_Part_Collection_Parser *)pc2;
    pcp->default_mouse_events = pcp2->default_mouse_events;
-   pcp->inherit_script = pcp2->inherit_script;
+   if (pcp2->inherit_script)
+     pcp->inherit_script = pcp2->inherit_script;
 
    /* as of 7 April 2014, target groups cannot be modified and are not freed.
     * this code will break if that ever changes.
