@@ -338,11 +338,10 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_parse.h \
 	lib/elementary/elm_code_syntax.h \
 	lib/elementary/efl_ui_multibuttonentry.h \
-	lib/elementary/Efl_Ui.h
 	lib/elementary/efl_ui_widget_scroller.h \
 	lib/elementary/efl_ui_widget_scroll_manager.h \
 	lib/elementary/efl_ui_widget_pan.h \
-	lib/elementary/elm_code_syntax.h
+	lib/elementary/Efl_Ui.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
