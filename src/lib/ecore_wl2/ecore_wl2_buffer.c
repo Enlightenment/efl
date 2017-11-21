@@ -583,7 +583,6 @@ _create_failed(void *data, struct zwp_linux_buffer_params_v1 *params)
    Ecore_Wl2_Display *ewd = data;
 
    zwp_linux_buffer_params_v1_destroy(params);
-   _buffer_manager_deref();
    _buffer_manager_destroy();
    ewd->wl.dmabuf = NULL;
 }
