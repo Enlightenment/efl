@@ -895,15 +895,21 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 
    efl_ui_focus_manager_reset_history(old_manager);
 
+   //we might have saved a logical element at the top, remove that if there is one
+   {
+      Node *n = NULL;
+
+      n = eina_list_last_data_get(pd->focus_stack);
+
+      if (n && n->type == NODE_TYPE_ONLY_LOGICAL && n->redirect_manager == old_manager)
+        pd->focus_stack = eina_list_remove(pd->focus_stack, n);
+   }
+
    //adjust focus property of the most upper element
    {
       Node *n = NULL;
-      Eina_List *last;
-      /* focus the upper most element */
-      last = eina_list_last(pd->focus_stack);
 
-      if (last)
-        n = eina_list_data_get(last);
+      n = eina_list_last_data_get(pd->focus_stack);
 
       if (n)
         {
