@@ -4197,8 +4197,11 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
      {
         _elm_gengrid_item_focused(item);
         _all_items_deselect(pd);
-        elm_gengrid_item_selected_set(item, EINA_TRUE);
-        elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+        if (!_elm_config->item_select_on_focus_disable)
+          {
+             elm_gengrid_item_selected_set(item, EINA_TRUE);
+             elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+          }
      }
 }
 
