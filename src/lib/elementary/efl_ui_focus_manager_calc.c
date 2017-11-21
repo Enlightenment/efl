@@ -1344,8 +1344,8 @@ _request_subchild(Node *node)
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
-   Node *node;
-   Efl_Ui_Focus_Object *last_focusable;
+   Node *node, *last;
+   Efl_Ui_Focus_Object *last_focusable = NULL;
    Efl_Ui_Focus_Manager *redirect_manager;
    Eo *focusable;
    Node_Type type;
@@ -1409,7 +1409,9 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    type = node->type;
    focusable = node->focusable;
 
-   last_focusable = _focus_stack_unfocus_last(pd);
+   last = eina_list_last_data_get(pd->focus_stack);
+   if (last)
+     last_focusable = last->focusable;
 
    //remove the object from the list and add it again
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
@@ -1422,6 +1424,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    if (node->type == NODE_TYPE_NORMAL)
      {
         //populate the new change
+        efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
         efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
