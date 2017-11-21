@@ -273,24 +273,25 @@ static void
 _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    Efl_Ui_List_SegArray_Node *node;
-   Evas_Coord ow, oh, scr_x, scr_y, ch;
+   Evas_Coord ch;
+   Eina_Rect vgmt;
+   Eina_Position2D spos;
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata;
    int i;
 
-   elm_interface_scrollable_content_viewport_geometry_get
-              (pd->modeler, NULL, NULL, &ow, &oh);
-   elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
+   vgmt = efl_ui_scrollable_viewport_geometry_get(pd->modeler);
+   spos = efl_ui_scrollable_content_pos_get(pd->modeler);
 
    ch = 0;
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
    EINA_ACCESSOR_FOREACH(nodes, i, node)
      {
         nodedata = node->layout_data;
-//        DBG("node %d h:%d ch:%d scr_y:%d oh:%d", node->first, nodedata->min.h, ch, scr_y, oh);
+//        DBG("node %d h:%d ch:%d spos.y:%d vgmt.h:%d", node->first, nodedata->min.h, ch, spos.y, vgmt.h);
         if (!nodedata || !nodedata->min.h)
           continue;
 
-        if ((ch >= scr_y || nodedata->min.h + ch >= scr_y) && (ch <= (scr_y + oh) || nodedata->min.h + ch <= scr_y + oh))
+        if ((ch >= spos.y || nodedata->min.h + ch >= spos.y) && (ch <= (spos.y + vgmt.h) || nodedata->min.h + ch <= spos.y + vgmt.h))
           _node_realize(pd, node);
         else
           _node_unrealize(pd, node);
@@ -413,7 +414,9 @@ static void
 _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    Eina_Bool horiz = EINA_FALSE/*_horiz(pd->orient)*/, zeroweight = EINA_FALSE;
-   Evas_Coord ow, oh, want, scr_x, scr_y;
+   Evas_Coord want;
+   Eina_Rect vgmt;
+   Eina_Position2D spos;
    int boxx, boxy, boxw, boxh, length, pad, extra = 0, rounding = 0;
    int boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    double cur_pos = 0, scale, box_align[2],  weight[2] = { 0, 0 };
@@ -492,19 +495,17 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
         weight[!horiz] = pd->count;
      }
 
-   elm_interface_scrollable_content_viewport_geometry_get
-              (pd->modeler, NULL, NULL, &ow, &oh);
+   vgmt = efl_ui_scrollable_viewport_geometry_get(pd->modeler);
+   spos = efl_ui_scrollable_content_pos_get(pd->modeler);
 
-   elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
+   DBG("spos.x: %d, spos.y: %d\n", (int)spos.x, (int)spos.y);
 
-   DBG("scr_x: %d, scr_y: %d\n", (int)scr_x, (int)scr_y);
-   
    // scan all items, get their properties, calculate total weight & min size
    // cache size of new items
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
 
    /* int sum_node_top = 0; */
-   
+
    EINA_ACCESSOR_FOREACH(nodes, i, items_node)
      {
        Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
@@ -517,12 +518,12 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
        /* int start_pos = ; */
        /* if(start_pos < 0) */
       /*   start_pos = 0; */
-       if(scr_y < cur_pos + nodedata->min.h + boxh
-          && scr_y + boxh + boxh > cur_pos) // start in this node
+       if(spos.y < cur_pos + nodedata->min.h + boxh
+          && spos.y + boxh + boxh > cur_pos) // start in this node
          {
             DBG("cur_pos: %d\n", (int)cur_pos);
 
-            for(j = 0; j != items_node->length && scr_y + boxh + boxh > cur_pos;++j)
+            for(j = 0; j != items_node->length && spos.y + boxh + boxh > cur_pos;++j)
               {
                  DBG("cur_pos item by item: %d\n", (int)cur_pos);
                  layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
@@ -629,19 +630,19 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
                       if (horiz)
                         {
                            if (h < pd->min.h) h = pd->min.h;
-                           if (h > oh) h = oh;
+                           if (h > vgmt.h) h = vgmt.h;
                         }
                       else
                         {
                            if (w < pd->min.w) w = pd->min.w;
-                           if (w > ow) w = ow;
+                           if (w > vgmt.w) w = vgmt.w;
                         }
 
                       //        DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
-                      evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
+                      evas_object_geometry_set(layout_item->layout, (x + 0 - spos.x), (y + 0 - spos.y), w, h);
 
                       // layout_item->x = x;
-                      // layout_item->y = y; 
+                      // layout_item->y = y;
 
                       } /* if (size) end */
               }

@@ -36,7 +36,8 @@ typedef struct _Efl_Ui_List_Data Efl_Ui_List_Data;
 struct _Efl_Ui_List_Data
 {
    Eo                           *obj;
-   Evas_Object                  *hit_rect;
+   Eo                           *scrl_mgr;
+   Efl_Ui_List_Pan              *pan_obj;
    Efl_Model                    *model;
 
    Efl_Orient                   orient;
@@ -63,8 +64,6 @@ struct _Efl_Ui_List_Data
    int segarray_first;
    Efl_Ui_List_SegArray segarray;
 
-   Evas_Object               *pan_obj;
-
    Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected_items;
    // struct {
@@ -75,6 +74,7 @@ struct _Efl_Ui_List_Data
    Elm_List_Mode                mode;
 
    Efl_Ui_Focus_Manager         *manager;
+   Eina_Rect                    gmt;
    Eina_Size2D                  min;
    int                          /*average_item_size, avsom, */item_count;
    Efl_Future                   *slice_future;
@@ -88,6 +88,7 @@ struct _Efl_Ui_List_Data
    Eina_Bool                    homogeneous : 1;
    Eina_Bool                    recalc : 1;
    Eina_Bool                    on_hold : 1;
+   Eina_Bool                    freeze_want : 1;
 };
 
 typedef struct _Efl_Ui_List_Pan_Data Efl_Ui_List_Pan_Data;
@@ -95,7 +96,8 @@ typedef struct _Efl_Ui_List_Pan_Data Efl_Ui_List_Pan_Data;
 struct _Efl_Ui_List_Pan_Data
 {
    Eo                     *wobj;
-   Evas_Coord             x, y, move_diff;
+   Eina_Rect              gmt;
+   Evas_Coord             move_diff;
 
    Ecore_Job              *resize_job;
 };
