@@ -15,8 +15,8 @@
  * License along with this library.
  * If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EINA_MATRIX3_H_
-#define EINA_MATRIX3_H_
+#ifndef EINA_MATRIX_H_
+#define EINA_MATRIX_H_
 
 #include "eina_quad.h"
 
@@ -1064,4 +1064,4 @@ EAPI Eina_Matrix_Type eina_matrix2_type_get(const Eina_Matrix2 *m);
  * @}
  */
 
-#endif /*EINA_MATRIX3_H_*/
+#endif /*EINA_MATRIX_H_*/
