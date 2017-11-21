@@ -154,7 +154,7 @@ START_TEST(efl_test_model_container_values)
 
    efl_future_then(future, _children_slice_future_then, _future_error_then, NULL, &test_data);
 
-   ecore_main_loop_iterate();
+   while ((!test_data.pass_flag) && (!test_data.fail_flag)) ecore_main_loop_iterate();
 
    ck_assert(!!test_data.pass_flag);
    ck_assert(!test_data.fail_flag);

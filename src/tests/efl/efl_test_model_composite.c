@@ -204,7 +204,7 @@ START_TEST(efl_test_model_composite_boolean)
    future = efl_model_children_slice_get(model, 0, 0);
    efl_future_then(future, _children_slice_get_then, _future_error_then, NULL, tdata);
 
-   ecore_main_loop_iterate();
+   while (!tdata->success_flag) ecore_main_loop_iterate();
 
    ck_assert(tdata->success_flag);
 
@@ -246,7 +246,7 @@ START_TEST(efl_test_model_composite_selection)
    future = efl_model_children_slice_get(model, 0, 0);
    efl_future_then(future, _selection_children_slice_get_then, _future_error_then, NULL, tdata);
 
-   ecore_main_loop_iterate();
+   while (!tdata->success_flag) ecore_main_loop_iterate();
 
    ck_assert(tdata->success_flag);
 
