@@ -1805,6 +1805,7 @@ _x11_dnd_enter(void *data, int etype EINA_UNUSED, void *ev)
    int i;
    Dropable *dropable;
 
+   sel_debug("In");
    if (!enter) return EINA_TRUE;
    dropable = _x11_dropable_find(pd, enter->win);
    if (dropable)
@@ -1849,6 +1850,7 @@ _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
    Dropable *dropable;
    Efl_Selection_Action act;
 
+   sel_debug("In");
    /* Need to send a status back */
    /* FIXME: Should check I can drop here */
    /* FIXME: Should highlight widget */
@@ -1980,6 +1982,7 @@ _x11_dnd_leave(void *data, int etype EINA_UNUSED, void *ev)
 static Eina_Bool
 _x11_dnd_drop(void *data, int etype EINA_UNUSED, void *ev)
 {
+   sel_debug("In");
    Efl_Selection_Manager_Data *pd = data;
    Ecore_X_Event_Xdnd_Drop *drop;
    Dropable *dropable = NULL;
@@ -2181,6 +2184,13 @@ _efl_selection_manager_drop_target_add(Eo *obj, Efl_Selection_Manager_Data *pd, 
    evas_object_event_callback_add(target_obj, EVAS_CALLBACK_DEL,
          _all_drop_targets_cbs_del, obj);
    if (!have_drops) ecore_x_dnd_aware_set(xwin, EINA_TRUE);
+
+   pd->seat_id = 1;
+   if (seat)
+     {
+        pd->seat_id = efl_input_device_seat_id_get(seat);
+     }
+   _seat_selection_init(pd, seat);
 
    /* TODO BUG: should handle dnd-aware per window, not just the first
     * window that requested it! */

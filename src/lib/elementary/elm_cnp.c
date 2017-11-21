@@ -2095,6 +2095,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *dropdata)
 {
+   ERR("in, disable for testing sel manager"); return;
    Dropable *dropable = NULL;
    Dropable_Cbs *cbs = NULL;
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
