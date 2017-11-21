@@ -11,10 +11,11 @@
 #include <drm_fourcc.h>
 #include <intel_bufmgr.h>
 #include <i915_drm.h>
-
+#include <vc4_drm.h>
 #include <exynos_drm.h>
 #include <exynos_drmif.h>
 #include <sys/mman.h>
+#include <sys/ioctl.h>
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
@@ -397,6 +398,140 @@ _wl_shm_buffer_manager_setup(int fd EINA_UNUSED)
    return EINA_TRUE;
 }
 
+struct internal_vc4_bo
+{
+   __u32 handle;
+   int size;
+   int fd;
+};
+
+static int
+align(int v, int a)
+{
+   return (v + a - 1) & ~((uint64_t)a - 1);
+}
+
+static Buffer_Handle *
+_vc4_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+{
+   struct drm_vc4_create_bo bo;
+   struct internal_vc4_bo *obo;
+   struct drm_gem_close cl;
+   size_t size;
+   int ret;
+
+   obo = malloc(sizeof(struct internal_vc4_bo));
+   if (!obo) return NULL;
+
+   *stride = align(w * 4, 16);
+   size = *stride * h;
+   memset(&bo, 0, sizeof(bo));
+   bo.size = size;
+   ret = ioctl(drm_fd, DRM_IOCTL_VC4_CREATE_BO, &bo);
+   if (ret) return NULL;
+   obo->handle = bo.handle;
+   obo->size = size;
+   /* First try to allocate an mmapable buffer with O_RDWR,
+    * if that fails retry unmappable - if the compositor is
+    * using GL it won't need to mmap the buffer and this can
+    * work - otherwise it'll reject this buffer and we'll
+    * have to fall back to shm rendering.
+    */
+   if (sym_drmPrimeHandleToFD(drm_fd, bo.handle,
+                              DRM_CLOEXEC | O_RDWR, fd) != 0)
+     if (sym_drmPrimeHandleToFD(drm_fd, bo.handle,
+                                DRM_CLOEXEC, fd) != 0) goto err;
+
+   obo->fd = *fd;
+   return (Buffer_Handle *)obo;
+
+err:
+   memset(&cl, 0, sizeof(cl));
+   cl.handle = bo.handle;
+   ioctl(drm_fd, DRM_IOCTL_GEM_CLOSE, &cl);
+   return NULL;
+}
+
+static void *
+_vc4_map(Ecore_Wl2_Buffer *buf)
+{
+   struct drm_vc4_mmap_bo map;
+   struct internal_vc4_bo *bo;
+   void *ptr;
+   int ret;
+
+   bo = (struct internal_vc4_bo *)buf->bh;
+
+   memset(&map, 0, sizeof(map));
+   map.handle = bo->handle;
+   ret = ioctl(drm_fd, DRM_IOCTL_VC4_MMAP_BO, &map);
+   if (ret) return NULL;
+
+   ptr = mmap(NULL, bo->size, PROT_READ | PROT_WRITE, MAP_SHARED, drm_fd,
+              map.offset);
+   if (ptr == MAP_FAILED) return NULL;
+
+   return ptr;
+}
+
+static void
+_vc4_unmap(Ecore_Wl2_Buffer *buf)
+{
+   struct internal_vc4_bo *bo;
+
+   bo = (struct internal_vc4_bo *)buf->bh;
+   munmap(buf->mapping, bo->size);
+}
+
+static void
+_vc4_discard(Ecore_Wl2_Buffer *buf)
+{
+   struct drm_gem_close cl;
+   struct internal_vc4_bo *bo;
+
+   bo = (struct internal_vc4_bo *)buf->bh;
+
+   memset(&cl, 0, sizeof(cl));
+   cl.handle = bo->handle;
+   ioctl(drm_fd, DRM_IOCTL_GEM_CLOSE, &cl);
+}
+
+static Eina_Bool
+_vc4_buffer_manager_setup(int fd)
+{
+   struct drm_gem_close cl;
+   struct drm_vc4_create_bo bo;
+   Eina_Bool fail = EINA_FALSE;
+   void *drm_lib;
+
+   memset(&bo, 0, sizeof(bo));
+   bo.size = 32;
+   if (ioctl(fd, DRM_IOCTL_VC4_CREATE_BO, &bo)) return EINA_FALSE;
+
+   memset(&cl, 0, sizeof(cl));
+   cl.handle = bo.handle;
+   ioctl(fd, DRM_IOCTL_GEM_CLOSE, &cl);
+
+   drm_lib = dlopen("libdrm.so", RTLD_LAZY | RTLD_GLOBAL);
+   if (!drm_lib) return EINA_FALSE;
+
+   SYM(drm_lib, drmPrimeHandleToFD);
+
+   if (fail) goto err;
+
+   buffer_manager->alloc = _vc4_alloc;
+   buffer_manager->to_buffer = _evas_dmabuf_wl_buffer_from_dmabuf;
+   buffer_manager->map = _vc4_map;
+   buffer_manager->unmap = _vc4_unmap;
+   buffer_manager->discard = _vc4_discard;
+   buffer_manager->manager_destroy = NULL;
+   buffer_manager->dl_handle = drm_lib;
+   return EINA_TRUE;
+err:
+   dlclose(drm_lib);
+   return EINA_FALSE;
+}
+
 EAPI Eina_Bool
 ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 {
@@ -421,6 +556,7 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 
         success = _intel_buffer_manager_setup(fd);
         if (!success) success = _exynos_buffer_manager_setup(fd);
+        if (!success) success = _vc4_buffer_manager_setup(fd);
      }
    if (!success) success = shm && _wl_shm_buffer_manager_setup(0);
    if (!success) goto err_bm;

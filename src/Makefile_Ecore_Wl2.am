@@ -24,6 +24,7 @@ static_libs/libdrm/exynos_drm.h \
 static_libs/libdrm/exynos_drmif.h \
 static_libs/libdrm/i915_drm.h \
 static_libs/libdrm/intel_bufmgr.h \
+static_libs/libdrm/vc4_drm.h \
 static_libs/libdrm/LICENSE
 
 
