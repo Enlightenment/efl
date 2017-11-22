@@ -54,7 +54,7 @@ enum Tokens
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
     KW(future),                                   \
     KW(any_value), KW(any_value_ptr), \
-    KW(mstring), KW(string), KW(stringshare), \
+    KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
     KW(void_ptr), \
     KW(__builtin_free_cb), \

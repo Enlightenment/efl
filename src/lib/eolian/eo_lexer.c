@@ -76,7 +76,7 @@ static const char * const ctypes[] =
    "Eina_List *",
    "Efl_Future *",
    "Eina_Value", "Eina_Value *",
-   "char *", "const char *", "Eina_Stringshare *",
+   "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 
    "void *",
 
