@@ -64,10 +64,11 @@ struct base_class_definition_generator
        return false;
      if(!as_generator(";\n" << scope_tab << "}\n").generate(sink, attributes::unused, context)) return false;
 
-     if(!as_generator
-        (
-         scope_tab << "Eo* _eo_ptr() const { return *(Eo**)this; }\n"
-        ).generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(
+         scope_tab << "Eo* _eo_ptr() const { return *(reinterpret_cast<Eo **>"
+              << "(const_cast<" << string << " *>(this))); }\n"
+        ).generate(sink, cls.cxx_name, context))
+       return false;
 
      // operator ::ns::Class_Name() const;
      // operator ::ns::Class_Name&();
