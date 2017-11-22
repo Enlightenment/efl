@@ -158,7 +158,7 @@ writers["dokuwiki"] = util.Object:clone {
         self.file = assert(io.open(dutil.make_page(subs, "txt"), "w"))
         if title then
             if M.has_feature("title") then
-                self:write_raw("<title>", title, "</title>")
+                self:write_raw("~~Title: ", title, "~~")
                 self:write_nl()
             else
                 self:write_h(title, 1)
