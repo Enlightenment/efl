@@ -1454,7 +1454,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry)
 {
-   printf("SETUP\n");
    if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS && entry)
      {
         Efl_Ui_Focus_Manager_Logical_End_Detail last;
