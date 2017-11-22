@@ -27,12 +27,14 @@ struct class_implementation_generator
      auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
      return as_generator
        (
+#ifndef USE_EOCXX_INHERIT_ONLY
         (namespaces
          [*function_definition(get_klass_name(cls))]
          << "\n"
        )).generate(sink, std::make_tuple(cls.namespaces, cls.functions), ctx)
        && as_generator
        (
+#endif
         attribute_reorder<0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
         (
          "namespace eo_cxx {\n"
