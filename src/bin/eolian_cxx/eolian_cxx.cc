@@ -74,7 +74,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
 
    efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
    std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
-   std::vector<efl::eolian::grammar::attributes::klass_def> forward_klasses{};
+   std::set<efl::eolian::grammar::attributes::klass_def> forward_klasses{};
 
    std::set<std::string> c_headers;
    std::set<std::string> cpp_headers;
@@ -90,8 +90,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
         c_headers.insert(eolian_class_file_get(klass2) + std::string(".h"));
         cpp_headers.insert(eolian_class_file_get(klass2) + std::string(".hh"));
         efl::eolian::grammar::attributes::klass_def cls{klass2, opts.unit};
-        if(std::find(forward_klasses.begin(), forward_klasses.end(), cls) == forward_klasses.end())
-          forward_klasses.push_back(cls);
+        forward_klasses.insert(cls);
      };
    auto complex_function
      = [&] (efl::eolian::grammar::attributes::complex_type_def const& complex)
@@ -123,8 +122,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
            c_headers.insert(eolian_class_file_get(inherit) + std::string(".h"));
            cpp_headers.insert(eolian_class_file_get(inherit) + std::string(".hh"));
            efl::eolian::grammar::attributes::klass_def klass3{inherit, opts.unit};
-           if(std::find(forward_klasses.begin(), forward_klasses.end(), klass3) == forward_klasses.end())
-             forward_klasses.push_back(klass3);
+           forward_klasses.insert(klass3);
 
            klass_function(inherit);
          }
@@ -157,7 +155,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
    std::tuple<std::string, std::set<std::string>&, std::set<std::string>&
               , std::string const&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
-              , std::vector<efl::eolian::grammar::attributes::klass_def>&
+              , std::set<efl::eolian::grammar::attributes::klass_def> const&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               > attributes
