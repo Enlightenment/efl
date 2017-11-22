@@ -41,7 +41,7 @@ struct appData
 
    void destroy() {
       // FIXME: need del() function and no error on unref().
-      ::efl_allow_parent_unref_set(m_win._eo_ptr(), true);
+      ::efl_allow_parent_unref_set(m_win, true);
       m_win = nullptr;
    }
 
