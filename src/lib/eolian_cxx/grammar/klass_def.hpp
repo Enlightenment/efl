@@ -719,6 +719,12 @@ struct klass_def
   {
     return !(lhs == rhs);
   }
+  friend inline bool operator<(klass_def const& lhs, klass_def const& rhs)
+  {
+     return lhs.eolian_name < rhs.eolian_name
+       || lhs.cxx_name < rhs.cxx_name
+       || lhs.namespaces < rhs.namespaces;
+  }
 
   klass_def(std::string eolian_name, std::string cxx_name, std::string filename
             , std::vector<std::string> namespaces
