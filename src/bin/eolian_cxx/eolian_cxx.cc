@@ -41,7 +41,7 @@ struct options_type
    options_type() : main_header(false) {}
 };
 
-efl::eina::log_domain domain("eolian_cxx");
+static efl::eina::log_domain domain("eolian_cxx");
 
 static bool
 opts_check(eolian_cxx::options_type const& opts)
@@ -85,11 +85,11 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
    auto klass_name_function
      = [&] (efl::eolian::grammar::attributes::klass_name const& name)
      {
-        Eolian_Class const* klass = get_klass(name, opts.unit);
-        assert(klass);
-        c_headers.insert(eolian_class_file_get(klass) + std::string(".h"));
-        cpp_headers.insert(eolian_class_file_get(klass) + std::string(".hh"));
-        efl::eolian::grammar::attributes::klass_def cls{klass, opts.unit};
+        Eolian_Class const* klass2 = get_klass(name, opts.unit);
+        assert(klass2);
+        c_headers.insert(eolian_class_file_get(klass2) + std::string(".h"));
+        cpp_headers.insert(eolian_class_file_get(klass2) + std::string(".hh"));
+        efl::eolian::grammar::attributes::klass_def cls{klass2, opts.unit};
         if(std::find(forward_klasses.begin(), forward_klasses.end(), cls) == forward_klasses.end())
           forward_klasses.push_back(cls);
      };
@@ -114,23 +114,23 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
      };
 
    std::function<void(Eolian_Class const*)> klass_function
-     = [&] (Eolian_Class const* klass)
+     = [&] (Eolian_Class const* klass2)
      {
-       for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass))
+       for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass2))
              , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
          {
            Eolian_Class const* inherit = &*inherit_iterator;
            c_headers.insert(eolian_class_file_get(inherit) + std::string(".h"));
            cpp_headers.insert(eolian_class_file_get(inherit) + std::string(".hh"));
-           efl::eolian::grammar::attributes::klass_def klass{inherit, opts.unit};
-           if(std::find(forward_klasses.begin(), forward_klasses.end(), klass) == forward_klasses.end())
-             forward_klasses.push_back(klass);
+           efl::eolian::grammar::attributes::klass_def klass3{inherit, opts.unit};
+           if(std::find(forward_klasses.begin(), forward_klasses.end(), klass3) == forward_klasses.end())
+             forward_klasses.push_back(klass3);
 
            klass_function(inherit);
          }
 
-       efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
-       for(auto&& f : klass_def.functions)
+       efl::eolian::grammar::attributes::klass_def klass2_def(klass2, opts.unit);
+       for(auto&& f : klass2_def.functions)
          {
            variant_function(f.return_type);
            for(auto&& p : f.parameters)
@@ -138,7 +138,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
                variant_function(p.type);
              }
          }
-       for(auto&& e : klass_def.events)
+       for(auto&& e : klass2_def.events)
          {
            if(e.type)
              variant_function(*e.type);
@@ -463,12 +463,12 @@ opts_get(int argc, char **argv)
 
    const struct option long_options[] =
      {
-       { "in",          required_argument, 0,  'I' },
-       { "out-file",    required_argument, 0,  'o' },
-       { "version",     no_argument,       0,  'v' },
-       { "help",        no_argument,       0,  'h' },
-       { "main-header", no_argument,       0,  'm' },
-       { 0,             0,                 0,   0  }
+       { "in",          required_argument, nullptr, 'I' },
+       { "out-file",    required_argument, nullptr, 'o' },
+       { "version",     no_argument,       nullptr, 'v' },
+       { "help",        no_argument,       nullptr, 'h' },
+       { "main-header", no_argument,       nullptr, 'm' },
+       { nullptr,       0,                 nullptr,  0  }
      };
    const char* options = "I:D:o:c::marvh";
 
