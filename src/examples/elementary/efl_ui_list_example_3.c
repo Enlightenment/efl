@@ -58,10 +58,11 @@ static void
 _bt_add_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   Eina_Value vtext;
+   Eina_Value vtext, value;
    Efl_Model_Item *child;
 
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
+   eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
    child = efl_model_child_add(priv->model);
 
    eina_value_set(&vtext, elm_object_text_get(priv->e_name));
@@ -70,7 +71,7 @@ _bt_add_clicked(void *data, Evas_Object *obj, void *event_info)
    eina_value_set(&vtext, elm_object_text_get(priv->e_occ));
    efl_model_property_set(child, "occupation", &vtext);
 
-   eina_value_set(&vtext, "unselected");
+   eina_value_set(&value, EINA_FALSE);
    efl_model_property_set(child, "selected", &vtext);
 }
 
@@ -153,21 +154,21 @@ _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 static Efl_Model*
 _make_model()
 {
-   Eina_Value vtext, vstyle;
+   Eina_Value vtext, value;
    Efl_Model_Item *model, *child;
    unsigned int i, len;
 
    model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
-   eina_value_setup(&vstyle, EINA_VALUE_TYPE_STRING);
+   eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
 
    len = sizeof(texts)/sizeof(const char*);
    for (i = 0; i < (len); i++)
      {
         child = efl_model_child_add(model);
 
-        i%2 ? eina_value_set(&vstyle, "even") : eina_value_set(&vstyle, "odd");
-        efl_model_property_set(child, "odd_style", &vstyle);
+        i%2 ? eina_value_set(&vtext, "even") : eina_value_set(&vtext, "odd");
+        efl_model_property_set(child, "odd_style", &vtext);
 
         eina_value_set(&vtext, texts[(i % len)]);
         efl_model_property_set(child, "name", &vtext);
@@ -175,8 +176,8 @@ _make_model()
         eina_value_set(&vtext, subtexts[(i % len)]);
         efl_model_property_set(child, "occupation", &vtext);
 
-        eina_value_set(&vtext, "unselected");
-        efl_model_property_set(child, "selected", &vtext);
+        eina_value_set(&value, EINA_FALSE);
+        efl_model_property_set(child, "selected", &value);
      }
 
    return model;
@@ -216,6 +217,7 @@ elm_main(int argc, char **argv)
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_model_connect(factory, "elm.text", "filename");
+   efl_ui_model_connect(factory, "signal/elm,state,%v", "selected");
    efl_ui_layout_factory_theme_config(factory, "list", "item", "default");
    priv->list2 = efl_add(EFL_UI_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list2, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);

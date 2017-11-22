@@ -34,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 void _efl_ui_list_custom_layout(Efl_Ui_List *);
-void _efl_ui_list_item_select_set(Efl_Ui_List_Item *, Eina_Bool);
+void _efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem*, Eina_Bool);
 Eina_Bool _efl_ui_list_item_select_clear(Eo *);
 //static void _item_calc(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
 static void _layout_unrealize(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
@@ -264,27 +264,12 @@ static void
 _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   Efl_Ui_List_Item *item = data;
-
-   EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd);
+   Efl_Ui_List_LayoutItem *item = data;
 
    if (ev->button != 1) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) pd->on_hold = EINA_TRUE;
-   else pd->on_hold = EINA_FALSE;
-   if (pd->on_hold || !item->down) return;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   item->down = EINA_FALSE;
-   ELM_SAFE_FREE(item->long_timer, ecore_timer_del);
-
-   if (!item->longpressed)
-     {
-       if (pd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS && item->selected)
-         return;
-
-       _efl_ui_list_item_select_set(item, EINA_TRUE);
-     }
-   else
-     item->longpressed = EINA_FALSE;
+   _efl_ui_list_item_select_set(item, EINA_TRUE);
 }
 
 static void
@@ -1379,40 +1364,34 @@ _efl_ui_list_item_select_clear(Eo *obj)
 }
 
 void
-_efl_ui_list_item_select_set(Efl_Ui_List_Item *item, Eina_Bool selected)
+_efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem *item, Eina_Bool selected)
 {
-   /* Eina_Stringshare *sprop, *svalue; */
+   Eina_Stringshare *sprop;
+   assert(item != NULL);
+   assert(item->children != NULL);
 
-   /* assert(item != NULL); */
-   /* EFL_UI_LIST_DATA_GET_OR_RETURN(item->list, pd); */
+   selected = !!selected;
+   /* if (!item->model || item->selected == selected) return; */
 
-   /* if ((pd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) || */
-   /*     (pd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)) */
-   /*   return; */
+   sprop = eina_stringshare_add(SELECTED_PROP);
 
-   /* selected = !!selected; */
-   /* /\* if (!item->model || item->selected == selected) return; *\/ */
-   /* assert(item->model != NULL); */
+   if (_efl_model_properties_has(item->children, sprop))
+     {
+        Eina_Value v;
+        eina_value_setup(&v, EINA_VALUE_TYPE_UCHAR);
+        eina_value_set(&v, selected);
+        efl_model_property_set(item->children, sprop, &v);
+        eina_value_flush(&v);
+     }
+   eina_stringshare_del(sprop);
 
-   /* sprop = eina_stringshare_add(SELECTED_PROP); */
-   /* svalue = (selected ? eina_stringshare_add("selected") : eina_stringshare_add("unselected")); */
-
-   /* if (_efl_model_properties_has(item->model, sprop)) */
-   /*   { */
-   /*      Eina_Value v; */
-   /*      eina_value_setup(&v, EINA_VALUE_TYPE_STRINGSHARE); */
-   /*      eina_value_set(&v, svalue); */
-   /*      efl_model_property_set(item->model, sprop, &v); */
-   /*      eina_value_flush(&v); */
-   /*   } */
-   /* eina_stringshare_del(sprop); */
-   /* eina_stringshare_del(svalue); */
-
-   /* /\* //TODO I need call this event or catch only by model connect event? *\/ */
-   /* if (selected) */
-   /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_SELECTED, item); */
-   /* else */
-   /*   efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_UNSELECTED, item); */
+   //TODO I need call this event or catch only by model connect event?
+/*
+   if (selected)
+     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_SELECTED, NULL);
+   else
+     efl_event_callback_legacy_call(item->layout, EFL_UI_EVENT_UNSELECTED, NULL);
+*/
 }
 
 static void
@@ -1478,9 +1457,10 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
-//   elm_widget_sub_object_add(obj, item->layout);
     evas_object_smart_member_add(item->layout, pd->pan_obj);
-//   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, item);
+
+   evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+
    efl_ui_view_model_set(item->layout, item->children);
 
    evt.child = item->children;
@@ -1498,6 +1478,8 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
    Efl_Ui_List_Item_Event evt;
    DBG("model_unrealize item:%p", item);
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
+
+   evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
    evas_object_hide(item->layout);
    evas_object_move(item->layout, -9999, -9999);

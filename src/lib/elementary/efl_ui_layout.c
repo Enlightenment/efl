@@ -1941,6 +1941,7 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
    Efl_Ui_Layout_Sub_Connect *sc = data;
    const Eina_Value_Type *vtype;
    Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
+   Eina_Stringshare *selected;
    char *text;
 
    sc->future = NULL;
@@ -1950,6 +1951,18 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
      {
          eina_value_get(value, &text);
          _view_update(sc, text);
+         return;
+     }
+
+   selected = eina_stringshare_add("selected");
+   if (vtype == EINA_VALUE_TYPE_UCHAR && sc->property == selected)
+     {
+         Eina_Bool sb = EINA_FALSE;
+         eina_value_get(value, &sb);
+         if (sb)
+           _view_update(sc, "selected");
+         else
+           _view_update(sc, "unselected");
      }
    else
      {
@@ -1957,6 +1970,8 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
          _view_update(sc, text);
          free(text);
      }
+
+     eina_stringshare_del(selected);
 }
 
 static void
