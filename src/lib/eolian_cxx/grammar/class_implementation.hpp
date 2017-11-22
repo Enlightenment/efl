@@ -25,16 +25,28 @@ struct class_implementation_generator
      std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
      auto base_class_name = *(lower_case[string] << "::") << string;
      auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
-     return as_generator
-       (
+     std::string guard_symbol;
+
+     if(!as_generator(*(string << "_") << string << "_IMPL_HH")
+        .generate(std::back_inserter(guard_symbol)
+                  , std::make_tuple(cpp_namespaces, cls.cxx_name), add_upper_case_context(ctx)))
+       return false;
+
+     if(!as_generator(   "#ifndef " << guard_symbol << "\n"
+                      << "#define " << guard_symbol << "\n")
+        .generate(sink, std::make_tuple(), ctx))
+       return false;
+
 #ifndef USE_EOCXX_INHERIT_ONLY
+     if(!as_generator(
         (namespaces
          [*function_definition(get_klass_name(cls))]
          << "\n"
-       )).generate(sink, std::make_tuple(cls.namespaces, cls.functions), ctx)
-       && as_generator
-       (
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions), ctx))
+       return false;
 #endif
+
+     if(!as_generator(
         attribute_reorder<0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
         (
          "namespace eo_cxx {\n"
@@ -48,8 +60,14 @@ struct class_implementation_generator
           << "inline " << base_class_name << "::operator " << class_name << " const&() const { return *static_cast< "
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
          ]
-         << "}\n\n"
-         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name), ctx);
+         << "}\n"
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name), ctx))
+       return false;
+
+     if(!as_generator("#endif\n").generate(sink, std::make_tuple(), ctx))
+       return false;
+
+     return true;
    }
 };
 
