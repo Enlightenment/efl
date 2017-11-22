@@ -1,3 +1,4 @@
+
 #ifndef EOLIAN_CXX_FUNCTION_DECLARATION_HH
 #define EOLIAN_CXX_FUNCTION_DECLARATION_HH
 
@@ -42,6 +43,13 @@ struct function_declaration_generator
             !as_generator("#ifdef " << *(string << "_") << string << "_" << string << "_BETA\n")
             .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name, suffix), add_upper_case_context(ctx)))
         return false;
+
+      std::string template_statement(f.template_statement());
+      if (!template_statement.empty() &&
+          !as_generator(template_statement << " ")
+          .generate(sink, attributes::unused, ctx))
+        return false;
+
       if(!as_generator
             ("::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "(" << (parameter % ", ") << ") const;\n")
             .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), ctx))

@@ -61,6 +61,8 @@ template <>
 struct out_traits<void*> { typedef void*& type; };
 template <typename T>
 struct out_traits<efl::shared_future<T>> { typedef efl::shared_future<T>& type; };
+template <>
+struct out_traits<efl::eina::strbuf> { typedef efl::eina::strbuf_wrapper& type; };
 
 template <typename T>
 struct inout_traits { typedef T& type; };
@@ -291,23 +293,7 @@ auto convert_inout(V& object) -> decltype(impl::convert_inout_impl(object, impl:
 template <typename T, typename U, bool Own = false, typename V>
 T convert_to_c(V&& object);
 
-template <typename F, typename T>
-void* data_function_ptr_to_c(T)
-{
-  return nullptr;
-}
-
-template <typename F, typename T>
-F function_ptr_to_c()
-{
-  return nullptr;
-}
-
-template <typename F, typename T>
-Eina_Free_Cb free_function_ptr_to_c()
-{
-  return nullptr;
-}
+template <typename U, typename F, typename V=void> struct function_wrapper;
 
 namespace impl {
 

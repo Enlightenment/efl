@@ -24,6 +24,7 @@ auto class_header =
     << "#include <Eina.hh>\n"
        "#include <Eo.hh>\n"
     << *header_include_directive // sequence<string>
+    <<  string                   // extra header <string>
     << *class_declaration          // sequence<class> | class
     << *class_forward_declaration          // sequence<class> | class
     << "\nnamespace eo_cxx {\n"
