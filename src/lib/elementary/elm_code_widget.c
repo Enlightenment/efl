@@ -196,7 +196,7 @@ _elm_code_widget_line_in_scope(Elm_Code_Line *line, Elm_Code_Line *fromline)
    Elm_Code_Line *midline;
    unsigned int number;
 
-   if (line->scope == 0 || fromline->scope == 0)
+   if (!line || !fromline || line->scope == 0 || fromline->scope == 0)
      return EINA_FALSE;
 
    if (line->number == fromline->number)
