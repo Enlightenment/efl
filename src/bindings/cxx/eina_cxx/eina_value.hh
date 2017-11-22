@@ -13,6 +13,20 @@
  * @{
  */
 
+/* FIXME:
+ *
+ * I think value wrappers have ownership issues. value_view as-is creates and
+ * never destroys an internal Eina_Value object. Leaks happily. value is fine
+ * but can not take ownership of an existing value safely.
+ *
+ * So, I think Eina_Value wrappers should come in three flavors:
+ * - read-only wrapper, "value_view". Can only read from an existing Eina_Value.
+ * - read-write wrapper, "value_wrapper". Can write to an existing Eina_Value.
+ * - read-write owner, "value". Creates and destroys the eina_value.
+ *
+ * See strbuf for an example.
+ */
+
 namespace efl { namespace eina {
 
 /**
@@ -281,6 +295,30 @@ struct _eina_value_traits<std::string>
 /**
  * @internal
  */
+template <>
+struct _eina_value_traits<::tm>
+  : _eina_value_traits_base<::tm>
+{
+  typedef typename  _eina_value_traits_base<::tm>::type type;
+  static ::Eina_Value_Type const* value_type()
+  {
+    return EINA_VALUE_TYPE_TM;
+  }
+  static void set( ::Eina_Value* v, type c)
+  {
+    ::eina_value_set(v, &c);
+  }
+  static type get( ::Eina_Value* v)
+  {
+     type time = {};
+     ::eina_value_get(v, &time);
+     return time;
+  }
+};
+
+/**
+ * @internal
+ */
 template <typename T>
 struct _eina_value_traits<T[], typename eina::enable_if<eina::is_pod<T>::value>::type>
   : _eina_value_traits_base<T[]>
@@ -434,8 +472,29 @@ public:
     primitive_init(v);
   }
 
+  // dubious
   value_view(Eina_Value* raw)
     : _raw(raw) {}
+
+  // dubious
+  value_view(Eina_Value const& raw)
+    : _raw(const_cast<Eina_Value *>(&raw)) {}
+
+  /**
+   * @brief Get this value as a string
+   * @return A new string
+   */
+  std::string to_string() const
+  {
+     char *c_str = ::eina_value_to_string(_raw);
+     std::string str(c_str);
+     free(c_str);
+     return str;
+  }
+
+  operator std::string() const {
+     return to_string();
+  }
 
   /**
    * @brief Swap stored values with the given <tt>eina::value</tt> object.
@@ -615,19 +674,20 @@ struct value : value_view
    using value_view::value_view;
 
    value(std::nullptr_t) {}
+
+   // FIXME: dubious - shouldn't be char
    value() : value_view(_eina_value_traits<char>::create()) {}
+
    explicit value(Eina_Value* raw)
      : value_view(raw) {}
 
    value(Eina_Value const* raw)
-     : value_view(_eina_value_traits<char>::create())
+     : value_view(::eina_value_dup(raw))
    {
-     if(!eina_value_copy(raw, _raw))
-       {
-          eina_value_free(_raw);
-          EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
-       }
+     if (!_raw) EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
    }
+
+   value(Eina_Value const& raw) : value(&raw) {}
   
    /**
     * @brief Deallocate stored value.
