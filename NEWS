@@ -1,6 +1,49 @@
 ==========
-EFL 1.20.5
+EFL 1.20.6
 ==========
+
+Changes since 1.20.5:
+---------------------
+
+Fixes:
+
+   * efl ui win - make win centering work with multiple screens (T6323)
+   * edje_cc: fix a memory leak issue when edje_cc writes images
+   * evas gl generic/common - add more linking for gles mode to fix deb build (T6158)
+   * edje_edit: duplicate assignment to variable.
+   * ecore_wayland: fix assigned value is never used.
+   * evas: Prevent crash with image_data_get (T5957)
+   * elm_code_widget: make sure the widget is cleared properly. (T6185)
+   * ecore_wl2: Remove just the flush from the idle handler (T6250)
+   * elm_tooltip: set parent window for windowed tooltips
+   * efl_wl: more closely follow wl spec for input regions
+   * efl_wl: destroy extant shell surface upon surface deletion
+   * ecore_cocoa: fix the backspace key
+   * edje_cc: fix errors in documentation
+   * edje_cc: add missing default values to documentation
+   * edje_cc: fix color2 and color3 descriptions
+   * edje_cc: fix state.no_render description
+   * edje_cc: parse "fixed" as bool
+   * edje_cc: fix incorrect type in minmul defaults
+   * edje_cc: fix color_class description
+   * edje_cc: move part_remove and program_remove to group
+   * edje_cc: fix default color_class colors
+   * edje_cc: fix spelling
+   * edje_cc: make bool parsing consistent
+   * edje_cc: make color parsing consistent
+   * edje_cc: move box and table properties documentation
+   * edje_cc: limit map.zoom to non-negative values
+   * edje_cc: fix text.align description
+   * edje_cc: fix program.filter description
+   * edje_cc: fix item.max parsing
+   * ecore-drm2: Fix issue of not being able to set output mode
+   * evas-software-generic: Check for render engine function before calling
+   * emotion: Fix data race condition (CID1381624)
+   * ector: use cairo_pattern_add_color_stop_rgba in gradient_radial
+   * efl_gfx_path: fix typo in _path_bounds_get
+   * efl net - handle proxy helper fails better and abort proxy lookups
+   * Ctxpopup: resizing ctxpopup after its content is removed (T6327)
+   * genlist: fix state corruption of content
 
 Changes since 1.20.4:
 ---------------------
