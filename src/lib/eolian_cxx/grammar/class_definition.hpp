@@ -42,8 +42,7 @@ struct class_definition_generator
      if(!as_generator("\n{\n").generate(sink, attributes::unused, context)) return false;
 
      // constructors
-     if(!as_generator
-        (
+     if(!as_generator(
             scope_tab << "explicit " << string << "( ::Eo* eo)\n"
          << scope_tab << scope_tab << ": ::efl::eo::concrete(eo) {}\n"
          << scope_tab << string << "(std::nullptr_t)\n"
@@ -57,10 +56,13 @@ struct class_definition_generator
          << scope_tab << string << "(Derived&& derived\n"
          << scope_tab << scope_tab << ", typename std::enable_if<\n"
          << scope_tab << scope_tab << scope_tab << "::efl::eo::is_eolian_object<Derived>::value\n"
-         << scope_tab << scope_tab << scope_tab << " && std::is_base_of< " << string << ", Derived>::value"
-         << scope_tab << scope_tab << scope_tab << ">::type* = 0) : ::efl::eo::concrete(derived._eo_ptr())\n"
-         << scope_tab << "{}\n"
-         << scope_tab << string << "( ::efl::eo::instantiate_t)\n"
+         << scope_tab << scope_tab << scope_tab << " && std::is_base_of< " << string << ", Derived>::value>::type* = 0)\n"
+         << scope_tab << scope_tab << scope_tab << ": ::efl::eo::concrete(derived._eo_ptr()) {}\n\n"
+              ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context))
+       return false;
+
+     if((cls.type == attributes::class_type::regular) && !as_generator(
+            scope_tab << string << "( ::efl::eo::instantiate_t)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, ::efl::eo::concrete{nullptr}, _eo_class());\n"
          << scope_tab << "}\n"
@@ -76,7 +78,7 @@ struct class_definition_generator
          << scope_tab << "template <typename T, typename F> " << string << "(  ::efl::eo::instantiate_t, T&& parent, F&& f, typename ::std::enable_if< ::efl::eolian::is_constructor_lambda<F, " << string << " >::value && ::efl::eo::is_eolian_object<T>::value>::type* = 0)\n"
          << scope_tab << "{\n"
          << scope_tab << scope_tab << "::efl::eolian::do_eo_add( ::efl::eo::concrete::_eo_raw, parent, _eo_class(), *this, std::forward<F>(f));\n"
-         << scope_tab << "}\n"
+         << scope_tab << "}\n\n"
          // << scope_tab << "explicit " << string << "( ::efl::eo::concrete const& parent)\n"
          // << scope_tab << scope_tab << ": ::efl::eo::concrete( ::efl::eo::do_eo_add(parent)) {}\n"
          // << scope_tab << "template <typename F>\n"
