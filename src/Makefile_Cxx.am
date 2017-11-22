@@ -151,6 +151,7 @@ bindings/cxx/eina_cxx/eina_ptrlist.hh \
 bindings/cxx/eina_cxx/eina_range_types.hh \
 bindings/cxx/eina_cxx/eina_ref.hh \
 bindings/cxx/eina_cxx/eina_stringshare.hh \
+bindings/cxx/eina_cxx/eina_strbuf.hh \
 bindings/cxx/eina_cxx/eina_string_view.hh \
 bindings/cxx/eina_cxx/eina_thread.hh \
 bindings/cxx/eina_cxx/eina_throw.hh \
