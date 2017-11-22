@@ -3766,6 +3766,7 @@ _elm_widget_item_efl_object_destructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
    eina_hash_free(item->labels);
 
+   efl_access_attributes_clear(eo_item);
    efl_access_removed(eo_item);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
@@ -5083,7 +5084,7 @@ _elm_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
         efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
         sd->manager.provider = NULL;
      }
-
+   efl_access_attributes_clear(obj);
    efl_access_removed(obj);
    if (sd->logical.parent)
      {
@@ -5260,15 +5261,45 @@ _elm_widget_efl_access_state_set_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNU
 EOLIAN static Eina_List*
 _elm_widget_efl_access_attributes_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   Eina_List *ret = NULL;
-   Efl_Access_Attribute *attr = calloc(1, sizeof(Efl_Access_Attribute));
-   if (!attr) return NULL;
+   Eina_List *attr_list = NULL;
 
-   attr->key = eina_stringshare_add("type");
-   attr->value = eina_stringshare_add(evas_object_type_get(obj));
+   attr_list = efl_access_attributes_get(efl_super(obj, ELM_WIDGET_CLASS));
 
-   ret = eina_list_append(ret, attr);
-   return ret;
+   //Add type and style information in addition.
+   Efl_Access_Attribute *attr = NULL;
+   attr = calloc(1, sizeof(Efl_Access_Attribute));
+   if (attr)
+     {
+        attr->key = eina_stringshare_add("type");
+        attr->value = eina_stringshare_add(elm_widget_type_get(obj));
+        attr_list = eina_list_append(attr_list, attr);
+     }
+
+   attr = calloc(1, sizeof(Efl_Access_Attribute));
+   if (attr)
+     {
+        attr->key = eina_stringshare_add("style");
+        attr->value = eina_stringshare_add(elm_widget_style_get(obj));
+        attr_list = eina_list_append(attr_list, attr);
+     }
+
+   return attr_list;
+}
+
+EOLIAN static Eina_List *
+_elm_widget_item_efl_access_attributes_get(Eo *eo_item, Elm_Widget_Item_Data *pd  EINA_UNUSED)
+{
+   Eina_List *attr_list = NULL;
+   attr_list = efl_access_attributes_get(efl_super(eo_item, ELM_WIDGET_ITEM_CLASS));
+   Efl_Access_Attribute *attr = NULL;
+   attr = calloc(1, sizeof(Efl_Access_Attribute));
+   if (attr)
+     {
+        attr->key = eina_stringshare_add("style");
+        attr->value = eina_stringshare_add(elm_object_item_style_get(eo_item));
+        attr_list = eina_list_append(attr_list, attr);
+     }
+   return attr_list;
 }
 
 EOLIAN static Eina_Rect

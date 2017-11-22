@@ -298,9 +298,22 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          get {
          }
          values {
-            /* FIXME: API for attribute free */
-            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes]]
+            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes, Must be freed by the user]]
          }
+      }
+      attribute_append {
+         [[Add key-value pair identifying object extra attributes
+         ]]
+         params {
+            @in key: const(string); [[The string key to give extra information]]
+            @in value: const(string); [[The string value to give extra information]]
+         }
+      }
+      attributes_clear {
+         [[Removes all attributes in accessible object.
+
+           \@internal
+         ]]
       }
       @property index_in_parent @protected @beta {
          [[Gets index of the child in parent's children list.]]

@@ -541,6 +541,7 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
            Efl.Object.constructor;
            Efl.Object.destructor;
            Efl.Access.state_set { get; }
+           Efl.Access.attributes { get; }
            Efl.Access.Component.extents { get; set; }
            Efl.Access.Component.alpha { get; }
            Efl.Access.Component.layer { get; }
