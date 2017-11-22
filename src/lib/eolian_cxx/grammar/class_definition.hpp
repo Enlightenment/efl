@@ -211,12 +211,17 @@ struct class_definition_generator
 
      // EXPERIMENTAL
      if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
+     // For easy wref, operator-> in wref needs to also return a pointer type
      if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
      if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+     // For easy interfacing with C: no need to use _eo_ptr()
+     if(!as_generator(   scope_tab << "operator Eo*() const { return _eo_ptr(); }\n"
+                     ).generate(sink, attributes::unused, context)) return false;
      if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
 
+     // eo_concrete
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
                       << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"
                      ).generate(sink, attributes::unused, context)) return false;
