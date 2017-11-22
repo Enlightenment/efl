@@ -134,6 +134,12 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::stringshare");
               }}
+           , {"strbuf", nullptr, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                return replace_base_type(r, " ::efl::eina::strbuf");
+              }}
            /* FIXME: handle any_value_ptr */
            , {"any_value", true, nullptr, nullptr, [&]
               {
