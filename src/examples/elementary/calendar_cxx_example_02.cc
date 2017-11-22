@@ -1,40 +1,60 @@
+#define EFL_CXX_WREF_EASY
+
 #include <Elementary.hh>
 
 using efl::eo::instantiate;
+using namespace std::placeholders;
 
-// FIXME: Function callbacks need a lot of love in C++
-static void
-_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
+struct appData
 {
-   if (::eina_value_type_get(&value) != ::EINA_VALUE_TYPE_TM)
-     {
-        // FIXME: val.to_string()
-        char *convert = ::eina_value_to_string(&value);
-        eina_strbuf_append(str, convert);
-        free(convert);
-     }
-   else
-     {
-        struct tm time;
-        eina_value_get(&value, &time);
-        eina_strbuf_append_strftime(str, "%b. %y", &time);
-     }
-}
+   appData() : m_win(nullptr) {}
+
+   ~appData() {
+      std::cout << "Good bye!" << std::endl;
+   }
+
+   void create() {
+      std::cout << "Hello!" << std::endl;
+
+      instantiate(m_win);
+      m_win.text_set("Calendar Layout Formatting Example");
+      m_win.delete_request_event_cb_add([&](){ destroy(); });
+
+      efl::ui::Calendar cal(instantiate, m_win);
+      m_win.content_set(cal);
+
+      auto wcal(cal._get_wref());
+
+      // FIXME: How does one figure out the argument types for the function?
+      auto cb_a = std::bind([=](
+                            efl::eina::strbuf_wrapper& sb,
+                            efl::eina::value_view const& value) {
+           try {
+              sb.append_strftime("%b. %y", efl::eina::get<tm>(value));
+           } catch (std::system_error const&)  {
+              sb.append(value.to_string());
+           }
+           std::cout << "Month: " << std::string(sb) << std::endl;
+        }, _1, _2);
+      cal.format_cb_set(cb_a);
+   }
+
+   void destroy() {
+      // FIXME: need del() function and no error on unref().
+      ::efl_allow_parent_unref_set(m_win._eo_ptr(), true);
+      m_win = nullptr;
+   }
+
+private:
+   efl::ui::Win m_win;
+};
+
+static appData app;
 
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
-
-   efl::ui::Win win(instantiate);
-   win.text_set("Calendar Layout Formatting Example");
-   win.autohide_set(true);
-
-   efl::ui::Calendar cal(instantiate, win);
-   win.content_set(cal);
-
-   // FIXME: Function cb doesn't work (C++ variant)
-   cal.format_cb_set(_format_cb);
-   ::efl_ui_format_cb_set(cal._eo_ptr(), NULL, _format_cb, NULL);
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   app.create();
 }
 EFL_MAIN()
