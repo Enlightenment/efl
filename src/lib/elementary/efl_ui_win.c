@@ -1705,29 +1705,16 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    o = efl_ui_focus_manager_move(obj, focus_dir);
 
-   if (!o && focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT)
+   if (!o)
      {
-        Efl_Ui_Focus_Object *root;
+        if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+          {
+             Efl_Ui_Focus_Object *root;
 
-        root = efl_ui_focus_manager_root_get(obj);
-        efl_ui_focus_manager_focus_set(obj, root);
+             root = efl_ui_focus_manager_root_get(obj);
+             efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
+          }
      }
-
-   if (!o && focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
-     {
-        Efl_Ui_Focus_Manager_Logical_End_Detail last;
-        Efl_Ui_Focus_Manager *rec_manager = obj;
-
-        do {
-          last = efl_ui_focus_manager_logical_end(rec_manager);
-          EINA_SAFETY_ON_NULL_GOTO(last.element, end);
-          efl_ui_focus_manager_focus_set(rec_manager, last.element);
-
-          rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
-        } while (!last.is_regular_end);
-     }
-
-end:
    return EINA_TRUE;
 }
 
