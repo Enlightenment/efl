@@ -3,6 +3,9 @@
 
 #include <type_traits>
 
+// EXPERIMENTAL
+//#define USE_EOCXX_INHERIT_ONLY
+
 namespace efl { namespace eolian { namespace grammar {
 
 template <typename T, typename Enable = void>

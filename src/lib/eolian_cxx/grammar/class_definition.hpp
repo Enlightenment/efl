@@ -27,15 +27,21 @@ struct class_definition_generator
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
 
-     if(!as_generator
-        (
-         "struct " << string << " : private ::efl::eo::concrete"
-         )
+#ifdef USE_EOCXX_INHERIT_ONLY
+     if(!as_generator("struct " << string << " : private ::efl::eo::concrete\n"
+                      << scope_tab << ", ::eo_cxx"
+                      << *("::" << lower_case[string]) << "::" << string)
+           .generate(sink, std::make_tuple(cls.cxx_name, attributes::cpp_namespaces(cls.namespaces), cls.cxx_name), context))
+       return false;
+#else
+     if(!as_generator("struct " << string << " : private ::efl::eo::concrete")
         .generate(sink, cls.cxx_name, context))
        return false;
+#endif
+
      for(auto&& i : cls.inherits)
        {
-         if(!as_generator("\n" << scope_tab << ", EO_CXX_INHERIT(" << *(" ::" << lower_case[string]) << "::" << string << ")")
+         if(!as_generator("\n" << scope_tab << ", EO_CXX_INHERIT(" << *("::" << lower_case[string]) << "::" << string << ")")
             .generate(sink, std::make_tuple(attributes::cpp_namespaces(i.namespaces), i.eolian_name), context))
            return false;
        }
@@ -89,8 +95,10 @@ struct class_definition_generator
          // << scope_tab << scope_tab << ": ::efl::eo::concrete( ::efl::eo::do_eo_add( ::efl::eo::concrete{nullptr}, f)) {}\n"
         ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
      
+#ifndef USE_EOCXX_INHERIT_ONLY
      if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
+#endif
                                              
      // static Efl_Class const* _eo_class();
      std::string suffix;
