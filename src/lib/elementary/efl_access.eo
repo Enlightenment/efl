@@ -305,8 +305,8 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          [[Add key-value pair identifying object extra attributes
          ]]
          params {
-            @in key: const(string); [[The string key to give extra information]]
-            @in value: const(string); [[The string value to give extra information]]
+            @in key: string; [[The string key to give extra information]]
+            @in value: string; [[The string value to give extra information]]
          }
       }
       attributes_clear {
