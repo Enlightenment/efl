@@ -1,5 +1,5 @@
 #ifndef EFL_UI_CALENDAR_PRIVATE_H
-#define ELM_WIDGET_CALENDAR_H
+#define ELM_UI_CALENDAR_PRIVATE_H
 
 #include "Elementary.h"
 
