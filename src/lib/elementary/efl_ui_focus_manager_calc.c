@@ -86,7 +86,7 @@ _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
      EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable));
 
    //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable) == obj)
+   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable) == obj);
 
    efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(pd->root->focusable), pd->root->focusable);
 }
@@ -1393,7 +1393,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    F_DBG("Manager: %p focusing object %p %s", obj, node->focusable, efl_class_name_get(node->focusable));
 
    //make sure this manager is in the chain of redirects
-   _manager_in_chain_set(pd);
+   _manager_in_chain_set(obj, pd);
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
