@@ -433,6 +433,7 @@ struct function_def
   std::string filename;
   bool is_beta;
   bool is_protected;
+  bool is_function_pointer;
 
   friend inline bool operator==(function_def const& lhs, function_def const& rhs)
   {
@@ -442,17 +443,27 @@ struct function_def
       && lhs.c_name == rhs.c_name
       && lhs.filename == rhs.filename
       && lhs.is_beta == rhs.is_beta
-      && lhs.is_protected == rhs.is_protected;
+      && lhs.is_protected == rhs.is_protected
+      && lhs.is_function_pointer == rhs.is_function_pointer;
   }
   friend inline bool operator!=(function_def const& lhs, function_def const& rhs)
   {
     return !(lhs == rhs);
   }
-  
+  function_def() = default;
   function_def(type_def return_type, std::string name, std::vector<parameter_def> parameters
                , std::string c_name, std::string filename, bool is_beta)
     : return_type(return_type), name(name), parameters(parameters), c_name(c_name), filename(filename), is_beta(is_beta) {}
-  function_def() = default;
+  function_def(type_def _return_type, std::string const& _name,
+               std::vector<parameter_def> const& _parameters,
+               std::string const& _c_name,
+               bool _is_beta = false,
+               bool _is_protected = false,
+               bool _is_function_pointer = false)
+    : return_type(_return_type), name(_name), parameters(_parameters),
+      c_name(_c_name), is_beta(_is_beta), is_protected(_is_protected),
+      is_function_pointer(_is_function_pointer) {}
+
   function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Unit const* unit)
     : return_type(void_)
   {
@@ -516,6 +527,49 @@ struct function_def
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
+  }
+
+  std::string template_statement() const
+  {
+     std::string statement;
+     char template_typename = 'F';
+     for (auto const& param : this->parameters)
+       {
+          attributes::regular_type_def const* typ =
+                efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+          if (typ && typ->is_function_ptr)
+            {
+               char typenam[2] = { 0, };
+               typenam[0] = template_typename++;
+               if (statement.empty())
+                 statement = std::string("template <typename ") + typenam;
+               else
+                 statement += std::string(", typename ") + typenam;
+            }
+       }
+     if (statement.empty()) return statement;
+     else return statement + ">";
+  }
+
+  std::vector<std::string> opening_statements() const
+  {
+     // FIXME: Supports only one function pointer
+     std::vector<std::string> statements;
+     char template_typename = 'F';
+     for (auto const& param : this->parameters)
+       {
+          attributes::regular_type_def const* typ =
+                efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+          if (typ && typ->is_function_ptr)
+            {
+               char typenam[2] = { 0, };
+               typenam[0] = template_typename++;
+               std::string statement = "auto fw = new ::efl::eolian::function_wrapper<";
+               statement += param.c_type + ", " + typenam + ">(" + param.param_name + ");";
+               statements.push_back(statement);
+            }
+       }
+     return statements;
   }
 };
 

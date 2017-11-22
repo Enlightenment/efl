@@ -25,6 +25,7 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/header.hpp"
 #include "grammar/impl_header.hpp"
+#include "grammar/types_definition.hpp"
 
 namespace eolian_cxx {
 
@@ -58,7 +59,8 @@ opts_check(eolian_cxx::options_type const& opts)
 }
 
 static bool
-generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
+generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
+         std::string const& cpp_types_header)
 {
    std::string header_decl_file_name = opts.out_file.empty()
      ? (::eolian_class_file_get(klass) + std::string(".hh")) : opts.out_file;
@@ -143,9 +145,9 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
          }
      };
    klass_function(klass);
-   
+
    cpp_headers.erase(eolian_class_file_get(klass) + std::string(".hh"));
-   
+
    std::string guard_name;
    as_generator(*(efl::eolian::grammar::string << "_") << efl::eolian::grammar::string << "_EO_HH")
      .generate(std::back_insert_iterator<std::string>(guard_name)
@@ -153,12 +155,13 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
                , efl::eolian::grammar::context_null{});
 
    std::tuple<std::string, std::set<std::string>&, std::set<std::string>&
+              , std::string const&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               > attributes
-   {guard_name, c_headers, cpp_headers, klasses, forward_klasses, klasses, klasses};
+   {guard_name, c_headers, cpp_headers, cpp_types_header, klasses, forward_klasses, klasses, klasses};
 
    if(opts.out_file == "-")
      {
@@ -205,19 +208,117 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts)
    return true;
 }
 
+static bool
+types_generate(std::string const& fname, options_type const& opts,
+               std::string& cpp_types_header)
+{
+   using namespace efl::eolian::grammar::attributes;
+
+   std::vector<function_def> functions;
+   Eina_Iterator *itr = eolian_declarations_get_by_file(fname.c_str());
+   /* const */ Eolian_Declaration *decl;
+
+   // Build list of functions with their parameters
+   while(::eina_iterator_next(itr, reinterpret_cast<void**>(&decl)))
+     {
+        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
+        if (dt != EOLIAN_DECL_ALIAS)
+          continue;
+
+        const Eolian_Typedecl *tp = eolian_declaration_data_type_get(decl);
+        if (!tp || eolian_typedecl_is_extern(tp))
+          continue;
+
+        if (::eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
+          continue;
+
+        const Eolian_Function *func = eolian_typedecl_function_pointer_get(tp);
+        if (!func) return false;
+
+        Eina_Iterator *param_itr = eolian_function_parameters_get(func);
+        std::vector<parameter_def> params;
+
+        /* const */ Eolian_Function_Parameter *param;
+        while (::eina_iterator_next(param_itr, reinterpret_cast<void **>(&param)))
+          {
+             parameter_direction param_dir;
+             switch (eolian_parameter_direction_get(param))
+               {
+                /* Note: Inverted on purpose, as the direction objects are
+                 * passed is inverted (from C to C++ for function pointers).
+                 * FIXME: This is probably not right in all cases. */
+                case EOLIAN_IN_PARAM: param_dir = parameter_direction::out; break;
+                case EOLIAN_INOUT_PARAM: param_dir = parameter_direction::inout; break;
+                case EOLIAN_OUT_PARAM: param_dir = parameter_direction::in; break;
+                default: return false;
+               }
+
+             const Eolian_Type *param_type_eolian = eolian_parameter_type_get(param);
+             type_def param_type(param_type_eolian, opts.unit, EOLIAN_C_TYPE_PARAM);
+             std::string param_name = eolian_parameter_name_get(param);
+             std::string param_c_type = eolian_type_c_type_get(param_type_eolian, EOLIAN_C_TYPE_PARAM);
+             parameter_def param_def(param_dir, param_type, param_name, param_c_type);
+             params.push_back(std::move(param_def));
+          }
+        ::eina_iterator_free(param_itr);
+
+        const Eolian_Type *ret_type_eolian = eolian_function_return_type_get(func, EOLIAN_FUNCTION_POINTER);
+
+        type_def ret_type = void_;
+        if (ret_type_eolian)
+          ret_type = type_def(ret_type_eolian, opts.unit, EOLIAN_C_TYPE_RETURN);
+
+        /*
+        // List namespaces. Not used as function_wrapper lives in efl::eolian.
+        std::vector<std::string> namespaces;
+        Eina_Iterator *ns_itr = eolian_typedecl_namespaces_get(tp);
+        char *ns;
+        while (::eina_iterator_next(ns_itr, reinterpret_cast<void**>(&ns)))
+          namespaces.push_back(std::string(ns));
+        ::eina_iterator_free(ns_itr);
+        */
+
+        std::string name = eolian_function_name_get(func);
+        std::string c_name = eolian_typedecl_full_name_get(tp);
+        std::replace(c_name.begin(), c_name.end(), '.', '_');
+        bool beta = eolian_function_is_beta(func);
+
+        function_def def(ret_type, name, params, c_name, beta, false, true);
+        functions.push_back(std::move(def));
+     }
+   ::eina_iterator_free(itr);
+
+   if (functions.empty())
+     return true;
+
+   std::stringstream sink;
+
+   sink.write("\n", 1);
+   if (!efl::eolian::grammar::types_definition
+       .generate(std::ostream_iterator<char>(sink),
+                 functions, efl::eolian::grammar::context_null()))
+     return false;
+
+   cpp_types_header = sink.str();
+
+   return true;
+}
+
 static void
 run(options_type const& opts)
 {
    if(!opts.main_header)
      {
-       const Eolian_Class *klass = NULL;
+       const Eolian_Class *klass = nullptr;
        char* dup = strdup(opts.in_files[0].c_str());
        char* base = basename(dup);
-       klass = ::eolian_class_get_by_file(NULL, base);
+       std::string cpp_types_header;
+       klass = ::eolian_class_get_by_file(nullptr, base);
        free(dup);
        if (klass)
          {
-           if (!generate(klass, opts))
+           if (!types_generate(base, opts, cpp_types_header) ||
+               !generate(klass, opts, cpp_types_header))
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
                  << "Error generating: " << ::eolian_class_name_get(klass)

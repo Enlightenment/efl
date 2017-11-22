@@ -17,6 +17,7 @@
 #include "grammar/attribute_conditional.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/type_impl.hpp"
+#include "grammar/eps.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -52,10 +53,22 @@ struct function_definition_generator
          !as_generator("#ifdef " << *(string << "_") << string << "_PROTECTED\n")
          .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name), add_upper_case_context(ctx)))
         return false;
-     
+
+      std::string template_statement(f.template_statement());
+      if (!template_statement.empty() &&
+          !as_generator(template_statement << "\n")
+          .generate(sink, attributes::unused, ctx))
+        return false;
+
       if(!as_generator
          ("inline ::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "::" << string << "(" << (parameter % ", ") << ") const\n{\n")
          .generate(sink, std::make_tuple(f.return_type, _klass_name.eolian_name, escape_keyword(f.name), f.parameters), ctx))
+        return false;
+
+      std::vector<std::string> opening_statements(f.opening_statements());
+      if (!opening_statements.empty() &&
+          !as_generator(scope_tab << *(string) << "\n")
+          .generate(sink, std::make_tuple(opening_statements), ctx))
         return false;
 
       auto out_declaration =
@@ -118,8 +131,8 @@ struct function_definition_generator
             scope_tab << "::efl::eolian::assign_out<" << parameter_type << ", " << c_type
             <<
             (
-             attribute_conditional([] (attributes::type_def const& type)
-             { return type.original_type.visit(attributes::get_qualifier_visitor{}) & qualifier_info::is_own; })
+             attribute_conditional([] (attributes::type_def const& typ)
+             { return typ.original_type.visit(attributes::get_qualifier_visitor{}) & qualifier_info::is_own; })
              [
                ", true"
              ] | eps
