@@ -156,6 +156,10 @@ struct class_definition_generator
                 << scope_tab << "} const " << string_replace(',', '_') << "_event;\n"
              ))).generate(sink, std::vector<attributes::event_def>{e}, context))
             return false;
+
+          /* EXPERIMENTAL: event_cb_add */
+          if (!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context))
+            return false;
           if (!as_generator(
                  scope_tab << "template <typename F>\n"
                  << scope_tab << "typename std::enable_if<std::is_bind_expression<F>::value, ::efl::eolian::signal_connection>::type\n"
@@ -174,6 +178,9 @@ struct class_definition_generator
                  << scope_tab << "}\n")
               .generate(sink, std::make_tuple(e.name, e.name), context))
             return false;
+          if (!as_generator("#endif\n").generate(sink, attributes::unused, context))
+            return false;
+
           if (e.beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
           if (e.protect && !as_generator("#endif\n").generate(sink, attributes::unused, context))
@@ -192,12 +199,13 @@ struct class_definition_generator
                          "return ::efl::eo::wref<" << string << ">(*this); }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
 
-     if(!as_generator("#ifdef EFL_CXX_WREF_EASY\n").generate(sink, attributes::unused, context)) return false;
+     // EXPERIMENTAL
+     if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
      if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
      if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
-          if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
 
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
                       << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"

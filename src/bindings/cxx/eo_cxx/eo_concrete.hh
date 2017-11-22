@@ -32,6 +32,7 @@ namespace efl { namespace eo {
 /// @{
 
 struct instantiate_t {
+#ifdef EFL_CXXPERIMENTAL
    /// @brief A helper to create objects with a different syntax
    ///
    /// @param obj The object to instantiate
@@ -49,6 +50,7 @@ struct instantiate_t {
       obj = T(*this);
       return obj;
    }
+#endif
 };
 
 /// @brief The handle to use to create real EFL objects
@@ -57,6 +59,10 @@ struct instantiate_t {
 /// to trigger a real EFL object creation. The following syntax is preferred:
 ///   T obj(instantiate, ...);
 instantiate_t const instantiate = {};
+
+#ifdef EFL_CXXPERIMENTAL
+instantiate_t const add = {};
+#endif
     
 /// @brief Creates concrete versions for <em>Eo</em> wrappers.
 ///

@@ -5,6 +5,8 @@
  * ./bg_cxx_example_02
  */
 
+#define EFL_CXXPERIMENTAL
+
 #include <Elementary.hh>
 
 #include <sstream>
@@ -16,7 +18,7 @@ efl::ui::Win win;
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   instantiate(win);
+   win = efl::ui::Win(instantiate);
    ::efl_ref(win._eo_ptr()); // FIXME: Window is doing BAD THINGS™!
    win.text_set("Bg Image");
    win.autohide_set(true);

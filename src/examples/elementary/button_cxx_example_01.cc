@@ -1,6 +1,6 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` button_cxx_example_01.cc -o button_cxx_example_01
 
-#define EFL_CXX_WREF_EASY
+#define EFL_CXXPERIMENTAL
 #include <Elementary.hh>
 
 using efl::eo::instantiate;

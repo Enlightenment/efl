@@ -1,9 +1,9 @@
-#define EFL_CXX_WREF_EASY
+#define EFL_CXXPERIMENTAL
 
 #include <Elementary.hh>
 
-using efl::eo::instantiate;
 using namespace std::placeholders;
+using efl::eo::add;
 
 struct appData
 {
@@ -16,11 +16,11 @@ struct appData
    void create() {
       std::cout << "Hello!" << std::endl;
 
-      instantiate(m_win);
+      add(m_win);
       m_win.text_set("Calendar Layout Formatting Example");
       m_win.delete_request_event_cb_add([&](){ destroy(); });
 
-      efl::ui::Calendar cal(instantiate, m_win);
+      efl::ui::Calendar cal(add, m_win);
       m_win.content_set(cal);
 
       auto wcal(cal._get_wref());
