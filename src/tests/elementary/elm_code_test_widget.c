@@ -24,9 +24,14 @@
 #undef DBG
 #define DBG(...) do { } while (0);
 
+// Guard against multiple redefinitions on Windows
+#define ELM_CODE_TEST
+
 #include "elm_code_parse.c"
 #include "elm_code_widget_selection.c"
 #include "elm_code_widget.c"
+
+#undef ELM_CODE_TEST
 
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
 {

@@ -58,12 +58,14 @@ static Eina_Unicode status_icons[] = {
 
 static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
 
+#ifndef ELM_CODE_TEST
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
 }
+#endif // ELM_CODE_TEST
 
 EOLIAN static Eo *
 _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
@@ -2273,4 +2275,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
 #include "elm_code_widget_text.c"
 #include "elm_code_widget_undo.c"
+#ifndef ELM_CODE_TEST
 #include "elm_code_widget.eo.c"
+#endif // ELM_CODE_TEST
