@@ -4846,8 +4846,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
         Eina_Bool is_anchor = EINA_FALSE;
         Eina_Bool is_item = EINA_FALSE;
 
-        if (efl_text_object_item_geometry_get(obj, anchor,
-                 NULL, NULL, NULL, NULL))
+        if (efl_text_annotation_is_item(obj, anchor))
           {
              is_anchor = EINA_TRUE;
              is_item = EINA_TRUE;
@@ -4971,7 +4970,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
                     {
                        rect->obj = ob;
 
-                       efl_text_object_item_geometry_get(an->obj,
+                       efl_text_item_geometry_get(an->obj,
                              an->annotation, &cx, &cy, &cw, &ch);
                        evas_object_move(rect->obj, x + cx, y + cy);
                        evas_object_resize(rect->obj, cw, ch);

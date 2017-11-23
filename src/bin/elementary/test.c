@@ -829,7 +829,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
-   ADD_TEST_EO(NULL, "Entries", "Ui.Text.Item.Provider", test_ui_text_item_factory);
+   ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
 
    //------------------------------//
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);

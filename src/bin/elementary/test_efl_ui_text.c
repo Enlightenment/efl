@@ -144,8 +144,8 @@ static void
 my_efl_ui_text_bt_4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
-         "size=32x32 href=emoticon/evil-laugh");
+   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+         "size=32x32", "emoticon/evil-laugh");
 }
 
 static void
@@ -216,12 +216,10 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    cur = efl_text_cursor_new(en);
 
    efl_text_cursor_position_set(en, cur, 2);
-   efl_text_cursor_object_item_insert(en, cur, "size=32x32 href=emoticon/happy");
+   efl_text_cursor_item_insert(en, cur, "size=32x32", "emoticon/happy");
    efl_text_cursor_position_set(en, cur, 50);
-
-   sprintf(buf, "size=32x32 href=file://%s/images/sky_01.jpg",
-         elm_app_data_dir_get());
-   efl_text_cursor_object_item_insert(en, cur, buf);
+   sprintf(buf, "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
+   efl_text_cursor_item_insert(en, cur, "size=32x32", buf);
 
    efl_text_cursor_position_set(en, main_cur, 5);
    efl_text_cursor_position_set(en, cur, 20);
@@ -350,21 +348,22 @@ my_efl_ui_text_item_factory_bt_image(void *data, Evas_Object *obj EINA_UNUSED,
    image_idx = (image_idx + 1) % 5;
    if (image_idx == 3)
      {
-        sprintf(buf, "size=32x32 href=file://%s/images/sky_02.jpg",
+        sprintf(buf, "file://%s/images/sky_02.jpg",
               elm_app_data_dir_get());
      }
    else if (image_idx == 4)
      {
-        sprintf(buf, "size=32x32 href=%s/images/sky_03.jpg",
+        sprintf(buf, "%s/images/sky_03.jpg",
               elm_app_data_dir_get());
      }
    else
      {
-        sprintf(buf, "size=32x32 href=%s", images[image_idx]);
+        sprintf(buf, "%s", images[image_idx]);
      }
    printf("Adding image: %s\n", buf);
-   efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
-         buf);
+   efl_text_cursor_item_insert(en,
+         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+         "size=32x32", buf);
 }
 
 static void
@@ -372,8 +371,8 @@ my_efl_ui_text_item_factory_bt_emoticon(void *data, Evas_Object *obj EINA_UNUSED
       void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_object_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
-         "size=32x32 href=emoticon/evil-laugh");
+   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+         "size=32x32", "emoticon/evil-laugh");
 }
 
 static void
@@ -456,12 +455,11 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    cur = efl_text_cursor_new(en);
 
    efl_text_cursor_position_set(en, cur, 2);
-   efl_text_cursor_object_item_insert(en, cur, "size=32x32 href=emoticon/happy");
+   efl_text_cursor_item_insert(en, cur, "size=32x32", "emoticon/happy");
    efl_text_cursor_position_set(en, cur, 50);
 
-   sprintf(buf, "size=32x32 href=file://%s/images/sky_01.jpg",
-         elm_app_data_dir_get());
-   efl_text_cursor_object_item_insert(en, cur, buf);
+   sprintf(buf, "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
+   efl_text_cursor_item_insert(en, cur, "size=32x32", buf);
    efl_text_cursor_position_set(en, main_cur, 5);
 
    efl_ui_text_interactive_editable_set(en, EINA_TRUE);
