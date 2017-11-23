@@ -93,7 +93,7 @@ evas_image_load_file_head_png(void *loader_data,
    png_infop info_ptr = NULL;
    png_uint_32 w32, h32;
    int bit_depth, color_type, interlace_type;
-   char hasa;
+   volatile char hasa;
    volatile Eina_Bool r = EINA_FALSE;
 
    opts = loader->opts;
