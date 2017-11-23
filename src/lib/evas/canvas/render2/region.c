@@ -1189,7 +1189,7 @@ region_del(Region *dest, Region *source)
      }
 
    // Add those rectangles in region 1 that aren't in region 2,
-   // do yucky substraction for overlaps, and
+   // do yucky subtraction for overlaps, and
    // just throw away rectangles in region 2 that aren't in region 1
    if (!_region_op(dest, dest, source, _region_del,
                    EINA_TRUE, EINA_FALSE, &overlap))

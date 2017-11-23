@@ -618,7 +618,7 @@ _evas_canvas3d_mesh_frame_vertex_data_map(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mes
 
    if (f->vertices[attrib].mapped)
      {
-        ERR("Try to map alreadly mapped data.");
+        ERR("Try to map already mapped data.");
         return NULL;
      }
 
@@ -735,7 +735,7 @@ _evas_canvas3d_mesh_index_data_map(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data 
 {
    if (pd->index_mapped)
      {
-        ERR("Try to map alreadly mapped data.");
+        ERR("Try to map already mapped data.");
         return NULL;
      }
 
