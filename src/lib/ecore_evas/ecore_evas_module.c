@@ -20,6 +20,16 @@ static Eina_Module *_ecore_evas_vnc = NULL;
 # define ECORE_EVAS_ENGINE_NAME "module.so"
 #endif
 
+static inline Eina_Bool
+_file_exists(const char *file)
+{
+   if (!file) return EINA_FALSE;
+
+   if (access(file, F_OK) == -1) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+
 static Eina_Module *
 _ecore_evas_vnc_server_module_try_load(const char *prefix,
                                        Eina_Bool use_prefix_only)
@@ -119,10 +129,9 @@ _ecore_evas_engine_load(const char *engine)
           {
              if (run_in_tree)
                {
-                  struct stat st;
                   snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
                            path, engine, ECORE_EVAS_ENGINE_NAME);
-                  if (stat(tmp, &st) != 0)
+                  if (!_file_exists(tmp))
                   tmp[0] = '\0';
                }
           }
@@ -165,9 +174,8 @@ _ecore_evas_engine_init(void)
      {
         if (getenv("EFL_RUN_IN_TREE"))
           {
-             struct stat st;
              const char mp[] = PACKAGE_BUILD_DIR"/src/modules/ecore_evas/engines/";
-             if (stat(mp, &st) == 0)
+             if (_file_exists(mp))
                {
                   _engines_paths = eina_list_append(_engines_paths, strdup(mp));
                   return;
@@ -216,16 +224,6 @@ _ecore_evas_engine_shutdown(void)
 
    EINA_LIST_FREE(_engines_available, path)
      eina_stringshare_del(path);
-}
-
-static Eina_Bool
-_file_exists(const char *file)
-{
-   struct stat st;
-   if (!file) return EINA_FALSE;
-
-   if (stat(file, &st) < 0) return EINA_FALSE;
-   return EINA_TRUE;
 }
 
 const Eina_List *
