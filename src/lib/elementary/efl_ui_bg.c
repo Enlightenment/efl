@@ -167,7 +167,7 @@ _efl_ui_bg_efl_file_file_set(Eo *obj, Efl_Ui_Bg_Data *sd, const char *file, cons
         err = evas_object_image_load_error_get(sd->img);
         if (err != EVAS_LOAD_ERROR_NONE)
           {
-             ERR("Could not load image '%s': %s\n",
+             ERR("Could not load image '%s': %s",
                  file, evas_load_error_str(err));
              int_ret = EINA_FALSE;
           }
