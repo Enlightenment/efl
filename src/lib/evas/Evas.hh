@@ -1,7 +1,7 @@
 #ifndef EVAS_HH
 #define EVAS_HH
 
-#if defined(EVAS_H)
+#if defined(_EVAS_H)
 #error "Do not include Evas C API headers before including Evas.hh"
 #endif
 
