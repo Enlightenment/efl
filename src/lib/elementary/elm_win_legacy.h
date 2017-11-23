@@ -303,7 +303,7 @@ EAPI int                   elm_win_norender_get(const Evas_Object *obj);
  * @param obj The window object
  *
  * You should NEVER call this unless you really know what you are doing and
- * why. Never call this unless you are asking for performance degredation
+ * why. Never call this unless you are asking for performance degradation
  * and possibly weird behavior. Windows get automatically rendered when the
  * application goes into the idle enter state so there is never a need to call
  * this UNLESS you have enabled "norender" mode.
@@ -738,7 +738,7 @@ EAPI Eina_Bool elm_win_wm_rotation_supported_get(const Evas_Object *obj);
 /**
  * @brief Get the preferred rotation value.
  *
- * This function is used to get the preferred rotoation value.
+ * This function is used to get the preferred rotation value.
  *
  * @return The preferred rotation of the window in degrees (0-360),
  * counter-clockwise.
@@ -1056,7 +1056,7 @@ EAPI int elm_win_layer_get(const Evas_Object *obj);
 EAPI Evas_Object *elm_win_inlined_image_object_get(const Evas_Object *obj);
 
 /**
- * @brief Internal. Used to completent the fake window type.
+ * @brief Internal. Used to complete the fake window type.
  *
  * @param[in] oee
  *
@@ -1130,9 +1130,9 @@ EAPI double elm_win_aspect_get(const Elm_Win *obj);
  * This function grabs the @c key of window using @c grab_mode.
  *
  * @param[in] key This string is the keyname to grab.
- * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * @param[in] modifiers A combination of modifier keys that must be present to
  * trigger the event. Not supported yet.
- * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * @param[in] not_modifiers A combination of modifier keys that must not be
  * present to trigger the event. Not supported yet.
  * @param[in] priority Not supported yet.
  * @param[in] grab_mode Describes how the key should be grabbed, wrt. focus and
@@ -1148,9 +1148,9 @@ EAPI Eina_Bool elm_win_keygrab_set(Elm_Win *obj, const char *key, Evas_Modifier_
  * This function unset keygrab value. Ungrab @c key of window.
  *
  * @param[in] key This string is the keyname to grab.
- * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * @param[in] modifiers A combination of modifier keys that must be present to
  * trigger the event. Not supported yet.
- * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * @param[in] not_modifiers A combination of modifier keys that must not be
  * present to trigger the event. Not supported yet.
  *
  * @return @c true on success, @c false otherwise
