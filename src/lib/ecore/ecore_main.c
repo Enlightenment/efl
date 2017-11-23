@@ -1931,10 +1931,33 @@ _ecore_main_fd_handlers_bads_rem(void)
 static void
 _ecore_main_fd_handlers_cleanup(void)
 {
-   Ecore_Fd_Handler *fdh;
+   Ecore_Fd_Handler *fdh, *last;
    Eina_List *l, *l2;
 
    if (!fd_handlers_to_delete) return;
+
+   // Cleanup deleted caller from the list
+   last = NULL;
+   fdh = fd_handlers_to_call;
+   while (fdh)
+     {
+        if (fdh->delete_me)
+          {
+             if (!last)
+               fd_handlers_to_call = fdh == fdh->next_ready ? NULL : fdh->next_ready;
+             else
+               last->next_ready = fdh == fdh->next_ready ? last : fdh->next_ready;
+          }
+        else
+          {
+             last = fdh;
+          }
+
+        if (fdh == fdh->next_ready)
+          break;
+        fdh = fdh->next_ready;
+     }
+
    EINA_LIST_FOREACH_SAFE(fd_handlers_to_delete, l, l2, fdh)
      {
         if (!fdh)
@@ -1945,6 +1968,8 @@ _ecore_main_fd_handlers_cleanup(void)
         /* fdh->delete_me should be set for all fdhs at the start of the list */
         if (fdh->references)
           continue;
+        if (fd_handlers_to_call_current == fdh)
+          fd_handlers_to_call_current = NULL;
         if (fdh->buf_func && fd_handlers_with_buffer)
           fd_handlers_with_buffer = eina_list_remove(fd_handlers_with_buffer, fdh);
         if (fdh->prep_func && fd_handlers_with_prep)
@@ -1992,7 +2017,7 @@ static void
 _ecore_main_fd_handlers_call(void)
 {
    /* grab a new list */
-    if (!fd_handlers_to_call_current)
+   if (!fd_handlers_to_call_current)
       {
          fd_handlers_to_call_current = fd_handlers_to_call;
          fd_handlers_to_call = NULL;
