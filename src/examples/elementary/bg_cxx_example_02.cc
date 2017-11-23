@@ -23,10 +23,6 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.text_set("Bg Image");
    win.autohide_set(true);
 
-   // FIXME: Part API needs some fixing to be nice in C++ :)
-   //efl::eo::downcast<efl::ui::win::Part>(win.part("background"))
-   //      .file_set("performance/background.png", nullptr);
-
    efl::ui::Bg bg(instantiate, win);
    bg.scale_type_set(EFL_UI_IMAGE_SCALE_TYPE_FILL);
    bg.file_set("performance/background.png", nullptr);
