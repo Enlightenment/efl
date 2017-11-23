@@ -813,7 +813,7 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
 
 /* Internal hack to mark legacy objects as such before construction.
  * No need for TLS: Only UI objects created in the main loop matter. */
-EAPI Eina_Bool _elm_legacy_add;
+EAPI extern Eina_Bool _elm_legacy_add;
 #define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
    efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
 

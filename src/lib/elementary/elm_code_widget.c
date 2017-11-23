@@ -24,7 +24,7 @@ typedef enum {
    ELM_CODE_WIDGET_COLOR_COUNT
 } Elm_Code_Widget_Colors;
 
-Eina_Unicode status_icons[] = {
+static Eina_Unicode status_icons[] = {
  ' ',
  ' ',
  ' ',
