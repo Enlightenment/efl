@@ -217,6 +217,24 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_glview.h>
 #include <elm_grid.h>
 
+
+#ifdef _WIN32
+#ifdef ELEMENTARY_BUILD
+// Elm legacy headers that require EAPI defined
+#include <elm_spinner.eo.h>
+#include <elm_entry.eo.h>
+#include <elm_ctxpopup.eo.h>
+#include <elm_ctxpopup_item.eo.h>
+#include <elm_popup.eo.h>
+#include <elm_popup_item.eo.h>
+#include <elm_colorselector.eo.h>
+#include <elm_interface_scrollable.eo.h>
+#include <elm_systray.eo.h>
+#include <elm_notify.eo.h>
+#include <elm_hoversel.eo.h>
+#endif
+#endif
+
 #include <elm_hover.h>
 #include <elm_image.h>
 #include <elm_index.h>
