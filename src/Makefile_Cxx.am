@@ -34,7 +34,7 @@ CLEANFILES += $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) lib/e
 ### Efl C++
 installed_eflcxxmainheadersdir = $(includedir)/efl-cxx-@VMAJ@/
 nodist_installed_eflcxxmainheaders_DATA = $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
-dist_installed_eflcxxmainheaders_DATA = lib/efl/Efl.hh
+dist_installed_eflcxxmainheaders_DATA = lib/efl/Efl.hh lib/efl/cxx/efl_part_impl.hh
 
 lib/efl/Efl.eo.hh: $(efl_eolian_files) $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
