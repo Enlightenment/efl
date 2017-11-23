@@ -38,16 +38,29 @@ typedef uintptr_t Eina_Sp_Id;
 typedef int16_t Eina_Table_Index;
 typedef uint16_t Eina_Generation_Counter;
 #else
+# ifndef EINA_FULL64BIT
+/* 47 bits */
+#  define EINA_BITS_MID_TABLE_ID       11
+#  define EINA_BITS_TABLE_ID           11
+#  define EINA_BITS_ENTRY_ID           12
+#  define EINA_BITS_GENERATION_COUNTER 11
+#  define EINA_BITS_FREE_COUNTER        2
+#  define EINA_DROPPED_TABLES           2
+#  define EINA_DROPPED_ENTRIES          2
+typedef int16_t Eina_Table_Index;
+typedef uint16_t Eina_Generation_Counter;
+# else
 /* 64 bits */
-# define EINA_BITS_MID_TABLE_ID       11
-# define EINA_BITS_TABLE_ID           11
-# define EINA_BITS_ENTRY_ID           12
-# define EINA_BITS_GENERATION_COUNTER 28
-# define EINA_BITS_FREE_COUNTER        2
-# define EINA_DROPPED_TABLES           2
-# define EINA_DROPPED_ENTRIES          2
+#  define EINA_BITS_MID_TABLE_ID       11
+#  define EINA_BITS_TABLE_ID           11
+#  define EINA_BITS_ENTRY_ID           12
+#  define EINA_BITS_GENERATION_COUNTER 28
+#  define EINA_BITS_FREE_COUNTER        2
+#  define EINA_DROPPED_TABLES           2
+#  define EINA_DROPPED_ENTRIES          2
 typedef int16_t Eina_Table_Index;
 typedef uint32_t Eina_Generation_Counter;
+# endif
 #endif
 
 /* Shifts macros to manipulate the SP id */
