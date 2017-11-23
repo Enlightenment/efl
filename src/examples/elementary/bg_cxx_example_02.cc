@@ -9,27 +9,31 @@
 
 #include <Elementary.hh>
 
-#include <sstream>
-
 using efl::eo::instantiate;
 
-efl::ui::Win win;
+static efl::ui::Win win;
 
 EAPI_MAIN void
-efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 {
+   Efl_Loop_Arguments *args = static_cast<Efl_Loop_Arguments *>(ev->info);
+
    win = efl::ui::Win(instantiate);
-   ::efl_ref(win._eo_ptr()); // FIXME: Window is doing BAD THINGS™!
    win.text_set("Bg Image");
    win.autohide_set(true);
+   win.delete_request_event_cb_add([](){ win = nullptr; efl_exit(0); });
+
+   std::string path;
+   if (eina_array_count(args->argv) > 0)
+     path = static_cast<const char *>(eina_array_data_get(args->argv, 0));
+   else
+     path = "performance/background.png";
 
    efl::ui::Bg bg(instantiate, win);
    bg.scale_type_set(EFL_UI_IMAGE_SCALE_TYPE_FILL);
-   bg.file_set("performance/background.png", nullptr);
+   bg.file_set(path, nullptr);
    win.content_set(bg);
 
    win.size_set({640, 400});
-   std::cout << "win " << win._eo_ptr() << std::endl;
-   win.delete_request_event_cb_add([](){ win = nullptr; efl_exit(0); });
 }
 EFL_MAIN()
