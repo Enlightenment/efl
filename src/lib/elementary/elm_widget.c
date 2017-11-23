@@ -5393,19 +5393,6 @@ _elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd 
    return NULL;
 }
 
-EOLIAN static Eina_Bool
-_elm_widget_selection_owner_get(Eo *obj, Elm_Widget_Smart_Data *pd)
-{
-   return pd->is_sel_owner;
-}
-
-EOLIAN static void
-_elm_widget_selection_owner_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool is_owner)
-{
-   pd->is_sel_owner = is_owner;
-}
-
-
 /* Legacy APIs */
 
 /* elm_object_content_xxx APIs are supposed to work on all objects for which

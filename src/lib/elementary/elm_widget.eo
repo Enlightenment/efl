@@ -381,12 +381,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
             }
          }
       }
-      @property selection_owner @protected {
-         [[Widget object is the selection owner or not.]]
-         values {
-            is_owner: bool;
-         }
-      }
 
       /* FIXME: Scroll API. Not sure how those APIs should be exposed with
        * the new scrollable API. */

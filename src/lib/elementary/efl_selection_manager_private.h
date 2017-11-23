@@ -37,16 +37,16 @@ enum
 };
 
 typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
+typedef struct _Seat_Selection Seat_Selection;
 typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Efl_Selection_Manager_Data *pd, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
+typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
 
 typedef struct _Efl_Sel_Manager_Atom Efl_Sel_Manager_Atom;
-typedef struct _Seat_Selection Seat_Selection;
 
 typedef struct _Dropable Dropable;
 
@@ -84,7 +84,7 @@ struct _X11_Cnp_Selection
    Efl_Selection_Format     format;
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
-   Efl_Selection_Action action; //FIXME: check type and var name, usage
+   Efl_Selection_Action action;
 
    Eo *owner;
 
@@ -107,43 +107,65 @@ struct _Anim_Icon
 };
 
 typedef struct _Drag_Container Drag_Container;
-struct _Drag_Container {
-    Evas *e;
-    Efl_Object *cont;
-    Efl_Selection_Format format;
-    void *buf;
-    int len;
-    Efl_Selection_Action action;
-    Eina_List *icons;
-    Evas_Coord final_icon_w;
-    Evas_Coord final_icon_h;
-    Evas_Coord down_x;
-    Evas_Coord down_y;
-    Ecore_Timer *timer;
-    Ecore_Animator *animator;
-    double time_to_drag;
-    double anim_duration;
-    void *drag_data_func_data;
-    Efl_Dnd_Drag_Data_Get drag_data_func;
-    Eina_Free_Cb drag_data_func_free_cb;
-    void *item_get_func_data;
-    Efl_Dnd_Item_Get item_get_func;
-    Eina_Free_Cb item_get_func_free_cb;
-    void *icon_func_data;
-    Efl_Dnd_Drag_Icon_Create icon_func;
-    Eina_Free_Cb icon_func_free_cb;
-    void *icon_list_func_data;
-    Efl_Dnd_Drag_Icon_List_Create icon_list_func;
-    Eina_Free_Cb icon_list_func_free_cb;
-    Efl_Input_Device *seat;
-};
+struct _Drag_Container
+{
+   Evas *e;
+   Efl_Object *cont;
+   Efl_Selection_Format format;
+   void *buf;
+   int len;
+   Efl_Selection_Action action;
+   Eina_List *icons;
+   Evas_Coord final_icon_w;
+   Evas_Coord final_icon_h;
+   Evas_Coord down_x;
+   Evas_Coord down_y;
+   Ecore_Timer *timer;
+   Ecore_Animator *animator;
+   double time_to_drag;
+   double anim_duration;
+   void *drag_data_func_data;
+   Efl_Dnd_Drag_Data_Get drag_data_func;
+   Eina_Free_Cb drag_data_func_free_cb;
+   void *item_get_func_data;
+   Efl_Dnd_Item_Get item_get_func;
+   Eina_Free_Cb item_get_func_free_cb;
+   void *icon_func_data;
+   Efl_Dnd_Drag_Icon_Create icon_func;
+   Eina_Free_Cb icon_func_free_cb;
+   void *icon_list_func_data;
+   Efl_Dnd_Drag_Icon_List_Create icon_list_func;
+   Eina_Free_Cb icon_list_func_free_cb;
+   Efl_Input_Device *seat;
 
+   Efl_Selection_Manager_Data *pd;
+};
 
 struct _Seat_Selection
 {
    unsigned int seat_id;
-   X11_Cnp_Selection *sellist;
-   Drag_Container *drag_cont;
+   X11_Cnp_Selection *sel_list;
+   //Drag_Container *drag_cont;
+   //Eina_List *drag_cont_list;
+
+   //drag
+   Eo *drag_obj;
+   Efl_Selection_Action drag_action;
+   Eo *drag_win;
+   Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
+   Eina_Bool accept;
+   Ecore_X_Window xwin;
+   int dragx, dragy; //change to EVASRECT2
+   int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
+   int drag_win_x_end, drag_win_y_end;
+   Efl_Selection_Type active_type;
+   Efl_Selection_Format active_format;
+
+   Saved_Type *saved_types;
+   Ecore_Event_Handler *enter_handler; //should be moved to sel_seat?
+   Ecore_Event_Handler *leave_handler;
+   Ecore_Event_Handler *pos_handler;
+   Ecore_Event_Handler *drop_handler;
 
    Efl_Selection_Manager_Data *pd;
 };
@@ -178,7 +200,6 @@ struct _Drop_Format
 struct _Dropable
 {
    Evas_Object    *obj;
-   /* FIXME: Cache window */
    //Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
    Eina_Inlist   *format_list;
    Efl_Input_Device *seat;
@@ -215,35 +236,18 @@ struct _Efl_Selection_Manager_Data
 
    Eina_Bool has_sel;
    unsigned int seat_id;
-   Efl_Selection_Type active_type;
-   Efl_Selection_Format active_format;
 
    Efl_Sel_Manager_Atom *atomlist;
-   //Efl_Sel_Manager_Selection *sellist;
-   X11_Cnp_Selection *sellist;
+   //Efl_Sel_Manager_Selection *sel_list;
    Eina_List *seat_list; //Seat_Selection list: seat0 (selection types) -> seat1 (selection types)
-   Saved_Type *savedtypes;
 
-   //drag: TODO: move to each seat
-   Eo *drag_obj;
-   Efl_Selection_Action drag_action;
-   Eo *drag_win;
-   Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
-   Eina_Bool accept;
-   Ecore_X_Window xwin;
-   int dragx, dragy; //change to EVASRECT2
-   int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
-   int drag_win_x_end, drag_win_y_end;
-   Eina_List *drops; //Dropable list
+   Eina_List *drag_cont_list;
 
    //drop
+   Eina_List *drop_list; //Dropable list
    Eina_Hash *types_hash;
-   Ecore_Event_Handler *enter_handler;
-   Ecore_Event_Handler *leave_handler;
-   Ecore_Event_Handler *pos_handler;
-   Ecore_Event_Handler *drop_handler;
    const char *text_uri;
-   Eina_List *cont_drop_list;
+   Eina_List *drop_cont_list;
 };
 
 #endif
