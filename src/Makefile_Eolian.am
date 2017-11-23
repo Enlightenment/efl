@@ -30,6 +30,7 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/database_event.c \
                                   lib/eolian/database_event_api.c \
                                   lib/eolian/database_part.c \
+                                  lib/eolian/database_part_api.c \
                                   lib/eolian/database_expr.c \
                                   lib/eolian/database_expr_api.c \
                                   lib/eolian/database_var.c \
@@ -94,6 +95,7 @@ tests/eolian/data/object_impl.eo \
 tests/eolian/data/object_impl_add.eo \
 tests/eolian/data/override.eo \
 tests/eolian/data/owning.eo \
+tests/eolian/data/parts.eo \
 tests/eolian/data/scope.eo \
 tests/eolian/data/struct.eo \
 tests/eolian/data/typedef.eo \

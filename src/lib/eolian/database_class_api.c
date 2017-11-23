@@ -173,6 +173,13 @@ eolian_class_events_get(const Eolian_Class *cl)
    return (cl->events ? eina_list_iterator_new(cl->events) : NULL);
 }
 
+EAPI Eina_Iterator *
+eolian_class_parts_get(const Eolian_Class *cl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   return (cl->parts ? eina_list_iterator_new(cl->parts) : NULL);
+}
+
 EAPI Eina_Bool
 eolian_class_ctor_enable_get(const Eolian_Class *cl)
 {

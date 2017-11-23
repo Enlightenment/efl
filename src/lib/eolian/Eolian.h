@@ -1253,7 +1253,7 @@ EAPI Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
  * @brief Get an iterator to the events defined in a class.
  *
  * @param[in] klass the class.
- * @return the iterator
+ * @return an iterator over const Eolian_Event* objects
  *
  * @ingroup Eolian
  */
@@ -1332,6 +1332,46 @@ EAPI Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
+
+/*
+ * @brief Get an iterator to the parts defined in a class.
+ *
+ * @param[in] klass the class.
+ * @return an iterator over const Eolian_Part* objects
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_class_parts_get(const Eolian_Class *klass);
+
+/*
+ * @brief Get the name of a part.
+ *
+ * @param[in] part the part handle
+ * @return the name or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_part_name_get(const Eolian_Part *part);
+
+/*
+ * @brief Get the type of a part.
+ *
+ * @param[in] part the part handle
+ * @return the type or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_part_class_get(const Eolian_Part *part);
+
+/*
+ * @brief Get the documentation of an part.
+ *
+ * @param[in] part the part handle
+ * @return the documentation or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Documentation *eolian_part_documentation_get(const Eolian_Part *part);
 
 /*
  * @brief Returns the C name of an event
