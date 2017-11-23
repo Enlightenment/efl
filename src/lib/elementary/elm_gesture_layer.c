@@ -144,7 +144,7 @@ typedef struct _Func_Data Func_Data;
 struct _Gesture_Info
 {
    Evas_Object      *obj;
-   void             *data; /**< Holds gesture intemidiate processing data */
+   void             *data; /**< Holds gesture intermediate processing data */
    Eina_Inlist      *cbs[ELM_GESTURE_STATE_ABORT + 1]; /**< Callback info (Func_Data) for states */
    Elm_Gesture_Type  g_type; /**< gesture type */
    Elm_Gesture_State state; /**< gesture state */
@@ -627,17 +627,17 @@ _state_report(Gesture_Info *gesture,
  *
  * Update state for a given gesture.
  * We may update gesture state to:
- * - @c UNDEFINED - current input did not start gesure yet.
+ * - @c UNDEFINED - current input did not start gesture yet.
  * - @c START - gesture started according to input.
- * - @c MOVE - gusture in progress.
+ * - @c MOVE - gesture in progress.
  * - @c END - gesture completed according to input.
- * - @c ABORT - input does not matches gesure.
+ * - @c ABORT - input does not matches gesture.
  * note that we may move from UNDEFINED to ABORT
  * because we may detect that gesture will not START
  * with a given input.
  *
  * @param g given gesture to change state.
- * @param s gesure new state.
+ * @param s gesture new state.
  * @param info buffer to be sent to user callback on report_state.
  * @param force makes report_state to report the new-state even
  * if its same as current state. Works for MOVE - gesture in progress.
@@ -1138,7 +1138,7 @@ _pending_device_add(Eina_List *list,
  * @internal
  *
  * This function reports ABORT to all none-detected gestures
- * Then resets test bits for all desired gesures
+ * Then resets test bits for all desired gestures
  * and clears input-events history.
  * note: if no gesture was detected, events from history list
  * are streamed to the widget because it's unused by layer.
@@ -1271,7 +1271,7 @@ _clear_if_finished(Evas_Object *obj)
 /**
  * @internal
  *
- * This function restartes line, flick, zoom and rotate gestures
+ * This function restarts line, flick, zoom and rotate gestures
  * when gesture-layer continues-gestures enabled.
  * Example of continues-gesture:
  * When doing a line, user stops moving finger but keeps fingers on touch.
@@ -1659,7 +1659,7 @@ _taps_rect_get(Eina_List *taps, int idx, Eina_Rectangle *r)
 static Eina_Bool
 _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
 {
-   /* Here we check if taps-gesture was completed successfuly */
+   /* Here we check if taps-gesture was completed successfully */
    /* Count how many taps were received on each device then   */
    /* determine if it matches n_taps_needed defined on START  */
    unsigned int i;
@@ -1740,7 +1740,7 @@ _tap_gesture_finish(void *data, Evas_Coord tap_finger_size)
  * when this timer expires we finish tap gestures.
  *
  * @param data The gesture-layer object.
- * @return cancles callback for this timer.
+ * @return cancels callback for this timer.
  *
  * @ingroup Elm_Gesture_Layer
  */
@@ -1773,7 +1773,7 @@ _multi_tap_timeout(void *data)
  * when this timer expires we START long tap gesture
  *
  * @param data The gesture-layer object.
- * @return cancles callback for this timer.
+ * @return cancels callback for this timer.
  *
  * @ingroup Elm_Gesture_Layer
  */
@@ -1904,7 +1904,7 @@ _tap_gesture_test(Evas_Object *obj,
               return;
            }
          else if (eina_list_count(pe_list) > st->n_taps_needed)
-           {  /* If we arleady got too many touches for this gesture. */
+           {  /* If we already got too many touches for this gesture. */
               _state_set(gesture, ELM_GESTURE_STATE_ABORT,
                     &st->info, EINA_FALSE);
            }
@@ -1949,7 +1949,7 @@ _tap_gesture_test(Evas_Object *obj,
                   !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)) ||
                ((gesture->g_type == ELM_GESTURE_N_DOUBLE_TAPS) &&
                 !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)))
-           {  /* Test for finish immidiatly, not waiting for timeout */
+           {  /* Test for finish immediately, not waiting for timeout */
               if (_tap_gesture_check_finish(gesture, sd->tap_finger_size))
                 {
                    _tap_gesture_finish(gesture, sd->tap_finger_size);
@@ -2043,7 +2043,7 @@ _compute_taps_center(Long_Tap_Type *st,
      return;
 
    EINA_LIST_FOREACH(st->touched, l, p)
-     {  /* Accumulate all then take avarage */
+     {  /* Accumulate all then take average */
        if (p->device == pe->device) /* This will take care of values
                                      * coming from MOVE event */
          {
@@ -2408,7 +2408,7 @@ _momentum_test(Evas_Object *obj,
    if (!pe)
      return;
 
-   /* First make avarage of all touched devices to determine center point */
+   /* First make average of all touched devices to determine center point */
    pe_local = *pe; /* Copy pe event info to local */
    EINA_LIST_FOREACH(sd->touched, l, p)
      if (p->device != pe_local.device)
@@ -2418,7 +2418,7 @@ _momentum_test(Evas_Object *obj,
           cnt++;
        }
 
-   /* Compute avarage to get center point */
+   /* Compute average to get center point */
    pe_local.x /= cnt;
    pe_local.y /= cnt;
 
@@ -2974,7 +2974,7 @@ _on_rotation_broke_tolerance(Rotate_Type *st)
           t -= 180;
      }
 
-   if ((t < low) || (t > high)) /* This marks that roation action has
+   if ((t < low) || (t > high)) /* This marks that rotation action has
                                  * started */
      {
         st->rotate_angular_tolerance = ELM_GESTURE_NEGATIVE_ANGLE;
@@ -3249,7 +3249,7 @@ _zoom_with_wheel_test(Evas_Object *obj,
          Elm_Gesture_State s;
          if (!evas_key_modifier_is_set(
                ((Evas_Event_Mouse_Wheel *)event_info)->modifiers,
-               "Control")) /* if using wheel witout CTRL after starting zoom */
+               "Control")) /* if using wheel without CTRL after starting zoom */
            {
               if ((st->zoom_wheel) &&
                   ((gesture_zoom->state == ELM_GESTURE_STATE_START) ||
@@ -3435,7 +3435,7 @@ _zoom_test(Evas_Object *obj,
              return; /* Zoom started */
           } /* End of ZOOM_START handling */
 
-        /* if we got here, we have (exacally) two fingers on surfce */
+        /* if we got here, we have (exactly) two fingers on surface */
         /* we also after START, report MOVE */
         /* First detect which finger moved  */
         if (pe->device == st->zoom_mv.device)
@@ -3531,7 +3531,7 @@ _rotate_properties_get(Rotate_Type *st,
 
         unsigned int tm_total = tm_end - tm_start;
         if (tm_total) /* Momentum computed as:
-                         accumulated roation angle (deg) divided by time */
+                         accumulated rotation angle (deg) divided by time */
           {
              double m = 0;
              if (((prev_angle < 90) && ((*angle) > 270)) ||
@@ -3674,7 +3674,7 @@ _rotate_test(Evas_Object *obj,
              return; /* Rotate started */
           } /* End of ROTATE_START handling */
 
-        /* if we got here, we have (exacally) two fingers on surfce */
+        /* if we got here, we have (exactly) two fingers on surface */
         /* we also after START, report MOVE */
         /* First detect which finger moved  */
         if (pe->device == st->rotate_mv.device)
