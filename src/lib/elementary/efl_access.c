@@ -129,6 +129,7 @@ struct _Efl_Access_Data
    const char    *description;
    const char    *translation_domain;
    Efl_Access_Role role;
+   Efl_Access_Reading_Info_Type reading_info;
    Efl_Access_Type type: 2;
 };
 
@@ -251,6 +252,42 @@ EOLIAN static void _efl_access_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_
         free(attr);
      }
    pd->attr_list = NULL;
+}
+
+EOLIAN static void
+_efl_access_reading_info_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Reading_Info_Type reading_info)
+{
+   Eina_Strbuf *buf = NULL;
+   pd->reading_info = reading_info;
+   buf = eina_strbuf_new();
+   eina_strbuf_reset(buf);
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_NAME))
+     {
+        eina_strbuf_append(buf, "name");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_ROLE))
+     {
+        eina_strbuf_append(buf, "role");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_DESCRIPTION))
+     {
+        eina_strbuf_append(buf, "description");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_STATE))
+     {
+        eina_strbuf_append(buf, "state");
+     }
+   efl_access_attribute_append(obj, "reading_info_type", eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+}
+
+EOLIAN Efl_Access_Reading_Info_Type
+_efl_access_reading_info_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+{
+   return pd->reading_info;
 }
 
 EOLIAN static Efl_Access_Role

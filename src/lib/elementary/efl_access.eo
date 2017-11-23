@@ -192,6 +192,15 @@ enum Efl.Access.Relation_Type
    last_defined, [[Last enum entry sentinel]]
 }
 
+enum Efl.Access.Reading.Info.Type
+{
+   [[The accessible Reading information type that can be read.]]
+   name = 1 << 0, [[Name should be read]]
+   role = 1 << 1, [[Role should be read]]
+   description = 1 << 2, [[description should be read.]]
+   state = 1 << 3, [[State should be read.]]
+}
+
 type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
 struct Efl.Access.Event.Handler; [[Accessibility event listener]]
@@ -314,6 +323,17 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
 
            \@internal
          ]]
+      }
+      @property reading_info_type @protected {
+         get {
+            [[Gets reading information types of an accessible object.]]
+         }
+         set {
+            [[Sets reading information of an accessible object.]]
+         }
+         values {
+            reading_info: Efl.Access.Reading.Info.Type; [[Reading information types]]
+         }
       }
       @property index_in_parent @protected @beta {
          [[Gets index of the child in parent's children list.]]
