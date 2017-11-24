@@ -77,6 +77,7 @@ include Makefile_efl_wl.am
 
 include Makefile_Cxx.am
 include Makefile_Eolian_Cxx.am
+include Makefile_Efl_Mono.am
 
 include Makefile_Elua.am
 
@@ -138,6 +139,10 @@ examples/eolian_cxx
 
 if HAVE_CXX11
 EXAMPLES_SUBDIRS += $(EXAMPLES_CXX)
+endif
+
+if HAVE_CSHARP
+EXAMPLES_SUBDIRS += examples/efl_mono
 endif
 
 if ALWAYS_BUILD_EXAMPLES

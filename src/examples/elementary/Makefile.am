@@ -257,6 +257,23 @@ nodist_codegen_example_SOURCES = \
 codegen_example_generated.c \
 codegen_example_generated.h
 
+
+if HAVE_CSHARP
+
+efl_ui_slider_mono_exe_SOURCES = \
+	efl_ui_slider_mono.cs
+
+if HAVE_WIN32
+MCS_FLAGS := $(MCS_FLAGS)
+MCS_FLAGS += -define:WIN32
+endif
+
+efl_ui_slider_mono.exe$(EXEEXT): $(efl_ui_slider_mono_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+	@rm -f efl_ui_slider_mono$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+
+endif
+
 examples_PROGRAMS = \
 actionslider_example_01 \
 bg_example_01 \
@@ -415,6 +432,13 @@ table_cxx_example_01 \
 table_cxx_example_02 \
 toolbar_cxx_example_01 \
 $(NULL)
+endif
+
+if HAVE_CSHARP
+
+examples_PROGRAMS += \
+	efl_ui_slider_mono.exe
+
 endif
 
 efl_thread_1_SOURCES = efl_thread_1.c

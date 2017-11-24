@@ -135,6 +135,62 @@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 @EINA_LDFLAGS@
 
+
+if HAVE_CSHARP
+
+include $(top_srcdir)/src/Makefile_Efl_Mono_MSBuild_Gen_Helper.am
+
+EXTRA_PROGRAMS += \
+EinaArray01.exe \
+EinaBinbuf01.exe \
+EinaError01.exe \
+EinaHash01.exe
+
+
+EinaArray01_exe_SOURCES = EinaArray01.cs
+EinaArray01.exe$(EXEEXT): $(EinaArray01_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+
+$(abs_top_builddir)/EinaArray01.csproj: $(EinaArray01_exe_SOURCES) $(am_dirstamp)
+	@rm -f $@
+	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a EinaArray01.exe -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/eina/%.cs,$(filter %.cs, $(^)))
+
+
+EinaBinbuf01_exe_SOURCES = EinaBinbuf01.cs
+EinaBinbuf01.exe$(EXEEXT): $(EinaBinbuf01_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+
+$(abs_top_builddir)/EinaBinbuf01.csproj: $(EinaBinbuf01_exe_SOURCES) $(am_dirstamp)
+	@rm -f $@
+	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a EinaBinbuf01.exe -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/eina/%.cs,$(filter %.cs, $(^)))
+
+
+EinaError01_exe_SOURCES = EinaError01.cs
+EinaError01.exe$(EXEEXT): $(EinaError01_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+
+$(abs_top_builddir)/EinaError01.csproj: $(EinaError01_exe_SOURCES) $(am_dirstamp)
+	@rm -f $@
+	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a EinaError01.exe -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/eina/%.cs,$(filter %.cs, $(^)))
+
+
+EinaHash01_exe_SOURCES = EinaHash01.cs
+EinaHash01.exe$(EXEEXT): $(EinaHash01_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+
+$(abs_top_builddir)/EinaHash01.csproj: $(EinaHash01_exe_SOURCES) $(am_dirstamp)
+	@rm -f $@
+	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a EinaHash01.exe -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/eina/%.cs,$(filter %.cs, $(^)))
+
+msbuildcsprojs: $(abs_top_builddir)/EinaArray01.csproj $(abs_top_builddir)/EinaBinbuf01.csproj $(abs_top_builddir)/EinaError01.csproj $(abs_top_builddir)/EinaHash01.csproj
+
+endif
+
+
 DATA_FILES = addr_book.txt chat.xml Makefile.examples
 
 EXTRA_DIST = $(DATA_FILES)
