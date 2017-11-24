@@ -170,6 +170,7 @@ src/lib/elementary/elm_table.c
 src/lib/elementary/elm_theme.c
 src/lib/elementary/elm_thumb.c
 src/lib/elementary/elm_toolbar.c
+src/lib/elementary/efl_ui_toolbar.c
 src/lib/elementary/elm_transit.c
 src/lib/elementary/elm_util.c
 src/lib/elementary/efl_ui_video.c

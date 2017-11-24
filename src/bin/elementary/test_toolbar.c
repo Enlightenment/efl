@@ -1312,3 +1312,75 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_resize(win, 420, 200);
    evas_object_show(win);
 }
+
+static void
+_toolbar_selected_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   //FIXME: after defining item interface, this should be changed.
+   Elm_Object_Item *item = efl_ui_menu_selected_item_get(ev->object);
+   const char *str = elm_object_item_text_get(item);
+   if (str)
+     printf(" string is \"%s\"\n", str);
+   else
+     printf("\n");
+}
+
+void
+test_efl_ui_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bx, *tb, *grd;
+   Evas_Object *ph1, *ph2, *ph3, *ph4;
+   char buf[PATH_MAX];
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                 efl_text_set(efl_added, "Efl Ui Toolbar"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_content_set(win, efl_added));
+
+   tb = efl_add(EFL_UI_TOOLBAR_CLASS, win,
+                efl_pack(bx, efl_added),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SELECTED, _toolbar_selected_cb, NULL),
+                efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
+                efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0));
+
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   ph1 = efl_add(EFL_UI_IMAGE_CLASS, win,
+                 efl_file_set(efl_added, buf, NULL),
+                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(40, 40)),
+                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+
+   ph2 = efl_add(EFL_UI_IMAGE_CLASS, win,
+                 efl_file_set(efl_added, buf, NULL),
+                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(80, 80)),
+                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+
+   snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
+   ph3 = efl_add(EFL_UI_IMAGE_CLASS, win,
+                 efl_file_set(efl_added, buf, NULL),
+                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(20, 20)),
+                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+
+   snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
+   ph4 = efl_add(EFL_UI_IMAGE_CLASS, win,
+                 efl_file_set(efl_added, buf, NULL),
+                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(60, 60)),
+                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+
+   efl_ui_toolbar_item_append(tb, "document-print", "Hello", _tb_sel1_cb, ph1);
+   efl_ui_toolbar_item_append(tb, "folder-new", "World", _tb_sel2_cb, ph1);
+   efl_ui_toolbar_item_append(tb, "object-rotate-right", "H", _tb_sel3_cb, ph4);
+   efl_ui_toolbar_item_append(tb, "mail-send", "Comes", _tb_sel4_cb, ph4);
+   efl_ui_toolbar_item_append(tb, "clock", "Elementary", _tb_sel5_cb, ph4);
+
+   grd = efl_add(EFL_UI_GRID_CLASS, win);
+   efl_pack_grid(grd, ph1, 0, 0, 1, 1);
+   efl_pack_grid(grd, ph2, 1, 0, 1, 1);
+   efl_pack_grid(grd, ph3, 0, 1, 1, 1);
+   efl_pack_grid(grd, ph4, 1, 1, 1, 1);
+
+   efl_pack(bx, grd);
+   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+}
+

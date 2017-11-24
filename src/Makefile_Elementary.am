@@ -61,6 +61,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_progressbar_part.eo \
 	lib/elementary/efl_ui_slider_part.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
+	lib/elementary/efl_ui_toolbar.eo \
+	lib/elementary/efl_ui_toolbar_item.eo \
 	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_widget_part_bg.eo \
 	lib/elementary/efl_ui_win_part.eo \
@@ -314,6 +316,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
+	lib/elementary/efl_ui_toolbar_private.h \
 	lib/elementary/efl_ui_video_private.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
@@ -668,6 +671,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_theme.c \
 	lib/elementary/elm_thumb.c \
 	lib/elementary/elm_toolbar.c \
+	lib/elementary/efl_ui_toolbar.c \
 	lib/elementary/elm_transit.c \
 	lib/elementary/elm_util.c \
 	lib/elementary/efl_ui_video.c \

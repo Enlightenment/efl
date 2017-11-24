@@ -189,6 +189,7 @@ extern EAPI double _efl_startup_time;
 # include <efl_ui_radio_eo.h>
 # include <efl_ui_bg_eo.h>
 # include <efl_ui_panes_eo.h>
+# include <efl_ui_toolbar.eo.h>
 
 /**
  * Initialize Elementary
