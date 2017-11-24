@@ -181,7 +181,6 @@ class Efl.Ui.Toolbar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Direction,
       Elm.Widget.focus_highlight_geometry { get; }
       Elm.Widget.focused_item { get; }
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
-      Elm.Widget.focus_state_apply;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.children { get; }
       Efl.Access.state_set { get; }

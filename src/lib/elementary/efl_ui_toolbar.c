@@ -1227,15 +1227,7 @@ _efl_ui_toolbar_efl_object_constructor(Eo *obj, Efl_Ui_Toolbar_Data *sd)
    _efl_ui_toolbar_highlight_in_theme(obj);
    _sizing_eval(obj);
 
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
    return obj;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_toolbar_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
-{
-   configured_state->logical = EINA_TRUE;
-   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 EOLIAN static Elm_Object_Item*
