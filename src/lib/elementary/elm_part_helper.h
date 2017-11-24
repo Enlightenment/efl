@@ -1,6 +1,9 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
+#define EFL_OBJECT_BETA
+#define EFL_OBJECT_PROTECTED
+
 #include "Elementary.h"
 #include "elm_priv.h"
 #include "efl_ui_layout_part_legacy.eo.h"
@@ -72,18 +75,19 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
    efl_allow_parent_unref_set(proxy, 1);
-   // efl_auto_unref_set(proxy, 1);
+   efl_auto_unref_set(proxy, 1);
    pd->part = eina_tmpstr_add(part);
    pd->obj = obj;
 
    return proxy;
 }
 
-#define ELM_PART_IMPLEMENT(PART_CLASS, _obj, _part) ({ \
-   Eo *proxy = efl_add(PART_CLASS, (Eo *) _obj, \
-                       _elm_part_initialize(efl_added, (Eo *) _obj, _part)); \
-   efl_auto_unref_set(proxy, 1); \
-   proxy; })
+static inline Eo *
+ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
+{
+   return efl_add(part_klass, NULL,
+                  _elm_part_initialize(efl_added, (Eo *) obj, part));
+}
 
 #define ELM_PART_OVERRIDE_ONLY_ALIASES(type, TYPE, typedata, aliases) \
    EOLIAN static Efl_Object * \
