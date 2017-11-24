@@ -1,18 +1,19 @@
 #include <Elementary.hh>
-#include <Eina.hh>
-#include <Evas.hh>
+
+#warning This example can't be implemented with EO APIs... FIXME
 
 EAPI_MAIN int
-elm_main (int argc, char *argv[])
+elm_main (int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    efl::eina::eina_init eina_init;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win_standard win;
-   win.title_set("Menu");
+   efl::ui::Win win(efl::eo::instantiate);
+   win.text_set("Menu Example");
    win.autohide_set(true);
 
+#if 0
    evas::rectangle rect(efl::eo::parent = win);
    win.resize_object_add(rect);
    rect.size_hint_min_set(0, 0);
@@ -60,8 +61,8 @@ elm_main (int argc, char *argv[])
    rect.callback_mouse_down_add( show );
    menu.visible_set(true);
 
-   win.size_set(250, 350);
-   win.visible_set(true);
+#endif
+   win.size_set({250, 350});
 
    elm_run();
    return 0;

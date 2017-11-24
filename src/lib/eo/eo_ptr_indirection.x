@@ -57,6 +57,12 @@
  * it to the fifo.
  */
 
+// enable this to test and use all 64bits of a pointer, otherwise limit to
+// 47 bits because of luajit. it wants to check if any bits in the upper 17 are
+// set for a sanity check for lightuserdata ... basically it does this:
+// #define checklightudptr(L, p) (((uint64_t)(p) >> 47) ? (lj_err_msg(L, LJ_ERR_BADLU), NULL) : (p))
+//#define EO_FULL64BIT 1
+
 #if SIZEOF_UINTPTR_T == 4
 /* 32 bits */
 # define BITS_MID_TABLE_ID        5
@@ -71,18 +77,33 @@
 typedef int16_t Table_Index;
 typedef uint16_t Generation_Counter;
 #else
+# ifndef EO_FULL64BIT
+/* 47 bits */
+#  define BITS_MID_TABLE_ID       11
+#  define BITS_TABLE_ID           11
+#  define BITS_ENTRY_ID           11
+#  define BITS_GENERATION_COUNTER 10
+#  define BITS_DOMAIN              2
+#  define BITS_CLASS               1
+#  define REF_TAG_SHIFT           46
+#  define DROPPED_TABLES           2
+#  define DROPPED_ENTRIES          3
+typedef int16_t Table_Index;
+typedef uint16_t Generation_Counter;
+# else
 /* 64 bits */
-# define BITS_MID_TABLE_ID       11
-# define BITS_TABLE_ID           11
-# define BITS_ENTRY_ID           11
-# define BITS_GENERATION_COUNTER 27
-# define BITS_DOMAIN              2
-# define BITS_CLASS               1
-# define REF_TAG_SHIFT           63
-# define DROPPED_TABLES           2
-# define DROPPED_ENTRIES          3
+#  define BITS_MID_TABLE_ID       11
+#  define BITS_TABLE_ID           11
+#  define BITS_ENTRY_ID           11
+#  define BITS_GENERATION_COUNTER 27
+#  define BITS_DOMAIN              2
+#  define BITS_CLASS               1
+#  define REF_TAG_SHIFT           63
+#  define DROPPED_TABLES           2
+#  define DROPPED_ENTRIES          3
 typedef int16_t Table_Index;
 typedef uint32_t Generation_Counter;
+# endif
 #endif
 
 /* Shifts macros to manipulate the Eo id */

@@ -70,7 +70,7 @@ enum Elm.Map.Route_Method
 
 
 class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
-               Elm.Interface.Atspi_Widget_Action,
+               Efl.Access.Widget.Action,
                Efl.Ui.Clickable)
 {
    [[Elementary map class]]
@@ -431,7 +431,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
 
            At least available sources of name type are "Nominatim".
          ]]
-         return: ptr(string); [[The char pointer array of source names.]]
+         return: legacy(ptr(string)); [[The char pointer array of source names.]]
          params {
             @in type: Elm.Map.Source_Type; [[Source type.]]
          }
@@ -566,7 +566,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
          ]]
          return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
          params {
-            @in route: ptr(const(Elm_Map_Route)); [[The route object to make a overlay.]]
+            @cref route: Elm_Map_Route; [[The route object to make a overlay.]]
          }
       }
       overlay_scale_add {
@@ -633,7 +633,7 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       press; [[Called when map was pressed]]

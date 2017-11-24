@@ -30,15 +30,19 @@
 
 /**
  * @brief Creates a basic #Eina_Value struct desc with refcounting.
+ *
  * @return The #Eina_Value_Struct_Desc on success, @c NULL on failure
+ *
  * @since 1.12
  */
 EAPI Eina_Value_Struct_Desc *eina_value_util_struct_desc_new(void);
 
 /**
  * @brief Creates a new #Eina_Value containing the passed parameter.
+ *
  * @param timestr The value to use
  * @return The #Eina_Value
+ *
  * @since 1.12
  */
 EAPI Eina_Value *eina_value_util_time_string_new(const char *timestr);

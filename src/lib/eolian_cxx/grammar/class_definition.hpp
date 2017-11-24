@@ -87,7 +87,7 @@ struct class_definition_generator
          // << scope_tab << scope_tab << ": ::efl::eo::concrete( ::efl::eo::do_eo_add( ::efl::eo::concrete{nullptr}, f)) {}\n"
         ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
      
-     if(!as_generator(*(scope_tab << function_declaration))
+     if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
                                              
      // static Efl_Class const* _eo_class();
@@ -169,6 +169,17 @@ struct class_definition_generator
 
      // /// @endcond
      if(!as_generator(scope_tab << "/// @endcond\n").generate(sink, attributes::unused, context)) return false;
+
+     if(!as_generator(   scope_tab << "::efl::eo::wref<" << string << "> _get_wref() const { "
+                         "return ::efl::eo::wref<" << string << ">(*this); }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+
+     if(!as_generator("#ifdef EFL_CXX_WREF_EASY\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+     if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+          if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
 
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
                       << scope_tab << "::efl::eo::concrete& _get_concrete() { return *this; }\n"

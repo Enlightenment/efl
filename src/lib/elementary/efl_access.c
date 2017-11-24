@@ -123,11 +123,13 @@ struct _Efl_Access_Event_Handler
 
 struct _Efl_Access_Data
 {
-   Efl_Access_Role role;
+   Efl_Access_Relation_Set relations;
+   Eina_List     *attr_list;
    const char    *name;
    const char    *description;
    const char    *translation_domain;
-   Efl_Access_Relation_Set relations;
+   Efl_Access_Role role;
+   Efl_Access_Reading_Info_Type reading_info;
    Efl_Access_Type type: 2;
 };
 
@@ -193,9 +195,99 @@ _efl_access_parent_set(Eo *obj, Efl_Access_Data *pd EINA_UNUSED, Efl_Access *new
 EOLIAN Eina_List*
 _efl_access_attributes_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED)
 {
-   WRN("The %s object does not implement the \"accessible_attributes_set\" function.",
-       efl_class_name_get(efl_class_get(obj)));
-   return NULL;
+   Eina_List *attr_list = NULL;
+   if (pd->attr_list)
+     {
+        Eina_List *l = NULL;
+        Efl_Access_Attribute *t_attr = NULL;
+        EINA_LIST_FOREACH(pd->attr_list, l, t_attr)
+          {
+             Efl_Access_Attribute *attr = calloc(1, sizeof(Efl_Access_Attribute));
+             if (!attr)
+                  return attr_list;
+
+             attr->key = eina_stringshare_add(t_attr->key);
+             attr->value = eina_stringshare_add(t_attr->value);
+             attr_list = eina_list_append(attr_list, attr);
+          }
+     }
+   return attr_list;
+}
+
+EOLIAN static void
+_efl_access_attribute_append(Eo *obj EINA_UNUSED, Efl_Access_Data *pd EINA_UNUSED, const char *key, const char *value)
+{
+   Eina_List *l;
+   Efl_Access_Attribute *attr = NULL;
+
+   if (!key || !value) return;
+
+   /* Check existing attributes has this key */
+   EINA_LIST_FOREACH(pd->attr_list, l, attr)
+     {
+        if (!strcmp((const char *)attr->key, key))
+          {
+             eina_stringshare_replace(&attr->value, value);
+             return;
+          }
+     }
+
+   /* Add new attribute */
+   attr = calloc(1, sizeof(Efl_Access_Attribute));
+   if (!attr) return;
+
+   attr->key = eina_stringshare_add(key);
+   attr->value = eina_stringshare_add(value);
+   pd->attr_list = eina_list_append(pd->attr_list, attr);
+}
+
+EOLIAN static void _efl_access_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+{
+   if (!pd->attr_list) return;
+   Efl_Access_Attribute *attr;
+   EINA_LIST_FREE(pd->attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+   pd->attr_list = NULL;
+}
+
+EOLIAN static void
+_efl_access_reading_info_type_set(Eo *obj, Efl_Access_Data *pd, Efl_Access_Reading_Info_Type reading_info)
+{
+   Eina_Strbuf *buf = NULL;
+   pd->reading_info = reading_info;
+   buf = eina_strbuf_new();
+   eina_strbuf_reset(buf);
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_NAME))
+     {
+        eina_strbuf_append(buf, "name");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_ROLE))
+     {
+        eina_strbuf_append(buf, "role");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_DESCRIPTION))
+     {
+        eina_strbuf_append(buf, "description");
+        eina_strbuf_append_char(buf, '|');
+     }
+   if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_STATE))
+     {
+        eina_strbuf_append(buf, "state");
+     }
+   efl_access_attribute_append(obj, "reading_info_type", eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+}
+
+EOLIAN Efl_Access_Reading_Info_Type
+_efl_access_reading_info_type_get(Eo *obj EINA_UNUSED, Efl_Access_Data *pd)
+{
+   return pd->reading_info;
 }
 
 EOLIAN static Efl_Access_Role

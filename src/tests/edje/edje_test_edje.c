@@ -151,8 +151,14 @@ START_TEST(edje_test_calculate_parens)
    int x, y, w, h;
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *obj;
+   Eina_Rect rect;
 
    obj = edje_object_add(evas);
+
+   /* A negative test case for efl_canvas_layout_calc_parts_extends */
+   rect = efl_canvas_layout_calc_parts_extends(obj);
+   fail_if(rect.w < 0 || rect.h < 0);
+
    fail_unless(edje_object_file_set(obj, test_layout_get("test_parens.edj"), "test_group"));
 
    evas_object_resize(obj, 100, 100);

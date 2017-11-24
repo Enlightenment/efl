@@ -192,6 +192,9 @@ EOAPI EFL_FUNC_BODY(efl_animation_object_group_objects_get, Eina_List *, NULL);
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_set, _efl_animation_object_group_efl_animation_object_target_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_duration_set, _efl_animation_object_group_efl_animation_object_duration_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_final_state_keep_set, _efl_animation_object_group_efl_animation_object_final_state_keep_set), \
-   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_set, _efl_animation_object_group_efl_animation_object_interpolator_set)
+   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_set, _efl_animation_object_group_efl_animation_object_interpolator_set), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_state_save, _efl_animation_object_group_efl_animation_object_target_state_save), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_state_reset, _efl_animation_object_group_efl_animation_object_target_state_reset), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_map_reset, _efl_animation_object_group_efl_animation_object_target_map_reset)
 
 #include "efl_animation_object_group.eo.c"

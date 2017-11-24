@@ -4,6 +4,8 @@
 
 #include "region.c"
 
+Eina_Bool evas_render2_use = EINA_FALSE;
+
 #ifndef _WIN32
 static inline double
 get_time(void)
@@ -69,6 +71,7 @@ _evas_render2(Eo *eo_e, Evas_Public_Data *e)
    if (e->rendering) return EINA_FALSE;
    // mark this canvas as a render2 canvas - not normal render
    e->render2 = EINA_TRUE;
+   evas_render2_use = EINA_TRUE;
    // check viewport size is same as output - not allowed to differ
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      ERR("viewport size != output size!");

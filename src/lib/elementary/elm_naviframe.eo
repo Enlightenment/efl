@@ -1,4 +1,4 @@
-class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
+class Elm.Naviframe (Efl.Ui.Layout, Efl.Access.Widget.Action)
 {
    [[Elementary naviframe class]]
    legacy_prefix: elm_naviframe;
@@ -149,7 +149,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Elm.Interface.Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
       Efl.Canvas.Layout_Signal.signal_emit;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Elm.Widget.resize_object { set; }
       Efl.Part.part;
    }

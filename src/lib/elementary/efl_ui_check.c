@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_NSTATE_PROTECTED
 
@@ -314,7 +314,7 @@ EAPI Evas_Object *
 elm_check_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -323,7 +323,6 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -383,10 +382,10 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      }
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_check_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_efl_ui_check_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_action[] = {
+   static Efl_Access_Action_Data atspi_action[] = {
           { "activate", "activate", NULL, _key_action_activate },
           { NULL, NULL, NULL, NULL }
    };

@@ -49,7 +49,7 @@ struct _Eina_Xattr
 };
 
 /**
- * @brief Gets an iterator that list all extended attribute of a file.
+ * @brief Gets an iterator that lists all extended attribute of a file.
  *
  * @param file The filename to retrieve the extended attribute list from.
  * @return an iterator.
@@ -102,20 +102,26 @@ EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Copies the extended attribute from one file to another.
+ *
  * @param src source file to use as input.
  * @param dst destination file to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
  * @see eina_xattr_fd_copy()
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eina_xattr_copy(const char *src, const char *dst) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Copies the extended attribute from one file descriptor to another.
+ *
  * @param src source file descriptor to use as input.
  * @param dst destination file descriptor to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
  * @see eina_xattr_copy()
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eina_xattr_fd_copy(int src, int dst);

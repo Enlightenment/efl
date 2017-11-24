@@ -26,6 +26,11 @@ static const struct ext_loader_s loaders[] =
    MATCHING(".svg.gz", "svg")
 };
 
+static const char *loaders_name[] =
+{ /* in order of most likely needed */
+  "eet", "svg"
+};
+
 static Evas_Module *
 _find_loader_module(const char *file)
 {
@@ -57,12 +62,30 @@ _vg_load_from_file(const char *file, const char *key)
    Evas_Vg_Load_Func *loader;
    int                error = EVAS_LOAD_ERROR_GENERIC;
    Vg_File_Data          *evg_data = NULL;
+   unsigned int i;
 
    em = _find_loader_module(file);
    if (em)
      {
         loader = em->functions;
         evg_data = loader->file_data(file, key, &error);
+     }
+   else
+     {
+        for (i = 0; i < sizeof (loaders_name) / sizeof (char *); i++)
+          {
+             em = evas_module_find_type(EVAS_MODULE_TYPE_VG_LOADER, loaders_name[i]);
+             if (em)
+               {
+                  loader = em->functions;
+                  evg_data = loader->file_data(file, key, &error);
+                  if (evg_data)
+                    return evg_data;
+               }
+             else
+               DBG("could not find module '%s'", loaders_name[i]);
+          }
+        INF("exhausted all means to load image '%s'", file);
      }
    return evg_data;
 }
@@ -79,7 +102,8 @@ struct ext_saver_s
 static const struct ext_saver_s savers[] =
 { /* map extensions to savers to use for good first-guess tries */
    MATCHING(".eet", "eet"),
-   MATCHING(".edj", "eet")
+   MATCHING(".edj", "eet"),
+   MATCHING(".svg", "svg")
 };
 
 static Evas_Module *
@@ -250,8 +274,7 @@ _evas_vg_dup_vg_tree(Vg_File_Data *fd, double w, double h)
    if (!fd) return NULL;
    if ( !w || !h ) return NULL;
 
-   root = evas_vg_container_add(NULL);
-   evas_vg_node_dup(root, fd->root);
+   root = efl_vg_dup(fd->root);
    _apply_transformation(root, w, h, fd);
 
    return root;

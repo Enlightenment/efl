@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -18,7 +18,7 @@ START_TEST (elm_atspi_role_get)
    icon = elm_icon_add(win);
    role = efl_access_role_get(icon);
 
-   ck_assert(role == EFL_ACCESS_ROLE_IMAGE);
+   ck_assert(role == EFL_ACCESS_ROLE_ICON);
 
    elm_shutdown();
 }

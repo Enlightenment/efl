@@ -62,6 +62,32 @@ EAPI int ecore_init(void);
  */
 EAPI int ecore_shutdown(void);
 
+/**
+ * This function will propagate the events on the main loop. So you
+ * should call ecore_init() first, then register your callback on
+ * @c EFL_LOOP_EVENT_ARGUMENTS and finally call ecore_init_ex().
+ *
+ * Once you are shuting down your program, you should symetrically
+ * call ecore_shutdown_ex().
+ */
+EAPI unsigned int ecore_init_ex(int argc, char **argv);
+
+/**
+ * Shuts down connections, signal handlers sockets etc.
+ *
+ * @return @c 0 if ecore shuts down, greater than @c 0 otherwise.
+ * This function shuts down all things set up in ecore_init_ex() and cleans
+ * up all event queues, handlers, filters, timers, idlers, idle enterers/exiters
+ * etc. set up after ecore_init_ex() was called.
+ *
+ * Do not call this function from any callback that may be called from the main
+ * loop, as the main loop will then fall over and not function properly.
+ *
+ * Note: This function should be called in symetric to ecore_init_ex()
+ */
+EAPI unsigned int ecore_shutdown_ex(void);
+
+
 #ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Inform EFL of the version this application was built for.

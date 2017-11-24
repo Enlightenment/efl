@@ -207,6 +207,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tgv);
 
 #if !EVAS_MODULE_NO_VG_SAVERS
 EVAS_EINA_STATIC_MODULE_DEFINE(vg_saver, eet);
+EVAS_EINA_STATIC_MODULE_DEFINE(vg_saver, svg);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_SAVERS
@@ -318,6 +319,9 @@ static const struct {
 #if !EVAS_MODULE_NO_VG_SAVERS
 #ifdef EVAS_STATIC_BUILD_VG_EET
   EVAS_EINA_STATIC_MODULE_USE(vg_saver, eet),
+#endif
+#ifdef EVAS_STATIC_BUILD_VG_SVG
+  EVAS_EINA_STATIC_MODULE_USE(vg_saver, svg),
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_SAVERS

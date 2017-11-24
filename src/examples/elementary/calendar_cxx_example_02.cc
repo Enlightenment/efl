@@ -1,43 +1,40 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "elementary_config.h"
-#endif
-
-#include <Efl.hh>
 #include <Elementary.hh>
 
-static char *
-_format_month_year(struct tm *format_time)
+using efl::eo::instantiate;
+
+// FIXME: Function callbacks need a lot of love in C++
+static void
+_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 {
-   char buf[32];
-   if (!strftime(buf, sizeof(buf), "%b %y", format_time)) return NULL;
-   return strdup(buf);
+   if (::eina_value_type_get(&value) != ::EINA_VALUE_TYPE_TM)
+     {
+        // FIXME: val.to_string()
+        char *convert = ::eina_value_to_string(&value);
+        eina_strbuf_append(str, convert);
+        free(convert);
+     }
+   else
+     {
+        struct tm time;
+        eina_value_get(&value, &time);
+        eina_strbuf_append_strftime(str, "%b. %y", &time);
+     }
 }
 
-EAPI_MAIN int
-elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   using efl::eo::instantiate;
-
    efl::ui::Win win(instantiate);
-   //win.title_set("Calendar Layout Formatting Example");
+   win.text_set("Calendar Layout Formatting Example");
    win.autohide_set(true);
 
-   ::elm::Calendar cal(instantiate, win);
-   //cal.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //win.resize_object_add(cal);
+   auto cal = efl::ui::Calendar(instantiate, win);
+   win.content_set(cal);
 
-   cal.format_function_set(_format_month_year);
-   // cal.weekdays_names_set(weekdays);
-
-   cal.eo_cxx::efl::Gfx::size_set({125,134});
-   win.eo_cxx::efl::Gfx::size_set({125,134});
-   cal.visible_set(true);
-   win.visible_set(true);
-
-   elm_run();
-   return 0;
+   // FIXME: Function cb doesn't work (C++ variant)
+   cal.format_cb_set(_format_cb);
+   ::efl_ui_format_cb_set(cal._eo_ptr(), NULL, _format_cb, NULL);
 }
-ELM_MAIN()
+EFL_MAIN()

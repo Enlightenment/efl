@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -544,7 +544,7 @@ _elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *it)
 {
    obj = efl_constructor(efl_super(obj, ELM_INDEX_ITEM_CLASS));
    it->base = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_RADIO_MENU_ITEM);
 
    return obj;
 }
@@ -1189,7 +1189,7 @@ EAPI Evas_Object *
 elm_index_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
@@ -1304,6 +1304,8 @@ _elm_index_item_selected_set(Eo *eo_it,
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);
+        if (_elm_config->atspi_mode)
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
      }
    else
      {
@@ -1693,10 +1695,10 @@ _elm_index_item_efl_access_name_get(Eo *eo_it, Elm_Index_Item_Data *data)
    return _elm_widget_item_accessible_plain_name_get(eo_it, data->letter);
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_index_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_index_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
           { NULL, NULL, NULL, NULL }
    };

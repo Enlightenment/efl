@@ -147,7 +147,7 @@ struct log_domain : _domain_base<log_domain>
    * @param name Name of the domain.
    * @param color Color of the domain name.
    */
-  log_domain(char const* name, char const* color = "black")
+  log_domain(char const* name, char const* color = EINA_COLOR_GREEN)
     : _domain( (::eina_init(), ::eina_log_domain_register(name, color)) )
   {
   }

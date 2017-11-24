@@ -68,9 +68,6 @@
  */
 
 #include "elm_gesture_layer_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_gesture_layer_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_gesture_layer_legacy.h"
 #endif

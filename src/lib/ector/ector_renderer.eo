@@ -34,7 +34,7 @@ abstract Ector.Renderer (Efl.Object)
 	 get {
 	 }
 	 values {
-	    m: ptr(const(Eina.Matrix3)); [[Transformation matrix]]
+	    @cref m: Eina.Matrix3; [[Transformation matrix]]
 	 }
       }
       @property origin {

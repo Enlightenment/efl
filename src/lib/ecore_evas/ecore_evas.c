@@ -157,14 +157,14 @@ ecore_evas_render(Ecore_Evas *ee)
    if (ee->in_async_render)
      {
         DBG("ee=%p is rendering, skip.", ee);
-        return EINA_TRUE;
+        return EINA_FALSE;
      }
 
    if (ee->engine.func->fn_prepare)
      if (!ee->engine.func->fn_prepare(ee))
        return EINA_FALSE;
 
-   rend = ecore_evas_render_prepare(ee);
+   ecore_evas_render_prepare(ee);
 
    ee->in_async_render = 1;
 
@@ -2641,7 +2641,7 @@ ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render)
 {
    ECORE_EVAS_CHECK(ee);
    ee->manual_render = manual_render;
-   if (!ee->anim_count) return;
+   if (!ee->animator_count) return;
    if (!ee->engine.func->fn_animator_register) return;
    if (!ee->engine.func->fn_animator_unregister) return;
 
@@ -3054,8 +3054,6 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
 }
 
-static Ecore_Evas *_general_tick = NULL;
-
 EAPI void
 ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time)
 {
@@ -3083,23 +3081,22 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
         ecore_evas_animator_tick(subee, NULL, loop_time);
      }
 
-   // We are the source of sync for general animator.
-   if (_general_tick == ee)
+   // We are a source of sync for general animator.
+   // Let's only trigger the animator once per rendering loop
+   if (!ecore_main_loop_animator_ticked_get())
      {
-        // Check first we didn't tick during this loop
-        if (!ecore_main_loop_animator_ticked_get())
-          ecore_animator_custom_tick();
+        // FIXME: We might want to enforce also Ecore_Animatore frametime
+        ecore_animator_custom_tick();
      }
 
    DBG("Animator ticked on %p.", ee->evas);
 }
 
+// Per Ecore_Evas ticking
 static void
-_ecore_evas_custom_tick_begin(void *data)
+ecore_evas_tick_begin(Ecore_Evas *ee)
 {
-   Ecore_Evas *ee = data;
-
-   if (ee->anim_count++ > 0) return;
+   if (ee->animator_count++ > 0) return;
 
    if (ee->manual_render)
      {
@@ -3110,47 +3107,71 @@ _ecore_evas_custom_tick_begin(void *data)
 }
 
 static void
-_ecore_evas_custom_tick_end(void *data)
+ecore_evas_tick_end(Ecore_Evas *ee)
 {
-   Ecore_Evas *ee = data;
-
-   if ((--ee->anim_count) > 0) return;
+   if ((--ee->animator_count) > 0) return;
 
    if (ee->manual_render) return;
 
    ee->engine.func->fn_animator_unregister(ee);
 }
 
+// Need all possible tick to tick for animator fallback as we don't
+// know if a window is the source of animator
+static void
+_ecore_evas_custom_tick_begin(void *data EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     if (!ee->deleted &&
+         ee->engine.func->fn_animator_register &&
+         ee->engine.func->fn_animator_unregister)
+       ecore_evas_tick_begin(ee);
+}
+
+static void
+_ecore_evas_custom_tick_end(void *data EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     if (!ee->deleted &&
+         ee->engine.func->fn_animator_register &&
+         ee->engine.func->fn_animator_unregister)
+       ecore_evas_tick_end(ee);
+}
+
 static void
 _ecore_evas_tick_source_find(void)
 {
    Ecore_Evas *ee;
-   Ecore_Evas *standby = NULL;
+   Eina_Bool source = EINA_FALSE;
 
-   _general_tick = NULL;
+   // Check if we do have a potential tick source for legacy
    EINA_INLIST_FOREACH(ecore_evases, ee)
      if (!ee->deleted &&
          ee->engine.func->fn_animator_register &&
          ee->engine.func->fn_animator_unregister)
        {
-          if (ee->anim_count)
-            {
-               _general_tick = ee;
-               break;
-            }
-          else
-            {
-               standby = ee;
-            }
+          source = EINA_TRUE;
+          break;
        }
 
-   // If no general source is already ticking pick one.
-   if (!_general_tick && standby)
-     {
-        _general_tick = standby;
-     }
+   // If just one source require fallback, we can't be sure that
+   // we are not running enlightenment and that this source might
+   // actually be the true tick source of all other window. In
+   // that scenario, we have to forcefully fallback.
+   EINA_INLIST_FOREACH(ecore_evases, ee)
+     if (!ee->deleted &&
+         (!ee->engine.func->fn_animator_register ||
+          !ee->engine.func->fn_animator_unregister))
+       {
+          source = EINA_FALSE;
+          break;
+       }
 
-   if (!_general_tick)
+   if (!source)
      {
         ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
      }
@@ -3158,9 +3179,9 @@ _ecore_evas_tick_source_find(void)
      {
         // Source set will trigger the previous tick end registered and then the new begin.
         // As we don't what was in behind, better first begin and end after source is set.
-        ecore_animator_custom_source_tick_begin_callback_set(_ecore_evas_custom_tick_begin, _general_tick);
+        ecore_animator_custom_source_tick_begin_callback_set(_ecore_evas_custom_tick_begin, NULL);
         ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
-        ecore_animator_custom_source_tick_end_callback_set(_ecore_evas_custom_tick_end, _general_tick);
+        ecore_animator_custom_source_tick_end_callback_set(_ecore_evas_custom_tick_end, NULL);
      }
 }
 
@@ -3182,22 +3203,19 @@ _check_animator_event_catcher_add(void *data, const Efl_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if (!ee->anim_count)
+             if (!ee->animator_count)
                INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
 
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
                {
                   // Backend support per window vsync
-                  _ecore_evas_custom_tick_begin(ee);
-
-                  if (ee->anim_count > 0) return;
-                  if (!_general_tick) _general_tick = ee;
+                  ecore_evas_tick_begin(ee);
                }
              else
                {
                   // Backend doesn't support per window vsync, fallback to generic support
-                  if (ee->anim_count++ > 0) return;
+                  if (ee->animator_count++ > 0) return;
                   ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
                }
 
@@ -3219,21 +3237,19 @@ _check_animator_event_catcher_del(void *data, const Efl_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if (ee->anim_count == 1)
+             if (ee->animator_count == 1)
                INF("Unsetting up animator for %p from '%s' titled '%s'.", ee->evas, ee->driver, ee->prop.title);
 
              if (ee->engine.func->fn_animator_register &&
                  ee->engine.func->fn_animator_unregister)
                {
                   // Backend support per window vsync
-                  _ecore_evas_custom_tick_end(ee);
-                  if (ee->anim_count > 0) return;
-                  if (_general_tick == ee) _ecore_evas_tick_source_find();
+                  ecore_evas_tick_end(ee);
                }
              else
                {
                   // Backend doesn't support per window vsync, fallback to generic support
-                  if (--ee->anim_count > 0) return;
+                  if (--ee->animator_count > 0) return;
                   ecore_animator_del(ee->anim);
                   ee->anim = NULL;
                }
@@ -3261,8 +3277,8 @@ _ecore_evas_register(Ecore_Evas *ee)
 
    _ecore_evas_register_animators(ee);
 
+   _ecore_evas_tick_source_find();
    if (_ecore_evas_render_sync) ee->first_frame = EINA_TRUE;
-   if (!_general_tick) _ecore_evas_tick_source_find();
    if (!ee->engine.func->fn_render)
      evas_event_callback_priority_add(ee->evas, EVAS_CALLBACK_RENDER_POST, EVAS_CALLBACK_PRIORITY_AFTER,
                                       _evas_evas_buffer_rendered, ee);
@@ -3320,13 +3336,15 @@ _ecore_evas_free(Ecore_Evas *ee)
    if (ee->refcount > 0) return;
 
    // Stop all vsync first
-   if (ee->engine.func->fn_animator_register &&
+   if (ee->animator_count > 0 &&
+       ee->engine.func->fn_animator_register &&
        ee->engine.func->fn_animator_unregister)
      {
         // Backend support per window vsync
         ee->engine.func->fn_animator_unregister(ee);
-        if (_general_tick == ee) _ecore_evas_tick_source_find();
+        _ecore_evas_tick_source_find();
      }
+   ee->animator_count = 0;
 
    efl_event_callback_array_del(ee->evas, animator_watch(), ee);
    if (ee->anim)

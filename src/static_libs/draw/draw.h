@@ -29,6 +29,8 @@ Cspace_Convert_Func  efl_draw_convert_func_get      (Efl_Gfx_Colorspace origcs, 
 int efl_draw_argb_premul(uint32_t *data, unsigned int len);
 void efl_draw_argb_unpremul(uint32_t *data, unsigned int len);
 
+Eina_Bool efl_draw_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint32_t *color_table, int size);
+
 
 /* common sw draw helpers */
 

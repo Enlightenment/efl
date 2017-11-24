@@ -1,4 +1,5 @@
 #include "private.h"
+#include "elm_spinner.eo.h"
 
 static Elm_Prefs_Item_Type supported_types[] =
 {

@@ -146,6 +146,9 @@ eina_magic_string_init(void)
         EINA_LOG_ERR("Could not register log domain: eina_magic_string");
         return EINA_FALSE;
      }
+
+   EINA_ERROR_MAGIC_FAILED = eina_error_msg_static_register("Magic check failed.");
+
    return EINA_TRUE;
 }
 

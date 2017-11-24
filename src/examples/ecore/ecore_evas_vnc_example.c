@@ -300,7 +300,7 @@ main(int argc, char *argv[])
    mouse_wheel = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
                                         _mouse_wheel, NULL);
 
-   _seat_children_print(evas_canvas_default_device_get(evas, EFL_INPUT_DEVICE_TYPE_SEAT));
+   _seat_children_print(evas_default_device_get(evas, EFL_INPUT_DEVICE_TYPE_SEAT));
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_ADDED,
                           _dev_added_or_removed, NULL);
    efl_event_callback_add(evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,

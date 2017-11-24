@@ -40,7 +40,7 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
            Value type is required for compatibility with the @Efl.Model API.]]
          params {
             name: string; [[Property name]]
-            type: ptr(const(Eina.Value.Type)); [[Property type]]
+            @cref type: Eina.Value.Type; [[Property type]]
             values: iterator<const(void_ptr)> @owned; [[Values to be added]]
          }
          return: bool; [[$true on success, $false otherwise]]

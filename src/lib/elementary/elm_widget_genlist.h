@@ -89,7 +89,7 @@ struct _Elm_Genlist_Data
    Ecore_Idler                          *must_recalc_idler;
    Eina_List                            *queue;
    Elm_Gen_Item                         *show_item, *anchor_item, *mode_item,
-                                        *reorder_rel, *expanded_item;
+                                        *reorder_rel, *expanded_item, *pin_item;
    Eina_Inlist                          *item_cache; /* an inlist of
                                                       * edje object it
                                                       * cache. */
@@ -149,6 +149,9 @@ struct _Elm_Genlist_Data
    Ecore_Idle_Enterer                   *queue_filter_enterer;
    Eina_Hash                             *size_caches;
 
+   Eina_Hash                            *content_item_map;
+   Eo                                   *provider;
+
    Eina_Bool                             filter;
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
@@ -201,6 +204,7 @@ struct _Elm_Genlist_Data
    Eina_Bool                             item_looping_on : 1;
 
    Eina_Bool                             tree_effect_animator : 1;
+   Eina_Bool                             pin_item_top : 1;
 };
 
 typedef struct _Item_Block Item_Block;

@@ -3,8 +3,8 @@ class Elm.Entry.Part (Efl.Ui.Layout.Part_Legacy)
    [[Elementary entry internal part class]]
    data: null;
    implements {
-      Efl.Container.content { set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { set; }
+      Efl.Content.content_unset;
       Efl.Text.text { get; set; }
    }
 }

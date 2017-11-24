@@ -2,7 +2,8 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_BETA
+#define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
@@ -160,7 +161,7 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
    visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_get(win) >= 1);
+   ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
    elm_shutdown();
@@ -187,7 +188,7 @@ START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
    visible = efl_gfx_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_get(win) >= 1);
+   ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
    elm_shutdown();
@@ -349,7 +350,7 @@ _inputs_timer3_cb(void *data)
    eina_iterator_free(it);
    fail_if(cnt != 2); // 2 moves (in the list), 2 ups (gone)
 
-   fail_if(!efl_canvas_pointer_inside_get(win));
+   fail_if(!efl_canvas_pointer_inside_get(win, NULL));
    pos = efl_canvas_pointer_position_get(win);
    ck_assert_int_eq(pos.x, points[1][0].x);
    ck_assert_int_eq(pos.y, points[1][0].y);

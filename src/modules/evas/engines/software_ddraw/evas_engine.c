@@ -47,7 +47,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
                                                  NULL,
                                                  evas_software_ddraw_outbuf_new_region_for_update,
                                                  evas_software_ddraw_outbuf_push_updated_region,
-                                                 evas_software_ddraw_outbuf_free_region_for_update,
+                                                 NULL,
                                                  evas_software_ddraw_outbuf_idle_flush,
                                                  evas_software_ddraw_outbuf_flush,
                                                  NULL,

@@ -4,12 +4,14 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_colorselector.h"
+#include "elm_widget_spinner.h"
 
 #define MY_CLASS ELM_COLORSELECTOR_CLASS
 
@@ -1881,9 +1883,8 @@ _palette_colors_load(Evas_Object *obj)
 }
 
 static inline void
-_palette_box_prepare(Eo *o, Eina_Bool legacy)
+_palette_box_prepare(Eo *o)
 {
-   if (legacy) efl_canvas_object_legacy_ctor(o);
    efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1902,8 +1903,16 @@ _create_colorpalette(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->palette_box) return;
-   sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
-                             _palette_box_prepare(efl_added, wd->legacy));
+   if (elm_widget_is_legacy(obj))
+     {
+        sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj,
+                                         _palette_box_prepare(efl_added));
+     }
+   else
+     {
+        sd->palette_box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
+                                  _palette_box_prepare(efl_added));
+     }
 
    hpadstr = edje_object_data_get(wd->resize_obj, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
@@ -2258,7 +2267,7 @@ EAPI Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -2578,10 +2587,10 @@ _elm_colorselector_class_constructor(Efl_Class *klass)
       _elm_colorselector_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_colorselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_colorselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "move,up", "move", "up", _key_action_move},
@@ -2658,10 +2667,10 @@ _elm_color_item_elm_widget_item_focus_get(Eo *eo_it, Elm_Color_Item_Data *it)
    return EINA_FALSE;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_color_item_elm_interface_atspi_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_color_item_efl_access_widget_action_elm_actions_get(Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},
           { NULL, NULL, NULL, NULL }
    };

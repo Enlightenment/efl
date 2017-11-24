@@ -46,7 +46,7 @@ _efl_net_server_simple_efl_net_server_client_announce(Eo *o, Efl_Net_Server_Simp
         return EINA_TRUE;
      }
 
-   if (efl_ref_get(client) == 1) /* users must take a reference themselves */
+   if (efl_ref_count(client) == 1) /* users must take a reference themselves */
      {
         DBG("client %s was not handled, closing it...",
             efl_net_socket_address_remote_get(client));

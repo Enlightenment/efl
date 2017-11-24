@@ -50,7 +50,7 @@ eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
                                                  NULL,
                                                  _evas_outbuf_update_region_new,
                                                  _evas_outbuf_update_region_push,
-                                                 _evas_outbuf_update_region_free,
+                                                 NULL,
                                                  _evas_outbuf_idle_flush,
                                                  _evas_outbuf_flush,
                                                  _evas_outbuf_redraws_clear,
@@ -304,7 +304,9 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* try to get functions from whatever engine module we inherit from */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Wayland))) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic",
+                                    sizeof(Evas_Engine_Info_Wayland)))
+     return 0;
 
    /* try to create our logging domain */
    _evas_engine_way_shm_log_dom =

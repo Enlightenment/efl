@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -701,7 +701,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             elm_widget_focus_set(obj, EINA_TRUE);
+             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
              efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
           }
      }
@@ -1260,7 +1260,7 @@ static Evas_Object *
 _elm_access_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -1504,10 +1504,10 @@ _access_atspi_action_do(Evas_Object *obj, const char *params)
    return ret;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_access_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_access_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "highlight", NULL, "highlight", _access_atspi_action_do},
           { "unhighlight", NULL, "unhighlight", _access_atspi_action_do},
           { "highlight,next", NULL, "highlight,next", _access_atspi_action_do},

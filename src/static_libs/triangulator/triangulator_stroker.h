@@ -38,6 +38,9 @@ Triangulator_Stroker *triangulator_stroker_new(void);
  */
 void triangulator_stroker_free(Triangulator_Stroker *stroker);
 
+void triangulator_stroker_stroke_set(Triangulator_Stroker *stroker, float width,
+                                     Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m);
+
 /**
  * Process the command list to generate triangle strips.
  * The alogrithm handles multiple contour by adding invisible triangles.
@@ -48,7 +51,7 @@ void triangulator_stroker_free(Triangulator_Stroker *stroker);
  * pt_count  :   number of points.
  *
  * output : It generates the outline in the form of triangle strips store in vertices array.
- *          The array can be used to copy the data to a VBO and draw the data using TRIANGLE_STRIP.  
+ *          The array can be used to copy the data to a VBO and draw the data using TRIANGLE_STRIP.
  */
 void triangulator_stroker_process(Triangulator_Stroker *stroker, const Efl_Gfx_Path_Command *cmds, const double *pts, int cmd_count, int pt_count);
 

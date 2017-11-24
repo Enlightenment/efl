@@ -109,6 +109,7 @@ handle_run(int fd, unsigned long bytes)
         CRI("no bytes to quicklaunch");
         return;
      }
+   DBG("Starting building up process.");
    _elm_startup_time = ecore_time_unix_get();
 
    buf = alloca(bytes);
@@ -157,9 +158,15 @@ handle_run(int fd, unsigned long bytes)
           }
      }
 #endif
+
+   INF("Requested to run '%s' with %i arguments and %i environment.",
+           argv[0], argc - 1, envnum);
    // Try new form before trying old form
    if (!efl_quicklaunch_prepare(argc, argv, cwd))
-     elm_quicklaunch_prepare(argc, argv, cwd);
+     {
+        WRN("Failed to prepare with new EFL_MAIN macro, switching to legacy.");
+        elm_quicklaunch_prepare(argc, argv, cwd);
+     }
 
    elm_quicklaunch_fork(argc, argv, cwd, post_fork, NULL);
    elm_quicklaunch_cleanup();
@@ -174,7 +181,7 @@ main(int argc, char **argv)
    struct linger lin;
    char buf[PATH_MAX];
    struct sigaction action;
-   const char *disp;
+   const char *domain;
    int ret = 0;
 
    if (!eina_init())
@@ -190,7 +197,12 @@ main(int argc, char **argv)
         _log_dom = EINA_LOG_DOMAIN_GLOBAL;
      }
 
-   if (!(disp = getenv("DISPLAY"))) disp = "unknown";
+   if (!(domain = getenv("ELM_QUICKLAUNCH_DOMAIN")))
+     {
+        domain = getenv("WAYLAND_DISPLAY");
+        if (!domain) domain = getenv("DISPLAY");
+        if (!domain) domain = "unknown";
+     }
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
    if (stat(buf, &st) < 0)
      {
@@ -201,7 +213,7 @@ main(int argc, char **argv)
              exit(-1);
           }
      }
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
+   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), domain);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
@@ -329,6 +341,8 @@ main(int argc, char **argv)
 
         len = sizeof(struct sockaddr_un);
         fd = accept(sock, (struct sockaddr *)&client, &len);
+
+        DBG("Accepting connection.");
         elm_quicklaunch_sub_init(argc, argv);
         // don't seed since we are doing this AFTER launch request
         // elm_quicklaunch_seed();

@@ -1,10 +1,10 @@
-class Elm.Flip.Part (Efl.Object, Efl.Container)
+class Elm.Flip.Part (Efl.Object, Efl.Content)
 {
    [[Elementary flip internal part class]]
    data: null;
    implements {
       Efl.Object.destructor;
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }

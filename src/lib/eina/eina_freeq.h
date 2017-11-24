@@ -291,6 +291,18 @@ eina_freeq_ptr_pending(Eina_FreeQ *fq);
  * tools like valgrind, eina detects this and will also immediately free
  * the data so valgrind's own memory checkers can detect use after free
  * as normal.
+ *
+ * Note: The free function must not access the CONTENT of the memory to be
+ * freed, or at least consider it invalid and full of garbage. It is already
+ * invalid at the moment it is added to the free queue. Just the actual
+ * free function may be delayed. The free function may also not access other
+ * memory already freed before being added to the free queue. They may do
+ * tricks like use memory headers that are outside the memory region to be
+ * freed (pass in pointer char *x, then char *header_address = x - 16 to get
+ * header information) as this header is not considered part of the free data.
+ * This note does not apply if you use a size of 0 for the pointer, but then
+ * you lose canary debugging ability when using 0 sized pointers on the free
+ * queue.
  * 
  * @since 1.19
  */

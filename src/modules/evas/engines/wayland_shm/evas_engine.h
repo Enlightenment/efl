@@ -75,18 +75,9 @@ extern int _evas_engine_way_shm_log_dom;
 typedef struct _Shm_Surface Shm_Surface;
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
-typedef enum _Surface_Type Surface_Type;
-enum _Surface_Type
-{
-   SURFACE_EMPTY,
-   SURFACE_SHM,
-   SURFACE_DMABUF
-};
-
 typedef struct _Surface Surface;
 struct _Surface
 {
-   Surface_Type type;
    Outbuf *ob;
    union
      {
@@ -109,7 +100,6 @@ struct _Outbuf
    int w, h;
    int rotation;
    int onebuf;
-   int num_buff;
    Outbuf_Depth depth;
 
    Ecore_Wl2_Display *ewd;
@@ -139,8 +129,7 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Eina_Bool _evas_dmabuf_surface_create(Surface *s, int w, int h, int num_buff);
-Eina_Bool _evas_shm_surface_create(Surface *s, int w, int h, int num_buff);
+Eina_Bool _evas_dmabuf_surface_create(Surface *s);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);
@@ -152,10 +141,6 @@ int _evas_outbuf_rotation_get(Outbuf *ob);
 void _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
 void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
-void _evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
-void _evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
-
-Eina_Bool _evas_surface_init(Surface *s, int w, int h, int num_buf);
 
 #endif

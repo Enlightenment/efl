@@ -32,12 +32,19 @@ struct _Evas_Cache_Vg_Entry
    int                   ref;
 };
 
+typedef struct _User_Vg_Entry
+{
+   int                   w; // current surface width
+   int                   h; // current surface height
+   Efl_VG               *root;
+}User_Vg_Entry; // holds the vg tree info set by the user
+
 struct _Efl_Canvas_Vg_Data
 {
    void                     *engine_data;
    Efl_VG                   *root;
-   Efl_VG                   *vg_tree;
    Evas_Cache_Vg_Entry      *vg_entry;
+   User_Vg_Entry            *user_entry; // holds the user set vg tree
    Eina_Rect                 fill;
    Eina_Rect                 viewbox;
    unsigned int              width, height;

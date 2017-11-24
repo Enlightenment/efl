@@ -90,7 +90,7 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
    Eio_Model_Data *priv = data;
    Eina_Array *properties;
 
-   EINA_SAFETY_ON_FALSE_RETURN(efl_ref_get(priv->obj));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_ref_count(priv->obj));
    properties = eina_array_new(20);
 
    memset(&evt, 0, sizeof(Efl_Model_Property_Event));

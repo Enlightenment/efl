@@ -30,6 +30,7 @@
 #include <Efl.h>
 
 #include "Ecore.h"
+#include "Efl_Core.h"
 #include "ecore_private.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
@@ -42,6 +43,8 @@
 
 static Ecore_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Ecore_Version *ecore_version = &_version;
+
+EAPI double _efl_startup_time = 0;
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #define KEEP_MAX(Global, Local) \
@@ -199,6 +202,25 @@ ecore_system_modules_unload(void)
      }
 }
 
+static void
+_efl_first_loop_iterate(void *data, const Efl_Event *event)
+{
+   double end = ecore_time_unix_get();
+   char *first = data;
+
+   switch (*first)
+     {
+      case 'A': abort();
+      case 'E':
+      case 'D': exit(-1);
+      case 'T': fprintf(stderr, "Loop started: '%f' - '%f' = '%f' sec\n", end, _efl_startup_time, end - _efl_startup_time);
+         break;
+     }
+
+   efl_event_callback_del(event->object, EFL_LOOP_EVENT_RESUME,
+                          _efl_first_loop_iterate, data);
+}
+
 EAPI void
 ecore_app_no_system_modules(void)
 {
@@ -323,6 +345,12 @@ ecore_init(void)
    if (!_no_system_modules)
      ecore_system_modules_load();
 
+   if (getenv("EFL_FIRST_LOOP"))
+     efl_event_callback_add(ecore_main_loop_get(),
+                            EFL_LOOP_EVENT_RESUME,
+                            _efl_first_loop_iterate,
+                            getenv("EFL_FIRST_LOOP"));
+
    _ecore_init_count_threshold = _ecore_init_count;
 
    eina_log_timing(_ecore_log_dom,
@@ -358,6 +386,8 @@ ecore_shutdown(void)
        }
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
+
+     efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
 
      ecore_system_modules_unload();
 
@@ -461,6 +491,31 @@ ecore_shutdown(void)
      return _ecore_init_count;
 }
 
+static unsigned int _ecore_init_ex = 0;
+
+EAPI unsigned int
+ecore_init_ex(int argc, char **argv)
+{
+   if (_ecore_init_ex++ != 0) return _ecore_init_ex;
+
+   ecore_init();
+   ecore_loop_arguments_send(argc - 1,
+                             (argc > 1) ? ((const char **) argv + 1) : NULL);
+   ecore_app_args_set(argc, (const char**) argv);
+
+   return _ecore_init_ex;
+}
+
+EAPI unsigned int
+ecore_shutdown_ex(void)
+{
+   if (--_ecore_init_ex != 0) return _ecore_init_ex;
+
+   ecore_shutdown();
+
+   return _ecore_init_ex;
+}
+
 struct _Ecore_Fork_Cb
 {
    Ecore_Cb func;
@@ -515,7 +570,7 @@ ecore_fork_reset(void)
 {
    Eina_List *l, *ln;
    Ecore_Fork_Cb *fcb;
-   
+
    eina_main_loop_define();
    eina_lock_take(&_thread_safety);
 
@@ -527,7 +582,6 @@ ecore_fork_reset(void)
    eina_lock_release(&_thread_safety);
 
    // should this be done withing the eina lock stuff?
-   
    fork_cbs_walking++;
    EINA_LIST_FOREACH(fork_cbs, l, fcb)
      {

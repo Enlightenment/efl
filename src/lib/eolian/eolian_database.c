@@ -6,6 +6,7 @@
 #include <Eina.h>
 #include "eo_parser.h"
 #include "eolian_database.h"
+#include "eolian_priv.h"
 
 Eina_Hash *_classes    = NULL;
 Eina_Hash *_aliases    = NULL;
@@ -675,17 +676,17 @@ _eolian_file_parse_nodep(const char *filepath)
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
      {
-        fprintf(stderr, "eolian: file '%s' doesn't have a correct extension\n", filepath);
+        _eolian_log("file '%s' doesn't have a correct extension", filepath);
         return EINA_FALSE;
      }
    if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))
      {
         char *vpath = eina_file_path_sanitize(filepath);
-        Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo);
+        Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo, NULL);
         free(vpath);
         return ret;
      }
-   return eo_parser_database_fill(eopath, !is_eo);
+   return eo_parser_database_fill(eopath, !is_eo, NULL);
 }
 
 static Eina_Bool
@@ -731,7 +732,7 @@ eolian_file_parse(const char *filepath)
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Eina_Bool *ret = fdata;
-   if (*ret) *ret = eo_parser_database_fill(data, EINA_TRUE);
+   if (*ret) *ret = eo_parser_database_fill(data, EINA_TRUE, NULL);
    if (*ret) *ret = _parse_deferred();
    return *ret;
 }
@@ -755,7 +756,7 @@ eolian_all_eot_files_parse()
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Eina_Bool *ret = fdata;
-   if (*ret) *ret = eo_parser_database_fill(data, EINA_FALSE);
+   if (*ret) *ret = eo_parser_database_fill(data, EINA_FALSE, NULL);
    if (*ret) *ret = _parse_deferred();
    return *ret;
 }

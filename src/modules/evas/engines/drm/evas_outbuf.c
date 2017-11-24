@@ -87,7 +87,7 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
      {
         ob->priv.num = atoi(num);
         if (ob->priv.num <= 0) ob->priv.num = 3;
-        else if (ob->priv.num > 4) ob->priv.num = 4;
+        else if (ob->priv.num > MAX_BUFFERS) ob->priv.num = MAX_BUFFERS;
      }
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
@@ -482,12 +482,6 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
 
    func(src, dst, (update->cache_entry.w - w), ((bpl / bpp) - rect.w),
         rect.w, rect.h, x + rx, y + ry, NULL);
-}
-
-void
-_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-
 }
 
 void

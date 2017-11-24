@@ -11,6 +11,8 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
+#include "elm_entry.eo.h"
+#include "elm_fileselector.eo.h"
 
 #include "elm_fileselector_entry_part.eo.h"
 #include "elm_part_helper.h"
@@ -57,8 +59,6 @@ SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
 SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED)
 SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED)
 SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE)
-SIG_FWD(FOCUSED, EFL_UI_WIDGET_EVENT_FOCUSED)
-SIG_FWD(UNFOCUSED, EFL_UI_WIDGET_EVENT_UNFOCUSED)
 SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE)
 SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY)
 SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT)
@@ -298,12 +298,12 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED);
    SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
    SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE);
-   SIG_FWD(FOCUSED, EFL_UI_WIDGET_EVENT_FOCUSED);
-   SIG_FWD(UNFOCUSED, EFL_UI_WIDGET_EVENT_UNFOCUSED);
    SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE);
    SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY);
    SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT);
 #undef SIG_FWD
+
+   efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, obj);
 
    if (!elm_layout_theme_set
        (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
@@ -329,7 +329,7 @@ EAPI Evas_Object *
 elm_fileselector_entry_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

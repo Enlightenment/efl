@@ -2,8 +2,8 @@ import elm_general;
 import elm_list;
 import elm_genlist_item;
 
-class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
-                   Elm.Interface.Atspi_Widget_Action, Efl.Access.Selection,
+class Elm.Genlist (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+                   Efl.Access.Widget_Action, Efl.Access.Selection,
                    Efl.Ui.Selectable)
 {
    [[Elementary genlist class]]
@@ -301,7 +301,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
 
               This returns a list of the realized items in the genlist.
               The list contains genlist item pointers. The list must be
-              freed by the caller when done with \@ref eina_list_free. The 
+              freed by the caller when done with \@ref eina_list_free. The
               item pointers in the list are only valid so long as those
               items are not deleted or the genlist is not deleted.
             ]]
@@ -331,7 +331,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Get the last item in the genlist
 
               This returns the last item in the list.
-              
+
               If filter is set to genlist, it returns
               last filtered item in the list.
             ]]
@@ -346,7 +346,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in before_it: Elm.Widget.Item; [[The item to place this new one before.]]
@@ -374,7 +374,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in after_it: Elm.Widget.Item; [[The item to place this new one after.]]
@@ -454,7 +454,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to prepended item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
@@ -476,7 +476,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to appended item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
@@ -493,7 +493,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          ]]
          return: Elm.Widget.Item; [[Handle to inserted item]]
          params {
-            @in itc: ptr(const(Elm.Genlist.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Genlist.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in parent: Elm.Widget.Item @nullable; [[The parent item, or $null if none.]]
             @in type: Elm.Genlist.Item.Type; [[Item type.]]
@@ -532,6 +532,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
+      Efl.Object.provider_find;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_sub_object_add;
       Elm.Widget.on_access_update;
@@ -545,7 +546,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Elm.Interface_Scrollable.policy { get; set; }
       Efl.Access.children { get; }
       Efl.Access.state_set { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;
@@ -554,6 +555,8 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.clear;
+      Efl.Ui.Focus.Composition.prepare;
+      Elm.Widget.focus_state_apply;
    }
    events {
       item,focused; [[Called when genlist item got focus]]
@@ -568,11 +571,11 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       edge,bottom; [[Called when bottom edge is reached]]
       edge,left; [[Called when left edge is reached]]
       edge,right; [[Called when right edge is reached]]
-      moved; [[Called when genlist item moved]] 
+      moved; [[Called when genlist item moved]]
       moved,before; [[Called when genlist item moved before]]
       moved,after; [[Called when genlist item moved after]]
       swipe; [[Called when swipe is detected]]
-      multi,pinch,in; [[Called when multitouch pinch in detected]] 
+      multi,pinch,in; [[Called when multitouch pinch in detected]]
       multi,pinch,out; [[Called when multitouch pinch out detected]]
       multi,swipe,down; [[Called when multitouch swipe down detected]]
       multi,swipe,up; [[Called when multitouch swipe up detected]]

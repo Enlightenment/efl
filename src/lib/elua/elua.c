@@ -70,6 +70,7 @@ EAPI Elua_State *
 elua_state_new(const char *progname)
 {
    Elua_State *ret = NULL;
+   Eina_Safepointer *sp;
    lua_State *L = luaL_newstate();
    if (!L)
      return NULL;
@@ -77,7 +78,9 @@ elua_state_new(const char *progname)
    ret->luastate = L;
    if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
-   lua_pushlightuserdata(L, ret);
+   sp = (Eina_Safepointer *)eina_safepointer_register(ret);
+   ret->sp = sp;
+   lua_pushlightuserdata(L, sp);
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr");
    return ret;
 }
@@ -106,6 +109,7 @@ elua_state_free(Elua_State *es)
    eina_stringshare_del(es->coredir);
    eina_stringshare_del(es->moddir);
    eina_stringshare_del(es->appsdir);
+   eina_safepointer_unregister(es->sp);
    free(es);
 }
 
@@ -260,7 +264,8 @@ elua_state_from_lua_state_get(lua_State *L)
    lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr");
    if (!lua_isnil(L, -1))
      {
-        void *st = lua_touserdata(L, -1);
+        Eina_Safepointer *sp = lua_touserdata(L, -1);
+        void *st = eina_safepointer_get(sp);
         lua_pop(L, 1);
         return (Elua_State *)st;
      }
@@ -355,22 +360,50 @@ _elua_get_localeconv(lua_State *L)
    return 1;
 };
 
+#ifdef ENABLE_NLS
+static int
+_elua_dgettext(lua_State *L)
+{
+   const char *domain = luaL_checkstring(L, 1);
+   const char *msgid  = luaL_checkstring(L, 2);
+   char *ret = dgettext(domain, msgid);
+   if (!ret)
+     lua_pushnil(L);
+   else
+     lua_pushstring(L, ret);
+   return 1;
+}
+
+static int
+_elua_dngettext(lua_State *L)
+{
+   const char *domain  = luaL_checkstring(L, 1);
+   const char *msgid   = luaL_checkstring(L, 2);
+   const char *plmsgid = luaL_checkstring(L, 3);
+   char *ret = dngettext(domain, msgid, plmsgid, luaL_checklong(L, 4));
+   if (!ret)
+     lua_pushnil(L);
+   else
+     lua_pushstring(L, ret);
+   return 1;
+}
+#endif
+
 const luaL_Reg gettextlib[] =
 {
    { "bind_textdomain", _elua_gettext_bind_textdomain },
    { "get_message_language", _elua_get_message_language },
    { "get_localeconv", _elua_get_localeconv },
+#ifdef ENABLE_NLS
+   { "dgettext", _elua_dgettext },
+   { "dngettext", _elua_dngettext },
+#endif
    { NULL, NULL }
 };
 
 static Eina_Bool
-_elua_state_i18n_setup(const Elua_State *es)
+_elua_state_i18n_setup(Elua_State *es)
 {
-#ifdef ENABLE_NLS
-   char *(*dgettextp)(const char*, const char*) = dgettext;
-   char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
-      = dngettext;
-#endif
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
@@ -380,12 +413,6 @@ _elua_state_i18n_setup(const Elua_State *es)
      return EINA_FALSE;
    lua_createtable(es->luastate, 0, 0);
    luaL_register(es->luastate, NULL, gettextlib);
-#ifdef ENABLE_NLS
-   lua_pushlightuserdata(es->luastate, *((void**)&dgettextp));
-   lua_setfield(es->luastate, -2, "dgettext");
-   lua_pushlightuserdata(es->luastate, *((void**)&dngettextp));
-   lua_setfield(es->luastate, -2, "dngettext");
-#endif
    lua_call(es->luastate, 1, 0);
    return EINA_TRUE;
 }

@@ -3478,15 +3478,16 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
+_ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
-   int outnum = 0;
+   int outnum = 0, i;
    int px = 0, py = 0, pw = 0, ph = 0;
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out = NULL;
    Ecore_X_Randr_Crtc crtc;
    unsigned int val[4] = { 0 };
-   
+   Eina_Bool found = EINA_FALSE;
+
    if (ecore_x_window_prop_card32_get
        (ee->prop.window, ecore_x_atom_get("E_ZONE_GEOMETRY"), val, 4) == 4)
      {
@@ -3496,7 +3497,7 @@ _ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int 
         if (h) *h = (int)val[3];
         return;
      }
-   
+
    root = ecore_x_window_root_get(ee->prop.window);
    out = ecore_x_randr_window_outputs_get(ee->prop.window, &outnum);
    if (!out)
@@ -3508,25 +3509,53 @@ norandr:
         ecore_x_window_size_get(root, w, h);
         return;
      }
-   crtc = ecore_x_randr_output_crtc_get(root, out[0]);
-   if (!crtc) goto norandr;
-   ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &pw, &ph);
-   if ((pw == 0) || (ph == 0)) goto norandr;
-   if (x) *x = px;
-   if (y) *y = py;
-   if (w) *w = pw;
-   if (h) *h = ph;
+   for (i = 0; i < outnum; i++)
+     {
+        Eina_Rectangle winrect, outrect;
+
+        crtc = ecore_x_randr_output_crtc_get(root, out[i]);
+        if (!crtc) continue;
+        ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &pw, &ph);
+        if ((pw == 0) || (ph == 0)) continue;
+        if ((i == 0) || (ecore_x_randr_primary_output_get(root) == out[i]))
+          {
+             found = EINA_TRUE;
+             if (x) *x = px;
+             if (y) *y = py;
+             if (w) *w = pw;
+             if (h) *h = ph;
+          }
+        winrect.x = ee->x + (ee->w / 2);
+        winrect.y = ee->y + (ee->h / 2);
+        winrect.w = 1;
+        winrect.h = 1;
+        outrect.x = px;
+        outrect.y = py;
+        outrect.w = pw;
+        outrect.h = ph;
+        if (eina_rectangles_intersect(&outrect, &winrect))
+          {
+             if (x) *x = px;
+             if (y) *y = py;
+             if (w) *w = pw;
+             if (h) *h = ph;
+             free(out);
+             return;
+          }
+     }
    free(out);
+   if (!found) goto norandr;
 }
 
 static void
 _ecore_evas_x_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
 {
    int scdpi, xmm = 0, ymm = 0, outnum = 0, w = 0, h = 0;
-   int px = 0, py = 0;
+   int px = 0, py = 0, i;
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out = NULL;
    Ecore_X_Randr_Crtc crtc;
+   Eina_Bool found = EINA_FALSE;
 
    root = ecore_x_window_root_get(ee->prop.window);
    out = ecore_x_randr_window_outputs_get(ee->prop.window, &outnum);
@@ -3539,15 +3568,40 @@ norandr:
         if (ydpi) *ydpi = scdpi;
         return;
      }
-   crtc = ecore_x_randr_output_crtc_get(root, out[0]);
-   if (!crtc) goto norandr;
-   ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &w, &h);
-   if ((w == 0) || (h == 0)) goto norandr;
-   ecore_x_randr_output_size_mm_get(root, out[0], &xmm, &ymm);
-   if ((xmm == 0) || (ymm == 0)) goto norandr;
-   if (xdpi) *xdpi = (w * 254) / (xmm * 10); // 25.4mm / inch
-   if (ydpi) *ydpi = (h * 254) / (ymm * 10); // 25.4mm / inch
+   for (i = 0; i < outnum; i++)
+     {
+        Eina_Rectangle winrect, outrect;
+
+        crtc = ecore_x_randr_output_crtc_get(root, out[i]);
+        if (!crtc) continue;
+        ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &w, &h);
+        if ((w == 0) || (h == 0)) continue;
+        ecore_x_randr_output_size_mm_get(root, out[i], &xmm, &ymm);
+        if ((xmm == 0) || (ymm == 0)) continue;
+        if ((i == 0) || (ecore_x_randr_primary_output_get(root) == out[i]))
+          {
+             found = EINA_TRUE;
+             if (xdpi) *xdpi = (w * 254) / (xmm * 10); // 25.4mm / inch
+             if (ydpi) *ydpi = (h * 254) / (ymm * 10); // 25.4mm / inch
+          }
+        winrect.x = ee->x + (ee->w / 2);
+        winrect.y = ee->y + (ee->h / 2);
+        winrect.w = 1;
+        winrect.h = 1;
+        outrect.x = px;
+        outrect.y = py;
+        outrect.w = w;
+        outrect.h = h;
+        if (eina_rectangles_intersect(&outrect, &winrect))
+          {
+             if (xdpi) *xdpi = (w * 254) / (xmm * 10); // 25.4mm / inch
+             if (ydpi) *ydpi = (h * 254) / (ymm * 10); // 25.4mm / inch
+             free(out);
+             return;
+          }
+     }
    free(out);
+   if (!found) goto norandr;
 }
 
 static void 

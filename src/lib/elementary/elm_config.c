@@ -3359,6 +3359,24 @@ elm_config_vsync_set(Eina_Bool enabled)
 }
 
 EAPI Eina_Bool
+elm_config_agressive_withdrawn_get(void)
+{
+   return _elm_config->auto_norender_withdrawn &&
+     _elm_config->auto_norender_iconified_same_as_withdrawn &&
+     _elm_config->auto_flush_withdrawn &&
+     _elm_config->auto_dump_withdrawn;
+}
+
+EAPI void
+elm_config_agressive_withdrawn_set(Eina_Bool enabled)
+{
+   _elm_config->auto_norender_withdrawn = enabled;
+   _elm_config->auto_norender_iconified_same_as_withdrawn = enabled;
+   _elm_config->auto_flush_withdrawn = enabled;
+   _elm_config->auto_dump_withdrawn = enabled;
+}
+
+EAPI Eina_Bool
 elm_config_accel_preference_override_get(void)
 {
    return _elm_config->accel_override;
@@ -4767,7 +4785,7 @@ static const struct {
    Efl_Ui_Slider_Indicator_Visible_Mode  val;
    const char                           *str;
 } _enum_map_slider_indicator_visible_mode[] = {
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT, "default" },
+{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_DRAG, "on_drag" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, "on_focus" },
 { EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE, "none" },

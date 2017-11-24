@@ -4,6 +4,7 @@
 
 #include <Eina.h>
 #include "eolian_database.h"
+#include "eolian_priv.h"
 
 EAPI Eina_Stringshare *
 eolian_class_file_get(const Eolian_Class *cl)
@@ -147,7 +148,7 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
           }
      }
 
-   fprintf(stderr, "eolian: function '%s' not found in class '%s'\n", func_name, cl->name);
+   _eolian_log("function '%s' not found in class '%s'", func_name, cl->name);
    return NULL;
 }
 
@@ -170,6 +171,13 @@ eolian_class_events_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    return (cl->events ? eina_list_iterator_new(cl->events) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_class_parts_get(const Eolian_Class *cl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+   return (cl->parts ? eina_list_iterator_new(cl->parts) : NULL);
 }
 
 EAPI Eina_Bool

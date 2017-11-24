@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_VALUE_PROTECTED
 
 #include <Elementary.h>
@@ -13,12 +13,8 @@
 #define MY_CLASS EFL_UI_SLIDER_INTERVAL_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Slider_Interval"
 
-typedef struct
-{
-} Efl_Ui_Slider_Interval_Data;
-
 EOLIAN static void
-_efl_ui_slider_interval_interval_value_get(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED, double *from, double *to)
+_efl_ui_slider_interval_interval_value_get(Eo *obj, void *sd EINA_UNUSED, double *from, double *to)
 {
    Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
    if (from) *from = fmin(pd->intvl_from, pd->intvl_to);
@@ -77,7 +73,7 @@ _val_set(Evas_Object *obj)
      edje_object_part_drag_value_set
         (wd->resize_obj, "elm.dragable2.slider", pos2, pos2);
 
-   // emit accessiblity event also if value was chagend by API
+   // emit accessibility event also if value was changed by API
    if (_elm_config->atspi_mode)
      efl_access_value_changed_signal_emit(obj);
 }
@@ -90,7 +86,7 @@ _visuals_refresh(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_slider_interval_interval_value_set(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED, double from, double to)
+_efl_ui_slider_interval_interval_value_set(Eo *obj, void *sd EINA_UNUSED, double from, double to)
 {
    Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
 
@@ -105,7 +101,7 @@ _efl_ui_slider_interval_interval_value_set(Eo *obj, Efl_Ui_Slider_Interval_Data 
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_slider_interval_efl_object_finalize(Eo *obj, Efl_Ui_Slider_Interval_Data *sd EINA_UNUSED)
+_efl_ui_slider_interval_efl_object_finalize(Eo *obj, void *sd EINA_UNUSED)
 {
    Efl_Ui_Slider_Data *pd =  efl_data_scope_get(obj, EFL_UI_SLIDER_CLASS);
 

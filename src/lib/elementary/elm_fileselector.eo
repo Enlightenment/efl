@@ -1,5 +1,5 @@
 class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
-                        Elm.Interface.Atspi_Widget_Action,
+                        Efl.Access.Widget.Action,
                         Efl.Ui.Clickable, Efl.Ui.Selectable)
 {
    [[Elementary fileselector class]]
@@ -54,7 +54,7 @@ class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.mode { get; set; }
       Elm.Interface.Fileselector.current_name { get; set; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
    }
    events {

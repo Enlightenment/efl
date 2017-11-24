@@ -297,6 +297,8 @@
  * @image latex elm-widget-tree.eps
  */
 
+#include "elm_object_item.h"
+
 typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
 typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
 typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
@@ -385,6 +387,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
+   Evas_Object                  *bg;
    Eina_List                    *tooltips, *cursors;
    Evas_Object                  *focus_previous, *focus_next;
    Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
@@ -748,6 +751,8 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 const char*           _elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name);
 const char*           _elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name);
 
+Efl_Canvas_Object *   _efl_ui_widget_bg_get(Elm_Widget *obj);
+
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
   ptr = efl_data_scope_get(o, ELM_WIDGET_CLASS);  \
@@ -809,11 +814,19 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
    return ret;
 }
 
+/* Internal hack to mark legacy objects as such before construction.
+ * No need for TLS: Only UI objects created in the main loop matter. */
+EAPI extern Eina_Bool _elm_legacy_add;
+#define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
+   efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
+
 static inline Eina_Bool
 elm_widget_is_legacy(const Eo *obj)
 {
-   Elm_Widget_Smart_Data *sd = (Elm_Widget_Smart_Data *)
-         efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *sd;
+
+   if (_elm_legacy_add) return EINA_TRUE;
+   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
    return sd ? sd->legacy : EINA_FALSE;
 }
 

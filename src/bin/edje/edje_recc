@@ -14,7 +14,7 @@ usage () {
   echo "-no-raw                  Do NOT allow images to be zero compression"
   echo "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)"
   echo "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)"
-  exit -1
+  exit 255
 }
 
 if [ $# -lt 1 ]; then

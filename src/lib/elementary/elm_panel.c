@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_LAYER_PROTECTED
 
 #include <Elementary.h>
@@ -955,7 +955,7 @@ EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Evas_Object *obj = elm_legacy_add(MY_CLASS, parent);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
@@ -1410,10 +1410,10 @@ _elm_panel_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_panel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_panel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Panel_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},
           { NULL, NULL, NULL, NULL }
    };

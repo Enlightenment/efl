@@ -116,8 +116,39 @@ START_TEST (elm_code_syntax_c)
 }
 END_TEST
 
+START_TEST (elm_code_syntax_scope_change_braces_test)
+{
+   Elm_Code_File *file;
+   Elm_Code_Line *line;
+   Elm_Code *code;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   code->file->mime = "text/x-csrc";
+   elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_SYNTAX);
+   file = code->file;
+
+   elm_code_file_line_append(file, "#include <stdio.h>", 18, NULL);
+   line = elm_code_file_line_get(file, 1);
+   ck_assert_int_eq(0, line->scope);
+
+   elm_code_file_line_append(file, "int main() {", 12, NULL);
+   line = elm_code_file_line_get(file, 2);
+   ck_assert_int_eq(1, line->scope);
+
+   elm_code_file_line_append(file, "}", 1, NULL);
+   elm_code_file_line_append(file, "", 0, NULL);
+   line = elm_code_file_line_get(file, 4);
+   ck_assert_int_eq(0, line->scope);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_syntax(TCase *tc)
 {
    tcase_add_test(tc, elm_code_syntax_lookup);
    tcase_add_test(tc, elm_code_syntax_c);
+   tcase_add_test(tc, elm_code_syntax_scope_change_braces_test);
 }

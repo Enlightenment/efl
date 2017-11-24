@@ -10,6 +10,7 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
+#include "elm_fileselector.eo.h"
 
 #define MY_CLASS ELM_FILESELECTOR_BUTTON_CLASS
 
@@ -261,7 +262,7 @@ EAPI Evas_Object *
 elm_fileselector_button_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

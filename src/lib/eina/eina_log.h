@@ -48,7 +48,7 @@
  * The Eina Log module provides logging facilities for libraries and
  * applications. It provides colored logging, basic logging levels (error,
  * warning, debug, info, critical) and loggers - called logging domains -
- * which will be covered on next sections.
+ * which will be covered in next sections.
  *
  * @section tutorial_log_basic_usage Basic Usage
  *
@@ -71,7 +71,7 @@
  * log messages into a context (e.g. a module) and provide a way of controlling
  * this set as a whole.
  *
- * For example, suppose you have 3 different modules on your application and you
+ * For example, suppose you have 3 different modules in your application and you
  * want to get logging only from one of them (e.g. create some sort of filter).
  * For achieving that, all you need to do is create a logging domain for each
  * module so that all logging inside a module can be considered as a whole.
@@ -742,7 +742,7 @@ static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
  * @param color Color of the domain name
  *
  * @return Domain index that will be used as the DOMAIN parameter on log
- *         macros. A negative return value means an log occurred.
+ *         macros. A negative return value means an error occurred.
  *
  * @note MT: Safe to call from any thread.
  */
@@ -886,8 +886,7 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
  * EINA_LOG_COLOR_DISABLE=0. If EINA_LOG_COLOR_DISABLE is unset (or
  * -1), then Eina will disable color if terminal ($TERM) is
  * unsupported or if redirecting to a file.
-
-   . Similarly, to disable file and line
+ * Similarly, to disable file and line
  * information, set EINA_LOG_FILE_DISABLE=1 or
  * EINA_LOG_FUNCTION_DISABLE=1 to avoid function name in output. It is
  * not acceptable to have both EINA_LOG_FILE_DISABLE and

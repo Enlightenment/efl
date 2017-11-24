@@ -10,6 +10,10 @@ group { name: "elm/bg/base/default";
    data.item: "version" "119";
    images.image: "bevel_dark_out.png" COMP;
    parts {
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             color_class: "dialog_base";
@@ -21,7 +25,9 @@ group { name: "elm/bg/base/default";
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
+         clip_to: "clipper";
          description { state: "default" 0.0;
+            fixed: 1 1;
          }
       }
       part { name: "bevel";

@@ -5,7 +5,7 @@
 #include <Emotion.h>
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -658,7 +658,7 @@ EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -678,10 +678,10 @@ _elm_player_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_player_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_player_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "play", "play", NULL, _key_action_play},

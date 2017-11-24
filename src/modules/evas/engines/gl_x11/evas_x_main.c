@@ -1554,13 +1554,6 @@ eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update EINA_UNUSED,
 }
 
 void
-eng_outbuf_push_free_region_for_update(Outbuf *ob EINA_UNUSED,
-                                       RGBA_Image *update EINA_UNUSED)
-{
-   /* Nothing to do here as we don't really create an image per area */
-}
-
-void
 eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode)
 {
    Tilebuf_Rect *rects = buffer_damage;

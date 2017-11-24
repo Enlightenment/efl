@@ -1,5 +1,5 @@
 class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
-                    Elm.Interface.Atspi_Widget_Action,
+                    Efl.Access.Widget.Action,
                     Elm.Entry, Elm.Genlist, Elm.Hover)
 {
    [[Elementary combobox class]]
@@ -44,7 +44,7 @@ class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
       Elm.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Elm.Genlist.filter { set; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       //Efl.Part.part; // TODO?
    }
    events {

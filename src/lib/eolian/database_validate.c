@@ -6,6 +6,7 @@
 #endif
 
 #include "eo_lexer.h"
+#include "eolian_priv.h"
 
 static Eina_Bool
 _validate(Eolian_Object *obj)
@@ -33,8 +34,8 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info)
             if (eolian_doc_token_ref_get(NULL, &tok, NULL, NULL) == EOLIAN_DOC_REF_INVALID)
               {
                  char *refn = eolian_doc_token_text_get(&tok);
-                 fprintf(stderr, "eolian:%s:%d:%d: failed validating reference '%s'\n",
-                         info->file, info->line, info->column, refn);
+                 _eolian_log_line(info->file, info->line, info->column,
+                                  "failed validating reference '%s'", refn);
                  free(refn);
                  ret = EINA_FALSE;
                  break;
@@ -98,7 +99,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 static Eina_Bool
 _obj_error(const Eolian_Object *o, const char *msg)
 {
-   fprintf(stderr, "eolian:%s:%d:%d: %s\n", o->file, o->line, o->column, msg);
+   _eolian_log_line(o->file, o->line, o->column, "%s", msg);
    return EINA_FALSE;
 }
 
@@ -171,6 +172,17 @@ _validate_type(Eolian_Type *tp)
         return _obj_error(&tp->base, buf);
      }
 
+   if (tp->is_ptr && !tp->legacy)
+     {
+        tp->is_ptr = EINA_FALSE;
+        Eina_Bool still_ownable = database_type_is_ownable(tp);
+        tp->is_ptr = EINA_TRUE;
+        if (still_ownable)
+          {
+             return _obj_error(&tp->base, "cannot take a pointer to pointer type");
+          }
+     }
+
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
@@ -180,10 +192,11 @@ _validate_type(Eolian_Type *tp)
         {
            if (tp->base_type)
              {
+                int kwid = eo_lexer_keyword_str_to_id(tp->full_name);
                 if (!tp->freefunc)
                   {
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
-                       eo_lexer_keyword_str_to_id(tp->full_name) - KW_accessor]);
+                       kwid - KW_accessor]);
                   }
                 Eolian_Type *itp = tp->base_type;
                 /* validate types in brackets so freefuncs get written... */
@@ -191,6 +204,16 @@ _validate_type(Eolian_Type *tp)
                   {
                      if (!_validate_type(itp))
                        return EINA_FALSE;
+                     if ((kwid >= KW_accessor) && (kwid <= KW_list))
+                       {
+                          if (!database_type_is_ownable(itp))
+                            {
+                               snprintf(buf, sizeof(buf),
+                                        "%s cannot contain value types (%s)",
+                                        tp->full_name, itp->full_name);
+                               return _obj_error(&itp->base, buf);
+                            }
+                       }
                      itp = itp->next_type;
                   }
                 return _validate(&tp->base);
@@ -290,14 +313,22 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
    Eolian_Function_Parameter *param;
    char buf[512];
 
+   static int _duplicates_warn = -1;
+   if (EINA_UNLIKELY(_duplicates_warn < 0))
+     {
+        const char *s = getenv("EOLIAN_WARN_FUNC_DUPLICATES");
+        if (!s) _duplicates_warn = 0;
+        else _duplicates_warn = atoi(s);
+     }
+
    const Eolian_Function *ofunc = eina_hash_find(nhash, func->name);
-   if (ofunc)
+   if (EINA_UNLIKELY(ofunc && (_duplicates_warn > 0)))
      {
         snprintf(buf, sizeof(buf),
-                 "function '%s' redefined (originally at %s:%d:%d)",
-                 func->name, ofunc->base.file,
+                 "%sfunction '%s' redefined (originally at %s:%d:%d)",
+                 func->is_beta ? "beta " : "", func->name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
-        if (getenv("EOLIAN_WARN_FUNC_DUPLICATES"))
+        if (!func->is_beta || (_duplicates_warn > 1))
           _obj_error(&func->base, buf);
      }
 
@@ -342,6 +373,26 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
 }
 
 static Eina_Bool
+_validate_part(Eolian_Part *part, Eina_Hash *nhash)
+{
+   if (!_validate_doc(part->doc))
+     return EINA_FALSE;
+
+   const Eolian_Function *ofunc = eina_hash_find(nhash, part->name);
+   if (ofunc)
+     {
+        char buf[512];
+        snprintf(buf, sizeof(buf),
+                 "part '%s' conflicts with a function (defined at %s:%d:%d)",
+                 part->name, ofunc->base.file,
+                 ofunc->base.line, ofunc->base.column);
+        _obj_error(&part->base, buf);
+     }
+
+   return _validate(&part->base);
+}
+
+static Eina_Bool
 _validate_event(Eolian_Event *event)
 {
    if (event->type && !_validate_type(event->type))
@@ -372,6 +423,7 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
    Eina_List *l;
    Eolian_Function *func;
    Eolian_Event *event;
+   Eolian_Part *part;
    Eolian_Implement *impl;
    Eolian_Class *icl;
    Eina_Bool res = EINA_TRUE;
@@ -402,6 +454,10 @@ _validate_class(Eolian_Class *cl, Eina_Hash *nhash)
 
    EINA_LIST_FOREACH(cl->events, l, event)
      if (!(res = _validate_event(event)))
+       goto freehash;
+
+   EINA_LIST_FOREACH(cl->parts, l, part)
+     if (!(res = _validate_part(part, nhash)))
        goto freehash;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)

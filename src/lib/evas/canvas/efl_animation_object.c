@@ -555,6 +555,10 @@ EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_repeat_count_get, int, 0);
 EOAPI EFL_VOID_FUNC_BODYV(efl_animation_object_interpolator_set, EFL_FUNC_CALL(interpolator), Efl_Interpolator *interpolator);
 EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_interpolator_get, Efl_Interpolator *, NULL);
 
+EOAPI EFL_VOID_FUNC_BODY(efl_animation_object_target_state_save);
+EOAPI EFL_VOID_FUNC_BODY(efl_animation_object_target_state_reset);
+EOAPI EFL_VOID_FUNC_BODY(efl_animation_object_target_map_reset);
+
 #define EFL_ANIMATION_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_set, _efl_animation_object_target_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_target_get, _efl_animation_object_target_get), \
@@ -570,7 +574,10 @@ EOAPI EFL_FUNC_BODY_CONST(efl_animation_object_interpolator_get, Efl_Interpolato
    EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_count_set, _efl_animation_object_repeat_count_set), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_repeat_count_get, _efl_animation_object_repeat_count_get), \
    EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_set, _efl_animation_object_interpolator_set), \
-   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_get, _efl_animation_object_interpolator_get)
+   EFL_OBJECT_OP_FUNC(efl_animation_object_interpolator_get, _efl_animation_object_interpolator_get), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_state_save, _efl_animation_object_target_state_save), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_state_reset, _efl_animation_object_target_state_reset), \
+   EFL_OBJECT_OP_FUNC(efl_animation_object_target_map_reset, _efl_animation_object_target_map_reset)
 
 EWAPI const Efl_Event_Description _EFL_ANIMATION_OBJECT_EVENT_PRE_STARTED =
    EFL_EVENT_DESCRIPTION("pre_started");

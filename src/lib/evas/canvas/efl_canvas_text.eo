@@ -162,8 +162,8 @@ Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
          legacy: null;
          return: mstring @owned; [[The text in the given range]]
          params {
-            @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
-            @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
+            @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
+            @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
          }
       }
       range_geometry_get {
@@ -176,10 +176,10 @@ Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
          ]]
          legacy: null;
          params {
-             @in cur1: const(ptr(Efl.Text.Cursor.Cursor)); [[Start of range]]
-             @in cur2: const(ptr(Efl.Text.Cursor.Cursor)); [[End of range]]
+             @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
+             @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
          }
-         return: iterator<Eina.Rect> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all geoemtries of the given range
          ]]
       }
@@ -194,10 +194,10 @@ Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
          ]]
          legacy: null;
          params {
-             @in cur1: ptr(const(Efl.Text.Cursor.Cursor)); [[Start of range]]
-             @in cur2: ptr(const(Efl.Text.Cursor.Cursor)); [[End of range]]
+             @cref cur1: Efl.Text.Cursor.Cursor; [[Start of range]]
+             @cref cur2: Efl.Text.Cursor.Cursor; [[End of range]]
          }
-         return: iterator<Eina.Rect> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all simple geometries of the given range
          ]]
       }
@@ -308,6 +308,7 @@ Efl.Text.Cursor, Efl.Text.Annotate, Efl.Text.Markup)
       Efl.Text.Format.wrap { get; set; }
       Efl.Text.Format.multiline { get; set; }
       Efl.Text.Format.halign { get; set; }
+      Efl.Text.Format.halign_auto_type { get; set; }
       Efl.Text.Format.valign { get; set; }
       Efl.Text.Format.linegap { get; set; }
       Efl.Text.Format.linerelgap { get; set; }

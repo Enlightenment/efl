@@ -6,11 +6,12 @@
 
 #include <Eina.h>
 #include "eolian_database.h"
+#include "eolian_priv.h"
 
 static Eina_Bool
 node_error(const Eolian_Object *obj, const char *msg)
 {
-   fprintf(stderr, "eolian:%s:%d:%d: %s\n", obj->file, obj->line, obj->column, msg);
+   _eolian_log_line(obj->file, obj->line, obj->column, "%s", msg);
    return EINA_FALSE;
 }
 

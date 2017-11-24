@@ -8,6 +8,9 @@
 #else
 # include <netdb.h>
 #endif
+
+#define __EFL_NET_IS_REQUIRED
+
 #include <Efl_Core.h>
 
 #ifdef EAPI

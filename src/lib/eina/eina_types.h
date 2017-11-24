@@ -58,7 +58,7 @@
 # else
 /**
  * @def EAPI
- * @brief Used to export functions(by changing visibility).
+ * @brief Used to export functions (by changing visibility).
  */
 #  define EAPI
 # endif
@@ -83,7 +83,7 @@
 # else
 /**
  * @def EAPI
- * @brief Used to export functions(by changing visibility).
+ * @brief Used to export functions (by changing visibility).
  */
 #  define EXPORTAPI
 # endif
@@ -303,7 +303,7 @@
  * @def EINA_ARG_NONNULL
  * Used to warn when the specified arguments of the function are @c NULL.
  *
- * @param ... Oridnals of the parameters to check for nullity (1..n)
+ * @param ... Ordinals of the parameters to check for nullity (1..n)
  *
  * @return Nothing, but Doxygen will complain if it's not documented :-P
  *
@@ -315,6 +315,7 @@
  * Used to warn when the function is considered as deprecated.
  */
 # define EINA_DEPRECATED
+
 /**
  * @def EINA_MALLOC
  * @brief EINA_MALLOC is used to tell the compiler that a function may be treated
@@ -322,54 +323,64 @@
  * the function returns and that the memory has undefined content.
  */
 # define EINA_MALLOC
+
 /**
  * @def EINA_PURE
- * @brief EINA_PURE is used to tell the compiler this functions has no effects
- * except the return value and their return value depends only on the parameters
+ * @brief EINA_PURE is used to tell the compiler this function has no effect
+ * except the return value and its return value depends only on the parameters
  * and/or global variables.
  */
 # define EINA_PURE
+
 /**
  * @def EINA_PRINTF
  * @param fmt The format to be used.
  * @param arg The argument to be used.
  */
 # define EINA_PRINTF(fmt, arg)
+
 /**
  * @def EINA_SCANF
  * @param fmt The format to be used.
  * @param arg The argument to be used.
  */
 # define EINA_SCANF(fmt, arg)
+
 /**
  * @def EINA_FORMAT
  * @param fmt The format to be used.
  */
 # define EINA_FORMAT(fmt)
+
 /**
  * @def EINA_CONST
  * @brief Attribute from gcc to prevent the function to read/modify any global memory.
  */
 # define EINA_CONST
+
 /**
  * @def EINA_NOINSTRUMENT
  * @brief Attribute from gcc to disable instrumentation for a specific function.
  */
 # define EINA_NOINSTRUMENT
+
 /**
  * @def EINA_UNLIKELY
  * @param exp The expression to be used.
  */
 # define EINA_UNLIKELY(exp) exp
+
 /**
  * @def EINA_LIKELY
  * @param exp The expression to be used.
  */
 # define EINA_LIKELY(exp)   exp
+
 /**
  * @def EINA_SENTINEL
  * @brief Attribute from gcc to prevent calls without the necessary NULL
  * sentinel in certain variadic functions
+ *
  * @since 1.7
  */
 # define EINA_SENTINEL
@@ -378,6 +389,7 @@
  * @def EINA_FALLTHROUGH
  * @brief Attribute from gcc to prevent warning and indicate that we expect
  * to actually go to the next switch statement
+ *
  * @since 1.20
  */
 # define EINA_FALLTHROUGH
@@ -385,11 +397,14 @@
 /**
  * @def EINA_PREFETCH
  * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into all levels of cache. For
  * just writing to an address look at EINA_PREFETCH_WRITE().
+ *
  * Note that the pointer @p arg does not have to be a valid pointer and
  * will not cause any exceptions (like segfaults) if it is invalid.
+ *
  * @since 1.19
  */
 # define EINA_PREFETCH(arg)
@@ -397,12 +412,15 @@
 /**
  * @def EINA_PREFETCH_WRITE
  * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into all levels of cache. This
  * specifically indicates that the address is going to be written to as
  * opposed to being read from as with EINA_PREFETCH().
+ *
  * Note that the pointer @p arg does not have to be a valid pointer and
  * will not cause any exceptions (like segfaults) if it is invalid.
+ *
  * @since 1.19
  */
 # define EINA_PREFETCH_WRITE(arg)
@@ -410,23 +428,30 @@
 /**
  * @def EINA_PREFETCH_NOCACHE
  * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into just the closest(l1) cache.
  * For just writing to an address look at EINA_PREFETCH_WRITE_NOCACHE().
+ *
  * Note that the pointer @p arg does not have to be a valid pointer and
  * will not cause any exceptions (like segfaults) if it is invalid.
+ *
  * @since 1.19
  */
 # define EINA_PREFETCH_NOCACHE(arg)
+
 /**
  * @def EINA_PREFETCH_WRITE_NOCACHE
+ *
  * @brief Hints that the pointer @parg needs to be pre-fetched into cache
+ *
  * This hints to the compiler to probably issue a prefetch command for the
  * memory address @p arg and ensure it goes into just the closest(l1) cache.
  * This specifically indicates that the address is going to be written to as
  * opposed to being read from as with EINA_PREFETCH_NOCACHE().
  * Note that the pointer @p arg does not have to be a valid pointer and
  * will not cause any exceptions (like segfaults) if it is invalid.
+ *
  * @since 1.19
  */
 # define EINA_PREFETCH_NOCACHE_WRITE(arg)
@@ -514,9 +539,11 @@ typedef void (*Eina_Free_Cb)(void *data);
 /**
  * @def EINA_C_ARRAY_LENGTH
  * Macro to return the array length of a standard c array.
+ *
  * For example:
  * int foo[] = { 0, 1, 2, 3 };
  * would return 4 and not 4 * sizeof(int).
+ *
  * @since 1.2.0
  */
 #define EINA_C_ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -525,7 +552,7 @@ typedef void (*Eina_Free_Cb)(void *data);
  * @def EINA_DOUBLE_EQUAL
  * Macro to compare 2 double floating point values and deal with precision
  * loss issues.
- * 
+ *
  * @since 1.18
  */
 #define EINA_DOUBLE_EQUAL(x, y) \

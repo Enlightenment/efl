@@ -4,6 +4,7 @@
 
 #define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_ACCESS_VALUE_PROTECTED
 
 #include <Elementary.h>
 
@@ -118,6 +119,8 @@ _units_set(Evas_Object *obj)
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
         elm_layout_text_set(obj, "elm.text.status", eina_strbuf_string_get(sd->format_strbuf));
+
+        eina_value_flush(&val);
      }
    else
      elm_layout_text_set(obj, "elm.text.status", NULL);
@@ -550,6 +553,12 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_get(Eo *obj, void *_pd EINA_UN
    return _progressbar_part_value_get(sd, pd->part);
 }
 
+EOLIAN static void
+_efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd, double *value, const char **text EINA_UNUSED)
+{
+   if (value) *value = _pd->val;
+}
+
 #include "efl_ui_progressbar_part.eo.c"
 
 /* Efl.Part end */
@@ -573,7 +582,7 @@ EAPI Evas_Object *
 elm_progressbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Eo *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Eo *obj = elm_legacy_add(MY_CLASS, parent);
    elm_progressbar_unit_format_set(obj, "%.0f %%");
 
    return obj;

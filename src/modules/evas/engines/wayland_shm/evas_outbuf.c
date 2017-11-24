@@ -9,29 +9,17 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-Eina_Bool
-_evas_surface_init(Surface *s, int w, int h, int num_buf)
-{
-   if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF"))
-     if (_evas_dmabuf_surface_create(s, w, h, num_buf)) return EINA_TRUE;
-
-   if (_evas_shm_surface_create(s, w, h, num_buf)) return EINA_TRUE;
-
-   return EINA_FALSE;
-}
-
 static Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland *info, int w, int h, Outbuf *ob)
+_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
 {
    Surface *out;
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
-   out->type = SURFACE_EMPTY;
    out->info = info;
    out->ob = ob;
 
-   if (_evas_surface_init(out, w, h, ob->num_buff)) return out;
+   if (_evas_dmabuf_surface_create(out)) return out;
 
    free(out);
    return NULL;
@@ -41,8 +29,6 @@ Outbuf *
 _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
 {
    Outbuf *ob = NULL;
-   char *num;
-   int sw, sh;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -58,39 +44,9 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->priv.destination_alpha = info->info.destination_alpha;
    ob->ewd = info->info.wl2_display;
 
-   /* default to triple buffer */
-   ob->num_buff = 3;
-
-   /* check for any 'number of buffers' override in the environment */
-   if ((num = getenv("EVAS_WAYLAND_SHM_BUFFERS")))
-     {
-        int n = 0;
-
-        n = atoi(num);
-        if (n <= 0) n = 1;
-        if (n > MAX_BUFFERS) n = MAX_BUFFERS;
-
-        ob->num_buff = n;
-     }
-
-   /* try to create the outbuf surface */
-   if ((ob->rotation == 0) || (ob->rotation == 180))
-     {
-        sw = w;
-        sh = h;
-     }
-   else if ((ob->rotation == 90) || (ob->rotation == 270))
-     {
-        sw = h;
-        sh = w;
-     }
-   else
-     goto unhandled_rotation;
-
-   ob->surface = _evas_surface_create(info, sw, sh, ob);
+   ob->surface = _evas_surface_create(info, ob);
    if (!ob->surface) goto surf_err;
 
-unhandled_rotation:
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
 
    return ob;
@@ -177,24 +133,6 @@ _evas_outbuf_idle_flush(Outbuf *ob)
              eina_rectangle_free(rect);
           }
      }
-}
-
-void
-_evas_surface_damage(struct wl_surface *s, int compositor_version, int w, int h, Eina_Rectangle *rects, unsigned int count)
-{
-   void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
-   unsigned int k;
-
-   if (compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
-     damage = wl_surface_damage_buffer;
-   else
-     damage = wl_surface_damage;
-
-   if ((rects) && (count > 0))
-     for (k = 0; k < count; k++)
-       damage(s, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
-   else
-     damage(s, 0, 0, w, h);
 }
 
 void 
@@ -325,7 +263,6 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
    age = ob->surface->funcs.assign(ob->surface);
    if (!age) return MODE_FULL;
 
-   if (age > ob->num_buff) return MODE_FULL;
    else if (age == 1) return MODE_COPY;
    else if (age == 2) return MODE_DOUBLE;
    else if (age == 3) return MODE_TRIPLE;
@@ -621,12 +558,6 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
 
    func(src, dst, (update->cache_entry.w - w), (wid - rect.w),
         rect.w, rect.h, x + rx, y + ry, NULL);
-}
-
-void 
-_evas_outbuf_update_region_free(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 }
 
 void

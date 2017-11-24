@@ -50,11 +50,6 @@ _outbuf_push_updated_region(Outbuf *ob EINA_UNUSED,
 }
 
 static void
-_outbuf_free_region_for_update(Outbuf *ob EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-}
-
-static void
 _outbuf_free(Outbuf *ob)
 {
    evas_common_font_ext_clear();
@@ -289,7 +284,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
                                            NULL,
                                            _outbuf_new_region_for_update,
                                            _outbuf_push_updated_region,
-                                           _outbuf_free_region_for_update,
+                                           NULL,
                                            NULL,
                                            _outbuf_flush,
                                            NULL,
@@ -321,11 +316,13 @@ eng_output_free(void *engine, void *data)
 }
 
 static void
-eng_output_dump(void *engine EINA_UNUSED, void *data)
+eng_output_dump(void *engine, void *data)
 {
    Render_Engine *re;
+   Render_Engine_GL_Generic *e = engine;
 
    re = (Render_Engine *)data;
+   generic_cache_dump(e->software.surface_cache);
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(re->generic.software.ob->gl_context);

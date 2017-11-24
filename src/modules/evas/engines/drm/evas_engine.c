@@ -41,7 +41,7 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
                                                  NULL,
                                                  _outbuf_update_region_new,
                                                  _outbuf_update_region_push,
-                                                 _outbuf_update_region_free,
+                                                 NULL,
                                                  NULL,
                                                  _outbuf_flush,
                                                  _outbuf_redraws_clear,
@@ -225,7 +225,9 @@ module_open(Evas_Module *em)
    if (!em) return 0;
 
    /* try to inherit functions from software_generic engine */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic", sizeof (Evas_Engine_Info_Drm))) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic",
+                                    sizeof(Evas_Engine_Info_Drm)))
+     return 0;
 
    /* try to create eina logging domain */
    _evas_engine_drm_log_dom =

@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -12,6 +12,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
+#include "elm_ctxpopup_item.eo.h"
+#include "elm_ctxpopup.eo.h"
 
 #include "elm_ctxpopup_part.eo.h"
 #include "elm_part_helper.h"
@@ -639,6 +641,19 @@ _parent_detach(Evas_Object *obj)
 }
 
 static void
+_on_content_del(void *data,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   ELM_CTXPOPUP_DATA_GET(data, sd);
+
+   sd->content = NULL;
+   elm_box_recalculate(sd->box);
+   elm_layout_sizing_eval(data);
+}
+
+static void
 _on_content_resized(void *data,
                     Evas *e EINA_UNUSED,
                     Evas_Object *obj EINA_UNUSED,
@@ -707,6 +722,8 @@ _elm_ctxpopup_content_set(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part, Evas
    sd->content = content;
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
+   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _on_content_del, obj);
+
    if (sd->visible) elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -731,6 +748,8 @@ _elm_ctxpopup_content_unset(Eo *obj, Elm_Ctxpopup_Data *sd, const char *part)
 
    content = sd->content;
    if (!content) return content;
+
+   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
    elm_box_unpack(sd->box, content);
    sd->content = NULL;
@@ -1085,6 +1104,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 
    evas_object_event_callback_del_full
      (sd->box, EVAS_CALLBACK_RESIZE, _on_content_resized, obj);
+   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    _parent_detach(obj);
 
    elm_ctxpopup_clear(obj);
@@ -1108,7 +1128,7 @@ EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Evas_Object *obj = elm_legacy_add(MY_CLASS, parent);
 
    /* access: parent could be any object such as elm_list which does
       not know elc_ctxpopup as its child object in the focus_next(); */
@@ -1231,9 +1251,8 @@ elm_ctxpopup_item_next_get(const Evas_Object *obj)
 }
 
 static void
-_item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_item_select(Elm_Ctxpopup_Item_Data *item)
 {
-   Elm_Ctxpopup_Item_Data *item = data;
    Elm_Object_Item *eo_item2;
    Eina_List *l;
 
@@ -1247,6 +1266,13 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 
    if (!item->wcb.org_func_cb) return;
    item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, EO_OBJ(item));
+}
+
+static void
+_item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Ctxpopup_Item_Data *item = data;
+   _item_select(item);
 }
 
 EOLIAN static Eo *
@@ -1419,6 +1445,14 @@ _elm_ctxpopup_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Da
 }
 
 EOLIAN static Elm_Object_Item*
+_elm_ctxpopup_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+{
+   if (!sd->list) return NULL;
+
+   return elm_object_focused_item_get(sd->list);
+}
+
+EOLIAN static Elm_Object_Item*
 _elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *sd, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Eo *eo_item;
@@ -1526,10 +1560,10 @@ _elm_ctxpopup_item_init(Eo *eo_item,
    sd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_ctxpopup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_ctxpopup_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "escape", "escape", NULL, _key_action_escape},
           { NULL, NULL, NULL, NULL }
    };
@@ -1545,6 +1579,26 @@ _elm_ctxpopup_efl_access_state_set_get(Eo *obj, Elm_Ctxpopup_Data *sd EINA_UNUSE
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
 
    return ret;
+}
+
+static Eina_Bool
+_item_access_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   ELM_CTXPOPUP_ITEM_DATA_GET(obj, it);
+   if (!it) return EINA_FALSE;
+
+   _item_select(it);
+   return EINA_TRUE;
+}
+
+EOLIAN static const Efl_Access_Action_Data*
+_elm_ctxpopup_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Item_Data *sd EINA_UNUSED)
+{
+   static Efl_Access_Action_Data atspi_actions[] = {
+          { "activate", NULL, NULL, _item_access_action_activate},
+          { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 /* Internal EO APIs and hidden overrides */

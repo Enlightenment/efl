@@ -153,19 +153,15 @@ _efl_vg_gradient_linear_efl_vg_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
-static void
-_efl_vg_gradient_linear_efl_vg_dup(Eo *obj,
-                                        Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED,
-                                        const Efl_VG *from)
+EOLIAN static Efl_VG *
+_efl_vg_gradient_linear_efl_vg_dup(const Eo *obj, Efl_VG_Gradient_Linear_Data *pd)
 {
-   Efl_VG_Gradient_Linear_Data *fromd;
+   Efl_VG *cn = NULL;
 
-   efl_vg_dup(efl_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS), from);
-
-   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_LINEAR_CLASS);
-
-   efl_gfx_gradient_linear_start_set(obj, fromd->start.x, fromd->start.y);
-   efl_gfx_gradient_linear_end_set(obj, fromd->end.x, fromd->end.y);
+   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   efl_gfx_gradient_linear_start_set(cn, pd->start.x, pd->start.y);
+   efl_gfx_gradient_linear_end_set(cn, pd->end.x, pd->end.y);
+   return cn;
 }
 
 EAPI void

@@ -61,6 +61,8 @@
 extern "C" {
 #endif
 
+extern EAPI double _efl_startup_time;
+
 #include "Ecore_Common.h"
 #include "Ecore_Eo.h"
 
@@ -72,3 +74,7 @@ extern "C" {
 #define EAPI
 
 #endif
+
+// We are including efl_general.h again, just in case Efl_Core.h was already included before this
+// and the __EFL_*_IS_REQUIRED changed since then.
+#include "efl_general.h"

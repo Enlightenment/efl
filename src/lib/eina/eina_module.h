@@ -40,7 +40,7 @@
  * @defgroup Eina_Module_Group Module
  *
  * Eina module provides some helpers over POSIX dlopen(). It is not
- * meant to replace, abstract or make a "portable" version of the
+ * meant to replace, abstract or make a "portable" version of
  * POSIX, but enhance its usage by defining some good practices.
  *
  * Modules are created with eina_module_new() and later loaded with
@@ -76,7 +76,7 @@ typedef Eina_Bool         (*Eina_Module_Cb)(Eina_Module *m, void *data);
 
 /**
  * @typedef Eina_Module_Init
- * If a function with such signature is exported by module as
+ * If a function with this signature is exported by module as
  * __eina_module_init, it will be called on the first load after
  * dlopen() and if #EINA_FALSE is returned, load will fail, #EINA_TRUE
  * means the module was successfully initialized.
@@ -86,7 +86,7 @@ typedef Eina_Bool (*Eina_Module_Init)(void);
 
 /**
  * @typedef Eina_Module_Shutdown
- * If a function with such signature is exported by module as
+ * If a function with this signature is exported by module as
  * __eina_module_shutdown, it will be called before calling dlclose()
  * @see Eina_Module_Init
  */
@@ -101,7 +101,7 @@ typedef void (*Eina_Module_Shutdown)(void);
 
 /**
  * @def EINA_MODULE_SHUTDOWN
- * declares the given function as the module shutdownializer
+ * declares the given function as to be called on shutdown
  * (__eina_module_shutdown). It must be of signature #Eina_Module_Shutdown
  */
 #define EINA_MODULE_SHUTDOWN(f) EXPORTAPI Eina_Module_Shutdown __eina_module_shutdown = &f
@@ -148,10 +148,10 @@ EAPI Eina_Bool
  *
  * This function load the shared file object passed in
  * eina_module_new(). If it is a internal Eina module (like the
- * mempools), it also initialize it. If the shared file object can not
+ * mempools), it also initializes it. If the shared file object cannot
  * be loaded, #EINA_FALSE is returned. If it is an internal Eina module and the
- * module can not be initialized, #EINA_FALSE is returned. If the module has
- * already been loaded, it's reference counter is increased by one and
+ * module cannot be initialized, #EINA_FALSE is returned. If the module has
+ * already been loaded, its reference counter is increased by one and
  * #EINA_TRUE is returned. If @p module is @c NULL, the function returns
  * immediately #EINA_FALSE.
  *
@@ -179,13 +179,13 @@ EAPI Eina_Bool
  eina_module_unload(Eina_Module *module) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieves the data associated to a symbol.
+ * @brief Retrieves the data associated with a symbol.
  *
  * @param module The module.
  * @param symbol The symbol.
- * @return The data associated to the symbol, or @c NULL on failure.
+ * @return The data associated with the symbol, or @c NULL on failure.
  *
- * This function returns the data associated to @p symbol of @p module. @p
+ * This function returns the data associated with @p symbol of @p module. @p
  * module must have been loaded before with eina_module_load(). If @p module
  * is @c NULL, or if it has not been correctly loaded before, the
  * function returns immediately @c NULL.
@@ -194,7 +194,7 @@ EAPI void *
  eina_module_symbol_get(const Eina_Module *module, const char *symbol) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Returns the file name associated to the module.
+ * @brief Returns the file name associated with the module.
  *
  * @param module The module.
  * @return The file name.
@@ -322,13 +322,13 @@ EAPI void
  eina_module_list_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Finds an module in array.
+ * @brief Finds a module in array.
  *
  * @param array The array to find the module.
  * @param module The name of module to be searched.
  * @return The module to find on success, @c NULL otherwise.
  *
- * This function finds an @p module in @p array.
+ * This function finds a @p module in @p array.
  * If the element is found  the function returns the module, else
  * @c NULL is returned.
  */

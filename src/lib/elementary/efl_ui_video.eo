@@ -1,5 +1,5 @@
 class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
-                 Efl.Player, Elm.Interface.Atspi_Widget_Action)
+                 Efl.Player, Efl.Access.Widget.Action)
 {
    [[Efl UI video class]]
    legacy_prefix: elm_video;
@@ -65,6 +65,6 @@ class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

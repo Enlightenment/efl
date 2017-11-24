@@ -5,7 +5,7 @@ mixin Efl.Access.Component ()
    [[AT-SPI component mixin]]
    data: null;
    methods {
-      @property size @protected {
+      @property size @protected @beta {
          [[Size of accessible widget.]]
          set {
             return: bool; [[$true if size was set, $false otherwise]]
@@ -17,7 +17,7 @@ mixin Efl.Access.Component ()
             h: int; [[Height of the widget]]
          }
       }
-      @property layer @protected {
+      @property layer @protected @beta {
          [[Evas layer of accessible widget.]]
          get {
          }
@@ -25,7 +25,7 @@ mixin Efl.Access.Component ()
             layer: int; [[Evas layer of the widget]]
          }
       }
-      @property alpha @protected {
+      @property alpha @protected @beta {
          [[Gets alpha of accessible widget.]]
          get {
          }
@@ -33,7 +33,7 @@ mixin Efl.Access.Component ()
             alpha: double; [[Alpha value in [0, 1] range.]]
          }
       }
-      @property z_order @protected {
+      @property z_order @protected @beta {
          [[Gets the depth at which the component is shown in relation to other
            components in the same container.]]
          get {
@@ -42,7 +42,7 @@ mixin Efl.Access.Component ()
             z_order: int; [[Z order of component]]
          }
       }
-      @property extents @protected {
+      @property extents @protected @beta {
          [[Geometry of accessible widget.]]
          get {
          }
@@ -57,7 +57,7 @@ mixin Efl.Access.Component ()
             rect: Eina.Rect; [[The geometry.]]
          }
       }
-      @property position @protected {
+      @property position @protected @beta {
          [[Position of accessible widget.]]
          set {
             return: bool; [[$true if position was set, $false otherwise]]
@@ -73,7 +73,7 @@ mixin Efl.Access.Component ()
             y: int; [[Y coordinate]]
          }
       }
-      contains @protected {
+      contains @protected @beta {
       	 [[Contains accessible widget]]
          params {
             screen_coords: bool; [[If $true x and y values will be relative to
@@ -83,13 +83,13 @@ mixin Efl.Access.Component ()
          }
          return: bool; [[$true if params have been set, $false otherwise]]
       }
-      focus_grab @protected {
+      focus_grab @protected @beta {
          [[Focuses accessible widget.]]
 
          return: bool; [[$true if focus grab focus succeed, $false otherwise.]]
 
       }
-      accessible_at_point_get @protected {
+      accessible_at_point_get @protected @beta {
          [[Gets top component object occupying space at given coordinates.]]
          params {
             screen_coords: bool; [[If $true x and y values will be relative to

@@ -1033,6 +1033,44 @@ EAPI const Evas_Lock *evas_key_lock_get(const Evas *obj) EINA_WARN_UNUSED_RESULT
  */
 
 /**
+ * @brief Returns whether the mouse pointer is logically inside the canvas.
+ *
+ * @param[in] obj The object.
+ * @param[in] dev The pointer device.
+ *
+ * @return @c true if the pointer is inside, @c false otherwise.
+ *
+ * @since 1.19
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_pointer_inside_by_device_get(const Evas *obj, Efl_Input_Device *dev);
+
+/**
+ * @brief Returns whether the default mouse pointer is logically inside the
+ * canvas.
+ *
+ * When this function is called it will return a value of either @c false or
+ * @c true, depending on if event_feed_mouse_in or event_feed_mouse_out have
+ * been called to feed in a  mouse enter event into the canvas.
+ *
+ * A return value of @c true indicates the mouse is logically inside the
+ * canvas, and @c false implies it is logically outside the canvas.
+ *
+ * A canvas begins with the mouse being assumed outside ($false).
+ *
+ * If @c e is not a valid canvas, the return value is undefined.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if the mouse pointer is inside the canvas, @c false
+ * otherwise
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_pointer_inside_get(const Evas *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @defgroup Evas_Touch_Point_List Touch Point List Functions
  *
  * Functions to get information of touched points in the Evas.

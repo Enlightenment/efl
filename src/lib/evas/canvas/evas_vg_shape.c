@@ -181,38 +181,24 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
    return r;
 }
 
-static void
-_efl_vg_shape_efl_vg_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_VG *from)
+
+EOLIAN static Efl_VG *
+_efl_vg_shape_efl_vg_dup(const Eo *obj, Efl_VG_Shape_Data *pd)
 {
-   Efl_VG_Shape_Data *fromd;
-   Eo *fill = NULL, *stroke_fill = NULL, *stroke_marker = NULL;
+   Efl_VG *cn = NULL;
+   Efl_VG_Shape_Data *cd = NULL;
 
-   efl_vg_dup(efl_super(obj, MY_CLASS), from);
+   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   cd = efl_data_scope_get(cn, MY_CLASS);
+   if (pd->fill)
+     cd->fill = efl_vg_dup(pd->fill);
+   if (pd->stroke.fill)
+     cd->stroke.fill = efl_vg_dup(pd->stroke.fill);
+   if (pd->stroke.marker)
+     cd->stroke.marker = efl_vg_dup(pd->stroke.marker);
 
-   fromd = efl_data_scope_get(from, MY_CLASS);
-
-   if (fromd->fill)
-     {
-        fill = efl_add(efl_class_get(fromd->fill), NULL, efl_vg_dup(efl_added, fromd->fill));
-        efl_vg_shape_fill_set(obj, fill);
-        efl_unref(fill);
-     }
-
-   if (fromd->stroke.fill)
-     {
-        stroke_fill = efl_add(efl_class_get(fromd->stroke.fill), NULL, efl_vg_dup(efl_added, fromd->stroke.fill));
-        efl_vg_shape_stroke_fill_set(obj, stroke_fill);
-        efl_unref(stroke_fill);
-     }
-
-   if (fromd->stroke.marker)
-     {
-        stroke_marker = efl_add(efl_class_get(fromd->stroke.marker), NULL, efl_vg_dup(efl_added, fromd->stroke.marker));
-        efl_vg_shape_stroke_marker_set(obj, stroke_marker);
-        efl_unref(stroke_marker);
-     }
-
-   efl_gfx_shape_dup(obj, from);
+   efl_gfx_shape_dup(cn, obj);
+   return cn;
 }
 
 EAPI double

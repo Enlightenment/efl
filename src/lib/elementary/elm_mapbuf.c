@@ -247,19 +247,19 @@ _elm_mapbuf_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_efl_container_content_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *content)
+_elm_mapbuf_efl_content_content_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *content)
 {
    return _elm_mapbuf_content_set(obj, sd, NULL, content);
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_efl_container_content_get(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_efl_content_content_get(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    return _elm_mapbuf_content_get(obj, sd, NULL);
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_efl_container_content_unset(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_efl_content_content_unset(Eo *obj, Elm_Mapbuf_Data *sd)
 {
    return _elm_mapbuf_content_unset(obj, sd, NULL);
 }
@@ -309,7 +309,7 @@ EAPI Evas_Object *
 elm_mapbuf_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

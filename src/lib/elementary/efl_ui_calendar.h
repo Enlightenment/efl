@@ -48,7 +48,6 @@
  * @{
  */
 
-#include "efl_ui_calendar_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_calendar.eo.h"
 #endif

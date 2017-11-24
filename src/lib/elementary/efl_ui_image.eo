@@ -45,7 +45,7 @@ struct Efl.Ui.Image.Error
 
 class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
-                 Efl.Access.Image, Elm.Interface.Atspi_Widget_Action,
+                 Efl.Access.Image, Efl.Access.Widget.Action,
                  Efl.Orientation, Efl.Flipable,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Canvas.Layout_Calc,
                  Efl.Canvas.Layout_Group, Efl.Canvas.Layout_Signal)
@@ -151,7 +151,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
       Efl.Access.Image.extents { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       drop; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */

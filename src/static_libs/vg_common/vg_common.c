@@ -547,25 +547,91 @@ vg_common_svg_node_free(Svg_Node *node)
 }
 
 static Efl_VG *
-_apply_gradient_property(Svg_Style_Gradient *g)
+_apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Vg_File_Data *vg_data)
 {
    Efl_VG *grad_obj = NULL;
    Efl_Gfx_Gradient_Stop *stops, *stop;
    int stop_count = 0, i = 0;
    Eina_List *l;
+   Eina_Matrix3 m; //for bbox translation
+   Eina_Rect r = EINA_RECT( 0, 0, 1, 1 );
+   Eina_Rect grad_geom = EINA_RECT(0, 0, 0, 0);
+   int radius;
+
+   //TODO: apply actual sizes (imporve bounds_get function?)...
+   //for example with figures and paths
+   if (!g->user_space)
+     evas_vg_node_bounds_get(vg, &r);
+   else
+     {
+        r.w = vg_data->view_box.w;
+        r.h = vg_data->view_box.h;
+     }
 
    if (g->type == SVG_LINEAR_GRADIENT)
      {
         grad_obj = evas_vg_gradient_linear_add(NULL);
-        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
-        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
+        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
+        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
+        radius = sqrt(pow(r.w, 2) + pow(r.h, 2)) / sqrt(2.0);
+        if (!g->user_space)
+          {
+             /**
+              * That is according to Units in here
+              *
+              * https://www.w3.org/TR/2015/WD-SVG2-20150915/coords.html
+              */
+             int min = (r.h > r.w) ? r.w : r.h;
+             radius = sqrt(pow(min, 2) + pow(min, 2)) / sqrt(2.0);
+          }
         grad_obj = evas_vg_gradient_radial_add(NULL);
-        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
-        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r);
-        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
+        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
+        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
+        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
+
+        /* in case of objectBoundingBox it need proper scaling */
+        if (!g->user_space)
+          {
+             double scale_X = 1.0, scale_reversed_X = 1.0;
+             double scale_Y = 1.0, scale_reversed_Y = 1.0;
+
+             /* check the smallest size, find the scale value */
+             if (r.h > r.w)
+               {
+                  scale_Y = ((double) r.w) / r.h;
+                  scale_reversed_Y = ((double) r.h) / r.w;
+               }
+             else
+               {
+                  scale_X = ((double) r.h) / r.w;
+                  scale_reversed_X = ((double) r.w) / r.h;
+               }
+
+             evas_vg_node_bounds_get(grad_obj, &grad_geom);
+
+             double cy = grad_geom.h / 2 + grad_geom.y;
+             double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;
+             double cx = grad_geom.w / 2 + grad_geom.x;
+             double cx_scaled = (grad_geom.w / 2) * scale_reversed_X;
+
+             /* matrix tranformation of gradient figure:
+              * 0. we remember size of gradient and it's center point
+              * 1. move all gradients to point {0;0}
+              *    (so scale wont increase starting point)
+              * 2. scale properly only according to the bigger size of entity
+              * 3. move back so new center point would stay on position
+              *    it had previously
+              */
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, grad_geom.x, grad_geom.y);
+             eina_matrix3_scale(&m, scale_X, scale_Y);
+             eina_matrix3_translate(&m, cx_scaled - cx, cy_scaled - cy);
+
+             efl_vg_transformation_set(grad_obj, &m);
+          }
      }
    else
      {
@@ -597,7 +663,7 @@ _apply_gradient_property(Svg_Style_Gradient *g)
 
 // vg tree creation
 static void
-_apply_vg_property(Svg_Node *node, Efl_VG *vg)
+_apply_vg_property(Svg_Node *node, Efl_VG *vg, Vg_File_Data *vg_data)
 {
    Svg_Style_Property *style = node->style;
 
@@ -621,7 +687,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
    else if (style->fill.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient));
+        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, vg_data));
      }
    else if (style->fill.paint.cur_color)
      {
@@ -648,7 +714,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg)
    else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient));
+        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, vg_data));
      }
    else if (style->stroke.paint.url)
      {
@@ -685,7 +751,7 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
 }
 
 static Efl_VG *
-vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
+vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg_data)
 {
    Efl_VG *vg = NULL;
    Svg_Node *child;
@@ -697,10 +763,10 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
         case SVG_NODE_G:
            {
               vg = evas_vg_container_add(parent);
-              _apply_vg_property(node, vg);
+              _apply_vg_property(node, vg, vg_data);
               EINA_LIST_FOREACH(node->child, l, child)
                 {
-                   vg_common_create_vg_node_helper(child, vg);
+                   vg_common_create_vg_node_helper(child, vg, vg_data);
                 }
               return vg;
            }
@@ -746,7 +812,7 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent)
            break;
      }
    if (vg)
-   _apply_vg_property(node, vg);
+   _apply_vg_property(node, vg, vg_data);
    return vg;
 }
 
@@ -763,7 +829,7 @@ vg_common_create_vg_node(Svg_Node *node)
    vg_data->view_box.w = node->node.doc.vw;
    vg_data->view_box.h = node->node.doc.vh;
    vg_data->preserve_aspect = node->node.doc.preserve_aspect;
-   vg_data->root = vg_common_create_vg_node_helper(node, NULL);
+   vg_data->root = vg_common_create_vg_node_helper(node, NULL, vg_data);
 
    return vg_data;
 }

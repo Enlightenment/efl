@@ -318,12 +318,6 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
 }
 
 void
-evas_software_xlib_swapbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_Image *update EINA_UNUSED)
-{
-   /* no need to do anything - they are cleaned up on flush */
-}
-
-void
 evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect *buffer_damage EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;

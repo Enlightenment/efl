@@ -444,7 +444,7 @@ START_TEST(eolian_complex_type)
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
    fail_if(eolian_type_is_owned(type));
-   fail_if(strcmp(type_name, "int"));
+   fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
 
    /* Methods return type */
@@ -1544,6 +1544,51 @@ START_TEST(eolian_function_as_arguments)
 }
 END_TEST
 
+START_TEST(eolian_parts)
+{
+   const Eolian_Unit *unit;
+   const Eolian_Class *cls;
+   Eina_Iterator *iter;
+   Eolian_Part *part;
+   int i = 0;
+
+   static const char *part_classes[] = {
+      "Override", "Base", "Parts"
+   };
+
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   fail_if(!(unit = eolian_file_parse(PACKAGE_DATA_DIR"/data/parts.eo")));
+
+   fail_if(!(cls = eolian_class_get_by_name(unit, "Parts")));
+
+   fail_if(!(iter = eolian_class_parts_get(cls)));
+
+   EINA_ITERATOR_FOREACH(iter, part)
+     {
+        const Eolian_Documentation *doc;
+        const Eolian_Class *klass;
+        char pattern[24];
+
+        sprintf(pattern, "part%d", i + 1);
+        ck_assert_str_eq(pattern, eolian_part_name_get(part));
+
+        sprintf(pattern, "Part %d", i + 1);
+        fail_if(!(doc = eolian_part_documentation_get(part)));
+        ck_assert_str_eq(pattern, eolian_documentation_summary_get(doc));
+
+        fail_if(!(klass = eolian_part_class_get(part)));
+        ck_assert_str_eq(part_classes[i], eolian_class_name_get(klass));
+        i++;
+     }
+   eina_iterator_free(iter);
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1567,4 +1612,5 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_docs);
    tcase_add_test(tc, eolian_function_types);
    tcase_add_test(tc, eolian_function_as_arguments);
+   tcase_add_test(tc, eolian_parts);
 }

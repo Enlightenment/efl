@@ -30,6 +30,7 @@ typedef struct _Elm_Code_Line
 
    Elm_Code_Status_Type status;
    Eina_List *tokens;
+   unsigned int scope;
 
    void *data;
    char *status_text;
@@ -103,6 +104,8 @@ EAPI void elm_code_line_status_clear(Elm_Code_Line *line);
 EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
 
 EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line);
+
+EAPI unsigned int elm_code_line_scope_get(Elm_Code_Line *line);
 
 EAPI Eina_Bool elm_code_line_contains_widget_cursor(Elm_Code_Line *line);
 

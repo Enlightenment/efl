@@ -1,8 +1,4 @@
-#include "evas_common_private.h"
 #include "evas_font_private.h"
-#include "evas_text_utils.h"
-#include "language/evas_bidi_utils.h"
-#include "language/evas_language_utils.h"
 
 #define PROPS_CHANGE(Props) Props->changed = EINA_TRUE;
 
@@ -47,7 +43,7 @@ evas_common_text_props_content_ref(Evas_Text_Props *props)
       return;
 
    props->info->refcount++;
-   if (props->font_instance) 
+   if (props->font_instance)
      ((RGBA_Font_Int *)props->font_instance)->references++;
 }
 
@@ -541,7 +537,7 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
         text_props->font_instance = fi;
         fi->references++;
      }
-   
+
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {

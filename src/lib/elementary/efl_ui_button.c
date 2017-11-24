@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
@@ -300,7 +300,7 @@ EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -389,10 +389,10 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(Eo *obj EINA_UNUSED,
    return sd->ar_gap_timeout;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_button_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_efl_ui_button_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate },
           { NULL, NULL, NULL, NULL}
    };
@@ -409,6 +409,8 @@ _efl_ui_button_class_constructor(Efl_Class *klass)
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_button, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 

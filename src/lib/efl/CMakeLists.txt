@@ -7,6 +7,7 @@ set(PUBLIC_EO_FILES
   interfaces/efl_canvas.eo
   interfaces/efl_config.eo
   interfaces/efl_container.eo
+  interfaces/efl_content.eo
   interfaces/efl_control.eo
   interfaces/efl_file.eo
   interfaces/efl_flipable.eo

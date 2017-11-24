@@ -3,9 +3,7 @@
 #endif
 
 #include <assert.h>
-
-#include "evas_common_private.h"
-#include "evas_private.h"
+#include "evas_font_ot.h"
 
 #ifdef USE_HARFBUZZ
 # include <hb.h>
@@ -13,7 +11,7 @@
 
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
-#include <ft2build.h> 
+#include <ft2build.h>
 #include FT_TRUETYPE_TABLES_H /* Freetype2 OS/2 font table. */
 
 #ifdef EVAS_CSERVE2
@@ -142,7 +140,7 @@ evas_common_font_dpi_set(int dpi_h, int dpi_v)
 EAPI RGBA_Font_Source *
 evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
 {
-   int error; 
+   int error;
    RGBA_Font_Source *fs;
 
    assert(name != NULL);
@@ -218,7 +216,7 @@ evas_common_font_source_reload(RGBA_Font_Source *fs)
   if (fs->data)
     {
       int error;
-      
+
       FTLOCK();
       error = FT_New_Memory_Face(evas_ft_lib, fs->data, fs->data_size, 0, &(fs->ft.face));
       FTUNLOCK();
@@ -316,8 +314,8 @@ _evas_common_font_double_int_cmp(const int *key1, EINA_UNUSED int key1_length,
 static int
 _evas_common_font_double_int_hash(const unsigned int key[2], int key_length)
 {
-   return 
-    eina_hash_int32(&key[0], key_length) ^ 
+   return
+    eina_hash_int32(&key[0], key_length) ^
     eina_hash_int32(&key[1], key_length);
 }
 
@@ -336,19 +334,17 @@ EAPI RGBA_Font_Int *
 evas_common_font_int_memory_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font_Int *fi;
-   char *fake_name;
+   char fake_name[PATH_MAX];
 
-   fake_name = evas_file_path_join(source, name);
+   eina_file_path_join(fake_name, sizeof(fake_name), source, name);
    fi = evas_common_font_int_find(fake_name, size, wanted_rend, bitmap_scalable);
    if (fi)
      {
-        free(fake_name);
         return fi;
      }
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi)
      {
-        free(fake_name);
         return NULL;
      }
    fi->src = evas_common_font_source_find(fake_name);
@@ -356,9 +352,8 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
     fi->src = evas_common_font_source_memory_load(fake_name, data, data_size);
    if (!fi->src)
      {
-	free(fi);
-        free(fake_name);
-	return NULL;
+        free(fi);
+        return NULL;
      }
    fi->size = size;
    fi->bitmap_scalable = bitmap_scalable;
@@ -380,8 +375,17 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
           }
      }
 #endif
-   free(fake_name);
    return fi;
+}
+
+static int
+_file_path_is_file_helper(const char *path)
+{
+   struct stat st;
+
+   if (stat(path, &st) == -1) return 0;
+   if (S_ISREG(st.st_mode)) return 1;
+   return 0;
 }
 
 EAPI RGBA_Font_Int *
@@ -396,7 +400,7 @@ evas_common_font_int_load(const char *name, int size,
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi) return NULL;
    fi->src = evas_common_font_source_find(name);
-   if (!fi->src && evas_file_path_is_file(name))
+   if (!fi->src && _file_path_is_file_helper(name))
      fi->src = evas_common_font_source_load(name);
 
    if (!fi->src)
@@ -466,7 +470,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	for (i = 0; i < fi->src->ft.face->num_fixed_sizes; i++)
 	  {
 	     int s, cd;
-             
+
 	     s = fi->src->ft.face->available_sizes[i].size;
 	     cd = chosen_size - fi->real_size;
 	     if (cd < 0) cd = -cd;
@@ -853,7 +857,7 @@ void
 evas_common_font_int_promote(RGBA_Font_Int *fi EINA_UNUSED)
 {
   return;
-/* unused - keep for reference  
+/* unused - keep for reference
   if (fonts_use_lru == (Eina_Inlist *)fi) return;
   if (!fi->inuse) return;
   fonts_use_lru = eina_inlist_remove(fonts_use_lru, EINA_INLIST_GET(fi));
@@ -871,7 +875,7 @@ void
 evas_common_font_int_use_trim(void)
 {
   return;
-/* unused - keep for reference  
+/* unused - keep for reference
   Eina_Inlist *l;
 
   if (fonts_use_usage <= (font_cache << 1)) return;
@@ -894,7 +898,7 @@ void
 evas_common_font_int_unload(RGBA_Font_Int *fi EINA_UNUSED)
 {
   return;
-/* unused - keep for reference  
+/* unused - keep for reference
   if (!fi->src->ft.face) return;
   _evas_common_font_int_clear(fi);
   FT_Done_Size(fi->ft.size);
@@ -909,7 +913,7 @@ evas_common_font_int_reload(RGBA_Font_Int *fi)
   if (fi->src->ft.face) return;
   evas_common_font_source_load_complete(fi->src);
   return;
-/* unused - keep for reference  
+/* unused - keep for reference
   evas_common_font_source_reload(fi->src);
   evas_common_font_int_load_complete(fi);
  */
@@ -947,7 +951,7 @@ evas_common_font_flush(void)
    while (font_cache_usage > font_cache)
      {
         int pfont_cache_usage;
-        
+
         pfont_cache_usage = font_cache_usage;
         evas_common_font_flush_last();
         if (pfont_cache_usage == font_cache_usage) break;

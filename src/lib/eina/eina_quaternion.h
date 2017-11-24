@@ -144,10 +144,10 @@ EAPI void eina_quaternion_matrix4_to(Eina_Matrix4 *m,
 /**
  * @brief Compute the inverse of the given quaternion.
  *
- * @param out The quaternion to inverse.
+ * @param out The quaternion to invert.
  * @param q The quaternion matrix.
  *
- * This function inverse the quaternion @p q and stores the result in
+ * This function inverses the quaternion @p q and stores the result in
  * @p out.
  *
  * @since 1.17

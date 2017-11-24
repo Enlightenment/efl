@@ -383,12 +383,12 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_NORMAL,            /**< The plain normal layout @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_FILENAME,          /**< Filename layout. Symbols such as '/' should be disabled. @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL_VARIATION_PERSON_NAME        /**< The name of a person. @since 1.12 */
-} Ecore_IMF_Input_Layout_Normal_Variation;
+} Ecore_IMF_Input_Panel_Layout_Normal_Variation;
 
 /**
  * @typedef Ecore_IMF_Input_Panel_Layout_Numberonly_Variation
  * @brief Enumeration for defining the types of Ecore_IMF Input Panel layout for numberonly variation
- * @since 1.18
+ * @since 1.8
  */
 typedef enum
 {

@@ -180,6 +180,39 @@ EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const cha
 EAPI Evas_Object          *elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title);
 
 /**
+ * @brief Set the window's autodel state.
+ *
+ * When closing the window in any way outside of the program control, like
+ * pressing the X button in the titlebar or using a command from the Window
+ * Manager, a "delete,request" signal is emitted to indicate that this event
+ * occurred and the developer can take any action, which may include, or not,
+ * destroying the window object.
+ *
+ * When the @c autodel parameter is set, the window will be automatically
+ * destroyed when this event occurs, after the signal is emitted. If @c autodel
+ * is @c false, then the window will not be destroyed and is up to the program
+ * to do so when it's required.
+ *
+ * @param[in] obj The object.
+ * @param[in] autodel If @c true, the window will automatically delete itself
+ * when closed.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
+
+/**
+ * @brief Get the window's autodel state.
+ *
+ * @param[in] obj The object.
+ *
+ * @return If @c true, the window will automatically delete itself when closed.
+ *
+ * @ingroup Elm_Win
+ */
+EAPI Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
+
+/**
  * Set the floating mode of a window.
  *
  * @param obj The window object
@@ -270,7 +303,7 @@ EAPI int                   elm_win_norender_get(const Evas_Object *obj);
  * @param obj The window object
  *
  * You should NEVER call this unless you really know what you are doing and
- * why. Never call this unless you are asking for performance degredation
+ * why. Never call this unless you are asking for performance degradation
  * and possibly weird behavior. Windows get automatically rendered when the
  * application goes into the idle enter state so there is never a need to call
  * this UNLESS you have enabled "norender" mode.
@@ -705,7 +738,7 @@ EAPI Eina_Bool elm_win_wm_rotation_supported_get(const Evas_Object *obj);
 /**
  * @brief Get the preferred rotation value.
  *
- * This function is used to get the preferred rotoation value.
+ * This function is used to get the preferred rotation value.
  *
  * @return The preferred rotation of the window in degrees (0-360),
  * counter-clockwise.
@@ -1023,7 +1056,7 @@ EAPI int elm_win_layer_get(const Evas_Object *obj);
 EAPI Evas_Object *elm_win_inlined_image_object_get(const Evas_Object *obj);
 
 /**
- * @brief Internal. Used to completent the fake window type.
+ * @brief Internal. Used to complete the fake window type.
  *
  * @param[in] oee
  *
@@ -1097,9 +1130,9 @@ EAPI double elm_win_aspect_get(const Elm_Win *obj);
  * This function grabs the @c key of window using @c grab_mode.
  *
  * @param[in] key This string is the keyname to grab.
- * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * @param[in] modifiers A combination of modifier keys that must be present to
  * trigger the event. Not supported yet.
- * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * @param[in] not_modifiers A combination of modifier keys that must not be
  * present to trigger the event. Not supported yet.
  * @param[in] priority Not supported yet.
  * @param[in] grab_mode Describes how the key should be grabbed, wrt. focus and
@@ -1115,9 +1148,9 @@ EAPI Eina_Bool elm_win_keygrab_set(Elm_Win *obj, const char *key, Evas_Modifier_
  * This function unset keygrab value. Ungrab @c key of window.
  *
  * @param[in] key This string is the keyname to grab.
- * @param[in] modifiers A combinaison of modifier keys that must be present to
+ * @param[in] modifiers A combination of modifier keys that must be present to
  * trigger the event. Not supported yet.
- * @param[in] not_modifiers A combinaison of modifier keys that must not be
+ * @param[in] not_modifiers A combination of modifier keys that must not be
  * present to trigger the event. Not supported yet.
  *
  * @return @c true on success, @c false otherwise
@@ -1256,3 +1289,36 @@ EAPI void elm_win_available_profiles_set(Elm_Win *obj, const char **profiles, un
  * @ingroup Efl_Ui_Win
  */
 EAPI Eina_Bool elm_win_available_profiles_get(const Elm_Win *obj, char ***profiles, unsigned int *count);
+
+/**
+ * @brief Set the array of available window rotations.
+ *
+ * This function is used to set the available rotations to give the hints to
+ * WM. WM will refer this hints and set the orientation window properly.
+ *
+ * @param[in] obj The object.
+ * @param[in] rotations The array of rotation value.
+ * @param[in] count The size of the rotations array.
+ *
+ * @since 1.9
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI void elm_win_wm_rotation_available_rotations_set(Elm_Win *obj, const int *rotations, unsigned int count);
+
+/**
+ * @brief Get the array of available window rotations.
+ *
+ * This function is used to get the available rotations.
+ *
+ * @param[in] obj The object.
+ * @param[out] rotations The array of rotation value.
+ * @param[out] count The size of the rotations array.
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.9
+ *
+ * @ingroup Efl_Ui_Win
+ */
+EAPI Eina_Bool elm_win_wm_rotation_available_rotations_get(const Elm_Win *obj, int **rotations, unsigned int *count);

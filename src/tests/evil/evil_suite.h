@@ -31,8 +31,8 @@ void evil_test_dlfcn(TCase *tc);
 void evil_test_main(TCase *tc);
 /* void evil_test_mman(TCase *tc); */
 /* void evil_test_pwd(TCase *tc); */
-/* void evil_test_stdio(TCase *tc); */
-/* void evil_test_stdlib(TCase *tc); */
+void evil_test_stdio(TCase *tc);
+void evil_test_stdlib(TCase *tc);
 /* void evil_test_string(TCase *tc); */
 /* void evil_test_time(TCase *tc); */
 /* void evil_test_unistd(TCase *tc); */

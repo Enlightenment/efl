@@ -3,7 +3,7 @@ class Elm.Dayselector.Part (Efl.Ui.Layout.Part_Legacy)
    [[Elementary dayselector internal part class]]
    data: null;
    implements {
-      Efl.Container.content { set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { set; }
+      Efl.Content.content_unset;
    }
 }

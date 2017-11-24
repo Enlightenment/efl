@@ -1,15 +1,13 @@
 class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
-                     Efl.Text, Efl.Text.Markup,
-                     Elm.Interface.Atspi_Widget_Action, Efl.Ui.Translatable)
+                     Efl.Text, Efl.Text.Markup, Efl.Content,
+                     Efl.Access.Widget.Action, Efl.Ui.Translatable)
 {
    [[Push-button widget
 
-   Press it and run some function. It can contain a simple label and icon object
-   and it also has an autorepeat feature.
+     Press it and run some function. It can contain a simple label and icon
+     object and it also has an autorepeat feature.
    ]]
    legacy_prefix: elm_button;
-   methods {
-   }
    implements {
       class.constructor;
       Efl.Object.constructor;
@@ -21,8 +19,10 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Elm.Widget.theme_apply;
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Text.text { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
    }

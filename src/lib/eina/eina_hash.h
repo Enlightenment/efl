@@ -215,7 +215,7 @@
  * However, @ref eina_hash_string_small_new still uses the same hash calculation
  * function that @ref eina_hash_string_superfast_new, which is more complex than
  * @ref eina_hash_string_djb2_new. The latter has a faster hash computation
- * function, but that will imply on a not so good distribution. But if just a
+ * function, but that will imply a not so good distribution. But if just a
  * few keys are being added, this is not a problem, it will still have not many
  * collisions and be faster to calculate the hash than in a hash created with
  * @ref eina_hash_string_small_new and @ref eina_hash_string_superfast_new.
@@ -381,7 +381,7 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
                               int             buckets_power_size) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(2, 3);
 
 /**
- * @brief Redefines the callback that clean the data of a hash.
+ * @brief Redefines the callback that cleans the data of a hash.
  *
  * @param hash The given hash table
  * @param data_free_cb The function called on each value when the hash
@@ -520,7 +520,7 @@ EAPI Eina_Hash *eina_hash_pointer_new(Eina_Free_Cb data_free_cb);
  * @return  The new hash table.
  *
  * This function creates a new hash table optimized for stringshared
- * values. Values CAN NOT be looked up with pointers not
+ * values. Values CANNOT be looked up with pointers not
  * equal to the original key pointer that was used to add a value. On failure,
  * this function returns @c NULL.
  *
@@ -564,7 +564,6 @@ EAPI Eina_Bool  eina_hash_add(Eina_Hash  *hash,
 
 /**
  * @brief Adds an entry to the given hash table without duplicating the string.
- * key.
  *
  * @param hash The given hash table. Cannot be @c NULL.
  * @param key A unique key. Cannot be @c NULL.
@@ -602,7 +601,7 @@ EAPI Eina_Bool eina_hash_direct_add(Eina_Hash  *hash,
  * This function removes the entry identified by @p key or @p data
  * from @p hash. If a free function was given to the
  * callback on creation, it will be called for the data being
- * deleted. If @p hash is @c NULL, the functions returns immediately #EINA_FALSE.
+ * deleted. If @p hash is @c NULL, the function returns immediately #EINA_FALSE.
  * If @p key is @c NULL, then @p data is used to find the a
  * match to remove, otherwise @p key is used and @p data is not
  * required and can be @c NULL. This function returns #EINA_FALSE if
@@ -692,7 +691,7 @@ EAPI Eina_Bool eina_hash_move(Eina_Hash  *hash,
  * @param hash The hash table to be freed.
  *
  * This function frees up all the memory allocated to storing @p hash,
- * and call the free callback if it has been passed to the hash table
+ * and calls the free callback if it has been passed to the hash table
  * at creation time. If no free callback has been passed, any entries
  * in the table that the program has no more pointers for elsewhere
  * may now be lost, so this should only be called if the program has
@@ -806,7 +805,7 @@ EAPI Eina_Bool eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * @param hash The given hash table. Cannot be @c NULL.
  * @param key The key. Cannot be @c NULL.
  * @param key_length The length of the key.
- * @param key_hash The hash that always match the key.
+ * @param key_hash The hash that always matches the key.
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * This function removes the entry identified by @p key and
@@ -814,7 +813,7 @@ EAPI Eina_Bool eina_hash_direct_add_by_hash(Eina_Hash  *hash,
  * callback on creation, it will be called for the data being
  * deleted. Do not forget to count '\\0' for string when setting the
  * value of @p key_length. If @p hash or @p key are @c NULL, the
- * functions returns immediately #EINA_FALSE. This function
+ * function returns immediately #EINA_FALSE. This function
  * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @note If you don't have the key_hash, use eina_hash_del_by_key() instead.
@@ -837,10 +836,10 @@ EAPI Eina_Bool eina_hash_del_by_key_hash(Eina_Hash  *hash,
  *
  * This function removes the entry identified by @p key from @p
  * hash. The key length and hash will be calculated automatically by
- * using function provided to has creation function. If a free
+ * using function provided to hash creation function. If a free
  * function was given to the callback on creation, it will be called
  * for the data being deleted. If @p hash or @p key are @c NULL, the
- * functions returns immediately #EINA_FALSE. This function
+ * function returns immediately #EINA_FALSE. This function
  * returns #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
  * @note If you already have the key_hash, use eina_hash_del_by_key_hash()
@@ -863,7 +862,7 @@ EAPI Eina_Bool eina_hash_del_by_key(Eina_Hash  *hash,
  * This function removes the entry identified by @p data from @p
  * hash. If a free function was given to the callback on creation, it
  * will be called for the data being deleted. If @p hash or @p data
- * are @c NULL, the functions returns immediately #EINA_FALSE. This
+ * are @c NULL, the function returns immediately #EINA_FALSE. This
  * function returns #EINA_FALSE if an error occurred, #EINA_TRUE
  * otherwise.
  *
@@ -890,7 +889,7 @@ EAPI Eina_Bool eina_hash_del_by_data(Eina_Hash  *hash,
  * This function removes the entry identified by @p key and
  * @p key_hash, or @p data, from @p hash. If a free function was given to
  * the  callback on creation, it will be called for the data being
- * deleted. If @p hash is @c NULL, the functions returns immediately #EINA_FALSE.
+ * deleted. If @p hash is @c NULL, the function returns immediately #EINA_FALSE.
  * If @p key is @c NULL, then @p key_length and @p key_hash
  * are ignored and @p data is used to find a match to remove,
  * otherwise @p key and @p key_hash are used and @p data is not
@@ -982,7 +981,7 @@ EAPI Eina_Iterator *eina_hash_iterator_key_new(const Eina_Hash *hash) EINA_MALLO
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, @c NULL is returned.
+ * If the memory cannot be allocated, @c NULL is returned.
  * Otherwise, a valid iterator is returned.
  *
  * @warning if the hash structure changes then the iterator becomes

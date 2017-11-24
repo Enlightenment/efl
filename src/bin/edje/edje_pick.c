@@ -256,18 +256,18 @@ _edje_pick_cleanup(Eina_List *ifs, Edje_File *out_file, Edje_Pick_Status s)
         if (p->edf)
           _edje_cache_file_unref(p->edf);
 
+        EINA_LIST_FREE(p->fontlist, ft)
+          {
+             Edje_Font *st = ft->f;
+
+             eina_stringshare_del(st->name);
+             eina_stringshare_del(st->file);
+             free(ft->data);
+             free(st);
+             free(ft);
+          }
+
         free(p);
-     }
-
-   EINA_LIST_FREE(p->fontlist, ft)
-     {
-        Edje_Font *st = ft->f;
-
-        eina_stringshare_del(st->name);
-        eina_stringshare_del(st->file);
-        free(ft->data);
-        free(st);
-        free(ft);
      }
 
    switch (s)

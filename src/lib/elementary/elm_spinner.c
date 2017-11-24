@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -12,6 +12,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
+#include "elm_entry.eo.h"
 
 #include "Eo.h"
 
@@ -54,9 +55,7 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
 static void
 _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
-_text_button_focused_cb(void *data, const Efl_Event *event);
-static void
-_entry_unfocused_cb(void *data, const Efl_Event *event);
+_entry_focus_change(void *data, const Efl_Event *event);
 static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 
@@ -408,7 +407,7 @@ _entry_value_apply(Evas_Object *obj)
    if (!sd->entry_visible) return;
 
    efl_event_callback_del
-    (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+    (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -647,7 +646,7 @@ _toggle_entry(Evas_Object *obj)
           }
 
         efl_event_callback_add
-           (sd->ent, EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_unfocused_cb, obj);
+           (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
@@ -875,9 +874,10 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_text_button_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_text_button_focus_change(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
@@ -886,11 +886,11 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
    _toggle_entry(data);
 }
 
-
 static void
-_entry_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_entry_focus_change(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (!efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
@@ -1213,8 +1213,9 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
+
         efl_event_callback_add
-          (priv->text_button, EFL_UI_WIDGET_EVENT_FOCUSED, _text_button_focused_cb, obj);
+          (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);
@@ -1352,7 +1353,7 @@ EAPI Evas_Object *
 elm_spinner_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EAPI void
@@ -1644,10 +1645,10 @@ _elm_spinner_class_constructor(Efl_Class *klass)
       _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Atspi_Action *
-_elm_spinner_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data *
+_elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},
       { NULL, NULL, NULL, NULL }
    };
@@ -1690,12 +1691,20 @@ _elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Dat
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd)
 {
-   const char *name;
+   const char *name, *ret;
    name = efl_access_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
-   const char *ret = elm_layout_text_get(obj, "elm.text");
+   if (sd->button_layout)
+     {
+        if (sd->entry_visible)
+          ret = elm_object_text_get(sd->ent);
+        else
+          ret = elm_object_text_get(sd->text_button);
+     }
+   else
+     ret = elm_layout_text_get(obj, "elm.text");
    return ret;
 }
 

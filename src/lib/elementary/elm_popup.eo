@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widget_Action)
+class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action)
 {
    [[Elementary popup class]]
    legacy_prefix: elm_popup;
@@ -175,8 +175,9 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Elm.Interface.Atspi_Widget_A
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
       Efl.Canvas.Layout_Signal.signal_emit;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }
+      Efl.Access.name { get; }
       Efl.Part.part;
    }
    events {

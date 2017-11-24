@@ -2,7 +2,7 @@ interface Efl.Access.Value ()
 {
    [[Elementary Access value interface]]
    methods {
-      @property value_and_text @protected {
+      @property value_and_text @protected @beta {
       	 [[Value and text property]]
          get {
             [[Gets value displayed by a accessible widget.]]
@@ -15,7 +15,7 @@ interface Efl.Access.Value ()
             text: string; [[string describing value in given context eg. small, enough]]
          }
       }
-      @property range @protected {
+      @property range @protected @beta {
          get {
             [[Gets a range of all possible values and its description]]
          }
@@ -25,7 +25,7 @@ interface Efl.Access.Value ()
             description: string; [[Description of the range]]
          }
       }
-      @property increment @protected {
+      @property increment @protected @beta {
          get {
             [[Gets an minimal incrementation value]]
          }

@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -430,11 +430,14 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 
    buf = eina_strbuf_new();
    eina_strbuf_append(buf, info);
+   eina_strbuf_append_printf(buf, ", %s", N_("Title"));
 
    info = elm_object_part_text_get(layout, SUBTITLE_PART);
    if (!info) goto end;
+   if (!strcmp(info, "")) goto end;
 
    eina_strbuf_append_printf(buf, ", %s", info);
+   eina_strbuf_append_printf(buf, ", %s", N_("Subtitle"));
 
 end:
    ret = eina_strbuf_string_steal(buf);
@@ -1581,7 +1584,7 @@ EAPI Evas_Object *
 elm_naviframe_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -1995,10 +1998,10 @@ _elm_naviframe_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_naviframe_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_naviframe_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "top_item_get", "top_item_get", NULL, _key_action_top_item_get },
           { "item_pop", "item_pop", NULL, _key_action_item_pop },
           { NULL, NULL, NULL, NULL }

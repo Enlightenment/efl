@@ -37,8 +37,8 @@ static const Efl_Test_Case etc[] = {
    { "Main", evil_test_main },
    /* { "Mman", evil_test_mman }, */
    /* { "Pwd", evil_test_pwd }, */
-   /* { "Stdio", evil_test_stdio }, */
-   /* { "Stdlib", evil_test_stdlib }, */
+   { "Stdio", evil_test_stdio },
+   { "Stdlib", evil_test_stdlib },
    /* { "String", evil_test_string }, */
    /* { "Time", evil_test_time }, */
    /* { "Unistd", evil_test_unistd }, */

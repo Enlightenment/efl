@@ -621,7 +621,7 @@ err:
      {
         if (EINA_UNLIKELY(obj->auto_unref != 0))
           {
-             if (!(--obj->auto_unref))
+             if (obj->finalized && !(--obj->auto_unref))
                efl_unref(eo_id);
           }
         _efl_unref(obj);
@@ -680,7 +680,7 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
      {
         if (EINA_UNLIKELY(call->obj->auto_unref != 0))
           {
-             if (!(--call->obj->auto_unref))
+             if (call->obj->finalized && !(--call->obj->auto_unref))
                efl_unref(call->eo_id);
           }
         _efl_unref(call->obj);
@@ -750,7 +750,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
                        "Unable to resolve op for api func %p for obj=%p (%s)", api_func, eo_obj, efl_class_name_get(eo_obj));
         if (EINA_UNLIKELY(obj->auto_unref))
           {
-             if (!(--obj->auto_unref))
+             if (obj->finalized && !(--obj->auto_unref))
                efl_unref(eo_obj);
           }
         return EFL_NOOP;
@@ -1188,7 +1188,7 @@ static void
 _vtable_free(Eo_Vtable *vtable)
 {
    if (!vtable) return;
-   eina_freeq_ptr_main_add(vtable, EINA_FREE_CB(_vtable_func_clean_all), 0);
+   _vtable_func_clean_all(vtable);
    eina_freeq_ptr_main_add(vtable, free, sizeof(*vtable));
 }
 
@@ -1904,7 +1904,7 @@ efl_unref(const Eo *obj_id)
 }
 
 EAPI int
-efl_ref_get(const Eo *obj_id)
+efl_ref_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
    int ref;
@@ -1914,7 +1914,7 @@ efl_ref_get(const Eo *obj_id)
 }
 
 EAPI int
-___efl_ref2_get(const Eo *obj_id)
+___efl_ref2_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
    int ref;
@@ -3390,22 +3390,12 @@ _eo_value_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
    return EINA_TRUE;
 }
 
-static void
-_eo_value_replace(Eo **dst, Eo * const *src)
-{
-   if (*src == *dst) return;
-   //ref *src first, since efl_unref(*dst) may trigger *src unref()
-   efl_ref(*src);
-   efl_unref(*dst);
-   *dst = *src;
-}
-
 static Eina_Bool
 _eo_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, va_list args)
 {
    Eo **dst = mem;
    Eo **src = va_arg(args, Eo **);
-   _eo_value_replace(dst, src);
+   efl_replace(dst, *src);
    return EINA_TRUE;
 }
 
@@ -3415,7 +3405,7 @@ _eo_value_pset(const Eina_Value_Type *type EINA_UNUSED,
 {
    Eo **dst = mem;
    Eo * const *src = ptr;
-   _eo_value_replace(dst, src);
+   efl_replace(dst, *src);
    return EINA_TRUE;
 }
 

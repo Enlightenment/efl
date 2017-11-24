@@ -16,7 +16,7 @@ popup.on('timeout', function()
 			       popup.setVisible(false);
 			   });
 
-content_container = popup.part("elm.swallow.content").cast("Efl.Container");
+content_container = popup.part("elm.swallow.content").cast("Efl.Content");
 content_container.setContent(content);
 
 popup.setPartText("title,text", "Title");

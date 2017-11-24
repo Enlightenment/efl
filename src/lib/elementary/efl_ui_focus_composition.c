@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -41,15 +42,23 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    else if (pd->registered)
      {
         Eina_List *n;
+        Eina_List *safed = NULL;
         Efl_Ui_Focus_Object *o;
+
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
-             efl_ui_focus_manager_calc_unregister(manager, o);
+             if (!!eina_list_data_find(pd->register_target, o))
+               safed = eina_list_append(safed, o);
+             else
+               efl_ui_focus_manager_calc_unregister(manager, o);
           }
+        pd->registered_targets = safed;
 
         EINA_LIST_FOREACH(pd->register_target, n, o)
           {
+             if (!!eina_list_data_find(pd->registered_targets, o)) continue;
+
              if (!pd->logical)
                efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
              else
@@ -167,9 +176,9 @@ _efl_ui_focus_composition_elements_flush(Eo *obj, Efl_Ui_Focus_Composition_Data 
 EOLIAN static void
 _efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
 {
-   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
-
    efl_ui_focus_composition_elements_flush(obj);
+
+   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

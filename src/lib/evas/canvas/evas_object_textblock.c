@@ -361,31 +361,31 @@ static const Evas_Object_Style_Tag_Base default_tags[] = {
 /**
  * @internal
  * @def _NODE_TEXT(x)
- * A convinience macro for casting to a text node.
+ * A convenience macro for casting to a text node.
  */
 #define _NODE_TEXT(x)  ((Evas_Object_Textblock_Node_Text *) (x))
 /**
  * @internal
  * @def _NODE_FORMAT(x)
- * A convinience macro for casting to a format node.
+ * A convenience macro for casting to a format node.
  */
 #define _NODE_FORMAT(x)  ((Evas_Object_Textblock_Node_Format *) (x))
 /**
  * @internal
  * @def _ITEM(x)
- * A convinience macro for casting to a generic item.
+ * A convenience macro for casting to a generic item.
  */
 #define _ITEM(x)  ((Evas_Object_Textblock_Item *) (x))
 /**
  * @internal
  * @def _ITEM_TEXT(x)
- * A convinience macro for casting to a text item.
+ * A convenience macro for casting to a text item.
  */
 #define _ITEM_TEXT(x)  ((Evas_Object_Textblock_Text_Item *) (x))
 /**
  * @internal
  * @def _ITEM_FORMAT(x)
- * A convinience macro for casting to a format item.
+ * A convenience macro for casting to a format item.
  */
 #define _ITEM_FORMAT(x)  ((Evas_Object_Textblock_Format_Item *) (x))
 
@@ -909,7 +909,7 @@ _style_clear(Evas_Textblock_Style *ts)
  * @param ts The ts to be cleared. Must not be NULL.
  * @param s The tag to be matched.
  * @param tag_len the length of the tag string.
- * @param[out] replace_len The length of the replcaement found. - Must not be NULL.
+ * @param[out] replace_len The length of the replacement found. - Must not be NULL.
  * @return The replacement string found.
  */
 static inline const char *
@@ -1007,7 +1007,7 @@ _format_unref_free(Evas_Object_Protected_Data *evas_o, Evas_Object_Textblock_For
         fmt->gfx_filter = NULL;
      }
    if ((obj->layer) && (obj->layer->evas))
-     evas_font_free(obj->layer->evas->evas, fmt->font.font);
+     evas_font_free(fmt->font.font);
    free(fmt);
 }
 
@@ -2669,7 +2669,7 @@ _format_is_param(const char *item)
 /**
  * @internal
  * Parse the format item and populate key and val with the stringshares that
- * corrospond to the formats parsed.
+ * correspond to the formats parsed.
  * It expects item to be of the structure:
  * "key=val"
  *
@@ -2835,8 +2835,12 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
    if (fmt->font.source) fmt2->font.source = eina_stringshare_add(fmt->font.source);
 
    /* FIXME: just ref the font here... */
-   fmt2->font.font = evas_font_load(obj->layer->evas->evas, fmt2->font.fdesc,
-         fmt2->font.source, (int)(((double) fmt2->font.size) * obj->cur->scale), fmt2->font.bitmap_scalable);
+   fmt2->font.font = evas_font_load(obj->layer->evas->font_path,
+                                    obj->layer->evas->hinting,
+                                    fmt2->font.fdesc,
+                                    fmt2->font.source,
+                                    (int)(((double) fmt2->font.size) * obj->cur->scale),
+                                    fmt2->font.bitmap_scalable);
 
    if (fmt->gfx_filter)
      {
@@ -2904,6 +2908,7 @@ struct _Ctxt
    Evas_Textblock_Align_Auto align_auto : 2;
    Eina_Bool width_changed : 1;
    Eina_Bool handle_obstacles : 1;
+   Eina_Bool vertical_ellipsis : 1;  /**<EINA_TRUE if needs vertical ellipsis, else EINA_FALSE. */
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
@@ -3380,7 +3385,6 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                }
              fmt->font.fdesc = evas_font_desc_new();
 
-             evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
              eina_stringshare_replace(&(fmt->font.fdesc->lang),
                    evas_font_lang_normalize("auto"));
              eina_stringshare_replace(&(fmt->font.fdesc->fallbacks),
@@ -3391,8 +3395,13 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              fmt->font.fdesc->slant = _FMT_INFO(font_slant);
              fmt->font.fdesc->width = _FMT_INFO(font_width);
              fmt->font.fdesc->lang = _FMT_INFO(font_lang);
-             fmt->font.font = evas_font_load(evas_obj->layer->evas->evas, fmt->font.fdesc,
-                   fmt->font.source, (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale), fmt->font.bitmap_scalable);
+             evas_font_name_parse(fmt->font.fdesc, _FMT_INFO(font));
+             fmt->font.font = evas_font_load(evas_obj->layer->evas->font_path,
+                                             evas_obj->layer->evas->hinting,
+                                             fmt->font.fdesc,
+                                             fmt->font.source,
+                                             (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale),
+                                             fmt->font.bitmap_scalable);
           }
         if (_FMT_INFO(gfx_filter_name))
           {
@@ -3920,6 +3929,41 @@ loop_advance:
              c->ln->y += c->o->style_pad.t;
              c->y += c->o->style_pad.t;
           }
+
+        if ((c->position == TEXTBLOCK_POSITION_END) ||
+              (c->position == TEXTBLOCK_POSITION_SINGLE))
+          {
+             c->ln->h += c->o->style_pad.b;
+          }
+     }
+
+   /* Check current line's height is acceptable or not */
+   if ((fmt->ellipsis == 1.0) &&
+       (c->h > 0) && (c->y + c->ln->h > c->h))
+     {
+        /* No text is shown when the object height is smaller than actual font size's height.
+         * Vertical ellipsis is not handled if the object has only one line. */
+        if ((EINA_INLIST_GET(c->paragraphs) != EINA_INLIST_GET(c->par)) ||
+            EINA_INLIST_GET(c->par->lines) != EINA_INLIST_GET(c->ln))
+          {
+             if (((c->position == TEXTBLOCK_POSITION_START) ||
+                  (c->position == TEXTBLOCK_POSITION_SINGLE))
+                 && (c->maxascent > c->ascent))
+               c->y -= c->o->style_pad.t;
+
+             /* Remove current line */
+             c->par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(
+                EINA_INLIST_GET(c->par->lines), EINA_INLIST_GET(c->ln));
+
+             if (c->o->ellip_ti && (_ITEM(c->o->ellip_ti)->ln == c->ln))
+               _ITEM(c->o->ellip_ti)->ln = NULL;
+
+             _line_free(c->ln);
+             c->ln = NULL;
+             c->vertical_ellipsis = EINA_TRUE;
+
+             return;
+          }
      }
 
    c->ln->baseline = c->ascent;
@@ -3997,7 +4041,9 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         last_fmt = _ITEM(EINA_INLIST_GET(c->ln->items)->last)->format;
      }
    _layout_line_finalize(c, last_fmt);
-   _layout_line_new(c, fmt);
+
+   if (!c->vertical_ellipsis)
+     _layout_line_new(c, fmt);
 }
 
 /**
@@ -4042,7 +4088,8 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         Evas_Object_Protected_Data *obj = c->evas_o;
 
         x = w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
-           c->marginr - from_x - ti->x_adjustment;
+           c->marginr - from_x;
+
         if (x < 0)
           x = 0;
         return ENFN->font_last_up_to_pos(ENC, fmt->font.font,
@@ -4153,6 +4200,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    int shad_sz = 0, shad_dst = 0, out_sz = 0;
    int dx = 0, minx = 0, maxx = 0, shx1, shx2;
    Evas_Object_Protected_Data *obj = c->evas_o;
+   int l, r, t, b;
+   l = r = t = b = 0;
 
    if (fmt->font.font)
      {
@@ -4244,11 +4293,21 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    if (shx1 < minx) minx = shx1;
    if (shx2 > maxx) maxx = shx2;
    ti->x_adjustment = maxx - minx;
-   
+
    ti->parent.w = tw + ti->x_adjustment;
    ti->parent.h = th;
    ti->parent.adv = advw;
    ti->parent.x = 0;
+
+   l = -minx;
+   r = maxx;
+   // Get height padding as well
+   evas_text_style_pad_get(fmt->style, NULL, NULL, &t, &b);
+
+   if (l > c->style_pad.l) c->style_pad.l = l;
+   if (r > c->style_pad.r) c->style_pad.r = r;
+   if (t > c->style_pad.t) c->style_pad.t = t;
+   if (b > c->style_pad.b) c->style_pad.b = b;
 }
 
 /**
@@ -4257,7 +4316,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
  *
  * @param c the context
  * @param it the item itself.
- * @param rel item ti will be appened after, NULL = last.
+ * @param rel item ti will be appended after, NULL = last.
  */
 static void
 _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
@@ -4506,9 +4565,13 @@ _format_finalize(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt)
 
    of = fmt->font.font;
 
-   fmt->font.font = evas_font_load(obj->layer->evas->evas, fmt->font.fdesc,
-         fmt->font.source, (int)(((double) fmt->font.size) * obj->cur->scale), fmt->font.bitmap_scalable);
-   if (of) evas_font_free(obj->layer->evas->evas, of);
+   fmt->font.font = evas_font_load(obj->layer->evas->font_path,
+                                   obj->layer->evas->hinting,
+                                   fmt->font.fdesc,
+                                   fmt->font.source,
+                                   (int)(((double) fmt->font.size) * obj->cur->scale),
+                                   fmt->font.bitmap_scalable);
+   if (of) evas_font_free(of);
 }
 
 static Efl_Canvas_Text_Filter_Program *
@@ -4634,16 +4697,16 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         //   item size=20x10 href=name
         //   item relsize=20x10 href=name
         //   item abssize=20x10 href=name
-        // 
+        //
         // optional arguments:
         //   vsize=full
         //   vsize=ascent
-        // 
+        //
         // size == item size (modifies line size) - can be multiplied by
         //   scale factor
         // relsize == relative size (height is current font height, width
         //   modified accordingly keeping aspect)
-        // abssize == absolute size (modifies line size) - never mulitplied by
+        // abssize == absolute size (modifies line size) - never multiplied by
         //   scale factor
         // href == name of item - to be found and matched later and used for
         //   positioning
@@ -5213,7 +5276,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 
    save_cx = c->x;
    temp_w = c->w;
-   ellip_w = ellip_ti->parent.w;
+   ellip_w = ellip_ti->parent.w - ellip_ti->x_adjustment;
 #ifdef BIDI_SUPPORT
    // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
    // line may be reordered in a way that the item placement will cause the
@@ -5392,7 +5455,7 @@ _item_get_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, Evas_Coord x, Evas_Coo
  * that don't intersect in whole) will be split, and the rest are set to be
  * visually-deleted.
  * Note that a special case for visible format items does not
- * split them, but instead just visually-deletes them (because there are no 
+ * split them, but instead just visually-deletes them (because there are no
  * characters to split).
  */
 static inline void
@@ -5613,6 +5676,7 @@ _layout_par(Ctxt *c)
         int adv_line = 0;
         int redo_item = 0;
         Evas_Textblock_Obstacle_Info *obs_info = NULL;
+        Evas_Coord itw;
 
         it = _ITEM(eina_list_data_get(i));
         /* Skip visually deleted items */
@@ -5658,9 +5722,15 @@ _layout_par(Ctxt *c)
           }
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
+        itw = it->w;
+        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             itw -= _ITEM_TEXT(it)->x_adjustment;
+          }
+
         if ((c->w >= 0) &&
               (obs ||
-                 (((c->x + it->w) >
+                 (((c->x + itw) >
                    (c->w - c->o->style_pad.l - c->o->style_pad.r -
                     c->marginl - c->marginr)) || (wrap > 0))))
           {
@@ -5903,6 +5973,13 @@ _layout_par(Ctxt *c)
                        else
                          {
                             _layout_line_advance(c, it->format);
+
+                            if (c->vertical_ellipsis)
+                              {
+                                 ret = 1;
+                                 goto end;
+                              }
+
                             item_preadv = EINA_FALSE;
                          }
                     }
@@ -5954,6 +6031,12 @@ _layout_par(Ctxt *c)
                   it = _ITEM(eina_list_data_get(i));
                }
              _layout_line_advance(c, it->format);
+
+             if (c->vertical_ellipsis)
+               {
+                  ret = 1;
+                  goto end;
+               }
           }
      }
 
@@ -5967,6 +6050,9 @@ _layout_par(Ctxt *c)
 
         /* Here 'it' is the last format used */
         _layout_line_finalize(c, it->format);
+
+        if (c->vertical_ellipsis)
+          ret = 1;
      }
 
 end:
@@ -6401,6 +6487,59 @@ _layout_visual(Ctxt *c)
       /* Clear the rest of the paragraphs and mark as invisible */
       if (c->par)
         {
+           if (c->vertical_ellipsis)
+             {
+                c->vertical_ellipsis = EINA_FALSE;
+
+                /* If there is no lines, go to the previous paragraph */
+                if (!c->par->lines)
+                  c->par = (Evas_Object_Textblock_Paragraph *)EINA_INLIST_GET(c->par)->prev;
+
+                if (c->par)
+                  {
+                     if (c->par->lines)
+                       c->ln = (Evas_Object_Textblock_Line *)EINA_INLIST_GET(c->par->lines)->last;
+
+                     if (c->ln && c->ln->items)
+                       {
+                          /* Ellipsize previous line */
+                          Evas_Object_Textblock_Item *last_it, *it;
+                          Eina_List *i;
+
+                          last_it = _ITEM(EINA_INLIST_GET(c->ln->items)->last);
+                          c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_remove(
+                             EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(last_it));
+                          EINA_LIST_FOREACH(c->par->logical_items, i, it)
+                            {
+                               if (last_it == it)
+                                 break;
+                            }
+
+                          /* Reset previous data before ellipsis */
+                          c->y -= c->ln->h;
+                          c->ln->x = c->ln->y = c->ln->w = c->ln->h = 0;
+                          c->ascent = c->descent = 0;
+                          c->maxascent = c->maxdescent = 0;
+                          c->x = last_it->x;
+#ifdef BIDI_SUPPORT
+                          if (c->par->is_bidi)
+                               _layout_update_bidi_props(c->o, c->par);
+#endif
+
+                          _layout_handle_ellipsis(c, last_it, i);
+
+#ifdef BIDI_SUPPORT
+                          if (c->par->bidi_props)
+                            {
+                               evas_bidi_paragraph_props_unref(c->par->bidi_props);
+                               c->par->bidi_props = NULL;
+                            }
+#endif
+                       }
+                     last_vis_par = c->par;
+                  }
+             }
+
            c->par = (Evas_Object_Textblock_Paragraph *)
               EINA_INLIST_GET(c->par)->next;
            while (c->par)
@@ -6462,6 +6601,7 @@ _layout_done(Ctxt *c, Evas_Coord *w_ret, Evas_Coord *h_ret)
         c->o->style_pad.b = c->style_pad.b;
         _paragraphs_clear(c);
         LYDBG("ZZ: ... layout #2\n");
+        c->o->content_changed = 0;
         _layout(c->obj, c->w, c->h, w_ret, h_ret);
         efl_event_callback_call(c->obj, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, NULL);
 
@@ -6502,6 +6642,7 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    c->w = w;
    c->h = h;
    c->style_pad.r = c->style_pad.l = c->style_pad.t = c->style_pad.b = 0;
+   c->vertical_ellipsis = EINA_FALSE;
 
    /* Update all obstacles */
    if (c->o->obstacle_changed || c->width_changed)
@@ -7563,7 +7704,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
         /* This loop goes through all of the mark up text until it finds format
          * tags, escape sequences or the terminating NULL. When it finds either
          * of those, it appends the text found up until that point to the textblock
-         * proccesses whatever found. It repeats itself until the termainating
+         * proccesses whatever found. It repeats itself until the terminating
          * NULL is reached. */
         for (;;)
           {
@@ -7801,7 +7942,7 @@ _evas_object_textblock_text_markup_get(Eo *eo_obj, Efl_Canvas_Text_Data *o)
           {
              Eina_Unicode tmp_ch;
              off += fnode->offset;
-             
+
              if (off > len) break;
              /* No need to skip on the first run */
              tmp_ch = text[off];
@@ -7864,7 +8005,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
    /* This loop goes through all of the mark up text until it finds format
     * tags, escape sequences or the terminating NULL. When it finds either
     * of those, it appends the text found up until that point to the textblock
-    * proccesses whatever found. It repeats itself until the termainating
+    * proccesses whatever found. It repeats itself until the terminating
     * NULL is reached. */
    for (;;)
      {
@@ -7939,7 +8080,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
              if (*p == 0)
@@ -7960,7 +8101,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
@@ -7987,7 +8128,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *eo_obj, const char *text)
                     }
                   else
                     {
-                       ERR("There is a invalid markup tag at positoin '%u'. Please check the text.", (unsigned int) (p - text));
+                       ERR("There is a invalid markup tag at position '%u'. Please check the text.", (unsigned int) (p - text));
                     }
                }
           }
@@ -9476,7 +9617,7 @@ _evas_textblock_node_format_remove_matching(Efl_Canvas_Text_Data *o,
  * @param o the textblock object.
  * @param tnode the text node the format should point to.
  * @param fmt the current format.
- * @param offset the offest to add (may be negative).
+ * @param offset the offset to add (may be negative).
  */
 static void
 _evas_textblock_node_format_adjust_offset(Efl_Canvas_Text_Data *o,
@@ -9555,7 +9696,7 @@ _evas_textblock_node_format_remove(Efl_Canvas_Text_Data *o, Evas_Object_Textbloc
  * If end == -1 end means the end of the string.
  * Assumes there is a prev node or the current node will be preserved.
  *
- * @param n the text node the positinos refer to.
+ * @param n the text node the positions refer to.
  * @param start the start of where to delete from.
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
  * @returns @c EINA_TRUE if removed a PS, @c EINA_FALSE otherwise.
@@ -9653,7 +9794,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl_Canvas_Text_Data *o,
  * n.
  *
  * @param o the textblock object.
- * @param n the text node the positinos refer to.
+ * @param n the text node the positions refer to.
  * @param start the start of where to delete from.
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
  */
@@ -14448,7 +14589,7 @@ evas_object_textblock_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
                                 void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object is */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 
@@ -14458,7 +14599,7 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                                  void *type_private_data EINA_UNUSED)
 {
    /* this returns 1 if the internal object data implies that the object was */
-   /* currently fulyl opque over the entire gradient it occupies */
+   /* currently fully opaque over the entire gradient it occupies */
    return 0;
 }
 
@@ -14495,9 +14636,8 @@ _evas_object_textblock_rehint(Evas_Object *eo_obj)
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        if (ti->parent.format->font.font)
                          {
-                            evas_font_load_hinting_set(obj->layer->evas->evas,
-                                  ti->parent.format->font.font,
-                                  obj->layer->evas->hinting);
+                            evas_font_load_hinting_set(ti->parent.format->font.font,
+                                                       obj->layer->evas->hinting);
                          }
                     }
                }
@@ -15257,6 +15397,11 @@ _efl_canvas_text_efl_text_font_font_bitmap_scalable_get(Eo *obj EINA_UNUSED, Efl
    _FMT(x) = v; \
    _canvas_text_format_changed(obj, o);
 
+#define _FMT_DBL_SET(x, v) \
+   if (EINA_DBL_EQ(_FMT(x), v)) return; \
+   _FMT(x) = v; \
+   _canvas_text_format_changed(obj, o);
+
 /* Helper: updates format field of extended format information, and informs if changed. */
 #define _FMT_INFO_SET_START(x, v) \
    Eina_Bool changed = EINA_FALSE; \
@@ -15468,14 +15613,45 @@ static const struct
    { EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT },
 };
 
+#define MAP_LEN(a) ((sizeof (a)) / sizeof((a)[0]))
+
+static Evas_Text_Style_Type
+_get_style_from_map(Efl_Text_Style_Effect_Type st)
+{
+   size_t i;
+   size_t len = MAP_LEN(_map_style_effect);
+   for (i = 0; i < len; i++)
+     {
+        if (_map_style_effect[i].x == st)
+           return _map_style_effect[i].y;
+     }
+   ERR("Mapping style failed. Please check code\n");
+   return EVAS_TEXT_STYLE_SHADOW; // shouldn't reach
+}
+
+static Evas_Text_Style_Type
+_get_dir_from_map(Efl_Text_Style_Shadow_Direction dir)
+{
+   size_t i;
+   size_t len = MAP_LEN(_map_shadow_dir);
+   for (i = 0; i < len; i++)
+     {
+        if (_map_shadow_dir[i].x == dir)
+           return _map_shadow_dir[i].y;
+     }
+   ERR("Mapping direction failed. Please check code\n");
+   return EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT; // shouldn't reach
+}
+
 static void
 _efl_canvas_text_efl_text_style_effect_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Effect_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(effect, type);
-   _FMT(style) = _map_style_effect[type].y;
+   _FMT(style) = _get_style_from_map(type);
    // Re-apply shadow direction
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style),
+         _get_dir_from_map(_FMT_INFO(shadow_direction)));
    _FMT_INFO_SET_END();
 }
 
@@ -15503,7 +15679,8 @@ _efl_canvas_text_efl_text_style_shadow_direction_set(Eo *obj EINA_UNUSED, Efl_Ca
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(shadow_direction, type);
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style), _map_shadow_dir[type].y);
+   EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(_FMT(style),
+         _get_dir_from_map(_FMT_INFO(shadow_direction)));
    _FMT_INFO_SET_END();
 }
 
@@ -15629,81 +15806,68 @@ _efl_canvas_text_efl_text_format_multiline_get(Eo *obj EINA_UNUSED, Efl_Canvas_T
 }
 
 static void
-_efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Type type)
+_efl_canvas_text_efl_text_format_halign_auto_type_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
 {
    ASYNC_BLOCK;
-   if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO)
+   if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NONE)
+     {
+        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NONE);
+     }
+   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NORMAL)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL);
      }
-   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_END)
-     {
-        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
-     }
-   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_LOCALE)
+   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_LOCALE)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
      }
-   else
+   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_END)
      {
-        double value = 0.0; // EFL_TEXT_HORIZONTAL_ALIGNMENT_LEFT
-        _FMT(halign_auto) = EINA_FALSE;
-
-        if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER)
-          {
-             value = 0.5;
-          }
-        else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_RIGHT)
-          {
-             value = 1.0;
-          }
-        _FMT_SET(halign, value);
+        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
      }
 }
 
-static Efl_Text_Format_Horizontal_Alignment_Type
-_efl_canvas_text_efl_text_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
+static Efl_Text_Format_Horizontal_Alignment_Auto_Type
+_efl_canvas_text_efl_text_format_halign_auto_type_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
-   Efl_Text_Format_Horizontal_Alignment_Type ret =
-      EFL_TEXT_HORIZONTAL_ALIGNMENT_LEFT;
+   Efl_Text_Format_Horizontal_Alignment_Auto_Type ret =
+      EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NONE;
 
    if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO;
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NORMAL;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_END)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_END;
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_END;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_LOCALE;
-     }
-   else if (EINA_DBL_EQ(_FMT(halign), 0.5))
-     {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_CENTER;
-     }
-   else if (EINA_DBL_EQ(_FMT(halign), 1.0))
-     {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_RIGHT;
+        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_LOCALE;
      }
    return ret;
 }
 
 static void
-_efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
-      Efl_Text_Format_Vertical_Alignment_Type type)
+_efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o,
+      double value)
 {
    ASYNC_BLOCK;
-   double value = 0.0; // EFL_TEXT_VERTICAL_ALIGNMENT_TOP
-   if (type == EFL_TEXT_VERTICAL_ALIGNMENT_CENTER)
-     {
-        value = 0.5;
-     }
-   else if (type == EFL_TEXT_VERTICAL_ALIGNMENT_BOTTOM)
-     {
-        value = 1.0;
-     }
+   _FMT_DBL_SET(halign, value);
+   _FMT(halign_auto) = EVAS_TEXTBLOCK_ALIGN_AUTO_NONE;
+}
+
+static double
+_efl_canvas_text_efl_text_format_halign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
+{
+   return _FMT(halign);
+}
+
+static void
+_efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
+      double value)
+{
+   ASYNC_BLOCK;
    if (!EINA_DBL_EQ(o->valign, value))
      {
         o->valign = value;
@@ -15711,7 +15875,7 @@ _efl_canvas_text_efl_text_format_valign_set(Eo *obj, Efl_Canvas_Text_Data *o,
      }
 }
 
-static Efl_Text_Format_Vertical_Alignment_Type
+static double
 _efl_canvas_text_efl_text_format_valign_get(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED)
 {
    return o->valign;

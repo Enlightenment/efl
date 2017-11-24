@@ -52,4 +52,5 @@ int main(int argc, char **argv)
 
    eina_value_flush(&otherv);
    eina_value_flush(&v);
+   eina_shutdown();
 }

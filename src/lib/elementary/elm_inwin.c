@@ -74,7 +74,7 @@ EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -112,19 +112,19 @@ _elm_inwin_activate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_inwin_efl_container_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
+_elm_inwin_efl_content_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
 {
    return efl_content_set(efl_part(obj, _content_aliases[0].real_part), content);
 }
 
 EOLIAN static Efl_Gfx *
-_elm_inwin_efl_container_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+_elm_inwin_efl_content_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
    return efl_content_get(efl_part(obj, _content_aliases[0].real_part));
 }
 
 EOLIAN static Efl_Gfx *
-_elm_inwin_efl_container_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+_elm_inwin_efl_content_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
    return efl_content_unset(efl_part(obj, _content_aliases[0].real_part));
 }

@@ -46,16 +46,13 @@ code_parse(Code *code)
    Eina_List *l;
    int id;
 
-   if (code->is_lua) return;
+   if (code->is_lua || code->parsed) return;
 
    id = eina_list_data_idx(codes, code);
    pcp = eina_list_nth(edje_collections, id);
 
    EINA_LIST_FOREACH(pcp->base_codes, l, base)
-     {
-        if (!base->parsed)
-          code_parse(base);
-     }
+     code_parse(base);
 
    if (code->shared)
      code_parse_internal(code);
@@ -66,17 +63,17 @@ code_parse(Code *code)
 static void
 code_parse_internal(Code *code)
 {
-   Code_Symbol *sym = NULL, *func;
+   Code_Symbol *sym = NULL, *func = NULL;
    Token *token, *tmp;
    char *begin = code->shared;
    char *end = begin + strlen(begin);
    char *body;
-   Eina_Array *stack;
+   Eina_Array *name_stack;
    Eina_Bool is_args = EINA_FALSE;
    Eina_Bool is_public = EINA_FALSE;
    int depth = 0;
 
-   stack = eina_array_new(4);
+   name_stack = eina_array_new(4);
 
    while ((token = next_token(&begin, end)))
      {
@@ -103,14 +100,14 @@ code_parse_internal(Code *code)
            case TOKEN_TYPE_COLON:
              if (!sym)
                sym = mem_alloc(SZ(Code_Symbol));
-             sym->tag = eina_array_pop(stack);
+             sym->tag = eina_array_pop(name_stack);
              break;
            case TOKEN_TYPE_SEMICOLON:
-             if (eina_array_count(stack))
+             if (eina_array_count(name_stack))
                {
                   if (!sym)
                     sym = mem_alloc(SZ(Code_Symbol));
-                  sym->name = eina_array_pop(stack);
+                  sym->name = eina_array_pop(name_stack);
                   sym->is_public = is_public;
                   code->vars = eina_list_append(code->vars, sym);
                   sym = NULL;
@@ -120,7 +117,7 @@ code_parse_internal(Code *code)
            case TOKEN_TYPE_COMMA:
              if (!sym)
                sym = mem_alloc(SZ(Code_Symbol));
-             sym->name = eina_array_pop(stack);
+             sym->name = eina_array_pop(name_stack);
              if (is_args)
                func->args = eina_list_append(func->args, sym);
              else
@@ -141,15 +138,15 @@ code_parse_internal(Code *code)
                        func = sym;
                        sym = NULL;
                     }
-                  func->name = eina_array_pop(stack);
+                  func->name = eina_array_pop(name_stack);
                }
              else
                {
-                  if (eina_array_count(stack))
+                  if (eina_array_count(name_stack))
                     {
                        if (!sym)
                          sym = mem_alloc(SZ(Code_Symbol));
-                       sym->name = eina_array_pop(stack);
+                       sym->name = eina_array_pop(name_stack);
                        func->args = eina_list_append(func->args, sym);
                     }
                   sym = func;
@@ -189,7 +186,7 @@ code_parse_internal(Code *code)
              is_public = EINA_TRUE;
              break;
            case TOKEN_TYPE_IDENTIFIER:
-             eina_array_push(stack, token->str);
+             eina_array_push(name_stack, token->str);
              token->str = NULL;
              break;
            default:
@@ -201,7 +198,7 @@ code_parse_internal(Code *code)
         free(token);
      }
 
-   eina_array_free(stack);
+   eina_array_free(name_stack);
 }
 
 static Token *
@@ -393,21 +390,6 @@ script_rewrite(Code *code)
           }
         if (count)
           eina_strbuf_append(buf, ";\n");
-
-        count = 0;
-        EINA_LIST_FOREACH(vars, l, sym)
-          {
-             if (sym->is_public) continue;
-
-             if (count++)
-               eina_strbuf_append(buf, ", ");
-
-             if (sym->tag)
-               eina_strbuf_append_printf(buf, "%s:", sym->tag);
-             eina_strbuf_append(buf, sym->name);
-          }
-        if (count)
-          eina_strbuf_append(buf, ";\n");
      }
 
    if (func)
@@ -460,6 +442,9 @@ script_rewrite(Code *code)
    code->original = strdup(code->shared);
    eina_strbuf_free(buf);
 
-   eina_list_free(vars);
-   eina_list_free(func);
+   eina_list_free(code->vars);
+   eina_list_free(code->func);
+
+   code->vars = vars;
+   code->func = func;
 }

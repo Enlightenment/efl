@@ -40,6 +40,7 @@ struct _Elua_State
    Eina_List *lmods;
    Eina_List *cmods;
    Eina_List *lincs;
+   Eina_Safepointer *sp;
    int requireref, apploadref;
 };
 

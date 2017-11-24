@@ -2,7 +2,7 @@
 struct Generic.Event
 {
   field1: int;
-  field2: list<int>;
+  field2: list<ptr(int)>;
 }
 
 class Generic (Efl.Object)
@@ -108,7 +108,7 @@ class Generic (Efl.Object)
      prefix,event1;
      prefix,event2: Generic;
      prefix,event3: int;
-     prefix,event4: list<int>;
+     prefix,event4: list<ptr(int)>;
      prefix,event5: Generic.Event;
      protected,event1 @protected;
      beta,event1 @beta;

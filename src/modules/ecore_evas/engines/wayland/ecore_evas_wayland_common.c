@@ -595,6 +595,7 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    Ecore_Evas *ee;
    Ecore_Wl2_Event_Window_Configure_Complete *ev;
    Evas_Engine_Info_Wayland *einfo;
+   Ecore_Evas_Engine_Wl_Data *wdata;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -611,6 +612,8 @@ _ecore_evas_wl_common_cb_window_configure_complete(void *data EINA_UNUSED, int t
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
 
+   wdata = ee->engine.data;
+   if (wdata->frame) ecore_evas_manual_render(ee);
    ecore_evas_manual_render_set(ee, 0);
 
    return ECORE_CALLBACK_PASS_ON;
@@ -1769,7 +1772,7 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
         einfo->y_rel = wdata->y_rel;
      }
    einfo->timestamp = wdata->timestamp;
-   evas_canvas_pointer_canvas_xy_get(evas, &einfo->x_cursor, &einfo->y_cursor);
+   evas_pointer_canvas_xy_get(evas, &einfo->x_cursor, &einfo->y_cursor);
    evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
    einfo->x_cursor -= fx;
    einfo->y_cursor -= fy;
@@ -2208,8 +2211,6 @@ _ee_cb_sync_done(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    if ((einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl2_display = wdata->display;
-        einfo->info.compositor_version =
-          ecore_wl2_display_compositor_version_get(wdata->display);
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl2_win = wdata->win;
@@ -2515,8 +2516,6 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, i
              einfo->info.rotation = ee->rotation;
              einfo->info.depth = 32;
              einfo->info.wl2_win = wdata->win;
-             einfo->info.compositor_version =
-               ecore_wl2_display_compositor_version_get(ewd);
              einfo->info.hidden = EINA_TRUE;
 
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))

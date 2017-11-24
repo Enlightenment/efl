@@ -96,7 +96,7 @@ EAPI Eina_Matrixsparse *eina_matrixsparse_new(unsigned long rows,
                                               const void *user_data);
 
 /**
- * @brief Frees resources allocated to Sparse Matrix.
+ * @brief Frees resources allocated for Sparse Matrix.
  *
  * @param m The Sparse Matrix instance to free, must @b not be @c NULL.
  */
@@ -149,7 +149,7 @@ EAPI Eina_Bool eina_matrixsparse_size_set(Eina_Matrixsparse *m,
  * @param col The new number of column to clear.
  * @param cell Pointer to return cell reference, if any exists.
  *
- * @return @c 1 on success, @c 0 on failure. It is considered success if did not
+ * @return @c 1 on success, @c 0 on failure. It is considered successful if did not
  *     exist but index is inside matrix size, in this case @c *cell == NULL
  *
  * @see eina_matrixsparse_cell_data_get()
@@ -272,7 +272,7 @@ EAPI Eina_Bool eina_matrixsparse_data_idx_set(Eina_Matrixsparse *m, unsigned lon
  * @param m The sparse matrix to operate on.
  * @param row The new number of row to clear.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if row
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered successful if row
  *     had no cells filled. Failure is asking for clear row outside
  *     matrix size.
  *
@@ -291,7 +291,7 @@ EAPI Eina_Bool eina_matrixsparse_row_idx_clear(Eina_Matrixsparse *m, unsigned lo
  * @param m The sparse matrix to operate on.
  * @param col The new number of column to clear.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if column
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered successful if column
  *     had no cells filled. Failure is asking for clear column outside
  *     matrix size.
  *
@@ -311,7 +311,7 @@ EAPI Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned
  * @param row The new number of row to clear.
  * @param col The new number of column to clear.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered success if did not
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure. It is considered successful if did not
  *     exist but index is inside matrix size.
  *
  * @warning Cells, rows or columns are not reference counted and thus

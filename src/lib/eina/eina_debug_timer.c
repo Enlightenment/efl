@@ -190,7 +190,8 @@ _eina_debug_timer_init(void)
 {
    eina_spinlock_new(&_lock);
 #ifndef _WIN32
-   pipe(pipeToThread);
+   if (pipe(pipeToThread) == -1)
+     return  EINA_FALSE;
 #endif
    return EINA_TRUE;
 }

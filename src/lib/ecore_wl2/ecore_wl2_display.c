@@ -14,6 +14,8 @@ static Eina_Bool _cb_connect_idle(void *data);
 static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
 static Eina_Bool _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync);
 
+static void _ecore_wl2_display_sync_add(Ecore_Wl2_Display *ewd);
+
 void
 _display_event_free(void *d, void *event)
 {
@@ -276,11 +278,13 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.shm =
           wl_registry_bind(registry, id, &wl_shm_interface, 1);
      }
-   else if (!strcmp(interface, "zwp_linux_dmabuf_v1"))
+   else if (!strcmp(interface, "zwp_linux_dmabuf_v1") && (version >= 2))
      {
         ewd->wl.dmabuf =
           wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 2);
         zwp_linux_dmabuf_v1_add_listener(ewd->wl.dmabuf, &_dmabuf_listener, ewd);
+        _ecore_wl2_buffer_test(ewd);
+        _ecore_wl2_display_sync_add(ewd);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
      {
@@ -463,6 +467,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    ewd->fd_hdl = NULL;
 
    ewd->shell_done = EINA_FALSE;
+   ewd->sync_done = EINA_FALSE;
 
    _ecore_wl2_display_globals_cleanup(ewd);
 
@@ -638,6 +643,9 @@ _cb_sync_done(void *data, struct wl_callback *cb, uint32_t serial EINA_UNUSED)
    Ecore_Wl2_Display *ewd;
 
    ewd = data;
+   if (--ewd->syncs) return;
+   if (ewd->sync_done) return;
+
    ewd->sync_done = EINA_TRUE;
 
    _ecore_wl2_shell_bind(ewd);
@@ -657,11 +665,19 @@ static const struct wl_callback_listener _sync_listener =
    _cb_sync_done
 };
 
-static Eina_Bool
-_ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
+static void
+_ecore_wl2_display_sync_add(Ecore_Wl2_Display *ewd)
 {
    struct wl_callback *cb;
 
+   ewd->syncs++;
+   cb = wl_display_sync(ewd->wl.display);
+   wl_callback_add_listener(cb, &_sync_listener, ewd);
+}
+
+static Eina_Bool
+_ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
+{
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display) return EINA_FALSE;
@@ -669,8 +685,7 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
    ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
    wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
 
-   cb = wl_display_sync(ewd->wl.display);
-   wl_callback_add_listener(cb, &_sync_listener, ewd);
+   _ecore_wl2_display_sync_add(ewd);
 
    if (sync)
      {
@@ -885,24 +900,23 @@ ecore_wl2_display_connect(const char *name)
 
    ewd->globals = eina_hash_int32_new(_cb_globals_hash_del);
 
+   ewd->xkb_context = xkb_context_new(0);
+   if (!ewd->xkb_context) goto context_err;
+
    /* check server display hash and match on pid. If match, skip sync */
    if (!_ecore_wl2_display_connect(ewd, _ecore_wl2_display_sync_get()))
      goto connect_err;
-
-   ewd->xkb_context = xkb_context_new(0);
-   if (!ewd->xkb_context) goto context_err;
 
    /* add this new client display to hash */
    eina_hash_add(_client_displays, ewd->name, ewd);
 
    return ewd;
 
-context_err:
-   ecore_main_fd_handler_del(ewd->fd_hdl);
-   wl_registry_destroy(ewd->wl.registry);
-   wl_display_disconnect(ewd->wl.display);
-
 connect_err:
+   xkb_context_unref(ewd->xkb_context);
+   ewd->xkb_context = NULL;
+
+context_err:
    eina_hash_free(ewd->globals);
    free(ewd->name);
    free(ewd);

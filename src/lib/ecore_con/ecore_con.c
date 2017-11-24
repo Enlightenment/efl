@@ -1549,8 +1549,8 @@ typedef struct _Efl_Net_Socks5_Reply_Ipv4 {
 static Eina_Bool
 _efl_net_ip_connect_async_run_socks5_auth_user_pass(SOCKET fd, const char *user, const char *pass, const char *proxy_protocol, const char *proxy_host, const char *proxy_port)
 {
-   uint8_t user_len = user ? strlen(user) : 0;
-   uint8_t pass_len = pass ? strlen(pass) : 0;
+   volatile uint8_t user_len = user ? strlen(user) : 0;
+   volatile uint8_t pass_len = pass ? strlen(pass) : 0;
    size_t len = 1 + 1 + user_len + 1 + pass_len;
    char *msg;
    volatile Eina_Bool ret = EINA_FALSE;

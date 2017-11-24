@@ -22,7 +22,7 @@ _efl_canvas_output_async_block(Efl_Canvas_Output *output)
 void
 efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output)
 {
-   if (output->info) return ;
+   if (output->info) return;
    if (!e->engine.func->info_size)
      {
         CRI("Engine not up to date no info size provided.");
@@ -96,7 +96,7 @@ efl_canvas_output_view_set(Efl_Canvas_Output *output,
    Evas_Public_Data *e;
 
    e = _efl_canvas_output_async_block(output);
-   if (!e) return ;
+   if (!e) return;
 
    if (output->geometry.x != x) goto changed;
    if (output->geometry.y != y) goto changed;
@@ -153,8 +153,9 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
    else
      {
      setup:
-        output->output = e->engine.func->output_setup(_evas_engine_context(e), info,
-                                                      output->geometry.w, output->geometry.h);
+        output->output = 
+          e->engine.func->output_setup(_evas_engine_context(e), info,
+                                       output->geometry.w, output->geometry.h);
      }
 
    return !!output->output;
@@ -179,7 +180,7 @@ efl_canvas_output_lock(Efl_Canvas_Output *output)
 }
 
 EAPI Eina_Bool
-efl_canvas_output_unlock(Efl_Canvas_Output *output EINA_UNUSED)
+efl_canvas_output_unlock(Efl_Canvas_Output *output)
 {
    return !!(--output->lock);
 }

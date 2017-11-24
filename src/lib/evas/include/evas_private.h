@@ -14,11 +14,9 @@
 
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
-#include "../common/evas_text_utils.h"
-#include "../common/language/evas_bidi_utils.h"
-#include "../common/language/evas_language_utils.h"
 
 #include "evas_3d_utils.h"
+
 
 #ifdef EAPI
 # undef EAPI
@@ -50,6 +48,7 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENC  _evas_engine_context(obj->layer->evas)
 
+#include "canvas/evas_canvas.eo.h"
 #include "canvas/evas_text.eo.h"
 #include "canvas/evas_textgrid.eo.h"
 #include "canvas/evas_line.eo.h"
@@ -65,10 +64,6 @@ typedef struct _Evas_Aspect                 Evas_Aspect;
 typedef struct _Evas_Border                 Evas_Border;
 typedef struct _Evas_Double_Pair            Evas_Double_Pair;
 typedef struct _Evas_Size_Hints             Evas_Size_Hints;
-typedef struct _Evas_Font_Dir               Evas_Font_Dir;
-typedef struct _Evas_Font                   Evas_Font;
-typedef struct _Evas_Font_Alias             Evas_Font_Alias;
-typedef struct _Evas_Font_Description       Evas_Font_Description;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
@@ -503,64 +498,6 @@ struct _Evas_Canvas3D_Pick_Data
    Evas_Real         u, v;
    Evas_Real         s, t;
 };
-
-enum _Evas_Font_Style
-{
-   EVAS_FONT_STYLE_SLANT,
-   EVAS_FONT_STYLE_WEIGHT,
-   EVAS_FONT_STYLE_WIDTH
-};
-
-enum _Evas_Font_Slant
-{
-   EVAS_FONT_SLANT_NORMAL,
-   EVAS_FONT_SLANT_OBLIQUE,
-   EVAS_FONT_SLANT_ITALIC
-};
-
-enum _Evas_Font_Weight
-{
-   EVAS_FONT_WEIGHT_NORMAL,
-   EVAS_FONT_WEIGHT_THIN,
-   EVAS_FONT_WEIGHT_ULTRALIGHT,
-   EVAS_FONT_WEIGHT_EXTRALIGHT,
-   EVAS_FONT_WEIGHT_LIGHT,
-   EVAS_FONT_WEIGHT_BOOK,
-   EVAS_FONT_WEIGHT_MEDIUM,
-   EVAS_FONT_WEIGHT_SEMIBOLD,
-   EVAS_FONT_WEIGHT_BOLD,
-   EVAS_FONT_WEIGHT_ULTRABOLD,
-   EVAS_FONT_WEIGHT_EXTRABOLD,
-   EVAS_FONT_WEIGHT_BLACK,
-   EVAS_FONT_WEIGHT_EXTRABLACK
-};
-
-enum _Evas_Font_Width
-{
-   EVAS_FONT_WIDTH_NORMAL,
-   EVAS_FONT_WIDTH_ULTRACONDENSED,
-   EVAS_FONT_WIDTH_EXTRACONDENSED,
-   EVAS_FONT_WIDTH_CONDENSED,
-   EVAS_FONT_WIDTH_SEMICONDENSED,
-   EVAS_FONT_WIDTH_SEMIEXPANDED,
-   EVAS_FONT_WIDTH_EXPANDED,
-   EVAS_FONT_WIDTH_EXTRAEXPANDED,
-   EVAS_FONT_WIDTH_ULTRAEXPANDED
-};
-
-enum _Evas_Font_Spacing
-{
-   EVAS_FONT_SPACING_PROPORTIONAL,
-   EVAS_FONT_SPACING_DUAL,
-   EVAS_FONT_SPACING_MONO,
-   EVAS_FONT_SPACING_CHARCELL
-};
-
-typedef enum _Evas_Font_Style               Evas_Font_Style;
-typedef enum _Evas_Font_Slant               Evas_Font_Slant;
-typedef enum _Evas_Font_Weight              Evas_Font_Weight;
-typedef enum _Evas_Font_Width               Evas_Font_Width;
-typedef enum _Evas_Font_Spacing             Evas_Font_Spacing;
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -1280,50 +1217,6 @@ struct _Evas_Data_Node
    void *data;
 };
 
-struct _Evas_Font_Dir
-{
-   Eina_Hash *lookup;
-   Eina_List *fonts;
-   Eina_List *aliases;
-   DATA64     dir_mod_time;
-   DATA64     fonts_dir_mod_time;
-   DATA64     fonts_alias_mod_time;
-};
-
-struct _Evas_Font
-{
-   struct {
-      const char *prop[14];
-   } x;
-   struct {
-      const char *name;
-   } simple;
-   const char *path;
-   char     type;
-};
-
-struct _Evas_Font_Alias
-{
-   const char *alias;
-   Evas_Font  *fn;
-};
-
-struct _Evas_Font_Description
-{
-   int ref;
-   Eina_Stringshare *name;
-   Eina_Stringshare *fallbacks;
-   Eina_Stringshare *lang;
-   Eina_Stringshare *style;
-
-   Evas_Font_Slant slant;
-   Evas_Font_Weight weight;
-   Evas_Font_Width width;
-   Evas_Font_Spacing spacing;
-
-   Eina_Bool is_new : 1;
-};
-
 struct _Efl_Canvas_Output
 {
    Eo *canvas;
@@ -1610,15 +1503,18 @@ struct _Evas_Func
    void *(*texture_image_get)            (void *engine, void *texture);
 
    Ector_Surface *(*ector_create)        (void *engine);
-   void  (*ector_output_set)             (void *engine, Ector_Surface *surface, void *output);
    void  (*ector_destroy)                (void *engine, Ector_Surface *surface);
    Ector_Buffer *(*ector_buffer_wrap)    (void *engine, Evas *e, void *engine_image);
    Ector_Buffer *(*ector_buffer_new)     (void *engine, Evas *e, int width, int height, Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags);
-   void  (*ector_begin)                  (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, int x, int y, Eina_Bool do_async);
-   void  (*ector_renderer_draw)          (void *engine, void *data, void *context, void *surface, void *engine_data, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
-   void  (*ector_end)                    (void *engine, void *context, Ector_Surface *ector, void *surface, void *engine_data, Eina_Bool do_async);
-   void* (*ector_new)                    (void *engine, void *context, Ector_Surface *ector, void *surface);
-   void  (*ector_free)                   (void *engine_data);
+   void  (*ector_begin)                  (void *engine, void *output, void *context, void *surface, Ector_Surface *ector, int x, int y, Eina_Bool do_async);
+   void  (*ector_renderer_draw)          (void *engine, void *output, void *context, void *surface, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
+   void  (*ector_end)                    (void *engine, void *output, void *context, void *surface, Ector_Surface *ector, Eina_Bool do_async);
+
+   void *(*ector_surface_create)         (void *engine, int w, int h, int *error);
+   void  (*ector_surface_destroy)        (void *engine, void *surface);
+   void  (*ector_surface_cache_set)      (void *engine, void *key, void *surface);
+   void *(*ector_surface_cache_get)      (void *engine, void *key);
+   void  (*ector_surface_cache_drop)     (void *engine, void *key);
 
    Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
    Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
@@ -1702,7 +1598,7 @@ void evas_debug_generic(const char *str);
 const char *evas_debug_magic_string_get(DATA32 magic);
 void evas_render_update_del(Evas_Public_Data *e, int x, int y, int w, int h);
 void evas_render_object_render_cache_free(Evas_Object *eo_obj, void *data);
-   
+
 void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);
 void evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a) EINA_ARG_NONNULL(1);
@@ -1763,23 +1659,6 @@ void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
 void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
-void evas_font_dir_cache_free(void);
-const char *evas_font_dir_cache_find(char *dir, char *font);
-Eina_List *evas_font_dir_available_list(const Evas* evas);
-void evas_font_dir_available_list_free(Eina_List *available);
-void evas_font_free(Evas *evas, void *font);
-void evas_fonts_zero_free(Evas *evas);
-void evas_fonts_zero_pressure(Evas *evas);
-void evas_font_name_parse(Evas_Font_Description *fdesc, const char *name);
-int evas_font_style_find(const char *start, const char *end, Evas_Font_Style style);
-Evas_Font_Description *evas_font_desc_new(void);
-Evas_Font_Description *evas_font_desc_dup(const Evas_Font_Description *fdesc);
-void evas_font_desc_unref(Evas_Font_Description *fdesc);
-int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Description *b);
-Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
-const char *evas_font_lang_normalize(const char *lang);
-void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool sourve_invisible);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);

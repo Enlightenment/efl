@@ -1,8 +1,16 @@
-class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Gfx) {
+class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Ui.Focus.User, Efl.Gfx) {
     methods {
         size {
             params {
                 rect : Eina.Rect;
+            }
+        }
+        @property manager {
+            set {
+
+            }
+            values {
+                manager : Efl.Ui.Focus.Manager;
             }
         }
     }
@@ -10,6 +18,8 @@ class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Gfx) {
         Efl.Object.constructor;
         Efl.Ui.Focus.Object.focus_geometry { get; }
         Efl.Ui.Focus.Object.focus { set; }
+        Efl.Ui.Focus.User.manager { get; }
+        Efl.Ui.Focus.User.parent {get; }
         Efl.Gfx.geometry { get; }
     }
 }

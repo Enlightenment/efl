@@ -2459,7 +2459,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    if (!eldbus_message_iter_fixed_array_get(states_iter, 'i', &array, &array_count))
      return EINA_FALSE;
 
-   //Roles according to libatspi impementation are transferred in 2-int element fixed bit array
+   //Roles according to libatspi implementation are transferred in 2-int element fixed bit array
    if (array_count != 2)
      {
         ERR("Unexpected states array size");
@@ -2468,7 +2468,7 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    uint64_t states = ((uint64_t)array[0] | ((uint64_t)array[1] << 32));
    rule->states = _atspi_state_set_to_elm_atspi_state_set(states);
 
-   //Roles according to libatspi impementation are transferred in 4-int element fixed bit array
+   //Roles according to libatspi implementation are transferred in 4-int element fixed bit array
    if (!eldbus_message_iter_fixed_array_get(role_iter, 'i', &array, &array_count))
      return EINA_FALSE;
 
@@ -3145,7 +3145,7 @@ _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj)
 static Eina_Bool
 _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_array)
 {
-  if (!efl_ref_get(data) || efl_destructed_is(data))
+  if (!efl_ref_count(data) || efl_destructed_is(data))
     return EINA_TRUE;
 
   Eldbus_Message_Iter *iter_struct, *iter_sub_array;
@@ -3202,11 +3202,11 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   eldbus_message_iter_basic_append(iter_struct, 'u', role);
 
   /* Marshall description */
-  const char* descritpion = NULL;
-  descritpion = efl_access_description_get(data);
-  if (!descritpion)
-    descritpion = "";
-  eldbus_message_iter_basic_append(iter_struct, 's', descritpion);
+  const char* description = NULL;
+  description = efl_access_description_get(data);
+  if (!description)
+    description = "";
+  eldbus_message_iter_basic_append(iter_struct, 's', description);
 
   /* Marshall state set */
   iter_sub_array = eldbus_message_iter_container_new(iter_struct, 'a', "u");
@@ -3617,7 +3617,7 @@ _on_elm_atspi_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *
         ERR("%s %s", errname, errmsg);
         return;
      }
-   DBG("Application successfuly registered at ATSPI2 bus.");
+   DBG("Application successfully registered at ATSPI2 bus.");
 }
 
 EAPI Eina_Bool
@@ -4386,7 +4386,7 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    _event_handlers_register(obj);
    _elm_atspi_bridge_app_register(obj);
 
-   // register accesible object event listener
+   // register accessible object event listener
    pd->event_hdlr = efl_access_event_handler_add(EFL_ACCESS_MIXIN, _bridge_accessible_event_dispatch, obj);
 }
 
@@ -4605,7 +4605,7 @@ _on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendi
      }
    if (!eldbus_message_arguments_get(msg, "b", &ret))
      {
-        ERR("Return message doen not contian return value");
+        ERR("Return message does not contain return value");
         goto reemit;
      }
    if (ret)
@@ -4646,7 +4646,7 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
    iter = eldbus_message_iter_get(msg);
    _iter_marshall_key_event(iter, ke);
 
-   // timeout should be kept reasonaby low to avoid delays
+   // timeout should be kept reasonably low to avoid delays
    if (!eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 100))
      return EINA_TRUE;
 

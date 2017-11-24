@@ -4,7 +4,7 @@
 
 #define ELM_WIDGET_PROTECTED
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -695,7 +695,7 @@ EAPI Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -855,14 +855,24 @@ _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_hover_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "dismiss", NULL, NULL, _action_dismiss},
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
+}
+
+EOLIAN static Efl_Access_State_Set
+_elm_hover_efl_access_state_set_get(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
+{
+   Efl_Access_State_Set states;
+   states = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+
+   STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
+   return states;
 }
 
 /* Efl.Part begin */

@@ -9,7 +9,9 @@
 #include "elm_view_list.h"
 
 #include "elm_priv.h"
+#include "elm_entry.eo.h"
 #include "elm_thumb.eo.h"
+#include "elm_label.eo.h"
 
 #include <assert.h>
 

@@ -1,10 +1,50 @@
 #ifndef _EVAS_FONT_PRIVATE_H
-# define _EVAS_FONT_PRIVATE_H
-#include "evas_font_ot.h"
+#define _EVAS_FONT_PRIVATE_H
+
+#include "evas_font.h"
+
+/* macros needed to log message through eina_log */
+extern EAPI int _evas_font_log_dom_global;
+#ifdef  _EVAS_FONT_DEFAULT_LOG_DOM
+# undef _EVAS_FONT_DEFAULT_LOG_DOM
+#endif
+#define _EVAS_FONT_DEFAULT_LOG_DOM _evas_font_log_dom_global
+
+#ifdef EVAS_FONT_DEFAULT_LOG_COLOR
+# undef EVAS_FONT_DEFAULT_LOG_COLOR
+#endif
+#define EVAS_FONT_DEFAULT_LOG_COLOR EINA_COLOR_BLUE
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_EVAS_FONT_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_EVAS_FONT_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_EVAS_FONT_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_EVAS_FONT_DEFAULT_LOG_DOM, __VA_ARGS__)
+
+#ifdef CRI
+# undef CRI
+#endif
+#define CRI(...) EINA_LOG_DOM_CRIT(_EVAS_FONT_DEFAULT_LOG_DOM, __VA_ARGS__)
+
 
 extern LK(lock_font_draw); // for freetype2 API calls
 extern LK(lock_bidi); // for fribidi API calls
 extern LK(lock_ot); // for harfbuzz calls
+
 #  define FTLOCK()   LKL(lock_font_draw)
 #  define FTUNLOCK() LKU(lock_font_draw)
 

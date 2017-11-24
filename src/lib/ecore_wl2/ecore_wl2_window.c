@@ -1532,7 +1532,8 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
       _ecore_wl2_window_configure_send(window);
 }
 
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
+EAPI void
+ecore_wl2_window_false_commit(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_NULL_RETURN(window->surface);
@@ -1607,10 +1608,34 @@ ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window)
    return window->req_config.resizing;
 }
 
-EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
+EAPI void
+ecore_wl2_window_update_begin(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    EINA_SAFETY_ON_TRUE_RETURN(window->updating);
 
    window->updating = EINA_TRUE;
+}
+
+EAPI void
+ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count)
+{
+   void (*damage)(struct wl_surface *, int32_t, int32_t, int32_t, int32_t);
+   unsigned int k;
+   int compositor_version;
+
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   compositor_version = window->display->wl.compositor_version;
+
+   if (compositor_version >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
+     damage = wl_surface_damage_buffer;
+   else
+     damage = wl_surface_damage;
+
+   if ((rects) && (count > 0))
+     for (k = 0; k < count; k++)
+       damage(window->surface, rects[k].x, rects[k].y, rects[k].w, rects[k].h);
+   else
+     damage(window->surface, 0, 0, INT_MAX, INT_MAX);
 }

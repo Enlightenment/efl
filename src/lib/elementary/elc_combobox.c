@@ -3,13 +3,17 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_combobox.h"
+#include "elm_entry.eo.h"
+#include "elm_combobox.eo.h"
+#include "elm_genlist.eo.h"
+#include "elm_hover.eo.h"
 
 #define MY_CLASS ELM_COMBOBOX_CLASS
 
@@ -333,16 +337,7 @@ EAPI Evas_Object *
 elm_combobox_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
-}
-
-static inline void
-_hover_ctor(Eo *parent, Eo *hover)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd);
-   if (wd->legacy)
-     efl_canvas_object_legacy_ctor(hover);
-   efl_gfx_visible_set(hover, EINA_FALSE);
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -366,9 +361,19 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    snprintf(buf, sizeof(buf), "combobox_vertical/%s", elm_widget_style_get(obj));
 
    //hover
-   sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
-                       _hover_ctor(obj, efl_added),
-                       efl_ui_widget_style_set(efl_added, buf));
+   if (elm_widget_is_legacy(obj))
+     {
+        sd->hover = elm_legacy_add(ELM_HOVER_CLASS, sd->hover_parent,
+                                   efl_gfx_visible_set(efl_added, EINA_FALSE),
+                                   efl_ui_widget_style_set(efl_added, buf));
+     }
+   else
+     {
+        sd->hover = efl_add(ELM_HOVER_CLASS, sd->hover_parent,
+                            efl_gfx_visible_set(efl_added, EINA_FALSE),
+                            efl_ui_widget_style_set(efl_added, buf));
+     }
+
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
@@ -508,12 +513,12 @@ _elm_combobox_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_combobox_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
+EOLIAN const Efl_Access_Action_Data *
+_elm_combobox_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
                                                                 Elm_Combobox_Data *pd
                                                                 EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
       {"activate", "activate", "return", _key_action_activate},
       {"move,up", "move", "up", _key_action_move},
       {"move,down", "move", "down", _key_action_move},

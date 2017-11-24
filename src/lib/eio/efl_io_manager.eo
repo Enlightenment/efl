@@ -41,7 +41,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina.File.Direct.Info>)>; [[List of entries in path]]
+      return: future<uint64, const(array<ptr(Eina.File.Direct.Info)>)>; [[List of entries in path]]
     }
 
     stat_ls {
@@ -50,7 +50,7 @@ class Efl.Io.Manager (Efl.Loop_User)
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
       }
-      return: future<uint64, const(array<Eina.File.Direct.Info>)>; [[List of entries in path]]
+      return: future<uint64, const(array<ptr(Eina.File.Direct.Info)>)>; [[List of entries in path]]
     }
 
     // Extended attributes

@@ -123,7 +123,7 @@ typedef const char Eina_Tmpstr;
 /**
  * @brief Adds a new temporary string based on the input string.
  *
- * @param str This is the input stringthat is copied into the temp string.
+ * @param str This is the input string that is copied into the temp string.
  * @return A pointer to the tmp string that is a standard C string.
  *
  * When you add a temporary string (tmpstr) it is expected to have a very

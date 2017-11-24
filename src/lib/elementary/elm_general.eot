@@ -7,6 +7,9 @@ type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
 type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
 type @extern Elm.Glob.Match_Flags: __undefined_type; [[Elementary glob matching flags]]
 
+/* Types for A11Y (internal/beta API) */
+type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
+
 /* FIXME: elm_policy API is not bound to EO */
 struct Elm.Event.Policy_Changed
 {
@@ -135,4 +138,4 @@ enum Elm.Icon.Type
 
 /* FIXME: shouldn't exist */
 struct @extern Elm_Gen_Item;
-struct @extern Elm_Atspi_Action;
+struct @extern Efl_Access_Action_Data;

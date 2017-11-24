@@ -37,6 +37,7 @@ _print_usage(const char *progn, FILE *outf)
    fprintf(outf, "Usage: %s [options] [input]\n", progn);
    fprintf(outf, "Options:\n"
                  "  -I inc        include path \"inc\"\n"
+                 "  -S            do not scan system dir for eo files\n"
                  "  -g type       generate file of type \"type\"\n"
                  "  -o name       specify the base name for output\n"
                  "  -o type:name  specify a particular output filename\n"
@@ -44,19 +45,25 @@ _print_usage(const char *progn, FILE *outf)
                  "  -v            print version and exit\n"
                  "\n"
                  "Available types:\n"
-                 "  h: C header file (.h)\n"
-                 "  l: Legacy C header file (.legacy.h)\n"
-                 "  s: Stub C header file (.stub.h)\n"
-                 "  c: C source file (.c)\n"
-                 "  i: Implementation file (added into .c)\n"
+                 "  h: C header file (.eo.h/.eot.h)\n"
+                 "  l: Legacy C header file (.eo.legacy.h/.eot.legacy.h)\n"
+                 "  s: Stub C header file (.eo.stub.h/.eot.stub.h)\n"
+                 "  c: C source file (.eo.c)\n"
+                 "  i: Implementation file (.c, merged with existing)\n"
                  "\n"
-                 "By default, the 'hc' set is used ('h' for .eot files).\n"
+                 "By default, the 'hc' set is used ('h' for .eot files).\n\n"
+                 "The system-wide Eolian directory is scanned for eo files\n"
+                 "by default, together with all specified '-I' flags.\n\n"
                  "Output filenames are determined from input .eo filename.\n"
-                 "Default filenames include input extension. (e.g. \".eo.c\")\n"
                  "Default output path is where the input file is.\n\n"
                  "Also, specifying a type-dependent input file automatically\n"
                  "adds it to generated files, so if you specify those, you\n"
-                 "don't need to explicitly specify -g for those types anymore.\n");
+                 "don't need to explicitly specify -g for those types anymore.\n\n"
+                 "Explicit output base name is without extension. The extension\n"
+                 "is determined from the input file name. If that is not possible\n"
+                 "for some reason, it defaults to \".eo\". Obviously, this does not\n"
+                 "affect specific filenames (-o x:y) as these are full names.\n"
+                 "Implementation files are a special case (no \".eo\" added).\n");
 }
 
 static void
@@ -100,20 +107,44 @@ _try_set_out(char t, char **outs, const char *val, int *what)
    return EINA_TRUE;
 }
 
-static void _fill_all_outs(char **outs, const char *val)
+static void _fill_all_outs(char **outs, const char *val, char *base)
 {
-   size_t vlen = strlen(val);
+   const char *ext = strrchr(val, '.');
+   if (!ext)
+     ext = ".eo";
+
+   char *basen = base;
+   if (!basen)
+     {
+        basen = strdup(val);
+        char *p = strrchr(basen, '.');
+        if (p) *p = '\0';
+     }
+
+   size_t blen = strlen(basen),
+          elen = strlen(ext);
+
    for (size_t i = 0; i < (sizeof(_dexts) / sizeof(char *)); ++i)
-   {
-      if (outs[i])
-        continue;
-      size_t dlen = strlen(_dexts[i]);
-      char *str = malloc(vlen + dlen + 1);
-      memcpy(str, val, vlen);
-      memcpy(str + vlen, _dexts[i], dlen);
-      str[vlen + dlen] = '\0';
-      outs[i] = str;
-   }
+     {
+        if (outs[i])
+          continue;
+        size_t dlen = strlen(_dexts[i]);
+        char *str = malloc(blen + elen + dlen + 1);
+        char *p = str;
+        memcpy(p, basen, blen);
+        p += blen;
+        if ((1 << i) != GEN_C_IMPL)
+          {
+             memcpy(p, ext, elen);
+             p += elen;
+          }
+        memcpy(p, _dexts[i], dlen);
+        p[dlen] = '\0';
+        outs[i] = str;
+     }
+
+   if (!base)
+     free(basen);
 }
 
 static Eina_Strbuf *
@@ -392,6 +423,10 @@ main(int argc, char **argv)
 {
    int pret = 1;
 
+   char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
+   char *basen = NULL;
+   Eina_List *includes = NULL;
+
    eina_init();
    eolian_init();
 
@@ -405,20 +440,20 @@ main(int argc, char **argv)
 
    eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
-   char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
-
    int gen_what = 0;
-   for (int opt; (opt = getopt(argc, argv, "I:g:o:hv")) != -1;)
+   Eina_Bool scan_system = EINA_TRUE;
+
+   for (int opt; (opt = getopt(argc, argv, "SI:g:o:hv")) != -1;)
      switch (opt)
        {
         case 0:
           break;
+        case 'S':
+          scan_system = EINA_FALSE;
+          break;
         case 'I':
-          if (!eolian_directory_scan(optarg))
-            {
-               fprintf(stderr, "eolian: could not scan '%s'\n", optarg);
-               goto end;
-            }
+          /* just a pointer to argv contents, so it persists */
+          includes = eina_list_append(includes, optarg);
           break;
         case 'g':
           for (const char *wstr = optarg; *wstr; ++wstr)
@@ -459,7 +494,12 @@ main(int argc, char **argv)
                     goto end;
                  }
             }
-          else _fill_all_outs(outs, optarg);
+          else
+            {
+               if (basen)
+                 free(basen);
+               basen = strdup(optarg);
+            }
           break;
         case 'h':
           _print_usage(argv[0], stdout);
@@ -488,6 +528,25 @@ main(int argc, char **argv)
         goto end;
      }
 
+   if (scan_system)
+     {
+        if (!eolian_system_directory_scan())
+          {
+             fprintf(stderr, "eolian: could not scan system directory\n");
+             goto end;
+          }
+     }
+
+   const char *inc;
+   EINA_LIST_FREE(includes, inc)
+     {
+        if (!eolian_directory_scan(inc))
+          {
+             fprintf(stderr, "eolian: could not scan '%s'\n", inc);
+             goto end;
+          }
+     }
+
    const Eolian_Unit *src = eolian_file_parse(input);
    if (!src)
      {
@@ -495,7 +554,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   _fill_all_outs(outs, input);
+   _fill_all_outs(outs, input, basen);
 
    const char *eobn = _get_filename(input);
 
@@ -524,8 +583,12 @@ end:
         eina_log_timing(_eolian_gen_log_dom, EINA_LOG_STATE_START, EINA_LOG_STATE_SHUTDOWN);
         eina_log_domain_unregister(_eolian_gen_log_dom);
      }
+
+   eina_list_free(includes);
    for (size_t i = 0; i < (sizeof(_dexts) / sizeof(char *)); ++i)
      free(outs[i]);
+   free(basen);
+
    eolian_shutdown();
    eina_shutdown();
 

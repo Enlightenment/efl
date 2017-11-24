@@ -34,7 +34,7 @@
  * layer, and rely on mmap to not fail for any part of the file.
  *
  * If you set up your own SIGBUS handler, then this will effectively disable
- * the safe mmap handling and make you liable to crashes on IO to or from
+ * the safe mmap handling and make you liable to crashing on IO to or from
  * such "damaged files" that would take down your process.
  *
  * @since 1.1.0

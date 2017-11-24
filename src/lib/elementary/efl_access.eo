@@ -192,6 +192,15 @@ enum Efl.Access.Relation_Type
    last_defined, [[Last enum entry sentinel]]
 }
 
+enum Efl.Access.Reading.Info.Type
+{
+   [[The accessible Reading information type that can be read.]]
+   name = 1 << 0, [[Name should be read]]
+   role = 1 << 1, [[Role should be read]]
+   description = 1 << 2, [[description should be read.]]
+   state = 1 << 3, [[State should be read.]]
+}
+
 type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
 struct Efl.Access.Event.Handler; [[Accessibility event listener]]
@@ -241,7 +250,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
    eo_prefix: efl_access;
    data: Efl_Access_Data;
    methods {
-      @property localized_role_name @protected {
+      @property localized_role_name @protected @beta {
          [[Gets an localized string describing accessible object role name.]]
          get {
          }
@@ -249,7 +258,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             localized_name: string; [[Localized accessible object role name]]
          }
       }
-      @property name {
+      @property name @beta {
          [[Accessible name of the object.]]
          get {
          }
@@ -259,7 +268,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             name: string; [[Accessible name]]
          }
       }
-      @property relation_set @protected {
+      @property relation_set @protected @beta {
          [[Gets an all relations between accessible object and other accessible objects.]]
          get {
          }
@@ -267,7 +276,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             relations: Efl.Access.Relation_Set; [[Accessible relation set]]
          }
       }
-      @property role {
+      @property role @beta {
          [[The role of the object in accessibility domain.]]
          get {
          }
@@ -277,7 +286,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             role: Efl.Access.Role; [[Accessible role]]
          }
       }
-      @property children @protected {
+      @property children @protected @beta {
          [[Gets object's accessible children.]]
          get {
          }
@@ -285,7 +294,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             children: list<Efl.Access> @owned; [[List of widget's children]]
          }
       }
-      @property role_name @protected {
+      @property role_name @protected @beta {
          [[Gets human-readable string indentifying object accessibility role.]]
          get {
          }
@@ -293,16 +302,40 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             role_name: string; [[Accessible role name]]
          }
       }
-      @property attributes @protected {
+      @property attributes @protected @beta {
          [[Gets key-value pairs indentifying object extra attributes. Must be free by a user.]]
          get {
          }
          values {
-            /* FIXME: API for attribute free */
-            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes]]
+            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes, Must be freed by the user]]
          }
       }
-      @property index_in_parent @protected {
+      attribute_append {
+         [[Add key-value pair identifying object extra attributes
+         ]]
+         params {
+            @in key: string; [[The string key to give extra information]]
+            @in value: string; [[The string value to give extra information]]
+         }
+      }
+      attributes_clear {
+         [[Removes all attributes in accessible object.
+
+           \@internal
+         ]]
+      }
+      @property reading_info_type @protected {
+         get {
+            [[Gets reading information types of an accessible object.]]
+         }
+         set {
+            [[Sets reading information of an accessible object.]]
+         }
+         values {
+            reading_info: Efl.Access.Reading.Info.Type; [[Reading information types]]
+         }
+      }
+      @property index_in_parent @protected @beta {
          [[Gets index of the child in parent's children list.]]
          get {
          }
@@ -310,7 +343,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             idx: int; [[Index in children list]]
          }
       }
-      @property description {
+      @property description @beta {
          [[Contextual information about object.]]
          get {
          }
@@ -320,7 +353,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             description: string; [[Accessible contextual information]]
          }
       }
-      @property parent {
+      @property parent @beta {
          [[Object's accessible parent.]]
          get {
          }
@@ -330,7 +363,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             parent: Efl.Access; [[Accessible parent]]
          }
       }
-      @property state_set @protected {
+      @property state_set @protected @beta {
          [[Gets set describing object accessible states.]]
          get {
          }
@@ -338,7 +371,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             states: Efl.Access.State_Set; [[Accessible state set]]
          }
       }
-      event_handler_add @class @protected {
+      event_handler_add @class @protected @beta {
          [[Register accessibility event listener]]
          params {
               @in cb: Efl_Event_Cb; [[Callback]]
@@ -346,21 +379,21 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          }
          return: ptr(Efl.Access.Event.Handler); [[Event handler]]
       }
-      event_handler_del @class @protected {
+      event_handler_del @class @protected @beta {
          [[Deregister accessibility event listener]]
          params {
               @in handler: ptr(Efl.Access.Event.Handler); [[Event handler]]
          }
       }
-      event_emit @class @protected {
+      event_emit @class @protected @beta {
       	 [[Emit event]]
          params {
             @in accessible: Efl.Access; [[Accessibility object.]]
-            @in event: ptr(const(Efl.Event.Description)); [[Accessibility event type.]]
+            @cref event: Efl.Event.Description; [[Accessibility event type.]]
             @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }
-      @property translation_domain {
+      @property translation_domain @beta {
          [[The translation domain of "name" and "description"
            properties.
 
@@ -382,7 +415,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             domain: string; [[Translation domain]]
          }
       }
-      @property type {
+      @property type @beta {
            [[Type of accessibility object]]
            get {
            }
@@ -392,7 +425,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
                type: Efl.Access.Type; [[Object type]]
            }
       }
-      relationship_append {
+      relationship_append @beta {
          [[Defines the relationship between two accessible objects.
 
            Adds unique relation between source object and relation_object of a
@@ -411,7 +444,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             @in relation_object: const(Efl.Access); [[Object to relate to]]
          }
       }
-      relationship_remove {
+      relationship_remove @beta {
          [[Removes the relationship between two accessible objects.
 
           If relation_object is NULL function removes all relations
@@ -422,10 +455,10 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
             @in relation_object: const(Efl.Access); [[Object to remove relation from]]
          }
       }
-      relationships_clear {
+      relationships_clear @beta {
          [[Removes all relationships in accessible object.]]
       }
-      @property root @class {
+      @property root @class @beta {
          get {
             [[Get root object of accessible object hierarchy]]
             values {

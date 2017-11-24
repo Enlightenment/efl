@@ -6,6 +6,6 @@ class Efl.Ui.Text_Async (Efl.Ui.Text)
    ]]
    data: null;
    implements {
-      Efl.Object.constructor;
+      //Efl.Object.constructor;
    }
 }

@@ -19,6 +19,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "ecore_internal.h"
+#include "elm_interface_scrollable.h"
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
@@ -405,9 +406,6 @@ elm_init(int argc, char **argv)
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
 
-   ecore_loop_arguments_send(argc - 1,
-                             (argc > 1) ? ((const char **)argv + 1) : NULL);
-
    _prefix_shutdown();
 
    system_handlers[0] =
@@ -423,6 +421,14 @@ elm_init(int argc, char **argv)
      _elm_config->web_backend = "none";
    _elm_code_parse_setup();
 
+   // For backward compability, EFL startup time and ELM startup time are made
+   // identical. It is fine to do it here as we are finishing initialisation
+   // and the startup time should have been accounted earlier.
+   if (_elm_startup_time >= 0)
+     if (_efl_startup_time <= 0)
+       _efl_startup_time = _elm_startup_time;
+   _elm_startup_time = _efl_startup_time;
+
    return _elm_init_count;
 }
 
@@ -434,8 +440,6 @@ elm_shutdown(void)
 
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
-
-   efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
 
    ecore_event_handler_del(system_handlers[0]);
    ecore_event_handler_del(system_handlers[1]);
@@ -724,7 +728,7 @@ elm_quicklaunch_mode_get(void)
 }
 
 EAPI int
-elm_quicklaunch_init(int    argc,
+elm_quicklaunch_init(int    argc EINA_UNUSED,
                      char **argv)
 {
    _elm_ql_init_count++;
@@ -739,11 +743,12 @@ elm_quicklaunch_init(int    argc,
 
    eet_init();
    ecore_init();
+   edje_init();
+   eio_init();
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_init();
 #endif
-   ecore_app_args_set(argc, (const char **)argv);
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
    if (!ELM_EVENT_POLICY_CHANGED)
@@ -755,7 +760,6 @@ elm_quicklaunch_init(int    argc,
 
    if (!ecore_file_init())
      ERR("Elementary cannot init ecore_file");
-   eio_init();
 
    _elm_exit_handler =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
@@ -793,28 +797,21 @@ elm_quicklaunch_sub_init(int    argc,
 {
    _elm_sub_init_count++;
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
-   if (quicklaunch_on)
-     {
-//        _elm_config_init();
-//#ifdef SEMI_BROKEN_QUICKLAUNCH
-//        return _elm_sub_init_count;
-//#endif
-     }
+   _elm_config_init();
 
    if (!quicklaunch_on)
      {
-        ecore_app_args_set(argc, (const char **)argv);
         ecore_evas_init(); // FIXME: check errors
-        edje_init();
         elm_color_class_init();
         _elm_module_init();
-        _elm_config_init();
         _elm_config_sub_init();
         ecore_imf_init();
         ecore_con_init();
         ecore_con_url_init();
         _elm_prefs_initted = _elm_prefs_init();
         _elm_ews_wm_init();
+
+        ecore_init_ex(argc, argv);
      }
    return _elm_sub_init_count;
 }
@@ -824,14 +821,10 @@ elm_quicklaunch_sub_shutdown(void)
 {
    _elm_sub_init_count--;
    if (_elm_sub_init_count > 0) return _elm_sub_init_count;
-   if (quicklaunch_on)
-     {
-//#ifdef SEMI_BROKEN_QUICKLAUNCH
-//        return _elm_sub_init_count;
-//#endif
-     }
    if (!quicklaunch_on)
      {
+        ecore_shutdown_ex();
+
         _elm_win_shutdown();
         _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
@@ -840,12 +833,15 @@ elm_quicklaunch_sub_shutdown(void)
         edje_shutdown();
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
-        _elm_config_shutdown();
         _elm_module_shutdown();
         if (_elm_prefs_initted)
           _elm_prefs_shutdown();
         elm_color_class_shutdown();
      }
+
+   _elm_config_shutdown();
+   ecore_main_loop_iterate();
+
    return _elm_sub_init_count;
 }
 
@@ -1008,7 +1004,6 @@ elm_quicklaunch_prepare(int    argc,
    qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
-        fprintf(stderr, "dlerr: %s\n", dlerror());
         WRN("dlopen('%s') failed: %s", exe2, dlerror());
         free(exe2);
         return EINA_FALSE;
@@ -1040,8 +1035,7 @@ efl_quicklaunch_prepare(int    argc,
                         const char *cwd)
 {
 #ifdef HAVE_FORK
-   char *exe, *exe2, *p;
-   char *exename;
+   char *exe, *exe2;
 
    if (argc <= 0 || argv == NULL) return EINA_FALSE;
 
@@ -1052,74 +1046,37 @@ efl_quicklaunch_prepare(int    argc,
         return EINA_FALSE;
      }
 
-   exe2 = malloc(strlen(exe) + 1 + 7 + strlen(LIBEXT));
-   strcpy(exe2, exe);
-   p = strrchr(exe2, '/');
-   if (p) p++;
-   else p = exe2;
-   exename = alloca(strlen(p) + 1);
-   strcpy(exename, p);
-   *p = 0;
-   strcat(p, "../lib/");
-   strcat(p, exename);
-   strcat(p, LIBEXT);
-   if (access(exe2, R_OK | X_OK) != 0)
-     ELM_SAFE_FREE(exe2, free);
+   exe2 = eina_file_path_sanitize(exe);
+
+   ELM_SAFE_FREE(exe, free);
+
    /* Try linking to executable first. Works with PIE files. */
-   qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
-   if (qr_handle)
-     {
-        INF("dlopen('%s') = %p", exe, qr_handle);
-        qre_main = dlsym(qr_handle, "efl_main");
-        qre_pause = dlsym(qr_handle, "efl_pause");
-        qre_resume = dlsym(qr_handle, "efl_resume");
-        qre_terminate = dlsym(qr_handle, "efl_terminate");
-        if (qre_main)
-          {
-             INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
-             free(exe2);
-             free(exe);
-             return EINA_TRUE;
-          }
-        dlclose(qr_handle);
-        qr_handle = NULL;
-     }
-
-   if (!exe2)
-     {
-        WRN("not quicklauncher capable: '%s'", exe);
-        free(exe);
-        return EINA_FALSE;
-     }
-   free(exe);
-
-   /* Open companion .so file.
-    * Support for legacy quicklaunch apps with separate library.
-    */
    qr_handle = dlopen(exe2, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
-        fprintf(stderr, "dlerr: %s\n", dlerror());
-        WRN("dlopen('%s') failed: %s", exe2, dlerror());
+        ERR("dlopen('%s') failed: %s", exe2, dlerror());
         free(exe2);
         return EINA_FALSE;
      }
+
    INF("dlopen('%s') = %p", exe2, qr_handle);
    qre_main = dlsym(qr_handle, "efl_main");
-   INF("dlsym(%p, 'elm_main') = %p", qr_handle, qre_main);
+   INF("dlsym(%p, 'efl_main') = %p", qr_handle, qre_main);
    qre_pause = dlsym(qr_handle, "efl_pause");
    qre_resume = dlsym(qr_handle, "efl_resume");
    qre_terminate = dlsym(qr_handle, "efl_terminate");
-   if (!qre_main)
+   if (qre_main)
      {
-        WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
-        dlclose(qr_handle);
-        qr_handle = NULL;
         free(exe2);
-        return EINA_FALSE;
+        return EINA_TRUE;
      }
+
+   WRN("not quicklauncher capable: no efl_main in '%s'", exe2);
+   dlclose(qr_handle);
+   qr_handle = NULL;
    free(exe2);
-   return EINA_TRUE;
+
+   return EINA_FALSE;
 #else
    (void)argc;
    (void)argv;
@@ -1144,6 +1101,7 @@ elm_quicklaunch_fork(int    argc,
         int i;
         char **args;
 
+        WRN("No main function found.");
         child = fork();
         if (child > 0) return EINA_TRUE;
         else if (child < 0)
@@ -1161,6 +1119,8 @@ elm_quicklaunch_fork(int    argc,
         ERR("failed to execute '%s': %s", argv[0], strerror(errno));
         exit(-1);
      }
+   INF("Main function found (legacy: %p, efl: %p)",
+       qr_main, qre_main);
    child = fork();
    if (child > 0) return EINA_TRUE;
    else if (child < 0)
@@ -1170,8 +1130,8 @@ elm_quicklaunch_fork(int    argc,
      }
    if (postfork_func) postfork_func(postfork_data);
 
-   ecore_fork_reset();
    eina_main_loop_define();
+   ecore_fork_reset();
 
    if (quicklaunch_on)
      {
@@ -1180,7 +1140,6 @@ elm_quicklaunch_fork(int    argc,
           _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
 #ifdef SEMI_BROKEN_QUICKLAUNCH
-        ecore_app_args_set(argc, (const char **)argv);
         evas_init();
         _elm_module_init();
         _elm_config_sub_init();
@@ -1224,7 +1183,6 @@ elm_quicklaunch_fork(int    argc,
 
    setsid();
    if (chdir(cwd) != 0) perror("could not chdir");
-   ecore_app_args_set(argc, (const char **)argv);
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
 
@@ -1238,15 +1196,26 @@ elm_quicklaunch_fork(int    argc,
           {
              efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
           }
+
+        ecore_init_ex(argc, argv);
+
         ret = efl_loop_exit_code_process(efl_loop_begin(ecore_main_loop_get()));
+
+        ecore_shutdown_ex();
+
         elm_shutdown();
         exit(ret);
      }
    else
      {
+        ecore_init_ex(argc, argv);
+
         ret = qr_main(argc, argv);
+
+        ecore_shutdown_ex();
         exit(ret);
      }
+
    return EINA_TRUE;
 #else
    return EINA_FALSE;
@@ -1621,15 +1590,6 @@ elm_object_focus_get(const Evas_Object *obj)
    //no manager means not registered
    if (!m) return EINA_FALSE;
 
-   //first ensure that the manager where we are registered in is in the redirect chain
-   while(m != elm_widget_top_get(obj))
-     {
-        Efl_Ui_Focus_Manager *m_low = efl_ui_focus_user_manager_get(m);
-
-        if (efl_ui_focus_manager_redirect_get(m_low) != m) return EINA_FALSE;
-
-        m = m_low;
-     }
    //assertion: our redirect manager m is in the redirect chain
    m = efl_ui_focus_user_manager_get(obj);
 
@@ -1652,59 +1612,6 @@ elm_object_focus_get(const Evas_Object *obj)
    return elm_widget_focus_get(obj);
 }
 
-static void _elm_widget_focus(Evas_Object *obj);
-
-static void
-_manager_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   _elm_widget_focus(data);
-}
-
-static void
-_elm_widget_focus(Evas_Object *obj)
-{
-   Efl_Ui_Focus_Manager *m, *m2 = obj;
-   Efl_Ui_Focus_Object *o;
-
-   m = elm_widget_top_get(obj);
-   m2 = efl_ui_focus_user_manager_get(obj);
-
-   o = efl_key_data_get(m, "__delayed_focus_set");
-   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-   efl_key_data_set(m, "__delayed_focus_set", NULL);
-
-   if (!m2)
-     {
-        efl_key_data_set(m, "__delayed_focus_set", obj);
-        efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-        return;
-     }
-
-   //build the chain of redirects
-   do
-     {
-       Efl_Ui_Focus_Manager *new_manager;;
-       new_manager = efl_ui_focus_user_manager_get(m2);
-
-       /* also delay the registeration if we miss a manager half way */
-       if (!new_manager && m2 != elm_widget_top_get(obj))
-         {
-            efl_key_data_set(m, "__delayed_focus_set", obj);
-            efl_event_callback_add(m2, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, obj);
-            return;
-         }
-
-       //new manager is in a higher hirarchy than m2
-       //so we set m2 as redirect in new_manager
-       efl_ui_focus_manager_redirect_set(new_manager, m2);
-       m2 = new_manager;
-     }
-   while(m && m2 && m != m2);
-
-   //now set the focus
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), obj);
-}
-
 EAPI void
 elm_object_focus_set(Evas_Object *obj,
                      Eina_Bool    focus)
@@ -1724,7 +1631,7 @@ elm_object_focus_set(Evas_Object *obj,
    else if (elm_widget_is(obj))
      {
         if (focus)
-          _elm_widget_focus(obj);
+          efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
         else
           {
              if (efl_ui_focus_manager_focus_get(efl_ui_focus_user_manager_get(obj)) == obj)

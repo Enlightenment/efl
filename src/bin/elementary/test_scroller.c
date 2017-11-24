@@ -1,8 +1,11 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
 #include <Elementary.h>
 
+// FIXME: Some internal APIs are used here...
+#include "elm_interface_scrollable.h"
 
 #define PSIZE 318
 

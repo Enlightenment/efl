@@ -38,7 +38,7 @@
  * @note Returning EINA_TRUE is important so we don't stop iterating over the
  * container.
  *
- * And here a more interesting function, it uses an iterator to print the
+ * And here's a more interesting function, it uses an iterator to print the
  * contents of a container. What's interesting about it is that it doesn't care
  * the type of container, it works for anything that can provide an iterator:
  * @until }
@@ -87,16 +87,16 @@
  *
  * @brief These functions manage iterators on containers.
  *
- * These functions allow to access elements of a container in a
+ * These functions allow accessing elements of a container in a
  * generic way, without knowing which container is used (a bit like
- * iterators in the C++ STL). Iterators only allows sequential access
- * (that is, from an element to the next one). For random access, see
+ * iterators in the C++ STL). Iterators only allow sequential access
+ * (that is, from one element to the next one). For random access, see
  * @ref Eina_Accessor_Group.
  *
  * Getting an iterator to access elements of a given container is done through
  * the functions of that particular container. There is no function to create
  * a generic iterator as iterators absolutely depend on the container. This
- * means you won't find iterator creation function here, those can be found on
+ * means you won't find an iterator creation function here, those can be found with
  * the documentation of the container type you're using. Though created with
  * container specific functions iterators are always deleted with the same
  * function: eina_iterator_free().
@@ -241,7 +241,7 @@ EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
  * @param fdata The data passed to the callback.
  *
  * This function iterates over the elements pointed by @p iterator,
- * beginning from the current element. For Each element, the callback
+ * beginning with the current element. For each element, the callback
  * @p cb is called with the data @p fdata. If @p iterator is @c NULL,
  * the function returns immediately. Also, if @p cb returns #EINA_FALSE,
  * the iteration stops at that point, if @p cb returns #EINA_TRUE
@@ -301,14 +301,14 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
 EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates a new iterator which which iterates throuw all elements with are accepted by the filter callback
+ * @brief Creates a new iterator which which iterates through all elements with are accepted by the filter callback
  *
  * @param original the iterator the use as original set
  * @param filter if the callback returns true the element from the original set is taken into the the new set.
  * @param free_cb when the iterator is gone this callback will be called with data as argument
  * @param data the data which is passed to the filter callback
  *
- * The iterator is filtered while it is beeing iterated.
+ * The iterator is filtered while it is being iterated.
  * The original iterator you pass in here is is then owned and will be freed once the the new iterator is freed.
  *
  * @since 1.19

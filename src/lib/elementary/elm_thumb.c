@@ -133,7 +133,7 @@ _on_thumb_preloaded(void *data,
 }
 
 /* As we do use stat to check if a thumbnail is available, it's
- * possible that we end up accessing it before the file is completly
+ * possible that we end up accessing it before the file is completely
  * written on disk. By retrying each time a thumbnail is finished we
  * should be fine or not.
  */
@@ -579,7 +579,7 @@ EAPI Evas_Object *
 elm_thumb_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

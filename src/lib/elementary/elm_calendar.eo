@@ -72,7 +72,7 @@ struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
                             with @Elm.Calendar.mark_del.
                           ]]
 
-class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi_Widget_Action)
+class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action)
 {
    [[Calendar widget
 
@@ -169,7 +169,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
          get {
          }
          values {
-            weekdays: ptr(string); [[Array of seven strings to be used as weekday names.
+            weekdays: legacy(ptr(string)); [[Array of seven strings to be used as weekday names.
             Warning: It must have 7 elements, or it will access invalid memory.
             Warning: The strings must be $null terminated ('@\0').]]
          }
@@ -252,7 +252,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
             ]]
          }
          values {
-            min: const(ptr(Efl.Time)); [[A tm struct to point to minimum date.]]
+            @cref min: Efl.Time; [[A tm struct to point to minimum date.]]
          }
       }
       @property date_max {
@@ -280,7 +280,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
             ]]
          }
          values {
-            max: const(ptr(Efl.Time)); [[A tm struct to point to maximum date.]]
+            @cref max: Efl.Time; [[A tm struct to point to maximum date.]]
          }
       }
       selected_time_set {
@@ -416,7 +416,7 @@ class Elm.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface.Atspi
       Elm.Widget.on_access_update;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
       changed; [[Emitted when the date in the calendar is changed]]

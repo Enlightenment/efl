@@ -1,4 +1,4 @@
-class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
+class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
 {
    [[Elementary radio class]]
    legacy_prefix: elm_radio;
@@ -18,22 +18,6 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
          }
          values {
             value: int; [[The value to use if this radio object is selected]]
-         }
-      }
-      @property value {
-         set {
-            [[Set the value of the radio group.
-
-              This sets the value of the radio group and will also set the
-              value if pointed to, to the value supplied, but will not call
-              any callbacks.
-            ]]
-         }
-         get {
-            [[Get the value of the radio group]]
-         }
-         values {
-            value: int; [[The value to use for the group]]
          }
       }
       @property value_pointer {
@@ -77,11 +61,15 @@ class Efl.Ui.Radio (Efl.Ui.Check, Elm.Interface.Atspi_Widget_Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_activate;
       Elm.Widget.widget_event;
       Efl.Access.state_set { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Ui.Nstate.value { set; get; }
    }
    events {
       changed; [[Called when radio changed]]

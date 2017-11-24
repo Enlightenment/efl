@@ -6,26 +6,36 @@
  * which provides a great deal of functionality. Below you can
  * find documentation for these libraries:
  *
+ * <h3>Core libraries</h3>
+ *
  * @li @ref ecore_main operating system abstraction and integration.
- * @li @ref edje_main layout and theme library with super powers.
  * @li @ref eet_main binary data parser and serializer.
  * @li @ref eeze_main hardware device manipulation and notification.
- * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
  * @li @ref eina_main data types and low-level/basic abstractions.
  * @li @ref eio_main asynchronous input/output
  * @li @ref eldbus_main D-Bus integration.
  * @li @ref embryo_main embedded script language.
- * @li @ref emotion_main to play music and videos.
  * @li @ref eo_main generic object system.
+ *
+ * <h3>Graphics libraries</h3>
+ *
+ * @li @ref edje_main layout and theme library with super powers.
+ * @li @ref efreet_main freedesktop.org (xdg) menu and desktop integration.
+ * @li @ref elementary_main widget library.
+ * @li @ref emotion_main to play music and videos.
  * @li @ref ephysics_main physics simulation integration and visual effects.
- * @li @ref escape_main playstation3 portability layer.
  * @li @ref ethumb_main to generate thumbnail images of files.
  * @li @ref evas_main drawing canvas.
+ *
+ * <h3>Operating System specific libraries</h3>
+ *
+ * @li @ref escape_main playstation3 portability layer.
  * @li @ref evil_main microsoft windows portability layer.
+ *
+ * <h3>Early stage libraries (BETA testing)</h3>
+ *
  * @li @ref eolian_main an EO file parser and code generator.
- * @li @ref eina_cxx_main Eina C++ bindings.
  * @li @ref elocation_main awareness library.
- * @li @ref elementary_main widget library.
  *
  */
 
@@ -36,7 +46,7 @@
  * @author Aharon Hillel <a.hillel@@samsung.com>
  * @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
  * @author Andre Dieb <andre.dieb@@gmail.com>
- * @author Andrew Elcock <andy@@elcock.org>
+ * @author Andrew Williams <andy@@andywilliams.me>
  * @author Arnaud de Turckheim 'quarium' <quarium@@gmail.com>
  * @author Bernhard Nemec <Bernhard.Nemec@@viasyshc.com>
  * @author billiob (Boris Faure) <billiob@@gmail.com>

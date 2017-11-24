@@ -16,6 +16,7 @@
 
 typedef enum {
    ELM_CODE_WIDGET_COLOR_GUTTER_BG = ELM_CODE_TOKEN_TYPE_COUNT,
+   ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG,
    ELM_CODE_WIDGET_COLOR_GUTTER_FG,
    ELM_CODE_WIDGET_COLOR_WHITESPACE,
    ELM_CODE_WIDGET_COLOR_SELECTION,
@@ -23,7 +24,7 @@ typedef enum {
    ELM_CODE_WIDGET_COLOR_COUNT
 } Elm_Code_Widget_Colors;
 
-Eina_Unicode status_icons[] = {
+static Eina_Unicode status_icons[] = {
  ' ',
  ' ',
  ' ',
@@ -57,13 +58,14 @@ Eina_Unicode status_icons[] = {
 
 static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
 
+#ifndef ELM_CODE_TEST
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code),
-                  efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
 }
+#endif // ELM_CODE_TEST
 
 EOLIAN static Eo *
 _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
@@ -190,13 +192,45 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
      }
 }
 
+static Eina_Bool
+_elm_code_widget_line_in_scope(Elm_Code_Line *line, Elm_Code_Line *fromline)
+{
+   Elm_Code_Line *midline;
+   unsigned int number;
+
+   if (!line || !fromline || line->scope == 0 || fromline->scope == 0)
+     return EINA_FALSE;
+
+   if (line->number == fromline->number)
+     return EINA_TRUE;
+
+   if (line->scope < fromline->scope)
+     return EINA_FALSE;
+
+   number = fromline->number;
+   while (number != line->number)
+   {
+      midline = elm_code_file_line_get(line->file, number);
+
+      if (midline->scope < fromline->scope)
+        return EINA_FALSE;
+
+      if (line->number < fromline->number)
+        number--;
+      else
+        number++;
+   }
+   return EINA_TRUE;
+}
+
 static void
-_elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
-                             int width, Elm_Code_Status_Type status, int line)
+_elm_code_widget_fill_line_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
+                                  int width, Elm_Code_Line *line)
 {
    char *number = NULL;
    int gutter, g;
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *cursor_line;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
@@ -204,17 +238,28 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
    if (width < gutter)
      return;
 
-   cells[gutter-1].codepoint = status_icons[status];
+   cells[gutter-1].codepoint = status_icons[line->status];
    cells[gutter-1].bold = 1;
    cells[gutter-1].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
-   cells[gutter-1].bg = (status == ELM_CODE_STATUS_TYPE_DEFAULT) ? ELM_CODE_WIDGET_COLOR_GUTTER_BG : status;
+   if (line->status == ELM_CODE_STATUS_TYPE_DEFAULT)
+     {
+        cursor_line = elm_code_file_line_get(line->file, pd->cursor_line);
+        if (_elm_code_widget_line_in_scope(line, cursor_line))
+          cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG;
+        else
+          cells[gutter-1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+     }
+   else
+     {
+        cells[gutter-1].bg = line->status;
+     }
 
    if (pd->show_line_numbers)
      {
-        if (line > 0)
+        if (line->number > 0)
           {
              number = malloc(sizeof(char) * gutter);
-             snprintf(number, gutter, "%*d", gutter - 1, line);
+             snprintf(number, gutter, "%*d", gutter - 1, line->number);
           }
         for (g = 0; g < gutter - 1; g++)
           {
@@ -271,7 +316,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->editable && pd->focussed && pd->cursor_line == number)
+   if (pd->visible && pd->editable && pd->focussed && pd->cursor_line == number)
      {
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
@@ -376,7 +421,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
      }
 
-   _elm_code_widget_fill_gutter(widget, cells, w, line->status, line->number);
+   _elm_code_widget_fill_line_gutter(widget, cells, w, line);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
@@ -565,6 +610,7 @@ _elm_code_widget_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   pd->visible = EINA_TRUE;
    if (pd->cursor_rect)
      evas_object_show(pd->cursor_rect);
 }
@@ -578,6 +624,7 @@ _elm_code_widget_hidden_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   pd->visible = EINA_FALSE;
    if (pd->cursor_rect)
      evas_object_hide(pd->cursor_rect);
 }
@@ -633,11 +680,9 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
-     {
-        if (oldrow <= elm_code_file_lines_get(code->file))
-          _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
-     }
-   _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
+     _elm_code_widget_refresh(widget, line_obj);
+   else
+     _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
    elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
 }
 
@@ -1812,6 +1857,8 @@ _elm_code_widget_setup_palette(Evas_Object *o)
                                     51, 153, 255, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
                                     75, 75, 75, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG,
+                                    54, 54, 54, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
                                     139, 139, 139, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
@@ -2228,4 +2275,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
 #include "elm_code_widget_text.c"
 #include "elm_code_widget_undo.c"
+#ifndef ELM_CODE_TEST
 #include "elm_code_widget.eo.c"
+#endif // ELM_CODE_TEST

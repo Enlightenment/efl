@@ -1,44 +1,43 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#include "elementary_config.h"
-#endif
+// g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` button_cxx_example_00.cc -o button_cxx_example_00
 
+#define EFL_CXX_WREF_EASY
 #include <Elementary.hh>
+#include <iostream>
 
-EAPI_MAIN int
-elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
+using efl::eo::instantiate;
+
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   using efl::eo::instantiate;
-
    efl::ui::Win win(instantiate);
-//    //win.title_set("Hello, World!");
-//    win.autohide_set(true);
-
-//    ::elm::Button btn(win);
-//    btn.text_set("elm.text","Good-Bye, World!");
-//    btn.eo_cxx::efl::Gfx::size_set(120, 30);
-//    btn.eo_cxx::efl::Gfx::position_set(60, 15);
-//    // btn.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-//    // btn.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
-   // win.title_set("Hello, World!");
+   win.text_set("Button Example");
    win.autohide_set(true);
 
-   efl::ui::Button btn(instantiate, win);
-   btn.text_set("Good-Bye, World!");
-   btn.eo_cxx::efl::Gfx::size_set({120, 30});
-   btn.eo_cxx::efl::Gfx::position_set({60, 15});
-   btn.visible_set(true);
+   efl::ui::Box box(instantiate, win);
+   win.content_set(box);
 
-   auto on_click = std::bind([] () { elm_exit(); });
+   efl::ui::Button bt(instantiate, win);
+   bt.text_set("Hello world!");
+   box.pack(bt);
 
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn, on_click);
+   auto wbt(bt._get_wref());
+   auto cb(std::bind([wbt]() {
+        std::cout << wbt->text_get() << std::endl;
+     }));
+   efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt, cb);
 
-   win.eo_cxx::efl::Gfx::size_set({240, 60});
-   win.visible_set(true);
+   efl::ui::Button bt2(instantiate, win);
+   bt2.text_set("Click to quit");
+   box.pack(bt2);
 
-   elm_run();
-   return 0;
+   auto wwin(win._get_wref());
+   auto cb2(std::bind([wwin]() {
+        ::efl_del(wwin->_eo_ptr()); // FIXME: No proper C++ API to delete win
+     }));
+   efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt2, cb2);
+
+   win.size_set({320,160});
 }
-ELM_MAIN()
+EFL_MAIN()

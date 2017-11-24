@@ -46,6 +46,14 @@ _btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_btn_remove_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                void *event_info EINA_UNUSED)
+{
+   printf("Button Remove\n");
+   evas_object_del(obj);
+}
+
+static void
 _ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
    printf("Item selected status: %d\n", efl_ui_item_selected_get(event_info));
@@ -437,6 +445,31 @@ _list_item_cb9(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 }
 
 static void
+_list_item_cb10(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ctxpopup, *btn;
+   Evas_Coord x,y;
+
+   if (list_mouse_down > 0) return;
+
+   ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
+
+   btn = elm_button_add(ctxpopup);
+   elm_object_text_set(btn, "Click to remove");
+   evas_object_size_hint_min_set(btn, 150, 150);
+   evas_object_smart_callback_add(btn, "clicked", _btn_remove_cb, ctxpopup);
+
+   elm_object_content_set(ctxpopup, btn);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_object_move(ctxpopup, x, y);
+   evas_object_show(ctxpopup);
+   _print_current_dir(ctxpopup);
+}
+
+static void
 _list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
@@ -497,6 +530,8 @@ test_ctxpopup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                         _list_item_cb8, NULL);
    elm_list_item_append(list, "Ctxpopup with part text & content function", NULL, NULL,
                         _list_item_cb9, NULL);
+   elm_list_item_append(list, "Ctxpopup with user content (enable to remove)", NULL, NULL,
+                        _list_item_cb10, NULL);
    evas_object_show(list);
    elm_list_go(list);
 

@@ -1,9 +1,9 @@
-class Efl.Ui.Layout.Part_Content (Efl.Ui.Layout.Part, Efl.Container)
+class Efl.Ui.Layout.Part_Content (Efl.Ui.Layout.Part, Efl.Content)
 {
    [[Elementary layout internal part class]]
    data: null;
    implements {
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }

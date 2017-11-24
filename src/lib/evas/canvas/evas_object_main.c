@@ -209,7 +209,7 @@ _animation_intercept_hide(void *data, Evas_Object *eo_obj)
      {
         event_anim->hide_anim_started = EINA_TRUE;
 
-        _all_animation_objects_cancel(obj);
+        if (obj) _all_animation_objects_cancel(obj);
 
         //Create animation object to start animation
         event_anim->anim_obj = efl_animation_object_create(event_anim->anim);
@@ -1607,6 +1607,7 @@ EAPI void
 evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+
    EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
@@ -1634,6 +1635,8 @@ _efl_canvas_object_efl_gfx_size_hint_hint_restricted_min_set(Eo *eo_obj, Evas_Ob
 {
    if (obj->delete_me)
      return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -1674,6 +1677,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_max_set(Eo *eo_obj, Evas_Object_Protec
    if (obj->delete_me)
      return;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -1737,6 +1741,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_min_set(Eo *eo_obj, Evas_Object_Protec
    if (obj->delete_me)
      return;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -1772,6 +1777,7 @@ _efl_canvas_object_efl_gfx_size_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Pro
    if (obj->delete_me)
      return;
 
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -1805,6 +1811,8 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
 {
    if (obj->delete_me)
      return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (!obj->legacy.align_set) obj->legacy.align_set = 1;
    if (EINA_UNLIKELY(!obj->size_hints))
@@ -1839,6 +1847,8 @@ _efl_canvas_object_efl_gfx_size_hint_hint_weight_set(Eo *eo_obj, Evas_Object_Pro
 {
    if (obj->delete_me)
      return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (!obj->legacy.weight_set) obj->legacy.weight_set = 1;
    if (EINA_UNLIKELY(!obj->size_hints))
@@ -1877,6 +1887,8 @@ _efl_canvas_object_efl_gfx_size_hint_hint_margin_set(Eo *eo_obj, Evas_Object_Pro
 {
    if (obj->delete_me)
      return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
    if (EINA_UNLIKELY(!obj->size_hints))
      {
@@ -2829,6 +2841,8 @@ _efl_canvas_object_event_animation_is_running(Eo *eo_obj,
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
+   if (!obj) return EINA_FALSE;
+
    if (_event_animation_object_get(obj, desc))
      return EINA_TRUE;
 
@@ -2840,7 +2854,7 @@ _efl_canvas_object_event_animation_cancel(Eo *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
-   _all_animation_objects_cancel(obj);
+   if (obj) _all_animation_objects_cancel(obj);
 }
 
 

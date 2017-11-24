@@ -3963,6 +3963,19 @@ _cb_vsync(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 }
 
 static void
+_cb_withdrawn(void *data EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool sb = elm_config_agressive_withdrawn_get();
+
+   if (val != sb)
+     {
+        elm_config_agressive_withdrawn_set(val);
+        elm_config_all_flush();
+     }
+}
+
+static void
 _status_config_rendering(Evas_Object *win,
                          Evas_Object *naviframe)
 {
@@ -4029,6 +4042,13 @@ _status_config_rendering(Evas_Object *win,
              "VSynced and from Tearing",
              _cb_vsync, NULL);
    elm_check_state_set(ck, elm_config_vsync_get());
+
+   CHECK_ADD("Aggressive withdrawn",
+             "When the application is iconified it will<br>"
+             "drop its ressource and switch to a paused state<br>"
+             "if the application handle that lifecycle state.",
+             _cb_withdrawn, NULL);
+   elm_check_state_set(ck, elm_config_agressive_withdrawn_get());
 
    evas_object_data_set(win, "rendering", bx);
    elm_naviframe_item_simple_push(naviframe, bx);

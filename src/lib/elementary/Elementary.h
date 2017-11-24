@@ -106,12 +106,6 @@
 # endif
 #endif /* ! _WIN32 */
 
-#ifdef _WIN32
-# define EAPI_MAIN
-#else
-# define EAPI_MAIN EAPI
-#endif
-
 /* allow usage from c++ */
 #ifdef __cplusplus
 extern "C"
@@ -150,6 +144,7 @@ EAPI extern Elm_Version *elm_version;
 # include "efl_ui_focus_manager_sub.eo.h"
 # include "efl_ui_focus_manager_root_focus.eo.h"
 # include "efl_ui_focus_user.eo.h"
+# include "efl_ui_focus_util.eo.h"
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>
@@ -222,6 +217,24 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_glview.h>
 #include <elm_grid.h>
 
+
+#ifdef _WIN32
+#ifdef ELEMENTARY_BUILD
+// Elm legacy headers that require EAPI defined
+#include <elm_spinner.eo.h>
+#include <elm_entry.eo.h>
+#include <elm_ctxpopup.eo.h>
+#include <elm_ctxpopup_item.eo.h>
+#include <elm_popup.eo.h>
+#include <elm_popup_item.eo.h>
+#include <elm_colorselector.eo.h>
+#include <elm_interface_scrollable.eo.h>
+#include <elm_systray.eo.h>
+#include <elm_notify.eo.h>
+#include <elm_hoversel.eo.h>
+#endif
+#endif
+
 #include <elm_hover.h>
 #include <elm_image.h>
 #include <elm_index.h>
@@ -269,9 +282,11 @@ EAPI extern Elm_Version *elm_version;
 #ifdef EFL_EO_API_SUPPORT
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_widget_part_bg.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
+# include <efl_ui_layout_part_bg.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_win_part.eo.h>
@@ -290,13 +305,16 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>
 # include <efl_ui_image_factory.eo.h>
-# include <efl_ui_slider_interval.eo.h>
 #endif
 
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>
 
 #include <elm_helper.h>
+
+#if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+# include "Efl_Ui.h"
+#endif
 
 #ifdef __cplusplus
 }

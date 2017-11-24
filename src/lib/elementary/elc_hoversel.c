@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -182,19 +182,18 @@ _on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_item_focused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_item_focus_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-}
-
-static void
-_item_unfocused_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   Elm_Hoversel_Item_Data *it = data;
-
-   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+     }
+   else
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+     }
 }
 
 static void
@@ -685,7 +684,7 @@ EAPI Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -865,8 +864,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_FOCUSED, _item_focused_cb, item);
-    efl_event_callback_add(bt, EFL_UI_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, item);
+    efl_event_callback_add(bt, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 
@@ -1016,10 +1014,10 @@ _elm_hoversel_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_hoversel_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
           { "move,up", "move", "up", _key_action_move},
           { "move,down", "move", "down", _key_action_move},
@@ -1029,6 +1027,12 @@ _elm_hoversel_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNU
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
+}
+
+EOLIAN Eina_List*
+_elm_hoversel_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *pd)
+{
+	return eina_list_clone(pd->items);
 }
 
 EOLIAN void

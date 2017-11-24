@@ -1,74 +1,11 @@
-type slider_func_type: __undefined_type; [[Elementary slider function type]]
-type slider_freefunc_type: __undefined_type; [[Elementary slider free function type]]
-
 class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
                      Efl.Access.Value, Efl.Text, Efl.Text.Markup, Efl.Ui.Format,
-                     Efl.Ui.Translatable, Elm.Interface.Atspi_Widget_Action)
+                     Efl.Ui.Translatable, Efl.Access.Widget.Action,
+                     Efl.Content)
 {
    [[Elementary slider class]]
    legacy_prefix: elm_slider;
    methods {
-      @property indicator_format {
-         set {
-            [[Set the format string for the indicator label.
-
-              The slider may display its value somewhere else then unit label,
-              for example, above the slider knob that is dragged around. This
-              function sets the format string used for this.
-
-              If $null, indicator label won't be visible. If not it sets the
-              format string for the label text. To the label text is provided
-              a floating point value, so the label text can display up to 1
-              floating point value. Note that this is optional.
-
-              Use a format string such as "%1.2f meters" for example, and it
-              will display values like: "3.14 meters" for a value equal to
-              3.14159.
-
-              Default is indicator label disabled.
-            ]]
-         }
-         get {
-            [[Get the indicator label format of the slider.
-
-              The slider may display its value somewhere else then unit label,
-              for example, above the slider knob that is dragged around. This
-              function gets the format string used for this.
-            ]]
-         }
-         values {
-            indicator: string @nullable; [[The format string for the indicator display.]]
-         }
-      }
-      @property indicator_show {
-         set {
-            [[Set whether to enlarge slider indicator (augmented knob) or not.
-
-              By default, indicator will be bigger while dragged by the user.
-
-              Warning: It won't display values set with @.indicator_format.set
-              if you disable indicator.
-            ]]
-         }
-         get {
-            [[Get whether a given slider widget's enlarging indicator or not.]]
-         }
-         values {
-            show: bool; [[$true will make it enlarge, $false will
-                          let the knob always at default size.]]
-         }
-      }
-      @property indicator_show_on_focus {
-         set {
-            [[Show the indicator of slider on focus.]]
-         }
-         get {
-            [[Get whether the indicator of the slider is set or not.]]
-         }
-         values {
-            flag: bool; [[$true if indicator is shown on focus, $false otherwise]]
-         }
-      }
       @property step {
          set {
             [[Set the step by which slider indicator will move.
@@ -91,25 +28,9 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
             step: double; [[The step value.]]
          }
       }
-      @property indicator_visible_mode {
-         [[Set/Get the visible mode of indicator.
-         ]]
-         values {
-            indicator_visible_mode: Efl.Ui.Slider.Indicator_Visible_Mode; [[The indicator visible mode.]]
-         }
-      }
-      @property indicator_format_function {
-         set {
-            [[Set the format function pointer for the indicator label
-
-              Set the callback function to format the indicator string.
-            ]]
-         }
-         values {
-            func: slider_func_type @nullable; [[The indicator format function.]]
-            free_func: slider_freefunc_type @nullable; [[The freeing function for the format string.]]
-         }
-      }
+   }
+   parts {
+      indicator: Efl.Ui.Slider.Part; [[A floating indicator above the slider.]]
    }
    implements {
       class.constructor;
@@ -125,11 +46,14 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Text.text { get; set; }
       Efl.Text.Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part;
    }
    events {
       changed; [[Called when slider changed]]

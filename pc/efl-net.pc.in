@@ -5,8 +5,8 @@ includedir=@includedir@
 eoincludedir=@datadir@/eolian/include
 eolian_flags=-I${pc_sysrootdir}${eoincludedir}/ecore-con-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/ecore-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/efl-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eo-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eet-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/emile-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eina-@VMAJ@
 
-Name: ecore-con
-Description: E core library, Con module
+Name: efl-net
+Description: EFL network module
 Requires.private: @requirements_pc_ecore_con@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_con -lecore -lefl -leo -leet -lemile -leina

@@ -1,0 +1,16 @@
+class Edje.Global (Efl.Object, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class, Efl.Gfx.Size_Class)
+{
+   [[An internal object that manages global color, text and size classes for
+     the whole application. Individual edje objects also support the same
+     features.
+   ]]
+   data: null;
+   implements {
+      Efl.Gfx.Color_Class.color_class { get; set; }
+      Efl.Gfx.Color_Class.color_class_del;
+      Efl.Gfx.Text_Class.text_class { get; set; }
+      Efl.Gfx.Text_Class.text_class_del;
+      Efl.Gfx.Size_Class.size_class { get; set; }
+      Efl.Gfx.Size_Class.size_class_del;
+   }
+}

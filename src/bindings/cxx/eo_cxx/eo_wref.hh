@@ -27,6 +27,14 @@ struct wref
    wref() : _eo_wref(nullptr)
    {
    }
+
+   /// @brief Empty constructor on nullptr.
+   ///
+   /// Create a empty weak reference.
+   ///
+   wref(std::nullptr_t) : _eo_wref(nullptr)
+   {
+   }
   
    /// @brief Class constructor.
    ///
@@ -71,7 +79,7 @@ struct wref
    /// strong reference to the <em>EO Object</em>. Otherwise it returns
    /// an empty eina::optional.
    ///
-   eina::optional<T> lock()
+   eina::optional<T> lock() const
    {
       if(_eo_wref) // XXX eo_ref() should work on multi-threaded environments
         {
@@ -113,6 +121,30 @@ struct wref
            _eo_wref = 0;
         }
       return *this;
+   }
+
+#ifdef EFL_CXX_WREF_EASY
+   T operator->() const {
+      if (!_eo_wref) return T(nullptr);
+      return T(detail::ref(_eo_wref));
+   }
+
+   T operator*() const {
+      if (!_eo_wref) return T(nullptr);
+      return T(detail::ref(_eo_wref));
+   }
+#endif
+
+   template <typename U>
+   bool operator == (U const &other) const
+   {
+      return other._eo_ptr() == _eo_wref;
+   }
+
+   template <typename U>
+   friend bool operator == (U const &other, wref<T> const &thiz)
+   {
+      return other._eo_ptr() == thiz._eo_wref;
    }
 
 private:

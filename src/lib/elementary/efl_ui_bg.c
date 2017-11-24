@@ -114,15 +114,15 @@ EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
 _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED)
 {
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
@@ -167,7 +167,7 @@ _efl_ui_bg_efl_file_file_set(Eo *obj, Efl_Ui_Bg_Data *sd, const char *file, cons
         err = evas_object_image_load_error_get(sd->img);
         if (err != EVAS_LOAD_ERROR_NONE)
           {
-             ERR("Could not load image '%s': %s\n",
+             ERR("Could not load image '%s': %s",
                  file, evas_load_error_str(err));
              int_ret = EINA_FALSE;
           }

@@ -4001,7 +4001,7 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
 
         evas_render_rendering_wait(evas);
 
-        evas_fonts_zero_pressure(eo_e);
+        evas_fonts_zero_pressure();
 
         if (ENFN && ENFN->output_idle_flush)
           {
@@ -4125,7 +4125,7 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
         GC_ALL(evas_object_image_load_opts_cow);
         GC_ALL(evas_object_image_state_cow);
 
-        evas_fonts_zero_pressure(eo_e);
+        evas_fonts_zero_pressure();
 
         if (ENFN && ENFN->output_idle_flush)
           {

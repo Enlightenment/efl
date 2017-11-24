@@ -151,28 +151,20 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
    return r;
 }
 
-static void
-_efl_vg_container_efl_vg_dup(Eo *obj,
-                                  Efl_VG_Container_Data *pd,
-                                  const Efl_VG *from)
+EOLIAN static Efl_VG *
+_efl_vg_container_efl_vg_dup(const Eo *obj, Efl_VG_Container_Data *pd)
 {
-   Efl_VG_Container_Data *fromd;
    Eina_List *l;
-   Eo *child;
+   Efl_VG *child;
+   Efl_VG *cn = NULL;
 
-   efl_vg_dup(efl_super(obj, EFL_VG_CONTAINER_CLASS), from);
-
-   fromd = efl_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
-
-   EINA_LIST_FREE(pd->children, child)
-     efl_unref(child);
-
-   EINA_LIST_FOREACH(fromd->children, l, child)
+   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   EINA_LIST_FOREACH(pd->children, l, child)
      {
-        // By setting parent, we automatically reference
-        // this new object as a child of obj. Magic at work !
-        (void) efl_add(efl_class_get(child), obj, efl_vg_dup(efl_added, child));
+        // parent_set adds the new node to the list of children of cn
+        efl_parent_set(efl_vg_dup(child), cn);
      }
+   return cn;
 }
 
 EAPI Efl_VG*

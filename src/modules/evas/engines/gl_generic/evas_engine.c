@@ -152,6 +152,8 @@ egl_display_get(Render_Engine_GL_Generic *engine)
 }
 #endif
 
+void eng_image_free(void *engine, void *image);
+
 static void *
 eng_engine_new(void)
 {
@@ -159,6 +161,7 @@ eng_engine_new(void)
 
    engine = calloc(1, sizeof (Render_Engine_GL_Generic));
    if (!engine) return NULL;
+   engine->software.surface_cache = generic_cache_new(engine, eng_image_free);
 
    return engine;
 }
@@ -168,6 +171,9 @@ eng_engine_free(void *engine)
 {
    Render_Engine_GL_Generic *e = engine;
    Render_Output_GL_Generic *output;
+
+   //@FIXME this causes some deadlock while freeing the engine image.
+   //generic_cache_destroy(e->software.surface_cache);
 
    EINA_LIST_FREE(e->software.outputs, output)
      ERR("Output %p not properly cleaned before engine destruction.", output);
@@ -2555,189 +2561,138 @@ _evas_render_op_to_ector_rop(Evas_Render_Op op)
 }
 
 static void
-eng_ector_renderer_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, void *engine_data EINA_UNUSED, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async EINA_UNUSED)
+eng_ector_renderer_draw(void *engine EINA_UNUSED, void *output,
+                        void *context EINA_UNUSED, void *surface EINA_UNUSED,
+                        Ector_Renderer *renderer, Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
-   Evas_GL_Image *dst = surface;
-   Evas_Engine_GL_Context *gc;
-   Render_Output_GL_Generic *re = data;
-   Eina_Rectangle *r;
-   Eina_Array *c;
-   Eina_Rectangle clip;
-   Eina_Array_Iterator it;
-   unsigned int i;
-
-   gc = re->window_gl_context_get(re->software.ob);
-   gc->dc = context;
-   if (gc->dc->clip.use)
-     {
-        clip.x = gc->dc->clip.x;
-        clip.y = gc->dc->clip.y;
-        clip.w = gc->dc->clip.w;
-        clip.h = gc->dc->clip.h;
-     }
-   else
-     {
-        clip.x = 0;
-        clip.y = 0;
-        clip.w = dst->w;
-        clip.h = dst->h;
-     }
-
-   c = eina_array_new(8);
-   if (clips)
-     {
-        EINA_ARRAY_ITER_NEXT(clips, i, r, it)
-          {
-             Eina_Rectangle *rc;
-
-             rc = eina_rectangle_new(r->x, r->y, r->w, r->h);
-             if (!rc) continue;
-
-             if (eina_rectangle_intersection(rc, &clip))
-               eina_array_push(c, rc);
-             else
-               eina_rectangle_free(rc);
-          }
-
-        if (eina_array_count(c) == 0 &&
-            eina_array_count(clips) > 0)
-          {
-             eina_array_free(c);
-             return;
-          }
-     }
-
-   if (eina_array_count(c) == 0)
-     eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
-
-   ector_renderer_draw(renderer, _evas_render_op_to_ector_rop(gc->dc->render_op), c, // mul_col will be applied by GL during ector_end
-                             0xffffffff);
-
-   while ((r = eina_array_pop(c)))
-     eina_rectangle_free(r);
-   eina_array_free(c);
-}
-
-typedef struct _Evas_GL_Ector Evas_GL_Ector;
-struct _Evas_GL_Ector
-{
-   Evas_GL_Image *gl;
-   DATA32 *software;
-
-   Eina_Bool tofree;
-};
-
-static void*
-eng_ector_new(void *engine EINA_UNUSED, void *context EINA_UNUSED, Ector_Surface *ector EINA_UNUSED, void *surface EINA_UNUSED)
-{
-   Evas_GL_Ector *r;
-
-   r = calloc(1, sizeof (Evas_GL_Ector));
-   return r;
-}
-
-static void
-eng_ector_free(void *engine_data)
-{
-   Evas_GL_Ector *r = engine_data;
-
-   evas_gl_common_image_free(r->gl);
-   if (r->tofree) free(r->software);
-   free(r);
-}
-
-static void
-eng_ector_begin(void *engine, void *context EINA_UNUSED, Ector_Surface *ector,
-                void *surface, void *engine_data,
-                int x, int y, Eina_Bool do_async EINA_UNUSED)
-{
-   Evas_Engine_GL_Context *gl_context;
-   Evas_GL_Ector *buffer = engine_data;
-   int w, h;
-
-   gl_context = gl_generic_context_get(engine, 1);
-   evas_gl_common_context_target_surface_set(gl_context, surface);
-   gl_context->dc = context;
-
    if (use_cairo|| !use_gl)
      {
-        w = gl_context->w; h = gl_context->h;
+        int w, h;
+        Eina_Rectangle *r;
+        Eina_Array *c = eina_array_new(4);
+        Evas_GL_Image *glimg = output;
 
-        if (!buffer->gl || buffer->gl->w != w || buffer->gl->h != h)
-          {
-             int err = EVAS_LOAD_ERROR_NONE;
+        eng_image_size_get(engine, glimg, &w, &h);
+        eina_array_push(c, eina_rectangle_new(0, 0, w, h));
 
-             evas_gl_common_image_free(buffer->gl);
-             if (buffer->tofree) free(buffer->software);
-             buffer->software = NULL;
+        ector_renderer_draw(renderer, _evas_render_op_to_ector_rop(EVAS_RENDER_COPY), c, 0xffffffff);
 
-             buffer->gl = evas_gl_common_image_new(gl_context, w, h, 1, EVAS_COLORSPACE_ARGB8888);
-             if (!buffer->gl)
-               {
-                  ERR("Creation of an image for vector graphics [%i, %i] failed\n", w, h);
-                  return ;
-               }
-             /* evas_gl_common_image_content_hint_set(buffer->gl, EVAS_IMAGE_CONTENT_HINT_DYNAMIC); */
-             buffer->gl = eng_image_data_get(engine, buffer->gl, 1, &buffer->software, &err, &buffer->tofree);
-             if (!buffer->gl && err != EVAS_LOAD_ERROR_NONE)
-               {
-                  ERR("Mapping of an image for vector graphics [%i, %i] failed with %i\n", w, h, err);
-                  return ;
-               }
-          }
-        memset(buffer->software, 0, sizeof (unsigned int) * w * h);
-        ector_buffer_pixels_set(ector, buffer->software, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        while ((r = eina_array_pop(c)))
+          eina_rectangle_free(r);
+        eina_array_free(c);
+     }
+   else
+     {
+       //FIXME no implementation yet
+     }
+}
+
+// Ector functions start
+static void*
+eng_ector_surface_create(void *engine, int width, int height, int *error)
+{
+   void *surface;
+
+   *error = EINA_FALSE;
+
+   if (use_gl)
+     {
+        surface = evas_gl_common_image_surface_new(gl_generic_context_get(engine, EINA_TRUE),
+                                                   width, height, EINA_TRUE, EINA_FALSE);
+        if (!surface) *error = EINA_TRUE;
+     }
+   else
+     {
+        surface = eng_image_new_from_copied_data(engine, width, height, NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+        if (!surface)
+           *error = EINA_TRUE;
+        else  //Use this hint for ZERO COPY texture upload.
+          eng_image_content_hint_set(engine, surface, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+     }
+
+   return surface;
+}
+
+static void
+eng_ector_surface_destroy(void *engine, void *surface)
+{
+   if (!surface) return;
+   eng_image_free(engine, surface);
+}
+
+static void
+eng_ector_surface_cache_set(void *engine, void *key , void *surface)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   generic_cache_data_set(e->software.surface_cache, key, surface);
+
+}
+
+static void *
+eng_ector_surface_cache_get(void *engine, void *key)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   return generic_cache_data_get(e->software.surface_cache, key);
+}
+
+static void
+eng_ector_surface_cache_drop(void *engine, void *key)
+{
+   Render_Engine_GL_Generic *e = engine;
+
+   generic_cache_data_drop(e->software.surface_cache, key);
+}
+
+static void
+eng_ector_begin(void *engine, void *output,
+                void *context EINA_UNUSED, void *surface EINA_UNUSED,
+                Ector_Surface *ector, int x, int y, Eina_Bool do_async EINA_UNUSED)
+{
+   if (use_cairo|| !use_gl)
+     {
+        int w, h, stride;
+        Evas_GL_Image *glim = output;
+        DATA32 *pixels;
+        int load_err;
+
+        glim = eng_image_data_get(engine, glim, EINA_TRUE, &pixels, &load_err,NULL);
+        eng_image_stride_get(engine, glim, &stride);
+        eng_image_size_get(engine, glim, &w, &h);
+        memset(pixels, 0, stride * h);
+
+        // it just uses the software backend to draw for now
+        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
    else
      {
-        evas_gl_common_context_flush(gl_context);
-
-        ector_surface_reference_point_set(ector, x, y);
+        //FIXME: No implementation yet
      }
 }
 
 static void
-eng_ector_end(void *engine, void *context EINA_UNUSED, Ector_Surface *ector,
-              void *surface EINA_UNUSED, void *engine_data,
-              Eina_Bool do_async EINA_UNUSED)
+eng_ector_end(void *engine, void *output,
+              void *context EINA_UNUSED, void *surface EINA_UNUSED,
+              Ector_Surface *ector, Eina_Bool do_async EINA_UNUSED)
 {
-   Evas_Engine_GL_Context *gl_context;
-   Evas_GL_Ector *buffer = engine_data;
-   int w, h;
-   Eina_Bool mul_use;
-
    if (use_cairo || !use_gl)
      {
-        gl_context = gl_generic_context_get(engine, 1);
-        w = gl_context->w; h = gl_context->h;
-        mul_use = gl_context->dc->mul.use;
+        Evas_GL_Image *glim = output;
+        DATA32 *pixels;
+        int load_err;
 
-        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, 0);
-        buffer->gl = eng_image_data_put(engine, buffer->gl, buffer->software);
+        glim = eng_image_data_get(engine, glim, EINA_FALSE, &pixels, &load_err,NULL);
 
-        if (!mul_use)
-          {
-             // @hack as image_draw uses below fields to do colour multiplication.
-             gl_context->dc->mul.col = ector_color_multiply(0xffffffff, gl_context->dc->col.col);
-             gl_context->dc->mul.use = EINA_TRUE;
-          }
-
-        // We actually just bluntly push the pixel all over the
-        // destination surface. We don't have the actual information
-        // of the widget size. This is not a problem.
-        // Later on, we don't want that information and today when
-        // using GL backend, you just need to turn on Evas_Map on
-        // the Evas_Object_VG.
-        evas_gl_common_image_draw(gl_context, buffer->gl, 0, 0, w, h, 0, 0, w, h, 0);
-
-        // restore gl state
-        gl_context->dc->mul.use = mul_use;
+        eng_image_data_put(engine, glim, pixels);
+        eng_image_data_put(engine, glim, pixels);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        evas_common_cpu_end_opt();
      }
    else if (use_gl)
      {
-        // FIXME: Need to find a cleaner way to do so (maybe have a reset in evas_gl_context)
-        // Force a full pipe reinitialization for now
+        //FIXME: No implementation yet
      }
 }
 
@@ -3298,9 +3253,11 @@ module_open(Evas_Module *em)
    ORD(ector_begin);
    ORD(ector_renderer_draw);
    ORD(ector_end);
-   ORD(ector_new);
-   ORD(ector_free);
-
+   ORD(ector_surface_create);
+   ORD(ector_surface_destroy);
+   ORD(ector_surface_cache_set);
+   ORD(ector_surface_cache_get);
+   ORD(ector_surface_cache_drop);
    ORD(gfx_filter_supports);
    ORD(gfx_filter_process);
 

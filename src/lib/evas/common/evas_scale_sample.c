@@ -1,6 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_blend_private.h"
 
+#include "Ecore.h"
+
 static Eina_Bool scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
 typedef struct _Evas_Scale_Thread Evas_Scale_Thread;
@@ -860,6 +862,23 @@ _evas_common_scale_sample_thread(void *data EINA_UNUSED,
    return NULL;
 }
 
+static void
+evas_common_scale_sample_fork_reset(void *data EINA_UNUSED)
+{
+   eina_thread_queue_free(thread_queue);
+   eina_thread_queue_free(main_queue);
+
+   thread_queue = eina_thread_queue_new();
+   main_queue = eina_thread_queue_new();
+
+   if (!eina_thread_create(&scaling_thread, EINA_THREAD_NORMAL, -1,
+                           _evas_common_scale_sample_thread, NULL))
+     {
+        CRI("We failed to recreate the upscaling thread.");
+        use_thread = EINA_FALSE;
+     }
+}
+
 EAPI void
 evas_common_scale_sample_init(void)
 {
@@ -869,6 +888,10 @@ evas_common_scale_sample_init(void)
 #ifdef _WIN32
    return;
 #endif
+
+   ecore_init();
+
+   ecore_fork_reset_callback_add(evas_common_scale_sample_fork_reset, NULL);
 
    thread_queue = eina_thread_queue_new();
    if (EINA_UNLIKELY(!thread_queue))
@@ -886,6 +909,7 @@ evas_common_scale_sample_init(void)
    if (!eina_thread_create(&scaling_thread, EINA_THREAD_NORMAL, -1,
                            _evas_common_scale_sample_thread, NULL))
      {
+        CRI("We failed to create the upscaling thread.");
         goto cleanup;
      }
 
@@ -905,6 +929,8 @@ evas_common_scale_sample_shutdown(void)
 
    if (!use_thread) return ;
 
+   ecore_fork_reset_callback_del(evas_common_scale_sample_fork_reset, NULL);
+
    msg = eina_thread_queue_send(thread_queue, sizeof (Evas_Scale_Msg), &ref);
    msg->task = NULL;
    eina_thread_queue_send_done(thread_queue, ref);
@@ -918,4 +944,6 @@ evas_common_scale_sample_shutdown(void)
 
    eina_thread_queue_free(thread_queue);
    eina_thread_queue_free(main_queue);
+
+   ecore_shutdown();
 }

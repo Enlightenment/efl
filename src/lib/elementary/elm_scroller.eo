@@ -1,6 +1,6 @@
 class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
-                    Elm.Interface.Atspi_Widget_Action,
-                    Efl.Ui.Scrollable, Efl.Container)
+                    Efl.Access.Widget.Action,
+                    Efl.Ui.Scrollable, Efl.Content)
 {
    [[Elementary scroller class]]
    legacy_prefix: elm_scroller;
@@ -45,8 +45,8 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_activate;
       Elm.Widget.widget_sub_object_del;
@@ -54,7 +54,7 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
       Elm.Widget.focus_state_apply;
    }

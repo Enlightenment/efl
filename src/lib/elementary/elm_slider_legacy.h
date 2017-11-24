@@ -176,7 +176,7 @@ EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_typ
  * @param[in] min The minimum value.
  * @param[in] max The maximum value.
  *
- * @ingroup Efl_Ui_Slider
+ * @ingroup Elm_Slider
  */
 EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
 
@@ -189,7 +189,7 @@ EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
  * @param[out] min The minimum value.
  * @param[out] max The maximum value.
  *
- * @ingroup Efl_Ui_Slider
+ * @ingroup Elm_Slider
  */
 EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
 
@@ -230,5 +230,124 @@ EAPI void elm_slider_range_set(Evas_Object *obj, double from, double to);
  * @since 1.18
  */
 EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to);
+
+/**
+ * @brief Set the format string for the indicator label.
+ *
+ * The slider may display its value somewhere else then unit label, for
+ * example, above the slider knob that is dragged around. This function sets
+ * the format string used for this.
+ *
+ * If @c null, indicator label won't be visible. If not it sets the format
+ * string for the label text. To the label text is provided a floating point
+ * value, so the label text can display up to 1 floating point value. Note that
+ * this is optional.
+ *
+ * Use a format string such as "%1.2f meters" for example, and it will display
+ * values like: "3.14 meters" for a value equal to 3.14159.
+ *
+ * Default is indicator label disabled.
+ *
+ * @param[in] obj The object.
+ * @param[in] indicator The format string for the indicator display.
+ *
+ * @ingroup Elm_Slider
+ */
+ EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+ 
+ /**
+  * @brief Get the indicator label format of the slider.
+  *
+  * The slider may display its value somewhere else then unit label, for
+  * example, above the slider knob that is dragged around. This function gets
+  * the format string used for this.
+  *
+  * @param[in] obj The object.
+  *
+  * @return The format string for the indicator display.
+  *
+  * @ingroup Elm_Slider
+  */
+ EAPI const char *elm_slider_indicator_format_get(const Evas_Object *obj);
+
+ /**
+ * @brief Set the format function pointer for the indicator label
+ *
+ * Set the callback function to format the indicator string.
+ *
+ * @param[in] obj The object.
+ * @param[in] func The indicator format function.
+ * @param[in] free_func The freeing function for the format string.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+
+/**
+ * @brief Show the indicator of slider on focus.
+ *
+ * @param[in] obj The object.
+ * @param[in] flag @c true if indicator is shown on focus, @c false otherwise
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag);
+
+/**
+ * @brief Get whether the indicator of the slider is set or not.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if indicator is shown on focus, @c false otherwise
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Eina_Bool elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);
+
+/**
+ * @brief Set whether to enlarge slider indicator (augmented knob) or not.
+ *
+ * By default, indicator will be bigger while dragged by the user.
+ *
+ * @param[in] obj The object.
+ * @param[in] show @c true will make it enlarge, @c false will let the knob
+ * always at default size.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
+
+/**
+ * @brief Get whether a given slider widget's enlarging indicator or not.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true will make it enlarge, @c false will let the knob always at
+ * default size.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
+
+/**
+ * @brief Set/Get the visible mode of indicator.
+ *
+ * @param[in] obj The object.
+ * @param[in] indicator_visible_mode The indicator visible mode.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode);
+
+/**
+ * @brief Set/Get the visible mode of indicator.
+ *
+ * @param[in] obj The object.
+ *
+ * @return The indicator visible mode.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(const Evas_Object *obj);
 
 #include "efl_ui_slider.eo.legacy.h"

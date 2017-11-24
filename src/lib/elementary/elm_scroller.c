@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 
@@ -12,6 +12,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
+#include "elm_scroller.eo.h"
 #include "elm_scroller_part.eo.h"
 #include "elm_part_helper.h"
 
@@ -718,19 +719,19 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_efl_container_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
+_elm_scroller_efl_content_content_set(Eo *obj, Elm_Scroller_Data *sd, Eo *content)
 {
    return _elm_scroller_content_set(obj, sd, "default", content);
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_container_content_get(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_get(Eo *obj, Elm_Scroller_Data *sd)
 {
    return _elm_scroller_content_get(obj, sd, "default");
 }
 
 EOLIAN static Eo *
-_elm_scroller_efl_container_content_unset(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_content_content_unset(Eo *obj, Elm_Scroller_Data *sd)
 {
    return _elm_scroller_content_unset(obj, sd, "default");
 }
@@ -848,7 +849,7 @@ EAPI Evas_Object *
 elm_scroller_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 static void
@@ -1345,10 +1346,10 @@ _elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_U
 }
 
 
-EOLIAN const Elm_Atspi_Action *
-_elm_scroller_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_scroller_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,left", "move", "left", _key_action_move},

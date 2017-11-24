@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 
@@ -1407,7 +1407,7 @@ EAPI Evas_Object *
 elm_diskselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -1766,10 +1766,10 @@ _elm_diskselector_class_constructor(Efl_Class *klass)
       _elm_diskselector_smart_focus_next_enable = EINA_TRUE;
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_diskselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_diskselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,previous", "move", "prev", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,first", "move", "first", _key_action_move},

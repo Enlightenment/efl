@@ -1191,7 +1191,6 @@ _pointer_axis(struct libinput_device *idevice, struct libinput_event_pointer *ev
    ptr = _evdev_pointer_get(dev->seat);
    if (!ptr) return EINA_FALSE;
 
-#ifdef LIBINPUT_HIGHER_08
    vert =
      libinput_event_pointer_has_axis(event,
                                      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
@@ -1212,12 +1211,6 @@ _pointer_axis(struct libinput_device *idevice, struct libinput_event_pointer *ev
         val = _pointer_axis_value(event, axis);
         dir = 1;
      }
-
-#else
-   axis = libinput_event_pointer_get_axis(event);
-   if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) dir = 1;
-   val = libinput_event_pointer_get_axis_value(event);
-#endif
 
    ptr->timestamp = libinput_event_pointer_get_time(event);
 
@@ -1595,6 +1588,30 @@ _tablet_tool_tip(struct libinput_device *idev, struct libinput_event_tablet_tool
    _pointer_button_send(dev, press[state]);
 }
 
+static void
+_switch_event_free(void *data EINA_UNUSED, void *event)
+{
+   Elput_Event_Switch *ev = event;
+
+   _evdev_device_destroy(ev->device);
+   free(ev);
+}
+
+static void
+_switch_toggle(struct libinput_device *idev, struct libinput_event_switch *event)
+{
+   Elput_Event_Switch *ev;
+
+   ev = calloc(1, sizeof(Elput_Event_Switch));
+   if (!ev) return;
+   ev->device = libinput_device_get_user_data(idev);
+   ev->device->refs++;
+   ev->time_usec = libinput_event_switch_get_time_usec(event);
+   ev->type = (Elput_Switch_Type)libinput_event_switch_get_switch(event);
+   ev->state = (Elput_Switch_State)libinput_event_switch_get_switch_state(event);
+   ecore_event_add(ELPUT_EVENT_SWITCH, ev, _switch_event_free, NULL);
+}
+
 int
 _evdev_event_process(struct libinput_event *event)
 {
@@ -1642,6 +1659,9 @@ _evdev_event_process(struct libinput_event *event)
       case LIBINPUT_EVENT_TABLET_TOOL_TIP: /* is this useful? */
         _tablet_tool_tip(idev, libinput_event_get_tablet_tool_event(event));
         break;
+      case LIBINPUT_EVENT_SWITCH_TOGGLE:
+        _switch_toggle(idev, libinput_event_get_switch_event(event));
+        break;
       default:
         ret = 0;
         break;
@@ -1670,7 +1690,6 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    edev->refs = 1;
    edev->seat = seat;
    edev->device = device;
-   edev->caps = 0;
    edev->ow = seat->manager->output_w;
    edev->oh = seat->manager->output_h;
 
@@ -1679,13 +1698,14 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
      oname = libinput_device_get_name(device);
    eina_stringshare_replace(&edev->output_name, oname);
 
+   if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_SWITCH))
+     edev->caps |= ELPUT_DEVICE_CAPS_SWITCH;
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD)) &&
        (libinput_device_keyboard_has_key(device, KEY_ENTER)))
-     {
-        _keyboard_init(seat, seat->manager->cached.keymap);
-        edev->caps |= ELPUT_DEVICE_CAPS_KEYBOARD;
-     }
- 
+     edev->caps |= ELPUT_DEVICE_CAPS_KEYBOARD;
+   if (edev->caps & (ELPUT_DEVICE_CAPS_SWITCH | ELPUT_DEVICE_CAPS_KEYBOARD))
+     _keyboard_init(seat, seat->manager->cached.keymap);
+
    if ((libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER) &&
        (libinput_device_pointer_has_button(device, BTN_LEFT))))
      edev->caps |= ELPUT_DEVICE_CAPS_POINTER;
@@ -1694,10 +1714,7 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TABLET_PAD))
      edev->caps |= ELPUT_DEVICE_CAPS_TABLET_PAD;
    if (edev->caps & ELPUT_DEVICE_CAPS_POINTER)
-     {
-        _pointer_init(seat);
-        edev->caps |= ELPUT_DEVICE_CAPS_POINTER;
-     }
+     _pointer_init(seat);
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
      edev->caps |= ELPUT_DEVICE_CAPS_TOUCH;
@@ -1705,8 +1722,6 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
      edev->caps |= ELPUT_DEVICE_CAPS_TOUCH | ELPUT_DEVICE_CAPS_GESTURE;
    if (edev->caps & ELPUT_DEVICE_CAPS_TOUCH)
      _touch_init(seat);
-
-   if (!edev->caps) goto err;
 
    libinput_device_set_user_data(device, edev);
    libinput_device_ref(edev->device);
@@ -1720,11 +1735,6 @@ _evdev_device_create(Elput_Seat *seat, struct libinput_device *device)
      }
 
    return edev;
-
-err:
-   eina_stringshare_del(edev->output_name);
-   free(edev);
-   return NULL;
 }
 
 void

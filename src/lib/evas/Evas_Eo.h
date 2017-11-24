@@ -4,8 +4,6 @@
 
 #ifdef EFL_EO_API_SUPPORT
 
-#include "canvas/evas_canvas.eo.h"
-
 /**
  * @ingroup Evas_Object_Rectangle
  *

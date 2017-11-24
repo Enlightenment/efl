@@ -1,109 +1,96 @@
+// g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` slider_cxx_example.cc -o slider_cxx_example
+
 #include <Elementary.hh>
 
-EAPI_MAIN int
-elm_main (int argc, char *argv[])
+using efl::eo::instantiate;
+
+static efl::ui::Win win;
+
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
+   win = efl::ui::Win(instantiate);
+   win.text_set("Slider example");
+   efl::eolian::event_add(efl::ui::Win::delete_request_event, win,
+                          std::bind([](){ win = nullptr; ::efl_exit(0); }));
 
-   ::elm::win win(elm_win_util_standard_add("slider", "Slider Example"));
-   win.autohide_set(true);
+   efl::ui::Box bx(instantiate, win);
+   win.content_set(bx);
 
-   ::elm::box bx(efl::eo::parent = win);
-   bx.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   win.resize_object_add(bx);
-   bx.visible_set(true);
-
-   ::elm::slider sl(efl::eo::parent = win);
-   sl.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   sl.size_hint_align_set(EVAS_HINT_FILL, 0.5);
+   efl::ui::Slider sl(instantiate, win);
+   sl.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl);
-   sl.visible_set(true);
 
-   ::elm::slider sl2(efl::eo::parent = win);
-   sl2.text_set("elm.text", "Counter");
-   ::elm::icon ic(efl::eo::parent = win);
-   ic.standard_set("home");
-   ic.resizable_set(false, false);
-   sl2.content_set("icon", ic);
+   efl::ui::Slider sl2(instantiate, win);
+   sl2.text_set("Counter");
+   efl::ui::Image ic(instantiate, win);
+   ic.icon_set("home");
+   ic.scalable_set(false, false);
+   sl2.content_set(ic);
 
-   ::elm::icon ic2(efl::eo::parent = win);
-   ic2.standard_set("folder");
-   ic2.resizable_set(false, false);
-   sl2.content_set("end", ic2);
+   efl::ui::Image ic2(instantiate, win);
+   ic2.icon_set("folder");
+   ic2.scalable_set(false, false);
+   // FIXME: C++ part API needs special reference handling! This will show ERR!
+   efl::eo::downcast<efl::Content>(sl2.part("elm.swallow.end"))
+         .content_set(ic2);
 
-   sl2.size_hint_align_set(EVAS_HINT_FILL, 0.5);
-   sl2.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   sl2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl2);
-   sl2.visible_set(true);
 
-   ::elm::slider sl3(efl::eo::parent = win);
-   sl3.value_set(1);
-   sl3.hint_min_set(220, 0);
-   sl3.size_hint_align_set(EVAS_HINT_FILL, 0.5);
-   sl3.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl::ui::Slider sl3(instantiate, win);
+   sl3.range_value_set(1);
+   sl3.hint_min_set({220, 0});
+   sl3.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl3);
-   sl3.visible_set(true);
 
-   ::elm::slider sl4(efl::eo::parent = win);
-   sl4.unit_format_set("%1.0f units");
-   sl4.min_max_set(0, 100);
-   sl4.size_hint_align_set(EVAS_HINT_FILL, 0.5);
-   sl4.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl::ui::Slider sl4(instantiate, win);
+   sl4.format_string_set("%1.0f units");
+   sl4.range_min_max_set(0, 100);
+   sl4.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl4);
-   sl4.visible_set(true);
 
-   ::elm::slider sl5(efl::eo::parent = win);
-   sl5.indicator_format_set("%1.2f");
-   sl5.inverted_set(true);
-   sl5.size_hint_align_set(EVAS_HINT_FILL, 0.5);
-   sl5.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl::ui::Slider sl5(instantiate, win);
+
+   // FIXME: C++ part API needs special reference handling! This will show ERR!
+   efl::eo::downcast<efl::ui::slider::Part>(sl5.part("indicator"))
+         .format_string_set("%1.2f");
+
+   sl5.direction_set(EFL_UI_DIR_UP);
+   sl5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl5);
-   sl5.visible_set(true);
 
-   ::elm::slider sl6(efl::eo::parent = win);
-   sl6.horizontal_set(false);
+   efl::ui::Slider sl6(instantiate, win);
+   sl4.direction_set(EFL_UI_DIR_HORIZONTAL);
 
-   auto indicator_format = [] (double val) {
-                                            char *indicator = new char[32];
-                                            snprintf(indicator, 32, "%1.2f u", val);
-                                            return indicator;
-                                           };
+// FIXME
+//   auto indicator_format = [] (double val) {
+//                                            char *indicator = new char[32];
+//                                            snprintf(indicator, 32, "%1.2f u", val);
+//                                            return indicator;
+//                                           };
+//   auto indicator_free = [] (char *obj) {delete obj;} ;
+//   sl6.indicator_format_function_set(indicator_format, indicator_free);
 
-   auto indicator_free = [] (char *obj) {delete obj;} ;
-
-   sl6.indicator_format_function_set(indicator_format, indicator_free);
-
-   sl6.size_hint_align_set(0.5, EVAS_HINT_FILL);
-   sl6.size_hint_weight_set(0, EVAS_HINT_EXPAND);
+   sl6.hint_align_set(0.5, EFL_GFX_SIZE_HINT_FILL);
+   sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
    bx.pack_end(sl6);
-   sl6.visible_set(true);
 
-   ::elm::slider sl7(efl::eo::parent = win);
-   sl7.unit_format_set("%1.3f units");
-   sl7.indicator_format_function_set(indicator_format, indicator_free);
-   sl7.size_hint_align_set(EVAS_HINT_FILL, 0.5);
-   sl7.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl::ui::Slider sl7(instantiate, win);
+   sl7.format_string_set("%1.3f units");
+//   sl7.indicator_format_function_set(indicator_format, indicator_free);
+   sl7.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl7);
-   sl7.visible_set(true);
 
-   auto changed = std::bind ( [] (::elm::slider obj)
-                  {
-                     double val = obj.value_get();
-                     std::cout << "Changed to " << val << std::endl;
-                  } , std::placeholders::_1  );
+   auto changed = std::bind ( [] (efl::ui::Slider obj)
+   { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
+         , std::placeholders::_1);
 
-   auto delay =  std::bind ( [] (::elm::slider obj)
-                 {
-                    double val = obj.value_get();
-                    std::cout << "Delay changed to " << val << std::endl;
-                 } , std::placeholders::_1  );
+   auto delay =  std::bind ( [] (efl::ui::Slider obj)
+   { std::cout << "Delay changed to " << obj.range_value_get() << std::endl; }
+         , std::placeholders::_1);
 
-   sl7.callback_changed_add(changed);
-   sl7.callback_delay_changed_add(delay);
-
-   win.visible_set(true);
-
-   elm_run();
-   return 0;
+   efl::eolian::event_add(sl7.changed_event, sl7, changed);
+   efl::eolian::event_add(sl7.delay_changed_event, sl7, delay);
 }
-ELM_MAIN()
+EFL_MAIN()

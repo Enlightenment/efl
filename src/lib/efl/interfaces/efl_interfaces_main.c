@@ -26,6 +26,10 @@
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"
 
+#include "interfaces/efl_gfx_color_class.eo.c"
+#include "interfaces/efl_gfx_text_class.eo.c"
+#include "interfaces/efl_gfx_size_class.eo.c"
+
 #include "interfaces/efl_gfx_gradient.eo.c"
 #include "interfaces/efl_gfx_gradient_linear.eo.c"
 #include "interfaces/efl_gfx_gradient_radial.eo.c"
@@ -41,6 +45,7 @@
 
 /* Packing & containers */
 #include "interfaces/efl_container.eo.c"
+#include "interfaces/efl_content.eo.c"
 #include "interfaces/efl_pack.eo.c"
 #include "interfaces/efl_pack_layout.eo.c"
 #include "interfaces/efl_pack_linear.eo.c"

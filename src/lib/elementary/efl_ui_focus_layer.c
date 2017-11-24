@@ -73,14 +73,12 @@ _efl_ui_focus_layer_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Foc
 EOLIAN static Efl_Object*
 _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->manager = efl_ui_widget_focus_manager_create(obj, obj);
-
    efl_composite_attach(obj, pd->manager);
-
    pd->enable_on_visible = EINA_TRUE;
    pd->cycle = EINA_TRUE;
-
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 EOLIAN static void
@@ -90,13 +88,15 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
      {
         pd->registered_manager = elm_widget_top_get(obj);
 
-        efl_ui_focus_manager_redirect_set(pd->registered_manager, obj);
+        efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
         efl_ui_focus_manager_focus_set(pd->manager, obj);
      }
    else
      {
         if (efl_ui_focus_manager_redirect_get(pd->registered_manager) == obj)
           efl_ui_focus_manager_redirect_set(pd->registered_manager, NULL);
+
+        efl_ui_focus_manager_calc_unregister(pd->registered_manager, obj);
         pd->registered_manager = NULL;
      }
 }

@@ -5,9 +5,10 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -2948,7 +2949,7 @@ EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eina_Bool
@@ -3910,10 +3911,10 @@ _elm_toolbar_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_toolbar_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_toolbar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "select", "select", NULL, _key_action_select},
           { NULL, NULL, NULL, NULL }
    };

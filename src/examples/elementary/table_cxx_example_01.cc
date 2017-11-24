@@ -1,44 +1,38 @@
+// g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` table_cxx_example_01.cc -o table_cxx_example_01
 
 #include <Elementary.hh>
 
-EAPI_MAIN int
-elm_main (int argc, char *argv[])
+using efl::eo::instantiate;
+
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win win(elm_win_util_standard_add("table", "Table"));
+   efl::ui::Win win(instantiate);
+   win.text_set("Table example");
    win.autohide_set(true);
 
-   ::elm::table table(efl::eo::parent = win);
-   win.resize_object_add(table);
-   table.visible_set(true);
-   table.padding_set(5, 5);
-   table.homogeneous_set(true);
+   efl::ui::Grid table(instantiate, win);
+   win.content_set(table);
+   table.pack_padding_set(5, 5, true);
+//   FIXME
+//   table.homogeneous_set(true);
 
-   ::elm::label label(efl::eo::parent = win);
-   label.text_set(nullptr, "label 0");
-   label.visible_set(true);
-   table.pack(label, 0, 0, 1, 1);
+   efl::ui::Text label(instantiate, win);
+   label.text_set("label 0");
+   table.pack_grid(label, 0, 0, 1, 1);
 
-   ::elm::label label1(efl::eo::parent = win);
-   label1.text_set(nullptr, "label 1");
-   label1.visible_set(true);
-   table.pack(label1, 1, 0, 1, 1);
+   efl::ui::Text label1(instantiate, win);
+   label1.text_set("label 1");
+   table.pack_grid(label1, 1, 0, 1, 1);
 
-   ::elm::label label2(efl::eo::parent = win);
-   label2.text_set(nullptr, "label 2");
-   label2.visible_set(true);
-   table.pack(label2, 0, 1, 1, 1);
+   efl::ui::Text label2(instantiate, win);
+   label2.text_set("label 2");
+   table.pack_grid(label2, 0, 1, 1, 1);
 
-   ::elm::label label3(efl::eo::parent = win);
-   label3.text_set(nullptr, "label 3");
-   label3.visible_set(true);
-   table.pack(label3, 1, 1, 1, 1);
-
-   win.visible_set(true);
-
-   elm_run();
-   return 0;
+   efl::ui::Text label3(instantiate, win);
+   label3.text_set("label 3");
+   table.pack_grid(label3, 1, 1, 1, 1);
 }
-ELM_MAIN()
-
+EFL_MAIN()

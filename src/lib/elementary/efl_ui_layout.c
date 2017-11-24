@@ -4,12 +4,14 @@
 
 #define EFL_ACCESS_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_UI_WIDGET_PART_BG_PROTECTED
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
+#include "elm_entry.eo.h"
 
 #define MY_CLASS EFL_UI_LAYOUT_CLASS
 #define MY_CLASS_PFX efl_ui_layout
@@ -396,18 +398,15 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
      {
         elm_layout_signal_emit(obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
-        if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,action,unfocus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
-        if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
-          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
      }
+
+   efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), item);
+
    if (efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
      edje_object_message_signal_process(wd->resize_obj);
 
@@ -2049,7 +2048,7 @@ EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -2388,6 +2387,24 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
    // can cause recalc, which has side effects... and could be slow.
    type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
 
+   if (eina_streq(part, "background"))
+     {
+        if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+          {
+             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
+                 type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+               {
+                  const char *file = NULL, *key = NULL;
+                  efl_file_get(wd->resize_obj, &file, &key);
+                  WRN("Layout has a background but it's not a swallow: '%s'",
+                      sd->group);
+               }
+             return efl_part(efl_super(obj, MY_CLASS), part);
+          }
+
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
+     }
+
    if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
      {
         ERR("Invalid type found for part '%s' in group '%s'", part, sd->group);
@@ -2405,7 +2422,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
       case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
-        DBG("No such part '%s' in group '%s'", part, sd->group);
+        WRN("No such part '%s' in group '%s'", part, sd->group);
         return NULL;
       default:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
@@ -2528,9 +2545,34 @@ _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_set(Eo *obj, vo
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
 }
 
+/* Efl.Ui.Layout.Part_Bg (common) */
+
+EOLIAN static Efl_Object *
+_efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Layout_Data *sd;
+   Elm_Part_Data *pd;
+   Eo *bg;
+
+   obj = efl_finalize(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS));
+   if (!obj) return NULL;
+
+   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   bg = _efl_ui_widget_bg_get(pd->obj);
+   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
+     {
+        ERR("Failed to swallow new background object!");
+        // Shouldn't happen. What now? del bg? call super? return null?
+     }
+
+   return obj;
+}
+
 /* Efl.Ui.Layout.Part_Xxx includes */
 #include "efl_ui_layout_part.eo.c"
 #include "efl_ui_layout_part_content.eo.c"
+#include "efl_ui_layout_part_bg.eo.c"
 #include "efl_ui_layout_part_text.eo.c"
 #include "efl_ui_layout_part_legacy.eo.c"
 

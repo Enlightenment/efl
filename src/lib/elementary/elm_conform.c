@@ -10,6 +10,10 @@
 #include "elm_priv.h"
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
+#include "elm_widget_plug.h"
+#include "elm_scroller.eo.h"
+#include "elm_genlist.eo.h"
+#include "elm_conformant.eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
 #define MY_CLASS_PFX elm_conformant
@@ -988,7 +992,7 @@ EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *

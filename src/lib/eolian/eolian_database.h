@@ -91,12 +91,13 @@ struct _Eolian_Class
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
-   Eina_List *inherits; /* List Eolian_Class * */
-   Eina_List *properties; /* List prop_name -> Eolian_Function */
-   Eina_List *methods; /* List meth_name -> Eolian_Function */
-   Eina_List *implements; /* List implements name -> Eolian_Implement */
-   Eina_List *constructors; /* List constructors name -> Eolian_Constructor */
-   Eina_List *events; /* List event_name -> Eolian_Event */
+   Eina_List *inherits; /* Eolian_Class */
+   Eina_List *properties; /* Eolian_Function */
+   Eina_List *methods; /* Eolian_Function */
+   Eina_List *implements; /* Eolian_Implement */
+   Eina_List *constructors; /* Eolian_Constructor */
+   Eina_List *events; /* Eolian_Event */
+   Eina_List *parts; /* Eolian_Part */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
    Eina_Bool toplevel:1;
@@ -146,6 +147,7 @@ struct _Eolian_Part
    Eolian_Object base;
    Eina_Stringshare *name;
    Eolian_Class *klass;
+   Eolian_Documentation *doc;
 };
 
 struct _Eolian_Function_Parameter
@@ -175,6 +177,7 @@ struct _Eolian_Type
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
    Eina_Bool owned     :1;
+   Eina_Bool legacy    :1;
 };
 
 struct _Eolian_Typedecl
@@ -356,5 +359,7 @@ void database_constructor_del(Eolian_Constructor *ctor);
 /* events */
 void database_event_del(Eolian_Event *event);
 
+/* parts */
+void database_part_del(Eolian_Part *part);
 
 #endif

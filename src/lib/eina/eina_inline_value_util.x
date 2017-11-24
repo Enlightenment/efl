@@ -990,7 +990,31 @@ eina_value_dup(const Eina_Value *val)
 
    v = eina_value_new(eina_value_type_get(val));
    EINA_SAFETY_ON_NULL_RETURN_VAL(v, NULL);
-   eina_value_copy(val, v);
+   if (!eina_value_copy(val, v))
+     {
+        eina_value_setup(v, EINA_VALUE_TYPE_ERROR);
+        eina_value_set(v, EINA_ERROR_VALUE_FAILED);
+     }
+   return v;
+}
+
+/**
+ * @brief Return a reference to #Eina_Value containing a copy of the passed parameter
+ * @param val The value to use
+ * @return The #Eina_Value
+ * @since 1.21
+ */
+static inline Eina_Value
+eina_value_reference_copy(const Eina_Value *val)
+{
+   Eina_Value v = EINA_VALUE_EMPTY;
+
+   if (!eina_value_setup(&v, eina_value_type_get(val)) ||
+       !eina_value_copy(val, &v))
+     {
+        eina_value_setup(&v, EINA_VALUE_TYPE_ERROR);
+        eina_value_set(&v, EINA_ERROR_VALUE_FAILED);
+     }
    return v;
 }
 

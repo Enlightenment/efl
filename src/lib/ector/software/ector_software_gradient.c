@@ -280,73 +280,14 @@ _linear_helper_sse3(uint32_t *buffer, int length, Ector_Renderer_Software_Gradie
 
 #endif
 
-static inline double
-_ease_linear(double t)
-{
-   return t;
-}
-
-static Eina_Bool
-_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint32_t *color_table, int size)
-{
-   int dist, idist, pos = 0, i;
-   Eina_Bool alpha = EINA_FALSE;
-   Efl_Gfx_Gradient_Stop *curr, *next;
-   uint32_t current_color, next_color;
-   double delta, t, incr, fpos;
-
-   assert(stop_count > 0);
-
-   curr = gradient_stops;
-   if (curr->a != 255) alpha = EINA_TRUE;
-   current_color = DRAW_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
-   incr = 1.0 / (double)size;
-   fpos = 1.5 * incr;
-
-   color_table[pos++] = current_color;
-
-   while (fpos <= curr->offset)
-     {
-        color_table[pos] = color_table[pos - 1];
-        pos++;
-        fpos += incr;
-     }
-
-   for (i = 0; i < stop_count - 1; ++i)
-     {
-        curr = (gradient_stops + i);
-        next = (gradient_stops + i + 1);
-        delta = 1/(next->offset - curr->offset);
-        if (next->a != 255) alpha = EINA_TRUE;
-        next_color = DRAW_ARGB_JOIN(next->a, next->r, next->g, next->b);
-        while (fpos < next->offset && pos < size)
-          {
-             t = _ease_linear((fpos - curr->offset) * delta);
-             dist = (int)(256 * t);
-             idist = 256 - dist;
-             color_table[pos] = draw_interpolate_256(current_color, idist, next_color, dist);
-             ++pos;
-             fpos += incr;
-          }
-        current_color = next_color;
-     }
-
-   for (;pos < size; ++pos)
-     color_table[pos] = current_color;
-
-   // Make sure the last color stop is represented at the end of the table
-   color_table[size-1] = current_color;
-   return alpha;
-}
-
 static void
 _update_color_table(void *data, Ector_Software_Thread *t EINA_UNUSED)
 {
    Ector_Renderer_Software_Gradient_Data *gdata = data;
 
    gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
-   gdata->alpha = _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count,
-                                                 gdata->color_table, GRADIENT_STOPTABLE_SIZE);
+   gdata->alpha = efl_draw_generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count,
+                                                         gdata->color_table, GRADIENT_STOPTABLE_SIZE);
 }
 
 static void

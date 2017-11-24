@@ -21,6 +21,20 @@ triangulator_stroker_free(Triangulator_Stroker *stroker)
    eina_inarray_free(stroker->arc_pts);
 }
 
+void triangulator_stroker_stroke_set(Triangulator_Stroker *stroker, float width,
+                                     Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m)
+{
+   float scale_factor = 1.0;
+   if (m)
+     {
+        // get the minimum scale factor from matrix
+        scale_factor =  m->xx < m->yy ? m->xx : m->yy;
+     }
+   stroker->width = (width * scale_factor)/2;
+   stroker->join_style = join_style;
+   stroker->cap_style = cap_style;
+}
+
 // calculate the normal vector
 static void
 normal_vector(float x1, float y1, float x2, float y2, float width,

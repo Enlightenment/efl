@@ -292,7 +292,7 @@ template <typename T, typename U, bool Own = false, typename V>
 T convert_to_c(V&& object);
 
 template <typename F, typename T>
-void* data_function_ptr_to_c(T function)
+void* data_function_ptr_to_c(T)
 {
   return nullptr;
 }
@@ -436,6 +436,10 @@ inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view& v, tag<Eina_Value
 inline Eina_Value* convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value*, in_traits<eina::value_view const&>::type>)
 {
   return const_cast<Eina_Value*>(v.native_handle());
+}
+inline Eina_Value const& convert_to_c_impl( ::efl::eina::value_view const& v, tag<Eina_Value, in_traits<eina::value_view const&>::type>)
+{
+  return *v.native_handle();
 }
 inline Eina_Bool convert_to_c_impl( bool b, tag<Eina_Bool, bool>)
 {
@@ -842,8 +846,9 @@ inline void do_eo_add(Eo*& object, P const& parent
                       , Efl_Class const* klass
                       , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
-  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
-  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
+  bool is_ref = (parent._eo_ptr() != nullptr);
+  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), is_ref, EINA_FALSE);
+  object = ::_efl_add_end(object, is_ref, EINA_FALSE);
 }
 
 template <typename T>
@@ -867,9 +872,10 @@ void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass
                , F&& f
                , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
-  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), EINA_TRUE, EINA_FALSE);
+  bool is_ref = (parent._eo_ptr() != nullptr);
+  object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), is_ref, EINA_FALSE);
   ::efl::eolian::call_lambda(std::forward<F>(f), proxy);
-  object = ::_efl_add_end(object, EINA_FALSE, EINA_FALSE);
+  object = ::_efl_add_end(object, is_ref, EINA_FALSE);
 }
 
 template <typename D, typename T>

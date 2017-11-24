@@ -13,8 +13,14 @@
 #include <fontconfig/fcfreetype.h>
 #endif
 
-#include "evas_common_private.h"
-#include "evas_private.h"
+#include "evas_font.h"
+
+/* General types - used for script type chceking */
+#define OPAQUE_TYPE(type) struct __##type { int a; }; \
+   typedef struct __##type type
+
+OPAQUE_TYPE(Evas_Font_Set); /* General type for RGBA_Font */
+OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 
 /* font dir cache */
 static Eina_Hash *font_dirs = NULL;
@@ -56,6 +62,70 @@ static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 #ifdef HAVE_FONTCONFIG
 static FcConfig *fc_config = NULL;
 #endif
+
+/* FIXME move these helper function to eina_file or eina_path */
+/* get the casefold feature! */
+#include <fnmatch.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <sys/param.h>
+#endif
+int
+_file_path_is_full_path(const char *path)
+{
+   if (!path) return 0;
+#ifdef _WIN32
+   if (evil_path_is_absolute(path)) return 1;
+#else
+   if (path[0] == '/') return 1;
+#endif
+   return 0;
+}
+
+static DATA64
+_file_modified_time(const char *file)
+{
+   struct stat st;
+
+   if (stat(file, &st) < 0) return 0;
+   if (st.st_ctime > st.st_mtime) return (DATA64)st.st_ctime;
+   else return (DATA64)st.st_mtime;
+   return 0;
+}
+
+Eina_List *
+_file_path_list(char *path, const char *match, int match_case)
+{
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
+   Eina_List *files = NULL;
+   int flags;
+
+   flags = FNM_PATHNAME;
+#ifdef FNM_CASEFOLD
+   if (!match_case)
+     flags |= FNM_CASEFOLD;
+#elif defined FNM_IGNORECASE
+   if (!match_case)
+     flags |= FNM_IGNORECASE;
+#else
+/*#warning "Your libc does not provide case-insensitive matching!"*/
+#endif
+
+   it = eina_file_direct_ls(path);
+   EINA_ITERATOR_FOREACH(it, info)
+     {
+        if (match)
+          {
+             if (fnmatch(match, info->path + info->name_start, flags) == 0)
+               files = eina_list_append(files, strdup(info->path + info->name_start));
+          }
+        else
+          files = eina_list_append(files, strdup(info->path + info->name_start));
+     }
+   if (it) eina_iterator_free(it);
+   return files;
+}
 
 static void
 evas_font_init(void)
@@ -102,13 +172,13 @@ evas_font_dir_cache_find(char *dir, char *font)
    fd = object_text_font_cache_dir_update(dir, fd);
    if (fd)
      {
-	Evas_Font *fn;
+        Evas_Font *fn;
 
-	fn = object_text_font_cache_font_find(fd, font);
-	if (fn)
-	  {
-	     return fn->path;
-	  }
+        fn = object_text_font_cache_font_find(fd, font);
+        if (fn)
+          {
+             return fn->path;
+          }
      }
    return NULL;
 }
@@ -122,123 +192,117 @@ evas_font_set_get(const char *name)
    p = strchr(name, ',');
    if (!p)
      {
-	fonts = eina_list_append(fonts, eina_stringshare_add(name));
+        fonts = eina_list_append(fonts, eina_stringshare_add(name));
      }
    else
      {
-	const char *pp;
-	char *nm;
+        const char *pp;
+        char *nm;
 
-	pp = name;
-	while (p)
-	  {
-	     nm = alloca(p - pp + 1);
-	     strncpy(nm, pp, p - pp);
-	     nm[p - pp] = 0;
-	     fonts = eina_list_append(fonts, eina_stringshare_add(nm));
-	     pp = p + 1;
-	     p = strchr(pp, ',');
-	     if (!p) fonts = eina_list_append(fonts, eina_stringshare_add(pp));
-	  }
+        pp = name;
+        while (p)
+          {
+             nm = alloca(p - pp + 1);
+             strncpy(nm, pp, p - pp);
+             nm[p - pp] = 0;
+             fonts = eina_list_append(fonts, eina_stringshare_add(nm));
+             pp = p + 1;
+             p = strchr(pp, ',');
+             if (!p) fonts = eina_list_append(fonts, eina_stringshare_add(pp));
+          }
      }
    return fonts;
 }
 
 void
-evas_fonts_zero_free(Evas *eo_evas)
+evas_fonts_zero_free()
 {
    Fndat *fd;
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    EINA_LIST_FREE(fonts_zero, fd)
      {
         if (fd->fdesc) evas_font_desc_unref(fd->fdesc);
-	if (fd->source) eina_stringshare_del(fd->source);
-	if ((evas->engine.func) && (evas->engine.func->font_free))
-	  evas->engine.func->font_free(_evas_engine_context(evas), fd->font);
+        if (fd->source) eina_stringshare_del(fd->source);
+        evas_common_font_free((RGBA_Font *)fd->font);
 #ifdef HAVE_FONTCONFIG
-	if (fd->set) FcFontSetDestroy(fd->set);
-	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+   if (fd->set) FcFontSetDestroy(fd->set);
+   if (fd->p_nm) FcPatternDestroy(fd->p_nm);
 #endif
-	free(fd);
+        free(fd);
      }
 }
 
 void
-evas_fonts_zero_pressure(Evas *eo_evas)
+evas_fonts_zero_pressure()
 {
    Fndat *fd;
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    while (fonts_zero
-	  && eina_list_count(fonts_zero) > 4) /* 4 is arbitrary */
+          && eina_list_count(fonts_zero) > 4) /* 4 is arbitrary */
      {
-	fd = eina_list_data_get(fonts_zero);
+        fd = eina_list_data_get(fonts_zero);
 
-	if (fd->ref != 0) break;
-	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
+        if (fd->ref != 0) break;
+        fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
 
         if (fd->fdesc) evas_font_desc_unref(fd->fdesc);
-	if (fd->source) eina_stringshare_del(fd->source);
-	if ((evas->engine.func) && (evas->engine.func->font_free))
-	  evas->engine.func->font_free(_evas_engine_context(evas), fd->font);
-#ifdef HAVE_FONTCONFIG
-	if (fd->set) FcFontSetDestroy(fd->set);
-	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
-#endif
-	free(fd);
+        if (fd->source) eina_stringshare_del(fd->source);
+        evas_common_font_free((RGBA_Font *)fd->font);
+      #ifdef HAVE_FONTCONFIG
+        if (fd->set) FcFontSetDestroy(fd->set);
+        if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+      #endif
+        free(fd);
 
-	if (eina_list_count(fonts_zero) < 5) break;
+        if (eina_list_count(fonts_zero) < 5) break;
      }
 }
 
 void
-evas_font_free(Evas *eo_evas, void *font)
+evas_font_free(void *font)
 {
    Eina_List *l;
    Fndat *fd;
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
-	if (fd->font == font)
-	  {
-	     fd->ref--;
-	     if (fd->ref == 0)
-	       {
-		  fonts_cache = eina_list_remove_list(fonts_cache, l);
-		  fonts_zero = eina_list_append(fonts_zero, fd);
-	       }
-	     break;
-	  }
+        if (fd->font == font)
+          {
+             fd->ref--;
+             if (fd->ref == 0)
+               {
+                  fonts_cache = eina_list_remove_list(fonts_cache, l);
+                  fonts_zero = eina_list_append(fonts_zero, fd);
+               }
+             break;
+          }
      }
    while (fonts_zero
-	  && eina_list_count(fonts_zero) > 42) /* 42 is arbitrary */
+          && eina_list_count(fonts_zero) > 42) /* 42 is arbitrary */
      {
-	fd = eina_list_data_get(fonts_zero);
+        fd = eina_list_data_get(fonts_zero);
 
-	if (fd->ref != 0) break;
-	fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
+        if (fd->ref != 0) break;
+        fonts_zero = eina_list_remove_list(fonts_zero, fonts_zero);
 
         if (fd->fdesc) evas_font_desc_unref(fd->fdesc);
-	if (fd->source) eina_stringshare_del(fd->source);
-	evas->engine.func->font_free(_evas_engine_context(evas), fd->font);
-#ifdef HAVE_FONTCONFIG
-	if (fd->set) FcFontSetDestroy(fd->set);
-	if (fd->p_nm) FcPatternDestroy(fd->p_nm);
-#endif
-	free(fd);
+        if (fd->source) eina_stringshare_del(fd->source);
+        evas_common_font_free((RGBA_Font *)fd->font);
+      #ifdef HAVE_FONTCONFIG
+        if (fd->set) FcFontSetDestroy(fd->set);
+        if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+      #endif
+        free(fd);
 
-	if (eina_list_count(fonts_zero) < 43) break;
+        if (eina_list_count(fonts_zero) < 43) break;
      }
 }
 
 #ifdef HAVE_FONTCONFIG
 static Evas_Font_Set *
-_evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int size,
+_evas_load_fontconfig(Evas_Font_Set *font, FcFontSet *set, int size,
       Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
    int i;
 
    /* Do loading for all in family */
@@ -249,9 +313,9 @@ _evas_load_fontconfig(Evas_Font_Set *font, Evas *eo_evas, FcFontSet *set, int si
         if (FcPatternGet(set->fonts[i], FC_FILE, 0, &filename) == FcResultMatch)
           {
              if (font)
-               evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
+               evas_common_font_add((RGBA_Font *)font, (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
              else
-               font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)filename.u.s, size, wanted_rend, bitmap_scalable);
+               font = (Evas_Font_Set *)evas_common_font_load((char *)filename.u.s, size, wanted_rend, bitmap_scalable);
           }
      }
 
@@ -385,7 +449,7 @@ _evas_font_style_find_internal(const char *style, const char *style_end,
              const char *cur = _map[i].name;
              len = strlen(cur);
              if (!strncasecmp(style, cur, len) &&
-                   (!cur[len] || (cur[len] == ' ')))
+                 (!cur[len] || (cur[len] == ' ')))
                {
                   return _map[i].type;
                }
@@ -474,8 +538,8 @@ evas_font_desc_cmp(const Evas_Font_Description *a,
 {
    /* FIXME: Do actual comparison, i.e less than and bigger than. */
    return !((a->name == b->name) && (a->weight == b->weight) &&
-         (a->slant == b->slant) && (a->width == b->width) &&
-         (a->spacing == b->spacing) && (a->lang == b->lang));
+            (a->slant == b->slant) && (a->width == b->width) &&
+            (a->spacing == b->spacing) && (a->lang == b->lang));
 }
 
 const char *
@@ -552,9 +616,8 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 }
 
 void *
-evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
+evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
 #ifdef HAVE_FONTCONFIG
    FcPattern *p_nm = NULL;
    FcFontSet *set = NULL;
@@ -583,32 +646,32 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
    EINA_LIST_FOREACH(fonts_cache, l, fd)
      {
         if (!evas_font_desc_cmp(fdesc, fd->fdesc))
-	  {
-	     if (((!source) && (!fd->source)) ||
-		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
-	       {
-                  if ((size == fd->size) &&
-                      (wanted_rend == fd->wanted_rend) &&
-                      (bitmap_scalable == fd->bitmap_scalable))
-		    {
-		       fonts_cache = eina_list_promote_list(fonts_cache, l);
-		       fd->ref++;
-		       return fd->font;
-		    }
-#ifdef HAVE_FONTCONFIG
-		  else if (fd->set && fd->p_nm && !fd->file_font)
-		    {
-                       found_fd = fd;
-		    }
-#endif
-	       }
-	  }
+          {
+              if (((!source) && (!fd->source)) ||
+                  ((source) && (fd->source) && (!strcmp(source, fd->source))))
+                {
+                   if ((size == fd->size) &&
+                       (wanted_rend == fd->wanted_rend) &&
+                       (bitmap_scalable == fd->bitmap_scalable))
+                     {
+                        fonts_cache = eina_list_promote_list(fonts_cache, l);
+                        fd->ref++;
+                        return fd->font;
+                     }
+                #ifdef HAVE_FONTCONFIG
+                   else if (fd->set && fd->p_nm && !fd->file_font)
+                     {
+                        found_fd = fd;
+                     }
+                #endif
+                }
+           }
      }
 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend, bitmap_scalable);
+        font = _evas_load_fontconfig(font, found_fd->set, size, wanted_rend, bitmap_scalable);
         goto on_find;
      }
 #endif
@@ -616,32 +679,32 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
    EINA_LIST_FOREACH_SAFE(fonts_zero, l, l_next, fd)
      {
         if (!evas_font_desc_cmp(fdesc, fd->fdesc))
-	  {
-	     if (((!source) && (!fd->source)) ||
-		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
-	       {
-		  if ((size == fd->size) &&
-                        (wanted_rend == fd->wanted_rend))
-		    {
-		       fonts_zero = eina_list_remove_list(fonts_zero, l);
-		       fonts_cache = eina_list_prepend(fonts_cache, fd);
-		       fd->ref++;
-		       return fd->font;
-		    }
-#ifdef HAVE_FONTCONFIG
-		  else if (fd->set && fd->p_nm && !fd->file_font)
-		    {
-                       found_fd = fd;
-		    }
-#endif
-	       }
-	  }
+          {
+             if (((!source) && (!fd->source)) ||
+                 ((source) && (fd->source) && (!strcmp(source, fd->source))))
+               {
+                  if ((size == fd->size) &&
+                                  (wanted_rend == fd->wanted_rend))
+                    {
+                       fonts_zero = eina_list_remove_list(fonts_zero, l);
+                       fonts_cache = eina_list_prepend(fonts_cache, fd);
+                       fd->ref++;
+                       return fd->font;
+                    }
+               #ifdef HAVE_FONTCONFIG
+                  else if (fd->set && fd->p_nm && !fd->file_font)
+                    {
+                                 found_fd = fd;
+                    }
+               #endif
+               }
+          }
      }
 
 #ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
-        font = _evas_load_fontconfig(font, evas->evas, found_fd->set, size, wanted_rend, bitmap_scalable);
+        font = _evas_load_fontconfig(font, found_fd->set, size, wanted_rend, bitmap_scalable);
         goto on_find;
      }
 #endif
@@ -649,57 +712,53 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
    fonts = evas_font_set_get(fdesc->name);
    EINA_LIST_FOREACH(fonts, l, nm) /* Load each font in append */
      {
-	if (l == fonts || !font) /* First iteration OR no font */
-	  {
-	     if (source) /* Load Font from "eet" source */
-	       {
-		  Eet_File *ef;
-		  char *fake_name;
+        if (l == fonts || !font) /* First iteration OR no font */
+          {
+             if (source) /* Load Font from "eet" source */
+               {
+                  Eet_File *ef;
+                  char fake_name[PATH_MAX];
 
-		  fake_name = evas_file_path_join(source, nm);
-		  if (fake_name)
-		    {
-		       font = evas->engine.func->font_load(_evas_engine_context(evas), fake_name, size, wanted_rend, bitmap_scalable);
-		       if (!font) /* Load from fake name failed, probably not cached */
-			 {
-			    /* read original!!! */
-			    ef = eet_open(source, EET_FILE_MODE_READ);
-			    if (ef)
-			      {
-				 void *fdata;
-				 int fsize = 0;
+                   eina_file_path_join(fake_name, PATH_MAX, source, nm);
+                   font = (Evas_Font_Set *)evas_common_font_load(fake_name, size, wanted_rend, bitmap_scalable);
+                   if (!font) /* Load from fake name failed, probably not cached */
+                     {
+                        /* read original!!! */
+                        ef = eet_open(source, EET_FILE_MODE_READ);
+                        if (ef)
+                          {
+                             void *fdata;
+                             int fsize = 0;
 
-				 fdata = eet_read(ef, nm, &fsize);
-				 if (fdata)
-				   {
-				      font = evas->engine.func->font_memory_load(_evas_engine_context(evas), source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
-				      free(fdata);
-				   }
-				 eet_close(ef);
-			      }
-			 }
-		       free(fake_name);
-		    }
-	       }
-	     if (!font) /* Source load failed */
-	       {
-		  if (evas_file_path_is_full_path((char *)nm)) /* Try filename */
-		    font = evas->engine.func->font_load(_evas_engine_context(evas), (char *)nm, size, wanted_rend, bitmap_scalable);
-		  else /* search font path */
-		    {
-		       Eina_List *ll;
-		       char *dir;
+                             fdata = eet_read(ef, nm, &fsize);
+                             if (fdata)
+                               {
+                                  font = (Evas_Font_Set *)evas_common_font_memory_load(source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
+                                  free(fdata);
+                               }
+                             eet_close(ef);
+                          }
+                     }
+               }
+             if (!font) /* Source load failed */
+               {
+                  if (_file_path_is_full_path((char *)nm)) /* Try filename */
+                    font = (Evas_Font_Set *)evas_common_font_load((char *)nm, size, wanted_rend, bitmap_scalable);
+                  else /* search font path */
+                    {
+                       const Eina_List *ll;
+                       char *dir;
 
-		       EINA_LIST_FOREACH(evas->font_path, ll, dir)
-			 {
-			    const char *f_file;
+                       EINA_LIST_FOREACH(font_paths, ll, dir)
+                         {
+                            const char *f_file;
 
-			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
-			    if (f_file)
-			      {
-				 font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend, bitmap_scalable);
-				 if (font) break;
-			      }
+                            f_file = evas_font_dir_cache_find(dir, (char *)nm);
+                            if (f_file)
+                              {
+                                 font = (Evas_Font_Set *)evas_common_font_load(f_file, size, wanted_rend, bitmap_scalable);
+                                 if (font) break;
+                              }
                          }
 
                        if (!font)
@@ -711,71 +770,66 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                                  f_file = evas_font_dir_cache_find(dir, (char *)nm);
                                  if (f_file)
                                    {
-                                      font = evas->engine.func->font_load(_evas_engine_context(evas), f_file, size, wanted_rend, bitmap_scalable);
+                                      font = (Evas_Font_Set *)evas_common_font_load(f_file, size, wanted_rend, bitmap_scalable);
                                       if (font) break;
                                    }
                               }
                          }
                     }
-	       }
-	  }
-	else /* Base font loaded, append others */
-	  {
-	     void *ok = NULL;
+               }
+          }
+        else /* Base font loaded, append others */
+          {
+             void *ok = NULL;
 
-	     if (source)
-	       {
-		  Eet_File *ef;
-		  char *fake_name;
+             if (source)
+               {
+                  Eet_File *ef;
+                  char fake_name[PATH_MAX];
 
-		  fake_name = evas_file_path_join(source, nm);
-		  if (fake_name)
-		    {
-		       /* FIXME: make an engine func */
-		       if (!evas->engine.func->font_add(_evas_engine_context(evas), font, fake_name, size, wanted_rend, bitmap_scalable))
-			 {
-			    /* read original!!! */
-			    ef = eet_open(source, EET_FILE_MODE_READ);
-			    if (ef)
-			      {
-				 void *fdata;
-				 int fsize = 0;
+                  eina_file_path_join(fake_name, PATH_MAX, source, nm);
+                  if (!evas_common_font_add((RGBA_Font *)font, fake_name, size, wanted_rend, bitmap_scalable))
+                    {
+                       /* read original!!! */
+                       ef = eet_open(source, EET_FILE_MODE_READ);
+                       if (ef)
+                         {
+                            void *fdata;
+                            int fsize = 0;
 
-				 fdata = eet_read(ef, nm, &fsize);
-				 if ((fdata) && (fsize > 0))
-				   {
-				      ok = evas->engine.func->font_memory_add(_evas_engine_context(evas), font, source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
-				   }
-				 eet_close(ef);
-                                 free(fdata);
-			      }
-			 }
-		       else
-			 ok = (void *)1;
-		       free(fake_name);
-		    }
-	       }
-	     if (!ok)
-	       {
-		  if (evas_file_path_is_full_path((char *)nm))
-		    evas->engine.func->font_add(_evas_engine_context(evas), font, (char *)nm, size, wanted_rend, bitmap_scalable);
-		  else
-		    {
-		       Eina_List *ll;
-		       char *dir;
-		       RGBA_Font *fn = NULL;
+                            fdata = eet_read(ef, nm, &fsize);
+                            if ((fdata) && (fsize > 0))
+                              {
+                                 ok = evas_common_font_memory_add((RGBA_Font *)font, source, nm, size, fdata, fsize, wanted_rend, bitmap_scalable);
+                              }
+                            eet_close(ef);
+                            free(fdata);
+                         }
+                    }
+                  else
+                    ok = (void *)1;
+               }
+             if (!ok)
+               {
+                  if (_file_path_is_full_path((char *)nm))
+                    evas_common_font_add((RGBA_Font *)font, (char *)nm, size, wanted_rend, bitmap_scalable);
+                  else
+                    {
+                       const Eina_List *ll;
+                       char *dir;
+                       RGBA_Font *fn = NULL;
 
-		       EINA_LIST_FOREACH(evas->font_path, ll, dir)
-			 {
-			    const char *f_file;
+                       EINA_LIST_FOREACH(font_paths, ll, dir)
+                         {
+                            const char *f_file;
 
-			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
-			    if (f_file)
-			      {
-				 fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend, bitmap_scalable);
-				 if (fn)
-				   break;
-			      }
+                            f_file = evas_font_dir_cache_find(dir, (char *)nm);
+                            if (f_file)
+                              {
+                                 fn = evas_common_font_add((RGBA_Font *)font, f_file, size, wanted_rend, bitmap_scalable);
+                                 if (fn)
+                                   break;
+                              }
                          }
 
                        if (!fn)
@@ -787,23 +841,23 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                                  f_file = evas_font_dir_cache_find(dir, (char *)nm);
                                  if (f_file)
                                    {
-                                      fn = (RGBA_Font *)evas->engine.func->font_add(_evas_engine_context(evas), font, f_file, size, wanted_rend, bitmap_scalable);
+                                      fn = evas_common_font_add((RGBA_Font *)font, f_file, size, wanted_rend, bitmap_scalable);
                                       if (fn)
                                          break;
                                    }
                               }
                          }
                     }
-	       }
-	  }
-	eina_stringshare_del(nm);
+               }
+          }
+       eina_stringshare_del(nm);
      }
    eina_list_free(fonts);
 
 #ifdef HAVE_FONTCONFIG
    if (!font) /* Search using fontconfig */
      {
-	FcResult res;
+        FcResult res;
 
         p_nm = FcPatternBuild (NULL,
               FC_WEIGHT, FcTypeInteger, _fc_weight_map[fdesc->weight],
@@ -844,26 +898,27 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
         if (fdesc->lang)
            FcPatternAddString (p_nm, FC_LANG, (FcChar8 *) fdesc->lang);
 
-	FcConfigSubstitute(fc_config, p_nm, FcMatchPattern);
-	FcDefaultSubstitute(p_nm);
+        FcConfigSubstitute(fc_config, p_nm, FcMatchPattern);
+        FcDefaultSubstitute(p_nm);
 
-	/* do matching */
-	set = FcFontSort(fc_config, p_nm, FcTrue, NULL, &res);
-	if (!set)
-	  {
-	     ERR("No fontconfig font matches '%s'. It was the last resource, no font found!", fdesc->name);
-	     FcPatternDestroy(p_nm);
-	     p_nm = NULL;
-	  }
-	else
+        /* do matching */
+        set = FcFontSort(fc_config, p_nm, FcTrue, NULL, &res);
+        if (!set)
           {
-             font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend, bitmap_scalable);
+              //FIXME add ERR log capability
+             //ERR("No fontconfig font matches '%s'. It was the last resource, no font found!", fdesc->name);
+             FcPatternDestroy(p_nm);
+             p_nm = NULL;
+          }
+        else
+          {
+             font = _evas_load_fontconfig(font, set, size, wanted_rend, bitmap_scalable);
           }
      }
    else /* Add a fallback list from fontconfig according to the found font. */
      {
 #if FC_MAJOR >= 2 && FC_MINOR >= 11
-	FcResult res;
+        FcResult res;
 
         FT_Face face = evas_common_font_freetype_face_get((RGBA_Font *) font);
 
@@ -884,7 +939,7 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
                }
              else
                {
-                  font = _evas_load_fontconfig(font, evas->evas, set, size, wanted_rend, bitmap_scalable);
+                  font = _evas_load_fontconfig(font, set, size, wanted_rend, bitmap_scalable);
                }
           }
 #endif
@@ -913,24 +968,20 @@ evas_font_load(Evas *eo_evas, Evas_Font_Description *fdesc, const char *source, 
      }
 
    if (font)
-      evas->engine.func->font_hinting_set(_evas_engine_context(evas), font,
-            evas->hinting);
+      evas_common_font_hinting_set((RGBA_Font *)font, hinting);
    return font;
 }
 
 void
-evas_font_load_hinting_set(Evas *eo_evas, void *font, int hinting)
+evas_font_load_hinting_set(void *font, int hinting)
 {
-   Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
-   evas->engine.func->font_hinting_set(_evas_engine_context(evas), font,
-				       hinting);
+   evas_common_font_hinting_set((RGBA_Font *) font, hinting);
 }
 
 Eina_List *
-evas_font_dir_available_list(const Evas *eo_evas)
+evas_font_dir_available_list(const Eina_List *font_paths)
 {
-   const Evas_Public_Data *evas = efl_data_scope_get(eo_evas, EVAS_CANVAS_CLASS);
-   Eina_List *l;
+   const Eina_List *l;
    Eina_List *ll;
    Eina_List *available = NULL;
    char *dir;
@@ -954,25 +1005,25 @@ evas_font_dir_available_list(const Evas *eo_evas)
 
    if (set)
      {
-	for (i = 0; i < set->nfont; i++)
-	  {
-	     char *font;
+        for (i = 0; i < set->nfont; i++)
+          {
+             char *font;
 
-	     font = (char *)FcNameUnparse(set->fonts[i]);
-	     available = eina_list_append(available, eina_stringshare_add(font));
-	     free(font);
-	  }
+             font = (char *)FcNameUnparse(set->fonts[i]);
+             available = eina_list_append(available, eina_stringshare_add(font));
+             free(font);
+          }
 
-	FcFontSetDestroy(set);
+        FcFontSetDestroy(set);
      }
 #endif
 
-   /* Add fonts in evas font_path*/
-   if (evas->font_path)
+   /* Add fonts in font_paths*/
+   if (font_paths)
      {
         if (!font_dirs) font_dirs = eina_hash_string_superfast_new(NULL);
 
-        EINA_LIST_FOREACH(evas->font_path, l, dir)
+        EINA_LIST_FOREACH(font_paths, l, dir)
           {
              Evas_Font_Dir *fd;
 
@@ -1016,8 +1067,8 @@ evas_font_dir_available_list_free(Eina_List *available)
 {
    while (available)
      {
-	eina_stringshare_del(available->data);
-	available = eina_list_remove(available, available->data);
+        eina_stringshare_del(available->data);
+        available = eina_list_remove(available, available->data);
      }
 }
 
@@ -1032,47 +1083,39 @@ font_cache_dir_free(const Eina_Hash *hash EINA_UNUSED, const void *key, void *da
 static Evas_Font_Dir *
 object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 {
+   char file_path[PATH_MAX];
    DATA64 mt;
-   char *tmp;
 
    if (fd)
      {
-	mt = evas_file_modified_time(dir);
-	if (mt != fd->dir_mod_time)
-	  {
-	     eina_hash_del(font_dirs, dir, fd);
-	     object_text_font_cache_dir_del(dir, fd);
-	  }
-	else
-	  {
-	     tmp = evas_file_path_join(dir, "fonts.dir");
-	     if (tmp)
-	       {
-		  mt = evas_file_modified_time(tmp);
-		  free(tmp);
-		  if (mt != fd->fonts_dir_mod_time)
-		    {
-		       eina_hash_del(font_dirs, dir, fd);
-		       object_text_font_cache_dir_del(dir, fd);
-		    }
-		  else
-		    {
-		       tmp = evas_file_path_join(dir, "fonts.alias");
-		       if (tmp)
-			 {
-			    mt = evas_file_modified_time(tmp);
-			    free(tmp);
-			 }
-		       if (mt != fd->fonts_alias_mod_time)
-			 {
-			    eina_hash_del(font_dirs, dir, fd);
-			    object_text_font_cache_dir_del(dir, fd);
-			 }
-		       else
-			 return fd;
-		    }
-	       }
-	  }
+        mt = _file_modified_time(dir);
+        if (mt != fd->dir_mod_time)
+          {
+             eina_hash_del(font_dirs, dir, fd);
+             object_text_font_cache_dir_del(dir, fd);
+          }
+        else
+          {
+             eina_file_path_join(file_path, PATH_MAX, dir, "fonts.dir");
+             mt = _file_modified_time(file_path);
+             if (mt != fd->fonts_dir_mod_time)
+               {
+                  eina_hash_del(font_dirs, dir, fd);
+                  object_text_font_cache_dir_del(dir, fd);
+               }
+             else
+               {
+                  eina_file_path_join(file_path, PATH_MAX, dir, "fonts.alias");
+                  mt = _file_modified_time(file_path);
+                  if (mt != fd->fonts_alias_mod_time)
+                    {
+                       eina_hash_del(font_dirs, dir, fd);
+                       object_text_font_cache_dir_del(dir, fd);
+                    }
+                  else
+                    return fd;
+               }
+          }
      }
    return object_text_font_cache_dir_add(dir);
 }
@@ -1089,23 +1132,23 @@ object_text_font_cache_font_find_x(Evas_Font_Dir *fd, char *font)
    if (num != 14) return NULL;
    EINA_LIST_FOREACH(fd->fonts, l, fn)
      {
-	if (fn->type == 1)
-	  {
-	     int i;
-	     int match = 0;
+        if (fn->type == 1)
+          {
+             int i;
+             int match = 0;
 
-	     for (i = 0; i < 14; i++)
-	       {
-		  if ((font_prop[i][0] == '*') && (font_prop[i][1] == 0))
-		    match++;
-		  else
-		    {
-		       if (!strcasecmp(font_prop[i], fn->x.prop[i])) match++;
-		       else break;
-		    }
-	       }
-	     if (match == 14) return fn;
-	  }
+             for (i = 0; i < 14; i++)
+               {
+                  if ((font_prop[i][0] == '*') && (font_prop[i][1] == 0))
+                    match++;
+                  else
+                    {
+                       if (!strcasecmp(font_prop[i], fn->x.prop[i])) match++;
+                       else break;
+                    }
+               }
+             if (match == 14) return fn;
+          }
      }
    return NULL;
 }
@@ -1118,10 +1161,10 @@ object_text_font_cache_font_find_file(Evas_Font_Dir *fd, char *font)
 
    EINA_LIST_FOREACH(fd->fonts, l, fn)
      {
-	if (fn->type == 0)
-	  {
-	     if (!strcasecmp(font, fn->simple.name)) return fn;
-	  }
+        if (fn->type == 0)
+          {
+             if (!strcasecmp(font, fn->simple.name)) return fn;
+          }
      }
    return NULL;
 }
@@ -1155,10 +1198,13 @@ object_text_font_cache_font_find(Evas_Font_Dir *fd, char *font)
 static Evas_Font_Dir *
 object_text_font_cache_dir_add(char *dir)
 {
+   char file_path[PATH_MAX];
    Evas_Font_Dir *fd;
-   char *tmp, *tmp2, *file;
+   char *file;
+   char tmp2[PATH_MAX];
    Eina_List *fdir;
    Evas_Font *fn;
+   FILE *f;
 
    fd = calloc(1, sizeof(Evas_Font_Dir));
    if (!fd) return NULL;
@@ -1169,133 +1215,104 @@ object_text_font_cache_dir_add(char *dir)
    /* READ fonts.alias, fonts.dir and directory listing */
 
    /* fonts.dir */
-   tmp = evas_file_path_join(dir, "fonts.dir");
-   if (tmp)
+   eina_file_path_join(file_path, PATH_MAX, dir, "fonts.dir");
+
+   f = fopen(file_path, "rb");
+   if (f)
      {
-	FILE *f;
+        int num;
+        char fname[4096], fdef[4096];
 
-	f = fopen(tmp, "rb");
-	if (f)
-	  {
-	     int num;
-	     char fname[4096], fdef[4096];
+        if (fscanf(f, "%i\n", &num) != 1) goto cant_read;
+        /* read font lines */
+        while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
+          {
+             char font_prop[14][256];
+             int i;
 
-	     if (fscanf(f, "%i\n", &num) != 1) goto cant_read;
-	     /* read font lines */
-	     while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
-	       {
-		  char font_prop[14][256];
-		  int i;
-
-		  /* skip comments */
-		  if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
-		  /* parse font def */
-		  num = evas_object_text_font_string_parse((char *)fdef, font_prop);
-		  if (num == 14)
-		    {
-		       fn = calloc(1, sizeof(Evas_Font));
-		       if (fn)
-			 {
-			    fn->type = 1;
-			    for (i = 0; i < 14; i++)
-			      fn->x.prop[i] = eina_stringshare_add(font_prop[i]);
-			    tmp2 = evas_file_path_join(dir, fname);
-			    if (tmp2)
-			      {
-				 fn->path = eina_stringshare_add(tmp2);
-				 free(tmp2);
-			      }
-			    fd->fonts = eina_list_append(fd->fonts, fn);
-			 }
-		    }
-	       }
-	     cant_read: ;
-	     fclose(f);
-	  }
-	free(tmp);
+             /* skip comments */
+             if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
+             /* parse font def */
+             num = evas_object_text_font_string_parse((char *)fdef, font_prop);
+             if (num == 14)
+               {
+                  fn = calloc(1, sizeof(Evas_Font));
+                  if (fn)
+                    {
+                       fn->type = 1;
+                       for (i = 0; i < 14; i++)
+                         fn->x.prop[i] = eina_stringshare_add(font_prop[i]);
+                       eina_file_path_join(tmp2, PATH_MAX, dir, fname);
+                       fn->path = eina_stringshare_add(tmp2);
+                       fd->fonts = eina_list_append(fd->fonts, fn);
+                    }
+               }
+          }
+        cant_read: ;
+        fclose(f);
      }
 
    /* directoy listing */
-   fdir = evas_file_path_list(dir, "*.ttf", 0);
+   fdir = _file_path_list(dir, "*.ttf", 0);
    EINA_LIST_FREE(fdir, file)
      {
-	tmp = evas_file_path_join(dir, file);
-	if (tmp)
-	  {
-	     fn = calloc(1, sizeof(Evas_Font));
-	     if (fn)
-	       {
-		  char *p;
+        eina_file_path_join(file_path, PATH_MAX, dir, file);
+        fn = calloc(1, sizeof(Evas_Font));
+        if (fn)
+          {
+             char *p;
 
-		  fn->type = 0;
-		  tmp2 = alloca(strlen(file) + 1);
-		  strcpy(tmp2, file);
-		  p = strrchr(tmp2, '.');
-		  if (p) *p = 0;
-		  fn->simple.name = eina_stringshare_add(tmp2);
-		  tmp2 = evas_file_path_join(dir, file);
-		  if (tmp2)
-		    {
-		       fn->path = eina_stringshare_add(tmp2);
-		       free(tmp2);
-		    }
-		  fd->fonts = eina_list_append(fd->fonts, fn);
-	       }
-	     free(tmp);
-	  }
-	free(file);
+             fn->type = 0;
+             strcpy(tmp2, file);
+             p = strrchr(tmp2, '.');
+             if (p) *p = 0;
+             fn->simple.name = eina_stringshare_add(tmp2);
+             eina_file_path_join(tmp2, PATH_MAX, dir, file);
+             fn->path = eina_stringshare_add(tmp2);
+             fd->fonts = eina_list_append(fd->fonts, fn);
+          }
+        free(file);
      }
 
    /* fonts.alias */
-   tmp = evas_file_path_join(dir, "fonts.alias");
-   if (tmp)
+   eina_file_path_join(file_path, PATH_MAX, dir, "fonts.alias");
+
+   f = fopen(file_path, "rb");
+   if (f)
      {
-	FILE *f;
+        char fname[4096], fdef[4096];
 
-	f = fopen(tmp, "rb");
-	if (f)
-	  {
-	     char fname[4096], fdef[4096];
+        /* read font alias lines */
+        while (fscanf(f, "%4090s %4090[^\n]\n", fname, fdef) == 2)
+          {
+             Evas_Font_Alias *fa;
 
-	     /* read font alias lines */
-	     while (fscanf(f, "%4090s %4090[^\n]\n", fname, fdef) == 2)
-	       {
-		  Evas_Font_Alias *fa;
-
-		  /* skip comments */
-		  if ((fname[0] == '!') || (fname[0] == '#')) continue;
-		  fa = calloc(1, sizeof(Evas_Font_Alias));
-		  if (fa)
-		    {
-		       fa->alias = eina_stringshare_add(fname);
-		       fa->fn = object_text_font_cache_font_find_x(fd, fdef);
-		       if ((!fa->alias) || (!fa->fn))
-			 {
-			    if (fa->alias) eina_stringshare_del(fa->alias);
-			    free(fa);
-			 }
-		       else
-			 fd->aliases = eina_list_append(fd->aliases, fa);
-		    }
-	       }
-	     fclose(f);
-	  }
-	free(tmp);
+             /* skip comments */
+             if ((fname[0] == '!') || (fname[0] == '#')) continue;
+             fa = calloc(1, sizeof(Evas_Font_Alias));
+             if (fa)
+               {
+                  fa->alias = eina_stringshare_add(fname);
+                  fa->fn = object_text_font_cache_font_find_x(fd, fdef);
+                  if ((!fa->alias) || (!fa->fn))
+                    {
+                       if (fa->alias) eina_stringshare_del(fa->alias);
+                       free(fa);
+                    }
+                  else
+                    fd->aliases = eina_list_append(fd->aliases, fa);
+               }
+          }
+        fclose(f);
      }
 
-   fd->dir_mod_time = evas_file_modified_time(dir);
-   tmp = evas_file_path_join(dir, "fonts.dir");
-   if (tmp)
-     {
-	fd->fonts_dir_mod_time = evas_file_modified_time(tmp);
-	free(tmp);
-     }
-   tmp = evas_file_path_join(dir, "fonts.alias");
-   if (tmp)
-     {
-	fd->fonts_alias_mod_time = evas_file_modified_time(tmp);
-	free(tmp);
-     }
+   fd->dir_mod_time = _file_modified_time(dir);
+
+   eina_file_path_join(file_path, PATH_MAX, dir, "fonts.dir");
+   fd->fonts_dir_mod_time = _file_modified_time(file_path);
+
+   eina_file_path_join(file_path, PATH_MAX, dir, "fonts.alias");
+   fd->fonts_alias_mod_time = _file_modified_time(file_path);
 
    return fd;
 }
@@ -1306,27 +1323,27 @@ object_text_font_cache_dir_del(char *dir EINA_UNUSED, Evas_Font_Dir *fd)
    if (fd->lookup) eina_hash_free(fd->lookup);
    while (fd->fonts)
      {
-	Evas_Font *fn;
-	int i;
+        Evas_Font *fn;
+        int i;
 
-	fn = fd->fonts->data;
-	fd->fonts = eina_list_remove(fd->fonts, fn);
-	for (i = 0; i < 14; i++)
-	  {
-	     if (fn->x.prop[i]) eina_stringshare_del(fn->x.prop[i]);
-	  }
-	if (fn->simple.name) eina_stringshare_del(fn->simple.name);
-	if (fn->path) eina_stringshare_del(fn->path);
-	free(fn);
+        fn = fd->fonts->data;
+        fd->fonts = eina_list_remove(fd->fonts, fn);
+        for (i = 0; i < 14; i++)
+          {
+             if (fn->x.prop[i]) eina_stringshare_del(fn->x.prop[i]);
+          }
+        if (fn->simple.name) eina_stringshare_del(fn->simple.name);
+        if (fn->path) eina_stringshare_del(fn->path);
+        free(fn);
      }
    while (fd->aliases)
      {
-	Evas_Font_Alias *fa;
+        Evas_Font_Alias *fa;
 
-	fa = fd->aliases->data;
-	fd->aliases = eina_list_remove(fd->aliases, fa);
-	if (fa->alias) eina_stringshare_del(fa->alias);
-	free(fa);
+        fa = fd->aliases->data;
+        fd->aliases = eina_list_remove(fd->aliases, fa);
+        if (fa->alias) eina_stringshare_del(fa->alias);
+        free(fa);
      }
    free(fd);
 }
@@ -1344,57 +1361,20 @@ evas_object_text_font_string_parse(char *buffer, char dest[14][256])
    i = 1;
    while (p[i])
      {
-	dest[n][m] = p[i];
-	if ((p[i] == '-') || (m == 255))
-	  {
-	     dest[n][m] = 0;
-	     n++;
-	     m = -1;
-	  }
-	i++;
-	m++;
-	if (n == 14) return n;
+        dest[n][m] = p[i];
+        if ((p[i] == '-') || (m == 255))
+          {
+             dest[n][m] = 0;
+             n++;
+             m = -1;
+          }
+        i++;
+        m++;
+        if (n == 14) return n;
      }
    dest[n][m] = 0;
    n++;
    return n;
-}
-
-EOLIAN void
-_evas_canvas_font_path_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *evas)
-{
-   evas_canvas_async_block(evas);
-   while (evas->font_path)
-     {
-	eina_stringshare_del(evas->font_path->data);
-	evas->font_path = eina_list_remove(evas->font_path, evas->font_path->data);
-     }
-}
-
-EOLIAN void
-_evas_canvas_font_path_append(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
-{
-   if (!path) return;
-   evas_canvas_async_block(e);
-   e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
-
-   evas_font_init();
-}
-
-EOLIAN void
-_evas_canvas_font_path_prepend(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
-{
-   if (!path) return;
-   evas_canvas_async_block(e);
-   e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
-
-   evas_font_init();
-}
-
-EOLIAN const Eina_List*
-_evas_canvas_font_path_list(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   return e->font_path;
 }
 
 EAPI void
@@ -1437,103 +1417,6 @@ EAPI const Eina_List *
 evas_font_path_global_list(void)
 {
    return global_font_path;
-}
-
-void
-evas_font_object_rehint(Evas_Object *eo_obj)
-{
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   if (obj->is_smart)
-     {
-	EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)
-	  evas_font_object_rehint(obj->object);
-     }
-   else
-     {
-	if (!strcmp(obj->type, "text"))
-	  _evas_object_text_rehint(eo_obj);
-	if (!strcmp(obj->type, "textblock"))
-	  _evas_object_textblock_rehint(eo_obj);
-     }
-}
-
-EAPI void
-evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
-{
-   Evas_Layer *lay;
-
-   EVAS_LEGACY_API(eo_e, e);
-   evas_canvas_async_block(e);
-   if (e->hinting == hinting) return;
-   e->hinting = hinting;
-
-   EINA_INLIST_FOREACH(e->layers, lay)
-     {
-	Evas_Object_Protected_Data *obj;
-
-	EINA_INLIST_FOREACH(lay->objects, obj)
-	  evas_font_object_rehint(obj->object);
-     }
-}
-
-EAPI Evas_Font_Hinting_Flags
-evas_font_hinting_get(const Evas *eo_e)
-{
-   EVAS_LEGACY_API(eo_e, e, EVAS_FONT_HINTING_NONE);
-   return e->hinting;
-}
-
-EAPI Eina_Bool
-evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
-{
-   EVAS_LEGACY_API(eo_e, e, EINA_FALSE);
-   if (e->engine.func->font_hinting_can_hint && _evas_engine_context(e))
-     return e->engine.func->font_hinting_can_hint(_evas_engine_context(e),
-                                                  hinting);
-   else return EINA_FALSE;
-}
-
-EOLIAN void
-_evas_canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   evas_canvas_async_block(e);
-   evas_render_rendering_wait(e);
-   if (_evas_engine_context(e))
-     e->engine.func->font_cache_flush(_evas_engine_context(e));
-}
-
-EOLIAN void
-_evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
-{
-   if (size < 0) size = 0;
-   evas_canvas_async_block(e);
-   evas_render_rendering_wait(e);
-   if (_evas_engine_context(e))
-     e->engine.func->font_cache_set(_evas_engine_context(e), size);
-}
-
-EOLIAN int
-_evas_canvas_font_cache_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   if (_evas_engine_context(e))
-     return e->engine.func->font_cache_get(_evas_engine_context(e));
-   return -1;
-}
-
-EOLIAN Eina_List*
-_evas_canvas_font_available_list(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
-{
-   return evas_font_dir_available_list(eo_e);
-}
-
-EAPI void
-evas_font_available_list_free(Evas *eo_e, Eina_List *available)
-{
-   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   evas_font_dir_available_list_free(available);
 }
 
 EAPI void

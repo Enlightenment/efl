@@ -13,6 +13,7 @@ EAPI int ELPUT_EVENT_MODIFIERS_SEND = 0;
 EAPI int ELPUT_EVENT_DEVICE_CHANGE = 0;
 EAPI int ELPUT_EVENT_SESSION_ACTIVE = 0;
 EAPI int ELPUT_EVENT_POINTER_MOTION = 0;
+EAPI int ELPUT_EVENT_SWITCH = 0;
 EAPI int elput_event_session_ready = 0;
 
 EAPI int
@@ -41,6 +42,7 @@ elput_init(void)
         ELPUT_EVENT_DEVICE_CHANGE = ecore_event_type_new();
         ELPUT_EVENT_SESSION_ACTIVE = ecore_event_type_new();
         ELPUT_EVENT_POINTER_MOTION = ecore_event_type_new();
+        ELPUT_EVENT_SWITCH = ecore_event_type_new();
         elput_event_session_ready = ecore_event_type_new();
      }
 
@@ -71,6 +73,7 @@ elput_shutdown(void)
                           ELPUT_EVENT_DEVICE_CHANGE,
                           ELPUT_EVENT_SESSION_ACTIVE,
                           ELPUT_EVENT_POINTER_MOTION,
+                          ELPUT_EVENT_SWITCH,
                           elput_event_session_ready);
 
    eina_log_domain_unregister(_elput_log_dom);

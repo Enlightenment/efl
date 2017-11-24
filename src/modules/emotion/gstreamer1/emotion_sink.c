@@ -137,6 +137,7 @@ emotion_video_sink_dispose(GObject* object)
    sink = EMOTION_VIDEO_SINK(object);
    priv = sink->priv;
 
+   eina_lock_take(&priv->m);
    if (priv->vfmapped)
      {
         if (priv->evas_object)
@@ -166,6 +167,7 @@ emotion_video_sink_dispose(GObject* object)
         priv->last_buffer = NULL;
      }
 
+   eina_lock_release(&priv->m);
    eina_lock_free(&priv->m);
    eina_condition_free(&priv->c);
 

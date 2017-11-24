@@ -1651,7 +1651,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 #endif
                                            eng_outbuf_new_region_for_update,
                                            eng_outbuf_push_updated_region,
-                                           eng_outbuf_push_free_region_for_update,
+                                           NULL,
                                            eng_outbuf_idle_flush,
                                            eng_outbuf_flush,
                                            NULL,
@@ -1846,11 +1846,13 @@ eng_canvas_alpha_get(void *engine)
 }
 
 static void
-eng_output_dump(void *engine EINA_UNUSED, void *data)
+eng_output_dump(void *engine, void *data)
 {
    Render_Engine *re = data;
+   Render_Engine_GL_Generic *e = engine;
 
    eng_window_use(eng_get_ob(re));
+   generic_cache_dump(e->software.surface_cache);
    evas_common_image_image_all_unload();
    evas_common_font_font_all_unload();
    glsym_evas_gl_common_image_all_unload(eng_get_ob(re)->gl_context);

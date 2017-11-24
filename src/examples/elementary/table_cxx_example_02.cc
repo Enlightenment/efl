@@ -1,46 +1,41 @@
-#include <Elementary.hh>
-#include <Evas.hh>
+// g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` table_cxx_example_01.cc -o table_cxx_example_01
 
-EAPI_MAIN int
-elm_main (int argc, char *argv[])
+#include <Evas.hh>
+#include <Elementary.hh>
+
+using efl::eo::instantiate;
+
+static void
+efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   ::elm::win win(elm_win_util_standard_add("table", "Table"));
+   efl::ui::Win win(instantiate);
+   win.text_set("Table example");
    win.autohide_set(true);
 
-   ::elm::table table(efl::eo::parent = win);
-   win.resize_object_add(table);
-   table.visible_set(true);
-   table.homogeneous_set(false);
+   efl::ui::Grid table(instantiate, win);
+   win.content_set(table);
+   table.pack_padding_set(5, 5, true);
 
-   evas::rectangle rect(efl::eo::parent = win);
-   rect.color_set( 255, 0, 0, 255);
-   rect.size_hint_min_set( 100, 50);
-   rect.visible_set(true);
-   table.pack(rect, 0, 0, 2, 1);
+   efl::canvas::Rectangle rect(instantiate, win);
+   rect.color_set(255, 0, 0, 255);
+   rect.hint_min_set({100, 50});
+   table.pack_grid(rect, 0, 0, 2, 1);
 
-   evas::rectangle rect2(efl::eo::parent = win);
-   rect2.color_set( 0, 255, 0, 255);
-   rect2.size_hint_min_set(50, 100);
-   rect2.visible_set(true);
-   table.pack(rect2, 0, 1, 1, 2);
+   efl::canvas::Rectangle rect2(instantiate, win);
+   rect2.color_set(0, 255, 0, 255);
+   rect2.hint_min_set({50, 100});
+   table.pack_grid(rect2, 0, 1, 1, 2);
 
-   evas::rectangle rect3(efl::eo::parent = win);
-   rect3.color_set( 0, 0, 255, 255);
-   rect3.size_hint_min_set(50, 50);
-   rect3.visible_set(true);
-   table.pack(rect3, 1, 1, 1, 1);
+   efl::canvas::Rectangle rect3(instantiate, win);
+   rect3.color_set(0, 0, 255, 255);
+   rect3.hint_min_set({50, 50});
+   table.pack_grid(rect3, 1, 1, 1, 1);
 
-   evas::rectangle rect4(efl::eo::parent = win);
-   rect4.color_set( 255, 255, 0, 255);
-   rect4.size_hint_min_set(50, 50);
-   rect4.visible_set(true);
-   table.pack(rect4, 1, 2, 1, 1);
-
-   win.visible_set(true);
-
-   elm_run();
-   return 0;
+   efl::canvas::Rectangle rect4(instantiate, win);
+   rect4.color_set(255, 255, 0, 255);
+   rect4.hint_min_set({50, 50});
+   table.pack_grid(rect4, 1, 2, 1, 1);
 }
-ELM_MAIN()
+EFL_MAIN()

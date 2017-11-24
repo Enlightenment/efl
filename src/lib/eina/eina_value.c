@@ -43,6 +43,8 @@
 #include "eina_safety_checks.h"
 #include "eina_value.h"
 
+EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -3531,6 +3533,98 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_TIMEVAL = {
 };
 
 static Eina_Bool
+_eina_value_type_tm_setup(const Eina_Value_Type *type, void *mem)
+{
+   memset(mem, 0, type->value_size);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_tm_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_tm_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void * dst)
+{
+   struct tm *tmsrc = (struct tm *)src;
+   struct tm *tmdst = dst;
+   *tmdst = *tmsrc;
+   return EINA_TRUE;
+}
+
+static int
+_eina_value_type_tm_compare(const Eina_Value_Type *type, const void *a, const void *b)
+{
+   struct tm tma = *(struct tm*)a;
+   struct tm tmb = *(struct tm*)b;
+   time_t ta, tb;
+
+   ta = mktime(&tma);
+   tb = mktime(&tmb);
+
+   return _eina_value_type_timeval_compare(type, &ta, &tb);
+}
+
+static Eina_Bool
+_eina_value_type_tm_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   *(struct tm*)mem = *(struct tm*)ptr;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_tm_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const struct tm tm_val = va_arg(args, struct tm);
+   return _eina_value_type_tm_pset(type, mem, &tm_val);
+}
+
+static Eina_Bool
+_eina_value_type_tm_pget(const Eina_Value_Type *type, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, type->value_size);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_tm_convert_to(const Eina_Value_Type *type, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   struct tm tmv = *(struct tm *)type_mem;
+   time_t t = mktime(&tmv);
+   struct timeval v = {t, 0};
+
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        const char *other_mem;
+        char buf[64];
+
+        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &tmv);
+        other_mem = buf; /* required due &buf == buf */
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else
+     return _eina_value_type_timeval_convert_to(type, convert, &v, convert_mem);
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_TM = {
+     EINA_VALUE_TYPE_VERSION,
+     sizeof(struct tm),
+     "struct tm",
+     _eina_value_type_tm_setup,
+     _eina_value_type_tm_flush,
+     _eina_value_type_tm_copy,
+     _eina_value_type_tm_compare,
+     _eina_value_type_tm_convert_to,
+     NULL, //No convert from
+     _eina_value_type_tm_vset,
+     _eina_value_type_tm_pset,
+     _eina_value_type_tm_pget
+};
+
+static Eina_Bool
 _eina_value_type_blob_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
 {
    memset(mem, 0, sizeof(Eina_Value_Blob));
@@ -5365,6 +5459,7 @@ eina_value_init(void)
    EINA_VALUE_TYPE_LIST = &_EINA_VALUE_TYPE_LIST;
    EINA_VALUE_TYPE_HASH = &_EINA_VALUE_TYPE_HASH;
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
+   EINA_VALUE_TYPE_TM = &_EINA_VALUE_TYPE_TM;
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
    EINA_VALUE_TYPE_STRUCT = &_EINA_VALUE_TYPE_STRUCT;
 
@@ -5379,6 +5474,7 @@ eina_value_init(void)
 
    EINA_VALUE_TYPE_VALUE = &_EINA_VALUE_TYPE_VALUE;
 
+   EINA_ERROR_VALUE_FAILED = eina_error_msg_static_register("Eina_Value failed to copy/convert.");
 
    return EINA_TRUE;
 
@@ -5461,14 +5557,13 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_FILE = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_RECTANGLE = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TM = NULL;
 
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
 EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
-
-EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
 EAPI const unsigned int eina_prime_table[] =
 {

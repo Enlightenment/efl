@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -149,7 +151,7 @@ _efl_ui_focus_manager_root_focus_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manag
 
 
 #include "efl_ui_focus_manager_root_focus.eo.c"
-/* focus rectnangle implementation */
+/* focus rectangle implementation */
 typedef struct {
   Eina_Bool focus;
 } Efl_Ui_Focus_Rectangle_Data;

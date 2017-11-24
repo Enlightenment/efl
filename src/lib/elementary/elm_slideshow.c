@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #define ELM_WIDGET_ITEM_PROTECTED
 #include <Elementary.h>
@@ -367,7 +367,7 @@ EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -694,10 +694,10 @@ _elm_slideshow_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_slideshow_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd EINA_UNUSED)
+EOLIAN static const Efl_Access_Action_Data*
+_elm_slideshow_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
           { "move,right", "move", "right", _key_action_move},
           { "pause", "pause", NULL, _key_action_pause},

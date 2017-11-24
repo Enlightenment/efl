@@ -39,7 +39,7 @@
  * @skip #include
  * @until Eina.h
  *
- * Just some boilerplate code, declaring some variable and initializing eina.
+ * Just some boilerplate code, declaring some variables and initializing eina.
  * @until eina_init
  * Here we add a sequence of elements to our list. By using append we add
  * elements to the end of the list, so the list will look like this:@n
@@ -69,7 +69,7 @@
  * accomplished using @ref eina_list_append_relative() and
  * @ref eina_list_append_relative_list():
  * @until zarek
- * First @a "cain" is added after the second element(remember that indexes are
+ * First @a "cain" is added after the second element (remember that indexes are
  * 0 based) and then we add @a "zarek" after @a "cain".
  *
  * @ref Eina_List also has prepend analogs to append functions we have used so
@@ -170,7 +170,7 @@
  * @until sagitarius
  *
  * To replace an element in the list it is not necessary to remove it and then
- * add with the new value, it is possible to just change the value of a node:
+ * re-add with the new value, it is possible to just change the value of a node:
  * @until aquarius
  *
  * We will now take a peek to see if the list still has the right number of
@@ -408,7 +408,7 @@ EAPI Eina_List            *eina_list_prepend(Eina_List *list, const void *data) 
  * @p relative is not in the list, @p data is appended to the end of
  * the list.  If @p list is @c NULL, a  new list is returned. If there
  * are multiple instances of @p relative in the list, @p data is
- * inserted after the first instance.On success, a new list pointer
+ * inserted after the first instance. On success, a new list pointer
  * that should be used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
  *
@@ -992,7 +992,7 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
 
 
 /**
- * @brief Returns node nearest to data is in the sorted list.
+ * @brief Returns node nearest to data from the sorted list.
  *
  * @param list The list to search for data, @b must be sorted.
  * @param func A function pointer that can handle comparing the list data nodes.
@@ -1033,7 +1033,7 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
  * 
  * If @a cmp_result is 0 the element is already in the list and we need not
  * insert it, if @a cmp_result is greater than zero @a "my @a data" needs to
- * come after @a l(the nearest node present), if less than zero before.
+ * come after @a l (the nearest node present), if less than zero before.
  *
  * @note O(log2(n)) average/worst case performance, for 1,000,000
  * elements it will do a maximum of 20 comparisons. This is much
@@ -1243,7 +1243,7 @@ static inline void        *eina_list_data_get(const Eina_List *list) EINA_PURE E
  * @param data The data member to the list node.
  * @return The previous data value.
  *
- * This function set the data member @p data of the specified list node
+ * This function sets the data member @p data of the specified list node
  * @p list. It returns the previous data of the node. If @p list is
  * @c NULL, this function returns @c NULL.
  *
@@ -1337,7 +1337,7 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
  * This function returns a newly allocated accessor associated to
  * @p list. If @p list is @c NULL or the count member of @p list is
  * less or equal than 0, this function returns @c NULL. If the memory can
- * not be allocated, @c NULL is returned Otherwise, a valid accessor is
+ * not be allocated, @c NULL is returned; otherwise, a valid accessor is
  * returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
@@ -1345,7 +1345,7 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
 EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Finds the member of the list and return the index.
+ * @brief Finds the member of the list and returns the index.
  *
  * @param list The list.
  * @param data The data member.
@@ -1499,7 +1499,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  * deleting the current node and continuing looping is safe.
  *
  * The following diagram illustrates this macro iterating over a list of four
- * elements("one", "two", "three" and "four"):
+ * elements ("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-foreach-safe.png" style="max-width: 100%;" />
  * <a href="eina-list-foreach-safe.png">Full-size</a>
@@ -1560,7 +1560,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  * deleting the current node and continuing looping is safe.
  *
  * The following diagram illustrates this macro iterating over a list of four
- * elements("one", "two", "three" and "four"):
+ * elements ("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-reverse-foreach-safe.png" style="max-width: 100%;" />
  * <a href="eina-list-reverse-foreach-safe.png">Full-size</a>
@@ -1613,7 +1613,7 @@ EAPI int                   eina_list_data_idx(const Eina_List *list, void *data)
  * the data contained in the current node in @p data.
  *
  * The following diagram illustrates this macro iterating over a list of four
- * elements("one", "two", "three" and "four"):
+ * elements ("one", "two", "three" and "four"):
  * @htmlonly
  * <img src="eina-list-free.png" style="max-width: 100%;" />
  * <a href="eina-list-free.png">Full-size</a>

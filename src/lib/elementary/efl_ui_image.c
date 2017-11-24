@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_IMAGE_PROTECTED
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_CANVAS_LAYOUT_CALC_PROTECTED
 
 #include <Elementary.h>
@@ -850,7 +850,7 @@ EAPI Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Evas_Object *obj = elm_legacy_add(MY_CLASS, parent);
    EFL_UI_IMAGE_DATA_GET(obj, priv);
 
    efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
@@ -1217,7 +1217,7 @@ _efl_ui_image_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, cons
         if (key) *key = sd->async.key;
         return;
      }
-   evas_object_image_file_get(sd->img, file, key);
+   efl_file_get(sd->img, file, key);
 }
 
 #if 0
@@ -1606,10 +1606,10 @@ _efl_ui_image_efl_access_image_extents_get(Eo *obj, Efl_Ui_Image_Data *sd EINA_U
    elm_image_object_size_get(obj, w, h);
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_image_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_efl_ui_image_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
         { "activate", "activate", NULL, _key_action_activate },
         { NULL, NULL, NULL, NULL },
    };

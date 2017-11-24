@@ -9,7 +9,7 @@ class Complex_Type {
          get {
          }
          values {
-            value: list<int> @owned;
+            value: list<string> @owned;
          }
       }
       foo {

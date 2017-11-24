@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERNAL_API_ARGESFSDFEFC
+#define EFL_ACCESS_BETA
 #define EFL_ACCESS_PROTECTED
 
 #include <Elementary.h>

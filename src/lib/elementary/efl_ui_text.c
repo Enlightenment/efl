@@ -1211,7 +1211,6 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 
         if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_FOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
         _return_key_enabled_check(obj);
@@ -1228,7 +1227,6 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 
         if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-        efl_event_callback_legacy_call(obj, EFL_UI_WIDGET_EVENT_UNFOCUSED, NULL);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
 
@@ -5396,13 +5394,6 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
 
 #include "efl_ui_text.eo.c"
-
-EOLIAN static Eo *
-_efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
-   return obj;
-}
 
 EOLIAN static void
 _efl_ui_text_async_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)

@@ -126,7 +126,7 @@ class Evas.Textgrid (Efl.Canvas.Object, Efl.Text.Properties, Efl.Text.Font)
 
          params {
             @in y: int; [[The row index of the grid.]]
-            @in row: ptr(const(Evas.Textgrid.Cell)); [[The string as a sequence of #Evas_Textgrid_Cell.]]
+            @cref row: Evas.Textgrid.Cell; [[The string as a sequence of #Evas_Textgrid_Cell.]]
          }
       }
       cellrow_get @const {

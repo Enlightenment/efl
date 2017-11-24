@@ -108,7 +108,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
            makes sure other widgets will not also process this input event.
          ]]
          params {
-            @in eo_event: const(ptr(Efl.Event));
+            @cref eo_event: Efl.Event;
                [[EO event struct with an Efl.Input.Event as info.]]
             @in source: Efl.Canvas.Object;
                [[Source object where the event originated. Often same as this.]]
@@ -143,16 +143,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
 
            Focus can be disabled by setting @.focus_allow to $false.
          ]]
-         set {
-            [[Set or unsets the focus on this widget.
-
-              Note: When you set focus to this object, if it can handle focus,
-              will take the focus away from the one who had it previously and
-              will, for now on, be the one receiving input events. Unsetting
-              focus will remove the focus from this object, passing it back to
-              the previous element as defined by the focus manager policy.
-            ]]
-         }
          get {
             [[Gets whether this object is currently focused.]]
          }
@@ -658,8 +648,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
    }
    events {
       moved; [[Called when widget moved]]
-      focused; [[Called when widget was focused]]
-      unfocused; [[Called when widget was unfocused]]
       language,changed; [[Called when widget language changed]]
       access,changed; [[Called when accessibility changed]]
    }

@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -11,8 +11,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_popup.h"
-
-#include "elm_popup_item.eo.h"
 
 #include "elm_popup_part.eo.h"
 #include "elm_part_helper.h"
@@ -896,19 +894,18 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
 }
 
 static void
-_item_focused_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_item_focus_change(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-}
-
-static void
-_item_unfocused_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Elm_Popup_Item_Data *it = data;
-
-   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+     }
+   else
+     {
+        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
+     }
 }
 
 EOLIAN static Eo *
@@ -939,9 +936,7 @@ _item_new(Elm_Popup_Item_Data *it)
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
         efl_event_callback_add
-              (VIEW(it), EFL_UI_WIDGET_EVENT_FOCUSED, _item_focused_cb, it);
-        efl_event_callback_add
-              (VIEW(it), EFL_UI_WIDGET_EVENT_UNFOCUSED, _item_unfocused_cb, it);
+              (VIEW(it), EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_change, it);
         evas_object_show(VIEW(it));
      }
 }
@@ -1517,7 +1512,7 @@ EAPI Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   Evas_Object *obj = efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   Evas_Object *obj = elm_legacy_add(MY_CLASS, parent);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    wd->highlight_root = EINA_TRUE;
@@ -1531,7 +1526,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
 
    return obj;
 }
@@ -1789,13 +1784,15 @@ _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_popup_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_popup_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Popup_Data *pd)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "dismiss", NULL, NULL, _action_dismiss},
           { NULL, NULL, NULL, NULL }
    };
+   if (pd->action_area)
+     return NULL;
    return &atspi_actions[0];
 }
 
@@ -1808,6 +1805,30 @@ _elm_popup_efl_access_state_set_get(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED)
    STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
 
    return ret;
+}
+
+EOLIAN static const char*
+_elm_popup_efl_access_name_get(Eo *obj, Elm_Popup_Data *sd)
+{
+   const char *name = NULL;
+   Eina_Strbuf *buf;
+
+   name = efl_access_name_get(efl_super(obj, ELM_POPUP_CLASS));
+   if (name) return name;
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_printf(buf, "%s", E_("Alert"));
+   if (sd->title_text)
+     eina_strbuf_append_printf(buf, ", %s", sd->title_text);
+   else if (sd->text_content_obj)
+     eina_strbuf_append_printf(buf, ", %s", elm_object_text_get(sd->text_content_obj));
+   else if (elm_object_part_text_get(obj, "elm.text"))
+     eina_strbuf_append_printf(buf, ", %s", elm_object_part_text_get(obj, "elm.text"));
+
+   name = _elm_widget_accessible_plain_name_get(obj, eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+
+   return name;
 }
 
 /* Standard widget overrides */

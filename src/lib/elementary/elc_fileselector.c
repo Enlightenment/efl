@@ -10,7 +10,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -18,6 +18,10 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
+#include "elm_entry.eo.h"
+#include "elm_fileselector.eo.h"
+#include "elm_genlist.eo.h"
+#include "elm_gengrid.eo.h"
 
 #include "elm_fileselector_part.eo.h"
 #include "elm_part_helper.h"
@@ -1514,19 +1518,19 @@ _anchors_undo(void *data)
 }
 
 static void
-_on_text_focused(void *data, const Efl_Event *event EINA_UNUSED)
+_on_text_focus_changed(void *data, const Efl_Event *event)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (!sd->path_entry_idler)
-       sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
-}
-
-static void
-_on_text_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   ELM_FILESELECTOR_DATA_GET(data, sd);
-   _anchors_do(data, sd->path);
+   if (efl_ui_focus_object_focus_get(event->object))
+     {
+        if (!sd->path_entry_idler)
+          sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
+     }
+   else
+     {
+        _anchors_do(data, sd->path);
+     }
 }
 
 static void
@@ -1967,9 +1971,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
    efl_event_callback_add
-     (en, EFL_UI_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
-   efl_event_callback_add
-     (en, EFL_UI_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
+   (en, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _on_text_focus_changed, obj);
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
 
@@ -2039,7 +2041,7 @@ EAPI Evas_Object *
 elm_fileselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 EOLIAN static Eo *
@@ -3143,10 +3145,10 @@ _elm_fileselector_class_destructor(Efl_Class *klass EINA_UNUSED)
      }
 }
 
-EOLIAN const Elm_Atspi_Action *
-_elm_fileselector_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_elm_fileselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "select", "select", NULL, _key_action_select },
           { "escape", "escape", NULL, _key_action_escape},
           { "backspace", "backspace", NULL, _key_action_backspace},

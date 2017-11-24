@@ -1,0 +1,7 @@
+class Parts (Override, Base) {
+   parts {
+      part1: Override; [[Part 1]]
+      part2: Base; [[Part 2]]
+      part3: Parts; [[Part 3]]
+   }
+}

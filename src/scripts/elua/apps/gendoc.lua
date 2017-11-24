@@ -1390,6 +1390,7 @@ build_property = function(impl, cl)
         if (isget and gdoc:exists()) or (isset and sdoc:exists()) then
             f:write_nl(2)
         end
+        f:write_nl()
         f:write_editable(pns, "description")
         f:write_nl()
     end
@@ -1405,6 +1406,7 @@ build_property = function(impl, cl)
             f:write_nl(2)
         end
         if isset then
+            f:write_nl()
             f:write_editable(pns, "getter_description")
             f:write_nl()
         end
@@ -1418,6 +1420,7 @@ build_property = function(impl, cl)
         end
         f:write_raw(sdoc:full_get(nil, true))
         if isget then
+            f:write_nl()
             f:write_editable(pns, "getter_description")
             f:write_nl()
         end
@@ -1425,6 +1428,7 @@ build_property = function(impl, cl)
 
     f:write_nl()
     if not isget or not isset then
+        f:write_nl()
         f:write_editable(pns, "description")
         f:write_nl()
     end

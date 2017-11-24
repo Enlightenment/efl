@@ -158,9 +158,10 @@ enum Efl.Ui.Win.Move_Resize_Mode
 }
 
 class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
-               Efl.Access.Component, Elm.Interface.Atspi_Widget_Action,
-               Efl.Container, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part, Efl.Ui.Focus.Manager )
+               Efl.Access.Component, Efl.Access.Widget.Action,
+               Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
+               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
+               Efl.Ui.Focus.Manager )
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
@@ -217,34 +218,24 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
          }
       }
       @property wm_available_rotations {
+         [[Defines which rotations this window supports.
+
+           The window manager will refer to these hints and rotate the window
+           accordingly, depending on the device orientation, for instance.
+         ]]
+         values {
+            allow_0: bool; [[Normal orientation.]]
+            allow_90: bool; [[Rotated 90 degrees CCW.]]
+            allow_180: bool; [[Rotated 180 degrees.]]
+            allow_270: bool; [[Rotated 270 degrees CCW (i.e. 90 CW).]]
+         }
          set {
-            [[Set the array of available window rotations.
-
-              This function is used to set the available rotations to give
-              the hints to WM. WM will refer this hints and set the
-              orientation window properly.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_set;
-            values {
-               rotations: ptr(const(int)); [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
+            legacy: null;
          }
          get {
-            [[Get the array of available window rotations.
-
-              This function is used to get the available rotations.
-
-              @since 1.9
-            ]]
-            legacy: elm_win_wm_rotation_available_rotations_get;
-            values {
-               rotations: ptr(int); [[The array of rotation value.]]
-               count: uint; [[The size of the rotations array.]]
-            }
-            return: bool; [[$true on success, $false otherwise]]
+            legacy: null;
+            return: bool; [[Returns $false if available rotations were
+                            not specified.]]
          }
       }
       @property wm_available_profiles {
@@ -304,51 +295,26 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
          }
       }
-      @property autodel {
-         set {
-            [[Set the window's autodel state.
-
-              When closing the window in any way outside of the program
-              control, like pressing the X button in the titlebar or using
-              a command from the Window Manager, a "delete,request" signal
-              is emitted to indicate that this event occurred and the
-              developer can take any action, which may include, or not,
-              destroying the window object.
-
-              When the $autodel parameter is set, the window will be
-              automatically destroyed when this event occurs, after the
-              signal is emitted. If $autodel is $false, then the window
-              will not be destroyed and is up to the program to do so
-              when it's required.
-            ]]
-         }
-         get {
-            [[Get the window's autodel state.]]
-         }
-         values {
-            autodel: bool; [[If $true, the window will automatically delete
-                             itself when closed.]]
-         }
-      }
       @property autohide {
          [[Window's autohide state.
 
-           This property works similarly to @.autodel, automatically handling
-           "delete,request" signals when set to $trze, with the difference
-           that it will hide the window, instead of destroying it.
+           When closing the window in any way outside of the program control,
+           like pressing the X button in the titlebar or using a command from
+           the Window Manager, a "delete,request" signal is emitted to indicate
+           that this event occurred and the developer can take any action, which
+           may include, or not, destroying the window object.
 
-           It is specially designed to work together with $ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN
-           which allows exiting Elementary's main loop when all the windows
-           are hidden.
+           When this property is set to $true, the window will be automatically
+           hidden when this event occurs, after the signal is emitted. If this
+           property is $false, nothing will happen, beyond the event emission.
 
-           Note: @.autodel and $autohide are not mutually exclusive. The window
+           C applications can use this option along with the quit policy
+           $ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting EFL's main
+           loop when all the windows are hidden.
+
+           Note: $autodel and $autohide are not mutually exclusive. The window
            will be deleted if both are set to $true.
          ]]
-
-         set {
-         }
-         get {
-         }
          values {
             autohide: bool; [[If $true, the window will automatically hide
                               itself when closed.]]
@@ -500,9 +466,16 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
             borderless: bool; [[If $true, the window is borderless.]]
          }
       }
-      @property role {
+      @property win_role {
+         /* FIXME: Do we actually need this? There is only support in X. */
+         [[The role of the window.
+
+           It is a hint of how the Window Manager should handle it. Unlike
+           @.win_type and @.win_name this can be changed at runtime.
+         ]]
          set {
             [[Set the role of the window.]]
+            legacy: elm_win_role_set;
          }
          get {
             [[Get the role of the window.
@@ -511,46 +484,51 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
               freed or modified. It will also be invalid if a new role
               is set or if the window is destroyed.
             ]]
+            legacy: elm_win_role_get;
          }
          values {
             role: string; [[The role to set.]]
          }
       }
-      @property name {
+      @property win_name {
          [[The window name.
 
            The meaning of name depends on the underlying windowing system.
 
-           The window name is a constructing property that need to be set at
-           creation within \@ref eo_add.
+           The window name is a construction property that can only be set at
+           creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it can NOT be modified afterward.
          ]]
          set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
+            [[Name can on be set before finalize.]]
             legacy: null;
          }
-         get { [[ @since 1.18 ]] }
+         get {
+            [[ @since 1.18 ]]
+            legacy: elm_win_name_get;
+         }
          values {
             name: string @nullable; [[Window name]]
          }
       }
-      @property type {
+      @property win_type {
          [[The type of the window.
 
            It is a hint of how the Window Manager should handle it.
 
-           The window type is a constructing property that need to be set at
-           creation within \@ref eo_add.
+           The window type is a construction property that can only be set at
+           creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it can NOT be modified afterward.
          ]]
          set {
-            [[Can only be used at creation time, within \@ref eo_add.]]
+            [[Type can on be set before finalize.]]
             legacy: null;
          }
          get {
-            [[If the object is not window object, return #ELM_WIN_UNKNOWN.]]
+            [[If the object is not window object, returns $unknown.]]
+            legacy: elm_win_type_get;
          }
          values {
             type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown); [[Window type]]
@@ -834,7 +812,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Efl.Access.state_set { get; }
       Efl.Access.name { get; }
       Efl.Access.Component.extents { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }
       Efl.Input.State.lock_enabled { get; }
       Efl.Screen.screen_dpi { get; }
@@ -858,14 +836,14 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       //Efl.Canvas.seats;
       Efl.Canvas.device { get; }
       Efl.Canvas.seat { get; }
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part;
       Efl.Object.provider_find;
    }
    constructors {
-      .name;
-      .type;
+      .win_name;
+      .win_type;
       .accel_preference;
    }
    events {

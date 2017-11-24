@@ -268,7 +268,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop_User, Efl.Net.Dialer) {
 
         request_headers_get {
             [[Returns an iterator to the key-value pairs for request headers]]
-            return: iterator<Efl.Net.Http.Header> @owned @warn_unused; [[Iterator to key value pairs]]
+            return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator to key value pairs]]
         }
 
         @property cookie_jar {

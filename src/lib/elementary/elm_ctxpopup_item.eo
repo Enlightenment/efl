@@ -1,4 +1,4 @@
-class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item)
+class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action)
 {
    [[Elementary context popup item class]]
    legacy_prefix: elm_ctxpopup_item;
@@ -25,5 +25,6 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item)
         Efl.Ui.Item.selected { get; set; }
         Efl.Ui.Item.prev { get; }
         Efl.Ui.Item.next { get; }
+        Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

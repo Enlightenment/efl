@@ -835,6 +835,27 @@ _edje_reload(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA
    _edje_load_or_show_error(obj, file, group);
 }
 
+static void
+_edje_circul(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   char buf[1024] = "";
+   Eina_List *parts = event_info;
+   Eina_List *l;
+   char *part_name;
+   char *group = data;
+
+   part_name = eina_list_data_get(eina_list_last(parts));
+   strncat(buf, part_name, strlen(part_name));
+   EINA_LIST_FOREACH(parts, l, part_name)
+     {
+        strncat(buf, " -> ", strlen(" -> "));
+        strncat(buf, part_name, strlen(part_name));
+     }
+
+   fprintf(stderr, "Group '%s' have a circul dependency between parts: %s\n",
+           group, buf);
+}
+
 static Eina_Bool
 _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 {
@@ -930,6 +951,7 @@ _create_edje(Evas *evas, const struct opts *opts)
              edje_file_collection_list_free(groups);
           }
      }
+   evas_object_smart_callback_add(edje, "circular,dependency", _edje_circul, opts->group);
 
    edje_object_size_max_get(edje, &maxw, &maxh);
    edje_object_size_min_get(edje, &minw, &minh);

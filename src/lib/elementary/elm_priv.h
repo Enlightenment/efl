@@ -55,6 +55,7 @@
 #include "elm_code_private.h"
 #include "efl_ui_focus_parent_provider.eo.h"
 #include "efl_ui_focus_parent_provider_standard.eo.h"
+#include "elm_widget_item_static_focus.eo.h"
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
@@ -705,6 +706,9 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    Edje_Signal_Cb func_cb);
  void                _efl_ui_image_sizing_eval(Evas_Object *obj);
 /* end of DEPRECATED */
+
+/* DO NOT USE THIS this is only for performance optimization! */
+void                 _elm_widget_full_eval(Eo *obj);
 
 Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa);
 

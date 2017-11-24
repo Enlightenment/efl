@@ -32,7 +32,7 @@ main(int argc, char **argv)
    struct stat st;
    char *exe;
    int we_are_elementary_run = 0;
-   char *disp;
+   char *domain;
    char *cwd;
 
    int sargc, slen, envnum;
@@ -45,8 +45,13 @@ main(int argc, char **argv)
         exit(-1);
      }
    cwd = strdup(buf);
-   if (!(disp = getenv("DISPLAY"))) disp = "unknown";
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
+   if (!(domain = getenv("ELM_QUICKLAUNCH_DOMAIN")))
+     {
+        domain = getenv("WAYLAND_DISPLAY");
+        if (!domain) domain = getenv("DISPLAY");
+        if (!domain) domain = "unknown";
+     }
+   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), domain);
    if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
      {
         perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");

@@ -1,4 +1,3 @@
-/* FIXME: This shouldn't be using undefined Elm_Atspi_Action */
 import elm_general;
 
 mixin Efl.Access.Action ()
@@ -43,11 +42,13 @@ mixin Efl.Access.Action ()
          }
       }
       @property actions @protected @beta {
+         /* C-only, internal API */
          [[Get list of available widget actions]]
          get @pure_virtual {
          }
          values {
-            actions: list<Elm_Atspi_Action>; [[Contains statically allocated strings]]
+            actions: list<ptr(Efl.Access.Action_Data)>;
+               [[Contains statically allocated strings.]]
          }
       }
       action_do @protected @pure_virtual @beta {

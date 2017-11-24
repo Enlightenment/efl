@@ -229,7 +229,7 @@ typedef Eina_Bool (*Eina_Simple_XML_Attribute_Cb)(void *data, const char *key, c
  * @param func What to call back while parse to do some action.  The
  *        first parameter is the given user @a data, the second is the
  *        token type, the third is the pointer to content start (it's
- *        not a NULL terminated string!), the forth is where this
+ *        not a NULL terminated string!), the fourth is where this
  *        content is located inside @a buf (does not include tag
  *        start, for instance "<!DOCTYPE value>" the offset points at
  *        "value"), the fifth is the size of the content. Whenever this
@@ -311,7 +311,7 @@ eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_C
 EAPI Eina_Simple_XML_Attribute * eina_simple_xml_attribute_new(Eina_Simple_XML_Node_Tag *parent, const char *key, const char *value);
 
 /**
- * @brief Removes attribute from parent and delete it.
+ * @brief Removes attribute from parent and deletes it.
  *
  * @param attr attribute to release memory.
  */
@@ -332,7 +332,7 @@ EAPI void eina_simple_xml_attribute_free(Eina_Simple_XML_Attribute *attr);
 EAPI Eina_Simple_XML_Node_Tag * eina_simple_xml_node_tag_new(Eina_Simple_XML_Node_Tag *parent, const char *name);
 
 /**
- * @brief Removes tag from parent and delete it.
+ * @brief Removes tag from parent and deletes it.
  *
  * @param tag to release memory.
  */
@@ -354,7 +354,7 @@ EAPI void eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag);
 EAPI Eina_Simple_XML_Node_Data * eina_simple_xml_node_data_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes data from parent and delete it.
+ * @brief Removes data from parent and deletes it.
  *
  * @param node to release memory.
  */
@@ -376,7 +376,7 @@ EAPI void eina_simple_xml_node_data_free(Eina_Simple_XML_Node_Data *node);
 EAPI Eina_Simple_XML_Node_CData * eina_simple_xml_node_cdata_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes cdata from parent and delete it.
+ * @brief Removes cdata from parent and deletes it.
  *
  * @param node to release memory.
  */
@@ -400,7 +400,7 @@ EAPI void eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node);
 EAPI Eina_Simple_XML_Node_Doctype_Child * eina_simple_xml_node_doctype_child_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes doctype child from parent and delete it.
+ * @brief Removes doctype child from parent and deletes it.
  *
  * @param node to release memory.
  *
@@ -424,7 +424,7 @@ EAPI void eina_simple_xml_node_doctype_child_free(Eina_Simple_XML_Node_Data *nod
 EAPI Eina_Simple_XML_Node_Processing * eina_simple_xml_node_processing_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes processing from parent and delete it.
+ * @brief Removes processing from parent and deletes it.
  *
  * @param node processing to release memory.
  */
@@ -446,7 +446,7 @@ EAPI void eina_simple_xml_node_processing_free(Eina_Simple_XML_Node_Data *node);
 EAPI Eina_Simple_XML_Node_Doctype * eina_simple_xml_node_doctype_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes doctype from parent and delete it.
+ * @brief Removes doctype from parent and deletes it.
  *
  * @param node doctype to release memory.
  */
@@ -468,7 +468,7 @@ EAPI void eina_simple_xml_node_doctype_free(Eina_Simple_XML_Node_Data *node);
 EAPI Eina_Simple_XML_Node_Comment * eina_simple_xml_node_comment_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
 
 /**
- * @brief Removes comment from parent and delete it.
+ * @brief Removes comment from parent and deletes it.
  *
  * @param node comment to release memory.
  */

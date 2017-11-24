@@ -11,9 +11,11 @@ struct Efl.Ui.Focus.Relations {
     down : list<Efl.Ui.Focus.Object>; [[[List of objects below]]
     next : Efl.Ui.Focus.Object; [[[Next object]]
     prev : Efl.Ui.Focus.Object; [[Previous object]]
-    type : string; [[Object type]]
     parent : Efl.Ui.Focus.Object; [[Parent object]]
     redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
+    node : Efl.Ui.Focus.Object; [[The node where this is the information from]]
+    logical : bool; [[true if this node is only logical]]
+    position_in_history : int; [[The position in the history stack]]
 }
 
 struct Efl.Ui.Focus.Manager.Logical_End_Detail {
@@ -145,6 +147,13 @@ interface Efl.Ui.Focus.Manager {
         }
         pop_history_stack {
             [[Removes the most upper history element, and gives the focus to the next one below]]
+        }
+        setup_on_first_touch {
+           [[Called when this manager is set as redirect]]
+           params {
+             direction : Efl.Ui.Focus.Direction; [[The direction in which this should be setup]]
+             entry : Efl.Ui.Focus.Object; [[The object that caused this manager to be redirect]]
+           }
         }
     }
     events {

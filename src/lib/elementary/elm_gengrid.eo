@@ -11,7 +11,7 @@ enum Elm.Gengrid.Reorder_Type
 }
 
 class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
-                   Efl.Ui.Clickable, Elm.Interface.Atspi_Widget_Action,
+                   Efl.Ui.Clickable, Efl.Access.Widget.Action,
                    Efl.Access.Selection)
 {
    [[Elementary gengrid class]]
@@ -377,7 +377,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Gengrid.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in relative: Elm.Widget.Item; [[The item to place this new one before.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
@@ -403,7 +403,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on error.]]
          params {
-            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Gengrid.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in relative: Elm.Widget.Item; [[The item to place this new one after.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
@@ -451,7 +451,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Gengrid.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
@@ -465,7 +465,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Gengrid.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in func: Evas_Smart_Cb @optional; [[Convenience function called
                                                  when the item is selected.]]
@@ -490,7 +490,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          ]]
          return: Elm.Widget.Item; [[A handle to the item added or $null on errors.]]
          params {
-            @in itc: ptr(const(Elm.Gengrid.Item.Class)); [[The item class for the item.]]
+            @cref itc: Elm.Gengrid.Item.Class; [[The item class for the item.]]
             @in data: const(void_ptr); [[The item data.]]
             @in comp: Eina_Compare_Cb; [[User defined comparison function
                                          that defines the sort order based
@@ -550,7 +550,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Canvas.Group.group_member_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_access_update;
-      Elm.Widget.on_focus_update;
       Elm.Widget.interest_region { get; }
       Elm.Widget.widget_event;
       Elm.Widget.focus_highlight_geometry { get; }
@@ -560,7 +559,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Elm.Interface_Scrollable.policy { get; set; }
       Efl.Access.children { get; }
       Efl.Access.state_set { get; }
-      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;
@@ -571,6 +570,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.clear;
       Efl.Ui.Focus.Composition.prepare;
       Elm.Widget.focus_state_apply;
+      Efl.Ui.Focus.Manager.setup_on_first_touch;
    }
    events {
       realized; [[Called when gengrid realized]]

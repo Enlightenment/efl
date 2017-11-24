@@ -3740,7 +3740,6 @@ EFL_LIB_END([Eldbus])
 
 
 #### Ecore_Drm
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_ecore_drm}" = "yes"])
 
 ### Additional options to configure
@@ -3763,23 +3762,9 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 gbm])
-EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 0.6.0])
+EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 1.6.0])
 
 EFL_ADD_LIBS([ECORE_DRM], [-lm])
-
-# API change from 0.7 to 0.8. So we define this to support both for now.
-PKG_CHECK_EXISTS([libinput >= 0.8.0],
-                 [have_libinput_new="yes"],
-                 [have_libinput_new="no"])
-AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
-AC_MSG_RESULT([${have_libinput_new}])
-if test "x${have_libinput_new}" = "xyes";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
-fi
-if test "x${have_libinput_new}" = "xno";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
-fi
-
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
@@ -3800,7 +3785,6 @@ EFL_LIB_END_OPTIONAL([Ecore_Drm])
 
 
 #### Elput
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Elput], [test "${want_elput}" = "yes"])
 
 ### Additional options to configure
@@ -3821,25 +3805,12 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
-EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 0.6.0 xkbcommon >= 0.3.0 libudev])
+EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.6.0 xkbcommon >= 0.3.0 libudev])
 
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
 
 EFL_ADD_LIBS([ELPUT], [-lm])
-
-# API change from 0.7 to 0.8. So we define this to support both for now.
-PKG_CHECK_EXISTS([libinput >= 0.8.0],
-                 [have_libinput_new="yes"],
-                 [have_libinput_new="no"])
-AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
-AC_MSG_RESULT([${have_libinput_new}])
-if test "x${have_libinput_new}" = "xyes";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
-fi
-if test "x${have_libinput_new}" = "xno";then
-  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
-fi
 
 
 EFL_EVAL_PKGS([ELPUT])
@@ -3860,7 +3831,6 @@ EFL_LIB_END_OPTIONAL([Elput])
 #### End of Elput
 
 #### Ecore_Drm2
-have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Ecore_Drm2], [test "${want_drm}" = "yes"])
 
 ### Additional options to configure
@@ -5226,19 +5196,6 @@ AC_ARG_ENABLE([always-build-examples],
    [want_always_build_examples="no"])
 AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
 
-BARF_OK="xno"
-# Harfbuzz
-AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb],
-   [ You will be told when this is needed ],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       BARF_OK=""
-    else
-       BARF_OK="xno"
-    fi
-   ],
-   [ BARF_OK="xno" ])
-
 #### Ecore_Buffer
 build_ecore_buffer_x11_dri2="no"
 build_ecore_buffer_x11_dri3="no"
@@ -5649,6 +5606,7 @@ pc/efl-cxx.pc
 pc/efl-wl.pc
 pc/efl-core.pc
 pc/efl-net.pc
+pc/efl-ui.pc
 pc/evas-fb.pc
 pc/evas-eglfs.pc
 pc/evas-opengl-x11.pc
@@ -6111,14 +6069,6 @@ if test -n "$CFOPT_WARNING"; then
   echo "==-- WARNING --=="
   echo ""
   echo "_____________________________________________________________________"
-  if test -n "$BARF_OK"; then
-    echo "Please add the following option to acknowledge this:"
-    echo "  --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb"
-    echo "_____________________________________________________________________"
-    rm -f Makefile
-    exit 1
-  fi
-  sleep 10
 fi
 
 if test "x$prefix" != "x/usr"; then

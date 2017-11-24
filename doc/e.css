@@ -1,11 +1,12 @@
 body, table, div, p, dl {
-  font-family: sans-serif;
-  font-size: 9pt;
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 body {
-  background-color: #404040;
-  color: black;
+  background-color: #303030 ;
+  color: #888888;
   margin: 0;
 }
 
@@ -83,7 +84,7 @@ div.qindex {
 }
 
 div.navpath {
-  width: 980px;
+  max-width: 980px;
   background-color: #606060;
   text-align: center;
   margin-left: auto;
@@ -99,13 +100,14 @@ div.navtab {
 }
 
 a {
-  color: #3399ff;
+  color: #44aaff;
   font-weight: normal;
   text-decoration: none;
+  text-shadow: 0px 0px 10px rgba(51, 153, 255, 0.5);
 }
 
 .contents a:visited {
-  color: #2277aa;
+  color: #2288ee;
 }
 
 a:hover {
@@ -150,7 +152,13 @@ dl.el {
   font-family: monospace, mono, fixed;
   font-size: 9pt;
   white-space: pre;
-  padding-top: 10px;
+  border: 0;
+
+  color: #bbbbbb;
+  background-color: #202020;
+  padding: 4px 6px;
+  margin: 4px 8px 4px 2px;
+  overflow: auto;
 }
 
 .line {
@@ -161,15 +169,6 @@ dl.el {
 /* To avoid packed effect on bullet lists */
 li .line:first-child {
    margin-top: 10px;
-}
-
-pre.fragment {
-  border: 1px solid #cccccc;
-  background-color: #eeeeee;
-  padding: 4px 6px;
-  margin: 4px 8px 4px 2px;
-  overflow: auto;
-  font-size: 9pt;
 }
 
 div.ah {
@@ -246,11 +245,11 @@ img.footer {
 }
 
 span.keyword {
-  color: #008000
+  color: #4488cc
 }
 
 span.keywordtype {
-  color: #604020
+  color: #4488cc
 }
 
 span.keywordflow {
@@ -258,19 +257,19 @@ span.keywordflow {
 }
 
 span.comment {
-  color: #800000
+  color: #3355bb
 }
 
 span.preprocessor {
-  color: #806020
+  color: #66ff55
 }
 
 span.stringliteral {
-  color: #002080
+  color: #ff8877
 }
 
 span.charliteral {
-  color: #008080
+  color: #aa9922
 }
 
 span.vhdldigit {
@@ -341,7 +340,7 @@ table.memberdecls {
 .mdescLeft, .mdescRight,
 .memItemLeft, .memItemRight,
 .memTemplItemLeft, .memTemplItemRight, .memTemplParams {
-  background-color: #eeeeee;
+  background-color: #202020;
   border: none;
   margin: 4px;
   padding: 1px 0 0 8px;
@@ -353,7 +352,7 @@ table.memberdecls {
 }
 
 .memItemLeft, .memItemRight, .memTemplParams {
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid #404040;
 }
 
 .memItemLeft, .memTemplItemLeft {
@@ -397,35 +396,22 @@ table.memberdecls {
 
 .memname {
   white-space: nowrap;
-  font-weight: bold;
   margin-left: 6px;
 }
 
 .memproto, dl.reflist dt {
-  border-top: 1px solid #aaaaaa;
-  border-left: 1px solid #aaaaaa;
-  border-right: 1px solid #aaaaaa;
   padding: 6px 0px 6px 0px;
-  color: #202020;
-  font-weight: bold;
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
-  -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-  background-color: #eeeeee;
+  background-color: #404040;
+  color: #ffffff;
 }
 
 .memdoc, dl.reflist dd {
-  border-bottom: 1px solid #aaaaaa;
-  border-left: 1px solid #aaaaaa;
-  border-right: 1px solid #aaaaaa;
   padding: 2px 5px;
-  background-color: #eeeeee;
-  border-top-width: 0;
+  background-color: #202020;
+  border-top: 1px solid #404040;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
   -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-  background-color: #ffffff;
 }
 
 dl.reflist dt {
@@ -446,7 +432,7 @@ dl.reflist dd {
 }
 
 .paramname {
-  color: #602020;
+  color: #bbbbbb;
   white-space: nowrap;
 }
 .paramname em {
@@ -527,7 +513,7 @@ dl.reflist dd {
 }
 
 .directory td.entry {
-  width: 400px;
+  width: 50%;
 }
 
 .directory-alt {
@@ -709,22 +695,24 @@ div.ingroups a {
 }
 
 .title {
-  font-size: 150%;
+  font-size: 24px;
   font-weight: bold;
   margin: 20px 2px;
-  text-shadow: 0px 0px 5px #3399ff;
   color: #ffffff;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 500;
 }
 
 div.header, div.footer {
   margin-left: auto;
   margin-right: auto;
-  width: 980px;
+  max-width: 980px;
 }
 
 div.footer {
   font-size: 10px;
   text-align: center;
+  border-top: 1px solid #404040;
 }
 
 div.footer span.copyright {
@@ -732,25 +720,10 @@ div.footer span.copyright {
   padding-left: 50px;
 }
 
-div.footer a {
-  color: black;
-}
-
-div.headertitle {
-  background-color: #606060;
-  padding:          5px 0px 5px 0px;
-  text-align:       center;
-  box-shadow:       0px 3px 5px #000000;
-  margin-bottom:    8px;
-}
-
 div.contents {
-  box-shadow: 0px 3px 10px #000000;
   margin-left: auto;
   margin-right: auto;
-  width: 940px;
-  background-color: white;
-  padding: 10px 20px;
+  max-width: 940px;
 }
 
 #projectlogo {
@@ -781,7 +754,6 @@ div.contents {
 
 #titlearea {
   box-shadow: 0px 3px 10px #000000;
-  width: 780px;
   margin-left: auto;
   margin-right: auto;
   padding: 0px 10px 0px 10px;
@@ -904,7 +876,7 @@ dl.citelist dd {
   padding: 5px 0px 5px 0px;
   text-align: center;
   box-shadow: 0px 3px 5px #000000;
-  width: 980px;
+  max-width: 980px;
   z-index: 101;
   font-size: 9pt;
 }

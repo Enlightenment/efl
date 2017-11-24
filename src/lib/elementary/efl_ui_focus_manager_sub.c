@@ -192,17 +192,18 @@ EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
 EOLIAN static Efl_Object*
 _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd EINA_UNUSED)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_array_add(obj, self_manager(), obj);
-
    _flush_manager(obj, pd);
-
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   return obj;
 }
 
 EOLIAN static void
 _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
    _border_unregister(obj, pd);
+
+   efl_event_callback_array_del(pd->manager, parent_manager(), obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }

@@ -98,6 +98,9 @@
 # endif
 #endif
 
+// This object is internal, only the interface needs to be exposed.
+#include "edje_global.eo.h"
+
 EAPI extern int _edje_default_log_dom ;
 
 #ifdef EDJE_DEFAULT_LOG_COLOR
@@ -2397,6 +2400,17 @@ EAPI extern Eina_Mempool *_emp_SNAPSHOT;
 EAPI extern Eina_Mempool *_emp_part;
 EAPI extern Eina_Mempool *_emp_VECTOR;
 
+static inline Edje_Global *
+_edje_global(void)
+{
+#ifndef NDEBUG
+   return efl_provider_find(ecore_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE);
+#else
+   extern Edje_Global *_edje_global_obj;
+   return _edje_global_obj;
+#endif
+}
+
 static inline void
 _edje_calc_params_need_type_common(Edje_Calc_Params *p)
 {
@@ -2534,11 +2548,24 @@ const char *   _edje_text_class_font_get(Edje *ed,
 const char *   _edje_text_font_get(const char *base, const char *new,
                                    char **free_later);
 
+void
+_edje_part_recalc_single_textblock(FLOAT_T sc,
+                                   Edje *ed,
+                                   Edje_Real_Part *ep,
+                                   Edje_Part_Description_Text *chosen_desc,
+                                   Edje_Calc_Params *params,
+                                   int *minw, int *minh,
+                                   int *maxw, int *maxh);
+void
+_edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
+                             Edje_Calc_Params *params,
+                             Edje_Part_Description_Text *chosen_desc);
 
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
 Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
+// The color_class has to be a pointer to an Eet owned string.
 Edje_Color_Class *_edje_color_class_recursive_find(const Edje *ed, const char *color_class);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 void              _edje_color_class_hash_free(void);
@@ -3133,8 +3160,8 @@ Eina_Bool _edje_part_table_clear(Edje *ed, const char *part, Eina_Bool clear);
 
 /* part containers: swallow */
 Eo *_edje_swallow_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);
-Efl_Gfx *_edje_efl_container_content_get(Edje *ed, const char *part);
-Eina_Bool _edje_efl_container_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
+Efl_Gfx *_edje_efl_content_content_get(Edje *ed, const char *part);
+Eina_Bool _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx *obj_swallow);
 
 /* part containers: external */
 Eo *_edje_external_internal_proxy_get(Edje_Object *obj, Edje *ed, Edje_Real_Part *rp);

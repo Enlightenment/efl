@@ -133,7 +133,7 @@
  * @image rtf eina_inlist-node_eg2-my-struct.png
  * @image latex eina_inlist-node_eg2-my-struct.eps
  *
- * Now we need some pointers and auxiliar variables that will help us iterate on
+ * Now we need some pointers and auxiliary variables that will help us iterate on
  * the lists:
  *
  * @skip struct
@@ -729,12 +729,12 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
  * @return A list pointer.
  * @since 1.1.0
  *
- * This function inserts item into a linked list assuming @p state match
- * the exact content order of the list. It use @p state to do a fast
+ * This function inserts item into a linked list assuming @p state matches
+ * the exact content order of the list. It uses @p state to do a fast
  * first step dichotomic search before starting to walk the inlist itself.
- * This make this code much faster than eina_inlist_sorted_insert() as it
+ * This makes this code much faster than eina_inlist_sorted_insert() as it
  * doesn't need to walk the list at all. The result is of course a sorted
- * list with an updated state.. If @p list is @c NULLL, item
+ * list with an updated state. If @p list is @c NULL, item
  * is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
@@ -742,8 +742,8 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
  * @note O(log2(n)) comparisons (calls to @p func) average/worst case
  * performance. As said in eina_list_search_sorted_near_list(),
  * lists do not have O(1) access time, so walking to the correct node
- * can be costly, but this version try to minimize that by making it a
- * O(log2(n)) for number small number. After n == 256, it start to add a
+ * can be costly, but this version tries to minimize that by making it a
+ * O(log2(n)) for number small number. After n == 256, it starts to add a
  * linear cost again. Consider worst case to be almost O(n) pointer
  * dereference (list walk).
  */
@@ -797,7 +797,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
  */
 EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
-/* This two macros are helpers for the _FOREACH ones, don't use them */
+/* These two macros are helpers for the _FOREACH ones, don't use them */
 /**
  * @def _EINA_INLIST_OFFSET
  * @param ref The reference to be used.
@@ -848,7 +848,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_REVERSE_FOREACH
- * @param list The list to traversed in reverse order.
+ * @param list The list to traverse in reverse order.
  * @param it The pointer to the list item, i.e. a pointer to each item
  * that is part of the list.
  */
@@ -858,7 +858,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_REVERSE_FOREACH_FROM
- * @param list The last list to traversed in reverse order.
+ * @param list The last list to traverse in reverse order.
  * @param it The pointer to the list item, i.e. a pointer to each item
  * that is part of the list.
  * @see EINA_INLIST_REVERSE_FOREACH()

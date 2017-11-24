@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_PROTECTED
-#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 
@@ -2694,10 +2694,10 @@ _efl_ui_image_zoomable_class_constructor(Efl_Class *klass)
    PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT = eina_error_msg_static_register("File is not a known format");
 }
 
-EOLIAN const Elm_Atspi_Action *
-_efl_ui_image_zoomable_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED)
+EOLIAN const Efl_Access_Action_Data *
+_efl_ui_image_zoomable_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd EINA_UNUSED)
 {
-   static Elm_Atspi_Action atspi_actions[] = {
+   static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},
           { "move,next", "move", "next", _key_action_move},
           { "move,left", "move", "left", _key_action_move},
@@ -2717,7 +2717,7 @@ EAPI Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return efl_add(MY_CLASS, parent, efl_canvas_object_legacy_ctor(efl_added));
+   return elm_legacy_add(MY_CLASS, parent);
 }
 
 static inline void

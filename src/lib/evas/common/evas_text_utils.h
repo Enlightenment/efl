@@ -17,7 +17,6 @@ typedef enum
 } Evas_Text_Props_Mode;
 
 # include "evas_font_ot.h"
-# include "language/evas_bidi_utils.h"
 # include "language/evas_language_utils.h"
 
 /* Used for showing "malformed" or missing chars */
@@ -126,7 +125,7 @@ struct _Evas_Font_Glyph_Info
    // relative layout info... worry then.
    Evas_Coord pen_after; // 4
    short x_bear, y_bear, width; // 6
-#else   
+#else
    Evas_Coord x_bear; // 4
    /* This one is rarely used, only in draw, in which we already get the glyph
     * so it doesn't really save time. Leaving it here just so no one will
@@ -134,7 +133,7 @@ struct _Evas_Font_Glyph_Info
    Evas_Coord y_bear; // 4
    Evas_Coord width; // 4
    Evas_Coord pen_after; // 4
-#endif   
+#endif
 };
 
 void
