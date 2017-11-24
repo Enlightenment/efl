@@ -149,8 +149,9 @@ _validate_typedecl(Eolian_Typedecl *tp)
 
 static const char * const eo_complex_frees[] =
 {
-   "eina_accessor_free", "eina_array_free", "eina_iterator_free",
-   "eina_hash_free", "eina_list_free",
+   "eina_accessor_free", "eina_array_free",
+   "eina_iterator_free", "eina_hash_free",
+   "eina_list_free", "eina_inarray_free", "eina_inlist_free",
 
    "efl_del" /* future */
 };
