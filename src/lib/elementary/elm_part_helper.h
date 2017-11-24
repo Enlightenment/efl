@@ -104,8 +104,6 @@ EOLIAN static Efl_Object * \
 _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
 { \
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
-   if (eina_streq(part, "background")) \
-     return efl_part(efl_super(obj, MY_CLASS), part); \
    return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
 }
 
