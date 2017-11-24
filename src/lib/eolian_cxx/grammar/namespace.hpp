@@ -54,6 +54,8 @@ struct namespaces_directive
 
 template <typename G>
 struct is_eager_generator<namespaces_generator<G>> : std::true_type {};
+template <typename G>
+struct is_generator<namespaces_generator<G>> : std::true_type {};
 
 namespace type_traits {
 template <typename G>
