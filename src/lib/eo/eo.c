@@ -621,7 +621,7 @@ err:
      {
         if (EINA_UNLIKELY(obj->auto_unref != 0))
           {
-             if (!(--obj->auto_unref))
+             if (obj->finalized && !(--obj->auto_unref))
                efl_unref(eo_id);
           }
         _efl_unref(obj);
@@ -680,7 +680,7 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
      {
         if (EINA_UNLIKELY(call->obj->auto_unref != 0))
           {
-             if (!(--call->obj->auto_unref))
+             if (call->obj->finalized && !(--call->obj->auto_unref))
                efl_unref(call->eo_id);
           }
         _efl_unref(call->obj);
@@ -750,7 +750,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
                        "Unable to resolve op for api func %p for obj=%p (%s)", api_func, eo_obj, efl_class_name_get(eo_obj));
         if (EINA_UNLIKELY(obj->auto_unref))
           {
-             if (!(--obj->auto_unref))
+             if (obj->finalized && !(--obj->auto_unref))
                efl_unref(eo_obj);
           }
         return EFL_NOOP;
