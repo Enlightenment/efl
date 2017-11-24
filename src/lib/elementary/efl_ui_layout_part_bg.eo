@@ -1,0 +1,11 @@
+class Efl.Ui.Layout.Part.Bg (Efl.Ui.Widget.Part.Bg, Efl.Ui.Bg)
+{
+   [[Elementary layout internal part background class]]
+   data: null;
+   implements {
+      Efl.Ui.Widget.Part.Bg.bg { set; }
+      Efl.File.file { get; set; }
+      Efl.Gfx.color { set; get; }
+      Efl.Ui.Image.scale_type { get; set; }
+   }
+}

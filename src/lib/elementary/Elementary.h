@@ -282,9 +282,11 @@ EAPI extern Elm_Version *elm_version;
 #ifdef EFL_EO_API_SUPPORT
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_widget_part_bg.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
+# include <efl_ui_layout_part_bg.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_win_part.eo.h>

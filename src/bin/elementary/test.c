@@ -302,6 +302,7 @@ void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
+void test_part_background(void *data, Evas_Object *obj, void *event_info);
 
 void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 
@@ -1130,6 +1131,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
    ADD_TEST(NULL, "Widgets Disable/Enable", "Layout", test_layout_disable);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Widgets Part", "Part Background", test_part_background);
 #undef ADD_TEST
 
    if (autorun)

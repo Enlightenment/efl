@@ -1,0 +1,22 @@
+class Efl.Ui.Widget.Part.Bg (Efl.Ui.Widget.Part, Efl.Ui.Bg)
+{
+   [[Elementary widget internal part background class]]
+   data: null;
+   methods {
+      @property bg @protected {
+         [[Background object]]
+         set {
+         }
+         get {
+         }
+         values {
+            bg: Efl.Canvas.Object;
+         }
+      }
+   }
+   implements {
+      Efl.File.file { get; set; }
+      Efl.Gfx.color { set; get; }
+      Efl.Ui.Image.scale_type { get; set; }
+   }
+}

@@ -387,6 +387,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
+   Evas_Object                  *bg;
    Eina_List                    *tooltips, *cursors;
    Evas_Object                  *focus_previous, *focus_next;
    Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;

@@ -54,6 +54,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_layout_part_content.eo \
 	lib/elementary/efl_ui_layout_part_text.eo \
 	lib/elementary/efl_ui_layout_part_table.eo \
+	lib/elementary/efl_ui_layout_part_bg.eo \
 	lib/elementary/efl_ui_layout_part_legacy.eo \
 	lib/elementary/efl_ui_multibuttonentry_part.eo \
 	lib/elementary/efl_ui_panes_part.eo \
@@ -61,6 +62,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_slider_part.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_widget_part.eo \
+	lib/elementary/efl_ui_widget_part_bg.eo \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_access.eo \
 	lib/elementary/efl_access_action.eo \
@@ -862,6 +864,7 @@ bin/elementary/test_notify.c \
 bin/elementary/test_nstate.c \
 bin/elementary/test_panel.c \
 bin/elementary/test_panes.c \
+bin/elementary/test_part_bg.c \
 bin/elementary/test_photo.c \
 bin/elementary/test_photocam.c \
 bin/elementary/test_popup.c \

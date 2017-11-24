@@ -10,6 +10,7 @@
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define EFL_UI_WIDGET_PART_BG_PROTECTED
 
 #include <Elementary.h>
 
@@ -814,6 +815,11 @@ _smart_reconfigure(Elm_Widget_Smart_Data *sd)
         evas_object_move(sd->hover_obj, sd->x, sd->y);
         evas_object_resize(sd->hover_obj, sd->w, sd->h);
      }
+   if (sd->bg)
+     {
+        evas_object_move(sd->bg, sd->x, sd->y);
+        evas_object_resize(sd->bg, sd->w, sd->h);
+     }
 }
 
 EOLIAN static void
@@ -902,7 +908,7 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
 }
 
 EOLIAN static void
-_elm_widget_efl_gfx_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, int r, int g, int b, int a)
+_elm_widget_efl_gfx_color_set(Eo *obj, Elm_Widget_Smart_Data *pd, int r, int g, int b, int a)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -913,6 +919,7 @@ _elm_widget_efl_gfx_color_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, i
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
      {
+       if (pd->bg == o) continue;
        if (evas_object_data_get(o, "_elm_leaveme")) continue;
        evas_object_color_set(o, r, g, b, a);
      }
@@ -983,15 +990,18 @@ _elm_widget_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Elm_Widget_Sma
 }
 
 EOLIAN static void
-_elm_widget_efl_canvas_group_group_member_add(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *child)
+_elm_widget_efl_canvas_group_group_member_add(Eo *obj, Elm_Widget_Smart_Data *pd, Evas_Object *child)
 {
    int r, g, b, a;
    efl_canvas_group_member_add(efl_super(obj, MY_CLASS), child);
 
    if (evas_object_data_get(child, "_elm_leaveme")) return;
 
-   evas_object_color_get(obj, &r, &g, &b, &a);
-   evas_object_color_set(child, r, g, b, a);
+   if (pd->bg != child)
+     {
+        evas_object_color_get(obj, &r, &g, &b, &a);
+        evas_object_color_set(child, r, g, b, a);
+     }
 
    efl_canvas_object_no_render_set(child, efl_canvas_object_no_render_get(obj));
    evas_object_clip_set(child, evas_object_clip_get(obj));
@@ -5522,6 +5532,8 @@ elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source
 EOLIAN static Efl_Object *
 _elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, const char *part)
 {
+   if (eina_streq(part, "background"))
+     return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_BG_CLASS, obj, part);
    return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_CLASS, obj, part);
 }
 
@@ -5536,6 +5548,94 @@ _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 #include "efl_ui_widget_part.eo.c"
 
 /* Efl.Part end */
+
+/* Efl.Part Bg implementation */
+EOLIAN static void
+_efl_ui_widget_part_bg_bg_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Canvas_Object *bg)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+
+   if (sd->bg == bg)
+     return;
+
+   efl_del(sd->bg);
+   sd->bg = bg;
+   if (!sd->bg)
+     return;
+
+   efl_canvas_group_member_add(pd->obj, sd->bg);
+   evas_object_stack_below(sd->bg, sd->resize_obj);
+   _smart_reconfigure(sd);
+}
+
+EOLIAN static Efl_Canvas_Object *
+_efl_ui_widget_part_bg_bg_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   Evas_Object *bg_obj = sd->bg;
+
+   if (!bg_obj)
+     {
+        bg_obj = efl_add(EFL_UI_BG_CLASS, pd->obj);
+        efl_ui_widget_part_bg_set(obj, bg_obj);
+     }
+
+   return bg_obj;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_part_bg_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file, const char *key)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_set(bg_obj, file, key);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_file_file_get(Eo *obj, void *pd EINA_UNUSED, const char **file, const char **key)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_file_get(bg_obj, file, key);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_gfx_color_set(Eo *obj, void *pd EINA_UNUSED, int r, int g, int b, int a)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_gfx_color_set(bg_obj, r, g, b, a);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_gfx_color_get(Eo *obj, void *pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_gfx_color_get(bg_obj, r, g, b, a);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_ui_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Image_Scale_Type scale_type)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_ui_image_scale_type_set(bg_obj, scale_type);
+}
+
+EOLIAN static Efl_Ui_Image_Scale_Type
+_efl_ui_widget_part_bg_efl_ui_image_scale_type_get(Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_ui_image_scale_type_get(bg_obj);
+}
+
+#include "efl_ui_widget_part_bg.eo.c"
+
+/* Efl.Part Bg end */
 
 
 /* Internal EO APIs and hidden overrides */
