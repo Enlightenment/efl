@@ -5046,8 +5046,11 @@ _elm_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSE
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
-   sd->legacy = _elm_legacy_add;
-   _elm_legacy_add = EINA_FALSE;
+   if (_elm_legacy_add)
+     {
+        sd->legacy = _elm_legacy_add;
+        _elm_legacy_add = EINA_FALSE;
+     }
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
