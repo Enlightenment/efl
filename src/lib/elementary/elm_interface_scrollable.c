@@ -794,9 +794,9 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
    sid->size_adjust_recurse++;
    if ((sid->content) || (sid->extern_pan))
      {
-        Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0, px, py,
-                   minx = 0, miny = 0;
-        double vx, vy, size;
+        Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0,
+                   px = 0, py = 0, minx = 0, miny = 0;
+        double vx = 0.0, vy = 0.0, size;
 
         edje_object_calc_force(sid->edje_obj);
         edje_object_part_geometry_get
