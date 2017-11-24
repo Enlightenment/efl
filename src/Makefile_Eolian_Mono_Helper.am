@@ -1,0 +1,17 @@
+### Helper for other modules using Eolian_Mono, include only after Makefile_Eolian_Helper.am
+
+if HAVE_EOLIAN_MONO
+EOLIAN_MONO = @eolian_mono@
+_EOLIAN_MONO_DEP = @eolian_mono@
+else
+EOLIAN_MONO = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_mono/eolian_mono${EXEEXT}
+_EOLIAN_MONO_DEP = bin/eolian_mono/eolian_mono${EXEEXT}
+endif
+
+EOLIAN_MONO_FLAGS = -M @VMAJ@ -m @VMIN@
+
+AM_V_EOLMONO = $(am__v_EOLMONO_@AM_V@)
+am__v_EOLMONO_ = $(am__v_EOLMONO_@AM_DEFAULT_V@)
+am__v_EOLMONO_0 = @echo "  EOLMONO  " $@;
+
+SUFFIXES += .eo.cs

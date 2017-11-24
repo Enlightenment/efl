@@ -163,6 +163,7 @@ EFL_WITH_BIN([eet], [eet-eet])
 EFL_WITH_BIN([edje], [edje-cc])
 EFL_WITH_BIN([eolian], [eolian-gen])
 EFL_WITH_BIN([eolian_cxx], [eolian-cxx])
+EFL_WITH_BIN([eolian_mono], [eolian-mono])
 EFL_WITH_BIN([eolian-js], [eolian-js])
 EFL_WITH_BIN_SUFFIX([elua], [elua], [_bin])
 EFL_WITH_BIN([eldbus], [eldbus_codegen])
@@ -329,6 +330,7 @@ AC_LANG(C)
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 AC_PROG_SED
+AC_PROG_MCS
 
 AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
 
@@ -1328,6 +1330,129 @@ EFL_EVAL_PKGS([EO_JS])
 
 EFL_LIB_END_OPTIONAL([Eo_Js])
 #### End of Eo JS
+
+#### Efl C Sharp Bindings
+
+want_csharp="no"
+AC_ARG_ENABLE([csharp-bindings],
+  [AS_HELP_STRING([--enable-csharp-bindings],[enable C Sharp bindings. @<:@default=disabled@:>@])],
+  [
+    if test "x${enableval}" = "xyes" ; then
+      want_csharp="yes"
+    else
+      want_csharp="no"
+    fi
+  ],
+  [want_csharp="no"])
+
+if test "x${want_csharp}" = "xyes" -a "x${HAVE_MCS}" != "x1"; then
+  want_csharp="no"
+  AC_MSG_ERROR([C Sharp bindings requested but C Sharp compiler could not be found])
+fi
+
+AM_CONDITIONAL([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"])
+AC_DEFINE_IF([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"],
+  [1], [Compiling bindings for C Sharp])
+AC_SUBST([want_csharp])
+
+# Efl Mono
+EFL_LIB_START_OPTIONAL([Efl_Mono], [test "x${want_csharp}" = "xyes"])
+
+EFL_PLATFORM_DEPEND([EFL_MONO], [evil])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Eina])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Eo])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ecore])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Eet])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ecore_Evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ecore_Con])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ecore_Audio])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Efl])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Evas])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Edje])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Emotion])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Eldbus])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Emile])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ethumb])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Ethumb_Client])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Eio])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Elementary])
+EFL_INTERNAL_DEPEND_PKG([EFL_MONO], [Efl_Custom_Exports_Mono])
+
+EFL_EVAL_PKGS([EFL_MONO])
+
+EFL_LIB_END_OPTIONAL([Efl_Mono])
+
+# Efl Custom Exports Mono
+EFL_LIB_START_OPTIONAL([Efl_Custom_Exports_Mono], [test "x${want_csharp}" = "xyes"])
+
+EFL_PLATFORM_DEPEND([EFL_CUSTOM_EXPORTS_MONO], [evil])
+EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eina])
+EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eo])
+EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Efl])
+EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eldbus])
+
+EFL_EVAL_PKGS([EFL_CUSTOM_EXPORTS_MONO])
+
+EFL_LIB_END_OPTIONAL([Efl_Custom_Exports_Mono])
+
+# Libtool versioning stuff.
+# On windows, the version of the library goes into the filename.
+# See https://autotools.io/libtool/windows.html#libtool.windows.version
+# Based on the current:revision:age string passed to libtool, the generated suffix
+# has the value of (current - age).
+# To get the current and age, we use the same calculation from m4/efl.m4 (lt_cur, lt_age)
+DLIB_PREFIX_MONO=""
+DLIB_SUFFIX_MONO=""
+if test "x${have_windows}" = "xyes"; then
+  DLIB_PREFIX_MONO="lib"
+  if test "x${EFL_VERSION_MAJOR}" = "x1"; then
+    DLIB_SUFFIX_MONO="-${EFL_VERSION_MAJOR}"
+  else
+    DLIB_SUFFIX_MONO="-${EFL_VERSION_MAJOR}00"
+  fi
+fi
+AC_SUBST([DLIB_PREFIX_MONO])
+AC_SUBST([DLIB_SUFFIX_MONO])
+
+EFL_DL_MONO="${DLIB_PREFIX_MONO}efl${DLIB_SUFFIX_MONO}";
+ECORE_DL_MONO="${DLIB_PREFIX_MONO}ecore${DLIB_SUFFIX_MONO}";
+EINA_DL_MONO="${DLIB_PREFIX_MONO}eina${DLIB_SUFFIX_MONO}"
+EO_DL_MONO="${DLIB_PREFIX_MONO}eo${DLIB_SUFFIX_MONO}"
+EVAS_DL_MONO="${DLIB_PREFIX_MONO}evas${DLIB_SUFFIX_MONO}"
+if test "x${have_windows}" = "xyes"; then
+  EVIL_DL_MONO="${DLIB_PREFIX_MONO}evil${DLIB_SUFFIX_MONO}"
+else
+  EVIL_DL_MONO="dl"
+fi
+ECORE_EVAS_DL_MONO="${DLIB_PREFIX_MONO}ecore_evas${DLIB_SUFFIX_MONO}"
+EDJE_DL_MONO="${DLIB_PREFIX_MONO}edje${DLIB_SUFFIX_MONO}"
+ELEMENTARY_DL_MONO="${DLIB_PREFIX_MONO}elementary${DLIB_SUFFIX_MONO}"
+ELDBUS_DL_MONO="${DLIB_PREFIX_MONO}eldbus${DLIB_SUFFIX_MONO}"
+CUSTOM_EXPORTS_MONO_DL_MONO="${DLIB_PREFIX_MONO}eflcustomexportsmono${DLIB_SUFFIX_MONO}"
+
+AC_SUBST([EFL_DL_MONO])
+AC_SUBST([ECORE_DL_MONO])
+AC_SUBST([EINA_DL_MONO])
+AC_SUBST([EO_DL_MONO])
+AC_SUBST([EVAS_DL_MONO])
+AC_SUBST([EVIL_DL_MONO])
+AC_SUBST([ECORE_EVAS_DL_MONO])
+AC_SUBST([EDJE_DL_MONO])
+AC_SUBST([ELEMENTARY_DL_MONO])
+AC_SUBST([ELDBUS_DL_MONO])
+AC_SUBST([CUSTOM_EXPORTS_MONO_DL_MONO])
+
+# Eos file/library mapping
+
+# Unescaped sed pattern: sed -n 's/src\/lib\/\([a-z0-9_]*\)\/[a-z\/]*\/\([a-z0-9\._]*\)/\2,\1/pg'
+_configure_path=`realpath $0`
+efl_mono_top_srcdir=`dirname ${_configure_path}`
+EFL_MONO_LIBRARY_MAP=`find ${efl_mono_top_srcdir}/src/lib/ -iname "*\.eo" | sed -n 's/.*\/src\/lib\/\(@<:@a-z0-9_@:>@*\)@<:@\/a-z@:>@*\/\(@<:@a-z0-9\._@:>@*\)/\2,\1/pg'`
+
+AC_SUBST([EFL_MONO_LIBRARY_MAP])
+AM_SUBST_NOTMAKE([EFL_MONO_LIBRARY_MAP])
+
+#### End of Efl C Sharp Bindings
 
 #### Eo
 
@@ -5560,6 +5685,8 @@ doc/Doxyfile
 doc/previews/Makefile
 doc/widgets/Makefile
 src/Makefile
+src/bindings/mono/efl_mono/efl_libs.cs
+src/bindings/mono/efl_mono/efl_libs.csv
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
@@ -5578,6 +5705,7 @@ src/examples/emile/Makefile
 src/examples/ethumb_client/Makefile
 src/examples/elua/Makefile
 src/examples/eolian_cxx/Makefile
+src/examples/efl_mono/Makefile
 src/examples/elocation/Makefile
 src/examples/elementary/Makefile
 src/lib/eina/eina_config.h
@@ -5603,6 +5731,7 @@ pc/eolian-js.pc
 pc/eo-js.pc
 pc/efl.pc
 pc/efl-cxx.pc
+pc/efl-mono.pc
 pc/efl-wl.pc
 pc/efl-core.pc
 pc/efl-net.pc
@@ -5789,6 +5918,7 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl} ${opengl_egl}"
 echo "  C++11.........: ${have_cxx11}"
+echo "  C#............: ${want_csharp}"
 echo "  JavaScript....: ${want_js}"
 echo "  JavaScript flg: $EINA_JS_LIBS"
 echo "Eina............: yes (${features_eina} unwind=$have_unwind)"

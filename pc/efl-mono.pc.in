@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+
+#variable to be used with meson
+mono_libs=-r:@prefix@/bin/libefl_mono.dll
+
+Name: EFL-Mono
+Description: EFL's C-Sharp bindings
+Version: @PACKAGE_VERSION@
+Libs: -r:${prefix}/bin/libefl_mono.dll
+

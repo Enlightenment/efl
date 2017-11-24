@@ -188,6 +188,11 @@ pc/eo-js.pc \
 pc/eina-js.pc
 endif
 
+if HAVE_CSHARP
+pkgconfig_DATA += \
+pc/efl-mono.pc
+endif
+
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += pc/evas-software-x11.pc
 endif
@@ -433,6 +438,15 @@ EXTRA_DIST += $(systemdunits_DATA)
 
 
 .PHONY: doc benchmark examples install-examples
+
+# MSBuild C Sharp projects generation:
+
+if HAVE_CSHARP
+
+msbuildcsprojs:
+	@$(MAKE) $(AM_MAKEFLAGS) -C src msbuildcsprojs
+
+endif
 
 # Documentation
 
