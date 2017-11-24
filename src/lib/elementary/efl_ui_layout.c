@@ -2391,12 +2391,13 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
      {
         if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
           {
-             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
+             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
+                 type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
                {
                   const char *file = NULL, *key = NULL;
                   efl_file_get(wd->resize_obj, &file, &key);
-                  WRN("Layout has a background but it's not a swallow: '%s:%s'",
-                      file, key);
+                  WRN("Layout has a background but it's not a swallow: '%s'",
+                      sd->group);
                }
              return efl_part(efl_super(obj, MY_CLASS), part);
           }
@@ -2421,7 +2422,7 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
       case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
-        DBG("No such part '%s' in group '%s'", part, sd->group);
+        WRN("No such part '%s' in group '%s'", part, sd->group);
         return NULL;
       default:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
