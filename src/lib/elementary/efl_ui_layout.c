@@ -2036,7 +2036,15 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd
          efl_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
      }
    else
-     return;
+     {
+        Efl_Ui_Layout_Sub_Connect *sc;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(pd->prop_connect, l, sc)
+          elm_layout_text_set(sc->obj, sc->name, NULL);
+
+        return;
+     }
 
    if (pd->prop_connect)
      _efl_ui_layout_view_model_update(pd);

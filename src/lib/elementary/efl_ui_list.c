@@ -54,19 +54,12 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-static inline Eina_Bool
-_horiz(Efl_Orient dir)
-{
-   return dir % 180 == EFL_ORIENT_RIGHT;
-}
-
 EOLIAN static void
 _efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data *psd)
 {
   //DBG("");
    /* if (pd->recalc) return; */
 
-   /* _efl_ui_list_custom_layout(obj); */
    evas_object_smart_changed(psd->wobj);
 }
 
@@ -269,6 +262,8 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
+//   Eo *parent = efl_parent_get(item->layout);
+//   efl_ui_focus_manager_focus_set(parent, item->layout);
    _efl_ui_list_item_select_set(item, EINA_TRUE);
 }
 
@@ -1123,6 +1118,8 @@ _efl_ui_list_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { "escape", "escape", NULL, _key_action_escape},
           { NULL, NULL, NULL, NULL }
    };
+
+   printf("elm action\n");
    return &atspi_actions[0];
 }
 
@@ -1248,20 +1245,24 @@ _key_action_move(Evas_Object *obj, const char *params)
    elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
    elm_interface_scrollable_content_viewport_geometry_get(obj, NULL, NULL, &v_w, &v_h);
 
-/*
-   Efl_Ui_List_Item *item = NULL;
-   Elm_Object_Item *oitem = NULL;
-   Elm_Layout *eoit = NULL;
    if (!strcmp(dir, "up") || !strcmp(dir, "up_multi"))
      {
-        if (!elm_widget_focus_next_get(obj, ELM_FOCUS_UP, &eoit, &oitem))
-          return EINA_FALSE;
+        efl_ui_focus_manager_move(pd->manager, EFL_UI_FOCUS_DIRECTION_UP);
      }
    else if (!strcmp(dir, "down") || !strcmp(dir, "down_multi"))
      {
-        if (!elm_widget_focus_next_get(obj, ELM_FOCUS_DOWN, &eoit, &oitem))
-          return EINA_FALSE;
+        efl_ui_focus_manager_move(pd->manager, EFL_UI_FOCUS_DIRECTION_DOWN);
      }
+   if (!strcmp(dir, "left"))
+     {
+        efl_ui_focus_manager_move(pd->manager, EFL_UI_FOCUS_DIRECTION_LEFT);
+     }
+   else if (!strcmp(dir, "right"))
+     {
+        efl_ui_focus_manager_move(pd->manager, EFL_UI_FOCUS_DIRECTION_RIGHT);
+     }
+
+/*
    else if (!strcmp(dir, "first"))
      {
         item = eina_list_data_get(pd->items);
@@ -1274,8 +1275,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         item = eina_list_data_get(eina_list_last(pd->items));
         elm_obj_pan_pos_max_get(pd->pan.obj, &x, &y);
      }
-   else */
-   if (!strcmp(dir, "prior"))
+   else if (!strcmp(dir, "prior"))
      {
         if (_horiz(pd->orient))
           {
@@ -1309,21 +1309,22 @@ _key_action_move(Evas_Object *obj, const char *params)
                y += page_y;
           }
      }
+*/
    else return EINA_FALSE;
 
-   elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
+//   elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
+/*   EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
 
-   /* Eo *focused = efl_ui_focus_manager_focused(pd->manager); */
-   /* if (focused) */
-   /*   _efl_ui_list_item_select_set(item, EINA_TRUE); */
-
+   Eo *focused = efl_ui_focus_manager_focused(pd->manager);
+   if (focused)
+     _efl_ui_list_item_select_set(item, EINA_TRUE);
+*/
    return EINA_FALSE;
 }
 
@@ -1333,22 +1334,24 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
    return _efl_ui_list_item_select_clear(obj);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_list_elm_widget_widget_event(Eo *obj, Efl_Ui_List_Data *pd, Efl_Event const* event, Evas_Object *src/*, Evas_Callback_Type type, void *event_info*/)
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_list, Efl_Ui_List_Data)
+
+/*EOLIAN static Eina_Bool
+_efl_ui_list_elm_widget_widget_event(Eo *obj, Efl_Ui_List_Data *pd, Efl_Event const* event, Evas_Object *src)
 {
-   /* (void)src; */
-   /* Evas_Event_Key_Down *ev = event->info; */
+   Evas_Event_Key_Down *ev = event->info;
 
-   /* if (event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; */
-   /* if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE; */
-   /* if (!eina_inarray_count(&pd->items.array)) return EINA_FALSE; */
+   if (event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE;
+   if (ev && ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   //if (!eina_inarray_count(&pd->items.array)) return EINA_FALSE;
 
-   /* if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions)) */
-   /*   return EINA_FALSE; */
+   if (!_elm_config_key_binding_call(obj, MY_CLASS_NAME, ev, key_actions))
+     return EINA_FALSE;
 
-   /* ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD; */
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
+   */
 
 Eina_Bool
 _efl_ui_list_item_select_clear(Eo *obj)
@@ -1457,7 +1460,8 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
-    evas_object_smart_member_add(item->layout, pd->pan_obj);
+   evas_object_smart_member_add(item->layout, pd->pan_obj);
+//   elm_widget_can_focus_set(item->layout, EINA_TRUE); //move to realize_evt??
 
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
@@ -1491,6 +1495,22 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
 
    efl_ui_view_model_set(item->layout, NULL);
    efl_ui_factory_release(pd->factory, item->layout);
+
+   if (elm_widget_can_focus_get(item->layout))
+     {
+        ELM_WIDGET_DATA_GET_OR_RETURN(item->layout, wd);
+        if (!elm_widget_focus_get(item->layout))
+          {
+             elm_layout_signal_emit(item->layout, "elm,action,unfocus", "elm");
+             evas_object_focus_set(wd->resize_obj, EINA_FALSE);
+             efl_event_callback_legacy_call(item->layout, ELM_WIDGET_EVENT_UNFOCUSED, NULL);
+          }
+        if (efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
+          edje_object_message_signal_process(wd->resize_obj);
+
+        elm_widget_can_focus_set(item->layout, EINA_FALSE);
+     }
+
    item->layout = NULL;
 }
 
