@@ -1925,7 +1925,7 @@ elm_widget_highlight_get(const Eo *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_widget_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd)
+_elm_widget_widget_top_get(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    Elm_Widget *parent = elm_widget_parent_get(obj);
    if (parent)
