@@ -360,14 +360,43 @@ _elua_get_localeconv(lua_State *L)
    return 1;
 };
 
+#ifdef ENABLE_NLS
+static int
+_elua_dgettext(lua_State *L)
+{
+   const char *domain = luaL_checkstring(L, 1);
+   const char *msgid  = luaL_checkstring(L, 2);
+   char *ret = dgettext(domain, msgid);
+   if (!ret)
+     lua_pushnil(L);
+   else
+     lua_pushstring(L, ret);
+   return 1;
+}
+
+static int
+_elua_dngettext(lua_State *L)
+{
+   const char *domain  = luaL_checkstring(L, 1);
+   const char *msgid   = luaL_checkstring(L, 2);
+   const char *plmsgid = luaL_checkstring(L, 3);
+   char *ret = dngettext(domain, msgid, plmsgid, luaL_checklong(L, 4));
+   if (!ret)
+     lua_pushnil(L);
+   else
+     lua_pushstring(L, ret);
+   return 1;
+}
+#endif
+
 const luaL_Reg gettextlib[] =
 {
    { "bind_textdomain", _elua_gettext_bind_textdomain },
    { "get_message_language", _elua_get_message_language },
    { "get_localeconv", _elua_get_localeconv },
 #ifdef ENABLE_NLS
-   { "dgettext", dgettext },
-   { "dgettext", dngettext },
+   { "dgettext", _elua_dgettext },
+   { "dngettext", _elua_dngettext },
 #endif
    { NULL, NULL }
 };

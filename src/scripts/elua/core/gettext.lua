@@ -1,7 +1,5 @@
 -- elua gettext module
 
-local ffi = require("ffi")
-
 local M = {}
 
 local gettext = ...
@@ -9,12 +7,6 @@ local gettext = ...
 local bind_textdomain         = gettext.bind_textdomain
 local dgettext                = gettext.dgettext
 local dngettext               = gettext.dngettext
-
-if  dgettext then
-    dgettext  = ffi.cast("char *(*)(const char*, const char*)", dgettext)
-    dngettext = ffi.cast("char *(*)(const char*, const char*, const char*, "
-        .. "unsigned long)", dngettext)
-end
 
 local domains = {}
 
@@ -39,7 +31,6 @@ M.set_default_domain = function(dom)
     return true
 end
 
-local cast, ffistr = ffi.cast, ffi.string
 local floor = math.floor
 local type = type
 
@@ -50,12 +41,11 @@ if dgettext then
             dom   = default_domain
         end
         if not domains[dom] or not msgid then return msgid end
-        local cmsgid = cast("const char*", msgid)
-        local lmsgid = dgettext(dom, cmsgid)
-        if cmsgid == lmsgid then
+        local lmsgid = dgettext(dom, msgid)
+        if msgid == lmsgid then
             return msgid
         end
-        return ffistr(lmsgid)
+        return lmsgid
     end
     M.dgettext = M.gettext
     M.ngettext = function(dom, msgid, plmsgid, n)
@@ -69,15 +59,13 @@ if dgettext then
             if not msgid or n == 1 then return msgid end
             return plmsgid
         end
-        local cmsgid   = cast("const char*", msgid)
-        local cplmsgid = cast("const char*", plmsgid)
-        local lmsgid   = dngettext(dom, cmsgid, cplmsgid, n)
+        local lmsgid = dngettext(dom, msgid, plmsgid, n)
         if n == 1 then
-            if cmsgid == lmsgid then return msgid end
+            if msgid == lmsgid then return msgid end
         else
-            if cplmsgid == lmsgid then return plmsgid end
+            if plmsgid == lmsgid then return plmsgid end
         end
-        return ffistr(lmsgid)
+        return lmsgid
     end
     M.dngettext = M.ngettext
 else
