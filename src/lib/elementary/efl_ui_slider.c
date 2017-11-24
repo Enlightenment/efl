@@ -1421,7 +1421,7 @@ static void
 _indi_default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    const Eina_Value_Type *type = eina_value_type_get(&value);
-   Efl_Ui_Slider_Data *sd = data;
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(data, EFL_UI_SLIDER_CLASS);
    double v;
 
    if (type != EINA_VALUE_TYPE_DOUBLE) return;
@@ -1433,7 +1433,7 @@ _indi_default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 static void
 _indi_default_format_free_cb(void *data)
 {
-   Efl_Ui_Slider_Data *sd = data;
+   Efl_Ui_Slider_Data *sd = efl_data_scope_get(data, EFL_UI_SLIDER_CLASS);
 
    if (sd && sd->indi_template)
      {
@@ -1451,7 +1451,7 @@ _efl_ui_slider_part_efl_ui_format_format_string_set(Eo *obj, void *_pd EINA_UNUS
    if (!template) return;
    eina_stringshare_replace(&sd->indi_template, template);
 
-   efl_ui_format_cb_set(efl_part(pd->obj, "indicator"), sd, _indi_default_format_cb, _indi_default_format_free_cb);
+   efl_ui_format_cb_set(efl_part(pd->obj, "indicator"), pd->obj, _indi_default_format_cb, _indi_default_format_free_cb);
 }
 
 EOLIAN static const char *
