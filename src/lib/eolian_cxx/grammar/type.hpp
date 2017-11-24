@@ -23,7 +23,7 @@ struct type_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return param.type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, param.c_type
+      return param.type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, param.type.c_type
             , param.direction != attributes::parameter_direction::in, false});
    }
 
@@ -45,6 +45,8 @@ type_generator const as_generator(type_terminal)
 
 template <>
 struct is_eager_generator<type_generator> : std::true_type {};
+template <>
+struct is_generator<type_generator> : std::true_type {};
 template <>
 struct is_generator<type_terminal> : std::true_type {};
 
