@@ -1,6 +1,8 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
+#include "Elementary.h"
+#include "elm_priv.h"
 #include "efl_ui_layout_part_legacy.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%s@%p:%s [%d]", efl_class_name_get(pd->obj), pd->obj, pd->part, (int) pd->temp); } while(0)
@@ -63,15 +65,23 @@ _elm_part_alias_find(const Elm_Layout_Part_Alias_Description *aliases, const cha
    return EINA_FALSE;
 }
 
+static inline Eo *
+_elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
+   efl_allow_parent_unref_set(proxy, 1);
+   // efl_auto_unref_set(proxy, 1);
+   pd->part = eina_tmpstr_add(part);
+   pd->obj = obj;
+
+   return proxy;
+}
+
 #define ELM_PART_IMPLEMENT(PART_CLASS, _obj, _part) ({ \
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_obj, NULL); \
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_part, NULL); \
-   Eo *proxy = efl_add(PART_CLASS, (Eo *) _obj); \
-   Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS); \
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL); \
-   pd->obj = (Eo *) _obj; \
-   pd->part = eina_tmpstr_add(_part); \
-   efl_allow_parent_unref_set(proxy, 1); \
+   Eo *proxy = efl_add(PART_CLASS, (Eo *) _obj, \
+                       _elm_part_initialize(efl_added, (Eo *) _obj, _part)); \
    efl_auto_unref_set(proxy, 1); \
    proxy; })
 

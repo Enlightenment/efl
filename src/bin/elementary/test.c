@@ -1133,7 +1133,7 @@ add_tests:
    ADD_TEST(NULL, "Widgets Disable/Enable", "Layout", test_layout_disable);
 
    //------------------------------//
-   ADD_TEST(NULL, "Widgets Part", "Part Background", test_part_background);
+   ADD_TEST_EO(NULL, "Widgets Part", "Part Background", test_part_background);
 #undef ADD_TEST
 
    if (autorun)

@@ -5550,39 +5550,31 @@ _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 /* Efl.Part end */
 
 /* Efl.Part Bg implementation */
-EOLIAN static void
-_efl_ui_widget_part_bg_bg_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Canvas_Object *bg)
+
+Efl_Canvas_Object *
+_efl_ui_widget_bg_get(Elm_Widget *obj)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Elm_Widget_Smart_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-
-   if (sd->bg == bg)
-     return;
-
-   efl_del(sd->bg);
-   sd->bg = bg;
-   if (!sd->bg)
-     return;
-
-   efl_canvas_group_member_add(pd->obj, sd->bg);
-   evas_object_stack_below(sd->bg, sd->resize_obj);
-   _smart_reconfigure(sd);
-}
-
-EOLIAN static Efl_Canvas_Object *
-_efl_ui_widget_part_bg_bg_get(Eo *obj, void *_pd EINA_UNUSED)
-{
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Elm_Widget_Smart_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   Elm_Widget_Smart_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Evas_Object *bg_obj = sd->bg;
 
    if (!bg_obj)
      {
-        bg_obj = efl_add(EFL_UI_BG_CLASS, pd->obj);
-        efl_ui_widget_part_bg_set(obj, bg_obj);
+        bg_obj = efl_add(EFL_UI_BG_CLASS, obj);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(bg_obj, NULL);
+        sd->bg = bg_obj;
+        efl_canvas_group_member_add(obj, sd->bg);
+        evas_object_stack_below(sd->bg, sd->resize_obj);
+        _smart_reconfigure(sd);
      }
 
    return bg_obj;
+}
+
+static inline Efl_Canvas_Object *
+efl_ui_widget_part_bg_get(Eo *part_obj)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_CLASS);
+   return _efl_ui_widget_bg_get(pd->obj);
 }
 
 EOLIAN static Eina_Bool

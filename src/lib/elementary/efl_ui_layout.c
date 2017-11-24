@@ -2383,17 +2383,33 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
 
-   if (eina_streq(part, "background"))
-     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
    // Check part type without using edje_object_part_object_get(), as this
    // can cause recalc, which has side effects... and could be slow.
    type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
+
+   if (eina_streq(part, "background"))
+     {
+        if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+          {
+             if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
+               {
+                  const char *file = NULL, *key = NULL;
+                  efl_file_get(wd->resize_obj, &file, &key);
+                  WRN("Layout has a background but it's not a swallow: '%s:%s'",
+                      file, key);
+               }
+             return efl_part(efl_super(obj, MY_CLASS), part);
+          }
+
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
+     }
 
    if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
      {
         ERR("Invalid type found for part '%s' in group '%s'", part, sd->group);
         return NULL;
      }
+
    switch (type)
      {
       case EFL_CANVAS_LAYOUT_PART_TYPE_BOX:
@@ -2528,78 +2544,28 @@ _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_set(Eo *obj, vo
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
 }
 
-/* Efl.Ui.Layout.Part.Bg (common) */
-EOLIAN static void
-_efl_ui_layout_part_bg_efl_ui_widget_part_bg_bg_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Canvas_Object *bg)
+/* Efl.Ui.Layout.Part_Bg (common) */
+
+EOLIAN static Efl_Object *
+_efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Efl_Canvas_Layout_Part_Type type;
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   Efl_Ui_Layout_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
-   ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
+   Efl_Ui_Layout_Data *sd;
+   Elm_Part_Data *pd;
+   Eo *bg;
 
-   // Check part type without using edje_object_part_object_get(), as this
-   // can cause recalc, which has side effects... and could be slow.
-   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, "background"));
-   if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
-     efl_ui_widget_part_bg_set(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS), bg);
+   obj = efl_finalize(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS));
+   if (!obj) return NULL;
 
-   if (wd->bg == bg)
-     return;
+   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   bg = _efl_ui_widget_bg_get(pd->obj);
+   if (!_efl_ui_layout_content_set(pd->obj, sd, "background", bg))
+     {
+        ERR("Failed to swallow new background object!");
+        // Shouldn't happen. What now? del bg? call super? return null?
+     }
 
-   efl_del(wd->bg);
-   wd->bg = bg;
-   if (!wd->bg)
-     return;
-
-   _efl_ui_layout_content_set(pd->obj, sd, "background", bg);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_bg_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file, const char *key)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   return efl_file_set(bg_obj, file, key);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_bg_efl_file_file_get(Eo *obj, void *pd EINA_UNUSED, const char **file, const char **key)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   efl_file_get(bg_obj, file, key);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_bg_efl_gfx_color_set(Eo *obj, void *pd EINA_UNUSED, int r, int g, int b, int a)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   efl_gfx_color_set(bg_obj, r, g, b, a);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_bg_efl_gfx_color_get(Eo *obj, void *pd EINA_UNUSED, int *r, int *g, int *b, int *a)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   efl_gfx_color_get(bg_obj, r, g, b, a);
-}
-
-EOLIAN static void
-_efl_ui_layout_part_bg_efl_ui_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Image_Scale_Type scale_type)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   efl_ui_image_scale_type_set(bg_obj, scale_type);
-}
-
-EOLIAN static Efl_Ui_Image_Scale_Type
-_efl_ui_layout_part_bg_efl_ui_image_scale_type_get(Eo *obj, void *pd EINA_UNUSED)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   return efl_ui_image_scale_type_get(bg_obj);
+   return obj;
 }
 
 /* Efl.Ui.Layout.Part_Xxx includes */

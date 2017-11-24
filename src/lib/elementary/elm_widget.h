@@ -751,6 +751,8 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 const char*           _elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name);
 const char*           _elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name);
 
+Efl_Canvas_Object *   _efl_ui_widget_bg_get(Elm_Widget *obj);
+
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
   ptr = efl_data_scope_get(o, ELM_WIDGET_CLASS);  \
