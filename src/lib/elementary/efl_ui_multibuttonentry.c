@@ -57,6 +57,14 @@ static void _entry_changed_cb(void *data, const Efl_Event *event);
 static void _entry_focus_changed_cb(void *data, const Efl_Event *event);
 static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"default", "elm.text"},
+   {"guide", "guide"},
+   {NULL, NULL}
+};
+
+
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
@@ -1480,46 +1488,22 @@ _view_init(Evas_Object *obj, Efl_Ui_Multibuttonentry_Data *sd)
      }
 }
 
-static Eina_Bool
-_efl_ui_multibuttonentry_content_set(Eo *obj, Efl_Ui_Multibuttonentry_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
-{
-   return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-}
-
-static Eo*
-_efl_ui_multibuttonentry_content_get(Eo *obj, Efl_Ui_Multibuttonentry_Data *_pd EINA_UNUSED, const char *part)
-{
-   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
-static Eo*
-_efl_ui_multibuttonentry_content_unset(Eo *obj, Efl_Ui_Multibuttonentry_Data *_pd EINA_UNUSED, const char *part)
-{
-   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
-EOLIAN static Eina_Bool
+static void
 _efl_ui_multibuttonentry_text_set(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd EINA_UNUSED, const char *part, const char *label)
 {
-   Eina_Bool int_ret = EINA_TRUE;
-
    if (!part || !strcmp(part, "default") || !strcmp(part, "elm.text"))
      {
         if (label) _label_set(obj, label);
-        int_ret = EINA_TRUE;
      }
    else if (!strcmp(part, "guide"))
      {
         if (label) _guide_text_set(obj, label);
-        int_ret = EINA_TRUE;
      }
    else
      efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
-
-   return int_ret;
 }
 
-EOLIAN static const char*
+static const char*
 _efl_ui_multibuttonentry_text_get(Eo *obj, Efl_Ui_Multibuttonentry_Data *sd, const char *part)
 {
    const char *text = NULL;
@@ -2088,10 +2072,7 @@ _elm_multibuttonentry_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
+ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data, _text_aliases)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
 #include "efl_ui_multibuttonentry_part.eo.c"
