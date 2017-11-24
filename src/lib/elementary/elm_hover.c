@@ -865,6 +865,16 @@ _elm_hover_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Hov
    return &atspi_actions[0];
 }
 
+EOLIAN static Efl_Access_State_Set
+_elm_hover_efl_access_state_set_get(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
+{
+   Efl_Access_State_Set states;
+   states = efl_access_state_set_get(efl_super(obj, MY_CLASS));
+
+   STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
+   return states;
+}
+
 /* Efl.Part begin */
 
 ELM_PART_OVERRIDE(elm_hover, ELM_HOVER, Elm_Hover_Data)
