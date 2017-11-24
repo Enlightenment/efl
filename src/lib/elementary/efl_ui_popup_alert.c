@@ -12,20 +12,6 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert"
 
-EOLIAN static void
-_efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED)
-{
-   elm_layout_sizing_eval(efl_super(obj, MY_CLASS));
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-      (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
-}
-
 static Eina_Bool
 _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *part, const char *label)
 {
@@ -263,8 +249,5 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_
 #include "efl_ui_popup_alert_part.eo.c"
 
 /* Efl.Part end */
-
-#define EFL_UI_POPUP_ALERT_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_alert)
 
 #include "efl_ui_popup_alert.eo.c"

@@ -17,8 +17,6 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D m
 {
    Eina_Rect geom = efl_gfx_geometry_get(obj);
 
-   pd->is_sizing_eval = EINA_TRUE;
-
    if (pd->is_expandable_w && !pd->is_expandable_h)
      {
         if ((pd->max_scroll.w > -1) && (min.w > pd->max_scroll.w))
@@ -47,29 +45,32 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D m
         if (wdir && !hdir)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(pd->max_scroll.w, geom.h));
+             efl_gfx_size_set(obj, EINA_SIZE2D(pd->max_scroll.w, min.h));
           }
         else if (!wdir && hdir)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(geom.w, pd->max_scroll.h));
+             efl_gfx_size_set(obj, EINA_SIZE2D(min.w, pd->max_scroll.h));
           }
         else if(wdir && hdir)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
              efl_gfx_size_set(obj, pd->max_scroll);
           }
+        else
+          {
+             Eina_Size2D new_size;
+             new_size.w = min.w > geom.w ? min.w : geom.w;
+             new_size.h = min.h > geom.h ? min.h : geom.h;
+             efl_gfx_size_set(obj, new_size);
+          }
      }
-
-   pd->is_sizing_eval = EINA_FALSE;
 }
 
 EOLIAN static void
 _efl_ui_popup_alert_scroll_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd)
 {
    if (pd->is_sizing_eval) return;
-
-   elm_layout_sizing_eval(efl_super(obj, MY_CLASS));
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;

@@ -239,7 +239,7 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
+_efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
@@ -254,6 +254,7 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    Eina_Size2D new_size;
    new_size.w = (minw > size.w ? minw : size.w);
    new_size.h = (minh > size.h ? minh : size.h);
+
    efl_gfx_size_set(obj, new_size);
 
    _calc_align(obj);
