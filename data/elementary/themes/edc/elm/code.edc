@@ -53,5 +53,6 @@ color_classes {
     color_class { name: "elm/code/widget/color/selection"; color: 51 153 255 255; }
     color_class { name: "elm/code/widget/color/gutter/bg"; color: 75 75 75 255; }
     color_class { name: "elm/code/widget/color/gutter/fg"; color: 139 139 139 255; }
+    color_class { name: "elm/code/widget/color/gutter/scope/bg"; color: 54 54 54 255; }
     color_class { name: "elm/code/widget/color/whitespace"; color: 50 50 50 127; }
 }
