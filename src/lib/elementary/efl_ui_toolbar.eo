@@ -4,28 +4,12 @@ class Efl.Ui.Toolbar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
                    Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
 {
-   [[Toolbar widget class]]
-   methods {
-      @property select_mode {
-         [[Control the toolbar select mode.
+   [[Toolbar widget
 
-           elm_toolbar_select_mode_set() changes item select mode in the toolbar widget.
-           - #ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
-           callback when first becoming selected. Any further clicks will
-           do nothing, unless you set always select mode.
-           - #ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
-           every click will make the selected callbacks be called.
-           - #ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
-           entirely and they will neither appear selected nor call selected
-           callback functions.]]
-         set {
-         }
-         get {
-         }
-         values {
-            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode If getting mode fails, it returns #ELM_OBJECT_SELECT_MODE_MAX]]
-         }
-      }
+     A toolbar displays a list of items inside.
+     Among them, only one can be selected at a time.
+   ]]
+   methods {
       item_insert_before {
          [[Insert a new item into the toolbar object before item $before.
 
@@ -172,7 +156,6 @@ class Efl.Ui.Toolbar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Direction,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_member_add;
       Elm.Widget.on_access_update;
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus_update;

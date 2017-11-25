@@ -65,7 +65,6 @@ class Efl.Ui.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
            Efl.Object.constructor;
            Efl.Object.destructor;
            Elm.Widget.Item.disable;
-           Elm.Widget.Item.disabled { set; }
            Elm.Widget.Item.focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }

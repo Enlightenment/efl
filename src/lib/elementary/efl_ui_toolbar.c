@@ -67,14 +67,6 @@ _item_unselect(Efl_Ui_Toolbar_Item_Data *item)
 }
 
 static void
-_item_mirrored_set(Evas_Object *obj EINA_UNUSED,
-                   Efl_Ui_Toolbar_Item_Data *it,
-                   Eina_Bool mirrored)
-{
-   efl_ui_mirrored_set(VIEW(it), mirrored);
-}
-
-static void
 _mirrored_set(Evas_Object *obj,
               Eina_Bool mirrored)
 {
@@ -83,7 +75,7 @@ _mirrored_set(Evas_Object *obj,
    EFL_UI_TOOLBAR_DATA_GET(obj, sd);
 
    EINA_INLIST_FOREACH(sd->items, it)
-     _item_mirrored_set(obj, it, mirrored);
+      efl_ui_mirrored_set(VIEW(it), mirrored);
 }
 
 static void
@@ -94,9 +86,7 @@ _efl_ui_toolbar_item_focused(Elm_Object_Item *eo_it)
    EFL_UI_TOOLBAR_DATA_GET(obj, sd);
    const char *focus_raise;
 
-   if ((!sd) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
-       (eo_it == sd->focused_item))
-     return;
+   if (!sd || (eo_it == sd->focused_item)) return;
 
    sd->focused_item = eo_it;
 
@@ -123,11 +113,9 @@ _efl_ui_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    Evas_Object *obj = WIDGET(it);
    EFL_UI_TOOLBAR_DATA_GET(obj, sd);
 
-   if ((!sd) || !sd->focused_item ||
-       (eo_it != sd->focused_item))
+   if ((!sd) || !sd->focused_item || (eo_it != sd->focused_item))
      return;
-   if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
-     return;
+
    if (elm_widget_focus_highlight_enabled_get(obj))
      {
         EFL_UI_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
@@ -256,13 +244,6 @@ _resizing_eval_item(Efl_Ui_Toolbar_Item_Data *it)
 }
 
 EOLIAN static void
-_efl_ui_toolbar_item_elm_widget_item_disabled_set(Eo *eo_id, Efl_Ui_Toolbar_Item_Data *sd, Eina_Bool disabled)
-{
-   elm_wdg_item_disabled_set(efl_super(eo_id, EFL_UI_TOOLBAR_ITEM_CLASS), disabled);
-   efl_ui_focus_composition_dirty(WIDGET(sd));
-}
-
-EOLIAN static void
 _efl_ui_toolbar_item_elm_widget_item_disable(Eo *eo_toolbar, Efl_Ui_Toolbar_Item_Data *toolbar_it)
 {
    const char* emission;
@@ -309,50 +290,30 @@ end:
 static void
 _item_select(Efl_Ui_Toolbar_Item_Data *it)
 {
-   Evas_Object *obj;
-   Eina_Bool sel;
-
    EFL_UI_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (elm_wdg_item_disabled_get(EO_OBJ(it)) || (it->object))
      return;
 
-   sel = it->selected;
-
-   if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_NONE) &&
-       (sd->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+   if (!it->selected)
      {
-        if (sel)
-          {
-             if (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS)
-               _item_unselect(it);
-          }
-        else
-          {
-             Elm_Object_Item *eo_it2 =
-                efl_ui_menu_selected_item_get(WIDGET(it));
-             EFL_UI_TOOLBAR_ITEM_DATA_GET(eo_it2, it2);
-             _item_unselect(it2);
+        Elm_Object_Item *eo_it2 =
+           efl_ui_menu_selected_item_get(WIDGET(it));
+        EFL_UI_TOOLBAR_ITEM_DATA_GET(eo_it2, it2);
+        _item_unselect(it2);
 
-             it->selected = EINA_TRUE;
-             sd->selected_item = EO_OBJ(it);
+        it->selected = EINA_TRUE;
+        sd->selected_item = EO_OBJ(it);
 
-             elm_layout_signal_emit(VIEW(it), "elm,state,selected", "elm");
-             if (it->icon)
-               elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
-          }
-     }
+        elm_layout_signal_emit(VIEW(it), "elm,state,selected", "elm");
+        if (it->icon)
+          elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
 
-   obj = WIDGET(it);
-
-   if ((!sel) || (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
-     {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
+        efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, EO_OBJ(it));
+        if (_elm_config->atspi_mode)
+          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
      }
-
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
-   if (_elm_config->atspi_mode)
-    efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
 }
 
 /* Send order signals when item is added/deleted.
@@ -489,7 +450,7 @@ _item_theme_hook(Evas_Object *obj,
 
    style = elm_widget_style_get(obj);
 
-   _item_mirrored_set(obj, it, efl_ui_mirrored_get(obj));
+   efl_ui_mirrored_set(VIEW(it), efl_ui_mirrored_get(obj));
    edje_object_scale_set(elm_layout_edje_get(view), scale);
 
    if (!it->object)
@@ -869,29 +830,12 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 EOLIAN static void
 _efl_ui_toolbar_item_efl_object_destructor(Eo *eo_item, Efl_Ui_Toolbar_Item_Data *item)
 {
-   Efl_Ui_Toolbar_Item_Data *next = NULL;
-   Evas_Object *obj;
-
    EFL_UI_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
-   obj = WIDGET(item);
-
-
-   if (!sd->delete_me)
-     next = EFL_UI_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
    sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(item));
    sd->item_count--;
-   if (!sd->delete_me)
-     {
-        if (!next) next = EFL_UI_TOOLBAR_ITEM_FROM_INLIST(sd->items);
-        if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
-            item->selected && next) _item_select(next);
-     }
-
-   efl_ui_focus_composition_dirty(WIDGET(item));
-
    _item_del(item);
-   efl_ui_widget_theme_apply(obj);
+   efl_ui_widget_theme_apply(WIDGET(item));
 
    efl_destructor(efl_super(eo_item, EFL_UI_TOOLBAR_ITEM_CLASS));
 }
@@ -902,11 +846,9 @@ _access_activate_cb(void *data EINA_UNUSED,
                     Elm_Object_Item *item)
 {
    EFL_UI_TOOLBAR_ITEM_DATA_GET(item, it);
-   EFL_UI_TOOLBAR_DATA_GET(WIDGET(it), sd);
-
    if (elm_wdg_item_disabled_get(item)) return;
 
-   if (it->selected && (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
+   if (it->selected)
      {
         _elm_access_say(E_("Unselected"));
         _item_unselect(it);
@@ -1031,11 +973,9 @@ _item_new(Evas_Object *obj,
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
-   if ((!sd->items) && (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
-     _item_select(it);
+   if (!sd->items) _item_select(it);
 
-   if (_elm_config->atspi_mode)
-        efl_access_added(eo_it);
+   if (_elm_config->atspi_mode) efl_access_added(eo_it);
 
    return it;
 }
@@ -1149,12 +1089,6 @@ _efl_ui_toolbar_efl_gfx_size_set(Eo *obj, Efl_Ui_Toolbar_Data *sd EINA_UNUSED, E
      return;
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-}
-
-EOLIAN static void
-_efl_ui_toolbar_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Toolbar_Data *sd EINA_UNUSED, Evas_Object *member)
-{
-   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 }
 
 static Eina_Bool _efl_ui_toolbar_smart_focus_next_enable = EINA_FALSE;
@@ -1560,28 +1494,6 @@ _efl_ui_toolbar_items_count(const Eo *obj EINA_UNUSED, Efl_Ui_Toolbar_Data *sd)
    return sd->item_count;
 }
 
-EOLIAN static void
-_efl_ui_toolbar_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Toolbar_Data *sd, Elm_Object_Select_Mode mode)
-{
-   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
-     return;
-
-   if (sd->select_mode == mode) return;
-   sd->select_mode = mode;
-
-   if ((mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
-       (sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
-       sd->items)
-     _item_select(EFL_UI_TOOLBAR_ITEM_FROM_INLIST(sd->items));
-
-}
-
-EOLIAN static Elm_Object_Select_Mode
-_efl_ui_toolbar_select_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Toolbar_Data *sd)
-{
-   return sd->select_mode;
-}
-
 EOLIAN static const char*
 _efl_ui_toolbar_item_efl_access_name_get(Eo *eo_item, Efl_Ui_Toolbar_Item_Data *item)
 {
@@ -1727,17 +1639,15 @@ EOLIAN Eina_Bool
 _efl_ui_toolbar_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_Toolbar_Data *pd, int child_index)
 {
    Efl_Ui_Toolbar_Item_Data *item;
-   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
-     {
-        EINA_INLIST_FOREACH(pd->items, item)
-          {
-             if (child_index-- == 0)
-               {
-                  efl_ui_item_selected_set(EO_OBJ(item), EINA_FALSE);
-                  return EINA_TRUE;
-               }
-          }
-     }
+
+   EINA_INLIST_FOREACH(pd->items, item)
+   {
+	   if (child_index-- == 0)
+	   {
+		   efl_ui_item_selected_set(EO_OBJ(item), EINA_FALSE);
+		   return EINA_TRUE;
+	   }
+   }
    return EINA_FALSE;
 }
 

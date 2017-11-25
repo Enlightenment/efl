@@ -32,7 +32,6 @@ struct _Efl_Ui_Toolbar_Data
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */
    Elm_Object_Item                      *last_focused_item; /**< This records the last focused item when widget looses focus. This is required to set the focus on last focused item when widgets gets focus. */
    unsigned int                          item_count;
-   Elm_Object_Select_Mode                select_mode;
    Efl_Ui_Dir                            dir;
 
    Eina_Bool                             delete_me : 1;
