@@ -1782,14 +1782,30 @@ _elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Da
    return EINA_FALSE;
 }
 
+// load a named colour class from the theme and apply it to the grid's specified palette
 static void
-_elm_code_widget_setup_palette(Evas_Object *o)
+_elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *name, Evas_Object *edje)
+{
+   int r, g, b, a;
+
+   if (!edje_object_color_class_get(edje, name, &r, &g, &b, &a,
+                                    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL))
+     return;
+
+   printf("item %s = color %d,%d,%d,%d\n", name, r, g, b, a);
+   evas_object_textgrid_palette_set(grid, EVAS_TEXTGRID_PALETTE_STANDARD, type, r, g, b, a);
+}
+
+static void
+_elm_code_widget_setup_palette(Evas_Object *o, Evas_Object *layout)
 {
    double feint = 0.5;
+   Evas_Object *edje;
+
+   edje = elm_layout_edje_get(layout);
 
    // setup status colors
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
-                                    36, 36, 36, 255);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_DEFAULT, "elm/code/status/default", edje);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CURRENT,
                                     12, 12, 12, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
@@ -1897,7 +1913,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
-        _elm_code_widget_setup_palette(grid);
+        _elm_code_widget_setup_palette(grid, efl_parent_get(pd->scroller));
 
         elm_box_pack_end(pd->gridbox, grid);
         pd->grids = eina_list_append(pd->grids, grid);
@@ -2234,6 +2250,11 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_layout_content_set(obj, "elm.swallow.content", scroller);
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
+   Eo *edje = elm_layout_edje_get(efl_parent_get(pd->scroller));
+int ret, a =0, r =0, g =0, b =0;
+ret = edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+printf("ret %d, color %d,%d,%d,%d\n", ret, r, g, b, a);
+
 
    background = elm_bg_add(scroller);
    evas_object_color_set(background, 36, 36, 36, 255);
