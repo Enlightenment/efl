@@ -156,7 +156,6 @@
 #define PRESSED      8
 #define BACKGROUND  16
 #define BUTTONMODE_SCRIPT \
-   script { \
       public btmode; \
       public eval_mode(m) { \
          new m1 = m & MASK; \
@@ -250,5 +249,4 @@
       flag_unset(flag) { \
          new m = get_int(btmode) & ~flag; \
          set_int(btmode, m); eval_mode(m); \
-      } \
-   }
+      }

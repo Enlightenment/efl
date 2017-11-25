@@ -1,7 +1,9 @@
 group { name: "elm/button/base/default";
    alias: "elm/button/base/naviframe/back_btn/default";
    alias: "elm/button/base/naviframe/back_btn/pager";
-   BUTTONMODE_SCRIPT
+   script {
+      BUTTONMODE_SCRIPT
+   }
    parts {
       rect { "base";
          scale: 1;
@@ -156,6 +158,7 @@ group { name: "elm/button/base/default";
          }
       }
       rect { "event";
+         ignore_flags: ON_HOLD;
          desc { "default";
             color: 0 0 0 0;
          }
