@@ -21,6 +21,10 @@
 #include "ecore_internal.h"
 #include "elm_interface_scrollable.h"
 
+//we need those for legacy compatible code
+#include "elm_genlist.eo.h"
+#include "elm_gengrid.eo.h"
+
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
 #ifdef __CYGWIN__
@@ -1763,6 +1767,11 @@ elm_object_focused_object_get(const Evas_Object *obj)
    while(efl_ui_focus_manager_redirect_get(man))
      {
         man = efl_ui_focus_manager_redirect_get(man);
+
+        // legacy compatible code, earlier those containers have not exposed theire items
+        if (efl_isa(man, ELM_GENGRID_CLASS) ||
+            efl_isa(man, ELM_TOOLBAR_CLASS) ||
+            efl_isa(man, ELM_GENLIST_CLASS)) return man;
      }
 
    return efl_ui_focus_manager_focus_get(man);
