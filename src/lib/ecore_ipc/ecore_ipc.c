@@ -495,7 +495,6 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
    if (efl_isa(svr->server, EFL_NET_SERVER_UNIX_CLASS))
      {
         old_mask = umask(new_mask);
-        efl_net_server_unix_unlink_before_bind_set(svr->server, EINA_TRUE);
         efl_net_server_unix_leading_directories_create_set(svr->server,
                                                            EINA_TRUE,
                                                            local_system ? 0755 : 0700);

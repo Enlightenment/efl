@@ -1531,7 +1531,6 @@ _ecore_con_server_server_set(Ecore_Con_Server *svr, Eo *server)
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    else if (efl_isa(inner_server, EFL_NET_SERVER_UNIX_CLASS))
      {
-        efl_net_server_unix_unlink_before_bind_set(inner_server, EINA_TRUE);
         efl_net_server_unix_leading_directories_create_set(inner_server, EINA_TRUE, (type == ECORE_CON_LOCAL_SYSTEM) ? 0755 : 0700);
      }
 #endif
