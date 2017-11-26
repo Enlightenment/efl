@@ -428,7 +428,12 @@ _vc4_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w
    memset(&bo, 0, sizeof(bo));
    bo.size = size;
    ret = ioctl(drm_fd, DRM_IOCTL_VC4_CREATE_BO, &bo);
-   if (ret) return NULL;
+   if (ret)
+     {
+        free(obo);
+        return NULL;
+     }
+
    obo->handle = bo.handle;
    obo->size = size;
    /* First try to allocate an mmapable buffer with O_RDWR,
@@ -449,6 +454,7 @@ err:
    memset(&cl, 0, sizeof(cl));
    cl.handle = bo.handle;
    ioctl(drm_fd, DRM_IOCTL_GEM_CLOSE, &cl);
+   free(obo);
    return NULL;
 }
 
