@@ -1782,87 +1782,64 @@ _elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Da
    return EINA_FALSE;
 }
 
+// load a named colour class from the theme and apply it to the grid's specified palette
 static void
-_elm_code_widget_setup_palette(Evas_Object *o)
+_elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *name, Evas_Object *edje)
 {
-   double feint = 0.5;
+   int r, g, b, a;
+
+   if (!edje_object_color_class_get(edje, name, &r, &g, &b, &a,
+                                    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL))
+     return;
+
+   evas_object_textgrid_palette_set(grid, EVAS_TEXTGRID_PALETTE_STANDARD, type, r, g, b, a);
+}
+
+static void
+_elm_code_widget_setup_palette(Evas_Object *o, Evas_Object *layout)
+{
+   Evas_Object *edje;
+
+   edje = elm_layout_edje_get(layout);
 
    // setup status colors
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
-                                    36, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CURRENT,
-                                    12, 12, 12, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_IGNORED,
-                                    36, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_NOTE,
-                                    221, 119, 17, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_WARNING,
-                                    221, 119, 17, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ERROR,
-                                    204, 17, 17, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FATAL,
-                                    204, 17, 17, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_ADDED,
-                                    36, 96, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_REMOVED,
-                                    96, 36, 36, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_CHANGED,
-                                    36, 36, 96, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_PASSED,
-                                    54, 96, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FAILED,
-                                    96, 54, 54, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_TODO,
-                                    51, 85, 187, 255);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_DEFAULT, "elm/code/status/default", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CURRENT, "elm/code/status/current", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_IGNORED, "elm/code/status/ignored", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_NOTE, "elm/code/status/note", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_WARNING, "elm/code/status/warning", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ERROR, "elm/code/status/error", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FATAL, "elm/code/status/fatal", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ADDED, "elm/code/status/added", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_REMOVED, "elm/code/status/removed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CHANGED, "elm/code/status/changed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_PASSED, "elm/code/status/passed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FAILED, "elm/code/status/failed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_TODO, "elm/code/status/todo", edje);
 
    // setup token colors
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
-                                    187, 187, 187, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_COMMENT,
-                                    85, 85, 85, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_STRING,
-                                    255, 136, 119, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_NUMBER,
-                                    170, 153, 34, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_BRACE,
-                                    170, 102, 170, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_TYPE,
-                                    255, 255, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CLASS,
-                                    255, 255, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_FUNCTION,
-                                    255, 255, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PARAM,
-                                    187, 187, 187, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_KEYWORD,
-                                    68, 136, 204, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_PREPROCESSOR,
-                                    102, 255, 85, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_ADDED,
-                                    54, 255, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_REMOVED,
-                                    255, 54, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
-                                    54, 54, 255, 255);
-
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_MATCH,
-                                    187, 187, 51, 255);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_DEFAULT, "elm/code/token/default", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_COMMENT, "elm/code/token/comment", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_STRING, "elm/code/token/string", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_NUMBER, "elm/code/token/number", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_BRACE, "elm/code/token/brace", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_TYPE, "elm/code/token/type", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CLASS, "elm/code/token/class", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_FUNCTION, "elm/code/token/function", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PARAM, "elm/code/token/param", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_KEYWORD, "elm/code/token/keyword", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PREPROCESSOR, "elm/code/token/preprocessor", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_ADDED, "elm/code/token/added", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_REMOVED, "elm/code/token/removed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CHANGED, "elm/code/token/changed", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_MATCH, "elm/code/token/match", edje);
 
    // other styles that the widget uses
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,
-                                    51, 153, 255, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
-                                    75, 75, 75, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG,
-                                    54, 54, 54, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
-                                    139, 139, 139, 255);
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
-                                    101 * feint, 101 * feint, 101 * feint, 255 * feint);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_SELECTION, "elm/code/widget/color/selection", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_BG, "elm/code/widget/color/gutter/bg", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_FG, "elm/code/widget/color/gutter/fg", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG, "elm/code/widget/color/scope/bg", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_WHITESPACE, "elm/code/widget/color/whitespace", edje);
 }
 
 static void
@@ -1897,7 +1874,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
-        _elm_code_widget_setup_palette(grid);
+        _elm_code_widget_setup_palette(grid, efl_parent_get(pd->scroller));
 
         elm_box_pack_end(pd->gridbox, grid);
         pd->grids = eina_list_append(pd->grids, grid);
@@ -2220,6 +2197,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
    const char *fontname, *fontsize;
+   Eo *edje;
+   int r, g, b, a;
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
@@ -2235,8 +2214,11 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
 
+   edje = elm_layout_edje_get(efl_parent_get(pd->scroller));
+   edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
    background = elm_bg_add(scroller);
-   evas_object_color_set(background, 36, 36, 36, 255);
+   evas_object_color_set(background, r, g, b, a);
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
