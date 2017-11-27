@@ -1874,7 +1874,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
-        _elm_code_widget_setup_palette(grid, efl_parent_get(pd->scroller));
+        _elm_code_widget_setup_palette(grid, widget);
 
         elm_box_pack_end(pd->gridbox, grid);
         pd->grids = eina_list_append(pd->grids, grid);
@@ -2192,13 +2192,35 @@ _elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
    *col = pd->cursor_col;
 }
 
+EOLIAN static Efl_Ui_Theme_Apply
+_elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+{
+   Eo *edje;
+   int r, g, b, a;
+   unsigned int i;
+   Evas_Object *grid, *background;
+
+   edje = elm_layout_edje_get(obj);
+   edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
+                               NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+   background = elm_object_part_content_get(pd->scroller, "elm.swallow.background");
+   evas_object_color_set(background, r, g, b, a);
+
+   for (i = 0; i < eina_list_count(pd->grids); i++)
+     {
+        grid = eina_list_nth(pd->grids, i);
+        _elm_code_widget_setup_palette(grid, obj);
+     }
+
+   return EFL_UI_THEME_APPLY_SUCCESS;
+}
+
 EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Object *background, *gridrows, *scroller;
    const char *fontname, *fontsize;
-   Eo *edje;
-   int r, g, b, a;
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
@@ -2214,11 +2236,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
 
-   edje = elm_layout_edje_get(efl_parent_get(pd->scroller));
-   edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
    background = elm_bg_add(scroller);
-   evas_object_color_set(background, r, g, b, a);
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
@@ -2234,6 +2252,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
+
+   _elm_code_widget_elm_widget_theme_apply(obj, pd);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
