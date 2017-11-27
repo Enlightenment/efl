@@ -14,6 +14,7 @@
 #include "grammar/namespace.hpp"
 #include "grammar/type_impl.hpp"
 #include "grammar/attribute_reorder.hpp"
+#include "grammar/part_implementation.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -40,19 +41,21 @@ struct class_implementation_generator
 #ifndef USE_EOCXX_INHERIT_ONLY
      if(!as_generator(
         (namespaces
-         [*function_definition(get_klass_name(cls))]
+         [*function_definition(get_klass_name(cls))
+         << *part_implementation(cls.cxx_name)]
          << "\n"
-         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions), ctx))
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cls.parts), ctx))
        return false;
 #endif
 
      if(!as_generator(
-        attribute_reorder<0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
+        attribute_reorder<0, 1, 4, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
         (
          "namespace eo_cxx {\n"
          << namespaces
          [
           *function_definition(get_klass_name(cls))
+          << *part_implementation(cls.cxx_name)
           << "inline " << base_class_name << "::operator " << class_name << "() const { return *static_cast< "
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
           << "inline " << base_class_name << "::operator " << class_name << "&() { return *static_cast< "
@@ -61,7 +64,7 @@ struct class_implementation_generator
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
          ]
          << "}\n"
-         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name), ctx))
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name, cls.parts), ctx))
        return false;
 
      if(!as_generator("#endif\n").generate(sink, std::make_tuple(), ctx))

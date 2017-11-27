@@ -1,5 +1,7 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` slider_cxx_example.cc -o slider_cxx_example
 
+#define EFL_CXXPERIMENTAL
+
 #include <Elementary.hh>
 
 using efl::eo::instantiate;
@@ -51,13 +53,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl4);
 
    efl::ui::Slider sl5(instantiate, win);
-
-   // FIXME: C++ part API needs special reference handling! This will show ERR!
-   efl::eo::downcast<efl::ui::slider::Part>(sl5.part("indicator"))
-         .format_string_set("%1.2f");
-
+   sl5.indicator().format_string_set("%1.0f rabbit(s)");
+   sl5.range_min_max_set(0, 100);
+   sl5.step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
    sl5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl5.hint_min_set({0, 120});
    bx.pack_end(sl5);
 
    efl::ui::Slider sl6(instantiate, win);
