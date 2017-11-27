@@ -10,8 +10,9 @@ class Efl.Ui.Bg (Efl.Ui.Layout, Efl.Ui.Image)
    implements {
       class.constructor;
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_member_add;
       Efl.File.file { get; set; }
-      Efl.Gfx.color { set; }
+      Efl.Gfx.color { get; set; }
       Efl.Ui.Image.scale_type { get; set; }
    }
 }

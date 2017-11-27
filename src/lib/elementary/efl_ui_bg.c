@@ -98,6 +98,9 @@ EOLIAN static void
 _efl_ui_bg_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Bg_Data *priv)
 {
 
+   priv->rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(priv->rect, 0, 0, 0, 0);
+
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -108,6 +111,7 @@ _efl_ui_bg_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Bg_Data *priv)
 
    if (!elm_layout_theme_set(obj, "bg", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
+   elm_layout_content_set(obj, "elm.swallow.rectangle", priv->rect);
 }
 
 EAPI Evas_Object *
@@ -127,6 +131,20 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED)
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
    return obj;
+}
+
+/* FIXME: Efl.Canvas.group_member_add in Elm.Widget sets child's colors as the same
+ *        with that of obj. The color of resize_obj of Bg should not be changed
+ *        because actual color is the color of rectangle in resize_obj.
+ */
+EOLIAN static void
+_efl_ui_bg_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Bg_Data *_pd EINA_UNUSED, Evas_Object *child)
+{
+   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), child);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (wd->resize_obj == child)
+     evas_object_color_set(child, 255, 255, 255, 255);
 }
 
 EOLIAN static Eina_Bool
@@ -265,31 +283,20 @@ elm_bg_color_set(Evas_Object *obj,
                  int g,
                  int b)
 {
+   int a = 255;
    EFL_UI_BG_CHECK(obj);
-   efl_gfx_color_set(obj, r, g, b, 255);
-}
-
-EOLIAN static void
-_efl_ui_bg_efl_gfx_color_set(Eo *obj, Efl_Ui_Bg_Data *sd, int r, int g, int b, int a)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    // reset color
    if ((r == -1) && (g == -1) && (b == -1))
-     {
-        ELM_SAFE_FREE(sd->rect, evas_object_del);
-        return;
-     }
+   {
+      r = g = b = a = 0;
+   }
+   efl_gfx_color_set(obj, r, g, b, a);
+}
 
-   if (!sd->rect)
-     {
-        sd->rect = evas_object_rectangle_add
-            (evas_object_evas_get(wd->resize_obj));
-        efl_gfx_visible_set(sd->rect, EINA_TRUE);
-        elm_layout_content_set(obj, "elm.swallow.rectangle", sd->rect);
-        elm_layout_sizing_eval(obj);
-     }
-
+EOLIAN static void
+_efl_ui_bg_efl_gfx_color_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, int r, int g, int b, int a)
+{
    evas_object_color_set(sd->rect, r, g, b, a);
 }
 
@@ -301,6 +308,12 @@ elm_bg_color_get(const Evas_Object *obj,
 {
    EFL_UI_BG_CHECK(obj);
    efl_gfx_color_get((Eo *) obj, r, g, b, NULL);
+}
+
+EOLIAN static void
+_efl_ui_bg_efl_gfx_color_get(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, int *r, int *g, int *b, int *a)
+{
+   evas_object_color_get(sd->rect, r, g, b, a);
 }
 
 EAPI void

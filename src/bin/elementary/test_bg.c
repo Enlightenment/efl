@@ -382,11 +382,16 @@ static void
 _cb_check_changed_scale_type(void *data, const Efl_Event *ev)
 {
    Evas_Object *o_bg = data;
+   int r, g, b, a;
 
    if (efl_ui_check_selected_get(ev->object))
      efl_gfx_color_set(o_bg, 255, 128, 128, 255);
    else
      efl_gfx_color_set(o_bg, 0, 0, 0, 0);
+
+   efl_gfx_color_get(o_bg, &r, &g, &b, &a);
+   printf("bg color: %d %d %d %d\n", r, g, b, a);
+   fflush(stdout);
 }
 
 void
@@ -431,7 +436,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
-   
+
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
                 efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FIT_INSIDE),
                 efl_ui_radio_group_add(efl_added, rdg),
@@ -440,7 +445,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   
+
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
                 efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
                 efl_ui_radio_group_add(efl_added, rdg),
@@ -448,7 +453,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
-   
+
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox,
                 efl_ui_radio_state_value_set(efl_added, EFL_UI_IMAGE_SCALE_TYPE_NONE),
                 efl_ui_radio_group_add(efl_added, rdg),
