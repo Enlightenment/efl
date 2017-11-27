@@ -1018,8 +1018,8 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
-   ADD_TEST(NULL, "Range Values", "Ui.Spin", test_ui_spin);
-   ADD_TEST(NULL, "Range Values", "Ui.Spin.Button", test_ui_spin_button);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Spin", test_ui_spin);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Spin.Button", test_ui_spin_button);
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
