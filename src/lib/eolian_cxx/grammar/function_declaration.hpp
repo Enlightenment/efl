@@ -51,7 +51,7 @@ struct function_declaration_generator
         return false;
 
       if(!as_generator
-            ("::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "(" << (parameter % ", ") << ") const;\n")
+            (scope_tab << "::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "(" << (parameter % ", ") << ") const;\n")
             .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), ctx))
         return false;
       if(f.is_beta &&

@@ -34,10 +34,10 @@ struct base_class_definition_generator
          "struct " << string << " {\n"
          ).generate(sink, cls.cxx_name, context)) return false;
 
-     if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
+     if(!as_generator(*(function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
 
-     if(!as_generator(*(scope_tab << part_declaration << ";\n"))
+     if(!as_generator(*(part_declaration << ";\n"))
         .generate(sink, cls.parts, context)) return false;
 
      // static Efl_Class const* _eo_class();

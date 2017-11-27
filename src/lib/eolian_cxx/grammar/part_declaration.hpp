@@ -18,7 +18,7 @@ struct part_declaration_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::part_def const& part, Context const& ctx) const
    {
-      if(!as_generator("::efl::eolian::return_traits<::" << *(string << "::"))
+      if(!as_generator(scope_tab << "::efl::eolian::return_traits<::" << *(string << "::"))
             .generate(sink, part.klass.namespaces, add_lower_case_context(ctx)))
         return false;
       if(!as_generator(string << ">::type " << string << "() const")
