@@ -26,7 +26,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
    Dmabuf_Surface *surface;
 
    if ((!w) || (!h)) return;
-   surface = s->surf.dmabuf;
+   surface = s->dmabuf;
    EINA_LIST_FOREACH_SAFE(surface->buffers, l, tmp, b)
      {
         int stride = b->stride;
@@ -49,7 +49,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
    Ecore_Wl2_Buffer *b;
    void *ptr;
 
-   surface = s->surf.dmabuf;
+   surface = s->dmabuf;
    b = surface->current;
    if (!b) return NULL;
 
@@ -105,7 +105,7 @@ _evas_dmabuf_surface_assign(Surface *s)
    Eina_List *l;
    Dmabuf_Surface *surface;
 
-   surface = s->surf.dmabuf;
+   surface = s->dmabuf;
    surface->current = _evas_dmabuf_surface_wait(surface);
    if (!surface->current)
      {
@@ -132,7 +132,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    Ecore_Wl2_Buffer *b;
    Ecore_Wl2_Window *win;
 
-   surface = s->surf.dmabuf;
+   surface = s->dmabuf;
    b = surface->current;
    if (!b) return;
 
@@ -157,7 +157,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
    Dmabuf_Surface *surface;
 
    if (!s) return;
-   surface = s->surf.dmabuf;
+   surface = s->dmabuf;
 
    EINA_LIST_FREE(surface->buffers, b)
      ecore_wl2_buffer_destroy(b);
@@ -185,7 +185,7 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
      types |= ECORE_WL2_BUFFER_DMABUF;
 
    if (!(surf = calloc(1, sizeof(Dmabuf_Surface)))) goto err;
-   out->surf.dmabuf = surf;
+   out->dmabuf = surf;
 
    surf->surface = out;
    surf->alpha = info->info.destination_alpha;

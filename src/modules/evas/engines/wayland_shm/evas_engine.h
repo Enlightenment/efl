@@ -72,18 +72,13 @@ extern int _evas_engine_way_shm_log_dom;
 
 # define MAX_BUFFERS 4
 
-typedef struct _Shm_Surface Shm_Surface;
 typedef struct _Dmabuf_Surface Dmabuf_Surface;
 
 typedef struct _Surface Surface;
 struct _Surface
 {
    Outbuf *ob;
-   union
-     {
-        Shm_Surface *shm;
-        Dmabuf_Surface *dmabuf;
-     } surf;
+   Dmabuf_Surface *dmabuf;
    Evas_Engine_Info_Wayland *info;
    struct
      {
