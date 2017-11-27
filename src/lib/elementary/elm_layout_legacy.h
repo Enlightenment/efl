@@ -133,7 +133,7 @@ EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission,
  * @brief Remove a signal-triggered callback from a given layout widget.
  *
  * This function removes the last callback attached to a signal emitted by the
- * undelying Edje object of @c obj, with parameters @c emission, @c source and
+ * underlying Edje object of @c obj, with parameters @c emission, @c source and
  * @c func matching exactly those passed to a previous call to
  * @ref elm_layout_signal_callback_add. The data pointer that was passed to
  * this call will be returned.
@@ -318,7 +318,7 @@ EAPI int elm_layout_freeze(Evas_Object *obj);
  *
  * This function thaws the given Edje object and the Elementary sizing calc.
  *
- * @note If sucessives freezes were done, an equal number of thaws will be
+ * @note If successive freezings were done, an equal number of thaws will be
  * required.
  *
  * See also @ref elm_layout_freeze.
@@ -521,7 +521,7 @@ EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission,
  * @brief Remove a signal-triggered callback from a given layout widget.
  *
  * This function removes the last callback attached to a signal emitted by the
- * undelying Edje object of @c obj, with parameters @c emission, @c source and
+ * underlying Edje object of @c obj, with parameters @c emission, @c source and
  * @c func matching exactly those passed to a previous call to
  * @ref elm_layout_signal_callback_add. The data pointer that was passed to
  * this call will be returned.
@@ -557,7 +557,7 @@ EAPI int elm_layout_freeze(Evas_Object *obj);
  *
  * This function thaws the given Edje object and the Elementary sizing calc.
  *
- * @note If sucessives freezes were done, an equal number of thaws will be
+ * @note If successive freezings were done, an equal number of thaws will be
  * required.
  *
  * See also @ref elm_layout_freeze.

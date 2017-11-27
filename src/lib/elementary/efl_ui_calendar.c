@@ -873,7 +873,7 @@ _efl_ui_calendar_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd, E
    if (!int_ret) return EINA_FALSE;
 
    // FIXME : Currently, focused item is same with selected item.
-   //         After arrenging focus logic in this widget, we need to make
+   //         After arranging focus logic in this widget, we need to make
    //         focused item which is for indicating direction key input movement
    //         on the calendar widget.
    if (elm_widget_focus_get(obj))

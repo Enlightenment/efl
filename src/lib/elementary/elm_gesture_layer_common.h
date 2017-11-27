@@ -244,7 +244,7 @@ EAPI double elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj);
  *
  * Sets the minimum @c rotate_angular_tolerance angle for the gesture to be recognized as a rotate.
  * Rotate should be rotated beyond the givin @c rotate_angular_tolerance to recognize
- * the start of the rotate gestrue.
+ * the start of the rotate gesture.
  *
  * @param obj gesture-layer.
  * @param rotate_angular_tolerance rotate angular tolerance
@@ -333,7 +333,7 @@ EAPI Eina_Bool elm_gesture_layer_continues_enable_get(const Evas_Object *obj);
 /**
  * This function sets the gesture layer double tap timeout of an object
  *
- * When the time diffrence between two tabs is less than the @c double_tap_timeout value,
+ * When the time difference between two tabs is less than the @c double_tap_timeout value,
  * it is recognized as a double tab, if set negative value, timeout will be 0.
  *
  * @param obj gesture-layer.

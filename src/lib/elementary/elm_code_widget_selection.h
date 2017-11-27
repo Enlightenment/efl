@@ -7,7 +7,7 @@ extern "C" {
 
 /**
  * @brief Selection handling functions.
- * @defgroup Managing the complexities of selecting text across seperate lines.
+ * @defgroup Managing the complexities of selecting text across separate lines.
  *
  * @{
  *

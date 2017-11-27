@@ -41,7 +41,7 @@ _efl_ui_focus_layer_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Layer_Data *
    if (ret)
      return ret;
 
-   //ret is NULL here, if we do not want to cycle return NULL, which will result in obj beeing unset
+   //ret is NULL here, if we do not want to cycle return NULL, which will result in obj being unset
    if (!pd->cycle)
      return NULL;
 

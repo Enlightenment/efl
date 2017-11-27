@@ -339,7 +339,7 @@ EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
 EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible);
 
 /**
- * Get if hiden files/directories in the file selector widget are visible or not.
+ * Get if hidden files/directories in the file selector widget are visible or not.
  *
  * @param obj The file selector object
  * @return Visibility of hidden files/directories

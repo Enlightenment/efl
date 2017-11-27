@@ -19,7 +19,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_flipselector"
 
 /* TODO: ideally, the default theme would use map{} blocks on the TEXT
-   parts to implement their fading in/out propertly (as in the clock
+   parts to implement their fading in/out properly (as in the clock
    widget) */
 /* TODO: if one ever wants to extend it to receiving generic widgets
    as items, be my guest. in this case, remember to implement the

@@ -40,7 +40,7 @@ struct _Elm_Conformant_Data
 #endif
    struct
    {
-      Ecore_Animator *animator; // animaton timer
+      Ecore_Animator *animator; // animation timer
       double          start; // time started
       Evas_Coord      auto_x, auto_y; // desired delta
       Evas_Coord      x, y; // current delta
