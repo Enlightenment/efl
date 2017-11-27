@@ -98,24 +98,6 @@ _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_U
    efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, obj);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_popup_efl_container_content_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *content)
-{
-   return efl_content_set(efl_part(obj, "elm.swallow.content"), content);
-}
-
-EOLIAN static Eo*
-_efl_ui_popup_efl_container_content_get(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
-{
-   return efl_content_get(efl_part(obj, "elm.swallow.content"));
-}
-
-EOLIAN static Eo*
-_efl_ui_popup_efl_container_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
-{
-   return efl_content_unset(efl_part(obj, "elm.swallow.content"));
-}
-
 EOLIAN static void
 _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup_Align type)
 {
@@ -268,6 +250,11 @@ _efl_ui_popup_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const ch
 {
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
+
+/* Standard widget overrides */
+
+ELM_PART_CONTENT_DEFAULT_SET(efl_ui_popup, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 /* Efl.Part begin */
 

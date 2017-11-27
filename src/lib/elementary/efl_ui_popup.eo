@@ -7,7 +7,7 @@ enum Efl.Ui.Popup.Align {
     bottom
 }
 
-class Efl.Ui.Popup(Efl.Ui.Layout)
+class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
 {
    methods {
       @property align {
@@ -44,8 +44,8 @@ class Efl.Ui.Popup(Efl.Ui.Layout)
       Efl.Gfx.position { set; }
       Efl.Gfx.visible { set; }
       Elm.Widget.widget_parent { set; }
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part;
    }
    events {
