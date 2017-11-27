@@ -9,7 +9,7 @@
 #include "evas_image.h"
 
 int
-evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
+evas_common_rgba_image_from_data(Image_Entry* ie_dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
 
@@ -67,7 +67,7 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
 }
 
 int
-evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
+evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
    RGBA_Image   *dst = (RGBA_Image *) ie_dst;
 
