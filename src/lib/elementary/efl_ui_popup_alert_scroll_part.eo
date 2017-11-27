@@ -3,8 +3,8 @@ class Efl.Ui.Popup.Alert.Scroll.Part (Efl.Ui.Layout.Part_Content, Efl.Ui.Layout.
    [[Efl UI Popup Alert Scroll internal part class]]
    data: null;
    implements {
-      Efl.Container.content { get; set; }
-      Efl.Container.content_unset;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Text.text { set; get; }
    }
 }
