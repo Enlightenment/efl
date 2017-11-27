@@ -129,7 +129,7 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Eina_Bool _evas_dmabuf_surface_create(Surface *s);
+Surface *_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);

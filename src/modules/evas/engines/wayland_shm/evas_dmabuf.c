@@ -165,37 +165,44 @@ _evas_dmabuf_surface_destroy(Surface *s)
    free(surface);
 }
 
-Eina_Bool
-_evas_dmabuf_surface_create(Surface *s)
+Surface *
+_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
 {
+   Surface *out = NULL;
+   Dmabuf_Surface *surf = NULL;
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
-   Dmabuf_Surface *surf = NULL;
 
-   ewd = s->info->info.wl2_display;
+   out = calloc(1, sizeof(*out));
+   if (!out) return NULL;
+   out->info = info;
+   out->ob = ob;
+
+   ewd = info->info.wl2_display;
    if (ecore_wl2_display_shm_get(ewd))
      types |= ECORE_WL2_BUFFER_SHM;
    if (ecore_wl2_display_dmabuf_get(ewd))
      types |= ECORE_WL2_BUFFER_DMABUF;
 
-   if (!(s->surf.dmabuf = calloc(1, sizeof(Dmabuf_Surface)))) return EINA_FALSE;
-   surf = s->surf.dmabuf;
+   if (!(surf = calloc(1, sizeof(Dmabuf_Surface)))) goto err;
+   out->surf.dmabuf = surf;
 
-   surf->surface = s;
-   surf->alpha = s->info->info.destination_alpha;
+   surf->surface = out;
+   surf->alpha = info->info.destination_alpha;
 
    /* create surface buffers */
    if (!ecore_wl2_buffer_init(ewd, types)) goto err;
 
-   s->funcs.destroy = _evas_dmabuf_surface_destroy;
-   s->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
-   s->funcs.data_get = _evas_dmabuf_surface_data_get;
-   s->funcs.assign = _evas_dmabuf_surface_assign;
-   s->funcs.post = _evas_dmabuf_surface_post;
+   out->funcs.destroy = _evas_dmabuf_surface_destroy;
+   out->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
+   out->funcs.data_get = _evas_dmabuf_surface_data_get;
+   out->funcs.assign = _evas_dmabuf_surface_assign;
+   out->funcs.post = _evas_dmabuf_surface_post;
 
-   return EINA_TRUE;
+   return out;
 
 err:
+   free(out);
    free(surf);
-   return EINA_FALSE;
+   return NULL;
 }

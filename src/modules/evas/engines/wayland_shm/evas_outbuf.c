@@ -9,22 +9,6 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-static Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
-{
-   Surface *out;
-
-   out = calloc(1, sizeof(*out));
-   if (!out) return NULL;
-   out->info = info;
-   out->ob = ob;
-
-   if (_evas_dmabuf_surface_create(out)) return out;
-
-   free(out);
-   return NULL;
-}
-
 Outbuf *
 _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
 {
