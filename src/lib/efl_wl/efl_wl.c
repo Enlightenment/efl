@@ -14,15 +14,22 @@
 #include <fcntl.h>
 #include <dlfcn.h>
 
+#include "Ecore_Evas.h"
+#include "Ecore_Wl2.h"
+#include "Ecore_Input.h"
+#include "Evas_GL.h"
+
+/* We have to include the wayland server stuff after any wayland client stuff
+ * like Ecore_Wl2.h or we'll get complaints about struct wl_buffer being
+ * deprecated.
+ * That's because its deprecated in server code - it's still the name of
+ * the opaque struct client side.
+ */
 #include <wayland-server.h>
 #include "xdg-shell-unstable-v6-server-protocol.h"
 #include "efl-hints-server-protocol.h"
 #include "dmabuf.h"
 
-#include "Ecore_Evas.h"
-#include "Ecore_Wl2.h"
-#include "Ecore_Input.h"
-#include "Evas_GL.h"
 # ifdef HAVE_ECORE_X
 #include "Ecore_X.h"
 #endif
