@@ -18,9 +18,6 @@ struct _Dmabuf_Surface
    Eina_Bool alpha : 1;
 };
 
-static void _internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface);
-static void _evas_dmabuf_surface_destroy(Surface *s);
-
 static void
 _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
@@ -154,22 +151,18 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 }
 
 static void
-_internal_evas_dmabuf_surface_destroy(Dmabuf_Surface *surface)
+_evas_dmabuf_surface_destroy(Surface *s)
 {
    Ecore_Wl2_Buffer *b;
+   Dmabuf_Surface *surface;
+
+   if (!s) return;
+   surface = s->surf.dmabuf;
 
    EINA_LIST_FREE(surface->buffers, b)
      ecore_wl2_buffer_destroy(b);
 
    free(surface);
-}
-
-static void
-_evas_dmabuf_surface_destroy(Surface *s)
-{
-   if (!s) return;
-
-   _internal_evas_dmabuf_surface_destroy(s->surf.dmabuf);
 }
 
 Eina_Bool
