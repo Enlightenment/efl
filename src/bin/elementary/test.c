@@ -701,7 +701,8 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    entry = en;
 
    chk = elm_check_add(win); // Nstate for All/Eo only/Legacy only?
-   elm_object_text_set(chk, "EO");
+   elm_object_text_set(chk, "Hide Legacy");
+   elm_check_state_set(chk, eo_only);
    evas_object_smart_callback_add(chk, "changed", _eo_chk_changed, NULL);
    elm_box_pack_end(bx1, chk);
    evas_object_show(chk);
