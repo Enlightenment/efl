@@ -1,0 +1,9 @@
+option('test',
+   type: 'boolean',
+   value: true,
+   description: 'enable unit test')
+
+option('example',
+   type: 'boolean',
+   value: true,
+   description: 'enable example')

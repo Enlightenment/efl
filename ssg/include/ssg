@@ -1,0 +1,6 @@
+#ifndef SSG_MODULE_H
+#define SSG_MODULE_H
+
+#include"ssg.h"
+
+#endif //SSG_MODULE_H
