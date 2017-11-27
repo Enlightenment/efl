@@ -97,7 +97,7 @@ struct class_definition_generator
         ).generate(sink, attributes::make_infinite_tuple(cls.cxx_name), context)) return false;
      
 #ifndef USE_EOCXX_INHERIT_ONLY
-     if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
+     if(!as_generator(*(function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
 #endif
                                              
