@@ -5406,6 +5406,10 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, obj);
    pd->profile.available = eina_array_new(4);
 
+   // For bindings: if no parent, allow simple unref
+   if (!efl_parent_get(obj))
+     efl_allow_parent_unref_set(obj, EINA_TRUE);
+
    efl_composite_attach(obj, pd->manager);
    _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
 
