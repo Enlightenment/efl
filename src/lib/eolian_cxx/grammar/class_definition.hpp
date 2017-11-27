@@ -15,6 +15,7 @@
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/attribute_conditional.hpp"
 #include "grammar/attribute_replace.hpp"
+#include "grammar/part_declaration.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -206,11 +207,17 @@ struct class_definition_generator
      // /// @endcond
      if(!as_generator(scope_tab << "/// @endcond\n").generate(sink, attributes::unused, context)) return false;
 
+     // EXPERIMENTAL: Parts
+     if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(*(scope_tab << part_declaration << ";\n"))
+           .generate(sink, cls.parts, context)) return false;
+     if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+
      if(!as_generator(   scope_tab << "::efl::eo::wref<" << string << "> _get_wref() const { "
                          "return ::efl::eo::wref<" << string << ">(*this); }\n"
                      ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
 
-     // EXPERIMENTAL
+     // EXPERIMENTAL: wref and implicit conversion to Eo*
      if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
      // For easy wref, operator-> in wref needs to also return a pointer type
      if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"

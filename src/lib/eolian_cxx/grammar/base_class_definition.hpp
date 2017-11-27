@@ -14,6 +14,7 @@
 #include "grammar/case.hpp"
 #include "grammar/address_of.hpp"
 #include "grammar/attribute_reorder.hpp"
+#include "grammar/part_declaration.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -35,6 +36,9 @@ struct base_class_definition_generator
 
      if(!as_generator(*(scope_tab << function_declaration(get_klass_name(cls))))
         .generate(sink, cls.functions, context)) return false;
+
+     if(!as_generator(*(scope_tab << part_declaration << ";\n"))
+        .generate(sink, cls.parts, context)) return false;
 
      // static Efl_Class const* _eo_class();
      std::string suffix;

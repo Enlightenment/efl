@@ -144,6 +144,14 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
      };
    klass_function(klass);
 
+   for(efl::eina::iterator<Eolian_Part const> parts_itr ( ::eolian_class_parts_get(klass))
+     , parts_last; parts_itr != parts_last; ++parts_itr)
+     {
+        Eolian_Class const* eolian_part_klass = ::eolian_part_class_get(&*parts_itr);
+        efl::eolian::grammar::attributes::klass_def part_klass(eolian_part_klass, opts.unit);
+        forward_klasses.insert(part_klass);
+     }
+
    cpp_headers.erase(eolian_class_file_get(klass) + std::string(".hh"));
 
    std::string guard_name;
