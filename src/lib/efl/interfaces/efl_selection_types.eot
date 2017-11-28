@@ -64,3 +64,10 @@ function Efl.Selection.Data_Ready {
    }
 };
 
+struct Efl.Selection.Changed
+{
+   type: Efl.Selection.Type; [[The selection type]]
+   seat_id: int; [[The seat on which the selection changed, or NULL for "default"]]
+   display: void_ptr; [[The display connection object, NULL under X11]]
+   exist: bool; [[EINA_TRUE if the selection has an owner]]
+}

@@ -85,6 +85,7 @@ struct _X11_Cnp_Selection
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
    Efl_Selection_Action action;
+   Eina_Bool active;
 
    Eo *owner;
 
@@ -159,7 +160,6 @@ struct _Seat_Selection
    int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
    int drag_win_x_end, drag_win_y_end;
    Efl_Selection_Type active_type;
-   Efl_Selection_Format active_format;
 
    Saved_Type *saved_types;
    Ecore_Event_Handler *enter_handler; //should be moved to sel_seat?
@@ -229,6 +229,7 @@ struct _Efl_Selection_Manager_Data
    Efl_Object *sel_man;
    Ecore_Event_Handler *notify_handler;
    Ecore_Event_Handler *clear_handler;
+   Ecore_Event_Handler *fix_handler;
    Efl_Promise *promise;
    Efl_Selection_Type loss_type;
 #ifdef HAVE_ELEMENTARY_X

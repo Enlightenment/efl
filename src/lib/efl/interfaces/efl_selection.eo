@@ -38,6 +38,7 @@ interface Efl.Selection {
    implements {
    }
    events {
-      selection,loss; [[Called when selection is lost]]
+      selection,loss; [[Called when selection has lost]]
+      selection,changed; [[Called when display server's selection has changed]]
    }
 }
