@@ -38,6 +38,10 @@ struct class_implementation_generator
         .generate(sink, std::make_tuple(), ctx))
        return false;
 
+     if(!as_generator("\n#include \"" << *(string << "_") << string << ".eo.hh\"\n\n")
+        .generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name), add_lower_case_context(ctx)))
+       return false;
+
 #ifndef USE_EOCXX_INHERIT_ONLY
      if(!as_generator(
         (namespaces
