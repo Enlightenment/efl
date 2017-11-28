@@ -335,35 +335,21 @@ test_efl_ui_text_async(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    evas_object_show(win);
 }
 
-static const char *images[4] = { "sky", "logo", "dog" };
+#define IMAGES_SZ 5
+static const char *images[IMAGES_SZ] = {
+     "sky", "logo", "dog", "eet_rock", "eet_plant" };
 
 static void
 my_efl_ui_text_item_factory_bt_image(void *data, Evas_Object *obj EINA_UNUSED,
       void *event_info EINA_UNUSED)
 {
    Evas_Object *en = data;
-   char buf[128];
-
    static int image_idx = 0;
-   image_idx = (image_idx + 1) % 5;
-   if (image_idx == 3)
-     {
-        sprintf(buf, "file://%s/images/sky_02.jpg",
-              elm_app_data_dir_get());
-     }
-   else if (image_idx == 4)
-     {
-        sprintf(buf, "%s/images/sky_03.jpg",
-              elm_app_data_dir_get());
-     }
-   else
-     {
-        sprintf(buf, "%s", images[image_idx]);
-     }
-   printf("Adding image: %s\n", buf);
+
+   image_idx = (image_idx + 1) % IMAGES_SZ;
    efl_text_cursor_item_insert(en,
          efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
-         "size=32x32", buf);
+         "size=32x32", images[image_idx]);
 }
 
 static void
@@ -406,12 +392,20 @@ my_efl_ui_text_item_factory_bt_change(void *data, Evas_Object *obj EINA_UNUSED,
    printf("Factory set to: %s\n", factories[item_factory_idx].name);
 }
 
+static void
+_ui_text_factory_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eina_File *f = data;
+   eina_file_close(f);
+}
+
 void
 test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx2, *bx3, *bt, *en;
    Efl_Text_Cursor_Cursor *main_cur, *cur;
    char buf[128];
+   Eina_File *f;
 
    win = elm_win_util_standard_add("entry", "Entry");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -424,6 +418,14 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    en = efl_add(EFL_UI_TEXT_CLASS, win,
          efl_text_multiline_set(efl_added, EINA_TRUE));
 
+   // Open EET source w/ key
+   sprintf(buf, "%s/images/image_items.eet", elm_app_data_dir_get());
+   f = eina_file_open(buf, EINA_FALSE);
+   if (f)
+     {
+        efl_event_callback_add(en, EFL_EVENT_DEL, _ui_text_factory_del, f);
+     }
+
    factories[0].name = "None";
    factories[0].item_factory = NULL;
 
@@ -433,6 +435,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    factories[2].name = "Emoticon Factory";
    factories[2].item_factory = efl_add(EFL_UI_TEXT_EMOTICON_ITEM_FACTORY_CLASS, en);
 
+   // Test assigning file path source
    sprintf(buf, "%s/images/sky_01.jpg", elm_app_data_dir_get());
    efl_ui_text_image_item_factory_matches_add(factories[1].item_factory,
          images[0], buf, NULL);
@@ -442,6 +445,19 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    sprintf(buf, "%s/images/mystrale.jpg", elm_app_data_dir_get());
    efl_ui_text_image_item_factory_matches_add(factories[1].item_factory,
          images[2], buf, NULL);
+
+   if (f)
+     {
+        efl_ui_text_image_item_factory_matches_mmap_add(factories[1].item_factory,
+              "eet_rock", f, "rock");
+        efl_ui_text_image_item_factory_matches_mmap_add(factories[1].item_factory,
+              "eet_plant", f, "plant");
+     }
+   else
+     {
+        printf("Error loading test file. Please review test.");
+     }
+
 
    printf("Added Efl.Ui.Text object\n");
    efl_text_set(en, "Hello world! Goodbye world! This is a test text for the"
