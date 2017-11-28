@@ -429,10 +429,12 @@ _drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *
      {
         int relative;
 
-        relative = ecore_drm2_output_relative_get(output);
+        relative = ecore_drm2_output_relative_mode_get(output);
         ecore_drm2_output_info_get(output, NULL, NULL, &ow, &oh, NULL);
         switch (relative)
           {
+           case ECORE_DRM2_RELATIVE_CLONE:
+             break;
            case ECORE_DRM2_RELATIVE_TO_LEFT:
            case ECORE_DRM2_RELATIVE_TO_RIGHT:
              if (w) *w += MAX(*w, ow);
