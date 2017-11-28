@@ -40,8 +40,12 @@ struct function_declaration_generator
         }
 
       if(f.is_beta &&
-            !as_generator("#ifdef " << *(string << "_") << string << "_" << string << "_BETA\n")
-            .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name, suffix), add_upper_case_context(ctx)))
+            !as_generator("#ifdef " << *(string << "_") << string << "_BETA\n")
+            .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name), add_upper_case_context(ctx)))
+        return false;
+      if(f.is_protected &&
+            !as_generator("#ifdef " << *(string << "_") << string << "_PROTECTED\n")
+            .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name), add_upper_case_context(ctx)))
         return false;
 
       if(!as_generator
@@ -70,6 +74,9 @@ struct function_declaration_generator
             .generate(sink, f.c_name, add_upper_case_context(ctx)))
         return false;
 
+      if(f.is_protected &&
+            !as_generator("#endif\n").generate(sink, attributes::unused, ctx))
+        return false;
       if(f.is_beta &&
             !as_generator("#endif\n").generate(sink, attributes::unused, ctx))
         return false;

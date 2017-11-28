@@ -16,7 +16,8 @@ bindings/cxx/eo_cxx/eo_wref.hh \
 bindings/cxx/eo_cxx/eo_future.hh \
 bindings/cxx/eo_cxx/eo_promise.hh \
 bindings/cxx/eo_cxx/eo_promise_meta.hh \
-bindings/cxx/eo_cxx/eo_private.hh
+bindings/cxx/eo_cxx/eo_private.hh \
+bindings/cxx/eo_cxx/efl_object_impl.hh
 
 ### Elementary C++
 installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
