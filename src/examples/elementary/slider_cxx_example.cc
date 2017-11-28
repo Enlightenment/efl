@@ -4,6 +4,7 @@
 
 #include <Elementary.hh>
 
+using namespace std::placeholders;
 using efl::eo::instantiate;
 
 static efl::ui::Win win;
@@ -11,10 +12,11 @@ static efl::ui::Win win;
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
    win = efl::ui::Win(instantiate);
    win.text_set("Slider example");
-   efl::eolian::event_add(efl::ui::Win::delete_request_event, win,
-                          std::bind([](){ win = nullptr; ::efl_exit(0); }));
+   win.delete_request_event_cb_add([](){ win._delete(); });
 
    efl::ui::Box bx(instantiate, win);
    win.content_set(bx);
@@ -62,17 +64,20 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl5);
 
    efl::ui::Slider sl6(instantiate, win);
-   sl4.direction_set(EFL_UI_DIR_HORIZONTAL);
-
-// FIXME
-//   auto indicator_format = [] (double val) {
-//                                            char *indicator = new char[32];
-//                                            snprintf(indicator, 32, "%1.2f u", val);
-//                                            return indicator;
-//                                           };
-//   auto indicator_free = [] (char *obj) {delete obj;} ;
-//   sl6.indicator_format_function_set(indicator_format, indicator_free);
-
+   sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
+   sl6.range_min_max_set(0, 10);
+   auto format_cb = std::bind([](
+                              efl::eina::strbuf_wrapper& sb,
+                              efl::eina::value_view const& value) {
+         try {
+            int d = int(efl::eina::get<double>(value));
+            if (d >= 2) sb.append_printf("%d things", d);
+            else if (!d) sb.append("nothing");
+            else sb.append("one thing");
+         } catch (std::system_error const&)  {
+            sb.append(value.to_string());
+         } }, _1, _2);
+   sl6.format_cb_set(format_cb);
    sl6.hint_align_set(0.5, EFL_GFX_SIZE_HINT_FILL);
    sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
    bx.pack_end(sl6);
@@ -91,7 +96,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    { std::cout << "Delay changed to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
-   efl::eolian::event_add(sl7.changed_event, sl7, changed);
-   efl::eolian::event_add(sl7.delay_changed_event, sl7, delay);
+   sl7.changed_event_cb_add(changed);
+   sl7.delay_changed_event_cb_add(delay);
 }
 EFL_MAIN()
