@@ -427,6 +427,10 @@ inline Eina_Value const& convert_to_c_impl( ::efl::eina::value_view const& v, ta
 {
   return *v.native_handle();
 }
+inline const Eina_Value convert_to_c_impl( ::efl::eina::value_view const& v, tag<const Eina_Value, in_traits<eina::value_view const&>::type>)
+{
+  return *v.native_handle();
+}
 inline Eina_Bool convert_to_c_impl( bool b, tag<Eina_Bool, bool>)
 {
   return b;
