@@ -7,6 +7,7 @@
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -5418,11 +5419,9 @@ _elm_entry_anchor_hover_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 /* END - ANCHOR HOVER */
 
-EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+static void
+_activate(Evas_Object *obj)
 {
-   if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
-
    ELM_ENTRY_DATA_GET(obj, sd);
 
    if (!elm_widget_disabled_get(obj) &&
@@ -5433,6 +5432,14 @@ _elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+{
+   if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
+   _activate(obj);
+
    return EINA_TRUE;
 }
 
@@ -6038,6 +6045,23 @@ _elm_entry_efl_access_name_get(Eo *obj, Elm_Entry_Data *sd)
 
    const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
    return _elm_widget_accessible_plain_name_get(obj, ret);
+}
+
+static Eina_Bool
+_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   _activate(obj);
+   return EINA_TRUE;
+}
+
+EOLIAN const Efl_Access_Action_Data *
+_elm_entry_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
+{
+   static Efl_Access_Action_Data atspi_actions[] = {
+          { "activate", "activate", NULL, _action_activate },
+          { NULL, NULL, NULL, NULL}
+   };
+   return &atspi_actions[0];
 }
 
 /* Efl.Part begin */
