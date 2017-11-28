@@ -8,19 +8,26 @@ typedef struct
    const char *template;
 } Efl_Ui_Format_Data;
 
+typedef enum _Format_Type
+{
+   FORMAT_TYPE_INVALID,
+   FORMAT_TYPE_DOUBLE,
+   FORMAT_TYPE_INT
+} Format_Type;
+
 static Eina_Bool
 _is_valid_digit(char x)
 {
    return ((x >= '0' && x <= '9') || (x == '.')) ? EINA_TRUE : EINA_FALSE;
 }
 
-static int
+static Format_Type
 _format_string_check(const char *fmt)
 {
    const char *itr = NULL;
    const char *start = NULL;
    Eina_Bool found = EINA_FALSE;
-   int ret_type = 0;
+   Format_Type ret_type = FORMAT_TYPE_INVALID;
 
    start = strchr(fmt, '%');
    if (!start) return 0;
@@ -29,7 +36,8 @@ _format_string_check(const char *fmt)
      {
         if (found && start[1] != '%')
           {
-             return 0;
+             ret_type = FORMAT_TYPE_INVALID;
+             break;
           }
 
         if (start[1] != '%' && !found)
@@ -40,12 +48,12 @@ _format_string_check(const char *fmt)
                   if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
                       (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
                     {
-                       ret_type = 1; //int
+                       ret_type = FORMAT_TYPE_INT;
                        break;
                     }
                   else if ((*itr == 'f') || (*itr == 'F'))
                     {
-                       ret_type = 2; //double
+                       ret_type = FORMAT_TYPE_DOUBLE;
                        break;
                     }
                   else if (_is_valid_digit(*itr))
@@ -54,7 +62,8 @@ _format_string_check(const char *fmt)
                     }
                   else
                     {
-                       return 0;
+                       ret_type = FORMAT_TYPE_INVALID;
+                       break;
                     }
                }
           }
@@ -82,23 +91,47 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 
    format_check_result = _format_string_check(sd->template);
 
-   if (format_check_result == 0)
+   if (format_check_result == FORMAT_TYPE_INVALID)
      {
-        ERR("Wrong String Format: %s\n", sd->template);
+        ERR("Wrong String Format: %s", sd->template);
         return;
      }
 
-   if (type == EINA_VALUE_TYPE_DOUBLE)
+   if ((format_check_result == FORMAT_TYPE_DOUBLE)
+       && (type == EINA_VALUE_TYPE_DOUBLE))
      {
         double v;
         eina_value_get(&value, &v);
         eina_strbuf_append_printf(str, sd->template, v);
      }
-   else if (type == EINA_VALUE_TYPE_INT)
+   else if ((format_check_result == FORMAT_TYPE_INT)
+            && (type == EINA_VALUE_TYPE_INT))
      {
         int v;
         eina_value_get(&value, &v);
         eina_strbuf_append_printf(str, sd->template, v);
+     }
+   else if ((format_check_result == FORMAT_TYPE_DOUBLE)
+            && (type == EINA_VALUE_TYPE_INT))
+     {
+        int v;
+        double d_v;
+
+        eina_value_get(&value, &v);
+
+        d_v = v;
+        eina_strbuf_append_printf(str, sd->template, d_v);
+     }
+   else if ((format_check_result == FORMAT_TYPE_INT)
+            && (type == EINA_VALUE_TYPE_DOUBLE))
+     {
+        double v;
+        int i_v;
+
+        eina_value_get(&value, &v);
+
+        i_v = v;
+        eina_strbuf_append_printf(str, sd->template, i_v);
      }
    else
      {
