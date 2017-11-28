@@ -5,6 +5,7 @@
 
 // EXPERIMENTAL
 //#define USE_EOCXX_INHERIT_ONLY
+//#define USE_EXTRA_IMPLEMENTATIONS
 
 namespace efl { namespace eolian { namespace grammar {
 

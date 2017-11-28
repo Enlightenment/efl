@@ -26,15 +26,15 @@ struct class_implementation_generator
      std::vector<std::string> cpp_namespaces = attributes::cpp_namespaces(cls.namespaces);
      auto base_class_name = *(lower_case[string] << "::") << string;
      auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
-     std::string guard_symbol;
+     std::string class_uppercase;
 
-     if(!as_generator(*(string << "_") << string << "_IMPL_HH")
-        .generate(std::back_inserter(guard_symbol)
+     if(!as_generator(*(string << "_") << string)
+        .generate(std::back_inserter(class_uppercase)
                   , std::make_tuple(cpp_namespaces, cls.cxx_name), add_upper_case_context(ctx)))
        return false;
 
-     if(!as_generator(   "#ifndef " << guard_symbol << "\n"
-                      << "#define " << guard_symbol << "\n")
+     if(!as_generator(   "#ifndef " << class_uppercase << "_IMPL_HH\n"
+                      << "#define " << class_uppercase << "_IMPL_HH\n")
         .generate(sink, std::make_tuple(), ctx))
        return false;
 
@@ -46,14 +46,21 @@ struct class_implementation_generator
      if(!as_generator(
         (namespaces
          [*function_definition(get_klass_name(cls))
-         << *part_implementation(cls.cxx_name)]
+         << *part_implementation(cls.cxx_name)
+#ifdef USE_EXTRA_IMPLEMENTATIONS
+         << "#ifdef EOLIAN_CXX_" << string << "_EXTRA_IMPLEMENTATIONS\n"
+         << scope_tab << "EOLIAN_CXX_" << string << "_EXTRA_IMPLEMENTATIONS\n"
+         << "#endif\n"
+#endif
+         ]
          << "\n"
-         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cls.parts), ctx))
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cls.parts,
+                                           class_uppercase, class_uppercase), ctx))
        return false;
 #endif
 
      if(!as_generator(
-        attribute_reorder<0, 1, 4, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
+        attribute_reorder<0, 1, 4, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 5, 5>
         (
          "namespace eo_cxx {\n"
          << namespaces
@@ -66,9 +73,16 @@ struct class_implementation_generator
             << class_name << "*>(static_cast<void*>(this)); }\n"
           << "inline " << base_class_name << "::operator " << class_name << " const&() const { return *static_cast< "
             << class_name << " const*>(static_cast<void const*>(this)); }\n"
+#ifdef USE_EXTRA_IMPLEMENTATIONS
+          << "#ifdef EOLIAN_CXX_" << string << "_EXTRA_IMPLEMENTATIONS\n"
+          << scope_tab << "EOLIAN_CXX_" << string << "_EXTRA_IMPLEMENTATIONS\n"
+          << "#endif\n"
+#endif
          ]
          << "}\n"
-         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name, cls.parts), ctx))
+         )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces,
+                                           cls.cxx_name, cls.parts,
+                                           class_uppercase), ctx))
        return false;
 
      if(!as_generator("#endif\n").generate(sink, std::make_tuple(), ctx))

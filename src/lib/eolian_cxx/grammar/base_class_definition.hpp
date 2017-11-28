@@ -40,6 +40,16 @@ struct base_class_definition_generator
      if(!as_generator(*(part_declaration << ";\n"))
         .generate(sink, cls.parts, context)) return false;
 
+#ifdef USE_EXTRA_IMPLEMENTATIONS
+     if(!as_generator
+        ("#ifdef EOLIAN_CXX_" << *(string << "_") << string << "_EXTRA_DECLARATIONS\n"
+         << scope_tab << "EOLIAN_CXX_" << *(string << "_") << string << "_EXTRA_DECLARATIONS\n"
+         << "#endif\n")
+        .generate(sink, std::make_tuple(cls.namespaces, cls.eolian_name,
+                                        cls.namespaces, cls.eolian_name), add_upper_case_context(context)))
+       return false;
+#endif
+
      // static Efl_Class const* _eo_class();
      std::string suffix;
      switch(cls.type)

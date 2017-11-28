@@ -66,7 +66,7 @@ struct class_declaration_generator
         .generate(sink, std::make_tuple(), context))
        return false;
 
-     
+
      return true;
    }
 };
