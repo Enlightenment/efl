@@ -134,7 +134,7 @@ struct class_definition_generator
               << "(const_cast<" << string << " *>(this))); }\n"
         ).generate(sink, cls.cxx_name, context))
        return false;
-     
+
      for (auto&& e : cls.events)
        {
           if (e.beta)
@@ -237,6 +237,7 @@ struct class_definition_generator
      if(!as_generator(   scope_tab << "using ::efl::eo::concrete::_eo_ptr;\n"
                       << scope_tab << "using ::efl::eo::concrete::_release;\n"
                       << scope_tab << "using ::efl::eo::concrete::_reset;\n"
+                      << scope_tab << "using ::efl::eo::concrete::_delete;\n"
                       << scope_tab << "using ::efl::eo::concrete::operator bool;\n"
                       ).generate(sink, attributes::unused, context)) return false;
 
