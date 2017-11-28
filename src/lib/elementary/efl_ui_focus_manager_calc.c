@@ -1358,8 +1358,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
    Node *node, *last;
    Efl_Ui_Focus_Object *last_focusable = NULL;
    Efl_Ui_Focus_Manager *redirect_manager;
-   Eo *focusable;
-   Node_Type type;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1417,8 +1415,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_
      }
 
    redirect_manager = node->redirect_manager;
-   type = node->type;
-   focusable = node->focusable;
 
    last = eina_list_last_data_get(pd->focus_stack);
    if (last)
