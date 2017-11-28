@@ -812,27 +812,27 @@ EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *o);
 EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
 
 /**
- * Set the relative state of the output
+ * Set the relative mode of the output
  *
  * @param output The output
- * @param relative The relative state to set
+ * @param relative The relative mode to set
  *
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_output_relative_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative relative);
+EAPI void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative relative);
 
 /**
- * Get the relative state of the output
+ * Get the relative mode of the output
  *
  * @param output
  *
- * @return The relative state
+ * @return The relative mode
  *
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI Ecore_Drm2_Relative ecore_drm2_output_relative_get(Ecore_Drm2_Output *output);
+EAPI Ecore_Drm2_Relative ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output);
 
 /**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
