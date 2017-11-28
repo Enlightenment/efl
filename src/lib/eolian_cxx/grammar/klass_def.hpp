@@ -420,6 +420,7 @@ struct function_def
   bool is_beta;
   bool is_protected;
   bool is_function_pointer;
+  bool is_static;
 
   friend inline bool operator==(function_def const& lhs, function_def const& rhs)
   {
@@ -429,7 +430,8 @@ struct function_def
       && lhs.c_name == rhs.c_name
       && lhs.is_beta == rhs.is_beta
       && lhs.is_protected == rhs.is_protected
-      && lhs.is_function_pointer == rhs.is_function_pointer;
+      && lhs.is_function_pointer == rhs.is_function_pointer
+      && lhs.is_static == rhs.is_static;
   }
   friend inline bool operator!=(function_def const& lhs, function_def const& rhs)
   {
@@ -500,6 +502,7 @@ struct function_def
      c_name = eolian_function_full_c_name_get(function, type, EINA_FALSE);
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
+     is_static = eolian_function_is_class(function);
   }
 
   std::string template_statement() const

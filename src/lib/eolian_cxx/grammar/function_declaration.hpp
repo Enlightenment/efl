@@ -24,7 +24,7 @@ struct function_declaration_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::function_def const& f, Context const& ctx) const
    {
-      std::string suffix;
+      std::string suffix, static_flag, const_flag;
       switch(_klass_name.type)
         {
         case attributes::class_type::regular:
@@ -50,8 +50,12 @@ struct function_declaration_generator
           .generate(sink, attributes::unused, ctx))
         return false;
 
+      if (f.is_static) static_flag = "static ";
+      else const_flag = " const";
+
       if(!as_generator
-            (scope_tab << "::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "(" << (parameter % ", ") << ") const;\n")
+            (scope_tab << static_flag << "::efl::eolian::return_traits<" << grammar::type(true) << ">::type "
+             << string << "(" << (parameter % ", ") << ")" << const_flag << ";\n")
             .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), ctx))
         return false;
       if(f.is_beta &&
