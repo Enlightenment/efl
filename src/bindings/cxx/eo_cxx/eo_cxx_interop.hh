@@ -646,13 +646,13 @@ T& convert_to_return(T* value, tag<T*, T&>)
 template <typename T>
 T convert_to_return(Eo* value, tag<Eo*, T>, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
 {
-  T v{value};
+  T v{eo::detail::ref(value)};
   return v;
 }
 template <typename T>
 T convert_to_return(Eo const* value, tag<Eo const*, T>, typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return T{const_cast<Eo*>(value)};
+  return T{const_cast<Eo*>(eo::detail::ref(value))};
 }
 template <typename T>
 eina::list<T> convert_to_return(Eina_List* value, tag<Eina_List*, eina::list<T>>)
