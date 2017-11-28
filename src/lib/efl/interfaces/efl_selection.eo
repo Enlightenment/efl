@@ -11,7 +11,8 @@ interface Efl.Selection {
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in buf: const(void_ptr);
             @in len: int; [[The buffer's length.]]
-            @in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            @in seat: int @optional;[[Specified seat for multiple seats case.]]
          }
       }
       selection_get {
@@ -19,13 +20,15 @@ interface Efl.Selection {
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in data_func: Efl.Selection.Data_Ready; [[Data ready function pointer]]
-            @in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            @in seat: int @optional;[[Specified seat for multiple seats case.]]
          }
       }
       selection_clear {
          params {
             @in type: Efl.Selection.Type; [[Selection Type]]
-            @in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+            //@in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+            @in seat: int @optional; [[Specified seat for multiple seats case.]]
          }
       }
       /*selection_loss_feedback { //name!!!

@@ -137,7 +137,7 @@ struct _Drag_Container
    void *icon_list_func_data;
    Efl_Dnd_Drag_Icon_List_Create icon_list_func;
    Eina_Free_Cb icon_list_func_free_cb;
-   Efl_Input_Device *seat;
+   int *seat;
 
    Efl_Selection_Manager_Data *pd;
 };
@@ -202,7 +202,7 @@ struct _Dropable
    Evas_Object    *obj;
    //Eina_Inlist    *cbs_list; /* List of Dropable_Cbs * */
    Eina_Inlist   *format_list;
-   Efl_Input_Device *seat;
+   int *seat;
    struct {
       Evas_Coord      x, y;
       Eina_Bool       in : 1;

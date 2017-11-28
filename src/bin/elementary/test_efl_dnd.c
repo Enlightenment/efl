@@ -78,16 +78,17 @@ _selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win = data;
    //Evas_Object *cnp = efl_add(EFL_CNP_CLASS, win);
+   int seat_id = efl_input_device_seat_id_get(seat);
 
    efl_selection_get(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT,
-	   NULL, _selection_data_ready_cb, NULL, seat);
+	   NULL, _selection_data_ready_cb, NULL, seat_id);
 }
 
 static void
 _selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
     efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
-	    "new", 4, NULL);
+	    "new", 4, 1);
 }
 
 static void
