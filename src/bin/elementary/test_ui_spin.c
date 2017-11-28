@@ -22,15 +22,13 @@ _spin_max_reached_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _inc_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   int val = (int)efl_ui_range_value_get(data);
-   efl_ui_range_value_set(data, ++val);
+   efl_ui_range_value_set(data, (efl_ui_range_value_get(data) + efl_ui_range_step_get(data)));
 }
 
 static void
 _dec_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   int val = (int)efl_ui_range_value_get(data);
-   efl_ui_range_value_set(data, --val);
+   efl_ui_range_value_set(data, (efl_ui_range_value_get(data) - efl_ui_range_step_get(data)));
 }
 
 void

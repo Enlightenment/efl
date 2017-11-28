@@ -163,6 +163,27 @@ _efl_ui_spin_elm_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
    return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_spin_elm_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+{
+   Eo *ev = eo_event->info;
+
+   if (efl_input_processed_get(ev)) return EINA_FALSE;
+
+   if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
+     {
+       if (efl_input_pointer_wheel_delta_get(ev) < 0)
+         efl_ui_range_value_set(obj, (efl_ui_range_value_get(obj) + sd->step));
+       else
+         efl_ui_range_value_set(obj, (efl_ui_range_value_get(obj) - sd->step));
+     }
+   else
+     return EINA_FALSE;
+
+   efl_input_processed_set(ev, EINA_TRUE);
+   return EINA_TRUE;
+}
+
 EOLIAN static Eo *
 _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
 {
