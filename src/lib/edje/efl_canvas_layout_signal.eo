@@ -1,8 +1,8 @@
 function Efl.Signal_Cb
 {
-   [[Signal callback definition for $Efl.Canvas.Layout_Signal]]
+   [[Signal callback definition for @Efl.Canvas.Layout_Signal]]
    params {
-      @in obj: Efl.Canvas.Object; [[Object where the signal comes from.]]
+      @in obj: Efl.Canvas.Layout_Signal; [[Object where the signal comes from.]]
       @in emission: string; [[The emitted signal.]]
       @in source: string; [[The source of the signal.]]
    }
