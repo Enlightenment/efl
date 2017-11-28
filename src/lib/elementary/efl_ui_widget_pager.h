@@ -18,7 +18,6 @@ typedef struct _Efl_Ui_Pager_Data
 
    Evas_Coord               x, y, w, h;
    Evas_Coord               mouse_x, mouse_y;
-   Evas_Coord               mouse_down_x, mouse_down_y;
 
    struct {
       Eina_Size2D           sz;
@@ -28,19 +27,14 @@ typedef struct _Efl_Ui_Pager_Data
    struct {
       Evas_Coord            x, y;
       int                   page;
-      double                ratio;
+      double                pos;
       Eina_Bool             enabled;
-   } mouse_down;
+   } down;
 
    struct {
-      int                   index;
-      Eo                   *obj;
-   } packed_page;
-
-   int                      cnt;
-   int                      page;
-   int                      current_page;
-   double                   move;
+      int                   page;
+      double                pos;
+   } curr;
 
    struct {
       Ecore_Animator       *animator;
@@ -50,7 +44,8 @@ typedef struct _Efl_Ui_Pager_Data
       Eina_Bool             jump;
    } change;
 
-   Efl_Ui_Dir               dir;
+   int                      cnt;
+
    Efl_Ui_Pager_Loop        loop;
    Efl_Page_Transition     *transition;
 

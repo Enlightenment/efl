@@ -19,6 +19,12 @@
   *
   */
 
+typedef enum _Pagetype {
+   LAYOUT = 1,
+   GENLIST,
+   BUTTON
+} Pagetype;
+
 typedef struct _Params {
    Evas_Object *navi;
    Evas_Object *pager;
@@ -45,6 +51,63 @@ static void scroll_block_cb(void *data, Evas_Object *obj, void *event_info);
 //static void transition_cb(void *data, Evas_Object *obj, void *event_info); //TODO
 static void win_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
+static char *
+text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   int num = (int)(uintptr_t)data;
+
+   snprintf(buf, sizeof(buf), "Item # %i", num);
+
+   return strdup(buf);
+}
+
+Eo *
+page_add(Pagetype p, Eo *parent, int page_num)
+{
+   Eo *page;
+   Elm_Genlist_Item_Class *itc;
+   Elm_Object_Item *it;
+   char buf[PATH_MAX];
+   int i;
+
+   switch (p) {
+
+      case LAYOUT:
+         page = efl_add(EFL_UI_LAYOUT_CLASS, parent);
+         snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj", elm_app_data_dir_get());
+         efl_file_set(page, buf, "page");
+         efl_text_set(efl_part(page, "text"), "Layout Page");
+         break;
+
+      case GENLIST:
+         page = elm_genlist_add(parent);
+         itc = elm_genlist_item_class_new();
+         itc->item_style = "default";
+         itc->func.text_get = text_get;
+         for (i = 0; i < 20; i++) {
+            it = elm_genlist_item_append(page,
+                                         itc,
+                                         i,
+                                         NULL,
+                                         ELM_GENLIST_ITEM_NONE,
+                                         NULL,
+                                         NULL);
+         }
+         evas_object_show(page);
+         break;
+      case BUTTON:
+         page = efl_add(EFL_UI_BUTTON_CLASS, parent);
+         efl_text_set(efl_part(page, "text"), "Button Page");
+         break;
+   }
+
+   evas_object_size_hint_weight_set(page, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(page, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   return page;
+}
+
 void
 test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -52,7 +115,6 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    Efl_Page_Transition *tran;
    Params *params = NULL;
    int i;
-   char buf[64];
 
    win = elm_win_util_standard_add("pager", "Pager");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -108,14 +170,21 @@ test_efl_ui_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_list_item_append(list, "Current Page", NULL, NULL, current_page_cb, params);
    elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    //elm_list_item_append(list, "Transition", NULL, NULL, transition_cb, params); //TODO
+
    elm_list_go(list);
 
    for (i = 0; i < PAGE_NUM; i++) {
-      page = efl_add(EFL_UI_LAYOUT_CLASS, pager);
-      snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj", elm_app_data_dir_get());
-      efl_file_set(page, buf, "page");
-      snprintf(buf, 16, "Page %d", i);
-      efl_text_set(efl_part(page, "text"), buf);
+      switch (i % 3) {
+         case 0:
+            page = page_add(LAYOUT, pager, i);
+            break;
+         case 1:
+            page = page_add(GENLIST, pager, i);
+            break;
+         case 2:
+            page = page_add(BUTTON, pager, i);
+            break;
+      }
       efl_pack_end(pager, page);
    }
 
@@ -168,21 +237,92 @@ static void side_page_num_slider_cb(void *data, Evas_Object *obj, void *event_in
    efl_page_transition_scroll_side_page_num_set(params->transition, params->side_page_num);
 }
 
-static void pack_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void pack_begin_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *pager = data;
    Evas_Object *page;
-   char buf[64];
    int index;
 
-   page = efl_add(EFL_UI_LAYOUT_CLASS, pager);
-   snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj", elm_app_data_dir_get());
-   efl_file_set(page, buf, "page");
+   index = efl_content_count(pager);
+   switch (index % 3) {
+      case 0:
+         page = page_add(LAYOUT, pager, index);
+         break;
+      case 1:
+         page = page_add(GENLIST, pager, index);
+         break;
+      case 2:
+         page = page_add(BUTTON, pager, index);
+         break;
+   }
+   efl_pack_begin(pager, page);
+}
+
+static void pack_end_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pager = data;
+   Evas_Object *page;
+   int index;
 
    index = efl_content_count(pager);
-   snprintf(buf, 16, "Page %d", index);
-   efl_text_set(efl_part(page, "text"), buf);
+   switch (index % 3) {
+      case 0:
+         page = page_add(LAYOUT, pager, index);
+         break;
+      case 1:
+         page = page_add(GENLIST, pager, index);
+         break;
+      case 2:
+         page = page_add(BUTTON, pager, index);
+         break;
+   }
    efl_pack_end(pager, page);
+}
+
+static void pack_before_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pager = data;
+   Evas_Object *curr_page, *page;
+   int index;
+
+   index = efl_ui_pager_current_page_get(pager);
+   curr_page = efl_pack_content_get(pager, index);
+
+   switch (index % 3) {
+      case 0:
+         page = page_add(LAYOUT, pager, index);
+         break;
+      case 1:
+         page = page_add(GENLIST, pager, index);
+         break;
+      case 2:
+         page = page_add(BUTTON, pager, index);
+         break;
+   }
+   efl_pack_before(pager, page, curr_page);
+}
+
+static void pack_after_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *pager = data;
+   Evas_Object *curr_page, *page;
+   int index;
+
+   index = efl_ui_pager_current_page_get(pager);
+   curr_page = efl_pack_content_get(pager, index);
+
+   switch (index % 3) {
+      case 0:
+         page = page_add(LAYOUT, pager, index);
+         break;
+      case 1:
+         page = page_add(GENLIST, pager, index);
+         break;
+      case 2:
+         page = page_add(BUTTON, pager, index);
+         break;
+   }
+   efl_pack_after(pager, page, curr_page);
 }
 
 static void page_set_btn_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -345,8 +485,26 @@ static void pack_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_naviframe_item_push(navi, "Pack End", btn, NULL, box, NULL);
 
    pack_btn = elm_button_add(navi);
+   elm_object_text_set(pack_btn, "Pack Begin");
+   evas_object_smart_callback_add(pack_btn, "clicked", pack_begin_btn_cb, pager);
+   evas_object_show(pack_btn);
+   elm_box_pack_end(box, pack_btn);
+
+   pack_btn = elm_button_add(navi);
    elm_object_text_set(pack_btn, "Pack End");
-   evas_object_smart_callback_add(pack_btn, "clicked", pack_btn_cb, pager);
+   evas_object_smart_callback_add(pack_btn, "clicked", pack_end_btn_cb, pager);
+   evas_object_show(pack_btn);
+   elm_box_pack_end(box, pack_btn);
+
+   pack_btn = elm_button_add(navi);
+   elm_object_text_set(pack_btn, "Pack Before Current Page");
+   evas_object_smart_callback_add(pack_btn, "clicked", pack_before_btn_cb, pager);
+   evas_object_show(pack_btn);
+   elm_box_pack_end(box, pack_btn);
+
+   pack_btn = elm_button_add(navi);
+   elm_object_text_set(pack_btn, "Pack After Current Page");
+   evas_object_smart_callback_add(pack_btn, "clicked", pack_after_btn_cb, pager);
    evas_object_show(pack_btn);
    elm_box_pack_end(box, pack_btn);
 }

@@ -11,13 +11,14 @@
 
 #define MY_CLASS EFL_UI_PAGER_CLASS
 
+#define DEBUG 0
 
 static void
 _efl_ui_pager_update(Efl_Ui_Pager_Data *pd)
 {
    if (pd->cnt == 0) return;
 
-   efl_page_transition_update(pd->transition, pd->move);
+   efl_page_transition_update(pd->transition, pd->curr.pos);
 }
 
 static void
@@ -26,37 +27,52 @@ _job(void *data)
    Evas_Object *obj = data;
    EFL_UI_PAGER_DATA_GET(obj, pd);
 
-   double t = 0;
-   Eina_Bool prev = EINA_FALSE, next = EINA_FALSE;
+   int prev_page, page_diff;
+   double prev_pos, pos_diff;
+
+   prev_page = pd->curr.page;
+   prev_pos = pd->curr.pos;
 
    pd->job = NULL;
 
-   if (pd->dir == EFL_UI_DIR_HORIZONTAL)
-     t = ((double)pd->mouse_down.x - (double)pd->mouse_x) / (double)pd->w;
-   else
-     t = ((double)pd->mouse_down.y - (double)pd->mouse_y) / (double)pd->h;
+   pos_diff = ((double) pd->down.x - (double) pd->mouse_x) / (double) pd->w;
+   pd->curr.pos = pd->down.pos + pos_diff;
+   page_diff = (int) pd->curr.pos;
 
-   if (t > 1.0) t = 1.0;
-   else if (t < -1.0) t = -1.0;
+   //FIXME what if (prev_pos != 0.0)
+   if ((pd->loop == EFL_UI_PAGER_LOOP_DISABLED) &&
+       (((prev_page == 0) && (pd->curr.pos < 0)) ||
+        ((prev_page == (pd->cnt - 1)) && (pd->curr.pos > 0))))
+     {
+        pd->curr.page = prev_page;
+        pd->curr.pos = prev_pos;
+        return;
+     }
 
-   if (pd->prev_block && (t < 0)) return;
-   if (pd->next_block && (t > 0)) return;
+   pd->curr.page = (pd->down.page + page_diff + pd->cnt) % pd->cnt;
+   pd->curr.pos -= page_diff;
 
-   if (EINA_DBL_EQ(pd->move, t)) return;
+   //FIXME what if (page_diff >= 2 || page_diff <= -2)
+   if (page_diff != 0)
+     {
+#if DEBUG
+        ERR("page changed %d -> %d, diff %d",
+            pd->down.page, pd->curr.page, page_diff);
+#endif
+        pd->down.x = pd->mouse_x;
+        pd->down.y = pd->mouse_y;
+        pd->down.page = pd->curr.page;
+        pd->down.pos = pd->curr.pos;
 
-   pd->move = t;
-
-   if (t < 0) prev = EINA_TRUE;
-   else if (t > 0) next = EINA_TRUE;
-
-   if (pd->prev_block && prev) return;
-   else if (pd->next_block && next) return;
-
-   if ((pd->loop == EFL_UI_PAGER_LOOP_DISABLED)
-       && ((next && pd->mouse_down.page == (pd->cnt - 1))
-           || (prev && pd->mouse_down.page == 0))) return;
+        efl_page_transition_curr_page_change(pd->transition, page_diff);
+     }
+#if DEBUG
+   ERR("curr page %d pos %lf", pd->curr.page, pd->curr.pos);
+#endif
 
    _efl_ui_pager_update(pd);
+
+   return;
 }
 
 static Eina_Bool
@@ -69,35 +85,42 @@ _animator(void *data, double pos)
 
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
 
-   if (pd->move < 0.0)
+   if (pd->curr.pos < 0.0)
      {
-        if (pd->move > -0.5)
-          pd->move = pd->move * (1 - p);
+        if (pd->curr.pos > -0.5)
+          pd->curr.pos = pd->curr.pos * (1 - p);
         else
-          pd->move = (-1) - (-1 - pd->move) * (1 - p);
+          pd->curr.pos = (-1) - (-1 - pd->curr.pos) * (1 - p);
      }
    else
      {
-        if (pd->move < 0.5)
-          pd->move = pd->move * (1 - p);
+        if (pd->curr.pos < 0.5)
+          pd->curr.pos = pd->curr.pos * (1 - p);
         else
-          pd->move = 1 - (1 - pd->move) * (1 - p);
+          pd->curr.pos = 1 - (1 - pd->curr.pos) * (1 - p);
+     }
+
+   if (EINA_DBL_EQ(pd->curr.pos, 1.0))
+     {
+        efl_page_transition_curr_page_change(pd->transition, 1.0);
+        pd->curr.page = (pd->curr.page + 1 + pd->cnt) % pd->cnt;
+        pd->curr.pos = 0.0;
+     }
+   else if (EINA_DBL_EQ(pd->curr.pos, -1.0))
+     {
+        efl_page_transition_curr_page_change(pd->transition, -1.0);
+        pd->curr.page = (pd->curr.page - 1 + pd->cnt) % pd->cnt;
+        pd->curr.pos = 0.0;
      }
 
    _efl_ui_pager_update(pd);
 
-   if (pos < 1.0) return ECORE_CALLBACK_RENEW;
-
-   if (EINA_DBL_EQ(pd->move, 1.0) || EINA_DBL_EQ(pd->move, -1.0))
+   if (EINA_DBL_EQ(pos, 1.0) || EINA_DBL_EQ(pd->curr.pos, 0.0))
      {
-        efl_page_transition_curr_page_change(pd->transition, pd->move);
-        pd->current_page = (pd->current_page + (int) pd->move + pd->cnt) % pd->cnt;
-        //TODO Call "page changed" callback
-        pd->move = 0.0;
+        pd->animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
      }
-
-   pd->animator = NULL;
-   return ECORE_CALLBACK_CANCEL;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -112,21 +135,23 @@ _mouse_down_cb(void *data,
    if (efl_input_pointer_button_get(ev) != 1) return;
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
 
-   if (pd->move != 0.0) return; //FIXME
-
    ELM_SAFE_FREE(pd->animator, ecore_animator_del);
 
    pd->move_started = EINA_FALSE;
-   pd->mouse_down.enabled = EINA_TRUE;
 
    pos = efl_input_pointer_position_get(ev);
    pd->mouse_x = pos.x - pd->x;
    pd->mouse_y = pos.y - pd->y;
 
-   pd->mouse_down.x = pd->mouse_x;
-   pd->mouse_down.y = pd->mouse_y;
+   pd->down.enabled = EINA_TRUE;
+   pd->down.x = pd->mouse_x;
+   pd->down.y = pd->mouse_y;
+   pd->down.page = pd->curr.page;
+   pd->down.pos = pd->curr.pos;
 
-   pd->mouse_down.page = pd->current_page;
+#if DEBUG
+   ERR("curr page %d pos %lf", pd->curr.page, pd->curr.pos);
+#endif
 }
 
 static void
@@ -139,17 +164,21 @@ _mouse_move_cb(void *data,
    Eina_Position2D pos;
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
-   if (!pd->mouse_down.enabled) return;
+   if (!pd->down.enabled) return;
 
    pos = efl_input_pointer_position_get(ev);
+
+   if (pd->prev_block && (pd->mouse_x < (pos.x - pd->x))) return;
+   if (pd->next_block && (pd->mouse_x > (pos.x - pd->x))) return;
+
    pd->mouse_x = pos.x - pd->x;
    pd->mouse_y = pos.y - pd->y;
 
    if (!pd->move_started)
      {
         Evas_Coord dx, dy;
-        dx = pd->mouse_x - pd->mouse_down.x;
-        dy = pd->mouse_y - pd->mouse_down.y;
+        dx = pd->mouse_x - pd->down.x;
+        dy = pd->mouse_y - pd->down.y;
 
         if (((dx * dx) + (dy * dy)) <=
             (_elm_config->finger_size * _elm_config->finger_size / 4))
@@ -172,39 +201,23 @@ _mouse_up_cb(void *data,
    double time;
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
-   if (!pd->mouse_down.enabled) return;
+   if (!pd->down.enabled) return;
 
-   pd->mouse_down.enabled = EINA_FALSE;
+   pd->down.enabled = EINA_FALSE;
 
    ELM_SAFE_FREE(pd->job, ecore_job_del);
 
-   if ((pd->loop == EFL_UI_PAGER_LOOP_DISABLED)
-       && (((pd->move > 0) && (pd->mouse_down.page == (pd->cnt - 1)))
-           || ((pd->move < 0) && (pd->mouse_down.page == 0))))
-     {
-        pd->move = 0.0;
-        return;
-     }
+   if (EINA_DBL_EQ(pd->curr.pos, 0.0)) return;
 
-   if (EINA_DBL_EQ(pd->move, 0.0)) return;
-   if (EINA_DBL_EQ(pd->move, 1.0) || EINA_DBL_EQ(pd->move, -1.0))
+   if (pd->curr.pos < 0.0)
      {
-        efl_page_transition_curr_page_change(pd->transition, pd->move);
-        pd->current_page = (pd->current_page + (int) pd->move + pd->cnt) % pd->cnt;
-        //TODO Call "page changed" callback
-        pd->move = 0.0;
-        return;
-     }
-
-   if (pd->move < 0.0)
-     {
-        if (pd->move > -0.5) time = (-1) * pd->move;
-        else time = 1 + pd->move;
+        if (pd->curr.pos > -0.5) time = (-1) * pd->curr.pos;
+        else time = 1 + pd->curr.pos;
      }
    else
      {
-        if (pd->move < 0.5) time = pd->move;
-        else time = 1 - pd->move;
+        if (pd->curr.pos < 0.5) time = pd->curr.pos;
+        else time = 1 - pd->curr.pos;
      }
 
    if (time < 0.01) time = 0.01;
@@ -221,6 +234,7 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *pd)
    pd->event = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                        evas_object_evas_get(obj));
    evas_object_color_set(pd->event, 0, 0, 0, 0);
+   evas_object_repeat_events_set(pd->event, EINA_TRUE);
 
    efl_event_callback_add(pd->event, EFL_EVENT_POINTER_DOWN,
                           _mouse_down_cb, obj);
@@ -239,10 +253,10 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    elm_widget_sub_object_parent_add(obj);
 
    pd->cnt = 0;
-   pd->current_page = -1;
-   pd->move = 0.0;
-   pd->dir = EFL_UI_DIR_HORIZONTAL;
    pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
+
+   pd->curr.page = 0;
+   pd->curr.pos = 0.0;
 
    _event_handler_create(obj, pd);
 
@@ -295,22 +309,104 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
+                                         Efl_Ui_Pager_Data *pd,
+                                         Efl_Gfx *subobj)
+{
+   efl_parent_set(subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
+
+   pd->content_list = eina_list_prepend(pd->content_list, subobj);
+   efl_gfx_stack_above(pd->event, subobj);
+
+   pd->cnt += 1;
+   pd->curr.page += 1;
+
+   efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
                                        Efl_Ui_Pager_Data *pd,
                                        Efl_Gfx *subobj)
 {
    efl_parent_set(subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
 
    pd->content_list = eina_list_append(pd->content_list, subobj);
    efl_gfx_stack_above(pd->event, subobj);
 
-   pd->packed_page.index = pd->cnt;
-   pd->packed_page.obj = subobj;
-
-   if (pd->cnt == 0) pd->current_page = 0;
    pd->cnt += 1;
 
-   efl_page_transition_update(pd->transition, pd->move);
+   efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
+                                          Efl_Ui_Pager_Data *pd,
+                                          Efl_Gfx *subobj,
+                                          const Efl_Gfx *existing)
+{
+   int index;
+   efl_parent_set(subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
+
+   index = eina_list_data_idx(pd->content_list, (void *)existing);
+   pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
+   efl_gfx_stack_above(pd->event, subobj);
+
+   pd->cnt += 1;
+   if (pd->curr.page >= index) pd->curr.page += 1;
+
+   efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
+                                         Efl_Ui_Pager_Data *pd,
+                                         Efl_Gfx *subobj,
+                                         const Efl_Gfx *existing)
+{
+   int index;
+   efl_parent_set(subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
+
+   index = eina_list_data_idx(pd->content_list, (void *)existing);
+   pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
+   efl_gfx_stack_above(pd->event, subobj);
+
+   pd->cnt += 1;
+   if (pd->curr.page > index) pd->curr.page += 1;
+
+   efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
+                                      Efl_Ui_Pager_Data *pd,
+                                      Efl_Gfx *subobj,
+                                      int index)
+{
+   Efl_Gfx *existing = NULL;
+   efl_parent_set(subobj, obj);
+   elm_widget_sub_object_add(obj, subobj);
+
+   existing = eina_list_nth(pd->content_list, index);
+   pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
+   efl_gfx_stack_above(pd->event, subobj);
+
+   pd->cnt += 1;
+   if (pd->curr.page >= index) pd->curr.page += 1;
+
+   efl_page_transition_update(pd->transition, pd->curr.pos);
 
    return EINA_TRUE;
 }
@@ -336,46 +432,39 @@ _change_animator(void *data, double pos)
 {
    Eo *obj = data;
    EFL_UI_PAGER_DATA_GET(obj, pd);
-   double p, d, move;
-   int page;
-   Eina_Bool changed = EINA_FALSE;
+
+   double p, d, temp_pos;
+   int temp_page;
 
    p = ecore_animator_pos_map(pos, ECORE_POS_MAP_ACCELERATE, 0.0, 0.0);
 
    d = pd->change.src + pd->change.delta * p;
-   page = d;
-   move = d - page;
+   temp_page = d;
+   temp_pos = d - temp_page;
 
-   if ((pd->change.delta < 0) && (move > 0))
+   if ((pd->change.delta < 0) && (temp_pos > 0))
      {
-        page += 1;
-        move -= 1.0;
+        temp_page += 1;
+        temp_pos -= 1.0;
      }
 
-   if (pd->current_page != page)
+   if (pd->curr.page != temp_page)
      {
         if (pd->change.delta < 0)
-          {
-             page += 1;
-             move = -1.0;
-          }
+          efl_page_transition_curr_page_change(pd->transition, -1.0);
         else
-          {
-             page -= 1;
-             move = 1.0;
-          }
-        changed = EINA_TRUE;
+          efl_page_transition_curr_page_change(pd->transition, 1.0);
+        temp_pos = 0.0;
      }
 
-   pd->move = move;
+   pd->curr.page = temp_page;
+   pd->curr.pos = temp_pos;
+
+#if DEBUG
+   ERR("curr page %d pos %lf", pd->curr.page, pd->curr.pos);
+#endif
+
    _efl_ui_pager_update(pd);
-
-   if (changed)
-     {
-        efl_page_transition_curr_page_change(pd->transition, pd->move);
-        pd->current_page = (page + (int) move + pd->cnt) % pd->cnt;
-        pd->move = 0.0;
-     }
 
    if (pos < 1.0) return ECORE_CALLBACK_RENEW;
 
@@ -391,16 +480,25 @@ _efl_ui_pager_current_page_set(Eo *obj EINA_UNUSED,
 {
    double time;
 
-   pd->change.src = pd->current_page + pd->move;
+#if DEBUG
+   ERR("curr page %d pos %lf", pd->curr.page, pd->curr.pos);
+#endif
+
+   pd->change.src = pd->curr.page + pd->curr.pos;
    pd->change.dst = index;
 
    pd->change.delta = pd->change.dst - pd->change.src;
+
+#if DEBUG
+   ERR("curr page %d pos %lf delta %lf",
+       pd->curr.page, pd->curr.pos, pd->change.delta);
+#endif
 
    if (pd->change.delta == 0) return;
 
    time = pd->change.delta;
    if (pd->change.delta < 0) time *= (-1);
-   time /= pd->cnt;
+   time /= pd->cnt; //FIXME
 
    ecore_animator_del(pd->change.animator);
    pd->change.animator = ecore_animator_timeline_add(time, _change_animator, obj);
@@ -410,7 +508,7 @@ EOLIAN static int
 _efl_ui_pager_current_page_get(Eo *obj EINA_UNUSED,
                                Efl_Ui_Pager_Data *pd)
 {
-   return pd->current_page;
+   return pd->curr.page;
 }
 
 EOLIAN static Efl_Page_Transition *
@@ -427,25 +525,6 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
 {
    efl_page_transition_bind(transition, obj);
    pd->transition = transition;
-}
-
-EOLIAN static Efl_Ui_Dir
-_efl_ui_pager_efl_ui_direction_direction_get(Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Pager_Data *pd)
-{
-   return pd->dir;
-}
-
-EOLIAN static void
-_efl_ui_pager_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Pager_Data *pd,
-                                             Efl_Ui_Dir dir)
-{
-   if (dir != EFL_UI_DIR_VERTICAL &&
-       dir != EFL_UI_DIR_HORIZONTAL)
-     return;
-
-   pd->dir = dir;
 }
 
 EOLIAN Eina_Size2D
@@ -520,7 +599,6 @@ _efl_ui_pager_loop_get(Eo *obj EINA_UNUSED,
 {
    return pd->loop;
 }
-
 
 
 #include "efl_ui_pager.eo.c"

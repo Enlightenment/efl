@@ -5,7 +5,7 @@ enum Efl.Ui.Pager.Loop
    enabled
 }
 
-class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
+class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear)
 {
    [[Efl ui pager class]]
    event_prefix: efl_ui_pager;
@@ -50,9 +50,12 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear, Efl.Ui.Direction)
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
       Efl.Container.content_count;
+      Efl.Pack.Linear.pack_begin;
       Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_before;
+      Efl.Pack.Linear.pack_after;
+      Efl.Pack.Linear.pack_at;
       Efl.Pack.Linear.pack_content_get;
       Efl.Pack.Linear.pack_index_get;
-      Efl.Ui.Direction.direction { set; get; }
    }
 }
