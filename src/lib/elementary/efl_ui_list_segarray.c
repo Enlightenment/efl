@@ -93,7 +93,7 @@ static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Nod
 {
    Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
    item->item.children = model;
-   item->item.index_offset = off_index;
+   item->item.index_offset = off_index - node->first;
    item->item.tree_node = node;
    return item;
 }

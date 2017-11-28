@@ -88,6 +88,8 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
       Elm.Widget.focus_manager_create;
       Elm.Widget.widget_event;
 
+      Efl.Ui.Focus.Manager.focus {set; }
+
       //Efl.Ui.Layout.sizing_eval;
       Efl.Ui.View.model { get; set; }
 
