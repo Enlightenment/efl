@@ -817,12 +817,12 @@ edje_match_program_hash_build(Edje_Program *const *programs,
 
 void
 edje_match_callback_hash_build(const Edje_Signal_Callback_Match *callbacks,
-                               int callbacks_count,
+                               unsigned int callbacks_count,
                                Eina_Rbtree **tree,
                                Eina_Inarray *result)
 {
    Eina_Rbtree *new = NULL;
-   int i;
+   unsigned int i;
 
    eina_inarray_step_set(result, sizeof (Eina_Inarray), sizeof (int), 8);
 

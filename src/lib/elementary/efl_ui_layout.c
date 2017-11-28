@@ -823,20 +823,24 @@ _efl_ui_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Data 
    efl_canvas_layout_signal_emit(wd->resize_obj, emission, source);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+EOLIAN static Efl_Signal_Cb_Connection
+_efl_ui_layout_efl_canvas_layout_signal_signal_cb_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED,
+                                                      const char *emission, const char *source,
+                                                      void *data, Efl_Signal_Cb func, Eina_Free_Cb data_free_cb)
 {
    // Don't do anything else than call forward here
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
+   Efl_Signal_Cb_Connection empty = {};
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, empty);
+   return efl_canvas_layout_signal_cb_add(wd->resize_obj, emission, source, data, func, data_free_cb);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_efl_ui_layout_efl_canvas_layout_signal_signal_cb_del(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED,
+                                                      const Efl_Signal_Cb_Connection *connection)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
+   return efl_canvas_layout_signal_cb_del(wd->resize_obj, connection);
 }
 
 // TODO:

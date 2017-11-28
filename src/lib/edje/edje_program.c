@@ -214,7 +214,8 @@ edje_transition_duration_factor_set(double scale)
 }
 
 static inline Eina_Bool
-_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+                                 Efl_Signal_Cb func, void *data, Eina_Free_Cb data_free_cb)
 {
    Edje_Signal_Callback_Group *gp;
    const char *sig;
@@ -229,7 +230,7 @@ _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *sou
    src = eina_stringshare_add(source);
 
    gp = (Edje_Signal_Callback_Group *) ed->callbacks;
-   ok = _edje_signal_callback_push(gp, sig, src, func, data, EINA_TRUE);
+   ok = _edje_signal_callback_push(gp, sig, src, func, data, data_free_cb, EINA_TRUE);
 
    eina_stringshare_del(sig);
    eina_stringshare_del(src);
@@ -244,31 +245,51 @@ edje_object_propagate_callback_add(Evas_Object *obj, Efl_Signal_Cb func, void *d
 
    ed = _edje_fetch(obj);
    if (!ed || ed->delete_me) return;
-   _edje_object_signal_callback_add(ed, "*", "*", func, data);
+   _edje_object_signal_callback_add(ed, "*", "*", func, data, NULL);
 }
 
-EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+EOLIAN Efl_Signal_Cb_Connection
+_edje_object_efl_canvas_layout_signal_signal_cb_add(Eo *obj EINA_UNUSED, Edje *ed,
+                                                    const char *emission, const char *source,
+                                                    void *data, Efl_Signal_Cb func, Eina_Free_Cb free_cb)
 {
-   return _edje_object_signal_callback_add(ed, emission, source, func, data);
+   Efl_Signal_Cb_Connection connection = { NULL, NULL, NULL, NULL };
+
+   if (!_edje_object_signal_callback_add(ed, emission, source, func, data, free_cb))
+     return connection;
+
+   connection.emission = emission;
+   connection.source = source;
+   connection.func_ptr = (const void *) func;
+   connection.user_data = data;
+
+   return connection;
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_edje_object_efl_canvas_layout_signal_signal_cb_del(Eo *obj EINA_UNUSED, Edje *ed,
+                                                    const Efl_Signal_Cb_Connection *connection)
 {
    Edje_Signal_Callback_Group *gp;
+   Eina_Stringshare *emission, *source;
    Eina_Bool ok;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(connection, EINA_FALSE);
    if (ed->delete_me) return EINA_FALSE;
-   if ((!emission) || (!source) || (!func)) return EINA_FALSE;
+   if ((!connection->emission) ||
+       (!connection->source) ||
+       (!connection->func_ptr))
+     return EINA_FALSE;
 
    gp = (Edje_Signal_Callback_Group *) ed->callbacks;
    if (!gp) return EINA_FALSE;
 
-   emission = eina_stringshare_add(emission);
-   source = eina_stringshare_add(source);
+   emission = eina_stringshare_add(connection->emission);
+   source = eina_stringshare_add(connection->source);
 
-   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+   ok = _edje_signal_callback_disable(gp, emission, source,
+                                      (Edje_Signal_Cb) connection->func_ptr,
+                                      (void *) connection->user_data);
 
    eina_stringshare_del(emission);
    eina_stringshare_del(source);

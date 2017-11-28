@@ -3067,26 +3067,29 @@ _elm_entry_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_D
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_entry_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+EOLIAN static Efl_Signal_Cb_Connection
+_elm_entry_efl_canvas_layout_signal_signal_cb_add(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd,
+                                                  const char *emission, const char *source,
+                                                  void *data, Edje_Signal_Cb func_cb, Eina_Free_Cb data_free_cb)
 {
-   Eina_Bool ok;
+   Efl_Signal_Cb_Connection ret;
 
-   ok = efl_canvas_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
+   ret = efl_canvas_layout_signal_cb_add(sd->entry_edje, emission, source, data, func_cb, data_free_cb);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
+     efl_canvas_layout_signal_cb_add(sd->scr_edje, emission, source, data, func_cb, data_free_cb);
 
-   return ok;
+   return ret;
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_entry_efl_canvas_layout_signal_signal_cb_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd,
+                                                  const Efl_Signal_Cb_Connection *connection)
 {
    Eina_Bool ok;
 
-   ok = efl_canvas_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
+   ok = efl_canvas_layout_signal_cb_del(sd->entry_edje, connection);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
+     ok |= efl_canvas_layout_signal_cb_del(sd->scr_edje, connection);
 
    return ok;
 }

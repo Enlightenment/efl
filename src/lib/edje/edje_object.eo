@@ -196,8 +196,8 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Layout_Group.group_size_max { get; }
       Efl.Canvas.Layout_Group.group_data { get; }
       Efl.Canvas.Layout_Signal.message_send;
-      Efl.Canvas.Layout_Signal.signal_callback_add;
-      Efl.Canvas.Layout_Signal.signal_callback_del;
+      Efl.Canvas.Layout_Signal.signal_cb_add;
+      Efl.Canvas.Layout_Signal.signal_cb_del;
       Efl.Canvas.Layout_Signal.signal_emit;
       Efl.Canvas.Layout_Signal.signal_process;
       Efl.Ui.Base.mirrored { set; get; }

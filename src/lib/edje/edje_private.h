@@ -1065,6 +1065,7 @@ struct _Edje_Signal_Callback_Group
    const Edje_Signal_Callback_Matches *matches;
 
    void **custom_data;
+   Eina_Hash *custom_data_free_cb; // custom_data (void*) -> Eina_Free_Cb
 
    Edje_Signal_Callback_Flags *flags;
 };
@@ -2342,9 +2343,9 @@ Eina_List *edje_match_program_hash_build(Edje_Program * const * programs,
 					 unsigned int count,
 					 Eina_Rbtree **tree);
 void edje_match_callback_hash_build(const Edje_Signal_Callback_Match *callback,
-				    int callbacks_count,
-				    Eina_Rbtree **tree,
-				    Eina_Inarray *result);
+                                    unsigned int callbacks_count,
+                                    Eina_Rbtree **tree,
+                                    Eina_Inarray *result);
 const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 						      const char *source,
 						      const Eina_Rbtree *tree);
@@ -2476,6 +2477,7 @@ void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
 Eina_Bool _edje_signal_callback_push(Edje_Signal_Callback_Group *cgp,
                                      const char *signal, const char *source,
                                      Edje_Signal_Cb func, void *data,
+                                     Eina_Free_Cb data_free_cb,
                                      Eina_Bool propagate);
 Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
                                         const char *signal, const char *source,

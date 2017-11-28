@@ -3,6 +3,7 @@
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include <Edje.h>
 #include <Edje.eo.hh>
 
 #endif

@@ -954,8 +954,8 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Layout_Signal.signal_callback_add;
-      Efl.Canvas.Layout_Signal.signal_callback_del;
+      Efl.Canvas.Layout_Signal.signal_cb_add;
+      Efl.Canvas.Layout_Signal.signal_cb_del;
       Efl.Canvas.Layout_Signal.signal_emit;
       Elm.Widget.on_access_activate;
       Elm.Widget.theme_apply;

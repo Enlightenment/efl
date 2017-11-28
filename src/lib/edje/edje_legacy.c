@@ -64,7 +64,7 @@ edje_object_message_signal_recursive_process(Edje_Object *obj)
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   efl_canvas_layout_signal_callback_add(obj, emission, source, (Efl_Signal_Cb) func, data);
+   efl_canvas_layout_signal_callback_add(obj, emission, source, func, data);
 }
 
 EAPI void *

@@ -1,16 +1,21 @@
-/*
-  Edje signaling interface.
+function Efl.Signal_Cb
+{
+   [[Signal callback definition for $Efl.Canvas.Layout_Signal]]
+   params {
+      @in obj: Efl.Canvas.Object; [[Object where the signal comes from.]]
+      @in emission: string; [[The emitted signal.]]
+      @in source: string; [[The source of the signal.]]
+   }
+};
 
-  Note: This API must be manually bound in other languages as this uses function
-  pointers! This is by design, to keep the API simplhe API simple.
-
-  If function pointers really become allowed in EO this needs to be altered to
-  match that.
-*/
-
-//type Edje.Signal_Cb: __undefined_type; [[Edje signal callback type]]
-
-type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
+struct Efl.Signal_Cb_Connection
+{
+   [[This struct can be used to remove signal callbacks.]]
+   emission: string; [[The emitted signal.]]
+   source: string; [[The source of the signal.]]
+   func_ptr: const(void_ptr); [[The function pointer in C (do not access).]]
+   user_data: const(void_ptr); [[The user data in C (do not access).]]
+}
 
 interface Efl.Canvas.Layout_Signal
 {
@@ -43,7 +48,7 @@ interface Efl.Canvas.Layout_Signal
             @in msg: const(any_value); [[The message's payload]]
          }
       }
-      signal_callback_add {
+      signal_cb_add {
          [[Adds a callback for an arriving Edje signal, emitted by
            a given Edje object.
 
@@ -80,33 +85,30 @@ interface Efl.Canvas.Layout_Signal
            See also the Edje Data Collection Reference for EDC files.
 
            See @.signal_emit on how to emit signals from code to a an object
-           See @.signal_callback_del.
+           See @.signal_cb_del.
          ]]
          params {
             @in emission: string; [[The signal's "emission" string]]
             @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
-               [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
+            @in func: Efl.Signal_Cb; [[The callback function to be executed
+               when the signal is emitted.]]
          }
-         return: bool; [[$true in case of success, $false in case of error.]]
+         return: Efl.Signal_Cb_Connection; [[A struct that can be used to
+            detach this callback. All fields are $null if this call failed.]]
       }
-      signal_callback_del {
+      signal_cb_del {
          [[Removes a signal-triggered callback from an object.
 
            This function removes a callback, previously attached to the emission
            of a signal, from the object  obj. The parameters emission, source
            and func must match exactly those passed to a previous call to
-           @.signal_callback_add().
+           @.signal_cb_add().
 
-           See @.signal_callback_add.
+           See @.signal_cb_add.
          ]]
          params {
-            @in emission: string; [[The signal's "emission" string]]
-            @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
-               [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
+            @cref connection: Efl.Signal_Cb_Connection; [[A connection
+               identifier as returned by @.signal_cb_add.]]
          }
          return: bool; [[$true in case of success, $false in case of error.]]
       }
@@ -119,7 +121,7 @@ interface Efl.Canvas.Layout_Signal
 
            See also the Edje Data Collection Reference for EDC files.
 
-           See @.signal_callback_add() for more on Edje signals.
+           See @.signal_cb_add() for more on Edje signals.
          ]]
          params {
             @in emission: string; [[The signal's "emission" string]]

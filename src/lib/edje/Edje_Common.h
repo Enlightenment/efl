@@ -89,7 +89,29 @@ struct _Edje_Size_Class
  * @{
  */
 
-typedef void (*Efl_Signal_Cb) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Edje signal callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the signal comes from. @c emission will identify the exact signal's emission string and @c source the exact signal's source one. */
+#ifndef _EFL_CANVAS_LAYOUT_SIGNAL_EO_TYPES
+#define _EFL_CANVAS_LAYOUT_SIGNAL_EO_TYPES
+
+/** Signal callback definition for @c Efl.Canvas.Layout_Signal
+ *
+ * @ingroup Efl
+ */
+typedef void (*Efl_Signal_Cb)(void *data, Eo *obj, const char *emission, const char *source);
+
+/** This struct can be used to remove signal callbacks.
+ *
+ * @ingroup Efl
+ */
+typedef struct _Efl_Signal_Cb_Connection
+{
+  const char *emission; /**< The emitted signal. */
+  const char *source; /**< The source of the signal. */
+  const void *func_ptr; /**< The function pointer in C (do not access). */
+  const void *user_data; /**< The user data in C (do not access). */
+} Efl_Signal_Cb_Connection;
+
+#endif
+
 typedef Efl_Signal_Cb Edje_Signal_Cb;
 
 /**

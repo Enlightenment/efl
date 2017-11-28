@@ -127,7 +127,7 @@ edje_signal_shutdown(void)
 }
 
 static void
-_edje_signal_callback_unset(Edje_Signal_Callback_Group *gp, int idx)
+_edje_signal_callback_unset(Edje_Signal_Callback_Group *gp, unsigned int idx)
 {
    Edje_Signal_Callback_Match *m;
 
@@ -136,12 +136,25 @@ _edje_signal_callback_unset(Edje_Signal_Callback_Group *gp, int idx)
    m->signal = NULL;
    eina_stringshare_del(m->source);
    m->source = NULL;
+
+   if (EINA_UNLIKELY(gp->custom_data_free_cb != NULL))
+     {
+        Eina_Free_Cb free_cb = (Eina_Free_Cb)
+              eina_hash_find(gp->custom_data_free_cb, &gp->custom_data[idx]);
+        if (free_cb)
+          {
+             free_cb((void *) gp->custom_data[idx]);
+             eina_hash_del(gp->custom_data_free_cb, &gp->custom_data[idx],
+                           (const void *) free_cb);
+          }
+     }
 }
 
 static void
-_edje_signal_callback_set(Edje_Signal_Callback_Group *gp, int idx,
+_edje_signal_callback_set(Edje_Signal_Callback_Group *gp, unsigned int idx,
                           const char *sig, const char *src,
-                          Edje_Signal_Cb func, void *data, Edje_Signal_Callback_Flags flags)
+                          Edje_Signal_Cb func, void *data, Eina_Free_Cb data_free_cb,
+                          Edje_Signal_Callback_Flags flags)
 {
    Edje_Signal_Callback_Match *m;
 
@@ -151,6 +164,12 @@ _edje_signal_callback_set(Edje_Signal_Callback_Group *gp, int idx,
    m->func = func;
 
    gp->custom_data[idx] = data;
+   if (EINA_UNLIKELY(data_free_cb != NULL))
+     {
+        if (!gp->custom_data_free_cb)
+          gp->custom_data_free_cb = eina_hash_pointer_new(NULL);
+        eina_hash_set(gp->custom_data_free_cb, &data, (void *) data_free_cb);
+     }
 
    gp->flags[idx] = flags;
 }
@@ -172,7 +191,8 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
 Eina_Bool
 _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
                            const char *sig, const char *src,
-                           Edje_Signal_Cb func, void *data, Eina_Bool propagate)
+                           Edje_Signal_Cb func, void *data, Eina_Free_Cb data_free_cb,
+                           Eina_Bool propagate)
 {
    unsigned int i;
    Edje_Signal_Callback_Flags flags;
@@ -193,7 +213,7 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
             (gp->flags[i].delete_me))
           {
              _edje_signal_callback_unset(gp, i);
-             _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
+             _edje_signal_callback_set(gp, i, sig, src, func, data, data_free_cb, flags);
              return EINA_TRUE;
           }
      }
@@ -224,7 +244,7 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
         if (gp->flags[i].delete_me)
           {
              _edje_signal_callback_unset(gp, i);
-             _edje_signal_callback_set(gp, i, sig, src, func, data, flags);
+             _edje_signal_callback_set(gp, i, sig, src, func, data, data_free_cb, flags);
              return EINA_TRUE;
           }
      }
@@ -232,7 +252,7 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
    _edje_signal_callback_grow(gp);
    // Set propagate and just_added flags
    _edje_signal_callback_set(gp, tmp->matches_count - 1,
-                             sig, src, func, data, flags);
+                             sig, src, func, data, data_free_cb, flags);
 
    return EINA_TRUE;
 }
@@ -296,6 +316,19 @@ _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
    gp->matches = NULL;
    free(gp->flags);
    gp->flags = NULL;
+   if (EINA_UNLIKELY(gp->custom_data_free_cb != NULL))
+     {
+        Eina_Iterator *itr = eina_hash_iterator_tuple_new(gp->custom_data_free_cb);
+        Eina_Hash_Tuple *tup;
+        EINA_ITERATOR_FOREACH(itr, tup)
+          {
+             Eina_Free_Cb free_cb = EINA_FREE_CB(tup->data);
+             if (free_cb && tup->key)
+               free_cb(*((void **) tup->key));
+          }
+        eina_iterator_free(itr);
+        eina_hash_free(gp->custom_data_free_cb);
+     }
    free(gp->custom_data);
    gp->custom_data = NULL;
    free(gp);
