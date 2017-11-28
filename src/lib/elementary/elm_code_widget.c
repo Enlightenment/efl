@@ -2040,7 +2040,8 @@ _elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code *code)
 
    pd->code = code;
 
-   code->widgets = eina_list_append(code->widgets, obj);
+   if (code)
+     code->widgets = eina_list_append(code->widgets, obj);
 }
 
 EOLIAN static Elm_Code *
