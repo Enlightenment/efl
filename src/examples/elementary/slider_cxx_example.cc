@@ -10,6 +10,12 @@ using efl::eo::instantiate;
 static efl::ui::Win win;
 
 static void
+signal_handler(efl::canvas::Object&, efl::eina::string_view emission, efl::eina::string_view source)
+{
+   std::cout << "Got " << emission << " from " << source << std::endl;
+}
+
+static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -31,6 +37,9 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ic.icon_set("home");
    ic.scalable_set(false, false);
    sl2.content_set(ic);
+
+   sl2.signal_cb_add("*", "*", std::bind(signal_handler, _1, _2, _3));
+   sl2.signal_emit("hello", "you");
 
    efl::ui::Image ic2(instantiate, win);
    ic2.icon_set("folder");

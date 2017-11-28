@@ -21,6 +21,7 @@ extern "C" {
 #include "elm_widget.h"
 }
 
+#include <Edje.hh>
 #include "Elementary.eo.hh"
 
 #endif
