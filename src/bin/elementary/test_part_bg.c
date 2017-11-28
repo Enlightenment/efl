@@ -3,7 +3,9 @@
 #endif
 #include <Elementary.h>
 
-const Efl_Class *content_class[17];
+#define MAX_NUM_OF_CONTENT 18
+
+const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
 
 
 static void
@@ -65,12 +67,12 @@ _create_box_contents(Evas_Object *box)
                   efl_pack_end(box, efl_added));
 
    radio_group = radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                  efl_pack_end(hbox, efl_added),
-                  efl_gfx_size_hint_weight_set(efl_added, 0, 0),
-                  efl_ui_radio_state_value_set(efl_added, 0));
+                                 efl_pack_end(hbox, efl_added),
+                                 efl_gfx_size_hint_weight_set(efl_added, 0, 0),
+                                 efl_ui_radio_state_value_set(efl_added, 0));
 
    content = efl_add(EFL_UI_BOX_CLASS, hbox,
-                       efl_pack_end(hbox, efl_added));
+                     efl_pack_end(hbox, efl_added));
    evas_object_data_set(radio, "data", content);
 
    content = efl_add(EFL_UI_TEXT_CLASS, content,
@@ -78,23 +80,23 @@ _create_box_contents(Evas_Object *box)
                      efl_ui_text_interactive_editable_set(efl_added, EINA_FALSE),
                      efl_pack_end(content, efl_added));
 
-   for (i = 0; i < (sizeof(content_class) / sizeof(content_class[0])) ; i++)
+   for (i = 0; i < MAX_NUM_OF_CONTENT; i++)
      {
         if (!content_class[i]) continue;
 
         hbox = efl_add(EFL_UI_BOX_CLASS, box,
                        efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                        efl_pack_end(box, efl_added));
-   
+
         radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
                         efl_ui_radio_group_add(efl_added, radio_group),
                         efl_pack_end(hbox, efl_added),
                         efl_ui_radio_state_value_set(efl_added, i + 1),
-                        efl_gfx_size_hint_weight_set(efl_added, 0, 0)
-                        );
+                        efl_gfx_size_hint_weight_set(efl_added, 0, 0));
 
         content = efl_add(content_class[i], hbox,
                           efl_pack_end(hbox, efl_added));
+
         if (efl_isa(content, efl_text_interface_get()))
           efl_text_set(content, "text");
 
@@ -138,30 +140,30 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[14] = EFL_UI_IMAGE_CLASS;
    content_class[15] = EFL_UI_IMAGE_ZOOMABLE_CLASS;
    content_class[16] = EFL_UI_NSTATE_CLASS;
-   //content_class[17] = EFL_UI_SPINNER_CLASS;
+   content_class[17] = EFL_UI_SPIN_CLASS;
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Widget Part Background"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_gfx_size_hint_weight_set(efl_added, 1, 1),
-                 efl_content_set(win, efl_added));
+                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                  efl_content_set(win, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                              efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                 efl_pack_end(vbox, efl_added));
+                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                  efl_pack_end(vbox, efl_added));
 
    reset_btn = efl_add(EFL_UI_BUTTON_CLASS, hbox,
-                              efl_pack_end(hbox, efl_added),
-                              efl_text_set(efl_added, "reset"));
+                       efl_pack_end(hbox, efl_added),
+                       efl_text_set(efl_added, "reset"));
    color_btn = efl_add(EFL_UI_BUTTON_CLASS, hbox,
-                              efl_pack_end(hbox, efl_added),
-                              efl_text_set(efl_added, "color"));
+                       efl_pack_end(hbox, efl_added),
+                       efl_text_set(efl_added, "color"));
    scale_btn = efl_add(EFL_UI_BUTTON_CLASS, hbox,
-                              efl_pack_end(hbox, efl_added),
-                              efl_text_set(efl_added, "scale_type"));
+                       efl_pack_end(hbox, efl_added),
+                       efl_text_set(efl_added, "scale_type"));
 
    scr = elm_scroller_add(vbox);
    evas_object_show(scr);
@@ -170,8 +172,8 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_pack_end(vbox, scr);
 
    vbox = efl_add(EFL_UI_BOX_CLASS, scr,
-                 efl_gfx_size_hint_weight_set(efl_added, 1, 1),
-                 efl_content_set(scr, efl_added));
+                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                  efl_content_set(scr, efl_added));
 
    radio_group = _create_box_contents(vbox);
 
