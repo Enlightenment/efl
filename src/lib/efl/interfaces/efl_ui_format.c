@@ -3,17 +3,18 @@
 
 #define ERR(...) EINA_LOG_DOM_ERR(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
 
-typedef struct
-{
-   const char *template;
-} Efl_Ui_Format_Data;
-
 typedef enum _Format_Type
 {
    FORMAT_TYPE_INVALID,
    FORMAT_TYPE_DOUBLE,
    FORMAT_TYPE_INT
 } Format_Type;
+
+typedef struct
+{
+   const char *template;
+   Format_Type format_type;
+} Efl_Ui_Format_Data;
 
 static Eina_Bool
 _is_valid_digit(char x)
@@ -78,7 +79,6 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    const Eina_Value_Type *type = eina_value_type_get(&value);
    Efl_Ui_Format_Data *sd = data;
-   int format_check_result;
 
    if (type == EINA_VALUE_TYPE_TM)
      {
@@ -89,29 +89,27 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
         return;
      }
 
-   format_check_result = _format_string_check(sd->template);
-
-   if (format_check_result == FORMAT_TYPE_INVALID)
+   if (sd->format_type == FORMAT_TYPE_INVALID)
      {
         ERR("Wrong String Format: %s", sd->template);
         return;
      }
 
-   if ((format_check_result == FORMAT_TYPE_DOUBLE)
+   if ((sd->format_type == FORMAT_TYPE_DOUBLE)
        && (type == EINA_VALUE_TYPE_DOUBLE))
      {
         double v;
         eina_value_get(&value, &v);
         eina_strbuf_append_printf(str, sd->template, v);
      }
-   else if ((format_check_result == FORMAT_TYPE_INT)
+   else if ((sd->format_type == FORMAT_TYPE_INT)
             && (type == EINA_VALUE_TYPE_INT))
      {
         int v;
         eina_value_get(&value, &v);
         eina_strbuf_append_printf(str, sd->template, v);
      }
-   else if ((format_check_result == FORMAT_TYPE_DOUBLE)
+   else if ((sd->format_type == FORMAT_TYPE_DOUBLE)
             && (type == EINA_VALUE_TYPE_INT))
      {
         int v;
@@ -122,7 +120,7 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
         d_v = v;
         eina_strbuf_append_printf(str, sd->template, d_v);
      }
-   else if ((format_check_result == FORMAT_TYPE_INT)
+   else if ((sd->format_type == FORMAT_TYPE_INT)
             && (type == EINA_VALUE_TYPE_DOUBLE))
      {
         double v;
@@ -157,7 +155,10 @@ EOLIAN static void
 _efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Format_Data *sd, const char *template)
 {
    if (!template) return;
+
    eina_stringshare_replace(&sd->template, template);
+   sd->format_type = _format_string_check(sd->template);
+
    efl_ui_format_cb_set(obj, sd, _default_format_cb, _default_format_free_cb);
 }
 
