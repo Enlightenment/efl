@@ -60,9 +60,14 @@ struct function_definition_generator
           .generate(sink, attributes::unused, ctx))
         return false;
 
+      std::string const_flag;
+      if (!f.is_static) const_flag = " const";
+
       if(!as_generator
-         ("inline ::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "::" << string << "(" << (parameter % ", ") << ") const\n{\n")
-         .generate(sink, std::make_tuple(f.return_type, _klass_name.eolian_name, escape_keyword(f.name), f.parameters), ctx))
+         ("inline ::efl::eolian::return_traits<" << grammar::type(true) << ">::type " << string << "::"
+          << string << "(" << (parameter % ", ") << ")" << string << "\n{\n")
+         .generate(sink, std::make_tuple(f.return_type, _klass_name.eolian_name,
+                                         escape_keyword(f.name), f.parameters, const_flag), ctx))
         return false;
 
       std::vector<std::string> opening_statements(f.opening_statements());
@@ -104,10 +109,13 @@ struct function_definition_generator
          && !as_generator(attributes::c_type({attributes::parameter_direction::in, f.return_type, ""})
                           << " __return_value = "
                           ).generate(sink, attributes::unused, ctx)) return false;
-      
+
+      std::string object_flag;
+      if (f.is_static) object_flag = "_eo_class()";
+      else object_flag = "_eo_ptr()";
+
       if(!as_generator
-         (" ::" << string << "(this->_eo_ptr()"
-          <<
+         (" ::" << string << "(" << string <<
           *(
             "\n" << scope_tab << scope_tab << ", "
             <<
@@ -119,7 +127,7 @@ struct function_definition_generator
             )
           )
           << ");\n"
-         ).generate(sink, std::make_tuple(f.c_name, f.parameters), ctx))
+         ).generate(sink, std::make_tuple(f.c_name, object_flag, f.parameters), ctx))
         return false;
 
       auto out_assignments =
