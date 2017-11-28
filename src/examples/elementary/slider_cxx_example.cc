@@ -8,11 +8,13 @@ using namespace std::placeholders;
 using efl::eo::instantiate;
 
 static efl::ui::Win win;
+static Efl_Signal_Cb_Connection con;
 
 static void
-signal_handler(efl::canvas::Object&, efl::eina::string_view emission, efl::eina::string_view source)
+signal_handler(efl::canvas::Layout_Signal& sl2, efl::eina::string_view emission, efl::eina::string_view source)
 {
    std::cout << "Got " << emission << " from " << source << std::endl;
+   sl2.signal_cb_del(con);
 }
 
 static void
@@ -38,8 +40,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ic.scalable_set(false, false);
    sl2.content_set(ic);
 
-   sl2.signal_cb_add("*", "*", std::bind(signal_handler, _1, _2, _3));
-   sl2.signal_emit("hello", "you");
+   con = sl2.signal_cb_add("*", "*", std::bind(signal_handler, _1, _2, _3));
 
    efl::ui::Image ic2(instantiate, win);
    ic2.icon_set("folder");
@@ -93,7 +94,6 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Slider sl7(instantiate, win);
    sl7.format_string_set("%1.3f units");
-//   sl7.indicator_format_function_set(indicator_format, indicator_free);
    sl7.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
    bx.pack_end(sl7);
 
