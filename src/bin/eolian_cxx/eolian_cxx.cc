@@ -161,13 +161,13 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
                , efl::eolian::grammar::context_null{});
 
    std::tuple<std::string, std::set<std::string>&, std::set<std::string>&
-              , std::string const&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::set<efl::eolian::grammar::attributes::klass_def> const&
+              , std::string const&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               , std::vector<efl::eolian::grammar::attributes::klass_def>&
               > attributes
-   {guard_name, c_headers, cpp_headers, cpp_types_header, klasses, forward_klasses, klasses, klasses};
+   {guard_name, c_headers, cpp_headers, klasses, forward_klasses, cpp_types_header, klasses, klasses};
 
    if(opts.out_file == "-")
      {

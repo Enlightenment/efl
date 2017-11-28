@@ -8,8 +8,6 @@
   match that.
 */
 
-//type Edje.Signal_Cb: __undefined_type; [[Edje signal callback type]]
-
 type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
 
 interface Efl.Canvas.Layout_Signal
