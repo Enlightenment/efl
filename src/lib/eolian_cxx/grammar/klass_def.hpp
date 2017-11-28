@@ -499,7 +499,7 @@ struct function_def
          else
            parameters.insert(parameters.end(), values.begin(), values.end());
        }
-     c_name = eolian_function_full_c_name_get(function, type, EINA_FALSE);
+     c_name = eolian_function_full_c_name_get(function, type, false);
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
      is_static = eolian_function_is_class(function);
