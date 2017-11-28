@@ -1,0 +1,30 @@
+import eldbus_types;
+
+class Elm.Bus.Watcher (Efl.Object)
+{
+   methods {
+        @property service {
+             values {
+                  bus: string;
+             }
+        }
+        @property connection {
+             get {
+             }
+             set {
+             }
+             values {
+                  conn: Eldbus.Connection;
+             }
+        }
+        OnRegistered @protected {
+        }
+        OnUnregistered @protected {
+        }
+   }
+   events {
+        registered;
+        unregistered;
+   }
+}
+

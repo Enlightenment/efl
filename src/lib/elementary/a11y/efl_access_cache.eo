@@ -1,0 +1,37 @@
+class Efl.Access.Cache (Efl.Object)
+{
+   methods {
+        add {
+             params {
+                  @in obj: Efl.Access;
+             }
+        }
+        remove {
+             params {
+                  @in obj: Efl.Access;
+             }
+        }
+        contains {
+             params {
+                  @in obj: Efl.Access;
+             }
+             return: bool;
+        }
+        @property root {
+             get {
+             }
+             set {
+             }
+             values {
+                  root: Efl.Access;
+             }
+        }
+        objects_iterator_new {
+             return: iterator<Efl.Access> @owned @warn_unused;
+        }
+   }
+   events {
+        added;
+        removed;
+   }
+}

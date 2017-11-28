@@ -1,0 +1,27 @@
+import eldbus_types;
+
+class Elm.Atspi.Bridge2 (Elm.Atspi.Bus.Watcher)
+{
+   methods {
+      @property root {
+         get {
+         }
+         set {
+         }
+         values {
+            ret: Efl.Access;
+         }
+      }
+      ref_connection {
+         return: Eldbus.Connection;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+      connected;
+      disconnected;
+   }
+}

@@ -1,0 +1,9 @@
+class Elm.Atspi.Access.Image.Adaptor (Elm.Atspi.Adaptor)
+{
+   implements 
+   {
+      Elm.Atspi.Adaptor.interface { get; }
+   }
+}
+
+

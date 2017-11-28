@@ -1,0 +1,18 @@
+class Efl.Access.Cache {
+     methods {
+          add {
+          }
+          remove {
+          }
+          contains {
+          }
+          @property root {
+          }
+          iterator {
+          }
+     }
+     events {
+          added;
+          removed;
+     }
+}

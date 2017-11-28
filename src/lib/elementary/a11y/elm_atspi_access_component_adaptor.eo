@@ -1,0 +1,7 @@
+class Elm.Atspi.Access.Component.Adaptor (Elm.Atspi.Adaptor)
+{
+   implements 
+   {
+      Elm.Atspi.Adaptor.interface { get; }
+   }
+}

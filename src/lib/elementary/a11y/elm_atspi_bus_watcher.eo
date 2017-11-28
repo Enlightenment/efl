@@ -1,0 +1,30 @@
+import eldbus_types;
+
+class Elm.Atspi.Bus.Watcher (Elm.Bus.Watcher)
+{
+   methods {
+        @property connection {
+             get {
+             }
+             set {
+             }
+             values {
+                  conn: Eldbus.Connection;
+             }
+        }
+        ref_a11y_bus_connection {
+             return: Eldbus.Connection;
+        }
+   }
+   constructors {
+        .connection;
+   }
+   implements {
+        Elm.Bus.Watcher.OnRegistered;
+        Elm.Bus.Watcher.OnUnregistered;
+   }
+   events {
+        enabled;
+        disabled;
+   }
+}

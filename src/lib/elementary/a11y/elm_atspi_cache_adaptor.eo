@@ -1,0 +1,8 @@
+class Elm.Atspi.Cache.Adaptor (Elm.Atspi.Adaptor)
+{
+   implements 
+   {
+      Elm.Atspi.Adaptor.cache { set; }
+      Elm.Atspi.Adaptor.interface { get; }
+   }
+}

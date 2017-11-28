@@ -1,0 +1,107 @@
+import eldbus_types;
+
+struct Eldbus.Message;
+struct Eldbus.Message.Iter;
+struct Eldbus.Service.Interface;
+struct Eldbus.Arg.Info;
+
+struct Elm.Atspi.Dbus.Reference
+{
+   bus: string;
+   path: string;
+}
+
+function Elm.Atspi.Method
+{
+   params {
+        @in subject: Efl.Access;
+        @in msg: ptr(Eldbus.Message);
+   }
+   return: ptr(Eldbus.Message);
+};
+
+function Elm.Atspi.Property.Set
+{
+   params {
+        @in subject: Efl.Access;
+        @in property_name: string;
+        @in iter: ptr(Eldbus.Message.Iter);
+        @in request: ptr(Eldbus.Message);
+   }
+   return: ptr(Eldbus.Message);
+};
+
+function Elm.Atspi.Property.Get
+{
+   params {
+        @in subject: Efl.Access;
+        @in property_name: string;
+        @in iter: ptr(Eldbus.Message.Iter);
+        @in request: ptr(Eldbus.Message);
+        @in error: ptr(ptr(Eldbus.Message));
+   }
+   return: bool;
+};
+
+struct Elm.Atspi.Method.Desc
+{
+   name: string;
+   in: const(ptr(Eldbus.Arg.Info));
+   out: const(ptr(Eldbus.Arg.Info));
+   func: Elm.Atspi.Method;
+}
+
+struct Elm.Atspi.Property.Desc
+{
+   name: string;
+   type: string;
+   set: Elm.Atspi.Property.Set;
+   get: Elm.Atspi.Property.Get;
+}
+
+struct Elm.Atspi.Interface.Desc
+{
+   name: string;
+   methods: const(ptr(Elm.Atspi.Method.Desc));
+   properties: const(ptr(Elm.Atspi.Property.Desc));
+}
+
+abstract Elm.Atspi.Adaptor (Efl.Object)
+{
+   [[Base class for accessibility adaptors]]
+   methods {
+        address_from_object @protected {
+             params {
+                  @in obj: Efl.Access;
+             }
+             return: Elm.Atspi.Dbus.Reference;
+        }
+        object_from_address @protected {
+             params {
+                  @in obj: Elm.Atspi.Dbus.Reference;
+             }
+             return: Efl.Access;
+        }
+        @property cache {
+             values {
+                  cache: Efl.Access.Cache;
+             }
+        }
+        @property interface @protected {
+             get {
+             }
+             values {
+                  desc: const(ptr(Elm.Atspi.Interface.Desc));
+             }
+        }
+        register {
+             params {
+                  @in desc: ptr(Eldbus.Connection);
+                  @in path_prefix: string;
+             }
+        }
+   }
+   constructors {
+        .cache;
+   }
+}

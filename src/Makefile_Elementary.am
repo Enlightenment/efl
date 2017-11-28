@@ -78,6 +78,20 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_window.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/elm_code_widget.eo \
+	lib/elementary/a11y/efl_access_cache.eo \
+	lib/elementary/a11y/elm_atspi_bus_watcher.eo \
+	lib/elementary/a11y/elm_atspi_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_bridge2.eo \
+	lib/elementary/a11y/elm_atspi_access_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_action_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_component_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_text_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_editable_text_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_selection_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_value_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_access_image_adaptor.eo \
+	lib/elementary/a11y/elm_atspi_cache_adaptor.eo \
+	lib/elementary/a11y/elm_bus_watcher.eo \
 	$(NULL)
 
 # More public files -- FIXME

@@ -1,0 +1,10 @@
+class Elm.Atspi.Access.Selection.Adaptor (Elm.Atspi.Adaptor)
+{
+   implements 
+   {
+      Elm.Atspi.Adaptor.interface { get; }
+   }
+}
+
+
+
