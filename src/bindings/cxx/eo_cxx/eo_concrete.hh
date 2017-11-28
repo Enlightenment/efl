@@ -167,6 +167,13 @@ struct concrete
      _eo_raw = _ptr;
    }
 
+   void _delete()
+   {
+      Eo* tmp = _eo_raw;
+      _eo_raw = nullptr;
+      detail::del(tmp);
+   }
+
    explicit operator bool() const
    {
       return _eo_raw;

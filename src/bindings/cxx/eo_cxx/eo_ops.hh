@@ -39,6 +39,12 @@ unref(const Eo *obj)
    ::efl_unref(obj);
 }
 
+inline void
+del(Eo *obj)
+{
+   ::efl_del(obj);
+}
+
 inline int
 ref_get(const Eo *obj)
 {
