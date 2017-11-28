@@ -44,6 +44,11 @@ struct function_declaration_generator
             .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name, suffix), add_upper_case_context(ctx)))
         return false;
 
+      if(!as_generator
+            ("#ifndef EOLIAN_CXX_" << string << "_DECLARATION\n")
+            .generate(sink, f.c_name, add_upper_case_context(ctx)))
+        return false;
+
       std::string template_statement(f.template_statement());
       if (!template_statement.empty() &&
           !as_generator(template_statement << " ")
@@ -58,9 +63,17 @@ struct function_declaration_generator
              << string << "(" << (parameter % ", ") << ")" << const_flag << ";\n")
             .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), ctx))
         return false;
+
+      if(!as_generator
+            ("#else\n" << scope_tab << "EOLIAN_CXX_" << string << "_DECLARATION\n"
+             "#endif\n")
+            .generate(sink, f.c_name, add_upper_case_context(ctx)))
+        return false;
+
       if(f.is_beta &&
             !as_generator("#endif\n").generate(sink, attributes::unused, ctx))
         return false;
+
       return true;
    }
 
