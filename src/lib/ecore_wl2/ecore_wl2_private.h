@@ -115,6 +115,7 @@ struct _Ecore_Wl2_Display
 
    Eina_Bool sync_done : 1;
    Eina_Bool shell_done : 1;
+   Eina_Bool recovering : 1;
 };
 
 struct _Ecore_Wl2_Subsurface

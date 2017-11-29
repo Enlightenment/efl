@@ -468,6 +468,7 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
 
    ewd->shell_done = EINA_FALSE;
    ewd->sync_done = EINA_FALSE;
+   ewd->recovering = EINA_TRUE;
 
    _ecore_wl2_display_globals_cleanup(ewd);
 
@@ -681,6 +682,8 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
    /* try to connect to wayland display with this name */
    ewd->wl.display = wl_display_connect(ewd->name);
    if (!ewd->wl.display) return EINA_FALSE;
+
+   ewd->recovering = EINA_FALSE;
 
    ewd->wl.registry = wl_display_get_registry(ewd->wl.display);
    wl_registry_add_listener(ewd->wl.registry, &_registry_listener, ewd);
