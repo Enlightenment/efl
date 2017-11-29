@@ -75,7 +75,6 @@ static const Evas_Object_Func object_func =
    evas_object_image_is_inside,
    NULL,
    NULL,
-   NULL,
    evas_object_image_has_opaque_rect,
    evas_object_image_get_opaque_rect,
    evas_object_image_can_map,

@@ -1,6 +1,7 @@
 type @extern Evas.Text_Style_Type : __undefined_type; [[External text style type]]
 
-class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Text.Font, Efl.Canvas.Filter.Internal)
+class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
+                 Efl.Text.Font, Efl.Canvas.Filter.Internal, Efl.Ui.Base)
 {
    [[Evas text class]]
    legacy_prefix: evas_object_text;
@@ -281,5 +282,6 @@ class Evas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties, Efl.Text.Font
       Efl.Canvas.Filter.Internal.filter_input_render;
       Efl.Canvas.Filter.Internal.filter_state_prepare;
       Efl.Canvas.Object.paragraph_direction { set; get; }
+      Efl.Ui.Base.scale { set; }
    }
 }

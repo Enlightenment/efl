@@ -458,7 +458,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              double s = base_s;
 
              if (ep->part->scale) base_s = TO_DOUBLE(sc);
-             efl_canvas_object_scale_set(ep->object, base_s);
+             efl_ui_scale_set(ep->object, base_s);
              efl_canvas_text_size_native_get(ep->object, &tw, &th);
 
              orig_s = base_s;
@@ -467,7 +467,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              {
                 orig_s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
                                                                                orig_s * TO_INT(params->eval.w) / tw);
-                efl_canvas_object_scale_set(ep->object, orig_s);
+                efl_ui_scale_set(ep->object, orig_s);
                 efl_canvas_text_size_native_get(ep->object, &tw, &th);
              }
              if (chosen_desc->text.fit_x)
@@ -476,7 +476,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                     {
                        s = _edje_part_recalc_single_textblock_scale_range_adjust(chosen_desc, base_s,
                                                                                  orig_s * TO_INT(params->eval.w) / tw);
-                       efl_canvas_object_scale_set(ep->object, s);
+                       efl_ui_scale_set(ep->object, s);
                        efl_canvas_text_size_native_get(ep->object, NULL, NULL);
                     }
                }
@@ -493,7 +493,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                             s = tmp_s;
                          }
 
-                       efl_canvas_object_scale_set(ep->object, s);
+                       efl_ui_scale_set(ep->object, s);
                        efl_canvas_text_size_native_get(ep->object, NULL, NULL);
                     }
                }
@@ -518,7 +518,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                        break;
                      s = tmp_s;
 
-                     efl_canvas_object_scale_set(ep->object, s);
+                     efl_ui_scale_set(ep->object, s);
                      efl_canvas_text_size_native_get(ep->object, &fw, &fh);
                      i--;
                   }

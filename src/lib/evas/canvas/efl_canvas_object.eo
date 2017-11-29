@@ -3,7 +3,7 @@ import efl_animation_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
-                            Efl.Gfx.Map, Efl.Loop_User)
+                            Efl.Gfx.Map, Efl.Loop_User, Efl.Ui.Base)
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -227,27 +227,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          values {
             repeat: bool; [[Whether $obj is to repeat events ($true) or
                             not ($false).]]
-         }
-      }
-      @property scale {
-         set {
-            [[Sets the scaling factor for an Evas object. Does not affect
-              all objects.
-
-              This will multiply the object's dimension by the given factor,
-              thus altering its geometry (width and height). Useful when
-              you want scalable UI elements, possibly at run time.
-
-              Note: Only text and textblock objects have scaling change
-              handlers. Other objects won't change visually on this call.
-            ]]
-         }
-         get {
-            [[Retrieves the scaling factor for the given Evas object.]]
-         }
-         values {
-            scale: double; [[The scaling factor. 1.0 means no scaling,
-                             default size.]]
          }
       }
       @property key_focus {
@@ -703,6 +682,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.Size.Hint.hint_max { get; set; }
       Efl.Gfx.Size.Hint.hint_margin { get; set; }
       Efl.Gfx.Size.Hint.hint_weight { get; set; }
+      Efl.Ui.Base.scale { get; set; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_User.loop { get; }
    }

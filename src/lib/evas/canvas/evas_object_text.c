@@ -114,9 +114,6 @@ static int evas_object_text_was_opaque(Evas_Object *eo_obj,
 				       Evas_Object_Protected_Data *obj,
 				       void *type_private_data);
 
-static void evas_object_text_scale_update(Evas_Object *eo_obj,
-					  Evas_Object_Protected_Data *obj,
-					  void *type_private_data);
 static void _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text);
 
 static const Evas_Object_Func object_func =
@@ -139,7 +136,6 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL,
-     evas_object_text_scale_update,
      NULL,
      NULL,
      NULL,
@@ -2217,14 +2213,15 @@ evas_object_text_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
-static void
-evas_object_text_scale_update(Evas_Object *eo_obj,
-                              Evas_Object_Protected_Data *pd EINA_UNUSED,
-                              void *type_private_data)
+EOLIAN static void
+_evas_text_efl_ui_base_scale_set(Evas_Object *eo_obj, Evas_Text_Data *o,
+                                 double scale)
 {
-   Evas_Text_Data *o = type_private_data;
    int size;
    const char *font;
+
+   if (EINA_DBL_EQ(efl_ui_scale_get(eo_obj), scale)) return;
+   efl_ui_scale_set(efl_super(eo_obj, MY_CLASS), scale);
 
    font = eina_stringshare_add(o->cur.font);
    size = o->cur.size;

@@ -2181,6 +2181,36 @@ EAPI Evas_Render_Op evas_object_render_op_get(const Evas_Object *obj);
  */
 EAPI Eina_Bool evas_object_static_clip_get(const Evas_Object *obj);
 
+/**
+ * @brief Sets the scaling factor for an Evas object. Does not affect all
+ * objects.
+ *
+ * This will multiply the object's dimension by the given factor, thus altering
+ * its geometry (width and height). Useful when you want scalable UI elements,
+ * possibly at run time.
+ *
+ * @note Only text and textblock objects have scaling change handlers. Other
+ * objects won't change visually on this call.
+ *
+ * @param[in] obj The object.
+ * @param[in] scale The scaling factor. 1.0 means no scaling, default size.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
+
+/**
+ * @brief Retrieves the scaling factor for the given Evas object.
+ *
+ * @param[in] obj The object.
+ *
+ * @return The scaling factor. 1.0 means no scaling, default size.
+ *
+ * @ingroup Evas_Object
+ */
+EAPI double evas_object_scale_get(const Evas_Object *obj);
+
+
 #include "canvas/efl_canvas_object.eo.legacy.h"
 
 /**

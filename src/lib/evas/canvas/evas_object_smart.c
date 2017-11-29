@@ -120,7 +120,6 @@ static const Evas_Object_Func object_func =
    NULL,
    NULL,
    NULL,
-   NULL,
    NULL, // render_prepare
    NULL
 };

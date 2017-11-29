@@ -708,9 +708,6 @@ static int evas_object_textblock_was_opaque(Evas_Object *eo_obj,
 static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
 						Evas_Object_Protected_Data *obj,
 						void *type_private_data);
-static void evas_object_textblock_scale_update(Evas_Object *eo_obj,
-					       Evas_Object_Protected_Data *obj,
-					       void *type_private_data);
 
 static const Evas_Object_Func object_func =
 {
@@ -732,7 +729,6 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL, /*evas_object_textblock_coords_recalc, <- disable - not useful. */
-     evas_object_textblock_scale_update,
      NULL,
      NULL,
      NULL,
@@ -14603,12 +14599,14 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
-static void
-evas_object_textblock_scale_update(Evas_Object *eo_obj EINA_UNUSED,
-                                   Evas_Object_Protected_Data *obj EINA_UNUSED,
-                                   void *type_private_data)
+EOLIAN static void
+_efl_canvas_text_efl_ui_base_scale_set(Evas_Object *eo_obj,
+                                       Efl_Canvas_Text_Data *o,
+                                       double scale)
 {
-   Efl_Canvas_Text_Data *o = type_private_data;
+   if (EINA_DBL_EQ(efl_ui_scale_get(eo_obj), scale)) return;
+   efl_ui_scale_set(efl_super(eo_obj, MY_CLASS), scale);
+
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);
    o->last_w = -1;

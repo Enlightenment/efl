@@ -113,10 +113,6 @@ static int evas_object_textgrid_was_opaque(Evas_Object *eo_obj,
 					   Evas_Object_Protected_Data *obj,
 					   void *type_private_data);
 
-static void evas_object_textgrid_scale_update(Evas_Object *eo_obj,
-					      Evas_Object_Protected_Data *pd,
-					      void *type_private_data);
-
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -137,7 +133,6 @@ static const Evas_Object_Func object_func =
    NULL,
    NULL,
    NULL,
-   evas_object_textgrid_scale_update,
    NULL,
    NULL,
    NULL,
@@ -876,15 +871,16 @@ evas_object_textgrid_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
-static void
-evas_object_textgrid_scale_update(Evas_Object *eo_obj,
-				  Evas_Object_Protected_Data *pd EINA_UNUSED,
-				  void *type_private_data)
+EOLIAN static void
+_evas_textgrid_efl_ui_base_scale_set(Evas_Object *eo_obj, Evas_Textgrid_Data *o,
+                                     double scale)
 {
    int font_size;
    const char *font_name;
 
-   Evas_Textgrid_Data *o = type_private_data;
+   if (EINA_DBL_EQ(efl_ui_scale_get(eo_obj), scale)) return;
+   efl_ui_scale_set(efl_super(eo_obj, MY_CLASS), scale);
+
    font_name = eina_stringshare_add(o->cur.font_name);
    font_size = o->cur.font_size;
    if (o->cur.font_name) eina_stringshare_del(o->cur.font_name);

@@ -1265,8 +1265,6 @@ struct _Evas_Object_Func
 
    void (*coords_recalc) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
-   void (*scale_update) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
-
    int (*has_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
    int (*get_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data,
                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
