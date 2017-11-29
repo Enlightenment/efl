@@ -14,6 +14,8 @@
 #define MY_CLASS EFL_UI_POPUP_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup"
 
+static const char PART_NAME_BACKWALL[] = "backwall";
+
 static void
 _backwall_clicked_cb(void *data,
                      Eo *o EINA_UNUSED,
@@ -178,16 +180,22 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_layout_theme_set(obj, "popup", "base", "view");
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
+     CRI("Failed to set layout!");
 
    pd->backwall = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set(obj, pd->backwall, "popup", "base", "backwall");
+   elm_widget_element_update(obj, pd->backwall, PART_NAME_BACKWALL);
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 

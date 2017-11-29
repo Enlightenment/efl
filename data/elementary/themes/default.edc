@@ -179,6 +179,7 @@ collections {
 #include "edc/efl/slider.edc"
 #include "edc/efl/radio.edc"
 #include "edc/efl/panes.edc"
+#include "edc/efl/popup.edc"
 #include "edc/efl/video.edc"
 #include "edc/efl/focus.edc"
 #include "edc/efl/multibuttonentry.edc"
