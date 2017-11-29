@@ -12,8 +12,10 @@ _elm_code_widget_text_line_number_width_get(Eo *obj EINA_UNUSED, Elm_Code_Widget
    int max;
 
    max = elm_code_file_lines_get(pd->code->file);
-   if (max < 1)
-     max = 1;
+
+   // leave space for 2 digits minimum
+   if (max < 10)
+     max = 10;
 
    return floor(log10(max)) + 1;
 }
