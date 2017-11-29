@@ -4920,9 +4920,10 @@ edje_evas_global_perspective_get(const Evas *e)
    return evas_object_data_get(obj, "_edje_perspective");
 }
 
-EOLIAN void
-_edje_object_perspective_set(Eo *obj, Edje *ed, Edje_Perspective *ps)
+EAPI void
+edje_object_perspective_set(Eo *obj, Edje_Perspective *ps)
 {
+   Edje *ed = _edje_fetch(obj);
    if (!ed) return;
    if (ed->persp == ps) return;
    if (ed->persp != ps)
@@ -4937,9 +4938,11 @@ _edje_object_perspective_set(Eo *obj, Edje *ed, Edje_Perspective *ps)
    _edje_recalc_do(ed);
 }
 
-EOLIAN const Edje_Perspective *
-_edje_object_perspective_get(Eo *obj EINA_UNUSED, Edje *ed)
+EAPI const Edje_Perspective *
+edje_object_perspective_get(const Eo *obj)
 {
+   Edje *ed =_edje_fetch(obj);
+   if (!ed) return NULL;
    return ed->persp;
 }
 

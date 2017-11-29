@@ -35,36 +35,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
             on: bool; [[The animation state, $true by default.]]
          }
       }
-      @property perspective {
-         set {
-            [[Sets the given perspective object on this Edje object.
-
-              Make the given perspective object be the default perspective for this Edje
-              object.
-
-              There can be only one perspective object per Edje object, and if a
-              previous one was set, it will be removed and the new perspective object
-              will be used.
-
-              An Edje perspective will only affect a part if it doesn't point to another
-              part to be used as perspective.
-
-              \@ref edje_object_perspective_new()
-              See also @.perspective.get()
-              \@ref edje_perspective_set()]]
-            values {
-                ps: ptr(Edje.Perspective); [[The perspective object that will be used.]]
-            }
-         }
-         get {
-            [[Gets the current perspective used on this Edje object.
-
-              See also @.perspective.set()]]
-            values {
-                @cref ps: Edje.Perspective; [[The perspective object that will be used.]]
-            }
-         }
-      }
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]

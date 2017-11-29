@@ -2933,6 +2933,158 @@ EAPI void edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh)
  */
 EAPI Eina_Bool edje_object_part_exists(const Edje_Object *obj, const char *part);
 
+
+/**
+ * @defgroup Edje_Perspective Edje Perspective
+ * @ingroup Edje_Object_Group
+ *
+ * @brief Functions that deal with 3D projection of an 2D object.
+ *
+ * Perspective is a graphical tool that makes objets represented in 2D
+ * look like they have a 3D appearance.
+ *
+ * Edje allows us to use perspective on any edje object. This group of
+ * functions deal with the use of perspective, by creating and configuring
+ * a perspective object that must set to a edje object or a canvas,
+ * affecting all the objects inside that have no particular perspective
+ * set already.
+ *
+ * @{
+ */
+
+/**
+ * @brief Creates a new perspective in the given canvas.
+ *
+ * @param e The given canvas (Evas).
+ * @return An @ref Edje_Perspective object for this canvas, or @c NULL on errors.
+ *
+ * This function creates a perspective object that can be set on an Edje
+ * object, or globally to all Edje objects on this canvas.
+ *
+ * @see edje_perspective_set()
+ * @see edje_perspective_free()
+ */
+EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
+/**
+ * @brief Deletes the given perspective object.
+ *
+ * @param ps A valid perspective object, or @c NULL.
+ *
+ * This function will delete the perspective object. If the perspective
+ * effect was being applied to any Edje object or part, this effect won't be
+ * applied anymore.
+ *
+ * @see edje_perspective_new()
+ */
+EAPI void                    edje_perspective_free           (Edje_Perspective *ps);
+/**
+ * @brief Sets up the transform for this perspective object.
+ *
+ * This sets the parameters of the perspective transformation. X, Y and Z
+ * values are used. The px and py points specify the "infinite distance" point
+ * in the 3D conversion (where all lines converge to like when artists draw
+ * 3D by hand). The @p z0 value specifies the z value at which there is a 1:1
+ * mapping between spatial coordinates and screen coordinates. Any points
+ * on this z value will not have their X and Y values modified in the transform.
+ * Those further away (Z value higher) will shrink into the distance, and
+ * those less than this value will expand and become bigger. The @p foc value
+ * determines the "focal length" of the camera. This is in reality the distance
+ * between the camera lens plane itself (at or closer than this rendering
+ * results are undefined) and the "z0" z value. This allows for some "depth"
+ * control and @p foc must be greater than 0.
+ *
+ * @param ps The perspective object
+ * @param px The perspective distance X coordinate
+ * @param py The perspective distance Y coordinate
+ * @param z0 The "0" z plane value
+ * @param foc The focal distance
+ */
+EAPI void                    edje_perspective_set            (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
+/**
+ * @brief Makes this perspective object be global for its canvas.
+ *
+ * @param ps The given perspective object
+ * @param global @c EINA_TRUE if the perspective should be global, @c
+ * EINA_FALSE otherwise.
+ *
+ * The canvas which this perspective object is being set as global is the one
+ * given as argument upon the object creation (the @p evas parameter on the
+ * function @c edje_perspective_new(evas) ).
+ *
+ * There can be only one global perspective object set per canvas, and if
+ * a perspective object is set to global when there was already another
+ * global perspective set, the old one will be set as non-global.
+ *
+ * A global perspective just affects a part if its Edje object doesn't have a
+ * perspective object set to it, and if the part doesn't point to another
+ * part to be used as perspective.
+ *
+ * @see edje_object_perspective_set()
+ * @see edje_perspective_global_get()
+ * @see edje_perspective_new()
+ */
+EAPI void                    edje_perspective_global_set     (Edje_Perspective *ps, Eina_Bool global);
+/**
+ * @brief Gets whether the given perspective object is global or not.
+ *
+ * @param ps The given perspective object.
+ * @return @c EINA_TRUE if this perspective object is global, @c EINA_FALSE
+ * otherwise.
+ *
+ * @see edje_perspective_global_set()
+ */
+EAPI Eina_Bool               edje_perspective_global_get     (const Edje_Perspective *ps);
+/**
+ * @brief Gets the global perspective object set for this canvas.
+ *
+ * @param e The given canvas (Evas).
+ * @return The perspective object set as global for this canvas. Or @c NULL
+ * if there is no global perspective set and on errors.
+ *
+ * This function will return the perspective object that was set as global
+ * with edje_perspective_global_set().
+ *
+ * @see edje_perspective_global_set()
+ * @see edje_perspective_global_get()
+ */
+EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
+
+/**
+ * @brief Sets the given perspective object on this Edje object.
+ *
+ * Make the given perspective object be the default perspective for this Edje
+ * object.
+ *
+ * There can be only one perspective object per Edje object, and if a previous
+ * one was set, it will be removed and the new perspective object will be used.
+ *
+ * An Edje perspective will only affect a part if it doesn't point to another
+ * part to be used as perspective.
+ *
+ * @ref edje_object_perspective_new() See also
+ * @ref edje_object_perspective_get() @ref edje_perspective_set()
+ *
+ * @param[in] obj The object.
+ * @param[in] ps The perspective object that will be used.
+ */
+EAPI void edje_object_perspective_set(Edje_Object *obj, Edje_Perspective *ps);
+
+/**
+ * @brief Gets the current perspective used on this Edje object.
+ *
+ * See also @ref edje_object_perspective_set()
+ *
+ * @param[in] obj The object.
+ *
+ * @return The perspective object that will be used.
+ */
+EAPI const Edje_Perspective *edje_object_perspective_get(const Edje_Object *obj);
+
+/**
+ * @}
+ */
+
+
 typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
 #define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
 #define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE
