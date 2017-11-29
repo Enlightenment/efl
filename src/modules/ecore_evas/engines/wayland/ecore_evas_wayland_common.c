@@ -187,8 +187,6 @@ _ee_display_unset(Ecore_Evas *ee)
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
 
-   einfo->info.wl2_win = NULL;
-
    wdata = ee->engine.data;
    if (!strcmp(ee->driver, "wayland_egl"))
      wdata->regen_objs = _evas_canvas_image_data_unset(ecore_evas_get(ee));
