@@ -274,7 +274,7 @@ _evas_vg_dup_vg_tree(Vg_File_Data *fd, double w, double h)
    if (!fd) return NULL;
    if ( !w || !h ) return NULL;
 
-   root = efl_vg_dup(fd->root);
+   root = efl_dup(fd->root);
    _apply_transformation(root, w, h, fd);
 
    return root;

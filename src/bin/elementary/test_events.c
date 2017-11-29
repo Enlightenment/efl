@@ -22,7 +22,7 @@ _pointer_down(void *data, const Efl_Event *ev)
    testdata *td = data;
    td->down = 1;
    efl_unref(td->evdown);
-   td->evdown = efl_input_dup(ev->info);
+   td->evdown = efl_dup(ev->info);
 }
 
 static void
@@ -30,7 +30,7 @@ _pointer_move(void *data, const Efl_Event *ev)
 {
    testdata *td = data;
    efl_unref(td->evmove);
-   td->evmove = efl_input_dup(ev->info);
+   td->evmove = efl_dup(ev->info);
 }
 
 static void
@@ -39,7 +39,7 @@ _pointer_up(void *data, const Efl_Event *ev)
    testdata *td = data;
    td->down = 0;
    efl_unref(td->evup);
-   td->evup = efl_input_dup(ev->info);
+   td->evup = efl_dup(ev->info);
 }
 
 static void
@@ -64,7 +64,7 @@ _key_down(void *data, const Efl_Event *ev)
    if (!efl_input_fake_get(ev->info))
      {
         efl_unref(td->evkeydown);
-        td->evkeydown = efl_input_dup(ev->info);
+        td->evkeydown = efl_dup(ev->info);
      }
 }
 
@@ -84,7 +84,7 @@ _key_up(void *data, const Efl_Event *ev)
    if (!efl_input_fake_get(ev->info))
      {
         efl_unref(td->evkeyup);
-        td->evkeyup = efl_input_dup(ev->info);
+        td->evkeyup = efl_dup(ev->info);
      }
 
    if (td->f) efl_future_cancel(td->f);

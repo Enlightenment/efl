@@ -20,6 +20,6 @@ class Efl.VG.Container (Efl.VG)
       Efl.Object.destructor;
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
-      Efl.VG.dup;
+      Efl.Dup.dup;
    }
 }

@@ -49,7 +49,8 @@ mixin Efl.Gfx.Path
           y: double; [[Y co-ordinate of control point.]]
         }
       }
-      dup {
+      /* FIXME: Return a new object!!! */
+      copy_from {
         [[Copy the shape data from the object specified.
 
           @since 1.18

@@ -465,7 +465,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -574,7 +574,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -787,7 +787,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -877,7 +877,7 @@ _evas_event_source_wheel_events(Evas_Object *eo_obj, Evas *eo_e,
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -936,7 +936,7 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -1002,7 +1002,7 @@ _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_
 
    if (obj->delete_me || src->delete_me || obj->layer->evas->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -1062,7 +1062,7 @@ _evas_event_source_multi_move_events(Evas_Object_Protected_Data *obj, Evas_Publi
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -1176,7 +1176,7 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
    Evas_Pointer_Data *pdata;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
 
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
@@ -1267,7 +1267,7 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -1594,7 +1594,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
    int event_id;
 
    /* Duplicating UP event */
-   evt = efl_input_dup(parent_ev);
+   evt = efl_dup(parent_ev);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 
@@ -1982,7 +1982,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
 
    event_id = _evas_object_event_new();
 
-   evt = efl_input_dup(pe->eo);
+   evt = efl_dup(pe->eo);
    ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    if (!ev) return;
 

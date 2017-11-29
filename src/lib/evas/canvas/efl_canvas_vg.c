@@ -496,7 +496,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, root);
    if (!buffer)
      {
-        dupe_root = evas_vg_node_dup(root);
+        dupe_root = efl_dup(root);
         // render to the buffer
         buffer = _render_to_buffer(obj, vd,
                                    engine, surface,

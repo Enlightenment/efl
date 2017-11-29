@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
+abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Dup)
 {
    [[Efl vector graphics abstract class]]
    eo_prefix: efl_vg;
@@ -103,10 +103,6 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
           @in pos_map: double; [[Interpolate mapping]]
         }
       }
-      dup @const {
-        [[Duplicate vector graphics object]]
-        return: Efl.VG @owned;
-      }
    }
    implements {
       Efl.Object.parent { set; }
@@ -123,5 +119,6 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Stack)
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise;
       Efl.Gfx.Stack.lower;
+      Efl.Dup.dup;
    }
 }

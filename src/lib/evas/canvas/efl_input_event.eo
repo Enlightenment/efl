@@ -1,6 +1,6 @@
 import efl_input_types;
 
-mixin Efl.Input.Event (Efl.Interface, Efl.Object)
+mixin Efl.Input.Event (Efl.Interface, Efl.Object, Efl.Dup)
 {
    [[Represents a generic event data.
 
@@ -29,17 +29,6 @@ mixin Efl.Input.Event (Efl.Interface, Efl.Object)
       }
       reset @pure_virtual {
          [[Resets the internal data to 0 or default values.]]
-      }
-      dup @pure_virtual {
-         [[Creates a copy of this event.
-
-           The returned event object is similar to the given object in most
-           ways except that @.fake will be $true.
-
-           Note: A reference is given to the caller. In order to avoid leaks
-           the C API users should call $efl_unref() after use.
-         ]]
-         return: Efl.Input.Event @owned; [[Event copy, marked as @.fake.]]
       }
       @property device @pure_virtual {
          [[Input device that originated this event.]]

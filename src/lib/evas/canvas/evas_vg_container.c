@@ -152,17 +152,17 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_container_efl_vg_dup(const Eo *obj, Efl_VG_Container_Data *pd)
+_efl_vg_container_efl_dup_dup(const Eo *obj, Efl_VG_Container_Data *pd)
 {
    Eina_List *l;
    Efl_VG *child;
    Efl_VG *cn = NULL;
 
-   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   cn = efl_dup(efl_super(obj, MY_CLASS));
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         // parent_set adds the new node to the list of children of cn
-        efl_parent_set(efl_vg_dup(child), cn);
+        efl_parent_set(efl_dup(child), cn);
      }
    return cn;
 }

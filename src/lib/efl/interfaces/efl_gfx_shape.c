@@ -8,6 +8,8 @@
 
 #include <Efl.h>
 
+#define MY_CLASS EFL_GFX_SHAPE_MIXIN
+
 typedef struct _Efl_Gfx_Shape_Data
 {
    Efl_Gfx_Shape_Public public;
@@ -260,15 +262,15 @@ _efl_gfx_shape_fill_rule_get(Eo *obj EINA_UNUSED,
    return pd->fill_rule;
 }
 
-static void
-_efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd,
-                                const Eo *dup_from)
+EOLIAN static void
+_efl_gfx_shape_efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Shape_Data *pd,
+                                      const Eo *dup_from)
 {
    Efl_Gfx_Shape_Data *from;
 
    if (obj == dup_from) return;
 
-   from = efl_data_scope_get(dup_from, EFL_GFX_SHAPE_MIXIN);
+   from = efl_data_scope_get(dup_from, MY_CLASS);
    if (!from) return;
 
    pd->public.stroke.scale = from->public.stroke.scale;
@@ -285,7 +287,7 @@ _efl_gfx_shape_dup(Eo *obj, Efl_Gfx_Shape_Data *pd,
    _efl_gfx_shape_stroke_dash_set(obj, pd, from->public.stroke.dash,
                                   from->public.stroke.dash_length);
 
-   efl_gfx_path_dup(obj, dup_from);
+   efl_gfx_path_copy_from(efl_super(obj, MY_CLASS), dup_from);
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"

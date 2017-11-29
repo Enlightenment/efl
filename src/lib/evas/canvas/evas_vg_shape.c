@@ -120,7 +120,7 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
    ector_renderer_shape_fill_set(nd->renderer, fill ? fill->renderer : NULL);
    ector_renderer_shape_stroke_fill_set(nd->renderer, stroke_fill ? stroke_fill->renderer : NULL);
    ector_renderer_shape_stroke_marker_set(nd->renderer, stroke_marker ? stroke_marker->renderer : NULL);
-   efl_gfx_shape_dup(nd->renderer, obj);
+   efl_gfx_path_copy_from(nd->renderer, obj);
    ector_renderer_prepare(nd->renderer);
 }
 
@@ -183,21 +183,21 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
 
 
 EOLIAN static Efl_VG *
-_efl_vg_shape_efl_vg_dup(const Eo *obj, Efl_VG_Shape_Data *pd)
+_efl_vg_shape_efl_dup_dup(const Eo *obj, Efl_VG_Shape_Data *pd)
 {
    Efl_VG *cn = NULL;
    Efl_VG_Shape_Data *cd = NULL;
 
-   cn = efl_vg_dup(efl_super(obj, MY_CLASS));
+   cn = efl_dup(efl_super(obj, MY_CLASS));
    cd = efl_data_scope_get(cn, MY_CLASS);
    if (pd->fill)
-     cd->fill = efl_vg_dup(pd->fill);
+     cd->fill = efl_dup(pd->fill);
    if (pd->stroke.fill)
-     cd->stroke.fill = efl_vg_dup(pd->stroke.fill);
+     cd->stroke.fill = efl_dup(pd->stroke.fill);
    if (pd->stroke.marker)
-     cd->stroke.marker = efl_vg_dup(pd->stroke.marker);
+     cd->stroke.marker = efl_dup(pd->stroke.marker);
 
-   efl_gfx_shape_dup(cn, obj);
+   efl_gfx_path_copy_from(cn, obj);
    return cn;
 }
 
@@ -318,7 +318,7 @@ evas_vg_shape_current_ctrl_get(Eo *obj, double *x, double *y)
 EAPI void
 evas_vg_shape_dup(Eo *obj, Eo *dup_from)
 {
-   efl_gfx_shape_dup(obj, dup_from);
+   efl_gfx_path_copy_from(obj, dup_from);
 }
 
 EAPI void

@@ -13,7 +13,15 @@ class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Input.Event.reset;
-      Efl.Input.Event.dup;
+      Efl.Dup.dup;
+         [[Creates a copy of this event. @Efl.Input.Event.fake is $true.
+
+           The returned event object is similar to the given object in most
+           ways except that @Efl.Input.Event.fake will be $true.
+
+           Note: A reference is given to the caller. In order to avoid leaks
+           the C API users should call $efl_unref() after use.
+         ]]
       Efl.Input.Event.timestamp { get; set; }
       Efl.Input.Event.event_flags { get; set; }
       Efl.Input.Event.device { get; set; }

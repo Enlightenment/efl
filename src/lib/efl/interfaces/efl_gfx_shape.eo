@@ -134,14 +134,8 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
           @in pos_map: double; [[Position map in range 0.0 to 1.0]]
         }
       }
-      dup {
-        [[Copy the shape data from the object specified.
-
-          @since 1.14
-        ]]
-        params {
-          @in dup_from: const(Efl.Object); [[Shape object from where data will be copied.]]
-        }
-      }
+   }
+   implements {
+      Efl.Gfx.Path.copy_from;
    }
 }

@@ -37,7 +37,7 @@ class Efl.VG.Shape (Efl.VG, Efl.Gfx.Shape)
    implements {
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
-      Efl.VG.dup;
+      Efl.Dup.dup;
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

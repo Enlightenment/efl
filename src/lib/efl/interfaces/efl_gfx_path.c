@@ -1575,8 +1575,8 @@ _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
      }
 }
 
-static void
-_efl_gfx_path_dup(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
+EOLIAN static void
+_efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
 {
    Efl_Gfx_Path_Data *from;
 

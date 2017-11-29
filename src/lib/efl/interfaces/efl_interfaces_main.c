@@ -6,6 +6,7 @@
 
 #include "interfaces/efl_config.eo.c"
 #include "interfaces/efl_control.eo.c"
+#include "interfaces/efl_dup.eo.c"
 #include "interfaces/efl_image.eo.c"
 #include "interfaces/efl_image_animated.eo.c"
 #include "interfaces/efl_image_load.eo.c"
