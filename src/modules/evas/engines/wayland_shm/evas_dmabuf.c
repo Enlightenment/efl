@@ -91,9 +91,12 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
 
    if (!best && (eina_list_count(s->buffers) < MAX_BUFFERS))
      {
-        Outbuf *ob;
-        ob = s->surface->ob;
-        best = ecore_wl2_buffer_create(ob->ewd, s->w, s->h, s->alpha);
+        Ecore_Wl2_Display *ewd;
+
+        ewd = ecore_wl2_window_display_get(s->surface->wl2_win);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+
+        best = ecore_wl2_buffer_create(ewd, s->w, s->h, s->alpha);
         /* Start at -1 so it's age is incremented to 0 for first draw */
         best->age = -1;
         s->buffers = eina_list_append(s->buffers, best);
@@ -133,7 +136,6 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    Dmabuf_Surface *surface;
    Ecore_Wl2_Buffer *b;
-   Ecore_Wl2_Window *win;
 
    surface = s->dmabuf;
    b = surface->current;
@@ -145,12 +147,10 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
    b->busy = EINA_TRUE;
    b->age = 0;
 
-   win = s->info->info.wl2_win;
+   ecore_wl2_window_buffer_attach(s->wl2_win, b->wl_buffer, 0, 0, EINA_FALSE);
+   ecore_wl2_window_damage(s->wl2_win, rects, count);
 
-   ecore_wl2_window_buffer_attach(win, b->wl_buffer, 0, 0, EINA_FALSE);
-   ecore_wl2_window_damage(win, rects, count);
-
-   ecore_wl2_window_commit(win, EINA_TRUE);
+   ecore_wl2_window_commit(s->wl2_win, EINA_TRUE);
 }
 
 static void
@@ -169,7 +169,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Surface *
-_evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
+_evas_surface_create(Ecore_Wl2_Window *win, Evas_Engine_Info_Wayland *info, Outbuf *ob)
 {
    Surface *out = NULL;
    Dmabuf_Surface *surf = NULL;
@@ -180,8 +180,9 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
    if (!out) return NULL;
    out->info = info;
    out->ob = ob;
+   out->wl2_win = win;
 
-   ewd = ecore_wl2_window_display_get(info->info.wl2_win);
+   ewd = ecore_wl2_window_display_get(win);
    if (ecore_wl2_display_shm_get(ewd))
      types |= ECORE_WL2_BUFFER_SHM;
    if (ecore_wl2_display_dmabuf_get(ewd))

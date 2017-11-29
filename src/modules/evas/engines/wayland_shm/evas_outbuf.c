@@ -28,7 +28,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->priv.destination_alpha = info->info.destination_alpha;
    ob->ewd = ecore_wl2_window_display_get(info->info.wl2_win);
 
-   ob->surface = _evas_surface_create(info, ob);
+   ob->surface = _evas_surface_create(info->info.wl2_win, info, ob);
    if (!ob->surface) goto surf_err;
 
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
