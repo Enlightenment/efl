@@ -358,6 +358,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         unichr = eina_unicode_utf8_next_get(chr, &chrpos);
 
         cells[x].codepoint = unichr;
+        cells[x].bold = 0;
         cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
 
@@ -375,6 +376,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    for (; x < (unsigned int) w; x++)
      {
         cells[x].codepoint = 0;
+        cells[x].bold = 0;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
      }
 
