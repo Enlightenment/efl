@@ -328,7 +328,7 @@ _validate_function(Eolian_Function *func, Eina_Hash *nhash)
                  "%sfunction '%s' redefined (originally at %s:%d:%d)",
                  func->is_beta ? "beta " : "", func->name, ofunc->base.file,
                  ofunc->base.line, ofunc->base.column);
-        if (!func->is_beta || (_duplicates_warn > 1))
+        if ((!func->is_beta && !ofunc->is_beta) || (_duplicates_warn > 1))
           _obj_error(&func->base, buf);
      }
 
