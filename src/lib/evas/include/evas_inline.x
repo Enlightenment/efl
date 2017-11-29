@@ -230,25 +230,14 @@ evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
         int fx, fy;
         fx = e->framespace.x;
         fy = e->framespace.y;
-        if (obj->is_smart)
-          {
-             int mapsmt = 0;
-             if (obj->map->cur.map && obj->map->cur.usemap) mapsmt = 1;
-             if (!mapsmt) return 1;
-             if (evas_object_is_in_output_rect(eo_obj, obj, -fx, -fy,
-                                               e->output.w, e->output.h) ||
-                 evas_object_was_in_output_rect(eo_obj, obj, -fx, -fy,
-                                                e->output.w, e->output.h))
-               return 1;
-          }
-        else
-          {
-             if (evas_object_is_in_output_rect(eo_obj, obj, -fx, -fy,
-                                               e->output.w, e->output.h) ||
-                 evas_object_was_in_output_rect(eo_obj, obj, -fx, -fy,
-                                                e->output.w, e->output.h))
-               return 1;
-          }
+        if (obj->is_smart && !(obj->map->cur.map && obj->map->cur.usemap))
+          return 1;
+
+        if (evas_object_is_in_output_rect(eo_obj, obj, -fx, -fy,
+                                          e->output.w, e->output.h) ||
+            evas_object_was_in_output_rect(eo_obj, obj, -fx, -fy,
+                                           e->output.w, e->output.h))
+          return 1;
      }
    /* FIXME: forcing object with proxies to stay active,
       need to be smarter and only do that when really needed. */
