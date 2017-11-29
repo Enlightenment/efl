@@ -801,7 +801,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
                              that it's not covered by any other window.]]
       Efl.Gfx.Stack.lower; [[This action is ignored by the Window.]]
       Elm.Widget.theme_apply;
-      Elm.Widget.focus { get; }
+      Efl.Ui.Focus.Object.focus { get; }
       Elm.Widget.focus_highlight_style { get; set; }
       Elm.Widget.focus_highlight_enabled { get; set; }
       Elm.Widget.focus_highlight_animate { get; set; }
