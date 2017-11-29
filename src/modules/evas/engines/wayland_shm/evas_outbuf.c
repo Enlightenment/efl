@@ -26,7 +26,7 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->rotation = info->info.rotation;
    ob->depth = info->info.depth;
    ob->priv.destination_alpha = info->info.destination_alpha;
-   ob->ewd = info->info.wl2_display;
+   ob->ewd = ecore_wl2_window_display_get(info->info.wl2_win);
 
    ob->surface = _evas_surface_create(info, ob);
    if (!ob->surface) goto surf_err;

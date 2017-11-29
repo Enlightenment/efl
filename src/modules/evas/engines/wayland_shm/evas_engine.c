@@ -130,14 +130,16 @@ eng_output_update(void *engine, void *data, void *info, unsigned int w, unsigned
 {
    Evas_Engine_Info_Wayland *einfo = info;
    Render_Engine *re = data;
+   Ecore_Wl2_Display *ewd;
    Outbuf *ob;
 
    ob = re->generic.ob;
-   if (ob->ewd != einfo->info.wl2_display)
+   ewd = ecore_wl2_window_display_get(einfo->info.wl2_win);
+   if (ob->ewd != ewd)
      {
-        if (einfo->info.wl2_display)
+        if (ewd)
           ob->dirty = EINA_TRUE;
-        re->generic.ob->ewd = einfo->info.wl2_display;
+        re->generic.ob->ewd = ewd;
      }
 
    eng_output_resize(engine, data, w, h);

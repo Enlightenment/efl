@@ -178,7 +178,7 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
    out->info = info;
    out->ob = ob;
 
-   ewd = info->info.wl2_display;
+   ewd = ecore_wl2_window_display_get(info->info.wl2_win);
    if (ecore_wl2_display_shm_get(ewd))
      types |= ECORE_WL2_BUFFER_SHM;
    if (ecore_wl2_display_dmabuf_get(ewd))

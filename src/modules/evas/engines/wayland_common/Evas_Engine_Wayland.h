@@ -14,7 +14,6 @@ struct _Evas_Engine_Info_Wayland
    /* engine specific data & parameters it needs to set up */
    struct
      {
-        Ecore_Wl2_Display *wl2_display;
         Ecore_Wl2_Window *wl2_win;
         int depth, rotation, edges;
         Eina_Bool destination_alpha : 1;

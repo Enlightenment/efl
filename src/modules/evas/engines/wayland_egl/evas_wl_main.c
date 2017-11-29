@@ -29,7 +29,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    gw->w = w;
    gw->h = h;
    gw->swap_mode = swap_mode;
-   gw->wl2_disp = einfo->info.wl2_display;
+   gw->wl2_disp = ecore_wl2_window_display_get(einfo->info.wl2_win);
    gw->wl2_win = einfo->info.wl2_win;
    if (display && (display != ecore_wl2_display_get(gw->wl2_disp)))
      context = EGL_NO_CONTEXT;
