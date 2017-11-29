@@ -125,7 +125,7 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Surface *_evas_surface_create(Ecore_Wl2_Window *win, Evas_Engine_Info_Wayland *info, Outbuf *ob);
+Surface *_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha, Evas_Engine_Info_Wayland *info, Outbuf *ob);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);

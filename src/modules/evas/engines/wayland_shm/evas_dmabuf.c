@@ -169,7 +169,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Surface *
-_evas_surface_create(Ecore_Wl2_Window *win, Evas_Engine_Info_Wayland *info, Outbuf *ob)
+_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha, Evas_Engine_Info_Wayland *info, Outbuf *ob)
 {
    Surface *out = NULL;
    Dmabuf_Surface *surf = NULL;
@@ -192,7 +192,7 @@ _evas_surface_create(Ecore_Wl2_Window *win, Evas_Engine_Info_Wayland *info, Outb
    out->dmabuf = surf;
 
    surf->surface = out;
-   surf->alpha = info->info.destination_alpha;
+   surf->alpha = alpha;
    surf->w = 0;
    surf->h = 0;
 
