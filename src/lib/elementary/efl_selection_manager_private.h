@@ -50,10 +50,10 @@ typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Seat_Selection *seat_sel, Ecore_X_
 #ifdef HAVE_ELEMENTARY_WL2
 typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
 
-typedef Eina_Bool (*Wl_Converter_Fn_Cb)     (char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
-static Eina_Bool _wl_targets_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
-static Eina_Bool _wl_general_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
-static Eina_Bool _wl_text_converter(char *target, Wl_Cnp_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+typedef Eina_Bool (*Wl_Converter_Fn_Cb)     (char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_targets_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
+static Eina_Bool _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 
 typedef Eina_Bool       (*Wl_Data_Preparer_Cb)   (Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
 static Eina_Bool _wl_data_preparer_markup(Wl_Cnp_Selection *sel, Elm_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
@@ -88,7 +88,7 @@ struct _Saved_Type
 struct _Sel_Manager_Selection
 {
    const char        *debug;
-   char              *selbuf;
+   char              *buf;
    unsigned int       len;
    Efl_Selection_Format     request_format;
    //Elm_Drop_Cb        datacb;
@@ -108,6 +108,7 @@ struct _Sel_Manager_Selection
    Ecore_Wl2_Offer *offer;
    //char **convertion_format;
    Ecore_Event_Handler *offer_handler;
+   Ecore_Wl2_Window *win;
 #endif
 
    Efl_Selection_Format     format;
