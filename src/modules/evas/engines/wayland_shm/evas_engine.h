@@ -77,10 +77,8 @@ typedef struct _Dmabuf_Surface Dmabuf_Surface;
 typedef struct _Surface Surface;
 struct _Surface
 {
-   Outbuf *ob;
    Ecore_Wl2_Window *wl2_win;
    Dmabuf_Surface *dmabuf;
-   Evas_Engine_Info_Wayland *info;
    struct
      {
         void (*destroy)(Surface *surface);
@@ -125,7 +123,7 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Surface *_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha, Evas_Engine_Info_Wayland *info, Outbuf *ob);
+Surface *_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);

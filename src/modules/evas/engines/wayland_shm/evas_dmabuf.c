@@ -169,7 +169,7 @@ _evas_dmabuf_surface_destroy(Surface *s)
 }
 
 Surface *
-_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha, Evas_Engine_Info_Wayland *info, Outbuf *ob)
+_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
    Surface *out = NULL;
    Dmabuf_Surface *surf = NULL;
@@ -178,8 +178,6 @@ _evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha, Evas_Engine_Info_Wa
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
-   out->info = info;
-   out->ob = ob;
    out->wl2_win = win;
 
    ewd = ecore_wl2_window_display_get(win);
