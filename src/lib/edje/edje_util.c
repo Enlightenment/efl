@@ -4944,12 +4944,14 @@ _edje_object_perspective_get(Eo *obj EINA_UNUSED, Edje *ed)
 #define EDJE_PRELOAD_EMISSION "preload,done"
 #define EDJE_PRELOAD_SOURCE   NULL
 
-EOLIAN Eina_Bool
-_edje_object_preload(Eo *obj, Edje *ed, Eina_Bool cancel)
+EAPI Eina_Bool
+edje_object_preload(Eo *obj, Eina_Bool cancel)
 {
    unsigned short count;
    unsigned short i;
+   Edje *ed;
 
+   ed = _edje_fetch(obj);
    if (!ed) return EINA_FALSE;
 
    _edje_recalc_do(ed);

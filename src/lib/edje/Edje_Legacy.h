@@ -52,6 +52,25 @@
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
 /**
+ * @brief Preloads the images on the Edje Object in the background.
+ *
+ * This function requests the preload of all data images (on the given object)
+ * in the background. The work is queued before being processed (because there
+ * might be other pending requests of this type). It emits a signal
+ * "preload,done" when finished.
+ *
+ * @note Use @c true on scenarios where you don't need the image data preloaded
+ * anymore.
+ *
+ * @param[in] obj The object.
+ * @param[in] cancel @c false will add it the preloading work queue, @c true
+ * will remove it (if it was issued before).
+ *
+ * @return @c false if obj was not a valid Edje object otherwise @c true
+ */
+EAPI Eina_Bool edje_object_preload(Evas_Object *obj, Eina_Bool cancel);
+
+/**
  * @brief Adds a callback for an arriving Edje signal, emitted by a given Edje
  * object.
  *

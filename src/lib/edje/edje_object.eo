@@ -66,26 +66,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
          }
       }
 
-      // TODO: Legacy only. EO may rely on futures.
-      preload {
-         [[Preloads the images on the Edje Object in the background.
-
-           This function requests the preload of all data images (on the given
-           object) in the background. The work is queued before being processed
-           (because there might be other pending requests of this type).
-           It emits a signal "preload,done" when finished.
-
-           Note: Use $true on scenarios where you don't need
-           the image data preloaded anymore.]]
-
-         return: bool; [[$false if obj was not a valid Edje object
-                         otherwise $true]]
-         params {
-            @in cancel: bool; [[$false will add it the preloading work queue,
-                                $true will remove it (if it was issued before).]]
-         }
-      }
-
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
          legacy: null;
