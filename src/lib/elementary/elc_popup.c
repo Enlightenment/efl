@@ -1843,7 +1843,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_popup, "default")
+ELM_PART_CONTENT_DEFAULT_GET(elm_popup, "default")
 #include "elm_popup_part.eo.c"
 
 /* Efl.Part end */

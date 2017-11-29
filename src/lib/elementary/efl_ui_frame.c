@@ -215,7 +215,7 @@ _efl_ui_frame_class_constructor(Efl_Class *klass)
 
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
-ELM_PART_CONTENT_DEFAULT_SET(efl_ui_frame, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_frame, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
 
 /* Internal EO APIs and hidden overrides */

@@ -6071,7 +6071,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_entry, ELM_ENTRY, Elm_Entry_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_entry, "icon")
+ELM_PART_CONTENT_DEFAULT_GET(elm_entry, "icon")
 #include "elm_entry_part.eo.c"
 
 /* Efl.Part end */

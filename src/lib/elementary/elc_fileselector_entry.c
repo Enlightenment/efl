@@ -628,7 +628,7 @@ ELM_PART_OVERRIDE_CONTENT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, El
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
 ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
 ELM_PART_OVERRIDE_TEXT_GET(elm_fileselector_entry, ELM_FILESELECTOR_ENTRY, Elm_Fileselector_Entry_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_fileselector_entry, "button icon")
+ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
 #include "elm_fileselector_entry_part.eo.c"
 
 /* Efl.Part end */

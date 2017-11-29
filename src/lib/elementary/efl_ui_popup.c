@@ -253,7 +253,7 @@ _efl_ui_popup_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const ch
 
 /* Standard widget overrides */
 
-ELM_PART_CONTENT_DEFAULT_SET(efl_ui_popup, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 /* Efl.Part begin */

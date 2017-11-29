@@ -1611,7 +1611,7 @@ ELM_PART_OVERRIDE(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_ctxpopup, "default")
+ELM_PART_CONTENT_DEFAULT_GET(elm_ctxpopup, "default")
 #include "elm_ctxpopup_part.eo.c"
 
 /* Efl.Part end */

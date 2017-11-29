@@ -23,7 +23,7 @@ struct _Elm_Part_Data
 
 // FIXME: Some widgets return the alias name, some return the real name
 // alias doesn't work for frame, _elm_layout_part_aliasing_eval() fails for scroller
-#define ELM_PART_CONTENT_DEFAULT_SET(type, part) \
+#define ELM_PART_CONTENT_DEFAULT_GET(type, part) \
    static const char * _ ## type ## _default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED) { return part; }
 
 #define ELM_PART_CONTENT_DEFAULT_OPS(type) \

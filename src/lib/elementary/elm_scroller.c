@@ -1374,7 +1374,7 @@ ELM_PART_OVERRIDE_CONTENT_SET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 // FIXME: should be "content" but "default" was legacy API
-ELM_PART_CONTENT_DEFAULT_SET(elm_scroller, "default")
+ELM_PART_CONTENT_DEFAULT_GET(elm_scroller, "default")
 #include "elm_scroller_part.eo.c"
 
 /* Efl.Part end */

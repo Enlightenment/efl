@@ -5635,7 +5635,7 @@ _efl_ui_widget_part_bg_efl_ui_image_scale_type_get(Eo *obj, void *pd EINA_UNUSED
 EFL_FUNC_BODY_CONST(elm_widget_default_content_part_get, const char *, NULL)
 EFL_FUNC_BODY_CONST(elm_widget_default_text_part_get, const char *, NULL)
 
-ELM_PART_CONTENT_DEFAULT_SET(elm_widget, NULL)
+ELM_PART_CONTENT_DEFAULT_GET(elm_widget, NULL)
 ELM_PART_TEXT_DEFAULT_GET(elm_widget, NULL)
 
 #define ELM_WIDGET_EXTRA_OPS \

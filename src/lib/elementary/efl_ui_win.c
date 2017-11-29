@@ -7231,7 +7231,7 @@ ELM_PART_OVERRIDE(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_win, EFL_UI_WIN, Efl_Ui_Win_Data)
-ELM_PART_CONTENT_DEFAULT_SET(efl_ui_win, "content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_win, "content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_win, Efl_Ui_Win_Data)
 #include "efl_ui_win_part.eo.c"
 

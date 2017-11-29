@@ -366,7 +366,7 @@ _efl_ui_radio_efl_access_state_set_get(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSE
 
 /* Part APIs */
 
-ELM_PART_CONTENT_DEFAULT_SET(efl_ui_radio, "elm.swallow.content")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_radio, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
 
 /* Internal EO APIs and hidden overrides */

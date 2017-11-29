@@ -709,7 +709,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_notify, "default")
+ELM_PART_CONTENT_DEFAULT_GET(elm_notify, "default")
 
 EOLIAN static const char *
 _elm_notify_part_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)

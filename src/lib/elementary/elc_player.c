@@ -698,7 +698,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_player, Elm_Player_Data)
 
 ELM_PART_OVERRIDE(elm_player, ELM_PLAYER, Elm_Player_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(elm_player, ELM_PLAYER, Elm_Player_Data)
-ELM_PART_CONTENT_DEFAULT_SET(elm_player, "video")
+ELM_PART_CONTENT_DEFAULT_GET(elm_player, "video")
 #include "elm_player_part.eo.c"
 
 /* End of Efl.Part */

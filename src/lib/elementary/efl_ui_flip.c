@@ -2353,7 +2353,7 @@ ELM_PART_OVERRIDE(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
-ELM_PART_CONTENT_DEFAULT_SET(efl_ui_flip, "front")
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
 #include "efl_ui_flip_part.eo.c"
 
 /* Efl.Part end */

@@ -159,7 +159,7 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_inwin)
-ELM_PART_CONTENT_DEFAULT_SET(elm_inwin, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_GET(elm_inwin, _content_aliases[0].real_part)
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
