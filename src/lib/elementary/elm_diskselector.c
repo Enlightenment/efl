@@ -905,7 +905,7 @@ _elm_diskselector_elm_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         edje_object_signal_emit
           (wd->resize_obj, "elm,action,focus", "elm");

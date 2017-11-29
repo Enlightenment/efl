@@ -963,7 +963,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    // and one of them can delete elm_entry.
    evas_object_ref(obj);
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
         if (sd->scroll)
@@ -1200,7 +1200,7 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
         evas_object_focus_set(sw, EINA_TRUE);
@@ -2243,7 +2243,7 @@ _entry_cursor_changed_signal_cb(void *data,
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
-   if (elm_widget_focus_get(data))
+   if (efl_ui_focus_object_focus_get(data))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
      }

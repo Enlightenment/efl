@@ -44,7 +44,7 @@
 #define ELM_WIDGET_FOCUS_GET(obj)                                          \
   (efl_isa(obj, ELM_WIDGET_CLASS) &&                                    \
    ((_elm_access_auto_highlight_get()) ? (elm_widget_highlight_get(obj)) : \
-                                         (elm_widget_focus_get(obj))))
+                                         (efl_ui_focus_object_focus_get(obj))))
 
 const char SIG_WIDGET_FOCUSED[] = "focused";
 const char SIG_WIDGET_UNFOCUSED[] = "unfocused";
@@ -1916,12 +1916,6 @@ elm_widget_access_highlight_in_theme_get(const Eo *obj)
    if (!sd) return EINA_FALSE;
 
    return sd->access_highlight_in_theme;
-}
-
-EOLIAN static Eina_Bool
-_elm_widget_focus_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return (sd->focused && sd->top_win_focused);
 }
 
 /** @internal */
@@ -4970,7 +4964,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj,
 
    Eina_Bool visible = evas_object_visible_get(obj);
    Eina_Bool disabled = elm_widget_disabled_get(obj);
-   Eina_Bool focused = elm_widget_focus_get(obj);
+   Eina_Bool focused = efl_ui_focus_object_focus_get(obj);
    Eina_Bool can_focus = elm_widget_can_focus_get(obj);
 
    if (sd->parent_obj)
@@ -5124,7 +5118,7 @@ _elm_widget_efl_object_debug_name_override(Eo *obj, Elm_Widget_Smart_Data *sd EI
 {
    const char *focus = "";
 
-   if (efl_ui_widget_focus_get(obj)) focus = ":focused";
+   if (efl_ui_focus_object_focus_get(obj)) focus = ":focused";
    efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, "%s", focus);
 }
@@ -5137,7 +5131,7 @@ _elm_widget_on_focus_update(Eo *obj, Elm_Widget_Smart_Data *sd, Elm_Object_Item 
    if (!elm_widget_can_focus_get(obj))
      return EINA_FALSE;
 
-   focused = elm_widget_focus_get(obj);
+   focused = efl_ui_focus_object_focus_get(obj);
 
    if (!sd->resize_obj)
      evas_object_focus_set(obj, focused);

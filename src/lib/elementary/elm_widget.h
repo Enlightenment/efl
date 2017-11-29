@@ -56,7 +56,7 @@
  *    // define this virtual function to handle it (e.g. to emit a
  *    // signal to an edje object)
  *
- *    if (elm_widget_focus_get(obj))
+ *    if (efl_ui_focus_object_focus_get(obj))
  *      {
  *         edje_object_signal_emit(sd->sub, "elm,action,focus", "elm");
  *         evas_object_focus_set(sd->sub, EINA_TRUE);
@@ -660,7 +660,6 @@ EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_B
 EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
 EAPI void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
 EAPI Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_focus_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);

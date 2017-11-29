@@ -394,7 +394,7 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
 
    if (!elm_widget_can_focus_get(obj)) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         elm_layout_signal_emit(obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);

@@ -454,7 +454,7 @@ _efl_ui_clock_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd, Elm_Obj
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (!elm_widget_focus_get(obj))
+   if (!efl_ui_focus_object_focus_get(obj))
      {
         if ((dt_mod) && (dt_mod->obj_hide))
           dt_mod->obj_hide(sd->mod_data);

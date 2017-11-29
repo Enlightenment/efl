@@ -937,7 +937,7 @@ _elm_spinner_elm_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd, Elm_Objec
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (!elm_widget_focus_get(obj))
+   if (!efl_ui_focus_object_focus_get(obj))
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);

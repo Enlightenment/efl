@@ -147,7 +147,7 @@ _elm_access_elm_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Efl_Ui
 EOLIAN static Eina_Bool
 _elm_access_elm_widget_on_focus_update(Eo *obj, void *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
-   evas_object_focus_set(obj, elm_widget_focus_get(obj));
+   evas_object_focus_set(obj, efl_ui_focus_object_focus_get(obj));
 
    return EINA_TRUE;
 }

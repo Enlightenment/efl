@@ -756,7 +756,7 @@ _elm_toolbar_elm_widget_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd, Elm_Objec
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
         if (sd->mouse_down) return EINA_TRUE;

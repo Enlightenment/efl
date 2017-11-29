@@ -68,7 +68,7 @@ _elm_plug_elm_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_I
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj))
+   if (efl_ui_focus_object_focus_get(obj))
      {
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
      }

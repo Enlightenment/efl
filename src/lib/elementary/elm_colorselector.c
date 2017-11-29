@@ -2648,7 +2648,7 @@ _elm_color_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *it, Ei
      }
    else
      {
-        if (!elm_widget_focus_get(obj))
+        if (!efl_ui_focus_object_focus_get(obj))
           return;
         sd->focused_item = NULL;
      }

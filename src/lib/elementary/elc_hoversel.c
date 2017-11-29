@@ -583,7 +583,7 @@ EOLIAN static Eina_Bool
 _elm_hoversel_item_elm_widget_item_focus_get(Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it)
 {
-   return elm_widget_focus_get(VIEW(it));
+   return efl_ui_focus_object_focus_get(VIEW(it));
 }
 
 EOLIAN static void

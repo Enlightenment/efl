@@ -134,22 +134,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
             disabled: bool(false); [[$true if the orientation mode is disabled.]]
          }
       }
-      // FIXME: This property may be simply removed from EO (replaced by focus manager stuff)
-      @property focus {
-         [[Whether the object is focused for inputs.
-
-           If an object is focused it will be the first to receive keyboard
-           inputs. Only visible, non-disabled objects can be focused.
-
-           Focus can be disabled by setting @.focus_allow to $false.
-         ]]
-         get {
-            [[Gets whether this object is currently focused.]]
-         }
-         values {
-            focus: bool(false); [[Whether the object is focused.]]
-         }
-      }
       // FIXME: focus_allow? can_focus? focusable?
       @property focus_allow {
          [[The ability for a widget to be focused.

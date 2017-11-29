@@ -1613,7 +1613,7 @@ elm_object_focus_get(const Evas_Object *obj)
         focused_child = efl_ui_focus_user_parent_get(focused_child);
      }
 
-   return elm_widget_focus_get(obj);
+   return efl_ui_focus_object_focus_get(obj);
 }
 
 EAPI void

@@ -3375,13 +3375,13 @@ _elm_genlist_elm_widget_on_focus_update(Eo *obj, Elm_Genlist_Data *sd, Elm_Objec
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (elm_widget_focus_get(obj) && (sd->items) && (sd->selected) &&
+   if (efl_ui_focus_object_focus_get(obj) && (sd->items) && (sd->selected) &&
        (!sd->last_selected_item))
      {
         sd->last_selected_item = eina_list_data_get(sd->selected);
      }
 
-   if (elm_widget_focus_get(obj) && !sd->mouse_down)
+   if (efl_ui_focus_object_focus_get(obj) && !sd->mouse_down)
      {
         if (sd->last_focused_item)
           eo_it = sd->last_focused_item;
@@ -6132,7 +6132,7 @@ _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
 
-        if (!elm_widget_focus_get(obj))
+        if (!efl_ui_focus_object_focus_get(obj))
           return;
 
         if (eo_it != sd->focused_item)
@@ -6152,7 +6152,7 @@ _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
      }
    else
      {
-        if (!elm_widget_focus_get(obj))
+        if (!efl_ui_focus_object_focus_get(obj))
           return;
         _elm_genlist_item_unfocused(eo_it);
      }
