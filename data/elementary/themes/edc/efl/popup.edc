@@ -23,7 +23,9 @@ group { "efl/popup";
    }
 }
 
-group { "efl/popup.alert";
+group { "efl/popup_alert";
+   alias: "efl/popup_alert_scroll";
+   alias: "efl/popup_alert_text";
    images.image: "rounded_square.png" COMP;
    parts {
       image { "bg";
@@ -108,13 +110,15 @@ group { "efl/popup.alert";
    }
 }
 
-group { "efl/popup.anchor";
+group { "efl/popup_anchor";
    inherit: "efl/popup";
 }
 
 group { "efl/popup/backwall";
-   alias: "efl/popup.alert/backwall";
-   alias: "efl/popup.anchor/backwall";
+   alias: "efl/popup_alert/backwall";
+   alias: "efl/popup_alert_scroll/backwall";
+   alias: "efl/popup_alert_text/backwall";
+   alias: "efl/popup_anchor/backwall";
    parts {
       rect { "base";
          desc { "default";
@@ -163,14 +167,18 @@ group { "efl/popup/backwall";
    }
 }
 
-group { "efl/popup.alert/button_layout1";
+group { "efl/popup_alert/button_layout1";
+   alias: "efl/popup_alert_scroll/button_layout1";
+   alias: "efl/popup_alert_text/button_layout1";
    parts {
       swallow { "elm.swallow.button1";
       }
    }
 }
 
-group { "efl/popup.alert/button_layout2";
+group { "efl/popup_alert/button_layout2";
+   alias: "efl/popup_alert_scroll/button_layout2";
+   alias: "efl/popup_alert_text/button_layout2";
    parts {
       spacer { "div1";
          desc { "default";
@@ -194,7 +202,9 @@ group { "efl/popup.alert/button_layout2";
    }
 }
 
-group { "efl/popup.alert/button_layout3";
+group { "efl/popup_alert/button_layout3";
+   alias: "efl/popup_alert_scroll/button_layout3";
+   alias: "efl/popup_alert_text/button_layout3";
    parts {
       spacer { "div1";
          desc { "default";
@@ -233,6 +243,17 @@ group { "efl/popup.alert/button_layout3";
    }
 }
 
-group { "efl/popup.alert/button";
+group { "efl/popup_alert/button";
    inherit: "efl/button";
+   alias: "efl/popup_alert_scroll/button";
+   alias: "efl/popup_alert_text/button";
+}
+
+group { "efl/popup_alert_scroll/scroller";
+   inherit: "elm/scroller/base/popup/no_inset_shadow";
+   alias: "efl/popup_alert_text/scroller";
+}
+
+group { "efl/popup_alert_text/text";
+   inherit: "efl/text";
 }

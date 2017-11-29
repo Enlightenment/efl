@@ -12,6 +12,9 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_TEXT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert.Text"
 
+static const char PART_NAME_SCROLLER[] = "scroller";
+static const char PART_NAME_TEXT[] = "text";
+
 EOLIAN static void
 _efl_ui_popup_alert_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED)
 {
@@ -50,7 +53,9 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
      {
         if (!pd->message)
           {
+             // TODO: Change internal component to Efl.Ui.Widget
              pd->message = elm_label_add(obj);
+             //elm_widget_element_update(obj, pd->message, PART_NAME_TEXT);
              elm_label_line_wrap_set(pd->message, ELM_WRAP_MIXED);
              efl_gfx_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
                                           EVAS_HINT_EXPAND);
@@ -97,13 +102,17 @@ _efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "popup_alert_scroll");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
    elm_widget_sub_object_parent_add(obj);
 
+   // TODO: Change internal component to Efl.Ui.Widget
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
+   //elm_widget_element_update(obj, pd->scroller, PART_NAME_SCROLLER);
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_AUTO);
 

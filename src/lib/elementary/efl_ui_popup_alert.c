@@ -252,7 +252,7 @@ _efl_ui_popup_alert_efl_object_constructor(Eo *obj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "popup.alert");
+     elm_widget_theme_klass_set(obj, "popup_alert");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
