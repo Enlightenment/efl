@@ -1047,11 +1047,11 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Tooltip 3", test_tooltip3);
    ADD_TEST(NULL, "Popups", "Tooltip 4", test_tooltip4);
    ADD_TEST(NULL, "Popups", "Popup", test_popup);
-   ADD_TEST(NULL, "Popups", "UI.Popup", test_ui_popup);
-   ADD_TEST(NULL, "Popups", "UI.Popup.Alert", test_ui_popup_alert);
-   ADD_TEST(NULL, "Popups", "UI.Popup.Alert.Scroll", test_ui_popup_alert_scroll);
-   ADD_TEST(NULL, "Popups", "UI.Popup.Alert.Text", test_ui_popup_alert_text);
-   ADD_TEST(NULL, "Popups", "UI.Popup.Anchor", test_ui_popup_anchor);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup", test_ui_popup);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert", test_ui_popup_alert);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Scroll", test_ui_popup_alert_scroll);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Text", test_ui_popup_alert_text);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Anchor", test_ui_popup_anchor);
 
    //------------------------------//
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
