@@ -437,6 +437,30 @@ EAPI int edje_object_freeze(Edje_Object *obj);
  */
 EAPI int edje_object_thaw(Edje_Object *obj);
 
+/**
+ * @typedef (*Edje_Text_Change_Cb)
+ *
+ * Callback prototype for Edje_Text_Change.
+ * @param data User provided data to pass to the callback
+ * @param obj The Evas_Object
+ * @param part The edje part
+ */
+typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
+/**
+ * @}
+ */
+
+/**
+ * @brief Sets the object text callback.
+ *
+ * This function sets the callback to be called when the text changes.
+ *
+ * @param[in] obj The object.
+ * @param[in] func The callback function to handle the text change
+ * @param[in] data The data associated to the callback function.
+ */
+EAPI void edje_object_text_change_cb_set(Edje_Object *obj, Edje_Text_Change_Cb func, void *data);
+
 
 
 /**

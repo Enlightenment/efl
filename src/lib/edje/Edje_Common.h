@@ -1325,18 +1325,6 @@ typedef enum _Edje_Text_Effect
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)  /**< right shadow direction value */
 } Edje_Text_Effect;
 
-/**
- * @typedef (*Edje_Text_Change_Cb)
- *
- * Callback prototype for Edje_Text_Change.
- * @param data User provided data to pass to the callback
- * @param obj The Evas_Object
- * @param part The edje part
- */
-typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
-/**
- * @}
- */
 
 /**
  * @defgroup Edje_Text_Selection Edje Text Selection

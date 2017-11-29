@@ -73,17 +73,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       }
 
       /* TEXT PART APIS BEGIN ---------------------------------------------- */
-      @property text_change_cb {
-         set {
-            [[Sets the object text callback.
-
-              This function sets the callback to be called when the text changes.]]
-         }
-         values {
-            func: Edje.Text.Change_Cb; [[The callback function to handle the text change]]
-            data: void_ptr; [[The data associated to the callback function.]]
-         }
-      }
       @property item_provider {
          set {
             [[Sets the function that provides item objects for named items in an edje entry text

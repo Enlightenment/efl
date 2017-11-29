@@ -1916,12 +1916,14 @@ _edje_object_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider
    ed->item_provider.data = data;
 }
 
-/* FIXDOC: New Function */
-EOLIAN void
-_edje_object_text_change_cb_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Text_Change_Cb func, void *data)
+EAPI void
+edje_object_text_change_cb_set(Eo *obj, Edje_Text_Change_Cb func, void *data)
 {
    unsigned short i;
+   Edje *ed;
 
+   ed = _edje_fetch(obj);
+   if (!ed) return;
    ed->text_change.func = func;
    ed->text_change.data = data;
 
