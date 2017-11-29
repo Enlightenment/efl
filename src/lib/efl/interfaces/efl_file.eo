@@ -6,13 +6,7 @@ mixin Efl.File {
    methods {
       @property load_error {
          get {
-            [[Gets the (last) file loading error for a given Edje object
-
-              This function is meant to be used after an Edje EDJ file
-              loading, what takes place with the $file_set() function. If that
-              function does not return $true, one should check for the reason
-              of failure with this one.
-            ]]
+            [[Gets the (last) file loading error for a given object.]]
          }
          values {
             error: Efl.Image.Load.Error(Efl.Image.Load.Error.none); [[The load error code.]]
@@ -105,9 +99,8 @@ mixin Efl.File {
 
            You can specify some flags when saving the image.  Currently
            acceptable flags are $quality and $compress. Eg.:
-           "quality=100 compress=9"]]
-
-         return: bool;  [[$true on success, $false otherwise]]
+           "quality=100 compress=9".
+         ]]
          params {
             @in file: string @nonull; [[The filename to be used to save the image (extension
                                               obligatory).]]
@@ -116,6 +109,7 @@ mixin Efl.File {
             @in flags: string; [[String containing the flags to be used ($null for
                                        none).]]
          }
+         return: bool;  [[$true on success, $false otherwise]]
       }
    }
 }

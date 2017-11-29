@@ -2,6 +2,19 @@
 
 #include "edje_private.h"
 
+EAPI Edje_Load_Error
+edje_object_load_error_get(const Eo *obj)
+{
+   Efl_Image_Load_Error p = efl_file_load_error_get(obj);
+   Edje *ed;
+
+   if (p != EFL_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return EDJE_LOAD_ERROR_GENERIC;
+   return ed->load_error;
+}
+
 EAPI Eina_Bool
 edje_object_part_geometry_get(const Edje_Object *obj, const char *part, int *x, int *y, int *w, int *h)
 {

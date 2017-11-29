@@ -85,22 +85,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                                 $true will remove it (if it was issued before).]]
          }
       }
-      @property load_error {
-         get {
-            [[Gets the (last) file loading error for a given Edje object
-
-              This function is meant to be used after an Edje EDJ file
-              loading, what takes place with the $file_set() function. If that
-              function does not return $true, one should check for the reason
-              of failure with this one.
-            ]]
-            legacy: null;
-         }
-         values {
-            error: Efl.Image.Load.Error(Efl.Image.Load.Error.generic);
-               [[The load error code.]]
-         }
-      }
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
@@ -204,6 +188,7 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }
       Efl.Ui.Base.base_scale { get; }
+      Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
       Efl.Part.part; [[Returns @Efl.Canvas.Layout.Part.]]

@@ -167,9 +167,9 @@ _edje_object_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file,
 }
 
 EOLIAN Efl_Image_Load_Error
-_edje_object_load_error_get(Eo *obj, Edje *ed)
+_edje_object_efl_file_load_error_get(Eo *obj, Edje *ed)
 {
-   Efl_Image_Load_Error p = efl_file_load_error_get(obj);
+   Efl_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EDJE_OBJECT_CLASS));
 
    if (p != EFL_IMAGE_LOAD_ERROR_NONE) return p;
    switch (ed->load_error)
@@ -186,19 +186,6 @@ _edje_object_load_error_get(Eo *obj, Edje *ed)
       case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: return EFL_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
       default: return EFL_IMAGE_LOAD_ERROR_GENERIC;
      }
-}
-
-EAPI Edje_Load_Error
-edje_object_load_error_get(const Eo *obj)
-{
-   Efl_Image_Load_Error p = efl_file_load_error_get(obj);
-   Edje *ed;
-
-   if (p != EFL_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
-
-   ed = _edje_fetch(obj);
-   if (!ed) return EDJE_LOAD_ERROR_GENERIC;
-   return ed->load_error;
 }
 
 EAPI const char *
