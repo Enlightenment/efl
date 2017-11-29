@@ -15,6 +15,7 @@ struct _Dmabuf_Surface
    Ecore_Wl2_Buffer *current;
    Eina_List *buffers;
 
+   int w, h;
    Eina_Bool alpha : 1;
 };
 
@@ -40,6 +41,8 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
         ecore_wl2_buffer_destroy(b);
         surface->buffers = eina_list_remove_list(surface->buffers, l);
      }
+   surface->w = w;
+   surface->h = h;
 }
 
 static void *
@@ -90,7 +93,7 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
      {
         Outbuf *ob;
         ob = s->surface->ob;
-        best = ecore_wl2_buffer_create(ob->ewd, ob->w, ob->h, s->alpha);
+        best = ecore_wl2_buffer_create(ob->ewd, s->w, s->h, s->alpha);
         /* Start at -1 so it's age is incremented to 0 for first draw */
         best->age = -1;
         s->buffers = eina_list_append(s->buffers, best);
@@ -189,6 +192,8 @@ _evas_surface_create(Evas_Engine_Info_Wayland *info, Outbuf *ob)
 
    surf->surface = out;
    surf->alpha = info->info.destination_alpha;
+   surf->w = 0;
+   surf->h = 0;
 
    /* create surface buffers */
    if (!ecore_wl2_buffer_init(ewd, types)) goto err;
