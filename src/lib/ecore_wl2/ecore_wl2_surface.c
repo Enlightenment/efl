@@ -146,8 +146,6 @@ _evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s)
 
    EINA_LIST_FREE(s->buffers, b)
      ecore_wl2_buffer_destroy(b);
-
-   free(s);
 }
 
 EAPI void
@@ -156,6 +154,9 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    surface->funcs.destroy(surface);
+   surface->wl2_win = NULL;
+
+   free(surface);
 }
 
 EAPI void
@@ -197,6 +198,10 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+
+   if (win->wl2_surface) return win->wl2_surface;
+
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
    out->wl2_win = win;
@@ -219,7 +224,7 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    out->funcs.data_get = _evas_dmabuf_surface_data_get;
    out->funcs.assign = _evas_dmabuf_surface_assign;
    out->funcs.post = _evas_dmabuf_surface_post;
-
+   win->wl2_surface = out;
    return out;
 
 err:
