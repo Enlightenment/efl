@@ -241,34 +241,10 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    _calc_align(obj);
 }
 
-static Eina_Bool
-_efl_ui_popup_content_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part, Eo *content)
-{
-   return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-}
-
-Eo *
-_efl_ui_popup_content_get(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part)
-{
-   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
-static Eo *
-_efl_ui_popup_content_unset(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, const char *part)
-{
-   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
 /* Standard widget overrides */
 
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
-
-/* Efl.Part begin */
-
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_popup, EFL_UI_POPUP, Efl_Ui_Popup_Data)
 
 EOLIAN static Eo *
 _efl_ui_popup_efl_part_part(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
