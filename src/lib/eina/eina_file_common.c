@@ -422,9 +422,9 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
    EINA_MAGIC_SET(file, EINA_FILE_MAGIC);
    file->filename = (char *)(file + 1);
    if (virtual_name)
-     strcpy((char *)file->filename, virtual_name);
+     file->filename = eina_stringshare_add(virtual_name);
    else
-     sprintf((char *)file->filename, tmpname, ti);
+     file->filename = eina_stringshare_printf(tmpname, ti);
 
    eina_lock_recursive_new(&file->lock);
    file->mtime = ti / 1000;
