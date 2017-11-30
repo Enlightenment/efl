@@ -146,6 +146,41 @@ _evas_dmabuf_surface_destroy(Surface *s)
    free(s);
 }
 
+void surface_destroy(Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN(surface);
+
+   surface->funcs.destroy(surface);
+}
+
+void surface_reconfigure(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
+{
+   EINA_SAFETY_ON_NULL_RETURN(surface);
+
+   surface->funcs.reconfigure(surface, w, h, flags, force);
+}
+
+void *surface_data_get(Surface *surface, int *w, int *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   return surface->funcs.data_get(surface, w, h);
+}
+
+int surface_assign(Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
+
+   return surface->funcs.assign(surface);
+}
+
+void surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count)
+{
+   EINA_SAFETY_ON_NULL_RETURN(surface);
+
+   surface->funcs.post(surface, rects, count);
+}
+
 Surface *
 _evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {

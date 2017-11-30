@@ -139,4 +139,11 @@ void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
 
+void surface_destroy(Surface *surface);
+void surface_reconfigure(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+void *surface_data_get(Surface *surface, int *w, int *h);
+int  surface_assign(Surface *surface);
+void surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count);
+
+
 #endif
