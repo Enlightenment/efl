@@ -7,8 +7,8 @@
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
-typedef struct _Surface Surface;
-struct _Surface
+typedef struct _Ecore_Wl2_Surface Ecore_Wl2_Surface;
+struct _Ecore_Wl2_Surface
 {
    Ecore_Wl2_Window *wl2_win;
    Ecore_Wl2_Buffer *current;
@@ -18,16 +18,16 @@ struct _Surface
    Eina_Bool alpha : 1;
    struct
      {
-        void (*destroy)(Surface *surface);
-        void (*reconfigure)(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-        void *(*data_get)(Surface *surface, int *w, int *h);
-        int  (*assign)(Surface *surface);
-        void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count);
+        void (*destroy)(Ecore_Wl2_Surface *surface);
+        void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+        void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
+        int  (*assign)(Ecore_Wl2_Surface *surface);
+        void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
      } funcs;
 };
 
 static void
-_evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
+_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
    Ecore_Wl2_Buffer *b;
    Eina_List *l, *tmp;
@@ -51,7 +51,7 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
 }
 
 static void *
-_evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
+_evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s, int *w, int *h)
 {
    Ecore_Wl2_Buffer *b;
    void *ptr;
@@ -76,7 +76,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 }
 
 static Ecore_Wl2_Buffer *
-_evas_dmabuf_surface_wait(Surface *s)
+_evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
 {
    Ecore_Wl2_Buffer *b, *best = NULL;
    Eina_List *l;
@@ -108,7 +108,7 @@ _evas_dmabuf_surface_wait(Surface *s)
 }
 
 static int
-_evas_dmabuf_surface_assign(Surface *s)
+_evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
 {
    Ecore_Wl2_Buffer *b;
    Eina_List *l;
@@ -133,7 +133,7 @@ _evas_dmabuf_surface_assign(Surface *s)
 }
 
 static void
-_evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
+_evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
    Ecore_Wl2_Buffer *b;
 
@@ -153,7 +153,7 @@ _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 }
 
 static void
-_evas_dmabuf_surface_destroy(Surface *s)
+_evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s)
 {
    Ecore_Wl2_Buffer *b;
 
@@ -165,45 +165,50 @@ _evas_dmabuf_surface_destroy(Surface *s)
    free(s);
 }
 
-void surface_destroy(Surface *surface)
+void
+ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    surface->funcs.destroy(surface);
 }
 
-void surface_reconfigure(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
+void
+ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    surface->funcs.reconfigure(surface, w, h, flags, force);
 }
 
-void *surface_data_get(Surface *surface, int *w, int *h)
+void *
+ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
 
    return surface->funcs.data_get(surface, w, h);
 }
 
-int surface_assign(Surface *surface)
+int
+ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
 
    return surface->funcs.assign(surface);
 }
 
-void surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count)
+void
+ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    surface->funcs.post(surface, rects, count);
 }
 
-Surface *
-_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
+Ecore_Wl2_Surface *
+ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
-   Surface *out;
+   Ecore_Wl2_Surface *out;
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
 

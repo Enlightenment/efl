@@ -28,8 +28,8 @@ _evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info)
    ob->priv.destination_alpha = info->info.destination_alpha;
    ob->ewd = ecore_wl2_window_display_get(info->info.wl2_win);
 
-   ob->surface = _evas_surface_create(info->info.wl2_win,
-                                      ob->priv.destination_alpha);
+   ob->surface = ecore_wl2_surface_create(info->info.wl2_win,
+                                          ob->priv.destination_alpha);
    if (!ob->surface) goto surf_err;
 
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
@@ -70,7 +70,7 @@ _evas_outbuf_free(Outbuf *ob)
    _evas_outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    _evas_outbuf_idle_flush(ob);
 
-   if (ob->surface) surface_destroy(ob->surface);
+   if (ob->surface) ecore_wl2_surface_destroy(ob->surface);
 
    eina_array_flush(&ob->priv.onebuf_regions);
 
@@ -244,7 +244,7 @@ _evas_outbuf_swap_mode_get(Outbuf *ob)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   age = surface_assign(ob->surface);
+   age = ecore_wl2_surface_assign(ob->surface);
    if (!age) return MODE_FULL;
 
    else if (age == 1) return MODE_COPY;
@@ -290,11 +290,11 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        surface_reconfigure(ob->surface, w, h, resize, dirty);
+        ecore_wl2_surface_reconfigure(ob->surface, w, h, resize, dirty);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        surface_reconfigure(ob->surface, h, w, resize, dirty);
+        ecore_wl2_surface_reconfigure(ob->surface, h, w, resize, dirty);
      }
 
    _evas_outbuf_idle_flush(ob);
@@ -318,7 +318,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
              int bw = 0, bh = 0;
              void *data;
 
-             if (!(data = surface_data_get(ob->surface, &bw, &bh)))
+             if (!(data = ecore_wl2_surface_data_get(ob->surface, &bw, &bh)))
                {
                   /* ERR("Could not get surface data"); */
                   return NULL;
@@ -494,7 +494,7 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    bpp = depth / 8;
 
    /* check for valid desination data */
-   if (!(dst = surface_data_get(ob->surface, &ww, &hh)))
+   if (!(dst = ecore_wl2_surface_data_get(ob->surface, &ww, &hh)))
      {
         /* ERR("Could not get surface data"); */
         return;
@@ -552,7 +552,7 @@ _evas_outbuf_redraws_clear(Outbuf *ob)
    if (!ob->priv.rect_count) return;
    wls = ecore_wl2_window_surface_get(ob->info->info.wl2_win);
    if (wls)
-     surface_post(ob->surface, ob->priv.rects, ob->priv.rect_count);
+     ecore_wl2_surface_post(ob->surface, ob->priv.rects, ob->priv.rect_count);
    free(ob->priv.rects);
    ob->priv.rect_count = 0;
 }

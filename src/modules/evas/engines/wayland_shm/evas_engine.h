@@ -71,7 +71,7 @@ extern int _evas_engine_way_shm_log_dom;
 
 # define MAX_BUFFERS 4
 
-typedef struct _Surface Surface;
+typedef struct _Ecore_Wl2_Surface Ecore_Wl2_Surface;
 
 struct _Outbuf
 {
@@ -83,7 +83,7 @@ struct _Outbuf
    Ecore_Wl2_Display *ewd;
    Evas_Engine_Info_Wayland *info;
 
-   Surface *surface;
+   Ecore_Wl2_Surface *surface;
 
    struct 
      {
@@ -107,8 +107,6 @@ struct _Outbuf
    Eina_Bool dirty : 1;
 };
 
-Surface *_evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
-
 Outbuf *_evas_outbuf_setup(int w, int h, Evas_Engine_Info_Wayland *info);
 void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_damage, Evas_Render_Mode render_mode);
@@ -121,11 +119,12 @@ void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
 
-void surface_destroy(Surface *surface);
-void surface_reconfigure(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-void *surface_data_get(Surface *surface, int *w, int *h);
-int  surface_assign(Surface *surface);
-void surface_post(Surface *surface, Eina_Rectangle *rects, unsigned int count);
+Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
+void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
+void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
+int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
+void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 
 
 #endif
