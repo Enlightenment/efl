@@ -6132,7 +6132,7 @@ _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
 
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
 
         if (eo_it != sd->focused_item)
