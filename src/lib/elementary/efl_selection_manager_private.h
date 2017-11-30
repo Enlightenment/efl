@@ -128,7 +128,7 @@ struct _Sel_Manager_Selection
 
 struct _Sel_Manager_Seat_Selection
 {
-   int seat;
+   unsigned int seat;
    Sel_Manager_Selection *sel_list;
    //Sel_Manager_Drag_Container *drag_cont;
    //Eina_List *drag_cont_list;
@@ -192,7 +192,7 @@ struct _Sel_Manager_Drag_Container
    void *icon_list_func_data;
    Efl_Dnd_Drag_Icon_List_Create icon_list_func;
    Eina_Free_Cb icon_list_func_free_cb;
-   int seat;
+   unsigned int seat;
 
    Efl_Selection_Manager_Data *pd;
 };
@@ -227,7 +227,7 @@ struct _Sel_Manager_Dropable
    Evas_Object    *obj;
    //Eina_Inlist    *cbs_list; /* List of Sel_Manager_Dropable_Cbs * */
    Eina_Inlist   *format_list;
-   int seat;
+   unsigned int seat;
    struct {
       Evas_Coord      x, y;
       Eina_Bool       in : 1;
@@ -290,7 +290,6 @@ struct _Efl_Selection_Manager_Data
 #endif
 
    Eina_Bool has_sel;
-   int seat;
 
    Sel_Manager_Atom *atom_list;
    //Efl_Sel_Manager_Selection *sel_list;
