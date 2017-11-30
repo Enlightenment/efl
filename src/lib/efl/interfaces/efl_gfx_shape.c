@@ -122,7 +122,7 @@ _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    efl_gfx_shape_stroke_join_set(obj, (pos_map < 0.5) ?
                                  property_from.j : property_to.j);
 
-   return efl_gfx_path_interpolate(efl_super(obj, EFL_GFX_PATH_MIXIN), from, to, pos_map);
+   return efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 }
 
 EOLIAN static void
