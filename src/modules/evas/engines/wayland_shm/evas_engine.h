@@ -72,13 +72,15 @@ extern int _evas_engine_way_shm_log_dom;
 
 # define MAX_BUFFERS 4
 
-typedef struct _Dmabuf_Surface Dmabuf_Surface;
-
 typedef struct _Surface Surface;
 struct _Surface
 {
    Ecore_Wl2_Window *wl2_win;
-   Dmabuf_Surface *dmabuf;
+   Ecore_Wl2_Buffer *current;
+   Eina_List *buffers;
+
+   int w, h;
+   Eina_Bool alpha : 1;
    struct
      {
         void (*destroy)(Surface *surface);

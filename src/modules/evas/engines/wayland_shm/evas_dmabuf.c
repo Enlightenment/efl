@@ -7,28 +7,14 @@
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
-typedef struct _Dmabuf_Surface Dmabuf_Surface;
-struct _Dmabuf_Surface
-{
-   Surface *surface;
-
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
-
-   int w, h;
-   Eina_Bool alpha : 1;
-};
-
 static void
 _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
 {
    Ecore_Wl2_Buffer *b;
    Eina_List *l, *tmp;
-   Dmabuf_Surface *surface;
 
    if ((!w) || (!h)) return;
-   surface = s->dmabuf;
-   EINA_LIST_FOREACH_SAFE(surface->buffers, l, tmp, b)
+   EINA_LIST_FOREACH_SAFE(s->buffers, l, tmp, b)
      {
         int stride = b->stride;
 
@@ -39,21 +25,19 @@ _evas_dmabuf_surface_reconfigure(Surface *s, int w, int h, uint32_t flags EINA_U
              continue;
           }
         ecore_wl2_buffer_destroy(b);
-        surface->buffers = eina_list_remove_list(surface->buffers, l);
+        s->buffers = eina_list_remove_list(s->buffers, l);
      }
-   surface->w = w;
-   surface->h = h;
+   s->w = w;
+   s->h = h;
 }
 
 static void *
 _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 {
-   Dmabuf_Surface *surface;
    Ecore_Wl2_Buffer *b;
    void *ptr;
 
-   surface = s->dmabuf;
-   b = surface->current;
+   b = s->current;
    if (!b) return NULL;
 
    /* We return stride/bpp because it may not match the allocated
@@ -73,7 +57,7 @@ _evas_dmabuf_surface_data_get(Surface *s, int *w, int *h)
 }
 
 static Ecore_Wl2_Buffer *
-_evas_dmabuf_surface_wait(Dmabuf_Surface *s)
+_evas_dmabuf_surface_wait(Surface *s)
 {
    Ecore_Wl2_Buffer *b, *best = NULL;
    Eina_List *l;
@@ -93,7 +77,7 @@ _evas_dmabuf_surface_wait(Dmabuf_Surface *s)
      {
         Ecore_Wl2_Display *ewd;
 
-        ewd = ecore_wl2_window_display_get(s->surface->wl2_win);
+        ewd = ecore_wl2_window_display_get(s->wl2_win);
         EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
 
         best = ecore_wl2_buffer_create(ewd, s->w, s->h, s->alpha);
@@ -109,11 +93,9 @@ _evas_dmabuf_surface_assign(Surface *s)
 {
    Ecore_Wl2_Buffer *b;
    Eina_List *l;
-   Dmabuf_Surface *surface;
 
-   surface = s->dmabuf;
-   surface->current = _evas_dmabuf_surface_wait(surface);
-   if (!surface->current)
+   s->current = _evas_dmabuf_surface_wait(s);
+   if (!s->current)
      {
         /* Should be unreachable and will result in graphical
          * anomalies - we should probably blow away all the
@@ -121,29 +103,27 @@ _evas_dmabuf_surface_assign(Surface *s)
          * see this happen...
          */
         WRN("No free DMAbuf buffers, dropping a frame");
-        EINA_LIST_FOREACH(surface->buffers, l, b)
+        EINA_LIST_FOREACH(s->buffers, l, b)
           b->age = 0;
         return 0;
      }
-   EINA_LIST_FOREACH(surface->buffers, l, b)
+   EINA_LIST_FOREACH(s->buffers, l, b)
      b->age++;
 
-   return surface->current->age;
+   return s->current->age;
 }
 
 static void
 _evas_dmabuf_surface_post(Surface *s, Eina_Rectangle *rects, unsigned int count)
 {
-   Dmabuf_Surface *surface;
    Ecore_Wl2_Buffer *b;
 
-   surface = s->dmabuf;
-   b = surface->current;
+   b = s->current;
    if (!b) return;
 
    ecore_wl2_buffer_unlock(b);
 
-   surface->current = NULL;
+   s->current = NULL;
    b->busy = EINA_TRUE;
    b->age = 0;
 
@@ -157,22 +137,17 @@ static void
 _evas_dmabuf_surface_destroy(Surface *s)
 {
    Ecore_Wl2_Buffer *b;
-   Dmabuf_Surface *surface;
 
    if (!s) return;
-   surface = s->dmabuf;
 
-   EINA_LIST_FREE(surface->buffers, b)
+   EINA_LIST_FREE(s->buffers, b)
      ecore_wl2_buffer_destroy(b);
-
-   free(surface);
 }
 
 Surface *
 _evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
-   Surface *out = NULL;
-   Dmabuf_Surface *surf = NULL;
+   Surface *out;
    Ecore_Wl2_Display *ewd;
    Ecore_Wl2_Buffer_Type types = 0;
 
@@ -186,13 +161,9 @@ _evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    if (ecore_wl2_display_dmabuf_get(ewd))
      types |= ECORE_WL2_BUFFER_DMABUF;
 
-   if (!(surf = calloc(1, sizeof(Dmabuf_Surface)))) goto err;
-   out->dmabuf = surf;
-
-   surf->surface = out;
-   surf->alpha = alpha;
-   surf->w = 0;
-   surf->h = 0;
+   out->alpha = alpha;
+   out->w = 0;
+   out->h = 0;
 
    /* create surface buffers */
    if (!ecore_wl2_buffer_init(ewd, types)) goto err;
@@ -207,6 +178,5 @@ _evas_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 
 err:
    free(out);
-   free(surf);
    return NULL;
 }

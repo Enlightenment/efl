@@ -29,8 +29,6 @@
 
 static int drm_fd = -1;
 
-typedef struct _Dmabuf_Surface Dmabuf_Surface;
-
 typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
 typedef struct _Buffer_Handle Buffer_Handle;
 typedef struct _Buffer_Manager Buffer_Manager;
