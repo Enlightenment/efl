@@ -12,6 +12,13 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert"
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"title", "title"},
+   {"elm.text.title", "elm.text.title"},
+   {NULL, NULL}
+};
+
 static const char PART_NAME_BUTTON[] = "button";
 static const char PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_COUNT][15] =
                                                 {"button_layout1",
@@ -35,7 +42,7 @@ _efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd 
 static Eina_Bool
 _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *part, const char *label)
 {
-   if (part && !strcmp(part, "title"))
+   if (eina_streq(part, "title") || eina_streq(part, "elm.text.title"))
      {
         if (pd->title_text)
           {
@@ -44,7 +51,7 @@ _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *p
           }
 
         pd->title_text = eina_stringshare_add(label);
-        elm_object_part_text_set(obj, "elm.text.title", label);
+        efl_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text.title"), label);
         elm_layout_signal_emit(obj, "elm,title,show", "elm");
 
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -60,7 +67,7 @@ _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *p
 const char *
 _efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, const char *part)
 {
-   if (part && !strcmp(part, "title"))
+   if (eina_streq(part, "title") || eina_streq(part, "elm.text.title"))
      {
         if (pd->title_text)
           return pd->title_text;
@@ -69,24 +76,6 @@ _efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, c
      }
 
    return efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
-static Eina_Bool
-_efl_ui_popup_alert_content_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part, Eo *content)
-{
-   return efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
-}
-
-Eo *
-_efl_ui_popup_alert_content_get(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
-{
-   return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
-}
-
-static Eo *
-_efl_ui_popup_alert_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED, const char *part)
-{
-   return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
 static void
@@ -274,11 +263,7 @@ _efl_ui_popup_alert_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
 }
 
 /* Efl.Part begin */
-
-ELM_PART_OVERRIDE(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
+ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data, _text_aliases)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
 #include "efl_ui_popup_alert_part.eo.c"

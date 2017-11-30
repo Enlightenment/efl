@@ -1,10 +1,8 @@
-class Efl.Ui.Popup.Part (Efl.Ui.Layout.Part_Content, Efl.Canvas.Object, Efl.File)
+class Efl.Ui.Popup.Part (Efl.Ui.Layout.Part, Efl.Canvas.Object, Efl.File)
 {
    [[Efl UI Popup internal part class]]
    data: null;
    implements {
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
       Efl.Canvas.Object.repeat_events { set; get; }
       Efl.File.file { set; }
    }
