@@ -217,7 +217,7 @@ test_code_editor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 {
    Evas_Object *win, *screen;
 
-   win = _test_code_win_create("code-editor", "Code Editor");
+   win = _test_code_win_create("code-editor", "Text Editor");
    screen = elm_box_add(win);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(screen, _elm_code_test_editor_setup(screen, EINA_FALSE));
@@ -295,7 +295,7 @@ test_code_diff_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 {
    Evas_Object *win, *screen;
 
-   win = _test_code_win_create("code-diff-inline", "Code Diff Inline");
+   win = _test_code_win_create("code-diff-inline", "Diff Inline");
    screen = elm_box_add(win);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(screen, _elm_code_test_diff_inline_setup(screen));
@@ -310,7 +310,7 @@ test_code_diff(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 {
    Evas_Object *win, *screen;
 
-   win = _test_code_win_create("code-diff", "Code Diff");
+   win = _test_code_win_create("code-diff", "Diff Comparison");
    screen = elm_box_add(win);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(screen, _elm_code_test_diff_setup(screen));
@@ -325,7 +325,7 @@ test_code_welcome(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 {
    Evas_Object *win, *screen;
 
-   win = _test_code_win_create("code-welcome", "Code Welcome");
+   win = _test_code_win_create("code-welcome", "Entry Markup");
    screen = elm_box_add(win);
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(screen, _elm_code_test_welcome_setup(screen));

@@ -825,9 +825,9 @@ add_tests:
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
 
    //------------------------------//
-   ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
-   ADD_TEST(NULL, "Advanced Entries", "Code Editor", test_code_editor);
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);
+   ADD_TEST(NULL, "Advanced Entries", "Entry Markup", test_code_welcome);
+   ADD_TEST(NULL, "Advanced Entries", "Text Editor", test_code_editor);
    ADD_TEST(NULL, "Advanced Entries", "Mirrored Editor", test_code_mirror);
    ADD_TEST(NULL, "Advanced Entries", "Logger", test_code_log);
    ADD_TEST(NULL, "Advanced Entries", "Diff Comparison", test_code_diff);
