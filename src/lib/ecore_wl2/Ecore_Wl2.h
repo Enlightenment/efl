@@ -360,26 +360,7 @@ typedef struct Ecore_Wl2_Event_Aux_Message
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Aux_Message;
 
-/* THIS WILL BE PRIVATE SHORTLY, DO NOT USE */
-typedef struct _Buffer_Handle Buffer_Handle;
 typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
-struct _Ecore_Wl2_Buffer
-{
-   struct wl_buffer *wl_buffer;
-   int size;
-   int w, h;
-   int age;
-   unsigned long stride;
-   Buffer_Handle *bh;
-   int fd;
-   void *mapping;
-
-   int index;
-   Eina_Bool locked : 1;
-   Eina_Bool busy : 1;
-   Eina_Bool orphaned : 1;
-   Eina_Bool alpha : 1;
-};
 
 typedef enum _Ecore_Wl2_Buffer_Type Ecore_Wl2_Buffer_Type;
 enum _Ecore_Wl2_Buffer_Type

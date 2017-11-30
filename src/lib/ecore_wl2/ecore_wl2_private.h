@@ -523,6 +523,25 @@ typedef struct Ecore_Wl2_Event_Window_WWW_Drag
    Eina_Bool dragging;
 } Ecore_Wl2_Event_Window_WWW_Drag;
 
+typedef struct _Buffer_Handle Buffer_Handle;
+typedef struct _Ecore_Wl2_Buffer
+{
+   struct wl_buffer *wl_buffer;
+   int size;
+   int w, h;
+   int age;
+   unsigned long stride;
+   Buffer_Handle *bh;
+   int fd;
+   void *mapping;
+
+   int index;
+   Eina_Bool locked : 1;
+   Eina_Bool busy : 1;
+   Eina_Bool orphaned : 1;
+   Eina_Bool alpha : 1;
+} Ecore_Wl2_Buffer;
+
 typedef struct _Ecore_Wl2_Surface
 {
    Ecore_Wl2_Window *wl2_win;
