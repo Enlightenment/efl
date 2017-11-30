@@ -89,19 +89,66 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
    segarray->array_initial_size = initial_step_size;
 }
 
-static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int off_index)
+static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
 {
    Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
    item->item.children = model;
-   item->item.index_offset = off_index - node->first;
+   item->item.index_offset = index - node->first;
    item->item.tree_node = node;
    return item;
 }
 
-/* void efl_ui_list_segarray_insert(Efl_Ui_List* segarray, int index, Efl_Ui_List_Item* item) */
-/* { */
-  
-/* } */
+void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_Model* model)
+{
+   Efl_Ui_List_SegArray_Node *node;
+
+   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
+                                                &index, sizeof(index), &_insert_lookup_cb, NULL);
+   if (!node) node = _alloc_node(segarray, index, segarray->array_initial_size);
+
+   assert(node->length < node->max); //don't have space in node to put this item
+   assert((index - node->first) == node->length); //TODO FIXME there is other item in this place need move others
+
+   node->pointers[node->length] = _create_item(model, node, index);
+   node->length++;
+   segarray->count++;
+}
+
+void efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
+{
+   Efl_Ui_List_SegArray_Node *node;
+   Efl_Ui_List_Item* item;
+   Eina_Iterator* iterator;
+   int offset;
+
+   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
+                                        &index, sizeof(index), &_insert_lookup_cb, NULL);
+   if (!node) return;
+
+   offset = index - node->first;
+   if (offset >= node->length) return;
+
+   item = node->pointers[offset];
+   free(item);
+   node->length--;
+   segarray->count--;
+
+   if (offset >= node->length) return
+
+   memmove(node->pointers[offset], node->pointers[offset+1], sizeof(Efl_Ui_List_Item*)*(node->length - offset));
+   while (offset < node->length)
+     {
+       item = node->pointers[offset];
+       item->item.index_offset--;
+       ++offset;
+     }
+
+   iterator = eina_rbtree_iterator_infix((void*)node);
+   while(eina_iterator_next(iterator, (void**)&node))
+     node->first--;
+
+   eina_iterator_free(iterator);
+}
 
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
 {
@@ -114,24 +161,18 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         int idx = first + i;
 
         DBG("insert is in the middle or at the end");
-
         node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
                                                 &idx, sizeof(idx), &_insert_lookup_cb, NULL);
-        if(node)
+        if(!node)
           {
-             assert(node->length < node->max);
-             node->pointers[node->length] = _create_item(children, node, i);
-             node->length++;
-             segarray->count++;
+             DBG("no node to add item for index %d!", idx);
+             node = _alloc_node(segarray, idx, segarray->array_initial_size);
           }
-        else
-          {
-             DBG("no node to add item for index %d!", i + first);
-             node = _alloc_node(segarray, i + first, segarray->array_initial_size);
-             node->pointers[0] = _create_item(children, node, i);
-             node->length++;
-             segarray->count++;
-          }
+
+        assert(node->length < node->max);
+        node->pointers[node->length] = _create_item(children, node, idx);
+        node->length++;
+        segarray->count++;
      }
 }
 

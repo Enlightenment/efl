@@ -23,10 +23,6 @@ struct _Efl_Ui_List_Item
    // Evas_Coord           x, y, minw, minh, w, h;
    // // double               h, v, wx, wy;
    // double               wx, wy;
-   Ecore_Timer         *long_timer;
-   Eina_Bool            selected: 1;
-   Eina_Bool            down: 1;
-   Eina_Bool            longpressed : 1;
 };
 
 int efl_ui_list_item_index_get(Efl_Ui_List_Item const* item);
