@@ -1507,7 +1507,7 @@ EAPI double edje_object_scale_get(const Edje_Object *obj);
  *
  * @ingroup Edje_Object
  */
-EAPI double edje_object_base_scale_get(const Edje_Object *obj);
+EAPI double edje_object_base_scale_get(const Evas_Object *obj);
 
 /**
  * @defgroup Edje_Part_Drag Edje Drag

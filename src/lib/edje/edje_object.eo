@@ -126,7 +126,6 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
       Efl.Ui.Base.scale { set; get; }
-      Efl.Ui.Base.base_scale { get; }
       Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
