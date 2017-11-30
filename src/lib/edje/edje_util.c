@@ -402,7 +402,7 @@ edje_object_base_scale_get(const Eo *obj)
 
    ed = _edje_fetch(obj);
    if (!ed->file) return 1.0;
-   return TO_DOUBLE(ed->scale);
+   return TO_DOUBLE(ed->file->base_scale);
 }
 
 EOLIAN Eina_Bool
