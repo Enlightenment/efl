@@ -34,7 +34,10 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
          ]]
       }
       @property custom_manager @protected {
-         [[Every widget will be registered in this manager]]
+         [[Register all children in this manager
+
+           Set to $null to register them in the same manager as the implementor is
+         ]]
          values {
             custom_manager : Efl.Ui.Focus.Manager;
          }
