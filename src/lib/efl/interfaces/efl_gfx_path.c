@@ -144,7 +144,7 @@ _efl_gfx_path_current_search(const Efl_Gfx_Path_Command *cmd,
    return EINA_TRUE;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
                   const Efl_Gfx_Path_Command *commands,
                   const double *points)
@@ -189,7 +189,7 @@ _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                   const Efl_Gfx_Path_Command **commands,
                   const double **points)
@@ -198,7 +198,7 @@ _efl_gfx_path_path_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
    if (points) *points = pd->points;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                          unsigned int *commands, unsigned int *points)
 {
@@ -206,7 +206,7 @@ _efl_gfx_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
    if (points) *points = pd->points_count;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *r)
 {
    double minx, miny, maxx, maxy;
@@ -232,7 +232,7 @@ _efl_gfx_path_bounds_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd, Eina_Rect *
    EINA_RECTANGLE_SET(r, minx, miny, (maxx - minx), (maxy - miny));
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                            double *x, double *y)
 {
@@ -240,7 +240,7 @@ _efl_gfx_path_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
    if (y) *y = pd->current.y;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_current_ctrl_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
                                 double *x, double *y)
 {
@@ -248,7 +248,7 @@ _efl_gfx_path_current_ctrl_get(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
    if (y) *y = pd->current_ctrl.y;
 }
 
-static Eina_Bool
+EOLIAN static Eina_Bool
 _efl_gfx_path_equal_commands_internal(Efl_Gfx_Path_Data *a,
                                        Efl_Gfx_Path_Data *b)
 {
@@ -272,7 +272,7 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
-static Eina_Bool
+EOLIAN static Eina_Bool
 _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                            const Eo *from, const Eo *to, double pos_map)
 {
@@ -345,7 +345,7 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
    return EINA_TRUE;
 }
 
-static Eina_Bool
+EOLIAN static Eina_Bool
 _efl_gfx_path_equal_commands(Eo *obj EINA_UNUSED,
                               Efl_Gfx_Path_Data *pd,
                               const Eo *with)
@@ -358,7 +358,7 @@ _efl_gfx_path_equal_commands(Eo *obj EINA_UNUSED,
    return _efl_gfx_path_equal_commands_internal(with_pd, pd);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
 {
    free(pd->commands);
@@ -379,7 +379,7 @@ _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_move_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                               double x, double y)
 {
@@ -398,7 +398,7 @@ _efl_gfx_path_append_move_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_line_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                               double x, double y)
 {
@@ -417,7 +417,7 @@ _efl_gfx_path_append_line_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_cubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                double ctrl_x0, double ctrl_y0,
                                double ctrl_x1, double ctrl_y1,
@@ -445,7 +445,7 @@ _efl_gfx_path_append_cubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_scubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                 double x, double y,
                                 double ctrl_x, double ctrl_y)
@@ -478,7 +478,7 @@ _efl_gfx_path_append_scubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                  x, y);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_quadratic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                    double x, double y,
                                    double ctrl_x, double ctrl_y)
@@ -499,7 +499,7 @@ _efl_gfx_path_append_quadratic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                  x, y);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_squadratic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                                     double x, double y)
 {
@@ -530,7 +530,7 @@ _efl_gfx_path_append_squadratic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
 /*
  * code adapted from enesim which was adapted from moonlight sources
  */
-static void
+EOLIAN static void
 _efl_gfx_path_append_arc_to(Eo *obj, Efl_Gfx_Path_Data *pd,
                              double x, double y,
                              double rx, double ry,
@@ -1001,7 +1001,7 @@ _curves_for_arc(double x, double y, double w, double h,
    return start_point;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_arc(Eo *obj, Efl_Gfx_Path_Data *pd,
                           double x, double y, double w, double h,
                           double start_angle, double sweep_length)
@@ -1025,7 +1025,7 @@ _efl_gfx_path_append_arc(Eo *obj, Efl_Gfx_Path_Data *pd,
      }
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_close(Eo *obj, Efl_Gfx_Path_Data *pd)
 {
    double *offset_point;
@@ -1050,7 +1050,7 @@ _efl_gfx_path_append_circle(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->convex = first;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_rect(Eo *obj, Efl_Gfx_Path_Data *pd,
                            double x, double y, double w, double h,
                            double rx, double ry)
@@ -1088,7 +1088,7 @@ _efl_gfx_path_append_rect(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->convex = first;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_horizontal_to(Eo *obj, Efl_Gfx_Path_Data *pd, double d,
                                    double current_x EINA_UNUSED,
                                    double current_y)
@@ -1096,7 +1096,7 @@ _efl_gfx_path_append_horizontal_to(Eo *obj, Efl_Gfx_Path_Data *pd, double d,
    _efl_gfx_path_append_line_to(obj, pd, d, current_y);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_vertical_to(Eo *obj, Efl_Gfx_Path_Data *pd, double d,
                                  double current_x,
                                  double current_y EINA_UNUSED)
@@ -1417,7 +1417,7 @@ _efl_gfx_path_parse_arc_to(const char *content, char **end,
    return EINA_TRUE;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
                                const char *svg_path_data)
 {
