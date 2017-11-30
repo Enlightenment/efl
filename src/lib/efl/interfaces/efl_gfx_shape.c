@@ -125,20 +125,20 @@ _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    return efl_gfx_path_interpolate(efl_super(obj, EFL_GFX_PATH_MIXIN), from, to, pos_map);
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_scale_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                 double s)
 {
    pd->public.stroke.scale = s;
 }
 
-static double
+EOLIAN static double
 _efl_gfx_shape_stroke_scale_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.scale;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                 int r, int g, int b, int a)
 {
@@ -148,7 +148,7 @@ _efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
    pd->public.stroke.color.a = a;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                 int *r, int *g, int *b, int *a)
 {
@@ -158,7 +158,7 @@ _efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
    if (a) *a = pd->public.stroke.color.a;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_width_set(Eo *obj, Efl_Gfx_Shape_Data *pd, double w)
 {
    pd->public.stroke.width = w;
@@ -166,27 +166,27 @@ _efl_gfx_shape_stroke_width_set(Eo *obj, Efl_Gfx_Shape_Data *pd, double w)
    efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
 }
 
-static double
+EOLIAN static double
 _efl_gfx_shape_stroke_width_get(Eo *obj EINA_UNUSED,
                                 Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.width;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_location_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                    double centered)
 {
    pd->public.stroke.centered = centered;
 }
 
-static double
+EOLIAN static double
 _efl_gfx_shape_stroke_location_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.centered;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                const Efl_Gfx_Dash *dash, unsigned int length)
 {
@@ -208,7 +208,7 @@ _efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
    pd->public.stroke.dash_length = length;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
                                Efl_Gfx_Shape_Data *pd,
                                const Efl_Gfx_Dash **dash, unsigned int *length)
@@ -217,7 +217,7 @@ _efl_gfx_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
    if (length) *length = pd->public.stroke.dash_length;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
                               Efl_Gfx_Shape_Data *pd,
                               Efl_Gfx_Cap c)
@@ -225,14 +225,14 @@ _efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
    pd->public.stroke.cap = c;
 }
 
-static Efl_Gfx_Cap
+EOLIAN static Efl_Gfx_Cap
 _efl_gfx_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
                               Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.cap;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
                                Efl_Gfx_Shape_Data *pd,
                                Efl_Gfx_Join j)
@@ -240,14 +240,14 @@ _efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
    pd->public.stroke.join = j;
 }
 
-static Efl_Gfx_Join
+EOLIAN static Efl_Gfx_Join
 _efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
                                Efl_Gfx_Shape_Data *pd)
 {
    return pd->public.stroke.join;
 }
 
-static void
+EOLIAN static void
 _efl_gfx_shape_fill_rule_set(Eo *obj EINA_UNUSED,
                              Efl_Gfx_Shape_Data *pd,
                              Efl_Gfx_Fill_Rule fill_rule)
@@ -255,7 +255,7 @@ _efl_gfx_shape_fill_rule_set(Eo *obj EINA_UNUSED,
    pd->fill_rule = fill_rule;
 }
 
-static Efl_Gfx_Fill_Rule
+EOLIAN static Efl_Gfx_Fill_Rule
 _efl_gfx_shape_fill_rule_get(Eo *obj EINA_UNUSED,
                              Efl_Gfx_Shape_Data *pd)
 {
