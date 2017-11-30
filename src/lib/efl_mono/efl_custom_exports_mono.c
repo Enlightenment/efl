@@ -323,14 +323,23 @@ EAPI size_t eina_value_sizeof()
    return sizeof(Eina_Value);
 }
 
-EAPI Eina_Bool eina_value_set_wrapper(Eina_Value *value, ...)
-{
-   va_list argp;
-   va_start(argp, value);
-   Eina_Bool ret = eina_value_vset(value, argp);
-   va_end(argp);
-   return ret;
+#define EINA_SET_WRAPPER(N, T) EAPI Eina_Bool eina_value_set_wrapper_##N(Eina_Value *value, T new_value) \
+{ \
+    return eina_value_set(value, new_value); \
 }
+
+EINA_SET_WRAPPER(char, char)
+EINA_SET_WRAPPER(uchar, unsigned char)
+EINA_SET_WRAPPER(short, short)
+EINA_SET_WRAPPER(ushort, unsigned short)
+EINA_SET_WRAPPER(int, int)
+EINA_SET_WRAPPER(uint, unsigned int)
+EINA_SET_WRAPPER(long, long)
+EINA_SET_WRAPPER(ulong, unsigned long)
+EINA_SET_WRAPPER(float, float)
+EINA_SET_WRAPPER(double, double)
+EINA_SET_WRAPPER(string, const char *)
+EINA_SET_WRAPPER(ptr, void *)
 
 EAPI Eina_Bool eina_value_setup_wrapper(Eina_Value *value,
                                    const Eina_Value_Type *type)

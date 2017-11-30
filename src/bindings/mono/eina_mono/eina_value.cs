@@ -46,51 +46,51 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.CustomExports, CharSet=CharSet.Ansi)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, string value);
+    internal static extern bool eina_value_set_wrapper_string(IntPtr handle, string value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, byte value);
+    internal static extern bool eina_value_set_wrapper_uchar(IntPtr handle, byte value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, sbyte value);
+    internal static extern bool eina_value_set_wrapper_char(IntPtr handle, sbyte value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, short value);
+    internal static extern bool eina_value_set_wrapper_short(IntPtr handle, short value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, ushort value);
+    internal static extern bool eina_value_set_wrapper_ushort(IntPtr handle, ushort value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, int value);
+    internal static extern bool eina_value_set_wrapper_int(IntPtr handle, int value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, uint value);
+    internal static extern bool eina_value_set_wrapper_uint(IntPtr handle, uint value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, long value);
+    internal static extern bool eina_value_set_wrapper_long(IntPtr handle, long value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, ulong value);
+    internal static extern bool eina_value_set_wrapper_ulong(IntPtr handle, ulong value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, float value);
+    internal static extern bool eina_value_set_wrapper_float(IntPtr handle, float value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, double value);
+    internal static extern bool eina_value_set_wrapper_double(IntPtr handle, double value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_set_wrapper(IntPtr handle, IntPtr value);
+    internal static extern bool eina_value_set_wrapper_ptr(IntPtr handle, IntPtr value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -908,7 +908,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_uchar(this.Handle, value);
     }
 
     public bool Set(sbyte value)
@@ -923,7 +923,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_char(this.Handle, value);
     }
 
     public bool Set(short value)
@@ -938,7 +938,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_short(this.Handle, value);
     }
 
     public bool Set(ushort value)
@@ -953,7 +953,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_ushort(this.Handle, value);
     }
 
     /// <summary>Stores the given uint value.</summary>
@@ -969,7 +969,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_uint(this.Handle, value);
     }
 
     /// <summary>Stores the given int value.</summary>
@@ -985,7 +985,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_int(this.Handle, value);
     }
 
     /// <summary>Stores the given ulong value.</summary>
@@ -1001,7 +1001,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_ulong(this.Handle, value);
     }
 
     /// <summary>Stores the given int value.</summary>
@@ -1017,7 +1017,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_long(this.Handle, value);
     }
 
     /// <summary>Stores the given int value.</summary>
@@ -1034,8 +1034,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
 
-        Console.WriteLine("Wrapper Set({0})", value);
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_float(this.Handle, value);
     }
 
     /// <summary>Stores the given int value.</summary>
@@ -1051,7 +1050,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric eina.Value"));
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_double(this.Handle, value);
     }
 
     /// <summary>Stores the given string value.</summary>
@@ -1068,7 +1067,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw (new ArgumentException(
                         "Trying to set non-string value on a string eina.Value"));
         // No need to worry about ownership as eina_value_set will copy the passed string.
-        return eina_value_set_wrapper(this.Handle, value);
+        return eina_value_set_wrapper_string(this.Handle, value);
     }
 
     /// <summary>Stores the given value into this value. The target value must be an optional.</summary>
