@@ -825,8 +825,11 @@ _efl_promise_all_die(void *data, const Efl_Event *ev EINA_UNUSED)
 
    while ((fa = eina_array_pop(&all->members)))
      {
-        EINA_REFCOUNT_UNREF(fa->d)
-          _efl_promise_msg_free(fa->d);
+        if (EINA_LIKELY(fa->d != NULL))
+          {
+             EINA_REFCOUNT_UNREF(fa->d)
+                   _efl_promise_msg_free(fa->d);
+          }
         assert(fa->f == NULL);
         free(fa);
      }

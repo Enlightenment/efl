@@ -1,0 +1,51 @@
+class Efl.Ui.Item (Efl.Object, Efl.Model, Efl.Ui.Selectable, Efl.Text)
+{
+   [[A generic item for a list of items.
+
+     Emits events from Efl.Ui.Selectable:
+     - Efl.Ui.Selectable.selected
+     - Efl.Ui.Selectable.unselected
+   ]]
+   methods {
+      @property item_list {
+         [[The parent item list.]]
+         get {}
+         values {
+            list: Efl.Ui.Item_List; [[The parent list.]]
+         }
+      }
+      @property item_view @protected {
+         get @pure_virtual {}
+         values {
+            obj: Efl.Ui.Layout; [[The real object.]]
+         }
+      }
+      @property icon {
+         [[The base icon name for this item.
+
+           This is a standard icon name, as used in $Efl.Ui.Image.
+         ]]
+         get {}
+         set {}
+         values {
+            icon: string @nullable; [[An icon name.]]
+         }
+      }
+      @property selected {
+         get {}
+         set {}
+         values {
+            sel: bool(false);
+         }
+      }
+      @property model {
+         values {
+            model: Efl.Model; [[The internal model object.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Text.text { set; get; }
+   }
+}

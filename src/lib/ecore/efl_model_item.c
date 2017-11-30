@@ -72,7 +72,7 @@ _efl_model_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Item_Data 
 {
    Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
-   Efl_Model_Property_Event evt;
+   Efl_Model_Property_Event evt = { NULL, NULL };
 
    Eina_Stringshare *sshared = eina_stringshare_add(property);
    Eina_Value *p_v = eina_hash_find(sd->properties, sshared);

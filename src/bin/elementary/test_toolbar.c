@@ -1313,74 +1313,83 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(win);
 }
 
-static void
-_toolbar_selected_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   //FIXME: after defining item interface, this should be changed.
-   Elm_Object_Item *item = efl_ui_menu_selected_item_get(ev->object);
-   const char *str = elm_object_item_text_get(item);
-   if (str)
-     printf(" string is \"%s\"\n", str);
-   else
-     printf("\n");
-}
-
 void
 test_efl_ui_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *tb, *grd;
-   Evas_Object *ph1, *ph2, *ph3, *ph4;
-   char buf[PATH_MAX];
+   Eo *win, *tb, *it;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
-                 efl_text_set(efl_added, "Efl Ui Toolbar"),
-                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   win = efl_add(EFL_UI_WIN_CLASS, NULL);
+   efl_ui_win_autodel_set(win, 1);
 
-   bx = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_content_set(win, efl_added));
+   tb = efl_add(EFL_UI_TOOLBAR_CLASS, win);
+   efl_content_set(win, tb);
 
-   tb = efl_add(EFL_UI_TOOLBAR_CLASS, win,
-                efl_pack(bx, efl_added),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SELECTED, _toolbar_selected_cb, NULL),
-                efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
-                efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0));
+   it = efl_ui_item_list_item_add(tb, "Hello", "file");
+   it = efl_ui_item_list_item_add(tb, "World", "file");
+   it = efl_ui_item_list_item_add(tb, "What's going on?", "file");
+   it = efl_ui_item_list_item_add(tb, "Eh?", "file");
 
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
-   ph1 = efl_add(EFL_UI_IMAGE_CLASS, win,
-                 efl_file_set(efl_added, buf, NULL),
-                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(40, 40)),
-                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+   efl_gfx_size_set(win, EINA_SIZE2D(200, 200));
+}
 
-   ph2 = efl_add(EFL_UI_IMAGE_CLASS, win,
-                 efl_file_set(efl_added, buf, NULL),
-                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(80, 80)),
-                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+static Eina_Value _eina_value_helper = EINA_VALUE_EMPTY;
 
-   snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
-   ph3 = efl_add(EFL_UI_IMAGE_CLASS, win,
-                 efl_file_set(efl_added, buf, NULL),
-                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(20, 20)),
-                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+#define _EINA_VALUE_HELPER_SET(name, typ, TYP) \
+static inline const Eina_Value * \
+_value_##name(typ v) \
+{ \
+   if (!_eina_value_helper.type || \
+       eina_value_type_get(&_eina_value_helper) != TYP) \
+     { \
+        eina_value_flush(&_eina_value_helper); \
+        eina_value_setup(&_eina_value_helper, TYP); \
+     } \
+   eina_value_set(&_eina_value_helper, v); \
+   return &_eina_value_helper; \
+}
 
-   snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
-   ph4 = efl_add(EFL_UI_IMAGE_CLASS, win,
-                 efl_file_set(efl_added, buf, NULL),
-                 efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(60, 60)),
-                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5));
+_EINA_VALUE_HELPER_SET(string, const char*, EINA_VALUE_TYPE_STRING)
+//_EINA_VALUE_HELPER_SET(bool, Eina_Bool, EINA_VALUE_TYPE_UCHAR)
 
-   efl_ui_toolbar_item_append(tb, "document-print", "Hello", _tb_sel1_cb, ph1);
-   efl_ui_toolbar_item_append(tb, "folder-new", "World", _tb_sel2_cb, ph1);
-   efl_ui_toolbar_item_append(tb, "object-rotate-right", "H", _tb_sel3_cb, ph4);
-   efl_ui_toolbar_item_append(tb, "mail-send", "Comes", _tb_sel4_cb, ph4);
-   efl_ui_toolbar_item_append(tb, "clock", "Elementary", _tb_sel5_cb, ph4);
+static Efl_Model *
+_model_create(void)
+{
+   Efl_Model *model, *child;
 
-   grd = efl_add(EFL_UI_GRID_CLASS, win);
-   efl_pack_grid(grd, ph1, 0, 0, 1, 1);
-   efl_pack_grid(grd, ph2, 1, 0, 1, 1);
-   efl_pack_grid(grd, ph3, 0, 1, 1, 1);
-   efl_pack_grid(grd, ph4, 1, 1, 1, 1);
+   model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
 
-   efl_pack(bx, grd);
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+   child = efl_model_child_add(model);
+   efl_model_property_set(child, "text", _value_string("Hello"));
+   efl_model_property_set(child, "icon", _value_string("file"));
+
+   child = efl_model_child_add(model);
+   efl_model_property_set(child, "text", _value_string("World!"));
+   efl_model_property_set(child, "icon", _value_string("user-desktop"));
+
+   child = efl_model_child_add(model);
+   efl_model_property_set(child, "text", _value_string("What's going on?"));
+   efl_model_property_set(child, "icon", _value_string("user-bookmarks"));
+
+   child = efl_model_child_add(model);
+   efl_model_property_set(child, "text", _value_string("lol"));
+   efl_model_property_set(child, "icon", _value_string("user-home"));
+
+   return model;
+}
+
+void
+test_efl_ui_toolbar_model(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *win, *tb;
+
+   win = efl_add(EFL_UI_WIN_CLASS, NULL);
+   efl_ui_win_autodel_set(win, 1);
+
+   tb = efl_add(EFL_UI_TOOLBAR_CLASS, win);
+   efl_content_set(win, tb);
+
+   efl_ui_item_list_model_set(tb, _model_create());
+
+   efl_gfx_size_set(win, EINA_SIZE2D(200, 200));
 }
 

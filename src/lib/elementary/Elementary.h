@@ -312,7 +312,12 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_image_factory.eo.h>
+#define _EFL_UI_ITEM_LIST_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Item_List;
+# include <efl_ui_item.eo.h>
+# include <efl_ui_item_list.eo.h>
 # include <efl_ui_toolbar.eo.h>
+# include <efl_ui_toolbar_item.eo.h>
 #endif
 
 /* include deprecated calls last of all */

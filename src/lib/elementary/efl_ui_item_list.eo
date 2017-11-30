@@ -1,0 +1,26 @@
+abstract Efl.Ui.Item_List (Efl.Ui.Layout, Efl.Model.Item)
+{
+   methods {
+      @property item_class @protected {
+         get @pure_virtual {}
+         values {
+            klass: const(Efl.Class); [[Class of item objects to create.]]
+         }
+      }
+      item_add {
+         params {
+            @in text: string;
+            @in icon: string @optional;
+         }
+         return: Efl.Ui.Item; [[A newly created item, appended to this list.]]
+      }
+      @property model {
+         values {
+            model: Efl.Model; [[The internal model.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}
