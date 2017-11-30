@@ -23,7 +23,7 @@ struct Elm.Toolbar.Item.State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
+class Elm.Toolbar.Item(Elm.Widget.Item, Elm.Item_Interface, Efl.Ui.Focus.Object)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
@@ -276,8 +276,8 @@ class Elm.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
            Efl.Ui.Focus.Object.focus { set; }
            Efl.Access.name { get; }
            Efl.Access.state_set { get; }
-           Efl.Ui.Item.selected { get; set; }
-           Efl.Ui.Item.prev { get; }
-           Efl.Ui.Item.next { get; }
+           Elm.Item_Interface.selected { get; set; }
+           Elm.Item_Interface.prev { get; }
+           Elm.Item_Interface.next { get; }
       }
 }

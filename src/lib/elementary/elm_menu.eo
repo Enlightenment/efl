@@ -1,4 +1,4 @@
-class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
+class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Elm.Menu_Interface,
                 Efl.Access.Selection, Efl.Ui.Focus.Manager)
 {
    [[Elementary menu class]]
@@ -64,10 +64,10 @@ class Elm.Menu (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Menu,
       Efl.Access.children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
-      Efl.Ui.Menu.selected_item { get; }
-      Efl.Ui.Menu.first_item { get; }
-      Efl.Ui.Menu.last_item { get; }
-      Efl.Ui.Menu.items { get; }
+      Elm.Menu_Interface.selected_item { get; }
+      Elm.Menu_Interface.first_item { get; }
+      Elm.Menu_Interface.last_item { get; }
+      Elm.Menu_Interface.items { get; }
       Efl.Object.provider_find;
    }
    events {

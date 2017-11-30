@@ -8,6 +8,8 @@
 #include "elm_icon.eo.h"
 #include "elm_widget_menu.h"
 #include "elm_widget_icon.h"
+#include "elm_item_interface.eo.h"
+#include "elm_menu_interface.eo.h"
 
 #define DBUS_PATH           "/com/canonical/dbusmenu"
 #define DBUS_INTERFACE      "com.canonical.dbusmenu"
@@ -360,7 +362,7 @@ _root_layout_build(Elm_DBus_Menu *dbus_menu, Eina_List *property_list,
 
    if (recursion_depth > 0)
      {
-        it = efl_ui_menu_items_get(dbus_menu->menu);
+        it = elm_menu_interface_items_get(dbus_menu->menu);
         EINA_ITERATOR_FOREACH (it, obj_item)
           {
              variant = eldbus_message_iter_container_new(array, 'v',
@@ -443,7 +445,7 @@ _elm_dbus_menu_add(Eo *menu)
 
    dbus_menu->menu = menu;
 
-   it = efl_ui_menu_items_get(menu);
+   it = elm_menu_interface_items_get(menu);
    EINA_ITERATOR_FOREACH(it, obj_item)
      {
         ELM_MENU_ITEM_DATA_GET(obj_item, item);

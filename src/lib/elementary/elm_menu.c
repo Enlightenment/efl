@@ -12,6 +12,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_menu.h"
+#include "elm_item_interface.eo.h"
+#include "elm_menu_interface.eo.h"
 
 #define MY_CLASS ELM_MENU_CLASS
 
@@ -919,7 +921,7 @@ elm_menu_parent_get(const Evas_Object *obj)
 EAPI Elm_Widget_Item *
 elm_menu_selected_item_get(const Evas_Object *obj)
 {
-   return efl_ui_menu_selected_item_get(obj);
+   return elm_menu_interface_selected_item_get(obj);
 }
 
 EAPI const Eina_List *
@@ -929,7 +931,7 @@ elm_menu_items_get(const Evas_Object *obj)
    Eina_Iterator *it;
    void *item_data;
 
-   it = efl_ui_menu_items_get(obj);
+   it = elm_menu_interface_items_get(obj);
    EINA_ITERATOR_FOREACH(it, item_data)
      {
         lst = eina_list_append(lst, item_data);
@@ -941,37 +943,37 @@ elm_menu_items_get(const Evas_Object *obj)
 EAPI Elm_Widget_Item *
 elm_menu_first_item_get(const Evas_Object *obj)
 {
-   return efl_ui_menu_first_item_get(obj);
+   return elm_menu_interface_first_item_get(obj);
 }
 
 EAPI Elm_Widget_Item *
 elm_menu_last_item_get(const Evas_Object *obj)
 {
-   return efl_ui_menu_last_item_get(obj);
+   return elm_menu_interface_last_item_get(obj);
 }
 
 EAPI void
 elm_menu_item_selected_set(Evas_Object *obj, Eina_Bool selected)
 {
-   efl_ui_item_selected_set(obj, selected);
+   elm_item_interface_selected_set(obj, selected);
 }
 
 EAPI Eina_Bool
 elm_menu_item_selected_get(const Evas_Object *obj)
 {
-   return efl_ui_item_selected_get(obj);
+   return elm_item_interface_selected_get(obj);
 }
 
 EAPI Elm_Widget_Item *
 elm_menu_item_prev_get(const Evas_Object *obj)
 {
-   return efl_ui_item_prev_get(obj);
+   return elm_item_interface_prev_get(obj);
 }
 
 EAPI Elm_Widget_Item *
 elm_menu_item_next_get(const Evas_Object *obj)
 {
-   return efl_ui_item_next_get(obj);
+   return elm_item_interface_next_get(obj);
 }
 
 EOLIAN static Evas_Object*
@@ -1266,13 +1268,13 @@ _elm_menu_item_subitems_clear(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *it)
 }
 
 EOLIAN static Eina_Iterator*
-_elm_menu_efl_ui_menu_items_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_elm_menu_interface_items_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    return eina_list_iterator_new(sd->items);
 }
 
 EOLIAN static void
-_elm_menu_item_efl_ui_item_selected_set(Eo *eo_item EINA_UNUSED,
+_elm_menu_item_elm_item_interface_selected_set(Eo *eo_item EINA_UNUSED,
                             Elm_Menu_Item_Data *item,
                             Eina_Bool selected)
 {
@@ -1292,13 +1294,13 @@ _elm_menu_item_efl_ui_item_selected_set(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_menu_item_efl_ui_item_selected_get(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *item)
+_elm_menu_item_elm_item_interface_selected_get(Eo *eo_item EINA_UNUSED, Elm_Menu_Item_Data *item)
 {
    return item->selected;
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_menu_item_efl_ui_item_prev_get(Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_elm_item_interface_prev_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    if (item->parent)
      {
@@ -1322,7 +1324,7 @@ _elm_menu_item_efl_ui_item_prev_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_menu_item_efl_ui_item_next_get(Eo *eo_item, Elm_Menu_Item_Data *item)
+_elm_menu_item_elm_item_interface_next_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
    if (item->parent)
      {
@@ -1346,20 +1348,20 @@ _elm_menu_item_efl_ui_item_next_get(Eo *eo_item, Elm_Menu_Item_Data *item)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_efl_ui_menu_first_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_elm_menu_interface_first_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    return (sd->items ? sd->items->data : NULL);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_efl_ui_menu_last_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_elm_menu_interface_last_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Eina_List *l = eina_list_last(sd->items);
    return (l ? l->data : NULL);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_menu_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_elm_menu_interface_selected_item_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Eina_List *l;
    Elm_Object_Item *eo_item;
@@ -1527,3 +1529,6 @@ _elm_menu_efl_object_provider_find(Eo *obj, Elm_Menu_Data *pd, const Efl_Object 
 
 #include "elm_menu_item.eo.c"
 #include "elm_menu.eo.c"
+
+#include "elm_item_interface.eo.c"
+#include "elm_menu_interface.eo.c"

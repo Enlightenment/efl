@@ -176,7 +176,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_next_get(const Evas_Object *obj);
  *
  * If a new item is selected the previously selected will be unselected.
  * Previously selected item can be get with function
- * @ref efl_ui_menu_selected_item_get.
+ * @ref elm_menu_interface_selected_item_get.
  *
  * Selected items will be highlighted.
  *

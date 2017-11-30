@@ -25,7 +25,7 @@ enum Elm.Toolbar.Shrink_Mode
 
 class Elm.Toolbar (Elm.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Menu)
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Elm.Menu_Interface)
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
@@ -340,10 +340,10 @@ class Elm.Toolbar (Elm.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollabl
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.clear;
-      Efl.Ui.Menu.selected_item { get; }
-      Efl.Ui.Menu.first_item { get; }
-      Efl.Ui.Menu.last_item { get; }
-      Efl.Ui.Menu.items { get; }
+      Elm.Menu_Interface.selected_item { get; }
+      Elm.Menu_Interface.first_item { get; }
+      Elm.Menu_Interface.last_item { get; }
+      Elm.Menu_Interface.items { get; }
       Efl.Ui.Focus.Composition.prepare;
    }
    events {

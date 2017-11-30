@@ -1,4 +1,4 @@
-interface Efl.Ui.Item {
+interface Elm.Item_Interface {
    [[Efl UI item interface]]
    legacy_prefix: null;
    methods {
@@ -10,7 +10,7 @@ interface Efl.Ui.Item {
             ]]
          }
          values {
-            item: Efl.Ui.Item; [[The item before the object in its parent's
+            item: Elm.Item_Interface; [[The item before the object in its parent's
                                 list. If there is no previous item or in case
                                 of error, $null is returned.]]
          }
@@ -23,7 +23,7 @@ interface Efl.Ui.Item {
             ]]
          }
          values {
-            item: Efl.Ui.Item; [[The item after the object in its parent's
+            item: Elm.Item_Interface; [[The item after the object in its parent's
                                 list. If there is no next item or in case
                                 of error, $null is returned.]]
          }
@@ -41,7 +41,7 @@ interface Efl.Ui.Item {
 
                If a new item is selected the previously selected will
                be unselected. Previously selected item can be retrieved
-               with @Efl.Ui.Menu.selected_item.get.
+               with @Elm.Menu_Interface.selected_item.get.
 
                Selected items will be highlighted.
              ]]

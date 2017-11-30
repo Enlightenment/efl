@@ -5330,7 +5330,7 @@ _drop_item_container_cmp(const void *d1,
 }
 
 static void
-_elm_item_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
+_elm_item_interface_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {  /* obj is the container pointer */
    Elm_Object_Item *it = NULL;
    int xposret = 0;
@@ -5353,7 +5353,7 @@ _elm_item_container_pos_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coor
 }
 
 static Eina_Bool
-_elm_item_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *ev)
+_elm_item_interface_container_drop_cb(void *data, Evas_Object *obj , Elm_Selection_Data *ev)
 {  /* obj is the container pointer */
    Elm_Object_Item *it = NULL;
    int xposret = 0;
@@ -5440,8 +5440,8 @@ elm_drop_item_container_add(Evas_Object *obj,
    elm_drop_target_add(obj, format,
                        entercb, enterdata,
                        leavecb, leavedata,
-                       _elm_item_container_pos_cb, posdata,
-                       _elm_item_container_drop_cb, dropdata);
+                       _elm_item_interface_container_pos_cb, posdata,
+                       _elm_item_interface_container_drop_cb, dropdata);
 
    return EINA_TRUE;
 }

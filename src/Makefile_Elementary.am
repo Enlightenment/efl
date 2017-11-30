@@ -210,6 +210,8 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
+	lib/elementary/elm_item_interface.eo \
+	lib/elementary/elm_menu_interface.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
