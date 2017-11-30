@@ -1791,13 +1791,13 @@ _seat_selection_init(Efl_Selection_Manager_Data *pd, int seat)
    return seat_sel;
 }
 
-//TODO: Should we add DRAG_START event???
-EOLIAN static void
-_efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, int seat)
+#ifdef HAVE_ELEMENTARY_X
+static void
+_x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, int seat)
 {
    Ecore_X_Window xwin = _x11_xwin_get(drag_obj);
    Ecore_X_Window xdragwin;
-   Efl_Selection_Type xdnd = ELM_SEL_TYPE_XDND;
+   //Efl_Selection_Type xdnd = EFL_SELECTION_TYPE_DND;
    Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
    Ecore_Evas *ee;
@@ -1813,6 +1813,7 @@ _efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_O
    pd->has_sel = EINA_TRUE;
 
    seat_sel = _seat_selection_init(pd, seat);
+   if (!seat_sel) return;
    seat_sel->active_type = EFL_SELECTION_TYPE_DND;
 
    sel = &seat_sel->sel_list[seat_sel->active_type];
@@ -1933,6 +1934,153 @@ _efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_O
    seat_sel->drag_win_x_start = seat_sel->drag_win_x_end = x;
    seat_sel->drag_win_y_start = seat_sel->drag_win_y_end = y;
 }
+#endif
+
+#ifdef HAVE_ELEMENTARY_WL2
+static void
+_wl_drag_source_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Seat_Selection *seat_sel = data;
+   if (seat_sel->drag_obj == obj)
+     seat_sel->drag_obj = NULL;
+}
+
+static void
+_wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, int seat)
+{
+   Ecore_Evas *ee;
+   Evas_Object *icon = NULL;
+   int x, y, x2 = 0, y2 = 0, x3, y3, w = 0, h = 0;
+   const char *types[SELECTION_N_ATOMS + 1];
+   int i, nb_types = 0;
+   Ecore_Wl2_Window *parent = NULL, *win;
+   Seat_Selection *seat_sel;
+   Sel_Manager_Selection *sel;
+
+   seat_sel = _seat_selection_init(pd, seat);
+   if (!seat_sel) return;
+   seat_sel->active_type = EFL_SELECTION_TYPE_DND;
+   sel = &seat_sel->sel_list[seat_sel->active_type];
+
+   /* if we already have a drag, get out */
+   if (seat_sel->drag_win) return;
+
+   for (i = SELECTION_ATOM_LISTING_ATOMS + 1; i < SELECTION_N_ATOMS; i++)
+     {
+        if (format == EFL_SELECTION_FORMAT_TARGETS || (pd->atom_list[i].format & format))
+          {
+             types[nb_types++] = pd->atom_list[i].name;
+             sel_debug("set dnd type: %s\n", pd->atom_list[i].name);
+          }
+     }
+   types[nb_types] = NULL;
+
+   win = _wl_window_get(drag_obj);
+   ecore_wl2_dnd_drag_types_set(_wl_default_seat_get(win, drag_obj), types);
+
+   /* set the drag data used when a drop occurs */
+   free(sel->buf);
+   sel->len = 0;
+   sel->buf = eina_strdup(buf);
+
+   if (buf)
+     {
+        sel->len = strlen(sel->buf);
+     }
+
+   /* setup callback to notify if this object gets deleted */
+   evas_object_event_callback_add(drag_obj, EVAS_CALLBACK_DEL,
+                                  _wl_drag_source_del, sel);
+
+   seat_sel->drag_obj = drag_obj;
+   seat_sel->drag_action = action;
+
+   seat_sel->drag_win = elm_win_add(NULL, "Elm-Drag", ELM_WIN_DND);
+   elm_win_alpha_set(seat_sel->drag_win, EINA_TRUE);
+   elm_win_borderless_set(seat_sel->drag_win, EINA_TRUE);
+   elm_win_override_set(seat_sel->drag_win, EINA_TRUE);
+
+   win = elm_win_wl_window_get(seat_sel->drag_win);
+
+   if (icon_func)
+     {
+        Evas_Coord xoff = 0, yoff = 0;
+
+        icon = icon_func(icon_func_data, seat_sel->drag_win, &xoff, &yoff);
+        if (icon)
+          {
+             x2 = xoff;
+             y2 = yoff;
+             evas_object_geometry_get(icon, NULL, NULL, &w, &h);
+          }
+     }
+   else
+     {
+        icon = elm_icon_add(seat_sel->drag_win);
+        evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND,
+                                         EVAS_HINT_EXPAND);
+     }
+
+   elm_win_resize_object_add(seat_sel->drag_win, icon);
+   evas_object_show(icon);
+
+   /* Position subwindow appropriately */
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(drag_obj));
+   ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+   x += x2;
+   y += y2;
+   seat_sel->drag_win_x_start = seat_sel->drag_win_x_end = x;
+   seat_sel->drag_win_y_start = seat_sel->drag_win_y_end = y;
+
+   evas_object_move(seat_sel->drag_win, x, y);
+   evas_object_resize(seat_sel->drag_win, w, h);
+   evas_object_show(seat_sel->drag_win);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(drag_obj), &x3, &y3);
+   seat_sel->dragx = x3 - x2;
+   seat_sel->dragy = y3 - y2;
+
+   if (elm_widget_is(drag_obj))
+     {
+        Evas_Object *top;
+
+        top = elm_widget_top_get(drag_obj);
+        if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(drag_obj));
+        if (top && (efl_isa(top, EFL_UI_WIN_CLASS)))
+          parent = elm_win_wl_window_get(top);
+     }
+   if (!parent)
+     {
+        Evas *evas;
+
+        if (!(evas = evas_object_evas_get(drag_obj)))
+          return;
+        if (!(ee = ecore_evas_ecore_evas_get(evas)))
+          return;
+
+        parent = ecore_evas_wayland2_window_get(ee);
+     }
+
+   sel->drag_serial = ecore_wl2_dnd_drag_start(_wl_default_seat_get(win, drag_obj), parent, win);
+}
+#endif
+
+
+//TODO: Should we add DRAG_START event???
+EOLIAN static void
+_efl_selection_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, Efl_Selection_Format format, const void *buf, int len, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, int seat)
+{
+#ifdef HAVE_ELEMENTARY_X
+   _x11_efl_sel_manager_drag_start(obj, pd, drag_obj, format, buf, len, action, icon_func_data, icon_func, icon_func_free_cb, seat);
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   _wl_efl_sel_manager_drag_start(obj, pd, drag_obj, format, buf, len, action, icon_func_data, icon_func, icon_func_free_cb, seat);
+#endif
+#ifdef HAVE_ELEMENTARY_WIN32
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+#endif
+}
 
 EOLIAN static void
 _efl_selection_manager_drag_cancel(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, int seat)
@@ -1969,13 +2117,14 @@ EOLIAN static void
 _efl_selection_manager_drag_action_set(Eo *obj, Efl_Selection_Manager_Data *pd , Efl_Selection_Action action, int seat)
 {
    ERR("In");
-   Ecore_X_Atom actx;
-
    Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
    if (seat_sel->drag_action == action) return;
    seat_sel->drag_action = action;
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Atom actx;
    actx = _x11_dnd_action_rev_map(action);
    ecore_x_dnd_source_action_set(actx);
+#endif
 }
 
 static void
