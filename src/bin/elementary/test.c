@@ -1029,8 +1029,8 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
-   ADD_TEST_EO(NULL, "Range Values", "Nstate", test_nstate);
-   ADD_TEST_EO(NULL, "Range Values", "Interval Slider", test_slider_interval);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
 
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);
