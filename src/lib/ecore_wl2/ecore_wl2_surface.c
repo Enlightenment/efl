@@ -1,30 +1,15 @@
-#include "evas_common_private.h"
-#include "evas_private.h"
-#include "evas_engine.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "ecore_wl2_private.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
 
-typedef struct _Ecore_Wl2_Surface Ecore_Wl2_Surface;
-struct _Ecore_Wl2_Surface
-{
-   Ecore_Wl2_Window *wl2_win;
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
-
-   int w, h;
-   Eina_Bool alpha : 1;
-   struct
-     {
-        void (*destroy)(Ecore_Wl2_Surface *surface);
-        void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-        void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
-        int  (*assign)(Ecore_Wl2_Surface *surface);
-        void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-     } funcs;
-};
+#define MAX_BUFFERS 4
 
 static void
 _evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
@@ -165,7 +150,7 @@ _evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s)
    free(s);
 }
 
-void
+EAPI void
 ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -173,7 +158,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
    surface->funcs.destroy(surface);
 }
 
-void
+EAPI void
 ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -181,7 +166,7 @@ ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t
    surface->funcs.reconfigure(surface, w, h, flags, force);
 }
 
-void *
+EAPI void *
 ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
@@ -189,7 +174,7 @@ ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
    return surface->funcs.data_get(surface, w, h);
 }
 
-int
+EAPI int
 ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
@@ -197,7 +182,7 @@ ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
    return surface->funcs.assign(surface);
 }
 
-void
+EAPI void
 ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -205,7 +190,7 @@ ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsign
    surface->funcs.post(surface, rects, count);
 }
 
-Ecore_Wl2_Surface *
+EAPI Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
    Ecore_Wl2_Surface *out;

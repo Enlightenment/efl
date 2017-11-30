@@ -17,6 +17,7 @@ lib/ecore_wl2/ecore_wl2_display.c \
 lib/ecore_wl2/ecore_wl2.c \
 lib/ecore_wl2/ecore_wl2_private.h \
 lib/ecore_wl2/ecore_wl2_buffer.c \
+lib/ecore_wl2/ecore_wl2_surface.c \
 static_libs/libdrm/drm_fourcc.h \
 static_libs/libdrm/drm.h \
 static_libs/libdrm/drm_mode.h \

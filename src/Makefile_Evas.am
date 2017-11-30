@@ -1320,7 +1320,6 @@ WAYLAND_SHM_SOURCES = \
 modules/evas/engines/wayland_common/Evas_Engine_Wayland.h \
 modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
-modules/evas/engines/wayland_shm/evas_dmabuf.c \
 modules/evas/engines/wayland_shm/evas_outbuf.c
 
 NODIST_WAYLAND_SHM_SOURCES = \

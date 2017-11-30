@@ -523,6 +523,24 @@ typedef struct Ecore_Wl2_Event_Window_WWW_Drag
    Eina_Bool dragging;
 } Ecore_Wl2_Event_Window_WWW_Drag;
 
+typedef struct _Ecore_Wl2_Surface
+{
+   Ecore_Wl2_Window *wl2_win;
+   Ecore_Wl2_Buffer *current;
+   Eina_List *buffers;
+
+   int w, h;
+   Eina_Bool alpha : 1;
+   struct
+     {
+        void (*destroy)(Ecore_Wl2_Surface *surface);
+        void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+        void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
+        int  (*assign)(Ecore_Wl2_Surface *surface);
+        void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
+     } funcs;
+} Ecore_Wl2_Surface;
+
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 void _display_event_free(void *d, void *event EINA_UNUSED);
 

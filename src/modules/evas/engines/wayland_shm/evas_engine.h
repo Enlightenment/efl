@@ -69,10 +69,6 @@ extern int _evas_engine_way_shm_log_dom;
 # include "../software_generic/Evas_Engine_Software_Generic.h"
 # include "Evas_Engine_Wayland.h"
 
-# define MAX_BUFFERS 4
-
-typedef struct _Ecore_Wl2_Surface Ecore_Wl2_Surface;
-
 struct _Outbuf
 {
    int w, h;

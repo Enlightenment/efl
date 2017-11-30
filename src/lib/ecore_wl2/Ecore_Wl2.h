@@ -44,6 +44,7 @@ typedef struct _Ecore_Wl2_Pointer Ecore_Wl2_Pointer;
 typedef struct _Ecore_Wl2_Keyboard Ecore_Wl2_Keyboard;
 typedef struct _Ecore_Wl2_Touch Ecore_Wl2_Touch;
 typedef struct _Ecore_Wl2_Offer Ecore_Wl2_Offer;
+typedef struct _Ecore_Wl2_Surface Ecore_Wl2_Surface;
 
 /* matches protocol values */
 typedef enum
@@ -2014,6 +2015,13 @@ EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
 EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
 EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+
+EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
+EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
+EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
+EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
+EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 
 # endif
 
