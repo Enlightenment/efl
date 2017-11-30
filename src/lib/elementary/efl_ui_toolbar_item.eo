@@ -1,0 +1,81 @@
+class Efl.Ui.Toolbar.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Ui.Focus.Object)
+{
+      [[Toolbar widget item class]]
+      methods {
+           @property icon {
+                get {
+                     [[Get the string used to set the icon of $item.]]
+                }
+                set {
+                     [[Set the icon associated with $item.
+
+                       Toolbar will load icon image from fdo or current theme.
+                       This behavior can be set by
+                       elm_toolbar_icon_order_lookup_set function.
+                       If an absolute path is provided it will load it direct
+                       from a file.
+
+                       Note: This function does not accept relative icon path.
+                     ]]
+                }
+                values {
+                     icon: string; [[A string with icon name or the
+                                           absolute path of an image file.]]
+                }
+           }
+           @property icon_object {
+                get {
+                     [[Get the icon object of $item.
+
+                       See also @.icon.set, @.icon_file_set, @.icon_memfile_set.
+                     ]]
+                }
+                values {
+                     obj: Efl.Canvas.Object; [[The icon object.]]
+                }
+           }
+           icon_memfile_set {
+                [[Set the icon associated with $item to an image in a binary buffer.
+
+                  Note: The icon image set by this function can be changed by
+                  @.icon.set.
+                ]]
+                params {
+                     @in img: const(void_ptr); [[The binary data that will be used as an image.]]
+                     @in size: size; [[The size of binary data $img.]]
+                     @in format: string; [[Optional format of $img to pass to the image loader.]]
+                     @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
+                }
+                return: bool; [[$true on success, $false otherwise]]
+           }
+           icon_file_set {
+                [[Set the icon associated with $item to an image in a binary buffer.
+
+                  Note: The icon image set by this function can be changed by
+                  elm_toolbar_item_icon_set().
+                ]]
+                params {
+                     @in file: string; [[The file that contains the image.]]
+                     @in key: string; [[Optional key of $img to pass to the image loader (eg. if $img is an edje file).]]
+                }
+                return: bool; [[$true on success, $false otherwise]]
+           }
+      }
+      implements {
+           Efl.Object.constructor;
+           Efl.Object.destructor;
+           Elm.Widget.Item.disable;
+           Elm.Widget.Item.focus { get; set; }
+           Elm.Widget.Item.signal_emit;
+           Elm.Widget.Item.part_text { get; set; }
+           Elm.Widget.Item.part_content { get; set; }
+           Elm.Widget.Item.part_content_unset;
+           Efl.Ui.Focus.Object.focus_geometry { get; }
+           Efl.Ui.Focus.Object.focus { set; }
+           Efl.Access.name { get; }
+           Efl.Access.state_set { get; }
+           Efl.Ui.Item.selected { get; set; }
+           Efl.Ui.Item.prev { get; }
+           Efl.Ui.Item.next { get; }
+      }
+}
