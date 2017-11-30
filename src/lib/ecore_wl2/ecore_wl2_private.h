@@ -559,6 +559,7 @@ typedef struct _Ecore_Wl2_Surface
         void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
         int  (*assign)(Ecore_Wl2_Surface *surface);
         void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
+        void (*flush)(Ecore_Wl2_Surface *surface);
      } funcs;
 } Ecore_Wl2_Surface;
 
