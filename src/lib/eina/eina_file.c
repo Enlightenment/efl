@@ -297,7 +297,7 @@ eina_file_real_close(Eina_File *file)
 
    if (file->fd != -1)
      {
-        if (file->global_map != MAP_FAILED)
+        if (!file->copied && file->global_map != MAP_FAILED)
           munmap(file->global_map, file->length);
         close(file->fd);
      }
