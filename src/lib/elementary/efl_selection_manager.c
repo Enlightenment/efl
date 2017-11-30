@@ -22,8 +22,8 @@
 
 
 
-static void _set_selection_list(Sel_Manager_Selection *sel_list, Seat_Selection *seat_sel);
-static Seat_Selection * _seat_selection_init(Efl_Selection_Manager_Data *pd, int seat);
+static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
+static Sel_Manager_Seat_Selection * _Sel_Manager_Seat_Selection_init(Efl_Selection_Manager_Data *pd, int seat);
 static Ecore_X_Atom _x11_dnd_action_rev_map(Efl_Selection_Action action);
 
 
@@ -33,11 +33,11 @@ static Ecore_Wl2_Input *_wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object 
 #endif
 
 //X11 does not have seat in selection_notify, use default one
-static Seat_Selection *
-_get_seat_selection(Efl_Selection_Manager_Data *pd, unsigned int seat)
+static Sel_Manager_Seat_Selection *
+_get_Sel_Manager_Seat_Selection(Efl_Selection_Manager_Data *pd, unsigned int seat)
 {
    Eina_List *l = NULL;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
    EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
      {
         //FIXME: use pd->seat: multi-seat selection request???
@@ -213,7 +213,7 @@ _x11_is_uri_type_data(Sel_Manager_Selection *sel EINA_UNUSED, Ecore_X_Event_Sele
 }
 
 static Eina_Bool
-_x11_data_preparer_text(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_text(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
       Efl_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    sel_debug("text data preparer");
@@ -225,7 +225,7 @@ _x11_data_preparer_text(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify
 }
 
 static Eina_Bool
-_x11_data_preparer_markup(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_markup(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
       Efl_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    sel_debug("markup data preparer");
@@ -240,7 +240,7 @@ _x11_data_preparer_markup(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Noti
  * So someone is pasting an image into my entry or widget...
  */
 static Eina_Bool
-_x11_data_preparer_uri(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_uri(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
       Efl_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    sel_debug("uri data preparer");
@@ -337,7 +337,7 @@ _x11_data_preparer_uri(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify 
  * Just received an vcard, either through cut and paste, or dnd.
  */
 static Eina_Bool
-_x11_data_preparer_vcard(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_vcard(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
       Efl_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    sel_debug("vcard receive\n");
@@ -349,7 +349,7 @@ _x11_data_preparer_vcard(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notif
 }
 
 static Eina_Bool
-_x11_data_preparer_image(Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *notify,
       Efl_Selection_Data *ddata, Tmp_Info **tmp_info)
 {
    Ecore_X_Selection_Data *data = notify->data;
@@ -415,7 +415,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    Efl_Selection_Manager_Data *pd = data;
    Efl_Selection_Changed *e;
    Ecore_X_Event_Fixes_Selection_Notify *ev = event;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Efl_Selection_Type type;
    Sel_Manager_Selection *sel;
 
@@ -429,7 +429,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
         break;
       default: return ECORE_CALLBACK_RENEW;
      }
-   seat_sel = _seat_selection_init(pd, 1);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, 1);
    if (!seat_sel) return ECORE_CALLBACK_RENEW;
    sel = seat_sel->sel_list + type;
    if (sel->active && (sel->xwin != ev->owner))
@@ -458,10 +458,10 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
    Efl_Selection_Manager_Data *pd = udata;
    Ecore_X_Event_Selection_Notify *ev = event;
    Sel_Manager_Selection *sel;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
    int i;
 
-   seat_sel =  _get_seat_selection(pd, 1);
+   seat_sel =  _get_Sel_Manager_Seat_Selection(pd, 1);
    if (!seat_sel)
      return EINA_FALSE;
 
@@ -510,7 +510,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                     {
                        if (success)
                          {
-                            Dropable *dropable;
+                            Sel_Manager_Dropable *dropable;
                             Eina_List *l;
                             sel_debug("drag & drop\n");
                             EINA_LIST_FOREACH(pd->drop_list, l, dropable)
@@ -591,7 +591,7 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
    Efl_Selection_Manager_Data *pd = data;
    Ecore_X_Event_Selection_Clear *ev = event;
    Sel_Manager_Selection *sel;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
    unsigned int i;
    ERR("In");
 
@@ -604,7 +604,7 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
         pd->promise = NULL;
      }*/
 
-   seat_sel = _get_seat_selection(pd, 1);
+   seat_sel = _get_Sel_Manager_Seat_Selection(pd, 1);
    if (!seat_sel)
      return EINA_FALSE;
 
@@ -629,7 +629,7 @@ static Eina_Bool
 _x11_general_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSED, void **data_ret, int *size_ret, Ecore_X_Atom *ttype EINA_UNUSED, int *typesize EINA_UNUSED)
 {
    //Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
-   //Seat_Selection *seat_sel = _get_seat_selection(pd, 1);
+   //Sel_Manager_Seat_Selection *seat_sel = _get_Sel_Manager_Seat_Selection(pd, 1);
 
    Sel_Manager_Selection *sel = *(Sel_Manager_Selection **)data;
    //if (_get_selection_type(data, seat_sel) == EFL_SELECTION_FORMAT_NONE)
@@ -674,7 +674,7 @@ _x11_targets_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSE
 
    sel = *(Sel_Manager_Selection **)data;
    seltype = sel->format;
-   Seat_Selection *seat_sel = sel->seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel = sel->seat_sel;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
 
    for (i = SELECTION_ATOM_LISTING_ATOMS + 1, count = 0; i < SELECTION_N_ATOMS ; i++)
@@ -782,7 +782,7 @@ static void
 _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *owner,
                                    Efl_Selection_Type type, Efl_Selection_Format format,
                                    //const void *buf, int len, int seat)
-                                   const void *buf, int len, Seat_Selection *seat_sel)
+                                   const void *buf, int len, Sel_Manager_Seat_Selection *seat_sel)
 {
    Ecore_X_Window xwin = _x11_xwin_get(owner);
    Sel_Manager_Selection *sel = seat_sel->sel_list + type;
@@ -815,7 +815,7 @@ _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *o
 static void
 _x11_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
                                    //Efl_Selection_Type type, Efl_Selection_Format format, int seat)
-                                   Efl_Selection_Type type, Efl_Selection_Format format, Seat_Selection *seat_sel)
+                                   Efl_Selection_Type type, Efl_Selection_Format format, Sel_Manager_Seat_Selection *seat_sel)
 {
    Ecore_X_Window xwin = _x11_xwin_get(obj);
    ERR("xwin: %d", xwin);
@@ -886,7 +886,7 @@ _wl_targets_converter(char *target, Sel_Manager_Selection *sel, void *data EINA_
    char *aret;
    int len = 0;
    int i = 0;
-   Seat_Selection *seat_sel = sel->seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel = sel->seat_sel;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    Efl_Selection_Format format = EFL_SELECTION_FORMAT_NONE;
    Eina_Bool is_uri = EINA_FALSE;
@@ -898,7 +898,7 @@ _wl_targets_converter(char *target, Sel_Manager_Selection *sel, void *data EINA_
      }
    else
      {
-        Efl_Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, target);
+        Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, target);
         if (atom)
           format = atom->format;
      }
@@ -936,8 +936,8 @@ static Eina_Bool
 _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
 {
    Efl_Selection_Format format = EFL_SELECTION_FORMAT_NONE;
-   Efl_Sel_Manager_Atom *atom = NULL;
-   Seat_Selection *seat_sel = sel->seat_sel;
+   Sel_Manager_Atom *atom = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = sel->seat_sel;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
 
    sel_debug("in\n");
@@ -977,8 +977,8 @@ static Eina_Bool
 _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret)
 {
    Efl_Selection_Format format = EFL_SELECTION_FORMAT_NONE;
-   Efl_Sel_Manager_Atom *atom = NULL;
-   Seat_Selection *seat_sel = sel->seat_sel;
+   Sel_Manager_Atom *atom = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = sel->seat_sel;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
 
    sel_debug("in\n");
@@ -1045,7 +1045,7 @@ static void
 _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
                                   Efl_Object *owner, Efl_Selection_Type type,
                                   Efl_Selection_Format format,
-                                  const void *buf, size_t len, Seat_Selection *seat_sel)
+                                  const void *buf, size_t len, Sel_Manager_Seat_Selection *seat_sel)
 {
    Ecore_Wl2_Window *win;
    Sel_Manager_Selection *sel;
@@ -1150,13 +1150,13 @@ static Eina_Bool
 _wl_selection_changed(void *data, int type, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
    Efl_Selection_Changed *e;
    Ecore_Wl2_Event_Seat_Selection *ev = event;
    Ecore_Wl2_Input *seat;
 
-   seat_sel = _seat_selection_init(pd, ev->seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, ev->seat);
    if (!seat_sel) return ECORE_CALLBACK_RENEW;
    sel = seat_sel->sel_list + type;
 
@@ -1186,7 +1186,7 @@ _wl_selection_send(void *data, int type, void *event)
    //Sel_Manager_Selection *sel;
    Ecore_Wl2_Event_Data_Source_Send *ev;
    int seat;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
    void *data_ret = NULL;
    int len_ret = 0;
@@ -1194,7 +1194,7 @@ _wl_selection_send(void *data, int type, void *event)
 
    ev = event;
    seat = ev->seat;
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    if (!seat_sel) return ECORE_CALLBACK_RENEW;
    sel = seat_sel->sel_list + type;
 
@@ -1208,7 +1208,7 @@ _wl_selection_send(void *data, int type, void *event)
         if (!strcmp(pd->atom_list[i].name, ev->type))
           {
              sel_debug("Found a type: %s\n", pd->atom_list[i].name);
-             Dropable *drop;
+             Sel_Manager_Dropable *drop;
              drop = efl_key_data_get(sel->request_obj, "__elm_dropable");
              if (drop)
                drop->last.type = pd->atom_list[i].name;
@@ -1385,7 +1385,7 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 
 static Eina_Bool
 _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
-                                  Efl_Selection_Type type, Efl_Selection_Format format, Seat_Selection *seat_sel)
+                                  Efl_Selection_Type type, Efl_Selection_Format format, Sel_Manager_Seat_Selection *seat_sel)
 {
    Sel_Manager_Selection *sel;
    Ecore_Wl2_Window *win;
@@ -1397,7 +1397,7 @@ _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
 
    //if (sel->active)
      //return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
-   sel = seat_sel + type;
+   sel = seat_sel->sel_list + type;
    win = _wl_window_get(obj);
 
    input = _wl_default_seat_get(win, (void*)obj);
@@ -1449,7 +1449,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
                                      const void *buf, int len, int seat)
 {
    ERR("In");
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Eina_Bool same_win = EINA_FALSE;
    //unsigned int seat = 1;
 
@@ -1467,7 +1467,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
    pd->seat = seat;
    pd->has_sel = EINA_TRUE;
 
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    seat_sel->active_type = type;
 
 #ifdef HAVE_ELEMENTARY_X
@@ -1515,7 +1515,7 @@ _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
    ERR("In");
    pd->seat = seat;
 
-   Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
+   Sel_Manager_Seat_Selection *seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
 
    //Sel_Manager_Selection *sel = pd->sel_list + type;
    Sel_Manager_Selection *sel = seat_sel->sel_list + type;
@@ -1540,9 +1540,9 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
 {
    ERR("In");
    Eina_Bool local = EINA_FALSE;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
 
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    Sel_Manager_Selection *sel = seat_sel->sel_list + type;
    if ((!sel->active) && (sel->owner != owner))
      {
@@ -1592,7 +1592,7 @@ _efl_selection_manager_selection_loss_feedback(Eo *obj, Efl_Selection_Manager_Da
 static Eina_Bool
 _drag_cancel_animate(void *data, double pos)
 {  /* Animation to "move back" drag-window */
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    if (pos >= 0.99)
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -1627,7 +1627,7 @@ _x11_win_rotation_changed_cb(void *data, const Efl_Event *event)
 static Eina_Bool
 _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    //Ecore_X_Window xwin = (Ecore_X_Window)(long)data;
    Ecore_X_Window xwin = seat_sel->xwin;
@@ -1638,7 +1638,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
      {
         Eina_Bool have_drop_list = EINA_FALSE;
         Eina_List *l;
-        Dropable *dropable;
+        Sel_Manager_Dropable *dropable;
 
         ecore_x_pointer_ungrab();
         ELM_SAFE_FREE(seat_sel->mouse_up_handler, ecore_event_handler_del);
@@ -1694,7 +1694,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
 static void
 _x11_drag_move(void *data, Ecore_X_Xdnd_Position *pos)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    //Efl_Selection_Manager_Data *pd = data;
    evas_object_move(seat_sel->drag_win,
                     pos->position.x - seat_sel->dragx, pos->position.y - seat_sel->dragy);
@@ -1715,7 +1715,7 @@ _x11_drag_move(void *data, Ecore_X_Xdnd_Position *pos)
 static void
 _x11_drag_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Sel_Manager_Selection *sel = &seat_sel->sel_list[seat_sel->active_type];
 
    if (seat_sel->drag_obj == obj)
@@ -1728,7 +1728,7 @@ _x11_drag_target_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *in
 static Eina_Bool
 _x11_dnd_status(void *data, int etype EINA_UNUSED, void *ev)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Ecore_X_Event_Xdnd_Status *status = ev;
 
    seat_sel->accept = EINA_FALSE;
@@ -1749,10 +1749,10 @@ _x11_dnd_status(void *data, int etype EINA_UNUSED, void *ev)
    return EINA_TRUE;
 }
 
-static Seat_Selection *
-_seat_selection_init(Efl_Selection_Manager_Data *pd, int seat)
+static Sel_Manager_Seat_Selection *
+_Sel_Manager_Seat_Selection_init(Efl_Selection_Manager_Data *pd, int seat)
 {
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
    Eina_List *l = NULL;
 
    EINA_LIST_FOREACH(pd->seat_list, l, seat_sel)
@@ -1764,7 +1764,7 @@ _seat_selection_init(Efl_Selection_Manager_Data *pd, int seat)
      }
    if (!seat_sel)
      {
-        seat_sel = calloc(1, sizeof(Seat_Selection));
+        seat_sel = calloc(1, sizeof(Sel_Manager_Seat_Selection));
         if (!seat_sel)
           {
              ERR("Failed to allocate seat");
@@ -1797,7 +1797,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obj
    Ecore_X_Window xwin = _x11_xwin_get(drag_obj);
    Ecore_X_Window xdragwin;
    //Efl_Selection_Type xdnd = EFL_SELECTION_TYPE_DND;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
    Ecore_Evas *ee;
    int x, y, x2 = 0, y2 = 0, x3, y3;
@@ -1811,7 +1811,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obj
    pd->seat = seat;
    pd->has_sel = EINA_TRUE;
 
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    if (!seat_sel) return;
    seat_sel->active_type = EFL_SELECTION_TYPE_DND;
 
@@ -1939,7 +1939,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obj
 static void
 _wl_drag_source_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    if (seat_sel->drag_obj == obj)
      seat_sel->drag_obj = NULL;
 }
@@ -1953,10 +1953,10 @@ _wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obje
    const char *types[SELECTION_N_ATOMS + 1];
    int i, nb_types = 0;
    Ecore_Wl2_Window *parent = NULL, *win;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
 
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    if (!seat_sel) return;
    seat_sel->active_type = EFL_SELECTION_TYPE_DND;
    sel = &seat_sel->sel_list[seat_sel->active_type];
@@ -2085,7 +2085,7 @@ EOLIAN static void
 _efl_selection_manager_drag_cancel(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj, int seat)
 {
    ERR("In");
-   Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
+   Sel_Manager_Seat_Selection *seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
 
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin = _x11_xwin_get(drag_obj);
@@ -2123,7 +2123,7 @@ EOLIAN static void
 _efl_selection_manager_drag_action_set(Eo *obj, Efl_Selection_Manager_Data *pd , Efl_Selection_Action action, int seat)
 {
    ERR("In");
-   Seat_Selection *seat_sel = _seat_selection_init(pd, seat);
+   Sel_Manager_Seat_Selection *seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    if (seat_sel->drag_action == action) return;
    seat_sel->drag_action = action;
 #ifdef HAVE_ELEMENTARY_X
@@ -2137,7 +2137,7 @@ static void
 _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
    Efl_Object *sel_man = data;
-   Dropable *dropable = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
    dropable = efl_key_data_get(obj, "__elm_dropable");
    if (dropable)
      {
@@ -2152,10 +2152,10 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
              dropable = efl_key_data_get(obj, "__elm_dropable");
              if (!dropable) break;
           }
-        /*Dropable_Cbs *cbs;
+        /*Sel_Manager_Dropable_Cbs *cbs;
         while (dropable->cbs_list)
           {
-             cbs = EINA_INLIST_CONTAINER_GET(dropable->cbs_list, Dropable_Cbs);
+             cbs = EINA_INLIST_CONTAINER_GET(dropable->cbs_list, Sel_Manager_Dropable_Cbs);
              elm_drop_target_del(obj, cbs->types,
                                  cbs->entercb, cbs->enterdata, cbs->leavecb, cbs->leavedata,
                                  cbs->poscb, cbs->posdata, cbs->dropcb, cbs->dropdata);
@@ -2168,7 +2168,7 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
 }
 
 static void
-_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
+_dropable_coords_adjust(Sel_Manager_Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas *ee;
    Evas *evas = evas_object_evas_get(dropable->obj);
@@ -2223,11 +2223,11 @@ _dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
 
 #ifdef HAVE_ELEMENTARY_X
 static void
-_x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Dropable *dropable, Evas_Coord x, Evas_Coord y, Efl_Selection_Action action)
+_x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *dropable, Evas_Coord x, Evas_Coord y, Efl_Selection_Action action)
 {
-   Dropable *d, *last_dropable = NULL;
+   Sel_Manager_Dropable *d, *last_dropable = NULL;
    Eina_List *l;
-   //Dropable_Cbs *cbs;
+   //Sel_Manager_Dropable_Cbs *cbs;
    Eina_Inlist *itr;
 
    EINA_LIST_FOREACH(pd->drop_list, l, d)
@@ -2383,11 +2383,11 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Dropable *dropable, Eva
      }
 }
 
-static Dropable *
+static Sel_Manager_Dropable *
 _x11_dropable_find(Efl_Selection_Manager_Data *pd, Ecore_X_Window win)
 {
    Eina_List *l;
-   Dropable *dropable;
+   Sel_Manager_Dropable *dropable;
 
    if (!pd->drop_list) return NULL;
    EINA_LIST_FOREACH(pd->drop_list, l, dropable)
@@ -2401,7 +2401,7 @@ static Evas *
 _x11_evas_get_from_xwin(Efl_Selection_Manager_Data *pd, Ecore_X_Window win)
 {
    /* Find the Evas connected to the window */
-   Dropable *dropable = _x11_dropable_find(pd, win);
+   Sel_Manager_Dropable *dropable = _x11_dropable_find(pd, win);
    return dropable ? evas_object_evas_get(dropable->obj) : NULL;
 }
 
@@ -2456,7 +2456,7 @@ _dnd_types_to_format(Efl_Selection_Manager_Data *pd, const char **types, int nty
    int i;
    for (i = 0; i < ntypes; i++)
      {
-        Efl_Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, types[i]);
+        Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, types[i]);
         if (atom) ret_type |= atom->format;
      }
    return ret_type;
@@ -2467,7 +2467,7 @@ _dropable_list_geom_find(Efl_Selection_Manager_Data *pd, Evas *evas, Evas_Coord 
 {
    Eina_List *itr, *top_objects_list = NULL, *dropable_list = NULL;
    Evas_Object *top_obj;
-   Dropable *dropable = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
 
    if (!pd->drop_list) return NULL;
 
@@ -2494,7 +2494,7 @@ _dropable_list_geom_find(Efl_Selection_Manager_Data *pd, Evas *evas, Evas_Coord 
                {
                   Eina_Bool exist = EINA_FALSE;
                   Eina_List *l;
-                  Dropable *d = NULL;
+                  Sel_Manager_Dropable *d = NULL;
                   EINA_LIST_FOREACH(dropable_list, l, d)
                     {
                        if (d == dropable)
@@ -2521,10 +2521,10 @@ _dropable_list_geom_find(Efl_Selection_Manager_Data *pd, Evas *evas, Evas_Coord 
 static Eina_Bool
 _x11_dnd_enter(void *data, int etype EINA_UNUSED, void *ev)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    Ecore_X_Event_Xdnd_Enter *enter = ev;
-   Dropable *dropable;
+   Sel_Manager_Dropable *dropable;
    int i;
 
    sel_debug("In");
@@ -2566,11 +2566,11 @@ _x11_dnd_enter(void *data, int etype EINA_UNUSED, void *ev)
 static Eina_Bool
 _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    Ecore_X_Event_Xdnd_Position *pos = ev;
    Ecore_X_Rectangle rect = { 0, 0, 0, 0 };
-   Dropable *dropable;
+   Sel_Manager_Dropable *dropable;
    Efl_Selection_Action act;
 
    sel_debug("In");
@@ -2597,7 +2597,7 @@ _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
 
              EINA_LIST_FOREACH(dropable_list, l, dropable)
                {
-                  //Dropable_Cbs *cbs;
+                  //Sel_Manager_Dropable_Cbs *cbs;
                   Drop_Format *df;
                   Eina_Inlist *itr;
                   //EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
@@ -2613,7 +2613,7 @@ _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
                             //of the supported data types.
                             for (i = 0; i < seat_sel->saved_types->ntypes; i++)
                               {
-                                 Efl_Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, seat_sel->saved_types->types[i]);
+                                 Sel_Manager_Atom *atom = eina_hash_find(pd->types_hash, seat_sel->saved_types->types[i]);
                                  if (atom && (atom->format & common_fmt))
                                    {
                                       int atom_idx = (atom - pd->atom_list);
@@ -2634,7 +2634,7 @@ _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
                }
              if (found)
                {
-                  Dropable *d = NULL;
+                  Sel_Manager_Dropable *d = NULL;
                   Eina_Rectangle inter_rect = {0, 0, 0, 0};
                   int idx = 0;
                   EINA_LIST_FOREACH(dropable_list, l, d)
@@ -2690,7 +2690,7 @@ _x11_dnd_position(void *data, int etype EINA_UNUSED, void *ev)
 static Eina_Bool
 _x11_dnd_leave(void *data, int etype EINA_UNUSED, void *ev)
 {
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
 #ifdef DEBUGON
    sel_debug("Leave %x\n", ((Ecore_X_Event_Xdnd_Leave *)ev)->win);
 #else
@@ -2706,16 +2706,16 @@ static Eina_Bool
 _x11_dnd_drop(void *data, int etype EINA_UNUSED, void *ev)
 {
    sel_debug("In");
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    Ecore_X_Event_Xdnd_Drop *drop;
-   Dropable *dropable = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
    //Elm_Selection_Data ddata;
    Efl_Selection_Data ddata;
    Evas_Coord x = 0, y = 0;
    Efl_Selection_Action act = EFL_SELECTION_ACTION_UNKNOWN;
    Eina_List *l;
-   //Dropable_Cbs *cbs;
+   //Sel_Manager_Dropable_Cbs *cbs;
    Eina_Inlist *itr;
    Sel_Manager_Selection *sel;
 
@@ -2849,13 +2849,13 @@ static Eina_Bool
 _x11_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *target_obj, Efl_Selection_Format format, int seat)
 {
    ERR("In");
-   Dropable *dropable = NULL;
-   //Dropable_Cbs *cbs = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
+   //Sel_Manager_Dropable_Cbs *cbs = NULL;
    Ecore_X_Window xwin = _x11_xwin_get(target_obj);
    Eina_List *l;
    Eina_Bool first = !pd->drop_list;
    Eina_Bool have_drop_list = EINA_FALSE;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
 
    /* Is this the first? */
    EINA_LIST_FOREACH(pd->drop_list, l, dropable)
@@ -2877,7 +2877,7 @@ _x11_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *tar
    if (!dropable)
      {
         /* Create new drop */
-        dropable = calloc(1, sizeof(Dropable));
+        dropable = calloc(1, sizeof(Sel_Manager_Dropable));
         if (!dropable) goto error;
         dropable->last.in = EINA_FALSE;
         pd->drop_list = eina_list_append(pd->drop_list, dropable);
@@ -2894,7 +2894,7 @@ _x11_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *tar
    if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_TRUE);
 
    pd->seat = seat;
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
 
    if (seat_sel->enter_handler) return EINA_TRUE;
    sel_debug("Adding drop target calls xwin=%#llx", (unsigned long long)xwin);
@@ -2925,11 +2925,11 @@ _wl_sel_obj_del2(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_
    if (sel->request_obj == obj) sel->request_obj = NULL;
 }
 
-static Dropable *
+static Sel_Manager_Dropable *
 _wl_dropable_find(Efl_Selection_Manager_Data *pd, unsigned int win)
 {
    Eina_List *l;
-   Dropable *dropable;
+   Sel_Manager_Dropable *dropable;
    Ecore_Wl2_Window *window;
 
    if (!pd->drop_list) return NULL;
@@ -2938,7 +2938,7 @@ _wl_dropable_find(Efl_Selection_Manager_Data *pd, unsigned int win)
    if (!window) return NULL;
 
    EINA_LIST_FOREACH(pd->drop_list, l, dropable)
-     if (_wl_elm_widget_window_get(dropable->obj) == window)
+     if (_wl_window_get(dropable->obj) == window)
        return dropable;
 
    return NULL;
@@ -2947,9 +2947,47 @@ _wl_dropable_find(Efl_Selection_Manager_Data *pd, unsigned int win)
 static Evas *
 _wl_evas_get_from_win(Efl_Selection_Manager_Data *pd, unsigned int win)
 {
-   Dropable *dropable = _wl_dropable_find(pd, win);
+   Sel_Manager_Dropable *dropable = _wl_dropable_find(pd, win);
    return dropable ? evas_object_evas_get(dropable->obj) : NULL;
 }
+
+static Eina_Bool
+_wl_drops_accept(Sel_Manager_Seat_Selection *seat_sel, const char *type)
+{
+   Efl_Selection_Manager_Data *pd;
+   Sel_Manager_Selection *sel;
+   Eina_List *l;
+   Sel_Manager_Dropable *drop;
+   Eina_Bool will_accept = EINA_FALSE;
+
+   if (!type) return EINA_FALSE;
+
+   pd = seat_sel->pd;
+   sel = seat_sel->sel_list + EFL_SELECTION_TYPE_DND;
+   EINA_LIST_FOREACH(pd->drop_list, l, drop)
+     {
+        Drop_Format *df;
+        EINA_INLIST_FOREACH(drop->format_list, df)
+          {
+             for (int i = 0; wl_convertion[i].translates ; ++i)
+               {
+                  if (!(wl_convertion[i].format & df->format)) continue;
+
+                  for (int j = 0; wl_convertion[i].translates[j]; ++j)
+                    {
+                       if (!strncmp(type, wl_convertion[i].translates[j], strlen(wl_convertion[i].translates[j])))
+                         {
+                            sel->request_obj = drop->obj;
+                            return EINA_TRUE;
+                         }
+                    }
+               }
+          }
+     }
+
+   return will_accept;
+}
+
 
 static void
 _wl_selection_parser(void *_data, int size, char ***ret_data, int *ret_count)
@@ -3060,10 +3098,10 @@ _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, 
 static Eina_Bool
 _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info EINA_UNUSED)
 {
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    char *p, *stripstr = NULL;
    char *data = ev->data;
-   Dropable *drop;
+   Sel_Manager_Dropable *drop;
    const char *type = NULL;
 
    sel_debug("In\n");
@@ -3193,9 +3231,9 @@ _wl_data_preparer_text(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ec
 
 
 static void
-_wl_dropable_handle(Seat_Selection *seat_sel, Dropable *dropable, Evas_Coord x, Evas_Coord y)
+_wl_dropable_handle(Sel_Manager_Seat_Selection *seat_sel, Sel_Manager_Dropable *dropable, Evas_Coord x, Evas_Coord y)
 {
-   Dropable *d, *last_dropable = NULL;
+   Sel_Manager_Dropable *d, *last_dropable = NULL;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
    Sel_Manager_Selection *sel;
    Eina_Inlist *itr;
@@ -3287,10 +3325,10 @@ _wl_dropable_handle(Seat_Selection *seat_sel, Dropable *dropable, Evas_Coord x, 
 }
 
 static void
-_wl_dropable_all_clean(Seat_Selection *seat_sel, unsigned int win)
+_wl_dropable_all_clean(Sel_Manager_Seat_Selection *seat_sel, unsigned int win)
 {
    Eina_List *l;
-   Dropable *dropable;
+   Sel_Manager_Dropable *dropable;
    Ecore_Wl2_Window *window;
 
    window = ecore_wl2_display_window_find(_elm_wl_display, win);
@@ -3298,7 +3336,7 @@ _wl_dropable_all_clean(Seat_Selection *seat_sel, unsigned int win)
 
    EINA_LIST_FOREACH(seat_sel->pd->drop_list, l, dropable)
      {
-        if (_wl_elm_widget_window_get(dropable->obj) == window)
+        if (_wl_window_get(dropable->obj) == window)
           {
              dropable->last.x = 0;
              dropable->last.y = 0;
@@ -3310,9 +3348,9 @@ _wl_dropable_all_clean(Seat_Selection *seat_sel, unsigned int win)
 static void
 _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_Ready *ev)
 {
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
    Efl_Selection_Manager_Data *pd;
-   Dropable *drop;
+   Sel_Manager_Dropable *drop;
    Ecore_Wl2_Window *win;
 
    sel_debug("In\n");
@@ -3321,7 +3359,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
    drop = efl_key_data_get(sel->request_obj, "__elm_dropable");
    if (drop)
      {
-        Efl_Sel_Manager_Atom *atom = NULL;
+        Sel_Manager_Atom *atom = NULL;
 
         atom = eina_hash_find(pd->types_hash, drop->last.type);
         if (atom && atom->wl_data_preparer)
@@ -3335,7 +3373,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
              success = atom->wl_data_preparer(sel, &ddata, ev, &tmp_info);
              if (success)
                {
-                  Dropable *dropable;
+                  Sel_Manager_Dropable *dropable;
                   Eina_List *l;
 
                   EINA_LIST_FOREACH(pd->drop_list, l, dropable)
@@ -3380,7 +3418,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
                          }
                     }
                }
-             win = _wl_elm_widget_window_get(sel->request_obj);
+             win = _wl_window_get(sel->request_obj);
              ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
              if (tmp_info) _tmpinfo_free(tmp_info);
              free(ddata.data);
@@ -3388,7 +3426,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
           }
      }
 
-   win = _wl_elm_widget_window_get(sel->request_obj);
+   win = _wl_window_get(sel->request_obj);
    ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
    seat_sel->saved_types->textreq = 0;
 }
@@ -3398,7 +3436,7 @@ _wl_dnd_enter(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Dnd_Enter *ev;
    Eina_Array *known, *available;
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    unsigned int i = 0;
 
    ev = event;
@@ -3427,7 +3465,7 @@ _wl_dnd_enter(void *data, int type EINA_UNUSED, void *event)
    seat_sel->accept = EINA_FALSE;
    for (i = 0; i < eina_array_count(available); i++)
      {
-        if (_wl_drops_accept(eina_array_data_get(available, i)))
+        if (_wl_drops_accept(seat_sel, eina_array_data_get(available, i)))
           {
              eina_array_push(known, strdup(eina_array_data_get(available, i)));
           }
@@ -3442,8 +3480,8 @@ static Eina_Bool
 _wl_dnd_leave(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Dnd_Leave *ev;
-   Seat_Selection *seat_sel = data;
-   Dropable *drop;
+   Sel_Manager_Seat_Selection *seat_sel = data;
+   Sel_Manager_Dropable *drop;
    sel_debug("In\n");
 
    ev = event;
@@ -3460,9 +3498,9 @@ static Eina_Bool
 _wl_dnd_position(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Dnd_Motion *ev;
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd = seat_sel->pd;
-   Dropable *drop;
+   Sel_Manager_Dropable *drop;
    Eina_Bool will_accept = EINA_FALSE;
 
    ev = event;
@@ -3493,7 +3531,7 @@ _wl_dnd_position(void *data, int type EINA_UNUSED, void *event)
              Efl_Selection_Format saved_format;
              Eina_List *l;
              Eina_Bool found = EINA_FALSE;
-             Dropable *dropable = NULL;
+             Sel_Manager_Dropable *dropable = NULL;
 
              saved_format =
                _dnd_types_to_format(pd, seat_sel->saved_types->types, seat_sel->saved_types->ntypes);
@@ -3516,7 +3554,7 @@ _wl_dnd_position(void *data, int type EINA_UNUSED, void *event)
                              * of the supported data types. */
                             for (i = 0; i < seat_sel->saved_types->ntypes; i++)
                               {
-                                 Efl_Sel_Manager_Atom *atom;
+                                 Sel_Manager_Atom *atom;
 
                                  atom = eina_hash_find(pd->types_hash,
                                                        seat_sel->saved_types->types[i]);
@@ -3576,7 +3614,7 @@ static Eina_Bool
 _wl_dnd_receive(void *data, int type, void *event)
 {
    Ecore_Wl2_Event_Offer_Data_Ready *ev;
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Sel_Manager_Selection *sel;
    Ecore_Wl2_Offer *offer;
    sel_debug("In\n");
@@ -3615,11 +3653,11 @@ static Eina_Bool
 _wl_dnd_drop(void *data, int type, void *event)
 {
    Ecore_Wl2_Event_Dnd_Drop *ev;
-   Seat_Selection *seat_sel = data;
+   Sel_Manager_Seat_Selection *seat_sel = data;
    Efl_Selection_Manager_Data *pd;
    Sel_Manager_Selection *sel;
    Ecore_Wl2_Window *win;
-   Dropable *drop;
+   Sel_Manager_Dropable *drop;
    Eina_List *l;
 
    sel_debug("In\n");
@@ -3658,19 +3696,19 @@ _wl_dnd_drop(void *data, int type, void *event)
 static Eina_Bool
 _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *target_obj, Efl_Selection_Format format, int seat)
 {
-   Dropable *dropable = NULL;
-   //Dropable_Cbs *cbs = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
+   //Sel_Manager_Dropable_Cbs *cbs = NULL;
    Eina_Bool first = !pd->drop_list;
    Drop_Format *df = calloc(1, sizeof(Drop_Format));
    if (!df) return EINA_FALSE;
    df->format = format;
-   Seat_Selection *seat_sel = NULL;
+   Sel_Manager_Seat_Selection *seat_sel = NULL;
 
    dropable = efl_key_data_get(target_obj, "__elm_dropable");
    if (!dropable)
      {
         //Create new drop
-        dropable = calloc(1, sizeof(Dropable));
+        dropable = calloc(1, sizeof(Sel_Manager_Dropable));
         if (!dropable) goto error;
         pd->drop_list = eina_list_append(pd->drop_list, dropable);
         if (!pd->drop_list) goto error;
@@ -3680,7 +3718,7 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
 
    dropable->format_list = eina_inlist_append(dropable->format_list, EINA_INLIST_GET(df));
    dropable->seat = seat;
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
 
    evas_object_event_callback_add(target_obj, EVAS_CALLBACK_DEL,
                                   _all_drop_targets_cbs_del, target_obj);
@@ -3730,8 +3768,8 @@ _efl_selection_manager_drop_target_del(Eo *obj, Efl_Selection_Manager_Data *pd, 
    Eina_List *l;
    Ecore_X_Window xwin;
    Eina_Bool have_drop_list = EINA_FALSE;
-   Dropable *dropable = NULL;
-   Seat_Selection *seat_sel;
+   Sel_Manager_Dropable *dropable = NULL;
+   Sel_Manager_Seat_Selection *seat_sel;
 
    dropable = efl_key_data_get(target_obj, "__elm_dropable");
    if (dropable)
@@ -3768,7 +3806,7 @@ _efl_selection_manager_drop_target_del(Eo *obj, Efl_Selection_Manager_Data *pd, 
           }
      }
    if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
-   seat_sel = _seat_selection_init(pd, seat);
+   seat_sel = _Sel_Manager_Seat_Selection_init(pd, seat);
    ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(seat_sel->drop_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(seat_sel->enter_handler, ecore_event_handler_del);
@@ -3810,7 +3848,7 @@ _efl_selection_manager_drop_item_container_add(Eo *obj, Efl_Selection_Manager_Da
 {
    ERR("In");
    Item_Container_Drop_Info *di;
-   Dropable *dropable = NULL;
+   Sel_Manager_Dropable *dropable = NULL;
 
    if (_drop_item_container_del(pd, cont, EINA_FALSE))
      {
@@ -3831,7 +3869,7 @@ _efl_selection_manager_drop_item_container_add(Eo *obj, Efl_Selection_Manager_Da
    dropable = efl_key_data_get(cont, "__elm_dropable");
    if (!dropable)
      {
-        dropable = calloc(1, sizeof(Dropable));
+        dropable = calloc(1, sizeof(Sel_Manager_Dropable));
         if (!dropable) return;
         dropable->last.in = EINA_FALSE;
         pd->drop_list = eina_list_append(pd->drop_list, dropable);
@@ -3853,7 +3891,7 @@ _efl_selection_manager_drop_item_container_del(Eo *obj, Efl_Selection_Manager_Da
 }
 
 static inline Eina_List *
-_anim_icons_make(Drag_Container *dc)
+_anim_icons_make(Sel_Manager_Drag_Container *dc)
 {
    Eina_List *list = NULL, *icon_list = NULL;
    Evas_Object *obj;
@@ -3885,14 +3923,14 @@ _anim_icons_make(Drag_Container *dc)
 static void
 _cont_obj_drag_done_cb(void *data, const Efl_Event *ev)
 {
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
    elm_widget_scroll_freeze_pop(dc->cont);
 }
 
 static Eina_Bool
 _cont_obj_drag_start(void *data)
 {
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
 
    dc->timer = NULL;
    efl_event_callback_add(dc->cont, EFL_DND_EVENT_DRAG_DONE, _cont_obj_drag_done_cb, dc);
@@ -3908,7 +3946,7 @@ _cont_obj_drag_start(void *data)
 static Eina_Bool
 _drag_anim_play(void *data, double pos)
 {
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
 
    ERR("In");
    if (dc->animator)
@@ -3946,7 +3984,7 @@ _drag_anim_play(void *data, double pos)
 }
 
 static inline void
-_drag_anim_start(Drag_Container *dc)
+_drag_anim_start(Sel_Manager_Drag_Container *dc)
 {
    ERR("In");
 
@@ -3966,7 +4004,7 @@ static Eina_Bool
 _cont_obj_anim_start(void *data)
 {
    sel_debug("In");
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
    Efl_Object *it = NULL;
    int xret, yret; //does not use
 
@@ -4015,11 +4053,11 @@ _cont_obj_anim_start(void *data)
 
 static void _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _item_container_del_internal(Drag_Container *dc, Eina_Bool full);
-static void _anim_data_free(Drag_Container *dc);
+static void _item_container_del_internal(Sel_Manager_Drag_Container *dc, Eina_Bool full);
+static void _anim_data_free(Sel_Manager_Drag_Container *dc);
 
 static void
-_abort_drag(Evas_Object *obj, Drag_Container *dc)
+_abort_drag(Evas_Object *obj, Sel_Manager_Drag_Container *dc)
 {
    evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_MOVE,
                                        _cont_obj_mouse_move_cb, dc);
@@ -4034,7 +4072,7 @@ _abort_drag(Evas_Object *obj, Drag_Container *dc)
 static void
 _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Drag_Container *dc = dc;
+   Sel_Manager_Drag_Container *dc = dc;
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -4058,7 +4096,7 @@ _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_anim_data_free(Drag_Container *dc)
+_anim_data_free(Sel_Manager_Drag_Container *dc)
 {
    if (dc)
      {
@@ -4078,7 +4116,7 @@ _anim_data_free(Drag_Container *dc)
 static void
 _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
 
    if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
      return;
@@ -4095,7 +4133,7 @@ _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _cont_obj_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   Drag_Container *dc = data;
+   Sel_Manager_Drag_Container *dc = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (ev->button != 1)
      return;
@@ -4120,7 +4158,7 @@ _cont_obj_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_item_container_del_internal(Drag_Container *dc, Eina_Bool full)
+_item_container_del_internal(Sel_Manager_Drag_Container *dc, Eina_Bool full)
 {
    if (dc)
      {
@@ -4151,7 +4189,7 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
 {
    ERR("In");
    //TODO: remove previous drag one
-   Drag_Container *dc = calloc(1, sizeof(Drag_Container));
+   Sel_Manager_Drag_Container *dc = calloc(1, sizeof(Sel_Manager_Drag_Container));
    if (!dc)
      {
         ERR("Failed to allocate memory");
@@ -4175,7 +4213,7 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
    dc->seat = seat;
    dc->pd = pd;
 
-   _seat_selection_init(pd, seat);
+   _Sel_Manager_Seat_Selection_init(pd, seat);
 
    pd->drag_cont_list = eina_list_append(pd->drag_cont_list, dc);
 
@@ -4186,14 +4224,14 @@ _efl_selection_manager_drag_item_container_add(Eo *obj, Efl_Selection_Manager_Da
 static int
 _drag_item_container_cmp(const void *d1, const void *d2)
 {
-   const Drag_Container *dc = d1;
+   const Sel_Manager_Drag_Container *dc = d1;
    return (((uintptr_t)dc->cont) - ((uintptr_t)d2));
 }
 
 EOLIAN static void
 _efl_selection_manager_drag_item_container_del(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *cont, int seat)
 {
-   Drag_Container *dc = eina_list_search_unsorted(pd->drag_cont_list,
+   Sel_Manager_Drag_Container *dc = eina_list_search_unsorted(pd->drag_cont_list,
                                       _drag_item_container_cmp, cont);
    if (dc)
      _item_container_del_internal(dc, EINA_TRUE);
@@ -4205,7 +4243,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    pd->sel_man = obj;
-   pd->atom_list = calloc(1, SELECTION_N_ATOMS * sizeof(Efl_Sel_Manager_Atom));
+   pd->atom_list = calloc(1, SELECTION_N_ATOMS * sizeof(Sel_Manager_Atom));
    if (!pd->atom_list)
      {
         ERR("failed to allocate atom_list");
@@ -4483,7 +4521,7 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
 static void
 _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
-   Seat_Selection *seat_sel;
+   Sel_Manager_Seat_Selection *seat_sel;
 
    ecore_event_handler_del(pd->notify_handler);
    ecore_event_handler_del(pd->clear_handler);
@@ -4511,7 +4549,7 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
 
 
 static void
-_set_selection_list(Sel_Manager_Selection *sel_list, Seat_Selection *seat_sel)
+_set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel)
 {
    sel_list[EFL_SELECTION_TYPE_PRIMARY].debug = "Primary";
    sel_list[EFL_SELECTION_TYPE_PRIMARY].ecore_sel = ECORE_X_SELECTION_PRIMARY;
