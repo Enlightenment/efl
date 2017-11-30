@@ -352,6 +352,9 @@ _toggle_entry(Evas_Object *obj)
      {
         if (!sd->ent)
           {
+             //FIXME: elm_entry will be changed to efl_ui_text after
+             //       filter feature implemented.
+             //       (Current efl_ui_text has missed filter feature.)
              sd->ent = elm_entry_add(obj);
              Eina_Strbuf *buf = eina_strbuf_new();
              eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
@@ -771,33 +774,23 @@ _efl_ui_spin_button_efl_object_finalize(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
-   sd->inc_button = elm_button_add(obj);
-   elm_object_style_set(sd->inc_button, "spinner/increase/default");
+   sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_widget_style_set(efl_added, "spinner/increase/default"),
+                            efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
+                            efl_content_set(efl_part(obj, "elm.swallow.inc_button"), efl_added));
 
-   efl_event_callback_array_add(sd->inc_button, _inc_dec_button_cb(), obj);
+   sd->text_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                             efl_ui_widget_style_set(efl_added, "spinner/default"),
+                             efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                                                    _text_button_clicked_cb, obj),
+                             efl_event_callback_add(efl_added, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
+                                                    _text_button_focus_changed_cb, obj),
+                             efl_content_set(efl_part(obj, "elm.swallow.text_button"), efl_added));
 
-   elm_layout_content_set(obj, "elm.swallow.inc_button", sd->inc_button);
-   elm_widget_sub_object_add(obj, sd->inc_button);
-
-   sd->text_button = elm_button_add(obj);
-   elm_object_style_set(sd->text_button, "spinner/default");
-
-   efl_event_callback_add(sd->text_button, EFL_UI_EVENT_CLICKED,
-                          _text_button_clicked_cb, obj);
-   efl_event_callback_add(sd->text_button,
-                          EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
-                          _text_button_focus_changed_cb, obj);
-
-   elm_layout_content_set(obj, "elm.swallow.text_button", sd->text_button);
-   elm_widget_sub_object_add(obj, sd->text_button);
-
-   sd->dec_button = elm_button_add(obj);
-   elm_object_style_set(sd->dec_button, "spinner/decrease/default");
-
-   efl_event_callback_array_add(sd->dec_button, _inc_dec_button_cb(), obj);
-
-   elm_layout_content_set(obj, "elm.swallow.dec_button", sd->dec_button);
-   elm_widget_sub_object_add(obj, sd->dec_button);
+   sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_widget_style_set(efl_added, "spinner/decrease/default"),
+                            efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
+                            efl_content_set(efl_part(obj, "elm.swallow.dec_button"), efl_added));
 
      {
         Eina_List *items = NULL;
