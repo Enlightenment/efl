@@ -636,23 +636,19 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          }
          return: bool @warn_unused; [[$true if the coords are inside the object, $false otherwise]]
       }
-      event_animation_set {
+      @property event_animation {
          [[Set the $animation which starts when the given $event_name happens to the object.]]
-         params {
+         get { legacy: null; }
+         set { legacy: null; }
+         keys {
             @cref event_type: Efl.Event.Description;
                [[The event description for which the given $animation is set.]]
-            @in animation: Efl.Animation;
-               [[The animation which starts when the given $event_name happens to the object.]]
          }
-         legacy: null;
-      }
-      event_animation_get {
-         [[Get the $animation which starts when the given $event happens to the object.]]
-         params {
-            @cref event_type: Efl.Event.Description; [[The event description for which the given $animation is set.]]
+         values {
+            animation: Efl.Animation;
+               [[The animation which starts when the given $event_name
+                 happens to the object.]]
          }
-         legacy: null;
-         return: Efl.Animation @warn_unused;
       }
    }
    implements {
