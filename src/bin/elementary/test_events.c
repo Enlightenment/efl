@@ -13,7 +13,7 @@ typedef struct {
    Eo *evdown, *evup, *evmove, *evkeydown, *evkeyup;
    Eo *win, *button, *text;
    int id;
-   Efl_Future *f;
+   Eina_Future *f;
 } testdata;
 
 static void
@@ -68,12 +68,17 @@ _key_down(void *data, const Efl_Event *ev)
      }
 }
 
-static void
-_ecore_timeout_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_ecore_timeout_cb(void *data,
+                  const Eina_Value t,
+                  const Eina_Future  *dead EINA_UNUSED)
 {
    testdata *td = data;
 
    elm_object_text_set(td->text, DEFAULT_TEXT);
+   td->f = NULL;
+
+   return t;
 }
 
 static void
@@ -87,9 +92,9 @@ _key_up(void *data, const Efl_Event *ev)
         td->evkeyup = efl_dup(ev->info);
      }
 
-   if (td->f) efl_future_cancel(td->f);
-   efl_future_use(&td->f, efl_loop_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.5, NULL));
-   efl_future_then(td->f, _ecore_timeout_cb, NULL, NULL, td);
+   if (td->f) eina_future_cancel(td->f);
+   td->f = efl_loop_Eina_FutureXXX_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.5);
+   eina_future_then(td->f, _ecore_timeout_cb, td);
 }
 
 static void
