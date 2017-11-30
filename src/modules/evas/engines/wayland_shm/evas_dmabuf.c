@@ -142,6 +142,8 @@ _evas_dmabuf_surface_destroy(Surface *s)
 
    EINA_LIST_FREE(s->buffers, b)
      ecore_wl2_buffer_destroy(b);
+
+   free(s);
 }
 
 Surface *
