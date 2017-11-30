@@ -73,23 +73,6 @@ extern int _evas_engine_way_shm_log_dom;
 # define MAX_BUFFERS 4
 
 typedef struct _Surface Surface;
-struct _Surface
-{
-   Ecore_Wl2_Window *wl2_win;
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
-
-   int w, h;
-   Eina_Bool alpha : 1;
-   struct
-     {
-        void (*destroy)(Surface *surface);
-        void (*reconfigure)(Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-        void *(*data_get)(Surface *surface, int *w, int *h);
-        int  (*assign)(Surface *surface);
-        void (*post)(Surface *surface, Eina_Rectangle *rects, unsigned int count);
-     } funcs;
-};
 
 struct _Outbuf
 {
