@@ -60,9 +60,9 @@ _efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
    property->j = efl_gfx_shape_stroke_join_get(obj);
 }
 
-static Eina_Bool
-_efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
-                           const Eo *from, const Eo *to, double pos_map)
+EOLIAN static Eina_Bool
+_efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
+                                        const Eo *from, const Eo *to, double pos_map)
 {
    Efl_Gfx_Shape_Data *from_pd, *to_pd;
    Efl_Gfx_Property property_from, property_to;
@@ -122,7 +122,7 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    efl_gfx_shape_stroke_join_set(obj, (pos_map < 0.5) ?
                                  property_from.j : property_to.j);
 
-   return efl_gfx_path_interpolate(obj, from, to, pos_map);
+   return efl_gfx_path_interpolate(efl_super(obj, EFL_GFX_PATH_MIXIN), from, to, pos_map);
 }
 
 static void

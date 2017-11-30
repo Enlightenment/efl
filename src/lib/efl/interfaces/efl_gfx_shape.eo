@@ -117,25 +117,9 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
                                            One of $EFL_GFX_FILL_RULE_WINDING, $EFL_GFX_FILL_RULE_ODD_EVEN]]
          }
       }
-      interpolate {
-        [[Creates intermediary shape part-way between two shapes
-
-          Sets the data properties of $obj as the linear interpolation
-          of the $from and $to objects by $pos_map.  In addition to
-          interpolating the path data, the two shapes' dash length, fill
-          color, and stroke style are also interpolated.
-
-          See also @Efl.Gfx.Path.interpolate.
-        ]]
-        return: bool; [[$true on success, $false otherwise]]
-        params {
-          @in from: const(Efl.Object); [[Source shape]]
-          @in to: const(Efl.Object); [[Destination shape]]
-          @in pos_map: double; [[Position map in range 0.0 to 1.0]]
-        }
-      }
    }
    implements {
       Efl.Gfx.Path.copy_from;
+      Efl.Gfx.Path.interpolate;
    }
 }

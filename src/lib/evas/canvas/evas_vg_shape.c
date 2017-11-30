@@ -163,7 +163,7 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
 
    r = efl_vg_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
 
-   r &= efl_gfx_shape_interpolate(obj, from, to, pos_map);
+   r &= efl_gfx_path_interpolate(obj, from, to, pos_map);
 
    if (fromd->fill && tod->fill && pd->fill)
      {
@@ -402,7 +402,7 @@ evas_vg_shape_append_svg_path(Eo *obj, const char *svg_path_data)
 EAPI Eina_Bool
 evas_vg_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map)
 {
-   return efl_gfx_shape_interpolate(obj, from, to, pos_map);
+   return efl_gfx_path_interpolate(obj, from, to, pos_map);
 }
 
 EAPI Eina_Bool
