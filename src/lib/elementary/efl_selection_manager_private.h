@@ -266,9 +266,11 @@ Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
 struct _Efl_Selection_Manager_Data
 {
    Efl_Object *sel_man;
+#ifdef HAVE_ELEMENTARY_X
    Ecore_Event_Handler *notify_handler;
    Ecore_Event_Handler *clear_handler;
    Ecore_Event_Handler *fix_handler;
+#endif
 #ifdef HAVE_ELEMENTARY_WL2
    Ecore_Event_Handler *send_handler;
    Ecore_Event_Handler *changed_handler;
@@ -276,8 +278,6 @@ struct _Efl_Selection_Manager_Data
 #endif
    Efl_Promise *promise;
    Efl_Selection_Type loss_type;
-#ifdef HAVE_ELEMENTARY_X
-#endif
 
    Sel_Manager_Atom *atom_list;
    Eina_List *seat_list;

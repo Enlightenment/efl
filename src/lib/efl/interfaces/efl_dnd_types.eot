@@ -1,16 +1,5 @@
 import efl_selection_types;
 
-/*enum Efl.Dnd.Action {
-   unknown, [[Action type is unknown]]
-   copy, [[Copy the data]]
-   move, [[Move the data]]
-   private, [[Pricate action type]]
-   ask, [[Ask the user what to do]]
-   list, [[List the data]]
-   link, [[Link the data]]
-   description [[Describe the data]]
-}*/
-
 function Efl.Dnd.Drag_Icon_Create {
    [[Function pointer for creating icon at the drag side.]]
    params {
@@ -32,7 +21,6 @@ function Efl.Dnd.Drag_Data_Get {
    }
 };
 
-//FIXME: This should be general for both drag and drop
 function Efl.Dnd.Item_Get {
    [[Function pointer to find out which item is under position (x, y)]]
    params {
@@ -67,7 +55,6 @@ struct Efl.Dnd.Drag_Pos {
    item: Efl.Object; [[The item object. It is only available for container object.]]
 }
 
-
 /*struct Efl.Dnd.Drag_Item_Container_Pos {
    item: ptr(Efl.Object); [[The item object]]
    x: int; [[Evas Coordinate]]
@@ -82,17 +69,3 @@ struct Efl.Dnd.Drag_Item_Container_Drop {
    x: int; [[x position relative to item (left (-1), middle (0), right (1)]]
    y: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
 }
-
-/*function Efl.Dnd.Drop_Item_Get {
-   [[Function pointer to find out which item is under position (x, y)]]
-   params {
-      @in obj: ptr(Eo); [[The container object]]
-      @in x: int; [[The x coordinate to get item]]
-      @in y: int; [[The y coordinate to get item]]
-      @out xret: int; [[x position relative to item (left (-1), middle (0), right (1)]]
-      @out yret: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
-   }
-   return: ptr(Eo);
-};
-*/
-

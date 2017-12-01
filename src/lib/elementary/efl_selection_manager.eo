@@ -136,10 +136,6 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      //Efl.Selection.selection_set;
-      //Efl.Selection.selection_get;
-      //Efl.Selection.selection_clear;
-      //Efl.Selection.selection_loss_feedback;
    }
    events {
    }
