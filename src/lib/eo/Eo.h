@@ -2009,7 +2009,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
        {                                                                \
           memcpy(internal, tmp, sizeof(tmp)); \
           qsort(internal, EINA_C_ARRAY_LENGTH(internal) - 1, sizeof (internal[0]), \
-                (void*) efl_callbacks_cmp);                              \
+                (int(*)(const void*,const void*)) efl_callbacks_cmp);  \
        }                                                                \
      return internal;                                                   \
   }
