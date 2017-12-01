@@ -2202,8 +2202,6 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    unsigned int i;
    Evas_Object *grid, *background;
 
-   efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-
    edje = elm_layout_edje_get(obj);
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
