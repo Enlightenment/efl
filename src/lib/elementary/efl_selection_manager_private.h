@@ -1,7 +1,6 @@
 #ifndef EFL_SELECTION_MANAGER_PRIVATE_H
 #define EFL_SELECTION_MANAGER_PRIVATE_H
 
-//#include "efl_selection_private.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -43,6 +42,7 @@ typedef struct _Sel_Manager_Dropable Sel_Manager_Dropable;
 typedef struct _Anim_Icon Anim_Icon;
 typedef struct _Sel_Manager_Drag_Container Sel_Manager_Drag_Container;
 typedef struct _Drop_Format Drop_Format;
+typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
 
 #ifdef HAVE_ELEMENTARY_X
 typedef struct _Tmp_Info      Tmp_Info;
@@ -59,7 +59,7 @@ static Eina_Bool _wl_targets_converter(char *target, Sel_Manager_Selection *sel,
 static Eina_Bool _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 static Eina_Bool _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 
-typedef Eina_Bool       (*Wl_Data_Preparer_Cb)   (Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+typedef Eina_Bool (*Wl_Data_Preparer_Cb)    (Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
 static Eina_Bool _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
 static Eina_Bool _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
 static Eina_Bool _wl_data_preparer_vcard(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
@@ -85,20 +85,16 @@ struct _Saved_Type
    Eina_Bool     textreq: 1;
 };
 
-
 struct _Sel_Manager_Selection
 {
    const char        *debug;
    char              *buf;
    unsigned int       len;
    Efl_Selection_Format     request_format;
-   //Elm_Drop_Cb        datacb;
 #ifdef HAVE_ELEMENTARY_X
    Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
    Eina_Bool        (*clear)   (void);
    void             (*request) (Ecore_X_Window, const char *target);
-   //Elm_Selection_Loss_Cb  loss_cb;
-   //void                  *loss_data;
 
    Ecore_X_Selection  ecore_sel;
    Ecore_X_Window     xwin;
@@ -107,7 +103,6 @@ struct _Sel_Manager_Selection
    uint32_t selection_serial;
    uint32_t drag_serial;
    Ecore_Wl2_Offer *offer;
-   //char **convertion_format;
    Ecore_Event_Handler *offer_handler;
    Ecore_Wl2_Window *win;
 #endif
@@ -130,8 +125,6 @@ struct _Sel_Manager_Seat_Selection
 {
    unsigned int seat;
    Sel_Manager_Selection *sel_list;
-   //Sel_Manager_Drag_Container *drag_cont;
-   //Eina_List *drag_cont_list;
 
    //drag
    Eo *drag_obj;
@@ -225,7 +218,6 @@ struct _Drop_Format
 struct _Sel_Manager_Dropable
 {
    Evas_Object    *obj;
-   //Eina_Inlist    *cbs_list; /* List of Sel_Manager_Dropable_Cbs * */
    Eina_Inlist   *format_list;
    unsigned int seat;
    struct {
@@ -241,7 +233,6 @@ struct _Sel_Manager_Dropable
    Eina_Bool is_container;
 };
 
-typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
 struct _Item_Container_Drop_Info
 {
    Efl_Object *obj;
@@ -254,24 +245,23 @@ typedef struct _Wl_Format_Translation
 {
   Efl_Selection_Format format;
   char **translates;
-} Wl_Format_Translation;
+} Sel_Manager_Wl_Format_Translation;
 
-char *wl_markup[] = {"application/x-elementary-markup", "", NULL};
-char *wl_text[] = {"text/plain;charset=utf-8", "text/plain", NULL};
-char *wl_html[] = {"text/html;charset=utf-8", "text/html", NULL};
-char *wl_vcard[] = {"text/x-vcard", NULL};
-char *wl_image[] = {"image/", "text/uri-list", NULL};
+char *sm_wl_markup[] = {"application/x-elementary-markup", "", NULL};
+char *sm_wl_text[] = {"text/plain;charset=utf-8", "text/plain", NULL};
+char *sm_wl_html[] = {"text/html;charset=utf-8", "text/html", NULL};
+char *sm_wl_vcard[] = {"text/x-vcard", NULL};
+char *sm_wl_image[] = {"image/", "text/uri-list", NULL};
 
-Wl_Format_Translation wl_convertion[] = {
-  {ELM_SEL_FORMAT_MARKUP, wl_markup},
-  {ELM_SEL_FORMAT_TEXT, wl_text},
-  {ELM_SEL_FORMAT_HTML, wl_html},
-  {ELM_SEL_FORMAT_VCARD, wl_vcard},
-  {ELM_SEL_FORMAT_IMAGE, wl_image},
-  {ELM_SEL_FORMAT_NONE, NULL},
+Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
+  {EFL_SELECTION_FORMAT_MARKUP, sm_wl_markup},
+  {EFL_SELECTION_FORMAT_TEXT, sm_wl_text},
+  {EFL_SELECTION_FORMAT_HTML, sm_wl_html},
+  {EFL_SELECTION_FORMAT_VCARD, sm_wl_vcard},
+  {EFL_SELECTION_FORMAT_IMAGE, sm_wl_image},
+  {EFL_SELECTION_FORMAT_NONE, NULL},
 };
 #endif
-
 
 struct _Efl_Selection_Manager_Data
 {
@@ -289,17 +279,14 @@ struct _Efl_Selection_Manager_Data
 #ifdef HAVE_ELEMENTARY_X
 #endif
 
-   Eina_Bool has_sel;
-
    Sel_Manager_Atom *atom_list;
-   //Efl_Sel_Manager_Selection *sel_list;
-   Eina_List *seat_list; //Sel_Manager_Seat_Selection list: seat0 (selection types) -> seat1 (selection types)
+   Eina_List *seat_list;
 
    Eina_List *drag_cont_list;
 
    //drop
-   Eina_List *drop_list; //Sel_Manager_Dropable list
-   Eina_Hash *types_hash;
+   Eina_List *drop_list;
+   Eina_Hash *type_hash;
    const char *text_uri;
    Eina_List *drop_cont_list;
 };

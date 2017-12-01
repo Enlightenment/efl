@@ -23,13 +23,14 @@
 
 Efl_Input_Device *seat = NULL;
 
-static void
+/*static void
 _selection_get_cb(void *data, Efl_Event const *event)
 {
    ERR("in");
    Efl_Cnp_Selection *sd = (Efl_Cnp_Selection *)((Efl_Future_Event_Success *)event->info)->value;
    printf("sel: %s, length: %d\n", (char *)sd->data, sd->length);
 }
+*/
 
 static void
 //_selection_data_ready_cb(void *data, Eo *obj, void *buf, int length)
@@ -38,6 +39,7 @@ _selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
     printf("obj: %p, data: %s, length: %d\n", obj, (char *)seldata->data, seldata->len);
 }
 
+/*
 static void
 _selection_loss_cb(void *data, Efl_Event const *event)
 {
@@ -56,6 +58,7 @@ _selection_progress_cb(void *data, Efl_Event const *event)
 {
    ERR("in");
 }
+*/
 
 static void
 _selection_loss_event_cb(void *data EINA_UNUSED, const Efl_Event *event)
@@ -76,8 +79,6 @@ _delete_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 _selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win = data;
-   //Evas_Object *cnp = efl_add(EFL_CNP_CLASS, win);
    int seat_id = efl_input_device_seat_id_get(seat);
 
    efl_selection_get(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT,
@@ -111,12 +112,10 @@ _drag_icon_cb(void *data, Eo *win, int *xoff, int *yoff)
 {
    Evas_Object *lb = data;
    Evas_Object *icon;
-   const char *text = "dnd text";
    Evas_Coord x, y, w, h;
    int xm, ym;
 
    icon = elm_label_add(win);
-   text = elm_object_text_get(lb);
    elm_object_text_set(icon, "dnd text");
 
    evas_object_geometry_get(lb, &x, &y, &w, &h);
@@ -198,7 +197,7 @@ _en_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event)
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   Evas_Object *win, *bx, *bt, *bt2, *en;
+   Evas_Object *win, *bx, *bt, *en;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    win = elm_win_util_standard_add("entry", "Entry");

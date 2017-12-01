@@ -14,7 +14,7 @@
 
 #include <Elementary.h>
 
-#define ERR(fmt, args...) printf("%s %d: " fmt "\n", __func__, __LINE__, ##args)
+#define ERR(fmt, args...) printf("%s %d: " fmt "\n", __FUNCTION__, __LINE__, ##args)
 
 #define FILESEP "file://"
 #define FILESEP_LEN sizeof(FILESEP) - 1
@@ -336,7 +336,7 @@ _win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 }
 
 
-static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+/*static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    Evas_Object *win = data;
    if (ev->len <= 0)
@@ -362,14 +362,14 @@ static Eina_Bool _drop_box_button_new_cb(void *data, Evas_Object *obj, Elm_Selec
    free(dd);
 
    return EINA_TRUE;
-}
+}*/
 
 void _enter_but_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
    printf("Entered %s - drop it here and I will never print this line anymore.\n", __FUNCTION__);
 }
 
-static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+/*static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
    Evas_Object *win = data;
    Evas_Object *ic;
@@ -391,7 +391,7 @@ static Eina_Bool _drop_but_icon_change_cb(void *data, Evas_Object *obj, Elm_Sele
    return EINA_TRUE;
 }
 
-/* Callback used to test multi-callbacks feature */
+// Callback used to test multi-callbacks feature
 static Eina_Bool _drop_but_cb_remove_cb(void *data EINA_UNUSED, Evas_Object *obj, Elm_Selection_Data *ev EINA_UNUSED)
 {
    printf("Second callback called - removing it\n");
@@ -413,6 +413,7 @@ static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, El
 
    return EINA_TRUE;
 }
+*/
 
 static void
 _5s_cancel_ck_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -436,10 +437,9 @@ static void
 _box_drag_drop_cb(void *data, const Efl_Event *ev)
 {
    ERR("box drop");
-   Efl_Object *grid = data;
    Efl_Selection_Data *sd = ev->info;
 
-   ERR("x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, sd->data, sd->len, sd->format, sd->action, sd->item);
+   ERR("x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, (const char *)sd->data, sd->len, sd->format, sd->action, sd->item);
 }
 
 #if 0
@@ -509,10 +509,10 @@ _grid_drop_cb(void *data, const Efl_Event *ev)
    Efl_Object *grid = data;
    Efl_Selection_Data *sd = ev->info;
 
-   ERR("grid drop: x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, sd->data, sd->len, sd->format, sd->action, sd->item);
+   ERR("grid drop: x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, (const char *)sd->data, sd->len, sd->format, sd->action, sd->item);
    if (sd->len < 0) return;
    char *dd = _strndup(sd->data, sd->len);
-   if (!dd) return EINA_FALSE;
+   if (!dd) return;
    char *s = _drag_data_extract(&dd);
    while (s)
      {
