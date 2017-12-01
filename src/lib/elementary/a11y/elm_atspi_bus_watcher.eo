@@ -9,19 +9,19 @@ class Elm.Atspi.Bus.Watcher (Elm.Bus.Watcher)
              set {
              }
              values {
-                  conn: Eldbus.Connection;
+                  conn: ptr(Eldbus.Connection);
              }
         }
         ref_a11y_bus_connection {
-             return: Eldbus.Connection;
+             return: ptr(Eldbus.Connection);
         }
    }
    constructors {
         .connection;
    }
    implements {
-        Elm.Bus.Watcher.OnRegistered;
-        Elm.Bus.Watcher.OnUnregistered;
+        Elm.Bus.Watcher.on_registered;
+        Elm.Bus.Watcher.on_unregistered;
    }
    events {
         enabled;

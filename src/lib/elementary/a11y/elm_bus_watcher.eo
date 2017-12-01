@@ -1,12 +1,31 @@
 import eldbus_types;
 
+struct Elm.Bus.Watcher.Service.Change.Info
+{
+    service_name: string;
+    old_id: string;
+    new_id: string;
+}
+
 class Elm.Bus.Watcher (Efl.Object)
 {
    methods {
-        @property service {
-             values {
-                  bus: string;
+        service_add {
+             params {
+                  @in bus: string;
              }
+        }
+        service_remove {
+             params {
+                  @in bus: string;
+             }
+        }
+        @property services {
+            get {
+            }
+            values {
+                services: iterator<string>;
+            }
         }
         @property connection {
              get {
@@ -14,13 +33,29 @@ class Elm.Bus.Watcher (Efl.Object)
              set {
              }
              values {
-                  conn: Eldbus.Connection;
+                  conn: ptr(Eldbus.Connection);
              }
         }
-        OnRegistered @protected {
+        on_registered @protected {
+             params {
+                  @in bus_name: string;
+                  @in old_id: string;
+                  @in new_id: string;
+             }
         }
-        OnUnregistered @protected {
+        on_unregistered @protected {
+             params {
+                  @in bus_name: string;
+                  @in old_id: string;
+             }
         }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+   constructors {
+        .connection;
    }
    events {
         registered;

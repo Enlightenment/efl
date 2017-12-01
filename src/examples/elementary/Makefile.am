@@ -67,7 +67,8 @@ $(top_builddir)/src/lib/embryo/libembryo.la \
 $(top_builddir)/src/lib/edje/libedje.la \
 $(top_builddir)/src/lib/elementary/libelementary.la \
 $(top_builddir)/src/lib/ethumb_client/libethumb_client.la \
-$(top_builddir)/src/lib/elocation/libelocation.la
+$(top_builddir)/src/lib/elocation/libelocation.la \
+$(top_builddir)/src/lib/eldbus/libeldbus.la
 
 SRCS = \
 actionslider_example_01.c \
@@ -176,7 +177,8 @@ efl_thread_2.c \
 efl_thread_3.c \
 efl_thread_4.c \
 efl_thread_5.c \
-efl_thread_6.c
+efl_thread_6.c \
+bus_watcher.c
 
 if HAVE_CXX11
 SRCS += \
@@ -364,7 +366,8 @@ efl_thread_2 \
 efl_thread_3 \
 efl_thread_4 \
 efl_thread_5 \
-efl_thread_6
+efl_thread_6 \
+bus_watcher
 #benchmark3d
 #sphere-hunter
 
