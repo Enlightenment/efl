@@ -1293,7 +1293,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    return EINA_TRUE;
 
 err:
-   ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p\n", cb, desc, func);
+   ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p", cb, desc, func);
    _eo_callback_free(cb);
    return EINA_FALSE;
 }
