@@ -97,23 +97,31 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
     } \
   while (0)
 
-static void
-_timeout(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_timeout(void *data,
+         const Eina_Value t,
+         const Eina_Future *dead EINA_UNUSED)
 {
    Eina_Bool *did = data;
+
+   if (t.type == EINA_VALUE_TYPE_ERROR)
+     return t;
+
    *did = EINA_TRUE;
    ck_abort_msg("timed out!");
+
+   return t;
 }
 
 #define LOOP_WITH_TIMEOUT(t) \
   do \
     { \
        Eina_Bool _did_timeout = EINA_FALSE; \
-       Efl_Future *_timeout_future = efl_loop_timeout(ecore_main_loop_get(), t, &_did_timeout); \
-       efl_future_then(_timeout_future, _timeout, NULL, NULL, &_did_timeout); \
+       Eina_Future *_timeout_future = efl_loop_Eina_FutureXXX_timeout(ecore_main_loop_get(), t); \
+       eina_future_then(_timeout_future, _timeout, &_did_timeout); \
        mark_point(); \
        ecore_main_loop_begin(); \
-       if (!_did_timeout) efl_future_cancel(_timeout_future); \
+       if (!_did_timeout) eina_future_cancel(_timeout_future); \
        else ck_abort_msg("Timed out!"); \
     } \
   while (0)
