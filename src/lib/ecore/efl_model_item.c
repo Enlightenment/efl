@@ -138,8 +138,15 @@ _efl_model_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Item
 {
    Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
    Efl_Future *rfuture = efl_promise_future_get(promise);
+   Eina_Accessor* accessor;
 
-   Eina_Accessor* accessor = efl_model_list_slice(sd->children, start, count);
+   if (!count)
+     {
+        start = 0;
+        count = eina_list_count(sd->children);
+     }
+
+   accessor = efl_model_list_slice(sd->children, start, count);
    efl_promise_value_set(promise, accessor, (Eina_Free_Cb)&eina_accessor_free);
 
    return rfuture;
