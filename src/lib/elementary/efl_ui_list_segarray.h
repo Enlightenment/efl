@@ -36,5 +36,7 @@ int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray);
 void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_size,
                                 int initial_step_size);
 
-#endif
+void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_Model* model);
+void efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index);
 
+#endif

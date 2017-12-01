@@ -37,10 +37,10 @@ void _efl_ui_list_custom_layout(Efl_Ui_List *);
 void _efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem*, Eina_Bool);
 Eina_Bool _efl_ui_list_item_select_clear(Eo *);
 //static void _item_calc(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
-static void _layout_unrealize(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
-static Eina_Bool _update_items(Eo *, Efl_Ui_List_Data *);
-static void _insert_at(Efl_Ui_List_Data* pd, int index, Efl_Model* child);
-static void _remove_at(Efl_Ui_List_Data* pd, int index);
+//static void _layout_unrealize(Efl_Ui_List_Data *, Efl_Ui_List_Item *);
+//static Eina_Bool _update_items(Eo *, Efl_Ui_List_Data *);
+//static void _insert_at(Efl_Ui_List_Data* pd, int index, Efl_Model* child);
+//static void _remove_at(Efl_Ui_List_Data* pd, int index);
 static void _layout(Efl_Ui_List_Data* pd);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
@@ -55,7 +55,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd)
 {
   //DBG("");
    /* if (pd->recalc) return; */
@@ -67,8 +67,6 @@ _efl_ui_list_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Pan_Data 
 EOLIAN static void
 _efl_ui_list_pan_elm_pan_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord ox, oy, ow, oh, cw;
-
 //   DBG("x: %d y: %d", (int)x, (int)y);
    if ((x == psd->x) && (y == psd->y)) return;
 
@@ -124,7 +122,7 @@ _efl_ui_list_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Pan_D
 }
 
 EOLIAN static void
-_efl_ui_list_pan_efl_object_destructor(Eo *obj, Efl_Ui_List_Pan_Data *psd)
+_efl_ui_list_pan_efl_object_destructor(Eo *obj, Efl_Ui_List_Pan_Data *psd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_PAN_CLASS));
 }
@@ -162,14 +160,9 @@ _child_added_cb(void *data, const Efl_Event *event)
    Efl_Model_Children_Event* evt = event->info;
    Efl_Ui_List *obj = data;
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
-/*
-   int index = evt->index - pd->realized.start;
 
-   if (index >= 0 && index <= pd->realized.slice)
-     _insert_at(pd, index, evt->child);
-   else
-     evas_object_smart_changed(pd->obj);
-*/
+   efl_ui_list_segarray_insert(&pd->segarray, evt->index, evt->child);
+   evas_object_smart_changed(obj);
 }
 
 static void
@@ -178,14 +171,9 @@ _child_removed_cb(void *data, const Efl_Event *event)
    Efl_Model_Children_Event* evt = event->info;
    Efl_Ui_List *obj = data;
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
-/*
-   int index = evt->index - pd->realized.start;
 
-   if (index >= 0 && index < pd->realized.slice)
-     _remove_at(pd, index);
-   else
-     evas_object_smart_changed(pd->obj);
-*/
+   efl_ui_list_segarray_remove(&pd->segarray, evt->index);
+   evas_object_smart_changed(obj);
 }
 /*
 static void
@@ -278,14 +266,13 @@ _item_selected_then(void * data, Efl_Event const* event)
 */
 
 static void
-_count_then(void * data, Efl_Event const* event)
+_count_then(void * data, Efl_Event const* event EINA_UNUSED)
 {
    Efl_Ui_List_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
-   int *count = ((Efl_Future_Event_Success*)event->info)->value;
+//   int *count = ((Efl_Future_Event_Success*)event->info)->value;
 
    pd->count_future = NULL;
-
    _layout(pd);
 }
 
@@ -867,7 +854,7 @@ _efl_ui_list_efl_gfx_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_Size2D size)
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
 //   DBG("");
    /* if (pd->recalc) return; */
@@ -910,7 +897,7 @@ _efl_ui_list_elm_layout_sizing_eval(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
+_efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd)
 {
    Efl_Ui_List_Pan_Data *pan_data;
    Evas_Coord minw, minh;
@@ -1221,12 +1208,12 @@ static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    EFL_UI_LIST_DATA_GET_OR_RETURN_VAL(obj, pd, EINA_FALSE);
+/*
    const char *dir = params;
 
    Evas_Coord page_x, page_y;
    Evas_Coord v_w, v_h;
    Evas_Coord x, y;
-/*
    elm_interface_scrollable_content_pos_get(obj, &x, &y);
    elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
    elm_interface_scrollable_content_viewport_geometry_get(obj, NULL, NULL, &v_w, &v_h);
@@ -1492,7 +1479,7 @@ _efl_ui_list_efl_ui_list_model_load_range_set(Eo* obj, Efl_Ui_List_Data* pd, int
 }
 
 EOLIAN static int
-_efl_ui_list_efl_ui_list_model_size_get(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_ui_list_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
 {
     /* TODO */
     return pd->item_count;

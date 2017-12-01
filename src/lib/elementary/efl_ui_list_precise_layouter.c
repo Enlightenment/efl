@@ -244,6 +244,15 @@ _on_modeler_resize(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
+_count_changed(void *data, const Efl_Event *event)
+{
+   Efl_Model_Children_Event* evt = event->info;
+   Efl_Ui_List_Precise_Layouter_Data *pd = data;
+
+   pd->recalc = EINA_TRUE;
+   evas_object_smart_changed(pd->modeler);
+}
+static void
 _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler, Efl_Ui_List_SegArray *segarray)
 {
    if(pd->initialized)
@@ -256,6 +265,7 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_Li
    pd->segarray = segarray;
 
    evas_object_event_callback_add(modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
+   efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, pd);
    efl_ui_list_model_load_range_set(modeler, 0, 0); // load all
 
    pd->min.w = 0;
@@ -269,6 +279,7 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
    int i = 0;
 
    evas_object_event_callback_del_full(pd->modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
+   efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, pd);
 
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
    EINA_ACCESSOR_FOREACH(nodes, i, node)

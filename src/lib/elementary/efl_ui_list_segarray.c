@@ -104,7 +104,8 @@ void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_
 
    node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
                                                 &index, sizeof(index), &_insert_lookup_cb, NULL);
-   if (!node) node = _alloc_node(segarray, index, segarray->array_initial_size);
+   if (!node)
+     node = _alloc_node(segarray, index, segarray->array_initial_size);
 
    assert(node->length < node->max); //don't have space in node to put this item
    assert((index - node->first) == node->length); //TODO FIXME there is other item in this place need move others
