@@ -323,7 +323,7 @@ _visuals_refresh(Evas_Object *obj,
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_ui_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_scale_get(obj) * elm_config_scale_get());
 
    _efl_ui_layout_highlight_in_theme(obj);
 

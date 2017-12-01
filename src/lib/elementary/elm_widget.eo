@@ -605,6 +605,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
+      Efl.Gfx.scale { set; get; }
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.is_frame_object { set; }
@@ -621,7 +622,6 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Ui.Focus.User.parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
-      Efl.Ui.Base.scale { get; set; }
       Efl.Ui.Base.mirrored { get; set; }
       Efl.Ui.Base.mirrored_automatic { get; set; }
       Efl.Ui.Cursor.cursor { get; set; }

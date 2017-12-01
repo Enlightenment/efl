@@ -2214,14 +2214,14 @@ evas_object_text_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_evas_text_efl_ui_base_scale_set(Evas_Object *eo_obj, Evas_Text_Data *o,
+_evas_text_efl_gfx_scale_set(Evas_Object *eo_obj, Evas_Text_Data *o,
                                  double scale)
 {
    int size;
    const char *font;
 
-   if (EINA_DBL_EQ(efl_ui_scale_get(eo_obj), scale)) return;
-   efl_ui_scale_set(efl_super(eo_obj, MY_CLASS), scale);
+   if (EINA_DBL_EQ(efl_gfx_scale_get(eo_obj), scale)) return;
+   efl_gfx_scale_set(efl_super(eo_obj, MY_CLASS), scale);
 
    font = eina_stringshare_add(o->cur.font);
    size = o->cur.size;

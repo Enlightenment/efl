@@ -364,7 +364,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 }
 
 EOLIAN void
-_edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
+_edje_object_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
    Evas_Object *o;
@@ -390,7 +390,7 @@ _edje_object_efl_ui_base_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 }
 
 EOLIAN double
-_edje_object_efl_ui_base_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return TO_DOUBLE(ed->scale);
 }

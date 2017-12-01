@@ -1089,7 +1089,7 @@ _elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
      {
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
         edje_object_scale_set
-          (VIEW(it), efl_ui_scale_get(obj) * elm_config_scale_get());
+          (VIEW(it), efl_gfx_scale_get(obj) * elm_config_scale_get());
         it->fixed = EINA_FALSE;
      }
 

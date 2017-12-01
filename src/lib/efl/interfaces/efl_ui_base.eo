@@ -40,30 +40,5 @@ interface Efl.Ui.Base
             language: string; [[The current language.]]
           }
       }
-      @property scale {
-         [[The scaling factor of an object.
-
-           This property is an individual scaling factor on the object (Edje
-           or UI widget). This property (or Edje's global scaling factor, when
-           applicable), will affect this object's part sizes. If scale is
-           not zero, than the individual scaling will override any global
-           scaling set, for the object obj's parts. Set it back to zero to
-           get the effects of the global scaling again.
-
-           Warning: In Edje, only parts which, at EDC level, had the "scale"
-           property set to 1, will be affected by this function. Check the
-           complete "syntax reference" for EDC files.
-         ]]
-         set {
-            [[Sets the scaling factor of an object.]]
-         }
-         get {
-            [[Gets an object's scaling factor.]]
-         }
-         values {
-            scale: double(0.0); [[The scaling factor (the default value is 0.0,
-                                  meaning individual scaling is not set)]]
-         }
-      }
    }
 }

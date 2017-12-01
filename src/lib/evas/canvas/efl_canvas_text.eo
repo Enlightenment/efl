@@ -351,7 +351,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
       Efl.Text.Annotate.cursor_object_item_insert;
       Efl.Text.Markup.markup { set; get; }
       Efl.Text.Markup.cursor_markup_insert;
-      Efl.Ui.Base.scale { set; }
+      Efl.Gfx.scale { set; }
    }
    events {
       cursor,changed; [[Called when cursor changed]]

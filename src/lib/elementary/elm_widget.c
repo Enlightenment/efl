@@ -1498,10 +1498,10 @@ _elm_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Objec
          * need to reset sobj's scale to 5.
          * Note that each widget's scale is 0 by default.
          */
-        double scale, pscale = efl_ui_scale_get(sobj);
+        double scale, pscale = efl_gfx_scale_get(sobj);
         Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
 
-        scale = efl_ui_scale_get(sobj);
+        scale = efl_gfx_scale_get(sobj);
         th = elm_widget_theme_get(sobj);
         mirrored = efl_ui_mirrored_get(sobj);
 
@@ -2658,7 +2658,7 @@ elm_widget_scroll_freeze_get(const Eo *obj)
 }
 
 EOLIAN static void
-_elm_widget_efl_ui_base_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
+_elm_widget_efl_gfx_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double scale)
 {
    if (scale < 0.0) scale = 0.0;
    if (sd->scale != scale)
@@ -2669,14 +2669,14 @@ _elm_widget_efl_ui_base_scale_set(Eo *obj, Elm_Widget_Smart_Data *sd, double sca
 }
 
 EOLIAN static double
-_elm_widget_efl_ui_base_scale_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_elm_widget_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    // FIXME: save walking up the tree by storing/caching parent scale
    if (sd->scale == 0.0)
      {
         if (sd->parent_obj && elm_widget_is(sd->parent_obj))
           {
-             return efl_ui_scale_get(sd->parent_obj);
+             return efl_gfx_scale_get(sd->parent_obj);
           }
         else
           {
