@@ -50,7 +50,7 @@ struct struct_definition_generator
         .generate(sink, struct_.cxx_name, context))
        return false;
 
-     // iterate enum fiels
+     // iterate struct fields
      for(auto first = std::begin(struct_.fields)
              , last = std::end(struct_.fields); first != last; ++first)
        {
@@ -63,6 +63,16 @@ struct struct_definition_generator
               )
               .generate(sink, std::make_tuple(field_type, field_name), context))
             return false;
+       }
+
+     // Check whether this is an extern struct without declared fields in .eo file and generate a
+     // placeholder field if positive.
+     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
+     // those 'mini-amd64.c condition fields not met' crashes.
+     if (struct_.fields.size() == 0)
+       {
+           if (!as_generator("public IntPtr field;\n").generate(sink, nullptr, context))
+             return false;
        }
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
