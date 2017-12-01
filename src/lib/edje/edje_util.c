@@ -396,12 +396,12 @@ _edje_object_efl_ui_base_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EAPI double
-edje_object_base_scale_get(const Eo *obj)
+edje_object_base_scale_get(const Evas_Object *obj)
 {
    Edje *ed;
 
    ed = _edje_fetch(obj);
-   if (!ed->file) return 1.0;
+   if (!ed || !ed->file) return 1.0;
    return TO_DOUBLE(ed->file->base_scale);
 }
 
