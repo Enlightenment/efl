@@ -494,9 +494,10 @@ _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_text_button_focus_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_text_button_focus_changed_cb(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
@@ -506,9 +507,10 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_focus_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
-   _toggle_entry(data);
+   if (!efl_ui_focus_object_focus_get(event->object))
+     _toggle_entry(data);
 }
 
 static void
