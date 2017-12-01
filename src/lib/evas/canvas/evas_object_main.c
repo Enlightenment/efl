@@ -2218,7 +2218,7 @@ _efl_canvas_object_anti_alias_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_ui_base_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
+_efl_canvas_object_efl_gfx_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale)
 {
    if (obj->delete_me) return;
    if (EINA_DBL_EQ(obj->cur->scale, scale)) return;
@@ -2233,7 +2233,7 @@ _efl_canvas_object_efl_ui_base_scale_set(Eo *eo_obj, Evas_Object_Protected_Data 
 }
 
 EOLIAN static double
-_efl_canvas_object_efl_ui_base_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_efl_gfx_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return 1.0;
    return obj->cur->scale;
@@ -2307,7 +2307,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    layer = efl_gfx_stack_layer_get(eo_obj);
    name = efl_name_get(eo_obj); // evas_object_name_get(eo_obj);
    geom = efl_gfx_geometry_get(eo_obj);
-   scale = efl_ui_scale_get(eo_obj);
+   scale = efl_gfx_scale_get(eo_obj);
    min = efl_gfx_size_hint_restricted_min_get(eo_obj);
    max = efl_gfx_size_hint_max_get(eo_obj);
    //efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
@@ -2971,13 +2971,13 @@ evas_object_evas_get(const Eo *eo_obj)
 EAPI void
 evas_object_scale_set(Evas_Object *obj, double scale)
 {
-   efl_ui_scale_set(obj, scale);
+   efl_gfx_scale_set(obj, scale);
 }
 
 EAPI double
 evas_object_scale_get(const Evas_Object *obj)
 {
-   return efl_ui_scale_get(obj);
+   return efl_gfx_scale_get(obj);
 }
 
 /* Internal EO APIs and hidden overrides */

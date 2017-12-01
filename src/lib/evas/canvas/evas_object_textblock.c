@@ -14600,12 +14600,12 @@ evas_object_textblock_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_canvas_text_efl_ui_base_scale_set(Evas_Object *eo_obj,
+_efl_canvas_text_efl_gfx_scale_set(Evas_Object *eo_obj,
                                        Efl_Canvas_Text_Data *o,
                                        double scale)
 {
-   if (EINA_DBL_EQ(efl_ui_scale_get(eo_obj), scale)) return;
-   efl_ui_scale_set(efl_super(eo_obj, MY_CLASS), scale);
+   if (EINA_DBL_EQ(efl_gfx_scale_get(eo_obj), scale)) return;
+   efl_gfx_scale_set(efl_super(eo_obj, MY_CLASS), scale);
 
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, eo_obj);

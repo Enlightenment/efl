@@ -109,7 +109,7 @@ _efl_ui_multibuttonentry_elm_widget_theme_apply(Eo *obj, Efl_Ui_Multibuttonentry
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   pad_scale = efl_ui_scale_get(obj) * elm_config_scale_get()
+   pad_scale = efl_gfx_scale_get(obj) * elm_config_scale_get()
       / edje_object_base_scale_get(elm_layout_edje_get(obj));
    elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 
@@ -1437,7 +1437,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Multibuttonentry_Data *sd)
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   pad_scale = efl_ui_scale_get(obj) * elm_config_scale_get()
+   pad_scale = efl_gfx_scale_get(obj) * elm_config_scale_get()
       / edje_object_base_scale_get(elm_layout_edje_get(obj));
    elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
 

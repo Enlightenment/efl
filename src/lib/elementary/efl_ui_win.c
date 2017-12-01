@@ -6519,7 +6519,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 
    edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
-                         efl_ui_scale_get(obj) * elm_config_scale_get());
+                         efl_gfx_scale_get(obj) * elm_config_scale_get());
 
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));

@@ -666,7 +666,7 @@ _popup_add(Efl_Ui_Slider_Data *sd, Eo *obj, Evas_Object **popup,
      _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "horizontal/popup", elm_widget_style_get(obj));
    else
      _elm_theme_set(elm_widget_theme_get(obj), *popup, "slider", "vertical/popup", elm_widget_style_get(obj));
-   edje_object_scale_set(*popup, efl_ui_scale_get(obj) *
+   edje_object_scale_set(*popup, efl_gfx_scale_get(obj) *
                          elm_config_scale_get());
    edje_object_signal_callback_add(*popup, "popup,hide,done", "elm", // XXX: for compat
                                    _popup_hide_done, obj);
@@ -739,10 +739,10 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (sd->popup)
      {
-        edje_object_scale_set(sd->popup, efl_ui_scale_get(obj) *
+        edje_object_scale_set(sd->popup, efl_gfx_scale_get(obj) *
                               elm_config_scale_get());
         if (sd->intvl_enable && sd->popup2)
-          edje_object_scale_set(sd->popup2, efl_ui_scale_get(obj) *
+          edje_object_scale_set(sd->popup2, efl_gfx_scale_get(obj) *
                                 elm_config_scale_get());
         else if (sd->intvl_enable && !sd->popup2)
           _popup_add(sd, obj, &sd->popup2, &sd->track2, EINA_TRUE);
@@ -756,11 +756,11 @@ _efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_ui_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_ui_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
        elm_config_scale_get());
 
    if (sd->intvl_enable)
@@ -1026,11 +1026,11 @@ _efl_ui_slider_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Slider_Data *sd)
 
    if (_is_horizontal(sd->dir))
      evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_ui_scale_get(obj) *
+       (sd->spacer, (double)sd->size * efl_gfx_scale_get(obj) *
        elm_config_scale_get(), 1);
    else
      evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_ui_scale_get(obj) *
+       (sd->spacer, 1, (double)sd->size * efl_gfx_scale_get(obj) *
        elm_config_scale_get());
 
    _val_fetch(obj, EINA_FALSE);
