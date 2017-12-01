@@ -1245,7 +1245,7 @@ _elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item
    int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
    if (!int_ret) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj) && sd->selected && !sd->last_selected_item)
+   if (elm_object_focus_get(obj) && sd->selected && !sd->last_selected_item)
      {
         Elm_Object_Item *sel = eina_list_data_get(sd->selected);
         sd->last_selected_item = efl_data_scope_get(sel, ELM_LIST_ITEM_CLASS);
@@ -1253,7 +1253,7 @@ _elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item
 
    if (!sd->items) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj) && !sd->mouse_down)
+   if (elm_object_focus_get(obj) && !sd->mouse_down)
      {
         if (sd->last_focused_item)
           eo_it = sd->last_focused_item;
@@ -2070,7 +2070,7 @@ _elm_list_item_elm_widget_item_focus_set(Eo *eo_it, Elm_List_Item_Data *it, Eina
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
 
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
 
         if (eo_it != sd->focused_item)
@@ -2082,7 +2082,7 @@ _elm_list_item_elm_widget_item_focus_set(Eo *eo_it, Elm_List_Item_Data *it, Eina
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
         if (eo_it)
           _elm_list_item_unfocused(eo_it);

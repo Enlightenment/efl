@@ -146,11 +146,11 @@ _visual_guide_text_set(Evas_Object *obj)
    elm_box_unpack(sd->box, sd->entry);
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK) return;
 
-   if (!efl_ui_focus_object_focus_get(obj))
+   if (!elm_object_focus_get(obj))
      elm_object_focus_set(sd->entry, EINA_FALSE);
 
    if ((!eina_list_count(sd->items)) && sd->guide_text
-       && (!efl_ui_focus_object_focus_get(obj)) && (!sd->n_str))
+       && (!elm_object_focus_get(obj)) && (!sd->n_str))
      {
         evas_object_hide(sd->entry);
         elm_box_pack_end(sd->box, sd->guide_text);
@@ -165,7 +165,7 @@ _visual_guide_text_set(Evas_Object *obj)
           {
              elm_box_pack_end(sd->box, sd->entry);
              evas_object_show(sd->entry);
-             if (efl_ui_focus_object_focus_get(obj))
+             if (elm_object_focus_get(obj))
                {
                   if (!sd->selected_it)
                     elm_object_focus_set(sd->entry, EINA_TRUE);
@@ -448,7 +448,7 @@ _item_select(Evas_Object *obj,
 
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
 
-        if (efl_ui_focus_object_focus_get(obj))
+        if (elm_object_focus_get(obj))
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
              elm_object_focus_set(VIEW(it), EINA_TRUE);
@@ -479,7 +479,7 @@ _item_select(Evas_Object *obj,
      {
         _current_item_state_change
           (obj, MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT);
-        if (efl_ui_focus_object_focus_get(obj) && sd->editable)
+        if (elm_object_focus_get(obj) && sd->editable)
           elm_object_focus_set(sd->entry, EINA_TRUE);
      }
 }
@@ -1039,7 +1039,7 @@ _entry_resize_cb(void *data,
 {
    EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
-   if (efl_ui_focus_object_focus_get(sd->parent))
+   if (elm_object_focus_get(sd->parent))
      elm_widget_show_region_set(sd->entry, efl_gfx_geometry_get(sd->entry), EINA_TRUE);
 }
 
@@ -1058,7 +1058,7 @@ _entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
    EFL_UI_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (elm_object_focus_get(event->object))
      {
         Elm_Multibuttonentry_Item_Data *item = NULL;
 

@@ -3805,7 +3805,7 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!elm_object_focus_get(obj))
           return;
         _elm_gengrid_item_unfocused(eo_it);
      }
