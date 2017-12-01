@@ -147,6 +147,10 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
         goto init_err;
      }
 
+   /* NB: No seat name passed in, try to get from env */
+   if (!device) device = getenv("XDG_SEAT");
+
+   /* NB: fallback to seat0 if env var is not set */
    if (!device) device = "seat0";
 
    edata->dev = ecore_drm2_device_open(device, 0);
