@@ -178,7 +178,8 @@ efl_thread_3.c \
 efl_thread_4.c \
 efl_thread_5.c \
 efl_thread_6.c \
-bus_watcher.c
+bus_watcher.c \
+atspi_bus_watcher.c
 
 if HAVE_CXX11
 SRCS += \
@@ -367,7 +368,8 @@ efl_thread_3 \
 efl_thread_4 \
 efl_thread_5 \
 efl_thread_6 \
-bus_watcher
+bus_watcher \
+atspi_bus_watcher
 #benchmark3d
 #sphere-hunter
 
