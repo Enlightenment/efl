@@ -385,7 +385,7 @@ eina_file_real_close(Eina_File *file)
 
    if (file->handle != INVALID_HANDLE_VALUE)
      {
-        if (file->global_map != MAP_FAILED)
+        if (!file->copied && file->global_map != MAP_FAILED)
           UnmapViewOfFile(file->global_map);
         CloseHandle(file->handle);
      }
