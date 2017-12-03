@@ -309,6 +309,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_image_factory.eo.h>
 # include <a11y/elm_bus_watcher.eo.h>
 # include <a11y/elm_atspi_bus_watcher.eo.h>
+# include <a11y/efl_access_cache.eo.h>
 #endif
 
 /* include deprecated calls last of all */

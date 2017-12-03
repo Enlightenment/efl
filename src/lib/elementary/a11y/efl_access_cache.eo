@@ -3,17 +3,19 @@ class Efl.Access.Cache (Efl.Object)
    methods {
         add {
              params {
-                  @in obj: Efl.Access;
+                  @in access: Efl.Access;
              }
+             return: bool;
         }
         remove {
              params {
-                  @in obj: Efl.Access;
+                  @in access: Efl.Access;
              }
+             return: bool;
         }
         contains {
              params {
-                  @in obj: Efl.Access;
+                  @in access: Efl.Access;
              }
              return: bool;
         }
@@ -30,8 +32,13 @@ class Efl.Access.Cache (Efl.Object)
              return: iterator<Efl.Access> @owned @warn_unused;
         }
    }
+   implements {
+       Efl.Object.constructor;
+       Efl.Object.destructor;
+   }
    events {
         added;
         removed;
+        root,changed;
    }
 }
