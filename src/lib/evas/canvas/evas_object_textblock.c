@@ -15123,7 +15123,9 @@ _efl_canvas_text_efl_text_annotate_range_annotations_get(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Text_Annotate_Annotation *
-_efl_canvas_text_efl_text_annotate_cursor_item_insert(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur, const char *format, const char *item)
+_efl_canvas_text_efl_text_annotate_cursor_item_insert(Eo *eo_obj,
+      Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *cur,
+      const char *item, const char *format)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
 

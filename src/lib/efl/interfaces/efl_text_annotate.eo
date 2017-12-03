@@ -150,11 +150,11 @@ interface Efl.Text.Annotate {
          legacy: null;
          params {
             cur: ptr(Efl.Text.Cursor.Cursor); [[Cursor object]]
-            @in format: string; [[Size format of the inserted item.
-                                  This hints how to size the item in the text.]]
             @in item: string;   [[Item key to be used in higher-up
                                   code to query and decided what image, emoticon
                                   etc. to embed.]]
+            @in format: string; [[Size format of the inserted item.
+                                  This hints how to size the item in the text.]]
          }
          return: ptr(Efl.Text.Annotate.Annotation); [[The annotation handle of the
          inserted item.]]
