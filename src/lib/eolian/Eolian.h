@@ -84,6 +84,12 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+/* State information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian Eolian;
+
 /* Class type used to extract information on classes
  *
  * @ingroup Eolian
@@ -523,30 +529,31 @@ EAPI int eolian_init(void);
 EAPI int eolian_shutdown(void);
 
 /*
- * @brief Create a new primary unit for Eolian state.
+ * @brief Create a new Eolian state.
  *
- * This creates a nameless "master unit" which holds all Eolian state.
+ * This creates a new Eolian state that consists of a "master unit" with
+ * the same address (therefore, you can cast it to Eolian_Unit) plus extra
+ * state information.
+ *
  * You need to free this with eolian_free once you're done.
  *
- * @return A new master unit (or NULL on failure).
+ * @return A new state (or NULL on failure).
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Unit *eolian_new(void);
+EAPI Eolian *eolian_new(void);
 
 /*
- * @brief Free a master unit.
+ * @brief Free an Eolian state.
  *
- * You can use this to free an Eolian state. Do not EVER use this to free
- * any unit other than master unit, as these are managed by the master unit
- * and freeing them would result in incorrect behavior.
+ * You can use this to free an Eolian state.
  *
  * If the input is NULL, this function has no effect.
  *
- * @param[in] unit the master unit to free
+ * @param[in] unit the state to free
  *
  */
-EAPI void eolian_free(Eolian_Unit *unit);
+EAPI void eolian_free(Eolian *state);
 
 /*
  * @brief Scan the given directory (recursively) and search for .eo and

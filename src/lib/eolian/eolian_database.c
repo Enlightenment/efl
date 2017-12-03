@@ -636,21 +636,25 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->enums);
 }
 
-EAPI Eolian_Unit *
+EAPI Eolian *
 eolian_new(void)
 {
-   Eolian_Unit *nunit = calloc(1, sizeof(Eolian_Unit));
-   if (!nunit)
+   Eolian *state = calloc(1, sizeof(Eolian));
+   if (!state)
      return NULL;
 
-   database_unit_init(nunit, NULL);
-   return nunit;
+   database_unit_init(&state->unit, NULL);
+   return state;
 }
 
 EAPI void
-eolian_free(Eolian_Unit *unit)
+eolian_free(Eolian *state)
 {
-   database_unit_del(unit);
+   if (!state)
+     return;
+
+   database_unit_del(&state->unit);
+   free(state);
 }
 
 #define EO_SUFFIX ".eo"

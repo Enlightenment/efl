@@ -59,6 +59,23 @@ extern Eina_Hash *_parsingeos;
 /* for deferred dependency parsing */
 extern Eina_Hash *_defereos;
 
+struct _Eolian_Unit
+{
+   Eolian_Unit   *parent;
+   Eina_Hash     *children;
+   Eina_Hash     *classes;
+   Eina_Hash     *globals;
+   Eina_Hash     *constants;
+   Eina_Hash     *aliases;
+   Eina_Hash     *structs;
+   Eina_Hash     *enums;
+};
+
+struct _Eolian
+{
+   Eolian_Unit unit;
+};
+
 typedef struct _Eolian_Object
 {
    const char *file;
@@ -292,18 +309,6 @@ struct _Eolian_Variable
    Eolian_Expression    *value;
    Eolian_Documentation *doc;
    Eina_Bool is_extern :1;
-};
-
-struct _Eolian_Unit
-{
-   Eolian_Unit   *parent;
-   Eina_Hash     *children;
-   Eina_Hash     *classes;
-   Eina_Hash     *globals;
-   Eina_Hash     *constants;
-   Eina_Hash     *aliases;
-   Eina_Hash     *structs;
-   Eina_Hash     *enums;
 };
 
 int database_init(void);
