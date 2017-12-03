@@ -31,6 +31,8 @@ Eina_Hash *_parsingeos = NULL;
 
 Eina_Hash *_defereos = NULL;
 
+static Eolian_Unit *_cunit = NULL;
+
 static int _database_init_count = 0;
 
 static void
@@ -598,8 +600,35 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
 }
 
 void
-database_unit_del(Eolian_Unit *unit EINA_UNUSED)
+database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname)
 {
+   Eolian_Unit *ocunit = _cunit;
+   unit->parent = ocunit;
+   if (ocunit)
+     eina_hash_add(ocunit->children, fname, unit);
+
+   unit->children   = eina_hash_stringshared_new(NULL);
+   unit->classes    = eina_hash_stringshared_new(NULL);
+   unit->globals    = eina_hash_stringshared_new(NULL);
+   unit->constants  = eina_hash_stringshared_new(NULL);
+   unit->aliases    = eina_hash_stringshared_new(NULL);
+   unit->structs    = eina_hash_stringshared_new(NULL);
+   unit->enums      = eina_hash_stringshared_new(NULL);
+   _cunit = unit;
+}
+
+void
+database_unit_del(Eolian_Unit *unit)
+{
+   if (!unit)
+     return;
+
+   eina_hash_free(unit->classes);
+   eina_hash_free(unit->globals);
+   eina_hash_free(unit->constants);
+   eina_hash_free(unit->aliases);
+   eina_hash_free(unit->structs);
+   eina_hash_free(unit->enums);
 }
 
 #define EO_SUFFIX ".eo"

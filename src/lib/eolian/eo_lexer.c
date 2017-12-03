@@ -1043,6 +1043,10 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    if (ls->current != 0xBF)
      return;
    next_char(ls);
+
+   Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
+   database_unit_init(ncunit, ls->filename);
+   eina_hash_add(_units, ls->filename, ncunit);
 }
 
 static void

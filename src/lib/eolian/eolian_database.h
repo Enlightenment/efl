@@ -48,6 +48,9 @@ extern Eina_Hash *_tfilenames;
 
 /* a hash holding all declarations, for redef checking etc */
 extern Eina_Hash *_decls;
+extern Eina_Hash *_declsf;
+
+extern Eina_Hash *_units;
 
 /* holds parsed/currently parsing eot files to keep track */
 extern Eina_Hash *_parsedeos;
@@ -293,13 +296,14 @@ struct _Eolian_Variable
 
 struct _Eolian_Unit
 {
-   Eina_List     *dependencies;
-   Eina_List     *classes;
-   Eina_List     *globals;
-   Eina_List     *constants;
-   Eina_List     *aliases;
-   Eina_List     *structs;
-   Eina_List     *enums;
+   Eolian_Unit   *parent;
+   Eina_Hash     *children;
+   Eina_Hash     *classes;
+   Eina_Hash     *globals;
+   Eina_Hash     *constants;
+   Eina_Hash     *aliases;
+   Eina_Hash     *structs;
+   Eina_Hash     *enums;
 };
 
 int database_init(void);
@@ -313,6 +317,7 @@ void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
 
 void database_doc_del(Eolian_Documentation *doc);
 
+void database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname);
 void database_unit_del(Eolian_Unit *unit);
 
 /* types */
