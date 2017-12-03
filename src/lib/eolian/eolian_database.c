@@ -602,10 +602,13 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
 void
 database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname)
 {
-   Eolian_Unit *ocunit = _cunit;
-   unit->parent = ocunit;
-   if (ocunit)
-     eina_hash_add(ocunit->children, fname, unit);
+   if (fname)
+     {
+        Eolian_Unit *ocunit = _cunit;
+        unit->parent = ocunit;
+        if (ocunit)
+          eina_hash_add(ocunit->children, fname, unit);
+     }
 
    unit->children   = eina_hash_stringshared_new(NULL);
    unit->classes    = eina_hash_stringshared_new(NULL);
@@ -614,7 +617,9 @@ database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname)
    unit->aliases    = eina_hash_stringshared_new(NULL);
    unit->structs    = eina_hash_stringshared_new(NULL);
    unit->enums      = eina_hash_stringshared_new(NULL);
-   _cunit = unit;
+
+   if (fname)
+     _cunit = unit;
 }
 
 void
@@ -629,6 +634,23 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->aliases);
    eina_hash_free(unit->structs);
    eina_hash_free(unit->enums);
+}
+
+EAPI Eolian_Unit *
+eolian_new(void)
+{
+   Eolian_Unit *nunit = calloc(1, sizeof(Eolian_Unit));
+   if (!nunit)
+     return NULL;
+
+   database_unit_init(nunit, NULL);
+   return nunit;
+}
+
+EAPI void
+eolian_free(Eolian_Unit *unit)
+{
+   database_unit_del(unit);
 }
 
 #define EO_SUFFIX ".eo"
