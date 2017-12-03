@@ -1353,7 +1353,7 @@ _request_subchild(Node *node)
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    Node *node, *last;
    Efl_Ui_Focus_Object *last_focusable = NULL;
@@ -1601,7 +1601,7 @@ _convert(Eina_List *node_list)
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *upper = NULL;
 

@@ -3,7 +3,7 @@ class Efl.Ui.Focus.Manager.Root_Focus(Efl.Ui.Focus.Manager.Calc) {
   implements {
     Efl.Ui.Focus.Manager.Calc.register;
     Efl.Ui.Focus.Manager.Calc.unregister;
-    Efl.Ui.Focus.Manager.focus {set; get;}
+    Efl.Ui.Focus.Manager.manager_focus {set; get;}
     Efl.Ui.Focus.Manager.fetch;
     Efl.Ui.Focus.Manager.logical_end;
     Efl.Ui.Focus.Manager.border_elements {get;}

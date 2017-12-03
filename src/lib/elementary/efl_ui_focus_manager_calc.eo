@@ -92,7 +92,7 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         class.destructor;
         Efl.Ui.Focus.Manager.move;
         Efl.Ui.Focus.Manager.request_move;
-        Efl.Ui.Focus.Manager.focus {get; set;}
+        Efl.Ui.Focus.Manager.manager_focus {get; set;}
         Efl.Ui.Focus.Manager.redirect {set; get;}
         Efl.Ui.Focus.Manager.border_elements {get;}
         Efl.Ui.Focus.Manager.root {set; get;}
