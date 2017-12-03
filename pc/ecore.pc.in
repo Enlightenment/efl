@@ -13,6 +13,6 @@ Name: ecore
 Description: Ecore event abstraction library
 Requires.private: @requirements_pc_ecore@
 Version: @VERSION@
-Libs: -L${libdir} -lecore -lefl
+Libs: -L${libdir} -lecore -lefl -lintl
 Libs.private: @requirements_libs_ecore@
 Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-@VMAJ@
