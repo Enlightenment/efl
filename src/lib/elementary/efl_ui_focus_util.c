@@ -20,7 +20,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
 {
    Elm_Widget *top, *o;
    Efl_Ui_Focus_Manager *m;
-   m = efl_ui_focus_user_manager_get(user);
+   m = efl_ui_focus_user_focus_manager_get(user);
 
    top = elm_widget_top_get(user);
 

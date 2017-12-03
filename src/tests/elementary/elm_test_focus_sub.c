@@ -13,13 +13,13 @@ _focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_sub_main_efl_ui_focus_user_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_user_focus_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_manager");
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_sub_main_efl_ui_focus_user_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_user_focus_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_parent");
 }

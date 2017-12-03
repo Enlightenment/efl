@@ -385,7 +385,7 @@ _toggle_entry(Evas_Object *obj)
            efl_ui_focus_composition_elements_set(obj, items);
         }
 
-        efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(obj), sd->ent);
+        efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(obj), sd->ent);
      }
 }
 
@@ -404,7 +404,7 @@ _spin_value(void *data)
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(data, EFL_UI_SPIN_CLASS);
 
-   if (_value_set(data, pd->val + (sd->inc_val ? pd->step : -pd->step))) 
+   if (_value_set(data, pd->val + (sd->inc_val ? pd->step : -pd->step)))
      _label_write(data);
 
    return ECORE_CALLBACK_RENEW;

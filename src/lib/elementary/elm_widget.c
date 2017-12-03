@@ -312,7 +312,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
    else
      {
-        new = efl_ui_focus_user_manager_get(parent);
+        new = efl_ui_focus_user_focus_manager_get(parent);
         provider = parent;
      }
 
@@ -5355,13 +5355,13 @@ _elm_widget_efl_object_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_widget_efl_ui_focus_user_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_elm_widget_efl_ui_focus_user_focus_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.parent;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_widget_efl_ui_focus_user_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_elm_widget_efl_ui_focus_user_focus_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.manager;
 }

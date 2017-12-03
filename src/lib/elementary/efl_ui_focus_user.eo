@@ -4,7 +4,7 @@ interface Efl.Ui.Focus.User {
       @since 1.20
     ]]
     methods {
-        @property manager {
+        @property focus_manager {
             [[Describes which manager is used to register.
 
               If a instance of this interface is the root of a manager this instance should not have the manager where it is root as this property. This other manager then this instance will be set as focused in the other manager.
@@ -15,7 +15,7 @@ interface Efl.Ui.Focus.User {
                 manager : Efl.Ui.Focus.Manager; [[The manager object]]
             }
         }
-        @property parent {
+        @property focus_parent {
             [[Describes which logical parent is used by this object.]]
             get {}
             values {

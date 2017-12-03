@@ -49,7 +49,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Efl_Ui_Focus_Object *node, *logical;
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_ui_focus_user_manager_get(obj);
+   manager = efl_ui_focus_user_focus_manager_get(obj);
    logical = obj;
    borders = efl_ui_focus_manager_border_elements_get(obj);
 
@@ -90,7 +90,7 @@ _border_unregister(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Efl_Ui_Focus_Object *node;
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_ui_focus_user_manager_get(obj);
+   manager = efl_ui_focus_user_focus_manager_get(obj);
    EINA_LIST_FREE(pd->current_border, node)
      {
         if (node == obj) continue;
@@ -137,7 +137,7 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    Eina_List *n;
    Efl_Ui_Focus_User *b;
    Efl_Ui_Focus_Manager *manager;
-   manager = efl_ui_focus_user_manager_get(ev->object);
+   manager = efl_ui_focus_user_focus_manager_get(ev->object);
 
    if (!ev->info) return;
 
@@ -157,8 +157,8 @@ _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Eina_List *n;
 
 
-   logical = efl_ui_focus_user_parent_get(obj);
-   manager = efl_ui_focus_user_manager_get(obj);
+   logical = efl_ui_focus_user_focus_parent_get(obj);
+   manager = efl_ui_focus_user_focus_manager_get(obj);
 
    //unregister from the old
    efl_event_callback_array_del(pd->manager, parent_manager(), obj);

@@ -537,7 +537,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           {
              Efl_Ui_Focus_Relations *rel;
 
-             rel = efl_ui_focus_manager_fetch(efl_ui_focus_user_manager_get(obj), obj);
+             rel = efl_ui_focus_manager_fetch(efl_ui_focus_user_focus_manager_get(obj), obj);
 
              if (rel)
                {

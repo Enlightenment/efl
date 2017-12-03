@@ -24,7 +24,7 @@ mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manag
       Elm.Widget.focus_state_apply;
       Efl.Gfx.visible {set;}
       Efl.Ui.Focus.Manager.move;
-      Efl.Ui.Focus.User.manager { get; }
+      Efl.Ui.Focus.User.focus_manager { get; }
       Efl.Object.constructor;
       Efl.Object.destructor;
    }
