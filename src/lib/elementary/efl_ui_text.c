@@ -3206,7 +3206,6 @@ EOLIAN static void
 _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
-   Elm_Entry_Item_Provider *ip;
    Elm_Entry_Markup_Filter *tf;
    Eo *text_obj;
 
