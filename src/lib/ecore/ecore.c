@@ -934,7 +934,7 @@ _ecore_fps_debug_shutdown(void)
         unlink(buf);
         if (_ecore_fps_runtime_mmap)
           {
-             munmap(_ecore_fps_runtime_mmap, sizeof(int));
+             munmap(_ecore_fps_runtime_mmap, sizeof(unsigned int));
              _ecore_fps_runtime_mmap = NULL;
           }
         close(_ecore_fps_debug_fd);
