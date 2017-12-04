@@ -255,7 +255,10 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                     {
                        if (pollincoming[i].data.ptr == INPUT_TIMER_TIMERFD)
                          {
-                            read(timerfd, &timerfdbuf, sizeof(timerfdbuf));
+                            if (read(timerfd, &timerfdbuf, sizeof(timerfdbuf)) == -1)
+                              {
+                                 ERR("Cannot read from timer descriptor. %m.");
+                              }
                             data_timeout = EINA_TRUE;
                          }
                        else if (pollincoming[i].data.ptr == INPUT_TIMER_CONTROL)
