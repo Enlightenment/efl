@@ -6,6 +6,7 @@ class Efl.Animation (Efl.Object)
    data: Efl_Animation_Data;
    methods {
       @property target {
+         [[Target object property]]
          set {
          }
          get {
@@ -15,6 +16,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property final_state_keep {
+         [[Keep final state property]]
          set {
          }
          get {
@@ -24,6 +26,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property duration {
+         [[Duration property]]
          set {
          }
          get {
@@ -33,6 +36,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property total_duration {
+         [[Total duration property]]
          get {
          }
          values {
@@ -40,6 +44,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property repeat_mode {
+         [[Repeat mode property]]
          set {
          }
          get {
@@ -49,6 +54,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property repeat_count {
+         [[Repeat count property]]
          set {
          }
          get {
@@ -58,6 +64,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property start_delay {
+         [[Start delay property]]
          set {
          }
          get {
@@ -67,6 +74,7 @@ class Efl.Animation (Efl.Object)
          }
       }
       @property interpolator {
+         [[Interpolator property]]
          set {
          }
          get {
