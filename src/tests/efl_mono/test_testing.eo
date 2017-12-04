@@ -370,7 +370,7 @@ class Test.Testing (Efl.Object) {
       /* Integer */
       eina_inarray_int_in {
          params {
-            @in arr: inarray<int>;
+            @in arr: inarray<ptr(int)>;
          }
          return: bool;
       }
@@ -387,7 +387,7 @@ class Test.Testing (Efl.Object) {
 
       eina_inarray_int_out {
          params {
-            @out arr: inarray<int>;
+            @out arr: inarray<ptr(int)>;
          }
          return: bool;
       }

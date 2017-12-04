@@ -189,18 +189,42 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
    iterator_header = eina_strbuf_new();
    iter_param = eina_strbuf_new();
 
+   Eolian_Type_Builtin_Type t = eolian_type_builtin_type_get(type);
+
    eina_strbuf_append_printf(iter_param, "%s_iter", eolian_parameter_name_get(parameter));
 
    //generate the field definition
    eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(inner_type, EOLIAN_C_TYPE_DEFAULT));
+   if(t == EOLIAN_TYPE_BUILTIN_INARRAY
+      || t == EOLIAN_TYPE_BUILTIN_INLIST)
+     {
+       eina_strbuf_append(*buf, "*");
+     }
    eina_strbuf_append_buffer(*buf, iter_param);
    eina_strbuf_append(*buf, ";\n");
 
-   Eolian_Type_Builtin_Type t = eolian_type_builtin_type_get(type);
 
    if (t == EOLIAN_TYPE_BUILTIN_LIST)
      {
         eina_strbuf_append_printf(*buf, "   EINA_LIST_FREE(");
+        eina_strbuf_append_buffer(*buf, param);
+        eina_strbuf_append_char(*buf, ',');
+        eina_strbuf_append_buffer(*buf, iter_param);
+        eina_strbuf_append(*buf, ")\n");
+        _generate_loop_content(buf, inner_type, iter_param);
+     }
+   else if (t == EOLIAN_TYPE_BUILTIN_INARRAY)
+     {
+        eina_strbuf_append_printf(*buf, "   EINA_INARRAY_FOREACH(");
+        eina_strbuf_append_buffer(*buf, param);
+        eina_strbuf_append_char(*buf, ',');
+        eina_strbuf_append_buffer(*buf, iter_param);
+        eina_strbuf_append(*buf, ")\n");
+        _generate_loop_content(buf, inner_type, iter_param);
+     }
+   else if (t == EOLIAN_TYPE_BUILTIN_INLIST)
+     {
+        eina_strbuf_append_printf(*buf, "   EINA_INLIST_FREE(");
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_char(*buf, ',');
         eina_strbuf_append_buffer(*buf, iter_param);
@@ -237,7 +261,7 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
      }
    else
      {
-        printf("Error, container unknown?!\n");
+        printf("Error, container unknown?! %d\n", (int)t);
      }
 
    eina_strbuf_free(iterator_header);
