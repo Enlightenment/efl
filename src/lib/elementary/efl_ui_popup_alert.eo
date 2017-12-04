@@ -12,16 +12,17 @@ struct Efl.Ui.Popup.Alert.Clicked_Event {
 
 class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
 {
+   [[EFL UI Popup Alert class]]
    methods {
       @property button {
          set {
             [[Set popup buttons.]]
          }
          keys {
-            type: Efl.Ui.Popup.Alert.Button;
+            type: Efl.Ui.Popup.Alert.Button; [[Alert popup button type]]
          }
          values {
-            text: string;
+            text: string; [[Alert string on button]]
          }
       }
    }
@@ -31,6 +32,6 @@ class Efl.Ui.Popup.Alert(Efl.Ui.Popup)
       Efl.Part.part;
    }
    events {
-      clicked: Efl.Ui.Popup.Alert.Clicked_Event;
+      clicked: Efl.Ui.Popup.Alert.Clicked_Event; [[Called when alert popup was clicked]]
    }
 }
