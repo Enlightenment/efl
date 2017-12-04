@@ -173,8 +173,8 @@ efl_ecore_evas_mono_files = \
 	bindings/mono/ecore_evas_mono/ecore_evas.cs
 
 lib_efl_mono_libefl_mono_dll_SOURCES = \
-	$(builddir)/bindings/mono/efl_mono/efl_all.cs \
-	bindings/mono/efl_mono/efl_libs.cs \
+	bindings/mono/efl_mono/efl_all.cs \
+	$(builddir)/bindings/mono/efl_mono/efl_libs.cs \
 	$(efl_eo_mono_files) \
 	$(efl_eina_mono_files) \
 	$(efl_eldbus_mono_files) \
