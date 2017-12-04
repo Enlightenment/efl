@@ -3172,9 +3172,6 @@ ecore_loop_arguments_send(int argc, const char **argv)
    efl_future_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, NULL, arga);
 }
 
-static void _efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED);
-static void _efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED);
-
 // Only one main loop handle for now
 void
 ecore_loop_future_register(Efl_Loop *l EINA_UNUSED, Efl_Future *f)
@@ -3199,10 +3196,6 @@ ecore_loop_promise_unregister(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
 {
    _pending_promises = eina_list_remove(_pending_promises, p);
 }
-
-EFL_CALLBACKS_ARRAY_DEFINE(timeout,
-                          { EFL_LOOP_TIMER_EVENT_TICK, _efl_loop_timeout_cb },
-                          { EFL_EVENT_DEL, _efl_loop_timeout_force_cancel_cb });
 
 static Eina_Future *
 _efl_loop_Eina_FutureXXX_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
@@ -3302,25 +3295,7 @@ _efl_loop_Eina_FutureXXX_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double 
 /* This event will be triggered when the main loop is destroyed and destroy its timers along */
 static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
 
-static void
-_efl_loop_timeout_force_cancel_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   _efl_loop_internal_cancel(data);
-}
-
 static void _efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED);
-
-static void
-_efl_loop_timeout_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Efl_Internal_Promise *t = data;
-
-   efl_promise_value_set(t->promise, (void*) t->data, NULL);
-   efl_del(t->promise);
-
-   efl_event_callback_array_del(t->u.timer, timeout(), t);
-   efl_del(t->u.timer);
-}
 
 static void
 _efl_loop_internal_cancel(Efl_Internal_Promise *p)
@@ -3338,11 +3313,6 @@ _efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED)
    if (j->job_is)
      {
         ecore_job_del(j->u.job);
-     }
-   else
-     {
-        efl_event_callback_array_del(j->u.timer, timeout(), j);
-        efl_del(j->u.timer);
      }
 
    _efl_loop_internal_cancel(j);
@@ -3385,34 +3355,6 @@ _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
  on_error:
    efl_del(promise);
    free(j);
-
-   return NULL;
-}
-
-static Efl_Future *
-_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time, const void *data)
-{
-   Efl_Internal_Promise *t;
-   Efl_Object *promise;
-
-   promise = efl_add(EFL_PROMISE_CLASS, obj);
-   if (!promise) return NULL;
-
-   t = _efl_internal_promise_new(promise, data);
-   if (!t) goto on_error;
-
-   t->job_is = EINA_FALSE;
-   t->u.timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
-                        efl_loop_timer_interval_set(efl_added, time),
-                        efl_event_callback_array_add(efl_added, timeout(), t));
-
-   if (!t->u.timer) goto on_error;
-
-   return efl_promise_future_get(promise);
-
- on_error:
-   efl_del(promise);
-   free(t);
 
    return NULL;
 }
