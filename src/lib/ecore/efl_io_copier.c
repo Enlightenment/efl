@@ -85,7 +85,7 @@ _efl_io_copier_timeout_inactivity_reschedule(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->inactivity_timer) eina_future_cancel(pd->inactivity_timer);
    if (pd->timeout_inactivity <= 0.0) return;
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), pd->timeout_inactivity),
+   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_inactivity),
                                   .success = _efl_io_copier_timeout_inactivity_cb,
                                   .storage = &pd->inactivity_timer);
 }

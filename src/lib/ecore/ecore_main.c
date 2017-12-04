@@ -3250,7 +3250,7 @@ _efl_loop_Eina_FutureXXX_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 }
 
 static void
-_efl_loop_Eina_FutureXXX_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+_efl_loop_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
    ecore_timer_del(d->timer);
@@ -3258,7 +3258,7 @@ _efl_loop_Eina_FutureXXX_timeout_cancel(void *data, const Eina_Promise *dead_ptr
 }
 
 static Eina_Bool
-_efl_loop_Eina_FutureXXX_timeout_done(void *data)
+_efl_loop_timeout_done(void *data)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
    eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
@@ -3267,7 +3267,7 @@ _efl_loop_Eina_FutureXXX_timeout_done(void *data)
 }
 
 static Eina_Future *
-_efl_loop_Eina_FutureXXX_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
+_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
 {
    Efl_Loop_Promise_Simple_Data *d;
    Eina_Promise *p;
@@ -3275,11 +3275,11 @@ _efl_loop_Eina_FutureXXX_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double 
    d = efl_loop_promise_simple_data_calloc(1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
 
-   d->timer = ecore_timer_add(time, _efl_loop_Eina_FutureXXX_timeout_done, d);
+   d->timer = ecore_timer_add(time, _efl_loop_timeout_done, d);
    EINA_SAFETY_ON_NULL_GOTO(d->timer, timer_error);
 
    p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _efl_loop_Eina_FutureXXX_timeout_cancel, d);
+                        _efl_loop_timeout_cancel, d);
    // d is dead if p is NULL
    EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
    d->promise = p;

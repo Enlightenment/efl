@@ -1499,7 +1499,7 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    if (pd->close_timeout)
      eina_future_cancel(pd->close_timeout);
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_timeout(efl_loop_get(o), 2.0),
+   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), 2.0),
                                   .success = _efl_net_dialer_websocket_close_request_timeout,
                                   .storage = &pd->close_timeout);
 
