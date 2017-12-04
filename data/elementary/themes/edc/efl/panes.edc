@@ -13,10 +13,18 @@
 
 group { "efl/panes/vertical";
    inherit: "elm/panes/vertical/default";
+   parts {
+      alias: "first" "elm.swallow.left";
+      alias: "second" "elm.swallow.right";
+   }
 }
 
 group { "efl/panes/horizontal";
    inherit: "elm/panes/horizontal/default";
+   parts {
+      alias: "first" "elm.swallow.left";
+      alias: "second" "elm.swallow.right";
+   }
 }
 
 group { "efl/panes/vertical:flush";
