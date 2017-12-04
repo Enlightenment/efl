@@ -22,6 +22,8 @@ inline bool is_function_blacklisted(std::string const& c_name)
     || c_name == "elm_wdg_item_focus_get"
     || c_name == "elm_wdg_item_focus_set"
     || c_name == "elm_interface_scrollable_mirrored_set"
+    || c_name == "evas_obj_table_mirrored_get"
+    || c_name == "evas_obj_table_mirrored_set"
     || c_name == "edje_obj_load_error_get"
     || c_name == "efl_ui_focus_user_parent_get"
     || c_name == "efl_canvas_object_scale_get" // duplicated signature
