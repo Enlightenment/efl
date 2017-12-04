@@ -315,7 +315,7 @@ int database_init(void);
 int database_shutdown(void);
 
 char *database_class_to_filename(const char *cname);
-Eina_Bool database_validate();
+Eina_Bool database_validate(const Eolian_Unit *src);
 
 void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);

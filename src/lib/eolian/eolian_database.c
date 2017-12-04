@@ -779,7 +779,8 @@ eolian_file_parse(const char *filepath)
      return NULL;
    if (!_parse_deferred())
      return NULL;
-   if (!database_validate())
+   /* FIXME: pass unit properly */
+   if (!database_validate(NULL))
      return NULL;
    return &unit_tmp;
 }
@@ -802,7 +803,8 @@ eolian_all_eot_files_parse()
 
    eina_hash_foreach(_tfilenames, _tfile_parse, &ret);
 
-   if (ret && !database_validate())
+   /* FIXME: pass unit properly */
+   if (ret && !database_validate(NULL))
      return EINA_FALSE;
 
    return ret;
@@ -826,7 +828,8 @@ eolian_all_eo_files_parse()
 
    eina_hash_foreach(_filenames, _file_parse, &ret);
 
-   if (ret && !database_validate())
+   /* FIXME: pass unit properly */
+   if (ret && !database_validate(NULL))
      return EINA_FALSE;
 
    return ret;
