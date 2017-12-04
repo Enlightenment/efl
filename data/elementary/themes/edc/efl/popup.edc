@@ -28,12 +28,13 @@ group { "efl/popup_alert";
    alias: "efl/popup_alert_text";
    images.image: "rounded_square.png" COMP;
    parts {
+      alias: "title" "elm.text.title";
       image { "bg";
          desc { "default";
             min: 100 100;
             image.border: 15 15 15 15;
             image.normal: "rounded_square.png";
-                  }
+          }
       }
       spacer { "base";
          desc { "default";

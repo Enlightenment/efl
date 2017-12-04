@@ -420,7 +420,13 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data, _content_aliases)
+static Eina_Bool
+_part_is_efl_ui_button_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return eina_streq(part, "elm.swallow.content");
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data, _part_is_efl_ui_button_part)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_button, EFL_UI_BUTTON, Efl_Ui_Button_Data)
 #include "efl_ui_button_part.eo.c"
 

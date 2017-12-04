@@ -62,14 +62,6 @@ static void _entry_changed_cb(void *data, const Efl_Event *event);
 static void _entry_focus_changed_cb(void *data, const Efl_Event *event);
 static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {"guide", "guide"},
-   {NULL, NULL}
-};
-
-
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
@@ -2066,9 +2058,15 @@ _elm_multibuttonentry_item_efl_access_widget_action_elm_actions_get(Eo *obj EINA
    return &atspi_actions[0];
 }
 
-/* Efl.Part begin */
+static Eina_Bool
+_part_is_efl_ui_multibutton_entry_part(const Eo *obj, const char *part)
+{
+   return (((elm_widget_is_legacy(obj)) && (eina_streq(part, "default"))) ||
+            (eina_streq(part, "guide")));
+}
 
-ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data, _text_aliases)
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY,
+  Efl_Ui_Multibuttonentry_Data, _part_is_efl_ui_multibutton_entry_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_multibuttonentry, EFL_UI_MULTIBUTTONENTRY, Efl_Ui_Multibuttonentry_Data)
 #include "efl_ui_multibuttonentry_part.eo.c"

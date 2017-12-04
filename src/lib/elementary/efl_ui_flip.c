@@ -2349,7 +2349,13 @@ elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction 
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
+static Eina_Bool
+_part_is_efl_ui_flip_entry_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return ((eina_streq(part, "front")) || (eina_streq(part, "back")));
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data, _part_is_efl_ui_flip_entry_part)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_flip, EFL_UI_FLIP, Efl_Ui_Flip_Data)

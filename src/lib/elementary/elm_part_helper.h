@@ -54,20 +54,6 @@ struct _Elm_Part_Data
       return efl_content_unset(efl_part(obj, _ ## type ## _default_content_part_get(obj, sd))); \
    }
 
-
-// For any widget that has specific part handling
-
-static inline Eina_Bool
-_elm_part_alias_find(const Elm_Layout_Part_Alias_Description *aliases, const char *part)
-{
-   const Elm_Layout_Part_Alias_Description *alias;
-
-   for (alias = aliases; alias && alias->alias; alias++)
-     if (eina_streq(alias->real_part, part))
-       return EINA_TRUE;
-   return EINA_FALSE;
-}
-
 static inline Eo *
 _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 {
@@ -89,14 +75,14 @@ ELM_PART_IMPLEMENT(const Efl_Class *part_klass, const Eo *obj, const char *part)
                   _elm_part_initialize(efl_added, (Eo *) obj, part));
 }
 
-#define ELM_PART_OVERRIDE_ONLY_ALIASES(type, TYPE, typedata, aliases) \
+#define ELM_PART_OVERRIDE_PARTIAL(type, TYPE, typedata, _is_part_cb) \
    EOLIAN static Efl_Object * \
    _ ## type ## _efl_part_part(const Eo *obj, typedata *priv EINA_UNUSED, const char *part) \
    { \
-      EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
-      if (_elm_part_alias_find(aliases, part)) \
-        return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
-      return efl_part(efl_super(obj, MY_CLASS), part); \
+     EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL); \
+     if (_is_part_cb(obj, part)) \
+       return ELM_PART_IMPLEMENT(TYPE ## _PART_CLASS, obj, part); \
+     return efl_part(efl_super(obj, MY_CLASS), part); \
    }
 
 #define ELM_PART_OVERRIDE(type, TYPE, typedata) \

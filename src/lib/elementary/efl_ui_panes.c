@@ -546,7 +546,20 @@ _efl_ui_panes_class_constructor(Efl_Class *klass)
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_panes, EFL_UI_PANES, Efl_Ui_Panes_Data, _content_aliases)
+static Eina_Bool
+_part_is_efl_ui_panes_part(const Eo *obj, const char *part)
+{
+   if (elm_widget_is_legacy(obj))
+     {
+        if ((eina_streq(part, "elm.swallow.left")) || (eina_streq(part, "elm.swallow.right")))
+          return EINA_TRUE;
+     }
+   
+   return (eina_streq(part, "first")) || (eina_streq(part, "second"));
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_panes, EFL_UI_PANES, Efl_Ui_Panes_Data,
+  _part_is_efl_ui_panes_part)
 
 EOLIAN static void
 _efl_ui_panes_part_hint_min_allow_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool allow)
