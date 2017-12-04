@@ -1,14 +1,16 @@
 enum Efl.Ui.Popup.Align {
-    none = 0,
-    center,
-    left,
-    right,
-    top,
-    bottom
+    [[Popup alignment type]]
+    none = 0, [[Popup not aligned]]
+    center,   [[Popup aligned to center]]
+    left,     [[Popup aligned to left]]
+    right,    [[Popup aligned to right]]
+    top,      [[Popup aligned to top]]
+    bottom    [[Popup aligned to bottom]]
 }
 
 class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
 {
+   [[EFL UI popup class]]
    methods {
       @property align {
          set {
@@ -18,7 +20,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
             [[ Get the current popup alignment.]]
          }
          values {
-             type: Efl.Ui.Popup.Align;
+             type: Efl.Ui.Popup.Align; [[Alignment type]]
          }
       }
       @property timeout {
@@ -31,7 +33,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
             [[ Get the currently set timeout seconds.]]
          }
          values {
-             time: double;
+             time: double; [[Timeout in seconds]]
          }
       }
    }
