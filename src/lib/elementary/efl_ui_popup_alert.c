@@ -12,13 +12,6 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup.Alert"
 
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"title", "title"},
-   {"elm.text.title", "elm.text.title"},
-   {NULL, NULL}
-};
-
 static const char PART_NAME_BUTTON[] = "button";
 static const char PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_COUNT][15] =
                                                 {"button_layout1",
@@ -262,8 +255,15 @@ _efl_ui_popup_alert_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
+static Eina_Bool
+_part_is_efl_ui_popup_alert_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   return (eina_streq(part, "title") || eina_streq(part, "elm.text.title"));
+}
+
 /* Efl.Part begin */
-ELM_PART_OVERRIDE_ONLY_ALIASES(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data, _text_aliases)
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_popup_alert, EFL_UI_POPUP_ALERT,
+                          Efl_Ui_Popup_Alert_Data, _part_is_efl_ui_popup_alert_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_Alert_Data)
 #include "efl_ui_popup_alert_part.eo.c"
