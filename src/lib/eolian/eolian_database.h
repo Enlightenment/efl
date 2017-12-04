@@ -81,8 +81,21 @@ typedef struct _Eolian_Object
    const char *file;
    int line;
    int column;
+   int refcount;
    Eina_Bool validated;
 } Eolian_Object;
+
+static inline void
+eolian_object_ref(Eolian_Object *obj)
+{
+   ++obj->refcount;
+}
+
+static inline Eina_Bool
+eolian_object_unref(Eolian_Object *obj)
+{
+   return (--obj->refcount > 0);
+}
 
 struct _Eolian_Documentation
 {
@@ -259,17 +272,17 @@ struct _Eolian_Event
 
 struct _Eolian_Struct_Type_Field
 {
-   Eina_Stringshare *name;
    Eolian_Object     base;
+   Eina_Stringshare *name;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
 };
 
 struct _Eolian_Enum_Type_Field
 {
+   Eolian_Object      base;
    Eolian_Typedecl   *base_enum;
    Eina_Stringshare  *name;
-   Eolian_Object      base;
    Eolian_Expression *value;
    Eolian_Documentation *doc;
    Eina_Bool is_public_value :1;
