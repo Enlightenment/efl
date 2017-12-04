@@ -230,79 +230,6 @@ START_TEST(ecore_test_timer_inside_call)
 }
 END_TEST
 
-static void
-_ecore_promise_quit(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Success *success = ev->info;
-   Eina_Bool *bob = data;
-   double *start = success->value;
-   double delta = ecore_loop_time_get() - *start;
-   double offset = 0.01;
-
-   if (_efl_test_jenkins_run())
-     offset *= 5;
-
-   ck_assert_msg(delta - 0.2 <= offset, "Ecore promise timeout took %f (should be <= %f)\n", delta - 0.2, offset);
-
-   *bob = EINA_TRUE;
-   ecore_main_loop_quit();
-}
-
-START_TEST(ecore_test_timeout)
-{
-   Efl_Future *timeout = NULL;
-   Eina_Bool bob = EINA_FALSE;
-   double start;
-
-   ecore_init();
-
-   start = ecore_time_get();
-   timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
-   efl_future_then(timeout, &_ecore_promise_quit, NULL, NULL, &bob);
-
-   ecore_main_loop_begin();
-
-   fail_if(bob != EINA_TRUE);
-
-   ecore_shutdown();
-}
-END_TEST
-
-static void
-_ecore_promise_then(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
-{
-   abort();
-}
-
-static void
-_ecore_promise_cancel(void *data, const Efl_Event *ev)
-{
-   Efl_Future_Event_Failure *failure = ev->info;
-   Eina_Bool *bob = data;
-
-   fail_if(failure->error != EINA_ERROR_FUTURE_CANCEL);
-   *bob = EINA_TRUE;
-}
-
-START_TEST(ecore_test_timeout_cancel)
-{
-   Efl_Future *timeout = NULL;
-   Eina_Bool bob = EINA_FALSE;
-   double start;
-
-   ecore_init();
-
-   start = ecore_time_get();
-   timeout = efl_loop_timeout(ecore_main_loop_get(), 0.2, &start);
-   efl_future_then(timeout, &_ecore_promise_then, &_ecore_promise_cancel, NULL, &bob);
-   efl_future_cancel(timeout);
-
-   fail_if(bob != EINA_TRUE);
-
-   ecore_shutdown();
-}
-END_TEST
-
 static Eina_Bool
 _test_time_cb(void *data)
 {
@@ -362,8 +289,6 @@ END_TEST
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
-  tcase_add_test(tc, ecore_test_timeout);
-  tcase_add_test(tc, ecore_test_timeout_cancel);
   tcase_add_test(tc, ecore_test_timer_lifecycle);
   tcase_add_test(tc, ecore_test_timer_inside_call);
 }
