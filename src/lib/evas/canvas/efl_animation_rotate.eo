@@ -6,6 +6,7 @@ class Efl.Animation.Rotate (Efl.Animation)
    data: Efl_Animation_Rotate_Data;
    methods {
       @property rotate {
+         [[Rotate property]]
          set {
          }
          get {
@@ -19,6 +20,7 @@ class Efl.Animation.Rotate (Efl.Animation)
          }
       }
       @property rotate_absolute {
+         [[Rotate absolute property]]
          set {
          }
          get {

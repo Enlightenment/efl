@@ -6,6 +6,7 @@ class Efl.Animation.Alpha (Efl.Animation)
    data: Efl_Animation_Alpha_Data;
    methods {
       @property alpha {
+         [[Alpha property]]
          set {
          }
          get {
