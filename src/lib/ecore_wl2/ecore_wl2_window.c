@@ -1035,7 +1035,7 @@ ecore_wl2_window_display_get(const Ecore_Wl2_Window *window)
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(window->display, NULL);
 
-   if (window->display->recovering) return EINA_FALSE;
+   if (window->display->recovering) return NULL;
 
    return window->display;
 }
