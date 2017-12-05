@@ -11,7 +11,7 @@
 #include "efl_ui_popup_anchor_private.h"
 
 #define MY_CLASS EFL_UI_POPUP_ANCHOR_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Popup.Anchor"
+#define MY_CLASS_NAME "Efl.Ui.Popup_Anchor"
 
 static void
 _anchor_calc(Eo *obj)

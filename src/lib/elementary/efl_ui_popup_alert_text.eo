@@ -1,4 +1,4 @@
-class Efl.Ui.Popup.Alert.Text(Efl.Ui.Popup.Alert, Efl.Text)
+class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
 {
    implements {
       Efl.Object.constructor;
