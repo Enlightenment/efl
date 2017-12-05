@@ -149,6 +149,16 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
             show_whitespace: bool; [[Whether or not we show whitespace characters]]
          }
       }
+      @property alpha {
+         [[Set an alpha color value for this widget (0 - 255) default is fully opaque (255).]]
+         set {
+         }
+         get {
+         }
+         values {
+            alpha: int;
+         }
+      }
       @property syntax_enabled {
          set {
             [[Set whether syntax highlighting should be use for this widget.]]

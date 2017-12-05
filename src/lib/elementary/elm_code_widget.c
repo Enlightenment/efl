@@ -1786,7 +1786,8 @@ _elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Da
 
 // load a named colour class from the theme and apply it to the grid's specified palette
 static void
-_elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *name, Evas_Object *edje)
+_elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *name,
+                                    double fade, Evas_Object *edje)
 {
    int r, g, b, a;
 
@@ -1794,54 +1795,55 @@ _elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *nam
                                     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL))
      return;
 
-   evas_object_textgrid_palette_set(grid, EVAS_TEXTGRID_PALETTE_STANDARD, type, r, g, b, a);
+   evas_object_textgrid_palette_set(grid, EVAS_TEXTGRID_PALETTE_STANDARD, type,
+                                    r * fade, g * fade, b * fade, a * fade);
 }
 
 static void
-_elm_code_widget_setup_palette(Evas_Object *o, Evas_Object *layout)
+_elm_code_widget_setup_palette(Evas_Object *o, Evas_Object *layout, float fade)
 {
    Evas_Object *edje;
 
    edje = elm_layout_edje_get(layout);
 
    // setup status colors
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_DEFAULT, "elm/code/status/default", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CURRENT, "elm/code/status/current", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_IGNORED, "elm/code/status/ignored", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_NOTE, "elm/code/status/note", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_WARNING, "elm/code/status/warning", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ERROR, "elm/code/status/error", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FATAL, "elm/code/status/fatal", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ADDED, "elm/code/status/added", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_REMOVED, "elm/code/status/removed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CHANGED, "elm/code/status/changed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_PASSED, "elm/code/status/passed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FAILED, "elm/code/status/failed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_TODO, "elm/code/status/todo", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_DEFAULT, "elm/code/status/default", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CURRENT, "elm/code/status/current", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_IGNORED, "elm/code/status/ignored", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_NOTE, "elm/code/status/note", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_WARNING, "elm/code/status/warning", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ERROR, "elm/code/status/error", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FATAL, "elm/code/status/fatal", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_ADDED, "elm/code/status/added", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_REMOVED, "elm/code/status/removed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_CHANGED, "elm/code/status/changed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_PASSED, "elm/code/status/passed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_FAILED, "elm/code/status/failed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_STATUS_TYPE_TODO, "elm/code/status/todo", fade, edje);
 
    // setup token colors
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_DEFAULT, "elm/code/token/default", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_COMMENT, "elm/code/token/comment", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_STRING, "elm/code/token/string", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_NUMBER, "elm/code/token/number", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_BRACE, "elm/code/token/brace", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_TYPE, "elm/code/token/type", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CLASS, "elm/code/token/class", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_FUNCTION, "elm/code/token/function", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PARAM, "elm/code/token/param", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_KEYWORD, "elm/code/token/keyword", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PREPROCESSOR, "elm/code/token/preprocessor", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_ADDED, "elm/code/token/added", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_REMOVED, "elm/code/token/removed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CHANGED, "elm/code/token/changed", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_MATCH, "elm/code/token/match", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_DEFAULT, "elm/code/token/default", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_COMMENT, "elm/code/token/comment", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_STRING, "elm/code/token/string", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_NUMBER, "elm/code/token/number", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_BRACE, "elm/code/token/brace", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_TYPE, "elm/code/token/type", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CLASS, "elm/code/token/class", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_FUNCTION, "elm/code/token/function", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PARAM, "elm/code/token/param", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_KEYWORD, "elm/code/token/keyword", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_PREPROCESSOR, "elm/code/token/preprocessor", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_ADDED, "elm/code/token/added", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_REMOVED, "elm/code/token/removed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_CHANGED, "elm/code/token/changed", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_TOKEN_TYPE_MATCH, "elm/code/token/match", fade, edje);
 
    // other styles that the widget uses
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_SELECTION, "elm/code/widget/color/selection", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_BG, "elm/code/widget/color/gutter/bg", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_FG, "elm/code/widget/color/gutter/fg", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG, "elm/code/widget/color/scope/bg", edje);
-   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_WHITESPACE, "elm/code/widget/color/whitespace", edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_SELECTION, "elm/code/widget/color/selection", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_BG, "elm/code/widget/color/gutter/bg", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_FG, "elm/code/widget/color/gutter/fg", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_GUTTER_SCOPE_BG, "elm/code/widget/color/scope/bg", fade, edje);
+   _elm_code_widget_setup_palette_item(o, ELM_CODE_WIDGET_COLOR_WHITESPACE, "elm/code/widget/color/whitespace", fade, edje);
 }
 
 static void
@@ -1876,7 +1878,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
-        _elm_code_widget_setup_palette(grid, widget);
+        _elm_code_widget_setup_palette(grid, widget, (double) pd->alpha / 255);
 
         elm_box_pack_end(pd->gridbox, grid);
         pd->grids = eina_list_append(pd->grids, grid);
@@ -2199,6 +2201,7 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Eo *edje;
    int r, g, b, a;
+   double fade;
    unsigned int i;
    Evas_Object *grid, *background;
 
@@ -2206,16 +2209,34 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+   fade = (double) pd->alpha / 255;
    background = elm_object_part_content_get(pd->scroller, "elm.swallow.background");
-   evas_object_color_set(background, r, g, b, a);
+   evas_object_color_set(background, r * fade, g * fade, b * fade, a * fade);
+
+   if (fade < 1.0)
+     evas_object_color_set(obj, 1, 1, 1, 1); // setting 0 alpha is not working
 
    for (i = 0; i < eina_list_count(pd->grids); i++)
      {
         grid = eina_list_nth(pd->grids, i);
-        _elm_code_widget_setup_palette(grid, obj);
+        _elm_code_widget_setup_palette(grid, obj, fade);
      }
 
    return EFL_UI_THEME_APPLY_SUCCESS;
+}
+
+EOLIAN static int
+_elm_code_widget_alpha_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->alpha;
+}
+
+EOLIAN static void
+_elm_code_widget_alpha_set(Eo *obj, Elm_Code_Widget_Data *pd, int alpha)
+{
+   pd->alpha = alpha;
+
+   _elm_code_widget_elm_widget_theme_apply(obj, pd);
 }
 
 EOLIAN static void
@@ -2226,6 +2247,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
+   pd->alpha = 255;
 
    if (!elm_layout_theme_set(obj, "code", "layout", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
