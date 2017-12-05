@@ -10,7 +10,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_POPUP_ALERT_SCROLL_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Popup.Alert.Scroll"
+#define MY_CLASS_NAME "Efl.Ui.Popup_Alert_Scroll"
 
 static const char PART_NAME_SCROLLER[] = "scroller";
 

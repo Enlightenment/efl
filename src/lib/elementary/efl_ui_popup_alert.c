@@ -10,7 +10,7 @@
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_POPUP_ALERT_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Popup.Alert"
+#define MY_CLASS_NAME "Efl.Ui.Popup_Alert"
 
 static const char PART_NAME_BUTTON[] = "button";
 static const char PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_COUNT][15] =
