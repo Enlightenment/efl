@@ -126,7 +126,6 @@ examples/emotion \
 examples/emile \
 examples/elocation \
 examples/ethumb_client \
-examples/efl_mono \
 examples/elementary
 
 if HAVE_ELUA
