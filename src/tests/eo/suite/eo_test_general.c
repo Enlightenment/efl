@@ -9,9 +9,6 @@
 # include <unistd.h>
 #endif
 
-#define EFL_OBJECT_BETA
-#define EFL_OBJECT_PROTECTED
-
 #include <Eo.h>
 
 #include "eo_suite.h"
@@ -1740,7 +1737,7 @@ START_TEST(efl_object_auto_unref_test)
    obj = efl_add(SIMPLE_CLASS, NULL);
    fail_if(efl_ref_count(obj) != 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
-   efl_auto_unref_set(obj, 1);
+   ___efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
    fail_if(efl_ref_count(obj) != 1);
    efl_name_set(obj, "name");
@@ -1751,7 +1748,7 @@ START_TEST(efl_object_auto_unref_test)
    obj = efl_add(SIMPLE_CLASS, NULL);
    fail_if(efl_ref_count(obj) != 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
-   efl_auto_unref_set(obj, 1);
+   ___efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
    fail_if(efl_ref_count(obj) != 1);
    simple_no_implementation(obj);
@@ -1764,7 +1761,7 @@ START_TEST(efl_object_auto_unref_test)
    fail_if(efl_ref_count(obj) != 1);
    efl_allow_parent_unref_set(obj, 1);
    efl_event_callback_add(obj, EFL_EVENT_DEL, _auto_unref_del_cb, &_auto_unref_del);
-   efl_auto_unref_set(obj, 1);
+   ___efl_auto_unref_set(obj, 1);
    fail_if(_auto_unref_del);
    fail_if(efl_ref_count(obj) != 1);
    efl_name_set(obj, "name");

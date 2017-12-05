@@ -16,9 +16,6 @@
 # include <mach/mach_time.h>
 #endif
 
-#define EFL_OBJECT_BETA
-#define EFL_OBJECT_PROTECTED
-
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"

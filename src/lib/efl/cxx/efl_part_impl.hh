@@ -8,7 +8,7 @@
 inline ::efl::Object Part::part(::efl::eina::string_view const& name) const \
 { \
    ::Eo *handle = ::efl_part(_eo_ptr(), name.c_str()); \
-   ::efl_auto_unref_set(handle, false); \
+   ::___efl_auto_unref_set(handle, false); \
    return ::efl::Object{handle}; \
 }
 

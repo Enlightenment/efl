@@ -119,7 +119,7 @@ struct _Eo_Object
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;
-     unsigned char auto_unref : 2; // unref after 1 call
+     unsigned char auto_unref : 1; // unref after 1 call - hack for parts
 };
 
 /* How we search and store the implementations in classes. */

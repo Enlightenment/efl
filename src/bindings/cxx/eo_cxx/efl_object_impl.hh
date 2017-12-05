@@ -1,9 +1,6 @@
 #ifndef EFL_OBJECT_MANUAL_IMPL_HH
 #define EFL_OBJECT_MANUAL_IMPL_HH
 
-#define EFL_OBJECT_BETA
-#define EFL_OBJECT_PROTECTED
-
 // Skip del. Must be implemented in eo::concrete.
 #define EOLIAN_CXX_EFL_DEL_DECLARATION
 #define EOLIAN_CXX_EFL_DEL_IMPLEMENTATION

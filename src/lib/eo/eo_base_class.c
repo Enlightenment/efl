@@ -5,9 +5,6 @@
 #include <Eina.h>
 #include <fnmatch.h>
 
-#define EFL_OBJECT_BETA
-#define EFL_OBJECT_PROTECTED
-
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
@@ -2109,12 +2106,12 @@ _efl_object_allow_parent_unref_get(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd)
    return pd->allow_parent_unref;
 }
 
-EOLIAN static void
-_efl_object_auto_unref_set(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED, Eina_Bool enable)
+EAPI void
+___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable)
 {
    // Write-only property
    EO_OBJ_POINTER(obj_id, obj);
-   obj->auto_unref = enable ? 2 : 0;
+   obj->auto_unref = enable ? 1 : 0;
 }
 
 EOLIAN static Eo *

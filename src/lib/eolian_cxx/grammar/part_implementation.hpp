@@ -31,7 +31,7 @@ struct part_implementation_generator
       if(!as_generator(string << ">::type "<< string << "::" << string << "() const\n{\n"
                        << scope_tab << "::Eo *__return_value = ::efl_part"
                        << "(this->_eo_ptr(), \"" << string << "\");\n"
-                       << scope_tab << "::efl_auto_unref_set(__return_value, false);\n")
+                       << scope_tab << "::___efl_auto_unref_set(__return_value, false);\n")
             .generate(sink, std::make_tuple(part.klass.eolian_name, klass_name, part.name, part.name), ctx))
         return false;
       if(!as_generator(scope_tab << "return ::" << *(string << "::"))

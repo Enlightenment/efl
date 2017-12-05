@@ -1,9 +1,6 @@
 #ifndef _ELM_PART_HELPER_H
 #define _ELM_PART_HELPER_H
 
-#define EFL_OBJECT_BETA
-#define EFL_OBJECT_PROTECTED
-
 #include "Elementary.h"
 #include "elm_priv.h"
 #include "efl_ui_layout_part_legacy.eo.h"
@@ -75,7 +72,7 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
    efl_allow_parent_unref_set(proxy, 1);
-   efl_auto_unref_set(proxy, 1);
+   ___efl_auto_unref_set(proxy, 1);
    pd->part = eina_tmpstr_add(part);
    pd->obj = obj;
 

@@ -101,7 +101,7 @@ end: \
    __VA_ARGS__; \
    if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
    efl_allow_parent_unref_set(proxy, 1); \
-   efl_auto_unref_set(proxy, 1); \
+   ___efl_auto_unref_set(proxy, 1); \
    return proxy; \
 }
 
