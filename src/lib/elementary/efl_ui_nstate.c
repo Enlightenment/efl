@@ -50,7 +50,7 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
      CRI("Failed to set layout!");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-   efl_canvas_layout_signal_callback_add
+   efl_layout_signal_callback_add
      (wd->resize_obj, "elm,action,state,changed", "*", _on_state_changed, obj);
 
    //TODO: Add ATSPI call here

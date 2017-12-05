@@ -545,5 +545,5 @@ _edje_object_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
 #include "edje_object.eo.c"
 #include "edje_global.eo.c"
 #include "efl_canvas_layout_calc.eo.c"
-#include "efl_canvas_layout_signal.eo.c"
+#include "efl_layout_signal.eo.c"
 #include "efl_canvas_layout_group.eo.c"

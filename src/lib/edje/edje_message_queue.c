@@ -32,7 +32,7 @@ _edje_object_message_propagate_send(Evas_Object *obj, Edje_Message_Type type, in
 }
 
 EOLIAN void
-_edje_object_efl_canvas_layout_signal_message_send(Eo *obj, Edje *pd EINA_UNUSED, int id, const Eina_Value val)
+_edje_object_efl_layout_signal_message_send(Eo *obj, Edje *pd EINA_UNUSED, int id, const Eina_Value val)
 {
    const Eina_Value_Type *valtype;
    Edje_Message_Type msgtype;
@@ -228,7 +228,7 @@ end:
 }
 
 EOLIAN void
-_edje_object_efl_canvas_layout_signal_signal_process(Eo *obj, Edje *ed, Eina_Bool recurse)
+_edje_object_efl_layout_signal_signal_process(Eo *obj, Edje *ed, Eina_Bool recurse)
 {
    Eina_List *l;
    Evas_Object *o;
@@ -238,7 +238,7 @@ _edje_object_efl_canvas_layout_signal_signal_process(Eo *obj, Edje *ed, Eina_Boo
    if (!recurse) return;
 
    EINA_LIST_FOREACH(ed->subobjs, l, o)
-     efl_canvas_layout_signal_process(o, EINA_TRUE);
+     efl_layout_signal_process(o, EINA_TRUE);
 }
 
 static Eina_Bool

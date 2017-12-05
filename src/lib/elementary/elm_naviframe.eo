@@ -148,7 +148,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Efl.Access.Widget.Action)
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
-      Efl.Canvas.Layout_Signal.signal_emit;
+      Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
       Elm.Widget.resize_object { set; }
       Efl.Part.part;

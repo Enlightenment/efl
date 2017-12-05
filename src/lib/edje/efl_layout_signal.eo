@@ -10,7 +10,7 @@
 
 type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
 
-interface Efl.Canvas.Layout_Signal
+interface Efl.Layout.Signal
 {
    [[Layouts asynchronous messaging and signaling interface.
 

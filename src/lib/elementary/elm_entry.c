@@ -984,9 +984,9 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    elm_entry_end_visible_set(obj, EINA_TRUE);
 
    if (sd->scroll)
-     efl_canvas_layout_signal_emit(sd->entry_edje, "elm,scroll,enable", "elm");
+     efl_layout_signal_emit(sd->entry_edje, "elm,scroll,enable", "elm");
    else
-     efl_canvas_layout_signal_emit(sd->entry_edje, "elm,scroll,disable", "elm");
+     efl_layout_signal_emit(sd->entry_edje, "elm,scroll,disable", "elm");
 
    sd->changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
@@ -3054,7 +3054,7 @@ _chars_add_till_limit(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_entry_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source)
+_elm_entry_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source)
 {
    /* always pass to both edje objs */
    edje_object_signal_emit(sd->entry_edje, emission, source);
@@ -3068,25 +3068,25 @@ _elm_entry_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Entry_D
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_entry_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
 
-   ok = efl_canvas_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
+     ok = efl_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
 
    return ok;
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_elm_entry_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
 
-   ok = efl_canvas_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
+     ok = efl_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
 
    return ok;
 }
@@ -3104,7 +3104,7 @@ _elm_entry_signal_callback_add_legacy(Eo *obj, const char *emission, const char 
                                           emission, source, func_cb, data);
 
    if (sd->scr_edje)
-     efl_canvas_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
+     efl_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
 }
 
 void *
@@ -3120,7 +3120,7 @@ _elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const char 
                                                  emission, source, func_cb);
 
    if (sd->scr_edje)
-     efl_canvas_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
+     efl_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
 
    return data;
 }

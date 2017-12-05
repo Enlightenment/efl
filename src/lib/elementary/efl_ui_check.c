@@ -328,11 +328,11 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
      CRI("Failed to set layout!");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-   efl_canvas_layout_signal_callback_add
+   efl_layout_signal_callback_add
      (wd->resize_obj, "elm,action,check,on", "*", _on_check_on, obj);
-   efl_canvas_layout_signal_callback_add
+   efl_layout_signal_callback_add
      (wd->resize_obj, "elm,action,check,off", "*", _on_check_off, obj);
-   efl_canvas_layout_signal_callback_add
+   efl_layout_signal_callback_add
      (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
 
    efl_access_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);

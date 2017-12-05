@@ -835,7 +835,7 @@ START_TEST(edje_test_message_send_eo)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
    eina_value_set(&v, "hello world");
-   efl_canvas_layout_signal_message_send(obj, 0, v);
+   efl_layout_signal_message_send(obj, 0, v);
    eina_value_flush(&v);
    edje_message_signal_process();
    edje_object_calc_force(obj);
@@ -843,7 +843,7 @@ START_TEST(edje_test_message_send_eo)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
    eina_value_set(&v, 42);
-   efl_canvas_layout_signal_message_send(obj, 1, v);
+   efl_layout_signal_message_send(obj, 1, v);
    eina_value_flush(&v);
    edje_message_signal_process();
    edje_object_calc_force(obj);
@@ -851,7 +851,7 @@ START_TEST(edje_test_message_send_eo)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_FLOAT);
    eina_value_set(&v, 0.12);
-   efl_canvas_layout_signal_message_send(obj, 2, v);
+   efl_layout_signal_message_send(obj, 2, v);
    eina_value_flush(&v);
    edje_message_signal_process();
    edje_object_calc_force(obj);
@@ -862,7 +862,7 @@ START_TEST(edje_test_message_send_eo)
    eina_value_array_append(va, 12);
    eina_value_array_append(va, 42);
    eina_value_array_append(va, 255);
-   efl_canvas_layout_signal_message_send(obj, 3, *va);
+   efl_layout_signal_message_send(obj, 3, *va);
    eina_value_free(va);
    edje_message_signal_process();
    edje_object_calc_force(obj);

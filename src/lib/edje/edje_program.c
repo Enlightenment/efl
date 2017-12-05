@@ -248,13 +248,13 @@ edje_object_propagate_callback_add(Evas_Object *obj, Efl_Signal_Cb func, void *d
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_edje_object_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
    return _edje_object_signal_callback_add(ed, emission, source, func, data);
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_edje_object_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
    Edje_Signal_Callback_Group *gp;
    Eina_Bool ok;
@@ -277,7 +277,7 @@ _edje_object_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN void
-_edje_object_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
+_edje_object_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source)
 {
    if (ed->delete_me) return;
    if ((!emission) || (!source)) return;

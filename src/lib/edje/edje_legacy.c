@@ -64,20 +64,20 @@ edje_object_part_state_get(const Edje_Object *obj, const char * part, double *va
 EAPI void
 edje_object_message_signal_process(Edje_Object *obj)
 {
-   efl_canvas_layout_signal_process(obj, EINA_FALSE);
+   efl_layout_signal_process(obj, EINA_FALSE);
 }
 
 /* since 1.20 */
 EAPI void
 edje_object_message_signal_recursive_process(Edje_Object *obj)
 {
-   efl_canvas_layout_signal_process(obj, EINA_TRUE);
+   efl_layout_signal_process(obj, EINA_TRUE);
 }
 
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   efl_canvas_layout_signal_callback_add(obj, emission, source, (Efl_Signal_Cb) func, data);
+   efl_layout_signal_callback_add(obj, emission, source, (Efl_Signal_Cb) func, data);
 }
 
 EAPI void *
@@ -133,7 +133,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
-   efl_canvas_layout_signal_emit(obj, emission, source);
+   efl_layout_signal_emit(obj, emission, source);
 }
 
 EAPI Eina_Bool

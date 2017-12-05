@@ -48,7 +48,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.Access.Image, Efl.Access.Widget.Action,
                  Efl.Orientation, Efl.Flipable,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Canvas.Layout_Calc,
-                 Efl.Canvas.Layout_Group, Efl.Canvas.Layout_Signal)
+                 Efl.Canvas.Layout_Group, Efl.Layout.Signal)
 {
    [[ Efl UI image class]]
    event_prefix: efl_ui_image;
@@ -137,7 +137,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Flipable.flip { get; set; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
-      Efl.Canvas.Layout_Signal.signal_emit;
+      Efl.Layout.Signal.signal_emit;
       Efl.Canvas.Layout_Group.group_size_min { get; }
       Efl.Canvas.Layout_Group.group_size_max { get; }
       //Efl.Canvas.Layout_Group.group_data { get; }

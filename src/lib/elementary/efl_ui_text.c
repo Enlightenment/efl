@@ -2615,41 +2615,41 @@ _markup_filter_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source)
+_efl_ui_text_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source)
 {
    /* always pass to both edje objs */
-   efl_canvas_layout_signal_emit(sd->entry_edje, emission, source);
+   efl_layout_signal_emit(sd->entry_edje, emission, source);
 
    // FIXME: This should not be here!
-   efl_canvas_layout_signal_process(sd->entry_edje, EINA_TRUE);
+   efl_layout_signal_process(sd->entry_edje, EINA_TRUE);
 
    if (sd->scr_edje)
      {
-        efl_canvas_layout_signal_emit(sd->scr_edje, emission, source);
-        efl_canvas_layout_signal_process(sd->scr_edje, EINA_TRUE); // FIXME
+        efl_layout_signal_emit(sd->scr_edje, emission, source);
+        efl_layout_signal_process(sd->scr_edje, EINA_TRUE); // FIXME
      }
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_canvas_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_efl_ui_text_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
 
-   ok = efl_canvas_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_add(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
+     ok = efl_layout_signal_callback_add(sd->scr_edje, emission, source, func_cb, data);
 
    return ok;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_canvas_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+_efl_ui_text_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Eina_Bool ok;
 
-   ok = efl_canvas_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_del(sd->entry_edje, emission, source, func_cb, data);
    if (sd->scr_edje)
-     ok = efl_canvas_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
+     ok = efl_layout_signal_callback_del(sd->scr_edje, emission, source, func_cb, data);
 
    return ok;
 }

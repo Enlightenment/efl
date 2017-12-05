@@ -4,7 +4,7 @@ import edje_types;
 
 class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
-                   Efl.Canvas.Layout_Signal, Efl.Canvas.Layout_Group,
+                   Efl.Layout.Signal, Efl.Canvas.Layout_Group,
                    Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                    Efl.Gfx.Size_Class)
 {
@@ -118,11 +118,11 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Canvas.Layout_Group.group_size_min { get; }
       Efl.Canvas.Layout_Group.group_size_max { get; }
       Efl.Canvas.Layout_Group.group_data { get; }
-      Efl.Canvas.Layout_Signal.message_send;
-      Efl.Canvas.Layout_Signal.signal_callback_add;
-      Efl.Canvas.Layout_Signal.signal_callback_del;
-      Efl.Canvas.Layout_Signal.signal_emit;
-      Efl.Canvas.Layout_Signal.signal_process;
+      Efl.Layout.Signal.message_send;
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
+      Efl.Layout.Signal.signal_emit;
+      Efl.Layout.Signal.signal_process;
       Efl.Ui.Base.mirrored { set; get; }
       Efl.Ui.Base.language { set; get; }
       Efl.Gfx.scale { set; get; }

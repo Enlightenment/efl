@@ -816,27 +816,27 @@ _efl_ui_layout_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, con
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source)
+_efl_ui_layout_efl_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   efl_canvas_layout_signal_emit(wd->resize_obj, emission, source);
+   efl_layout_signal_emit(wd->resize_obj, emission, source);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+_efl_ui_layout_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
+   return efl_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_efl_canvas_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+_efl_ui_layout_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_canvas_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
+   return efl_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
 }
 
 // TODO:
@@ -2069,17 +2069,17 @@ EOLIAN static void _efl_ui_layout_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_message_send(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
+_efl_ui_layout_efl_layout_signal_message_send(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, int id, const Eina_Value msg)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   efl_canvas_layout_signal_message_send(wd->resize_obj, id, msg);
+   efl_layout_signal_message_send(wd->resize_obj, id, msg);
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_canvas_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, Eina_Bool recurse)
+_efl_ui_layout_efl_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, Eina_Bool recurse)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   efl_canvas_layout_signal_process(wd->resize_obj, recurse);
+   efl_layout_signal_process(wd->resize_obj, recurse);
 }
 
 
@@ -2273,7 +2273,7 @@ _elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_sig
    esd->data = data;
    *p_edje_signals = eina_list_append(*p_edje_signals, esd);
 
-   efl_canvas_layout_signal_callback_add(edje, emission, source,
+   efl_layout_signal_callback_add(edje, emission, source,
                                          _edje_signal_callback, esd);
 }
 
@@ -2316,7 +2316,7 @@ _elm_layout_signal_callback_del_legacy(Eo *obj EINA_UNUSED, Eo *edje, Eina_List 
           {
              *p_edje_signals = eina_list_remove_list(*p_edje_signals, l);
 
-             efl_canvas_layout_signal_callback_del(edje, emission, source,
+             efl_layout_signal_callback_del(edje, emission, source,
                                                    _edje_signal_callback, esd);
 
              eina_stringshare_del(esd->emission);
@@ -2352,7 +2352,7 @@ elm_layout_signal_callback_del(Eo *obj, const char *emission, const char *source
 EAPI void
 elm_layout_signal_emit(Eo *obj, const char *emission, const char *source)
 {
-   efl_canvas_layout_signal_emit(obj, emission, source);
+   efl_layout_signal_emit(obj, emission, source);
 }
 
 EAPI const char *

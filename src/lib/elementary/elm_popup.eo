@@ -174,7 +174,7 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action)
       Efl.Ui.Translatable.translation_update;
       Elm.Widget.widget_sub_object_del;
       Elm.Widget.widget_event;
-      Efl.Canvas.Layout_Signal.signal_emit;
+      Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }
       Efl.Access.name { get; }
