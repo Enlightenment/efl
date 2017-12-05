@@ -17,16 +17,21 @@ interface Efl.Dnd (Efl.Selection) {
             @in len: int; [[The data's length.]]
             @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drag_action_set {
          [[This sets the action for the drag]]
          params {
             @in action: Efl.Selection.Action; [[Drag action]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drag_cancel {
          [[This cancels the on-going drag]]
+         params {
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
       }
       drag_item_container_add {
          [[This registers a drag for items in a container. Many items can be
@@ -39,11 +44,13 @@ interface Efl.Dnd (Efl.Selection) {
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
             @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drag_item_container_del {
          [[Remove drag function of items in the container object.]]
          params {
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drop_target_add {
@@ -51,20 +58,26 @@ interface Efl.Dnd (Efl.Selection) {
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_DROP.]]
          params {
             @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drop_target_del {
          params {
             @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drop_item_container_add {
          params {
             @in format: Efl.Selection.Format; [[Accepted data formats]]
             @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
       drop_item_container_del {
+         params {
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
       }
    }
    implements {
