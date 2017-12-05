@@ -1599,7 +1599,7 @@ elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 }
 
 EOLIAN static int
-_efl_ui_layout_efl_canvas_layout_calc_calc_freeze(Eo *obj, Efl_Ui_Layout_Data *sd)
+_efl_ui_layout_efl_layout_calc_calc_freeze(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
@@ -1611,7 +1611,7 @@ _efl_ui_layout_efl_canvas_layout_calc_calc_freeze(Eo *obj, Efl_Ui_Layout_Data *s
 }
 
 EOLIAN static int
-_efl_ui_layout_efl_canvas_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
+_efl_ui_layout_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
@@ -2247,13 +2247,13 @@ elm_layout_part_cursor_unset(Eo *obj, const char *part)
 EAPI int
 elm_layout_freeze(Evas_Object *obj)
 {
-   return efl_canvas_layout_calc_freeze(obj);
+   return efl_layout_calc_freeze(obj);
 }
 
 EAPI int
 elm_layout_thaw(Evas_Object *obj)
 {
-   return efl_canvas_layout_calc_thaw(obj);
+   return efl_layout_calc_thaw(obj);
 }
 
 void

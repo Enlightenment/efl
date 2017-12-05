@@ -5,7 +5,7 @@
 #define EFL_ACCESS_IMAGE_PROTECTED
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_CANVAS_LAYOUT_CALC_PROTECTED
+#define EFL_LAYOUT_CALC_PROTECTED
 
 #include <Elementary.h>
 
@@ -1190,17 +1190,17 @@ _efl_ui_image_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
      edje_object_calc_force(sd->img);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Size2D restricted)
+_efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Size2D restricted)
 {
    if (sd->edje)
-     return efl_canvas_layout_calc_size_min(sd->img, restricted);
+     return efl_layout_calc_size_min(sd->img, restricted);
    else
      {
         // Ignore restricted here? Combine with min? Hmm...

@@ -1,6 +1,6 @@
 class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
-                     Efl.Canvas.Layout_Calc, Efl.Layout.Signal,
+                     Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Canvas.Layout_Group)
 {
    [[Elementary layout class]]
@@ -48,8 +48,8 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.File.file { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Layout_Calc.calc_freeze;
-      Efl.Canvas.Layout_Calc.calc_thaw;
+      Efl.Layout.Calc.calc_freeze;
+      Efl.Layout.Calc.calc_thaw;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
       Efl.Layout.Signal.signal_emit;

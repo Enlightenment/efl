@@ -3,7 +3,7 @@ import edje_types;
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
-                   Efl.Observer, Efl.Ui.Base, Efl.Canvas.Layout_Calc,
+                   Efl.Observer, Efl.Ui.Base, Efl.Layout.Calc,
                    Efl.Layout.Signal, Efl.Canvas.Layout_Group,
                    Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                    Efl.Gfx.Size_Class)
@@ -109,12 +109,12 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Gfx.Size_Class.size_class { get; set; }
       Efl.Gfx.Size_Class.size_class_del;
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Layout_Calc.calc_auto_update_hints { get; set; }
-      Efl.Canvas.Layout_Calc.calc_size_min;
-      Efl.Canvas.Layout_Calc.calc_parts_extends;
-      Efl.Canvas.Layout_Calc.calc_freeze;
-      Efl.Canvas.Layout_Calc.calc_thaw;
-      Efl.Canvas.Layout_Calc.calc_force;
+      Efl.Layout.Calc.calc_auto_update_hints { get; set; }
+      Efl.Layout.Calc.calc_size_min;
+      Efl.Layout.Calc.calc_parts_extends;
+      Efl.Layout.Calc.calc_freeze;
+      Efl.Layout.Calc.calc_thaw;
+      Efl.Layout.Calc.calc_force;
       Efl.Canvas.Layout_Group.group_size_min { get; }
       Efl.Canvas.Layout_Group.group_size_max { get; }
       Efl.Canvas.Layout_Group.group_data { get; }

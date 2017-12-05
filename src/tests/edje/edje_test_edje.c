@@ -155,8 +155,8 @@ START_TEST(edje_test_calculate_parens)
 
    obj = edje_object_add(evas);
 
-   /* A negative test case for efl_canvas_layout_calc_parts_extends */
-   rect = efl_canvas_layout_calc_parts_extends(obj);
+   /* A negative test case for efl_layout_calc_parts_extends */
+   rect = efl_layout_calc_parts_extends(obj);
    fail_if(rect.w < 0 || rect.h < 0);
 
    fail_unless(edje_object_file_set(obj, test_layout_get("test_parens.edj"), "test_group"));

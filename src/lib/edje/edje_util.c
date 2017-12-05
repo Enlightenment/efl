@@ -460,7 +460,7 @@ _edje_object_efl_canvas_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *e
 }
 
 EOLIAN int
-_edje_object_efl_canvas_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -478,7 +478,7 @@ _edje_object_efl_canvas_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN int
-_edje_object_efl_canvas_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -3344,7 +3344,7 @@ _edje_object_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edj
 }
 
 EOLIAN void
-_edje_object_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 {
    int pf, pf2;
 
@@ -3367,7 +3367,7 @@ _edje_object_efl_canvas_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN Eina_Rectangle
-_edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0, w = 0, h = 0;
@@ -3407,7 +3407,7 @@ _edje_object_efl_canvas_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Size2D
-_edje_object_efl_canvas_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
+_edje_object_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
 {
    const int CALC_COUNT_LIMIT = 255;
 
@@ -5040,7 +5040,7 @@ edje_object_preload(Eo *obj, Eina_Bool cancel)
 }
 
 EOLIAN void
-_edje_object_efl_canvas_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
+_edje_object_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
 {
    if (!ed) return;
    if (ed->update_hints == !!update) return;
@@ -5054,7 +5054,7 @@ _edje_object_efl_canvas_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUS
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_canvas_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
+_edje_object_efl_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->update_hints;
 }
