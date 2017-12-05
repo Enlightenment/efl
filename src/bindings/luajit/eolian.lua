@@ -13,6 +13,7 @@ ffi.cdef [[
     typedef unsigned char Eina_Bool;
     typedef struct _Eina_Iterator Eina_Iterator;
 
+    typedef struct _Eolian Eolian;
     typedef struct _Eolian_Class Eolian_Class;
     typedef struct _Eolian_Function Eolian_Function;
     typedef struct _Eolian_Type Eolian_Type;
@@ -284,17 +285,19 @@ ffi.cdef [[
         const char *text, *text_end;
     } Eolian_Doc_Token;
 
-    const Eolian_Unit *eolian_file_parse(const char *filepath);
-    Eina_Iterator *eolian_all_eo_file_paths_get(void);
-    Eina_Iterator *eolian_all_eot_file_paths_get(void);
-    Eina_Iterator *eolian_all_eo_files_get(void);
-    Eina_Iterator *eolian_all_eot_files_get(void);
     int eolian_init(void);
     int eolian_shutdown(void);
-    Eina_Bool eolian_directory_scan(const char *dir);
-    Eina_Bool eolian_system_directory_scan();
-    Eina_Bool eolian_all_eo_files_parse();
-    Eina_Bool eolian_all_eot_files_parse();
+    Eolian *eolian_new(void);
+    void eolian_free(Eolian *state);
+    const Eolian_Unit *eolian_file_parse(Eolian *state, const char *filepath);
+    Eina_Iterator *eolian_all_eo_file_paths_get(Eolian *state);
+    Eina_Iterator *eolian_all_eot_file_paths_get(Eolian *state);
+    Eina_Iterator *eolian_all_eo_files_get(Eolian *state);
+    Eina_Iterator *eolian_all_eot_files_get(Eolian *state);
+    Eina_Bool eolian_directory_scan(Eolian *state, const char *dir);
+    Eina_Bool eolian_system_directory_scan(Eolian *state);
+    Eina_Bool eolian_all_eo_files_parse(Eolian *state);
+    Eina_Bool eolian_all_eot_files_parse(Eolian *state);
     const Eolian_Class *eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -509,44 +512,59 @@ M.object_scope = {
     PROTECTED = 3
 }
 
-M.directory_scan = function(dir)
-    return eolian.eolian_directory_scan(dir) ~= 0
-end
+ffi.metatype("Eolian", {
+    __index = {
+        directory_scan = function(self, dir)
+            return eolian.eolian_directory_scan(self, dir) ~= 0
+        end,
 
-M.system_directory_scan = function()
-    return eolian.eolian_system_directory_scan() ~= 0
-end
+        system_directory_scan = function(self)
+            return eolian.eolian_system_directory_scan(self) ~= 0
+        end,
 
-M.file_parse = function(fpath)
-    local v = eolian.eolian_file_parse(fpath)
-    if v == nil then
-        return nil
+        file_parse = function(self, fpath)
+            local v = eolian.eolian_file_parse(self, fpath)
+            if v == nil then
+                return nil
+            end
+            return v
+        end,
+
+        all_eo_files_parse = function(self)
+            return eolian.eolian_all_eo_files_parse(self) ~= 0
+        end,
+
+        all_eot_files_parse = function(self)
+            return eolian.eolian_all_eot_files_parse(self) ~= 0
+        end,
+
+        all_eo_file_paths_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_all_eo_file_paths_get(self))
+        end,
+
+        all_eot_file_paths_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_all_eot_file_paths_get(self))
+        end,
+
+        all_eo_files_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_all_eo_files_get(self))
+        end,
+
+        all_eot_files_get = function(self)
+            return iterator.String_Iterator(eolian.eolian_all_eot_files_get(self))
+        end,
+
+        unit_get = function(self)
+            return ffi.cast("Eolian_Unit *", self)
+        end
+    },
+    __gc = function(self)
+        eolian.eolian_free(self)
     end
-    return v
-end
+})
 
-M.all_eo_files_parse = function()
-    return eolian.eolian_all_eo_files_parse() ~= 0
-end
-
-M.all_eot_files_parse = function()
-    return eolian.eolian_all_eot_files_parse() ~= 0
-end
-
-M.all_eo_file_paths_get = function()
-    return iterator.String_Iterator(eolian.eolian_all_eo_file_paths_get())
-end
-
-M.all_eot_file_paths_get = function()
-    return iterator.String_Iterator(eolian.eolian_all_eot_file_paths_get())
-end
-
-M.all_eo_files_get = function()
-    return iterator.String_Iterator(eolian.eolian_all_eo_files_get())
-end
-
-M.all_eot_files_get = function()
-    return iterator.String_Iterator(eolian.eolian_all_eot_files_get())
+M.new = function()
+    return eolian.eolian_new()
 end
 
 M.declaration_type = {

@@ -685,7 +685,7 @@ _scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
 }
 
 EAPI Eina_Bool
-eolian_directory_scan(const char *dir)
+eolian_directory_scan(Eolian *state EINA_UNUSED, const char *dir)
 {
    if (!dir) return EINA_FALSE;
    eina_file_dir_list(dir, EINA_TRUE, _scan_cb, NULL);
@@ -693,13 +693,13 @@ eolian_directory_scan(const char *dir)
 }
 
 EAPI Eina_Bool
-eolian_system_directory_scan()
+eolian_system_directory_scan(Eolian *state)
 {
    Eina_Bool ret;
    Eina_Strbuf *buf = eina_strbuf_new();
    eina_strbuf_append(buf, eina_prefix_data_get(_eolian_prefix));
    eina_strbuf_append(buf, "/include");
-   ret = eolian_directory_scan(eina_strbuf_string_get(buf));
+   ret = eolian_directory_scan(state, eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
 }
@@ -773,7 +773,7 @@ _parse_deferred()
 static Eolian_Unit unit_tmp;
 
 EAPI const Eolian_Unit *
-eolian_file_parse(const char *filepath)
+eolian_file_parse(Eolian *state EINA_UNUSED, const char *filepath)
 {
    if (!_eolian_file_parse_nodep(filepath))
      return NULL;
@@ -794,7 +794,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
 }
 
 EAPI Eina_Bool
-eolian_all_eot_files_parse()
+eolian_all_eot_files_parse(Eolian *state EINA_UNUSED)
 {
    Eina_Bool ret = EINA_TRUE;
 
@@ -819,7 +819,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
 }
 
 EAPI Eina_Bool
-eolian_all_eo_files_parse()
+eolian_all_eo_files_parse(Eolian *state EINA_UNUSED)
 {
    Eina_Bool ret = EINA_TRUE;
 
@@ -836,28 +836,28 @@ eolian_all_eo_files_parse()
 }
 
 EAPI Eina_Iterator *
-eolian_all_eot_files_get(void)
+eolian_all_eot_files_get(Eolian *state EINA_UNUSED)
 {
    if (!_tfilenames) return NULL;
    return eina_hash_iterator_key_new(_tfilenames);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eo_files_get(void)
+eolian_all_eo_files_get(Eolian *state EINA_UNUSED)
 {
    if (!_filenames) return NULL;
    return eina_hash_iterator_key_new(_filenames);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eot_file_paths_get(void)
+eolian_all_eot_file_paths_get(Eolian *state EINA_UNUSED)
 {
    if (!_tfilenames) return NULL;
    return eina_hash_iterator_data_new(_tfilenames);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eo_file_paths_get(void)
+eolian_all_eo_file_paths_get(Eolian *state EINA_UNUSED)
 {
    if (!_filenames) return NULL;
    return eina_hash_iterator_data_new(_filenames);

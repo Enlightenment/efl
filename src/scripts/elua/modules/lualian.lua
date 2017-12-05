@@ -16,6 +16,14 @@ local obj_scope = eolian.object_scope
 local param_dir = eolian.parameter_dir
 
 local gen_unit
+local gen_state
+
+local get_state = function()
+    if not gen_state then
+        gen_state = eolian.new()
+    end
+    return assert(gen_state, "could not create eolian state")
+end
 
 cutil.init_module(function()
     dom = log.Domain("lualian")
@@ -683,21 +691,21 @@ local gen_class = function(klass)
 end
 
 M.include_dir = function(dir)
-    if not eolian.directory_scan(dir) then
+    if not get_state():directory_scan(dir) then
         error("Failed including directory: " .. dir)
     end
 end
 
 M.load_eot_files = function()
-    return eolian.all_eot_files_parse()
+    return get_state():all_eot_files_parse()
 end
 
 M.system_directory_scan = function()
-    return eolian.system_directory_scan()
+    return get_state():system_directory_scan()
 end
 
 M.generate = function(fname, fstream)
-    local unit = eolian.file_parse(fname)
+    local unit = get_state():file_parse(fname)
     if unit == nil then
         error("Failed parsing file: " .. fname)
     end

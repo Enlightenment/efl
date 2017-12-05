@@ -430,6 +430,8 @@ main(int argc, char **argv)
    eina_init();
    eolian_init();
 
+   Eolian *eos = eolian_new();
+
    const char *dom = "eolian_gen";
    _eolian_gen_log_dom = eina_log_domain_register(dom, EINA_COLOR_GREEN);
    if (_eolian_gen_log_dom < 0)
@@ -530,7 +532,7 @@ main(int argc, char **argv)
 
    if (scan_system)
      {
-        if (!eolian_system_directory_scan())
+        if (!eolian_system_directory_scan(eos))
           {
              fprintf(stderr, "eolian: could not scan system directory\n");
              goto end;
@@ -540,14 +542,14 @@ main(int argc, char **argv)
    const char *inc;
    EINA_LIST_FREE(includes, inc)
      {
-        if (!eolian_directory_scan(inc))
+        if (!eolian_directory_scan(eos, inc))
           {
              fprintf(stderr, "eolian: could not scan '%s'\n", inc);
              goto end;
           }
      }
 
-   const Eolian_Unit *src = eolian_file_parse(input);
+   const Eolian_Unit *src = eolian_file_parse(eos, input);
    if (!src)
      {
         fprintf(stderr, "eolian: could not parse file '%s'\n", input);
@@ -589,6 +591,7 @@ end:
      free(outs[i]);
    free(basen);
 
+   eolian_free(eos);
    eolian_shutdown();
    eina_shutdown();
 

@@ -34,6 +34,7 @@ struct options_type
 {
    std::vector<std::string> include_dirs;
    std::vector<std::string> in_files;
+   mutable Eolian* state;
    mutable Eolian_Unit const* unit;
    std::string out_file;
    bool main_header;
@@ -298,7 +299,7 @@ run(options_type const& opts)
 
        for(auto&& name : opts.in_files)
          {
-           Eolian_Unit const* unit = ::eolian_file_parse(name.c_str());
+           Eolian_Unit const* unit = ::eolian_file_parse(opts.state, name.c_str());
            if(!unit)
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
@@ -346,17 +347,30 @@ run(options_type const& opts)
 }
 
 static void
+state_init(options_type const& opts)
+{
+   Eolian *eos = ::eolian_new();
+   if (!eos)
+     {
+        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+          << "Eolian failed creating state";
+        assert(false && "Error creating Eolian state");
+     }
+   opts.state = eos;
+}
+
+static void
 database_load(options_type const& opts)
 {
    for (auto src : opts.include_dirs)
      {
-        if (!::eolian_directory_scan(src.c_str()))
+        if (!::eolian_directory_scan(opts.state, src.c_str()))
           {
              EINA_CXX_DOM_LOG_WARN(eolian_cxx::domain)
                << "Couldn't load eolian from '" << src << "'.";
           }
      }
-   if (!::eolian_all_eot_files_parse())
+   if (!::eolian_all_eot_files_parse(opts.state))
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed parsing eot files";
@@ -368,7 +382,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!opts.main_header && !::eolian_file_parse(opts.in_files[0].c_str()))
+   if (!opts.main_header && !::eolian_file_parse(opts.state, opts.in_files[0].c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
          << "Failed parsing: " << opts.in_files[0] << ".";
@@ -480,6 +494,7 @@ int main(int argc, char **argv)
         efl::eina::eina_init eina_init;
         efl::eolian::eolian_init eolian_init;
         eolian_cxx::options_type opts = opts_get(argc, argv);
+        eolian_cxx::state_init(opts);
         eolian_cxx::database_load(opts);
         eolian_cxx::run(opts);
      }
