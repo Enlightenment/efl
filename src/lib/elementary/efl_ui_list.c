@@ -270,7 +270,6 @@ _count_then(void * data, Efl_Event const* event EINA_UNUSED)
 {
    Efl_Ui_List_Data *pd = data;
    EINA_SAFETY_ON_NULL_RETURN(pd);
-//   int *count = ((Efl_Future_Event_Success*)event->info)->value;
 
    pd->count_future = NULL;
    _layout(pd);
@@ -1420,11 +1419,7 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
 
    item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
    evas_object_smart_member_add(item->layout, pd->pan_obj);
-//   elm_widget_can_focus_set(item->layout, EINA_TRUE); //move to realize_evt??
-
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
-
-   efl_ui_view_model_set(item->layout, item->children);
 
    evt.child = item->children;
    evt.layout = item->layout;
@@ -1442,7 +1437,11 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
    //DBG("model_unrealize item:%p", item);
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
+   evas_object_smart_member_del(item->layout);
+   evas_object_hide(item->layout);
+   evas_object_move(item->layout, -9999, -9999);
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+
    if (elm_object_focus_allow_get(item->layout))
      {
         if (elm_widget_focus_get(item->layout))
@@ -1456,12 +1455,7 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
    evt.index = efl_ui_list_item_index_get(item);
 
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, &evt);
-   evas_object_hide(item->layout);
-   evas_object_move(item->layout, -9999, -9999);
-
-//   efl_ui_view_model_set(item->layout, NULL);
    efl_ui_factory_release(pd->factory, item->layout);
-
    item->layout = NULL;
 }
 

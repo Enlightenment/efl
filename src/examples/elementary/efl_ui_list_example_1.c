@@ -25,13 +25,9 @@ static void
 _realized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_List_Item_Event *ie = event->info;
-
    if (!ie->layout) return;
 
    Efl_Ui_Layout *layout = ie->layout;
-
-   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_focus_allow_set(layout, EINA_TRUE);
 }
 
@@ -55,14 +51,13 @@ _make_model()
 
    model = efl_add(EFL_MODEL_ITEM_CLASS, NULL);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
-   eina_value_setup(&vstyle, EINA_VALUE_TYPE_STRING);
 
    for (i = 0; i < (NUM_ITEMS); i++)
      {
         s = i%2;
         child = efl_model_child_add(model);
-        eina_value_set(&vstyle, styles[s]);
-        efl_model_property_set(child, "odd_style", &vstyle);
+        eina_value_set(&vtext, styles[s]);
+        efl_model_property_set(child, "odd_style", &vtext);
 
         snprintf(buf, sizeof(buf), "Item # %i", i);
         eina_value_set(&vtext, buf);
@@ -76,7 +71,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Efl_Ui_Layout_Factory *factory;
-   Evas_Object *win, *li;
+   Evas_Object *win, *li, *bx, *vbx;
    Eo *model;
 
    win = elm_win_util_standard_add("viewlist", "Viewlist");
@@ -94,12 +89,14 @@ elm_main(int argc, char **argv)
    li = efl_add(EFL_UI_LIST_CLASS, win);
    efl_ui_list_layout_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
+   elm_box_pack_end(bx, li);
 
    efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_REALIZED, _realized_cb, NULL);
 //   efl_event_callback_add(li, EFL_UI_LIST_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
 
    elm_win_resize_object_add(win, li);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    //showall
    evas_object_show(li);

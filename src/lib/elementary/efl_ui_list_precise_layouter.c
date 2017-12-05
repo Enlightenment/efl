@@ -216,7 +216,6 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
    int i;
 
    Eina_Size2D min = efl_gfx_size_hint_combined_min_get(obj);
-
    for (i = 0; i != node->length; ++i)
      {
         item = (Efl_Ui_List_LayoutItem *)node->pointers[i];
@@ -227,7 +226,7 @@ _on_item_size_hint_change(void *data, Evas *e EINA_UNUSED,
              if (!nodedata->realized)
                {
                   //DBG("item size change unrealize");
-                  free(evas_object_event_callback_del(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change));
+                  free(evas_object_event_callback_del(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change));
                   efl_ui_list_model_unrealize(pd->modeler, item);
                }
              return;
@@ -252,6 +251,7 @@ _count_changed(void *data, const Efl_Event *event)
    pd->recalc = EINA_TRUE;
    evas_object_smart_changed(pd->modeler);
 }
+
 static void
 _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_Model *modeler, Efl_Ui_List_SegArray *segarray)
 {
@@ -308,7 +308,7 @@ _node_realize(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_SegArray_Node *
    if (nodedata->realized)
      return;
 
-   DBG("node_realize %d", node->first);
+//   DBG("node_realize %d", node->first);
    nodedata->realized = EINA_TRUE;
 
    for (i = 0; i != node->length; ++i)
@@ -374,7 +374,8 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
         if (!nodedata || !nodedata->min.h)
           continue;
 
-        if ((ch >= scr_y || nodedata->min.h + ch >= scr_y) && (ch <= (scr_y + oh) || nodedata->min.h + ch <= scr_y + oh))
+        if ((scr_y < ch || scr_y < nodedata->min.h + ch) &&
+                        (scr_y + oh > ch || scr_y + oh > nodedata->min.h + ch))
           _node_realize(pd, node);
         else
           _node_unrealize(pd, node);
@@ -540,29 +541,19 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
            continue;
          }
 
-//       if(scr_y < cur_pos + nodedata->min.h + boxh
-//          && scr_y + boxh + boxh > cur_pos) // start in this node
-         if (nodedata->realized)
+       if (nodedata->realized)
          {
-            //DBG("cur_pos: %d\n", (int)cur_pos);
-
-            for(j = 0; j != items_node->length && scr_y + boxh + boxh > cur_pos;++j)
+            for(j = 0; j != items_node->length;++j)
               {
 //                 DBG("cur_pos item by item: %d\n", (int)cur_pos);
                  layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
                  double x, y, w, h;
                  double weight_x, weight_y;
 
-                 if(layout_item->min.w && layout_item->min.h)
+                 if (layout_item->min.w && layout_item->min.h)
                    {
+                      assert(layout_item->layout != NULL);
 //                      DBG("size information for item %d width %d height %d", j, layout_item->min.w, layout_item->min.h);
-                      if(!layout_item->layout)
-                        {
-                           DBG("realizing showing item\n");
-                           efl_ui_list_model_realize(pd->modeler, layout_item);
-                           assert(layout_item->layout != NULL);
-                        }
-
                       if (pd->resize)
                         _item_size_calc(pd, layout_item);
 
@@ -582,25 +573,14 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
 
                       //DBG("------- x=%0.f, y=%0.f, w=%0.f, h=%0.f --- ", x, y, w, h);
                       evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
-                   } /* if (size) end */
+                   }
               }
-         }
-       else if (nodedata->realized) // unrealize
-         {
-            for(j = 0; j != items_node->length;++j)
-              {
-                 layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
-                 if(layout_item->layout)
-                   efl_ui_list_model_unrealize(pd->modeler, layout_item);
-              }
-            nodedata->realized = EINA_FALSE;
-            cur_pos += nodedata->min.h;
          }
        else
          {
             cur_pos += nodedata->min.h;
          }
-   } /* EINA ACCESSOR FOREACH END */
+   }
    eina_accessor_free(nodes);
 
    pd->resize = EINA_FALSE;

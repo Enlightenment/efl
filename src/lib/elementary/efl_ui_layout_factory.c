@@ -69,29 +69,33 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
 {
    Efl_Gfx *layout;
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
+/*
    if (eina_array_count(pd->layouts))
      {
         layout = eina_array_pop(pd->layouts);
         efl_parent_set(layout, parent);
         efl_ui_view_model_set(layout, model);
      }
-   else
+   else */
      {
         layout = efl_add(EFL_UI_LAYOUT_CLASS, parent,
                          efl_ui_view_model_set(efl_added, model),
                          elm_layout_theme_set(efl_added, pd->klass, pd->group, pd->style));
+
         eina_hash_foreach(pd->connects, _model_connect, layout);
+
+        evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
+        evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
 
    return layout;
 }
 
 EOLIAN static void
-_efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx *layout)
+_efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd EINA_UNUSED, Efl_Gfx *layout)
 {
    efl_ui_view_model_set(layout, NULL);
-   eina_array_push(pd->layouts, layout);
+   efl_del(layout);
 }
 
 EOLIAN static void
