@@ -731,6 +731,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/a11y/elm_bus_watcher.c \
 	lib/elementary/a11y/elm_atspi_bus_watcher.c \
 	lib/elementary/a11y/efl_access_cache.c \
+	lib/elementary/a11y/elm_atspi_adaptor.c \
+	lib/elementary/a11y/elm_atspi_access_component_adaptor.c \
 	$(NULL)
 
 
