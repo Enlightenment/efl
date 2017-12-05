@@ -2141,6 +2141,7 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
    /* Private for EFL internal use only. Do not use these! */
 EAPI int ___efl_ref2_count(const Eo *obj_id);
 EAPI void ___efl_ref2_reset(const Eo *obj_id);
+EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
 
 #endif
 
