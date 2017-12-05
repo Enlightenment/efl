@@ -18,6 +18,11 @@ static const char PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_COUNT][15] =
                                                  "button_layout2",
                                                  "button_layout3"};
 
+static const char BUTTON_SWALLOW_NAME[EFL_UI_POPUP_ALERT_BUTTON_COUNT][20] =
+                                                {"elm.swallow.button1",
+                                                 "elm.swallow.button2",
+                                                 "elm.swallow.button3"};
+
 EOLIAN static void
 _efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED)
 {
@@ -37,19 +42,19 @@ _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *p
 {
    if (eina_streq(part, "title") || eina_streq(part, "elm.text.title"))
      {
-        if (pd->title_text)
+        Eina_Bool changed = eina_stringshare_replace(&pd->title_text, label);
+        if (changed)
           {
-             eina_stringshare_del(pd->title_text);
-             pd->title_text = NULL;
+             efl_text_set(efl_part(efl_super(obj, MY_CLASS), "title"), label);
+             if (label)
+               elm_layout_signal_emit(obj, "elm,title,show", "elm");
+             else
+               elm_layout_signal_emit(obj, "elm,title,hide", "elm");
+
+             ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+             edje_object_message_signal_process(wd->resize_obj);
+             elm_layout_sizing_eval(obj);
           }
-
-        pd->title_text = eina_stringshare_add(label);
-        efl_text_set(efl_part(efl_super(obj, MY_CLASS), "elm.text.title"), label);
-        elm_layout_signal_emit(obj, "elm,title,show", "elm");
-
-        ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-        edje_object_message_signal_process(wd->resize_obj);
-        elm_layout_sizing_eval(obj);
      }
    else
      efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
@@ -72,8 +77,7 @@ _efl_ui_popup_alert_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Data *pd, c
 }
 
 static void
-_positive_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
-                            void *event_info EINA_UNUSED)
+_positive_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
@@ -84,8 +88,7 @@ _positive_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
 }
 
 static void
-_negative_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
-                            void *event_info EINA_UNUSED)
+_negative_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
@@ -96,8 +99,7 @@ _negative_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
 }
 
 static void
-_user_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
-                        void *event_info EINA_UNUSED)
+_user_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
@@ -110,117 +112,73 @@ _user_button_clicked_cb(void *data, Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popup_Alert_Button type, const char *text)
 {
-   if (pd->button[type])
-     {
-        efl_del(pd->button[type]);
-        pd->button[type] = NULL;
-     }
-   pd->button[type] = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                              elm_widget_element_update(obj, efl_added, PART_NAME_BUTTON),
-                              efl_text_set(efl_added, text));
+   int i;
+   Eo *cur_content;
 
-   switch (type)
+   if ((type < EFL_UI_POPUP_ALERT_BUTTON_POSITIVE) || (type > EFL_UI_POPUP_ALERT_BUTTON_USER))
      {
-      case EFL_UI_POPUP_ALERT_BUTTON_POSITIVE:
-         evas_object_smart_callback_add(pd->button[type], "clicked",
-                                        _positive_button_clicked_cb,
-                                        obj);
-         break;
-      case EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE:
-         evas_object_smart_callback_add(pd->button[type], "clicked",
-                                        _negative_button_clicked_cb,
-                                        obj);
-         break;
-      case EFL_UI_POPUP_ALERT_BUTTON_USER:
-         evas_object_smart_callback_add(pd->button[type], "clicked",
-                                        _user_button_clicked_cb,
-                                        obj);
-         break;
-      default:
-         break;
+        ERR("Wrong type (%d) is passed!", type);
+        return;
      }
+   if (!pd->button[type])
+     {
+        pd->button[type] = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                                   elm_widget_element_update(obj, efl_added,
+                                                             PART_NAME_BUTTON));
+        switch (type)
+          {
+            case EFL_UI_POPUP_ALERT_BUTTON_POSITIVE:
+              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+                                     _positive_button_clicked_cb, obj);
+              break;
+            case EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE:
+              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+                                     _negative_button_clicked_cb, obj);
+              break;
+            case EFL_UI_POPUP_ALERT_BUTTON_USER:
+              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+                                     _user_button_clicked_cb, obj);
+              break;
+            default:
+              break;
+          }
+     }
+   efl_text_set(pd->button[type], text);
 
-   Eo *cur_content = efl_content_unset(efl_part(obj, "buttons"));
+   cur_content = efl_content_get(efl_part(obj, "buttons"));
    if (cur_content)
      {
-        efl_content_unset(efl_part(cur_content, "elm.swallow.button1"));
-        efl_content_unset(efl_part(cur_content, "elm.swallow.button2"));
-        efl_content_unset(efl_part(cur_content, "elm.swallow.button3"));
-        efl_del(cur_content);
+        for (i = 0; i < EFL_UI_POPUP_ALERT_BUTTON_COUNT; i++)
+          efl_content_unset(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]));
+     }
+   else
+     {
+        cur_content = efl_add(EFL_UI_LAYOUT_CLASS, obj,
+                              efl_content_set(efl_part(obj, "buttons"), efl_added));
      }
 
-   if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]
-       && pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]
-       && pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER])
+   int btn_count = !!pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE] +
+                   !!pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE] +
+                   !!pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER];
+   elm_widget_element_update(obj, cur_content, PART_NAME_BUTTON_LAYOUT[btn_count - 1]);
+
+   i = 0;
+   if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER])
      {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_3]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_3]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_3], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER]);
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_3], "elm.swallow.button2"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]);
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_3], "elm.swallow.button3"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_3]);
+        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                                 pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER]);
+        i++;
      }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]
-            && pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE])
+   if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE])
      {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_2]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]);
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button2"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]);
+        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                                 pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]);
+        i++;
      }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]
-            && pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER])
+   if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE])
      {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_2]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER]);
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button2"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]);
-     }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]
-            && pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER])
-     {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_2]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER]);
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2], "elm.swallow.button2"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_2]);
-     }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE])
-     {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_1]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_POSITIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]);
-     }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE])
-     {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_1]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]);
-     }
-   else if (pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER])
-     {
-        pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]
-           = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                     elm_widget_element_update(obj, efl_added,
-                                               PART_NAME_BUTTON_LAYOUT[EFL_UI_POPUP_ALERT_BUTTON_1]));
-        efl_content_set(efl_part(pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1], "elm.swallow.button1"), pd->button[EFL_UI_POPUP_ALERT_BUTTON_USER]);
-        efl_content_set(efl_part(obj, "buttons"), pd->button_layout[EFL_UI_POPUP_ALERT_BUTTON_1]);
+        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                                 pd->button[EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE]);
      }
 
    elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
@@ -246,12 +204,7 @@ _efl_ui_popup_alert_efl_object_constructor(Eo *obj,
 EOLIAN static void
 _efl_ui_popup_alert_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Alert_Data *pd)
 {
-   if (pd->title_text)
-     {
-        eina_stringshare_del(pd->title_text);
-        pd->title_text = NULL;
-     }
-
+   ELM_SAFE_FREE(pd->title_text, eina_stringshare_del);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
