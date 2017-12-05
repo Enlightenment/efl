@@ -1,4 +1,4 @@
-#define CIT_STYLES\
+#define CIT_STYLE\
       style { name: "efl_ui_calendar_date_style";\
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center text_class=calendar_day_text color_class=calendar_day_text";\
       }\
@@ -437,7 +437,7 @@ group { "efl/calendar";
       public last_focused_item;
    }
    styles {
-      CIT_STYLES
+      CIT_STYLE
    }
    parts {
       part { name: "bg"; type: SPACER;
