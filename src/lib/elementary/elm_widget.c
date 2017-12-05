@@ -391,49 +391,22 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
 {
    *should = *want_full = EINA_FALSE;
 
+    //can focus can be overridden by the following properties
+    if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS) ||
+        (!pd->parent_obj) ||
+        (_tree_unfocusable(obj)) ||
+        (_tree_disabled(obj)) ||
+        (!evas_object_visible_get(obj)))
+      return;
+
     if (pd->can_focus)
       {
-        *should = EINA_TRUE;
-        //can focus can be overridden by the following properties
-
-        if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS))
-          *should = EINA_FALSE;
-
-        if (!pd->parent_obj)
-          *should = EINA_FALSE;
-
-        if (_tree_unfocusable(obj))
-          *should = EINA_FALSE;
-
-        if (_tree_disabled(obj))
-          *should = EINA_FALSE;
-
-        if (!evas_object_visible_get(obj))
-          *should = EINA_FALSE;
-
-        if (*should)
-          *want_full = EINA_TRUE;
-     }
-
-   if (!*should && pd->logical.child_count > 0)
-     {
-        *should = EINA_TRUE;
-
-        if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS))
-          *should = EINA_FALSE;
-
-        if (!pd->parent_obj)
-          *should = EINA_FALSE;
-
-        if (_tree_unfocusable(obj))
-          *should = EINA_FALSE;
-
-        if (_tree_disabled(obj))
-          *should = EINA_FALSE;
-
-        if (!evas_object_visible_get(obj))
-          *should = EINA_FALSE;
-     }
+         *should = *want_full = EINA_TRUE;
+      }
+    else if (pd->logical.child_count > 0)
+      {
+         *should = EINA_TRUE;
+      }
 }
 
 static void
