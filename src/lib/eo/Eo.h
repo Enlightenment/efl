@@ -10,7 +10,7 @@
 
 #define EOLIAN
 
-/* When used, it indicates that the function is an Eo API. */
+/* When used, this indicates that the function is an Eo API. */
 #define EOAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
@@ -54,12 +54,12 @@ extern "C" {
  *
  * @section eo_main_intro Introduction
  *
- * The Eo generic object system. It was designed to be the base object
+ * The Eo generic object system. It's designed to be the base object
  * system for the EFL.
 
  * @section eo_main_compiling How to compile
  *
- * Eo is a library your application links to. The procedure for this is
+ * Eo is a library to which your application can link. The procedure for this is
  * very simple. You simply have to compile your application with the
  * appropriate compiler flags that the @c pkg-config script outputs. For
  * example:
@@ -80,8 +80,8 @@ extern "C" {
  *
  * @section eo_main_next_steps Next Steps
  *
- * After you understood what Eo is and installed it in your system
- * you should proceed understanding the programming interface.
+ * After you've understood and installed Eo,
+ * you can then learn more about the programming interface.
  *
  * Recommended reading:
  *
@@ -93,13 +93,13 @@ extern "C" {
  * @section eo_lifecycle_debug Debug Object Lifecycle
  *
  * When dealing with objects it's important to investigate the object
- * lifecycle: when it was created, when it was deleted. This is not
+ * lifecycle: in other words when they were created and deleted. This is not
  * that trivial since objects can have extra references added with
  * efl_ref() as well as removed with efl_unref(), efl_parent_set() to
  * NULL or efl_del().
  *
- * To aid development process and debug memory leaks and invalid
- * access, we provide eo_debug script helper that will preload
+ * To aid development process as well as debug memory leaks and invalid
+ * access, you can use the eo_debug script helper to preload
  * libeo_dbg.so, run as:
  *
  * @verbatim
@@ -109,10 +109,10 @@ extern "C" {
  * @endverbatim
  *
  * This will print out all the objects that were created and deleted,
- * as well as keep the stack trace that originated those, if a double
+ * as well as keep the stack trace that originated those. If a double
  * free or user-after-free occurs it will print out the backtrace
  * where the object was created and where it was deleted. If only
- * errors should be displayed, decrease the log level to 2:
+ * errors should be displayed decrease the log level to 2:
  *
  * @verbatim
    export EO_LIFECYCLE_DEBUG=1
@@ -122,14 +122,14 @@ extern "C" {
  *
  * Keep in mind that the log will consume memory for all objects and
  * that main loop primitives such as timers, jobs, promises and
- * futures are all objects, being created in large numbers, thus
- * consuming lots of memory.
+ * futures are all objects. If created in large numbers, they will
+ * consume large amounts of of memory.
  *
- * To address that log pollution and memory consumption, one can
- * select just handful classes to be logged using @c
- * EO_LIFECYCLE_DEBUG with a list of comma-separated class names. If
- * @c EO_LIFECYCLE_DEBUG=1 or @c EO_LIFECYCLE_DEBUG=*, then all
- * classes are logged, otherwise just the classes listed will be
+ * To address log pollution and memory consumption, you can
+ * select just a handful classes to be logged using @c
+ * EO_LIFECYCLE_DEBUG with a list of comma-separated class names. Use
+ * @c EO_LIFECYCLE_DEBUG=1 or @c EO_LIFECYCLE_DEBUG=* to log all
+ * classes, otherwise just the classes listed will be
  * (whitelist).
  *
  * @verbatim
@@ -139,8 +139,8 @@ extern "C" {
    eo_debug my_app
  * @endverbatim
  *
- * Another approach is to log all but few classes, also known as
- * blacklist. This is done with another environment variable @c
+ * Another approach is to log all but a few classes, also known as
+ * a blacklist. This is done with another environment variable @c
  * EO_LIFECYCLE_NO_DEBUG=class1,class2.
  *
  * @verbatim
@@ -170,7 +170,7 @@ typedef struct _Eo_Opaque Eo;
 
 /**
  * @typedef Efl_Class
- * The basic class type - should be removed, just for compat.
+ * The basic class type - should be removed, for compatibility reasons.
  */
 typedef Eo Efl_Class;
 #define _EFL_CLASS_EO_CLASS_TYPE
@@ -184,7 +184,7 @@ typedef Eo Efl_Object;
  * @var _efl_class_creation_lock
  * This variable is used for locking purposes in the class_get function
  * defined in #EFL_DEFINE_CLASS.
- * This is just to work around the fact that we need to init locks before
+ * This is just to work around the fact that you need to init locks before
  * using them.
  * Don't touch it if you don't know what you are doing.
  * @internal
@@ -193,8 +193,8 @@ EAPI extern Eina_Lock _efl_class_creation_lock;
 
 /**
  * @var _efl_object_init_generation
- * This variable stores the current eo init generation. That is, how many times
- * we have completed full init/shutdown cycles. Starts at 1 and incremeted on
+ * This variable stores the current eo init generation. In other words how many times
+ * you have completed full init/shutdown cycles. This starts at 1 and is incremeted on
  * every call to shutdown that actually shuts down eo.
  * @internal
  */
@@ -206,7 +206,7 @@ EAPI extern unsigned int _efl_object_init_generation;
  * A function to be called on object deletion/destruction instead of normal
  * destruction taking place.
  *
- * @param obj_id The object needing destruction
+ * @param obj_id The object needing to be destroyed.
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
@@ -248,7 +248,7 @@ typedef struct _Efl_Callback_Array_Item
 /**
  * @brief Add a callback for an event with a specific priority.
  *
- * callbacks of the same priority are called in reverse order of creation.
+ * Callbacks of the same priority are called in reverse order of creation.
  *
  * A callback is only executed on events emitted after this call finished.
  *
@@ -262,10 +262,10 @@ typedef struct _Efl_Callback_Array_Item
 EOAPI Eina_Bool efl_event_callback_priority_add(Eo *obj, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb cb, const void *data);
 
 /**
- * @brief Delete a callback with a specific data associated to it for an event.
+ * @brief Delete a callback with a specific data associated with it for an event.
  *
  * The callback will never be emitted again after this call, even if a event
- * emission is going on.
+ * emission is taking place.
  *
  * @param[in] desc The description of the event to listen to
  * @param[in] func The callback to delete
@@ -281,7 +281,7 @@ EOAPI Eina_Bool efl_event_callback_del(Eo *obj, const Efl_Event_Description *des
  * efl_callbacks_cmp if you are not using the @ref EFL_CALLBACKS_ARRAY_DEFINE
  * macro.
  *
- * callbacks of the same priority are called in reverse order of creation.
+ * Callbacks of the same priority are called in reverse order of creation.
  *
  * A callback from the array is only executed on events emitted  after this
  * call finished.
@@ -309,23 +309,23 @@ EOAPI Eina_Bool efl_event_callback_array_del(Eo *obj, const Efl_Callback_Array_I
 /**
  * @brief Call the callbacks for an event of an object.
  *
- * @param[in] desc The description of the event to call
- * @param[in] event_info Extra event info to pass to the callbacks
+ * @param[in] desc The description of the event to call.
+ * @param[in] event_info Extra event info to pass to the callbacks.
  *
- * @return @c false if one of the callbacks aborted the call, @c true otherwise
+ * @return @c false If one of the callbacks aborted the call, @c true otherwise
  */
 EOAPI Eina_Bool efl_event_callback_call(Eo *obj, const Efl_Event_Description *desc, void *event_info);
 
 /**
  * @brief Call the callbacks for an event of an object.
  *
- * Like @ref efl_event_callback_call, but also call legacy smart callbacks that
+ * Like @ref efl_event_callback_call but also call legacy smart callbacks that
  * have the same name of the given event.
  *
- * @param[in] desc The description of the event to call
- * @param[in] event_info Extra event info to pass to the callbacks
+ * @param[in] desc The description of the event to call.
+ * @param[in] event_info Extra event info to pass to the callbacks.
  *
- * @return @c false if one of the callbacks aborted the call, @c true otherwise
+ * @return @c false If one of the callbacks aborted the call, @c true otherwise
  *
  * @since 1.19
  */
@@ -336,7 +336,7 @@ EOAPI Eina_Bool efl_event_callback_legacy_call(Eo *obj, const Efl_Event_Descript
  *
  * @param[in] link The future to link with the object
  *
- * @return @c true if it succeeded on setting up the tracking.
+ * @return @c true if it succeeds in setting up tracking.
  */
 EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 
@@ -344,7 +344,7 @@ EOAPI Eina_Bool efl_future_link(Eo *obj, Efl_Future *link);
 /**
  * @struct _Efl_Future_Cb_Desc
  *
- * A struct with callbacks to be used by efl_future_cb_from_desc() and efl_future_chain_array()
+ * A structure with callbacks to be used by efl_future_cb_from_desc() and efl_future_chain_array()
  *
  * @see efl_future_cb_from_desc()
  * @see efl_future_chain_array()
@@ -353,8 +353,8 @@ typedef struct _Efl_Future_Cb_Desc {
    /**
     * Called on success (value.type is not @c EINA_VALUE_TYPE_ERROR).
     *
-    * if @c success_type is not NULL, then the value is guaranteed to be of that type,
-    * if it's not, then it will trigger @c error with @c EINVAL.
+    * If @c success_type is not NULL, then the value is guaranteed to be of that type.
+    * If not, it will trigger @c error with @c EINVAL.
     *
     * After this function returns, @c free callback is called if provided.
     *
@@ -366,12 +366,12 @@ typedef struct _Efl_Future_Cb_Desc {
     * If there is no need to convert the received value, it's @b recommended
     * to pass-thru @p value argument. If you need to convert to a different type
     * or generate a new value, use @c eina_value_setup() on @b another Eina_Value
-    * and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+    * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
     * whole chain will wait until the promise is resolved in
-    * order to continue its execution.
-    * Note that the value contents must survive this function scope,
-    * that is, do @b not use stack allocated blobs, arrays, structures or types that
-    * keeps references to memory you give. Values will be automatically cleaned up
+    * order to continue execution.
+    * Note that the value contents must survive this function scope.
+    * In other words, do @b not use stack allocated blobs, arrays, structures or types that
+    * keeps references to memory you assign. Values will be automatically cleaned up
     * using @c eina_value_flush() once they are unused (no more future or futures
     * returned a new value).
     */
@@ -379,8 +379,8 @@ typedef struct _Efl_Future_Cb_Desc {
    /**
     * Called on error (value.type is @c EINA_VALUE_TYPE_ERROR).
     *
-    * This function can return another error, propagating or converting it. However it
-    * may also return a non-error, in this case the next future in chain will receive a regular
+    * This function can return another error then propagate or convert it. However it
+    * may also return a non-error, in which case the next future in the chain will receive a regular
     * value, which may call its @c success.
     *
     * If this function is not provided, then it will pass thru the error to the next error handler.
@@ -394,8 +394,8 @@ typedef struct _Efl_Future_Cb_Desc {
     *
     * After this function returns, @c free callback is called if provided.
     *
-    * @note On future creation errors and future cancellation this function will be called
-    * from the current context with the following errors respectitally: `EINVAL`, `ENOMEM` and  `ECANCELED`.
+    * @note On future creation errors and future cancellation this function is called
+    * from the current context with the following errors respectively: `EINVAL`, `ENOMEM` and  `ECANCELED`.
     * Otherwise this function is called from a safe context.
     *
     *
@@ -404,11 +404,11 @@ typedef struct _Efl_Future_Cb_Desc {
     * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
     * If you need to convert to a different type or generate a new value,
     * use @c eina_value_setup() on @b another Eina_Value
-    * and return it. By returning an promise Eina_Value (eina_promise_as_value()) the
+    * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
     * whole chain will wait until the promise is resolved in
-    * order to continue its execution.
-    * Note that the value contents must survive this function scope,
-    * that is, do @b not use stack allocated blobs, arrays, structures or types that
+    * order to continue execution.
+    * Note that the value contents must survive this function scope.
+    * In other words @b not use stack allocated blobs, arrays, structures or types that
     * keeps references to memory you give. Values will be automatically cleaned up
     * using @c eina_value_flush() once they are unused (no more future or futures
     * returned a new value).
@@ -420,23 +420,23 @@ typedef struct _Efl_Future_Cb_Desc {
     * This is called after @c success or @c error, as well as it's called if none of them are
     * provided. Thus can be used as a "weak ref" mechanism.
     *
-    * @note On future creation errors and future cancellation this function will be called
-    * from the current context with the following errors respectitally: `EINVAL`, `ENOMEM` and  `ECANCELED`.
+    * @note On future creation errors and future cancellation this function is called
+    * from the current context with the following errors respectively: `EINVAL`, `ENOMEM` and  `ECANCELED`.
     * Otherwise this function is called from a safe context.
     *
     * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
-    * @param dead_future The future that was freed.
+    * @param dead_future The future that's been freed.
     */
    void (*free)(Eo *o, const Eina_Future *dead_future);
    /**
     * If provided, then @c success will only be called if the value type matches the given pointer.
     *
-    * If provided and doesn't match, then @c error will be called with @c EINVAL. If no @c error,
+    * If provided and no match is found, @c error will be called with @c EINVAL. If there's no @c error,
     * then it will be propagated to the next future in the chain.
     */
    const Eina_Value_Type *success_type;
    /**
-    * This is used by Eo to cancel a pending futures in case
+    * This is used by Eo to cancel pending futures in case
     * an Eo object is deleted. It can be @c NULL.
     */
    Eina_Future **storage;
@@ -450,14 +450,13 @@ typedef struct _Efl_Future_Cb_Desc {
  * and the object. In case the object is deleted before the future is resolved/rejected,
  * the object destructor will cancel the future.
  *
- * @note In case context info are needed for the #Efl_Future_Desc callbacks efl_key_data_set()
+ * @note In case context info is required for the #Efl_Future_Desc, callbacks efl_key_data_set()
  * can be used.
  *
- * The example below shows a file download using an Eo object, if the download
- * lasts more than 30 seconds the Eo object will be deleted, causing the
- * future to also be deleted.
+ * The example below demonstrates a file download using an Eo object. If the download
+ * lasts more than 30 seconds the Eo object will be deleted along with the future.
  * Usually this would be done with an eina_future_race() of the download promise and a timeout promise,
- * however we provide the following example to illustrate efl_key_data_set() usage.
+ * however the following example is useful to illustrate efl_key_data_set() usage.
  *
  * @code
  *
@@ -466,7 +465,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * {
  *    Eo *downloader = data;
  *    //In case the download is not completed yet.
- *    //Delete the downloader (which in cancel the file download and the future)
+ *    //Delete the downloader (cancels the file download and the future)
  *    efl_key_data_set(downloader, "timer", NULL);
  *    efl_unref(downloader);
  *    return EINA_FALSE;
@@ -476,7 +475,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * _file_ok(Eo *o EINA_UNUSED, const Eina_Value value)
  * {
  *    const char *data;
- *    //There's no need to check the value type since EO infra already did that for us
+ *    //There's no need to check the value type since EO infra already has done so.
  *    eina_value_get(&value, &data);
  *    //Deliver the data to the user
  *    data_deliver(data);
@@ -495,7 +494,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * _downlader_free(Eo *o, const Eina_Future *dead_future EINA_UNUSED)
  * {
  *    Ecore_Timer *t = efl_key_data_get(o, "timer");
- *    //The download was finished before the timer expired. Cancel it...
+ *    //The download finished before the timer expired. Cancel it...
  *    if (t)
  *    {
  *      ecore_timer_del(t);
@@ -510,7 +509,7 @@ typedef struct _Efl_Future_Cb_Desc {
  *   Eina_Future *f = downloader_download_file(downloader, file);
  *   timer = ecore_timer_add(30, _timeout, downloader);
  *   //Usually this would be done with an eina_future_race() of the download promise and a timeout promise,
- *   //however we provide the following example to illustrate efl_key_data_set() usage.
+ *   //however the following example is useful to illustrate efl_key_data_set() usage.
  *   efl_key_data_set(downloader, "timer", timer);
  *   eina_future_then_from_desc(f, efl_future_cb(.success = _file_ok, .error = _file_err, .success_type = EINA_VALUE_TYPE_STRING, .free = downloader_free));
  * }
@@ -551,18 +550,18 @@ EOAPI Eina_Future_Desc efl_future_cb_from_desc(Eo *obj, const Efl_Future_Cb_Desc
 #define efl_future_Eina_FutureXXX_then(_eo, _future, ...) eina_future_then_from_desc(_future, efl_future_cb(_eo, ## __VA_ARGS__))
 
 /**
- * Creates an Future chain based on #Efl_Future_Cb_Desc
+ * Creates a Future chain based on #Efl_Future_Cb_Desc
  *
  * This function is an wrapper around efl_future_cb_from_desc() and eina_future_then_from_desc()
  *
- * For more information about them, check their documentations.
+ * For more information about these check the documentation.
  *
  *
- * @param obj An EO object to link against the future
+ * @param obj An EO object to link to the future
  * @param prev The previous future
  * @param descs An array of Efl_Future_Cb_Desc
  * @return An Eina_Future or @c NULL on error.
- * @note If an error happens the whole future chain will be CANCELED, causing
+ * @note If an error occurs the whole future chain will be CANCELED, causing
  * desc.error to be called passing `ENOMEM` or `EINVAL` and desc.free
  * to free the @p obj if necessary.
  *
@@ -601,9 +600,9 @@ typedef struct _Efl_Dbg_Info
 } Efl_Dbg_Info;
 
 /**
- * @brief Get debug information from the object.
+ * @brief Get debug information from an object.
  *
- * @param[in] root_node Node of the tree
+ * @param[in] root_node the tree Node
  */
 EOAPI void efl_dbg_info_get(Eo *obj, Efl_Dbg_Info *root_node);
 
@@ -686,7 +685,7 @@ typedef unsigned int Efl_Object_Op;
 
 /**
  * @def EFL_EVENT_DESCRIPTION(name)
- * An helper macro to help populating #Efl_Event_Description
+ * A helper macro to help populate #Efl_Event_Description
  * @param name The name of the event.
  * @see Efl_Event_Description
  */
@@ -694,7 +693,7 @@ typedef unsigned int Efl_Object_Op;
 
 /**
  * @def EFL_EVENT_DESCRIPTION_HOT(name)
- * An helper macro to help populating #Efl_Event_Description and make
+ * A helper macro to help populate #Efl_Event_Description and make
  * the event impossible to freeze.
  * @param name The name of the event.
  * @see Efl_Event_Description
@@ -704,7 +703,7 @@ typedef unsigned int Efl_Object_Op;
 
 /**
  * @def EFL_EVENT_DESCRIPTION(name)
- * An helper macro to help populating #Efl_Event_Description
+ * A helper macro to help populating #Efl_Event_Description
  * @param name The name of the event.
  * @see Efl_Event_Description
  */
@@ -712,7 +711,7 @@ typedef unsigned int Efl_Object_Op;
 
 /**
  * @def EFL_EVENT_DESCRIPTION_HOT(name)
- * An helper macro to help populating #Efl_Event_Description and make
+ * A helper macro to help populating #Efl_Event_Description and make
  * the event impossible to freeze.
  * @param name The name of the event.
  * @see Efl_Event_Description
@@ -733,13 +732,12 @@ typedef unsigned int Efl_Object_Op;
 
 /**
  * @def EFL_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...)
- * A convenience macro to be used for creating the class_get function. This
- * macro is fairly simple but should still be used as it'll let us improve
- * things easily.
+ * A convenient macro to be used for creating the class_get function. This
+ * macro is fairly simple and makes for better code.
  * @param class_get_func_name the name of the wanted class_get function name.
  * @param class_desc the class description.
- * @param parent_class The parent class for the function. Look at efl_class_new() for more information.
- * @param ... List of extensions. Look at efl_class_new() for more information.
+ * @param parent_class The parent class for the function. See efl_class_new() for more information.
+ * @param ... List of extensions. See efl_class_new() for more information.
  *
  * You must use this macro if you want thread safety in class creation.
  */
@@ -803,7 +801,7 @@ typedef struct _Efl_Op_Description
 /**
  * @struct _Efl_Object_Ops
  *
- * This struct holds the ops and the size of the ops.
+ * This structure holds the ops and the size of the ops.
  */
 typedef struct _Efl_Object_Ops
 {
@@ -813,7 +811,7 @@ typedef struct _Efl_Object_Ops
 
 /**
  * @struct _Efl_Class_Description
- * This struct holds the description of a class.
+ * This structure holds the class description.
  * This description should be passed to efl_class_new.
  */
 struct _Efl_Class_Description
@@ -838,13 +836,13 @@ typedef struct _Efl_Class_Description Efl_Class_Description;
  * @param desc the class description to create the class with.
  * @param parent the class to inherit from.
  * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
- * @return The new class's handle on success, or NULL otherwise.
+ * @return The new class' handle on success or NULL otherwise.
  *
  * @note There are two types of extensions, mixins and none-mixins.
- *       Mixins are inheriting api AND the implementation.
- *       Non-mixins only inherit the api, so a class which inherits a non-mixin as extension must implement the api.
+ *       Mixins are inheriting both the API AND the implementation.
+ *       Non-mixins only inherit the API, so a class which inherits a non-mixin as an extension must implement the api.
  *
- * You should use #EFL_DEFINE_CLASS. It'll provide thread safety and other
+ * Use #EFL_DEFINE_CLASS. This will provide thread safety and other
  * features easily.
  *
  * @see #EFL_DEFINE_CLASS
@@ -870,9 +868,9 @@ EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Obje
  * @return true on success, false otherwise.
  *
  * This lets you override all of the Eo functions of this object (this
- * one included) and repalce them with ad-hoc implementation.
- * The contents of the array are copied so they can for example reside
- * on the stack.
+ * one included) and replace them with ad-hoc implementation.
+ * The contents of the array are copied so they can reside
+ * on the stack for instance.
  *
  * You are only allowed to override functions that are defined in the
  * class or any of its interfaces (that is, efl_isa returning true).
@@ -919,7 +917,7 @@ EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 /**
  * @brief Gets the name of the passed class.
  * @param klass the class to work on.
- * @return The class's name.
+ * @return The class' name.
  *
  * @see efl_class_get()
  */
@@ -968,13 +966,13 @@ EAPI Eina_Bool efl_object_shutdown(void);
  *
  * You cannot mix objects between domains in the object tree or as direct
  * or indirect references unless you explicitly handle it and ensure the
- * other domain is adopted into your local thread space
+ * other domain is adopted into your local thread space.
  */
 typedef enum
 {
    EFL_ID_DOMAIN_INVALID = -1, /**< Invalid */
    EFL_ID_DOMAIN_MAIN    =  0, /**< The main loop domain where eo_init() is called */
-   EFL_ID_DOMAIN_SHARED  =  1, /**< A special shared domain that all threads can see but has extra locking and unlocking costs to access */
+   EFL_ID_DOMAIN_SHARED  =  1, /**< A special shared domain visible to all threads but with extra locking and unlocking costs to access */
    EFL_ID_DOMAIN_THREAD /**< The normal domain for threads so they can adopt the main loop domain at times */
    /* One more slot for future expansion here - maybe fine-grain locked objs */
 } Efl_Id_Domain;
@@ -991,12 +989,11 @@ typedef struct _Efl_Domain_Data Efl_Domain_Data;
  * @return The native domain
  *
  * This will return the native eo object allocation domain for the current
- * thread. This can only be changed with efl_domain_switch() and this can
+ * thread. This can only be changed with efl_domain_switch() and can
  * only be called before any objects are created/allocated on the thread
- * where it is called. Calling it after this point will result in
+ * where it's called. Calling it after this point will result in
  * undefined behavior, so be sure to call this immediaetly after a thread
- * begins to execute, before anything else. You must not change the domain
- * of the main thread.
+ * begins to execute. You must not change the domain of the main thread.
  * 
  * @see efl_domain_switch()
  * @see efl_domain_current_get()
@@ -1011,9 +1008,9 @@ typedef struct _Efl_Domain_Data Efl_Domain_Data;
 EAPI Efl_Id_Domain    efl_domain_get(void);
 
 /**
- * @brief Switch the native domain for the current thread
+ * @brief Switch the native domain for the current thread.
  * @param domain The domain to switch to
- * @return EINA_TRUE if the switch succeeds, and EINA_FALSE if it fails
+ * @return EINA_TRUE if the switch succeeds and EINA_FALSE if it fails.
  *
  * Permanently switch the native domain for new objects for the calling
  * thread. All objects created on this thread UNLESS it has switched to a
@@ -1030,7 +1027,7 @@ EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
  * @return The current domain
  *
  * Get the currently used domain that is at the top of the domain stack.
- * There is actually a stack of domans to use you can alter via
+ * There is actually a stack of domans to use. You can alter this via
  * efl_domain_current_push() and efl_domain_current_pop(). This only gets
  * the domain for the current thread.
  * 
@@ -1039,13 +1036,13 @@ EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
 EAPI Efl_Id_Domain    efl_domain_current_get(void);
 
 /**
- * @brief Set the current domain used for allocating new objects
- * @return EINA_TRUE if it succeeds, and EINA_FALSE on failure
+ * @brief Set the current domain used for allocating new objects.
+ * @return EINA_TRUE if it succeeds and EINA_FALSE on failure.
  *
  * Temporarily switch the current domain being used for allocation. There
- * is actually a stack of domans to use you can alter via
+ * is actually a stack of domans to use. You can alter this via
  * efl_domain_current_push() and efl_domain_current_pop(). The current
- * domain is the one ont he top of the stack, so this entry is altered
+ * domain is the one on the top of the stack, so this entry is altered
  * without pushing or popping. This only applies to the calling thread.
  * 
  * @see efl_domain_get()
@@ -1053,13 +1050,13 @@ EAPI Efl_Id_Domain    efl_domain_current_get(void);
 EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
 
 /**
- * @brief Push a new domain onto the domain stack
- * @param domain The domain to push
- * @return EINA_TRUE if it succeeds, and EINA_FALSE on failure
+ * @brief Push a new domain onto the domain stack.
+ * @param domain The domain to push.
+ * @return EINA_TRUE if it succeeds and EINA_FALSE on failure.
  *
  * This pushes a domain on the domain stack that can be popped later with
  * efl_domain_current_pop(). If the stack is full this may fail and return
- * EINA_FALSE in that case. This applies only to the calling thread.
+ * EINA_FALSE. This applies only to the calling thread.
  * 
  * @see efl_domain_get()
  */
@@ -1081,10 +1078,10 @@ EAPI void             efl_domain_current_pop(void);
  *
  * This gets a handle to the domain data for the current thread, intended
  * to be used by another thread to adopt with efl_domain_data_adopt().
- * Once you use efl_domain_data_adopt() the thread that called
+ * Once you use efl_domain_data_adopt(), the thread which called
  * efl_domain_data_get() should suspend and not execute anything
  * related to eo or efl objects until the thread that adopted the data
- * called efl_domain_data_return() to return the data to its owner and
+ * calls efl_domain_data_return() to return the data to its owner and
  * stop making it available to that thread.
  *
  * @see efl_domain_get()
@@ -1100,7 +1097,7 @@ EAPI Efl_Domain_Data *efl_domain_data_get(void);
  * as an extra domain locally. The adopted domain must have a domain ID
  * that is not the same as the current thread domain or local domain. You
  * may not adopt a domain that clashes with the current domain. If you
- * set, push or pop domains so these might clash (be the same) then
+ * set, push or pop domains in such a way that these are the same then
  * undefined behaviour will occur.
  *
  * This will also push the adopted domain as the current domain so that
@@ -1120,7 +1117,7 @@ EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
  * @return EINA_TRUE on success EINA_FALSE on failure
  *
  * This returns the domain specified by @p domain to the thread it came
- * from, allowing that thread after this to continue execution. This
+ * from, allowing said thread to continue execution afterwards. This
  * will implicitly pop the current domain from the stack, assuming that
  * the current domain is the same one pushed implicitly by
  * efl_domain_data_adopt(). You cannot return your own native local
@@ -1133,12 +1130,12 @@ EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
 /**
  * @prief Check if 2 objects are compatible
  * @param obj The basic object
- * @param obj_target The alternat object that may be referenced by @p obj
+ * @param obj_target The alternate object that may be referenced by @p obj
  * @return EINA_TRUE if compatible, EINA_FALSE if not
  *
- * This checks to see if 2 objects are compatible and could be parent or
- * children of eachother, could reference eachother etc.. There is only a
- * need to call this if you got objects from multiple domains (an
+ * This checks to see if 2 objects are compatible : whether they are parent or
+ * children of each other, could reference each other etc. You only
+ * need to call this if you have objects from multiple domains (an
  * adopted domain with efl_domain_data_adopt() or the shared domain
  * EFL_ID_DOMAIN_SHARED where objects may be accessed by any thread).
  * 
@@ -1156,10 +1153,10 @@ typedef struct _Efl_Object_Op_Call_Data
    _Eo_Object   *obj;
    void         *func;
    void         *data;
-   void         *extn1; // for the future to avoid ABI issues
-   void         *extn2; // for the future to avoid ABI issues
-   void         *extn3; // for the future to avoid ABI issues
-   void         *extn4; // for the future to avoid ABI issues
+   void         *extn1; // for future use to avoid ABI issues
+   void         *extn2; // for future use to avoid ABI issues
+   void         *extn3; // for future use to avoid ABI issues
+   void         *extn4; // for future use to avoid ABI issues
 } Efl_Object_Op_Call_Data;
 
 #define EFL_OBJECT_CALL_CACHE_SIZE 1
@@ -1221,12 +1218,12 @@ typedef struct _Efl_Object_Call_Cache
                                  __FILE__, __LINE__)) goto __##Name##_failed; \
    _func_ = (_Eo_##Name##_func) ___call.func;
 
-// yes this looks ugly with gotos BUT it moves rare "init" handling code
+// This looks ugly with gotos BUT it moves rare "init" handling code
 // out of the hot path and thus l1 instruction cach prefetch etc. so it
-// should provide a micro-speedup. this has been shown to have real big
-// measurable effects on very hot code paths as l1 instgruction cache
-// does matter and fetching a cacheline of code may fetch a lot of rarely
-// used instructions that are skipepd by and if so moving those away out
+// should provide a micro-speedup. This has been shown to have
+// a measurable effect on very hot code paths as l1 instgruction cache
+// does matter. Fetching a cacheline of code may also fetch a lot of rarely
+// used instructions that are skipped. If this happens, moving those away out
 // of the cacheline that was already fetched should yield better cache
 // hits.
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet, ErrorCase) \
@@ -1312,7 +1309,7 @@ __##Name##_failed: \
 #define EFL_FUNC_BODYV_CONST(Name, Ret, DefRet, Arguments, ...) _EFL_OBJECT_FUNC_BODYV(Name, const Eo *, Ret, DefRet, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
 #define EFL_VOID_FUNC_BODYV_CONST(Name, Arguments, ...) _EFL_OBJECT_VOID_FUNC_BODYV(Name, const Eo *, , EFL_FUNC_CALL(Arguments), __VA_ARGS__)
 
-// the following macros are also taking a FallbackCall the call you specify there will be called once the call cannot be redirected to a object,
+// The following macros are also taking a FallbackCall the call you specify there will be called once the call cannot be redirected to a object,
 // which means eo will be the deepest scope this call will ever get.
 
 #define EFL_FUNC_BODY_FALLBACK(Name, Ret, DefRet, FallbackCall) _EFL_OBJECT_FUNC_BODY(Name, Eo *, Ret, DefRet, FallbackCall)
@@ -1349,11 +1346,11 @@ EAPI Eo * _efl_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
 /*****************************************************************************/
 
 /**
- * @brief Prepare a call to the parent class implementation of a function
+ * @brief Prepare a call to the parent class implementation of a function.
  *
- * @param obj        The object to call (can be a class)
- * @param cur_klass  The current class
- * @return An EO handle that must be used as part of an EO function call.
+ * @param obj        The object to call (can be a class).
+ * @param cur_klass  The current class.
+ * @return An EO handle which must be used as part of an EO function call.
  *
  * @warning The returned value must always be used as the first argument (the
  * object) of a method or property function call, and should never be handled
@@ -1388,14 +1385,14 @@ EAPI Eo * _efl_add_end(Eo *obj, Eina_Bool is_ref, Eina_Bool is_fallback);
 EAPI Eo *efl_super(const Eo *obj, const Efl_Class *cur_klass);
 
 /**
- * @brief Prepare a call to cast to a parent class implementation of a function
+ * @brief Prepare a call to cast to a parent class implementation of a function.
  *
- * @param obj        The object to call (can be a class)
- * @param cur_klass  The class to cast into
+ * @param obj        The object to call (can be a class).
+ * @param cur_klass  The class to cast into.
  * @return An EO handle that must be used as part of an EO function call.
  *
  * @warning The returned value must always be used as the first argument (the
- * object) of a method or property function call, and should never be handled
+ * object) of a method or property function call and should never be handled
  * in any other way. Do not call any function from this file on the returned
  * value (eg. efl_ref, etc...).
  *
@@ -1459,17 +1456,17 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add
- * @brief Create a new object and call its constructor(If it exits).
+ * @brief Create a new object and call its constructor (If it exists).
  *
  * The object returned by this function will always have 1 ref
  * (reference count) irrespective of whether the parent is NULL or
  * not.
- * If the object is created using this function, then it would
- * automatically gets deleted when the parent object is deleted.
+ * If the object is created using this function, then it will
+ * automatically be deleted when the parent object is.
  * There is no need to call efl_unref on the child. This is convenient
  * in C.
  *
- * If you want a more "consistent" behaviour, take a look at #efl_add_ref.
+ * If you want a more "consistent" behaviour, see #efl_add_ref.
  *
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
@@ -1480,12 +1477,12 @@ EAPI Eo *_efl_added_get(void);
 
 /**
  * @def efl_add_ref
- * @brief Create a new object and call its constructor(If it exists).
+ * @brief Create a new object and call its constructor (If it exists).
  *
  * The object returned by this function has 1 ref for itself, 1 ref from the
  * parent (if exists) and possible other refs if were added during construction.
  * If a child object is created using this, then it won't get deleted
- * when the parent object is deleted until you manually remove the ref
+ * when the parent object is until you manually remove the ref
  * by calling efl_unref().
  *
  * @param klass the class of the object to create.
@@ -1570,7 +1567,7 @@ EAPI void *efl_data_xref_internal(const char *file, int line, const Eo *obj, con
 /**
  * @def efl_data_xunref(obj, data, ref_obj)
  * Use this function if you used efl_data_xref to reference the data.
- * Convenience macro around efl_data_xunref_internal()
+ * Convenience macro around efl_data_xunref_internal().
  * @see efl_data_xref()
  */
 #define efl_data_xunref(obj, data, ref_obj) efl_data_xunref_internal(obj, data, ref_obj)
@@ -1578,7 +1575,7 @@ EAPI void *efl_data_xref_internal(const char *file, int line, const Eo *obj, con
 /**
  * @def efl_data_unref(obj, data)
  * Use this function if you used efl_data_ref to reference the data.
- * Convenience macro around efl_data_unref_internal()
+ * Convenience macro around efl_data_unref_internal().
  * @see efl_data_ref()
  */
 #define efl_data_unref(obj, data) efl_data_xunref_internal(obj, data, obj)
@@ -1586,7 +1583,7 @@ EAPI void *efl_data_xref_internal(const char *file, int line, const Eo *obj, con
 /**
  * @brief Decrement the object data reference count by 1.
  * @param obj the object to work on.
- * @param data a pointer to the data to unreference
+ * @param data a pointer to the data to unreference.
  * @param file the call's filename.
  * @param line the call's line number.
  *
@@ -1600,11 +1597,11 @@ EAPI void efl_data_xunref_internal(const Eo *obj, void *data, const Eo *ref_obj)
  * @return The object passed.
  *
  * It's very easy to get a refcount leak and start leaking memory because
- * of a forgotten unref or an extra ref. That is why there are efl_xref
- * and efl_xunref that will make debugging easier in such a case.
- * Therefor, these functions should only be used in small scopes, i.e at the
- * start of some section in which the object may get freed, or if you know
- * what you are doing.
+ * of a forgotten unref or an extra ref. Both efl_xref
+ * and efl_xunref that make debugging easier in these situations.
+ * These functions should only be used on a small scale i.e at the
+ * start of some section in which an object may be freed unless you really
+ * know what you are doing.
  *
  * @see efl_unref()
  * @see efl_ref_count()
@@ -1631,19 +1628,19 @@ EAPI void efl_unref(const Eo *obj);
 EAPI int efl_ref_count(const Eo *obj);
 
 /**
- * @brief Set a deletion interceptor function
- * @param obj The object to set the interceptor on
- * @param del_intercept_func The interceptor function to call
+ * @brief Set a deletion interceptor function.
+ * @param obj The object to set the interceptor on.
+ * @param del_intercept_func The interceptor function to call.
  *
  * This sets the function @p del_intercept_func to be called when an object
  * is about to go from a reference count of 1 to 0, thus triggering actual
  * destruction of the object. Instead of going to a reference count of 0 and
  * being destroyed, the object will stay alive with a reference count of 1
- * and this intercept function will be called instead. It is the job of
- * this interceptor function to handle any further deletion of of the object
+ * and this intercept function will be called instead. 
+ * The interceptor function handles any further deletion of of the object
  * from here.
  *
- * Note that by default objects have no interceptor function set, and thus
+ * Note that by default objects have no interceptor function set and thus
  * will be destroyed as normal. To return an object to this state, simply
  * set the @p del_intercept_func to NULL which is the default.
  *
@@ -1667,22 +1664,22 @@ EAPI void efl_del_intercept_set(Eo *obj, Efl_Del_Intercept del_intercept_func);
  * @return The intercept function or NULL if none is set.
  *
  * This returns the interceptor function set by efl_del_intercept_set(). Note
- * that objects by default have no interceptor (NULL) set, but certain
- * classes may set one up in a constructor, so it is important to be able
- * to get the interceptor function to know if this has happend and
- * if you want to override this interceptor, be sure to call it after your
- * own interceptor function has finished. It would generally be a bad idea
- * though to override these functions.
+ * that objects by default have no interceptor (NULL) set but certain
+ * classes may set one up in a constructor. Make sure that
+ * the interceptor function knows if this has happened.
+ * If you want to override the interceptor be sure to call it after your
+ * own interceptor function has finished. It's generally be a bad idea
+ * to override these functions however.
  * 
  * @see efl_del_intercept_set()
  */
 EAPI Efl_Del_Intercept efl_del_intercept_get(const Eo *obj);
 
 /**
- * @brief Clears the object so it can be reused (for example in a cache)
- * @param obj The object to mark for reusal
+ * @brief Clears the object so it can be reused (for example in a cache).
+ * @param obj The object to mark for reusal.
  *
- * This assumes the destructor has been called on the object, so it
+ * This assumes the destructor has been called on the object so it
  * should probably only be used from the del intercept.
  *
  * @see efl_del_intercept_set()
@@ -1697,16 +1694,16 @@ EAPI void efl_reuse(const Eo *obj);
 #define efl_xref(obj, ref_obj) efl_xref_internal(__FILE__, __LINE__, obj, ref_obj)
 
 /**
- * @brief Increment the object's reference count by 1 (and associate the ref with ref_obj)
+ * @brief Increment the object's reference count by 1 (and associate the ref with ref_obj).
  * @param obj the object to work on.
  * @param ref_obj the object that references obj.
  * @param file the call's filename.
  * @param line the call's line number.
  * @return The object passed (obj)
  *
- * People should not use this function, use #efl_xref instead.
- * A compile flag my make it and eobj_xunref() behave the same as eobj_ref()
- * and eobj_unref() respectively. So this should be used wherever possible.
+ * Do not use this function, use #efl_xref instead.
+ * A compile flag may make it and eobj_xunref() behave the same as eobj_ref()
+ * and eobj_unref() respectively. This should be used wherever possible.
  *
  * @see efl_xunref()
  */
@@ -1717,8 +1714,8 @@ EAPI Eo *efl_xref_internal(const char *file, int line, Eo *obj, const Eo *ref_ob
  * @param obj the object to work on.
  * @param ref_obj the object that references obj.
  *
- * This function only enforces the checks for object association. I.e don't rely
- * on it. If such enforces are compiled out, this function behaves the same as
+ * This function only enforces the checks for object association. Don't rely
+ * on it. If such enforces are compiled out this function behaves the same as
  * efl_unref().
  *
  * @see efl_xref_internal()
@@ -1729,8 +1726,8 @@ EAPI void efl_xunref(Eo *obj, const Eo *ref_obj);
  * @brief Add a new weak reference to obj.
  *
  * This function registers the object handle pointed by wref to obj so when obj
- * is deleted it'll be updated to NULL. This functions should be used when you
- * want to keep track of an object in a safe way, but you don't want to prevent
+ * is deleted, it'll be updated to NULL. The function should be used when you
+ * want to keep track of an object in a safe way but you don't want to prevent
  * it from being freed.
  *
  * @param[in] wref The weak ref
@@ -1772,11 +1769,11 @@ EOAPI void *efl_key_data_get(const Eo *obj, const char * key);
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or referring object is deleted. If the referenced object is deleted
- * then the key is deleted automatically.
+ * deleted or when the referring object is deleted. If the referenced object 
+ * is deleted, then the key is deleted automatically.
  *
- * This is the same key store used by key_data and key_value so keys are shared
- * and can store only one thing
+ * This is the same key store used by key_data and key_value. Keys are shared
+ * and can store only one thing.
  *
  * @param[in] key The key associated with the object ref
  * @param[in] objdata The object to set
@@ -1787,11 +1784,11 @@ EOAPI void efl_key_ref_set(Eo *obj, const char * key, const Efl_Object *objdata)
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or referring object is deleted. If the referenced object is deleted
- * then the key is deleted automatically.
+ * deleted or when the referring object is deleted. If the referenced object is 
+ * deleted then the key is deleted automatically.
  *
- * This is the same key store used by key_data and key_value so keys are shared
- * and can store only one thing
+ * This is the same key store used by key_data and key_value. Keys are shared
+ * and can store only one thing.
  *
  * @param[in] key The key associated with the object ref
  *
@@ -1805,8 +1802,8 @@ EOAPI Efl_Object *efl_key_ref_get(const Eo *obj, const char * key);
  * The object key will be removed if the object is removed, but will not take
  * or removed references like key_obj.
  *
- * This is the same key store used by key_data and key_value so keys are shared
- * and can store only one thing
+ * This is the same key store used by key_data and key_value. Keys are shared
+ * and can store only one thing.
  *
  * @param[in] key The key associated with the object ref
  * @param[in] objdata The object to set
@@ -1819,7 +1816,7 @@ EOAPI void efl_key_wref_set(Eo *obj, const char * key, const Efl_Object *objdata
  * The object key will be removed if the object is removed, but will not take
  * or removed references like key_obj.
  *
- * This is the same key store used by key_data and key_value so keys are shared
+ * This is the same key store used by key_data and key_value. Keys are shared
  * and can store only one thing
  *
  * @param[in] key The key associated with the object ref
@@ -1832,10 +1829,10 @@ EOAPI Efl_Object *efl_key_wref_get(const Eo *obj, const char * key);
  * @brief Value on with string key on the object.
  *
  * This stores the value with the given string key on the object and it will be
- * freed when replaced or deleted or the referring object is deleted.
+ * freed when replaced or deleted, or when the referring object is deleted.
  *
- * This is the same key store used by key_data and key_obj so keys are shared
- * and can store only one thing
+ * This is the same key store used by key_data and key_obj. Keys are shared
+ * and can store only one thing.
  *
  * @param[in] key The key associated with the value
  * @param[in] value The value to set
@@ -1846,10 +1843,10 @@ EOAPI void efl_key_value_set(Eo *obj, const char * key, Eina_Value *value);
  * @brief Value on with string key on the object.
  *
  * This stores the value with the given string key on the object and it will be
- * freed when replaced or deleted or the referring object is deleted.
+ * freed when replaced or deleted, or when the referring object is deleted.
  *
- * This is the same key store used by key_data and key_obj so keys are shared
- * and can store only one thing
+ * This is the same key store used by key_data and key_obj. Keys are shared
+ * and can store only one thing.
  *
  * @param[in] key The key associated with the value
  *
@@ -1862,12 +1859,13 @@ EOAPI Eina_Value *efl_key_value_get(const Eo *obj, const char * key);
  * @param obj the object to work on.
  * @param manual_free indicates if the free is manual (EINA_TRUE) or automatic (EINA_FALSE).
  *
- * The developer is in charge to call the function efl_manual_free to free the memory allocated for this object.
+ * The developer is in charge of calling the function efl_manual_free to free the memory 
+ * allocated for this object.
  *
- * Do not use, unless you really know what you are doing. It's used by Evas
+ * Do not use this unless you really know what you are doing. It's used by Evas
  * because evas wants to keep its private data available even after the object
- * is deleted. Setting this to true makes Eo destruct the object but not free
- * the private data or the object itself.
+ * is deleted. Setting this to true makes Eo destroy the object but doesn't free
+ * the private data nor the object itself.
  *
  * @see efl_manual_free()
  */
@@ -1877,8 +1875,8 @@ EAPI void efl_manual_free_set(Eo *obj, Eina_Bool manual_free);
  * @brief Frees the object.
  * @param obj the object to work on.
  * This function must be called by the developer if the function
- * efl_manual_free_set has been called before with the parameter EINA_TRUE.
- * An error will be printed if this function is called when the manual
+ * efl_manual_free_set has been called beforehand with the parameter EINA_TRUE.
+ * An error will display if this function is called when the manual
  * free option is not set to EINA_TRUE or the number of refs is not 0.
  * @return EINA_TRUE if successfully freed. EINA_FALSE otherwise.
  *
@@ -1891,7 +1889,7 @@ EAPI Eina_Bool efl_manual_free(Eo *obj);
  * @param obj the object to check.
  * This function checks if the object was already destructed (but not alraedy
  * freed). It should only be used with objects that are supposed to be manually
- * freed, but not yet freed (but possibly destructed).
+ * freed but are not yet free such as those which have been destroyed.
  *
  * @see efl_manual_free_set()
  */
@@ -1962,7 +1960,7 @@ typedef void (*efl_key_data_free_func)(void *);
  */
 
 /**
- * Don't use.
+ * Don't use this.
  * The values of the returned event structure are also internal, don't assume
  * anything about them.
  * @internal
@@ -1993,10 +1991,9 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 
 /**
  * Helper for creating global callback arrays.
- * The problem is on windows where you can't declare a static array with
- * external symbols in it, because the addresses are only known at runtime.
- * This also open up the possibility to automatically sort them for better
- * performance.
+ * Problems occur here in windows where you can't declare a static array with
+ * external symbols in them. These addresses are only known at runtime.
+ * This also allows for automatic sorting for better performance.
  */
 #define EFL_CALLBACKS_ARRAY_DEFINE(Name, ...)                           \
   static Efl_Callback_Array_Item *                                      \
@@ -2021,7 +2018,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @param[in] cb the callback to call.
  * @param[in] data additional data to pass to the callback.
  *
- * callbacks of the same priority are called in reverse order of creation.
+ * Callbacks of the same priority are called in reverse order of creation.
  *
  * @see efl_event_callback_priority_add()
  */
@@ -2038,7 +2035,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  *
  * Callbacks of the same priority are called in reverse order of creation.
  * The array should have been created by @ref EFL_CALLBACKS_ARRAY_DEFINE. If
- * that wasn't the case, be careful of portability issue and make sure that
+ * this isn't the case, be careful of portability issues and make sure that
  * it is properly sorted with @ref efl_callbacks_cmp.
  *
  * @see efl_event_callback_array_priority_add()
@@ -2048,7 +2045,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
          EFL_CALLBACK_PRIORITY_DEFAULT, data)
 
 /**
- * @def Replace the previously Eo pointer with new content.
+ * @def Replace the previous Eo pointer with new content.
  *
  * @param storage The object to replace the old reference. It can not be @c NULL.
  * @param new_obj The new object. It may be @c NULL.
@@ -2072,7 +2069,7 @@ efl_replace(Eo **storage, Eo *new_obj)
 EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
 
 /**
- * @brief Create a new #Eina_Value containing the passed parameter
+ * @brief Create a new #Eina_Value containing the passed parameter.
  * @param obj The object to use
  * @return The #Eina_Value
  * @since 1.21
@@ -2115,9 +2112,9 @@ eina_value_object_init(Eo *obj)
  */
 
 /**
- * @brief Get an iterator on the Eo classes
+ * @brief Get an iterator on the Eo classes.
  *
- * You can use this function to walk over the Eo classes.
+ * You can use this function to go over the Eo classes.
  *
  * @return an iterator on success, NULL otherwise
  */
@@ -2126,7 +2123,7 @@ EAPI Eina_Iterator *eo_classes_iterator_new(void);
 /**
  * @brief Get an iterator on the Eo objects
  *
- * You can use this function to walk over the Eo objects.
+ * You can use this function to go over the Eo objects.
  *
  * @return an iterator on success, NULL otherwise
  */
@@ -2144,7 +2141,6 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
    /* Private for EFL internal use only. Do not use these! */
 EAPI int ___efl_ref2_count(const Eo *obj_id);
 EAPI void ___efl_ref2_reset(const Eo *obj_id);
-EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool val);
 
 #endif
 
