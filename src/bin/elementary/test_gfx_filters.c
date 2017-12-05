@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_colorselector.eo.h"
 
-const int default_font_size = 48;
+static const int default_font_size = 48;
 
 typedef struct _Filter_Image
 {
@@ -152,7 +152,7 @@ _spinner_fill(Eo *obj)
      }
    elm_spinner_editable_set(obj, EINA_FALSE);
    elm_spinner_min_max_set(obj, 0, k - 1);
-   elm_obj_spinner_wrap_set(obj, 1);
+   elm_spinner_wrap_set(obj, 1);
 }
 
 static void
@@ -168,7 +168,7 @@ _filter_apply(Eo *win, const char *code, const char *name)
 }
 
 static void
-_spinner_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_spinner_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win = data;
    Eo *text, *code, *spinner, *tb;
@@ -305,10 +305,10 @@ _flip_click(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_colsel_cb(void *data, const Efl_Event *ev)
+_colsel_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Eo *win = data;
-   Eo *colsel = ev->object;
+   Eo *colsel = obj;
    Eo *text, *tb;
    int r = 0, g = 0, b = 0, a = 255;
    char buf[64];
@@ -350,20 +350,21 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_text_set(o, "Filter:");
       efl_pack(box2, o);
 
-      o = spinner = efl_add(ELM_SPINNER_CLASS, win,
-                            efl_gfx_size_hint_weight_set(efl_added, 1.0, 1.0),
-                            efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5));
+      o = spinner = elm_spinner_add(win);
+      efl_gfx_size_hint_weight_set(o, 1.0, 1.0);
+      efl_gfx_size_hint_align_set(o, -1.0, 0.5);
       _spinner_fill(o);
       efl_pack(box2, o);
-      spinner = o;
+      evas_object_show(o);
 
-      o = efl_add(ELM_SPINNER_CLASS, win,
-                  efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
-                  elm_spinner_min_max_set(efl_added, 6, 120),
-                  elm_spinner_value_set(efl_added, default_font_size),
-                  efl_event_callback_add(efl_added, ELM_SPINNER_EVENT_DELAY_CHANGED, _font_size_change, win));
+      o = elm_spinner_add(win);
+      efl_gfx_size_hint_weight_set(o, 0.0, 1.0);
+      efl_gfx_size_hint_align_set(o, -1.0, 0.5);
+      elm_spinner_min_max_set(o, 6, 120);
+      elm_spinner_value_set(o, default_font_size);
+      efl_event_callback_add(o, ELM_SPINNER_EVENT_DELAY_CHANGED, _font_size_change, win);
       efl_pack(box2, o);
+      evas_object_show(o);
 
       o = efl_add(EFL_UI_BUTTON_CLASS, win,
                   efl_text_set(efl_added, "Flip"),
@@ -420,15 +421,16 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       { 0, 0, 0, 0 }
       };
 
-      o = efl_add(ELM_COLORSELECTOR_CLASS, win,
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 0),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, 0),
-                  elm_colorselector_mode_set(efl_added, ELM_COLORSELECTOR_PALETTE),
-                  efl_gfx_size_hint_max_set(efl_added, maxsz),
-                  efl_name_set(efl_added, "myColor"),
-                  elm_object_tooltip_text_set(efl_added, "Pick a color to use as variable 'myColor'"),
-                  efl_event_callback_add(efl_added, ELM_COLORSELECTOR_EVENT_CHANGED, _colsel_cb, win));
+      o = elm_colorselector_add(win);
+      efl_gfx_size_hint_weight_set(o, 1.0, 0);
+      efl_gfx_size_hint_align_set(o, -1.0, 0);
+      elm_colorselector_mode_set(o, ELM_COLORSELECTOR_PALETTE);
+      efl_gfx_size_hint_max_set(o, maxsz);
+      efl_name_set(o, "myColor");
+      elm_object_tooltip_text_set(o, "Pick a color to use as variable 'myColor'");
+      evas_object_smart_callback_add(o, "changed", _colsel_cb, win);
       efl_pack(box2, o);
+      evas_object_show(o);
 
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(colors); k++)
         elm_colorselector_palette_color_add(o, colors[k].r, colors[k].g, colors[k].b, colors[k].a);
@@ -440,7 +442,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    {
       flip = efl_add(EFL_UI_FLIP_CLASS, win);
-      efl_content_set(efl_part(split, "top"), flip);
+      efl_content_set(efl_part(split, "first"), flip);
 
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
@@ -518,7 +520,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       // Efl.Ui.Text doesn't seem to trigger the proper events during edit
       efl_event_callback_add(o, EFL_EVENT_KEY_DOWN, _code_changed_hack, win);
 
-      efl_content_set(efl_part(split, "bottom"), code);
+      efl_content_set(efl_part(split, "second"), code);
    }
 
    efl_key_wref_set(win, "text", text);
@@ -526,9 +528,9 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_key_wref_set(win, "code", code);
    efl_key_wref_set(win, "flip", flip);
    efl_key_wref_set(win, "spinner", spinner);
-   efl_event_callback_add(spinner, ELM_SPINNER_EVENT_CHANGED, _spinner_cb, win);
+   evas_object_smart_callback_add(spinner, "changed", _spinner_cb, win);
    elm_spinner_value_set(spinner, 1.0);
-   _spinner_cb(win, NULL);
+   _spinner_cb(win, spinner, NULL);
 
    efl_gfx_size_set(win, EINA_SIZE2D(500,  600));
 }
