@@ -1,4 +1,4 @@
-class Efl.Ui.Popup.Anchor(Efl.Ui.Popup)
+class Efl.Ui.Popup_Anchor(Efl.Ui.Popup)
 {
    methods {
       @property anchor {
