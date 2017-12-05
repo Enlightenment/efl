@@ -124,7 +124,12 @@ struct _Sel_Manager_Selection
 struct _Sel_Manager_Seat_Selection
 {
    unsigned int seat;
+#ifdef HAVE_ELEMENTARY_X
    Sel_Manager_Selection *sel_list;
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   Sel_Manager_Selection *sel;
+#endif
 
    //drag
    Eo *drag_obj;
