@@ -3047,7 +3047,7 @@ void _test_testing_set_callback(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, void
    if (!pd)
      {
         EINA_LOG_ERR("Null private data");
-        return -1;
+        return;
      }
 
    if (pd->free_cb)
