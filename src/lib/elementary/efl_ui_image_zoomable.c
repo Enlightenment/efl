@@ -1552,19 +1552,19 @@ _efl_ui_image_zoomable_efl_image_image_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Imag
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
-     return efl_canvas_layout_group_size_min_get(sd->edje);
+     return efl_layout_group_size_min_get(sd->edje);
    else
      return EINA_SIZE2D(0, 0);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_image_zoomable_efl_canvas_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje)
-     return efl_canvas_layout_group_size_max_get(sd->edje);
+     return efl_layout_group_size_max_get(sd->edje);
    else
      return EINA_SIZE2D(0, 0);
 }

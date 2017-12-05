@@ -1,7 +1,7 @@
 class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
                      Efl.Layout.Calc, Efl.Layout.Signal,
-                     Efl.Canvas.Layout_Group)
+                     Efl.Layout.Group)
 {
    [[Elementary layout class]]
    methods {
@@ -55,9 +55,9 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Signal.message_send;
       Efl.Layout.Signal.signal_process;
-      Efl.Canvas.Layout_Group.group_data { get; }
-      Efl.Canvas.Layout_Group.group_size_min { get; }
-      Efl.Canvas.Layout_Group.group_size_max { get; }
+      Efl.Layout.Group.group_data { get; }
+      Efl.Layout.Group.group_size_min { get; }
+      Efl.Layout.Group.group_size_max { get; }
       Elm.Widget.widget_sub_object_add;
       Elm.Widget.theme_apply;
       Elm.Widget.on_disabled_update;

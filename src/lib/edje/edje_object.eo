@@ -4,7 +4,7 @@ import edje_types;
 
 class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
                    Efl.Observer, Efl.Ui.Base, Efl.Layout.Calc,
-                   Efl.Layout.Signal, Efl.Canvas.Layout_Group,
+                   Efl.Layout.Signal, Efl.Layout.Group,
                    Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                    Efl.Gfx.Size_Class)
 {
@@ -115,9 +115,9 @@ class Edje.Object (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Layout.Calc.calc_freeze;
       Efl.Layout.Calc.calc_thaw;
       Efl.Layout.Calc.calc_force;
-      Efl.Canvas.Layout_Group.group_size_min { get; }
-      Efl.Canvas.Layout_Group.group_size_max { get; }
-      Efl.Canvas.Layout_Group.group_data { get; }
+      Efl.Layout.Group.group_size_min { get; }
+      Efl.Layout.Group.group_size_max { get; }
+      Efl.Layout.Group.group_data { get; }
       Efl.Layout.Signal.message_send;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;

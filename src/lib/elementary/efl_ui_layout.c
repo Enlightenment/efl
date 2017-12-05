@@ -1549,27 +1549,27 @@ elm_layout_edje_get(const Eo *obj)
 }
 
 EOLIAN static const char *
-_efl_ui_layout_efl_canvas_layout_group_group_data_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *key)
+_efl_ui_layout_efl_layout_group_group_data_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *key)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   return efl_canvas_layout_group_data_get(wd->resize_obj, key);
+   return efl_layout_group_data_get(wd->resize_obj, key);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_layout_efl_canvas_layout_group_group_size_min_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
+_efl_ui_layout_efl_layout_group_group_size_min_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_SIZE2D(0, 0));
 
-   return efl_canvas_layout_group_size_min_get(wd->resize_obj);
+   return efl_layout_group_size_min_get(wd->resize_obj);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_layout_efl_canvas_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
+_efl_ui_layout_efl_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_SIZE2D(0, 0));
 
-   return efl_canvas_layout_group_size_max_get(wd->resize_obj);
+   return efl_layout_group_size_max_get(wd->resize_obj);
 }
 
 /* layout's sizing evaluation is deferred. evaluation requests are
@@ -2358,7 +2358,7 @@ elm_layout_signal_emit(Eo *obj, const char *emission, const char *source)
 EAPI const char *
 elm_layout_data_get(const Evas_Object *obj, const char *key)
 {
-   return efl_canvas_layout_group_data_get(obj, key);
+   return efl_layout_group_data_get(obj, key);
 }
 
 EAPI Eina_Bool

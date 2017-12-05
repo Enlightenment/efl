@@ -1188,7 +1188,7 @@ EAPI void
 edje_object_size_min_get(const Edje_Object *obj, int *minw, int *minh)
 {
    Eina_Size2D sz;
-   sz = efl_canvas_layout_group_size_min_get(obj);
+   sz = efl_layout_group_size_min_get(obj);
    if (minw) *minw = sz.w;
    if (minh) *minh = sz.h;
 }
@@ -1197,7 +1197,7 @@ EAPI void
 edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh)
 {
    Eina_Size2D sz;
-   sz = efl_canvas_layout_group_size_max_get(obj);
+   sz = efl_layout_group_size_max_get(obj);
    if (maxw) *maxw = sz.w;
    if (maxh) *maxh = sz.h;
 }
