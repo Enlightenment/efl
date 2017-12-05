@@ -1,6 +1,7 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` popup_cxx_example.cc -o popup_cxx_example
 
-#define EFL_CXX_WREF_EASY
+#define EFL_CXXPERIMENTAL
+
 #include <Evas.hh>
 #include <Elementary.hh>
 #include <iostream>

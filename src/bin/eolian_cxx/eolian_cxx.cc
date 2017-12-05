@@ -241,55 +241,9 @@ types_generate(std::string const& fname, options_type const& opts,
         const Eolian_Function *func = eolian_typedecl_function_pointer_get(tp);
         if (!func) return false;
 
-        Eina_Iterator *param_itr = eolian_function_parameters_get(func);
-        std::vector<parameter_def> params;
-
-        /* const */ Eolian_Function_Parameter *param;
-        while (::eina_iterator_next(param_itr, reinterpret_cast<void **>(&param)))
-          {
-             parameter_direction param_dir;
-             switch (eolian_parameter_direction_get(param))
-               {
-                /* Note: Inverted on purpose, as the direction objects are
-                 * passed is inverted (from C to C++ for function pointers).
-                 * FIXME: This is probably not right in all cases. */
-                case EOLIAN_IN_PARAM: param_dir = parameter_direction::out; break;
-                case EOLIAN_INOUT_PARAM: param_dir = parameter_direction::inout; break;
-                case EOLIAN_OUT_PARAM: param_dir = parameter_direction::in; break;
-                default: return false;
-               }
-
-             const Eolian_Type *param_type_eolian = eolian_parameter_type_get(param);
-             type_def param_type(param_type_eolian, opts.unit, EOLIAN_C_TYPE_PARAM);
-             std::string param_name = eolian_parameter_name_get(param);
-             std::string param_c_type = eolian_type_c_type_get(param_type_eolian, EOLIAN_C_TYPE_PARAM);
-             parameter_def param_def(param_dir, param_type, param_name, param_c_type);
-             params.push_back(std::move(param_def));
-          }
-        ::eina_iterator_free(param_itr);
-
-        const Eolian_Type *ret_type_eolian = eolian_function_return_type_get(func, EOLIAN_FUNCTION_POINTER);
-
-        type_def ret_type = void_;
-        if (ret_type_eolian)
-          ret_type = type_def(ret_type_eolian, opts.unit, EOLIAN_C_TYPE_RETURN);
-
-        /*
-        // List namespaces. Not used as function_wrapper lives in efl::eolian.
-        std::vector<std::string> namespaces;
-        Eina_Iterator *ns_itr = eolian_typedecl_namespaces_get(tp);
-        char *ns;
-        while (::eina_iterator_next(ns_itr, reinterpret_cast<void**>(&ns)))
-          namespaces.push_back(std::string(ns));
-        ::eina_iterator_free(ns_itr);
-        */
-
-        std::string name = eolian_function_name_get(func);
-        std::string c_name = eolian_typedecl_full_name_get(tp);
-        std::replace(c_name.begin(), c_name.end(), '.', '_');
-        bool beta = eolian_function_is_beta(func);
-
-        function_def def(ret_type, name, params, c_name, beta, false, true);
+        function_def def(func, EOLIAN_FUNCTION_POINTER, opts.unit);
+        def.c_name = eolian_typedecl_full_name_get(tp);
+        std::replace(def.c_name.begin(), def.c_name.end(), '.', '_');
         functions.push_back(std::move(def));
      }
    ::eina_iterator_free(itr);

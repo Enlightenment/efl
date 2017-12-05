@@ -208,26 +208,17 @@ struct class_definition_generator
      if(!as_generator(scope_tab << "/// @endcond\n").generate(sink, attributes::unused, context)) return false;
 
      // EXPERIMENTAL: Parts
-     if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
-     if(!as_generator(*(scope_tab << part_declaration << ";\n"))
-           .generate(sink, cls.parts, context)) return false;
-     if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+     if (!cls.parts.empty())
+       {
+          if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
+          if(!as_generator(*(scope_tab << part_declaration << ";\n"))
+                .generate(sink, cls.parts, context)) return false;
+          if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+       }
 
      if(!as_generator(   scope_tab << "::efl::eo::wref<" << string << "> _get_wref() const { "
                          "return ::efl::eo::wref<" << string << ">(*this); }\n"
-                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
-
-     // EXPERIMENTAL: wref and implicit conversion to Eo*
-     if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
-     // For easy wref, operator-> in wref needs to also return a pointer type
-     if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
-                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
-     if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
-                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
-     // For easy interfacing with C: no need to use _eo_ptr()
-     if(!as_generator(   scope_tab << "operator Eo*() const { return _eo_ptr(); }\n"
-                     ).generate(sink, attributes::unused, context)) return false;
-     if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
+                         ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
 
      // eo_concrete
      if(!as_generator(   scope_tab << "::efl::eo::concrete const& _get_concrete() const { return *this; }\n"
@@ -240,6 +231,18 @@ struct class_definition_generator
                       << scope_tab << "using ::efl::eo::concrete::_delete;\n"
                       << scope_tab << "using ::efl::eo::concrete::operator bool;\n"
                       ).generate(sink, attributes::unused, context)) return false;
+
+     // EXPERIMENTAL: wref and implicit conversion to Eo*
+     if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, context)) return false;
+     // For easy wref, operator-> in wref needs to also return a pointer type
+     if(!as_generator(   scope_tab << "const " << string << "* operator->() const { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+     if(!as_generator(   scope_tab << string << "* operator->() { return this; }\n"
+                     ).generate(sink, std::make_tuple(cls.cxx_name, cls.cxx_name), context)) return false;
+     // For easy interfacing with C: no need to use _eo_ptr()
+     if(!as_generator(   scope_tab << "operator Eo*() const { return _eo_ptr(); }\n"
+                     ).generate(sink, attributes::unused, context)) return false;
+     if(!as_generator("#endif \n").generate(sink, attributes::unused, context)) return false;
 
      if(!as_generator(   scope_tab << "friend bool operator==(" << string << " const& lhs, " << string << " const& rhs)\n"
                       << scope_tab << "{ return lhs._get_concrete() == rhs._get_concrete(); }\n"

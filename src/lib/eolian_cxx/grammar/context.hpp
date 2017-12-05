@@ -56,7 +56,7 @@ Tag const& context_find_tag(context_cons<OtherTag, Tail> const& context
 }
 
 template <typename Tag, typename OtherTag, typename Tail> 
-Tag const& context_find_tag(context_null const& context)
+Tag const& context_find_tag(context_null const&)
 {
   throw std::logic_error("Context for generation not available");
 }

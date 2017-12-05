@@ -53,7 +53,8 @@ private:
 
 template <>
 struct is_eager_generator<part_implementation_generator> : std::true_type {};
-
+template <>
+struct is_generator<part_implementation_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<part_implementation_generator> : std::integral_constant<int, 1> {};

@@ -48,10 +48,12 @@ struct function_declaration_generator
             .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name), add_upper_case_context(ctx)))
         return false;
 
+#ifdef USE_EOCXX_MANUAL_OVERRIDES
       if(!as_generator
             ("#ifndef EOLIAN_CXX_" << string << "_DECLARATION\n")
             .generate(sink, f.c_name, add_upper_case_context(ctx)))
         return false;
+#endif
 
       std::string template_statement(f.template_statement());
       if (!template_statement.empty() &&
@@ -68,11 +70,13 @@ struct function_declaration_generator
             .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), ctx))
         return false;
 
+#ifdef USE_EOCXX_MANUAL_OVERRIDES
       if(!as_generator
             ("#else\n" << scope_tab << "EOLIAN_CXX_" << string << "_DECLARATION\n"
              "#endif\n")
             .generate(sink, f.c_name, add_upper_case_context(ctx)))
         return false;
+#endif
 
       if(f.is_protected &&
             !as_generator("#endif\n").generate(sink, attributes::unused, ctx))

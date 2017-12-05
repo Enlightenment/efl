@@ -458,17 +458,15 @@ struct function_def
     return !(lhs == rhs);
   }
   function_def() = default;
-  function_def(type_def return_type, std::string name, std::vector<parameter_def> parameters
-               , std::string c_name, std::string filename, bool is_beta)
-    : return_type(return_type), name(name), parameters(parameters), c_name(c_name), filename(filename), is_beta(is_beta) {}
   function_def(type_def _return_type, std::string const& _name,
                std::vector<parameter_def> const& _parameters,
                std::string const& _c_name,
+               std::string _filename,
                bool _is_beta = false,
                bool _is_protected = false,
                bool _is_function_pointer = false)
     : return_type(_return_type), name(_name), parameters(_parameters),
-      c_name(_c_name), is_beta(_is_beta), is_protected(_is_protected),
+      c_name(_c_name), filename(_filename), is_beta(_is_beta), is_protected(_is_protected),
       is_function_pointer(_is_function_pointer) {}
 
   function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Unit const* unit)
@@ -572,7 +570,7 @@ struct function_def
                char typenam[2] = { 0, };
                typenam[0] = template_typename++;
                std::string statement = "auto fw = new ::efl::eolian::function_wrapper<";
-               statement += param.c_type + ", " + typenam + ">(" + param.param_name + ");";
+               statement += param.type.c_type + ", " + typenam + ">(" + param.param_name + ");";
                statements.push_back(statement);
             }
        }

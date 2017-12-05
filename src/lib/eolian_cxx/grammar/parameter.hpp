@@ -78,12 +78,20 @@ struct parameter_as_argument_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return as_generator(parameter_type << "(" << string << ")").generate(sink, std::make_tuple(param, param.param_name), context);
+      attributes::parameter_def param_copy = param;
+      if (param.direction == attributes::parameter_direction::in)
+        param_copy.direction = attributes::parameter_direction::out;
+      else if (param.direction == attributes::parameter_direction::out)
+        param_copy.direction = attributes::parameter_direction::in;
+      return as_generator(parameter_type << "(" << string << ")")
+            .generate(sink, std::make_tuple(param_copy, param_copy.param_name), context);
    }
 };
 
 template <>
 struct is_eager_generator<parameter_as_argument_generator> : std::true_type {};
+template <>
+struct is_generator<parameter_as_argument_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<parameter_as_argument_generator> : std::integral_constant<int, 1> {};

@@ -56,7 +56,7 @@ struct type_function_declaration_generator {
 
       std::vector<std::string> c_args;
       for (auto itr : f.parameters)
-        c_args.push_back(", " + itr.c_type + " " + itr.param_name);
+        c_args.push_back(", " + itr.type.c_type + " " + itr.param_name);
       if (!as_generator(
              scope_tab << "static " << string << " caller(void *cxx_call_data"
              << *(string) << ") {\n"
@@ -102,7 +102,8 @@ struct type_function_declaration_generator {
 
 template <>
 struct is_eager_generator<type_function_declaration_generator> : std::true_type {};
-
+template <>
+struct is_generator<type_function_declaration_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<type_function_declaration_generator> : std::integral_constant<int, 1> {};
