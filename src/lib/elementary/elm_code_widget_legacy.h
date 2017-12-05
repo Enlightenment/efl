@@ -9,5 +9,6 @@
  * @ingroup Data
  */
 EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code);
+EAPI void elm_code_widget_alpha_set(Elm_Code_Widget *widget, int alpha);
 
 #include "elm_code_widget.eo.legacy.h"

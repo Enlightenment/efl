@@ -20,6 +20,7 @@ typedef struct
    const char *font_name;
    Evas_Font_Size font_size;
    double gravity_x, gravity_y;
+   int alpha;
 
    unsigned int cursor_line, cursor_col;
    Evas_Object *cursor_rect;
