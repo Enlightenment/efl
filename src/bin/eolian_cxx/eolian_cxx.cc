@@ -40,6 +40,10 @@ struct options_type
    bool main_header;
 
    options_type() : main_header(false) {}
+   ~options_type()
+     {
+        eolian_free(state);
+     }
 };
 
 static efl::eina::log_domain domain("eolian_cxx");
