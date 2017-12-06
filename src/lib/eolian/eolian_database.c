@@ -8,8 +8,6 @@
 #include "eolian_database.h"
 #include "eolian_priv.h"
 
-Eina_Hash *_filenames  = NULL;
-Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_decls      = NULL;
 Eina_Hash *_declsf     = NULL;
 Eina_Hash *_units      = NULL;
@@ -36,8 +34,6 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _filenames  = eina_hash_string_small_new(free);
-   _tfilenames = eina_hash_string_small_new(free);
    _decls      = eina_hash_stringshared_new(free);
    _declsf     = eina_hash_stringshared_new(_hashlist_free);
    _parsedeos  = eina_hash_string_small_new(NULL);
@@ -61,8 +57,6 @@ database_shutdown()
    if (_database_init_count == 0)
      {
         eolian_free(_state); _state = NULL;
-        eina_hash_free(_filenames ); _filenames  = NULL;
-        eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_hash_free(_decls     ); _decls      = NULL;
         eina_hash_free(_declsf    ); _declsf     = NULL;
         eina_hash_free(_parsedeos ); _parsedeos  = NULL;
@@ -613,6 +607,9 @@ eolian_new(void)
 
    database_unit_init(&state->unit, NULL);
 
+   state->filenames_eo  = eina_hash_string_small_new(free);
+   state->filenames_eot = eina_hash_string_small_new(free);
+
    state->classes_f   = eina_hash_stringshared_new(NULL);
    state->aliases_f   = eina_hash_stringshared_new(_hashlist_free);
    state->structs_f   = eina_hash_stringshared_new(_hashlist_free);
@@ -656,7 +653,7 @@ _scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
 {
    Eina_Bool is_eo = eina_str_has_suffix(name, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(name, EOT_SUFFIX)) return;
-   eina_hash_add(is_eo ? _filenames : _tfilenames,
+   eina_hash_add(is_eo ? _state->filenames_eo : _state->filenames_eot,
                  eina_stringshare_add(name), join_path(path, name));
 }
 
@@ -710,7 +707,7 @@ _eolian_file_parse_nodep(const char *filepath)
         _eolian_log("file '%s' doesn't have a correct extension", filepath);
         return EINA_FALSE;
      }
-   if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))
+   if (!(eopath = eina_hash_find(is_eo ? _state->filenames_eo : _state->filenames_eot, filepath)))
      {
         char *vpath = eina_file_path_sanitize(filepath);
         Eina_Bool ret = eo_parser_database_fill(vpath, !is_eo, NULL);
@@ -777,7 +774,7 @@ eolian_all_eot_files_parse(Eolian *state EINA_UNUSED)
    if (_database_init_count <= 0)
      return EINA_FALSE;
 
-   eina_hash_foreach(_tfilenames, _tfile_parse, &ret);
+   eina_hash_foreach(_state->filenames_eot, _tfile_parse, &ret);
 
    /* FIXME: pass unit properly */
    if (ret && !database_validate(NULL))
@@ -802,7 +799,7 @@ eolian_all_eo_files_parse(Eolian *state EINA_UNUSED)
    if (_database_init_count <= 0)
      return EINA_FALSE;
 
-   eina_hash_foreach(_filenames, _file_parse, &ret);
+   eina_hash_foreach(_state->filenames_eo, _file_parse, &ret);
 
    /* FIXME: pass unit properly */
    if (ret && !database_validate(NULL))
@@ -814,27 +811,27 @@ eolian_all_eo_files_parse(Eolian *state EINA_UNUSED)
 EAPI Eina_Iterator *
 eolian_all_eot_files_get(Eolian *state EINA_UNUSED)
 {
-   if (!_tfilenames) return NULL;
-   return eina_hash_iterator_key_new(_tfilenames);
+   if (!_state) return NULL;
+   return eina_hash_iterator_key_new(_state->filenames_eot);
 }
 
 EAPI Eina_Iterator *
 eolian_all_eo_files_get(Eolian *state EINA_UNUSED)
 {
-   if (!_filenames) return NULL;
-   return eina_hash_iterator_key_new(_filenames);
+   if (!_state) return NULL;
+   return eina_hash_iterator_key_new(_state->filenames_eo);
 }
 
 EAPI Eina_Iterator *
 eolian_all_eot_file_paths_get(Eolian *state EINA_UNUSED)
 {
-   if (!_tfilenames) return NULL;
-   return eina_hash_iterator_data_new(_tfilenames);
+   if (!_state) return NULL;
+   return eina_hash_iterator_data_new(_state->filenames_eot);
 }
 
 EAPI Eina_Iterator *
 eolian_all_eo_file_paths_get(Eolian *state EINA_UNUSED)
 {
-   if (!_filenames) return NULL;
-   return eina_hash_iterator_data_new(_filenames);
+   if (!_state) return NULL;
+   return eina_hash_iterator_data_new(_state->filenames_eo);
 }

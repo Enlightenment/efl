@@ -31,9 +31,6 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
-extern Eina_Hash *_tfilenames;
-
 /* a hash holding all declarations, for redef checking etc */
 extern Eina_Hash *_decls;
 extern Eina_Hash *_declsf;
@@ -65,6 +62,9 @@ struct _Eolian_Unit
 struct _Eolian
 {
    Eolian_Unit unit;
+
+   Eina_Hash *filenames_eo; /* filename to full path mapping */
+   Eina_Hash *filenames_eot;
 
    Eina_Hash *classes_f;
    Eina_Hash *aliases_f;

@@ -275,7 +275,7 @@ doc_ref_class(const char *cname)
           *p = tolower(*p);
      }
    memcpy(buf + clen, ".eo", sizeof(".eo"));
-   const char *eop = eina_hash_find(_filenames, buf);
+   const char *eop = eina_hash_find(_state->filenames_eo, buf);
    if (!eop)
      return;
    eina_hash_set(_defereos, buf, eop);

@@ -822,7 +822,7 @@ parse_type_void(Eo_Lexer *ls)
              fnm = database_class_to_filename(nm);
              if (!compare_class_file(bnm, fnm))
                {
-                  const char *fname = eina_hash_find(_filenames, fnm);
+                  const char *fname = eina_hash_find(_state->filenames_eo, fnm);
                   eina_stringshare_del(bnm);
                   free(fnm);
                   if (fname)
@@ -1530,7 +1530,7 @@ parse_part(Eo_Lexer *ls)
    if (!compare_class_file(bnm, fnm))
      {
         Eolian_Class *dep = NULL;
-        const char *fname = eina_hash_find(_filenames, fnm);
+        const char *fname = eina_hash_find(_state->filenames_eo, fnm);
         eina_stringshare_del(bnm);
         free(fnm);
         if (fname)
@@ -2038,7 +2038,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
         eo_lexer_syntax_error(ls, ebuf);
         return; /* unreachable (longjmp above), make static analysis shut up */
      }
-   fname = eina_hash_find(_filenames, fnm);
+   fname = eina_hash_find(_state->filenames_eo, fnm);
    free(fnm);
    if (!fname)
      {
@@ -2177,11 +2177,11 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            check(ls, TOK_VALUE);
            eina_strbuf_append(buf, ls->t.value.s);
            eina_strbuf_append(buf, ".eot");
-           if (!(found = eina_hash_find(_tfilenames, eina_strbuf_string_get(buf))))
+           if (!(found = eina_hash_find(_state->filenames_eot, eina_strbuf_string_get(buf))))
              {
                 size_t buflen = eina_strbuf_length_get(buf);
                 eina_strbuf_remove(buf, buflen - 1, buflen);
-                if (!(found = eina_hash_find(_filenames, eina_strbuf_string_get(buf))))
+                if (!(found = eina_hash_find(_state->filenames_eo, eina_strbuf_string_get(buf))))
                   {
                      pop_strbuf(ls);
                      snprintf(errbuf, sizeof(errbuf),
