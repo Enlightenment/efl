@@ -532,7 +532,7 @@ database_validate(const Eolian_Unit *src)
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(_state->unit.structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 

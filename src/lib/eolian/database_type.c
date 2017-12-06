@@ -53,9 +53,9 @@ database_type_add(Eolian_Typedecl *def)
 void
 database_struct_add(Eolian_Typedecl *tp)
 {
-   eina_hash_set(_structs, tp->full_name, tp);
-   eina_hash_set(_structsf, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(_structsf, tp->base.file), tp));
+   eina_hash_set(_state->unit.structs, tp->full_name, tp);
+   eina_hash_set(_state->structs_f, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(_state->structs_f, tp->base.file), tp));
    database_decl_add(tp->full_name, EOLIAN_DECL_STRUCT, tp->base.file, tp);
 }
 
