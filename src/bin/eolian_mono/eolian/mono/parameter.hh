@@ -1135,7 +1135,7 @@ struct native_convert_function_pointer_generator
       // Getting the type through C api
       std::string type_name = param.type.original_type.visit(type_name_visitor{});
 
-      const Eolian_Typedecl *tpd = ::eolian_typedecl_alias_get_by_name(NULL, type_name.c_str());
+      const Eolian_Typedecl *tpd = ::eolian_typedecl_alias_get_by_name(param.unit, type_name.c_str());
       if (!tpd)
         {
            EINA_LOG_ERR("Failed to get typedecl for c type [%s]", param.type.c_type.c_str());
@@ -1150,7 +1150,7 @@ struct native_convert_function_pointer_generator
            EINA_LOG_ERR("Failed to get function pointer info for c type [%s]", param.type.c_type.c_str());
            return false;
         }
-      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER, NULL);
+      attributes::function_def f(fd, EOLIAN_FUNCTION_POINTER, param.unit);
 
       std::string param_name = escape_keyword(param.param_name);
       // Allocate GCHandle in "param_name"_handle for param;

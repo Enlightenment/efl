@@ -469,7 +469,7 @@ struct klass
 
      for (auto&& c : cls.inherits)
        {
-          attributes::klass_def klass(get_klass(c, NULL), NULL);
+          attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
 
           for (auto&& e : klass.events)
             {
@@ -638,7 +638,7 @@ struct klass
      // Inherited events
      for (auto&& c : cls.inherits)
        {
-          attributes::klass_def klass(get_klass(c, NULL), NULL);
+          attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
 
           // FIXME Enable inherited events registration. Beware of conflicting events
           for (auto&& e : klass.events)
