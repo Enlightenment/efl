@@ -8,12 +8,10 @@
 #include "eolian_database.h"
 #include "eolian_priv.h"
 
-Eina_Hash *_aliases    = NULL;
 Eina_Hash *_structs    = NULL;
 Eina_Hash *_enums      = NULL;
 Eina_Hash *_globals    = NULL;
 Eina_Hash *_constants  = NULL;
-Eina_Hash *_aliasesf   = NULL;
 Eina_Hash *_structsf   = NULL;
 Eina_Hash *_enumsf     = NULL;
 Eina_Hash *_globalsf   = NULL;
@@ -46,12 +44,10 @@ database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
    eina_init();
-   _aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    _globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    _constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
-   _aliasesf   = eina_hash_stringshared_new(_hashlist_free);
    _structsf   = eina_hash_stringshared_new(_hashlist_free);
    _enumsf     = eina_hash_stringshared_new(_hashlist_free);
    _globalsf   = eina_hash_stringshared_new(_hashlist_free);
@@ -81,12 +77,10 @@ database_shutdown()
    if (_database_init_count == 0)
      {
         eolian_free(_state); _state = NULL;
-        eina_hash_free(_aliases   ); _aliases    = NULL;
         eina_hash_free(_structs   ); _structs    = NULL;
         eina_hash_free(_enums     ); _enums      = NULL;
         eina_hash_free(_globals   ); _globals    = NULL;
         eina_hash_free(_constants ); _constants  = NULL;
-        eina_hash_free(_aliasesf  ); _aliasesf   = NULL;
         eina_hash_free(_structsf  ); _structsf   = NULL;
         eina_hash_free(_enumsf    ); _enumsf     = NULL;
         eina_hash_free(_globalsf  ); _globalsf   = NULL;
@@ -644,6 +638,7 @@ eolian_new(void)
    database_unit_init(&state->unit, NULL);
 
    state->classes_f = eina_hash_stringshared_new(NULL);
+   state->aliases_f = eina_hash_stringshared_new(_hashlist_free);
 
    return state;
 }

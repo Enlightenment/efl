@@ -43,9 +43,10 @@ database_typedecl_del(Eolian_Typedecl *tp)
 void
 database_type_add(Eolian_Typedecl *def)
 {
-   eina_hash_set(_aliases, def->full_name, def);
-   eina_hash_set(_aliasesf, def->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(_aliasesf, def->base.file), def));
+   eina_hash_set(_state->unit.aliases, def->full_name, def);
+   eina_hash_set(_state->aliases_f, def->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(_state->aliases_f, def->base.file),
+                def));
    database_decl_add(def->full_name, EOLIAN_DECL_ALIAS, def->base.file, def);
 }
 
