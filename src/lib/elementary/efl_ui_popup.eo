@@ -34,6 +34,17 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
              time: double;
          }
       }
+      @property popup_size {
+         set {
+            [[Set the popup size.]]
+         }
+         get {
+            [[get the current popup size.]]
+         }
+         values {
+            size: Eina.Size2D;
+         }
+      }
    }
    parts {
       backwall: Efl.Ui.Popup.Part; [[A backwall behind the popup.]]

@@ -57,7 +57,7 @@ _create_popup(efl_ui_popup_data *p_data)
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, _backwall_clicked, NULL);
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_EVENT_TIMEOUT, _timeout_cb, p_data);
-   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Efl.Ui.Popup");
