@@ -3676,6 +3676,8 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "entry");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
@@ -3695,7 +3697,10 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   if (!elm_layout_theme_set(obj, "entry", "base", elm_widget_style_get(obj)))
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
