@@ -14,6 +14,7 @@ efl_eolian_legacy_files = \
 
 efl_eolian_files = \
       lib/efl/interfaces/efl_canvas.eo \
+      lib/efl/interfaces/efl_canvas_pointer.eo \
       lib/efl/interfaces/efl_config.eo \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_dup.eo \

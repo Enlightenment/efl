@@ -634,9 +634,9 @@ _evas_canvas_pointer_button_down_mask_by_device_get(Eo *eo_e EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas_efl_canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED,
-                                           Evas_Public_Data *e,
-                                           Eo *dev)
+_evas_canvas_efl_canvas_pointer_pointer_inside_get(Eo *eo_e EINA_UNUSED,
+                                                   Evas_Public_Data *e,
+                                                   Efl_Input_Device *dev)
 {
    Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, dev);
    if (!pdata) return EINA_FALSE;

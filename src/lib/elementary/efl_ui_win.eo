@@ -157,7 +157,7 @@ enum Efl.Ui.Win.Move_Resize_Mode
    right = (1 << 4)    [[Start resizing window to the right]]
 }
 
-class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
+class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
                Efl.Access.Component, Efl.Access.Widget.Action,
                Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
@@ -825,7 +825,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Access.Window,
       Efl.Gfx.Size.Hint.hint_max { set; }
       Efl.Text.text { get; set; }
       Efl.Canvas.pointer_position { get; }
-      Efl.Canvas.pointer_inside { get; }
+      Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.pointer_iterate;
       Efl.Canvas.image_max_size { get; }
       Efl.Canvas.smart_objects_calculate;

@@ -2383,7 +2383,7 @@ _efl_ui_win_efl_canvas_pointer_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_canvas_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev)
+_efl_ui_win_efl_canvas_pointer_pointer_inside_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev)
 {
    return efl_canvas_pointer_inside_get(sd->evas, dev);
 }

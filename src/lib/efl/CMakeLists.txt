@@ -5,6 +5,7 @@ set(LIBRARIES eo eina)
 set(PUBLIC_EO_FILES
   interfaces/efl_animator.eo
   interfaces/efl_canvas.eo
+  interfaces/efl_canvas_pointer.eo
   interfaces/efl_config.eo
   interfaces/efl_container.eo
   interfaces/efl_content.eo
