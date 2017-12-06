@@ -127,7 +127,6 @@ elementary/themes/edc/elm/layout.edc \
 elementary/themes/edc/elm/list.edc \
 elementary/themes/edc/elm/map.edc \
 elementary/themes/edc/elm/menu.edc \
-elementary/themes/edc/elm/multibuttonentry.edc \
 elementary/themes/edc/elm/naviframe.edc \
 elementary/themes/edc/elm/notify.edc \
 elementary/themes/edc/elm/panel.edc \

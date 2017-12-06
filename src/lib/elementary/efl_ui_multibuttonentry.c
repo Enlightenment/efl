@@ -36,10 +36,6 @@ static const char SIG_EXPANDED[] = "expanded";
 static const char SIG_CONTRACTED[] = "contracted";
 static const char SIG_EXPAND_STATE_CHANGED[] = "expand,state,changed";
 
-static const char PART_NAME_BUTTON[] = "btn";
-static const char PART_NAME_GUIDE_TEXT[] = "guidetext";
-static const char PART_NAME_LABEL[] = "label";
-static const char PART_NAME_CLOSED_BUTTON[] = "closedbutton";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ITEM_SELECTED, ""},
    {SIG_ITEM_ADDED, ""},
@@ -54,6 +50,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EXPAND_STATE_CHANGED, ""},
    {NULL, NULL}
 };
+
+static const char PART_NAME_BUTTON[] = "btn";
+static const char PART_NAME_GUIDE_TEXT[] = "guidetext";
+static const char PART_NAME_LABEL[] = "label";
+static const char PART_NAME_CLOSED_BUTTON[] = "closedbutton";
 
 static Eina_Bool _efl_ui_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
 static Eina_Bool _efl_ui_multibuttonentry_smart_focus_direction_enable = EINA_TRUE;
