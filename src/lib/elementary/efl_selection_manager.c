@@ -39,7 +39,7 @@ static Ecore_X_Window _x11_xwin_get(Evas_Object *obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
 static Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
-static Ecore_Wl2_Input *_wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj);
+static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id);
 #endif
 
 static Sel_Manager_Seat_Selection *
@@ -1979,7 +1979,7 @@ _wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obje
    types[nb_types] = NULL;
 
    win = _wl_window_get(drag_obj);
-   ecore_wl2_dnd_drag_types_set(_wl_default_seat_get(win, drag_obj), types);
+   ecore_wl2_dnd_drag_types_set(_wl_seat_get(win, drag_obj, seat), types);
 
    /* set the drag data used when a drop occurs */
    free(sel->buf);
@@ -2064,7 +2064,7 @@ _wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obje
         parent = ecore_evas_wayland2_window_get(ee);
      }
 
-   sel->drag_serial = ecore_wl2_dnd_drag_start(_wl_default_seat_get(win, drag_obj), parent, win);
+   sel->drag_serial = ecore_wl2_dnd_drag_start(_wl_seat_get(win, drag_obj, seat), parent, win);
    ERR("seat: %d, sel: %p, drag_serial: %d", seat, sel, sel->drag_serial);
 }
 
@@ -2347,7 +2347,7 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
           }
         types[count - 1] = 0;
 
-        sel->selection_serial = ecore_wl2_dnd_selection_set(_wl_default_seat_get(win, owner), types);
+        sel->selection_serial = ecore_wl2_dnd_selection_set(_wl_seat_get(win, owner, seat_sel->seat), types);
         ERR("serial: %d", sel->selection_serial);
 
         free(types);
@@ -2499,15 +2499,19 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
 
    seat_sel->accept = EINA_FALSE;
    win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
-   ecore_wl2_input_ungrab(_wl_default_seat_get(win, NULL));
+   ecore_wl2_input_ungrab(_wl_seat_get(win, NULL, seat_sel->seat));
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Ecore_Wl2_Input *
-_wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
+_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
 {
    Eo *seat, *parent2, *ewin;
+   Ecore_Wl2_Input *input = NULL;
+
+   input = ecore_wl2_display_input_find(ecore_wl2_window_display_get(win), seat_id);
+   if (input) return input;
 
    if (obj)
      {
@@ -2528,7 +2532,6 @@ _wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
 
    if (!obj)
      {
-        Ecore_Wl2_Input *input;
         Eina_Iterator *it;
         it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(win));
         EINA_ITERATOR_FOREACH(it, input) break;
@@ -2660,7 +2663,7 @@ _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
    sel = seat_sel->sel;
    win = _wl_window_get(obj);
 
-   input = _wl_default_seat_get(win, (void*)obj);
+   input = _wl_seat_get(win, (void*)obj, seat_sel->seat);
    offer = ecore_wl2_dnd_selection_get(input);
 
    //there can be no selection available
@@ -3213,7 +3216,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
                     }
                }
              win = _wl_window_get(sel->request_obj);
-             ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
+             ecore_wl2_dnd_drag_end(_wl_seat_get(win, NULL, seat_sel->seat));
              if (tmp_info) _tmpinfo_free(tmp_info);
              free(ddata.data);
              return;
@@ -3221,7 +3224,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
      }
 
    win = _wl_window_get(sel->request_obj);
-   ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
+   ecore_wl2_dnd_drag_end(_wl_seat_get(win, NULL, seat_sel->seat));
    seat_sel->saved_types->textreq = 0;
 }
 
@@ -3480,7 +3483,7 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
 
    //FIXME: get wl_display (prev: handled in elm_config)
    win = ecore_wl2_display_window_find(pd->wl_display, ev->win);
-   ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, NULL));
+   ecore_wl2_dnd_drag_end(_wl_seat_get(win, NULL, seat_sel->seat));
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3993,7 +3996,7 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_default_seat_get(_wl_window_get(owner), owner));
+   sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_seat_get(_wl_window_get(owner), owner, seat));
    ERR("sel serial: %d", sel->selection_serial);
 #endif
 }
@@ -4011,7 +4014,7 @@ _efl_selection_manager_selection_has_owner(Eo *obj, Efl_Selection_Manager_Data *
 
    win = _wl_window_get(request);
    if (win)
-     return !!ecore_wl2_dnd_selection_get(_wl_default_seat_get(win, request));
+     return !!ecore_wl2_dnd_selection_get(_wl_seat_get(win, request, seat));
 #endif
    return EINA_FALSE;
 }
@@ -4083,7 +4086,7 @@ _efl_selection_manager_drag_cancel(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_
 
    win = _wl_window_get(drag_obj);
    if (win)
-     ecore_wl2_dnd_drag_end(_wl_default_seat_get(win, drag_obj));
+     ecore_wl2_dnd_drag_end(_wl_seat_get(win, drag_obj, seat));
 #endif
 
    ELM_SAFE_FREE(seat_sel->drag_win, evas_object_del);
