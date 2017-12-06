@@ -1462,7 +1462,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Ef
 
              rec_manager = efl_ui_focus_manager_redirect_get(rec_manager);
           }
-        while (!last.is_regular_end || rec_manager);
+        while (rec_manager);
      }
    else if (DIRECTION_IS_2D(direction) && entry)
      efl_ui_focus_manager_focus_set(obj, entry);

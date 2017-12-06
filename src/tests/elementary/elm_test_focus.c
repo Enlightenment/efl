@@ -441,6 +441,99 @@ START_TEST(root_redirect_chain_unset)
 }
 END_TEST
 
+static Efl_Ui_Focus_Manager_Calc*
+_recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right, Efl_Ui_Focus_Object **most_left)
+{
+   Efl_Ui_Focus_Manager *m, *m_child1 = NULL, *m_child3 = NULL;
+   Efl_Ui_Focus_Object *child1, *child3;
+
+   TEST_OBJ_NEW(root, 0, 20, 20, 20);
+   TEST_OBJ_NEW(child2, 0, 20, 20, 20);
+
+   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
+    efl_ui_focus_manager_root_set(efl_added, root)
+   );
+
+   printf("New manaager %p\n", m);
+
+   if (recusion_depth < 3)
+     {
+        m_child1 = _recursive_triangle_manager(recusion_depth + 1, NULL, most_left);
+        m_child3 = _recursive_triangle_manager(recusion_depth + 1, most_right, NULL);
+        child1 = efl_ui_focus_manager_root_get(m_child1);
+        child3 = efl_ui_focus_manager_root_get(m_child3);
+        focus_test_manager_set(child1, m);
+        focus_test_manager_set(child3, m);
+     }
+   else
+     {
+        TEST_OBJ_NEW(tmp_child1, 0, 20, 20, 20);
+        TEST_OBJ_NEW(tmp_child3, 0, 20, 20, 20);
+
+        child1 = tmp_child1;
+        child3 = tmp_child3;
+
+        if (most_left)
+          {
+             *most_left = child1;
+             printf("SETTING %p\n", child1);
+          }
+
+        if (most_right)
+          {
+             *most_right = child3;
+             printf("SETTING %p\n", child3);
+          }
+     }
+
+   printf("Child 1 %p\n", child1);
+   printf("Child 2 %p\n", child2);
+   printf("Child 3 %p\n", child3);
+
+   efl_ui_focus_manager_calc_register(m, child1, root, m_child1);
+   efl_ui_focus_manager_calc_register(m, child2, root, NULL);
+   efl_ui_focus_manager_calc_register(m, child3, root, m_child3);
+
+   return m;
+}
+
+static Efl_Ui_Focus_Object*
+_get_highest_redirect(Efl_Ui_Focus_Manager *manager)
+{
+   Efl_Ui_Focus_Manager *tmp = manager;
+
+   do {
+     manager = tmp;
+     tmp = efl_ui_focus_manager_redirect_get(tmp);
+   } while (tmp);
+
+   return manager;
+}
+
+START_TEST(first_touch_check)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *most_left, *most_right;
+
+   elm_init(1, NULL);
+
+   m = _recursive_triangle_manager(0, &most_right, &most_left);
+
+   efl_ui_focus_manager_setup_on_first_touch(m, EFL_UI_FOCUS_DIRECTION_NEXT, efl_ui_focus_manager_root_get(m));
+   printf("%p %p\n", most_left, most_right);
+
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(_get_highest_redirect(m)), most_left);
+
+   efl_ui_focus_manager_reset_history(m);
+
+   efl_ui_focus_manager_setup_on_first_touch(m, EFL_UI_FOCUS_DIRECTION_PREVIOUS, efl_ui_focus_manager_root_get(m));
+   printf("%s\n", efl_name_get(efl_ui_focus_manager_focus_get(_get_highest_redirect(m))));
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(_get_highest_redirect(m)), most_right);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -456,4 +549,5 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, logical_shift);
     tcase_add_test(tc, root_redirect_chain);
     tcase_add_test(tc, root_redirect_chain_unset);
+    tcase_add_test(tc, first_touch_check);
 }
