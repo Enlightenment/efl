@@ -34,9 +34,9 @@ database_var_global_add(Eolian_Variable *var)
 static void
 database_var_constant_add(Eolian_Variable *var)
 {
-   eina_hash_set(_constants, var->full_name, var);
-   eina_hash_set(_constantsf, var->base.file, eina_list_append
-                 ((Eina_List*)eina_hash_find(_constantsf, var->base.file), var));
+   eina_hash_set(_state->unit.constants, var->full_name, var);
+   eina_hash_set(_state->constants_f, var->base.file, eina_list_append
+                 ((Eina_List*)eina_hash_find(_state->constants_f, var->base.file), var));
    database_decl_add(var->full_name, EOLIAN_DECL_VAR, var->base.file, var);
 }
 
