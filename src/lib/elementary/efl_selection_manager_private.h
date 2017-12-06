@@ -102,7 +102,8 @@ struct _Sel_Manager_Selection
 #ifdef HAVE_ELEMENTARY_WL2
    uint32_t selection_serial;
    uint32_t drag_serial;
-   Ecore_Wl2_Offer *offer;
+   Ecore_Wl2_Offer *sel_offer;
+   Ecore_Wl2_Offer *dnd_offer;
    Ecore_Event_Handler *offer_handler;
    Ecore_Wl2_Window *win;
 #endif
@@ -279,6 +280,7 @@ struct _Efl_Selection_Manager_Data
 #ifdef HAVE_ELEMENTARY_WL2
    Ecore_Event_Handler *send_handler;
    Ecore_Event_Handler *changed_handler;
+   Ecore_Event_Handler *end_handler;
    Ecore_Wl2_Display   *wl_display;
 #endif
    Efl_Promise *promise;

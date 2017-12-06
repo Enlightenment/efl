@@ -282,6 +282,7 @@ static Eina_Bool
 _drag_cancel_animate(void *data, double pos)
 {  /* Animation to "move back" drag-window */
    Sel_Manager_Seat_Selection *seat_sel = data;
+   sel_debug("in, pos: %f", pos);
    if (pos >= 0.99)
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -1129,6 +1130,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                   ecore_x_window_ignore_set(xdragwin, 0);
                   evas_object_del(seat_sel->drag_win);
                   seat_sel->drag_win = NULL;
+                  sel_debug("deleted drag_win");
                }
           }
 
@@ -1956,11 +1958,13 @@ _wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obje
    Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
 
+   sel_debug("In");
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
    if (!seat_sel) return;
    seat_sel->active_type = EFL_SELECTION_TYPE_DND;
    sel = seat_sel->sel;
 
+   sel_debug("checking drag_win: %p", seat_sel->drag_win);
    /* if we already have a drag, get out */
    if (seat_sel->drag_win) return;
 
@@ -2460,6 +2464,46 @@ _wl_selection_send(void *data, int type, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
+{
+   sel_debug("In");
+   Efl_Selection_Manager_Data *pd = data;
+   Ecore_Wl2_Event_Data_Source_End *ev;
+   Sel_Manager_Seat_Selection *seat_sel;
+   Sel_Manager_Selection *sel;
+   Ecore_Wl2_Window *win;
+
+   ev = event;
+   seat_sel = _sel_manager_seat_selection_init(pd, ev->seat);
+   sel = seat_sel->sel;
+   if (ev->serial != sel->drag_serial)
+    return ECORE_CALLBACK_RENEW;
+
+   efl_event_callback_call(seat_sel->drag_obj, EFL_DND_EVENT_DRAG_DONE, NULL);
+   if (seat_sel->drag_win)
+     {
+        if (!seat_sel->accept)
+          {
+             /* Commit animation when drag cancelled */
+             /* Record final position of dragwin, then do animation */
+             ecore_animator_timeline_add(0.3, _drag_cancel_animate, seat_sel->drag_win);
+          }
+        else
+          {
+             /* No animation drop was committed */
+             evas_object_del(seat_sel->drag_win);
+             seat_sel->drag_win = NULL;
+          }
+     }
+
+   seat_sel->accept = EINA_FALSE;
+   win = ecore_wl2_display_window_find(_elm_wl_display, ev->win);
+   ecore_wl2_input_ungrab(_wl_default_seat_get(win, NULL));
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static Ecore_Wl2_Input *
 _wl_default_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj)
 {
@@ -2557,7 +2601,7 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
    Sel_Manager_Selection *sel = data;
    ERR("in");
 
-   if (sel->offer != ev->offer) return ECORE_CALLBACK_PASS_ON;
+   if (sel->sel_offer != ev->offer) return ECORE_CALLBACK_PASS_ON;
 
    if (sel->data_func)
      {
@@ -2568,7 +2612,7 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
         sel_data.format = sel->format;
         sel_data.data = ev->data;
         sel_data.len = ev->len;
-        sel_data.action = _wl_to_elm(ecore_wl2_offer_action_get(sel->offer));
+        sel_data.action = _wl_to_elm(ecore_wl2_offer_action_get(sel->sel_offer));
         sel->data_func(sel->data_func_data,
                        sel->request_obj,
                        &sel_data);
@@ -2602,6 +2646,7 @@ static Eina_Bool
 _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
                                   Efl_Selection_Type type, Efl_Selection_Format format, Sel_Manager_Seat_Selection *seat_sel)
 {
+   sel_debug("In, format: %d", format);
    Sel_Manager_Selection *sel;
    Ecore_Wl2_Window *win;
    Ecore_Wl2_Input *input;
@@ -2631,18 +2676,10 @@ _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
             if (!ecore_wl2_offer_supports_mime(offer, sm_wl_convertion[i].translates[j])) continue;
 
             //we have found matching mimetypes
-            sel->offer = offer;
+            sel->sel_offer = offer;
             sel->format = sm_wl_convertion[i].format;
-            /*Selection_Ready *ready;
 
-            ready = calloc(1, sizeof(Selection_Ready));
-
-            ready->requestwidget = (Evas_Object *) obj;
-            ready->drop_cb = datacb;
-            ready->drop_cb_data = udata;
-            ready->offer = offer;
-            ready->format = sm_wl_convertion[i].format;*/
-
+            sel_debug("request type: %s", (char *)sm_wl_convertion[i].translates[j]);
             evas_object_event_callback_add(sel->request_obj, EVAS_CALLBACK_DEL,
                                            _wl_selection_receive_timeout, sel);
             sel->offer_handler = ecore_event_handler_add(ECORE_WL2_EVENT_OFFER_DATA_READY,
@@ -2653,6 +2690,7 @@ _wl_efl_sel_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
          }
      }
 
+   sel_debug("no type match");
    return EINA_FALSE;
 }
 
@@ -3377,7 +3415,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 
    ev = event;
    sel = seat_sel->sel;
-   offer = sel->offer;
+   offer = sel->dnd_offer;
 
    if (offer != ev->offer) return ECORE_CALLBACK_PASS_ON;
 
@@ -3396,7 +3434,6 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
                                                EVAS_CALLBACK_DEL,
                                                _wl_sel_obj_del2, sel);
            sel->request_obj = NULL;
-
      }
 
    ecore_wl2_offer_finish(ev->offer);
@@ -3421,7 +3458,7 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
    seat_sel->saved_types->y = ev->y;
    pd = seat_sel->pd;
    sel = seat_sel->sel;
-   sel->offer = ev->offer;
+   sel->dnd_offer = ev->offer;
 
    EINA_LIST_FOREACH(pd->drop_list, l, drop)
      {
@@ -4461,6 +4498,8 @@ _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Dat
                            _wl_selection_send, pd);
    pd->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
                            _wl_selection_changed, pd);
+   pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
+                                             _wl_dnd_end, pd);
 #endif
    return obj;
 }
@@ -4477,6 +4516,7 @@ _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data
 #ifdef HAVE_ELEMENTARY_WL2
    ecore_event_handler_del(pd->send_handler);
    ecore_event_handler_del(pd->changed_handler);
+   ecore_event_handler_del(pd->end_handler);
 #endif
    free(pd->atom_list);
    EINA_LIST_FREE(pd->seat_list, seat_sel)
