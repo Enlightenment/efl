@@ -33,6 +33,8 @@ Eina_Hash *_defereos = NULL;
 
 static Eolian_Unit *_cunit = NULL;
 
+Eolian *_state = NULL;
+
 static int _database_init_count = 0;
 
 static void
@@ -66,6 +68,7 @@ database_init()
    _parsingeos = eina_hash_string_small_new(NULL);
    _defereos   = eina_hash_string_small_new(NULL);
    _units      = eina_hash_stringshared_new(EINA_FREE_CB(database_unit_del));
+   _state = eolian_new();
    return ++_database_init_count;
 }
 
@@ -81,6 +84,7 @@ database_shutdown()
 
    if (_database_init_count == 0)
      {
+        eolian_free(_state);
         eina_hash_free(_classes   ); _classes    = NULL;
         eina_hash_free(_aliases   ); _aliases    = NULL;
         eina_hash_free(_structs   ); _structs    = NULL;
@@ -611,12 +615,12 @@ database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname)
      }
 
    unit->children   = eina_hash_stringshared_new(NULL);
-   unit->classes    = eina_hash_stringshared_new(NULL);
-   unit->globals    = eina_hash_stringshared_new(NULL);
-   unit->constants  = eina_hash_stringshared_new(NULL);
-   unit->aliases    = eina_hash_stringshared_new(NULL);
-   unit->structs    = eina_hash_stringshared_new(NULL);
-   unit->enums      = eina_hash_stringshared_new(NULL);
+   unit->classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
+   unit->globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   unit->constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
+   unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
+   unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
 
    if (fname)
      _cunit = unit;
