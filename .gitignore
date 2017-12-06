@@ -90,3 +90,4 @@ Session.vim
 .cproject
 .project
 /.settings/
+efl_libs.csv
