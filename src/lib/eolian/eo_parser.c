@@ -2537,8 +2537,8 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot, Eolian_Class **fcl)
    if (!_db_fill_ctors(cl))
      goto error;
 
-   eina_hash_set(_classes, cl->full_name, cl);
-   eina_hash_set(_classesf, cl->base.file, cl);
+   eina_hash_set(_state->unit.classes, cl->full_name, cl);
+   eina_hash_set(_state->classes_f, cl->base.file, cl);
    eolian_object_ref(&cl->base);
 
    if (fcl) *fcl = cl;

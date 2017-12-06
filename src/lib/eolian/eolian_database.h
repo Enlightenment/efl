@@ -31,13 +31,11 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-extern Eina_Hash *_classes;
 extern Eina_Hash *_aliases;
 extern Eina_Hash *_structs;
 extern Eina_Hash *_enums;
 extern Eina_Hash *_globals;
 extern Eina_Hash *_constants;
-extern Eina_Hash *_classesf;
 extern Eina_Hash *_aliasesf;
 extern Eina_Hash *_structsf;
 extern Eina_Hash *_enumsf;
@@ -59,6 +57,9 @@ extern Eina_Hash *_parsingeos;
 /* for deferred dependency parsing */
 extern Eina_Hash *_defereos;
 
+/* TODO: remove */
+extern Eolian *_state;
+
 struct _Eolian_Unit
 {
    Eolian_Unit   *parent;
@@ -74,6 +75,8 @@ struct _Eolian_Unit
 struct _Eolian
 {
    Eolian_Unit unit;
+
+   Eina_Hash *classes_f;
 };
 
 typedef struct _Eolian_Object
