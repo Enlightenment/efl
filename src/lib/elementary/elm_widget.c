@@ -3881,6 +3881,10 @@ _elm_widget_onscreen_is(Evas_Object *widget)
    if (eina_rectangle_is_empty(&r1))
      return EINA_FALSE;
 
+   // window does not have to check viewport and geometry
+   if (efl_isa(widget, EFL_ACCESS_WINDOW_INTERFACE))
+      return EINA_TRUE;
+
    // check if on canvas
    evas_output_viewport_get(evas, &r2.x, &r2.y, &r2.w, &r2.h);
    if (!eina_rectangles_intersect(&r1, &r2))
