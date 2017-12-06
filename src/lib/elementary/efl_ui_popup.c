@@ -75,6 +75,13 @@ _calc_align(Eo *obj)
      }
 }
 
+EOLIAN static void
+_efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Size2D size)
+{
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
+   _calc_align(obj);
+}
+
 static void
 _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -101,7 +108,7 @@ _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_U
 }
 
 EOLIAN static void
-_efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup_Align type)
+_efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd EINA_UNUSED, Efl_Ui_Popup_Align type)
 {
    pd->align = type;
    _calc_align(obj);
