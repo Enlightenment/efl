@@ -32,23 +32,21 @@ eolian_class_namespaces_get(const Eolian_Class *cl)
 }
 
 EAPI const Eolian_Class *
-eolian_class_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
-                         const char *class_name)
+eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(class_name);
-   Eolian_Class *cl = eina_hash_find(_state->unit.classes, shr);
+   Eolian_Class *cl = eina_hash_find(unit->state->unit.classes, shr);
    eina_stringshare_del(shr);
    return cl;
 }
 
 EAPI const Eolian_Class *
-eolian_class_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
-                         const char *file_name)
+eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(file_name);
-   Eolian_Class *cl = eina_hash_find(_state->classes_f, shr);
+   Eolian_Class *cl = eina_hash_find(unit->state->classes_f, shr);
    eina_stringshare_del(shr);
    return cl;
 }
@@ -61,9 +59,9 @@ eolian_class_type_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
-eolian_all_classes_get(const Eolian_Unit *unit EINA_UNUSED)
+eolian_all_classes_get(const Eolian_Unit *unit)
 {
-   return (_state ? eina_hash_iterator_data_new(_state->unit.classes) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->state->unit.classes) : NULL);
 }
 
 EAPI const Eolian_Documentation *

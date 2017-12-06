@@ -166,6 +166,8 @@ typedef struct _Eo_Lexer
    /* points to the current line being lexed, used by error messages to
     * display the current line with a caret at the respective column */
    const char  *stream_line;
+   /* a pointer to the state this lexer belongs to */
+   Eolian      *state;
    /* this is jumped to when an error happens */
    jmp_buf      err_jmp;
 
@@ -187,7 +189,7 @@ typedef struct _Eo_Lexer
 
 int         eo_lexer_init           (void);
 int         eo_lexer_shutdown       (void);
-Eo_Lexer   *eo_lexer_new            (const char *source);
+Eo_Lexer   *eo_lexer_new            (Eolian *state, const char *source);
 void        eo_lexer_free           (Eo_Lexer *ls);
 /* gets a regular token, singlechar or one of TOK_something */
 int         eo_lexer_get            (Eo_Lexer *ls);

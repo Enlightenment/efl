@@ -23,28 +23,28 @@ database_var_del(Eolian_Variable *var)
 }
 
 static void
-database_var_global_add(Eolian_Variable *var)
+database_var_global_add(Eolian *state, Eolian_Variable *var)
 {
-   eina_hash_set(_state->unit.globals, var->full_name, var);
-   eina_hash_set(_state->globals_f, var->base.file, eina_list_append
-                 ((Eina_List*)eina_hash_find(_state->globals_f, var->base.file), var));
+   eina_hash_set(state->unit.globals, var->full_name, var);
+   eina_hash_set(state->globals_f, var->base.file, eina_list_append
+                 ((Eina_List*)eina_hash_find(state->globals_f, var->base.file), var));
    database_decl_add(var->full_name, EOLIAN_DECL_VAR, var->base.file, var);
 }
 
 static void
-database_var_constant_add(Eolian_Variable *var)
+database_var_constant_add(Eolian *state, Eolian_Variable *var)
 {
-   eina_hash_set(_state->unit.constants, var->full_name, var);
-   eina_hash_set(_state->constants_f, var->base.file, eina_list_append
-                 ((Eina_List*)eina_hash_find(_state->constants_f, var->base.file), var));
+   eina_hash_set(state->unit.constants, var->full_name, var);
+   eina_hash_set(state->constants_f, var->base.file, eina_list_append
+                 ((Eina_List*)eina_hash_find(state->constants_f, var->base.file), var));
    database_decl_add(var->full_name, EOLIAN_DECL_VAR, var->base.file, var);
 }
 
 void
-database_var_add(Eolian_Variable *var)
+database_var_add(Eolian *state, Eolian_Variable *var)
 {
    if (var->type == EOLIAN_VAR_GLOBAL)
-     database_var_global_add(var);
+     database_var_global_add(state, var);
    else
-     database_var_constant_add(var);
+     database_var_constant_add(state, var);
 }

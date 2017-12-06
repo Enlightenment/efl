@@ -261,7 +261,7 @@ enum Doc_Tokens {
 };
 
 static void
-doc_ref_class(const char *cname)
+doc_ref_class(Eo_Lexer *ls, const char *cname)
 {
    size_t clen = strlen(cname);
    char *buf = alloca(clen + 4);
@@ -275,7 +275,7 @@ doc_ref_class(const char *cname)
           *p = tolower(*p);
      }
    memcpy(buf + clen, ".eo", sizeof(".eo"));
-   const char *eop = eina_hash_find(_state->filenames_eo, buf);
+   const char *eop = eina_hash_find(ls->state->filenames_eo, buf);
    if (!eop)
      return;
    eina_hash_set(_defereos, buf, eop);
@@ -303,14 +303,14 @@ doc_ref(Eo_Lexer *ls)
    buf[rlen] = '\0';
 
    /* actual full class name */
-   doc_ref_class(buf);
+   doc_ref_class(ls, buf);
 
    /* method name at the end */
    char *end = strrchr(buf, '.');
    if (!end)
      return;
    *end = '\0';
-   doc_ref_class(buf);
+   doc_ref_class(ls, buf);
 
    /* .get or .set at the end, handle possible property */
    if (strcmp(end + 1, "get") && strcmp(end + 1, "set"))
@@ -319,7 +319,7 @@ doc_ref(Eo_Lexer *ls)
    if (!end)
      return;
    *end = '\0';
-   doc_ref_class(buf);
+   doc_ref_class(ls, buf);
 }
 
 static int
@@ -1014,7 +1014,7 @@ get_filename(Eo_Lexer *ls)
 }
 
 static void
-eo_lexer_set_input(Eo_Lexer *ls, const char *source)
+eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
 {
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
@@ -1023,6 +1023,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
         longjmp(ls->err_jmp, EINA_TRUE);
      }
    ls->lookahead.token = -1;
+   ls->state           = state;
    ls->buff            = eina_strbuf_new();
    ls->handle          = f;
    ls->stream          = eina_file_map_all(f, EINA_FILE_RANDOM);
@@ -1045,7 +1046,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    next_char(ls);
 
    Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
-   database_unit_init(ncunit, ls->filename);
+   database_unit_init(state, ncunit, ls->filename);
    eina_hash_add(_units, ls->filename, ncunit);
 }
 
@@ -1112,13 +1113,13 @@ eo_lexer_free(Eo_Lexer *ls)
 }
 
 Eo_Lexer *
-eo_lexer_new(const char *source)
+eo_lexer_new(Eolian *state, const char *source)
 {
    volatile Eo_Lexer *ls = calloc(1, sizeof(Eo_Lexer));
 
    if (!setjmp(((Eo_Lexer *)(ls))->err_jmp))
      {
-        eo_lexer_set_input((Eo_Lexer *) ls, source);
+        eo_lexer_set_input((Eo_Lexer *) ls, state, source);
         return (Eo_Lexer *) ls;
      }
    eo_lexer_free((Eo_Lexer *) ls);

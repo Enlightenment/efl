@@ -44,11 +44,9 @@ extern Eina_Hash *_parsingeos;
 /* for deferred dependency parsing */
 extern Eina_Hash *_defereos;
 
-/* TODO: remove */
-extern Eolian *_state;
-
 struct _Eolian_Unit
 {
+   Eolian        *state;
    Eolian_Unit   *parent;
    Eina_Hash     *children;
    Eina_Hash     *classes;
@@ -326,21 +324,21 @@ int database_init(void);
 int database_shutdown(void);
 
 char *database_class_to_filename(const char *cname);
-Eina_Bool database_validate(const Eolian_Unit *src);
+Eina_Bool database_validate(Eolian *state, const Eolian_Unit *src);
 
 void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
 
 void database_doc_del(Eolian_Documentation *doc);
 
-void database_unit_init(Eolian_Unit *unit, Eina_Stringshare *fname);
+void database_unit_init(Eolian *state, Eolian_Unit *unit, Eina_Stringshare *fname);
 void database_unit_del(Eolian_Unit *unit);
 
 /* types */
 
-void database_type_add(Eolian_Typedecl *def);
-void database_struct_add(Eolian_Typedecl *tp);
-void database_enum_add(Eolian_Typedecl *tp);
+void database_type_add(Eolian *state, Eolian_Typedecl *def);
+void database_struct_add(Eolian *state, Eolian_Typedecl *tp);
+void database_enum_add(Eolian *state, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
@@ -358,7 +356,7 @@ void database_expr_print(Eolian_Expression *expr);
 /* variables */
 
 void database_var_del(Eolian_Variable *var);
-void database_var_add(Eolian_Variable *var);
+void database_var_add(Eolian *state, Eolian_Variable *var);
 
 /* classes */
 void database_class_del(Eolian_Class *cl);

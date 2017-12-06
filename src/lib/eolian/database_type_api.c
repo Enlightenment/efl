@@ -7,93 +7,87 @@
 #include "eo_lexer.h"
 
 EAPI const Eolian_Typedecl *
-eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
-                                  const char *name)
+eolian_typedecl_alias_get_by_name(const Eolian_Unit *unit, const char *name)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Typedecl *tp = eina_hash_find(_state->unit.aliases, shr);
+   Eolian_Typedecl *tp = eina_hash_find(unit->state->unit.aliases, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
    return tp;
 }
 
 EAPI const Eolian_Typedecl *
-eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
-                                   const char *name)
+eolian_typedecl_struct_get_by_name(const Eolian_Unit *unit, const char *name)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Typedecl *tp = eina_hash_find(_state->unit.structs, shr);
+   Eolian_Typedecl *tp = eina_hash_find(unit->state->unit.structs, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
    return tp;
 }
 
 EAPI const Eolian_Typedecl *
-eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
-                                 const char *name)
+eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit, const char *name)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Typedecl *tp = eina_hash_find(_state->unit.enums, shr);
+   Eolian_Typedecl *tp = eina_hash_find(unit->state->unit.enums, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
    return tp;
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
-                                    const char *fname)
+eolian_typedecl_aliases_get_by_file(const Eolian_Unit *unit, const char *fname)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(_state->aliases_f, shr);
+   Eina_List *l = eina_hash_find(unit->state->aliases_f, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
-                                    const char *fname)
+eolian_typedecl_structs_get_by_file(const Eolian_Unit *unit, const char *fname)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(_state->structs_f, shr);
+   Eina_List *l = eina_hash_find(unit->state->structs_f, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
-                                  const char *fname)
+eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit, const char *fname)
 {
-   if (!_state) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(_state->enums_f, shr);
+   Eina_List *l = eina_hash_find(unit->state->enums_f, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_aliases_get(const Eolian_Unit *unit EINA_UNUSED)
+eolian_typedecl_all_aliases_get(const Eolian_Unit *unit)
 {
-   return (_state ? eina_hash_iterator_data_new(_state->unit.aliases) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->state->unit.aliases) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_structs_get(const Eolian_Unit *unit EINA_UNUSED)
+eolian_typedecl_all_structs_get(const Eolian_Unit *unit)
 {
-   return (_state ? eina_hash_iterator_data_new(_state->unit.structs) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->state->unit.structs) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_typedecl_all_enums_get(const Eolian_Unit *unit EINA_UNUSED)
+eolian_typedecl_all_enums_get(const Eolian_Unit *unit)
 {
-   return (_state ? eina_hash_iterator_data_new(_state->unit.enums) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->state->unit.enums) : NULL);
 }
 
 EAPI Eolian_Type_Type

@@ -513,7 +513,7 @@ _var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 Eina_Bool
-database_validate(const Eolian_Unit *src)
+database_validate(Eolian *state, const Eolian_Unit *src)
 {
    Eolian_Class *cl;
 
@@ -528,23 +528,23 @@ database_validate(const Eolian_Unit *src)
 
    Cb_Ret rt = { src, EINA_TRUE };
 
-   eina_hash_foreach(_state->unit.aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(state->unit.aliases, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_state->unit.structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(state->unit.structs, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_state->unit.enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(state->unit.enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_state->unit.globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(state->unit.globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_state->unit.constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(state->unit.constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
