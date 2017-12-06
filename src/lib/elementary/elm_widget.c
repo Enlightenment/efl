@@ -3882,7 +3882,7 @@ _elm_widget_onscreen_is(Evas_Object *widget)
      return EINA_FALSE;
 
    // window does not have to check viewport and geometry
-   if (efl_isa(widget, EFL_ACCESS_WINDOW_INTERFACE))
+   if (efl_isa(widget, EFL_UI_WIN_CLASS))
       return EINA_TRUE;
 
    // check if on canvas
