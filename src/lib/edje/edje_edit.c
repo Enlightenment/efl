@@ -39,9 +39,9 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 /* Get ed(Edje*) from obj(Evas_Object*) */
 #define GET_ED_OR_RETURN(RET)          \
   Edje *ed;                            \
-  if (!efl_isa(obj, EDJE_OBJECT_CLASS)) \
+  if (!efl_isa(obj, EFL_CANVAS_LAYOUT_CLASS)) \
     return RET;                        \
-  ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
+  ed = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_CLASS);
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
 #define GET_RP_OR_RETURN(RET)         \
@@ -298,7 +298,7 @@ edje_edit_object_add(Evas *evas)
 EOLIAN static Eo *
 _edje_edit_efl_object_constructor(Eo *obj, Edje_Edit *eed)
 {
-   eed->base = efl_data_ref(obj, EDJE_OBJECT_CLASS);
+   eed->base = efl_data_ref(obj, EFL_CANVAS_LAYOUT_CLASS);
 
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
@@ -1145,7 +1145,7 @@ _delete_play_actions(Evas_Object *obj, const char *name, int action_type, Eet_Fi
           continue;
 
         eeo = edje_edit_object_add(ed->base.evas);
-        if (!efl_isa(eeo, EDJE_OBJECT_CLASS))
+        if (!efl_isa(eeo, EFL_CANVAS_LAYOUT_CLASS))
           return EINA_FALSE;
 
         if (!edje_object_file_set(eeo, ed->file->path, pce->entry))
@@ -1161,7 +1161,7 @@ _delete_play_actions(Evas_Object *obj, const char *name, int action_type, Eet_Fi
              continue;
           }
 
-        eed = efl_data_scope_get(eeo, EDJE_OBJECT_CLASS);
+        eed = efl_data_scope_get(eeo, EFL_CANVAS_LAYOUT_CLASS);
         for (i = 0; i < eed->collection->patterns.table_programs_size; i++)
           {
              Edje_Program *program;

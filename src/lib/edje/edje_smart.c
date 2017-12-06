@@ -7,7 +7,7 @@
 # undef MY_CLASS
 #endif
 
-#define MY_CLASS             EDJE_OBJECT_CLASS
+#define MY_CLASS             EFL_CANVAS_LAYOUT_CLASS
 
 #define MY_CLASS_NAME        "Edje"
 #define MY_CLASS_NAME_LEGACY "edje"
@@ -24,7 +24,7 @@ edje_object_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_edje_object_efl_object_constructor(Eo *obj, Edje *ed)
+_efl_canvas_layout_efl_object_constructor(Eo *obj, Edje *ed)
 {
    Eo *parent;
    Evas *e;
@@ -48,7 +48,7 @@ _edje_object_efl_object_constructor(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
+_efl_canvas_layout_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 {
    efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
    eina_strbuf_append_printf(sb, ":file='%s':group='%s'",
@@ -57,7 +57,7 @@ _edje_object_efl_object_debug_name_override(Eo *obj, Edje *ed, Eina_Strbuf *sb)
 }
 
 EOLIAN static void
-_edje_object_efl_object_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Efl_Dbg_Info *root) EINA_ARG_NONNULL(3)
+_efl_canvas_layout_efl_object_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Efl_Dbg_Info *root) EINA_ARG_NONNULL(3)
 {
    efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
    Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
@@ -106,7 +106,7 @@ _edje_size_class_free(void *data)
 
 /* Private Routines */
 EOLIAN static void
-_edje_object_efl_canvas_group_group_add(Eo *obj, Edje *ed)
+_efl_canvas_layout_efl_canvas_group_group_add(Eo *obj, Edje *ed)
 {
    Evas *tev = evas_object_evas_get(obj);
 
@@ -130,7 +130,7 @@ _edje_object_efl_canvas_group_group_add(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
+_efl_canvas_layout_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 {
    _edje_block_violate(ed);
    ed->delete_me = 1;
@@ -155,7 +155,7 @@ _edje_object_efl_canvas_group_group_del(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_gfx_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
+_efl_canvas_layout_efl_gfx_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
 {
    unsigned short i;
 
@@ -250,7 +250,7 @@ _edje_limit_get(Edje *ed, Edje_Limit **limits, unsigned int length, Evas_Coord s
 }
 
 EOLIAN static void
-_edje_object_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
+_efl_canvas_layout_efl_gfx_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
@@ -334,7 +334,7 @@ _edje_object_hide(Eo *obj, Edje *ed)
 }
 
 EOLIAN static void
-_edje_object_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
+_efl_canvas_layout_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -344,7 +344,7 @@ _edje_object_efl_gfx_visible_set(Eo *obj, Edje *ed, Eina_Bool vis)
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_object_no_render_set(Eo *obj, Edje *ed, Eina_Bool enable)
+_efl_canvas_layout_efl_canvas_object_no_render_set(Eo *obj, Edje *ed, Eina_Bool enable)
 {
    Eina_List *l;
    Edje *edg;
@@ -358,13 +358,13 @@ _edje_object_efl_canvas_object_no_render_set(Eo *obj, Edje *ed, Eina_Bool enable
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *ed)
 {
    _edje_recalc_do(ed);
 }
 
 EOLIAN static Eina_Bool
-_edje_object_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
+_efl_canvas_layout_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
                                const Eina_File *f, const char *key)
 {
    Eina_Bool ret;
@@ -384,7 +384,7 @@ _edje_object_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
 }
 
 EOLIAN static void
-_edje_object_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
+_efl_canvas_layout_efl_file_mmap_get(Eo *obj EINA_UNUSED, Edje *pd,
                                const Eina_File **f, const char **key)
 {
    if (f) *f = pd->file ? pd->file->f : NULL;
@@ -410,7 +410,7 @@ edje_object_file_get(const Edje_Object *obj, const char **file, const char **gro
 }
 
 EOLIAN static void
-_edje_object_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
+_efl_canvas_layout_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
 {
    efl_canvas_object_paragraph_direction_set(efl_super(obj, MY_CLASS), dir);
 
@@ -421,7 +421,7 @@ _edje_object_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_B
 }
 
 EOLIAN static void
-_edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs, const char *key, void *data)
+_efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs, const char *key, void *data)
 {
    if (!obs) return;
 
@@ -471,13 +471,13 @@ _edje_object_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object *obs,
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_player_playable_get(Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_player_playable_get(Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN void
-_edje_object_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
+_efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
 {
    double t;
    Eina_List *l;
@@ -514,7 +514,7 @@ _edje_object_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed) return EINA_FALSE;
    if (ed->delete_me) return EINA_FALSE;
@@ -524,25 +524,25 @@ _edje_object_efl_player_play_get(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN void
-_edje_object_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
+_efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
 {
    if (speed <= 0.0) speed = 1.0;
    pd->duration_scale = 1.0/speed;
 }
 
 EOLIAN double
-_edje_object_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_play_speed_get(Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }
 
 /* Internal EO APIs and hidden overrides */
 
-#define EDJE_OBJECT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(edje_object), \
-   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _edje_object_efl_object_dbg_info_get)
+#define EFL_CANVAS_LAYOUT_EXTRA_OPS \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_layout), \
+   EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_layout_efl_object_dbg_info_get)
 
-#include "edje_object.eo.c"
+#include "efl_canvas_layout.eo.c"
 #include "edje_global.eo.c"
 #include "efl_layout_calc.eo.c"
 #include "efl_layout_signal.eo.c"

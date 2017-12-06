@@ -40,7 +40,7 @@
 #endif
 
 // auto_unref
-#define EDJE_OBJECT_BETA
+#define EFL_CANVAS_LAYOUT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
 

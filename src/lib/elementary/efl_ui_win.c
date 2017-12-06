@@ -8330,7 +8330,7 @@ elm_win_resize_object_add(Eo *obj, Evas_Object *subobj)
    // Little hack for E
    if (evas_obj_box_count(sd->legacy.box) > 0)
      sd->single_edje_content = 0;
-   else if (efl_isa(subobj, EDJE_OBJECT_CLASS))
+   else if (efl_isa(subobj, EFL_CANVAS_LAYOUT_CLASS))
      sd->single_edje_content = 1;
 
    ret  = elm_widget_sub_object_add(obj, subobj);

@@ -155,7 +155,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
    Evas_Coord x = 0, y = 0, w = 1, h = 1;
 
-   if (efl_isa(img, EDJE_OBJECT_CLASS))
+   if (efl_isa(img, EFL_CANVAS_LAYOUT_CLASS))
      {
         x = sd->img_x;
         y = sd->img_y;
@@ -1257,7 +1257,7 @@ _efl_ui_image_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data 
 {
    int tw, th;
 
-   if (efl_isa(sd->img, EDJE_OBJECT_CLASS))
+   if (efl_isa(sd->img, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);

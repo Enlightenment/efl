@@ -238,7 +238,7 @@ _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
 }
 
 EOLIAN void
-_edje_object_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
+_efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
 {
    const char *lookup;
    char *signal;
@@ -260,7 +260,7 @@ _edje_object_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
 }
 
 EOLIAN const char *
-_edje_object_efl_ui_base_language_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_base_language_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed->language)
      return _edje_language;
@@ -364,7 +364,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 }
 
 EOLIAN void
-_edje_object_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
+_efl_canvas_layout_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
    Evas_Object *o;
@@ -390,7 +390,7 @@ _edje_object_efl_gfx_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 }
 
 EOLIAN double
-_edje_object_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_gfx_scale_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return TO_DOUBLE(ed->scale);
 }
@@ -406,7 +406,7 @@ edje_object_base_scale_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_ui_base_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_base_mirrored_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->is_rtl;
 }
@@ -422,7 +422,7 @@ _edje_object_orientation_inform(Evas_Object *obj)
 }
 
 EOLIAN void
-_edje_object_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
+_efl_canvas_layout_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
    unsigned short i;
 
@@ -450,7 +450,7 @@ _edje_object_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 }
 
 EOLIAN const char *
-_edje_object_efl_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
+_efl_canvas_layout_efl_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, const char *key)
 {
    if (!key) return NULL;
    if (!ed->collection) return NULL;
@@ -460,7 +460,7 @@ _edje_object_efl_layout_group_group_data_get(Eo *obj EINA_UNUSED, Edje *ed, cons
 }
 
 EOLIAN int
-_edje_object_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -478,7 +478,7 @@ _edje_object_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN int
-_edje_object_efl_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_thaw(Eo *obj EINA_UNUSED, Edje *ed)
 {
    unsigned short i;
 
@@ -754,7 +754,7 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
 
    if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
 
-   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_get(o, EFL_CANVAS_LAYOUT_CLASS);
    if (!ed) return EINA_FALSE;
 
    /*
@@ -839,7 +839,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_color_class_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a)
+_efl_canvas_layout_efl_gfx_color_class_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a)
 {
    Eina_Bool int_ret;
    Eina_Bool need_update;
@@ -887,7 +887,7 @@ edje_object_color_class_get(const Evas_Object *obj, const char *color_class, int
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
+_efl_canvas_layout_efl_gfx_color_class_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class, Efl_Gfx_Color_Class_Layer layer, int *r, int *g, int *b, int *a)
 {
    Edje_Color_Class *cc;
 
@@ -906,7 +906,7 @@ edje_objcet_color_class_description_get(const Evas_Object *obj, const char *colo
 }
 
 EOLIAN const char *
-_edje_object_efl_gfx_color_class_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+_efl_canvas_layout_efl_gfx_color_class_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
    return cc ? cc->desc : NULL;
@@ -919,7 +919,7 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 }
 
 EOLIAN void
-_edje_object_efl_gfx_color_class_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+_efl_canvas_layout_efl_gfx_color_class_color_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
 {
    Edje_Color_Class *cc = NULL;
    unsigned short i;
@@ -958,7 +958,7 @@ edje_object_color_class_clear(const Evas_Object *obj)
 }
 
 EOLIAN void
-_edje_object_efl_gfx_color_class_color_class_clear(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_gfx_color_class_color_class_clear(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Edje_List_Foreach_Data fdata;
    Edje_Color_Class *cc = NULL;
@@ -1212,7 +1212,7 @@ _edje_text_class_active_iterator_next(Eina_Iterator *it, void **data)
 
    if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
 
-   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_get(o, EFL_CANVAS_LAYOUT_CLASS);
    if (!ed) return EINA_FALSE;
 
    /*
@@ -1282,7 +1282,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Efl_Font_Size size)
+_efl_canvas_layout_efl_gfx_text_class_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char *font, Efl_Font_Size size)
 {
    Edje_Text_Class *tc = NULL;
    unsigned short i;
@@ -1352,7 +1352,7 @@ edje_object_text_class_get(const Evas_Object *obj, const char *text_class, const
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Efl_Font_Size *size)
+_efl_canvas_layout_efl_gfx_text_class_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Efl_Font_Size *size)
 {
    Edje_Text_Class *tc = _edje_text_class_find(ed, text_class);
 
@@ -1378,7 +1378,7 @@ edje_object_text_class_del(Evas_Object *obj, const char *text_class)
 }
 
 EOLIAN void
-_edje_object_efl_gfx_text_class_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
+_efl_canvas_layout_efl_gfx_text_class_text_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class)
 {
    Edje_Text_Class *tc = NULL;
    unsigned short i;
@@ -1622,7 +1622,7 @@ _edje_size_class_active_iterator_next(Eina_Iterator *it, void **data)
 
    if (!eina_iterator_next(tuple->data, (void **)&o)) return EINA_FALSE;
 
-   ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_get(o, EFL_CANVAS_LAYOUT_CLASS);
    if (!ed) return EINA_FALSE;
 
    /*
@@ -1692,7 +1692,7 @@ edje_object_size_class_set(Evas_Object *obj, const char *size_class, Evas_Coord 
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_size_class_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
+_efl_canvas_layout_efl_gfx_size_class_size_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh)
 {
    Edje_Size_Class *sc = NULL;
    unsigned short i;
@@ -1760,7 +1760,7 @@ edje_object_size_class_get(const Evas_Object *obj, const char *size_class, Evas_
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
+_efl_canvas_layout_efl_gfx_size_class_size_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje_Size_Class *sc = _edje_size_class_find(ed, size_class);
 
@@ -1790,7 +1790,7 @@ edje_object_size_class_del(Evas_Object *obj, const char *size_class)
 }
 
 EOLIAN void
-_edje_object_efl_gfx_size_class_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
+_efl_canvas_layout_efl_gfx_size_class_size_class_del(Eo *obj EINA_UNUSED, Edje *ed, const char *size_class)
 {
    Edje_Size_Class *sc = NULL;
    unsigned short i;
@@ -1907,7 +1907,7 @@ edje_object_part_object_get(const Eo *obj, const char *part)
 }
 
 EOLIAN void
-_edje_object_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
+_efl_canvas_layout_item_provider_set(Eo *obj EINA_UNUSED, Edje *ed, Edje_Item_Provider_Cb func, void *data)
 {
    ed->item_provider.func = func;
    ed->item_provider.data = data;
@@ -2151,7 +2151,7 @@ edje_object_part_text_select_all(const Eo *obj, const char *part)
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_efl_canvas_layout_part_text_cursor_geometry_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Edje_Real_Part *rp;
 
@@ -2231,7 +2231,7 @@ edje_object_part_text_select_extend(const Eo *obj, const char *part)
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_cursor_next(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_next(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2247,7 +2247,7 @@ _edje_object_part_text_cursor_next(Eo *obj EINA_UNUSED, Edje *ed, const char *pa
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_cursor_prev(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_prev(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2263,7 +2263,7 @@ _edje_object_part_text_cursor_prev(Eo *obj EINA_UNUSED, Edje *ed, const char *pa
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_cursor_up(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_up(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2279,7 +2279,7 @@ _edje_object_part_text_cursor_up(Eo *obj EINA_UNUSED, Edje *ed, const char *part
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_cursor_down(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_down(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2295,7 +2295,7 @@ _edje_object_part_text_cursor_down(Eo *obj EINA_UNUSED, Edje *ed, const char *pa
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2309,7 +2309,7 @@ _edje_object_part_text_cursor_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const cha
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2323,7 +2323,7 @@ _edje_object_part_text_cursor_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char 
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_copy(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor src, Edje_Cursor dst)
+_efl_canvas_layout_part_text_cursor_copy(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor src, Edje_Cursor dst)
 {
    Edje_Real_Part *rp;
 
@@ -2337,7 +2337,7 @@ _edje_object_part_text_cursor_copy(Eo *obj EINA_UNUSED, Edje *ed, const char *pa
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2351,7 +2351,7 @@ _edje_object_part_text_cursor_line_begin_set(Eo *obj EINA_UNUSED, Edje *ed, cons
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    Edje_Real_Part *rp;
 
@@ -2365,7 +2365,7 @@ _edje_object_part_text_cursor_line_end_set(Eo *obj EINA_UNUSED, Edje *ed, const 
 }
 
 EOLIAN Eina_Bool
-_edje_object_part_text_cursor_coord_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, Evas_Coord x, Evas_Coord y)
+_efl_canvas_layout_part_text_cursor_coord_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, Evas_Coord x, Evas_Coord y)
 {
    Edje_Real_Part *rp;
 
@@ -2381,7 +2381,7 @@ _edje_object_part_text_cursor_coord_set(Eo *obj EINA_UNUSED, Edje *ed, const cha
 }
 
 EOLIAN void
-_edje_object_part_text_cursor_pos_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, int pos)
+_efl_canvas_layout_part_text_cursor_pos_set(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur, int pos)
 {
    Edje_Real_Part *rp;
 
@@ -2395,7 +2395,7 @@ _edje_object_part_text_cursor_pos_set(Eo *obj EINA_UNUSED, Edje *ed, const char 
 }
 
 EOLIAN int
-_edje_object_part_text_cursor_pos_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
+_efl_canvas_layout_part_text_cursor_pos_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Edje_Cursor cur)
 {
    int ret;
    Edje_Real_Part *rp;
@@ -3230,7 +3230,7 @@ _swallow_real_part_get(Evas_Object *obj_swallow)
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
+_efl_canvas_layout_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -3290,7 +3290,7 @@ _edje_efl_content_content_get(Edje *ed, const char *part)
 }
 
 EOLIAN Eo *
-_edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
+_efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
 
@@ -3316,7 +3316,7 @@ _edje_object_efl_part_part(Eo *obj, Edje *ed, const char *part)
 }
 
 EOLIAN Eina_Size2D
-_edje_object_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    if ((!ed) || (!ed->collection))
      return EINA_SIZE2D(0, 0);
@@ -3325,7 +3325,7 @@ _edje_object_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN Eina_Size2D
-_edje_object_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED)
+_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED)
 {
    Eina_Size2D sz;
 
@@ -3344,7 +3344,7 @@ _edje_object_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed E
 }
 
 EOLIAN void
-_edje_object_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 {
    int pf, pf2;
 
@@ -3367,7 +3367,7 @@ _edje_object_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN Eina_Rectangle
-_edje_object_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
    Evas_Coord xx2 = 0, yy2 = 0, w = 0, h = 0;
@@ -3407,7 +3407,7 @@ _edje_object_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN Eina_Size2D
-_edje_object_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
+_efl_canvas_layout_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Edje *ed, Eina_Size2D restricted)
 {
    const int CALC_COUNT_LIMIT = 255;
 
@@ -4395,7 +4395,7 @@ _part_iterator_free(Part_Iterator *it)
 }
 
 EOLIAN Eina_Iterator *
-_edje_object_access_part_iterate(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_access_part_iterate(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Part_Iterator *it;
 
@@ -4422,7 +4422,7 @@ edje_object_access_part_list_get(const Edje_Object *obj)
    Eina_Iterator *it;
    const char *str;
 
-   it = edje_obj_access_part_iterate((Eo *) obj);
+   it = efl_canvas_layout_access_part_iterate((Eo *) obj);
    EINA_ITERATOR_FOREACH(it, str)
      access_parts = eina_list_append(access_parts, str);
    eina_iterator_free(it);
@@ -4792,7 +4792,7 @@ _edje_perspective_obj_del(void *data, EINA_UNUSED Evas *e, EINA_UNUSED Evas_Obje
      {
         Edje *ed;
 
-        ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+        ed = efl_data_scope_get(o, EFL_CANVAS_LAYOUT_CLASS);
         if (!ed) continue;
         ed->persp = NULL;
         ed->dirty = EINA_TRUE;
@@ -4845,7 +4845,7 @@ edje_perspective_set(Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Co
      {
         Edje *ed;
 
-        ed = efl_data_scope_get(o, EDJE_OBJECT_CLASS);
+        ed = efl_data_scope_get(o, EFL_CANVAS_LAYOUT_CLASS);
         if (!ed) continue;
         if (!ed->persp)
           {
@@ -5040,7 +5040,7 @@ edje_object_preload(Eo *obj, Eina_Bool cancel)
 }
 
 EOLIAN void
-_edje_object_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
+_efl_canvas_layout_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool update)
 {
    if (!ed) return;
    if (ed->update_hints == !!update) return;
@@ -5054,7 +5054,7 @@ _edje_object_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Edj
 }
 
 EOLIAN Eina_Bool
-_edje_object_efl_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_layout_calc_calc_auto_update_hints_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->update_hints;
 }
@@ -5597,9 +5597,9 @@ _edje_fetch(const Evas_Object *obj)
 {
    Edje *ed;
 
-   if (!obj || !efl_isa(obj, EDJE_OBJECT_CLASS))
+   if (!obj || !efl_isa(obj, EFL_CANVAS_LAYOUT_CLASS))
      return NULL;
-   ed = efl_data_scope_get(obj, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_get(obj, EFL_CANVAS_LAYOUT_CLASS);
    if ((ed) && (ed->delete_me)) return NULL;
    return ed;
 }
@@ -5693,7 +5693,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
    rp->typedata.swallow->swallow_params.min.h = 0;
    rp->typedata.swallow->swallow_params.max.w = -1;
    rp->typedata.swallow->swallow_params.max.h = -1;
-   if (efl_isa(rp->typedata.swallow->swallowed_object, EDJE_OBJECT_CLASS))
+   if (efl_isa(rp->typedata.swallow->swallowed_object, EFL_CANVAS_LAYOUT_CLASS))
      {
         Evas_Coord w = 0, h = 0;
 

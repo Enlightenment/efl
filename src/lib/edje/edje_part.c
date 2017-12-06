@@ -42,7 +42,7 @@ _part_reuse_error(Efl_Canvas_Layout_Part_Data *pd)
 
    // TODO: Enable full debug only for eo_debug?
    // Don't trust pd->ed as it may be invalid now.
-   ed = efl_data_scope_safe_get(pd->obj, EDJE_OBJECT_CLASS);
+   ed = efl_data_scope_safe_get(pd->obj, EFL_CANVAS_LAYOUT_CLASS);
    if (!ed)
      {
         ERR("A previous misuse of efl_part has been detected. Handles returned "

@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define EFL_GFX_FILTER_BETA
-#define EDJE_OBJECT_BETA
+#define EFL_CANVAS_LAYOUT_BETA
 
 #include <Eina.h>
 #include <Edje.h>
@@ -362,13 +362,13 @@ START_TEST(edje_test_swallows)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
 
-   ly = efl_add(EDJE_OBJECT_CLASS, evas);
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
 
    fail_unless(edje_object_part_exists(ly, "swallow"));
 
 
-   o1 = efl_add(EDJE_OBJECT_CLASS, ly);
+   o1 = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
@@ -378,7 +378,7 @@ START_TEST(edje_test_swallows)
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
-   o2 = efl_add(EDJE_OBJECT_CLASS, ly);
+   o2 = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
    fail_if(!edje_object_part_swallow(ly, "swallow", o2));
    ck_assert_ptr_eq(efl_parent_get(o2), ly);
    /* o1 is deleted at this point. */
@@ -393,13 +393,13 @@ START_TEST(edje_test_swallows_eoapi)
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *ly, *o1, *o2;
 
-   ly = efl_add(EDJE_OBJECT_CLASS, evas);
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
 
    fail_unless(edje_object_part_exists(ly, "swallow"));
 
 
-   o1 = efl_add(EDJE_OBJECT_CLASS, ly);
+   o1 = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
@@ -409,7 +409,7 @@ START_TEST(edje_test_swallows_eoapi)
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
-   o2 = efl_add(EDJE_OBJECT_CLASS, ly);
+   o2 = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o2));
    ck_assert_ptr_eq(efl_parent_get(o2), ly);
    /* o1 is deleted at this point. */
@@ -433,7 +433,7 @@ START_TEST(edje_test_access)
    fail_unless(edje_object_file_set(obj, test_layout_get("test_layout.edj"), "test_group"));
 
    /* eo api */
-   it = edje_obj_access_part_iterate(obj);
+   it = efl_canvas_layout_access_part_iterate(obj);
    fail_if(!it);
 
    EINA_ITERATOR_FOREACH(it, name)
@@ -825,7 +825,7 @@ START_TEST(edje_test_message_send_eo)
 
    evas = EDJE_TEST_INIT_EVAS();
 
-   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+   obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added, test_layout_get("test_messages.edj"), "test_group"));
 
    // FIXME: EO API HERE
@@ -882,7 +882,7 @@ START_TEST(edje_test_signals)
 
    evas = EDJE_TEST_INIT_EVAS();
 
-   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+   obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added, test_layout_get("test_signals.edj"), "level1"),
                  efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),
                  efl_gfx_visible_set(efl_added, 1));
@@ -925,7 +925,7 @@ START_TEST(edje_test_signal_callback_del_full)
 
    evas = EDJE_TEST_INIT_EVAS();
 
-   obj = efl_add(EDJE_OBJECT_CLASS, evas,
+   obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added,
                  test_layout_get("test_signal_callback_del_full.edj"), "test"),
                  efl_gfx_size_set(efl_added, EINA_SIZE2D(320, 240)),

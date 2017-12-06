@@ -111,7 +111,7 @@ main_delete_request(Ecore_Evas *ee EINA_UNUSED)
 static void
 bg_setup(void)
 {
-   o_bg = efl_add(EDJE_OBJECT_CLASS, evas);
+   o_bg = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    efl_file_set(o_bg, theme_file, "background");
    efl_gfx_position_set(o_bg, EINA_POSITION2D(0, 0));
    efl_gfx_size_set(o_bg, EINA_SIZE2D(startw,  starth));
@@ -621,7 +621,7 @@ init_video_object(const char *module_filename, const char *filename)
    fd = calloc(1, sizeof(Frame_Data));
    if (!fd) exit(1);
 
-   oe = efl_add(EDJE_OBJECT_CLASS, evas);
+   oe = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    efl_event_callback_add(oe, EFL_EVENT_DEL, _oe_free_cb, fd);
    efl_key_data_set(oe, "frame_data", fd);
    efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");

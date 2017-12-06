@@ -4642,7 +4642,7 @@ static inline Eo *
 _decoration_create(Efl_Ui_Text_Data *sd, const char *file,
       const char *source, Eina_Bool above)
 {
-   Eo *ret = efl_add(EDJE_OBJECT_CLASS, sd->entry_edje);
+   Eo *ret = efl_add(EFL_CANVAS_LAYOUT_CLASS, sd->entry_edje);
    Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    edje_object_file_set(ret, file, source);
    evas_object_smart_member_add(ret, sd->entry_edje);

@@ -407,7 +407,7 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
 
    efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), item);
 
-   if (efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
+   if (efl_isa(wd->resize_obj, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_message_signal_process(wd->resize_obj);
 
    return EINA_TRUE;
@@ -1791,7 +1791,7 @@ _efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Efl_Ui_Layout_Data *_pd EINA_
    efl_dbg_info_get(efl_super(eo_obj, MY_CLASS), root);
    ELM_WIDGET_DATA_GET_OR_RETURN(eo_obj, wd);
 
-   if (wd->resize_obj && efl_isa(wd->resize_obj, EDJE_OBJECT_CLASS))
+   if (wd->resize_obj && efl_isa(wd->resize_obj, EFL_CANVAS_LAYOUT_CLASS))
      {
         Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
         const char *file, *edje_group;

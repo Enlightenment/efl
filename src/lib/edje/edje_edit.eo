@@ -1,4 +1,4 @@
-class Edje.Edit (Edje.Object)
+class Edje.Edit (Efl.Canvas.Layout)
 {
    [[Edje editing class to access edje object internals.
    

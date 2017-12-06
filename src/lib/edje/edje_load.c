@@ -160,16 +160,16 @@ static int        _sort_defined_boxes(const void *a, const void *b);
 /************************** API Routines **************************/
 
 EOLIAN void
-_edje_object_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
+_efl_canvas_layout_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
 {
    if (file) *file = ed->path;
    if (group) *group = ed->group;
 }
 
 EOLIAN Efl_Image_Load_Error
-_edje_object_efl_file_load_error_get(Eo *obj, Edje *ed)
+_efl_canvas_layout_efl_file_load_error_get(Eo *obj, Edje *ed)
 {
-   Efl_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EDJE_OBJECT_CLASS));
+   Efl_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EFL_CANVAS_LAYOUT_CLASS));
 
    if (p != EFL_IMAGE_LOAD_ERROR_NONE) return p;
    switch (ed->load_error)

@@ -3322,7 +3322,7 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
    const char *target_hl_part = NULL;
    const Evas_Object *edje_obj = NULL;
 
-   if (obj && efl_isa(obj, EDJE_OBJECT_CLASS))
+   if (obj && efl_isa(obj, EFL_CANVAS_LAYOUT_CLASS))
      {
         edje_obj = obj;
         if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
@@ -3650,7 +3650,7 @@ _elm_widget_item_signal_callback_list_get(Elm_Widget_Item_Data *item, Eina_List 
      elm_object_signal_callback_del(item->view,
                                     wisd->emission, wisd->source,
                                     _elm_widget_item_signal_cb);
-   else if (efl_isa(item->view, EDJE_OBJECT_CLASS))
+   else if (efl_isa(item->view, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_signal_callback_del_full(item->view,
                                           wisd->emission, wisd->source,
                                           _elm_widget_item_signal_cb, wisd);
@@ -4717,7 +4717,7 @@ _elm_widget_item_signal_callback_add(Eo *eo_item,
 
    if (_elm_widget_is(item->view))
      elm_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
-   else if (efl_isa(item->view, EDJE_OBJECT_CLASS))
+   else if (efl_isa(item->view, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_signal_callback_add(item->view, emission, source, _elm_widget_item_signal_cb, wisd);
    else
      {
