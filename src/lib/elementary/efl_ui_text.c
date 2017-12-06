@@ -657,52 +657,6 @@ _update_selection_handler(Eo *obj)
      }
 }
 
-static const char *
-_efl_ui_text_theme_group_get(Evas_Object *obj)
-{
-   EFL_UI_TEXT_DATA_GET(obj, sd);
-
-   if (sd->password) return "password";
-   if (sd->editable)
-     {
-        if (sd->single_line) return "single";
-        switch (sd->line_wrap)
-          {
-            case ELM_WRAP_CHAR:
-              return "charwrap";
-
-            case ELM_WRAP_WORD:
-              return "base";
-
-            case ELM_WRAP_MIXED:
-              return "mixedwrap";
-
-            case ELM_WRAP_NONE:
-            default:
-              return "nowrap";
-          }
-     }
-   else
-     {
-        if (sd->single_line) return "single-noedit";
-        switch (sd->line_wrap)
-          {
-            case ELM_WRAP_CHAR:
-              return "noedit-charwrap";
-
-            case ELM_WRAP_WORD:
-              return "noedit";
-
-            case ELM_WRAP_MIXED:
-              return "noedit-mixedwrap";
-
-            case ELM_WRAP_NONE:
-            default:
-              return "nowrap-noedit";
-          }
-     }
-}
-
 static void
 _edje_entry_user_insert(Evas_Object *obj, const char *data)
 {
@@ -921,7 +875,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    elm_widget_element_update(obj, sd->entry_edje,
-                                   _efl_ui_text_theme_group_get(obj));
+                                   elm_widget_theme_element_get(obj));
 
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
@@ -2970,206 +2924,6 @@ _end_handler_mouse_move_cb(void *data,
      _magnifier_move(data);
 }
 
-EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Text_Data *priv)
-{
-   Eo *text_obj;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
-
-   efl_composite_attach(obj, text_obj);
-   priv->text_obj = text_obj;
-
-   // FIXME: use the theme, when a proper theming option is available
-   //  (possibly, text_classes).
-   // For now, set this for easier setup
-   efl_text_font_set(text_obj, "Sans", 12);
-   efl_text_normal_color_set(text_obj, 255, 255, 255, 255);
-
-   efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
-
-   priv->entry_edje = wd->resize_obj;
-
-   priv->cnp_mode = ELM_CNP_MODE_PLAINTEXT;
-   priv->line_wrap = ELM_WRAP_WORD;
-   priv->context_menu = EINA_TRUE;
-   priv->auto_save = EINA_TRUE;
-   priv->editable = EINA_TRUE;
-   priv->sel_allow = EINA_TRUE;
-
-   priv->single_line = !efl_text_multiline_get(text_obj);
-
-   priv->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
-   elm_drop_target_add(obj, priv->drop_format,
-                       _dnd_enter_cb, NULL,
-                       _dnd_leave_cb, NULL,
-                       _dnd_pos_cb, NULL,
-                       _dnd_drop_cb, NULL);
-
-   if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "text");
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       _efl_ui_text_theme_group_get(obj),
-                                       elm_widget_theme_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   edje_object_part_swallow(priv->entry_edje, "elm.text", text_obj);
-   evas_object_size_hint_weight_set
-      (priv->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set
-      (priv->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
-         _efl_ui_text_changed_cb, obj);
-   efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
-         _efl_ui_text_changed_cb, obj);
-   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
-         _efl_ui_text_selection_changed_cb, obj);
-   efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
-         _efl_ui_text_cursor_changed_cb, obj);
-   evas_object_event_callback_add(priv->entry_edje, EVAS_CALLBACK_MOVE,
-         _efl_ui_text_move_cb, obj);
-
-   /* Async layout */
-   if (priv->async.enabled)
-     {
-#if 0
-        efl_event_callback_add(text_obj,
-              EFL_CANVAS_TEXT_EVENT_ASYNC_LAYOUT_COMPLETE,
-              _on_layout_complete, obj);
-#endif
-     }
-
-   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);
-
-   Evas_Object* clip = evas_object_clip_get(priv->entry_edje);
-   evas_object_clip_set(priv->hit_rect, clip);
-
-   evas_object_smart_member_add(priv->hit_rect, obj);
-   elm_widget_sub_object_add(obj, priv->hit_rect);
-
-   /* common scroller hit rectangle setup */
-   evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
-   evas_object_show(priv->hit_rect);
-   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
-
-   elm_interface_scrollable_objects_set(obj, priv->entry_edje, priv->hit_rect);
-
-   edje_object_text_markup_filter_callback_add
-     (priv->entry_edje, "elm.text", _markup_filter_cb, obj);
-
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
-   evas_object_event_callback_add
-     (priv->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
-
-   /* this code can't go in smart_resize. sizing gets wrong */
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
-
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,changed,user", "elm.text",
-     _entry_changed_user_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "preedit,changed", "elm.text",
-     _entry_preedit_changed_signal_cb, obj);
-
-   edje_object_signal_callback_add
-     (priv->entry_edje, "cursor,changed", "elm.text",
-     _entry_cursor_changed_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "cursor,changed,manual", "elm.text",
-     _entry_cursor_changed_manual_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,down,*", "elm.text",
-     _entry_anchor_down_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,up,*", "elm.text",
-     _entry_anchor_up_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,move,*", "elm.text",
-     _entry_anchor_move_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,in,*", "elm.text",
-     _entry_anchor_in_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "anchor,mouse,out,*", "elm.text",
-     _entry_anchor_out_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,key,enter", "elm.text",
-     _entry_key_enter_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,key,escape", "elm.text",
-     _entry_key_escape_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1", "elm.text",
-     _entry_mouse_down_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,clicked,1", "elm.text",
-     _entry_mouse_clicked_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1,double", "elm.text",
-     _entry_mouse_double_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "mouse,down,1,triple", "elm.text",
-     _entry_mouse_triple_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,undo,request", "elm.text",
-     _entry_undo_request_signal_cb, obj);
-   edje_object_signal_callback_add
-     (priv->entry_edje, "entry,redo,request", "elm.text",
-     _entry_redo_request_signal_cb, obj);
-
-   efl_text_set(priv->text_obj, "");
-
-   elm_object_sub_cursor_set
-     (wd->resize_obj, obj, ELM_CURSOR_XTERM);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   if (_elm_config->desktop_entry)
-     edje_object_part_text_select_allow_set
-       (priv->entry_edje, "elm.text", EINA_TRUE);
-
-   //elm_layout_sizing_eval(obj);
-
-   efl_ui_text_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
-   efl_ui_text_input_panel_enabled_set(obj, EINA_TRUE);
-   efl_ui_text_prediction_allow_set(obj, EINA_TRUE);
-   efl_ui_text_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
-
-   priv->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
-       (priv->entry_edje, "elm.text");
-
-   entries = eina_list_prepend(entries, obj);
-
-   // module - find module for entry
-   priv->api = _module_find(obj);
-   // if found - hook in
-   if ((priv->api) && (priv->api->obj_hook)) priv->api->obj_hook(obj);
-
-   _mirrored_set(obj, efl_ui_mirrored_get(obj));
-
-   // access
-   _elm_access_object_register(obj, priv->entry_edje);
-   _elm_access_text_set
-     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
-   _elm_access_callback_set
-     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
-
-   if (_elm_config->desktop_entry)
-     priv->sel_handler_disabled = EINA_TRUE;
-
-   _create_text_cursors(obj, priv);
-}
-
 static void
 _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 {
@@ -3199,7 +2953,281 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
+     return;
+
+   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_position_set(sd->hit_rect, pos);
+
+   if (sd->hoversel) _hoversel_position(obj);
+
+   _update_selection_handler(obj);
+}
+
+EOLIAN static void
+_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
+     return;
+
+   efl_gfx_size_set(sd->hit_rect, sz);
+   _update_selection_handler(obj);
+
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+}
+
+EOLIAN static void
+_efl_ui_text_efl_gfx_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
+{
+   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
+     return;
+
+   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   if (vis) _update_selection_handler(obj);
+}
+
+EOLIAN static void
+_efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
+{
+   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
+
+   if (sd->hit_rect)
+     evas_object_raise(sd->hit_rect);
+}
+
+static void
+_cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   const Efl_Callback_Array_Item *event = ev->info;
+
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
+     sd->validators++;
+}
+
+static void
+_cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   const Efl_Callback_Array_Item *event = ev->info;
+
+   EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
+     sd->validators--;
+   return;
+
+}
+
+EOLIAN static Eo *
+_efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
+{
+   Eo *text_obj;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "text");
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+
+   elm_widget_sub_object_parent_add(obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
+   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+
+   sd->entry_edje = wd->resize_obj;
+
+   sd->cnp_mode = ELM_CNP_MODE_PLAINTEXT;
+   sd->line_wrap = ELM_WRAP_WORD;
+   sd->context_menu = EINA_TRUE;
+   sd->auto_save = EINA_TRUE;
+   sd->editable = EINA_TRUE;
+   sd->sel_allow = EINA_TRUE;
+
+   sd->drop_format = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   elm_drop_target_add(obj, sd->drop_format,
+                       _dnd_enter_cb, NULL,
+                       _dnd_leave_cb, NULL,
+                       _dnd_pos_cb, NULL,
+                       _dnd_drop_cb, NULL);
+
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)))
+     CRI("Failed tp set layout!");
+
+   text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
+
+   efl_composite_attach(obj, text_obj);
+   sd->text_obj = text_obj;
+
+   // FIXME: use the theme, when a proper theming option is available
+   //  (possibly, text_classes).
+   // For now, set this for easier setup
+   efl_text_font_set(text_obj, "Sans", 12);
+   efl_text_normal_color_set(text_obj, 255, 255, 255, 255);
+   efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
+
+   sd->single_line = !efl_text_multiline_get(text_obj);
+
+   edje_object_part_swallow(sd->entry_edje, "elm.text", text_obj);
+   evas_object_size_hint_weight_set
+      (sd->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set
+      (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+         _efl_ui_text_changed_cb, obj);
+   efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
+         _efl_ui_text_changed_cb, obj);
+   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+         _efl_ui_text_selection_changed_cb, obj);
+   efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
+         _efl_ui_text_cursor_changed_cb, obj);
+   evas_object_event_callback_add(sd->entry_edje, EVAS_CALLBACK_MOVE,
+         _efl_ui_text_move_cb, obj);
+
+   /* Async layout */
+   if (sd->async.enabled)
+     {
+#if 0
+        efl_event_callback_add(text_obj,
+              EFL_CANVAS_TEXT_EVENT_ASYNC_LAYOUT_COMPLETE,
+              _on_layout_complete, obj);
+#endif
+     }
+
+   sd->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_data_set(sd->hit_rect, "_elm_leaveme", obj);
+
+   Evas_Object* clip = evas_object_clip_get(sd->entry_edje);
+   evas_object_clip_set(sd->hit_rect, clip);
+
+   evas_object_smart_member_add(sd->hit_rect, obj);
+   elm_widget_sub_object_add(obj, sd->hit_rect);
+
+   /* common scroller hit rectangle setup */
+   evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
+   evas_object_show(sd->hit_rect);
+   evas_object_repeat_events_set(sd->hit_rect, EINA_TRUE);
+
+   elm_interface_scrollable_objects_set(obj, sd->entry_edje, sd->hit_rect);
+
+   edje_object_text_markup_filter_callback_add
+     (sd->entry_edje, "elm.text", _markup_filter_cb, obj);
+
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
+   evas_object_event_callback_add
+     (sd->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
+
+   /* this code can't go in smart_resize. sizing gets wrong */
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
+
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,changed,user", "elm.text",
+     _entry_changed_user_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "preedit,changed", "elm.text",
+     _entry_preedit_changed_signal_cb, obj);
+
+   edje_object_signal_callback_add
+     (sd->entry_edje, "cursor,changed", "elm.text",
+     _entry_cursor_changed_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "cursor,changed,manual", "elm.text",
+     _entry_cursor_changed_manual_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,down,*", "elm.text",
+     _entry_anchor_down_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,up,*", "elm.text",
+     _entry_anchor_up_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,move,*", "elm.text",
+     _entry_anchor_move_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,in,*", "elm.text",
+     _entry_anchor_in_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "anchor,mouse,out,*", "elm.text",
+     _entry_anchor_out_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,key,enter", "elm.text",
+     _entry_key_enter_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,key,escape", "elm.text",
+     _entry_key_escape_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1", "elm.text",
+     _entry_mouse_down_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,clicked,1", "elm.text",
+     _entry_mouse_clicked_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1,double", "elm.text",
+     _entry_mouse_double_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "mouse,down,1,triple", "elm.text",
+     _entry_mouse_triple_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,undo,request", "elm.text",
+     _entry_undo_request_signal_cb, obj);
+   edje_object_signal_callback_add
+     (sd->entry_edje, "entry,redo,request", "elm.text",
+     _entry_redo_request_signal_cb, obj);
+
+   efl_text_set(sd->text_obj, "");
+
+   elm_object_sub_cursor_set
+     (wd->resize_obj, obj, ELM_CURSOR_XTERM);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   if (_elm_config->desktop_entry)
+     edje_object_part_text_select_allow_set
+       (sd->entry_edje, "elm.text", EINA_TRUE);
+
+   efl_ui_text_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
+   efl_ui_text_input_panel_enabled_set(obj, EINA_TRUE);
+   efl_ui_text_prediction_allow_set(obj, EINA_TRUE);
+   efl_ui_text_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
+
+   sd->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
+       (sd->entry_edje, "elm.text");
+
+   entries = eina_list_prepend(entries, obj);
+
+   // module - find module for entry
+   sd->api = _module_find(obj);
+   // if found - hook in
+   if ((sd->api) && (sd->api->obj_hook)) sd->api->obj_hook(obj);
+
+   _mirrored_set(obj, efl_ui_mirrored_get(obj));
+
+   // access
+   _elm_access_object_register(obj, sd->entry_edje);
+   _elm_access_text_set
+     (_elm_access_info_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_callback_set
+     (_elm_access_info_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
+
+   if (_elm_config->desktop_entry)
+     sd->sel_handler_disabled = EINA_TRUE;
+
+   _create_text_cursors(obj, sd);
+
+   return obj;
+}
+
+EOLIAN static void
+_efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
@@ -3288,95 +3316,10 @@ _efl_ui_text_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Text_Data *sd)
    // a specific behavior of SWALLOW parts.
    efl_del(sd->text_obj);
    sd->text_obj = NULL;
-   efl_canvas_group_del(efl_super(obj, MY_CLASS));
-}
 
-EOLIAN static void
-_efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
-     return;
+   ecore_job_del(sd->deferred_decoration_job);
+   sd->deferred_decoration_job = NULL;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
-
-   if (sd->hoversel) _hoversel_position(obj);
-
-   _update_selection_handler(obj);
-}
-
-EOLIAN static void
-_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
-     return;
-
-   efl_gfx_size_set(sd->hit_rect, sz);
-   _update_selection_handler(obj);
-
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-}
-
-EOLIAN static void
-_efl_ui_text_efl_gfx_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
-{
-   if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
-     return;
-
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
-   if (vis) _update_selection_handler(obj);
-}
-
-EOLIAN static void
-_efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *member)
-{
-   efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
-
-   if (sd->hit_rect)
-     evas_object_raise(sd->hit_rect);
-}
-
-static void
-_cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   const Efl_Callback_Array_Item *event = ev->info;
-
-   EFL_UI_TEXT_DATA_GET(ev->object, sd);
-   if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
-     sd->validators++;
-}
-
-static void
-_cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   const Efl_Callback_Array_Item *event = ev->info;
-
-   EFL_UI_TEXT_DATA_GET(ev->object, sd);
-   if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
-     sd->validators--;
-   return;
-
-}
-
-EOLIAN static Eo *
-_efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
-   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
-   efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
-   efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
-
-   return obj;
-}
-
-EOLIAN static void
-_efl_ui_text_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
-{
-   ecore_job_del(pd->deferred_decoration_job);
-   pd->deferred_decoration_job = NULL;
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -4048,12 +3991,6 @@ _efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }
    return EINA_TRUE;
-}
-
-static void
-_efl_ui_text_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
 // ATSPI Accessibility
@@ -5362,31 +5299,28 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+//ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_TEXT_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text), \
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_text), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
 
 #include "efl_ui_text.eo.c"
 
-EOLIAN static void
-_efl_ui_text_async_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
+EOLIAN static Eo *
+_efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
+
    sd->async.enabled = EINA_TRUE;
-   efl_canvas_group_add(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
-}
 
-EOLIAN static void
-_efl_ui_text_async_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
-{
-   efl_canvas_group_del(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
-}
+   // FIXME: should we have to keep this efl_ui_text_xxx classes?
+   // Then, going to make new theme for these classes? ex) efl/text_async?
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "text");
+   obj = efl_constructor(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
 
-#define EFL_UI_TEXT_ASYNC_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_text_async)
+   return obj;
+}
 
 #include "efl_ui_text_async.eo.c"
 
@@ -5397,6 +5331,10 @@ _efl_ui_text_async_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
 EOLIAN static Eo *
 _efl_ui_text_editable_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
+   // FIXME: should we have to keep this efl_ui_text_xxx classes?
+   // Then, going to make new theme for these classes? ex) efl/text_editable?
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_ui_text_interactive_editable_set(obj, EINA_TRUE);
 
