@@ -278,7 +278,8 @@ run(options_type const& opts)
        char* dup = strdup(opts.in_files[0].c_str());
        char* base = basename(dup);
        std::string cpp_types_header;
-       klass = ::eolian_class_get_by_file(nullptr, base);
+       opts.unit = (Eolian_Unit*)opts.state;
+       klass = ::eolian_class_get_by_file(opts.unit, base);
        free(dup);
        if (klass)
          {
