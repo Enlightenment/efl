@@ -536,7 +536,7 @@ database_validate(const Eolian_Unit *src)
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(_enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   eina_hash_foreach(_state->unit.enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 

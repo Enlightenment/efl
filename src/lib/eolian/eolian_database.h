@@ -31,10 +31,8 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-extern Eina_Hash *_enums;
 extern Eina_Hash *_globals;
 extern Eina_Hash *_constants;
-extern Eina_Hash *_enumsf;
 extern Eina_Hash *_globalsf;
 extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
@@ -75,6 +73,7 @@ struct _Eolian
    Eina_Hash *classes_f;
    Eina_Hash *aliases_f;
    Eina_Hash *structs_f;
+   Eina_Hash *enums_f;
 };
 
 typedef struct _Eolian_Object

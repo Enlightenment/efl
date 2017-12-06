@@ -34,9 +34,9 @@ EAPI const Eolian_Typedecl *
 eolian_typedecl_enum_get_by_name(const Eolian_Unit *unit EINA_UNUSED,
                                  const char *name)
 {
-   if (!_enums) return NULL;
+   if (!_state) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Typedecl *tp = eina_hash_find(_enums, shr);
+   Eolian_Typedecl *tp = eina_hash_find(_state->unit.enums, shr);
    eina_stringshare_del(shr);
    if (!tp) return NULL;
    return tp;
@@ -70,9 +70,9 @@ EAPI Eina_Iterator *
 eolian_typedecl_enums_get_by_file(const Eolian_Unit *unit EINA_UNUSED,
                                   const char *fname)
 {
-   if (!_enumsf) return NULL;
+   if (!_state) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(_enumsf, shr);
+   Eina_List *l = eina_hash_find(_state->enums_f, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
@@ -93,7 +93,7 @@ eolian_typedecl_all_structs_get(const Eolian_Unit *unit EINA_UNUSED)
 EAPI Eina_Iterator *
 eolian_typedecl_all_enums_get(const Eolian_Unit *unit EINA_UNUSED)
 {
-   return (_enums ? eina_hash_iterator_data_new(_enums) : NULL);
+   return (_state ? eina_hash_iterator_data_new(_state->unit.enums) : NULL);
 }
 
 EAPI Eolian_Type_Type
