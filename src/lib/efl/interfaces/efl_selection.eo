@@ -31,6 +31,12 @@ interface Efl.Selection {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
+      has_owner {
+         params {
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+         return: bool;
+      }
       /*selection_loss_feedback { //name!!!
          params {
             @in type: Efl.Selection.Type; [[Selection type]]

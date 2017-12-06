@@ -10,6 +10,7 @@ mixin Efl.Cnp (Efl.Selection) {
       Efl.Selection.selection_set;
       Efl.Selection.selection_get;
       Efl.Selection.selection_clear;
+      Efl.Selection.has_owner;
       //Efl.Selection.selection_loss_feedback;
    }
    /*events {

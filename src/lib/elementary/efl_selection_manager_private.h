@@ -271,7 +271,7 @@ Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
 
 struct _Efl_Selection_Manager_Data
 {
-   Efl_Object *sel_man;
+   Eo *sel_man;
 #ifdef HAVE_ELEMENTARY_X
    Ecore_Event_Handler *notify_handler;
    Ecore_Event_Handler *clear_handler;

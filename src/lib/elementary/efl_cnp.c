@@ -61,6 +61,14 @@ _efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_
    efl_selection_manager_selection_clear(sel_man, obj, type, seat);
 }
 
+EOLIAN static Eina_Bool
+_efl_cnp_efl_selection_has_owner(Eo *obj, Efl_Cnp_Data *pd, unsigned int seat)
+{
+    ERR("In");
+    Eo *sel_man = _selection_manager_get(obj);
+    return efl_selection_manager_selection_has_owner(sel_man, obj, seat);
+}
+
 //issue: selection clear only come with window-level
 //if a window has two entries, selection moves from one entry to the other
 //the selection clear does not come (still in that window)

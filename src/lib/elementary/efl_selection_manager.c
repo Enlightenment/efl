@@ -3918,6 +3918,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
 #endif
 }
 
+//TODO: add support for local
 EOLIAN static void
 _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
                                      Efl_Object *owner, Efl_Selection_Type type,
@@ -3995,6 +3996,24 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
    sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_default_seat_get(_wl_window_get(owner), owner));
    ERR("sel serial: %d", sel->selection_serial);
 #endif
+}
+
+EOLIAN static Eina_Bool
+_efl_selection_manager_selection_has_owner(Eo *obj, Efl_Selection_Manager_Data *pd,
+                                           Efl_Object *request, unsigned int seat)
+{
+#ifdef HAVE_ELEMENTARY_X
+   if (_x11_xwin_get(request))
+     return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
+#endif
+#ifdef HAVE_ELEMENTARY_WL2
+   Ecore_Wl2_Window *win;
+
+   win = _wl_window_get(request);
+   if (win)
+     return !!ecore_wl2_dnd_selection_get(_wl_default_seat_get(win, request));
+#endif
+   return EINA_FALSE;
 }
 
 /*
@@ -4252,7 +4271,7 @@ _efl_selection_manager_drag_item_container_del(Eo *obj, Efl_Selection_Manager_Da
      _item_container_del_internal(dc, EINA_TRUE);
 }
 
-static Efl_Object *
+static Eo *
 _efl_selection_manager_efl_object_constructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
