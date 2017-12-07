@@ -35,8 +35,6 @@ extern Eina_Prefix *_eolian_prefix;
 extern Eina_Hash *_decls;
 extern Eina_Hash *_declsf;
 
-extern Eina_Hash *_units;
-
 struct _Eolian_Unit
 {
    Eolian        *state;
@@ -60,6 +58,8 @@ struct _Eolian
    Eina_Hash *parsing;
    Eina_Hash *parsed;
    Eina_Hash *defer;
+
+   Eina_Hash *units;
 
    Eina_Hash *classes_f;
    Eina_Hash *aliases_f;
