@@ -1,3 +1,5 @@
+#pragma warning disable 1591
+
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -12,7 +14,7 @@ public delegate void Eina_Free_Cb(IntPtr data);
 
 }
 
-public static class NativeCustomExportFunctions
+internal static class NativeCustomExportFunctions
 {
     [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_mono_native_free(IntPtr ptr);

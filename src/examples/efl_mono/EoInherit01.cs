@@ -30,7 +30,7 @@ public class ExampleEoInherit01
         int given = 111;
 
         // Call the C# override from the C method
-        example.NumberwrapperConcrete.example_numberwrapper_number_set(inheritObj.raw_handle, given);
+        inheritObj.CallNumberSet(given);
 
         WriteLine($"Override successfully called? {inheritObj.derivedCalled}!\n");
 

@@ -22,6 +22,9 @@ struct enum_definition_generator
      auto open_namespace = *("namespace " << string << " { ") << "\n";
      if(!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context))) return false;
 
+     if(!as_generator(documentation).generate(sink, enum_, context))
+       return false;
+
      if(!as_generator
         (
          "public enum " << string << "\n{\n"
@@ -38,9 +41,9 @@ struct enum_definition_generator
           name[0] = std::toupper(name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
-               string << " = " << string << ",\n"
+               documentation << string << " = " << string << ",\n"
               )
-              .generate(sink, std::make_tuple(name, literal), context))
+              .generate(sink, std::make_tuple(*first, name, literal), context))
             return false;
        }
 

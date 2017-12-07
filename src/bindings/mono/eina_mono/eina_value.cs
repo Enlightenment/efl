@@ -1,3 +1,5 @@
+#pragma warning disable 1591
+
 #define CODE_ANALYSIS
 
 using System;
@@ -708,7 +710,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Setup(containerType, subtype, step);
     }
 
-    /// <summary>Constructor to build value from Values_Natives passed by value from C
+    /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
     public Value(Value_Native value)
     {
         this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
@@ -721,13 +723,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         this.Ownership = ValueOwnership.Managed;
     }
 
-    /// <summary>Implicit conversion from managed value to native struct representation
+    /// <summary>Implicit conversion from managed value to native struct representation.</summary>
     public static implicit operator Value_Native(Value v)
     {
         return v.GetNative();
     }
 
-    /// <summary>
+    /// <summary>Implicit conversion from native struct representation to managed wrapper.</summary>
     public static implicit operator Value(Value_Native v)
     {
         return new Value(v);

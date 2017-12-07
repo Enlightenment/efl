@@ -17,6 +17,12 @@ class Example.Numberwrapper (Efl.Object) {
          }
       }
 
+      number_set_call {
+         params {
+            n: int;
+         }
+      }
+
       number_callback_set {
          params {
             cb: NumberCb;

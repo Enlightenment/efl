@@ -1,0 +1,86 @@
+struct Foo {
+    [[This is struct Foo.
+      It does stuff.
+
+      Note: This is a note.
+
+      This is a longer description for struct Foo.
+
+      Warning: This is a warning. You can only use Warning: and
+      Note: at the beginning of a paragraph.
+
+      This is another paragraph.
+
+      @since 1.66
+    ]]
+    field1: int; [[Field documentation.]]
+    field2: float;
+    field3: short; [[Another field documentation.]]
+}
+
+enum Bar {
+    [[Docs for enum Bar.]]
+    blah = 0,
+    foo = 1, [[Docs for foo.]]
+    bar = 2 [[Docs for bar.]]
+}
+
+type Alias: Bar; [[Docs for typedef.
+
+                   More docs for typedef.
+                   See @Bar. @since 2.0
+                 ]]
+
+var pants: int = 150; [[Docs for var.]]
+
+struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
+
+class Docs {
+    [[Docs for class.
+
+      More docs for class. Testing references now.
+      @Foo
+      @Bar
+      @Alias
+      @pants
+      @.meth
+      @.prop
+      @.prop.get
+      @.prop.set
+      @Foo.field1
+      @Bar.foo
+      @Docs
+
+      @since 1.17
+    ]]
+    legacy_prefix: docs;
+    methods {
+        meth {
+            [[Method documentation.]]
+            params {
+                @in a: int; [[Param documentation.]]
+                @out b: float;
+                @out c: long; [[Another param documentation.]]
+            }
+            return: int; [[Return documentation.]]
+        }
+        @property prop {
+            [[Property common documentation.
+
+              @since 1.18
+            ]]
+            get {
+                [[Get documentation.]]
+            }
+            set {
+                [[Set documentation.]]
+            }
+            values {
+                val: int; [[Value documentation.]]
+            }
+        }
+    }
+    events {
+        clicked; [[Event docs.]]
+    }
+}

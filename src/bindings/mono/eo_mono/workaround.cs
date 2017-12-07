@@ -1,32 +1,47 @@
+#pragma warning disable 1591
 
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+///<summary>Eo class description, passed to efl_class_new.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 public struct ClassDescription
 {
+    ///<summary>Current Eo version.</summary>
     public uint version;
+    ///<summary>Name of the class.</summary>
     [MarshalAs(UnmanagedType.LPStr)] public String name;
+    ///<summary>Class type.</summary>
     public int class_type;
+    ///<summary>Size of data (private + protected + public) per instance.</summary>
     public UIntPtr data_size;
+    ///<summary>Initializer for the class.</summary>
     public IntPtr class_initializer;
+    ///<summary>Constructor of the class.</summary>
     public IntPtr class_constructor;
+    ///<summary>Destructor of the class.</summary>
     public IntPtr class_destructor;
 }
 
+///<summary>Description of an Eo API operation.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 public struct Efl_Op_Description
 {
+    ///<summary>The EAPI function offering this op. (String with the name of the function on Windows)</summary>
     public IntPtr api_func;
+    ///<summary>The static function to be called for this op</summary>
     public IntPtr func;
 }
 
+///<summary>List of operations on a given Object.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 public struct Efl_Object_Ops
 {
-    public IntPtr descs; /**< The op descriptions array of size count. */
-    public UIntPtr count; /**< Number of op descriptions. */
+    ///<summary>The op descriptions array of size count.</summary>
+    public IntPtr descs;
+    ///<summary>Number of op descriptions.</summary>
+    public UIntPtr count;
 };
 
 [StructLayout(LayoutKind.Sequential)]
@@ -262,28 +277,45 @@ namespace evas {
 /* Copied from Evas_Legacy.h */
 public enum Text_Style_Type
 {
-   Plain = 0, /**< plain, standard text */
-   Shadow, /**< text with shadow underneath */
-   Outline, /**< text with an outline */
-   SoftOutline, /**< text with a soft outline */
-   Glow, /**< text with a glow effect */
-   OutlineShadow, /**< text with both outline and shadow effects */
-   FarShadow, /**< text with (far) shadow underneath */
-   OutlineSoftShadow, /**< text with outline and soft shadow effects combined */
-   SoftShadow, /**< text with (soft) shadow underneath */
-   FarSoftShadow, /**< text with (far soft) shadow underneath */
+   ///<summary> plain, standard text.</summary>
+   Plain = 0,
+   ///<summary> text with shadow underneath.</summary>
+   Shadow,
+   ///<summary> text with an outline.</summary>
+   Outline,
+   ///<summary> text with a soft outline.</summary>
+   SoftOutline,
+   ///<summary> text with a glow effect.</summary>
+   Glow,
+   ///<summary> text with both outline and shadow effects.</summary>
+   OutlineShadow,
+   ///<summary> text with (far) shadow underneath.</summary>
+   FarShadow,
+   ///<summary> text with outline and soft shadow effects combined.</summary>
+   OutlineSoftShadow,
+   ///<summary> text with (soft) shadow underneath.</summary>
+   SoftShadow,
+   ///<summary> text with (far soft) shadow underneath.</summary>
+   FarSoftShadow,
 
    // Shadow direction modifiers
-   ShadowDirectionBottomRight = 0 /* 0 >> 4 */, /**< shadow growing to bottom right */
-   ShadowDirectionBottom= 16 /* 1 >> 4 */, /**< shadow growing to the bottom */
-   ShadowDirectionBottomLeft = 32 /* 2 >> 4 */, /**< shadow growing to bottom left */
-   ShadowDirectionLeft = 48 /* 3 >> 4 */, /**< shadow growing to the left */
-   ShadowDirectionTopLeft = 64 /* 4 >> 4 */, /**< shadow growing to top left */
-   ShadowDirectionTop = 80 /* 5 >> 4 */, /**< shadow growing to the top */
-   ShadowDirectionTopRight = 96 /* 6 >> 4 */, /**< shadow growing to top right */
-   ShadowDirectionRight = 112 /* 7 >> 4 */ /**< shadow growing to the right */
+   ///<summary> shadow growing to bottom right.</summary>
+   ShadowDirectionBottomRight = 0 /* 0 >> 4 */,
+  ///<summary> shadow growing to the bottom.</summary>
+   ShadowDirectionBottom= 16 /* 1 >> 4 */,
+   ///<summary> shadow growing to bottom left.</summary>
+   ShadowDirectionBottomLeft = 32 /* 2 >> 4 */,
+   ///<summary> shadow growing to the left.</summary>
+   ShadowDirectionLeft = 48 /* 3 >> 4 */,
+   ///<summary> shadow growing to top left.</summary>
+   ShadowDirectionTopLeft = 64 /* 4 >> 4 */,
+   ///<summary> shadow growing to the top.</summary>
+   ShadowDirectionTop = 80 /* 5 >> 4 */,
+   ///<summary> shadow growing to top right.</summary>
+   ShadowDirectionTopRight = 96 /* 6 >> 4 */,
+   ///<summary> shadow growing to the right.</summary>
+   ShadowDirectionRight = 112 /* 7 >> 4 */
 };
-    
 
 // Copied from Evas_Common.h
 //
@@ -292,47 +324,83 @@ public enum Text_Style_Type
 
 public enum Callback_Type
 {
-  EVAS_CALLBACK_MOUSE_IN = 0, /**< Mouse In Event */
-  EVAS_CALLBACK_MOUSE_OUT, /**< Mouse Out Event */
-  EVAS_CALLBACK_MOUSE_DOWN, /**< Mouse Button Down Event */
-  EVAS_CALLBACK_MOUSE_UP, /**< Mouse Button Up Event */
-  EVAS_CALLBACK_MOUSE_MOVE, /**< Mouse Move Event */
-  EVAS_CALLBACK_MOUSE_WHEEL, /**< Mouse Wheel Event */
-  EVAS_CALLBACK_MULTI_DOWN, /**< Multi-touch Down Event */
-  EVAS_CALLBACK_MULTI_UP, /**< Multi-touch Up Event */
-  EVAS_CALLBACK_MULTI_MOVE, /**< Multi-touch Move Event */
-  EVAS_CALLBACK_FREE, /**< Object Being Freed (Called after Del) */
-  EVAS_CALLBACK_KEY_DOWN, /**< Key Press Event */
-  EVAS_CALLBACK_KEY_UP, /**< Key Release Event */
-  EVAS_CALLBACK_FOCUS_IN, /**< Focus In Event */
-  EVAS_CALLBACK_FOCUS_OUT, /**< Focus Out Event */
-  EVAS_CALLBACK_SHOW, /**< Show Event */
-  EVAS_CALLBACK_HIDE, /**< Hide Event */
-  EVAS_CALLBACK_MOVE, /**< Move Event */
-  EVAS_CALLBACK_RESIZE, /**< Resize Event */
-  EVAS_CALLBACK_RESTACK, /**< Restack Event */
-  EVAS_CALLBACK_DEL, /**< Object Being Deleted (called before Free) */
-  EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
-  EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
-  EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image has been preloaded */
-  EVAS_CALLBACK_CANVAS_FOCUS_IN, /**< Canvas got focus as a whole */
-  EVAS_CALLBACK_CANVAS_FOCUS_OUT, /**< Canvas lost focus as a whole */
-  EVAS_CALLBACK_RENDER_FLUSH_PRE, /**< Called after render update regions have
-                                   * been calculated, but only if update regions exist */
-  EVAS_CALLBACK_RENDER_FLUSH_POST, /**< Called after render update regions have
-                                    * been sent to the display server, but only
-                                    * if update regions existed for the most recent frame */
-  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, /**< Canvas object got focus */
-  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
-  EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanism in Evas that throw out original image data) */
-  EVAS_CALLBACK_RENDER_PRE, /**< Called just before rendering starts on the canvas target. @since 1.2 */
-  EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target. @since 1.2 */
-  EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed. @since 1.8 */
-  EVAS_CALLBACK_DEVICE_CHANGED, /**< Devices added, removed or changed on canvas. @since 1.8 */
-  EVAS_CALLBACK_AXIS_UPDATE, /**< Input device changed value on some axis. @since 1.13 */
-  EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, /**< Canvas viewport resized. @since 1.15 */
-  EVAS_CALLBACK_LAST /**< Sentinel value to indicate last enum field during
-                      * iteration */
+  ///<summary> Mouse In Event.</summary>
+  EVAS_CALLBACK_MOUSE_IN = 0,
+  ///<summary> Mouse Out Event.</summary>
+  EVAS_CALLBACK_MOUSE_OUT,
+  ///<summary> Mouse Button Down Event.</summary>
+  EVAS_CALLBACK_MOUSE_DOWN,
+  ///<summary> Mouse Button Up Event.</summary>
+  EVAS_CALLBACK_MOUSE_UP,
+  ///<summary> Mouse Move Event.</summary>
+  EVAS_CALLBACK_MOUSE_MOVE,
+  ///<summary> Mouse Wheel Event.</summary>
+  EVAS_CALLBACK_MOUSE_WHEEL,
+  ///<summary> Multi-touch Down Event.</summary>
+  EVAS_CALLBACK_MULTI_DOWN,
+  ///<summary> Multi-touch Up Event.</summary>
+  EVAS_CALLBACK_MULTI_UP,
+  ///<summary> Multi-touch Move Event.</summary>
+  EVAS_CALLBACK_MULTI_MOVE,
+  ///<summary> Object Being Freed (Called after Del).</summary>
+  EVAS_CALLBACK_FREE,
+  ///<summary> Key Press Event.</summary>
+  EVAS_CALLBACK_KEY_DOWN,
+  ///<summary> Key Release Event.</summary>
+  EVAS_CALLBACK_KEY_UP,
+  ///<summary> Focus In Event.</summary>
+  EVAS_CALLBACK_FOCUS_IN,
+  ///<summary> Focus Out Event.</summary>
+  EVAS_CALLBACK_FOCUS_OUT,
+  ///<summary> Show Event.</summary>
+  EVAS_CALLBACK_SHOW,
+  ///<summary> Hide Event.</summary>
+  EVAS_CALLBACK_HIDE,
+  ///<summary> Move Event.</summary>
+  EVAS_CALLBACK_MOVE,
+  ///<summary> Resize Event.</summary>
+  EVAS_CALLBACK_RESIZE,
+  ///<summary> Restack Event.</summary>
+  EVAS_CALLBACK_RESTACK,
+  ///<summary> Object Being Deleted (called before Free).</summary>
+  EVAS_CALLBACK_DEL,
+  ///<summary> Events go on/off hold.</summary>
+  EVAS_CALLBACK_HOLD,
+  ///<summary> Size hints changed event.</summary>
+  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+  ///<summary> Image has been preloaded.</summary>
+  EVAS_CALLBACK_IMAGE_PRELOADED,
+  ///<summary> Canvas got focus as a whole.</summary>
+  EVAS_CALLBACK_CANVAS_FOCUS_IN,
+  ///<summary> Canvas lost focus as a whole.</summary>
+  EVAS_CALLBACK_CANVAS_FOCUS_OUT,
+  ///<summary>Called after render update regions have been calculated,
+  /// but only if update regions exist.</summary>
+  EVAS_CALLBACK_RENDER_FLUSH_PRE,
+  ///<summary>Called after render update regions have
+  /// been sent to the display server, but only
+  /// if update regions existed for the most recent frame.</summary>
+  EVAS_CALLBACK_RENDER_FLUSH_POST,
+  ///<summary> Canvas object got focus.</summary>
+  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN,
+  ///<summary> Canvas object lost focus.</summary>
+  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
+  ///<summary> Image data has been unloaded (by some mechanism in Evas that throw out original image data).</summary>
+  EVAS_CALLBACK_IMAGE_UNLOADED,
+  ///<summary> Called just before rendering starts on the canvas target. @since 1.2.</summary>
+  EVAS_CALLBACK_RENDER_PRE,
+  ///<summary> Called just after rendering stops on the canvas target. @since 1.2.</summary>
+  EVAS_CALLBACK_RENDER_POST,
+  ///<summary> Image size is changed. @since 1.8.</summary>
+  EVAS_CALLBACK_IMAGE_RESIZE,
+  ///<summary> Devices added, removed or changed on canvas. @since 1.8.</summary>
+  EVAS_CALLBACK_DEVICE_CHANGED,
+  ///<summary> Input device changed value on some axis. @since 1.13.</summary>
+  EVAS_CALLBACK_AXIS_UPDATE,
+  ///<summary> Canvas viewport resized. @since 1.15.</summary>
+  EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
+  ///<summary>Sentinel value to indicate last enum field during iteration.</summary>
+  EVAS_CALLBACK_LAST
 };
 
 }

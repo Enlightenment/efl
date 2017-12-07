@@ -94,6 +94,7 @@ tests/eolian_cxx/generic.c \
 tests/eolian_cxx/name1_name2_type_generation.c \
 tests/eolian_cxx/eolian_cxx_test_inheritance.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc \
+tests/eolian_cxx/eolian_cxx_test_documentation.cc \
 tests/eolian_cxx/eolian_cxx_test_cyclic.cc \
 tests/eolian_cxx/complex.c \
 tests/eolian_cxx/complex_cxx.cc \
@@ -168,7 +169,7 @@ tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eolian_cxx\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/eolian_cxx\" \
+-DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_cxx\" \
 @CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ \
 @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ \

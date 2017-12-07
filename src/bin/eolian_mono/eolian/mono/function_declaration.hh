@@ -21,10 +21,13 @@ struct function_declaration_generator
   {
     if(is_function_blacklisted(f.c_name))
       return true;
-    else
-      return as_generator
+
+    if(!as_generator(documentation).generate(sink, f, context))
+      return false;
+
+    return as_generator
         (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
-        .generate(sink, std::make_tuple(f.return_type, managed_method_name(f.name), f.parameters), context);
+      .generate(sink, std::make_tuple(f.return_type, managed_method_name(f.name), f.parameters), context);
   }
 };
 

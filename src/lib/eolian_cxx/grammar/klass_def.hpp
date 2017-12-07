@@ -167,6 +167,49 @@ inline bool operator<(klass_name const& lhs, klass_name const& rhs)
                                               , rhs.type));
 }
 
+struct documentation_def
+{
+   std::string summary;
+   std::string description;
+   std::string since;
+   std::vector<std::string> desc_paragraphs;
+
+   documentation_def() {}
+   documentation_def(std::string summary, std::string description, std::string since)
+     : summary(summary), description(description), since(since)
+   {}
+   documentation_def(Eolian_Documentation const* eolian_doc)
+   {
+      const char *str;
+
+      if (!eolian_doc)
+        return;
+
+      str = eolian_documentation_summary_get(eolian_doc);
+      if (str)
+        summary = str;
+
+      str = eolian_documentation_description_get(eolian_doc);
+      if (str)
+        description = str;
+
+      str = eolian_documentation_since_get(eolian_doc);
+      if (str)
+        since = str;
+
+      efl::eina::ptr_list<const char> l(eolian_documentation_string_split(description.c_str()));
+      for (auto&& i : l)
+        desc_paragraphs.push_back({&i});
+   }
+
+   friend inline bool operator==(documentation_def const& lhs, documentation_def const& rhs)
+   {
+      return lhs.summary == rhs.summary
+        && lhs.description == rhs.description
+        && lhs.since == rhs.since;
+   }
+};
+
 template <>
 struct tuple_element<0ul, klass_name>
 {
@@ -394,21 +437,24 @@ struct parameter_def
   parameter_direction direction;
   type_def type;
   std::string param_name;
+  documentation_def documentation;
   Eolian_Unit const* unit;
 
   friend inline bool operator==(parameter_def const& lhs, parameter_def const& rhs)
   {
     return lhs.direction == rhs.direction
       && lhs.type == rhs.type
-      && lhs.param_name == rhs.param_name;
+      && lhs.param_name == rhs.param_name
+      && lhs.documentation == rhs.documentation;
   }
   friend inline bool operator!=(parameter_def const& lhs, parameter_def const& rhs)
   {
     return !(lhs == rhs);
   }
 
-  parameter_def(parameter_direction direction, type_def type, std::string param_name, Eolian_Unit const* unit)
-    : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), unit(unit) {}
+  parameter_def(parameter_direction direction, type_def type, std::string param_name,
+                documentation_def documentation, Eolian_Unit const* unit)
+    : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), documentation(documentation), unit(unit) {}
   parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
     : type( ::eolian_parameter_type_get(param), unit, EOLIAN_C_TYPE_PARAM)
     , param_name( ::eolian_parameter_name_get(param)), unit(unit)
@@ -429,6 +475,8 @@ struct parameter_def
        }
      if( ::eolian_parameter_is_optional(param))
        type.original_type.visit(detail::add_optional_qualifier_visitor{});
+
+     documentation = eolian_parameter_documentation_get(param);
   }
 };
 
@@ -467,6 +515,16 @@ template <int I>
 typename tuple_element<I, parameter_def>::type& get(parameter_def& p)
 { return tuple_element<I, parameter_def>::get(p); }
 
+enum class function_type
+{
+  unresolved,
+  property,
+  prop_set,
+  prop_get,
+  method,
+  function_pointer
+};
+
 struct function_def
 {
   type_def return_type;
@@ -474,9 +532,12 @@ struct function_def
   std::vector<parameter_def> parameters;
   std::string c_name;
   std::string filename;
+  documentation_def documentation;
+  documentation_def return_documentation;
+  documentation_def property_documentation;
+  function_type type;
   bool is_beta;
   bool is_protected;
-  bool is_function_pointer;
   bool is_static;
   Eolian_Unit const* unit;
 
@@ -487,9 +548,12 @@ struct function_def
       && lhs.parameters == rhs.parameters
       && lhs.c_name == rhs.c_name
       && lhs.filename == rhs.filename
+      && lhs.documentation == rhs.documentation
+      && lhs.return_documentation == rhs.return_documentation
+      && lhs.property_documentation == rhs.property_documentation
+      && lhs.type == rhs.type
       && lhs.is_beta == rhs.is_beta
       && lhs.is_protected == rhs.is_protected
-      && lhs.is_function_pointer == rhs.is_function_pointer
       && lhs.is_static == rhs.is_static;
   }
   friend inline bool operator!=(function_def const& lhs, function_def const& rhs)
@@ -501,13 +565,20 @@ struct function_def
                std::vector<parameter_def> const& _parameters,
                std::string const& _c_name,
                std::string _filename,
+               documentation_def _documentation,
+               documentation_def _return_documentation,
+               documentation_def _property_documentation,
+               function_type _type,
                bool _is_beta = false,
                bool _is_protected = false,
-               bool _is_function_pointer = false,
                Eolian_Unit const* unit = nullptr)
     : return_type(_return_type), name(_name), parameters(_parameters),
-      c_name(_c_name), filename(_filename), is_beta(_is_beta), is_protected(_is_protected),
-      is_function_pointer(_is_function_pointer), unit(unit) {}
+      c_name(_c_name), filename(_filename), documentation(_documentation),
+      return_documentation(_return_documentation),
+      property_documentation(_property_documentation),
+      type(_type),
+      is_beta(_is_beta), is_protected(_is_protected),
+      unit(unit) {}
 
   function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Unit const* unit)
     : return_type(void_), unit(unit)
@@ -572,6 +643,40 @@ struct function_def
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
      is_static = eolian_function_is_class(function);
+
+     return_documentation = eolian_function_return_documentation_get(function, type);
+
+     Eolian_Implement const* implement = eolian_function_implement_get(function);
+     if (!implement)
+       return;
+
+     documentation = eolian_implement_documentation_get(implement, type);
+
+
+     if (type == EOLIAN_PROP_GET || type == EOLIAN_PROP_SET)
+       property_documentation = eolian_implement_documentation_get(implement, EOLIAN_PROPERTY);
+
+     switch (type)
+       {
+       case EOLIAN_UNRESOLVED:
+         this->type = function_type::unresolved;
+         break;
+       case EOLIAN_PROPERTY:
+         this->type = function_type::property;
+         break;
+       case EOLIAN_PROP_GET:
+         this->type = function_type::prop_get;
+         break;
+       case EOLIAN_PROP_SET:
+         this->type = function_type::prop_set;
+         break;
+       case EOLIAN_METHOD:
+         this->type = function_type::method;
+         break;
+       case EOLIAN_FUNCTION_POINTER:
+         this->type = function_type::function_pointer;
+         break;
+       }
   }
 
   std::string template_statement() const
@@ -677,6 +782,7 @@ struct event_def
   eina::optional<type_def> type;
   std::string name, c_name;
   bool beta, protect;
+  documentation_def documentation;
 
   friend inline bool operator==(event_def const& lhs, event_def const& rhs)
   {
@@ -684,21 +790,25 @@ struct event_def
       && lhs.name == rhs.name
       && lhs.c_name == rhs.c_name
       && lhs.beta == rhs.beta
-      && lhs.protect == rhs.protect;
+      && lhs.protect == rhs.protect
+      && lhs.documentation == rhs.documentation;
   }
   friend inline bool operator!=(event_def const& lhs, event_def const& rhs)
   {
     return !(lhs == rhs);
   }
 
-  event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
-    : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
+  event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect,
+            documentation_def documentation)
+    : type(type), name(name), c_name(c_name), beta(beta), protect(protect)
+    , documentation(documentation) {}
   event_def(Eolian_Event const* event, Eolian_Unit const* unit)
     : type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit, EOLIAN_C_TYPE_DEFAULT}} : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_name_get(event))
     , beta( ::eolian_event_is_beta(event))
-    , protect( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED){}
+    , protect( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED)
+    , documentation( ::eolian_event_documentation_get(event)) {}
 };
 
 template <>
@@ -768,6 +878,7 @@ struct klass_def
   std::string eolian_name;
   std::string cxx_name;
   std::string filename;
+  documentation_def documentation;
   std::vector<std::string> namespaces;
   std::vector<function_def> functions;
   std::set<klass_name, compare_klass_name_by_name> inherits;
@@ -802,12 +913,14 @@ struct klass_def
   }
 
   klass_def(std::string eolian_name, std::string cxx_name, std::string filename
+            , documentation_def documentation
             , std::vector<std::string> namespaces
             , std::vector<function_def> functions
             , std::set<klass_name, compare_klass_name_by_name> inherits
             , class_type type
             , std::set<klass_name, compare_klass_name_by_name> immediate_inherits)
     : eolian_name(eolian_name), cxx_name(cxx_name), filename(filename)
+    , documentation(documentation)
     , namespaces(namespaces)
     , functions(functions), inherits(inherits), type(type)
     , immediate_inherits(immediate_inherits)
@@ -915,6 +1028,8 @@ struct klass_def
            events.push_back({&*event_iterator, unit});
          } catch(std::exception const&) {}
        }
+
+     documentation = eolian_class_documentation_get(klass);
   }
 
   // TODO memoize the return?
@@ -956,6 +1071,7 @@ struct enum_value_def
   value_def value;
   std::string name;
   std::string c_name;
+  documentation_def documentation;
 
   enum_value_def(Eolian_Enum_Type_Field const* enum_field, Eolian_Unit const* unit)
   {
@@ -963,6 +1079,7 @@ struct enum_value_def
       c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
       auto exp = eolian_typedecl_enum_field_value_get(enum_field, EINA_TRUE);
       value = eolian_expression_eval(unit, exp, EOLIAN_MASK_INT); // FIXME hardcoded int
+      documentation = eolian_typedecl_enum_field_documentation_get(enum_field);
   }
 };
 
@@ -972,6 +1089,7 @@ struct enum_def
   std::string cxx_name;
   std::vector<std::string> namespaces;
   std::vector<enum_value_def> fields;
+  documentation_def documentation;
 
   enum_def(Eolian_Typedecl const* enum_obj, Eolian_Unit const* unit)
   {
@@ -989,6 +1107,8 @@ struct enum_def
           enum_value_def field_def(&*field_iterator, unit);
           this->fields.push_back(field_def);
        }
+
+     documentation = ::eolian_typedecl_documentation_get(enum_obj);
   }
 };
 
@@ -996,6 +1116,7 @@ struct struct_field_def
 {
   type_def type;
   std::string name;
+  documentation_def documentation;
 
   struct_field_def(Eolian_Struct_Type_Field const* struct_field, Eolian_Unit const* unit)
   {
@@ -1003,6 +1124,7 @@ struct struct_field_def
      try {
         type.set(eolian_typedecl_struct_field_type_get(struct_field), unit, EOLIAN_C_TYPE_DEFAULT);
      } catch(std::runtime_error const&) { /* Silently skip pointer fields*/ }
+     documentation = ::eolian_typedecl_struct_field_documentation_get(struct_field);
   }
 
 };
@@ -1013,6 +1135,7 @@ struct struct_def
   std::string cxx_name;
   std::vector<std::string> namespaces;
   std::vector<struct_field_def> fields;
+  documentation_def documentation;
 
   struct_def(Eolian_Typedecl const* struct_obj, Eolian_Unit const* unit)
   {
@@ -1029,6 +1152,8 @@ struct struct_def
           struct_field_def field_def(&*field_iterator, unit);
           this->fields.push_back(field_def);
        }
+
+     documentation = ::eolian_typedecl_documentation_get(struct_obj);
   }
 };
 
@@ -1137,7 +1262,7 @@ template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
-
+  
 }
 
 } } }

@@ -10,6 +10,7 @@
 #include "type.hh"
 #include "keyword.hh"
 #include "using_decl.hh"
+#include "documentation.hh"
 
 namespace eolian_mono {
 
@@ -35,6 +36,9 @@ struct struct_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
+
+     if(!as_generator(documentation).generate(sink, struct_, context))
+       return false;
      if(!as_generator
         (
          "[StructLayout(LayoutKind.Sequential)]\n"
@@ -46,11 +50,14 @@ struct struct_definition_generator
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
+          auto field_name = field.name;
+          field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
-               " public " << type << " " << string << ";\n"
+               documentation(1)
+               << scope_tab(1) << "public " << type << " " << string << ";\n"
               )
-              .generate(sink, std::make_tuple(field.type, to_field_name(field.name)), context))
+              .generate(sink, std::make_tuple(field, field.type, to_field_name(field.name)), context))
             return false;
        }
 
@@ -79,7 +86,7 @@ struct struct_internal_definition_generator
      if (!as_generator
          (
           "[StructLayout(LayoutKind.Sequential)]\n"
-          "public struct " << string << "\n{\n"
+          "internal struct " << string << "\n{\n"
          )
          .generate(sink, binding_struct_internal_name(struct_), context))
        return false;
@@ -97,11 +104,11 @@ struct struct_internal_definition_generator
                               || regular->base_type == "stringshare"
                               || regular->base_type == "any_value_ptr")))
             {
-               if (!as_generator(" public System.IntPtr " << string << ";\n")
+               if (!as_generator(" internal System.IntPtr " << string << ";\n")
                    .generate(sink, field_name, context))
                  return false;
             }
-          else if (!as_generator(eolian_mono::marshall_annotation(false) << " public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+          else if (!as_generator(eolian_mono::marshall_annotation(false) << " internal " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
             return false;
        }
@@ -112,7 +119,7 @@ struct struct_internal_definition_generator
      // those 'mini-amd64.c condition fields not met' crashes.
      if (struct_.fields.size() == 0)
        {
-           if (!as_generator("public IntPtr field;\n").generate(sink, nullptr, context))
+           if (!as_generator("internal IntPtr field;\n").generate(sink, nullptr, context))
              return false;
        }
 
@@ -330,7 +337,7 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "public static class " << string << "_StructConvertion\n{\n"
+          "internal static class " << string << "_StructConvertion\n{\n"
          )
          .generate(sink, struct_.cxx_name, context))
        return false;
@@ -338,7 +345,7 @@ struct struct_binding_conversion_functions_generator
      // to internal
      if (!as_generator
          (
-          scope_tab << "public static " << string << " ToInternal(" << string << " _external_struct)\n"
+          scope_tab << "internal static " << string << " ToInternal(" << string << " _external_struct)\n"
           << scope_tab << "{\n"
           << scope_tab << scope_tab << "var _internal_struct = new " << string << "();\n\n"
          )
@@ -366,7 +373,7 @@ struct struct_binding_conversion_functions_generator
      // to external
      if (!as_generator
          (
-          scope_tab << "public static " << string << " ToExternal(" << string << " _internal_struct)\n"
+          scope_tab << "internal static " << string << " ToExternal(" << string << " _internal_struct)\n"
           << scope_tab << "{\n"
           << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n\n"
          )

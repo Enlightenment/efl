@@ -254,12 +254,27 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
+      call_eina_binbuf_in {
+         params {
+            @in binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+
       eina_binbuf_in_own {
          params {
             @in binbuf: ptr(Eina.Binbuf) @owned;
          }
          return: bool;
       }
+
+      call_eina_binbuf_in_own {
+        params {
+            @in str: ptr(Eina.Binbuf) @owned;
+        }
+        return: bool;
+      }
+
       check_binbuf_in_own {
          return: bool;
       }
@@ -270,6 +285,11 @@ class Test.Testing (Efl.Object) {
          }
          return: bool;
       }
+
+      call_eina_binbuf_out {
+         return: ptr(Eina.Binbuf);
+      }
+
       check_binbuf_out {
          return: bool;
       }
@@ -281,14 +301,27 @@ class Test.Testing (Efl.Object) {
          return: bool;
       }
 
+      call_eina_binbuf_out_own {
+         return: ptr(Eina.Binbuf) @owned;
+      }
+
       eina_binbuf_return {
          return: ptr(Eina.Binbuf);
       }
+
+      call_eina_binbuf_return {
+         return: ptr(Eina.Binbuf);
+      }
+
       check_binbuf_return {
          return: bool;
       }
 
       eina_binbuf_return_own {
+         return: ptr(Eina.Binbuf) @owned;
+      }
+
+      call_eina_binbuf_return_own {
          return: ptr(Eina.Binbuf) @owned;
       }
 

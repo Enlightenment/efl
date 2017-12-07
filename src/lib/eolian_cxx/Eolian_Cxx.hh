@@ -24,6 +24,24 @@ struct eolian_init
    }
 };
 
+struct eolian_state
+{
+   Eolian *value;
+   eolian_state()
+   {
+       value = ::eolian_new();
+   }
+   ~eolian_state()
+   {
+     ::eolian_free(value);
+   }
+
+   inline Eolian_Unit const* as_unit() const
+   {
+       return (Eolian_Unit const*)value;
+   }
+};
+
 } }
 
 #endif // EOLIAN_CXX_LIB_HH

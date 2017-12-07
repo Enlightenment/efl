@@ -14,6 +14,7 @@
 #include "function_definition.hh"
 #include "function_registration.hh"
 #include "function_declaration.hh"
+#include "documentation.hh"
 #include "grammar/string.hpp"
 #include "grammar/attribute_replace.hpp"
 #include "grammar/integral.hpp"
@@ -30,7 +31,8 @@ template <typename OutputIterator, typename Context>
 static bool generate_static_cast_method(OutputIterator sink, const std::string &class_name, Context const &context)
 {
    return as_generator(
-       scope_tab << "public static " << class_name << " static_cast(efl.Object obj)\n"
+       scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
+       << scope_tab << "public static " << class_name << " static_cast(efl.Object obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "if (obj == null)\n"
        << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
@@ -43,13 +45,15 @@ template <typename OutputIterator, typename Context>
 static bool generate_equals_method(OutputIterator sink, Context const &context)
 {
    return as_generator(
-       scope_tab << "public override bool Equals(object obj)\n"
+       scope_tab << "///<summary>Verifies if the given object is equals to this.</summary>\n" 
+       << scope_tab << "public override bool Equals(object obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "var other = obj as efl.Object;\n"
        << scope_tab << scope_tab << "if (other == null)\n"
        << scope_tab << scope_tab << scope_tab << "return false;\n"
        << scope_tab << scope_tab << "return this.raw_handle == other.raw_handle;\n"
        << scope_tab << "}\n"
+       << scope_tab << "///<summary>Gets the hash code for this object based on the native pointer it points to.</summary>\n"
        << scope_tab << "public override int GetHashCode()\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "return this.raw_handle.ToInt32();\n"
@@ -156,8 +160,12 @@ struct klass
           std::replace(evt_name.begin(), evt_name.end(), ',', '_');
           std::string arg_type = (*etype).original_type.visit(get_csharp_type_visitor{});
 
+          if (!as_generator("///<summary>Event argument wrapper for event " << string << ".</summary>\n"
+                      ).generate(sink, evt_name, context))
+            return false;
 
           if (!as_generator("public class " << evt_name << "_Args : EventArgs {\n"
+                      << scope_tab << "///<summary>Actual event payload.</summary>\n"
                       << scope_tab << "public " << arg_type << " arg { get; set; }\n"
                       << "}\n").generate(sink, NULL, context))
               return false;
@@ -166,6 +174,10 @@ struct klass
      // Interface class
      {
      auto iface_cxt = context_add_tag(class_context{class_context::interface}, context);
+
+     if(!as_generator(documentation).generate(sink, cls, iface_cxt))
+       return false;
+
      if(!as_generator
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
@@ -199,6 +211,10 @@ struct klass
           if (etype.is_engaged())
               wrapper_args_type = "<" + evt_name + "_Args>";
 
+
+         if (!as_generator(documentation(1)).generate(sink, e, iface_cxt))
+           return false;
+
          //FIXME Add a way to generate camelcase names
          if (!as_generator(
                      scope_tab << "event EventHandler" << wrapper_args_type << " " 
@@ -218,19 +234,26 @@ struct klass
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
          if(!as_generator
             (
-             "public class " << string << "Concrete : " << string << "\n{\n"
+             documentation
+             << "sealed public class " << string << "Concrete : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
+             << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
              << scope_tab << "public System.IntPtr raw_klass {\n"
              << scope_tab << scope_tab << "get { return efl.eo.Globals.efl_class_get(handle); }\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
              << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
-             << ")] static extern System.IntPtr\n"
+             << ")] private static extern System.IntPtr\n"
              << scope_tab << scope_tab << class_get_name << "();\n"
              << (class_type == "class" ? "" : "/*")
+             << scope_tab << "///<summary>Creates a new instance.</summary>\n"
+             << scope_tab << "///<param>Parent instance.</param>\n"
+             << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
              << scope_tab << "public " << string << "Concrete(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "System.IntPtr klass = " << class_get_name << "();\n"
@@ -246,22 +269,26 @@ struct klass
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
              << (class_type == "class" ? "" : "*/")
+             << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
              << scope_tab << "public " << string << "Concrete(System.IntPtr raw)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "handle = raw;\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Destructor.</summary>\n"
              << scope_tab << "~" << string << "Concrete()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
-             << scope_tab << "protected virtual void Dispose(bool disposing)\n"
+             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
+             << scope_tab << "protected void Dispose(bool disposing)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "efl.eo.Globals.efl_unref(handle);\n"
              << scope_tab << scope_tab << scope_tab << "handle = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(true);\n"
@@ -269,7 +296,7 @@ struct klass
              << scope_tab << "}\n"
             )
             .generate(sink
-              , std::make_tuple(
+              , std::make_tuple( cls,
                 cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
                 , cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
                 , cls.cxx_name)
@@ -304,22 +331,29 @@ struct klass
 
          if(!as_generator
             (
-             "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
+             documentation
+             << "public " << class_type << " " << string << "Inherit : " << string << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
-             << scope_tab << "public static System.IntPtr klass = System.IntPtr.Zero;\n"
+             << scope_tab << "internal static System.IntPtr klass = System.IntPtr.Zero;\n"
              << scope_tab << "private static readonly object klassAllocLock = new object();\n"
-             << scope_tab << (cls_has_string_return ? ("public Dictionary<String, IntPtr> cached_strings = new Dictionary<String, IntPtr>();") : "") << "\n"
-             << scope_tab << (cls_has_stringshare_return ? ("public Dictionary<String, IntPtr> cached_stringshares = new Dictionary<String, IntPtr>();") : "") << "\n"
+             << scope_tab << (cls_has_string_return ? ("internal Dictionary<String, IntPtr> cached_strings = new Dictionary<String, IntPtr>();") : "") << "\n"
+             << scope_tab << (cls_has_stringshare_return ? ("internal Dictionary<String, IntPtr> cached_stringshares = new Dictionary<String, IntPtr>();") : "") << "\n"
+             << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
              << scope_tab << scope_tab << "get { return handle; }\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
              << scope_tab << "public System.IntPtr raw_klass {\n"
              << scope_tab << scope_tab << "get { return klass; }\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
              << scope_tab << "public delegate void ConstructingMethod(" << string << " obj);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(inherit_cxt).actual_library_name(cls.filename)
-             << ")] static extern System.IntPtr\n"
+             << ")] private static extern System.IntPtr\n"
              << scope_tab << scope_tab << class_get_name << "();\n"
+             << scope_tab << "///<summary>Creates a new instance.</summary>\n"
+             << scope_tab << "///<param>Parent instance.</param>\n"
+             << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
              << scope_tab << "public " << string << "Inherit(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
@@ -339,10 +373,12 @@ struct klass
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Destructor.</summary>\n"
              << scope_tab << "~" << string << "Inherit()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "protected virtual void Dispose(bool disposing)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
@@ -350,6 +386,7 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "handle = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << "}\n"
+             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
              << scope_tab << (cls_has_string_return ? "efl.eo.Globals.free_dict_values(cached_strings);" : "") << "\n"
@@ -360,7 +397,7 @@ struct klass
             )
             .generate(sink
               , std::make_tuple(
-                cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
+                cls, cls.cxx_name, cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name
                 , cls.cxx_name, cls.cxx_name, cls.namespaces, cls.eolian_name, cls.cxx_name
                 , cls.cxx_name)
               , inherit_cxt))
@@ -399,7 +436,7 @@ struct klass
          auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
          if(!as_generator
             (
-             "public " << class_type << " " << string << "NativeInherit {\n"
+             "internal " << class_type << " " << string << "NativeInherit {\n"
              << scope_tab << "public static byte class_initializer(IntPtr klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Efl_Op_Description[] descs = new Efl_Op_Description[" << grammar::int_ << "];\n"
@@ -528,7 +565,7 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to add event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
@@ -544,12 +581,12 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Failed to remove event proxy for event ${key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
             << scope_tab << scope_tab << "} else if (event_count == 0) {\n"
-            << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Trying to remove proxy for event ${key} when there is nothing registered.\");\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Trying to remove proxy for event {key} when there is nothing registered.\");\n"
             << scope_tab << scope_tab << scope_tab << "return false;\n"
             << scope_tab << scope_tab << "} \n"
             << scope_tab << scope_tab << "event_cb_count[key]--;\n"
@@ -586,8 +623,12 @@ struct klass
            // Marshal.PtrToStructure for value types
 
            // Wrapper event declaration
+          if(!as_generator(documentation(1)).generate(sink, e, context))
+            return false;
+
           if(!as_generator(
                 scope_tab << "protected event EventHandler" << wrapper_args_template << " " << upper_name << ";\n"
+                << scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
                 << scope_tab << "protected void On_" << event_name << "(" << wrapper_args_type << " e)\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
@@ -596,13 +637,13 @@ struct klass
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                 << scope_tab << "}\n"
-                << scope_tab << "public void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
+                << scope_tab << "private void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
                 << scope_tab << "{\n"
                 << scope_tab << event_args
                 << scope_tab << scope_tab << "try {\n"
                 << scope_tab << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
                 << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
-                << scope_tab << scope_tab << scope_tab << "eina.Log.Warning(e.ToString());\n"
+                << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
                 << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"
@@ -618,7 +659,7 @@ struct klass
                       << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " += value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error adding proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << scope_tab << "remove {\n"
@@ -627,7 +668,7 @@ struct klass
                       << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << event_name << "_delegate))\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << upper_name << " -= value;\n"
                       << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error removing proxy for event ${key}\");\n"
+                      << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
                       << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                       << scope_tab << scope_tab << "}\n"
                       << scope_tab << "}\n")
@@ -672,8 +713,12 @@ struct klass
                    wrapper_args_type << "EventArgs";
                  }
 
+               if (!as_generator(documentation(1)).generate(sink, e, context))
+                 return false;
+
                if (!as_generator(
                      scope_tab << "protected event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
+                    << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
                      << scope_tab << "protected void On_" << wrapper_evt_name << "(" << wrapper_args_type.str() << " e)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
@@ -683,13 +728,13 @@ struct klass
                      << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
                      << scope_tab << "}\n"
                      << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
-                     << scope_tab << "protected void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
+                     << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
                      << scope_tab << "{\n"
                      << scope_tab << event_args
                     << scope_tab << scope_tab << "try {\n"
                     << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
                     << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
-                    << scope_tab << scope_tab << scope_tab << "eina.Log.Warning(e.ToString());\n"
+                    << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
                     << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
                     << scope_tab << scope_tab << "}\n"
                      << scope_tab << "}\n"
@@ -703,7 +748,7 @@ struct klass
                           << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " += value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error adding proxy for event ${key}\");\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                           << scope_tab << scope_tab << "remove {\n"
@@ -712,7 +757,7 @@ struct klass
                           << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " -= value;\n"
                           << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error(\"Error removing proxy for event ${key}\");\n"
+                          << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
                           << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                           << scope_tab << scope_tab << "}\n"
                      << scope_tab << "}\n")

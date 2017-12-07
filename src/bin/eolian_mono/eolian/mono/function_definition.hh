@@ -15,6 +15,7 @@
 #include "marshall_type.hh"
 #include "parameter.hh"
 #include "keyword.hh"
+#include "documentation.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"
 
@@ -34,7 +35,7 @@ struct native_function_definition_generator
     if(!as_generator
        ("\n\n" << scope_tab
         << eolian_mono::marshall_native_annotation(true)
-        << " public delegate "
+        << " private delegate "
         << eolian_mono::marshall_type(true)
         << " "
         << string
@@ -50,7 +51,7 @@ struct native_function_definition_generator
     if(!as_generator
        (scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(f.filename) << ")] "
         << eolian_mono::marshall_native_annotation(true)
-        << " public static extern "
+        << " private static extern "
         << eolian_mono::marshall_type(true)
         << " " << string
         << "(System.IntPtr obj"
@@ -68,7 +69,7 @@ struct native_function_definition_generator
 
     if(!as_generator
        (scope_tab
-        << " public static "
+        << " private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
@@ -108,7 +109,7 @@ struct native_function_definition_generator
       return false;
 
     if(!as_generator
-       (scope_tab << "public static  "
+       (scope_tab << "private static  "
         << string
         << "_delegate "
         << string << "_static_delegate = new " << string << "_delegate(" << string << "NativeInherit." << string << ");\n"
@@ -137,7 +138,7 @@ struct function_definition_generator
     if(!as_generator
        ("\n\n" << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(f.filename) << ")]\n"
         << scope_tab << eolian_mono::marshall_annotation(true)
-        << " public static extern "
+        << " private static extern "
         << eolian_mono::marshall_type(true)
         << " " << string
         << "(System.IntPtr obj"
@@ -151,6 +152,10 @@ struct function_definition_generator
 
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
+      return false;
+
+    if(!as_generator
+       (documentation(1)).generate(sink, f, context))
       return false;
 
     if(!as_generator

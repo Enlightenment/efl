@@ -52,6 +52,11 @@ void _example_numberwrapper_number_set(EINA_UNUSED Eo *obj, Example_Numberwrappe
    pd->number = n;
 }
 
+void _example_numberwrapper_number_set_call(Eo *obj, EINA_UNUSED Example_Numberwrapper_Data *pd, int n)
+{
+   example_numberwrapper_number_set(obj, n);
+}
+
 int _example_numberwrapper_number_get(EINA_UNUSED Eo *obj, Example_Numberwrapper_Data *pd)
 {
    return pd->number;

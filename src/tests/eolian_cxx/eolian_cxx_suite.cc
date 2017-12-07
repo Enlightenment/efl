@@ -13,6 +13,7 @@ static const Efl_Test_Case etc[] = {
   { "Eolian-Cxx Inheritance", eolian_cxx_test_inheritance },
   { "Eolian-Cxx Binding", eolian_cxx_test_binding },
   { "Eolian-Cxx Cyclic", eolian_cxx_test_cyclic },
+  { "Eolian-Cxx Documentation", eolian_cxx_test_documentation },
   { NULL, NULL }
 };
 

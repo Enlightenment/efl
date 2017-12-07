@@ -26,7 +26,7 @@ struct literal_generator
    const char* string;
 };
 
-literal_generator as_generator(char const* literal) { return literal; }
+inline literal_generator as_generator(char const* literal) { return literal; }
 
 struct {
   literal_generator operator()(const char* literal) const
@@ -164,7 +164,7 @@ struct is_generator<string_generator_terminal> : std::true_type {};
 template <>
 struct is_generator<std::string> : std::true_type {};
 
-string_generator as_generator(string_generator_terminal)
+inline string_generator as_generator(string_generator_terminal)
 {
   return string_generator{};
 }
@@ -181,7 +181,7 @@ struct attributes_needed<string_replace_generator> : std::integral_constant<int,
 
 namespace std {
 
-::efl::eolian::grammar::specific_string_generator as_generator(std::string string)
+inline ::efl::eolian::grammar::specific_string_generator as_generator(std::string string)
 {
   return ::efl::eolian::grammar::specific_string_generator{string};
 }

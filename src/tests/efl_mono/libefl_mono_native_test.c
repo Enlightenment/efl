@@ -307,6 +307,11 @@ Eina_Bool _test_testing_eina_binbuf_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Tes
   return r;
 }
 
+Eina_Bool _test_testing_call_eina_binbuf_in(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Binbuf *binbuf)
+{
+  return test_testing_eina_binbuf_in(obj, binbuf);
+}
+
 Eina_Binbuf *_binbuf_in_own_to_check = NULL;
 
 Eina_Bool _test_testing_eina_binbuf_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Binbuf *binbuf)
@@ -317,6 +322,11 @@ Eina_Bool _test_testing_eina_binbuf_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test
   eina_binbuf_append_char(binbuf, 33);
   _binbuf_in_own_to_check = binbuf;
   return r;
+}
+
+Eina_Bool _test_testing_call_eina_binbuf_in_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Eina_Binbuf *binbuf)
+{
+    return test_testing_eina_binbuf_in_own(obj, binbuf);
 }
 
 Eina_Bool _test_testing_check_binbuf_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
@@ -339,6 +349,13 @@ Eina_Bool _test_testing_eina_binbuf_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Te
   return EINA_TRUE;
 }
 
+Eina_Binbuf *_test_testing_call_eina_binbuf_out(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Binbuf *binbuf = NULL;
+  test_testing_eina_binbuf_out(obj, &binbuf);
+  return binbuf;
+}
+
 Eina_Bool _test_testing_check_binbuf_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
 {
     if (!_binbuf_out_to_check) return EINA_FALSE;
@@ -353,6 +370,13 @@ Eina_Bool _test_testing_eina_binbuf_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Tes
   return EINA_TRUE;
 }
 
+Eina_Binbuf *_test_testing_call_eina_binbuf_out_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  Eina_Binbuf *binbuf = NULL;
+  test_testing_eina_binbuf_out_own(obj, &binbuf);
+  return binbuf;
+}
+
 Eina_Binbuf *_binbuf_return_to_check = NULL;
 
 Eina_Binbuf *_test_testing_eina_binbuf_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
@@ -361,6 +385,11 @@ Eina_Binbuf *_test_testing_eina_binbuf_return(EINA_UNUSED Eo *obj, EINA_UNUSED T
   eina_binbuf_append_char(binbuf, 33);
   _binbuf_return_to_check = binbuf;
   return binbuf;
+}
+
+Eina_Binbuf *_test_testing_call_eina_binbuf_return(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  return test_testing_eina_binbuf_return(obj);
 }
 
 Eina_Bool _test_testing_check_binbuf_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
@@ -375,6 +404,12 @@ Eina_Binbuf *_test_testing_eina_binbuf_return_own(EINA_UNUSED Eo *obj, EINA_UNUS
   eina_binbuf_append_char(binbuf, 33);
   return binbuf;
 }
+
+Eina_Binbuf *_test_testing_call_eina_binbuf_return_own(Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+  return test_testing_eina_binbuf_return_own(obj);
+}
+
 
 static const int base_seq_int[] = {0x0,0x2A,0x42};
 static const unsigned int base_seq_int_size = EINA_C_ARRAY_LENGTH(base_seq_int);

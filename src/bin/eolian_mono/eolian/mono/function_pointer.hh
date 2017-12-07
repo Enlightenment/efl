@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include "documentation.hh"
+
 namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
@@ -36,25 +38,26 @@ struct function_pointer {
       if(!as_generator(open_namespace).generate(sink, namespaces, add_lower_case_context(context))) return false;
 
       // C# visible delegate
-      if (!as_generator("public delegate " << type << " " << string
+      if (!as_generator(documentation
+                  << "public delegate " << type << " " << string
                   << "(" << (parameter % ", ") << ");\n")
-              .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context))
+              .generate(sink, std::make_tuple(f, f.return_type, escape_keyword(f.name), f.parameters), context))
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
-      if (!as_generator("public delegate " << type << " " << string // public?
+      if (!as_generator("internal delegate " << type << " " << string // public?
                   << "Internal(IntPtr data, " << (parameter % ", ") << ");\n")
               .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters), context))
           return false;
 
       std::string f_name = escape_keyword(f.name);
       // Wrapper type, with callback matching the Unamanaged one
-      if (!as_generator("public class " << f_name << "Wrapper\n"
+      if (!as_generator("internal class " << f_name << "Wrapper\n"
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
                   << scope_tab << "private Eina_Free_Cb _cb_free_cb;\n\n"
 
-                  << scope_tab << "public " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina_Free_Cb _cb_free_cb)\n"
+                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina_Free_Cb _cb_free_cb)\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "this._cb = _cb;\n"
                   << scope_tab << scope_tab << "this._cb_data = _cb_data;\n"
@@ -67,12 +70,12 @@ struct function_pointer {
                   << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
                   << scope_tab << "}\n\n"
 
-                  << scope_tab << "public " << type << " ManagedCb(" << (parameter % ",") << ")\n"
+                  << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ",") << ")\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return ": "") << "_cb(_cb_data, " << (argument_invocation_no_conversion % ", ") << ");\n"
                   << scope_tab << "}\n\n"
 
-                  << scope_tab << "public static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ")\n"
+                  << scope_tab << "internal static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ")\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"

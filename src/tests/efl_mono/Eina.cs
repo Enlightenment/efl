@@ -510,7 +510,7 @@ class TestEinaBinbuf
     {
         var t = new NativeInheritImpl();
         var binbuf = new eina.Binbuf(base_seq, (uint)base_seq.Length);
-        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_in(t.raw_handle, binbuf.Handle));
+        Test.Assert(t.CallEinaBinbufIn(binbuf));
         Test.Assert(t.binbuf_in_flag);
         Test.Assert(binbuf.Own);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
@@ -523,7 +523,7 @@ class TestEinaBinbuf
         var t = new NativeInheritImpl();
         var binbuf = new eina.Binbuf(base_seq, (uint)base_seq.Length);
         binbuf.Own = false;
-        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_in_own(t.raw_handle, binbuf.Handle));
+        Test.Assert(t.CallEinaBinbufInOwn(binbuf));
         Test.Assert(t.binbuf_in_own_flag);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{43,42,0x0,0x2A,0x42,33}));
         binbuf.Dispose();
@@ -534,11 +534,8 @@ class TestEinaBinbuf
     public static void test_inherit_eina_binbuf_out()
     {
         var t = new NativeInheritImpl();
-        IntPtr bb_hdl;
-        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_out(t.raw_handle, out bb_hdl));
+        eina.Binbuf binbuf = t.CallEinaBinbufOut();
         Test.Assert(t.binbuf_out_flag);
-        Test.Assert(bb_hdl != IntPtr.Zero);
-        var binbuf = new eina.Binbuf(bb_hdl, false);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_seq));
@@ -550,11 +547,8 @@ class TestEinaBinbuf
     public static void test_inherit_eina_binbuf_out_own()
     {
         var t = new NativeInheritImpl();
-        IntPtr bb_hdl;
-        Test.Assert(NativeInheritImpl.test_testing_eina_binbuf_out_own(t.raw_handle, out bb_hdl));
+        eina.Binbuf binbuf = t.CallEinaBinbufOutOwn();
         Test.Assert(t.binbuf_out_own_flag);
-        Test.Assert(bb_hdl != IntPtr.Zero);
-        var binbuf = new eina.Binbuf(bb_hdl, true);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_seq));
@@ -566,10 +560,8 @@ class TestEinaBinbuf
     public static void test_inherit_eina_binbuf_return()
     {
         var t = new NativeInheritImpl();
-        IntPtr bb_hdl = NativeInheritImpl.test_testing_eina_binbuf_return(t.raw_handle);
+        var binbuf = t.CallEinaBinbufReturn();
         Test.Assert(t.binbuf_return_flag);
-        Test.Assert(bb_hdl != IntPtr.Zero);
-        var binbuf = new eina.Binbuf(bb_hdl, false);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_seq));
@@ -581,10 +573,8 @@ class TestEinaBinbuf
     public static void test_inherit_eina_binbuf_return_own()
     {
         var t = new NativeInheritImpl();
-        IntPtr bb_hdl = NativeInheritImpl.test_testing_eina_binbuf_return_own(t.raw_handle);
+        var binbuf = t.CallEinaBinbufReturnOwn();
         Test.Assert(t.binbuf_return_own_flag);
-        Test.Assert(bb_hdl != IntPtr.Zero);
-        var binbuf = new eina.Binbuf(bb_hdl, true);
         Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[]{33}));
         binbuf.Reset();
         Test.Assert(binbuf.Append(base_seq));
@@ -681,7 +671,7 @@ class TestEinaSlice
     {
         var t = new NativeInheritImpl();
         var slc = new eina.Slice(pinnedPtr, (UIntPtr)3);
-        Test.Assert(NativeInheritImpl.test_testing_eina_slice_in(t.raw_handle, slc));
+        Test.Assert(t.EinaSliceIn(slc));
         Test.Assert(t.slice_in_flag);
     }
 
@@ -694,7 +684,7 @@ class TestEinaSlice
         var slc = new eina.Rw_Slice(ptr, (UIntPtr)3);
 
         var t = new NativeInheritImpl();
-        Test.Assert(NativeInheritImpl.test_testing_eina_rw_slice_in(t.raw_handle, slc));
+        Test.Assert(t.EinaRwSliceIn(slc));
 
         Test.Assert(t.rw_slice_in_flag);
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
@@ -706,7 +696,7 @@ class TestEinaSlice
     {
         var t = new NativeInheritImpl();
         var slc = new eina.Slice();
-        Test.Assert(NativeInheritImpl.test_testing_eina_slice_out(t.raw_handle, ref slc));
+        Test.Assert(t.EinaSliceOut(ref slc));
         Test.Assert(t.slice_out_flag);
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);
@@ -717,7 +707,7 @@ class TestEinaSlice
     {
         var t = new NativeInheritImpl();
         var slc = new eina.Rw_Slice();
-        Test.Assert(NativeInheritImpl.test_testing_eina_rw_slice_out(t.raw_handle, ref slc));
+        Test.Assert(t.EinaRwSliceOut(ref slc));
         Test.Assert(t.rw_slice_out_flag);
         Test.Assert(slc.Mem != IntPtr.Zero);
         Test.Assert(slc.Length == base_seq.Length);

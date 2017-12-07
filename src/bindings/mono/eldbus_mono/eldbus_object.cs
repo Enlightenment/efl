@@ -1,3 +1,6 @@
+
+#pragma warning disable 1591
+
 using System.Runtime.InteropServices;
 
 using static eldbus.EldbusObjectNativeFunctions;

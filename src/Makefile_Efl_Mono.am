@@ -190,9 +190,11 @@ lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @EFL_CUSTOM_EXPORTS_MONO_
 
 #Efl Mono - C Sharp binding library
 
+libefl_mono_dll_MCS_FLAGS = -doc:lib/efl_mono/libefl_mono.xml
+
 lib/efl_mono/libefl_mono.dll: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp) $(efl_mono_files_gen) lib/efl_mono/libefl_mono.dll.config
 	@rm -f lib/efl_mono/libefl_mono.dll
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) $(libefl_mono_dll_MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
 
 lib/efl_mono/libefl_mono.dll.config:
 	echo "<configuration>" > $@
@@ -213,6 +215,7 @@ endif
 EFL_INSTALL_EXEC_HOOK += \
 $(MKDIR_P) $(efl_mono_dll_dest); \
 cp -f $(builddir)/lib/efl_mono/libefl_mono.dll $(efl_mono_dll_dest)/libefl_mono.dll; \
+cp -f $(builddir)/lib/efl_mono/libefl_mono.xml $(efl_mono_dll_dest)/libefl_mono.xml; \
 $(MKDIR_P) $(DESTDIR)$(datadir)/efl_mono; \
 cp -f $(builddir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
 
