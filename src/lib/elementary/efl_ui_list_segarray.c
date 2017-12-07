@@ -61,11 +61,26 @@ static Eina_Rbtree_Direction _rbtree_compare(Efl_Ui_List_SegArray_Node const* le
     return EINA_RBTREE_RIGHT;
 }
 
+
+static void
+_free_node(Efl_Ui_List_SegArray_Node* node, void* data EINA_UNUSED)
+{
+   int i = 0;
+
+   while (i < node->length)
+     {
+       free(node->pointers[i]);
+       ++i;
+     }
+
+   free(node);
+}
+
 static Efl_Ui_List_SegArray_Node*
 _alloc_node(Efl_Ui_List_SegArray* segarray, int first, int max)
 {
    DBG("alloc'ing and inserting node with first index: %d", first);
-  
+
    Efl_Ui_List_SegArray_Node* node;
    node = calloc(1, sizeof(Efl_Ui_List_SegArray_Node) + max*sizeof(Efl_Ui_List_Item*));
    node->first = first;
@@ -87,6 +102,12 @@ void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_siz
 {
    segarray->root = NULL;
    segarray->array_initial_size = initial_step_size;
+}
+
+void efl_ui_list_segarray_flush(Efl_Ui_List_SegArray* segarray)
+{
+   eina_rbtree_delete(EINA_RBTREE_GET(segarray->root), EINA_RBTREE_FREE_CB(_free_node), NULL);
+   segarray->root = NULL;
 }
 
 static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
@@ -115,40 +136,44 @@ void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_
    segarray->count++;
 }
 
-void efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
+Efl_Ui_List_Item*
+efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
 {
    Efl_Ui_List_SegArray_Node *node;
-   Efl_Ui_List_Item* item;
+   Efl_Ui_List_Item *item, *rt;
    Eina_Iterator* iterator;
    int offset;
 
    node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
                                         &index, sizeof(index), &_insert_lookup_cb, NULL);
-   if (!node) return;
+   if (!node) return NULL;
 
    offset = index - node->first;
-   if (offset >= node->length) return;
+   if (offset >= node->length) return NULL;
 
-   item = node->pointers[offset];
-   free(item);
-   node->length--;
+   rt = node->pointers[offset];
    segarray->count--;
+   node->length--;
 
-   if (offset >= node->length) return
-
-   memmove(node->pointers[offset], node->pointers[offset+1], sizeof(Efl_Ui_List_Item*)*(node->length - offset));
-   while (offset < node->length)
+   if (offset < node->length)
      {
-       item = node->pointers[offset];
-       item->item.index_offset--;
-       ++offset;
+         while (offset < node->length)
+           {
+             node->pointers[offset] = node->pointers[offset+1];
+             item = node->pointers[offset];
+             --item->item.index_offset;
+             ++offset;
+           }
+
+         iterator = eina_rbtree_iterator_infix((void*)node);
+         eina_iterator_next(iterator, (void**)&node);
+         while(eina_iterator_next(iterator, (void**)&node))
+           node->first--;
+
+         eina_iterator_free(iterator);
      }
 
-   iterator = eina_rbtree_iterator_infix((void*)node);
-   while(eina_iterator_next(iterator, (void**)&node))
-     node->first--;
-
-   eina_iterator_free(iterator);
+   return rt;
 }
 
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
@@ -161,10 +186,10 @@ void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int fi
         Efl_Ui_List_SegArray_Node *node;
         int idx = first + i;
 
-        DBG("insert is in the middle or at the end");
+        //DBG("insert is in the middle or at the end");
         node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
                                                 &idx, sizeof(idx), &_insert_lookup_cb, NULL);
-        if(!node)
+        if (!node)
           {
              DBG("no node to add item for index %d!", idx);
              node = _alloc_node(segarray, idx, segarray->array_initial_size);
@@ -318,6 +343,8 @@ _efl_ui_list_segarray_node_accessor_get_container(Efl_Ui_List_Segarray_Node_Acce
 static void
 _efl_ui_list_segarray_node_accessor_free(Efl_Ui_List_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
+   if (acc->pre_iterator)
+     eina_iterator_free(acc->pre_iterator);
    free(acc);
 }
 

@@ -44,6 +44,7 @@ struct _Priv_Data
    Evas_Object *list2;
    Evas_Object *e_name;
    Evas_Object *e_occ;
+   Evas_Object *selected;
 };
 typedef struct _Priv_Data Priv_Data;
 
@@ -52,6 +53,13 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 {
    Priv_Data *priv = (Priv_Data*)data;
    efl_unref(priv->model);
+}
+
+static void
+_focused(void *data, const Efl_Event *event)
+{
+   Priv_Data *priv = (Priv_Data*)data;
+   priv->selected = event->info;
 }
 
 static void
@@ -73,26 +81,28 @@ _bt_add_clicked(void *data, Evas_Object *obj, void *event_info)
 
    eina_value_set(&value, EINA_FALSE);
    efl_model_property_set(child, "selected", &vtext);
+
+   eina_value_flush(&vtext);
+   eina_value_flush(&value);
 }
 
 static void
 _bt_del_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   Efl_Object *l = NULL;
    Eo *child = NULL;
 
-//   l = elm_interface_atspi_selection_selected_child_get(priv->list1, 0);
-//   printf("selection %p\n", l);
-//   if(l)
-//     {
-//       child = efl_ui_view_model_get(l);
-//       efl_model_child_del(priv->model, child);
-//     }
-//   else
-//     {
-//       printf("no selection\n");
-//     }
+   //l = efl_ui_focus_manager_focus_get(priv->list1);
+   if(priv->selected)
+     {
+        printf("focused %p\n", priv->selected);
+        child = efl_ui_view_model_get(priv->selected);
+        efl_model_child_del(priv->model, child);
+     }
+   else
+     {
+        printf("no focused\n");
+     }
 }
 
 static void
@@ -146,6 +156,7 @@ _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
    Efl_Ui_List_Item_Event *ie = event->info;
    printf("relized 2\n");
 
+   elm_object_focus_allow_set(ie->layout, EINA_TRUE);
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_ui_model_connect(ie->layout, "elm.text", "occupation");
@@ -180,6 +191,8 @@ _make_model()
         efl_model_property_set(child, "selected", &value);
      }
 
+   eina_value_flush(&vtext);
+   eina_value_flush(&value);
    return model;
 }
 
@@ -296,6 +309,7 @@ elm_main(int argc, char **argv)
    elm_box_pack_end(vbx, bt);
 
    elm_box_pack_end(bx, priv->list2);
+   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused ,priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
 

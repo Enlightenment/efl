@@ -8,7 +8,7 @@ typedef struct _Efl_Ui_List_Item Efl_Ui_List_Item;
 typedef struct _Efl_Ui_List_SegArray_Node
 {
    EINA_RBTREE;
-  
+
    int length;
    int max;
    int first;
@@ -33,10 +33,10 @@ Efl_Ui_List_SegArray_Node* efl_ui_list_segarray_item_node_get(Efl_Ui_List_SegArr
                                                               Efl_Ui_List_Item* item);
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor);
 int efl_ui_list_segarray_count(Efl_Ui_List_SegArray const* segarray);
-void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, //int member_size,
-                                int initial_step_size);
+void efl_ui_list_segarray_setup(Efl_Ui_List_SegArray* segarray, int initial_step_size);
+void efl_ui_list_segarray_flush(Efl_Ui_List_SegArray* segarray);
 
 void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_Model* model);
-void efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index);
+Efl_Ui_List_Item *efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index);
 
 #endif

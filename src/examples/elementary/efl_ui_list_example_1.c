@@ -64,6 +64,7 @@ _make_model()
         efl_model_property_set(child, "name", &vtext);
      }
 
+   eina_value_flush(&vtext);
    return model;
 }
 
