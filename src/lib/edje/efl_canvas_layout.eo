@@ -10,7 +10,6 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
-   event_prefix: edje_object;
    data: Edje;
    methods {
       @property animation {
@@ -133,9 +132,5 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Player.play_speed { get; set; }
-   }
-   events {
-      recalc; [[Edje re-calculated the object.]]
-      circular,dependency; [[Edje found circular dependencies between parts of the object.]]
    }
 }

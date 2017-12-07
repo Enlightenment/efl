@@ -10,6 +10,7 @@ interface Efl.Layout.Calc
 
      @since 1.21
    ]]
+   event_prefix: efl_layout;
    methods {
       @property calc_auto_update_hints {
          [[Whether this object updates its size hints automatically.
@@ -105,5 +106,10 @@ interface Efl.Layout.Calc
            See also @.calc_freeze and @.calc_thaw.
          ]]
       }
+   }
+   events {
+      recalc; [[The layout was recalculated.]]
+      circular,dependency; [[A circular dependency between parts of the
+         object was found.]]
    }
 }

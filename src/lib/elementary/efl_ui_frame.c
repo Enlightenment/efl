@@ -69,7 +69,7 @@ _on_recalc_done(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
 
    efl_event_callback_del
-     (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
+     (wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
    sd->anim = EINA_FALSE;
 
    elm_layout_sizing_eval(data);
@@ -88,7 +88,7 @@ _on_frame_clicked(void *data,
 
    if (sd->collapsible)
      {
-        efl_event_callback_add(wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, _recalc, data);
+        efl_event_callback_add(wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
         elm_layout_signal_emit(data, "elm,action,toggle", "elm");
         sd->collapsed++;
         sd->anim = EINA_TRUE;
@@ -193,7 +193,7 @@ _efl_ui_frame_collapse_go(Eo *obj, Efl_Ui_Frame_Data *sd, Eina_Bool collapse)
 
    elm_layout_signal_emit(obj, "elm,action,toggle", "elm");
    efl_event_callback_legacy_call
-     (wd->resize_obj, EDJE_OBJECT_EVENT_RECALC, obj);
+     (wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, obj);
    sd->collapsed = collapse;
    elm_widget_tree_unfocusable_set(obj, sd->collapsed);
    sd->anim = EINA_TRUE;
