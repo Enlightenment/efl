@@ -25,7 +25,6 @@ int
 database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
-   eina_init();
    _decls      = eina_hash_stringshared_new(free);
    _declsf     = eina_hash_stringshared_new(_hashlist_free);
    return ++_database_init_count;
@@ -45,7 +44,6 @@ database_shutdown()
      {
         eina_hash_free(_decls     ); _decls      = NULL;
         eina_hash_free(_declsf    ); _declsf     = NULL;
-        eina_shutdown();
      }
    return _database_init_count;
 }
