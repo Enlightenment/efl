@@ -52,6 +52,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set;}
       Efl.Gfx.visible { set; }

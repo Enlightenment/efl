@@ -239,8 +239,8 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
+static void
+_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
@@ -258,6 +258,25 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    efl_gfx_size_set(obj, new_size);
 
    _calc_align(obj);
+}
+
+EOLIAN static void
+_efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   if (pd->needs_size_calc) return;
+   pd->needs_size_calc = EINA_TRUE;
+
+   evas_object_smart_changed(obj);
+}
+
+EOLIAN static void
+_efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   if (pd->needs_size_calc)
+     {
+        _sizing_eval(obj, pd);
+        pd->needs_size_calc = EINA_FALSE;
+     }
 }
 
 /* Standard widget overrides */

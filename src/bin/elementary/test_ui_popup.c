@@ -325,6 +325,8 @@ efl_ui_popup_alert_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev)
      printf("Negative Button is clicked\n");
    else if(event->button_type == EFL_UI_POPUP_ALERT_BUTTON_USER)
      printf("User Button is clicked\n");
+
+   efl_del(ev->object);
 }
 
 void
@@ -356,22 +358,14 @@ test_ui_popup_alert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
 }
 
-void
-test_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
-
-   Eo *win = efl_add(EFL_UI_WIN_CLASS, NULL,
-                     efl_text_set(efl_added, "Efl.Ui.Popup.Alert.Scroll"),
-                     efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-
-   efl_gfx_size_set(win, EINA_SIZE2D(320, 320));
-
+   Eo *win = data;
    Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
-
-   efl_gfx_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
@@ -383,7 +377,149 @@ test_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
    efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
 
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+static void
+_alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+
+   efl_content_set(efl_ui_popup, layout);
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(320, -1));
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+static void
+_alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+
+   efl_content_set(efl_ui_popup, layout);
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 320));
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+static void
+_alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+
+   efl_content_set(efl_ui_popup, layout);
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(320, 320));
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+static void
+_alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   char buf[PATH_MAX];
+   Eo *win = data;
+   Eo *efl_ui_popup= efl_add(EFL_UI_POPUP_ALERT_SCROLL_CLASS, win);
+
+   efl_text_set(efl_part(efl_ui_popup, "title"), "title");
+
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+
+   efl_content_set(efl_ui_popup, layout);
+
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+
+   efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(80, 80));
+   efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
+
+   efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
+}
+
+void
+test_ui_popup_alert_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *win = efl_add(EFL_UI_WIN_CLASS, NULL,
+                     efl_text_set(efl_added, "Efl.Ui.Popup.Alert.Scroll"),
+                     efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
+   efl_gfx_size_set(win, EINA_SIZE2D(500, 500));
+
+   Eo *create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "1. size(160,160), content(200, 200), expand(-1, -1)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 0));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case1_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "2. size(160,160), content(200, 200), expand(320, -1)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 50));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case2_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "3. size(160,160), content(200, 200), expand(-1, 320)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 100));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case3_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "4. size(160,160), content(200, 200), expand(320, 320)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 150));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case4_cb, win);
+
+   create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(create_btn, "5. size(160,160), content(200, 200), expand(80, 80)");
+   efl_gfx_position_set(create_btn, EINA_POSITION2D(0, 200));
+   efl_gfx_size_set(create_btn, EINA_SIZE2D(500, 50));
+   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case5_cb, win);
 }
 
 void

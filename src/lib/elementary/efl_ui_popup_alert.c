@@ -23,20 +23,6 @@ static const char BUTTON_SWALLOW_NAME[EFL_UI_POPUP_ALERT_BUTTON_COUNT][20] =
                                                  "elm.swallow.button2",
                                                  "elm.swallow.button3"};
 
-EOLIAN static void
-_efl_ui_popup_alert_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Data *pd EINA_UNUSED)
-{
-   elm_layout_sizing_eval(efl_super(obj, MY_CLASS));
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-      (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
-}
-
 static Eina_Bool
 _efl_ui_popup_alert_text_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, const char *part, const char *label)
 {
@@ -182,6 +168,8 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
      }
 
    elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 }
 
@@ -222,8 +210,5 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert, EFL_UI_POPUP_ALERT, Efl_Ui_Popup_
 #include "efl_ui_popup_alert_part.eo.c"
 
 /* Efl.Part end */
-
-#define EFL_UI_POPUP_ALERT_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_alert)
 
 #include "efl_ui_popup_alert.eo.c"
