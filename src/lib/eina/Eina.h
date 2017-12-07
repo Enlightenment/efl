@@ -57,15 +57,15 @@
  *
  * @section eina_main_intro Introduction
  *
- * The Eina library is a library that implements an API for data types
+ * The Eina library is a library which implements an API for data types
  * in an efficient way. It also provides some useful tools like
- * opening shared libraries, errors management, type conversion,
- * time accounting and memory pool.
+ * opening shared libraries, error management, type conversion,
+ * time accounting and memory pools.
  *
  * This library is cross-platform and can be compiled and used on
- * Linux, BSD, Opensolaris and Windows (XP and CE).
+ * Linux, BSD, and Windows.
  *
- * The data types that are available are (see @ref Eina_Data_Types_Group):
+ * The data types available are (see @ref Eina_Data_Types_Group):
  * @li @ref Eina_Fp_Group standard floating point numbers.
  * @li @ref Eina_Inline_Array_Group standard array of inlined members.
  * @li @ref Eina_Array_Group standard array of @c void* data.
@@ -82,7 +82,7 @@
  * @li @ref Eina_Trash_Group container of unused but allocated data.
  * @li @ref Eina_Value_Group container for generic value storage and access.
  *
- * The tools that are available are (see @ref Eina_Tools_Group):
+ * The tools available are (see @ref Eina_Tools_Group):
  * @li @ref Eina_Benchmark_Group helper to write benchmarks.
  * @li @ref Eina_Convert_Group faster conversion from strings to integers, double, etc.
  * @li @ref Eina_Counter_Group measures number of calls and their time.
@@ -100,9 +100,9 @@
  *
  * @section eina_main_compiling How to compile
  *
- * Eina is a library your application links to. The procedure for this is
+ * Eina is a library to which your app can link. The procedure for this is
  * very simple. You simply have to compile your application with the
- * appropriate compiler flags that the @c pkg-config script outputs. For
+ * appropriate compiler flags as outputted by the @c pkg-config script. For
  * example:
  *
  * Compiling C or C++ files into object files:
@@ -121,8 +121,8 @@
  *
  * @section eina_main_next_steps Next Steps
  *
- * After you understood what Eina is and installed it in your system
- * you should proceed understanding the programming interface.
+ * After you've understood what Eina is and installed it,
+ * you can now learn more about the the programming interface.
  *
  * Recommended reading:
  *
@@ -163,37 +163,37 @@
  *
  * The choice of which container to use in each situation is very important in
  * achieving good performance and readable code. The most common container types
- * to be used are:
+ * used are:
  * @li List
  * @li Inline list
  * @li Array
  * @li Inline array
  * @li Hash
  *
- * All types have virtues and vices. The following considerations are good
+ * All types have pros and cons. The following considerations are good
  * starting point in deciding which container to use:
- * @li Hashes are appropriate for datasets which will be searched often;
- * @li arrays are good when accessing members by position;
- * @li lists provide good versatility for adding elements in any position with
- * minimal overhead;
- * @li inline arrays use very little memory and don't cause fragmentation and
- * therefore are a good option in memory constrained systems;
- * @li inline lists are the appropriate type to use when the flexibility of a
- * list is required but the overhead of pointer indirection is not acceptable.
- * @warning These are general considerations, every situation is different,
- * don't follow these recommendations blindly.
+ * @li Hashes are appropriate for datasets which will be searched often.
+ * @li Arrays are good when accessing members by position;
+ * @li Lists provide good versatility for adding elements in any position with
+ * minimal overhead.
+ * @li Inline arrays use very little memory and don't cause fragmentation so
+ * are a good option in memory constrained systems.
+ * @li Inline lists are the best type to use when list flexibility is
+ * required but no pointer indirection overhead can be allowed.
+ * @warning These are general considerations. Every situation is different.
+ * Don't follow these recommendations blindly.
  *
  * @section eina_main_Creation Creating custom container types
  *
- * @note Before creating a custom container check if one of the existing ones
- * doesn't suit your needs. For example, while there is no stack type @ref
- * Eina_Array_Group is a very good substitute, similarly there is no queue type
+ * @note Before creating a custom container check if any of the existing ones
+ * suit your needs. For example, while there is no stack type @ref
+ * Eina_Array_Group is a very good substitute. Similarly there is no queue type
  * however an @ref Eina_List_Group works very well as a queue.
  *
- * If creating a custom container type consider allowing access to the data in
+ * If creating a custom container type, consider allowing access to the data in
  * your container through @ref Eina_Iterator_Group "Iterators" and @ref
  * Eina_Accessor_Group "Accessors". To do so your container should have an
- * iterator creation function and an accessor creation function, these functions
+ * iterator creation function and an accessor creation function. These functions
  * should return properly populated @ref _Eina_Iterator and @ref _Eina_Accessor.
  *
  * @defgroup Eina_Tools_Group Tools
