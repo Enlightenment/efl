@@ -5,12 +5,15 @@
 
 static Evas_Object *_test_code_win_create(const char *id, const char *name)
 {
-   Evas_Object *win;
+   Evas_Object *win, *bg;
 
    win = elm_win_add(NULL, id, ELM_WIN_BASIC);
    elm_win_title_set(win, name);
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_alpha_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
 
    evas_object_resize(win, 360 * elm_config_scale_get(), 220 * elm_config_scale_get());
    return win;
@@ -96,7 +99,6 @@ _elm_code_test_editor_setup(Evas_Object *parent, Eina_Bool log)
    elm_obj_code_widget_editable_set(widget, EINA_TRUE);
    elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
    elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
-   elm_obj_code_widget_alpha_set(widget, 200);
 
    if (!log)
      {

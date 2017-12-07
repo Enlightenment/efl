@@ -2203,19 +2203,13 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    int r, g, b, a;
    double fade;
    unsigned int i;
-   Evas_Object *grid, *background;
+   Evas_Object *grid;
 
    edje = elm_layout_edje_get(obj);
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
    fade = (double) pd->alpha / 255;
-   background = elm_object_part_content_get(pd->scroller, "elm.swallow.background");
-   evas_object_color_set(background, r * fade, g * fade, b * fade, a * fade);
-
-   if (fade < 1.0)
-     evas_object_color_set(obj, 1, 1, 1, 1); // setting 0 alpha is not working
-
    for (i = 0; i < eina_list_count(pd->grids); i++)
      {
         grid = eina_list_nth(pd->grids, i);
@@ -2242,7 +2236,7 @@ _elm_code_widget_alpha_set(Eo *obj, Elm_Code_Widget_Data *pd, int alpha)
 EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Object *background, *gridrows, *scroller;
+   Evas_Object *gridrows, *scroller;
    const char *fontname, *fontsize;
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
@@ -2259,12 +2253,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_layout_content_set(obj, "elm.swallow.content", scroller);
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
-
-   background = elm_bg_add(scroller);
-   evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(background);
-   elm_object_part_content_set(scroller, "elm.swallow.background", background);
 
    fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
    fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
