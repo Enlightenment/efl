@@ -107,6 +107,15 @@ _sel_manager_seat_selection_init(Efl_Selection_Manager_Data *pd, unsigned int se
        seat_sel->sel = sel;
    }
 #endif
+#ifdef HAVE_ELEMENTARY_CO
+   if (!seat_sel->sel)
+   {
+       Sel_Manager_Selection *sel = calloc(1, sizeof(Sel_Manager_Selection));
+       sel->seat_sel = seat_sel;
+       seat_sel->sel = sel;
+   }
+#endif
+
 
    return seat_sel;
 }
@@ -3540,6 +3549,188 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
 }
 #endif
 
+#ifdef HAVE_ELEMENTARY_COCOA
+static Ecore_Cocoa_Window *
+_cocoa_window_get(const Evas_Object *obj)
+{
+   Evas_Object *top, *par;
+   Ecore_Cocoa_Window *win = NULL;
+
+   if (elm_widget_is(obj))
+     {
+         top = elm_widget_top_get(obj);
+         if (!top)
+           {
+              par = elm_widget_parent_widget_get(obj);
+              if (par) top = elm_widget_top_get(par);
+           }
+         if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
+           win = elm_win_cocoa_window_get(top);
+     }
+   if (!win)
+     {
+        // FIXME
+        CRI("WIN has not been retrieved!!!");
+     }
+
+   return win;
+}
+
+static Ecore_Cocoa_Cnp_Type
+_sel_format_to_ecore_cocoa_cnp_type(Efl_Selection_Format fmt)
+{
+   Ecore_Cocoa_Cnp_Type type = 0;
+
+   if ((fmt & EFL_SELECTION_FORMAT_TEXT) ||
+       (fmt & EFL_SELECTION_FORMAT_VCARD))
+     type |= ECORE_COCOA_CNP_TYPE_STRING;
+   if (fmt & EFL_SELECTION_FORMAT_MARKUP)
+     type |= ECORE_COCOA_CNP_TYPE_MARKUP;
+   if (fmt & EFL_SELECTION_FORMAT_HTML)
+     type |= ECORE_COCOA_CNP_TYPE_HTML;
+   if (fmt & EFL_SELECTION_FORMAT_IMAGE)
+     type |= ECORE_COCOA_CNP_TYPE_IMAGE;
+
+   return type;
+}
+
+static void
+_cocoa_sel_obj_del_req_cb(void        *data,
+                          Evas        *e       EINA_UNUSED,
+                          Evas_Object *obj,
+                          void        *ev_info EINA_UNUSED)
+{
+   Sel_Manager_Selection *sel = data;
+   if (sel->request_obj == obj) sel->request_obj = NULL;
+}
+
+static void
+_cocoa_sel_obj_del_cb(void        *data,
+                      Evas        *e       EINA_UNUSED,
+                      Evas_Object *obj,
+                      void        *ev_info EINA_UNUSED)
+{
+   Sel_Manager_Selection *sel = data;
+   if (sel->owner == obj)
+     {
+        sel->owner = NULL;
+     }
+   //if (dragwidget == obj) dragwidget = NULL;
+}
+
+static void
+_job_pb_cb(void *data)
+{
+   Sel_Manager_Selection *sel = data;
+   Efl_Selection_Data ddata;
+   Ecore_Cocoa_Cnp_Type type, get_type;
+   void *pbdata;
+   int pbdata_len;
+
+   if (sel->data_func)
+     {
+        ddata.x = 0;
+        ddata.y = 0;
+
+        /* Pass to cocoa clipboard */
+        type = _sel_format_to_ecore_cocoa_cnp_type(sel->request_format);
+        pbdata = ecore_cocoa_clipboard_get(&pbdata_len, type, &get_type);
+
+        ddata.format = EFL_SELECTION_FORMAT_NONE;
+        if (get_type & ECORE_COCOA_CNP_TYPE_STRING)
+          ddata.format |= EFL_SELECTION_FORMAT_TEXT;
+        if (get_type & ECORE_COCOA_CNP_TYPE_MARKUP)
+          ddata.format |= EFL_SELECTION_FORMAT_MARKUP;
+        if (get_type & ECORE_COCOA_CNP_TYPE_IMAGE)
+          ddata.format |= EFL_SELECTION_FORMAT_IMAGE;
+        if (get_type & ECORE_COCOA_CNP_TYPE_HTML)
+          ddata.format |= EFL_SELECTION_FORMAT_HTML;
+
+        ddata.data = pbdata;
+        ddata.len = pbdata_len;
+        ddata.action = EFL_SELECTION_ACTION_UNKNOWN;
+        sel->data_func(sel->data_func_data, sel->request_obj, &ddata);
+        free(pbdata);
+     }
+}
+
+static void
+_cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
+                                     Evas_Object         *owner,
+                                     Efl_Selection_Type   type,
+                                     Efl_Selection_Format format,
+                                     const void          *buf,
+                                     size_t               len,
+                                     Sel_Manager_Seat_Selection *seat_sel)
+{
+   Sel_Manager_Selection *sel;
+   Ecore_Cocoa_Cnp_Type ecore_type;
+   Ecore_Win32_Window *win;
+
+   sel = seat_sel->sel;
+   win = _cocoa_window_get(owner);
+   if ((!buf) && (format != EFL_SELECTION_FORMAT_IMAGE))
+     return efl_selection_manager_selection_clear(pd->sel_man, owner, type, seat_sel->seat);
+   if (len <= 0) return EINA_FALSE;
+
+   efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOSS, NULL);
+   if (sel->owner)
+     evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_cb, sel);
+
+   sel->owner = owner;
+   sel->win = win;
+   sel->format = format;
+
+   evas_object_event_callback_add(sel->owner, EVAS_CALLBACK_DEL,
+                                  _cocoa_sel_obj_del_cb, sel);
+   ELM_SAFE_FREE(sel->buf, free);
+   sel->len = 0;
+   if (buf)
+     {
+        sel->buf = malloc(len + 1);
+        if (EINA_UNLIKELY(!sel->buf))
+          {
+             CRI("Failed to allocate memory!");
+             efl_selection_manager_selection_clear(pd->sel_man, owner, type, seat_sel->seat);
+             return;
+          }
+        memcpy(sel->buf, buf, len);
+        sel->buf[len] = 0;
+        sel->len = len;
+        ecore_type = _sel_format_to_ecore_cocoa_cnp_type(format);
+        ecore_cocoa_clipboard_set(buf, len, ecore_type);
+     }
+
+   return;
+}
+
+static void
+_cocoa_efl_sel_manager_selection_get(const Evas_Object  *owner,
+                                     Efl_Selection_Manager_Data *pd,
+                                     Efl_Selection_Type        type EINA_UNUSED,
+                                     Efl_Selection_Format      format,
+                                     Sel_Manager_Seat_Selection *seat_sel)
+{
+   Ecore_Cocoa_Window *win;
+   Sel_Manager_Selection *sel;
+
+   sel = seat_sel->sel;
+   sel->request_format = format;
+   win = _cocoa_window_get(owner);
+   if (sel->request_obj)
+     evas_object_event_callback_del_full(sel->request_obj, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_req_cb, sel);
+
+   sel->win = win;
+   ecore_job_add(_job_pb_cb, sel);
+
+   evas_object_event_callback_add(sel->request_obj, EVAS_CALLBACK_DEL,
+                                  _cocoa_sel_obj_del_req_cb, sel);
+}
+
+#endif
+
 static int
 _drop_item_container_cmp(const void *d1, const void *d2)
 {
@@ -3916,6 +4107,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
    return _wl_efl_sel_manager_selection_set(pd, owner, type, format, buf, len, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
+   return _cocoa_efl_sel_manager_selection_set(pd, owner, type, format, buf, len, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
 #endif
@@ -3941,6 +4133,9 @@ _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
 #ifdef HAVE_ELEMENTARY_WL2
    sel = seat_sel->sel;
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   sel = seat_sel->sel;
+#endif
    sel->request_obj = owner;
    sel->data_func_data = data_func_data;
    sel->data_func = data_func;
@@ -3951,6 +4146,9 @@ _efl_selection_manager_selection_get(Eo *obj, Efl_Selection_Manager_Data *pd,
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
    _wl_efl_sel_manager_selection_get(owner, pd, type, format, seat_sel);
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   _cocoa_efl_sel_manager_selection_get(owner, pd, type, format, seat_sel);
 #endif
 }
 
@@ -3969,6 +4167,9 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
    sel = seat_sel->sel_list + type;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
+   sel = seat_sel->sel;
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
    sel = seat_sel->sel;
 #endif
    if ((!sel->active) && (sel->owner != owner))
@@ -3998,6 +4199,20 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
 #ifdef HAVE_ELEMENTARY_WL2
    sel->selection_serial = ecore_wl2_dnd_selection_clear(_wl_seat_get(_wl_window_get(owner), owner, seat));
    ERR("sel serial: %d", sel->selection_serial);
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sel->owner)
+     evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_cb, sel);
+   if (sel->request_obj)
+     evas_object_event_callback_del_full(sel->request_obj, EVAS_CALLBACK_DEL,
+                                         _cocoa_sel_obj_del_req_cb, sel);
+   sel->owner = NULL;
+   sel->request_obj = NULL;
+   ELM_SAFE_FREE(sel->buf, free);
+   sel->len = 0;
+
+   ecore_cocoa_clipboard_clear();
 #endif
 }
 

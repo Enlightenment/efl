@@ -43,11 +43,11 @@ typedef struct _Anim_Icon Anim_Icon;
 typedef struct _Sel_Manager_Drag_Container Sel_Manager_Drag_Container;
 typedef struct _Drop_Format Drop_Format;
 typedef struct _Item_Container_Drop_Info Item_Container_Drop_Info;
+typedef struct _Sel_Manager_Selection Sel_Manager_Selection;
 
 #ifdef HAVE_ELEMENTARY_X
 typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
-typedef struct _Sel_Manager_Selection Sel_Manager_Selection;
 
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (Sel_Manager_Selection *sel, Ecore_X_Event_Selection_Notify *);
@@ -107,10 +107,14 @@ struct _Sel_Manager_Selection
    Ecore_Event_Handler *offer_handler;
    Ecore_Wl2_Window *win;
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   Ecore_Cocoa_Window *win;
+   int                    pb_count;
+#endif
 
    Efl_Selection_Format     format;
    Efl_Selection_Action action;
-   Eina_Bool active;
+   Eina_Bool active : 1;
 
    Eo *owner;
 
@@ -129,6 +133,9 @@ struct _Sel_Manager_Seat_Selection
    Sel_Manager_Selection *sel_list;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
+   Sel_Manager_Selection *sel;
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
    Sel_Manager_Selection *sel;
 #endif
 
