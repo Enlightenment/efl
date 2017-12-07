@@ -680,7 +680,7 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
 static Eolian_Class *
 _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 {
-   if (eina_hash_find(_parsingeos, fname))
+   if (eina_hash_find(ls->state->parsing, fname))
      return NULL;
    Eolian_Class *cl = NULL;
    if (!eo_parser_database_fill(ls->state, fname, EINA_FALSE, &cl) || !cl)
@@ -2499,14 +2499,14 @@ end:
 Eina_Bool
 eo_parser_database_fill(Eolian *state, const char *filename, Eina_Bool eot, Eolian_Class **fcl)
 {
-   Eolian_Class *cl = eina_hash_find(_parsedeos, filename);
+   Eolian_Class *cl = eina_hash_find(state->parsed, filename);
    if (cl)
      {
         if (!eot && fcl) *fcl = cl;
         return EINA_TRUE;
      }
 
-   eina_hash_set(_parsingeos, filename, (void *)EINA_TRUE);
+   eina_hash_set(state->parsing, filename, (void *)EINA_TRUE);
 
    Eo_Lexer *ls = eo_lexer_new(state, filename);
    if (!ls)
@@ -2544,14 +2544,14 @@ eo_parser_database_fill(Eolian *state, const char *filename, Eina_Bool eot, Eoli
    if (fcl) *fcl = cl;
 
 done:
-   eina_hash_set(_parsedeos, filename, eot ? (void *)EINA_TRUE : cl);
-   eina_hash_set(_parsingeos, filename, (void *)EINA_FALSE);
+   eina_hash_set(state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
+   eina_hash_set(state->parsing, filename, (void *)EINA_FALSE);
 
    eo_lexer_free(ls);
    return EINA_TRUE;
 
 error:
-   eina_hash_set(_parsingeos, filename, (void *)EINA_FALSE);
+   eina_hash_set(state->parsing, filename, (void *)EINA_FALSE);
    eo_lexer_free(ls);
    return EINA_FALSE;
 }

@@ -37,10 +37,6 @@ extern Eina_Hash *_declsf;
 
 extern Eina_Hash *_units;
 
-/* holds parsed/currently parsing eot files to keep track */
-extern Eina_Hash *_parsedeos;
-extern Eina_Hash *_parsingeos;
-
 /* for deferred dependency parsing */
 extern Eina_Hash *_defereos;
 
@@ -63,6 +59,9 @@ struct _Eolian
 
    Eina_Hash *filenames_eo; /* filename to full path mapping */
    Eina_Hash *filenames_eot;
+
+   Eina_Hash *parsing;
+   Eina_Hash *parsed;
 
    Eina_Hash *classes_f;
    Eina_Hash *aliases_f;

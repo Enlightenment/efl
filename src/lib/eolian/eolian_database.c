@@ -12,9 +12,6 @@ Eina_Hash *_decls      = NULL;
 Eina_Hash *_declsf     = NULL;
 Eina_Hash *_units      = NULL;
 
-Eina_Hash *_parsedeos  = NULL;
-Eina_Hash *_parsingeos = NULL;
-
 Eina_Hash *_defereos = NULL;
 
 static Eolian_Unit *_cunit = NULL;
@@ -34,8 +31,6 @@ database_init()
    eina_init();
    _decls      = eina_hash_stringshared_new(free);
    _declsf     = eina_hash_stringshared_new(_hashlist_free);
-   _parsedeos  = eina_hash_string_small_new(NULL);
-   _parsingeos = eina_hash_string_small_new(NULL);
    _defereos   = eina_hash_string_small_new(NULL);
    _units      = eina_hash_stringshared_new(EINA_FREE_CB(database_unit_del));
    return ++_database_init_count;
@@ -55,8 +50,6 @@ database_shutdown()
      {
         eina_hash_free(_decls     ); _decls      = NULL;
         eina_hash_free(_declsf    ); _declsf     = NULL;
-        eina_hash_free(_parsedeos ); _parsedeos  = NULL;
-        eina_hash_free(_parsingeos); _parsingeos = NULL;
         eina_hash_free(_defereos  ); _defereos   = NULL;
         eina_hash_free(_units     ); _units      = NULL;
         eina_shutdown();
@@ -607,6 +600,9 @@ eolian_new(void)
 
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
+
+   state->parsed  = eina_hash_string_small_new(NULL);
+   state->parsing = eina_hash_string_small_new(NULL);
 
    state->classes_f   = eina_hash_stringshared_new(NULL);
    state->aliases_f   = eina_hash_stringshared_new(_hashlist_free);
