@@ -110,30 +110,19 @@ void efl_ui_list_segarray_flush(Efl_Ui_List_SegArray* segarray)
    segarray->root = NULL;
 }
 
-static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
+static Efl_Ui_List_Item* _create_item_partial(Efl_Model* model)
 {
    Efl_Ui_List_Item* item = calloc(1, sizeof(Efl_Ui_List_Item));
    item->item.children = model;
-   item->item.index_offset = index - node->first;
-   item->item.tree_node = node;
    return item;
 }
 
-void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_Model* model)
+static Efl_Ui_List_Item* _create_item(Efl_Model* model, Efl_Ui_List_SegArray_Node* node, unsigned int index)
 {
-   Efl_Ui_List_SegArray_Node *node;
-
-   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
-                                                &index, sizeof(index), &_insert_lookup_cb, NULL);
-   if (!node)
-     node = _alloc_node(segarray, index, segarray->array_initial_size);
-
-   assert(node->length < node->max); //don't have space in node to put this item
-   assert((index - node->first) == node->length); //TODO FIXME there is other item in this place need move others
-
-   node->pointers[node->length] = _create_item(model, node, index);
-   node->length++;
-   segarray->count++;
+   Efl_Ui_List_Item* item =  _create_item_partial(model);
+   item->item.index_offset = index - node->first;
+   item->item.tree_node = node;
+   return item;
 }
 
 Efl_Ui_List_Item*
@@ -155,7 +144,10 @@ efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
    segarray->count--;
    node->length--;
 
-   if (offset < node->length)
+   if (offset >= node->length) return NULL;
+
+   memmove(node->pointers[offset], node->pointers[offset+1], sizeof(Efl_Ui_List_Item*)*(node->length - offset));
+   while (offset < node->length)
      {
          while (offset < node->length)
            {
@@ -164,16 +156,83 @@ efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
              --item->item.index_offset;
              ++offset;
            }
-
-         iterator = eina_rbtree_iterator_infix((void*)node);
-         eina_iterator_next(iterator, (void**)&node);
-         while(eina_iterator_next(iterator, (void**)&node))
-           node->first--;
-
-         eina_iterator_free(iterator);
      }
 
+   node = (void*)EINA_RBTREE_GET(node)->son[EINA_RBTREE_LEFT];
+   iterator = eina_rbtree_iterator_infix((void*)node);
+   while(eina_iterator_next(iterator, (void**)&node))
+     node->first--;
+
    return rt;
+}
+
+static void
+_efl_ui_list_segarray_insert_at_node(Efl_Ui_List_SegArray* segarray, int index, Efl_Ui_List_Item* item, Efl_Ui_List_SegArray_Node* node)
+{
+   Eina_Iterator* iterator;
+   int pos;
+
+   if(node && node->length != node->max && (index - node->first) <= node->length)
+    {
+       pos = index - node->first;
+       item->item.tree_node = node;
+       item->item.index_offset = pos;
+       if(pos < node->length)
+         {
+            assert(node->length != node->max);
+
+            memmove(&node->pointers[pos], &node->pointers[pos+1], sizeof(node->pointers[pos])*(node->length - pos));
+            node->pointers[pos] = item;
+            node->length++;
+         }
+       else 
+         {
+            assert(pos == node->length);
+      
+            assert(node->length != node->max);
+            node->pointers[pos] = item;
+            node->length++;
+         }
+    }
+  else
+    {
+       node = _alloc_node(segarray, index, segarray->array_initial_size);
+       node->pointers[0] = item;
+       node->length++;
+       item->item.index_offset = 0;
+       item->item.tree_node = node;
+    }
+
+   node = (void*)EINA_RBTREE_GET(node)->son[EINA_RBTREE_LEFT];
+   iterator = eina_rbtree_iterator_infix((void*)node);
+   while(eina_iterator_next(iterator, (void**)&node))
+     {
+       node->first++;
+     }
+
+   eina_iterator_free(iterator);
+}
+
+
+void efl_ui_list_segarray_insert(Efl_Ui_List_SegArray* segarray, int index, Efl_Model* model)
+{
+  Efl_Ui_List_SegArray_Node* node, *next;
+  Efl_Ui_List_Item* item;
+
+  item = _create_item_partial(model);
+  
+  node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
+                                          &index, sizeof(index), &_insert_lookup_cb, NULL);
+  if(node)
+    {
+      next = (void*)EINA_RBTREE_GET(node)->son[EINA_RBTREE_LEFT];
+      if(next && next->first <= index)
+        _efl_ui_list_segarray_insert_at_node(segarray, index, item, next);
+      else
+        _efl_ui_list_segarray_insert_at_node(segarray, index, item, node);
+    }
+  else
+    _efl_ui_list_segarray_insert_at_node(segarray, index, item, NULL);
 }
 
 void efl_ui_list_segarray_insert_accessor(Efl_Ui_List_SegArray* segarray, int first, Eina_Accessor* accessor)
