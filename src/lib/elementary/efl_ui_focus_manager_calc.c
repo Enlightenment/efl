@@ -305,21 +305,14 @@ _min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
 }
 
 static inline void
-_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
+_calculate_node_stage1(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Eina_Rect rect, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
-   Eina_Rect rect;
+   int dim_min, dim_max, cur_pos_min = 0, cur_neg_min = 0;
    Efl_Ui_Focus_Object *op;
-   int dim_min, dim_max;
    Eina_Iterator *nodes;
-   int cur_pos_min = 0, cur_neg_min = 0;
    Node *n;
 
    nodes = eina_hash_iterator_data_new(pd->node_hash);
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-
-   *pos = NULL;
-   *neg = NULL;
-
    _min_max_gen(dim, rect, &dim_min, &dim_max);
 
    EINA_ITERATOR_FOREACH(nodes, n)
@@ -410,9 +403,24 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
 #endif
          }
 
+
      }
    eina_iterator_free(nodes);
    nodes = NULL;
+
+}
+
+static inline void
+_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
+{
+   Eina_Rect rect;
+
+   rect = efl_ui_focus_object_focus_geometry_get(node);
+
+   *pos = NULL;
+   *neg = NULL;
+
+   _calculate_node_stage1(pd, node, rect, dim, pos, neg);
 }
 
 #ifdef CALC_DEBUG
