@@ -42,8 +42,6 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
-struct @extern Eina.Inarray; [[Eina inarray data structure]]
-
 type @extern Eina.Unicode: uint32; [[Eina unicode type]]
 
 struct @extern Eina.File.Direct.Info; [[Eina file direct information data structure]]
