@@ -278,7 +278,7 @@ doc_ref_class(Eo_Lexer *ls, const char *cname)
    const char *eop = eina_hash_find(ls->state->filenames_eo, buf);
    if (!eop)
      return;
-   eina_hash_set(_defereos, buf, eop);
+   eina_hash_set(ls->state->defer, buf, eop);
 }
 
 static void

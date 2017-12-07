@@ -2189,7 +2189,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                      eo_lexer_syntax_error(ls, errbuf);
                   }
              }
-           eina_hash_set(_defereos, eina_strbuf_string_get(buf), found);
+           eina_hash_set(ls->state->defer, eina_strbuf_string_get(buf), found);
            pop_strbuf(ls);
            eo_lexer_get(ls);
            check_next(ls, ';');
