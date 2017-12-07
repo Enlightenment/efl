@@ -2487,7 +2487,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
           {
              /* Commit animation when drag cancelled */
              /* Record final position of dragwin, then do animation */
-             ecore_animator_timeline_add(0.3, _drag_cancel_animate, seat_sel->drag_win);
+             ecore_animator_timeline_add(0.3, _drag_cancel_animate, seat_sel);
           }
         else
           {
@@ -3068,11 +3068,10 @@ _wl_dropable_handle(Sel_Manager_Seat_Selection *seat_sel, Sel_Manager_Dropable *
    /* We leave the last dropable */
    if (last_dropable)
      {
+        Drop_Format *df;
         sel_debug("leave %p\n", last_dropable->obj);
         last_dropable->last.in = EINA_FALSE;
-        last_dropable->last.type = NULL;
 
-        Drop_Format *df;
         EINA_INLIST_FOREACH_SAFE(last_dropable->format_list, itr, df)
           {
              if (df->format & last_dropable->last.format)
@@ -3158,6 +3157,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
      {
         Sel_Manager_Atom *atom = NULL;
 
+        ERR("type: %s, drop: %p", drop->last.type, drop);
         atom = eina_hash_find(pd->type_hash, drop->last.type);
         if (atom && atom->wl_data_preparer)
           {
@@ -3467,7 +3467,7 @@ _wl_dnd_drop(void *data, int type EINA_UNUSED, void *event)
      {
         if (drop->last.in)
           {
-             sel_debug("Request data of type %s\n", drop->last.type);
+             sel_debug("Request data of type %s; drop: %p\n", drop->last.type, drop);
              sel->request_obj = drop->obj;
              sel->request_format = drop->last.format;
              evas_object_event_callback_add(sel->request_obj,
@@ -3491,7 +3491,6 @@ static Eina_Bool
 _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *target_obj, Efl_Selection_Format format, unsigned int seat)
 {
    Sel_Manager_Dropable *dropable = NULL;
-   Eina_Bool first = !pd->drop_list;
    Sel_Manager_Seat_Selection *seat_sel = NULL;
    Drop_Format *df;
 
@@ -3503,9 +3502,13 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
      {
         //Create new drop
         dropable = calloc(1, sizeof(Sel_Manager_Dropable));
-        if (!dropable) goto error;
+        if (!dropable) return EINA_FALSE;
         pd->drop_list = eina_list_append(pd->drop_list, dropable);
-        if (!pd->drop_list) goto error;
+        if (!pd->drop_list)
+          {
+             free(dropable);
+             return EINA_FALSE;
+          }
         dropable->obj = target_obj;
         efl_key_data_set(target_obj, "__elm_dropable", dropable);
      }
@@ -3517,7 +3520,7 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
    evas_object_event_callback_add(target_obj, EVAS_CALLBACK_DEL,
                                   _all_drop_targets_cbs_del, pd);
 
-   if (first)
+   if (!seat_sel->enter_handler)
      {
         seat_sel->enter_handler =
           ecore_event_handler_add(ECORE_WL2_EVENT_DND_ENTER,
@@ -3534,9 +3537,6 @@ _wl_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *targ
      }
 
    return EINA_TRUE;
-error:
-   free(dropable);
-   return EINA_FALSE;
 }
 #endif
 
