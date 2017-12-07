@@ -290,6 +290,21 @@ _distance(Eina_Rect node, Eina_Rect op, Dimension dim)
 }
 
 static inline void
+_min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
+{
+   if (dim == DIMENSION_X)
+     {
+        *min = rect.y;
+        *max = eina_rectangle_max_y(&rect.rect);
+     }
+   else
+     {
+        *min = rect.x;
+        *max = eina_rectangle_max_x(&rect.rect);
+     }
+}
+
+static inline void
 _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
    Eina_Rect rect;
@@ -305,16 +320,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
    *pos = NULL;
    *neg = NULL;
 
-   if (dim == DIMENSION_X)
-     {
-        dim_min = rect.y;
-        dim_max = rect.y + rect.h;
-     }
-   else
-     {
-        dim_min = rect.x;
-        dim_max = rect.x + rect.w;
-     }
+   _min_max_gen(dim, rect, &dim_min, &dim_max);
 
    EINA_ITERATOR_FOREACH(nodes, n)
      {
@@ -328,17 +334,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
 
         op_rect = efl_ui_focus_object_focus_geometry_get(op);
 
-        if (dim == DIMENSION_X)
-          {
-             min = op_rect.y;
-             max = eina_rectangle_max_y(&op_rect.rect);
-          }
-        else
-          {
-             min = op_rect.x;
-             max = eina_rectangle_max_x(&op_rect.rect);
-          }
-
+        _min_max_gen(dim, op_rect, &min, &max);
 
         /* The only way the calculation does make sense is if the two number
          * lines are not disconnected.
