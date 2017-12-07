@@ -619,6 +619,20 @@ eolian_free(Eolian *state)
 
    database_unit_del(&state->unit);
 
+   eina_hash_free(state->filenames_eo);
+   eina_hash_free(state->filenames_eot);
+
+   eina_hash_free(state->parsed);
+   eina_hash_free(state->parsing);
+   eina_hash_free(state->defer);
+
+   eina_hash_free(state->classes_f);
+   eina_hash_free(state->aliases_f);
+   eina_hash_free(state->structs_f);
+   eina_hash_free(state->enums_f);
+   eina_hash_free(state->globals_f);
+   eina_hash_free(state->constants_f);
+
    free(state);
 }
 
