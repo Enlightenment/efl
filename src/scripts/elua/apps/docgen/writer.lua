@@ -77,7 +77,7 @@ local write_include = function(self, tp, name, flags)
                        .. table.concat(name, ":")
         elseif name[#name] == false then
             name[#name] = nil
-            name = ":" .. root_nspace .. ":user:"
+            name = ":" .. root_nspace .. "-include:"
                        .. table.concat(name, ":")
         else
             name = table.concat(name, ":")
@@ -276,7 +276,7 @@ writers["dokuwiki"] = util.Object:clone {
                              .. table.concat(target, ":")
             elseif target[#target] == false then
                 target[#target] = nil
-                target = ":" .. root_nspace .. ":user:"
+                target = ":" .. root_nspace .. "-include:"
                              .. table.concat(target, ":")
             else
                 target = table.concat(target, ":")
