@@ -1,9 +1,11 @@
 class Elm.Calendar.Item (Efl.Object, Efl.Ui.Focus.Object)
 {
+    [[Elm Calendar Item class]]
     methods {
        @property day_number {
+          [[Day number property]]
           values {
-            i : int;
+            i : int; [[Day number]]
           }
        }
     }
