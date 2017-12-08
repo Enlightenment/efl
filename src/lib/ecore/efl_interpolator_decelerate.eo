@@ -7,6 +7,7 @@ class Efl.Interpolator.Decelerate (Efl.Interpolator)
    data: Efl_Interpolator_Decelerate_Data;
    methods {
       @property factor {
+         [[Factor property]]
          set {
          }
          get {

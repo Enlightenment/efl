@@ -4,6 +4,7 @@ class Efl.Interpolator.Bounce (Efl.Interpolator)
    data: Efl_Interpolator_Bounce_Data;
    methods {
       @property factors {
+         [[Factors property]]
          set {
          }
          get {

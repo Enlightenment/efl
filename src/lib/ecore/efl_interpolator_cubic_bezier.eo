@@ -4,6 +4,7 @@ class Efl.Interpolator.Cubic_Bezier (Efl.Interpolator)
    data: Efl_Interpolator_Cubic_Bezier_Data;
    methods {
       @property factors {
+         [[Factors property]]
          set {
          }
          get {
