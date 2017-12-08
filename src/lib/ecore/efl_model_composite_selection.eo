@@ -3,14 +3,16 @@ class Efl.Model.Composite.Selection (Efl.Model.Composite.Boolean)
    [[Efl model composite selection class]]
    methods {
       select {
+         [[Select composition]]
          params {
-           idx: int;
+           idx: int; [[Index]]
          }
-         return: future<any_value>;
+         return: future<any_value>; [[Future on the selected composition]]
       }
       @property exclusive_selection {
+         [[Exclusive Selection property]]
          values {
-           exclusive: bool;
+           exclusive: bool; [[$true is selection is exclusive, $flase otherwise]]
          }
       }
    }
