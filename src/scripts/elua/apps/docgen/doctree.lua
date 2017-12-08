@@ -9,6 +9,7 @@ local dutil = require("docgen.util")
 local writer
 
 local M = {}
+local eos = eolian:new()
 
 local get_cache = function(o, nm)
     local ret = o[nm]
@@ -1501,26 +1502,26 @@ M.DocTokenizer = Node:clone {
 
 M.scan_directory = function(dir)
     if not dir then
-        if not eolian.system_directory_scan() then
+        if not eos:system_directory_scan() then
             error("failed scanning system directory")
         end
         return
     end
-    if not eolian.directory_scan(dir) then
+    if not eos:directory_scan(dir) then
         error("failed scanning directory: " .. dir)
     end
 end
 
 M.parse = function(st)
-    if not eolian.all_eot_files_parse() then
+    if not eos:all_eot_files_parse() then
         error("failed parsing eo type files")
     end
     if st and st:match("%.") then
-        if not eolian.file_parse(st:gsub("%.", "_"):lower() .. ".eo") then
+        if not eos:file_parse(st:gsub("%.", "_"):lower() .. ".eo") then
             error("failed parsing eo file")
         end
     else
-        if not eolian.all_eo_files_parse() then
+        if not eos:all_eo_files_parse() then
             error("failed parsing eo files")
         end
     end
