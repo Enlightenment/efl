@@ -156,7 +156,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
          get {
          }
          values {
-            alpha: int;
+            alpha: int; [[Alpha value]]
          }
       }
       @property syntax_enabled {
