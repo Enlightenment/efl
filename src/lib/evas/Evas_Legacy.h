@@ -2210,6 +2210,39 @@ EAPI void evas_object_scale_set(Evas_Object *obj, double scale);
  */
 EAPI double evas_object_scale_get(const Evas_Object *obj);
 
+/**
+ * @brief Returns whether the mouse pointer is logically inside the object.
+ *
+ * @param[in] dev The pointer device.
+ *
+ * @return @c true if the pointer is inside, @c false otherwise.
+ *
+ * @since 1.20
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, Efl_Input_Device * dev);
+
+/**
+ * @brief Returns whether the default mouse pointer is logically inside the
+ * object.
+ *
+ * When this function is called it will return a value of either @c false or
+ * @c true, depending on if event_feed_mouse_in or event_feed_mouse_out have
+ * been called to feed in a mouse enter event into the object.
+ *
+ * A return value of @c true indicates the mouse is logically inside the
+ * object, and @c false implies it is logically outside the object.
+ *
+ * If @c e is not a valid object, the return value is undefined.
+ *
+ * @return @c true if the mouse pointer is inside the object, @c false
+ * otherwise
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
 
 #include "canvas/efl_canvas_object.eo.legacy.h"
 

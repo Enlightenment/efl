@@ -570,7 +570,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
           }
      }
 
-   if (efl_canvas_object_pointer_in_get(cur->eventarea))
+   if (efl_canvas_pointer_inside_get(cur->eventarea, NULL))
      _elm_cursor_set(cur);
 }
 

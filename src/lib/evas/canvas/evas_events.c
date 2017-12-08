@@ -3868,9 +3868,9 @@ _efl_canvas_object_pointer_mode_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_pointer_device_in_get(Eo *eo_obj,
-                                         Evas_Object_Protected_Data *obj,
-                                         Efl_Input_Device *pointer)
+_efl_canvas_object_efl_canvas_pointer_pointer_inside_get(Eo *eo_obj,
+                                                         Evas_Object_Protected_Data *obj,
+                                                         Efl_Input_Device *pointer)
 {
    Evas_Object_Protected_Data *in, *parent;
    Eo *eo_in, *eo_parent;
@@ -3879,7 +3879,6 @@ _efl_canvas_object_pointer_device_in_get(Eo *eo_obj,
    Evas_Pointer_Data *pdata;
 
    EVAS_OBJECT_DATA_ALIVE_CHECK(obj, EINA_FALSE);
-
 
    if (!pointer)
      pointer = obj->layer->evas->default_mouse;
@@ -3892,6 +3891,10 @@ _efl_canvas_object_pointer_device_in_get(Eo *eo_obj,
    if (!obj_pdata) return EINA_FALSE;
    if (!obj->is_smart)
      return obj_pdata->mouse_in;
+
+   /* This is to keep the legacy APIs evas_object_pointer_inside_by_device_get & 
+    * evas_object_pointer_inside_get. */
+   if (obj->is_pointer_inside_legacy) return EINA_FALSE;
 
    /* For smart objects, this is a bit expensive obj->mouse_in will not be set.
     * Alternatively we could count the number of in and out events propagated
@@ -3915,12 +3918,6 @@ _efl_canvas_object_pointer_device_in_get(Eo *eo_obj,
      }
 
    return EINA_FALSE;
-}
-
-EOLIAN Eina_Bool
-_efl_canvas_object_pointer_in_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   return _efl_canvas_object_pointer_device_in_get(eo_obj, obj, NULL);
 }
 
 EAPI void

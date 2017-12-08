@@ -2662,19 +2662,6 @@ _efl_canvas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_pointer_inside_by_device_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Efl_Input_Device *dev)
-{
-   Evas_Pointer_Data *pdata;
-   Evas_Object_Pointer_Data *obj_pdata;
-
-   if (!obj->layer) return EINA_FALSE;
-   pdata = _evas_pointer_data_by_device_get(obj->layer->evas, dev);
-   if (!pdata) return EINA_FALSE;
-   obj_pdata = _evas_object_pointer_data_get(pdata, obj);
-   return obj_pdata ? obj_pdata->mouse_in : EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
 _efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
 {
    Eina_Rectangle c;
@@ -2693,12 +2680,6 @@ _efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object
         c = obj->cur->geometry;
      }
    return RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h);
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_object_pointer_inside_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   return _efl_canvas_object_pointer_inside_by_device_get(eo_obj, obj, NULL);
 }
 
 static void
@@ -2978,6 +2959,21 @@ EAPI double
 evas_object_scale_get(const Evas_Object *obj)
 {
    return efl_gfx_scale_get(obj);
+}
+
+EAPI Eina_Bool
+evas_object_pointer_inside_by_device_get(const Evas_Object *eo_obj, Efl_Input_Device *dev)
+{
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
+
+   obj->is_pointer_inside_legacy = EINA_TRUE;
+   return efl_canvas_pointer_inside_get(eo_obj, dev);
+}
+
+EAPI Eina_Bool
+evas_object_pointer_inside_get(const Evas_Object *eo_obj)
+{
+   return evas_object_pointer_inside_by_device_get(eo_obj, NULL);
 }
 
 /* Internal EO APIs and hidden overrides */

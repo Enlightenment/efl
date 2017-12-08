@@ -3,7 +3,7 @@ import efl_animation_types;
 
 abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size.Hint,
-                            Efl.Gfx.Map, Efl.Loop_User, Efl.Ui.Base)
+                            Efl.Gfx.Map, Efl.Loop_User, Efl.Ui.Base, Efl.Canvas.Pointer)
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -54,41 +54,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
          }
          values {
             pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]
-         }
-      }
-      @property pointer_in {
-         [[Read-only value indicating whether the main pointer is in the object.
-
-           This shall be true between pointer,in and pointer,out events (coming
-           in matching numbers). Note that group objects may receive multiple
-           pointer,in in a row. See algo @.pointer_device_in.get
-
-           @since 1.19
-         ]]
-         get {
-            legacy: null;
-         }
-         values {
-            in: bool; [[If $true the main pointer has entered this object.]]
-         }
-      }
-      @property pointer_device_in {
-         [[Read-only value indicating whether a pointer is in the object.
-
-           This shall be true between pointer,in and pointer,out events (coming
-           in matching numbers). Note that group objects may receive multiple
-           pointer,in in a row.
-
-           @since 1.19
-         ]]
-         get {
-            legacy: null;
-         }
-         keys {
-            pointer: Efl.Input.Device; [[The pointer. Use $null for the defaul pointer]]
-         }
-         values {
-            in: bool; [[If $true the pointer has entered this object.]]
          }
       }
       @property render_op {
@@ -586,36 +551,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             enable: bool; [[Enable "no-render" mode.]]
          }
       }
-      @property pointer_inside_by_device {
-         [[Returns whether the mouse pointer is logically inside the
-           object. @since 1.20]]
-         keys {
-            dev: Efl.Input.Device; [[The pointer device.]]
-         }
-         get {}
-         values {
-            in: bool; [[$true if the pointer is inside, $false otherwise.]]
-         }
-      }
-      @property pointer_inside {
-         get {
-            [[Returns whether the default mouse pointer is logically inside the
-              object.
-
-              When this function is called it will return a value of either
-              $false or $true, depending on if event_feed_mouse_in or
-              event_feed_mouse_out have been called to feed in a mouse
-              enter event into the object.
-
-              A return value of $true indicates the mouse is logically
-              inside the object, and $false implies it is logically
-              outside the object.
-
-              If $e is not a valid object, the return value is undefined.
-            ]]
-            return: bool @warn_unused; [[$true if the mouse pointer is inside the object, $false otherwise]]
-         }
-      }
       pointer_coords_inside_get {
          [[Returns whether the coords are logically inside the
            object.
@@ -681,5 +616,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
       Efl.Gfx.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_User.loop { get; }
+      Efl.Canvas.Pointer.pointer_inside { get; }
    }
 }
