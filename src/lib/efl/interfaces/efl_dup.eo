@@ -11,7 +11,7 @@ interface Efl.Dup
            The newly created object will have no event handlers or anything of
            the sort.
          ]]
-         return: Efl.Dup @owned;
+         return: Efl.Dup @owned; [[Returned carbon copy]]
       }
    }
 }

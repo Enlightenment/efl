@@ -5,6 +5,7 @@ interface Efl.Text.Markup(Efl.Text.Cursor) {
    ]]
    methods {
       @property markup {
+         [[Markup property]]
          values {
             markup: string; [[The markup-text representation set to this text.]]
          }
