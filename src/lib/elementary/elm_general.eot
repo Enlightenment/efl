@@ -137,8 +137,8 @@ enum Elm.Icon.Type
 }
 
 /* FIXME: shouldn't exist */
-struct @extern Elm_Gen_Item;
-struct @extern Efl_Access_Action_Data;
+struct @extern Elm_Gen_Item; [[Elementary gen item]]
+struct @extern Efl_Access_Action_Data; [[Efl access action data]]
 
 
 /* Enums from elm_entry.eo, also used by efl_ui_text */
