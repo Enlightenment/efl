@@ -2,6 +2,7 @@ import efl_gesture_types;
 
 class Efl.Gesture.Manager (Efl.Object)
 {
+   [[EFL Gesture Manager class]]
    methods {
       recognizer_register {
          [[This function is called to register a new Efl.Gesture.Recognizer]]

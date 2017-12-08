@@ -1,5 +1,6 @@
 class Efl.Gesture.Recognizer_Long_Tap (Efl.Gesture.Recognizer)
 {
+   [[EFL Gesture Recognizer Long Tap class]]
    data: null;
    implements {
       Efl.Gesture.Recognizer.create;

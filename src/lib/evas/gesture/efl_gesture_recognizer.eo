@@ -2,6 +2,7 @@ import efl_gesture_types;
 
 abstract Efl.Gesture.Recognizer (Efl.Object)
 {
+   [[EFL Gesture Recognizer abstract class]]
    methods {
       create @pure_virtual {
          [[This function is called to create a new Efl.Gesture object for the given target]]

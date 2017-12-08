@@ -5,8 +5,10 @@ import efl_input_types;
 
 class Efl.Gesture.Touch(Efl.Object)
 {
+   [[EFL Gesture Touch class]]
    methods {
       point_record {
+         [[Touch point record method]]
          params {
             @in tool       : int; [[The finger id ]]
             @in pos        : Eina.Vector2; [[Position of the event]]
@@ -39,7 +41,7 @@ class Efl.Gesture.Touch(Efl.Object)
       @property multi_touch {
          [[This property tells if the event is multi touch.]]
          get {
-            return: bool; [[returns true if its a multi touch]]
+            return: bool; [[returns $true if its a multi touch]]
          }
       }
       @property state {

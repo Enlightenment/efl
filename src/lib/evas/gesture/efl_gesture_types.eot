@@ -12,7 +12,7 @@ enum Efl.Gesture.State
 {
    [[ This enum type describes the state of a gesture. ]]
    legacy: efl_gesture;
-   none    = 0,
+   none    = 0, [[No gesture state]]
    started = 1, [[A continuous gesture has started.]]
    updated,     [[A gesture continues.]]
    finished,    [[A gesture has finished.]]
@@ -29,5 +29,5 @@ enum Efl.Gesture.Recognizer_Result
    trigger   = 0x0004, [[The gesture has been triggered]]
    finish    = 0x0008, [[The gesture has been finished successfully.]]
    cancel    = 0x0010, [[The event made it clear that it is not a gesture. If the gesture recognizer was in Triggered state before, then the gesture is canceled.]]
-   result_mask = 0x00ff,
+   result_mask = 0x00ff, [[The gesture result mask]]
 }

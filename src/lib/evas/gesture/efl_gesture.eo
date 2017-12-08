@@ -2,6 +2,7 @@ import efl_gesture_types;
 
 abstract Efl.Gesture(Efl.Object)
 {
+   [[EFL Gesture abstract class]]
    methods {
       @property type {
          [[This property holds the type of the gesture.]]
