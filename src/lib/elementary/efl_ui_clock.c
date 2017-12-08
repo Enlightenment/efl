@@ -397,9 +397,11 @@ _reload_format(Evas_Object *obj)
                       field->location);
              elm_layout_signal_emit(obj, buf, "elm");
           }
-        snprintf
-          (buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location + 1));
-        elm_layout_text_set(obj, buf, field->separator);
+        if (field->location + 1)
+          {
+             snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location + 1));
+             elm_layout_text_set(obj, buf, field->separator);
+          }
      }
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -525,9 +527,11 @@ _efl_ui_clock_elm_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
                       field->location);
              elm_layout_signal_emit(obj, buf, "elm");
 
-             snprintf
-               (buf, sizeof(buf), EDC_PART_SEPARATOR_STR, field->location);
-             elm_layout_text_set(obj, buf, field->separator);
+             if (field->location)
+               {
+                  snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location));
+                  elm_layout_text_set(obj, buf, field->separator);
+               }
 
              dt_mod->field_value_display(sd->mod_data, field->item_obj);
           }
