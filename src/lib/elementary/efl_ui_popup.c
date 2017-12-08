@@ -75,6 +75,13 @@ _calc_align(Eo *obj)
      }
 }
 
+EOLIAN static void
+_efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
+{
+   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
+   _calc_align(obj);
+}
+
 static void
 _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
