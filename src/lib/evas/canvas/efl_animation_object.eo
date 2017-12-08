@@ -6,6 +6,7 @@ class Efl.Animation.Object (Efl.Object)
    data: Efl_Animation_Object_Data;
    methods {
       @property auto_del {
+         [[Auto delete property]]
          set {
          }
          get {
