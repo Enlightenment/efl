@@ -45,6 +45,7 @@ collections {
 #include "edc/elm/slideshow.edc"
 #include "edc/elm/diskselector.edc"
 #include "edc/elm/ctxpopup.edc"
+#include "edc/elm/multibuttonentry.edc"
 #include "edc/elm/dayselector.edc"
 #include "edc/elm/actionslider.edc"
 #include "edc/elm/photocam.edc"

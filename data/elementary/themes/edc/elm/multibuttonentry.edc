@@ -1,35 +1,38 @@
-group { "efl/multibuttonentry";
+group { name: "elm/multibuttonentry/base/default";
    data.item: "horizontal_pad" 0;
    data.item: "vertical_pad" 0;
    data.item: "closed_height" 0;
    parts {
-      rect { "bg";
-         scale;
-         desc { "default";
+      part { name: "bg";
+         type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
             color_class: "multibuttonentry_bg";
          }
       }
-      swallow { "elm.swallow.background";
-         scale;
-         desc { "default";
-            rel.to: "bg";
+      part { name: "elm.swallow.background";
+         type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
-      swallow { "box.swallow";
-         desc { "default";
-            rel.to: "bg";
+      part { name: "box.swallow"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
    }
 }
 
-group { "efl/multibuttonentry/label";
+group { name: "elm/multibuttonentry/label/default";
    parts {
-      text { "elm.text";
-         nomouse;
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
          effect: GLOW;
-         scale;
-         desc { "default";
+         scale: 1;
+         description { state: "default" 0.0;
             color: FN_COL_HIGHLIGHT;
             color_class: "multibuttonentry_label";
             text { font: FNBD; size: 10;
@@ -45,12 +48,12 @@ group { "efl/multibuttonentry/label";
    }
 }
 
-group { "efl/multibuttonentry/guidetext";
+group { name: "elm/multibuttonentry/guidetext/default";
    parts {
-      text { "elm.text";
-         scale;
+      part { name: "elm.text"; type: TEXT;
+         scale: 1;
          effect: SHADOW BOTTOM;
-         desc { "default";
+         description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -4 -4;
             color: FN_COL_DISABLE;
@@ -63,14 +66,14 @@ group { "efl/multibuttonentry/guidetext";
    }
 }
 
-group { "efl/multibuttonentry/btn";
+group { name: "elm/multibuttonentry/btn/default";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
    images.image: "sym_close_dark_normal.png" COMP;
    images.image: "sym_close_dark_selected.png" COMP;
    images.image: "win_glow.png" COMP;
    styles {
-      style { name: "efl_multibuttonentry_textblock_style";
+      style { name: "multibuttonentry_textblock_style";
          base: "font="FN" align=0.5 font_size=10 color=#ffffffff style=shadow,bottom shadow_color=#00000080 text_class=multibuttonentry_item ellipsis=1.0";
          tag: "br" "\n";
          tag: "ps" "ps";
@@ -85,16 +88,16 @@ group { "efl/multibuttonentry/btn";
    }
 
    parts {
-      rect { "bg";
-         desc { "default";
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
             color_class: "multibuttonentry_item_bg";
          }
-         desc { "pressed";
+         description { state: "pressed" 0.0;
             color_class: "multibuttonentry_item_bg_selected";
          }
       }
-      image { "base";
-         desc { "default";
+      part { name: "base";
+         description { state: "default" 0.0;
             image.normal: "button_normal.png";
             image.border: 4 4 3 5;
             image.middle: SOLID;
@@ -102,15 +105,14 @@ group { "efl/multibuttonentry/btn";
             rel2.offset: 0 1;
             fill.smooth: 0;
          }
-         desc { "pressed";
-            inherit: "default";
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
             image.normal: "button_clicked.png";
             image.border: 5 5 4 6;
          }
       }
-      image { "glow";
-         nomouse;
-         desc { "default";
+      part { name: "glow"; mouse_events: 0;
+         description { state: "default" 0.0;
             image.normal: "win_glow.png";
             image.border: 9 9 9 9;
             image.middle: 0;
@@ -120,20 +122,19 @@ group { "efl/multibuttonentry/btn";
             rel2.to: "base";
             fill.smooth: 0;
             color: 255 255 255 0;
-            hid;
+            visible: 0;
          }
-         desc { "focused";
-            inherit: "default";
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
             color: 255 255 255 255;
-            vis;
+            visible: 1;
          }
-         desc { "unfocused";
-            inherit: "default";
+         description { state: "unfocused" 0.0;
+            inherit: "default" 0.0;
          }
       }
-      image { "close";
-         nomouse;
-         desc { "default";
+      part { name: "close"; mouse_events: 0;
+         description { state: "default" 0.0;
             image.normal: "sym_close_dark_normal.png";
             rel1.to: "del";
             rel2.to: "del";
@@ -141,14 +142,14 @@ group { "efl/multibuttonentry/btn";
             max: 15 15;
             fixed: 1 1;
          }
-         desc { "clicked";
-            inherit: "default";
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
             image.normal: "sym_close_dark_selected.png";
          }
       }
-      rect { "del";
-         scale;
-         desc { "default";
+      part { name: "del"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
             fixed: 1 0;
             min: 4 4;
             align: 1.0 0.5;
@@ -161,17 +162,16 @@ group { "efl/multibuttonentry/btn";
             color: 0 0 0 0;
          }
       }
-      textblock { "elm.btn.text";
-         nomouse;
-         scale;
-         desc { "default";
+      part { name: "elm.btn.text"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
             color_class: "multibuttonentry_item_text";
-            text { style: "efl_multibuttonentry_textblock_style";
+            text { style: "multibuttonentry_textblock_style";
                min: 1 1;
                ellipsis: -1;
                text_class: "multibuttonentry_item_text";
             }
-            hid;
+            visible: 0;
             rel1.offset: 5 5;
             rel1.to: "base";
             rel2.to_x: "del";
@@ -180,12 +180,11 @@ group { "efl/multibuttonentry/btn";
             rel2.offset: -3 -7;
          }
       }
-      textblock { "text";
-         nomouse;
-         scale;
-         desc { "default";
+      part { name: "text"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
             color_class: "multibuttonentry_item_text";
-            text { style: "efl_multibuttonentry_textblock_style";
+            text { style: "multibuttonentry_textblock_style";
                text_source: "elm.btn.text";
                min: 0 1;
                align: 0.0 0.5;
@@ -199,14 +198,14 @@ group { "efl/multibuttonentry/btn";
             rel2.relative: 0.0 1.0;
             rel2.offset: -3 -7;
          }
-         desc { "pressed";
+         description { state: "pressed" 0.0;
             inherit: "default";
             color_class: "multibuttonentry_item_text_pressed";
             text {
                text_class: "multibuttonentry_item_text_pressed";
             }
          }
-         desc { "disabled";
+         description { state: "disabled" 0.0;
             inherit: "default";
             color_class: "multibuttonentry_item_text_disabled";
             text {
@@ -217,8 +216,7 @@ group { "efl/multibuttonentry/btn";
    }
    programs {
       program {
-         signal: "mouse,clicked,1";
-         source: "base";
+         signal: "mouse,clicked,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
                emit("clicked", "");
@@ -226,28 +224,24 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "elm,state,default";
-         source: "elm";
-         action: STATE_SET "default";
+         signal: "elm,state,default"; source: "elm";
+         action: STATE_SET "default" 0.0;
          target: "glow";
       }
       program {
-         signal: "elm,state,focused";
-         source: "elm";
-         action: STATE_SET "focused";
+         signal: "elm,state,focused"; source: "elm";
+         action: STATE_SET "focused" 0.0;
          target: "glow";
       }
       program {
-         signal: "elm,state,enabled";
-         source: "elm";
+         signal: "elm,state,enabled"; source: "elm";
          script {
             set_state(PART:"text", "default", 0.0);
             set_int(disabled , 0);
          }
       }
       program {
-         signal: "elm,state,disabled";
-         source: "elm";
+         signal: "elm,state,disabled"; source: "elm";
          script {
             new st[31];
             new Float: vl;
@@ -259,14 +253,12 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "elm,state,unfocused";
-         source: "elm";
-         action: STATE_SET "unfocused";
+         signal: "elm,state,unfocused"; source: "elm";
+         action: STATE_SET "unfocused" 0.0;
          target: "glow";
       }
       program {
-         signal: "mouse,down,1";
-         source: "base";
+         signal: "mouse,down,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
                set_state(PART:"base", "pressed", 0.0);
@@ -276,8 +268,7 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "mouse,up,1";
-         source: "base";
+         signal: "mouse,up,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
                set_state(PART:"base", "default", 0.0);
@@ -287,28 +278,25 @@ group { "efl/multibuttonentry/btn";
          }
       }
       program {
-         signal: "mouse,clicked,1";
-         source: "del";
+         signal: "mouse,clicked,1"; source: "del";
          action: SIGNAL_EMIT "elm,deleted" "elm";
       }
       program {
-         signal: "mouse,down,1";
-         source: "del";
-         action: STATE_SET "clicked";
+         signal: "mouse,down,1"; source: "del";
+         action: STATE_SET "clicked" 0.0;
          target: "close";
       }
       program {
-         signal: "mouse,up,1";
-         source: "del";
-         action: STATE_SET "default";
+         signal: "mouse,up,1"; source: "del";
+         action: STATE_SET "default" 0.0;
          target: "close";
       }
    }
 }
 
-group { "efl/multibuttonentry/closedbutton";
+group { name: "elm/multibuttonentry/closedbutton/default";
    styles {
-      style { name: "textblock_style_efl_multibuttonentry_default";
+      style { name: "textblock_style_multibuttonentry_default";
          base: "font="FNBD" font_size=10 text_class=multibuttonentry_closed style=glow color=#3399ffff glow_color=#3399ff18 align=center glow2_color=#3399ff12 wrap=char";
          tag: "br" "\n";
          tag: "ps" "ps";
@@ -318,15 +306,14 @@ group { "efl/multibuttonentry/closedbutton";
       }
    }
    parts {
-      rect { "bg";
-         desc { "default";
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
-      textblock { "elm.text";
-         nomouse;
-         scale;
-         desc { "default";
+      part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel1.to: "bg";
             rel2.offset: -3 -3;
