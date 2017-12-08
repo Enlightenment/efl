@@ -3892,8 +3892,8 @@ _efl_canvas_object_efl_canvas_pointer_pointer_inside_get(Eo *eo_obj,
    if (!obj->is_smart)
      return obj_pdata->mouse_in;
 
-   /* This is to keep the legacy APIs evas_object_pointer_inside_by_device_get & 
-    * evas_object_pointer_inside_get. */
+   /* This is to keep the legacy APIs evas_object_pointer_inside_by_device_get() & 
+    * evas_object_pointer_inside_get() old behaviour. */
    if (obj->is_pointer_inside_legacy) return EINA_FALSE;
 
    /* For smart objects, this is a bit expensive obj->mouse_in will not be set.
