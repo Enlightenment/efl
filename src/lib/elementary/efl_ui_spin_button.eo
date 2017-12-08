@@ -63,7 +63,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       }
    }
    implements {
-      Efl.Object.finalize;
+      Efl.Object.constructor;
       Elm.Widget.theme_apply;
       Elm.Widget.widget_event;
       Elm.Widget.on_focus_update;

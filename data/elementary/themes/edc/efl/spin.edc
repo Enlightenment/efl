@@ -1,17 +1,15 @@
-group { name: "elm/spin/base/default";
+group { "efl/spin";
    parts {
-      part { name: "bg";
-         type: RECT;
-         scale: 1;
-         description { state: "default" 0.0;
+      rect { "bg";
+         scale;
+         desc { "default";
             color: 0 0 0 0;
          }
       }
-      part { name: "elm.text";
-         type: TEXT;
-         mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
+      text { "elm.text";
+         nomouse;
+         scale;
+         desc { "default";
             color: FN_COL_DEFAULT;
             text {
                font: FNBD;

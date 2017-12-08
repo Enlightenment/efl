@@ -145,8 +145,6 @@ elementary/themes/edc/elm/separator.edc \
 elementary/themes/edc/elm/slider.edc \
 elementary/themes/edc/elm/slideshow.edc \
 elementary/themes/edc/elm/spinner.edc \
-elementary/themes/edc/elm/spin.edc \
-elementary/themes/edc/elm/spin_button.edc \
 elementary/themes/edc/elm/textpath.edc \
 elementary/themes/edc/elm/thumb.edc \
 elementary/themes/edc/elm/toolbar.edc \
@@ -1033,6 +1031,8 @@ elementary/themes/edc/efl/progress.edc \
 elementary/themes/edc/efl/radio.edc \
 elementary/themes/edc/efl/scroller.edc \
 elementary/themes/edc/efl/slider.edc \
+elementary/themes/edc/efl/spin.edc \
+elementary/themes/edc/efl/spin_button.edc \
 elementary/themes/edc/efl/text.edc \
 elementary/themes/edc/efl/textpath.edc \
 elementary/themes/edc/efl/tooltip.edc \

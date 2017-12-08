@@ -150,19 +150,6 @@ _efl_ui_spin_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Data *_pd EINA_UNUSED)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_spin_elm_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
-
-   if (!elm_layout_theme_set(obj, "spin", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
-   elm_layout_sizing_eval(obj);
-
-   return EFL_UI_THEME_APPLY_SUCCESS;
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_spin_elm_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
@@ -187,6 +174,10 @@ _efl_ui_spin_elm_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Ev
 EOLIAN static Eo *
 _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
 {
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "spin");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    elm_widget_sub_object_parent_add(obj);
@@ -194,22 +185,16 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    sd->val_max = 100.0;
    sd->step = 1.0;
 
-   if (!elm_layout_theme_set(obj, "spin", "base",
-                             elm_widget_style_get(obj)))
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                    elm_widget_theme_klass_get(obj),
+                                    elm_widget_theme_element_get(obj),
+                                    elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
    _label_write(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-
-   return obj;
-}
-
-EOLIAN static Eo *
-_efl_ui_spin_efl_object_finalize(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
-{
-   obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    return obj;
 }

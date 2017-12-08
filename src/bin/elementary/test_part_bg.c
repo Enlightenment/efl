@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 
-#define MAX_NUM_OF_CONTENT 18
+#define MAX_NUM_OF_CONTENT 19
 
 const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
 
@@ -141,6 +141,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[15] = EFL_UI_IMAGE_ZOOMABLE_CLASS;
    content_class[16] = EFL_UI_NSTATE_CLASS;
    content_class[17] = EFL_UI_SPIN_CLASS;
+   content_class[18] = EFL_UI_SPIN_BUTTON_CLASS;
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Widget Part Background"),

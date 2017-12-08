@@ -20,6 +20,10 @@
 
 #define EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME 0.2
 
+static const char PART_NAME_DEC_BUTTON[] = "dec_button";
+static const char PART_NAME_TEXT_BUTTON[] = "text_button";
+static const char PART_NAME_INC_BUTTON[] = "inc_button";
+
 static void
 _inc_dec_button_clicked_cb(void *data, const Efl_Event *event);
 static void
@@ -101,13 +105,15 @@ _label_write(Evas_Object *obj)
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
    if (pd->templates)
-     elm_layout_text_set(sd->text_button, "elm.text", pd->templates);
+     {
+        efl_text_set(sd->text_button, pd->templates);
+     }
    else
      {
         char buf[1024];
 
         snprintf(buf, sizeof(buf), "%.0f", pd->val);
-        elm_layout_text_set(sd->text_button, "elm.text", buf);
+        efl_text_set(sd->text_button, buf);
      }
 }
 
@@ -151,9 +157,7 @@ _entry_hide(Evas_Object *obj)
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
    elm_layout_signal_emit(obj, "elm,state,button,active", "elm");
-   evas_object_show(sd->text_button);
    elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
-   evas_object_hide(sd->ent);
 
    if (sd->entry_visible && !evas_focus_state_get(evas_object_evas_get(obj)))
      sd->entry_reactivate = EINA_TRUE;
@@ -337,7 +341,6 @@ _entry_show_cb(void *data,
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
    elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
-   evas_object_hide(sd->text_button);
 }
 
 static void
@@ -376,7 +379,6 @@ _toggle_entry(Evas_Object *obj)
                                _entry_focus_changed_cb, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
-        evas_object_show(sd->ent);
         {
            Eina_List *items = NULL;
 
@@ -617,7 +619,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
    if (sd->entry_visible)
      txt = elm_object_text_get(sd->ent);
    else
-	 txt = elm_object_text_get(sd->text_button);
+	 txt = efl_text_get(sd->text_button);
 
    if (txt) return strdup(txt);
 
@@ -717,13 +719,14 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_spin_button_elm_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
-   if (!elm_layout_theme_set(obj, "spin_button", "base", elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
+   int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
+   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
    if (sd->ent)
      {
+        //elm_widget_element_update(obj, sd->ent, PART_NAME_TEXT);
         Eina_Strbuf *buf = eina_strbuf_new();
         eina_strbuf_append_printf(buf, "spin_button/%s", elm_widget_style_get(obj));
         elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
@@ -731,56 +734,40 @@ _efl_ui_spin_button_elm_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd 
      }
 
    if (sd->inc_button)
-     {
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "spin_button/increase/%s", elm_widget_style_get(obj));
-        elm_widget_style_set(sd->inc_button, eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
+     elm_widget_element_update(obj, sd->inc_button, PART_NAME_INC_BUTTON);
 
    if (sd->text_button)
-     {
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "spin_button/%s", elm_widget_style_get(obj));
-        elm_widget_style_set(sd->text_button, eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
+     elm_widget_element_update(obj, sd->text_button, PART_NAME_TEXT_BUTTON);
 
    if (sd->dec_button)
-     {
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eina_strbuf_append_printf(buf, "spin_button/decrease/%s", elm_widget_style_get(obj));
-        elm_widget_style_set(sd->dec_button, eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
+     elm_widget_element_update(obj, sd->dec_button, PART_NAME_DEC_BUTTON);
 
    if (_elm_config->access_mode)
      _access_spinner_register(obj, EINA_TRUE);
 
+   _label_write(obj);
    elm_layout_sizing_eval(obj);
    return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 EOLIAN static Eo *
-_efl_ui_spin_button_efl_object_finalize(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
+_efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 {
-   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "spin_button");
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    elm_widget_sub_object_parent_add(obj);
 
    sd->first_interval = 0.85;
 
-   if (!elm_layout_theme_set(obj, "spin_button", "base",
-                             elm_widget_style_get(obj)))
-     CRI("Failed to set layout!");
-
    sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                            efl_ui_widget_style_set(efl_added, "spinner/increase/default"),
+                            elm_widget_element_update(obj, efl_added, PART_NAME_INC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "elm.swallow.inc_button"), efl_added));
 
    sd->text_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                             efl_ui_widget_style_set(efl_added, "spinner/default"),
+                             elm_widget_element_update(obj, efl_added, PART_NAME_TEXT_BUTTON),
                              efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
                                                     _text_button_clicked_cb, obj),
                              efl_event_callback_add(efl_added, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
@@ -788,7 +775,7 @@ _efl_ui_spin_button_efl_object_finalize(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
                              efl_content_set(efl_part(obj, "elm.swallow.text_button"), efl_added));
 
    sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                            efl_ui_widget_style_set(efl_added, "spinner/decrease/default"),
+                            elm_widget_element_update(obj, efl_added, PART_NAME_DEC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "elm.swallow.dec_button"), efl_added));
 
@@ -805,10 +792,8 @@ _efl_ui_spin_button_efl_object_finalize(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    elm_layout_signal_callback_add
       (obj, "elm,action,entry,toggle", "*", _entry_toggle_cb, NULL);
 
-   _label_write(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
