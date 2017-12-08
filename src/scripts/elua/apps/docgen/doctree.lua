@@ -29,7 +29,7 @@ M.Node = util.Object:clone {
         PROTECTED = eolian.object_scope.PROTECTED
     },
 
-    nspaces_get = function(self, subn, root)
+    nspaces_get = function(self, root)
         local tbl = self:namespaces_get()
         -- temporary workaround
         if type(tbl) ~= "table" then
@@ -38,7 +38,7 @@ M.Node = util.Object:clone {
         for i = 1, #tbl do
             tbl[i] = tbl[i]:lower()
         end
-        table.insert(tbl, 1, subn)
+
         tbl[#tbl + 1] = self:name_get():lower()
         if root ~= nil then
             tbl[#tbl + 1] = not not root
@@ -279,7 +279,7 @@ M.Class = Node:clone {
     end,
 
     nspaces_get = function(self, root)
-        return M.Node.nspaces_get(self, self:type_str_get(), root)
+        return M.Node.nspaces_get(self, root)
     end,
 
     is_same = function(self, other)
@@ -923,7 +923,7 @@ M.Typedecl = Node:clone {
     end,
 
     nspaces_get = function(self, root)
-        return M.Node.nspaces_get(self, self:type_str_get(), root)
+        return M.Node.nspaces_get(self, root)
     end,
 
     -- static getters
@@ -1215,7 +1215,7 @@ M.Variable = Node:clone {
     end,
 
     nspaces_get = function(self, root)
-        return M.Node.nspaces_get(self, self:type_str_get(), root)
+        return M.Node.nspaces_get(self, root)
     end,
 
     serialize = function(self)
