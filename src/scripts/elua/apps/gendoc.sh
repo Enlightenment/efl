@@ -1,5 +1,6 @@
 #!/bin/sh
 # a parallel doc generation script
+cd "$(dirname "$(realpath "$0")")";
 
 # exit on failure
 set -e
