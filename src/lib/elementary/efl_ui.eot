@@ -20,7 +20,7 @@ enum Efl.Ui.Focus.Direction
    down = 3,     [[ down direction ]]
    right = 4,    [[ right direction ]]
    left = 5,     [[ left direction ]]
-   last = 6
+   last = 6      [[ last direction ]]
 }
 
 enum Efl.Ui.Interest_Region_Mode

@@ -7,6 +7,7 @@ mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manag
    ]]
    methods {
      @property enable @protected {
+        [[Enable property]]
         values {
            v : bool; [[$true to set enable the layer $false to disable it]]
         }

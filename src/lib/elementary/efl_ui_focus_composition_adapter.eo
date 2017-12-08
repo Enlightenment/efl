@@ -1,9 +1,11 @@
 class Efl.Ui.Focus.Composition.Adapter (Efl.Object, Efl.Ui.Focus.Object)
 {
+   [[EFL UI Focus Composition Adapter class]]
    methods {
       @property canvas_object {
+         [[Canvas Object Property]]
          values {
-            v : Efl.Canvas.Object;
+            v : Efl.Canvas.Object; [[EFL canvas object]]
          }
       }
    }

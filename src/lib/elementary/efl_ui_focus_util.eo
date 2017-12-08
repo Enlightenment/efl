@@ -1,8 +1,10 @@
 class Efl.Ui.Focus.Util(Efl.Object) {
+   [[EFL UI Focus Util class]]
    methods {
       focus @class {
+         [[Focus helper method]]
          params {
-            focus_elem : Efl.Ui.Focus.Object;
+            focus_elem : Efl.Ui.Focus.Object; [[Focus element]]
          }
       }
    }

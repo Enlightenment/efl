@@ -14,7 +14,7 @@ struct Efl.Ui.Focus.Relations {
     parent : Efl.Ui.Focus.Object; [[Parent object]]
     redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
     node : Efl.Ui.Focus.Object; [[The node where this is the information from]]
-    logical : bool; [[true if this node is only logical]]
+    logical : bool; [[$true if this node is only logical]]
     position_in_history : int; [[The position in the history stack]]
 }
 
@@ -116,9 +116,9 @@ interface Efl.Ui.Focus.Manager {
               so you can call this function out of a prepare call.
             ]]
               params {
-                 child : Efl.Ui.Focus.Object;
+                 child : Efl.Ui.Focus.Object; [[Parent for returned child]]
               }
-              return : Efl.Ui.Focus.Object;
+              return : Efl.Ui.Focus.Object; [[Child of passed parameter]]
         }
         fetch {
             [[This will fetch the data from a registered node.
