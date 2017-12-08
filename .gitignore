@@ -91,3 +91,4 @@ Session.vim
 .project
 /.settings/
 efl_libs.csv
+.vscode/
