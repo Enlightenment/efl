@@ -315,7 +315,7 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
         nt[#nt + 1] = {
             writer.Buffer():write_link(
                 iscl and v:nspaces_get(true)
-                      or dtree.Node.nspaces_get(v, ctype, true),
+                      or dtree.Node.nspaces_get(v, true),
                 v:full_name_get()
             ):finish(),
             v:doc_get():brief_get()
@@ -1026,7 +1026,7 @@ local write_tsigs = function(f, tp, ns)
 end
 
 local build_alias = function(tp)
-    local ns = dtree.Node.nspaces_get(tp, "alias")
+    local ns = dtree.Node.nspaces_get(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating alias: " .. fulln)
@@ -1044,7 +1044,7 @@ local build_alias = function(tp)
 end
 
 local build_struct = function(tp)
-    local ns = dtree.Node.nspaces_get(tp, "struct")
+    local ns = dtree.Node.nspaces_get(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating struct: " .. fulln)
@@ -1077,7 +1077,7 @@ local build_struct = function(tp)
 end
 
 local build_enum = function(tp)
-    local ns = dtree.Node.nspaces_get(tp, "enum")
+    local ns = dtree.Node.nspaces_get(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating enum: " .. fulln)

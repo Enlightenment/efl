@@ -270,16 +270,14 @@ writers["dokuwiki"] = util.Object:clone {
 
     write_link = function(self, target, title)
         if type(target) == "table" then
-            if target[#target] == true then
-                target[#target] = nil
-                target = ":" .. root_nspace .. ":"
-                             .. table.concat(target, ":")
-            elseif target[#target] == false then
+            if target[#target] == false then
                 target[#target] = nil
                 target = ":" .. root_nspace .. "-include:"
                              .. table.concat(target, ":")
             else
-                target = table.concat(target, ":")
+                target[#target] = nil
+                target = ":" .. root_nspace .. ":"
+                             .. table.concat(target, ":")
             end
         end
         if not title then
