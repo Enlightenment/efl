@@ -1,5 +1,6 @@
 interface Efl.Gfx.Size_Class
 {
+   [[Efl Gfx Size Class interface]]
    methods {
       @property size_class {
          set {

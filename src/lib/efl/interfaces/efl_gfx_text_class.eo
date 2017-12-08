@@ -2,6 +2,7 @@ import efl_gfx_types;
 
 interface Efl.Gfx.Text_Class
 {
+   [[Efl Gfx Text Class interface]]
    methods {
       @property text_class {
          set {

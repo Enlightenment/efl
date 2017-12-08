@@ -2,6 +2,7 @@ import efl_gfx_types;
 
 interface Efl.Gfx.Color_Class
 {
+   [[Efl Gfx Color Class interface]]
    methods {
       @property color_class {
          set {
@@ -19,7 +20,7 @@ interface Efl.Gfx.Color_Class
               the given color.
 
               Note: These color values are expected to be premultiplied by \@p a.]]
-            return: bool;
+            return: bool; [[$true if setting the color succeeded, $false otherwise]]
          }
          get {
             [[Get the color of color class.
@@ -32,7 +33,7 @@ interface Efl.Gfx.Color_Class
               to text parts).
 
               Note: These color values are expected to be premultiplied by \@p a.]]
-            return: bool;
+            return: bool; [[$true if getting the color succeeded, $false otherwise]]
          }
          keys {
             color_class: string; [[The name of color class]]

@@ -198,6 +198,7 @@ enum Efl.Image.Load.Error
 }
 
 enum Efl.Gfx.Color_Class.Layer {
+   [[Efl Gfx Color Class layer enum]]
    normal = 0, [[Default color]]
    outline, [[Outline color]]
    shadow [[Shadow color]]
