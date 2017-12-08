@@ -1,5 +1,6 @@
 class Efl.Ui.Popup_Alert_Scroll(Efl.Ui.Popup_Alert)
 {
+   [[EFL UI Popup Alert Scroll class]]
    implements {
       Efl.Object.constructor;
       Efl.Part.part;

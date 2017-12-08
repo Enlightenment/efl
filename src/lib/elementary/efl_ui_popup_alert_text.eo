@@ -1,5 +1,6 @@
 class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
 {
+   [[EFL UI Popup Alert Text class]]
    implements {
       Efl.Object.constructor;
       Efl.Text.text { get; set; }
