@@ -8,12 +8,14 @@ struct Eio.Data
 }
 
 function EflIoPath {
+  [[EflIoPath function]]
   params {
      @in paths: accessor<string>; [[Accessor to an array of path.]]
   }
 };
 
 function EflIoDirectInfo {
+  [[EflIoDirectInfo function]]
   params {
      @in entries: accessor<Eina.File.Direct.Info>; [[Accessor to an array of info.]]
   }
