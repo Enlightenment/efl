@@ -156,9 +156,9 @@ struct _Sel_Manager_Seat_Selection
    Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
    Eina_Bool accept;
    Ecore_X_Window xwin;
-   int dragx, dragy; //change to EVASRECT2
-   int drag_win_x_start, drag_win_y_start; //FIXME: change to EVASRECT2
-   int drag_win_x_end, drag_win_y_end;
+   Eina_Position2D drag_pos;
+   Eina_Position2D drag_win_start;
+   Eina_Position2D drag_win_end;
    Efl_Selection_Type active_type;
 
    Saved_Type *saved_types;
@@ -188,10 +188,8 @@ struct _Sel_Manager_Drag_Container
    int len;
    Efl_Selection_Action action;
    Eina_List *icons;
-   Evas_Coord final_icon_w;
-   Evas_Coord final_icon_h;
-   Evas_Coord down_x;
-   Evas_Coord down_y;
+   Eina_Size2D final_icon;
+   Eina_Position2D down;
    Ecore_Timer *timer;
    Ecore_Animator *animator;
    double time_to_drag;

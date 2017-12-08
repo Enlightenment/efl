@@ -22,6 +22,8 @@
 
 
 Efl_Input_Device *seat = NULL;
+Eina_Bool drop_added = EINA_FALSE;
+Evas_Object *drop_bt = NULL;
 
 /*static void
 _selection_get_cb(void *data, Efl_Event const *event)
@@ -105,6 +107,13 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
    printf("Object %s was focused by seat %s\n",
           evas_object_name_get(focused),
           efl_name_get(seat));
+   int seat_id = efl_input_device_seat_id_get(seat);
+   if (!drop_added)
+     {
+        efl_dnd_drop_target_add(drop_bt, EFL_SELECTION_FORMAT_TEXT, seat_id);
+     }
+
+   drop_added = EINA_TRUE;
 }
 
 static Efl_Object *
@@ -186,11 +195,13 @@ _en_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event)
 {
    printf("dnd start\n");
    Evas_Object *en = data;
+   int seat_id = efl_input_device_seat_id_get(seat);
+
    efl_event_callback_add(en, EFL_DND_EVENT_DRAG_POS, _dnd_drag_pos_cb, en);
    efl_event_callback_add(en, EFL_DND_EVENT_DRAG_ACCEPT, _dnd_drag_accept_cb, en);
    efl_event_callback_add(en, EFL_DND_EVENT_DRAG_DONE, _dnd_drag_done_cb, en);
    efl_dnd_drag_start(en, EFL_SELECTION_FORMAT_TEXT, "dnd Text", 9,
-                 EFL_SELECTION_ACTION_COPY, en, _drag_icon_cb, NULL);
+                 EFL_SELECTION_ACTION_COPY, en, _drag_icon_cb, NULL, seat_id);
 }
 
 
@@ -236,7 +247,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_LEAVE, _dnd_drop_leave_cb, bt);
    efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_POS, _dnd_drop_pos_cb, bt);
    efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_DROP, _dnd_drop_drop_cb, bt);
-   efl_dnd_drop_target_add(bt, EFL_SELECTION_FORMAT_TEXT);
+   drop_bt = bt;
    elm_box_pack_end(bx, bt);
 
    en = efl_add(EFL_UI_TEXT_CLASS, win);
