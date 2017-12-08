@@ -73,10 +73,10 @@ START_TEST(pos_check)
    efl_ui_focus_manager_focus_set(m, obj);
 
    CHECK(middle, east, west, north, south)
-   CHECK(east, NULL, middle, NULL, NULL)
-   CHECK(west, middle, NULL, NULL, NULL)
-   CHECK(north, NULL, NULL, NULL, middle)
-   CHECK(south, NULL, NULL, middle, NULL)
+   CHECK(east, NULL, middle, north, south)
+   CHECK(west, middle, NULL, north, south)
+   CHECK(north, east, west, NULL, middle)
+   CHECK(south, east, west, middle, NULL)
 
    efl_del(middle);
    efl_del(south);
@@ -88,6 +88,78 @@ START_TEST(pos_check)
 }
 END_TEST
 
+static Eina_Bool
+_equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
+{
+   unsigned int i = 0;
+
+   for (i = 0; lst[i]; ++i)
+     {
+        Eina_Bool found = EINA_FALSE;
+        Eina_List *n;
+        Efl_Ui_Focus_Object *elem;
+
+        EINA_LIST_FOREACH(elems, n, elem)
+          {
+            if (lst[i] != elem) continue;
+
+            found = EINA_TRUE;
+            break;
+          }
+
+        if (!found) return EINA_FALSE;
+     }
+
+   if (eina_list_count(elems) != i) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+START_TEST(pos_check2)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Relations *rel;
+   Efl_Ui_Focus_Object *root, *middle, *north_east, *north_west, *south_east, *south_west;
+
+   elm_init(1, NULL);
+
+   middle = elm_focus_test_object_new("middle", 40, 40, 5, 5);
+
+   north_east = elm_focus_test_object_new("north_east", 60, 20, 5, 5);
+   north_west = elm_focus_test_object_new("north_west", 20, 20, 5, 5);
+   south_east = elm_focus_test_object_new("south_east", 60, 60, 5, 5);
+   south_west = elm_focus_test_object_new("south_west", 20, 60, 5, 5);
+
+   m = elm_focus_test_manager_new(&root);
+   efl_ui_focus_manager_calc_register(m, middle, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north_east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north_west, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south_east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south_west, root, NULL);
+
+   rel = efl_ui_focus_manager_fetch(m, middle);
+
+#define ck_assert_set_eq(set, ...) \
+   { \
+      Efl_Ui_Focus_Object *tmp[] = { __VA_ARGS__ }; \
+      ck_assert_int_eq(_equal_set(set, tmp), EINA_TRUE); \
+   }
+
+   ck_assert_set_eq(rel->left, north_west, south_west, NULL);
+   ck_assert_set_eq(rel->right, north_east, south_east, NULL);
+   ck_assert_set_eq(rel->top, north_west, north_east, NULL);
+   ck_assert_set_eq(rel->down, south_west, south_east, NULL);
+
+#undef ck_assert_set_eq
+
+   efl_del(middle);
+   efl_del(north_east);
+   efl_del(north_west);
+   efl_del(south_east);
+   efl_del(south_west);
+
+   elm_shutdown();
+}
+END_TEST
 START_TEST(redirect)
 {
    elm_init(1, NULL);
@@ -539,6 +611,7 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, focus_register_twice);
     tcase_add_test(tc, focus_unregister_twice);
     tcase_add_test(tc, pos_check);
+    tcase_add_test(tc, pos_check2);
     tcase_add_test(tc, redirect);
     tcase_add_test(tc, border_check);
     tcase_add_test(tc, finalize_check);

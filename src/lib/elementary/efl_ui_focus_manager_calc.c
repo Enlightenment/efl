@@ -410,10 +410,77 @@ _calculate_node_stage1(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *
 
 }
 
+static inline Eina_Position2D
+_relative_position_rects(Eina_Rect *a, Eina_Rect *b)
+{
+   Eina_Position2D a_pos = {a->rect.x + a->rect.w/2, a->rect.y + a->rect.h/2};
+   Eina_Position2D b_pos = {b->rect.x + b->rect.w/2, b->rect.y + b->rect.h/2};
+
+   return (Eina_Position2D){b_pos.x - a_pos.x, b_pos.y - b_pos.y};
+}
+
+static inline Eina_Rectangle_Outside
+_direction_to_outside(Efl_Ui_Focus_Direction direction)
+{
+   if (direction == EFL_UI_FOCUS_DIRECTION_RIGHT) return EINA_RECTANGLE_OUTSIDE_RIGHT;
+   if (direction == EFL_UI_FOCUS_DIRECTION_LEFT) return EINA_RECTANGLE_OUTSIDE_LEFT;
+   if (direction == EFL_UI_FOCUS_DIRECTION_DOWN) return EINA_RECTANGLE_OUTSIDE_BOTTOM;
+   if (direction == EFL_UI_FOCUS_DIRECTION_UP) return EINA_RECTANGLE_OUTSIDE_TOP;
+
+   return -1;
+}
+
+static inline void
+_calculate_node_stage2(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Eina_Rect rect, Efl_Ui_Focus_Direction direction, Eina_List **lst)
+{
+   Efl_Ui_Focus_Object *op;
+   Eina_Iterator *nodes;
+   int min_distance = 0;
+   Node *n;
+
+   nodes = eina_hash_iterator_data_new(pd->node_hash);
+
+   EINA_ITERATOR_FOREACH(nodes, n)
+     {
+        Eina_Rectangle_Outside outside, outside_dir;
+        Eina_Position2D pos;
+        int distance;
+        Eina_Rect op_rect;
+
+        op = n->focusable;
+
+        if (op == node) continue;
+        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
+
+        op_rect = efl_ui_focus_object_focus_geometry_get(op);
+        outside = eina_rectangle_outside_position(&rect.rect, &op_rect.rect);
+        outside_dir = _direction_to_outside(direction);
+        //calculate relative position of the nodes
+        pos = _relative_position_rects(&rect, &op_rect);
+        //calculate distance
+        distance = sqrt(powerof2(pos.x) + powerof2(pos.y));
+
+        if (outside & outside_dir)
+          {
+             if (min_distance == 0 || min_distance > distance)
+               {
+                  min_distance = distance;
+                  *lst = eina_list_free(*lst);
+                  *lst = eina_list_append(*lst, op);
+               }
+             else if (min_distance == distance)
+               {
+                  *lst = eina_list_append(*lst, op);
+               }
+          }
+     }
+}
+
 static inline void
 _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
    Eina_Rect rect;
+   Efl_Ui_Focus_Direction direction;
 
    rect = efl_ui_focus_object_focus_geometry_get(node);
 
@@ -421,6 +488,25 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
    *neg = NULL;
 
    _calculate_node_stage1(pd, node, rect, dim, pos, neg);
+
+  if (!*pos)
+    {
+       if (dim == DIMENSION_Y)
+         direction = EFL_UI_FOCUS_DIRECTION_DOWN;
+       else
+         direction = EFL_UI_FOCUS_DIRECTION_RIGHT;
+       _calculate_node_stage2(pd, node, rect, direction, pos);
+    }
+
+  if (!*neg)
+    {
+       if (dim == DIMENSION_Y)
+         direction = EFL_UI_FOCUS_DIRECTION_UP;
+       else
+         direction = EFL_UI_FOCUS_DIRECTION_LEFT;
+
+     _calculate_node_stage2(pd, node, rect, direction, neg);
+     }
 }
 
 #ifdef CALC_DEBUG
