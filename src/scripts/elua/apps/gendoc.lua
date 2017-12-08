@@ -1001,10 +1001,10 @@ local build_class = function(cl)
     find_callables(cl, omeths, ievs, written)
 
     build_functable(f, "Members", cl, meths, true)
-    build_functable(f, "Inherited", cl, omeths, false)
+    build_functable(f, "Inherited Members", cl, omeths, false)
 
     build_evtable(f, "Events", cl, cl:events_get(), true)
-    build_evtable(f, "Inherited", cl, ievs, false)
+    build_evtable(f, "Inherited Events", cl, ievs, false)
 
     f:finish()
 end
