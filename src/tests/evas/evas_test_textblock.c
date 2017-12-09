@@ -4371,7 +4371,7 @@ START_TEST(evas_textblock_annotation)
    /* Check "item" annotations */
    efl_text_set(tb, "abcd");
    evas_textblock_cursor_pos_set(cur, 4);
-   an = efl_text_cursor_item_insert(tb, cur, "size=16x16", "");
+   an = efl_text_cursor_item_insert(tb, cur, "", "size=16x16");
    _test_check_annotation(tb, 4, 4, _COMP_PARAMS("size=16x16 href="));
 
    /* Check that format is not extended if it's an "object item" */
@@ -4420,7 +4420,7 @@ START_TEST(evas_textblock_annotation)
    an = efl_text_cursor_item_annotation_get(tb, cur);
    ck_assert(!an);
 
-   an = efl_text_cursor_item_insert(tb, cur, "size=16x16", "");
+   an = efl_text_cursor_item_insert(tb, cur, "", "size=16x16");
    evas_textblock_cursor_pos_set(cur, 4);
    an = efl_text_cursor_item_annotation_get(tb, cur);
    ck_assert(an);
