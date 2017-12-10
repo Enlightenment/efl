@@ -305,13 +305,18 @@ _min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
 }
 
 static inline void
-_calculate_node_stage1(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Eina_Rect rect, Dimension dim, Eina_List **pos, Eina_List **neg)
+_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
    int dim_min, dim_max, cur_pos_min = 0, cur_neg_min = 0;
    Efl_Ui_Focus_Object *op;
    Eina_Iterator *nodes;
+   Eina_Rect rect;
    Node *n;
 
+   *pos = NULL;
+   *neg = NULL;
+
+   rect = efl_ui_focus_object_focus_geometry_get(node);
    nodes = eina_hash_iterator_data_new(pd->node_hash);
    _min_max_gen(dim, rect, &dim_min, &dim_max);
 
@@ -431,13 +436,15 @@ _direction_to_outside(Efl_Ui_Focus_Direction direction)
 }
 
 static inline void
-_calculate_node_stage2(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Eina_Rect rect, Efl_Ui_Focus_Direction direction, Eina_List **lst)
+_calculate_node_indirection(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Direction direction, Eina_List **lst)
 {
    Efl_Ui_Focus_Object *op;
    Eina_Iterator *nodes;
    int min_distance = 0;
    Node *n;
+   Eina_Rect rect;
 
+   rect = efl_ui_focus_object_focus_geometry_get(node);
    nodes = eina_hash_iterator_data_new(pd->node_hash);
 
    EINA_ITERATOR_FOREACH(nodes, n)
@@ -473,39 +480,6 @@ _calculate_node_stage2(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *
                   *lst = eina_list_append(*lst, op);
                }
           }
-     }
-}
-
-static inline void
-_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
-{
-   Eina_Rect rect;
-   Efl_Ui_Focus_Direction direction;
-
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-
-   *pos = NULL;
-   *neg = NULL;
-
-   _calculate_node_stage1(pd, node, rect, dim, pos, neg);
-
-  if (!*pos)
-    {
-       if (dim == DIMENSION_Y)
-         direction = EFL_UI_FOCUS_DIRECTION_DOWN;
-       else
-         direction = EFL_UI_FOCUS_DIRECTION_RIGHT;
-       _calculate_node_stage2(pd, node, rect, direction, pos);
-    }
-
-  if (!*neg)
-    {
-       if (dim == DIMENSION_Y)
-         direction = EFL_UI_FOCUS_DIRECTION_UP;
-       else
-         direction = EFL_UI_FOCUS_DIRECTION_LEFT;
-
-     _calculate_node_stage2(pd, node, rect, direction, neg);
      }
 }
 
@@ -575,6 +549,33 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
    convert_border_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
    convert_border_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
    convert_border_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+
+   /*
+    * Stage 2: if there is still no relation in a special direction,
+    *          just take every single node that is in the given direction
+    *          and take the one with the shortest direction
+    */
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+     {
+        if (!DIRECTION_ACCESS(node, i).partners)
+          {
+             Eina_List *tmp = NULL;
+             Efl_Ui_Focus_Object *focusable;
+
+             _calculate_node_indirection(pd, node->focusable, i, &tmp);
+
+             EINA_LIST_FREE(tmp, focusable)
+               {
+                  Border *b;
+                  Node *n;
+
+                  b = &DIRECTION_ACCESS(node, i);
+                  n = node_get(obj, pd, focusable);
+                  b->partners = eina_list_append(b->partners, n);
+               }
+
+          }
+     }
 
 #ifdef CALC_DEBUG
    _debug_node(node);
