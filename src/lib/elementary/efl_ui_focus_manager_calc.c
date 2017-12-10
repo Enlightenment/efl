@@ -10,7 +10,6 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_CALC_CLASS
 #define FOCUS_DATA(obj) Efl_Ui_Focus_Manager_Calc_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-#define DIM_EFL_UI_FOCUS_DIRECTION(dim,neg) dim*2+neg
 #define NODE_DIRECTIONS_COUNT 4
 
 #define DIRECTION_IS_LOGICAL(dir) (dir >= EFL_UI_FOCUS_DIRECTION_PREVIOUS && dir < EFL_UI_FOCUS_DIRECTION_UP)
