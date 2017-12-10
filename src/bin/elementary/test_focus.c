@@ -1015,6 +1015,7 @@ _focus5_layout(Evas_Object *grid, struct _focus5_obj *layout)
    while(layout->name) {
       printf("button: %s\n", layout->name);
       obj = elm_button_add(grid);
+      efl_name_set(obj, layout->name);
       elm_object_text_set(obj, layout->name);
       elm_grid_pack(grid, obj, layout->x, layout->y, layout->w, layout->h);
       evas_object_show(obj);
