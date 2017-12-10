@@ -33,12 +33,9 @@ _elm_atspi_app_object_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Atspi_App
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
-        Efl_Access_Type type;
         if (!efl_isa(win, EFL_ACCESS_MIXIN))
           continue;
-        type = efl_access_type_get(win);
-        if (type == EFL_ACCESS_TYPE_REGULAR)
-          accs = eina_list_append(accs, win);
+        accs = eina_list_append(accs, win);
      }
 
    return accs;

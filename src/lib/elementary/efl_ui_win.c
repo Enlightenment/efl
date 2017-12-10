@@ -4358,7 +4358,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
                   efreet_desktop_free(d);
                }
           }
-        efl_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
      }
 
    edje_object_part_swallow(sd->frame_obj, "elm.swallow.icon", sd->icon);

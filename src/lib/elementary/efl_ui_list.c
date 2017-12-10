@@ -302,7 +302,6 @@ _efl_ui_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_Data *pd)
 
    pd->mode = ELM_LIST_COMPRESS;
 
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
    pd->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
    pan_data = efl_data_scope_get(pd->pan_obj, MY_PAN_CLASS);
    pan_data->wobj = obj;

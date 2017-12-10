@@ -161,7 +161,6 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    pd->align.h = 0.5;

@@ -5308,38 +5308,20 @@ _elm_widget_efl_access_children_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *widget;
-   Efl_Access_Type type;
 
    EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
         if (!efl_isa(widget, EFL_ACCESS_MIXIN)) continue;
-        type = efl_access_type_get(widget);
-        if (type == EFL_ACCESS_TYPE_DISABLED) continue;
-        if (type == EFL_ACCESS_TYPE_SKIPPED)
-          {
-             Eina_List *children;
-             children = efl_access_children_get(widget);
-             accs = eina_list_merge(accs, children);
-             continue;
-          }
         accs = eina_list_append(accs, widget);
      }
    return accs;
 }
 
 EOLIAN static Eo*
-_elm_widget_efl_access_parent_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_elm_widget_efl_access_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
-   Efl_Access_Type type;
-   Efl_Access *parent = obj;
-
-   do {
-        ELM_WIDGET_DATA_GET_OR_RETURN(parent, wd, NULL);
-        parent = wd->parent_obj;
-        type = efl_access_type_get(parent);
-   } while (parent && (type == EFL_ACCESS_TYPE_SKIPPED));
-
+   Efl_Access *parent = pd->parent_obj;
    return efl_isa(parent, EFL_ACCESS_MIXIN) ? parent : NULL;
 }
 
