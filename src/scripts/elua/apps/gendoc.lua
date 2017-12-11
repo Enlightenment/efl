@@ -701,11 +701,10 @@ find_parent_briefdoc = function(fulln, cl)
     return pdoc:brief_get(pdocf)
 end
 
-local build_functable = function(f, title, tcl, tbl, newm)
+local build_functable = function(f, tcl, tbl, newm)
     if #tbl == 0 then
         return
     end
-    f:write_h(title, newm and 2 or 3)
     local nt = {}
     for i, implt in ipairs(tbl) do
         local lbuf = writer.Buffer()
@@ -757,29 +756,31 @@ local build_functable = function(f, title, tcl, tbl, newm)
         -- overridde info (or empty)
         wt[#wt + 1] = lbuf:finish()
 
-        local doc = impl:doc_get(func.METHOD, true)
-        local docf = impl:fallback_doc_get(true)
-        local bdoc
-        if over and (not doc:exists() and (not docf or not docf:exists())) then
-            bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
-        else
-            bdoc = doc:brief_get(docf)
-        end
+        if newm then
+            local doc = impl:doc_get(func.METHOD, true)
+            local docf = impl:fallback_doc_get(true)
+            local bdoc
+            if over and (not doc:exists() and (not docf or not docf:exists())) then
+                bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
+            else
+                bdoc = doc:brief_get(docf)
+            end
 
-        lbuf:write_nl()
-        local codes = {}
-        if func:type_get() ~= dtree.Function.PROPERTY then
-            codes[#codes + 1] = gen_func_csig(func, func:type_get())
-        else
-            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
-            codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
-        end
-        lbuf:write_code(table.concat(codes, "\n"), "c")
-
-        if bdoc ~= "No description supplied." then
             lbuf:write_nl()
-            lbuf:write_raw(bdoc)
-            lbuf:write_br()
+            local codes = {}
+            if func:type_get() ~= dtree.Function.PROPERTY then
+                codes[#codes + 1] = gen_func_csig(func, func:type_get())
+            else
+                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
+                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
+            end
+            lbuf:write_code(table.concat(codes, "\n"), "c")
+
+            if bdoc ~= "No description supplied." then
+                lbuf:write_nl()
+                lbuf:write_raw(bdoc)
+                lbuf:write_br()
+            end
         end
 
         -- sigs and description
@@ -908,11 +909,10 @@ local build_evcsig = function(ev)
     return table.concat(csbuf)
 end
 
-local build_evtable = function(f, title, tcl, tbl, newm)
+local build_evtable = function(f, tcl, tbl, newm)
     if #tbl == 0 then
         return
     end
-    f:write_h(title, newm and 2 or 3)
     local nt = {}
     for i, evt in ipairs(tbl) do
         local lbuf = writer.Buffer()
@@ -938,16 +938,18 @@ local build_evtable = function(f, title, tcl, tbl, newm)
         -- name info
         wt[1] = lbuf:finish()
 
-        lbuf:write_nl()
-        lbuf:write_code(build_evcsig(ev), "c");
-
-        local bdoc = ev:doc_get():brief_get()
-        if bdoc ~= "No description supplied." then
+        if newm then
             lbuf:write_nl()
-            lbuf:write_raw(bdoc)
-            lbuf:write_br()
-        end
+            lbuf:write_code(build_evcsig(ev), "c");
 
+            local bdoc = ev:doc_get():brief_get()
+            if bdoc ~= "No description supplied." then
+                lbuf:write_nl()
+                lbuf:write_raw(bdoc)
+                lbuf:write_br()
+            end
+
+        end
         -- description
         wt[#wt + 1] = lbuf:finish()
         nt[#nt + 1] = wt
@@ -1027,11 +1029,19 @@ local build_class = function(cl)
     end
     find_callables(cl, omeths, ievs, written)
 
-    build_functable(f, "Members", cl, meths, true)
-    build_functable(f, "Inherited Members", cl, omeths, false)
+    f:write_h("Members", 2)
+    build_functable(f, cl, meths, true)
+    if #omeths ~= 0 then
+        f:write_h("Inherited", 3)
+    end
+    build_functable(f, cl, omeths, false)
 
-    build_evtable(f, "Events", cl, cl:events_get(), true)
-    build_evtable(f, "Inherited Events", cl, ievs, false)
+    f:write_h("Events", 2)
+    build_evtable(f, cl, cl:events_get(), true)
+    if #ievs ~= 0 then
+        f:write_h("Inherited", 3)
+    end
+    build_evtable(f, cl, ievs, false)
 
     f:finish()
 end
