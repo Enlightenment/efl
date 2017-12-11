@@ -3039,7 +3039,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.high;
              if (!pd->pollers.high)
                {
-                  ecore_timer_del(pd->poll_high);
+                  efl_del(pd->poll_high);
                   pd->poll_high = NULL;
                }
           }
@@ -3048,7 +3048,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.medium;
              if (!pd->pollers.medium)
                {
-                  ecore_timer_del(pd->poll_medium);
+                  efl_del(pd->poll_medium);
                   pd->poll_medium = NULL;
                }
           }
@@ -3057,7 +3057,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.low;
              if (!pd->pollers.low)
                {
-                  ecore_timer_del(pd->poll_low);
+                  efl_del(pd->poll_low);
                   pd->poll_low = NULL;
                }
           }
