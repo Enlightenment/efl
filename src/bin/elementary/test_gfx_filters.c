@@ -237,7 +237,7 @@ _code_changed_hack(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eina_Future *f;
 
-   f = eina_future_then(efl_loop_Eina_FutureXXX_job(efl_loop_get(data)),
+   f = eina_future_then(efl_loop_job(efl_loop_get(data)),
                         _code_changed, data);
    efl_future_Eina_FutureXXX_then(data, f);
 }

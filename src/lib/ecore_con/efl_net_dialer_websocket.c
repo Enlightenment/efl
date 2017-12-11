@@ -764,7 +764,7 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
    loop = efl_loop_get(o);
    if (!loop) return;
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(loop),
+   efl_future_Eina_FutureXXX_then(o, efl_loop_job(loop),
                                   .success = _efl_net_dialer_websocket_job,
                                   .storage = &pd->job);
 }

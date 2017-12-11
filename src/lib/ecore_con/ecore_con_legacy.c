@@ -873,7 +873,7 @@ static void
 _ecore_con_server_job_schedule(Ecore_Con_Server *svr, Eo *loop,
                                Eina_Future_Cb cb)
 {
-   eina_future_then(efl_loop_Eina_FutureXXX_job(loop), cb, svr, &svr->ssl.job);
+   eina_future_then(efl_loop_job(loop), cb, svr, &svr->ssl.job);
 }
 
 EAPI Eina_Bool
@@ -918,7 +918,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type)
    cl->ssl.upgrading = EINA_TRUE;
    cl->ssl.ctx = ssl_ctx;
 
-   eina_future_then(efl_loop_Eina_FutureXXX_job(efl_loop_get(cl->socket)),
+   eina_future_then(efl_loop_job(efl_loop_get(cl->socket)),
                     _ecore_con_client_ssl_upgrade_job, cl, &cl->ssl.job);
 
    DBG("cl=%p SSL upgrading from %#x to type=%#x", cl, svr->type, compl_type);

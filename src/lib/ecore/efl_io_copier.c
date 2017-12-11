@@ -133,7 +133,7 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
 {
    if (pd->job) return;
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(efl_loop_get(o)),
+   efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
                                   .success = _efl_io_copier_job,
                                   .storage = &pd->job);
 }

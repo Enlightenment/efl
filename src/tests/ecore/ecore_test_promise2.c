@@ -506,7 +506,7 @@ START_TEST(efl_test_job)
    Eina_Bool done = EINA_FALSE;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_Eina_FutureXXX_job(ecore_main_loop_get()),
+   f = eina_future_then(efl_loop_job(ecore_main_loop_get()),
                         _promise_empty_done, &done);
    fail_if(!f);
    ecore_main_loop_begin();

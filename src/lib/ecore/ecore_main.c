@@ -3140,7 +3140,7 @@ ecore_loop_arguments_send(int argc, const char **argv)
    for (i = 0; i < argc; i++)
      eina_array_push(arga, eina_stringshare_add(argv[i]));
 
-   job = eina_future_then(efl_loop_Eina_FutureXXX_job(ecore_main_loop_get()),
+   job = eina_future_then(efl_loop_job(ecore_main_loop_get()),
                           _efl_loop_arguments_send, arga);
    efl_future_Eina_FutureXXX_then(ecore_main_loop_get(), job);
 }
@@ -3171,7 +3171,7 @@ ecore_loop_promise_unregister(Efl_Loop *l EINA_UNUSED, Efl_Promise *p)
 }
 
 static Eina_Future *
-_efl_loop_Eina_FutureXXX_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+_efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    // NOTE: Eolian should do efl_future_then() to bind future to object.
    return efl_future_Eina_FutureXXX_then(obj,

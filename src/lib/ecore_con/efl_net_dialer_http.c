@@ -862,7 +862,7 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
    /* object deleted from CURL callback, CURL* easy was
     * dissociated and we must delete it ourselves.
     */
-   f = efl_loop_Eina_FutureXXX_job(ecore_main_loop_get());
+   f = efl_loop_job(ecore_main_loop_get());
    eina_future_then_from_desc(f, eina_future_cb_easy(.success = _efl_net_dialer_http_curl_cleanup,
                                                      .error = _efl_net_dialer_http_curl_cleanup_error,
                                                      .data = easy));
@@ -1725,7 +1725,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if ((!pd->pending_close) && (pd->easy))
           {
-             efl_future_Eina_FutureXXX_then(o, efl_loop_Eina_FutureXXX_job(efl_loop_get(o)),
+             efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
                                             .success = _efl_net_dialer_http_pending_close,
                                             .storage = &pd->pending_close);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
