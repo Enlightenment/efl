@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_POPUP_ALERT_SCROLL_BETA
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
