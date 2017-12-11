@@ -95,13 +95,6 @@ class Efl.Loop (Efl.Object)
          }
          return: ptr(Eina.Future) @owned /* future<void> */; [[The future handle.]]
       }
-      job {
-         [[Will execute that promise in the near future.]]
-         params {
-            @in data: const(void_ptr) @optional; [[The data to be given when the promise is done.]]
-         }
-         return: future<void_ptr>; [[The promise that will be triggered.]]
-      }
       register {
          [[Will register a manager of a specific class to be answered by eo.provider_find.]]
          params {

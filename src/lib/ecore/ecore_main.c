@@ -3093,30 +3093,6 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 
-typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
-struct _Efl_Internal_Promise
-{
-   union {
-      Ecore_Job *job;
-      Efl_Loop_Timer *timer;
-   } u;
-   Efl_Promise *promise;
-
-   const void *data;
-
-   Eina_Bool job_is : 1;
-};
-
-static void
-_efl_loop_job_cb(void *data)
-{
-   Efl_Internal_Promise *j = data;
-
-   efl_promise_value_set(j->promise, (void*) j->data, NULL);
-
-   free(j);
-}
-
 static void
 _efl_loop_arguments_cleanup(Eina_Array *arga)
 {
@@ -3286,73 +3262,6 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
 
  timer_error:
    efl_loop_promise_simple_data_mp_free(d);
-   return NULL;
-}
-
-/* This event will be triggered when the main loop is destroyed and destroy its timers along */
-static void _efl_loop_internal_cancel(Efl_Internal_Promise *p);
-
-static void _efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED);
-
-static void
-_efl_loop_internal_cancel(Efl_Internal_Promise *p)
-{
-   efl_promise_failed_set(p->promise, EINA_ERROR_FUTURE_CANCEL);
-   efl_del(p->promise);
-   free(p);
-}
-
-static void
-_efl_loop_job_cancel(void* data, const Efl_Event *ev EINA_UNUSED)
-{
-   Efl_Internal_Promise *j = data;
-
-   if (j->job_is)
-     {
-        ecore_job_del(j->u.job);
-     }
-
-   _efl_loop_internal_cancel(j);
-}
-
-static Efl_Internal_Promise *
-_efl_internal_promise_new(Efl_Promise* promise, const void *data)
-{
-   Efl_Internal_Promise *p;
-
-   p = calloc(1, sizeof (Efl_Internal_Promise));
-   if (!p) return NULL;
-
-   efl_event_callback_add(promise, EFL_PROMISE_EVENT_FUTURE_NONE, _efl_loop_job_cancel, p);
-
-   p->promise = promise;
-   p->data = data;
-
-   return p;
-}
-
-static Efl_Future *
-_efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const void *data)
-{
-   Efl_Internal_Promise *j;
-   Efl_Object *promise;
-
-   promise = efl_add(EFL_PROMISE_CLASS, obj);
-   if (!promise) return NULL;
-
-   j = _efl_internal_promise_new(promise, data);
-   if (!j) goto on_error;
-
-   j->job_is = EINA_TRUE;
-   j->u.job = ecore_job_add(_efl_loop_job_cb, j);
-   if (!j->u.job) goto on_error;
-
-   return efl_promise_future_get(promise);
-
- on_error:
-   efl_del(promise);
-   free(j);
-
    return NULL;
 }
 
