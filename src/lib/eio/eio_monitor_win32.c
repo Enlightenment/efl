@@ -191,14 +191,7 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
                               &w->overlapped,
                               NULL))
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ERR("%s", msg);
-             free(msg);
-          }
+        ERR("%s", evil_last_error_get());
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -271,14 +264,7 @@ _eio_monitor_win32_watcher_new(Eio_Monitor      *monitor,
                               &w->overlapped,
                               NULL))
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ERR("%s", msg);
-             free(msg);
-          }
+        ERR("%s", evil_last_error_get());
         goto close_event;
      }
 

@@ -61,9 +61,8 @@ _efl_net_server_windows_client_listen_success(void *data, Eo *client, DWORD used
      snprintf(cstr, sizeof(cstr), "%s:%lu", addr, cpid);
    else
      {
-        char *msg = evil_last_error_get();
-        WRN("server=%p (%s) could not GetNamedPipeClientProcessId(client): %s", o, addr, msg);
-        free(msg);
+        WRN("server=%p (%s) could not GetNamedPipeClientProcessId(client): %s",
+            o, addr, evil_last_error_get());
         eina_strlcpy(cstr, addr, sizeof(cstr));
      }
 
@@ -71,9 +70,8 @@ _efl_net_server_windows_client_listen_success(void *data, Eo *client, DWORD used
      snprintf(sstr, sizeof(sstr), "%s:%lu", addr, spid);
    else
      {
-        char *msg = evil_last_error_get();
-        WRN("server=%p (%s) could not GetNamedPipeServerProcessId(client): %s", o, addr, msg);
-        free(msg);
+        WRN("server=%p (%s) could not GetNamedPipeServerProcessId(client): %s",
+            o, addr, evil_last_error_get());
         eina_strlcpy(sstr, addr, sizeof(sstr));
      }
 
@@ -225,8 +223,8 @@ _efl_net_server_windows_client_new(Eo *o, Efl_Net_Server_Windows_Data *pd)
            case ERROR_INVALID_PARAMETER: return EINVAL;
            default:
              {
-                char *msg = evil_format_message(win32err);
-                ERR("Unexpected win32err=%lu (%s)", win32err, msg);
+                ERR("Unexpected win32err=%lu (%s)",
+                    win32err, evil_format_message(win32err));
                 return EINVAL;
              }
           }

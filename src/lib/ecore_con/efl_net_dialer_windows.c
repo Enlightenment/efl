@@ -66,9 +66,8 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
            case ERROR_INVALID_NAME: return EADDRNOTAVAIL;
            default:
              {
-                char *msg = evil_format_message(win32err);
-                ERR("CreateFile(%s): Unexpected win32err=%lu (%s)", pd->address_dial, win32err, msg);
-                free(msg);
+                ERR("CreateFile(%s): Unexpected win32err=%lu (%s)",
+                    pd->address_dial, win32err, evil_format_message(win32err));
                 return EINVAL;
              }
           }
@@ -85,9 +84,8 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
     snprintf(cstr, sizeof(cstr), "%s:%lu", address, cpid);
   else
     {
-       char *msg = evil_last_error_get();
-       WRN("server=%p (%s) could not GetNamedPipeClientProcessId(o): %s", o, address, msg);
-       free(msg);
+       WRN("server=%p (%s) could not GetNamedPipeClientProcessId(o): %s",
+           o, address, evil_last_error_get());
        eina_strlcpy(cstr, address, sizeof(cstr));
     }
 
@@ -95,9 +93,8 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
     snprintf(sstr, sizeof(sstr), "%s:%lu", address, spid);
   else
     {
-       char *msg = evil_last_error_get();
-       WRN("server=%p (%s) could not GetNamedPipeServerProcessId(o): %s", o, address, msg);
-       free(msg);
+       WRN("server=%p (%s) could not GetNamedPipeServerProcessId(o): %s",
+           o, address, evil_last_error_get());
        eina_strlcpy(sstr, address, sizeof(sstr));
      }
 

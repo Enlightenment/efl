@@ -24,7 +24,7 @@ static int _dl_err_viewed = 0;
 static void
 _dl_get_last_error(char *desc)
 {
-   char *str;
+   const char *str;
    size_t l1;
    size_t l2;
 
@@ -45,7 +45,6 @@ _dl_get_last_error(char *desc)
         memcpy(_dl_err + l1, str, l2);
         _dl_err[l1 + l2] = '\0';
      }
-   free(str);
    _dl_err_viewed = 0;
 }
 

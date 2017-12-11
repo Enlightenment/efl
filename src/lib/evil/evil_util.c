@@ -17,6 +17,7 @@
 #include "evil_macro.h"
 #include "evil_util.h"
 
+DWORD _evil_tls_index;
 
 /* static void _evil_error_display(const char *fct, LONG res); */
 static void _evil_last_error_display(const char *fct);
@@ -113,12 +114,12 @@ evil_utf16_to_utf8(const wchar_t *text16)
    return text8;
 }
 
-char *
+const char *
 evil_format_message(long err)
 {
+   char *buf;
    LPTSTR msg;
    char  *str;
-   char  *disp;
 
    if (!FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                       NULL,
@@ -128,10 +129,10 @@ evil_format_message(long err)
                       0,
                       NULL))
      {
-        char buf[4096];
-
-        snprintf(buf, 4096, "FormatMessage failed with error %ld\n", GetLastError());
-        return strdup(buf);
+        buf = (char *)TlsGetValue(_evil_tls_index);
+        snprintf(buf, 4096,
+                 "FormatMessage failed with error %ld\n", GetLastError());
+        return (const char *)buf;
      }
 
 #ifdef UNICODE
@@ -140,15 +141,8 @@ evil_format_message(long err)
    str = msg;
 #endif /* UNICODE */
 
-   disp = (char *)malloc((strlen(str) + strlen("(00000) ") + 1) * sizeof(char));
-   if (!disp)
-     {
-        LocalFree(msg);
-        return NULL;
-     }
-
-   snprintf(disp, strlen(str) + strlen("(00000) ") + 1,
-            "(%5ld) %s", err, str);
+   buf = (char *)TlsGetValue(_evil_tls_index);
+   snprintf(buf, 4096, "(%5ld) %s", err, str);
 
 #ifdef UNICODE
    free(str);
@@ -156,10 +150,10 @@ evil_format_message(long err)
 
    LocalFree(msg);
 
-   return disp;
+   return (const char *)buf;
 }
 
-char *
+const char *
 evil_last_error_get(void)
 {
    DWORD  err;
@@ -171,11 +165,7 @@ evil_last_error_get(void)
 static void
 _evil_last_error_display(const char *fct)
 {
-   char *error;
-
-   error = evil_last_error_get();
-   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, error);
-   free(error);
+   fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, evil_last_error_get());
 }
 
 

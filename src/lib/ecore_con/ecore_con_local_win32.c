@@ -64,14 +64,7 @@ _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handle
    if (broken_pipe)
      {
 #if 0
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ecore_con_event_client_error(cl, msg);
-             free(msg);
-          }
+        ecore_con_event_client_error(cl, evil_last_error_get());
 #endif
         _ecore_con_client_kill(obj);
         return ECORE_CALLBACK_CANCEL;
@@ -99,12 +92,7 @@ _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handle
      return ECORE_CALLBACK_RENEW;
 
 #if 0
-   msg = evil_last_error_get();
-   if (msg)
-     {
-        ecore_con_event_server_error(host_svr, msg);
-        free(msg);
-     }
+   ecore_con_event_server_error(host_svr, evil_last_error_get());
 #endif
    _ecore_con_server_kill(cl->host_server);
    return ECORE_CALLBACK_CANCEL;
@@ -126,12 +114,7 @@ _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handle
    if (!ResetEvent(svr->event_peek))
      return ECORE_CALLBACK_RENEW;
 #if 0
-   msg = evil_last_error_get();
-   if (msg)
-     {
-        ecore_con_event_server_error(svr, msg);
-        free(msg);
-     }
+   ecore_con_event_server_error(svr, evil_last_error_get());
 #endif
    _ecore_con_server_kill(obj);
    return ECORE_CALLBACK_CANCEL;
@@ -172,14 +155,7 @@ _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handle
    if (broken_pipe)
      {
 #if 0
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ecore_con_event_server_error(svr, msg);
-             free(msg);
-          }
+        ecore_con_event_server_error(svr, evil_last_error_get());
 #endif
         _ecore_con_server_kill(obj);
         return ECORE_CALLBACK_CANCEL;
@@ -686,14 +662,7 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *obj)
    res = WriteFile(svr->pipe, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num, &written, NULL);
    if (!res)
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ecore_con_event_server_error(obj, msg);
-             free(msg);
-          }
+        ecore_con_event_server_error(obj, evil_last_error_get());
         _ecore_con_server_kill(obj);
      }
 
@@ -737,14 +706,7 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *obj)
    res = WriteFile(svr->pipe, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, &written, NULL);
    if (!res)
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             ecore_con_event_client_error(obj, msg);
-             free(msg);
-          }
+        ecore_con_event_client_error(obj, evil_last_error_get());
         _ecore_con_client_kill(obj);
      }
 

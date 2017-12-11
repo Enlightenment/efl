@@ -2594,13 +2594,7 @@ _ecore_main_win32_objects_wait(DWORD objects_nbr,
      {
         ERR("Error when waiting threads.");
         if (result == WAIT_FAILED)
-          {
-             char *str;
-
-             str = evil_last_error_get();
-             ERR("%s", str);
-             free(str);
-          }
+          ERR("%s", evil_last_error_get());
         goto close_thread;
      }
 
@@ -2755,11 +2749,7 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
    /* The result tells us the type of event we have. */
    if (result == WAIT_FAILED)
      {
-        char *m;
-
-        m = evil_last_error_get();
-        WRN("%s", m);
-        free(m);
+        WRN("%s", evil_last_error_get());
         res = -1;
      }
    else if (result == WAIT_TIMEOUT)

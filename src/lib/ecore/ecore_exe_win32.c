@@ -64,11 +64,7 @@ _ecore_exe_close_cb(void *data,
 
    /* FIXME : manage the STILL_ACTIVE returned error */
    if (!GetExitCodeProcess(exe->process, &exit_code))
-     {
-        char *msg = evil_last_error_get();
-        DBG("%s", msg);
-        free(msg);
-     }
+     DBG("%s", evil_last_error_get());
 
    e->exit_code = exit_code;
    e->exited = 1;
@@ -498,16 +494,8 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    if (!CreateProcess(shell, exe_cmd_buf, NULL, NULL, EINA_TRUE,
                       run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
      {
-        char *msg;
-
-        msg = evil_last_error_get();
-        if (msg)
-          {
-             WRN("Failed to create process %s: %s", exe_cmd_buf, msg);
-             free(msg);
-          }
-        else
-          WRN("Failed to create process %s: %ld", exe_cmd_buf, GetLastError());
+        WRN("Failed to create process %s: %s",
+            exe_cmd_buf, evil_last_error_get());
         goto error;
      }
 

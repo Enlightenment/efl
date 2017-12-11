@@ -59,9 +59,9 @@ EAPI char *evil_wchar_to_char(const wchar_t *text);
  */
 EAPI char *evil_utf16_to_utf8(const wchar_t *text);
 
-EAPI char *evil_format_message(long err);
+EAPI const char *evil_format_message(long err);
 
-EAPI char *evil_last_error_get(void);
+EAPI const char *evil_last_error_get(void);
 
 /**
  * @brief Return a dir to store temporary files.

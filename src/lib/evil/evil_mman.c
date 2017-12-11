@@ -83,12 +83,8 @@ mmap(void  *addr EVIL_UNUSED,
    fm = CreateFileMapping(handle, NULL, protect, 0, 0, NULL);
    if (!fm)
      {
-        char *str;
-
-        str = evil_last_error_get();
-        fprintf(stderr, "[Evil] [mmap] CreateFileMapping failed: %s\n", str);
-        free(str);
-
+        fprintf(stderr, "[Evil] [mmap] CreateFileMapping failed: %s\n",
+                evil_last_error_get());
         return MAP_FAILED;
      }
 
@@ -117,12 +113,8 @@ mmap(void  *addr EVIL_UNUSED,
 
    if (!data)
      {
-        char *str;
-
-        str = evil_last_error_get();
-        fprintf(stderr, "[Evil] [mmap] MapViewOfFile failed: %s\n", str);
-        free(str);
-
+        fprintf(stderr, "[Evil] [mmap] MapViewOfFile failed: %s\n",
+                evil_last_error_get());
         return MAP_FAILED;
      }
 
@@ -137,13 +129,8 @@ munmap(void  *addr,
 
    res = UnmapViewOfFile(addr);
    if (!res)
-     {
-        char *str;
-
-        str = evil_last_error_get();
-        fprintf(stderr, "[Evil] [munmap] UnmapViewOfFile failed: %s\n", str);
-        free(str);
-     }
+     fprintf(stderr, "[Evil] [munmap] UnmapViewOfFile failed: %s\n",
+             evil_last_error_get());
 
    return (res == 0) ? -1 : 0;
 }

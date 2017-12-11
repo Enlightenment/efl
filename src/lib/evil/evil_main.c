@@ -22,6 +22,8 @@ extern LONGLONG _evil_time_freq;
 extern LONGLONG _evil_time_count;
 extern long     _evil_time_second;
 
+extern DWORD    _evil_tls_index;
+
 long _evil_systemtime_to_time(SYSTEMTIME st);
 
 int
@@ -95,4 +97,42 @@ evil_shutdown(void)
    evil_sockets_shutdown();
 
    return _evil_init_count;
+}
+
+BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved)
+{
+   LPVOID data;
+
+   switch (reason)
+     {
+     case DLL_PROCESS_ATTACH:
+       _evil_tls_index = TlsAlloc();
+       if (_evil_tls_index == TLS_OUT_OF_INDEXES)
+         return FALSE;
+     case DLL_THREAD_ATTACH:
+       data = (LPVOID)LocalAlloc(LPTR, 4096);
+       if (!data)
+         return FALSE;
+       if (!TlsSetValue(_evil_tls_index, data))
+         return FALSE;
+       break;
+     case DLL_THREAD_DETACH:
+       data = TlsGetValue(_evil_tls_index);
+       if (data)
+         LocalFree((HLOCAL)data);
+       break;
+     case DLL_PROCESS_DETACH:
+       data = TlsGetValue(_evil_tls_index);
+       if (data)
+         LocalFree((HLOCAL)data);
+       TlsFree(_evil_tls_index);
+       break;
+     default:
+       break;
+     }
+
+   return TRUE;
+
+   (void)inst;
+   (void)reserved;
 }
