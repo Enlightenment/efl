@@ -275,15 +275,15 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 
    if (!done)
      {
-	if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
-	if (cpu_feature_mask & CPU_FEATURE_MMX2) do_sse = 1;
-	if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
+        if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
+        if (cpu_feature_mask & CPU_FEATURE_MMX2) do_sse = 1;
+        if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
+        done = 1;
      }
-//   INF("%i %i %i", do_mmx, do_sse, do_sse2);
+
    *mmx = do_mmx;
    *sse = do_sse;
    *sse2 = do_sse2;
-   done = 1;
 }
 
 #ifdef BUILD_MMX
