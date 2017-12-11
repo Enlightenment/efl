@@ -14,7 +14,7 @@ struct _Efl_Ui_Spin_Button_Data
    Eina_Bool             entry_reactivate : 1;
    Eina_Bool             editable : 1;
    Eina_Bool             inc_val : 1;
-   Eina_Bool             loop : 1;
+   Eina_Bool             circulate : 1;
 };
 
 #endif

@@ -10,8 +10,8 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
      @since 1.21
    ]]
    methods {
-      @property loop {
-         [[Control whether the spin should loop when it reaches its minimum or maximum value.
+      @property circulate {
+         [[Control whether the spin should circulate value when it reaches its minimum or maximum value.
 
            Disabled by default. If disabled, when the user tries to increment the
            value,
@@ -21,7 +21,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
            but the value less step is less than minimum value. In this case,
            the new displayed value will be the minimum value.
 
-           When loop is enabled, when the user tries to increment the value,
+           When this is enabled, when the user tries to increment the value,
            but displayed value plus step value is bigger than maximum value,
            the new value will be the minimum value. When the the user tries to
            decrement it, but the value less step is less than minimum value,
@@ -40,7 +40,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
          get {
          }
          values {
-            loop: bool(false); [[$true to enable loop or $false to disable it.]]
+            circulate: bool(false); [[$true to enable circulate or $false to disable it.]]
          }
       }
       @property editable {

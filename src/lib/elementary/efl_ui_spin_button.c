@@ -135,7 +135,7 @@ _value_set(Evas_Object *obj,
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   if (sd->loop)
+   if (sd->circulate)
      {
         if (new_val < pd->val_min)
           new_val = pd->val_max;
@@ -820,15 +820,15 @@ _efl_ui_spin_button_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *s
 }
 
 EOLIAN static void
-_efl_ui_spin_button_loop_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd, Eina_Bool loop)
+_efl_ui_spin_button_circulate_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd, Eina_Bool circulate)
 {
-   sd->loop = loop;
+   sd->circulate = circulate;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_loop_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+_efl_ui_spin_button_circulate_get(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
 {
-   return sd->loop;
+   return sd->circulate;
 }
 
 EOLIAN static const Efl_Access_Action_Data *
