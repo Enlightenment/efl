@@ -100,6 +100,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
 {
    int i;
    Eo *cur_content;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if ((type < EFL_UI_POPUP_ALERT_BUTTON_POSITIVE) || (type > EFL_UI_POPUP_ALERT_BUTTON_USER))
      {
@@ -168,6 +169,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
      }
 
    elm_layout_signal_emit(obj, "elm,buttons,show", "elm");
+   edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 }
 
