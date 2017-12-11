@@ -367,7 +367,7 @@ _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbu
         return;
      }
 
-   eina_promise_resolve(promise, eina_value_object_init(o));
+   eina_promise_resolve(promise, EINA_VALUE_EMPTY);
 }
 
 static void

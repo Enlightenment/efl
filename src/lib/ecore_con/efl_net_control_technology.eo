@@ -96,7 +96,7 @@ class Efl.Net.Control.Technology (Efl.Loop_User) {
               state. Otherwise prefer to let the system passively do
               scans in a timely manner.
             ]]
-            return: ptr(Eina.Future) @owned; [[Future return for finished background scan]] /* NOTE: This should be future<void> */
+            return: ptr(Eina.Future) @owned; [[Future return for finished background scan]]
         }
     }
 
