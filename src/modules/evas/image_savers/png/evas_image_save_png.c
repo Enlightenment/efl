@@ -32,8 +32,10 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
    volatile png_bytep  png_data = NULL;
    png_color_8         sig_bit = {};
    int                 num_passes = 1, pass;
-   Eina_Bool           gry8 = EINA_FALSE, agry88 = EINA_FALSE, free_data = EINA_FALSE;
-   int                 pixel_size = 4;
+   volatile Eina_Bool  gry8 = EINA_FALSE;
+   volatile Eina_Bool  agry88 = EINA_FALSE;
+   volatile Eina_Bool  free_data = EINA_FALSE;
+   volatile int        pixel_size = 4;
 
    if (!im || !im->image.data || !file)
       return 0;
