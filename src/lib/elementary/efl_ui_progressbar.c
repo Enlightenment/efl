@@ -352,6 +352,7 @@ EOLIAN static void
 _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   char *group;
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "progressbar");
@@ -361,11 +362,15 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
    priv->dir = EFL_UI_DIR_RIGHT;
    priv->val = MIN_RATIO_LVL;
 
+   group = _efl_ui_progressbar_theme_group_get(obj, priv);
+
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
-                                       _efl_ui_progressbar_theme_group_get(obj, priv),
+                                       group
                                        elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
+
+   free(group);
 
    efl_ui_format_string_set(obj, "%.0f %%");
 
