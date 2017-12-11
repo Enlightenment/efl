@@ -1885,8 +1885,9 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
    elm_interface_scrollable_content_region_set(obj, wx, sid->wy, ww, wh);
 }
 
-static void
-_scroll_wheel_post_event_job(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_scroll_wheel_post_event_job(void *data, const Eina_Value v,
+                             const Eina_Future *dead EINA_UNUSED)
 {
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
@@ -1897,6 +1898,7 @@ _scroll_wheel_post_event_job(void *data, const Efl_Event *ev EINA_UNUSED)
         sid->current_page.x = _elm_scroll_page_x_get(sid, 0, EINA_FALSE);
         sid->current_page.y = _elm_scroll_page_y_get(sid, 0, EINA_FALSE);
      }
+   return v;
 }
 
 static inline void
@@ -1906,8 +1908,11 @@ _scroll_wheel_post_event_go(Elm_Scrollable_Smart_Interface_Data *sid, int x, int
    _elm_scroll_wanted_coordinates_update(sid, x, y);
    if (_elm_config->scroll_animation_disable)
      {
-        efl_future_then(efl_loop_job(efl_loop_get(sid->obj), NULL),
-                        _scroll_wheel_post_event_job, NULL, NULL, sid);
+        Eina_Future *f;
+
+        f = eina_future_then(efl_loop_Eina_FutureXXX_job(efl_loop_get(sid->obj)),
+                             _scroll_wheel_post_event_job, sid);
+        efl_future_Eina_FutureXXX_then(sid->obj, f);
      }
    else
      {
