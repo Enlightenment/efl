@@ -23,7 +23,7 @@ end
 
 local matches_filter = function(obj)
     local ns = obj:nspaces_get()
-    if #ns and ns[1] == "efl" then
+    if #ns and (ns[1] == "efl" or ns[1] == "eina") then
         return true
     end
 
