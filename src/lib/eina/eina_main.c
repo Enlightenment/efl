@@ -97,6 +97,7 @@ static int _eina_log_dom = -1;
 
 EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
 EAPI Eina_Error EINA_ERROR_NOT_MAIN_LOOP = 0;
+EAPI Eina_Error EINA_ERROR_NOT_IMPLEMENTED = 0;
 EAPI unsigned int eina_seed = 0;
 
 #ifdef EFL_HAVE_THREADS
@@ -301,6 +302,7 @@ eina_init(void)
    eina_cpu_count_internal();
 
    EINA_ERROR_NOT_MAIN_LOOP = eina_error_msg_static_register("Not in main loop.");
+   EINA_ERROR_NOT_IMPLEMENTED = eina_error_msg_static_register("Functionallity not implemented.");
 
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 

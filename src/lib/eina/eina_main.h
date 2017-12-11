@@ -22,6 +22,7 @@
 #include <Efl_Config.h>
 
 #include "eina_types.h"
+#include "eina_error.h"
 
 /**
  * @addtogroup Eina_Main_Group Main
@@ -67,6 +68,8 @@ typedef struct _Eina_Version
 } Eina_Version;
 
 EAPI extern Eina_Version *eina_version;
+
+EAPI extern Eina_Error EINA_ERROR_NOT_IMPLEMENTED;
 
 /**
  * @brief Initializes the Eina library.
