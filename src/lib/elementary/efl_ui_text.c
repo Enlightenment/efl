@@ -700,11 +700,7 @@ _selection_data_cb(void *data EINA_UNUSED,
         snprintf(entry_tag, len + 1, tag_string, buf);
         _edje_entry_user_insert(obj, entry_tag);
      }
-   else if (sel_data->format & ELM_SEL_FORMAT_MARKUP)
-     {
-        _edje_entry_user_insert(obj, buf);
-     }
-   else
+   else if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
      {
         Efl_Text_Cursor_Cursor *cur, *start, *end;
         efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
@@ -714,6 +710,10 @@ _selection_data_cb(void *data EINA_UNUSED,
           }
         cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
         efl_text_cursor_text_insert(obj, cur, buf);
+     }
+   else
+     {
+        _edje_entry_user_insert(obj, buf);
      }
    free(buf);
 

@@ -700,11 +700,7 @@ _selection_data_cb(void *data EINA_UNUSED,
         snprintf(entry_tag, len + 1, tag_string, buf);
         _edje_entry_user_insert(obj, entry_tag);
      }
-   else if (sel_data->format & ELM_SEL_FORMAT_MARKUP)
-     {
-        _edje_entry_user_insert(obj, buf);
-     }
-   else
+   else if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
      {
         char *txt = _elm_util_text_to_mkup(buf);
         if (txt)
@@ -716,6 +712,10 @@ _selection_data_cb(void *data EINA_UNUSED,
           {
              ERR("Failed to convert text to markup text!");
           }
+     }
+   else
+     {
+        _edje_entry_user_insert(obj, buf);
      }
    free(buf);
 
