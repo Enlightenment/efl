@@ -900,6 +900,8 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+/**** focus 4 ****/
+
 static void
 btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -926,7 +928,7 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    Evas_Object *win, *box, *sc, *btn, *ly, *btn2;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("focus4", "Focus 5");
+   win = elm_win_util_standard_add("focus4", "Focus 4");
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
@@ -965,3 +967,113 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(win);
 }
 
+/**** focus 5 ****/
+
+struct _focus5_obj {
+   const char *name;
+   Evas_Coord x, y, w, h;
+};
+
+struct _focus5_obj _focus5_layout_data1[] = {
+   {"top",    40,  0, 20, 10},
+   {"bottom", 40, 90, 20, 10},
+   {"left",    0, 45, 20, 10},
+   {"right",  80, 45, 20, 10},
+   {NULL, 0, 0, 0, 0} /* sentinel */
+};
+
+struct _focus5_obj _focus5_layout_data2[] = {
+   {"top L",   0,  0, 20, 10},
+   {"top R",  80,  0, 20, 10},
+   {"bot L",   0, 90, 20, 10},
+   {"bot R",  80, 90, 20, 10},
+   {"center", 40, 40, 20, 10},
+   {NULL, 0, 0, 0, 0} /* sentinel */
+};
+
+struct _focus5_obj _focus5_layout_data3[] = {
+   {"top",    40,  0, 20, 10},
+   {"bottom", 40, 90, 20, 10},
+   {"left",    0, 45, 20, 10},
+   {"right",  80, 45, 20, 10},
+   {"top L",   0,  0, 20, 10},
+   {"top R",  80,  0, 20, 10},
+   {"bot L",   0, 90, 20, 10},
+   {"bot R",  80, 90, 20, 10},
+   {"center", 40, 40, 20, 10},
+   {NULL, 0, 0, 0, 0} /* sentinel */
+};
+
+void
+_focus5_layout(Evas_Object *grid, struct _focus5_obj *layout)
+{
+   Evas_Object *obj;
+
+   evas_object_data_set(grid, "layout", layout);
+   elm_grid_clear(grid, EINA_TRUE);
+
+   while(layout->name) {
+      printf("button: %s\n", layout->name);
+      obj = elm_button_add(grid);
+      efl_name_set(obj, layout->name);
+      elm_object_text_set(obj, layout->name);
+      elm_grid_pack(grid, obj, layout->x, layout->y, layout->w, layout->h);
+      evas_object_show(obj);
+      layout++;
+   }
+}
+
+static void
+_focus5_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *grid = data;
+   struct _focus5_obj *layout = evas_object_data_get(grid, "layout");
+
+   // brrr...a really naive looping 
+   if (layout == _focus5_layout_data1)
+      _focus5_layout(grid, _focus5_layout_data2);
+   else if (layout == _focus5_layout_data2)
+      _focus5_layout(grid, _focus5_layout_data3);
+   // else if (layout == _focus5_layout_data3)
+   //    _focus5_layout(grid, _focus5_layout_data4);
+   else
+      _focus5_layout(grid, _focus5_layout_data1);
+
+}
+
+void
+test_focus5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *sep, *btn, *grid;
+
+   win = elm_win_util_standard_add("focus5", "Focus 5");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   grid = elm_grid_add(box);
+   elm_grid_size_set(grid, 100, 100);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(box, grid);
+   evas_object_show(grid);
+   _focus5_layout(grid, _focus5_layout_data1);
+
+   sep = elm_separator_add(box);
+   elm_separator_horizontal_set(sep, EINA_TRUE);
+   elm_box_pack_end(box, sep);
+   evas_object_show(sep);
+
+   btn = elm_button_add(box);
+   elm_object_focus_allow_set(btn, EINA_FALSE);
+   elm_box_pack_end(box, btn);
+   elm_object_text_set(btn, "Show next layout  (this btn is NOT focusable)");
+   evas_object_smart_callback_add(btn, "clicked", _focus5_btn_clicked, grid);
+   evas_object_show(btn);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}

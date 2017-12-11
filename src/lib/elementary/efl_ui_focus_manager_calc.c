@@ -10,7 +10,6 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_CALC_CLASS
 #define FOCUS_DATA(obj) Efl_Ui_Focus_Manager_Calc_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-#define DIM_EFL_UI_FOCUS_DIRECTION(dim,neg) dim*2+neg
 #define NODE_DIRECTIONS_COUNT 4
 
 #define DIRECTION_IS_LOGICAL(dir) (dir >= EFL_UI_FOCUS_DIRECTION_PREVIOUS && dir < EFL_UI_FOCUS_DIRECTION_UP)
@@ -290,31 +289,35 @@ _distance(Eina_Rect node, Eina_Rect op, Dimension dim)
 }
 
 static inline void
+_min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
+{
+   if (dim == DIMENSION_X)
+     {
+        *min = rect.y;
+        *max = eina_rectangle_max_y(&rect.rect);
+     }
+   else
+     {
+        *min = rect.x;
+        *max = eina_rectangle_max_x(&rect.rect);
+     }
+}
+
+static inline void
 _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
 {
-   Eina_Rect rect;
+   int dim_min, dim_max, cur_pos_min = 0, cur_neg_min = 0;
    Efl_Ui_Focus_Object *op;
-   int dim_min, dim_max;
    Eina_Iterator *nodes;
-   int cur_pos_min = 0, cur_neg_min = 0;
+   Eina_Rect rect;
    Node *n;
-
-   nodes = eina_hash_iterator_data_new(pd->node_hash);
-   rect = efl_ui_focus_object_focus_geometry_get(node);
 
    *pos = NULL;
    *neg = NULL;
 
-   if (dim == DIMENSION_X)
-     {
-        dim_min = rect.y;
-        dim_max = rect.y + rect.h;
-     }
-   else
-     {
-        dim_min = rect.x;
-        dim_max = rect.x + rect.w;
-     }
+   rect = efl_ui_focus_object_focus_geometry_get(node);
+   nodes = eina_hash_iterator_data_new(pd->node_hash);
+   _min_max_gen(dim, rect, &dim_min, &dim_max);
 
    EINA_ITERATOR_FOREACH(nodes, n)
      {
@@ -328,17 +331,7 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
 
         op_rect = efl_ui_focus_object_focus_geometry_get(op);
 
-        if (dim == DIMENSION_X)
-          {
-             min = op_rect.y;
-             max = eina_rectangle_max_y(&op_rect.rect);
-          }
-        else
-          {
-             min = op_rect.x;
-             max = eina_rectangle_max_x(&op_rect.rect);
-          }
-
+        _min_max_gen(dim, op_rect, &min, &max);
 
         /* The only way the calculation does make sense is if the two number
          * lines are not disconnected.
@@ -414,9 +407,79 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
 #endif
          }
 
+
      }
    eina_iterator_free(nodes);
    nodes = NULL;
+
+}
+
+static inline Eina_Position2D
+_relative_position_rects(Eina_Rect *a, Eina_Rect *b)
+{
+   Eina_Position2D a_pos = {a->rect.x + a->rect.w/2, a->rect.y + a->rect.h/2};
+   Eina_Position2D b_pos = {b->rect.x + b->rect.w/2, b->rect.y + b->rect.h/2};
+
+   return (Eina_Position2D){b_pos.x - a_pos.x, b_pos.y - b_pos.y};
+}
+
+static inline Eina_Rectangle_Outside
+_direction_to_outside(Efl_Ui_Focus_Direction direction)
+{
+   if (direction == EFL_UI_FOCUS_DIRECTION_RIGHT) return EINA_RECTANGLE_OUTSIDE_RIGHT;
+   if (direction == EFL_UI_FOCUS_DIRECTION_LEFT) return EINA_RECTANGLE_OUTSIDE_LEFT;
+   if (direction == EFL_UI_FOCUS_DIRECTION_DOWN) return EINA_RECTANGLE_OUTSIDE_BOTTOM;
+   if (direction == EFL_UI_FOCUS_DIRECTION_UP) return EINA_RECTANGLE_OUTSIDE_TOP;
+
+   return -1;
+}
+
+static inline void
+_calculate_node_indirection(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Direction direction, Eina_List **lst)
+{
+   Efl_Ui_Focus_Object *op;
+   Eina_Iterator *nodes;
+   int min_distance = 0;
+   Node *n;
+   Eina_Rect rect;
+
+   rect = efl_ui_focus_object_focus_geometry_get(node);
+   nodes = eina_hash_iterator_data_new(pd->node_hash);
+
+   EINA_ITERATOR_FOREACH(nodes, n)
+     {
+        Eina_Rectangle_Outside outside, outside_dir;
+        Eina_Position2D pos;
+        int distance;
+        Eina_Rect op_rect;
+
+        op = n->focusable;
+
+        if (op == node) continue;
+        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
+
+        op_rect = efl_ui_focus_object_focus_geometry_get(op);
+        outside = eina_rectangle_outside_position(&rect.rect, &op_rect.rect);
+        outside_dir = _direction_to_outside(direction);
+        //calculate relative position of the nodes
+        pos = _relative_position_rects(&rect, &op_rect);
+        //calculate distance
+        distance = sqrt(powerof2(pos.x) + powerof2(pos.y));
+
+        if (outside & outside_dir)
+          {
+             if (min_distance == 0 || min_distance > distance)
+               {
+                  min_distance = distance;
+                  *lst = eina_list_free(*lst);
+                  *lst = eina_list_append(*lst, op);
+               }
+             else if (min_distance == distance)
+               {
+                  *lst = eina_list_append(*lst, op);
+               }
+          }
+     }
 }
 
 #ifdef CALC_DEBUG
@@ -485,6 +548,33 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
    convert_border_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
    convert_border_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
    convert_border_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+
+   /*
+    * Stage 2: if there is still no relation in a special direction,
+    *          just take every single node that is in the given direction
+    *          and take the one with the shortest direction
+    */
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+     {
+        if (!DIRECTION_ACCESS(node, i).partners)
+          {
+             Eina_List *tmp = NULL;
+             Efl_Ui_Focus_Object *focusable;
+
+             _calculate_node_indirection(pd, node->focusable, i, &tmp);
+
+             EINA_LIST_FREE(tmp, focusable)
+               {
+                  Border *b;
+                  Node *n;
+
+                  b = &DIRECTION_ACCESS(node, i);
+                  n = node_get(obj, pd, focusable);
+                  b->partners = eina_list_append(b->partners, n);
+               }
+
+          }
+     }
 
 #ifdef CALC_DEBUG
    _debug_node(node);
