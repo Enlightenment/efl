@@ -112,7 +112,7 @@ _efl_input_focus_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Input_Focus *
-_efl_input_focus_efl_dup_dup(const Eo *obj, Efl_Input_Focus_Data *pd)
+_efl_input_focus_efl_duplicate_duplicate(const Eo *obj, Efl_Input_Focus_Data *pd)
 {
    Efl_Input_Focus_Data *ev;
    Efl_Input_Focus *evt;

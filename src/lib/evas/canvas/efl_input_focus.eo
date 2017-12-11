@@ -17,7 +17,7 @@ class Efl.Input.Focus(Efl.Object, Efl.Input.Event)
       Efl.Object.destructor;
       Efl.Input.Event.device { get; set; }
       Efl.Input.Event.reset;
-      Efl.Dup.dup;
+      Efl.Duplicate.duplicate;
          [[Creates a copy of this event. @Efl.Input.Event.fake is $true.
 
            The returned event object is similar to the given object in most

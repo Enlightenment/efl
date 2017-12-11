@@ -1,17 +1,17 @@
-interface Efl.Dup
+interface Efl.Duplicate
 {
    [[An interface for duplication of objects.
 
-     Objects implementing this interface can be duplicated with @.dup.
+     Objects implementing this interface can be duplicated with @.duplicate.
    ]]
    methods {
-      dup @const {
+      duplicate @const {
          [[Creates a carbon copy of this object and returns it.
 
            The newly created object will have no event handlers or anything of
            the sort.
          ]]
-         return: Efl.Dup @owned; [[Returned carbon copy]]
+         return: Efl.Duplicate @owned; [[Returned carbon copy]]
       }
    }
 }

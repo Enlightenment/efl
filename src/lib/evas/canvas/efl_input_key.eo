@@ -56,7 +56,7 @@ class Efl.Input.Key (Efl.Object, Efl.Input.Event, Efl.Input.State, Efl.Input.Eve
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Input.Event.reset;
-      Efl.Dup.dup;
+      Efl.Duplicate.duplicate;
          [[Creates a copy of this event. @Efl.Input.Event.fake is $true.
 
            The returned event object is similar to the given object in most

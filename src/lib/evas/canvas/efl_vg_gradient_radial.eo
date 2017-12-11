@@ -8,7 +8,7 @@ class Efl.VG.Gradient.Radial (Efl.VG.Gradient, Efl.Gfx.Gradient.Radial)
       Efl.Gfx.Gradient.Radial.focal { get; set; }
       Efl.VG.bounds_get;
       Efl.VG.interpolate;
-      Efl.Dup.dup;
+      Efl.Duplicate.duplicate;
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

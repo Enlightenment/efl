@@ -475,7 +475,7 @@ _evas_device_cleanup(Evas *eo_e)
    /* If the device is deleted, _del_cb will remove the device
     * from the devices list. Ensure we delete them only once, and only if this
     * Evas is the owner, otherwise we would kill external references (eg.
-    * from efl_dup()). */
+    * from efl_duplicate()). */
 again:
    e->devices_modified = EINA_FALSE;
    cpy = eina_list_clone(e->devices);

@@ -154,11 +154,11 @@ _efl_vg_gradient_linear_efl_vg_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_gradient_linear_efl_dup_dup(const Eo *obj, Efl_VG_Gradient_Linear_Data *pd)
+_efl_vg_gradient_linear_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Gradient_Linear_Data *pd)
 {
    Efl_VG *cn = NULL;
 
-   cn = efl_dup(efl_super(obj, MY_CLASS));
+   cn = efl_duplicate(efl_super(obj, MY_CLASS));
    efl_gfx_gradient_linear_start_set(cn, pd->start.x, pd->start.y);
    efl_gfx_gradient_linear_end_set(cn, pd->end.x, pd->end.y);
    return cn;

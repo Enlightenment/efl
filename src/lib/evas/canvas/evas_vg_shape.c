@@ -183,19 +183,19 @@ _efl_vg_shape_efl_vg_interpolate(Eo *obj,
 
 
 EOLIAN static Efl_VG *
-_efl_vg_shape_efl_dup_dup(const Eo *obj, Efl_VG_Shape_Data *pd)
+_efl_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Shape_Data *pd)
 {
    Efl_VG *cn = NULL;
    Efl_VG_Shape_Data *cd = NULL;
 
-   cn = efl_dup(efl_super(obj, MY_CLASS));
+   cn = efl_duplicate(efl_super(obj, MY_CLASS));
    cd = efl_data_scope_get(cn, MY_CLASS);
    if (pd->fill)
-     cd->fill = efl_dup(pd->fill);
+     cd->fill = efl_duplicate(pd->fill);
    if (pd->stroke.fill)
-     cd->stroke.fill = efl_dup(pd->stroke.fill);
+     cd->stroke.fill = efl_duplicate(pd->stroke.fill);
    if (pd->stroke.marker)
-     cd->stroke.marker = efl_dup(pd->stroke.marker);
+     cd->stroke.marker = efl_duplicate(pd->stroke.marker);
 
    efl_gfx_path_copy_from(cn, obj);
    return cn;

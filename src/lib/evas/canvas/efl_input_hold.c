@@ -101,7 +101,7 @@ _efl_input_hold_efl_input_event_reset(Eo *obj, Efl_Input_Hold_Data *pd)
 }
 
 EOLIAN static Efl_Input_Event *
-_efl_input_hold_efl_dup_dup(const Eo *obj, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_duplicate_duplicate(const Eo *obj, Efl_Input_Hold_Data *pd)
 {
    Efl_Input_Hold_Data *ev;
    Efl_Input_Hold *evt;

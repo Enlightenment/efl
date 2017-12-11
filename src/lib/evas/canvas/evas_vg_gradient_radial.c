@@ -174,12 +174,12 @@ _efl_vg_gradient_radial_efl_vg_interpolate(Eo *obj,
 
 
 EOLIAN static Efl_VG *
-_efl_vg_gradient_radial_efl_dup_dup(const Eo *obj, Efl_VG_Gradient_Radial_Data *pd)
+_efl_vg_gradient_radial_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Gradient_Radial_Data *pd)
 
 {
    Efl_VG *cn = NULL;
 
-   cn = efl_dup(efl_super(obj, MY_CLASS));
+   cn = efl_duplicate(efl_super(obj, MY_CLASS));
    efl_gfx_gradient_radial_focal_set(cn, pd->focal.x, pd->focal.y);
    efl_gfx_gradient_radial_center_set(cn, pd->center.x, pd->center.y);
    efl_gfx_gradient_radial_radius_set(cn, pd->radius);

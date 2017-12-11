@@ -1,6 +1,6 @@
 import efl_input_types;
 
-mixin Efl.Input.Event (Efl.Interface, Efl.Object, Efl.Dup)
+mixin Efl.Input.Event (Efl.Interface, Efl.Object, Efl.Duplicate)
 {
    [[Represents a generic event data.
 

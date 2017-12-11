@@ -716,7 +716,7 @@ _efl_vg_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_efl_dup_dup(const Eo *obj, Efl_VG_Data *pd)
+_efl_vg_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Data *pd)
 {
    Efl_VG *cn;
    Efl_VG_Data *cd;
@@ -733,7 +733,7 @@ _efl_vg_efl_dup_dup(const Eo *obj, Efl_VG_Data *pd)
      }
 
    if (pd->mask)
-     cd->mask = efl_dup(pd->mask);
+     cd->mask = efl_duplicate(pd->mask);
 
    cd->x = pd->x;
    cd->y = pd->y;
