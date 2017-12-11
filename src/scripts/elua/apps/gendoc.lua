@@ -959,6 +959,11 @@ local build_evtable = function(f, tcl, tbl, newm)
         end
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    for i = #nt, 1, -1 do
+        if i ~= 1 and nt[i][1] == nt[i - 1][1] then
+            table.remove(nt, i)
+        end
+    end
     for i, item in ipairs(nt) do
         -- name
         f:write_raw(item[1])
