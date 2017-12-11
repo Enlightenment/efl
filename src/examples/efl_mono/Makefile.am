@@ -47,14 +47,16 @@ endif
 
 example_numberwrapper.c: example_numberwrapper.eo.h example_numberwrapper.eo.c
 
-numberwrapper_lib_name = example_numberwrapper.out
+noinst_lib_LTLIBRARIES = libexample_numberwrapper.la
+noinst_libdir = $(abs_top_builddir)
 
-$(numberwrapper_lib_name): example_numberwrapper.c
-	$(CC) -shared -o $@ $< -DEFL_BETA_API_SUPPORT -I. $(COMMON_FLAGS)
+libexample_numberwrapper_la_SOURCES = example_numberwrapper.c
+libexample_numberwrapper_la_LDFLAGS = -shared
+libexample_numberwrapper_la_CFLAGS = $(COMMON_FLAGS) -DEFL_BETA_API_SUPPORT
 
 SRCS += example_numberwrapper.c
 EXTRA_FILES += example_numberwrapper.eo
-GENERATED += example_numberwrapper.eo.h example_numberwrapper.eo.c $(numberwrapper_lib_name)
+GENERATED += example_numberwrapper.eo.h example_numberwrapper.eo.c EoInherit01.exe.config
 
 # CSharp examples
 
@@ -68,24 +70,33 @@ FunctionPointer01.exe
 
 example_numberwrapper.eo.cs: example_numberwrapper.eo
 	$(AM_V_EOLMONO) \
-	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport $(numberwrapper_lib_name) -o $@ -r $(top_builddir)/src/bindings/mono/efl_mono/efl_libs.csv $<
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport example_numberwrapper -o $@ -r $(top_builddir)/src/bindings/mono/efl_mono/efl_libs.csv $<
 
 EoInherit01_exe_SOURCES = EoInherit01.cs
 EoInherit01_srcs = $(EoInherit01_exe_SOURCES) example_numberwrapper.eo.cs
-EoInherit01.exe$(EXEEXT): $(EoInherit01_srcs) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) $(numberwrapper_lib_name)
+EoInherit01.exe: $(EoInherit01_srcs) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la EoInherit01.exe.config
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 $(abs_top_builddir)/EoInherit01.csproj: $(EoInherit01_srcs) $(am_dirstamp) $(numberwrapper_lib_name)
 	@rm -f $@
 	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a EoInherit01.exe -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/efl_mono/%.cs,$(filter %.cs, $(^)))
-
+EoInherit01.exe.config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"example_numberwrapper\" target=\"$(abs_top_builddir)/src/examples/efl_mono/.libs/libexample_numberwrapper.so\"/>" >> $@
+	echo "  <dllmap dll=\"efl_mono\" target=\"$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll\"/>" >> $@
+	echo "  <runtime>" >> $@
+	echo "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">" >> $@
+	echo "      <probing privatePath=\"/home/felipe/dev/samsung/upstream/efl/build/src/lib/efl_mono\" />" >> $@
+	echo "    </assemblyBinding>" >> $@
+	echo "  </runtime>" >> $@
+	echo "</configuration>" >> $@
 
 FunctionPointer01_exe_SOURCES = FunctionPointer01.cs
 FunctionPointer01_srcs = $(FunctionPointer01_exe_SOURCES) example_numberwrapper.eo.cs
-FunctionPointer01.exe$(EXEEXT): $(FunctionPointer01_srcs) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) $(numberwrapper_lib_name)
+FunctionPointer01.exe: $(FunctionPointer01_srcs) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll $(numberwrapper_lib_name)
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 $(abs_top_builddir)/FunctionPointer01.csproj: $(FunctionPointer01_srcs) $(am_dirstamp) $(numberwrapper_lib_name)
 	@rm -f $@
