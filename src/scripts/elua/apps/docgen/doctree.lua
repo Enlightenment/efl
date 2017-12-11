@@ -21,6 +21,15 @@ local get_cache = function(o, nm)
     return ret, true
 end
 
+local matches_filter = function(obj)
+    local ns = obj:nspaces_get()
+    if #ns and ns[1] == "efl" then
+        return true
+    end
+
+    return false
+end
+
 M.Node = util.Object:clone {
     scope = {
         UNKNOWN = eolian.object_scope.UNKNOWN,
@@ -322,7 +331,10 @@ M.Class = Node:clone {
         local ret, had = get_cache(M.Class, "_cache_all")
         if not had then
             for cl in eolian.all_classes_get(eos:unit_get()) do
-                ret[#ret + 1] = M.Class(cl)
+                local cls = M.Class(cl)
+                if matches_filter(cls) then
+                   ret[#ret + 1] = cls
+                end
             end
         end
         return ret
@@ -926,7 +938,10 @@ M.Typedecl = Node:clone {
     all_aliases_get = function()
         local ret = {}
         for tp in eolian.typedecl_all_aliases_get(eos:unit_get()) do
-            ret[#ret + 1] = M.Typedecl(tp)
+            local tpo = M.Typedecl(tp)
+            if matches_filter(tpo) then
+                ret[#ret + 1] = tpo
+            end
         end
         return ret
     end,
@@ -934,7 +949,10 @@ M.Typedecl = Node:clone {
     all_structs_get = function()
         local ret = {}
         for tp in eolian.typedecl_all_structs_get(eos:unit_get()) do
-            ret[#ret + 1] = M.Typedecl(tp)
+            local tpo = M.Typedecl(tp)
+            if matches_filter(tpo) then
+                ret[#ret + 1] = tpo
+            end
         end
         return ret
     end,
@@ -942,7 +960,11 @@ M.Typedecl = Node:clone {
     all_enums_get = function()
         local ret = {}
         for tp in eolian.typedecl_all_enums_get(eos:unit_get()) do
-            ret[#ret + 1] = M.Typedecl(tp)
+            local tpo = M.Typedecl(tp)
+            local tpn = tpo:nspaces_get()
+            if matches_filter(tpo) then
+                ret[#ret + 1] = tpo
+            end
         end
         return ret
     end,
