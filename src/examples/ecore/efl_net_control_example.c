@@ -698,22 +698,28 @@ _cmd_technology_show(Eo *ctl, size_t argc EINA_UNUSED, char **argv)
    _technology_print(tech);
 }
 
-static void
-_technology_scan_done(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_technology_scan_done(void *data, const Eina_Value v,
+                      const Eina_Future *dead EINA_UNUSED)
 {
    Eo *tech = data;
-   printf("INFO: technology '%s' finished scan.\n",
-          efl_net_control_technology_name_get(tech));
-}
 
-static void
-_technology_scan_error(void *data, const Efl_Event *event)
-{
-   Eo *tech = data;
-   Efl_Future_Event_Failure *f = event->info;
-   printf("INFO: technology '%s' could not scan: %s\n",
-          efl_net_control_technology_name_get(tech),
-          eina_error_msg_get(f->error));
+   if (v.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+
+        eina_value_error_get(&v, &err);
+        printf("INFO: technology '%s' could not scan: %s\n",
+               efl_net_control_technology_name_get(tech),
+               eina_error_msg_get(err));
+     }
+   else
+     {
+        printf("INFO: technology '%s' finished scan.\n",
+               efl_net_control_technology_name_get(tech));
+     }
+
+   return v;
 }
 
 static void
@@ -722,11 +728,8 @@ _cmd_technology_scan(Eo *ctl, size_t argc EINA_UNUSED, char **argv)
    Eo *tech = _technology_find(ctl, argv[1]);
    if (!tech) return;
    printf("INFO: started scan on technology '%s'\n", argv[1]);
-   efl_future_then(efl_net_control_technology_scan(tech),
-                   _technology_scan_done,
-                   _technology_scan_error,
-                   NULL,
-                   tech);
+   eina_future_then(efl_net_control_technology_scan(tech),
+                    _technology_scan_done, tech);
 }
 
 static void

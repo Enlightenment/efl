@@ -56,10 +56,11 @@ _efl_net_control_technology_type_get(Eo *obj EINA_UNUSED, Efl_Net_Control_Techno
    return 0;
 }
 
-EOLIAN static Efl_Future *
-_efl_net_control_technology_scan(Eo *obj EINA_UNUSED, Efl_Net_Control_Technology_Data *pd EINA_UNUSED)
+EOLIAN static Eina_Future *
+_efl_net_control_technology_scan(Eo *obj, Efl_Net_Control_Technology_Data *pd EINA_UNUSED)
 {
-   return NULL;
+   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+                               EINA_ERROR_NOT_IMPLEMENTED);
 }
 
 #include "efl_net_control_technology.eo.c"
