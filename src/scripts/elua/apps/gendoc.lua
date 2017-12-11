@@ -375,17 +375,34 @@ build_inherits = function(cl, t, lvl)
     t = t or {}
     lvl = lvl or 0
     local lbuf = writer.Buffer()
-    lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
-    lbuf:write_raw(" ")
-    lbuf:write_i("(" .. cl:type_str_get() .. ")")
-    if lvl == 0 then
-        lbuf:write_b(lbuf:finish())
+    if lvl > 0 then
+        lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+        lbuf:write_raw(" ")
+        lbuf:write_i("(" .. cl:type_str_get() .. ")")
+ 
+        t[#t + 1] = { lvl - 1, lbuf:finish() }
     end
-    t[#t + 1] = { lvl, lbuf:finish() }
+
     for i, acl in ipairs(cl:inherits_get()) do
         build_inherits(acl, t, lvl + 1)
     end
     return t
+end
+
+local build_inherit_summary
+build_inherit_summary = function(cl, buf)
+    buf = buf or writer.Buffer()
+    buf:write_raw(" => ")
+
+    buf:write_link(cl:nspaces_get(true), cl:full_name_get())
+    buf:write_raw(" ")
+    buf:write_i("(" .. cl:type_str_get() .. ")")
+
+    local inherits = cl:inherits_get()
+    if #inherits ~= 0 then
+        build_inherit_summary(inherits[1], buf)
+    end
+    return buf
 end
 
 local default_theme_light = {
@@ -968,6 +985,22 @@ local build_class = function(cl)
     local f = writer.Writer(cln, fulln)
     printgen("Generating class: " .. fulln)
 
+    f:write_h(cl:full_name_get() .. " (" .. cl:type_str_get() .. ")", 1)
+ 
+    f:write_h("Description", 2)
+    f:write_raw(cl:doc_get():full_get(nil, true))
+    f:write_nl(2)
+
+    f:write_editable(cln, "description")
+    f:write_nl()
+
+    f:write_h("Inheritance", 2)
+    local inherits = cl:inherits_get()
+    if #inherits ~= 0 then
+        f:write_raw(build_inherit_summary(inherits[1]):finish())
+    end
+    f:write_nl()
+
     f:write_folded("Inheritance graph", function()
         f:write_graph(build_igraph(cl))
     end)
@@ -975,15 +1008,9 @@ local build_class = function(cl)
         f:write_nl(2)
     end
 
-    f:write_h("Inheritance hierarchy", 2)
-    f:write_list(build_inherits(cl))
-    f:write_nl()
-
-    f:write_h("Description", 2)
-    f:write_raw(cl:doc_get():full_get(nil, true))
-    f:write_nl(2)
-
-    f:write_editable(cln, "description")
+    f:write_folded("Full hierarchy", function()
+        f:write_list(build_inherits(cl))
+    end)
     f:write_nl()
 
     local written = {}
