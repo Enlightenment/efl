@@ -18,9 +18,7 @@ function Efl.Dnd.Drag_Data_Get {
    params {
       @in obj: ptr(Eo); [[The container object]]
       @out format: Efl.Selection.Format; [[Data format]]
-      //Eina_Slice
-      @out buf: void_ptr; [[Data]]
-      @out len: int; [[The data's length]]
+      @out drag_data: Eina.Slice; [[Data]]
       @out action: Efl.Selection.Action; [[The drag action]]
    }
 };

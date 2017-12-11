@@ -1,13 +1,15 @@
-class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
+import efl_ui_dnd_types;
+
+class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
    methods {
       selection_set @beta {
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
-            //@in data: Eina.Slice;
-            @in buf: const(void_ptr);
-            @in len: int; [[The buffer's length.]]
+            @in data: Eina.Slice;
+            ////@in buf: const(void_ptr);
+            ////@in len: int; [[The buffer's length.]]
             //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
@@ -41,16 +43,14 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
       drag_start @beta {
          [[This starts a drag and drop process at the drag side.
            During dragging, there are three events emitted as belows:
-              - EFL_DND_EVENT_DRAG_POS
-              - EFL_DND_EVENT_DRAG_ACCEPT
-              - EFL_DND_EVENT_DRAG_DONE
+              - EFL_UI_DND_EVENT_DRAG_POS
+              - EFL_UI_DND_EVENT_DRAG_ACCEPT
+              - EFL_UI_DND_EVENT_DRAG_DONE
          ]]
          params {
             @in drag_obj: Efl.Object; [[The drag object]]
             @in format: Efl.Selection.Format; [[The data format]]
-            //@in data: Eina.Slice;
-            @in buf: const(void_ptr);
-            @in len: int; [[The data's length.]]
+            @in data: Eina.Slice;
             @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
             //@in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
@@ -76,7 +76,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
       drag_item_container_add @beta {
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
-           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
+           EFL_UI_DND_EVENT_DRAG_POS, EFL_UI_DND_EVENT_DRAG_ACCEPT, EFL_UI_DND_EVENT_DRAG_DONE.]]
          params {
             @in cont: Efl.Object; [[Container object]]
             //@in format: Efl.Selection.Format; [[The data format]]

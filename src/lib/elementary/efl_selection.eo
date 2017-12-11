@@ -1,4 +1,6 @@
-enum Efl.Selection.Type
+import efl_selection_types;
+
+/*enum Efl.Selection.Type
 {
    [[Selection type]]
    primary, [[Primary text selection (highlighted or selected text)]]
@@ -62,4 +64,55 @@ struct Efl.Selection.Changed
    seat: int; [[The seat on which the selection changed, or NULL for "default"]]
    display: void_ptr; [[The display connection object, NULL under X11]]
    exist: bool; [[EINA_TRUE if the selection has an owner]]
+}*/
+
+mixin Efl.Selection {
+   [[Efl Copy and Paste class]]
+   //legacy_prefix: elm_cnp;
+   //eo_prefix: efl_selection;
+   //data: Efl_Selection_Data_Priv;
+   data: null;
+   methods {
+      selection_set {
+         params {
+            @in type: Efl.Selection.Type; [[Selection Type]]
+            @in format: Efl.Selection.Format; [[Selection Format]]
+            @in data: Eina.Slice;
+            ////@in buf: const(void_ptr);
+            ///@in len: int; [[The buffer's length.]]
+            //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+         }
+      }
+      selection_get {
+         params {
+            @in type: Efl.Selection.Type; [[Selection Type]]
+            @in format: Efl.Selection.Format; [[Selection Format]]
+            @in data_func: Efl.Selection.Data_Ready; [[Data ready function pointer]]
+            //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
+            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+         }
+      }
+      selection_clear {
+         params {
+            @in type: Efl.Selection.Type; [[Selection Type]]
+            //@in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      //selection_has { //change to property selection_owner
+      has_owner {
+         params {
+            //@in type: Efl.Selection.Type (Efl.Selection.Type.clipboard);
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+         return: bool;
+      }
+   }
+   implements {
+   }
+   events {
+      selection,lost; [[Called when selection has lost]]
+      selection,changed; [[Called when display server's selection has changed]]
+   }
 }

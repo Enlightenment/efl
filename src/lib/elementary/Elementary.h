@@ -149,6 +149,14 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
+# include "efl_selection_types.eot.h"
+# include "efl_ui_dnd_types.eot.h"
+# include <efl_selection.eo.h>
+//# include <efl_ui_dnd_drag.eo.h>
+//# include <efl_ui_dnd_drop.eo.h>
+# include <efl_ui_dnd.eo.h>
+# include <efl_ui_dnd_container.eo.h>
+//# include <efl_selection_manager.eo.h> //private
 #endif
 
 #include <elm_tooltip.h>
@@ -312,11 +320,6 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_image_factory.eo.h>
-# include <efl_cnp.eo.h>
-//# include <efl_ui_dnd_drag.eo.h>
-//# include <efl_ui_dnd_drop.eo.h>
-# include <efl_ui_dnd.eo.h>
-# include <efl_selection_manager.eo.h>
 #endif
 
 /* include deprecated calls last of all */

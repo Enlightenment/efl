@@ -60,10 +60,6 @@ set(PUBLIC_EO_FILES
   interfaces/efl_vpath_file.eo
   interfaces/efl_vpath_file_core.eo
   interfaces/efl_vpath_manager.eo
-  interfaces/efl_selection_types.eot
-  interfaces/efl_dnd_types.eot
-  interfaces/efl_selection.eo
-  interfaces/efl_dnd.eo
 )
 
 set(PUBLIC_HEADERS

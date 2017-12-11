@@ -7,13 +7,27 @@
 //#define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 //#define ELM_LAYOUT_PROTECTED
 
+#define EFL_SELECTION_MANAGER_BETA
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#include "efl_cnp_private.h"
+typedef struct _Efl_Selection_Data_Priv Efl_Selection_Data_Priv;
+typedef struct _Efl_Selection_Atom Efl_Selection_Atom;
 
-#define MY_CLASS EFL_CNP_MIXIN
-#define MY_CLASS_NAME "Efl.Cnp"
+struct _Efl_Selection_Atom
+{
+   const char    *name;
+   Ecore_X_Atom  x_atom;
+};
+
+struct _Efl_Selection_Data_Priv
+{
+
+};
+
+#define MY_CLASS EFL_SELECTION_MIXIN
+#define MY_CLASS_NAME "Efl.Selection"
 
 static inline Eo*
 _selection_manager_get(Eo *obj)
@@ -33,7 +47,7 @@ _selection_manager_get(Eo *obj)
 }
 
 EOLIAN static void
-_efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format,
+_efl_selection_selection_get(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format,
                                      void *data_func_data, Efl_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
 {
    ERR("In");
@@ -45,16 +59,16 @@ _efl_cnp_efl_selection_selection_get(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Ty
 }
 
 EOLIAN static void
-_efl_cnp_efl_selection_selection_set(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, Efl_Selection_Format format, const void *buf, int len, unsigned int seat)
+_efl_selection_selection_set(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
    ERR("sel_man: %p", sel_man);
-   efl_selection_manager_selection_set(sel_man, obj, type, format, buf, len, seat);
+   efl_selection_manager_selection_set(sel_man, obj, type, format, data, seat);
 }
 
 EOLIAN static void
-_efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type, unsigned int seat)
+_efl_selection_selection_clear(Eo *obj, void *pd, Efl_Selection_Type type, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
@@ -62,7 +76,7 @@ _efl_cnp_efl_selection_selection_clear(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_
 }
 
 EOLIAN static Eina_Bool
-_efl_cnp_efl_selection_has_owner(Eo *obj, Efl_Cnp_Data *pd, unsigned int seat)
+_efl_selection_has_owner(Eo *obj, void *pd, unsigned int seat)
 {
     ERR("In");
     Eo *sel_man = _selection_manager_get(obj);
@@ -85,11 +99,11 @@ _x11_efl_cnp_selection_clear_cb(void *data, int type, void *event)
 //Selection loss event callback:: name
 //future or event???
 /*EOLIAN static Efl_Future *
-_efl_cnp_efl_selection_selection_loss_feedback(Eo *obj, Efl_Cnp_Data *pd, Efl_Selection_Type type)
+_efl_selection_selection_loss_feedback(Eo *obj, void *pd, Efl_Selection_Type type)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
    return efl_selection_manager_selection_loss_feedback(sel_man, obj, type);
 }*/
 
-#include "efl_cnp.eo.c"
+#include "efl_selection.eo.c"

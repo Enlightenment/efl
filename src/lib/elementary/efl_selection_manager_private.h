@@ -88,8 +88,7 @@ struct _Saved_Type
 struct _Sel_Manager_Selection
 {
    const char        *debug;
-   char              *buf;
-   unsigned int       len;
+   Eina_Rw_Slice         data;
    Efl_Selection_Format     request_format;
 #ifdef HAVE_ELEMENTARY_X
    Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
@@ -184,8 +183,7 @@ struct _Sel_Manager_Drag_Container
    Evas *e;
    Efl_Object *cont;
    Efl_Selection_Format format;
-   void *buf;
-   int len;
+   Eina_Slice data;
    Efl_Selection_Action action;
    Eina_List *icons;
    Eina_Size2D final_icon;

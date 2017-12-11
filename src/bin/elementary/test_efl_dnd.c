@@ -43,7 +43,7 @@ _selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
 
 /*
 static void
-_selection_loss_cb(void *data, Efl_Event const *event)
+_selection_lost_cb(void *data, Efl_Event const *event)
 {
     Eo *obj = data;
     ERR("obj: %p has lost selection; %p", obj, event->object);
@@ -63,7 +63,7 @@ _selection_progress_cb(void *data, Efl_Event const *event)
 */
 
 static void
-_selection_loss_event_cb(void *data EINA_UNUSED, const Efl_Event *event)
+_selection_lost_event_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *obj = event->object;
    ERR("Lost selection for obj: %p", obj);
@@ -90,8 +90,10 @@ _selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 _selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
-	    "new", 4, 1);
+   Eina_Slice sel_data = EINA_SLICE_STR("new");
+   efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS, sel_data, 1);
+   //fl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
+	//  "new", 4, 1);
 }
 
 static void
@@ -110,7 +112,7 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
    int seat_id = efl_input_device_seat_id_get(seat);
    if (!drop_added)
      {
-        efl_dnd_drop_target_add(drop_bt, EFL_SELECTION_FORMAT_TEXT, seat_id);
+        efl_ui_dnd_drop_target_add(drop_bt, EFL_SELECTION_FORMAT_TEXT, seat_id);
      }
 
    drop_added = EINA_TRUE;
@@ -196,11 +198,12 @@ _en_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event)
    printf("dnd start\n");
    Evas_Object *en = data;
    int seat_id = efl_input_device_seat_id_get(seat);
+   Eina_Slice drag_data = EINA_SLICE_STR("dnd Text");
 
-   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_POS, _dnd_drag_pos_cb, en);
-   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_ACCEPT, _dnd_drag_accept_cb, en);
-   efl_event_callback_add(en, EFL_DND_EVENT_DRAG_DONE, _dnd_drag_done_cb, en);
-   efl_dnd_drag_start(en, EFL_SELECTION_FORMAT_TEXT, "dnd Text", 9,
+   efl_event_callback_add(en, EFL_UI_DND_EVENT_DRAG_POS, _dnd_drag_pos_cb, en);
+   efl_event_callback_add(en, EFL_UI_DND_EVENT_DRAG_ACCEPT, _dnd_drag_accept_cb, en);
+   efl_event_callback_add(en, EFL_UI_DND_EVENT_DRAG_DONE, _dnd_drag_done_cb, en);
+   efl_ui_dnd_drag_start(en, EFL_SELECTION_FORMAT_TEXT, drag_data,
                  EFL_SELECTION_ACTION_COPY, en, _drag_icon_cb, NULL, seat_id);
 }
 
@@ -243,10 +246,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bt = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(bt, "test sel/drop");
    efl_gfx_visible_set(bt, EINA_TRUE);
-   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_ENTER, _dnd_drop_enter_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_LEAVE, _dnd_drop_leave_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_POS, _dnd_drop_pos_cb, bt);
-   efl_event_callback_add(bt, EFL_DND_EVENT_DRAG_DROP, _dnd_drop_drop_cb, bt);
+   efl_event_callback_add(bt, EFL_UI_DND_EVENT_DRAG_ENTER, _dnd_drop_enter_cb, bt);
+   efl_event_callback_add(bt, EFL_UI_DND_EVENT_DRAG_LEAVE, _dnd_drop_leave_cb, bt);
+   efl_event_callback_add(bt, EFL_UI_DND_EVENT_DRAG_POS, _dnd_drop_pos_cb, bt);
+   efl_event_callback_add(bt, EFL_UI_DND_EVENT_DRAG_DROP, _dnd_drop_drop_cb, bt);
    drop_bt = bt;
    elm_box_pack_end(bx, bt);
 
@@ -264,13 +267,13 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    //efl_selection_get(bt, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TEXT, NULL, _selection_data_ready_cb, NULL, seat);
 
-   //efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOSS, _selection_loss_event_cb, NULL);
+   //efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOST, _selection_lost_event_cb, NULL);
 
-   /*Efl_Future *f = efl_selection_loss_feedback(bt, EFL_SELECTION_TYPE_PRIMARY);
+   /*Efl_Future *f = efl_selection_lost_feedback(bt, EFL_SELECTION_TYPE_PRIMARY);
    if (f)
    {
        printf("register future callbacks\n");
-       efl_future_then(f, _selection_loss_cb, NULL, NULL, bt);
+       efl_future_then(f, _selection_lost_cb, NULL, NULL, bt);
    }*/
    //
 
@@ -321,7 +324,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Selection Set");
    evas_object_smart_callback_add(bt, "clicked", _selection_set_btn_cb, win);
-   efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOSS, _selection_loss_event_cb, NULL);
+   efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOST, _selection_lost_event_cb, NULL);
    evas_object_show(bt);
    elm_box_pack_end(hbox, bt);
 

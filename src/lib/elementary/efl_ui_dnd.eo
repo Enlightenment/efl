@@ -1,16 +1,134 @@
-import efl_selection_types;
-import efl_dnd_types;
+import efl_ui_dnd_types;
 
-mixin Efl.Ui.Dnd (Efl.Dnd) {
+
+/*function Efl.Dnd.Drag_Icon_Create {
+   [[Function pointer for creating icon at the drag side.]]
+   params {
+      @in win: ptr(Eo); [[The window to create the objects relative to]]
+      //@in drag_obj: Efl.Gfx;
+      //Eina_Position2D
+      @out xoff: int; [[A return coordinate for the X offset at which to place the drag icon object relative to the source drag object]]
+      @out yoff: int; [[A return coordinate for the Y offset at which to place the drag icon object relative to the source drag object]]
+   }
+   return: ptr(Eo); //Eo
+   //return: Efl.Gfx; [[The drag icon object]] //Efl.Canvas.Object
+};
+
+function Efl.Dnd.Drag_Data_Get {
+   [[Function pointer for getting data and format at the drag side.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+      @out format: Efl.Selection.Format; [[Data format]]
+      //Eina_Slice
+      @out drag_data: Eina.Slice; [[Data]]
+      @out action: Efl.Selection.Action; [[The drag action]]
+   }
+};
+
+function Efl.Dnd.Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+      @in x: int; [[The x coordinate to get item]]
+      @in y: int; [[The y coordinate to get item]]
+      @out xret: int; [[x position relative to item (left (-1), middle (0), right (1)]]
+      @out yret: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
+   }
+   return: ptr(Eo); [[Object under x,y coordinates or NULL if not found]]
+};
+
+function Efl.Dnd.Drag_Icon_List_Create {
+   [[Function pointer to create list of icons at the drag side.
+     These icons are used for animation on combining selection icons
+     to one icon.]]
+   params {
+      @in obj: ptr(Eo); [[The container object]]
+   }
+   return: ptr(Eina_List);
+};
+
+struct Efl.Dnd.Drag_Accept {
+   accepted: bool;
+}
+
+struct Efl.Dnd.Drag_Pos {
+   x: int; [[Evas Coordinate]]
+   y: int; [[Evas Coordinate]]
+   action: Efl.Selection.Action; [[The drag action]]
+   format: Efl.Selection.Format; [[The drag format]]
+   item: Efl.Object; [[The item object. It is only available for container object.]]
+}
+
+/*struct Efl.Dnd.Drag_Item_Container_Pos {
+   item: ptr(Efl.Object); [[The item object]]
+   x: int; [[Evas Coordinate]]
+   y: int; [[Evas Coordinate]]
+   action: Efl.Selection.Action; [[The drag action]]
+   format: Efl.Selection.Format; [[The drag format]]
+}*
+
+struct Efl.Dnd.Drag_Item_Container_Drop {
+   item: Efl.Object; [[The item object]]
+   data: Efl.Selection.Data; [[The selection data]]
+   x: int; [[x position relative to item (left (-1), middle (0), right (1)]]
+   y: int; [[y position relative to item (upper (-1), middle (0), bottom (1)]]
+}*/
+
+mixin Efl.Ui.Dnd {
+   //eo_prefix: efl_dnd;
+   data: null;
+   methods {
+      drag_start {
+         [[This starts a drag and drop process at the drag side.
+           During dragging, there are three events emitted as belows:
+              - EFL_DND_EVENT_DRAG_POS
+              - EFL_DND_EVENT_DRAG_ACCEPT
+              - EFL_DND_EVENT_DRAG_DONE
+         ]]
+         params {
+            @in format: Efl.Selection.Format; [[The data format]]
+            @in data: Eina.Slice; [[The drag data]]
+            @in action: Efl.Selection.Action; [[Action when data is transferred]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_action_set { //CHECKING
+         [[This sets the action for the drag]]
+         params {
+            @in action: Efl.Selection.Action; [[Drag action]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_cancel {
+         [[This cancels the on-going drag]]
+         params {
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drop_target_add { //change to property (keys: format, seat, value: boolean)
+         [[There are four events emitted: EFL_DND_EVENT_DRAG_ENTER, EFL_DND_EVENT_DRAG_LEAVE,
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_DROP.]]
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drop_target_del { //remove
+         params {
+            @in format: Efl.Selection.Format; [[Accepted data format]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+   }
    implements {
-      Efl.Dnd.drag_start;
-      Efl.Dnd.drag_cancel;
-      Efl.Dnd.drag_action_set;
-      Efl.Dnd.drag_item_container_add;
-      Efl.Dnd.drag_item_container_del;
-      Efl.Dnd.drop_target_add;
-      Efl.Dnd.drop_target_del;
-      Efl.Dnd.drop_item_container_add;
-      Efl.Dnd.drop_item_container_del;
+   }
+   events {
+      drag,accept; [[accept drag data]]
+      drag,done; [[drag is done (mouse up)]]
+      drag,enter; [[called when the drag object enters this object]]
+      drag,leave; [[called when the drag object leaves this object]]
+      drag,pos; [[called when the drag object changes drag position]]
+      drag,drop; [[called when the drag object dropped on this object]]
    }
 }

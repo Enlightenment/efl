@@ -172,12 +172,12 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup_util.eo.h"
 
 /* Selection and dnd interfaces */
-#include "interfaces/efl_selection_types.eot.h"
-#include "interfaces/efl_dnd_types.eot.h"
-#include "interfaces/efl_selection.eo.h"
+//#include "interfaces/efl_selection_types.eot.h"
+//#include "interfaces/efl_dnd_types.eot.h"
+//#include "interfaces/efl_selection.eo.h"
 //#include "interfaces/efl_dnd_drag.eo.h"
 //#include "interfaces/efl_dnd_drop.eo.h"
-#include "interfaces/efl_dnd.eo.h"
+//#include "interfaces/efl_dnd.eo.h"
 
 #else
 
