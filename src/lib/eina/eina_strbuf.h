@@ -730,7 +730,7 @@ EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UN
  *
  * @param buf The buffer to get the string from and which will be freed
  *
- * @return The string contained by bug. The caller must release the memory of the returned string by calling
+ * @return The string contained by buf. The caller must release the memory of the returned string by calling
  * free().
  *
  * @since 1.19
