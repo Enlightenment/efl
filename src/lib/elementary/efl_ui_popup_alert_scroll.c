@@ -14,8 +14,6 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_SCROLL_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup_Alert_Scroll"
 
-static const char PART_NAME_SCROLLER[] = "scroller";
-
 static void
 _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
                       Eina_Size2D exp_scr_min, Eina_Size2D min)
@@ -273,10 +271,8 @@ _efl_ui_popup_alert_scroll_efl_object_constructor(Eo *obj,
 
    elm_widget_sub_object_parent_add(obj);
 
-   // TODO: Change internal component to Efl.Ui.Widget
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
-   //elm_widget_element_update(obj, pd->scroller, PART_NAME_SCROLLER);
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_AUTO,
                            ELM_SCROLLER_POLICY_AUTO);
 

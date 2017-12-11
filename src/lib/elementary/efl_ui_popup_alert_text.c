@@ -12,7 +12,6 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_TEXT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup_Alert_Text"
 
-static const char PART_NAME_SCROLLER[] = "scroller";
 static const char PART_NAME_TEXT[] = "text";
 
 EOLIAN static void
@@ -109,10 +108,8 @@ _efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
 
    elm_widget_sub_object_parent_add(obj);
 
-   // TODO: Change internal component to Efl.Ui.Widget
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
-   //elm_widget_element_update(obj, pd->scroller, PART_NAME_SCROLLER);
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_AUTO);
 
