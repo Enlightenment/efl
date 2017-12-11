@@ -3180,7 +3180,7 @@ _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 }
 
 static void
-_efl_loop_Eina_FutureXXX_idle_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+_efl_loop_idle_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
    ecore_idler_del(d->idler);
@@ -3188,7 +3188,7 @@ _efl_loop_Eina_FutureXXX_idle_cancel(void *data, const Eina_Promise *dead_ptr EI
 }
 
 static Eina_Bool
-_efl_loop_Eina_FutureXXX_idle_done(void *data)
+_efl_loop_idle_done(void *data)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
    eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
@@ -3197,7 +3197,7 @@ _efl_loop_Eina_FutureXXX_idle_done(void *data)
 }
 
 static Eina_Future *
-_efl_loop_Eina_FutureXXX_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+_efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d;
    Eina_Promise *p;
@@ -3205,11 +3205,11 @@ _efl_loop_Eina_FutureXXX_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    d = efl_loop_promise_simple_data_calloc(1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
 
-   d->idler = ecore_idler_add(_efl_loop_Eina_FutureXXX_idle_done, d);
+   d->idler = ecore_idler_add(_efl_loop_idle_done, d);
    EINA_SAFETY_ON_NULL_GOTO(d->idler, idler_error);
 
    p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _efl_loop_Eina_FutureXXX_idle_cancel, d);
+                        _efl_loop_idle_cancel, d);
    // d is dead if p is NULL
    EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
    d->promise = p;
