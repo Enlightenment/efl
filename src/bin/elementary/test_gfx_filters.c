@@ -199,8 +199,9 @@ _spinner_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
      }
 }
 
-static void
-_code_changed(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_code_changed(void *data, const Eina_Value v,
+              const Eina_Future *dead EINA_UNUSED)
 {
    Eo *win = data;
    Eo *code, *spinner;
@@ -227,13 +228,18 @@ _code_changed(void *data, const Efl_Event *ev EINA_UNUSED)
    elm_spinner_value_set(spinner, 0);
    _filter_apply(win, source, elm_spinner_special_value_get(spinner, 0));
    eina_strbuf_free(buf);
+
+   return v;
 }
 
 static void
 _code_changed_hack(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Future *p = efl_loop_job(efl_loop_get(data), NULL);
-   efl_future_then(p, _code_changed, NULL, NULL, data);
+   Eina_Future *f;
+
+   f = eina_future_then(efl_loop_Eina_FutureXXX_job(efl_loop_get(data)),
+                        _code_changed, data);
+   efl_future_Eina_FutureXXX_then(data, f);
 }
 
 static void
@@ -510,7 +516,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       o = code = efl_add(EFL_UI_TEXT_EDITABLE_CLASS, win,
                          efl_ui_text_scrollable_set(efl_added, 1),
                          efl_text_multiline_set(efl_added, 1));
-      efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed, win);
+      efl_event_callback_add(o, EFL_UI_TEXT_EVENT_CHANGED_USER, _code_changed_hack, win);
 
       // Insert filter code inside style string: DEFAULT='blah blah <here>'
       efl_gfx_filter_program_set(o, code_filter, "code");
