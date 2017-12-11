@@ -1462,23 +1462,18 @@ M.DocTokenizer = Node:clone {
     ref_get = function(self, root)
         local tp, d1, d2 = self.tok:ref_get(eos:unit_get())
         local reft = eolian.doc_ref_type
-        local ret
+        local ret = {}
         if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
-            ret = { class_type_str[d1:type_get()] }
-            if not ret[1] then
+            if not class_type_str[d1:type_get()] then
                 error("unknown class type for class '"
                       .. d1:full_name_get() .. "'")
             end
         elseif tp == reft.ALIAS then
-            ret = { "alias" }
         elseif tp == reft.STRUCT or tp == reft.STRUCT_FIELD then
             -- TODO: point to field
-            ret = { "struct" }
         elseif tp == reft.ENUM or tp == reft.ENUM_FIELD  then
             -- TODO: point to field
-            ret = { "enum" }
         elseif tp == reft.VAR then
-            ret = { "var" }
         else
             error("invalid reference '" .. self:text_get() .. "'")
         end
