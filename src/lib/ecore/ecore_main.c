@@ -3127,12 +3127,16 @@ _efl_loop_arguments_cleanup(Eina_Array *arga)
    eina_array_free(arga);
 }
 
-static void
-_efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_loop_arguments_send(void *data, const Eina_Value v,
+                         const Eina_Future *dead EINA_UNUSED)
 {
    static Eina_Bool initialization = EINA_TRUE;
    Efl_Loop_Arguments arge;
    Eina_Array *arga = data;
+
+   if (v.type == EINA_VALUE_TYPE_ERROR)
+     goto on_error;
 
    arge.argv = arga;
    arge.initialization = initialization;
@@ -3140,13 +3144,10 @@ _efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_event_callback_call(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, &arge);
 
+ on_error:
    _efl_loop_arguments_cleanup(arga);
-}
 
-static void
-_efl_loop_arguments_cancel(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _efl_loop_arguments_cleanup(data);
+   return v;
 }
 
 // It doesn't make sense to send those argument to any other mainloop
@@ -3155,7 +3156,7 @@ _efl_loop_arguments_cancel(void *data, const Efl_Event *ev EINA_UNUSED)
 EAPI void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
-   Efl_Future *job;
+   Eina_Future *job;
    Eina_Array *arga;
    int i = 0;
 
@@ -3163,8 +3164,9 @@ ecore_loop_arguments_send(int argc, const char **argv)
    for (i = 0; i < argc; i++)
      eina_array_push(arga, eina_stringshare_add(argv[i]));
 
-   job = efl_loop_job(ecore_main_loop_get(), NULL);
-   efl_future_then(job, _efl_loop_arguments_send, _efl_loop_arguments_cancel, NULL, arga);
+   job = eina_future_then(efl_loop_Eina_FutureXXX_job(ecore_main_loop_get()),
+                          _efl_loop_arguments_send, arga);
+   efl_future_Eina_FutureXXX_then(ecore_main_loop_get(), job);
 }
 
 // Only one main loop handle for now
