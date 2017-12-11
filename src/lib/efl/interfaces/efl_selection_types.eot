@@ -20,20 +20,13 @@ enum Efl.Selection.Format
    html = 0x10 [[Raw HTML-like data (eg. webkit)]]
 }
 
-struct Efl.Cnp.Selection
-{
-   [[EFL Cnp selection]]
-   data: void_ptr; [[data]]
-   length: int; [[length]]
-}
-
 enum Efl.Selection.Action
 {
    [[Defines the kind of action associated with the drop data]]
    unknown, [[Action type is unknown]]
    copy, [[Copy the data]]
    move, [[Move the data]]
-   private, [[Pricate action type]]
+   private, [[Private action type]]
    ask, [[Ask the user what to do]]
    list, [[List the data]]
    link, [[Link the data]]
@@ -46,16 +39,19 @@ struct Efl.Selection.Data
    x: int; [[The coordinates of the drop (DND operations only)]]
    y: int; [[The coordinates of the drop (DND operations only)]]
    format: Efl.Selection.Format; [[The format of the selection]]
+   //data: Eina.Slice;
    data: void_ptr; [[The selection data, type determined by format member]]
+   //len: uint; [[The length of the selection data]]
    len: int; [[The length of the selection data]]
    action: Efl.Selection.Action; [[The action to perform with the data @since 1.8]]
-   item: Efl.Object; [[item under the drag position. It is only available for container]]
+   //hovered_item: Efl.Object; [[item under the drag position. It is only available for container (CHECKING]]
+   item: Efl.Object; [[item under the drag position. It is only available for container (CHECKING]]
 }
 
-function Efl.Selection.Data_Ready {
+function Efl.Selection.Data_Ready { //FIXME: promise
    [[Function pointer for getting selection]]
    params {
-      @in obj: ptr(Eo);
+      @in obj: ptr(Eo); //CHECKING
       @in seldata: ptr(Efl.Selection.Data);
    }
 };

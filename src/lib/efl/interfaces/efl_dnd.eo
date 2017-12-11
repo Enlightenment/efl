@@ -13,14 +13,14 @@ interface Efl.Dnd (Efl.Selection) {
          ]]
          params {
             @in format: Efl.Selection.Format; [[The data format]]
-            @in buf: const(void_ptr);
+            @in buf: const(void_ptr); //same for selection with slice
             @in len: int; [[The data's length.]]
             @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_action_set {
+      drag_action_set { //CHECKING
          [[This sets the action for the drag]]
          params {
             @in action: Efl.Selection.Action; [[Drag action]]
@@ -33,27 +33,28 @@ interface Efl.Dnd (Efl.Selection) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_item_container_add {
+      drag_item_container_add { //drag_item_callback //property
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
          params {
-            @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
+            @in time_to_drag: double; [[Time since mouse down happens to drag starts]] //drag_delay: property
             @in anim_durataion: double; [[animation duration]]
+            //@in anim_durataion: double; [[animation duration]] //just config
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
-            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations CHECKING ]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_item_container_del {
+      drag_item_container_del { //remove
          [[Remove drag function of items in the container object.]]
          params {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drop_target_add {
+      drop_target_add { //change to property (keys: format, seat, value: boolean)
          [[There are four events emitted: EFL_DND_EVENT_DRAG_ENTER, EFL_DND_EVENT_DRAG_LEAVE,
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_DROP.]]
          params {
@@ -61,7 +62,7 @@ interface Efl.Dnd (Efl.Selection) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drop_target_del {
+      drop_target_del { //remove
          params {
             @in format: Efl.Selection.Format; [[Accepted data format]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]

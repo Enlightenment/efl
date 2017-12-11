@@ -1,17 +1,18 @@
 class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
    methods {
-      selection_set {
+      selection_set @beta {
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
+            //@in data: Eina.Slice;
             @in buf: const(void_ptr);
             @in len: int; [[The buffer's length.]]
             //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
       }
-      selection_get {
+      selection_get @beta {
          params {
             @in request: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
@@ -21,7 +22,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
       }
-      selection_clear {
+      selection_clear @beta {
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
             @in type: Efl.Selection.Type; [[Selection Type]]
@@ -29,7 +30,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      selection_has_owner {
+      selection_has_owner @beta {
          [[Check if the request object has selection or not]]
          params {
             @in request: Efl.Object; [[the request object]]
@@ -37,7 +38,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
          }
          return: bool; [[EINA_TRUE if the request object has selection, otherwise, EINA_FALSE]]
       }
-      drag_start {
+      drag_start @beta {
          [[This starts a drag and drop process at the drag side.
            During dragging, there are three events emitted as belows:
               - EFL_DND_EVENT_DRAG_POS
@@ -47,6 +48,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
          params {
             @in drag_obj: Efl.Object; [[The drag object]]
             @in format: Efl.Selection.Format; [[The data format]]
+            //@in data: Eina.Slice;
             @in buf: const(void_ptr);
             @in len: int; [[The data's length.]]
             @in action: Efl.Selection.Action; [[Action when data is transferred]]
@@ -55,7 +57,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_action_set {
+      drag_action_set @beta {
          [[This sets the action for the drag]]
          params {
             @in action: Efl.Selection.Action; [[Drag action]]
@@ -63,7 +65,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_cancel {
+      drag_cancel @beta {
          [[This cancels the on-going drag]]
          params {
             @in drag_obj: Efl.Object; [[The drag object]]
@@ -71,7 +73,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_item_container_add {
+      drag_item_container_add @beta {
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
@@ -90,7 +92,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case]]
          }
       }
-      drag_item_container_del {
+      drag_item_container_del @beta {
          [[Remove drag function of items in the container object.]]
          params {
             @in cont: Efl.Object; [[Container object]]
@@ -98,7 +100,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case]]
          }
       }
-      drop_target_add {
+      drop_target_add @beta {
          [[There are four events emitted: EFL_DND_DROP_DRAG_ENTER, EFL_DND_DROP_DRAG_LEAVE,
            EFL_DND_DROP_DRAG_POS, EFL_DND_DROP_DRAG_DROP.]]
          params {
@@ -109,7 +111,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      drop_target_del {
+      drop_target_del @beta {
          params {
             @in target_obj: Efl.Object; [[The drop target]]
             @in format: Efl.Selection.Format; [[Accepted data format]]
@@ -117,7 +119,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drop_item_container_add {
+      drop_item_container_add @beta {
          params {
             @in cont: Efl.Object; [[Container object]]
             @in format: Efl.Selection.Format; [[Accepted data formats]]
@@ -126,7 +128,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Selection, Efl.Dnd) {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drop_item_container_del {
+      drop_item_container_del @beta {
          params {
             @in cont: Efl.Object; [[Container object]]
             //@in seat: Efl.Input.Device @optional; [[Specified seat for multiple seats case.]]

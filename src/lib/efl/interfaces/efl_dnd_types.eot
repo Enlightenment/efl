@@ -4,10 +4,13 @@ function Efl.Dnd.Drag_Icon_Create {
    [[Function pointer for creating icon at the drag side.]]
    params {
       @in win: ptr(Eo); [[The window to create the objects relative to]]
+      //@in drag_obj: Efl.Gfx;
+      //Eina_Position2D
       @out xoff: int; [[A return coordinate for the X offset at which to place the drag icon object relative to the source drag object]]
       @out yoff: int; [[A return coordinate for the Y offset at which to place the drag icon object relative to the source drag object]]
    }
-   return: ptr(Eo); [[The drag icon object]]
+   return: ptr(Eo); //Eo
+   //return: Efl.Gfx; [[The drag icon object]] //Efl.Canvas.Object
 };
 
 function Efl.Dnd.Drag_Data_Get {
@@ -15,6 +18,7 @@ function Efl.Dnd.Drag_Data_Get {
    params {
       @in obj: ptr(Eo); [[The container object]]
       @out format: Efl.Selection.Format; [[Data format]]
+      //Eina_Slice
       @out buf: void_ptr; [[Data]]
       @out len: int; [[The data's length]]
       @out action: Efl.Selection.Action; [[The drag action]]

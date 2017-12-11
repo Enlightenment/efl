@@ -89,7 +89,6 @@ elm_public_eolian_files = \
 	lib/elementary/elm_code_widget.eo \
 	lib/elementary/efl_cnp.eo \
 	lib/elementary/efl_ui_dnd.eo \
-	lib/elementary/efl_selection_manager.eo \
 	$(NULL)
 #lib/elementary/efl_ui_dnd_drag.eo 
 #lib/elementary/efl_ui_dnd_drop.eo 
@@ -122,6 +121,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
+	lib/elementary/efl_selection_manager.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API

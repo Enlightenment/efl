@@ -9,6 +9,7 @@ interface Efl.Selection {
          params {
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
+            //@in data: Eina.Slice;
             @in buf: const(void_ptr);
             @in len: int; [[The buffer's length.]]
             //@in seat: Efl.Input.Device @optional;[[Specified seat for multiple seats case.]]
@@ -31,18 +32,14 @@ interface Efl.Selection {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
+      //selection_has { //change to property selection_owner
       has_owner {
          params {
+            //@in type: Efl.Selection.Type (Efl.Selection.Type.clipboard);
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
          return: bool;
       }
-      /*selection_loss_feedback { //name!!!
-         params {
-            @in type: Efl.Selection.Type; [[Selection type]]
-         }
-         return: future<generic_value>; [[Future of selection that is ready]]
-      }*/
    }
    implements {
    }
