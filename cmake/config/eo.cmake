@@ -1,3 +1,0 @@
-EFL_OPTION(HAVE_EO_ID "Have Eo id indirection" ON)
-
-CHECK_APPEND_DEFINE(HAVE_EO_ID ${HAVE_EO_ID})
