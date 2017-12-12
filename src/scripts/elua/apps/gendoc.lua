@@ -712,7 +712,7 @@ local build_functable = function(f, tcl, tbl, newm)
         local cl, impl = unpack(implt)
         local ocl = impl:class_get()
         if not newm then
-            lbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
+            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
             lbuf:write_raw(".")
         end
 
@@ -740,15 +740,9 @@ local build_functable = function(f, tcl, tbl, newm)
             -- TODO: possibly also mention which part of a property was
             -- overridden and where, get/set override point might differ!
             -- but we get latest doc every time so it's ok for now
-            lbuf:write_raw(" ")
             local llbuf = writer.Buffer()
-            llbuf:write_raw("[Overridden")
-            if cl ~= tcl then
-                llbuf:write_raw(" in ")
-                llbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
-            else
-                llbuf:write_raw(" here")
-            end
+            llbuf:write_raw(" [Overridden from ")
+            llbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
             llbuf:write_raw("]")
             lbuf:write_i(llbuf:finish())
         end
@@ -1026,11 +1020,7 @@ local build_class = function(cl)
     for i, impl in ipairs(cl:implements_get()) do
         local func = impl:function_get()
         written[func:id_get()] = true
-        if impl:is_overridden(cl) then
-            omeths[#omeths + 1] = { cl, impl }
-        else
-            meths[#meths + 1] = { cl, impl }
-        end
+        meths[#meths + 1] = { cl, impl }
     end
     find_callables(cl, omeths, ievs, written)
 
