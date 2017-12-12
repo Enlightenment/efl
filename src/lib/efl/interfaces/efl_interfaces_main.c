@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_CANVAS_BETA
+
 #include <Efl.h>
 
 #include "interfaces/efl_config.eo.c"
