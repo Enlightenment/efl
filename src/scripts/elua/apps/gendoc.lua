@@ -756,8 +756,7 @@ local build_functable = function(f, tcl, tbl, newm)
                 bdoc = doc:brief_get(docf)
             end
             if bdoc ~= "No description supplied." then
-                lbuf:write_br()
-                lbuf:write_nl()
+                lbuf:write_br(true)
                 lbuf:write_raw("> ")
                 lbuf:write_raw(bdoc)
             end
@@ -771,7 +770,7 @@ local build_functable = function(f, tcl, tbl, newm)
                 codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
             end
             lbuf:write_code(table.concat(codes, "\n"), "c")
-            lbuf:write_br()
+            lbuf:write_br(true)
         end
 
         -- sigs and description
@@ -834,14 +833,12 @@ local build_functable = function(f, tcl, tbl, newm)
 	-- class grouping for inheritance
         if cl ~= prevcl then
             if wrote then
-                f:write_br()
-                f:write_nl()
+                f:write_br(true)
             end
 
             prevcl = cl
             f:write_link(cl:nspaces_get(true), cl:full_name_get())
-            f:write_br()
-            f:write_nl()
+            f:write_br(true)
             f:write_raw("> ")
             wrote = true
         elseif not newm then
@@ -947,8 +944,7 @@ local build_evtable = function(f, tcl, tbl, newm)
         if newm then
             local bdoc = ev:doc_get():brief_get()
             if bdoc ~= "No description supplied." then
-                lbuf:write_br()
-                lbuf:write_nl()
+                lbuf:write_br(true)
                 lbuf:write_raw("> ")
                 lbuf:write_raw(bdoc)
             end
@@ -977,14 +973,12 @@ local build_evtable = function(f, tcl, tbl, newm)
         local cl = item[0]
         if cl ~= prevcl then
             if wrote then
-                f:write_br()
-                f:write_nl()
+                f:write_br(true)
             end
 
             prevcl = cl
             f:write_link(cl:nspaces_get(true), cl:full_name_get())
-            f:write_br()
-            f:write_nl()
+            f:write_br(true)
             f:write_raw("> ")
             wrote = true
         elseif not newm then
