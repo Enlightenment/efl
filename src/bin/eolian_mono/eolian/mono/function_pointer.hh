@@ -69,14 +69,14 @@ struct function_pointer {
 
                   << scope_tab << "public " << type << " ManagedCb(" << (parameter % ",") << ")\n"
                   << scope_tab << "{\n"
-                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return ": "") << "_cb(_cb_data, " << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return ": "") << "_cb(_cb_data, " << (argument_invocation_no_conversion % ", ") << ");\n"
                   << scope_tab << "}\n\n"
 
                   << scope_tab << "public static " << type << " Cb(IntPtr cb_data, " << (parameter % ", ") << ")\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
-                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return " : "") << "cb(" << (argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << (f.return_type.c_type != "void" ? "return " : "") << "cb(" << (argument_invocation_no_conversion % ", ") << ");\n"
                   << scope_tab << "}\n"
                   << "}\n"
                   ).generate(sink, std::make_tuple(f.return_type, f.parameters, f.parameters, f.return_type, f.parameters, f_name, f_name, f.parameters), context))

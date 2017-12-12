@@ -4,6 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
+#include "helpers.hh"
 #include "namespace.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
@@ -148,7 +149,12 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if(eina::optional<bool> b = call_match
+        if (regular.is_struct() && !is_struct_blacklisted(regular))
+          {
+             return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
+                    .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
+          }
+        else if (eina::optional<bool> b = call_match
          (match_table
           , [&] (match const& m)
           {

@@ -681,7 +681,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         this.Ownership = ValueOwnership.Managed;
     }
 
-    internal Value(IntPtr handle, ValueOwnership ownership=ValueOwnership.Managed) {
+    public Value(IntPtr handle, ValueOwnership ownership=ValueOwnership.Managed) {
         this.Handle = handle;
         this.Ownership = ownership;
     }

@@ -59,7 +59,10 @@ namespace efl { namespace kw_event {
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Description {
-    IntPtr pointer; // Opaque type, just pass the pointer. What about hot/freeze/etc?
+    public IntPtr Name;
+    [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
+    [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
+    [MarshalAs(UnmanagedType.U1)] public bool Restart;
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
@@ -76,7 +79,10 @@ public struct Description {
             descriptions.Add(name, data);
         }
 
-        this.pointer = descriptions[name];
+        this.Name = descriptions[name];
+        this.Unfreezable = false;
+        this.Legacy_is = false;
+        this.Restart = false;
     }
 };
 
@@ -241,18 +247,13 @@ public struct Efl_Font_Size {
 
 namespace eina {
 
+[StructLayout(LayoutKind.Sequential)]
 public struct Rectangle {
     public int x;
     public int y;
     public int w;
     public int h;
 }
-
-}
-
-namespace eina {
-
-public interface File {}
 
 }
 

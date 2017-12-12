@@ -51,7 +51,7 @@ struct marshall_annotation_visitor_generate
       match const parameter_match_table[] =
         {
            // signed primitives
-          {"bool", nullptr, [&] { return " [MarshalAs(UnmanagedType.I1)]"; }},
+          {"bool", nullptr, [&] { return " [MarshalAs(UnmanagedType.U1)]"; }},
           {"string", true, [&] {
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringPassOwnershipMarshaler))]";
           }},
@@ -80,7 +80,7 @@ struct marshall_annotation_visitor_generate
       match const return_match_table[] =
         {
            // signed primitives
-          {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.I1)]"; }},
+          {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.U1)]"; }},
           {"string", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringPassOwnershipMarshaler))]";
           }},
@@ -170,7 +170,7 @@ struct marshall_native_annotation_visitor_generate
       match const parameter_match_table[] =
         {
            // signed primitives
-          {"bool", nullptr, [&] { return " [MarshalAs(UnmanagedType.I1)]"; }},
+          {"bool", nullptr, [&] { return " [MarshalAs(UnmanagedType.U1)]"; }},
           {"string", true, [&] {
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringPassOwnershipMarshaler))]";
           }},
@@ -191,7 +191,7 @@ struct marshall_native_annotation_visitor_generate
       match const return_match_table[] =
         {
            // signed primitives
-          {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.I1)]"; }},
+          {"bool", nullptr, [&] { return " [return: MarshalAs(UnmanagedType.U1)]"; }},
           {"string", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringPassOwnershipMarshaler))]";
           }},

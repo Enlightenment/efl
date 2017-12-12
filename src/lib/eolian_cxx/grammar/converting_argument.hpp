@@ -26,7 +26,7 @@ struct converting_argument_generator
      bool operator()(T const&) const { return false;}
      bool operator()(attributes::regular_type_def const& r) const
      {
-       return r.is_function_ptr;
+       return r.is_function_ptr();
      }
    } static const is_function_ptr;
    template <typename OutputIterator, typename Context>

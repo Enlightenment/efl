@@ -4,6 +4,7 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
+#include "helpers.hh"
 #include "marshall_type.hh"
 #include "type.hh"
 #include "using_decl.hh"
@@ -226,6 +227,9 @@ inline bool param_is_acceptable(attributes::parameter_def const &param, std::str
 
 inline bool param_should_use_out_var(attributes::parameter_def const& param, bool native)
 {
+   if (param.direction == attributes::parameter_direction::in)
+     return false;
+
    if ((native && param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
            || (native && param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
            || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -261,11 +265,18 @@ inline bool param_should_use_out_var(attributes::parameter_def const& param, boo
       )
      return true;
 
+   auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+   if (need_struct_conversion(regular))
+     return true;
+
    return false;
 }
 
 inline bool param_should_use_in_var(attributes::parameter_def const& param, bool /*native*/)
 {
+    if (param.direction != attributes::parameter_direction::in)
+      return false;
+
     if (param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, !WANT_OUT)
@@ -299,6 +310,10 @@ inline bool param_should_use_in_var(attributes::parameter_def const& param, bool
        )
         return true;
 
+    auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+    if (need_struct_conversion(regular))
+      return true;
+
     return false;
 }
 
@@ -320,7 +335,9 @@ inline std::string direction_modifier(attributes::parameter_def const& param)
      }
    else if (param.direction != attributes::parameter_direction::in)
      {
-        if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice")
+        auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+        if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice"
+            || need_struct_conversion(regular))
            return " ref ";
         else
            return " out ";
@@ -335,7 +352,7 @@ struct is_fp_visitor
 
    bool operator()(grammar::attributes::regular_type_def const &type) const
    {
-      return type.is_function_ptr;
+      return type.is_function_ptr();
    }
 
    template<typename T>
@@ -445,14 +462,18 @@ struct native_argument_invocation_generator
 // Generates the correct parameter name when invoking a function
 struct argument_invocation_generator
 {
+   constexpr argument_invocation_generator(bool conversion_vars)
+     : use_conversion_vars(conversion_vars)
+   {}
+
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
      std::string arg = direction_modifier(param);
 
-     if (param_should_use_out_var(param, false))
+     if (use_conversion_vars && param_should_use_out_var(param, false))
        arg += out_variable_name(param.param_name);
-     else if (param_should_use_in_var(param, false))
+     else if (use_conversion_vars && param_should_use_in_var(param, false))
        arg += in_variable_name(param.param_name);
      else if (param.type.original_type.visit(is_fp_visitor{}))
        {
@@ -465,7 +486,11 @@ struct argument_invocation_generator
 
      return as_generator(arg).generate(sink, attributes::unused, context);
    }
-} const argument_invocation {};
+
+   bool const use_conversion_vars;
+} const argument_invocation {true};
+
+argument_invocation_generator const argument_invocation_no_conversion {false};
 
 struct native_convert_in_variable_generator
 {
@@ -475,7 +500,14 @@ struct native_convert_in_variable_generator
       if (param.direction != attributes::parameter_direction::in)
         return true;
 
-      if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular))
+        {
+           return as_generator(
+                "var " << string << " = " << type << "_StructConvertion.ToExternal(" << escape_keyword(param.param_name) << ");\n"
+             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
+        }
+      else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
            return as_generator(
                 "var " << string << " = new eina.Binbuf(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
@@ -530,7 +562,14 @@ struct convert_in_variable_generator
       if (param.direction != attributes::parameter_direction::in)
         return true;
 
-      if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular))
+        {
+           return as_generator(
+                "var " << string << " = " << type << "_StructConvertion.ToInternal(" << escape_keyword(param.param_name) << ");\n"
+             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
+        }
+      else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
            auto var_name = in_variable_name(param.param_name);
            if (!as_generator(
@@ -608,7 +647,17 @@ struct convert_out_variable_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
+      if (param.direction == attributes::parameter_direction::in)
+        return true;
+
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular))
+        {
+           return as_generator(
+               "var " << string << " = new " << marshall_type << "();\n"
+             ).generate(sink, std::make_tuple(out_variable_name(param.param_name), param.type), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -665,7 +714,12 @@ struct native_convert_out_variable_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT)
+      if (param.direction == attributes::parameter_direction::in)
+        return true;
+
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular)
+          || param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT)
           || param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
            return as_generator(
@@ -740,7 +794,17 @@ struct convert_out_assign_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
+      if (param.direction == attributes::parameter_direction::in)
+        return true;
+
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular))
+        {
+           return as_generator(
+                string << " = " << type << "_StructConvertion.ToExternal(" << out_variable_name(param.param_name) << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -829,7 +893,14 @@ struct convert_return_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
-     if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
+     auto regular = efl::eina::get<attributes::regular_type_def>(&ret_type.original_type);
+     if (need_struct_conversion(regular))
+       {
+          return as_generator(
+               "return " << type << "_StructConvertion.ToExternal(_ret_var);\n"
+            ).generate(sink, ret_type, context);
+       }
+     else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
        {
            if (!as_generator("var _binbuf_ret = new eina.Binbuf(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"} << ");\n"
                              << scope_tab << scope_tab << "return _binbuf_ret;\n")
@@ -881,7 +952,17 @@ struct native_convert_out_assign_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
+      if (param.direction == attributes::parameter_direction::in)
+        return true;
+
+      auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
+      if (need_struct_conversion(regular))
+        {
+           return as_generator(
+                string << " = " << type << "_StructConvertion.ToInternal(" << string << ");\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
+        }
+      else if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
            return as_generator(
                 string << "= efl.eo.Globals.cached_stringshare_to_intptr(((" << string << "Inherit)wrapper).cached_stringshares, " << string << ");\n"
@@ -1001,7 +1082,14 @@ struct native_convert_return_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& ret_type, Context const& context) const
    {
-     if (ret_type.c_type == "const char *")
+     auto regular = efl::eina::get<attributes::regular_type_def>(&ret_type.original_type);
+     if (need_struct_conversion(regular))
+       {
+          return as_generator(
+               "return " << type << "_StructConvertion.ToInternal(_ret_var);\n"
+            ).generate(sink, ret_type, context);
+       }
+     else if (ret_type.c_type == "const char *")
        {
           if(!ret_type.has_own)
             {

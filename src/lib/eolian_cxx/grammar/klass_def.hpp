@@ -24,7 +24,7 @@ namespace efl { namespace eolian { namespace grammar {
 namespace attributes {
 
 struct complex_type_def;
-  
+
 }
 
 namespace attributes {
@@ -64,16 +64,44 @@ bool lexicographical_compare(std::tuple<T, U> const& lhs
        || (!(std::get<0>(rhs) < std::get<0>(lhs))
           && std::get<1>(lhs) < std::get<1>(rhs));
 }
-        
+
+enum class typedecl_type
+{
+  unknown,
+  struct_,
+  struct_opaque,
+  enum_,
+  alias,
+  function_ptr,
+};
+
+inline typedecl_type typedecl_type_get(Eolian_Typedecl const* decl)
+{
+  if (!decl)
+    return typedecl_type::unknown;
+
+  Eolian_Typedecl_Type t = eolian_typedecl_type_get(decl);
+  switch (t)
+  {
+  case EOLIAN_TYPEDECL_UNKNOWN: return typedecl_type::unknown;
+  case EOLIAN_TYPEDECL_STRUCT: return typedecl_type::struct_;
+  case EOLIAN_TYPEDECL_STRUCT_OPAQUE: return typedecl_type::struct_opaque;
+  case EOLIAN_TYPEDECL_ENUM: return typedecl_type::enum_;
+  case EOLIAN_TYPEDECL_ALIAS: return typedecl_type::alias;
+  case EOLIAN_TYPEDECL_FUNCTION_POINTER: return typedecl_type::function_ptr;
+  default: return typedecl_type::unknown;
+  }
+}
+
 struct type_def;
 bool operator==(type_def const& rhs, type_def const& lhs);
 bool operator!=(type_def const& rhs, type_def const& lhs);
-        
+
 enum class class_type
 {
   regular, abstract_, mixin, interface_
 };
-        
+
 struct klass_name
 {
    std::vector<std::string> namespaces;
@@ -168,19 +196,28 @@ get(klass_name const& klass)
 {
   return tuple_element<N, klass_name>::get(klass);
 }
-        
+
 struct regular_type_def
 {
-   regular_type_def() : is_undefined(false), is_function_ptr(false) {}
+   regular_type_def() : type_type(typedecl_type::unknown), is_undefined(false) {}
    regular_type_def(std::string base_type, qualifier_def qual, std::vector<std::string> namespaces
-                    , bool is_undefined = false, bool is_function_ptr = false)
+                    , typedecl_type type_type = typedecl_type::unknown, bool is_undefined = false)
      : base_type(std::move(base_type)), base_qualifier(qual), namespaces(std::move(namespaces))
-     , is_undefined(is_undefined), is_function_ptr(is_function_ptr) {}
-  
+     , type_type(type_type), is_undefined(is_undefined) {}
+
+   bool is_type(typedecl_type tt) const { return type_type == tt; }
+   bool is_unknown() const { return is_type(typedecl_type::unknown); }
+   bool is_struct() const { return is_type(typedecl_type::struct_); }
+   bool is_struct_opaque() const { return is_type(typedecl_type::struct_opaque); }
+   bool is_enum() const { return is_type(typedecl_type::enum_); }
+   bool is_alias() const { return is_type(typedecl_type::alias); }
+   bool is_function_ptr() const { return is_type(typedecl_type::function_ptr); }
+
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
-   bool is_undefined, is_function_ptr;
+   typedecl_type type_type;
+   bool is_undefined;
 };
 
 inline bool operator==(regular_type_def const& rhs, regular_type_def const& lhs)
@@ -245,7 +282,7 @@ struct get_qualifier_visitor
     return complex.outer.base_qualifier;
   }
 };
-  
+
 inline bool operator==(type_def const& lhs, type_def const& rhs)
 {
   return lhs.original_type == rhs.original_type && lhs.c_type == rhs.c_type;
@@ -254,9 +291,9 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
 {
   return !(lhs == rhs);
 }
-        
-type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}, false}, "void", false};
-        
+
+type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false};
+
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
    c_type = ::eolian_type_c_type_get(unit, eolian_type, ctype);
@@ -267,14 +304,14 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
-       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}, false};
+       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}};
        break;
      case EOLIAN_TYPE_REGULAR:
        if (!stp)
          {
            bool is_undefined = false;
            Eolian_Typedecl const* decl = eolian_type_typedecl_get(unit, eolian_type);
-           bool is_function_ptr = decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
+           typedecl_type type_type = (decl ? typedecl_type_get(decl) : typedecl_type::unknown);
            if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
              {
                Eolian_Type const* aliased = eolian_typedecl_base_type_get(decl);
@@ -289,7 +326,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
            for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                  , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
              namespaces.push_back(&*namespace_iterator);
-           original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, is_undefined, is_function_ptr}};
+           original_type = {regular_type_def{ ::eolian_type_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, type_type, is_undefined}};
          }
        else
          {
@@ -320,7 +357,7 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
     switch(eolian_exp_type)
       {
       case EOLIAN_EXPR_INT:
-        original_type = attributes::regular_type_def{"int", {{}, {}}, {}, false};
+        original_type = attributes::regular_type_def{"int", {{}, {}}, {}};
         c_type = "int";
         break;
       default:
@@ -351,7 +388,7 @@ struct add_optional_qualifier_visitor
   }
 };
 }
-        
+
 struct parameter_def
 {
   parameter_direction direction;
@@ -369,7 +406,7 @@ struct parameter_def
   {
     return !(lhs == rhs);
   }
-  
+
   parameter_def(parameter_direction direction, type_def type, std::string param_name, Eolian_Unit const* unit)
     : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), unit(unit) {}
   parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
@@ -545,7 +582,7 @@ struct function_def
        {
           attributes::regular_type_def const* typ =
                 efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-          if (typ && typ->is_function_ptr)
+          if (typ && typ->is_function_ptr())
             {
                char typenam[2] = { 0, };
                typenam[0] = template_typename++;
@@ -568,7 +605,7 @@ struct function_def
        {
           attributes::regular_type_def const* typ =
                 efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
-          if (typ && typ->is_function_ptr)
+          if (typ && typ->is_function_ptr())
             {
                char typenam[2] = { 0, };
                typenam[0] = template_typename++;
@@ -652,8 +689,8 @@ struct event_def
   friend inline bool operator!=(event_def const& lhs, event_def const& rhs)
   {
     return !(lhs == rhs);
-  }  
-  
+  }
+
   event_def(type_def type, std::string name, std::string c_name, bool beta, bool protect)
     : type(type), name(name), c_name(c_name), beta(beta), protect(protect) {}
   event_def(Eolian_Event const* event, Eolian_Unit const* unit)
@@ -835,7 +872,7 @@ struct klass_def
          Eolian_Class const* inherit = &*inherit_iterator;
          immediate_inherits.insert({inherit, {}});
        }
-     std::function<void(Eolian_Class const*)> inherit_algo = 
+     std::function<void(Eolian_Class const*)> inherit_algo =
        [&] (Eolian_Class const* inherit_klass)
        {
          for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(inherit_klass))
@@ -1100,7 +1137,7 @@ template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
-  
+
 }
 
 } } }

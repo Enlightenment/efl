@@ -13,12 +13,28 @@ namespace eina = efl::eina;
 template <typename T>
 T const* as_const_pointer(T* p) { return p; }
 
+inline
 attributes::regular_type_def replace_base_type(attributes::regular_type_def v, std::string name)
 {
   v.base_type = name;
   return v;
 }
 
+template <typename T>
+attributes::regular_type_def replace_base_integer(attributes::regular_type_def v)
+{
+  bool s = std::is_signed<T>::value;
+  switch (sizeof(T))
+  {
+  case 1: return s ? replace_base_type(v, " sbyte") : replace_base_type(v, " byte");
+  case 2: return s ? replace_base_type(v, " short") : replace_base_type(v, " ushort");
+  case 4: return s ? replace_base_type(v, " int") : replace_base_type(v, " uint");
+  case 8: return s ? replace_base_type(v, " long") : replace_base_type(v, " ulong");
+  default: return v;
+  }
+}
+
+inline
 attributes::complex_type_def replace_outer(attributes::complex_type_def v, attributes::regular_type_def const& regular)
 {
   v.outer = regular;
@@ -62,26 +78,29 @@ struct visitor_generate
       const match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " byte"); }}
-           , {"llong", nullptr, [&] { return replace_base_type(regular, " long"); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, " sbyte"); }}
+           , {"short", nullptr, [&] { return replace_base_integer<short>(regular); }}
+           , {"int", nullptr, [&] { return replace_base_integer<int>(regular); }}
+           , {"long", nullptr, [&] { return replace_base_integer<long>(regular); }}
+           , {"llong", nullptr, [&] { return replace_base_integer<long long>(regular); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, " sbyte"); }}
            , {"int16", nullptr, [&] { return replace_base_type(regular, " short"); }}
            , {"int32", nullptr, [&] { return replace_base_type(regular, " int"); }}
            , {"int64", nullptr, [&] { return replace_base_type(regular, " long"); }}
-           , {"ssize", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"ssize", nullptr, [&] { return replace_base_integer<ssize_t>(regular); }}
            // unsigned primitives
            , {"ubyte", nullptr, [&] { return replace_base_type(regular, " byte"); }}
-           , {"ushort", nullptr, [&] { return replace_base_type(regular, " ushort"); }}
-           , {"uint", nullptr, [&] { return replace_base_type(regular, " uint"); }}
-           , {"ulong", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
-           , {"ullong", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
+           , {"ushort", nullptr, [&] { return replace_base_integer<unsigned short>(regular); }}
+           , {"uint", nullptr, [&] { return replace_base_integer<unsigned int>(regular); }}
+           , {"ulong", nullptr, [&] { return replace_base_integer<unsigned long>(regular); }}
+           , {"ullong", nullptr, [&] { return replace_base_integer<unsigned long long>(regular); }}
            , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
            , {"uint16", nullptr, [&] { return replace_base_type(regular, " ushort"); }}
            , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint"); }}
            , {"uint64", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
-           , {"size", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
+           , {"size", nullptr, [&] { return replace_base_integer<size_t>(regular); }}
            
-           , {"ptrdiff", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"ptrdiff", nullptr, [&] { return replace_base_integer<ptrdiff_t>(regular); }}
            , {"intptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
            , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
            , {"void", nullptr, [&]

@@ -34,6 +34,9 @@
 #include "test_numberwrapper.eo.h"
 #include "test_testing.eo.h"
 
+#define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __FUNCTION__), fflush(stderr), 0))
+#define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __FUNCTION__, (a), (b)), fflush(stderr), 0))
+
 typedef struct Test_Testing_Data
 {
   Test_SimpleCb cb;
@@ -3121,6 +3124,397 @@ void _test_testing_error_ret_set(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Ein
 Eina_Error _test_testing_returns_error(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
    return pd->error_code;
+}
+
+//         //
+// Structs //
+//         //
+
+// auxiliary functions
+
+static
+void struct_simple_with_values(Test_StructSimple *simple)
+{
+   simple->fbyte = -126;
+   simple->fubyte = 254u;
+   simple->fchar = '~';
+   simple->fshort = -32766;
+   simple->fushort = 65534u;
+   simple->fint = -32766;
+   simple->fuint = 65534u;
+   simple->flong = -2147483646;
+   simple->fulong = 4294967294u;
+   simple->fllong = -9223372036854775806;
+   simple->fullong = 18446744073709551614u;
+   simple->fint8 = -126;
+   simple->fuint8 = 254u;
+   simple->fint16 = -32766;
+   simple->fuint16 = 65534u;
+   simple->fint32 = -2147483646;
+   simple->fuint32 = 4294967294u;
+   simple->fint64 = -9223372036854775806;
+   simple->fuint64 = 18446744073709551614u;
+   simple->fssize = -2147483646;
+   simple->fsize = 4294967294u;
+   simple->fintptr =  0xFE;
+   simple->fptrdiff = -2147483646;
+   simple->ffloat = -16777216.0;
+   simple->fdouble = -9007199254740992.0;
+   simple->fbool = EINA_TRUE;
+   simple->fvoid_ptr = (void*) 0xFE;
+   simple->fenum = TEST_SAMPLEENUM_V2;
+   simple->fstring = "test/string";
+   simple->fmstring = strdup("test/mstring");
+   simple->fstringshare = eina_stringshare_add("test/stringshare");
+}
+
+static
+Eina_Bool check_and_modify_struct_simple(Test_StructSimple *simple)
+{
+   Eina_Bool ret =
+     EQUAL(simple->fbyte, -126)
+     && EQUAL(simple->fubyte, 254u)
+     && EQUAL(simple->fchar, '~')
+     && EQUAL(simple->fshort, -32766)
+     && EQUAL(simple->fushort, 65534u)
+     && EQUAL(simple->fint, -32766)
+     && EQUAL(simple->fuint, 65534u)
+     && EQUAL(simple->flong, -2147483646)
+     && EQUAL(simple->fulong, 4294967294u)
+     && EQUAL(simple->fllong, -9223372036854775806)
+     && EQUAL(simple->fullong, 18446744073709551614u)
+     && EQUAL(simple->fint8, -126)
+     && EQUAL(simple->fuint8, 254u)
+     && EQUAL(simple->fint16, -32766)
+     && EQUAL(simple->fuint16, 65534u)
+     && EQUAL(simple->fint32, -2147483646)
+     && EQUAL(simple->fuint32, 4294967294u)
+     && EQUAL(simple->fint64, -9223372036854775806)
+     && EQUAL(simple->fuint64, 18446744073709551614u)
+     && EQUAL(simple->fssize, -2147483646)
+     && EQUAL(simple->fsize, 4294967294u)
+     && EQUAL(simple->fintptr, 0xFE)
+     && EQUAL(simple->fptrdiff, -2147483646)
+     && EQUAL(simple->ffloat, -16777216.0)
+     && EQUAL(simple->fdouble, -9007199254740992.0)
+     && EQUAL(simple->fbool, EINA_TRUE)
+     && EQUAL(simple->fvoid_ptr, (void*) 0xFE)
+     && EQUAL(simple->fenum, TEST_SAMPLEENUM_V2)
+     && STR_EQUAL(simple->fstring, "test/string")
+     && STR_EQUAL(simple->fmstring, "test/mstring")
+     && STR_EQUAL(simple->fstringshare, "test/stringshare")
+   ;
+
+   if (!ret)
+     return ret;
+
+   simple->fmstring[4] = '-';
+   return strcmp(simple->fmstring, "test-mstring") == 0;
+}
+
+static
+Eina_Bool check_zeroed_struct_simple(Test_StructSimple *simple)
+{
+   Eina_Bool ret =
+     simple->fbyte == 0
+     && simple->fubyte == 0
+     && simple->fchar == '\0'
+     && simple->fshort == 0
+     && simple->fushort == 0
+     && simple->fint == 0
+     && simple->fuint == 0
+     && simple->flong == 0
+     && simple->fulong == 0
+     && simple->fllong == 0
+     && simple->fullong == 0
+     && simple->fint8 == 0
+     && simple->fuint8 == 0
+     && simple->fint16 == 0
+     && simple->fuint16 == 0
+     && simple->fint32 == 0
+     && simple->fuint32 == 0
+     && simple->fint64 == 0
+     && simple->fuint64 == 0
+     && simple->fssize == 0
+     && simple->fsize == 0
+     && simple->fintptr == 0x00
+     && simple->fptrdiff == 0
+     && simple->ffloat == 0
+     && simple->fdouble == 0
+     && simple->fbool == EINA_FALSE
+     && simple->fvoid_ptr == NULL
+     && simple->fenum == TEST_SAMPLEENUM_V0
+     && simple->fstring == NULL
+     && simple->fmstring == NULL
+     && simple->fstringshare == NULL
+   ;
+
+   return ret;
+}
+
+static
+void struct_complex_with_values(Test_StructComplex *complex)
+{
+   complex->farray = eina_array_new(4);
+   eina_array_push(complex->farray, _new_int(0x0));
+   eina_array_push(complex->farray, _new_int(0x2A));
+   eina_array_push(complex->farray, _new_int(0x42));
+
+   complex->finarray = eina_inarray_new(sizeof(int), 0);
+   eina_inarray_push(complex->finarray, _int_ref(0x0));
+   eina_inarray_push(complex->finarray, _int_ref(0x2A));
+   eina_inarray_push(complex->finarray, _int_ref(0x42));
+
+   complex->flist = eina_list_append(complex->flist, strdup("0x0"));
+   complex->flist = eina_list_append(complex->flist, strdup("0x2A"));
+   complex->flist = eina_list_append(complex->flist, strdup("0x42"));
+
+   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x0));
+   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x2A));
+   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x42));
+
+   complex->fhash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(complex->fhash, "aa", strdup("aaa"));
+   eina_hash_add(complex->fhash, "bb", strdup("bbb"));
+   eina_hash_add(complex->fhash, "cc", strdup("ccc"));
+
+   complex->fiterator = eina_array_iterator_new(complex->farray);
+
+   eina_value_setup(&complex->fany_value, EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(&complex->fany_value, -9007199254740992.0);
+
+   complex->fany_value_ptr = eina_value_new(EINA_VALUE_TYPE_STRING);
+   eina_value_set(complex->fany_value_ptr, "abc");
+
+   complex->fbinbuf = eina_binbuf_new();
+   eina_binbuf_append_char(complex->fbinbuf, 126);
+
+   complex->fslice.len = 1;
+   complex->fslice.mem = malloc(1);
+   memset((void*)complex->fslice.mem, 125, 1);
+
+   complex->fobj = _new_obj(42);
+}
+
+static
+Eina_Bool check_and_modify_struct_complex(Test_StructComplex *complex)
+{
+   if (!_array_int_equal(complex->farray, base_seq_int, base_seq_int_size))
+     return EINA_FALSE;
+
+   if (!_inarray_int_equal(complex->finarray, base_seq_int, base_seq_int_size))
+     return EINA_FALSE;
+
+   if (!_list_str_equal(complex->flist, base_seq_str, base_seq_str_size))
+     return EINA_FALSE;
+
+   if (!_inlist_int_equal(complex->finlist, base_seq_int, base_seq_int_size))
+     return EINA_FALSE;
+
+   if (!_hash_str_check(complex->fhash, "aa", "aaa")
+       || !_hash_str_check(complex->fhash, "bb", "bbb")
+       || !_hash_str_check(complex->fhash, "cc", "ccc"))
+     return EINA_FALSE;
+
+   if (!_iterator_int_equal(complex->fiterator, base_seq_int, base_seq_int_size, EINA_FALSE))
+     return EINA_FALSE;
+
+   double double_val = 0;
+   if (!eina_value_get(&complex->fany_value, &double_val) || double_val != -9007199254740992.0)
+     return EINA_FALSE;
+
+   const char *str_val = NULL;
+   if (!eina_value_get(complex->fany_value_ptr, &str_val) || strcmp(str_val, "abc") != 0)
+     return EINA_FALSE;
+
+   if (eina_binbuf_length_get(complex->fbinbuf) != 1 || eina_binbuf_string_get(complex->fbinbuf)[0] != 126)
+     return EINA_FALSE;
+
+   if (complex->fslice.len != 1 || *(char*)complex->fslice.mem != 125)
+     return EINA_FALSE;
+
+   if (complex->fobj == NULL || test_numberwrapper_number_get(complex->fobj) != 42)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static
+Eina_Bool check_zeroed_struct_complex(Test_StructComplex *complex)
+{
+   Eina_Bool ret =
+      complex->farray == NULL
+      && complex->finarray == NULL
+      && complex->flist == NULL
+      && complex->finlist == NULL
+      && complex->fhash == NULL
+      && complex->fiterator == NULL
+
+      && complex->fany_value.type == NULL
+      && complex->fany_value.value._guarantee == 0
+
+      && complex->fany_value_ptr == NULL
+      && complex->fbinbuf == NULL
+
+      && complex->fslice.len == 0
+      && complex->fslice.mem == NULL
+
+      && complex->fobj == NULL
+   ;
+
+   return ret;
+}
+
+// with simple types
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple simple)
+{
+   return check_and_modify_struct_simple(&simple);
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+   (void) simple;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+   (void) simple;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple *simple)
+{
+   if (!simple)
+     {
+        EINA_LOG_ERR("Null struct pointer");
+        return EINA_FALSE;
+     }
+
+   struct_simple_with_values(simple);
+
+   return EINA_TRUE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_ptr_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+   (void) simple;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_simple_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructSimple **simple)
+{
+   (void) simple;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Test_StructSimple _test_testing_struct_simple_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Test_StructSimple simple = {0,};
+   struct_simple_with_values(&simple);
+   return simple;
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_struct_simple_ptr_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   EINA_LOG_ERR("Not implemented!");
+   return NULL;
+}
+
+EOLIAN
+Test_StructSimple *_test_testing_struct_simple_ptr_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   EINA_LOG_ERR("Not implemented!");
+   return NULL;
+}
+
+// with complex types
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex complex)
+{
+   return check_and_modify_struct_complex(&complex);
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_ptr_in(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex *complex)
+{
+   (void) complex;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_ptr_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex *complex)
+{
+   (void) complex;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex *complex)
+{
+   if (!complex)
+     {
+        EINA_LOG_ERR("Null struct pointer");
+        return EINA_FALSE;
+     }
+
+   struct_complex_with_values(complex);
+
+   return EINA_TRUE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_ptr_out(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex **complex)
+{
+   (void) complex;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Eina_Bool _test_testing_struct_complex_ptr_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd, Test_StructComplex **complex)
+{
+   (void) complex;
+   EINA_LOG_ERR("Not implemented!");
+   return EINA_FALSE;
+}
+
+EOLIAN
+Test_StructComplex _test_testing_struct_complex_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   Test_StructComplex complex = {0,};
+   struct_complex_with_values(&complex);
+   return complex;
+}
+
+EOLIAN
+Test_StructComplex* _test_testing_struct_complex_ptr_return(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   EINA_LOG_ERR("Not implemented!");
+   return NULL;
+}
+
+EOLIAN
+Test_StructComplex* _test_testing_struct_complex_ptr_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Test_Testing_Data *pd)
+{
+   EINA_LOG_ERR("Not implemented!");
+   return NULL;
 }
 
 //                   //

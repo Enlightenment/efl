@@ -10,6 +10,7 @@ struct class_context
         concrete,
         inherit,
         inherit_native,
+        structs,
     };
     wrapper_kind current_wrapper_kind;
 };

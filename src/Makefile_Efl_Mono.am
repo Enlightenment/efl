@@ -371,6 +371,7 @@ tests_efl_mono_efl_mono_exe_SOURCES = \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
      tests/efl_mono/Strings.cs \
+     tests/efl_mono/Structs.cs \
      tests/efl_mono/TestUtils.cs \
      tests/efl_mono/Value.cs \
      tests/efl_mono/ValueEolian.cs

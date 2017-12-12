@@ -183,7 +183,8 @@ run(options_type const& opts)
                , struct_last; struct_iterator != struct_last; ++struct_iterator)
          {
             efl::eolian::grammar::attributes::struct_def struct_(&*struct_iterator, opts.unit);
-            if (!eolian_mono::struct_definition.generate(iterator, struct_, efl::eolian::grammar::context_null()))
+            auto structs_cxt = context_add_tag(class_context{class_context::structs}, context);
+            if (!eolian_mono::struct_entities.generate(iterator, struct_, structs_cxt))
               {
                  throw std::runtime_error("Failed to generate struct");
               }
