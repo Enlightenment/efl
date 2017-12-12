@@ -2,12 +2,14 @@
 #include "Efl.h"
 
 #define ERR(...) EINA_LOG_DOM_ERR(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
 
 typedef enum _Format_Type
 {
    FORMAT_TYPE_INVALID,
    FORMAT_TYPE_DOUBLE,
-   FORMAT_TYPE_INT
+   FORMAT_TYPE_INT,
+   FORMAT_TYPE_STRING,
 } Format_Type;
 
 typedef struct
@@ -46,6 +48,7 @@ _format_string_check(const char *fmt)
              found = EINA_TRUE;
              for (itr = start + 1; *itr != '\0'; itr++)
                {
+                  // FIXME: This does not properly support int64 or unsigned.
                   if ((*itr == 'd') || (*itr == 'u') || (*itr == 'i') ||
                       (*itr == 'o') || (*itr == 'x') || (*itr == 'X'))
                     {
@@ -55,6 +58,11 @@ _format_string_check(const char *fmt)
                   else if ((*itr == 'f') || (*itr == 'F'))
                     {
                        ret_type = FORMAT_TYPE_DOUBLE;
+                       break;
+                    }
+                  else if (*itr == 's')
+                    {
+                       ret_type = FORMAT_TYPE_STRING;
                        break;
                     }
                   else if (_is_valid_digit(*itr))
@@ -79,62 +87,46 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    const Eina_Value_Type *type = eina_value_type_get(&value);
    Efl_Ui_Format_Data *sd = data;
+   Eina_Value copy;
 
    if (type == EINA_VALUE_TYPE_TM)
      {
         struct tm v;
         eina_value_get(&value, &v);
         eina_strbuf_append_strftime(str, sd->template, &v);
-
         return;
      }
 
-   if (sd->format_type == FORMAT_TYPE_INVALID)
+   if (sd->format_type == FORMAT_TYPE_DOUBLE)
      {
-        ERR("Wrong String Format: %s", sd->template);
-        return;
-     }
-
-   if ((sd->format_type == FORMAT_TYPE_DOUBLE)
-       && (type == EINA_VALUE_TYPE_DOUBLE))
-     {
-        double v;
-        eina_value_get(&value, &v);
+        double v = 0.0;
+        eina_value_setup(&copy, EINA_VALUE_TYPE_DOUBLE);
+        eina_value_convert(&value, &copy);
+        eina_value_get(&copy, &v);
         eina_strbuf_append_printf(str, sd->template, v);
+        eina_value_flush(&copy);
      }
-   else if ((sd->format_type == FORMAT_TYPE_INT)
-            && (type == EINA_VALUE_TYPE_INT))
+   else if (sd->format_type == FORMAT_TYPE_INT)
      {
-        int v;
-        eina_value_get(&value, &v);
+        int v = 0;
+        eina_value_setup(&copy, EINA_VALUE_TYPE_INT);
+        eina_value_convert(&value, &copy);
+        eina_value_get(&copy, &v);
         eina_strbuf_append_printf(str, sd->template, v);
+        eina_value_flush(&copy);
      }
-   else if ((sd->format_type == FORMAT_TYPE_DOUBLE)
-            && (type == EINA_VALUE_TYPE_INT))
+   else if (sd->format_type == FORMAT_TYPE_STRING)
      {
-        int v;
-        double d_v;
-
-        eina_value_get(&value, &v);
-
-        d_v = v;
-        eina_strbuf_append_printf(str, sd->template, d_v);
-     }
-   else if ((sd->format_type == FORMAT_TYPE_INT)
-            && (type == EINA_VALUE_TYPE_DOUBLE))
-     {
-        double v;
-        int i_v;
-
-        eina_value_get(&value, &v);
-
-        i_v = v;
-        eina_strbuf_append_printf(str, sd->template, i_v);
+        char *v = eina_value_to_string(&value);
+        eina_strbuf_append_printf(str, sd->template, v);
+        free(v);
      }
    else
      {
+        // Error: Discard format string and just print value.
+        DBG("Could not guess value type in format string: '%s'", sd->template);
         char *v = eina_value_to_string(&value);
-        eina_strbuf_append_printf(str, "%s", v);
+        eina_strbuf_append(str, v);
         free(v);
      }
 }
