@@ -5,7 +5,7 @@ enum Efl.Ui.Dir
 {
    [[Direction for UI objects and layouts.
 
-     Not to be confused with $Efl.Orient which is for images and canvases. This
+     Not to be confused with @Efl.Orient which is for images and canvases. This
      enum is used to define how widgets should expand and orient themselves,
      not to rotate images.
 

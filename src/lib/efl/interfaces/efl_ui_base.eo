@@ -20,8 +20,8 @@ interface Efl.Ui.Base
            If enabled, the system or application configuration will be used
            to set the value of @.mirrored.
 
-           This property may be implemented by high-level widgets (in $Efl.Ui)
-           but not by low-level widgets (in $Efl.Canvas) as the configuration
+           This property may be implemented by high-level widgets (in Efl.Ui)
+           but not by low-level widgets (in @Efl.Canvas) as the configuration
            should affect only high-level widgets.
          ]]
          values {

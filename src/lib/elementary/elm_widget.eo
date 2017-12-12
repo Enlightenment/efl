@@ -37,7 +37,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
          }
          values {
             sobj: Efl.Canvas.Object @nullable;
-               [[A canvas object (often a $Efl.Canvas.Layout object).]]
+               [[A canvas object (often a @Efl.Canvas.Layout object).]]
          }
       }
       @property disabled {
@@ -176,7 +176,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
          [[Root widget in the widget hierarchy.
 
            This returns the top widget, in terms of widget hierarchy. This is
-           usually a window ($Efl.Ui.Win). This function walks the list of
+           usually a window (@Efl.Ui.Win). This function walks the list of
            @.widget_parent.
 
            If this widget has no parent (in terms of widget hierarchy) this

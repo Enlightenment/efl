@@ -79,7 +79,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
 
            This sets alpha flag for map rendering. If the object is a type that
            has its own alpha settings, then this will take precedence. Only
-           image objects support this currently ($Efl.Canvas.Image and its
+           image objects support this currently (@Efl.Canvas.Image and its
            friends). Setting this off stops alpha blending of the map area,
            and is useful if you know the object and/or all sub-objects is 100%
            solid.

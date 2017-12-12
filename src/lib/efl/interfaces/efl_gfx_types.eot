@@ -166,7 +166,7 @@ enum Efl.Gfx.Size.Hint.Aspect
 {
    [[Aspect types/policies for scaling size hints.
 
-     See also $Efl.Gfx.Size.Hint.aspect.
+     See also @Efl.Gfx.Size.Hint.hint_aspect.
    ]]
 
    none = 0, [[No preference on either direction of the container
