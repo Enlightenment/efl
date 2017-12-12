@@ -30,6 +30,7 @@
 
 #include "elm_part_helper.h"
 #include "efl_ui_win_part.eo.h"
+#include "elm_plug.eo.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
@@ -85,6 +86,7 @@ struct _Efl_Ui_Win_Data
    Evas_Object          *img_obj, *frame_obj;
    Eo /* wref */        *bg, *content;
    Evas_Object          *obj; /* The object itself */
+   Evas_Object          *indicator;
 #ifdef HAVE_ELEMENTARY_X
    struct
    {
@@ -116,8 +118,7 @@ struct _Efl_Ui_Win_Data
 
    Efl_Ui_Win_Type                   type;
    Efl_Ui_Win_Keyboard_Mode          kbdmode;
-   Elm_Win_Indicator_Mode         indmode;
-   Elm_Win_Indicator_Opacity_Mode ind_o_mode;
+   Efl_Ui_Win_Indicator_Mode         indimode;
    struct
    {
       const char  *info;
@@ -237,6 +238,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool need_bg_standard : 1;
       Eina_Bool need_menu : 1;
       Eina_Bool need_unresizable : 1;
+      Eina_Bool need_indicator : 1;
       Eina_Bool cur_borderless : 1;
       Eina_Bool cur_shadow : 1;
       Eina_Bool cur_focus : 1;
@@ -245,11 +247,14 @@ struct _Efl_Ui_Win_Data
       Eina_Bool cur_bg_standard : 1;
       Eina_Bool cur_menu : 1;
       Eina_Bool cur_unresizable : 1;
+      Eina_Bool cur_indicator : 1;
       Eina_Bool wayland : 1;
    } csd;
 
    struct {
       Evas_Object *box, *edje;
+      Elm_Win_Indicator_Mode         indmode;
+      Elm_Win_Indicator_Opacity_Mode ind_o_mode;
       Eina_Bool    forbidden : 1; /**< Marks some legacy APIs as not allowed. */
       Eina_Bool    bg_must_swallow : 1; /**< Legacy theme compatibility (elm_bg for standard window) */
       Eina_Bool    bg_must_swallow_init : 1;
@@ -2872,6 +2877,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
    eina_stringshare_del(sd->stack_master_id);
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
+   evas_object_del(sd->indicator);
 
    sd->focus_highlight.style = NULL;
    sd->title = NULL;
@@ -3441,10 +3447,10 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
      }
    ecore_x_e_virtual_keyboard_state_set
      (sd->x.xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
-   if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
+   if (sd->legacy.indmode == ELM_WIN_INDICATOR_SHOW)
      ecore_x_e_illume_indicator_state_set
        (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
-   else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
+   else if (sd->legacy.indmode == ELM_WIN_INDICATOR_HIDE)
      ecore_x_e_illume_indicator_state_set
        (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
 
@@ -3770,7 +3776,7 @@ _elm_win_property_change(void *data,
      {
         if (e->win == sd->x.xwin)
           {
-             sd->indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
+             sd->legacy.indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
              efl_event_callback_legacy_call
                (sd->obj, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL);
           }
@@ -4429,7 +4435,7 @@ static void
 _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc)
 {
    Eina_Bool borderless, maximized, shadow, focus, bg_solid, menu, unresizable,
-         alpha, bg_standard;
+         alpha, bg_standard, indicator;
    Eina_Bool changed = EINA_FALSE;
 
    if (!sd->frame_obj)
@@ -4455,6 +4461,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_borderless = EINA_TRUE;
         sd->csd.need_unresizable = EINA_TRUE;
         sd->csd.need_menu = EINA_FALSE;
+        sd->csd.need_indicator = EINA_FALSE;
      }
    else
      {
@@ -4476,6 +4483,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
+   indicator = sd->csd.need_indicator;
 
    /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
     * At the moment, E Wayland uses SSD for its internal windows. Which means
@@ -4503,6 +4511,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    STATE_SET(bg_standard, "elm,state,background,standard,on", "elm,state,background,standard,off");
    STATE_SET(unresizable, "elm,state,unresizable,on", "elm,state,unresizable,off");
    STATE_SET(menu, "elm,action,show_menu", "elm,action,hide_menu");
+   STATE_SET(indicator, "elm,action,show_indicator", "elm,action,hide_indicator");
 
 #undef STATE_SET
 
@@ -4649,6 +4658,80 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
      sd->csd.need = EINA_FALSE;
    else
      sd->csd.need = sd->csd.wayland;
+}
+
+static void
+_indicator_resized(void *data, const Efl_Event *event)
+{
+   ELM_WIN_DATA_GET_OR_RETURN(data, sd);
+   Evas_Object *indicator = event->object;
+   Evas_Coord_Size *size = (Evas_Coord_Size *)event->info;
+   efl_gfx_size_hint_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
+   _elm_win_frame_obj_update(sd);
+}
+
+static Evas_Object*
+_create_indicator(Evas_Object *obj)
+{
+   Evas_Object *indicator = NULL;
+   const char *indicator_serv_name;
+
+   indicator_serv_name = "elm_indicator_portrait";
+   if (!indicator_serv_name)
+     {
+        ERR("Conformant cannot get portrait indicator service name");
+        return NULL;
+     }
+
+   indicator = elm_plug_add(obj);
+   if (!indicator)
+     {
+        ERR("Conformant cannot create plug to server[%s]", indicator_serv_name);
+        return NULL;
+     }
+
+   if (!elm_plug_connect(indicator, indicator_serv_name, 0, EINA_FALSE))
+     {
+        ERR("Conformant cannot connect to server[%s]", indicator_serv_name);
+        return NULL;
+     }
+
+   return indicator;
+}
+
+static void
+_indicator_add(Efl_Ui_Win_Data *sd)
+{
+   Eo *obj = sd->obj;
+
+   sd->indicator = _create_indicator(obj);
+
+   if ((!sd->indicator) ||
+       (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.indicator", sd->indicator)))
+     return;
+
+   efl_event_callback_add
+     (sd->indicator, ELM_PLUG_EVENT_IMAGE_RESIZED, _indicator_resized, obj);
+
+   efl_canvas_object_is_frame_object_set(sd->indicator, EINA_TRUE);
+   sd->csd.need_indicator = EINA_TRUE;
+
+   _elm_win_frame_style_update(sd, 0, 1);
+}
+
+static void
+_indicator_del(Efl_Ui_Win_Data *sd)
+{
+   Eo *obj = sd->obj;
+
+   efl_event_callback_del
+     (sd->indicator, ELM_PLUG_EVENT_IMAGE_RESIZED, _indicator_resized, obj);
+
+   efl_del(sd->indicator);
+   sd->indicator = NULL;
+
+   sd->csd.need_indicator = EINA_FALSE;
+   _elm_win_frame_style_update(sd, 0, 1);
 }
 
 static Eo *
@@ -5052,7 +5135,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      _shot_init(sd);
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
-   sd->indmode = ELM_WIN_INDICATOR_UNKNOWN;
+   sd->legacy.indmode = ELM_WIN_INDICATOR_UNKNOWN;
+   sd->indimode = EFL_UI_WIN_INDICATOR_OFF;
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -5309,6 +5393,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
            default: break;
           }
         _elm_win_frame_add(sd, element, style);
+
+        if (sd->indimode != EFL_UI_WIN_INDICATOR_OFF)
+          _indicator_add(sd);
 
         if (_elm_config->focus_highlight_enable)
           elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
@@ -6355,32 +6442,37 @@ _efl_ui_win_keyboard_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_indicator_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)
+_efl_ui_win_indicator_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Indicator_Mode mode)
 {
-   //TODO: this mode will be implemented after removing the conformant.
-   return;
+   sd->legacy.forbidden = EINA_TRUE;
+   if (sd->indimode == mode) return;
+   sd->indimode = mode;
+
+   if (sd->indimode == EFL_UI_WIN_INDICATOR_OFF)
+     {
+        _indicator_del(sd);
+        return;
+     }
+
+   if (!sd->indicator) _indicator_add(sd);
+
+   if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
+     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_opaque", "elm");
+   else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
+     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_transparent", "elm");
+   else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
+     edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,hidden", "elm");
+
+   edje_object_message_signal_process(sd->frame_obj);
+   evas_object_smart_calculate(sd->frame_obj);
+   _elm_win_frame_obj_update(sd);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_indicator_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+EOLIAN static Efl_Ui_Win_Indicator_Mode
+_efl_ui_win_indicator_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
-   //TODO: this mode will be implemented after removing the conformant.
-   return EINA_FALSE;
-}
-
-EOLIAN static void
-_efl_ui_win_indicator_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED, Efl_Ui_Win_Indicator_Type type EINA_UNUSED)
-{
-   //TODO: this mode will be implemented after removing the conformant.
-   return;
-}
-
-EOLIAN static Efl_Ui_Win_Indicator_Type
-_efl_ui_win_indicator_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
-{
-   //TODO: this mode will be implemented after removing the conformant.
-
-   return EFL_UI_WIN_INDICATOR_TYPE_UNKNOWN;
+   sd->legacy.forbidden = EINA_TRUE;
+   return sd->indimode;
 }
 
 EOLIAN static Eina_Bool
@@ -7523,19 +7615,25 @@ elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return;
+   if (sd->legacy.forbidden)
+     {
+        CRI("Use of this API is forbidden after calling an EO API on this "
+            "window. Fix your code!");
+        return;
+     }
 
-   if (mode == sd->indmode) return;
+   if (mode == sd->legacy.indmode) return;
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
 #endif
-   sd->indmode = mode;
+   sd->legacy.indmode = mode;
 #ifdef HAVE_ELEMENTARY_X
    if (sd->x.xwin)
      {
-        if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
+        if (sd->legacy.indmode == ELM_WIN_INDICATOR_SHOW)
           ecore_x_e_illume_indicator_state_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
-        else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
+        else if (sd->legacy.indmode == ELM_WIN_INDICATOR_HIDE)
           ecore_x_e_illume_indicator_state_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
      }
@@ -7549,8 +7647,14 @@ elm_win_indicator_mode_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return ELM_WIN_INDICATOR_UNKNOWN;
+   if (sd->legacy.forbidden)
+     {
+        CRI("Use of this API is forbidden after calling an EO API on this "
+            "window. Fix your code!");
+        return ELM_WIN_INDICATOR_UNKNOWN;
+     }
 
-   return sd->indmode;
+   return sd->legacy.indmode;
 }
 
 EAPI void
@@ -7558,20 +7662,26 @@ elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode m
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return;
+   if (sd->legacy.forbidden)
+     {
+        CRI("Use of this API is forbidden after calling an EO API on this "
+            "window. Fix your code!");
+        return;
+     }
 
-   if (mode == sd->ind_o_mode) return;
-   sd->ind_o_mode = mode;
+   if (mode == sd->legacy.ind_o_mode) return;
+   sd->legacy.ind_o_mode = mode;
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
-        if (sd->ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
+        if (sd->legacy.ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
           ecore_x_e_illume_indicator_opacity_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
-        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
+        else if (sd->legacy.ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
           ecore_x_e_illume_indicator_opacity_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
-        else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
+        else if (sd->legacy.ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
           ecore_x_e_illume_indicator_opacity_set
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
      }
@@ -7585,8 +7695,14 @@ elm_win_indicator_opacity_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
+   if (sd->legacy.forbidden)
+     {
+        CRI("Use of this API is forbidden after calling an EO API on this "
+            "window. Fix your code!");
+        return ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
+     }
 
-   return sd->ind_o_mode;
+   return sd->legacy.ind_o_mode;
 }
 
 EAPI void

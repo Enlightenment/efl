@@ -46,7 +46,7 @@ group { name: "elm/border/base/default";
          desc {
             rel1.to: "elm.swallow.menu";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bottom_clip";
+            rel2.to: "elm.swallow.keyboard";
             rel2.relative: 1.0 0.0;
          }
       }
@@ -71,7 +71,9 @@ group { name: "elm/border/base/default";
       rect { "bg_clip";
          nomouse;
          desc { "default";
-            rel.to: "elm.spacer.content";
+            rel1.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "bottom_clip";
          }
       }
       rect { "elm.rect.background";
@@ -108,6 +110,17 @@ group { name: "elm/border/base/default";
             visible: 1;
          }
       }
+      spacer { "indicator_spacer";
+         desc { "default";
+            rel.to: "elm.swallow.indicator";
+         }
+         desc { "hidden";
+            rel.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+      }
 
       /* main menu */
       rect { "menu_bg";
@@ -120,7 +133,7 @@ group { name: "elm/border/base/default";
       swallow { "elm.swallow.menu";
          required: 1; // since 1.19
          desc { "default";
-            rel.to: "top_clip";
+            rel.to: "indicator_spacer";
             rel1.relative: 0.0 1.0;
             visible: 0;
             align: 0.5 0.0;
@@ -137,7 +150,7 @@ group { name: "elm/border/base/default";
          desc { "default";
             rel1.to: "elm.swallow.menu";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bottom_clip";
+            rel2.to: "elm.swallow.keyboard";
             rel2.relative: 1.0 0.0;
          }
       }
@@ -573,6 +586,14 @@ group { name: "elm/border/base/default";
          desc { "hidden"; inherit: "default"; hid; }
       }
       /* bottom border - spacer and clipper */
+      swallow { "elm.swallow.keyboard";
+         desc { "default";
+           rel.to: "bottom_clip";
+           rel2.relative: 1.0 0.0;
+           align: 0.0 1.0;
+           fixed: 0 1;
+         }
+      }
       rect { "bottom_clip";
          desc { "default";
             rel.to: "shadow_spacer";
@@ -662,6 +683,34 @@ group { name: "elm/border/base/default";
             FIXED_SIZE(69, 5)
          }
       }
+      rect { "indicator_bg";
+         clip: "bg_clip";
+         desc { "default";
+            color: 148 23 45 255;
+            rel.to: "elm.swallow.indicator";
+         }
+         desc { "bg_transparent";
+            inherit: "default";
+            color: 0 0 0 0;
+         }
+      }
+      swallow { "elm.swallow.indicator";
+         clip: "bg_clip";
+         desc { "default";
+            rel.to: "top_clip";
+            rel1.relative: 0.0 1.0;
+            visible: 0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+         }
+         desc { "visible"; inherit: "default";
+            visible: 1;
+            fixed: 0 1;
+         }
+         desc { "hidden"; inherit: "visible";
+            align: 0.5 1.0;
+         }
+      }
    }
 
 #define BORDERLESS  1
@@ -670,9 +719,16 @@ group { name: "elm/border/base/default";
 #define SET_MODE(a) script { new m = get_int(border_mode); m |= (a); set_int(border_mode, m); eval_mode(m); }
 #define UNSET_MODE(a) script { new m = get_int(border_mode); m &= ~(a); set_int(border_mode, m); eval_mode(m); }
 
+#define INDICATOR_TYPE_UNKNOWN 0
+#define INDICATOR_TYPE_BG_OPAQUE 1
+#define INDICATOR_TYPE_BG_TRANSPARENT 2
+#define INDICATOR_TYPE_HIDDEN 3
+
    programs {
       script {
          public border_mode;
+         public indicator_type = 0;
+         public indicator_enabled = 0;
          public eval_mode(m) {
             if (m & (BORDERLESS | MAXIMIZED | UNRESIZABLE)) {
                set_state(PART:"bottom_clip", "hidden", 0.0);
@@ -830,6 +886,78 @@ group { name: "elm/border/base/default";
       program {
          signal: "elm,state,unmaximize*"; source: "elm";
          UNSET_MODE(MAXIMIZED);
+      }
+
+      /*indicator*/
+      program {
+         signal: "elm,action,show_indicator"; source: "elm";
+         script {
+            set_int(indicator_enabled, 1);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "elm,action,hide_indicator"; source: "elm";
+         script {
+            set_int(indicator_enabled, 0);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "elm,action,indicator,bg_opaque"; source: "elm";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_BG_OPAQUE);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "elm,action,indicator,bg_transparent"; source: "elm";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_BG_TRANSPARENT);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "elm,action,indicator,hidden"; source: "elm";
+         script {
+            set_int(indicator_type, INDICATOR_TYPE_HIDDEN);
+         }
+         after: "update_indicator";
+      }
+      program {
+         signal: "elm,action,indicator,show_effect"; source: "elm";
+         action: STATE_SET "visible";
+         transition: DECELERATE 0.2;
+         target: "elm.swallow.indicator";
+      }
+      program {
+         signal: "elm,action,indicator,hide_effect"; source: "elm";
+         action: STATE_SET "hidden";
+         transition: DECELERATE 0.2;
+         target: "elm.swallow.indicator";
+      }
+      program { name: "update_indicator";
+         script {
+            if (get_int(indicator_enabled)) {
+              if ((get_int(indicator_type) == INDICATOR_TYPE_BG_OPAQUE) ||
+                  (get_int(indicator_type) == INDICATOR_TYPE_UNKNOWN)) {
+                set_state(PART:"elm.swallow.indicator", "visible", 0.0);
+                set_state(PART:"indicator_spacer", "default", 0.0);
+                set_state(PART:"indicator_bg", "default", 0.0);
+              } else if (get_int(indicator_type) == INDICATOR_TYPE_BG_TRANSPARENT) {
+                set_state(PART:"elm.swallow.indicator", "visible", 0.0);
+                set_state(PART:"indicator_spacer", "default", 0.0);
+                set_state(PART:"indicator_bg", "bg_transparent", 0.0);
+              } else if (get_int(indicator_type) == INDICATOR_TYPE_HIDDEN) {
+                set_state(PART:"elm.swallow.indicator", "hidden", 0.0);
+                set_state(PART:"indicator_spacer", "hidden", 0.0);
+                set_state(PART:"indicator_bg", "default", 0.0);
+              }
+            } else {
+             set_state(PART:"elm.swallow.indicator", "default", 0.0);
+             set_state(PART:"indicator_spacer", "default", 0.0);
+            }
+         }
       }
 
       /* application desktop menu */

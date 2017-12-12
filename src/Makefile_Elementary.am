@@ -933,6 +933,7 @@ bin/elementary/test_win_dialog.c \
 bin/elementary/test_win_modal.c \
 bin/elementary/test_efl_ui_text.c \
 bin/elementary/test_win_stack.c \
+bin/elementary/test_win_indicator.c \
 bin/elementary/test_gesture_framework.c \
 bin/elementary/test.h
 

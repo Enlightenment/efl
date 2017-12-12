@@ -73,12 +73,12 @@ enum Efl.Ui.Win.Keyboard_Mode
    j2me [[J2ME keyboard layout]]
 }
 
-enum Efl.Ui.Win.Indicator_Type
+enum Efl.Ui.Win.Indicator_Mode
 {
    [[Defines the type indicator that can be shown]]
    legacy: efl_ui_win_indicator;
 
-   type_unknown, [[Unknown indicator type]]
+   off, [[Request to deactivate the indicator]]
    bg_opaque, [[The icon of indicator is opaque, the background of indicator is also opaque.
                 The content of window is located the end of indicator.
                 The area of indicator and window content are not overlapped]]
@@ -168,8 +168,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
    eo_prefix: efl_ui_win;
    event_prefix: efl_ui_win;
    methods {
-      @property indicator_enabled {
-         [[In some environments, like phones, you may have an indicator that
+      @property indicator_mode {
+           [[In some environments, like phones, you may have an indicator that
            shows battery status, reception, time etc. This is the indicator.
 
            Sometimes you don't want it because you provide the same functionality
@@ -187,23 +187,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             legacy: null;
          }
          values {
-            enabled: bool; [[If $true, the indicator is enabled,
-                             If $false, the indicator is disabled.]]
-         }
-      }
-      @property indicator_type {
-         [[The indicator type of the window.
-
-           @since 1.18
-         ]]
-         set {
-            legacy: null;
-         }
-         get {
-            legacy: null;
-         }
-         values {
-            type: Efl.Ui.Win.Indicator_Type; [[The type, one of #Efl_Ui_Win_Indicator_Type.]]
+            type: Efl.Ui.Win.Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
          }
       }
       @property keyboard_mode {

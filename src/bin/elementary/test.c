@@ -307,6 +307,8 @@ void test_dnd_multi_features(void *data, Evas_Object *obj, void *event_info);
 void test_dnd_types(void *data, Evas_Object *obj, void *event_info);
 void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
+void test_win_indicator(void *data, Evas_Object *obj, void *event_info);
+void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
@@ -748,6 +750,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Keygrab Set", test_win_keygrab);
    ADD_TEST(NULL, "Window / Background", "Window Modal", test_win_modal);
    ADD_TEST(NULL, "Window / Background", "Window Stack", test_win_stack);
+   ADD_TEST(NULL, "Window / Background", "Window Indicator", test_win_indicator);
    ADD_TEST_EO(NULL, "Window / Background", "Efl.Ui.Win (Bg part)", test_bg_window);
    ADD_TEST_EO(NULL, "Window / Background", "Efl.Ui.Bg", test_bg_scale_type);
 
