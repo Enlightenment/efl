@@ -110,6 +110,7 @@ void test_scaling(void *data, Evas_Object *obj, void *event_info);
 void test_scaling2(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
 void test_slider_interval(void *data, Evas_Object *obj, void *event_info);
+void test_ui_slider(void *data, Evas_Object *obj, void *event_info);
 void test_actionslider(void *data, Evas_Object *obj, void *event_info);
 void test_genlist(void *data, Evas_Object *obj, void *event_info);
 void test_genlist2(void *data, Evas_Object *obj, void *event_info);
@@ -1035,6 +1036,7 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider", test_ui_slider);
 
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);
