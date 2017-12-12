@@ -38,7 +38,9 @@ typedef struct _Border Border;
 typedef struct _Node Node;
 
 struct _Border {
-  Eina_List *partners;
+  Eina_List *partners; //partners that are linked in both directions
+  Eina_List *one_direction; //partners that are linked in one direction
+  Eina_List *cleanup_nodes; //a list of nodes that needs to be cleaned up when this node is deleted
 };
 
 typedef enum {
@@ -138,6 +140,49 @@ border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *lis
      }
 }
 
+static void
+border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list)
+{
+   Node *partner;
+   Eina_List *lnode;
+   Border *border;
+
+   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
+
+   border = &DIRECTION_ACCESS(node, direction);
+
+   EINA_LIST_FREE(border->one_direction, partner)
+     {
+        Border *b = &DIRECTION_ACCESS(partner, _complement(direction));
+        b->cleanup_nodes = eina_list_remove(b->cleanup_nodes, node);
+     }
+
+   border->one_direction = list;
+
+   EINA_LIST_FOREACH(border->one_direction, lnode, partner)
+     {
+        Border *comp_border = &DIRECTION_ACCESS(partner,_complement(direction));
+
+        comp_border->cleanup_nodes = eina_list_append(comp_border->cleanup_nodes, node);
+     }
+}
+
+static void
+border_onedirection_cleanup(Node *node, Efl_Ui_Focus_Direction direction)
+{
+   Node *partner;
+   Border *border;
+
+   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
+
+   border = &DIRECTION_ACCESS(node, direction);
+
+   EINA_LIST_FREE(border->cleanup_nodes, partner)
+     {
+        Border *b = &DIRECTION_ACCESS(partner, _complement(direction));
+        b->one_direction = eina_list_remove(b->one_direction, node);
+     }
+}
 /**
  * Create a new node
  */
@@ -185,6 +230,8 @@ node_item_free(Node *item)
    for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
         border_partners_set(item, i, NULL);
+        border_onedirection_cleanup(item, i);
+        border_onedirection_set(item, i, NULL);
      }
 
    //free the tree items
@@ -514,7 +561,7 @@ _debug_node(Node *node)
 #endif
 
 static void
-convert_border_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir)
+convert_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir, void (*converter)(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list))
 {
    Eina_List *partners = NULL;
    Efl_Ui_Focus_Object *fobj;
@@ -532,7 +579,7 @@ convert_border_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd
         partners = eina_list_append(partners, entry);
      }
 
-   border_partners_set(node, dir, partners);
+   converter(node, dir, partners);
 }
 
 static void
@@ -544,10 +591,11 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
    _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
    _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
 
-   convert_border_set(obj, pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT);
-   convert_border_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
-   convert_border_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
-   convert_border_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+   convert_set(obj, pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT, border_partners_set);
+   convert_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT, border_partners_set);
+   convert_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP, border_partners_set);
+   convert_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN, border_partners_set);
+
 
    /*
     * Stage 2: if there is still no relation in a special direction,
@@ -559,20 +607,9 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
         if (!DIRECTION_ACCESS(node, i).partners)
           {
              Eina_List *tmp = NULL;
-             Efl_Ui_Focus_Object *focusable;
 
              _calculate_node_indirection(pd, node->focusable, i, &tmp);
-
-             EINA_LIST_FREE(tmp, focusable)
-               {
-                  Border *b;
-                  Node *n;
-
-                  b = &DIRECTION_ACCESS(node, i);
-                  n = node_get(obj, pd, focusable);
-                  b->partners = eina_list_append(b->partners, n);
-               }
-
+             convert_set(obj, pd, node, tmp, i, border_onedirection_set);
           }
      }
 
@@ -1176,8 +1213,14 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
 {
    Node *candidate;
    Eina_List *node_list;
+   Eina_List *lst;
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_IS_2D(direction), NULL);
+
+   //decide which direction we take
+   lst = DIRECTION_ACCESS(upper, direction).partners;
+   if (!lst)
+     lst = DIRECTION_ACCESS(upper, direction).one_direction;
 
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
@@ -1185,7 +1228,7 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
         //we only calculate partners for normal nodes
         if (candidate->type == NODE_TYPE_NORMAL) continue;
 
-        if (eina_list_data_find(DIRECTION_ACCESS(upper, direction).partners, candidate))
+        if (eina_list_data_find(lst, candidate))
           {
              //this is the next accessible part
              return candidate;
@@ -1194,12 +1237,10 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
 
    //if we haven't found anything in the history, use the widget with the smallest distance
    {
-      Eina_List *lst = DIRECTION_ACCESS(upper, direction).partners;
       Eina_List *n;
       Node *node, *min = NULL;
       Eina_Vector2 elem, other;
       float min_distance = 0.0;
-
 
       _get_middle(upper->focusable, &elem);
 
@@ -1679,12 +1720,15 @@ _efl_ui_focus_manager_calc_efl_object_finalize(Eo *obj, Efl_Ui_Focus_Manager_Cal
 }
 
 static Eina_List*
-_convert(Eina_List *node_list)
+_convert(Border b)
 {
    Eina_List *n, *par = NULL;
    Node *node;
 
-   EINA_LIST_FOREACH(node_list, n, node)
+   EINA_LIST_FOREACH(b.partners, n, node)
+     par = eina_list_append(par, node->focusable);
+
+   EINA_LIST_FOREACH(b.one_direction, n, node)
      par = eina_list_append(par, node->focusable);
 
    return par;
@@ -1721,7 +1765,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
      efl_ui_focus_object_prepare_logical(n->tree.parent->focusable);
    efl_ui_focus_object_prepare_logical(n->focusable);
 
-#define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir).partners);
+#define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir));
 
    res->right = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_RIGHT);
    res->left = DIR_CLONE(EFL_UI_FOCUS_DIRECTION_LEFT);
