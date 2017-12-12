@@ -284,6 +284,6 @@ mixin Efl.Gfx.Path
       }
    }
    events {
-      changed; [[Graphics path was changed.]]
+      changed: Efl.Gfx.Path.Change_Event; [[Graphics path was changed.]]
    }
 }

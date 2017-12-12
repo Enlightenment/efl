@@ -76,11 +76,17 @@ struct _Ector_Renderer_Cairo_Shape_Data
 };
 
 static void
-_ector_renderer_cairo_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
+_ector_renderer_cairo_shape_path_changed(void *data, const Efl_Event *event)
 {
    Ector_Renderer_Cairo_Shape_Data *pd = data;
+   Efl_Gfx_Path_Change_Event *ev = event->info;
 
-   if (pd->path) cairo_path_destroy(pd->path);
+   if (!pd->path) return;
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
+
+   cairo_path_destroy(pd->path);
    pd->path = NULL;
 }
 

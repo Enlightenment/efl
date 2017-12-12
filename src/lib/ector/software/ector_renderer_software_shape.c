@@ -746,6 +746,11 @@ static void
 _ector_renderer_software_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ector_Renderer_Software_Shape_Data *pd = data;
+   Efl_Gfx_Path_Change_Event *ev = event->info;
+
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
 
    if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
    if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);

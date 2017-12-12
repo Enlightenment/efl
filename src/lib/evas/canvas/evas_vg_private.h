@@ -127,7 +127,8 @@ _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 static inline void
 _efl_vg_changed(Eo *obj)
 {
-   efl_event_callback_legacy_call(obj, EFL_GFX_EVENT_CHANGED, NULL);
+   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_FILL };
+   efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 static inline void *

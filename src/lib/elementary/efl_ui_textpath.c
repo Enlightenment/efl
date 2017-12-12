@@ -438,9 +438,14 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_path_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_path_changed_cb(void *data, const Efl_Event *event)
 {
+   Efl_Gfx_Path_Change_Event *ev = event->info;
    EFL_UI_TEXTPATH_DATA_GET(data, sd);
+
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
 
    _path_data_get(data, sd, EINA_TRUE);
    _sizing_eval(sd);

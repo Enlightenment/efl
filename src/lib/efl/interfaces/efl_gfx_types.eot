@@ -146,13 +146,18 @@ enum Efl.Gfx.Border_Fill_Mode
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
 }
 
-enum Efl.Gfx.Change.Flag
+enum Efl.Gfx.Change_Flag
 {
    [[What property got changed for this object @since 1.18]]
    none    = 0x0, [[No change]]
    matrix  = 0x1, [[matrix got changed]]
    path    = 0x2, [[path got changes]]
-   all     = -1   [[all property got changed]]
+   fill    = 0x4, [[coloring or fill information changed, not geometry]]
+   all     = 0xffff [[all properties got changed]]
+}
+
+struct Efl.Gfx.Path.Change_Event {
+   what: Efl.Gfx.Change_Flag; [[Indicates what changed.]]
 }
 
 struct Efl.Gfx.Event.Render_Post

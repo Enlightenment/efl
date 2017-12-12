@@ -146,6 +146,5 @@ interface Efl.Gfx {
       hide; [[Object just became invisible.]]
       move; [[Object was moved, its position during the event is the new one.]]
       resize; [[Object was resized, its size during the event is the new one.]]
-      changed; [[Object was changed]]
    }
 }

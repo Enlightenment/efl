@@ -343,7 +343,7 @@ _efl_canvas_vg_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Data *pd)
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
-   efl_event_callback_add(pd->root, EFL_GFX_EVENT_CHANGED, _evas_vg_tree_changed, obj);
+   efl_event_callback_add(pd->root, EFL_GFX_PATH_EVENT_CHANGED, _evas_vg_tree_changed, obj);
 
    return eo_obj;
 }

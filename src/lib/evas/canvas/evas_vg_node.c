@@ -17,7 +17,7 @@ static const Efl_VG_Interpolation interpolation_identity = {
 };
 
 static void
-_efl_vg_property_changed(void *data, const Efl_Event *event)
+_efl_vg_property_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_VG_Data *pd = data;
    Eo *parent;
@@ -25,7 +25,7 @@ _efl_vg_property_changed(void *data, const Efl_Event *event)
    if (!pd->flags) pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
    parent = efl_parent_get(event->object);
-   efl_event_callback_legacy_call(parent, event->desc, event->info);
+   efl_event_callback_call(parent, event->desc, event->info);
 }
 
 static void
@@ -252,7 +252,7 @@ _efl_vg_efl_object_constructor(Eo *obj,
         return NULL;
    }
 
-   efl_event_callback_add(obj, EFL_GFX_EVENT_CHANGED, _efl_vg_property_changed, pd);
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _efl_vg_property_changed, pd);
    pd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    pd->changed = EINA_TRUE;
 

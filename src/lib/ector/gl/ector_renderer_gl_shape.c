@@ -24,6 +24,11 @@ static void
 _ector_renderer_gl_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Ector_Renderer_GL_Shape_Data *pd = data;
+   Efl_Gfx_Path_Change_Event *ev = event->info;
+
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
 
    free(pd->vertex);
    pd->vertex = NULL;
