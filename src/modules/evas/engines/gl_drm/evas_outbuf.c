@@ -54,6 +54,7 @@ _evas_outbuf_release_fb(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status status, void *da
 
    ob = data;
    bo = ecore_drm2_fb_bo_get(fb);
+   if ((!ob->surface) || (!bo)) return;
    gbm_surface_release_buffer(ob->surface, bo);
 }
 
