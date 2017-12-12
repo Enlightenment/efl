@@ -1412,14 +1412,6 @@ build_property = function(impl, cl)
         end
     end
 
-    local pgkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}
-    local pskeys = isset and fn:property_keys_get(fn.PROP_SET) or {}
-    build_vallist(f, pgkeys, pskeys, "Keys")
-
-    local pgvals = isget and fn:property_values_get(fn.PROP_GET) or {}
-    local psvals = isset and fn:property_values_get(fn.PROP_SET) or {}
-    build_vallist(f, pgvals, psvals, "Values")
-
     if isget and isset then
         f:write_h("Description", 2)
         if doc:exists() or (not gdoc:exists() and not sdoc:exists()) then
@@ -1432,6 +1424,14 @@ build_property = function(impl, cl)
         f:write_editable(pns, "description")
         f:write_nl()
     end
+
+    local pgkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}
+    local pskeys = isset and fn:property_keys_get(fn.PROP_SET) or {}
+    build_vallist(f, pgkeys, pskeys, "Keys")
+
+    local pgvals = isget and fn:property_values_get(fn.PROP_GET) or {}
+    local psvals = isset and fn:property_values_get(fn.PROP_SET) or {}
+    build_vallist(f, pgvals, psvals, "Values")
 
     if isget and gdoc:exists() then
         if isset then
