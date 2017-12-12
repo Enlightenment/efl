@@ -87,7 +87,7 @@ EoInherit01.exe.config:
 	echo "  <dllmap dll=\"efl_mono\" target=\"$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll\"/>" >> $@
 	echo "  <runtime>" >> $@
 	echo "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">" >> $@
-	echo "      <probing privatePath=\"/home/felipe/dev/samsung/upstream/efl/build/src/lib/efl_mono\" />" >> $@
+	echo "      <probing privatePath=\"$(abs_top_builddir)/src/lib/efl_mono\" />" >> $@
 	echo "    </assemblyBinding>" >> $@
 	echo "  </runtime>" >> $@
 	echo "</configuration>" >> $@
