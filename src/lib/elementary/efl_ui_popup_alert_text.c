@@ -12,7 +12,7 @@
 #define MY_CLASS EFL_UI_POPUP_ALERT_TEXT_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Popup_Alert_Text"
 
-static const char PART_NAME_TEXT[] = "text";
+//static const char PART_NAME_TEXT[] = "text";
 
 EOLIAN static void
 _efl_ui_popup_alert_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd EINA_UNUSED)
