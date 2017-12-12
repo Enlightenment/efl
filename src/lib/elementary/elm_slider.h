@@ -77,7 +77,7 @@
 #include "elm_slider_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_slider_eo.h"
-#include "efl_ui_slider_part.eo.h"
+#include "efl_ui_slider_part_indicator.eo.h"
 #include <efl_ui_slider_interval.eo.h>
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT

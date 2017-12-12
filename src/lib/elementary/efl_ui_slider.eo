@@ -30,7 +30,8 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
       }
    }
    parts {
-      indicator: Efl.Ui.Slider.Part; [[A floating indicator above the slider.]]
+      indicator: Efl.Ui.Slider.Part_Indicator;
+          [[A floating indicator above the slider.]]
    }
    implements {
       class.constructor;
