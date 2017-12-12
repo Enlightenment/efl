@@ -65,7 +65,7 @@ _efl_ui_focus_layer_efl_ui_focus_user_focus_manager_get(Eo *obj, Efl_Ui_Focus_La
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_layer_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state EINA_UNUSED, Elm_Widget_Focus_State *configured_state EINA_UNUSED, Elm_Widget *redirect EINA_UNUSED)
+_efl_ui_focus_layer_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state EINA_UNUSED, Efl_Ui_Widget_Focus_State *configured_state EINA_UNUSED, Elm_Widget *redirect EINA_UNUSED)
 {
    return EINA_FALSE;
 }

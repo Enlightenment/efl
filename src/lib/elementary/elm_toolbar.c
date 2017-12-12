@@ -2953,7 +2953,7 @@ elm_toolbar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    configured_state->logical = EINA_TRUE;
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);

@@ -6,7 +6,7 @@ function Efl.Ui.Scrollable_On_Show_Region {
    }
 };
 
-struct Elm.Widget.Focus_State {
+struct Efl.Ui.Widget.Focus_State {
    [[All relevant fields needed for the current state of focus registeration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
    parent : Efl.Ui.Focus.User; [[The parent the widget is using as logical parent]]
@@ -549,9 +549,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
            not registered.
          ]]
          params {
-            @in current_state : Elm.Widget.Focus_State;
+            @in current_state : Efl.Ui.Widget.Focus_State;
                [[The focus manager to register with.]]
-            @inout configured_state : Elm.Widget.Focus_State;
+            @inout configured_state : Efl.Ui.Widget.Focus_State;
                [[The evalulated Focus state that should be used.]]
             @in redirect : Elm.Widget;
                [[A redirect that will be set by the elm.widget implementation.]]

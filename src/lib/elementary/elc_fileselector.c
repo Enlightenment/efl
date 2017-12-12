@@ -3067,7 +3067,7 @@ _elm_fileselector_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
    Eina_Bool ret = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 

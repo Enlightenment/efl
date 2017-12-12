@@ -8791,7 +8791,7 @@ _elm_genlist_item_efl_ui_focus_object_prepare_logical(Eo *obj, Elm_Gen_Item *pd)
 }
 
 EOLIAN static Eina_Bool 
-_elm_genlist_elm_widget_focus_state_apply(Eo *obj, Elm_Genlist_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_genlist_elm_widget_focus_state_apply(Eo *obj, Elm_Genlist_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }

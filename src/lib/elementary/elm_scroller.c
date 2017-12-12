@@ -1336,7 +1336,7 @@ _elm_scroller_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    //undepended from logical or not we always reigster as full with ourself as redirect
    configured_state->logical = EINA_TRUE;

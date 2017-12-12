@@ -334,7 +334,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_elm_widget_focus_state_apply(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
    Eina_Bool registered = EINA_TRUE;
 
@@ -412,7 +412,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
 static void
 _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Bool want_full)
 {
-   Elm_Widget_Focus_State configuration;
+   Efl_Ui_Widget_Focus_State configuration;
 
    //this would mean we are registering again the root, we dont want that
    if (pd->manager.manager == obj) return;

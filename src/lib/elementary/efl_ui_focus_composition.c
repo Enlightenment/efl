@@ -130,7 +130,7 @@ _efl_ui_focus_composition_composition_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_F
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
 {
    Eina_Bool registered;
 

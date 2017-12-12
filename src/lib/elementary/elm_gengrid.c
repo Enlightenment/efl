@@ -5722,7 +5722,7 @@ _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_elm_gengrid_elm_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNUSED, Elm_Widget_Focus_State current_state, Elm_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_gengrid_elm_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
 {
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
