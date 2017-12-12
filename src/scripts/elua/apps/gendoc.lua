@@ -1063,14 +1063,14 @@ local build_alias = function(tp)
     local f = writer.Writer(ns, fulln)
     printgen("Generating alias: " .. fulln)
 
-    write_tsigs(f, tp, ns)
-
     f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     f:write_editable(ns, "description")
     f:write_nl()
+
+    write_tsigs(f, tp, ns)
 
     f:finish()
 end
@@ -1080,8 +1080,6 @@ local build_struct = function(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating struct: " .. fulln)
-
-    write_tsigs(f, tp, ns)
 
     f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
@@ -1105,6 +1103,8 @@ local build_struct = function(tp)
     f:write_list(arr)
     f:write_nl()
 
+    write_tsigs(f, tp, ns)
+
     f:finish()
 end
 
@@ -1113,8 +1113,6 @@ local build_enum = function(tp)
     local fulln = tp:full_name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating enum: " .. fulln)
-
-    write_tsigs(f, tp, ns)
 
     f:write_h("Description", 2)
     f:write_raw(tp:doc_get():full_get(nil, true))
@@ -1138,6 +1136,8 @@ local build_enum = function(tp)
     f:write_list(arr)
     f:write_nl()
 
+    write_tsigs(f, tp, ns)
+
     f:finish()
 end
 
@@ -1147,14 +1147,14 @@ local build_variable = function(v, constant)
     local f = writer.Writer(ns, fulln)
     printgen("Generating variable: " .. fulln)
 
-    write_tsigs(f, v, ns)
-
     f:write_h("Description", 2)
     f:write_raw(v:doc_get():full_get(nil, true))
     f:write_nl(2)
 
     f:write_editable(ns, "description")
     f:write_nl()
+
+    write_tsigs(f, v, ns)
 
     f:finish()
 end
@@ -1325,12 +1325,19 @@ build_method = function(impl, cl)
     local f = writer.Writer(mns, methn)
     printgen("Generating method: " .. methn)
 
-    write_inherited_from(f, impl, cl, over, false)
-
     local doc = impl:doc_get(fn.METHOD)
     if over and not doc:exists() then
         doc = find_parent_doc(impl:full_name_get(), cl, fn.METHOD)
     end
+
+    f:write_h("Description", 2)
+    f:write_raw(doc:full_get(nil, true))
+    f:write_nl()
+
+    f:write_editable(mns, "description")
+    f:write_nl()
+
+    write_inherited_from(f, impl, cl, over, false)
 
     f:write_h("Signature", 2)
     f:write_code(gen_method_sig(fn, cl))
@@ -1347,13 +1354,6 @@ build_method = function(impl, cl)
         f:write_nl()
     end
 
-    f:write_h("Description", 2)
-    f:write_raw(doc:full_get(nil, true))
-    f:write_nl()
-
-    f:write_editable(mns, "description")
-    f:write_nl()
-
     write_ilist(f, impl, cl)
     f:write_nl()
 
@@ -1367,8 +1367,6 @@ build_property = function(impl, cl)
     local propn = cl:full_name_get() .. "." .. fn:name_get()
     local f = writer.Writer(pns, propn)
     printgen("Generating property: " .. propn)
-
-    write_inherited_from(f, impl, cl, over, true)
 
     local pimp = fn:implement_get()
 
@@ -1390,21 +1388,6 @@ build_property = function(impl, cl)
             sdoc = find_parent_doc(impl:full_name_get(), cl, fn.PROP_SET)
         end
     end
-
-    f:write_h("Signature", 2)
-    f:write_code(gen_prop_sig(fn, cl))
-    f:write_nl()
-
-    f:write_h("C signature", 2)
-    local codes = {}
-    if isget then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET)
-    end
-    if isset then
-        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET)
-    end
-    f:write_code(table.concat(codes, "\n"), "c")
-    f:write_nl()
 
     local pgkeys = isget and fn:property_keys_get(fn.PROP_GET) or {}
     local pskeys = isset and fn:property_keys_get(fn.PROP_SET) or {}
@@ -1461,9 +1444,27 @@ build_property = function(impl, cl)
     f:write_nl()
     if not isget or not isset then
         f:write_nl()
+        f:write_br()
         f:write_editable(pns, "description")
         f:write_nl()
     end
+
+    write_inherited_from(f, impl, cl, over, true)
+
+    f:write_h("Signature", 2)
+    f:write_code(gen_prop_sig(fn, cl))
+    f:write_nl()
+
+    f:write_h("C signature", 2)
+    local codes = {}
+    if isget then
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_GET)
+    end
+    if isset then
+        codes[#codes + 1] = gen_func_csig(fn, fn.PROP_SET)
+    end
+    f:write_code(table.concat(codes, "\n"), "c")
+    f:write_nl()
 
     write_ilist(f, impl, cl)
     f:write_nl()
@@ -1503,6 +1504,13 @@ build_event = function(ev, cl)
     local f = writer.Writer(evn, evnm)
     printgen("Generating event: " .. evnm)
 
+    f:write_h("Description", 2)
+    f:write_raw(ev:doc_get():full_get(nil, true))
+    f:write_nl()
+
+    f:write_editable(evn, "description")
+    f:write_nl()
+
     f:write_h("Signature", 2)
     local buf = { ev:name_get() }
 
@@ -1538,13 +1546,6 @@ build_event = function(ev, cl)
 
     f:write_h("C usage", 2)
     f:write_code(build_event_example(ev), "c")
-    f:write_nl()
-
-    f:write_h("Description", 2)
-    f:write_raw(ev:doc_get():full_get(nil, true))
-    f:write_nl()
-
-    f:write_editable(evn, "description")
     f:write_nl()
 
     f:finish()
