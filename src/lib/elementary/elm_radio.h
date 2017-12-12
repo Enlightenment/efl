@@ -66,6 +66,7 @@
 
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_radio_eo.h"
+#define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_radio_legacy.h"

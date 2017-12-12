@@ -34,6 +34,6 @@ class Efl.Ui.Nstate(Efl.Ui.Button)
       Elm.Widget.widget_event;
    }
    events {
-      state,changed; [[Called when nstate widget changed]]
+      changed; [[Called when the value changed.]]
    }
 }

@@ -32,8 +32,4 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Efl.Access.Widget.Action)
       Efl.Access.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
-   events {
-      changed; [[This is called whenever the user changes the state of the check
-                  objects (event_info is always NULL).]]
-   }
 }
