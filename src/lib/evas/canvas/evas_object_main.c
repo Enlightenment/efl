@@ -2662,7 +2662,7 @@ _efl_canvas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
+_efl_canvas_object_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Position2D pos)
 {
    Eina_Rectangle c;
 
@@ -2679,7 +2679,7 @@ _efl_canvas_object_pointer_coords_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object
         if (obj->clip.clipees) return EINA_FALSE;
         c = obj->cur->geometry;
      }
-   return RECTS_INTERSECT(x, y, 1, 1, c.x, c.y, c.w, c.h);
+   return RECTS_INTERSECT(pos.x, pos.y, 1, 1, c.x, c.y, c.w, c.h);
 }
 
 static void

@@ -551,8 +551,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
             enable: bool; [[Enable "no-render" mode.]]
          }
       }
-      pointer_coords_inside_get {
-         [[Returns whether the coords are logically inside the
+      @property coords_inside {
+         get {
+           [[Returns whether the coords are logically inside the
            object.
 
            When this function is called it will return a value of either
@@ -564,12 +565,14 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
            outside the object.
 
            If $e is not a valid object, the return value is undefined.
-         ]]
-         params {
-            @in x: int; [[The canvas-relative x coordinate.]]
-            @in y: int; [[The canvas-relative y coordinate.]]
+          ]]
          }
-         return: bool @warn_unused; [[$true if the coords are inside the object, $false otherwise]]
+         keys {
+            pos: Eina.Position2D; [[The position in pixels.]]
+         }
+         values {
+            return: bool; [[$true if the coords are inside the object, $false otherwise]]
+         }
       }
       @property event_animation {
          [[Set the $animation which starts when the given $event_name happens to the object.]]
