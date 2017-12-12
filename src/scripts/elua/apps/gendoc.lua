@@ -711,11 +711,6 @@ local build_functable = function(f, tcl, tbl, newm)
 
         local cl, impl = unpack(implt)
         local ocl = impl:class_get()
-        if not newm then
-            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
-            lbuf:write_raw(".")
-        end
-
         local func = impl:function_get()
         local over = impl:is_overridden(cl)
 
@@ -732,11 +727,12 @@ local build_functable = function(f, tcl, tbl, newm)
         end
 
         local wt = {}
-        wt[0] = func
+        wt[0] = cl
+        wt[1] = func
         -- name info
-        wt[1] = lbuf:finish()
+        wt[2] = lbuf:finish()
 
-        if over then
+        if over and newm then
             -- TODO: possibly also mention which part of a property was
             -- overridden and where, get/set override point might differ!
             -- but we get latest doc every time so it's ok for now
@@ -759,7 +755,13 @@ local build_functable = function(f, tcl, tbl, newm)
             else
                 bdoc = doc:brief_get(docf)
             end
-
+            if bdoc ~= "No description supplied." then
+                lbuf:write_br()
+                lbuf:write_nl()
+                lbuf:write_raw("> ")
+                lbuf:write_raw(bdoc)
+            end
+ 
             lbuf:write_nl()
             local codes = {}
             if func:type_get() ~= dtree.Function.PROPERTY then
@@ -769,12 +771,7 @@ local build_functable = function(f, tcl, tbl, newm)
                 codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
             end
             lbuf:write_code(table.concat(codes, "\n"), "c")
-
-            if bdoc ~= "No description supplied." then
-                lbuf:write_nl()
-                lbuf:write_raw(bdoc)
-                lbuf:write_br()
-            end
+            lbuf:write_br()
         end
 
         -- sigs and description
@@ -805,7 +802,7 @@ local build_functable = function(f, tcl, tbl, newm)
         end
     end
     table.sort(nt, function(v1, v2)
-        local f1, f2 = v1[0], v2[0]
+        local f1, f2 = v1[1], v2[1]
         local f1s, f2s = get_best_scope(f1), get_best_scope(f2)
         if f1s ~= f2s then
             if f1s ~= f1.scope.PROTECED then
@@ -816,11 +813,15 @@ local build_functable = function(f, tcl, tbl, newm)
                 return f2s == f2.scope.PRIVATE
             end
         end
-        return v1[1] < v2[1]
+        return v1[2] < v2[2]
     end)
+
+    local prevcl = tcl
+    local wrote = false
     for i, item in ipairs(nt) do
         -- scope
-        local func = item[0]
+        local cl = item[0]
+        local func = item[1]
         local ftt = {
             [func.scope.PROTECTED] = "protected",
             [func.scope.PRIVATE] = "private"
@@ -829,10 +830,28 @@ local build_functable = function(f, tcl, tbl, newm)
             f:write_b(fs)
             f:write_raw(" ")
         end
+
+	-- class grouping for inheritance
+        if cl ~= prevcl then
+            if wrote then
+                f:write_br()
+                f:write_nl()
+            end
+
+            prevcl = cl
+            f:write_link(cl:nspaces_get(true), cl:full_name_get())
+            f:write_br()
+            f:write_nl()
+            f:write_raw("> ")
+            wrote = true
+        elseif not newm then
+            f:write_raw(", ")
+        end
+
         -- name
-        f:write_raw(item[1])
-        -- override
         f:write_raw(item[2])
+        -- override
+        f:write_raw(item[3])
         -- scope
         if func:type_get() == func.PROPERTY then
             local ft1, ft2 = ftt[func:scope_get(func.PROP_GET)],
@@ -859,10 +878,7 @@ local build_functable = function(f, tcl, tbl, newm)
             end
         end
         -- desc
-        f:write_raw(item[3])
-        f:write_nl()
-        f:write_br()
-        f:write_nl()
+        f:write_raw(item[4])
     end
     f:write_nl()
 end
@@ -918,31 +934,28 @@ local build_evtable = function(f, tcl, tbl, newm)
             cl, ev = tcl, evt
         end
 
-        if not newm then
-            lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
-            lbuf:write_raw(".")
-        end
-
         local llbuf = writer.Buffer()
         llbuf:write_link(ev:nspaces_get(cl, true), ev:name_get())
         lbuf:write_b(llbuf:finish())
 
         local wt = {}
-        wt[0] = ev
+        wt[0] = cl
+        wt[1] = ev
         -- name info
-        wt[1] = lbuf:finish()
+        wt[2] = lbuf:finish()
 
         if newm then
-            lbuf:write_nl()
-            lbuf:write_code(build_evcsig(ev), "c");
-
             local bdoc = ev:doc_get():brief_get()
             if bdoc ~= "No description supplied." then
-                lbuf:write_nl()
-                lbuf:write_raw(bdoc)
                 lbuf:write_br()
+                lbuf:write_nl()
+                lbuf:write_raw("> ")
+                lbuf:write_raw(bdoc)
             end
 
+            lbuf:write_nl()
+            lbuf:write_code(build_evcsig(ev), "c");
+            lbuf:write_br()
         end
         -- description
         wt[#wt + 1] = lbuf:finish()
@@ -952,17 +965,36 @@ local build_evtable = function(f, tcl, tbl, newm)
             build_event(ev, cl)
         end
     end
-    table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
+    table.sort(nt, function(v1, v2) return v1[2] < v2[2] end)
     for i = #nt, 1, -1 do
-        if i ~= 1 and nt[i][1] == nt[i - 1][1] then
+        if i ~= 1 and nt[i][2] == nt[i - 1][2] then
             table.remove(nt, i)
         end
     end
+    local prevcl = tcl
+    local wrote = false
     for i, item in ipairs(nt) do
+        local cl = item[0]
+        if cl ~= prevcl then
+            if wrote then
+                f:write_br()
+                f:write_nl()
+            end
+
+            prevcl = cl
+            f:write_link(cl:nspaces_get(true), cl:full_name_get())
+            f:write_br()
+            f:write_nl()
+            f:write_raw("> ")
+            wrote = true
+        elseif not newm then
+            f:write_raw(", ")
+        end
+
         -- name
-        f:write_raw(item[1])
+        f:write_raw(item[2])
         -- scope
-        local ev = item[0]
+        local ev = item[1]
         local ett = {
             [ev.scope.PROTECTED] = "protected",
             [ev.scope.PRIVATE] = "private"
@@ -973,10 +1005,7 @@ local build_evtable = function(f, tcl, tbl, newm)
             f:write_m(ets)
         end
         -- desc
-        f:write_raw(item[2])
-        f:write_nl()
-        f:write_br()
-        f:write_nl()
+        f:write_raw(item[3])
     end
 end
 
