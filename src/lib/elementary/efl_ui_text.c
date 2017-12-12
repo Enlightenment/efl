@@ -240,12 +240,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_ENTRY_SIGNALS
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"icon", "elm.swallow.icon"},
-   {"end", "elm.swallow.end"},
-   {NULL, NULL}
-};
+/* static const Elm_Layout_Part_Alias_Description _content_aliases[] = */
+/* { */
+/*    {"icon", "elm.swallow.icon"}, */
+/*    {"end", "elm.swallow.end"}, */
+/*    {NULL, NULL} */
+/* }; */
 
 static Eina_List *entries = NULL;
 
