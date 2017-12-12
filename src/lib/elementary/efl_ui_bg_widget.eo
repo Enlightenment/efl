@@ -1,4 +1,4 @@
-class Efl.Ui.Bg_Widget (Efl.Ui.Layout, Efl.Ui.Bg)
+class Efl.Ui.Bg_Widget (Efl.Ui.Layout, Efl.Ui.Bg, Efl.Image.Load)
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 
@@ -11,8 +11,9 @@ class Efl.Ui.Bg_Widget (Efl.Ui.Layout, Efl.Ui.Bg)
       class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
-      //Efl.File.mmap { get; set; }
+      Efl.File.mmap { get; set; }
       Efl.Gfx.color { get; set; }
       Efl.Image.scale_type { get; set; }
+      Efl.Image.Load.load_size { get; set; }
    }
 }
