@@ -194,7 +194,7 @@ interface Efl.Canvas ()
          }
       }
       /* FIXME: maybe not necessary if gesture supports this */
-      pointer_iterate @const {
+      pointer_iterate @const @beta {
          [[Returns an iterator over the current known pointer positions.
 
            This is used to iterate over the current known multi-touch positions,

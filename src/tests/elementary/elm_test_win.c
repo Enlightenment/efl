@@ -5,6 +5,8 @@
 #define EFL_ACCESS_BETA
 #define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
+#define EFL_CANVAS_BETA
+
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
 # include <Ecore_X.h>

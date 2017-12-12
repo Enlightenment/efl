@@ -13,6 +13,7 @@
 #define EFL_UI_WIN_INLINED_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
+#define EFL_CANVAS_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
