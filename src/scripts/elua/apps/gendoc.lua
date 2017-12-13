@@ -654,81 +654,16 @@ local build_functable = function(f, tcl, tbl, newm)
         local lbuf = writer.Buffer()
 
         local cl, impl = unpack(implt)
-        local ocl = impl:class_get()
         local func = impl:function_get()
-        local over = impl:is_overridden(cl)
-
-        local llbuf = writer.Buffer()
-        llbuf:write_link(func:nspaces_get(cl, true), func:name_get())
-        lbuf:write_b(llbuf:finish())
-
-        local pt = propt_to_type[func:type_get()]
-        if pt then
-            lbuf:write_raw(" ")
-            local llbuf = writer.Buffer()
-            llbuf:write_b(pt)
-            lbuf:write_i(llbuf:finish())
-        end
 
         local wt = {}
         wt[0] = cl
         wt[1] = func
-        -- name info
-        wt[2] = lbuf:finish()
+        wt[2] = impl
 
-        if over and newm then
-            -- TODO: possibly also mention which part of a property was
-            -- overridden and where, get/set override point might differ!
-            -- but we get latest doc every time so it's ok for now
-            local llbuf = writer.Buffer()
-            llbuf:write_raw(" [Overridden from ")
-            llbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
-            llbuf:write_raw("]")
-            lbuf:write_i(llbuf:finish())
-        end
-
-        -- overridde info (or empty)
-        wt[#wt + 1] = lbuf:finish()
-
-        if newm then
-            local doc = impl:doc_get(func.METHOD, true)
-            local docf = impl:fallback_doc_get(true)
-            local bdoc
-            if over and (not doc:exists() and (not docf or not docf:exists())) then
-                bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
-            else
-                bdoc = doc:brief_get(docf)
-            end
-            if bdoc ~= "No description supplied." then
-                lbuf:write_br(true)
-                lbuf:write_raw("> ")
-                lbuf:write_raw(bdoc)
-            end
- 
-            lbuf:write_nl()
-            local codes = {}
-            if func:type_get() ~= dtree.Function.PROPERTY then
-                codes[#codes + 1] = gen_func_csig(func, func:type_get())
-            else
-                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
-                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
-            end
-            lbuf:write_code(table.concat(codes, "\n"), "c")
-            lbuf:write_br(true)
-        end
-
-        -- sigs and description
-        wt[#wt + 1] = lbuf:finish()
         nt[#nt + 1] = wt
-
-        if cl == tcl then
-            if impl:is_prop_get() or impl:is_prop_set() then
-                build_property(impl, cl)
-            else
-                build_method(impl, cl)
-            end
-        end
     end
+
     local get_best_scope = function(f)
         local ft = f:type_get()
         if ft == f.PROPERTY then
@@ -745,6 +680,11 @@ local build_functable = function(f, tcl, tbl, newm)
         end
     end
     table.sort(nt, function(v1, v2)
+        local cl1, cl2 = v1[0], v2[0]
+        if cl1 ~= cl2 then
+            return cl1:full_name_get() < cl2:full_name_get()
+        end
+
         local f1, f2 = v1[1], v2[1]
         local f1s, f2s = get_best_scope(f1), get_best_scope(f2)
         if f1s ~= f2s then
@@ -756,23 +696,19 @@ local build_functable = function(f, tcl, tbl, newm)
                 return f2s == f2.scope.PRIVATE
             end
         end
-        return v1[2] < v2[2]
+        return f1:name_get() < f2:name_get()
     end)
 
     local prevcl = tcl
     local wrote = false
-    for i, item in ipairs(nt) do
-        -- scope
-        local cl = item[0]
-        local func = item[1]
-        local ftt = {
-            [func.scope.PROTECTED] = "protected",
-            [func.scope.PRIVATE] = "private"
-        }
-        if fs then
-            f:write_b(fs)
-            f:write_raw(" ")
-        end
+    for i, wt in ipairs(nt) do
+        local cl = wt[0]
+        local func = wt[1]
+        local impl = wt[2]
+
+        local ocl = impl:class_get()
+        local func = impl:function_get()
+        local over = impl:is_overridden(cl)
 
 	-- class grouping for inheritance
         if cl ~= prevcl then
@@ -789,11 +725,23 @@ local build_functable = function(f, tcl, tbl, newm)
             f:write_raw(", ")
         end
 
-        -- name
-        f:write_raw(item[2])
-        -- override
-        f:write_raw(item[3])
+
+        local llbuf = writer.Buffer()
+        llbuf:write_link(func:nspaces_get(cl, true), func:name_get())
+        f:write_b(llbuf:finish())
+
+        local pt = propt_to_type[func:type_get()]
+        if pt then
+            f:write_raw(" ")
+            local llbuf = writer.Buffer()
+            llbuf:write_b(pt)
+            f:write_i(llbuf:finish())
+        end
         -- scope
+        local ftt = {
+            [func.scope.PROTECTED] = "protected",
+            [func.scope.PRIVATE] = "private"
+        }
         if func:type_get() == func.PROPERTY then
             local ft1, ft2 = ftt[func:scope_get(func.PROP_GET)],
                              ftt[func:scope_get(func.PROP_SET)]
@@ -818,8 +766,52 @@ local build_functable = function(f, tcl, tbl, newm)
                 f:write_m(ft)
             end
         end
-        -- desc
-        f:write_raw(item[4])
+ 
+        if over and newm then
+            -- TODO: possibly also mention which part of a property was
+            -- overridden and where, get/set override point might differ!
+            -- but we get latest doc every time so it's ok for now
+            local llbuf = writer.Buffer()
+            llbuf:write_raw(" [Overridden from ")
+            llbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
+            llbuf:write_raw("]")
+            f:write_i(llbuf:finish())
+        end
+
+        if newm then
+            local doc = impl:doc_get(func.METHOD, true)
+            local docf = impl:fallback_doc_get(true)
+            local bdoc
+            if over and (not doc:exists() and (not docf or not docf:exists())) then
+                bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
+            else
+                bdoc = doc:brief_get(docf)
+            end
+            if bdoc ~= "No description supplied." then
+                f:write_br(true)
+                f:write_raw("> ")
+                f:write_raw(bdoc)
+            end
+ 
+            f:write_nl()
+            local codes = {}
+            if func:type_get() ~= dtree.Function.PROPERTY then
+                codes[#codes + 1] = gen_func_csig(func, func:type_get())
+            else
+                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_GET)
+                codes[#codes + 1] = gen_func_csig(func, dtree.Function.PROP_SET)
+            end
+            f:write_code(table.concat(codes, "\n"), "c")
+            f:write_br(true)
+        end
+
+        if cl == tcl then
+            if impl:is_prop_get() or impl:is_prop_set() then
+                build_property(impl, cl)
+            else
+                build_method(impl, cl)
+            end
+        end
     end
     f:write_nl()
 end
