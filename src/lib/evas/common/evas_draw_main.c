@@ -107,19 +107,17 @@ _evas_common_draw_context_stash(RGBA_Draw_Context *dc)
 static RGBA_Draw_Context *
 _evas_common_draw_context_find(void)
 {
-   RGBA_Draw_Context *dc;
+   RGBA_Draw_Context *dc = NULL;
 
-   if (!_ctxt_spares)
-     {
-        dc = malloc(sizeof(RGBA_Draw_Context));
-     }
-   else
+   if (_ctxt_spares)
      {
         SLKL(_ctx_spares_lock);
         dc = eina_trash_pop(&_ctxt_spares);
         _ctxt_spares_count--;
         SLKU(_ctx_spares_lock);
      }
+
+   if (!dc) dc = malloc(sizeof(RGBA_Draw_Context));
 
    return dc;
 }
