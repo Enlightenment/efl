@@ -337,6 +337,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
    int cursor_pos;
    int start, end;
+   char *tmp;
 
    cursor_pos = evas_textblock_cursor_pos_get(cur);
 
@@ -350,11 +351,12 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    end = evas_textblock_cursor_pos_get(del_end);
    if (start == end) goto end;
 
+   tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
+
    info.insert = EINA_FALSE;
    info.position = start;
    info.length = end - start;
-
-   char *tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
+   info.content = tmp;
 
    efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
 
