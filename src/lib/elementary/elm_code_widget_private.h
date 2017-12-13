@@ -59,10 +59,6 @@ void _elm_code_widget_backspace(Elm_Code_Widget *widget);
 
 void _elm_code_widget_delete(Elm_Code_Widget *widget);
 
-void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
-
-void _elm_code_widget_tooltip_add(Evas_Object *widget);
-
 EAPI Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Evas_Object *widget);
 
 void _elm_code_widget_selection_delete_no_undo(Elm_Code_Widget *widget);
