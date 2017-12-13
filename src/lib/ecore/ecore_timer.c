@@ -516,7 +516,7 @@ _efl_loop_timer_efl_object_parent_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *
    else if (first == suspended)
      suspended = eina_inlist_remove(suspended, EINA_INLIST_GET(pd));
 
-   efl_parent_set(efl_super(obj, EFL_LOOP_USER_CLASS), parent);
+   efl_parent_set(efl_super(obj, EFL_LOOP_TIMER_CLASS), parent);
 
    if (efl_parent_get(obj) != parent)
      return ;

@@ -1,6 +1,6 @@
-class Efl.Loop_User (Efl.Object)
+class Efl.Loop.Consumer (Efl.Object)
 {
-   [[An Efl.Loop_User is a class that require one of the parent to provide
+   [[An Efl.Loop.Consumer is a class that require one of the parent to provide
      an Efl.Loop interface when doing provider_find. It will enforce this by
      only allowing parent that provide such interface or NULL.]]
    eo_prefix: efl_loop;

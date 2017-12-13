@@ -2441,7 +2441,7 @@ fallback:
 }
 
 EOLIAN static Efl_Loop *
-_efl_canvas_object_efl_loop_user_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
+_efl_canvas_object_efl_loop_consumer_loop_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
    return ecore_main_loop_get();
 }

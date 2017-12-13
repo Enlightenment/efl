@@ -21,7 +21,7 @@ function EflIoDirectInfo {
   }
 };
 
-class Efl.Io.Manager (Efl.Loop_User)
+class Efl.Io.Manager (Efl.Loop.Consumer)
 {
   [[Class representing an asynchronous file operation.]]
 
