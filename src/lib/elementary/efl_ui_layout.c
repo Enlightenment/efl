@@ -1849,6 +1849,7 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
    Efl_Ui_Layout_Sub_Connect *sc = data;
    const Eina_Value_Type *vtype;
    Eina_Value *value = (Eina_Value *)((Efl_Future_Event_Success*)event->info)->value;
+   Eina_Stringshare *selected;
    char *text;
 
    sc->future = NULL;
@@ -1858,6 +1859,18 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
      {
          eina_value_get(value, &text);
          _view_update(sc, text);
+         return;
+     }
+
+   selected = eina_stringshare_add("selected");
+   if (vtype == EINA_VALUE_TYPE_UCHAR && sc->property == selected)
+     {
+         Eina_Bool sb = EINA_FALSE;
+         eina_value_get(value, &sb);
+         if (sb)
+           _view_update(sc, "selected");
+         else
+           _view_update(sc, "unselected");
      }
    else
      {
@@ -1865,6 +1878,8 @@ _prop_future_then_cb(void* data, Efl_Event const*event)
          _view_update(sc, text);
          free(text);
      }
+
+     eina_stringshare_del(selected);
 }
 
 static void
@@ -1904,6 +1919,7 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
            {
               if (sc->property == ss_prop)
                 {
+                    if (sc->future) efl_future_cancel(sc->future);
                     sc->future = efl_model_property_get(pd->model, sc->property);
                     efl_future_then(sc->future, &_prop_future_then_cb, &_prop_future_error_cb, NULL, sc);
                 }
@@ -1915,9 +1931,15 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 EOLIAN static void
 _efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, Efl_Model *model)
 {
+   Efl_Ui_Layout_Sub_Connect *sc;
+   Eina_List *l;
+
    if (pd->model)
      {
          efl_event_callback_del(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
+         EINA_LIST_FOREACH(pd->prop_connect, l, sc)
+           if (sc->future) efl_future_cancel(sc->future);
+
          efl_unref(pd->model);
          pd->model = NULL;
      }
@@ -1929,7 +1951,15 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd
          efl_event_callback_add(pd->model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_model_properties_changed_cb, pd);
      }
    else
-     return;
+     {
+        EINA_LIST_FOREACH(pd->prop_connect, l, sc)
+          {
+             if (!sc->is_signal)
+               elm_layout_text_set(obj, sc->name, NULL);
+          }
+
+        return;
+     }
 
    if (pd->prop_connect)
      _efl_ui_layout_view_model_update(pd);

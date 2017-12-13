@@ -168,6 +168,7 @@ collections {
 #include "edc/efl/button.edc"
 #include "edc/efl/calendar.edc"
 #include "edc/efl/nstate.edc"
+#include "edc/efl/list.edc"
 // XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
 // XXX: mobile mode needs different entry setup

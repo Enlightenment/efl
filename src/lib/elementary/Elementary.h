@@ -280,6 +280,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
+#include "efl_ui_list_segarray.h"
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_widget_part_bg.eo.h>
@@ -312,6 +313,13 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_image_factory.eo.h>
+# include <efl_ui_slider_interval.eo.h>
+# include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_list_types.eot.h>
+# include <efl_ui_list_model.eo.h>
+# include <efl_ui_list_relayout.eo.h>
+# include <efl_ui_list.eo.h>
+# include <efl_ui_list_pan.eo.h>
 #endif
 
 /* include deprecated calls last of all */

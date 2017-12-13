@@ -1,0 +1,8 @@
+group { "efl/list";
+   inherit: "elm/list/base/default";
+}
+
+group { "efl/list/item";
+   inherit: "elm/list/item/default";
+}
+
