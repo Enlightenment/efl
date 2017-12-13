@@ -566,6 +566,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Stack, Efl.Animator,
 
            If $e is not a valid object, the return value is undefined.
           ]]
+          legacy: null;
          }
          keys {
             pos: Eina.Position2D; [[The position in pixels.]]

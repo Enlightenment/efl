@@ -2971,6 +2971,14 @@ evas_object_pointer_inside_by_device_get(const Evas_Object *eo_obj, Efl_Input_De
 }
 
 EAPI Eina_Bool
+evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y)
+{
+   Eina_Position2D pos = EINA_POSITION2D(x, y);
+
+   return efl_canvas_object_coords_inside_get(eo_obj, pos);
+}
+
+EAPI Eina_Bool
 evas_object_pointer_inside_get(const Evas_Object *eo_obj)
 {
    return evas_object_pointer_inside_by_device_get(eo_obj, NULL);

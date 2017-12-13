@@ -2243,6 +2243,27 @@ EAPI Eina_Bool evas_object_pointer_inside_by_device_get(const Evas_Object *obj, 
  */
 EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Returns whether the coords are logically inside the object.
+ *
+ * When this function is called it will return a value of either @c false or
+ * @c true, depending on if the coords are inside the object's current
+ * geometry.
+ *
+ * A return value of @c true indicates the position is logically inside the
+ * object, and @c false implies it is logically outside the object.
+ *
+ * If @c e is not a valid object, the return value is undefined.
+ *
+ * @param[in] x The canvas-relative x coordinate.
+ * @param[in] y The canvas-relative y coordinate.
+ *
+ * @return @c true if the coords are inside the object, @c false otherwise
+ *
+ * @ingroup Evas_Object
+ */
+
+EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y) EINA_WARN_UNUSED_RESULT;
 
 #include "canvas/efl_canvas_object.eo.legacy.h"
 
