@@ -431,7 +431,6 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
-   elm_object_tooltip_text_set(grid, line->status_text);
    evas_object_textgrid_update_add(grid, 0, 0, w, 1);
 }
 
@@ -1098,7 +1097,17 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
 
    if (!pd->editable || !event->buttons)
-     return;
+     {
+        Elm_Code_Line *line;
+
+        line = elm_code_file_line_get(elm_code_widget_code_get(widget)->file, row);
+        if (line)
+          elm_object_tooltip_text_set(widget, line->status_text);
+        else
+          elm_object_tooltip_text_set(widget, NULL);
+
+        return;
+     }
 
    if (!pd->selection)
      if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
