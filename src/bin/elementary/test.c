@@ -507,11 +507,14 @@ _menu_create(const char *option_str)
                   elm_object_part_content_set(bt, "icon", ic);
                   evas_object_show(ic);
                }
-             else if (t->is_eo)
+             if (t->is_eo)
                {
-                  ic = efl_add(EFL_UI_IMAGE_CLASS, win,
-                               efl_ui_image_icon_set(efl_added, "user-bookmarks"));
-                  elm_object_part_content_set(bt, "icon", ic);
+                  Eo *shadow = efl_ref(efl_part(bt, "shadow"));
+                  efl_gfx_color_set(shadow, 0, 128, 255, 255);
+                  efl_ui_widget_part_shadow_offset_set(shadow, 0, 0);
+                  efl_ui_widget_part_shadow_radius_set(shadow, 3, 3);
+                  efl_ui_widget_part_shadow_grow_set(shadow, 2);
+                  efl_unref(shadow);
                }
              elm_box_pack_end(tbx2, bt);
              evas_object_show(bt);

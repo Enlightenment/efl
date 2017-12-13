@@ -2418,6 +2418,8 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, 
 
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_BG_CLASS, obj, part);
      }
+   else if (eina_streq(part, "shadow"))
+     return efl_part(efl_super(obj, MY_CLASS), part);
 
    if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
      {

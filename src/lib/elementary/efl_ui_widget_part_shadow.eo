@@ -1,0 +1,31 @@
+class Efl.Ui.Widget.Part_Shadow (Efl.Ui.Widget.Part, Efl.Gfx, Efl.Gfx.Filter)
+{
+   data: null;
+   methods {
+      @property offset {
+         values {
+            ox: double;
+            oy: double;
+         }
+      }
+      @property radius {
+         values {
+            rx: double;
+            ry: double;
+         }
+      }
+      @property grow {
+         values {
+            radius: double;
+         }
+      }
+   }
+   implements {
+      Efl.Gfx.color { set; get; }
+      Efl.Gfx.Filter.filter_program { set; get; }
+      Efl.Gfx.Filter.filter_source { set; get; }
+      Efl.Gfx.Filter.filter_data { set; get; }
+      Efl.Gfx.Filter.filter_padding { get; }
+      Efl.Gfx.Filter.filter_state { set; get; }
+   }
+}

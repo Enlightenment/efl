@@ -74,6 +74,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_widget_part_bg.eo \
+	lib/elementary/efl_ui_widget_part_shadow.eo \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_access.eo \
 	lib/elementary/efl_access_action.eo \

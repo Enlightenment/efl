@@ -185,9 +185,27 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(pb);
    pd->pb5 = pb;
 
+#define FILTER_CODE \
+   "a = buffer { 'alpha' }" \
+   "grow { 4, dst = a }" \
+   "blur { 20, src = a, color = 'red' }" \
+   "blur { 6, src = a, color = 'red' }" \
+   "blur { 6, src = input, color = 'orange' }" \
+   "blur { 2, src = input, color = 'cyan' }"
+
+#define FILTER2 \
+   "blend { ox = -8, oy = -5, color = color(255, 255, 255, 64) } " \
+   "blend { ox = 5, oy = 5, color = color(255, 255, 255, 64) } " \
+   "blend { ox = -2, oy = 8, color = color(255, 255, 255, 64) } " \
+
+   efl_gfx_filter_program_set(efl_part(pb, "shadow"), FILTER2, "blur");
+
    ic2 = elm_icon_add(win);
    elm_image_file_set(ic2, buf, NULL);
    evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
+
+
+   efl_gfx_filter_program_set(efl_part(ic2, "shadow"), FILTER_CODE, "blur");
 
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
@@ -212,6 +230,13 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
    pd->pb7 = pb;
+
+   Eo *shadow = efl_ref(efl_part(pb, "shadow"));
+   efl_gfx_color_set(shadow, 0, 255, 255, 255);
+   efl_ui_widget_part_shadow_offset_set(shadow, 0, 0);
+   efl_ui_widget_part_shadow_radius_set(shadow, 10, 10);
+   efl_ui_widget_part_shadow_grow_set(shadow, 5);
+   efl_unref(shadow);
 
    bt_bx = elm_box_add(win);
    elm_box_horizontal_set(bt_bx, EINA_TRUE);
