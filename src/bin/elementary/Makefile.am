@@ -113,6 +113,7 @@ test_notify.c \
 test_nstate.c \
 test_panel.c \
 test_panes.c \
+test_ui_panes.c \
 test_part_bg.c \
 test_photo.c \
 test_photocam.c \
