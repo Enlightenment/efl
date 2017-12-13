@@ -1,17 +1,5 @@
 import efl_text_types;
 
-struct Efl.Ui.Text.Interactive.Change_Info {
-   [[This structure includes all the information about content changes.
-
-     It's meant to be used to implement undo/redo.
-   ]]
-   content: string; [[The content added/removed]]
-   position: size; [[The position where it was added/removed]]
-   length: size; [[The length of content in characters (not bytes, actual unicode characters)]]
-   insert: bool; [[$true if the content was inserted, $false if removei]]
-   merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
-}
-
 interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
    Efl.Text.Format, Efl.Text.Style)
 {
@@ -57,7 +45,6 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
       }
    }
    events {
-      changed,user: Efl.Ui.Text.Interactive.Change_Info; [[The text object has changed due to user interaction]]
       selection,changed; [[The selection on the object has changed. Query using @.selection_cursors]]
    }
 }

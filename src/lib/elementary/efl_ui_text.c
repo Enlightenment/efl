@@ -2054,7 +2054,8 @@ _mouse_move_cb(void *data,
 
 static void
 _entry_changed_handle(void *data,
-                      const Efl_Event_Description* event)
+                      const Efl_Event_Description* event,
+                      Efl_Ui_Text_Change_Info *info)
 {
    Evas_Coord minh;
    const char *text;
@@ -2101,7 +2102,7 @@ _entry_changed_handle(void *data,
    /* callback - this could call callbacks that delete the
     * entry... thus... any access to sd after this could be
     * invalid */
-   efl_event_callback_legacy_call(data, event, NULL);
+   efl_event_callback_legacy_call(data, event, info);
 }
 
 static void
@@ -2149,7 +2150,7 @@ _entry_preedit_changed_signal_cb(void *data,
                                  const char *emission EINA_UNUSED,
                                  const char *source EINA_UNUSED)
 {
-   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_PREEDIT_CHANGED);
+   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_PREEDIT_CHANGED, NULL);
 }
 
 static void
@@ -3079,7 +3080,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
       (sd->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
       (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+   efl_event_callback_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER,
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
@@ -3302,7 +3303,7 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
    _clear_text_selection(sd);
 
    text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
-   efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+   efl_event_callback_del(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER,
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
@@ -5238,14 +5239,14 @@ static void
 _efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _decoration_defer_all(data);
-   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED);
+   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED, NULL);
 }
 
 static void
-_efl_ui_text_changed_user_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_text_changed_user_cb(void *data, const Efl_Event *event)
 {
    _decoration_defer_all(data);
-   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED_USER);
+   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED_USER, event->info);
 }
 
 static void

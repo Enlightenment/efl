@@ -395,7 +395,8 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
    events {
       activated; [[Called when entry got activated]]
       changed; [[Called when entry changed]]
-      changed,user; [[Called when object changed due to user interaction]]
+      changed,user: Efl.Ui.Text.Change_Info;
+         [[The text object has changed due to user interaction]]
       validate; [[Called when validating]]
       context,open; [[Called when context menu was opened]]
       anchor,clicked; [[Called when anchor was clicked]]

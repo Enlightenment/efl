@@ -334,7 +334,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    Efl_Ui_Internal_Text_Interactive_Data *en = efl_data_scope_get(obj, MY_CLASS);
    Ecore_IMF_Event_Delete_Surrounding *ev = event_info;
    Evas_Textblock_Cursor *del_start, *del_end;
-   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
    int cursor_pos;
    int start, end;
 
@@ -356,7 +356,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
 
    char *tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
 
    free(tmp);
 
@@ -585,7 +585,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_
 {
    size_t start, end;
    char *tmp;
-   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    start = evas_textblock_cursor_pos_get(cur1);
    end = evas_textblock_cursor_pos_get(cur2);
@@ -599,7 +599,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_
    tmp = efl_canvas_text_range_text_get(obj, cur1, cur2);
    info.content = tmp;
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
 
    if (tmp) free(tmp);
 
@@ -616,7 +616,7 @@ _sel_range_del_emit(Evas_Object *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
 static void
 _delete_emit(Eo *obj, Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive_Data *en EINA_UNUSED, size_t pos)
 {
-   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
    Eina_Unicode content[2];
    content[0] = efl_text_cursor_content_get(obj, c);
    content[1] = 0;
@@ -630,8 +630,7 @@ _delete_emit(Eo *obj, Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive
    info.length = 1;
    info.content = tmp;
 
-   efl_event_callback_legacy_call(obj,
-         EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
 
    evas_textblock_cursor_char_delete(c);
@@ -712,7 +711,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
    char *string = (char *)ev->string;
    Eina_Bool free_string = EINA_FALSE;
    Eina_Bool changed_user = EINA_FALSE;
-   Efl_Ui_Text_Interactive_Change_Info info = { NULL, 0, 0, 0, 0 };
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    if (!ev->key) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
@@ -1057,8 +1056,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 end:
    if (changed_user)
      {
-        efl_event_callback_call(obj,
-              EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
+        efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
      }
    (void) 0;
 }
