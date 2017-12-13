@@ -594,7 +594,6 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = @top_srcdir@/src/lib \
-                         @top_srcdir@/src/bindings \
                          @top_srcdir@/elm_intro.h \
                          @srcdir@/index_elm.dox \
                          @srcdir@/main.dox \
@@ -630,8 +629,7 @@ INPUT_ENCODING         = UTF-8
 
 FILE_PATTERNS          = *.c \
                          *.h \
-                         *.x \
-                         *.hh
+                         *.x
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -647,7 +645,8 @@ EXCLUDE                = @top_builddir@/src/lib/evas/common \
                          @top_builddir@/src/lib/evas/cache \
                          @top_builddir@/src/lib/evas/file \
                          @top_builddir@/src/lib/evas/cserve2 \
-                         @top_builddir@/src/lib/evas/include
+                         @top_builddir@/src/lib/evas/include \
+                         @top_builddir@/src/lib/efl
 
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
@@ -662,7 +661,9 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = *_private*
+EXCLUDE_PATTERNS       = *_private* \
+                         */efl_* \
+                         */Efl_*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
