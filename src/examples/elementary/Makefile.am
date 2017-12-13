@@ -185,7 +185,6 @@ efl_ui_list_example_1.c \
 efl_ui_list_example_2.c \
 efl_ui_list_example_3.c
 
-if HAVE_CXX11
 SRCS += \
 bg_cxx_example_01.cc \
 bg_cxx_example_02.cc \
@@ -208,7 +207,6 @@ table_cxx_example_01.cc \
 table_cxx_example_02.cc \
 toolbar_cxx_example_01.cc \
 $(NULL)
-endif
 
 EDCS = \
 twitter_example_01.edc \
@@ -422,7 +420,7 @@ efl_ui_list_example_3
 	$(MKDIR_P) sphere_hunter/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) -id sphere_hunter/ -id $(top_srcdir)/data/elementary/themes $< $@
 
-if HAVE_CXX11
+if HAVE_CXX
 examples_PROGRAMS += \
 bg_cxx_example_01 \
 bg_cxx_example_02 \
@@ -459,7 +457,7 @@ efl_thread_2_SOURCES = efl_thread_2.c
 efl_thread_3_SOURCES = efl_thread_3.c
 efl_thread_4_SOURCES = efl_thread_4.c
 
-if HAVE_CXX11
+if HAVE_CXX
 bg_cxx_example_01_SOURCES = bg_cxx_example_01.cc
 bg_cxx_example_02_SOURCES = bg_cxx_example_02.cc
 box_cxx_example_02_SOURCES = box_cxx_example_02.cc
@@ -568,7 +566,7 @@ table_example_01:table_example_01.png:0.0 \
 table_example_02:table_example_02.png:0.0 \
 menu_example_01:menu_example_01.png:0.5
 
-if HAVE_CXX11
+if HAVE_CXX
 SCREENSHOTS += \
  bg_cxx_example_01:bg_cxx_example_01.png:0.0 \
  bg_cxx_example_02:bg_cxx_example_02.png:0.0 \

@@ -1,10 +1,13 @@
-if HAVE_CXX11
 
 ### Eo C++
-CLEANFILES += $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
+installed_eetcxxheadersdir = $(includedir)/eet-cxx-@VMAJ@
+dist_installed_eetcxxheaders_DATA = \
+bindings/cxx/eet_cxx/eet_composite.hh \
+bindings/cxx/eet_cxx/eet_register.hh \
+bindings/cxx/eet_cxx/eet_type.hh \
+bindings/cxx/eet_cxx/Eet.hh
 
 installed_eocxxheadersdir = $(includedir)/eo-cxx-@VMAJ@/
-nodist_installed_eocxxheaders_DATA = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
 dist_installed_eocxxheaders_DATA = \
 bindings/cxx/eo_cxx/eo_concrete.hh \
 bindings/cxx/eo_cxx/eo_cxx_interop.hh \
@@ -19,54 +22,16 @@ bindings/cxx/eo_cxx/eo_promise_meta.hh \
 bindings/cxx/eo_cxx/eo_private.hh \
 bindings/cxx/eo_cxx/efl_object_impl.hh
 
-### Elementary C++
-installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
-nodist_installed_elementarycxxmainheaders_DATA = $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) \
-lib/elementary/Elementary.eo.hh
-dist_installed_elementarycxxmainheaders_DATA = lib/elementary/Elementary.hh
-
-lib/elementary/Elementary.eo.hh: $(elm_public_eolian_files) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
-
-CLEANFILES += $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) lib/elementary/Elementary.eo.hh
-
-### Efl C++
 installed_eflcxxmainheadersdir = $(includedir)/efl-cxx-@VMAJ@/
-nodist_installed_eflcxxmainheaders_DATA = $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
 dist_installed_eflcxxmainheaders_DATA = lib/efl/Efl.hh lib/efl/cxx/efl_part_impl.hh
 
-lib/efl/Efl.eo.hh: $(efl_eolian_files) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
+dist_installed_elementarycxxmainheaders_DATA = lib/elementary/Elementary.hh
 
-CLEANFILES += $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
-
-### Evas C++
 installed_evascxxmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
 dist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
-nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.eo.hh
 
-installed_evascxxcanvasheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
-nodist_installed_evascxxcanvasheaders_DATA = $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh)
-
-installed_evascxxgestureheadersdir = $(includedir)/evas-cxx-@VMAJ@/gesture
-nodist_installed_evascxxgestureheaders_DATA = $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh)
-
-lib/evas/Evas.eo.hh: $(evas_canvas_eolian_pub_files) $(evas_gesture_eolian_pub_files) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
-
-CLEANFILES += $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh) \
-              $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh) \
-              lib/evas/Evas.eo.hh
-
-### Eldbus C++
 installed_eldbuscxxmainheadersdir = $(includedir)/eldbus_cxx-@VMAJ@
-nodist_installed_eldbuscxxmainheaders_DATA = $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
 dist_installed_eldbuscxxmainheaders_DATA = \
 bindings/cxx/eldbus_cxx/eldbus_basic.hh \
 bindings/cxx/eldbus_cxx/eldbus_error.hh \
@@ -81,50 +46,13 @@ bindings/cxx/eldbus_cxx/eldbus_service.hh \
 bindings/cxx/eldbus_cxx/eldbus_signature_traits.hh \
 bindings/cxx/eldbus_cxx/Eldbus_Model.hh
 
-lib/eldbus/Eldbus_Model.eo.hh: $(eldbus_eolian_files) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
-
-CLEANFILES += $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
-
-### Eet C++
-installed_eetcxxheadersdir = $(includedir)/eet-cxx-@VMAJ@
-dist_installed_eetcxxheaders_DATA = \
-bindings/cxx/eet_cxx/eet_composite.hh \
-bindings/cxx/eet_cxx/eet_register.hh \
-bindings/cxx/eet_cxx/eet_type.hh \
-bindings/cxx/eet_cxx/Eet.hh
-
-### Generated headers src/lib/edje
 installed_edjecxxmainheadersdir = $(includedir)/edje-cxx-@VMAJ@/
-dist_installed_edjecxxmainheaders_DATA = lib/edje/Edje.hh
-nodist_installed_edjecxxmainheaders_DATA = $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl_hh) lib/edje/Edje.eo.hh
 
-lib/edje/Edje.eo.hh: $(edje_eolian_files) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
-
-CLEANFILES += $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl_hh) lib/edje/Edje.eo.hh
-
-### Ecore src/lib/ecore
 installed_ecorecxxheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxheaders_DATA = \
 bindings/cxx/ecore_cxx/Ecore.hh \
 bindings/cxx/ecore_cxx/Ecore_Manual.hh
 
-nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) \
-lib/ecore/Ecore.eo.hh
-
-lib/ecore/Ecore.eo.hh: $(ecore_eolian_files_public) $(_EOLIAN_CXX_DEP)
-	$(AM_V_EOLCXX) \
-	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
-
-CLEANFILES += $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) lib/ecore/Ecore.eo.hh
-
-## Eina src/lib/eina
 installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@
 dist_installed_einacxxheaders_DATA = \
 bindings/cxx/eina_cxx/eina_accessor.hh       \
@@ -166,10 +94,90 @@ bindings/cxx/eina_cxx/eina_copy_traits.hh \
 bindings/cxx/eina_cxx/eina_variant.hh \
 bindings/cxx/eina_cxx/Eina.hh
 
-### Eio
 installed_eiocxxmainheadersdir = $(includedir)/eio-cxx-@VMAJ@/
-nodist_installed_eiocxxmainheaders_DATA = $(eio_eolian_cxx_hh) $(eio_eolian_cxx_impl_hh) lib/eio/Eio.eo.hh
 dist_installed_eiocxxmainheaders_DATA = lib/eio/Eio.hh
+
+if HAVE_CXX
+nodist_installed_edjecxxmainheaders_DATA = $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl_hh) lib/edje/Edje.eo.hh
+nodist_installed_eocxxheaders_DATA = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
+nodist_installed_eflcxxmainheaders_DATA = $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
+nodist_installed_elementarycxxmainheaders_DATA = $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) \
+lib/elementary/Elementary.eo.hh
+nodist_installed_eldbuscxxmainheaders_DATA = $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
+
+CLEANFILES = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
+
+### Elementary C++
+
+lib/elementary/Elementary.eo.hh: $(elm_public_eolian_files) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) lib/elementary/Elementary.eo.hh
+
+### Efl C++
+lib/efl/Efl.eo.hh: $(efl_eolian_files) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
+
+### Evas C++
+nodist_installed_evascxxmainheaders_DATA = lib/evas/Evas.eo.hh
+
+installed_evascxxcanvasheadersdir = $(includedir)/evas-cxx-@VMAJ@/canvas
+nodist_installed_evascxxcanvasheaders_DATA = $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh)
+
+installed_evascxxgestureheadersdir = $(includedir)/evas-cxx-@VMAJ@/gesture
+nodist_installed_evascxxgestureheaders_DATA = $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh)
+
+
+lib/evas/Evas.eo.hh: $(evas_canvas_eolian_pub_files) $(evas_gesture_eolian_pub_files) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh) \
+              $(evas_gesture_eolian_cxx_hh) $(evas_gesture_eolian_cxx_impl_hh) \
+              lib/evas/Evas.eo.hh
+
+
+lib/eldbus/Eldbus_Model.eo.hh: $(eldbus_eolian_files) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
+
+### Eet C++
+
+### Generated headers src/lib/edje
+dist_installed_edjecxxmainheaders_DATA = lib/edje/Edje.hh
+
+lib/edje/Edje.eo.hh: $(edje_eolian_files) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(edje_eolian_cxx_hh) $(edje_eolian_cxx_impl_hh) lib/edje/Edje.eo.hh
+
+### Ecore src/lib/ecore
+nodist_installed_ecorecxxheaders_DATA = $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) \
+lib/ecore/Ecore.eo.hh
+
+lib/ecore/Ecore.eo.hh: $(ecore_eolian_files_public) $(_EOLIAN_CXX_DEP)
+	$(AM_V_EOLCXX) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
+
+CLEANFILES += $(ecore_eolian_cxx_hh) $(ecore_eolian_cxx_impl_hh) lib/ecore/Ecore.eo.hh
+
+## Eina src/lib/eina
+
+### Eio
+nodist_installed_eiocxxmainheaders_DATA = $(eio_eolian_cxx_hh) $(eio_eolian_cxx_impl_hh) lib/eio/Eio.eo.hh
 
 lib/eio/Eio.eo.hh: $(eio_eolian_files) $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
@@ -382,7 +390,7 @@ tests_elementary_cxx_cxx_dummy_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib
 
 endif
 
+endif
+
 EXTRA_DIST2 += \
 tests/eina_cxx/simple.eo
-
-endif

@@ -356,7 +356,7 @@ evas_aspect_hints_SOURCES = evas-aspect-hints.c
 evas_aspect_hints_CPPFLAGS = $(EDJE_COMMON_CPPFLAGS)
 evas_aspect_hints_LDADD = $(EDJE_COMMON_LDADD)
 
-if HAVE_CXX11
+if HAVE_CXX
 
 EXTRA_PROGRAMS += evas_cxx_rectangle
 evas_cxx_rectangle_SOURCES = evas_cxx_rectangle.cc

@@ -13,6 +13,8 @@ SRCS = \
 eina_cxx_list_01.cc \
 eina_cxx_thread_01.cc
 
+if HAVE_CXX
+
 EXTRA_PROGRAMS = \
 eina_cxx_list_01 \
 eina_cxx_thread_01
@@ -22,6 +24,8 @@ eina_cxx_list_01.cc
 
 eina_cxx_thread_01_SOURCES = \
 eina_cxx_thread_01.cc
+
+endif
 
 examples: $(EXTRA_PROGRAMS)
 

@@ -1,3 +1,50 @@
+
+efl_custom_exports_mono_files = \
+	lib/efl_mono/efl_custom_exports_mono.c
+
+efl_eo_mono_files = \
+	bindings/mono/eo_mono/object.cs \
+	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/workaround.cs
+
+efl_eina_mono_files = \
+	bindings/mono/eina_mono/eina_config.cs \
+	bindings/mono/eina_mono/eina_array.cs \
+	bindings/mono/eina_mono/eina_hash.cs \
+	bindings/mono/eina_mono/eina_list.cs \
+	bindings/mono/eina_mono/eina_inarray.cs \
+	bindings/mono/eina_mono/eina_inlist.cs \
+	bindings/mono/eina_mono/eina_iterator.cs \
+	bindings/mono/eina_mono/eina_container_common.cs \
+	bindings/mono/eina_mono/eina_common.cs \
+	bindings/mono/eina_mono/eina_log.cs \
+	bindings/mono/eina_mono/eina_binbuf.cs \
+	bindings/mono/eina_mono/eina_slice.cs \
+	bindings/mono/eina_mono/eina_stringshare.cs \
+	bindings/mono/eina_mono/eina_error.cs \
+	bindings/mono/eina_mono/eina_value.cs
+
+efl_eldbus_mono_files = \
+	bindings/mono/eldbus_mono/eldbus_common.cs \
+	bindings/mono/eldbus_mono/eldbus_config.cs \
+	bindings/mono/eldbus_mono/eldbus_connection.cs \
+	bindings/mono/eldbus_mono/eldbus_message.cs \
+	bindings/mono/eldbus_mono/eldbus_object.cs \
+	bindings/mono/eldbus_mono/eldbus_pending.cs \
+	bindings/mono/eldbus_mono/eldbus_proxy.cs \
+	bindings/mono/eldbus_mono/eldbus_service.cs
+
+efl_ecore_evas_mono_files = \
+	bindings/mono/ecore_evas_mono/ecore_evas.cs
+
+lib_efl_mono_libefl_mono_dll_SOURCES = \
+	bindings/mono/efl_mono/efl_all.cs \
+	$(builddir)/bindings/mono/efl_mono/efl_libs.cs \
+	$(efl_eo_mono_files) \
+	$(efl_eina_mono_files) \
+	$(efl_eldbus_mono_files) \
+	$(efl_ecore_evas_mono_files)
+
 if HAVE_CSHARP
 
 bin_PROGRAMS += bin/eolian_mono/eolian_mono
@@ -117,8 +164,6 @@ MCS_FLAGS += -define:WIN32
 endif
 
 # Efl Custom Exports Mono auxiliary library
-efl_custom_exports_mono_files = \
-	lib/efl_mono/efl_custom_exports_mono.c
 
 lib_LTLIBRARIES += \
 lib/efl_mono/libeflcustomexportsmono.la
@@ -137,48 +182,6 @@ lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @EFL_CUSTOM_EXPORTS_MONO_
 #Efl Mono - C Sharp binding library
 bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 
-efl_eo_mono_files = \
-	bindings/mono/eo_mono/object.cs \
-	bindings/mono/eo_mono/iwrapper.cs \
-	bindings/mono/eo_mono/workaround.cs
-
-efl_eina_mono_files = \
-	bindings/mono/eina_mono/eina_config.cs \
-	bindings/mono/eina_mono/eina_array.cs \
-	bindings/mono/eina_mono/eina_hash.cs \
-	bindings/mono/eina_mono/eina_list.cs \
-	bindings/mono/eina_mono/eina_inarray.cs \
-	bindings/mono/eina_mono/eina_inlist.cs \
-	bindings/mono/eina_mono/eina_iterator.cs \
-	bindings/mono/eina_mono/eina_container_common.cs \
-	bindings/mono/eina_mono/eina_common.cs \
-	bindings/mono/eina_mono/eina_log.cs \
-	bindings/mono/eina_mono/eina_binbuf.cs \
-	bindings/mono/eina_mono/eina_slice.cs \
-	bindings/mono/eina_mono/eina_stringshare.cs \
-	bindings/mono/eina_mono/eina_error.cs \
-	bindings/mono/eina_mono/eina_value.cs
-
-efl_eldbus_mono_files = \
-	bindings/mono/eldbus_mono/eldbus_common.cs \
-	bindings/mono/eldbus_mono/eldbus_config.cs \
-	bindings/mono/eldbus_mono/eldbus_connection.cs \
-	bindings/mono/eldbus_mono/eldbus_message.cs \
-	bindings/mono/eldbus_mono/eldbus_object.cs \
-	bindings/mono/eldbus_mono/eldbus_pending.cs \
-	bindings/mono/eldbus_mono/eldbus_proxy.cs \
-	bindings/mono/eldbus_mono/eldbus_service.cs
-
-efl_ecore_evas_mono_files = \
-	bindings/mono/ecore_evas_mono/ecore_evas.cs
-
-lib_efl_mono_libefl_mono_dll_SOURCES = \
-	bindings/mono/efl_mono/efl_all.cs \
-	$(builddir)/bindings/mono/efl_mono/efl_libs.cs \
-	$(efl_eo_mono_files) \
-	$(efl_eina_mono_files) \
-	$(efl_eldbus_mono_files) \
-	$(efl_ecore_evas_mono_files)
 
 lib/efl_mono/libefl_mono.dll: $(lib_efl_mono_libefl_mono_dll_SOURCES) lib/efl_mono/$(am__dirstamp) $(efl_eolian_mono_files) lib/efl_mono/libefl_mono.dll.config
 	@rm -f lib/efl_mono/libefl_mono.dll

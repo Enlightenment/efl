@@ -264,7 +264,8 @@ _child_removed_cb(void *data, const Efl_Event *event)
 
    if (nodedata->min.w == litem->min.w)
      nodedata->min.w = 0;
-     for (i = 0; i != itemnode->length; ++i)
+
+   for (i = 0; i != itemnode->length; ++i)
        {
           layout_item = (Efl_Ui_List_LayoutItem *)itemnode->pointers[i];
           if (nodedata->min.w < layout_item->min.w)

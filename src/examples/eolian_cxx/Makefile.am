@@ -69,6 +69,24 @@ LDADD = \
 	$(top_builddir)/src/lib/evas/libevas.la \
 	$(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 
+IMPL = \
+	colourable.c \
+	colourable_cxx.cc \
+	colourablesquare.c \
+	colourablesquare_cxx.cc
+
+SRCS = \
+	eolian_cxx_simple_01.cc \
+	eolian_cxx_callbacks_01.cc \
+	$(IMPL)
+
+ECXX_EXAMPLE_EOS = \
+	ns_colourable.eo \
+	ns_colourablesquare.eo
+
+dist_example_eos_SOURCES = $(ECXX_EXAMPLE_EOS)
+
+if HAVE_CXX
 GENERATED = \
 	ns_colourable.eo.c \
 	ns_colourable.eo.h \
@@ -82,30 +100,10 @@ GENERATED = \
 BUILT_SOURCES = $(GENERATED)
 CLEANFILES += $(BUILT_SOURCES)
 
-ECXX_EXAMPLE_EOS = \
-	ns_colourable.eo \
-	ns_colourablesquare.eo
-
-IMPL = \
-	colourable.c \
-	colourable_cxx.cc \
-	colourablesquare.c \
-	colourablesquare_cxx.cc
-
-SRCS = \
-	eolian_cxx_simple_01.cc \
-	eolian_cxx_callbacks_01.cc \
-	$(IMPL)
-#	eolian_cxx_inherit_01.cc
-
 EXTRA_PROGRAMS = \
 	eolian_cxx_simple_01 \
 	eolian_cxx_simple_01_cxx_impl \
 	eolian_cxx_callbacks_01
-#	eolian_cxx_inherit_01
-
-DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
-EXTRA_DIST = $(DATA_FILES)
 
 eolian_cxx_simple_01_SOURCES = \
 	eolian_cxx_simple_01.cc \
@@ -123,13 +121,11 @@ eolian_cxx_simple_01_cxx_impl_SOURCES = \
 	colourablesquare_cxx.cc
 eolian_cxx_simple_01_cxx_impl.$(OBJEXT): $(GENERATED)
 
-# eolian_cxx_inherit_01_SOURCES = \
-# 	eolian_cxx_inherit_01.cc \
-# 	colourable.c \
-# 	colourablesquare.c
-# eolian_cxx_inherit_01.$(OBJEXT): $(GENERATED)
-
 eolian_cxx_callbacks_01_SOURCES = eolian_cxx_callbacks_01.cc
+endif
+
+DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
+EXTRA_DIST = $(DATA_FILES)
 
 %.eo.hh: %.eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<

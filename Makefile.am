@@ -162,7 +162,7 @@ pc/elocation.pc \
 pc/elementary.pc \
 pc/efl-ui.pc
 
-if HAVE_CXX11
+if HAVE_CXX
 pkgconfig_DATA += \
 pc/eina-cxx.pc \
 pc/evas-cxx.pc \

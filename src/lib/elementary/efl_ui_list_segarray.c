@@ -76,7 +76,6 @@ _alloc_node(Efl_Ui_List_SegArray* segarray, int first, int max)
    node = calloc(1, sizeof(Efl_Ui_List_SegArray_Node) + max*sizeof(Efl_Ui_List_Item*));
    node->first = first;
    node->max = max;
-   void* tmp = segarray->root;
    segarray->root = (void*)eina_rbtree_inline_insert(EINA_RBTREE_GET(segarray->root), EINA_RBTREE_GET(node),
                                                      EINA_RBTREE_CMP_NODE_CB(&_rbtree_compare), NULL);
    segarray->node_count++;

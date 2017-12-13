@@ -340,7 +340,7 @@ GENERATED_JS_BINDINGS += $(generated_ecore_js_bindings)
 
 endif
 
-if HAVE_CXX11
+if HAVE_CXX
 
 ecore_eolian_cxx_hh = $(ecore_eolian_files_public:%.eo=%.eo.hh)
 ecore_eolian_cxx_impl_hh = $(ecore_eolian_files_public:%.eo=%.eo.impl.hh)

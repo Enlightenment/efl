@@ -126,22 +126,13 @@ examples/emotion \
 examples/emile \
 examples/elocation \
 examples/ethumb_client \
+examples/eina_cxx \
+examples/eolian_cxx \
+examples/efl_mono \
 examples/elementary
 
 if HAVE_ELUA
 EXAMPLES_SUBDIRS += examples/elua
-endif
-
-EXAMPLES_CXX = \
-examples/eina_cxx \
-examples/eolian_cxx
-
-if HAVE_CXX11
-EXAMPLES_SUBDIRS += $(EXAMPLES_CXX)
-endif
-
-if HAVE_CSHARP
-EXAMPLES_SUBDIRS += examples/efl_mono
 endif
 
 if ALWAYS_BUILD_EXAMPLES

@@ -1,16 +1,16 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-if HAVE_CSHARP
-
 include $(top_srcdir)/src/Makefile_Eolian_Helper.am
 include $(top_srcdir)/src/Makefile_Eolian_Mono_Helper.am
 include $(top_srcdir)/src/Makefile_Efl_Mono_MSBuild_Gen_Helper.am
 
-SRCS =
-EXTRA_FILES =
+SRCS = example_numberwrapper.c
+EXTRA_FILES = example_numberwrapper.eo
 EXTRA_PROGRAMS =
 GENERATED =
 CLEANFILES =
+
+if HAVE_CSHARP
 
 # Simple object used by the examples
 
@@ -54,8 +54,6 @@ libexample_numberwrapper_la_SOURCES = example_numberwrapper.c
 libexample_numberwrapper_la_LDFLAGS = -shared
 libexample_numberwrapper_la_CFLAGS = $(COMMON_FLAGS) -DEFL_BETA_API_SUPPORT
 
-SRCS += example_numberwrapper.c
-EXTRA_FILES += example_numberwrapper.eo
 GENERATED += example_numberwrapper.eo.h example_numberwrapper.eo.c EoInherit01.exe.config
 
 # CSharp examples
@@ -108,10 +106,10 @@ GENERATED += example_numberwrapper.eo.cs
 
 
 # Finishing
+CLEANFILES += $(GENERATED)
+endif
 
 EXTRA_DIST = $(EXTRA_FILES)
-
-CLEANFILES += $(GENERATED)
 
 examples: $(EXTRA_PROGRAMS)
 
@@ -131,4 +129,3 @@ if ALWAYS_BUILD_EXAMPLES
 noinst_PROGRAMS = $(EXTRA_PROGRAMS)
 endif
 
-endif

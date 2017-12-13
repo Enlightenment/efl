@@ -323,12 +323,6 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_efl_ui_list_efl_ui_focus_manager_focus_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_Ui_Focus_Object *focus)
-{
-    efl_ui_focus_manager_focus_set(pd->manager, focus);
-}
-
 EOLIAN static Efl_Ui_Focus_Manager*
 _efl_ui_list_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
@@ -408,7 +402,7 @@ _efl_ui_list_layout_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_U
 }
 
 EOLIAN static void
-_efl_ui_list_efl_ui_view_model_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Model *model)
+_efl_ui_list_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, Efl_Model *model)
 {
    if (pd->model == model)
      return;
@@ -478,19 +472,19 @@ _efl_ui_list_efl_access_selection_selected_child_deselect(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, int child_index)
+_efl_ui_list_efl_access_selection_is_child_selected(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, int child_index EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_access_selection_all_children_select(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN Eina_Bool
-_efl_ui_list_efl_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_access_selection_clear(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -502,13 +496,13 @@ _efl_ui_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_Lis
 }
 
 static Eina_Bool
-_key_action_move(Evas_Object *obj, const char *params)
+_key_action_move(Evas_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
      return EINA_FALSE;
 }
 
 static Eina_Bool
-_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+_key_action_select(Evas_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
    return EINA_FALSE;
 }

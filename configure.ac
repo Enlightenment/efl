@@ -1136,7 +1136,7 @@ else
   have_cxx11="no"
 fi
 
-AM_CONDITIONAL([HAVE_CXX11], [test "x${have_cxx11}" = "xyes"])
+AM_CONDITIONAL([HAVE_CXX], [test "x${have_cxx11}" = "xyes"])
 
 EFL_INTERNAL_DEPEND_PKG([EINA_CXX], [Eina])
 EFL_ADD_CFLAGS([EINA_CXX], [${EFL_PTHREAD_CFLAGS}])
