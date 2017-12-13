@@ -1,10 +1,18 @@
 /**
  * @mainpage Enlightenment Foundation Libraries (EFL)
  *
- * The Enlightenment Project covers more than simple window management. It
- * also includes the EFL, or Enlightenment Foundation Libraries: a framework
- * which provides a great deal of functionality. Below you can
- * find documentation for these libraries:
+ * The Enlightenment Foundation Libraries (EFL) cover a wide range of
+ * functions including inter-process communication (IPC), graphics, audio
+ * and even location services. Other powerful features include file
+ * handling utilities, widgets and user interface controls, thumbnailing
+ * and rendering via scene graph. You can discover more of EFL's
+ * capabilities by visiting the
+ * <a href="https://enlightenment.org/about-efl.md" target="_top">About EFL page</a>.
+ *
+ * For ease of access to documentation, EFL can be split into Core,
+ * Graphics, Operating System Specific and Beta library categories.
+ * Documentation for libraries in each of these categories is available
+ * below.
  *
  * <h3>Core libraries</h3>
  *
