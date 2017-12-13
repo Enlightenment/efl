@@ -201,17 +201,9 @@ EAPI int                 ecore_audio_shutdown(void);
 
 #include <ecore_audio_obj_in_tone.h>
 
-#if HAVE_PULSE
-# include <ecore_audio_obj_out_pulse.h>
-# define ECORE_AUDIO_OUT_RENDER_CLASS ECORE_AUDIO_OUT_PULSE_CLASS
-# define ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL
-#endif
+#include <ecore_audio_obj_out_pulse.h>
 
-#if HAVE_WASAPI
-# include <ecore_audio_obj_out_wasapi.h>
-# define ECORE_AUDIO_OUT_RENDER_CLASS ECORE_AUDIO_OUT_WASAPI_CLASS
-# define ECORE_AUDIO_OUT_RENDER_EVENT_CONTEXT_FAIL ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL
-#endif
+#include <ecore_audio_obj_out_wasapi.h>
 
 /**
  * @}

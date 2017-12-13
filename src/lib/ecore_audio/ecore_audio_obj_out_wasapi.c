@@ -2,6 +2,8 @@
 #include <config.h>
 #endif
 
+#ifdef _WIN32
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -607,3 +609,5 @@ _ecore_audio_out_wasapi_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Wasapi
 }
 
 #include "ecore_audio_out_wasapi.eo.c"
+
+#endif /*_WIN32*/
