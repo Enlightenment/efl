@@ -78,13 +78,9 @@ IMPL = \
 SRCS = \
 	eolian_cxx_simple_01.cc \
 	eolian_cxx_callbacks_01.cc \
-	$(IMPL)
-
-ECXX_EXAMPLE_EOS = \
 	ns_colourable.eo \
 	ns_colourablesquare.eo
-
-dist_example_eos_SOURCES = $(ECXX_EXAMPLE_EOS)
+	$(IMPL)
 
 if HAVE_CXX
 GENERATED = \
