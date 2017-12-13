@@ -119,6 +119,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_page_transition_scroll.eo \
 	lib/elementary/efl_page_indicator.eo \
 	lib/elementary/efl_page_indicator_icon.eo \
+	lib/elementary/efl_ui_model_state.eo \
 	$(NULL)
 
 # More public files -- FIXME
