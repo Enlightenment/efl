@@ -16,22 +16,22 @@
 
 static void
 _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
-                      Eina_Size2D exp_scr_min, Eina_Size2D min)
+                      Eina_Size2D obj_min, Eina_Size2D scr_min)
 {
    Eina_Size2D max_size;
    max_size.w = -1;
    max_size.h = -1;
 
    if (pd->max_size.w != -1)
-     max_size.w = (exp_scr_min.w > pd->max_size.w) ? exp_scr_min.w : pd->max_size.w;
+     max_size.w = (obj_min.w > pd->max_size.w) ? obj_min.w : pd->max_size.w;
    if (pd->max_size.h != -1)
-     max_size.h = (exp_scr_min.h > pd->max_size.h) ? exp_scr_min.h : pd->max_size.h;
+     max_size.h = (obj_min.h > pd->max_size.h) ? obj_min.h : pd->max_size.h;
 
    Eina_Size2D size;
-   size.w = (exp_scr_min.w > pd->size.w) ? exp_scr_min.w : pd->size.w;
-   size.h = (exp_scr_min.h > pd->size.h) ? exp_scr_min.h : pd->size.h;
+   size.w = (obj_min.w > pd->size.w) ? obj_min.w : pd->size.w;
+   size.h = (obj_min.h > pd->size.h) ? obj_min.h : pd->size.h;
 
-   Eina_Size2D new_min = exp_scr_min;
+   Eina_Size2D new_min = obj_min;
 
    if ((max_size.w == -1) && (max_size.h == -1))
      {
@@ -40,30 +40,30 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
      }
    else if ((max_size.w == -1) && (max_size.h != -1))
      {
-        if (max_size.h < min.h)
+        if (max_size.h < scr_min.h)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
              efl_gfx_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
           }
         else
           {
-             new_min.h = min.h;
+             new_min.h = scr_min.h;
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(size.w, min.h));
+             efl_gfx_size_set(obj, EINA_SIZE2D(size.w, scr_min.h));
           }
      }
    else if ((max_size.w != -1) && (max_size.h == -1))
      {
-        if (max_size.w < min.w)
+        if (max_size.w < scr_min.w)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
              efl_gfx_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
           }
         else
           {
-             new_min.w = min.w;
+             new_min.w = scr_min.w;
              elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(min.w, size.h));
+             efl_gfx_size_set(obj, EINA_SIZE2D(scr_min.w, size.h));
           }
      }
    else if ((max_size.w != -1) && (max_size.h != -1))
@@ -72,26 +72,26 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
         Eina_Bool min_limit_w = EINA_FALSE;
         Eina_Bool min_limit_h = EINA_FALSE;
 
-        if (max_size.w < min.w)
+        if (max_size.w < scr_min.w)
           {
              new_size.w = max_size.w;
           }
         else
           {
              min_limit_w = EINA_TRUE;
-             new_min.w = min.w;
-             new_size.w = min.w;
+             new_min.w = scr_min.w;
+             new_size.w = scr_min.w;
           }
 
-        if (max_size.h < min.h)
+        if (max_size.h < scr_min.h)
           {
              new_size.h = max_size.h;
           }
         else
           {
              min_limit_h = EINA_TRUE;
-             new_min.h = min.h;
-             new_size.h = min.h;
+             new_min.h = scr_min.h;
+             new_size.h = scr_min.h;
           }
 
         elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
