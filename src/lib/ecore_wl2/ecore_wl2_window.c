@@ -1483,8 +1483,10 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
    EINA_SAFETY_ON_NULL_RETURN(window->surface);
 
    if (window->commit_pending)
-     ERR("Commit before previous commit processed");
-
+     {
+        wl_callback_destroy(window->callback);
+        ERR("Commit before previous commit processed");
+     }
    if (!window->pending.configure)
      {
         window->commit_pending = EINA_TRUE;
