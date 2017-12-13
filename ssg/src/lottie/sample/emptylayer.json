@@ -1,0 +1,48 @@
+/* Empty Layer Json file */
+
+{   /* Composition */
+   "v":"5.0.5",   /*version*/
+   "fr":29.9700012207031, /*frame Rate*/
+   "ip":0,                /*start frame */
+   "op":1.00000004073083, /*end frame */
+   "w":100,               /* width of composition */
+   "h":100,               /* height of composition */
+   "nm":"EmptyLayer",     /* name */
+   "ddd":0,               /* 3d stuff */
+   "assets":[],           /* external file like image or font or other composition file */
+
+   "layers":[
+             {
+               "ddd":0,
+               "ind":1, /*layer id */
+               "ty":4,  /* layer type 4 is for shape layer */
+               "nm":"Shape Layer 1",  /*name*/
+               "sr":1,  /* time streatch */
+               "ks":{  /*Layer transform matrix*/
+
+                       "o":{           /* opacity its a single value property the format when no animation is specified*/
+                              "a":0,   /* Does this  property has animation */
+                              "k":100, /* property value */
+                              "ix":11  /* property index */
+                            },
+                       "r":{"a":0,"k":0,"ix":10}, /*rotation*/
+
+                       "p":{                  /*position , its a multidimensional property(x,y,z).*/
+                              "a":0,          /* no animation */
+                              "k":[50,50,0],  /* array of property value */
+                              "ix":2          /* property index ?? is it Unique ??*/
+                            },
+                       "a":{"a":0,"k":[0,0,0],"ix":1}, /*anchor point / origin */
+                       "s":{"a":0,"k":[100,100,100],"ix":6} /* scale */
+                    },
+               "ao":0,
+               "shapes":[],            /*Shape list*/
+               "ip":0,                 /* start frame */
+               "op":1.00000004073083,  /* end   frame */
+               "st":0,                 /* start time */
+               "bm":0                  /*blend mode 0 for normal*/
+              }
+            ],
+
+   "markers":[]
+}
