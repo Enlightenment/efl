@@ -194,6 +194,16 @@ lib/efl_mono/libefl_mono.dll: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp
 	@rm -f lib/efl_mono/libefl_mono.dll
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
 
+lib/efl_mono/libefl_mono.dll.config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
+	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
+	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
+	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
+	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
+	echo "</configuration>" >> $@
+
 if HAVE_WIN32
 efl_mono_dll_dest = $(DESTDIR)$(bindir)
 else
@@ -348,6 +358,16 @@ tests/efl_mono/libefl_mono_test.dll: $(efl_mono_test_eolian_mono_files) tests/ef
 	@rm -f tests/efl_mono/libefl_mono_test.dll
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_builddir)/lib/efl_mono/libefl_mono.dll -out:$@ -t:library $(filter %.cs, $(^))
 
+tests/efl_mono/efl_mono$(EXEEXT).config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
+	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
+	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
+	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
+	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
+	echo "</configuration>" >> $@
+
 # C Sharp test executable
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
 AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'; export MONO_BUILDPATH;
@@ -357,7 +377,6 @@ if HAVE_WIN32
 AM_TESTS_ENVIRONMENT += PATH='$(PATH):$(TEST_PATHS):$(WIN_ADD_TEST_PATHS)'; export PATH;
 else
 AM_TESTS_ENVIRONMENT += LD_LIBRARY_PATH='$(LD_LIBRARY_PATH):$(TEST_PATHS)'; export LD_LIBRARY_PATH;
-endif
 
 check_PROGRAMS += tests/efl_mono/efl_mono
 TESTS += tests/efl_mono/mono_test_driver.sh
@@ -377,15 +396,7 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Value.cs \
      tests/efl_mono/ValueEolian.cs
 
-lib/efl_mono/libefl_mono.dll.config:
-	echo "<configuration>" > $@
-	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
-	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
-	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
-	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
-	echo "</configuration>" >> $@
-
-tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
+tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll tests/efl_mono/efl_mono$(EXEEXT).config
 	@rm -f $@
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^))
 
@@ -394,6 +405,11 @@ tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
 	$(AM_V_EOLMONO) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport "@DLIB_PREFIX_MONO@efl_mono_native_test@DLIB_SUFFIX_MONO@" -o $@ $(ALL_EO_REFS) $<
+
+CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/test_testing.eo.cs tests/efl_mono/test_numberwrapper.eo.cs tests/efl_mono/test_testing.eo.c tests/efl_mono/test_numberwrapper.eo.c tests/efl_mono/test_testing.eo.h tests/efl_mono/test_numberwrapper.eo.h
+
+endif
+
 
 endif
 endif
