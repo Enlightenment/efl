@@ -79,13 +79,24 @@ EOLIAN static void
 _efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
    efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
-   _calc_align(obj);
+
+   //Add align calc only
+   Eina_Bool needs_size_calc = pd->needs_size_calc;
+   elm_layout_sizing_eval(obj);
+   pd->needs_size_calc = needs_size_calc;
 }
 
 static void
 _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   _calc_align(data);
+   Eo *obj = data;
+
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, pd);
+
+   //Add align calc only
+   Eina_Bool needs_size_calc = pd->needs_size_calc;
+   elm_layout_sizing_eval(obj);
+   pd->needs_size_calc = needs_size_calc;
 }
 
 EOLIAN static void
@@ -111,7 +122,11 @@ EOLIAN static void
 _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup_Align type)
 {
    pd->align = type;
-   _calc_align(obj);
+
+   //Add align calc only
+   Eina_Bool needs_size_calc = pd->needs_size_calc;
+   elm_layout_sizing_eval(obj);
+   pd->needs_size_calc = needs_size_calc;
 }
 
 EOLIAN static Efl_Ui_Popup_Align
@@ -240,7 +255,7 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 }
 
 static void
-_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
+_sizing_eval(Eo *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord minw = -1, minh = -1;
@@ -256,15 +271,24 @@ _sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
    new_size.w = (minw > size.w ? minw : size.w);
    new_size.h = (minh > size.h ? minh : size.h);
    efl_gfx_size_set(obj, new_size);
-
-   _calc_align(obj);
 }
 
 EOLIAN static void
 _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
-   if (pd->needs_size_calc) return;
+   if (pd->needs_group_calc) return;
+   pd->needs_group_calc = EINA_TRUE;
+
+   /* These flags can be modified by sub classes not to calculate size or align
+    * their super classes.
+    * e.g. Efl.Ui.Popup.Alert.Scroll class sets the flag as follows not to
+    *      calculate size by its super class.
+    *
+    *      ppd->needs_size_calc = EINA_FALSE;
+    *      efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+    */
    pd->needs_size_calc = EINA_TRUE;
+   pd->needs_align_calc = EINA_TRUE;
 
    evas_object_smart_changed(obj);
 }
@@ -276,10 +300,19 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
-   if (pd->needs_size_calc)
+   if (pd->needs_group_calc)
      {
-        _sizing_eval(obj, pd);
-        pd->needs_size_calc = EINA_FALSE;
+        if (pd->needs_size_calc)
+          {
+             _sizing_eval(obj);
+             pd->needs_size_calc = EINA_FALSE;
+          }
+        if (pd->needs_align_calc)
+          {
+             _calc_align(obj);
+             pd->needs_align_calc = EINA_FALSE;
+          }
+        pd->needs_group_calc = EINA_FALSE;
      }
 }
 

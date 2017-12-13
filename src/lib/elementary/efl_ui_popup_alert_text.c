@@ -5,6 +5,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
+#include "efl_ui_popup_private.h"
 #include "efl_ui_popup_alert_text_private.h"
 #include "efl_ui_popup_alert_text_part.eo.h"
 #include "elm_part_helper.h"
@@ -148,26 +149,21 @@ _sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_alert_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
-{
-   if (pd->needs_size_calc) return;
-   pd->needs_size_calc = EINA_TRUE;
-
-   evas_object_smart_changed(obj);
-}
-
-EOLIAN static void
 _efl_ui_popup_alert_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
 {
    /* When elm_layout_sizing_eval() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
-   if (pd->needs_size_calc)
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
+
+   if (ppd->needs_group_calc)
      {
         _sizing_eval(obj, pd);
 
-        pd->needs_size_calc = EINA_FALSE;
+        //Not to calculate size by super class
+        ppd->needs_size_calc = EINA_FALSE;
+        efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
      }
 }
 
@@ -287,7 +283,6 @@ _efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
 
    pd->size = EINA_SIZE2D(0, 0);
    pd->max_size = EINA_SIZE2D(-1, -1);
-   pd->needs_size_calc = EINA_FALSE;
 
    return obj;
 }
@@ -303,10 +298,5 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert_text, EFL_UI_POPUP_ALERT_TEXT, Efl
 #include "efl_ui_popup_alert_text_part.eo.c"
 
 /* Efl.Part end */
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_POPUP_ALERT_TEXT_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup_alert_text)
 
 #include "efl_ui_popup_alert_text.eo.c"

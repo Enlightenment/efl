@@ -9,7 +9,19 @@ struct _Efl_Ui_Popup_Data
    Efl_Ui_Popup_Align align;
    Ecore_Timer       *timer;
    double             timeout;
+   Eina_Bool          needs_group_calc : 1;
    Eina_Bool          needs_size_calc : 1;
+   Eina_Bool          needs_align_calc : 1;
 };
+
+#define EFL_UI_POPUP_DATA_GET_OR_RETURN(o, ptr, ...) \
+  Efl_Ui_Popup_Data *ptr;                            \
+  ptr = efl_data_scope_get(o, EFL_UI_POPUP_CLASS);   \
+  if (EINA_UNLIKELY(!ptr))                           \
+    {                                                \
+       CRI("no ui popup data for object %p (%s)",    \
+           o, evas_object_type_get(o));              \
+       return __VA_ARGS__;                           \
+    }
 
 #endif

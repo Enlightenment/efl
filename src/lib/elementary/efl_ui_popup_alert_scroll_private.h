@@ -10,7 +10,6 @@ struct _Efl_Ui_Popup_Alert_Scroll_Data
    Eo         *content;
    Eina_Size2D size;
    Eina_Size2D max_size;
-   Eina_Bool   needs_size_calc : 1;
 };
 
 #endif
