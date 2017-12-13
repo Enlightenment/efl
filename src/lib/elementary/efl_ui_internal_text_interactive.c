@@ -356,7 +356,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
 
    char *tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
 
    free(tmp);
 
@@ -508,7 +508,7 @@ _sel_cursor_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -599,7 +599,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_
    tmp = efl_canvas_text_range_text_get(obj, cur1, cur2);
    info.content = tmp;
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
 
    if (tmp) free(tmp);
 
@@ -630,7 +630,7 @@ _delete_emit(Eo *obj, Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive
    info.length = 1;
    info.content = tmp;
 
-   efl_event_callback_legacy_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
 
    evas_textblock_cursor_char_delete(c);
