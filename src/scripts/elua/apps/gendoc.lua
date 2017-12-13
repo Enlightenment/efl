@@ -615,62 +615,6 @@ local set_theme = function(tname)
     end
 end
 
-local class_to_node = function(cl, main)
-    local ret = {}
-
-    ret.label = cl:full_name_get()
-    ret.name = ret.label:lower():gsub("%.", "_")
-
-    local clr = cl:theme_str_get()
-
-    ret.style = current_theme.classes[clr].style
-    ret.color = current_theme.classes[clr][main and "primary_color" or "color"]
-    ret.fillcolor = current_theme.classes[clr][main and "primary_fill_color"
-                                                     or "fill_color"]
-    ret.fontcolor = current_theme.classes[clr][main and "primary_font_color"
-                                                     or "font_color"]
-
-    -- FIXME: need a dokuwiki graphviz plugin with proper URL support
-    -- the existing one only supports raw URLs (no dokuwikí namespaces)
-    --ret.URL = ":" .. global_opts.root_nspace .. ":"
-    --              .. table.concat(cl:nspaces_get(), ":")
-
-    return ret
-end
-
-local build_igraph_r
-build_igraph_r = function(cl, nbuf, ibuf)
-    local sn = cl:full_name_get():lower():gsub("%.", "_")
-    for i, acl in ipairs(cl:inherits_get()) do
-        nbuf[#nbuf + 1] = class_to_node(acl)
-        ibuf[#ibuf + 1] = { sn, (acl:full_name_get():lower():gsub("%.", "_")) }
-        build_igraph_r(acl, nbuf, ibuf)
-    end
-end
-
-local build_igraph = function(cl)
-    local graph = {
-        type = "hierarchy",
-        attrs = {
-            rankdir = current_theme.rank_dir,
-            size = current_theme.size,
-            bgcolor = current_theme.bg_color
-        },
-        node = current_theme.node,
-        edge = current_theme.edge
-    }
-
-    local nbuf = {}
-    local ibuf = {}
-    nbuf[#nbuf + 1] = class_to_node(cl, true)
-    build_igraph_r(cl, nbuf, ibuf)
-
-    graph.nodes = nbuf
-    graph.connections = ibuf
-
-    return graph
-end
-
 local find_parent_impl
 find_parent_impl = function(fulln, cl)
     for i, pcl in ipairs(cl:inherits_get()) do
@@ -1025,9 +969,6 @@ local build_class = function(cl)
     end
     f:write_nl()
 
-    f:write_folded("Inheritance graph", function()
-        f:write_graph(build_igraph(cl))
-    end)
     if writer.has_feature("dot") then
         f:write_nl(2)
     end
@@ -1634,7 +1575,6 @@ getopt.parse {
         { "n", "namespace", true, help = "Root namespace of the docs." },
         { nil, "graph-theme", true, help = "Optional graph theme." },
         { nil, "graph-theme-light", false, help = "Use light builtin graph theme." },
-        { nil, "disable-graphviz", false, help = "Disable graphviz usage." },
         { nil, "disable-notes", false, help = "Disable notes plugin usage." },
         { nil, "disable-folded", false, help = "Disable folded plugin usage." },
         { nil, "disable-title", false, help = "Disable title plugin usage." },
@@ -1693,7 +1633,6 @@ getopt.parse {
         local wfeatures = {
             notes = not opts["disable-notes"],
             folds = not opts["disable-folded"],
-            dot = not opts["disable-graphviz"],
             title = not opts["disable-title"]
         }
         writer.init(rootns, wfeatures)
