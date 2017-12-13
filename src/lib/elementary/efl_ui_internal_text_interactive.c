@@ -1057,7 +1057,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 end:
    if (changed_user)
      {
-        efl_event_callback_legacy_call(obj,
+        efl_event_callback_call(obj,
               EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
      }
    (void) 0;

@@ -268,19 +268,20 @@ static void _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd);
 static void _magnifier_move(void *data);
 static void _update_decorations(Eo *obj);
 static void _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd);
-static void _efl_ui_text_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
-static void _efl_ui_text_selection_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
-static void _efl_ui_text_cursor_changed_cb(void *data EINA_UNUSED, const Efl_Event *event);
-static void _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-static void _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
-static void _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
+static void _efl_ui_text_changed_cb(void *data, const Efl_Event *event);
+static void _efl_ui_text_changed_user_cb(void *data, const Efl_Event *event);
+static void _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event);
+static void _efl_ui_text_cursor_changed_cb(void *data, const Efl_Event *event);
+static void _efl_ui_text_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _efl_ui_text_select_none(Eo *obj, Efl_Ui_Text_Data *sd);
+static void _efl_ui_text_anchor_hover_end(Eo *obj, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *parent);
-static const char* _efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd);
+static const char* _efl_ui_text_selection_get(Eo *obj, Efl_Ui_Text_Data *sd);
 static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
 static void _decoration_defer_all(Eo *obj);
 static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd, const char *source, Eina_Bool above);
 static void _decoration_defer(Eo *obj);
-static void _anchors_clear_all(Evas_Object *o EINA_UNUSED, Efl_Ui_Text_Data *sd);
+static void _anchors_clear_all(Evas_Object *o, Efl_Ui_Text_Data *sd);
 static void _unused_item_objs_free(Efl_Ui_Text_Data *sd);
 static void _clear_text_selection(Efl_Ui_Text_Data *sd);
 
@@ -3079,7 +3080,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_object_size_hint_align_set
       (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
-         _efl_ui_text_changed_cb, obj);
+         _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
    efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
@@ -3302,7 +3303,7 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 
    text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
    efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
-         _efl_ui_text_changed_cb, obj);
+         _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
    efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
@@ -5238,6 +5239,13 @@ _efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _decoration_defer_all(data);
    _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED);
+}
+
+static void
+_efl_ui_text_changed_user_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   _decoration_defer_all(data);
+   _entry_changed_handle(data, EFL_UI_TEXT_EVENT_CHANGED_USER);
 }
 
 static void
