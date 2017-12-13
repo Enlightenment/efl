@@ -37,13 +37,16 @@ efl_eldbus_mono_files = \
 efl_ecore_evas_mono_files = \
 	bindings/mono/ecore_evas_mono/ecore_evas.cs
 
-lib_efl_mono_libefl_mono_dll_SOURCES = \
+lib_efl_mono_libefl_mono_dll_sources = \
 	bindings/mono/efl_mono/efl_all.cs \
-	$(builddir)/bindings/mono/efl_mono/efl_libs.cs \
 	$(efl_eo_mono_files) \
 	$(efl_eina_mono_files) \
 	$(efl_eldbus_mono_files) \
 	$(efl_ecore_evas_mono_files)
+
+EXTRA_DIST2 += \
+bindings/mono/efl_mono/efl_libs.cs.in \
+bindings/mono/efl_mono/efl_libs.csv.in
 
 if HAVE_CSHARP
 
@@ -151,10 +154,16 @@ lib/efl/interfaces/efl_text_properties.eo.cs \
 $(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
 lib/eo/eina_types.eot.cs
 
-installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
-nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_files:%.eo=%.eo.cs)
+efl_mono_files_gen =\
+$(lib_efl_mono_libefl_mono_dll_sources) \
+$(efl_eolian_mono_files) \
+$(builddir)/bindings/mono/efl_mono/efl_libs.cs
 
-CLEANFILES += $(efl_eolian_mono_files)
+
+installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
+nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_files:%.eo=%.eo.cs) $(builddir)/bindings/mono/efl_mono/efl_libs.csv
+
+CLEANFILES += $(efl_mono_files_gen)
 
 if HAVE_WIN32
 
@@ -180,12 +189,24 @@ lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @EFL_CUSTOM_EXPORTS_MONO_LIBS@
 lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @EFL_CUSTOM_EXPORTS_MONO_INTERNAL_LIBS@
 
 #Efl Mono - C Sharp binding library
-bin_PROGRAMS += lib/efl_mono/libefl_mono.dll
 
-
-lib/efl_mono/libefl_mono.dll: $(lib_efl_mono_libefl_mono_dll_SOURCES) lib/efl_mono/$(am__dirstamp) $(efl_eolian_mono_files) lib/efl_mono/libefl_mono.dll.config
+lib/efl_mono/libefl_mono.dll: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp) $(efl_mono_files_gen) lib/efl_mono/libefl_mono.dll.config
 	@rm -f lib/efl_mono/libefl_mono.dll
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -out:$@ -t:library $(filter %.cs, $(^))
+
+if HAVE_WIN32
+efl_mono_dll_dest = $(DESTDIR)$(bindir)
+else
+efl_mono_dll_dest = $(DESTDIR)$(libdir)/efl-mono-@VMAJ@
+endif
+
+EFL_INSTALL_EXEC_HOOK += \
+$(MKDIR_P) $(efl_mono_dll_dest); \
+cp -f $(srcdir)/lib/efl_mono/libefl_mono.dll $(efl_mono_dll_dest)/libefl_mono.dll; \
+cp -f $(srcdir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
+
+all-local: lib/efl_mono/libefl_mono.dll
+
 
 ### MSBuild
 
@@ -210,7 +231,7 @@ bin_efl_mono_msbuild_gen_efl_mono_msbuild_gen_DEPENDENCIES = @USE_EOLIAN_INTERNA
 include Makefile_Efl_Mono_MSBuild_Gen_Helper.am
 
 # Efl Mono DLL for MSBuild
-../libefl_mono.csproj: $(lib_efl_mono_libefl_mono_dll_SOURCES) lib/efl_mono/$(am__dirstamp) $(efl_eolian_mono_files) $(_EFL_MONO_MSBUILD_GEN_DEP)
+../libefl_mono.csproj: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp) $(efl_mono_files_gen) $(_EFL_MONO_MSBUILD_GEN_DEP)
 	@rm -f $@
 	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a libefl_mono.dll -t library $(patsubst %.cs,src/%.cs,$(filter %.cs, $(^)))
 
@@ -361,9 +382,11 @@ lib/efl_mono/libefl_mono.dll.config:
 	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
 	echo "</configuration>" >> $@
 
-tests/efl_mono/efl_mono.exe: $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
-	@rm -f tests/efl_mono/efl_mono_exe
+tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
+	@rm -f tests/efl_mono/efl_mono.exe
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^))
+
+###EXTRA_DIST2 += $(tests_efl_mono_efl_mono_exe_srcs)
 
 # Rule for generating the .cs files
 tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)

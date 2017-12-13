@@ -370,55 +370,55 @@ endif
 if HAVE_CSHARP
 
 EXTRA_PROGRAMS += \
-    evas_mono_box.exe \
-    evas_mono_image.exe \
-    evas_mono_image2.exe \
-	evas_mono_rectangle.exe \
-    evas_mono_table.exe \
-    evas_mono_text.exe
+    evas_mono_box_csharp \
+    evas_mono_image_csharp \
+    evas_mono_image2_csharp \
+    evas_mono_rectangle_csharp \
+    evas_mono_table_csharp \
+    evas_mono_text_csharp
 
 
-evas_mono_box_exe_SOURCES = \
+evas_mono_box_csharp_SOURCES = \
 	evas_mono_box.cs
 
-evas_mono_box.exe$(EXEEXT): $(evas_mono_box_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_box$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_box_csharp$(EXEEXT): $(evas_mono_box_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-evas_mono_image_exe_SOURCES = \
+evas_mono_image_csharp_SOURCES = \
 	evas_mono_image.cs
 
-evas_mono_image.exe$(EXEEXT): $(evas_mono_image_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_image$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_image_csharp$(EXEEXT): $(evas_mono_image_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-evas_mono_image2_exe_SOURCES = \
+evas_mono_image2_csharp_SOURCES = \
 	evas_mono_image2.cs
 
-evas_mono_image2.exe$(EXEEXT): $(evas_mono_image2_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_image2$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_image2_csharp$(EXEEXT): $(evas_mono_image2_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-evas_mono_rectangle_exe_SOURCES = \
+evas_mono_rectangle_csharp_SOURCES = \
 	evas_mono_rectangle.cs
 
-evas_mono_rectangle.exe$(EXEEXT): $(evas_mono_rectangle_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_rectangle$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_rectangle_csharp$(EXEEXT): $(evas_mono_rectangle_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-evas_mono_table_exe_SOURCES = \
+evas_mono_table_csharp_SOURCES = \
 	evas_mono_table.cs
 
-evas_mono_table.exe$(EXEEXT): $(evas_mono_table_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_table$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_table_csharp$(EXEEXT): $(evas_mono_table_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-evas_mono_text_exe_SOURCES = \
+evas_mono_text_csharp_SOURCES = \
 	evas_mono_text.cs
 
-evas_mono_text.exe$(EXEEXT): $(evas_mono_text_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f evas_mono_text$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
+evas_mono_text_csharp$(EXEEXT): $(evas_mono_text_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
 endif
 

@@ -265,23 +265,6 @@ nodist_codegen_example_SOURCES = \
 codegen_example_generated.c \
 codegen_example_generated.h
 
-
-if HAVE_CSHARP
-
-efl_ui_slider_mono_exe_SOURCES = \
-	efl_ui_slider_mono.cs
-
-if HAVE_WIN32
-MCS_FLAGS := $(MCS_FLAGS)
-MCS_FLAGS += -define:WIN32
-endif
-
-efl_ui_slider_mono.exe$(EXEEXT): $(efl_ui_slider_mono_exe_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT)
-	@rm -f efl_ui_slider_mono$(EXEEXT)
-	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll$(EXEEXT) -out:$@ $(filter %.cs, $(^))
-
-endif
-
 examples_PROGRAMS = \
 actionslider_example_01 \
 bg_example_01 \
@@ -447,8 +430,20 @@ endif
 
 if HAVE_CSHARP
 
+efl_ui_slider_mono_SOURCES = \
+	efl_ui_slider_mono.cs
+
+if HAVE_WIN32
+MCS_FLAGS := $(MCS_FLAGS)
+MCS_FLAGS += -define:WIN32
+endif
+
+efl_ui_slider_mono$(EXEEXT): $(efl_ui_slider_mono_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
 examples_PROGRAMS += \
-	efl_ui_slider_mono.exe
+	efl_ui_slider_mono
 
 endif
 
@@ -607,6 +602,9 @@ screenshots: examples
 
 EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc evas3d_map_example.edc twitter_example_01.edc efl_ui_list_example.edc performance/layout.edc performance/background.png performance/target_texture.png sphere_hunter/sphere_hunter.edc sphere_hunter/score.jpg sphere_hunter/EFL_victory.png sphere_hunter/EFL_defeat.png codegen_example_generated.c codegen_example_generated.h codegen_example.edj prefs_example_01.epc prefs_example_02.epc prefs_example_03.epc prefs_example_03.edc
 
+if HAVE_CSHARP
+EXTRA_DIST += $(MONO_SRCS)
+endif
 
 examples: $(examples_PROGRAMS) $(EDJS)
 
