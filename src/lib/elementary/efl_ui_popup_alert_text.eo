@@ -1,8 +1,27 @@
+import eina_types;
+
 class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
 {
    [[EFL UI Popup Alert Text class]]
+   methods {
+      @property expandable {
+         set {
+            [[Set the expandable of popup.
+
+              If the contents of the popup has min size, popup will be increased by min size to the y direction.
+              If max hint is set, it will be increased to value of max hint,
+              and then scrolling will occur.
+            ]]
+         }
+         values {
+            max_size: Eina.Size2D; [[A 2D max size in pixel uinits.]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Ui.Popup.popup_size { set;}
       Efl.Text.text { get; set; }
       Efl.Part.part;
    }
