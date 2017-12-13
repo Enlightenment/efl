@@ -351,7 +351,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    end = evas_textblock_cursor_pos_get(del_end);
    if (start == end) goto end;
 
-   tmp = efl_canvas_text_range_text_get(obj, en->sel_start, en->sel_end);
+   tmp = efl_canvas_text_range_text_get(obj, del_start, del_end);
 
    info.insert = EINA_FALSE;
    info.position = start;
