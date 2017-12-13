@@ -2185,7 +2185,7 @@ test_entry6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
                        "input_panel_enabled: FALSE.<br>"
-                       "This entry doesn't allow to show virtual keyboard automatically.<br>"
+                       "This entry doesn't allow one to show virtual keyboard automatically.<br>"
                        "it is used in case that wants its own keypad such as calculator.");
    elm_entry_input_panel_enabled_set(en, EINA_FALSE);
    elm_box_pack_end(bx, en);

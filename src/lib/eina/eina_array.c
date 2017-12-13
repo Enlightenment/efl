@@ -310,7 +310,7 @@ eina_array_step_set(Eina_Array *array,
 
    if (sizeof (Eina_Array) != sizeof_eina_array)
      {
-	ERR("Unknow Eina_Array size ! Got %i, expected %i !\n",
+	ERR("Unknown Eina_Array size ! Got %i, expected %i !\n",
 	    sizeof_eina_array,
 	    (int) sizeof (Eina_Array));
 	/* Force memory to zero to provide a small layer of security */

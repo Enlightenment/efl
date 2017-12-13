@@ -76,7 +76,7 @@ main(void)
    childPid = ecore_exe_pid_get(childHandle);
 
    if (childPid == -1)
-     fprintf(stderr, "Could not retrive the PID!\n");
+     fprintf(stderr, "Could not retrieve the PID!\n");
    else
      printf("The child process has PID:%u\n", (unsigned int)childPid);
 

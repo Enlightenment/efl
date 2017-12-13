@@ -286,7 +286,7 @@ _ethumbd_hang_cb(void *data)
    ed->hang_timer = NULL;
    if (ed->processing)
      {
-        ERR("timout while processing thumb");
+        ERR("timeout while processing thumb");
         if (ed->slave.exe) ecore_exe_kill(ed->slave.exe);
      }
    return EINA_FALSE;

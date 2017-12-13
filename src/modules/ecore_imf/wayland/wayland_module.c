@@ -166,7 +166,7 @@ im_module_init(void)
 
    ecore_imf_module_register(&wayland_im_info, im_module_create, 
                              im_module_exit);
-   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module initalized");
+   EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module initialized");
 
    return EINA_TRUE;
 

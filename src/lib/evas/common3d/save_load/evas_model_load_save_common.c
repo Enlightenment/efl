@@ -165,7 +165,7 @@ evas_model_load_aabb_add_to_frame(Evas_Canvas3D_Mesh *mesh,
 
    if (!evas_canvas3d_mesh_aabb_add_to_frame(pd, frame, stride.positions))
      {
-        ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
+        ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", 0);
      }
 }
 

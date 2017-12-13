@@ -226,7 +226,7 @@ _evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
    ctx = evas_gl_common_current_context_get();
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -522,14 +522,14 @@ _evgl_glClear(GLbitfield mask)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -766,14 +766,14 @@ _evgl_glFramebufferParameteri(GLenum target, GLenum pname, GLint param)
 
     if (!rsc->current_eng)
       {
-         ERR("Unable to retrive Current Engine");
+         ERR("Unable to retrieve Current Engine");
          return;
       }
 
     ctx = rsc->current_ctx;
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 
@@ -814,14 +814,14 @@ _evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget,
 
     if (!rsc->current_eng)
       {
-         ERR("Unable to retrive Current Engine");
+         ERR("Unable to retrieve Current Engine");
          return;
       }
 
     ctx = rsc->current_ctx;
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 
@@ -873,14 +873,14 @@ _evgl_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderb
 
     if (!rsc->current_eng)
       {
-         ERR("Unable to retrive Current Engine");
+         ERR("Unable to retrieve Current Engine");
          return;
       }
 
     ctx = rsc->current_ctx;
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 
@@ -939,7 +939,7 @@ _evgl_glGetFloatv(GLenum pname, GLfloat* params)
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1082,7 +1082,7 @@ _evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GL
 
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1136,14 +1136,14 @@ _evgl_glGetFramebufferParameteriv(GLenum target, GLenum pname, GLint* params)
 
     if (!rsc->current_eng)
       {
-         ERR("Unable to retrive Current Engine");
+         ERR("Unable to retrieve Current Engine");
          return;
       }
 
     ctx = rsc->current_ctx;
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 
@@ -1190,7 +1190,7 @@ _evgl_glGetIntegerv(GLenum pname, GLint* params)
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1424,7 +1424,7 @@ _evgl_glGetStringi(GLenum name, GLuint index)
 
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return NULL;
      }
 
@@ -1463,14 +1463,14 @@ _evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1517,14 +1517,14 @@ _evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1605,14 +1605,14 @@ _evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1720,7 +1720,7 @@ _evgl_glDrawBuffers(GLsizei n, const GLenum *bufs)
     ctx = evas_gl_common_current_context_get();
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 
@@ -1776,7 +1776,7 @@ _evgl_glReadBuffer(GLenum src)
     ctx = evas_gl_common_current_context_get();
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 

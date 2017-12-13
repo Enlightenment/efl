@@ -985,7 +985,7 @@ _name_owner_changed(void *data EINA_UNUSED, const char *bus EINA_UNUSED, const c
      }
    else
      {
-        DBG("unknow change from %s to %s", old, new);
+        DBG("unknown change from %s to %s", old, new);
      }
 }
 

@@ -122,7 +122,7 @@ _eeze_disk_mount_result_handler(void *data EINA_UNUSED, int type EINA_UNUSED, Ec
           else
             {
                disk->mount_fail_count = 0;
-               _eeze_disk_mount_error_handler(disk, "Maximimum number of mount-related failures reached");
+               _eeze_disk_mount_error_handler(disk, "Maximum number of mount-related failures reached");
             }
           return ECORE_CALLBACK_RENEW;
        }
@@ -158,7 +158,7 @@ _eeze_disk_mount_result_handler(void *data EINA_UNUSED, int type EINA_UNUSED, Ec
            else
              {
                 disk->mount_fail_count = 0;
-                _eeze_disk_mount_error_handler(disk, "Maximimum number of mount-related failures reached");
+                _eeze_disk_mount_error_handler(disk, "Maximum number of mount-related failures reached");
              }
             return ECORE_CALLBACK_RENEW;
          }

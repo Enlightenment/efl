@@ -2149,7 +2149,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    if (type < EET_T_UNKNOW ||
        type >= EET_T_LAST)
      {
-        CRI("Preventing later bug due to unknow type: %i", type);
+        CRI("Preventing later bug due to unknown type: %i", type);
         return;
      }
    if (offset < 0)
@@ -2869,7 +2869,7 @@ _eet_data_dump_token_get(const char *src,
                       TOK_ADD(p[0]);
                       break;
                    default:
-                      ERR("Unknow escape character %#x (%c). Append as is",
+                      ERR("Unknown escape character %#x (%c). Append as is",
                           p[0], p[0]);
                       TOK_ADD(p[0]);
                   }
@@ -4585,7 +4585,7 @@ case Eet_Type:                                                    \
          return eet_node_null_new(name);
 
       default:
-        ERR("Unknow type passed to eet_data_node_simple_type");
+        ERR("Unknown type passed to eet_data_node_simple_type");
         return NULL;
      }
 }

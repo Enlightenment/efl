@@ -1890,7 +1890,7 @@ _editable_text_text_insert(const Eldbus_Service_Interface *iface, const Eldbus_M
    ELM_ATSPI_OBJ_CHECK_OR_RETURN_DBUS_ERROR(obj, EFL_ACCESS_EDITABLE_TEXT_INTERFACE, msg);
 
    if (!eldbus_message_arguments_get(msg, "isi", &pos, &text, &len))
-     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Postion, string, length expected.");
+     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Position, string, length expected.");
 
    ret = eldbus_message_method_return_new(msg);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);

@@ -469,7 +469,7 @@ _efl_loop_timer_util_instanciate(Efl_Loop_Timer_Data *timer)
 
    if (!timer->initialized)
      {
-        ERR("Trying to instanciate an uninitialized timer is impossible.");
+        ERR("Trying to instantiate an uninitialized timer is impossible.");
         return ;
      }
 

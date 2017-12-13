@@ -355,7 +355,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    if (!sd->engine_instance) _engine_init(obj, sd);
    if (!sd->engine_instance)
      {
-        WRN("No engine choosen. Please set an engine.");
+        WRN("No engine chosen. Please set an engine.");
         return EINA_FALSE;
      }
 

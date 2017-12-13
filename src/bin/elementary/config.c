@@ -4316,7 +4316,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
           {
              printf("Usage:\n"
                     "  -h                This help\n"
-                    "  -q                Quiet mode (dont show window)\n"
+                    "  -q                Quiet mode (don't show window)\n"
                     "  -t THEME          Set theme to THEME (ELM_THEME spec)\n"
                     "  -f SIZE           Set finger size to SIZE pixels\n"
                     "  -s SCALE          Set scale factor to SCALE\n"

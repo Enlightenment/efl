@@ -169,7 +169,7 @@ ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer_Consumer *consumer)
    // This should not happen.
    if (_shared_buffer_state_get(sb) != SHARED_BUFFER_STATE_ENQUEUE)
      {
-        ERR("Unknown error occured - Not on Enqueued State: buffer %p, state %s",
+        ERR("Unknown error occurred - Not on Enqueued State: buffer %p, state %s",
             sb, _shared_buffer_state_string_get(sb));
         return NULL;
      }
@@ -357,7 +357,7 @@ _ecore_buffer_consumer_cb_add_buffer(void *data, struct bq_consumer *bq_consumer
 
    if (!sb)
      {
-        ERR("Unknown Error occured - maybe this buffer is not shared yet");
+        ERR("Unknown Error occurred - maybe this buffer is not shared yet");
         return;
      }
 
@@ -365,7 +365,7 @@ _ecore_buffer_consumer_cb_add_buffer(void *data, struct bq_consumer *bq_consumer
    if ((state != SHARED_BUFFER_STATE_IMPORT) &&
        (state != SHARED_BUFFER_STATE_RELEASE))
      {
-        ERR("Unknown Error occured - Could not enqueued this state of buffer: buffer %p, state %s",
+        ERR("Unknown Error occurred - Could not enqueued this state of buffer: buffer %p, state %s",
             sb, _shared_buffer_state_string_get(sb));
         return;
      }

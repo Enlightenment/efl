@@ -1359,7 +1359,7 @@ eng_gl_context_use(Context_3D *ctx)
 #else
    if (!__glXMakeContextCurrent(ctx->display, ctx->glxwin, ctx->context))
      {
-        ERR("glXMakeContextCurrent(%p, %p, %p, %p) faild.",
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p) failed.",
             (void *)ctx->display, (void *)ctx->glxwin,
             (void *)ctx->win, (void *)ctx->context);
      }

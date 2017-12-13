@@ -515,14 +515,14 @@ _evgl_gles1_glClear(GLbitfield mask)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -806,7 +806,7 @@ _evgl_gles1_glDisable(GLenum cap)
    ctx = evas_gl_common_current_context_get();
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -860,7 +860,7 @@ _evgl_gles1_glEnable(GLenum cap)
    ctx = evas_gl_common_current_context_get();
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1030,7 +1030,7 @@ _evgl_gles1_glGetIntegerv(GLenum pname, GLint *params)
         ctx = rsc->current_ctx;
         if (!ctx)
           {
-             ERR("Unable to retrive Current Context");
+             ERR("Unable to retrieve Current Context");
              return;
           }
 
@@ -1472,14 +1472,14 @@ _evgl_gles1_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1571,14 +1571,14 @@ _evgl_gles1_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -1818,14 +1818,14 @@ _evgl_gles1_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 

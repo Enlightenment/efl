@@ -589,7 +589,7 @@ elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb tr
    EINA_INLIST_FOREACH(transit->effect_list, effect_module)
      if ((effect_module->transition_cb == transition_cb) && (effect_module->effect == effect))
        {
-          WRN("elm_transit does not allow to add the duplicated effect! : transit=%p", transit);
+          WRN("elm_transit does not allow one to add the duplicated effect! : transit=%p", transit);
           return;
        }
 
@@ -792,7 +792,7 @@ elm_transit_duration_set(Elm_Transit *transit, double duration)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    if (transit->animator)
      {
-        WRN("elm_transit does not allow to set the duration time in operating! : transit=%p", transit);
+        WRN("elm_transit does not allow one to set the duration time in operating! : transit=%p", transit);
         return;
      }
    transit->time.duration = duration;
@@ -918,7 +918,7 @@ elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_k
    if (transit->state_keep == state_keep) return;
    if (transit->animator)
      {
-        WRN("elm_transit does not allow to change final state keep mode in operating! : transit=%p", transit);
+        WRN("elm_transit does not allow one to change final state keep mode in operating! : transit=%p", transit);
         return;
      }
    transit->state_keep = !!state_keep;

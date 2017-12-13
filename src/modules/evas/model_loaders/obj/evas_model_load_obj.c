@@ -450,7 +450,7 @@ evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 
    if (!evas_canvas3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
      {
-        ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
+        ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", 0);
      }
 
    if (map)

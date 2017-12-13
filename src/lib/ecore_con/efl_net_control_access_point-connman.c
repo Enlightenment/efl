@@ -621,7 +621,7 @@ _efl_net_control_access_point_configuration_ipv6_set(Eo *o, Efl_Net_Control_Acce
          break;
       case EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_TEMPORARY:
          _append_dict_entry(array, "Method", "s", "auto");
-         _append_dict_entry(array, "Privacy", "s", "prefered");
+         _append_dict_entry(array, "Privacy", "s", "preferred");
          break;
      }
 
@@ -1238,7 +1238,7 @@ _efl_net_control_access_point_property_actual_ipv6_changed(Eo *o EINA_UNUSED, Ef
                pd->actual.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_NONE;
              else if (strcmp(str, "enabled") == 0)
                pd->actual.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_PUBLIC;
-             else if (strcmp(str, "prefered") == 0)
+             else if (strcmp(str, "preferred") == 0)
                pd->actual.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_TEMPORARY;
              else
                WRN("Unexpected IPV6 Privacy value '%s'", str);
@@ -1460,7 +1460,7 @@ _efl_net_control_access_point_property_configured_ipv6_changed(Eo *o EINA_UNUSED
                pd->configured.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_NONE;
              else if (strcmp(str, "enabled") == 0)
                pd->configured.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_PUBLIC;
-             else if (strcmp(str, "prefered") == 0)
+             else if (strcmp(str, "preferred") == 0)
                pd->configured.ipv6.method = EFL_NET_CONTROL_ACCESS_POINT_IPV6_METHOD_AUTO_PRIVACY_TEMPORARY;
              else
                WRN("Unexpected IPV6 Privacy value '%s'", str);

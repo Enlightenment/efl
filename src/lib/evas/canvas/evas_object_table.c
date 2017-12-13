@@ -405,13 +405,13 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
         if (o_minw < 1)
           {
              ERR("homogeneous table based on item size but no "
-                 "horizontal mininum size specified! Using expand.");
+                 "horizontal minimum size specified! Using expand.");
              expand_h = 1;
           }
         if (o_minh < 1)
           {
              ERR("homogeneous table based on item size but no "
-                 "vertical mininum size specified! Using expand.");
+                 "vertical minimum size specified! Using expand.");
              expand_v = 1;
           }
      }

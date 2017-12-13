@@ -3462,7 +3462,7 @@ _evas_image_data_convert_internal(Evas_Image_Data *o, void *data, Evas_Colorspac
         break;
 
       default:
-        WRN("unknow colorspace: %i\n", o->cur->cspace);
+        WRN("unknown colorspace: %i\n", o->cur->cspace);
         break;
      }
 

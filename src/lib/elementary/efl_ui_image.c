@@ -40,7 +40,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DOWNLOAD_ERROR, ""},
    {SIG_LOAD_OPEN, "Triggered when the file has been opened (image size is known)"},
    {SIG_LOAD_READY, "Triggered when the image file is ready for display"},
-   {SIG_LOAD_ERROR, "Triggered whenener an I/O or decoding error occured"},
+   {SIG_LOAD_ERROR, "Triggered whenener an I/O or decoding error occurred"},
    {SIG_LOAD_CANCEL, "Triggered whenener async I/O was cancelled"},
    {NULL, NULL}
 };

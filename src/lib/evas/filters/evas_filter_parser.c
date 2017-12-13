@@ -889,7 +889,7 @@ _lua_buffer_new(lua_State *L)
    if (!_lua_instruction_run(L, instr))
      {
         _instruction_del(instr);
-        return luaL_error(L, "buffer instanciation failed");
+        return luaL_error(L, "buffer instantiation failed");
      }
    else
      {

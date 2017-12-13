@@ -32,7 +32,7 @@ _print_current_dir(Evas_Object *obj)
          printf("ctxpopup direction: down!\n");
          break;
       case ELM_CTXPOPUP_DIRECTION_UNKNOWN:
-         printf("ctxpopup direction: unknow!\n");
+         printf("ctxpopup direction: unknown!\n");
          break;
      }
      printf(" [%s : %d] auto_hide_mode=%d\n", __func__, __LINE__, elm_ctxpopup_auto_hide_disabled_get(obj));

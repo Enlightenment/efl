@@ -277,14 +277,14 @@ _evgl_glEvasGLImageTargetTexture2D(GLenum target, EvasGLImage image)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -313,14 +313,14 @@ _evgl_glEvasGLImageTargetRenderbufferStorage(GLenum target, EvasGLImage image)
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
@@ -432,14 +432,14 @@ _evgl_glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenu
 
    if (!rsc->current_eng)
      {
-        ERR("Unable to retrive Current Engine");
+        ERR("Unable to retrieve Current Engine");
         return;
      }
 
    ctx = rsc->current_ctx;
    if (!ctx)
      {
-        ERR("Unable to retrive Current Context");
+        ERR("Unable to retrieve Current Context");
         return;
      }
 
