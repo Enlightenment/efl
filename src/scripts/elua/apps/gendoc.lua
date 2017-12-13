@@ -962,21 +962,18 @@ local build_class = function(cl)
     f:write_editable(cln, "description")
     f:write_nl()
 
-    f:write_h("Inheritance", 2)
     local inherits = cl:inherits_get()
     if #inherits ~= 0 then
+        f:write_h("Inheritance", 2)
+
         f:write_raw(build_inherit_summary(inherits[1]):finish())
-    end
-    f:write_nl()
+	f:write_nl()
 
-    if writer.has_feature("dot") then
-        f:write_nl(2)
+        f:write_folded("Full hierarchy", function()
+            f:write_list(build_inherits(cl))
+        end)
+        f:write_nl()
     end
-
-    f:write_folded("Full hierarchy", function()
-        f:write_list(build_inherits(cl))
-    end)
-    f:write_nl()
 
     local written = {}
     local ievs = {}
