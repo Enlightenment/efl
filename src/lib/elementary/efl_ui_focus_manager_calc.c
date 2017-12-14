@@ -511,7 +511,7 @@ _calculate_node_indirection(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Obj
         //calculate relative position of the nodes
         pos = _relative_position_rects(&rect, &op_rect);
         //calculate distance
-        distance = sqrt(pow(pos.x, 2) + pow(pos.y, 2));
+        distance = pow(pos.x, 2) + pow(pos.y, 2);
 
         if (outside & outside_dir)
           {
