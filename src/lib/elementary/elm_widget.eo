@@ -570,6 +570,9 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
          return: Efl.Ui.Focus.Manager; [[The focus manager.]]
       }
    }
+   parts {
+      shadow: Efl.Ui.Widget.Part_Shadow;
+   }
    implements {
       class.constructor;
       Efl.Object.constructor;

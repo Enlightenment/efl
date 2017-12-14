@@ -114,6 +114,7 @@ static void
 _on_sub_obj_del(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
 static void _elm_widget_focus_tree_unfocusable_handle(Eo *obj);
+static void _elm_widget_shadow_update(Elm_Widget *obj);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del });
@@ -795,6 +796,8 @@ _smart_reconfigure(Elm_Widget_Smart_Data *sd)
         evas_object_move(sd->bg, sd->x, sd->y);
         evas_object_resize(sd->bg, sd->w, sd->h);
      }
+   if (sd->has_shadow)
+     _elm_widget_shadow_update(sd->obj);
 }
 
 EOLIAN static void
@@ -5625,6 +5628,268 @@ elm_widget_signal_callback_del(Eo *obj, const char *emission, const char *source
 }
 
 
+/* Widget Shadow Begin */
+
+typedef struct _Widget_Shadow
+{
+   Eo *widget;
+   Eo *surface;
+   struct {
+      double rx, ry, ox, oy, grow;
+      int r, g, b, a;
+   } props;
+   Eina_Stringshare *code, *name;
+} Widget_Shadow;
+
+static void _widget_shadow_update(Widget_Shadow *shadow);
+
+static void
+_widget_shadow_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Widget_Shadow *shadow = data;
+
+   efl_del(shadow->surface);
+   free(shadow);
+}
+
+static void
+_widget_shadow_event_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Widget_Shadow *shadow = data;
+   _widget_shadow_update(shadow);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
+{ EFL_EVENT_DEL, _widget_shadow_del_cb },
+{ EFL_GFX_EVENT_MOVE, _widget_shadow_event_cb },
+{ EFL_GFX_EVENT_RESIZE, _widget_shadow_event_cb },
+{ EFL_GFX_EVENT_RESTACK, _widget_shadow_event_cb },
+{ EFL_GFX_EVENT_HIDE, _widget_shadow_event_cb },
+{ EFL_GFX_EVENT_SHOW, _widget_shadow_event_cb })
+
+static Widget_Shadow *
+_widget_shadow_part_get(Eo *part_obj)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_CLASS);
+   Widget_Shadow *shadow;
+   Eo *widget = pd->obj;
+
+   shadow = efl_key_data_get(widget, "__elm_shadow");
+   if (!shadow)
+     {
+        shadow = calloc(1, sizeof(*shadow));
+        shadow->widget = pd->obj;
+        efl_key_data_set(widget, "__elm_shadow", shadow);
+        efl_event_callback_array_add(widget, widget_shadow_cb(), shadow);
+     }
+   return shadow;
+}
+
+static void
+_widget_shadow_update(Widget_Shadow *ws)
+{
+   int l = 0, r = 0, t = 0, b = 0;
+   Eina_Rect srect, wrect, fill;
+   char filter[1024];
+
+#define FILTER_FMT \
+   "a = buffer { 'alpha' }" \
+   "grow { %f, dst = a, alphaonly = true }" \
+   "blur { src = a, rx = %f, ry = %f, color = color(%d,%d,%d,%d) }"
+
+   if (!ws->surface)
+     {
+        ws->surface = efl_add(EFL_CANVAS_PROXY_CLASS, ws->widget);
+        efl_gfx_fill_auto_set(ws->surface, 1);
+        efl_canvas_proxy_source_clip_set(ws->surface, EINA_FALSE);
+        efl_canvas_proxy_source_events_set(ws->surface, EINA_FALSE);
+        efl_canvas_proxy_source_set(ws->surface, ws->widget);
+     }
+
+   if (!ws->code)
+     {
+        snprintf(filter, sizeof(filter), FILTER_FMT,
+                 ws->props.grow, ws->props.rx, ws->props.ry,
+                 ws->props.r, ws->props.g, ws->props.b, ws->props.a);
+     }
+
+   efl_gfx_filter_program_set(ws->surface,
+                              ws->code ? ws->code : filter,
+                              ws->name ? ws->name : "shadow");
+   efl_gfx_filter_padding_get(ws->surface, &l, &r, &t, &b);
+
+   wrect = efl_gfx_geometry_get(ws->widget);
+   srect.x = wrect.x + (int) (-l + ws->props.ox);
+   srect.y = wrect.y + (int) (-t + ws->props.oy);
+   srect.w = wrect.w + (int) (l + r);
+   srect.h = wrect.h + (int) (t + b);
+   fill.size = wrect.size;
+   fill.x = 0;
+   fill.y = 0;
+
+   if ((!ws->props.a && !ws->code) ||
+       !efl_gfx_visible_get(ws->widget))
+     {
+        efl_gfx_visible_set(ws->surface, EINA_FALSE);
+        return;
+     }
+
+   efl_canvas_object_clip_set(ws->surface, efl_canvas_object_clip_get(ws->widget));
+   efl_canvas_group_member_add(efl_canvas_object_render_parent_get(ws->widget), ws->surface);
+   efl_gfx_geometry_set(ws->surface, srect);
+   efl_gfx_stack_below(ws->surface, ws->widget);
+   efl_gfx_visible_set(ws->surface, EINA_TRUE);
+}
+
+static void
+_elm_widget_shadow_update(Elm_Widget *obj)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   _widget_shadow_update(shadow);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_blur_offset_set(Eo *obj, void *_pd EINA_UNUSED, double ox, double oy)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   shadow->props.ox = ox;
+   shadow->props.oy = oy;
+   _widget_shadow_update(shadow);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_blur_offset_get(Eo *obj, void *_pd EINA_UNUSED, double *ox, double *oy)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   if (ox) *ox = shadow->props.ox;
+   if (oy) *oy = shadow->props.oy;
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_blur_radius_set(Eo *obj, void *_pd EINA_UNUSED, double rx, double ry)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   shadow->props.rx = rx;
+   shadow->props.ry = ry;
+   _widget_shadow_update(shadow);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_blur_radius_get(Eo *obj, void *_pd EINA_UNUSED, double *rx, double *ry)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   if (rx) *rx = shadow->props.rx;
+   if (ry) *ry = shadow->props.ry;
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   shadow->props.r = r;
+   shadow->props.g = g;
+   shadow->props.b = b;
+   shadow->props.a = a;
+   _widget_shadow_update(shadow);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   if (r) *r = shadow->props.r;
+   if (g) *g = shadow->props.g;
+   if (b) *b = shadow->props.b;
+   if (a) *a = shadow->props.a;
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_blur_grow_set(Eo *obj, void *_pd EINA_UNUSED, double radius)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   shadow->props.grow = radius;
+   _widget_shadow_update(shadow);
+}
+
+EOLIAN static double
+_efl_ui_widget_part_shadow_efl_gfx_blur_grow_get(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Widget_Shadow *shadow = _widget_shadow_part_get(obj);
+   return shadow->props.grow;
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_program_set(Eo *obj, void *_pd EINA_UNUSED, const char *code, const char *name)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   eina_stringshare_replace(&ws->code, code);
+   eina_stringshare_replace(&ws->name, name);
+   _widget_shadow_update(ws);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_program_get(Eo *obj, void *_pd EINA_UNUSED, const char **code, const char **name)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   efl_gfx_filter_program_get(ws->surface, code, name);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_source_set(Eo *obj, void *_pd EINA_UNUSED, const char *name, Efl_Gfx *source)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   _widget_shadow_update(ws);
+   efl_gfx_filter_source_set(ws->surface, name, source);
+}
+
+EOLIAN static Efl_Gfx *
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_source_get(Eo *obj, void *_pd EINA_UNUSED, const char *name)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   return efl_gfx_filter_source_get(ws->surface, name);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_data_set(Eo *obj, void *_pd EINA_UNUSED, const char *name, const char *value, Eina_Bool execute)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   _widget_shadow_update(ws);
+   efl_gfx_filter_data_set(ws->surface, name, value, execute);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_data_get(Eo *obj, void *_pd EINA_UNUSED, const char *name, const char **value, Eina_Bool *execute)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   efl_gfx_filter_data_get(ws->surface, name, value, execute);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_padding_get(Eo *obj, void *_pd EINA_UNUSED, int *l, int *r, int *t, int *b)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   efl_gfx_filter_padding_get(ws->surface, l, r, t, b);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_state_set(Eo *obj, void *_pd EINA_UNUSED, const char *cur_state, double cur_val, const char *next_state, double next_val, double pos)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   efl_gfx_filter_state_set(ws->surface, cur_state, cur_val, next_state, next_val, pos);
+}
+
+EOLIAN static void
+_efl_ui_widget_part_shadow_efl_gfx_filter_filter_state_get(Eo *obj, void *_pd EINA_UNUSED, const char **cur_state, double *cur_val, const char **next_state, double *next_val, double *pos)
+{
+   Widget_Shadow *ws = _widget_shadow_part_get(obj);
+   efl_gfx_filter_state_get(ws->surface, cur_state, cur_val, next_state, next_val, pos);
+}
+
+#include "efl_ui_widget_part_shadow.eo.c"
+
+/* Widget Shadow End */
+
+
 /* Efl.Part implementation */
 
 EOLIAN static Efl_Object *
@@ -5632,6 +5897,8 @@ _elm_widget_efl_part_part(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED, 
 {
    if (eina_streq(part, "background"))
      return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_BG_CLASS, obj, part);
+   else if (eina_streq(part, "shadow"))
+     return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_SHADOW_CLASS, obj, part);
    return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_CLASS, obj, part);
 }
 

@@ -1,0 +1,35 @@
+class Efl.Ui.Widget.Part_Shadow (Efl.Ui.Widget.Part, Efl.Gfx,
+                                 Efl.Gfx.Blur, Efl.Gfx.Filter)
+{
+   [[A drop-shadow or glow effect around any widget.
+
+     A simple drop-shadow effect can be applied to any widget by setting the
+     color and blur radius on this part.
+
+     For instance, a blue glow can be achieved with:
+      obj.shadow().color_set(0, 128, 255, 255);
+      obj.shadow().grow_set(2);
+      obj.shadow().radius_set(3, 3);
+
+     As another example, here's a black drop-shadow:
+      obj.shadow().color_set(0, 0, 0, 255);
+      obj.shadow().grow_set(1);
+      obj.shadow().radius_set(5, 5);
+      obj.shadow().offset_set(5, 5);
+
+     It is also possible to manually specify which @Efl.Gfx.Filter program to
+     use.
+   ]]
+   data: null;
+   implements {
+      Efl.Gfx.color { set; get; }
+      Efl.Gfx.Blur.radius { set; get; }
+      Efl.Gfx.Blur.offset { set; get; }
+      Efl.Gfx.Blur.grow { set; get; }
+      Efl.Gfx.Filter.filter_program { set; get; }
+      Efl.Gfx.Filter.filter_source { set; get; }
+      Efl.Gfx.Filter.filter_data { set; get; }
+      Efl.Gfx.Filter.filter_padding { get; }
+      Efl.Gfx.Filter.filter_state { set; get; }
+   }
+}

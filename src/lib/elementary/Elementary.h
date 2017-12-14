@@ -284,6 +284,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_widget_part_bg.eo.h>
+# include <efl_ui_widget_part_shadow.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
