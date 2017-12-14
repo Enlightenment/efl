@@ -1,0 +1,70 @@
+import eldbus_types;
+
+struct Elm.Bus.Watcher.Owner.Change.Info
+{
+    service_name: string;
+    old_id: string;
+    new_id: string;
+}
+
+class Elm.Bus.Watcher (Efl.Object)
+{
+   methods {
+        service_add {
+             params {
+                  @in bus: string;
+             }
+        }
+        service_remove {
+             params {
+                  @in bus: string;
+             }
+        }
+        @property services {
+            get {
+            }
+            values {
+                services: iterator<string>;
+            }
+        }
+        @property connection {
+             get {
+             }
+             set {
+             }
+             values {
+                  conn: ptr(Eldbus.Connection);
+             }
+        }
+        on_registered @protected {
+             params {
+                  @in bus_name: string;
+             }
+        }
+        on_unregistered @protected {
+             params {
+                  @in bus_name: string;
+             }
+        }
+        on_owner_changed @protected {
+             params {
+                  @in bus_name: string;
+                  @in old_id: string;
+                  @in new_id: string;
+             }
+        }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+   constructors {
+        .connection;
+   }
+   events {
+        registered: string;
+        unregistered: string;
+        owner,changed : Elm.Bus.Watcher.Owner.Change.Info;
+   }
+}
+

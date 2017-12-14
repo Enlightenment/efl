@@ -93,6 +93,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_window.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/elm_code_widget.eo \
+	lib/elementary/elm_bus_watcher.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -747,6 +748,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_precise_layouter.c \
 	lib/elementary/efl_ui_list_segarray.c \
 	lib/elementary/efl_ui_layout_factory.c \
+	lib/elementary/elm_bus_watcher.c \
 	$(NULL)
 
 
