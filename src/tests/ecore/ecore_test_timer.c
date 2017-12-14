@@ -289,6 +289,8 @@ END_TEST
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
+/* XXX: this seems a silly test - that we del the loop object?
   tcase_add_test(tc, ecore_test_timer_lifecycle);
+ */
   tcase_add_test(tc, ecore_test_timer_inside_call);
 }

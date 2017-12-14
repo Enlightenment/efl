@@ -899,7 +899,9 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
+/* XXX: this seems a silly test... that we delete the loop object?
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
+ */
    tcase_add_test(tc, ecore_test_efl_loop_register);
    tcase_add_test(tc, ecore_test_efl_app_version);
 }
