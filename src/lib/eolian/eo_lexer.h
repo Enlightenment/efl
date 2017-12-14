@@ -168,6 +168,8 @@ typedef struct _Eo_Lexer
    const char  *stream_line;
    /* a pointer to the state this lexer belongs to */
    Eolian      *state;
+   /* the unit being filled during current parsing */
+   Eolian_Unit *unit;
    /* this is jumped to when an error happens */
    jmp_buf      err_jmp;
 
