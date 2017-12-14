@@ -3424,6 +3424,10 @@ evas_render_updates_internal(Evas *eo_e,
 
                   haveup = EINA_TRUE;
 
+                  /* adjust the rendering rectangle to the output offset */
+                  ux += out->geometry.x;
+                  uy += out->geometry.y;
+
                   /* phase 7.1 render every snapshot that needs to be updated
                      for this part of the screen */
                   eina_evlog("+render_snapshots", eo_e, 0.0, NULL);
