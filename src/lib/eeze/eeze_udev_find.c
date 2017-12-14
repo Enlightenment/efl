@@ -28,7 +28,10 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
      return NULL;
 
    if (!(device = _new_device(syspath)))
-     return NULL;
+     {
+        udev_enumerate_unref(en);
+        return NULL;
+     }
 
    vendor = udev_device_get_property_value(device, "ID_VENDOR_ID");
 
