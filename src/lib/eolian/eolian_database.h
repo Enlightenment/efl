@@ -38,7 +38,6 @@ extern Eina_Hash *_declsf;
 struct _Eolian_Unit
 {
    Eolian        *state;
-   Eolian_Unit   *parent;
    Eina_Hash     *children;
    Eina_Hash     *classes;
    Eina_Hash     *globals;

@@ -549,7 +549,6 @@ database_unit_init(Eolian *state, Eolian_Unit *unit, Eina_Stringshare *fname)
    if (fname)
      {
         Eolian_Unit *ocunit = _cunit;
-        unit->parent = ocunit;
         if (ocunit)
           eina_hash_add(ocunit->children, fname, unit);
      }
