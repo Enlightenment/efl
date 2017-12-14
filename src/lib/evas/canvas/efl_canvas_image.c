@@ -65,7 +65,7 @@ _evas_image_load_error_get(const Eo *eo_obj)
 }
 
 EOLIAN static Efl_Image_Load_Error
-_efl_canvas_image_efl_image_load_load_error_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
+_efl_canvas_image_efl_file_load_error_get(Eo *eo_obj, void *_pd EINA_UNUSED EINA_UNUSED)
 {
    return _evas_image_load_error_get(eo_obj);
 }
@@ -784,7 +784,7 @@ _efl_canvas_image_efl_object_dbg_info_get(Eo *obj, void *pd EINA_UNUSED, Efl_Dbg
 {
    efl_dbg_info_get(efl_super(obj, MY_CLASS), root);
 
-   if ((efl_image_load_error_get(obj) != EFL_IMAGE_LOAD_ERROR_NONE) &&
+   if ((efl_file_load_error_get(obj) != EFL_IMAGE_LOAD_ERROR_NONE) &&
        (root))
      {
         Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);

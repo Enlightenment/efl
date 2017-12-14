@@ -163,18 +163,6 @@ interface Efl.Image.Load ()
             div: int; [[The scale down dividing factor.]]
          }
       }
-      @property load_error {
-         get {
-            [[Retrieves a number representing any error that occurred during
-              the last loading of the given image object's source image.
-            ]]
-            return: Efl.Image.Load.Error @warn_unused; [[
-               A value giving the last error that occurred, one of
-               @Efl.Image.Load.Error values. @Efl.Image.Load.Error.none is
-               returned if there was no error.
-            ]]
-         }
-      }
       @property load_skip_header {
          [[Initial load should skip header check and leave it all to data load
 

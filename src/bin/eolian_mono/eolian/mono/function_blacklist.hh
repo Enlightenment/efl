@@ -8,7 +8,6 @@ inline bool is_function_blacklisted(std::string const& c_name)
   return
     c_name == "efl_event_callback_array_priority_add"
     || c_name == "efl_player_position_get"
-    || c_name == "efl_image_load_error_get"
     || c_name == "efl_text_font_source_get"
     || c_name == "efl_text_font_source_set"
     || c_name == "efl_ui_focus_manager_focus_get"

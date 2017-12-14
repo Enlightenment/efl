@@ -194,7 +194,7 @@ main(void)
     * will be deleted automatically by parent.*/
 
    efl_file_set(d.img, img_path, NULL);
-   err = efl_image_load_error_get(d.img);
+   err = efl_file_load_error_get(d.img);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -212,7 +212,7 @@ main(void)
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = efl_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
    efl_file_set(d.clipper_border, border_img_path, NULL);
-   err = efl_image_load_error_get(d.clipper_border);
+   err = efl_file_load_error_get(d.clipper_border);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
