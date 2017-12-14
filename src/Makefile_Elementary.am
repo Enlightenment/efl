@@ -905,6 +905,7 @@ bin/elementary/test_panel.c \
 bin/elementary/test_panes.c \
 bin/elementary/test_ui_panes.c \
 bin/elementary/test_part_bg.c \
+bin/elementary/test_part_shadow.c \
 bin/elementary/test_photo.c \
 bin/elementary/test_photocam.c \
 bin/elementary/test_popup.c \

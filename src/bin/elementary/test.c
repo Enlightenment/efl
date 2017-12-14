@@ -314,6 +314,7 @@ void test_win_modal(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 void test_part_background(void *data, Evas_Object *obj, void *event_info);
+void test_part_shadow(void *data, Evas_Object *obj, void *event_info);
 
 void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 
@@ -1148,7 +1149,7 @@ add_tests:
    ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
-   ADD_TEST_EO(NULL, "Evas", "Gfx Map", test_efl_gfx_map);
+   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Map", test_efl_gfx_map);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
@@ -1156,6 +1157,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Widgets Part", "Part Background", test_part_background);
+   ADD_TEST_EO(NULL, "Widgets Part", "Part Shadow", test_part_shadow);
 #undef ADD_TEST
 
    if (autorun)
