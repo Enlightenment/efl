@@ -1024,6 +1024,29 @@ _mouse_selection_paste_at_position(Elm_Code_Widget *widget,
    free(text);
 }
 
+static Evas_Object *
+_elm_code_widget_tooltip_cb(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
+{
+   Evas_Object *label;
+
+   if (!data)
+     return NULL;
+
+   label = elm_label_add(tooltip);
+   elm_object_text_set(label, (Eina_Stringshare *)data);
+   return label;
+}
+
+static void
+_elm_code_widget_tooltip_del_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                                void *event_info EINA_UNUSED)
+{
+   if (!data)
+     return;
+
+   eina_stringshare_del((Eina_Stringshare *)data);
+}
+
 static void
 _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                void *event_info)
@@ -1099,12 +1122,13 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (!pd->editable || !event->buttons)
      {
         Elm_Code_Line *line;
+        Eina_Stringshare *text = NULL;
 
         line = elm_code_file_line_get(elm_code_widget_code_get(widget)->file, row);
-        if (line)
-          elm_object_tooltip_text_set(widget, line->status_text);
-        else
-          elm_object_tooltip_text_set(widget, NULL);
+        if (line && line->status_text)
+          text = eina_stringshare_add(line->status_text);
+        elm_object_tooltip_content_cb_set(pd->gridbox, _elm_code_widget_tooltip_cb,
+                                          text, _elm_code_widget_tooltip_del_cb);
 
         return;
      }
@@ -2253,6 +2277,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
+   _elm_code_widget_elm_widget_theme_apply(obj, pd);
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
@@ -2282,8 +2307,6 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
-
-   _elm_code_widget_elm_widget_theme_apply(obj, pd);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
