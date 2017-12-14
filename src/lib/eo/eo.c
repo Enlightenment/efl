@@ -2320,6 +2320,7 @@ efl_object_shutdown(void)
    eina_lock_release(&_efl_class_creation_lock);
 
    eina_hash_free(_ops_storage);
+   _ops_storage = NULL;
 
    eina_spinlock_free(&_ops_storage_lock);
    eina_lock_free(&_efl_class_creation_lock);
