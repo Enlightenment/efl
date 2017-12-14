@@ -465,8 +465,8 @@ _event_free(void *user_data, void *func_data)
 static void*
 _filter_start(void *data)
 {
-   int *did = data;
-   (*did)++;
+   int *fdid = data;
+   (*fdid)++;
    return NULL;
 }
 
@@ -474,7 +474,7 @@ static Eina_Bool
 _filter(void *data, void *loop_data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Eina_Bool res = EINA_TRUE;
-   int *did = data;
+   int *fdid = data;
    int *ev = event;
 
    if (NULL != event)
@@ -486,7 +486,7 @@ _filter(void *data, void *loop_data EINA_UNUSED, int type EINA_UNUSED, void *eve
       }
    }
 
-   (*did)++;
+   (*fdid)++;
 
    return res;
 }
@@ -494,8 +494,8 @@ _filter(void *data, void *loop_data EINA_UNUSED, int type EINA_UNUSED, void *eve
 static void
 _filter_end(void *user_data, void *func_data EINA_UNUSED)
 {
-   int *did = user_data;
-   (*did)++;
+   int *fdid = user_data;
+   (*fdid)++;
 }
 
 START_TEST(ecore_test_ecore_main_loop_event)
