@@ -462,6 +462,23 @@ _instruction_param_geti(Evas_Filter_Instruction *instr, const char *name,
    return -1;
 }
 
+static Eina_Bool
+_instruction_param_getb(Evas_Filter_Instruction *instr, const char *name,
+                        Eina_Bool *isset)
+{
+   Instruction_Param *param;
+
+   EINA_INLIST_FOREACH(instr->params, param)
+     if (!strcasecmp(name, param->name))
+       {
+          if (isset) *isset = param->set;
+          return param->value.b;
+       }
+
+   if (isset) *isset = EINA_FALSE;
+   return EINA_FALSE;
+}
+
 static double
 _instruction_param_getd(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
@@ -970,7 +987,10 @@ _blend_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
                  draw the buffer in this color. If both buffers are RGBA, this will
                  have no effect.
   @param fillmode Map the input onto the whole surface of the output by stretching or
-                 repeating it. See @ref evasfilter_fillmode "fillmodes".
+                  repeating it. See @ref evasfilter_fillmode "fillmodes".
+  @param alphaonly If true, this means all RGBA->Alpha conversions discard the
+                   RGB components entirely, and only use the Alpha channel.
+                   False by default, which means RGB is used as Grey color level.
 
   If @a src is an alpha buffer and @a dst is an RGBA buffer, then the @a color option should be set.
 
@@ -998,6 +1018,7 @@ _blend_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
    _instruction_param_seq_add(instr, "oy", VT_INT, 0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
    _instruction_param_name_add(instr, "fillmode", VT_STRING, "none");
+   _instruction_param_name_add(instr, "alphaonly", VT_BOOL, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -1122,6 +1143,7 @@ _blur_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
    _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
    _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_name_add(instr, "count", VT_INT, 0);
+   _instruction_param_name_add(instr, "alphaonly", VT_BOOL, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -1618,6 +1640,7 @@ _grow_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
    _instruction_param_name_add(instr, "smooth", VT_BOOL, EINA_TRUE);
    _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
    _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
+   _instruction_param_name_add(instr, "alphaonly", VT_BOOL, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -3045,6 +3068,7 @@ _instr2cmd_blend(Evas_Filter_Context *ctx,
    Buffer *src, *dst;
    Evas_Filter_Fill_Mode fillmode;
    int ox, oy, A, R, G, B;
+   Eina_Bool alphaonly;
 
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
@@ -3052,11 +3076,13 @@ _instr2cmd_blend(Evas_Filter_Context *ctx,
    fillmode = _fill_mode_get(instr);
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
+   alphaonly = _instruction_param_getb(instr, "alphaonly", NULL);
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
    if (isset) SETCOLOR(color);
-   cmd = evas_filter_command_blend_add(ctx, dc, src->cid, dst->cid, ox, oy, fillmode);
+   cmd = evas_filter_command_blend_add(ctx, dc, src->cid, dst->cid,
+                                       ox, oy, fillmode, alphaonly);
    if (isset) RESETCOLOR();
 
    return cmd;
@@ -3073,6 +3099,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx,
    DATA32 color;
    Buffer *src, *dst;
    int ox, oy, rx, ry, A, R, G, B, count;
+   Eina_Bool alphaonly;
 
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
@@ -3083,6 +3110,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx,
    count = _instruction_param_geti(instr, "count", &cntset);
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
+   alphaonly = _instruction_param_getb(instr, "alphaonly", NULL);
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
@@ -3116,7 +3144,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx,
    if (!yset) ry = rx;
    if (colorset) SETCOLOR(color);
    cmd = evas_filter_command_blur_add(ctx, dc, src->cid, dst->cid, type,
-                                      rx, ry, ox, oy, count);
+                                      rx, ry, ox, oy, count, alphaonly);
    if (colorset) RESETCOLOR();
 
    return cmd;
@@ -3235,16 +3263,18 @@ _instr2cmd_grow(Evas_Filter_Context *ctx,
    Evas_Filter_Command *cmd;
    Buffer *src, *dst;
    Eina_Bool smooth;
+   Eina_Bool alphaonly;
    int radius;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
    radius = _instruction_param_geti(instr, "radius", NULL);
-   smooth = _instruction_param_geti(instr, "smooth", NULL);
+   smooth = _instruction_param_getb(instr, "smooth", NULL);
+   alphaonly = _instruction_param_getb(instr, "alphaonly", NULL);
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
-   cmd = evas_filter_command_grow_add(ctx, dc, src->cid, dst->cid, radius, smooth);
+   cmd = evas_filter_command_grow_add(ctx, dc, src->cid, dst->cid, radius, smooth, alphaonly);
    if (cmd) cmd->draw.need_temp_buffer = EINA_TRUE;
 
    return cmd;

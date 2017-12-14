@@ -6,7 +6,8 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
               Evas_GL_Image *image,
               Evas_Filter_Fill_Mode fillmode,
               int sx, int sy, int sw, int sh,
-              int dx, int dy, int dw, int dh)
+              int dx, int dy, int dw, int dh,
+              Eina_Bool alphaonly)
 {
    int right = 0, bottom = 0, left = 0, top = 0;
    int row, col, rows, cols;
@@ -15,7 +16,7 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
    if (fillmode == EVAS_FILTER_FILL_MODE_NONE)
      {
         DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d", sx, sy, sw, sh, dx, dy, sw, sh);
-        evas_gl_common_image_draw(gc, image, sx, sy, sw, sh, dx, dy, sw, sh, EINA_TRUE);
+        evas_gl_common_filter_blend_push(gc, image->tex, sx, sy, sw, sh, dx, dy, sw, sh, alphaonly);
         return EINA_TRUE;
      }
 
@@ -148,8 +149,8 @@ _mapped_blend(Evas_Engine_GL_Context *gc,
                  "(src %dx%d, dst %dx%d)",
                  col, row, src_x, src_y, src_w, src_h,
                  dst_x, dst_y, dst_w, dst_h, sw, sh, dw, dh);
-             evas_gl_common_image_draw(gc, image, src_x, src_y, src_w, src_h,
-                                       dst_x, dst_y, dst_w, dst_h, EINA_TRUE);
+             evas_gl_common_filter_blend_push(gc, image->tex, src_x, src_y, src_w, src_h,
+                                              dst_x, dst_y, dst_w, dst_h, alphaonly);
           }
      }
    return ret;
@@ -169,6 +170,7 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
 
    image = evas_ector_buffer_drawable_image_get(cmd->input->buffer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(image, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(image->tex, EINA_FALSE);
 
    surface = evas_ector_buffer_render_image_get(cmd->output->buffer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
@@ -232,7 +234,8 @@ _gl_filter_blend(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
        cmd->output->id, cmd->output->buffer);
    _mapped_blend(gc, image, cmd->draw.fillmode,
                  src_x, src_y, src_w, src_h,
-                 dst_x, dst_y, dst_w, dst_h);
+                 dst_x, dst_y, dst_w, dst_h,
+                 cmd->draw.alphaonly);
 
    evas_common_draw_context_free(gc->dc);
    gc->dc = dc_save;

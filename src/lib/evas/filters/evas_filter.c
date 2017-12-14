@@ -734,7 +734,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
                                 Evas_Filter_Buffer *in, Evas_Filter_Buffer *out,
                                 Evas_Filter_Blur_Type type,
                                 int rx, int ry, int ox, int oy, int count,
-                                int R, int G, int B, int A)
+                                int R, int G, int B, int A, Eina_Bool alphaonly)
 {
    Evas_Filter_Command *cmd = NULL;
    Evas_Filter_Buffer *dx_in, *dx_out, *dy_in, *dy_out, *tmp = NULL;
@@ -798,6 +798,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
              cmd->draw.scale.pad_y = pad_y;
              cmd->draw.scale.factor_x = down_x;
              cmd->draw.scale.factor_y = down_y;
+             cmd->draw.alphaonly = alphaonly;
              dx_in = tmp;
 
              tmp = evas_filter_temporary_buffer_get(ctx, ww, hh, in->alpha_only, EINA_TRUE);
@@ -827,6 +828,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd->blur.type = type;
         cmd->blur.dx = dx;
         cmd->blur.count = count;
+        cmd->draw.alphaonly = alphaonly;
      }
 
    if (dy)
@@ -837,6 +839,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd->blur.type = type;
         cmd->blur.dy = dy;
         cmd->blur.count = count;
+        cmd->draw.alphaonly = alphaonly;
      }
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd, NULL);
@@ -852,6 +855,7 @@ evas_filter_command_blur_add_gl(Evas_Filter_Context *ctx,
         cmd->draw.scale.pad_y = pad_y;
         cmd->draw.scale.factor_x = down_x;
         cmd->draw.scale.factor_y = down_y;
+        cmd->draw.alphaonly = alphaonly;
      }
 
    cmd->draw.ox = ox;
@@ -886,7 +890,8 @@ _blur_support_gl(Evas_Filter_Context *ctx, Evas_Filter_Buffer *in, Evas_Filter_B
 Evas_Filter_Command *
 evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                              int inbuf, int outbuf, Evas_Filter_Blur_Type type,
-                             int dx, int dy, int ox, int oy, int count)
+                             int dx, int dy, int ox, int oy, int count,
+                             Eina_Bool alphaonly)
 {
    Evas_Filter_Buffer *in = NULL, *out = NULL, *tmp = NULL, *in_dy = NULL;
    Evas_Filter_Buffer *out_dy = NULL, *out_dx = NULL;
@@ -904,7 +909,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    if (!dx && !dy)
      {
         XDBG("Changing 0px blur into simple blend");
-        return evas_filter_command_blend_add(ctx, drawctx, inbuf, outbuf, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
+        return evas_filter_command_blend_add(ctx, drawctx, inbuf, outbuf, ox, oy, EVAS_FILTER_FILL_MODE_NONE, alphaonly);
      }
 
    in = _filter_buffer_get(ctx, inbuf);
@@ -922,7 +927,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
      }
 
    if (_blur_support_gl(ctx, in, out))
-     return evas_filter_command_blur_add_gl(ctx, in, out, type, dx, dy, ox, oy, count, R, G, B, A);
+     return evas_filter_command_blur_add_gl(ctx, in, out, type, dx, dy, ox, oy,
+                                            count, R, G, B, A, alphaonly);
 
    // Note (SW engine):
    // The basic blur operation overrides the pixels in the target buffer,
@@ -979,7 +985,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
                 if (dy) ENFN->context_color_set(ENC, drawctx, 255, 255, 255, 255);
                 cmd = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_out,
-                                                   type, dx, 0, tmp_ox, tmp_oy, 0);
+                                                   type, dx, 0, tmp_ox, tmp_oy, 0,
+                                                   alphaonly);
                 if (!cmd) goto fail;
                 cmd->blur.auto_count = EINA_TRUE;
                 if (dy) ENFN->context_color_set(ENC, drawctx, R, G, B, A);
@@ -996,7 +1003,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                 if (dx && (inbuf == outbuf))
                   ENFN->context_render_op_set(ENC, drawctx, EVAS_RENDER_COPY);
                 cmd = evas_filter_command_blur_add(ctx, drawctx, tmp_in, outbuf,
-                                                   type, 0, dy, ox, oy, 0);
+                                                   type, 0, dy, ox, oy, 0,
+                                                   alphaonly);
                 if (dx && (inbuf == outbuf))
                   ENFN->context_render_op_set(ENC, drawctx, render_op);
                 if (!cmd) goto fail;
@@ -1145,7 +1153,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         XDBG("Add extra blend %d -> %d", blendbuf->id, out->id);
         blendcmd = evas_filter_command_blend_add(ctx, drawctx,
                                                  blendbuf->id, out->id, ox, oy,
-                                                 EVAS_FILTER_FILL_MODE_NONE);
+                                                 EVAS_FILTER_FILL_MODE_NONE,
+                                                 alphaonly);
         if (!blendcmd) goto fail;
         ox = oy = 0;
      }
@@ -1158,7 +1167,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         ENFN->context_render_op_set(ENC, drawctx, EVAS_RENDER_COPY);
         copycmd = evas_filter_command_blend_add(ctx, drawctx,
                                                 copybuf->id, out->id, ox, oy,
-                                                EVAS_FILTER_FILL_MODE_NONE);
+                                                EVAS_FILTER_FILL_MODE_NONE,
+                                                alphaonly);
         ENFN->context_color_set(ENC, drawctx, R, G, B, A);
         ENFN->context_render_op_set(ENC, drawctx, render_op);
         if (!copycmd) goto fail;
@@ -1178,7 +1188,8 @@ fail:
 Evas_Filter_Command *
 evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
                               int inbuf, int outbuf, int ox, int oy,
-                              Evas_Filter_Fill_Mode fillmode)
+                              Evas_Filter_Fill_Mode fillmode,
+                              Eina_Bool alphaonly)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *in, *out;
@@ -1221,10 +1232,11 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
    cmd->draw.ox = ox;
    cmd->draw.oy = oy;
    cmd->draw.rop = copy ? EFL_GFX_RENDER_OP_COPY : EFL_GFX_RENDER_OP_BLEND;
+   cmd->draw.alphaonly = alphaonly;
    cmd->draw.clip_use =
-         ENFN->context_clip_get(ENC, drawctx,
-                                &cmd->draw.clip.x, &cmd->draw.clip.y,
-                                &cmd->draw.clip.w, &cmd->draw.clip.h);
+         !!ENFN->context_clip_get(ENC, drawctx,
+                                  &cmd->draw.clip.x, &cmd->draw.clip.y,
+                                  &cmd->draw.clip.w, &cmd->draw.clip.h);
 
    XDBG("Add %s %d -> %d: offset %d,%d, color: %d,%d,%d,%d",
         copy ? "copy" : "blend", in->id, out->id, ox, oy, R, G, B, A);
@@ -1238,7 +1250,8 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
 
 Evas_Filter_Command *
 evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
-                             int inbuf, int outbuf, int radius, Eina_Bool smooth)
+                             int inbuf, int outbuf, int radius, Eina_Bool smooth,
+                             Eina_Bool alphaonly)
 {
    Evas_Filter_Command *blurcmd, *threshcmd, *blendcmd;
    Evas_Filter_Buffer *tmp = NULL, *in, *out;
@@ -1251,7 +1264,8 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
    if (!radius)
      {
         XDBG("Changing 0px grow into simple blend");
-        return evas_filter_command_blend_add(ctx, draw_context, inbuf, outbuf, 0, 0, EVAS_FILTER_FILL_MODE_NONE);
+        return evas_filter_command_blend_add(ctx, draw_context, inbuf, outbuf, 0, 0,
+                                             EVAS_FILTER_FILL_MODE_NONE, alphaonly);
      }
 
    in = _filter_buffer_get(ctx, inbuf);
@@ -1271,7 +1285,8 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
 
    blurcmd = evas_filter_command_blur_add(ctx, draw_context, inbuf, growbuf,
                                           EVAS_FILTER_BLUR_DEFAULT,
-                                          abs(radius), abs(radius), 0, 0, 0);
+                                          abs(radius), abs(radius), 0, 0, 0,
+                                          alphaonly);
    if (!blurcmd) return NULL;
 
    if (diam > 255) diam = 255;
@@ -1309,7 +1324,8 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
      {
         blendcmd = evas_filter_command_blend_add(ctx, draw_context, tmp->id,
                                                  outbuf, 0, 0,
-                                                 EVAS_FILTER_FILL_MODE_NONE);
+                                                 EVAS_FILTER_FILL_MODE_NONE,
+                                                 alphaonly);
         if (!blendcmd)
           {
              _command_del(ctx, threshcmd);
@@ -1375,6 +1391,7 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
 {
    Evas_Filter_Buffer *in, *out, *map, *tmp = NULL, *disp_out;
    Evas_Filter_Command *cmd = NULL;
+   Eina_Bool alphaonly = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(intensity >= 0, NULL);
@@ -1417,7 +1434,8 @@ evas_filter_command_displacement_map_add(Evas_Filter_Context *ctx,
 
         fillcmd = evas_filter_command_blend_add(ctx, draw_context, disp_out->id,
                                                 out->id, 0, 0,
-                                                EVAS_FILTER_FILL_MODE_NONE);
+                                                EVAS_FILTER_FILL_MODE_NONE,
+                                                alphaonly);
         if (!fillcmd) goto fail;
      }
 

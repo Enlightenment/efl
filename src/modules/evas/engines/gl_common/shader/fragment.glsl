@@ -226,6 +226,10 @@ vec4 fetch_pixel(float ox, float oy)
             new_alpha);
 #endif
 
+#ifdef SHD_ALPHA_ONLY
+   c = vec4(c.a, c.a, c.a, c.a);
+#endif
+
 #ifndef SHD_FILTER_BLUR
 
    gl_FragColor =

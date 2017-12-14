@@ -8,11 +8,12 @@
 typedef Eina_Bool (*draw_func) (void *context, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async);
 static Eina_Bool _mapped_blend(void *drawctx, const void *src_map, unsigned int src_stride, void *dst_map, unsigned int dst_stride, Evas_Filter_Fill_Mode fillmode, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, draw_func image_draw);
 
-struct Filter_Blend_Draw_Context
+typedef struct _Filter_Blend_Draw_Context
 {
    Efl_Gfx_Render_Op rop;
    uint32_t color;
-};
+   Eina_Bool alphaonly;
+} Filter_Blend_Draw_Context;
 
 #define LINELEN(stride, ptr) (stride / (sizeof(*ptr)))
 
@@ -25,7 +26,7 @@ _image_draw_cpu_alpha_alpha(void *context,
                             int smooth EINA_UNUSED,
                             Eina_Bool do_async EINA_UNUSED)
 {
-   struct Filter_Blend_Draw_Context *dc = context;
+   Filter_Blend_Draw_Context *dc = context;
    const uint8_t *srcdata = src_map;
    uint8_t *dstdata = dst_map;
    Draw_Func_Alpha func;
@@ -60,7 +61,7 @@ _image_draw_cpu_alpha_rgba(void *context,
                            int smooth EINA_UNUSED,
                            Eina_Bool do_async EINA_UNUSED)
 {
-   struct Filter_Blend_Draw_Context *dc = context;
+   Filter_Blend_Draw_Context *dc = context;
    uint8_t *srcdata = (uint8_t *) src_map;
    uint32_t *dstdata = dst_map;
    RGBA_Comp_Func_Mask func;
@@ -95,7 +96,7 @@ _image_draw_cpu_rgba_rgba(void *context,
                           int smooth EINA_UNUSED,
                           Eina_Bool do_async EINA_UNUSED)
 {
-   struct Filter_Blend_Draw_Context *dc = context;
+   Filter_Blend_Draw_Context *dc = context;
    uint32_t *srcdata = (uint32_t *) src_map;
    uint32_t *dstdata = dst_map;
    RGBA_Comp_Func func;
@@ -125,7 +126,7 @@ _image_draw_cpu_rgba_rgba(void *context,
 }
 
 static Eina_Bool
-_image_draw_cpu_rgba_alpha(void *context EINA_UNUSED,
+_image_draw_cpu_rgba_alpha(void *context,
                            const void *src_map, unsigned int src_stride,
                            void *dst_map, unsigned int dst_stride,
                            int src_x, int src_y, int src_w, int src_h,
@@ -133,6 +134,8 @@ _image_draw_cpu_rgba_alpha(void *context EINA_UNUSED,
                            int smooth EINA_UNUSED,
                            Eina_Bool do_async EINA_UNUSED)
 {
+   Filter_Blend_Draw_Context *dc = context;
+   Eina_Bool alphaonly = dc && dc->alphaonly;
    uint32_t *srcdata = (uint32_t *) src_map;
    uint8_t *dstdata = dst_map;
    int x, y, sw, dw;
@@ -156,14 +159,30 @@ _image_draw_cpu_rgba_alpha(void *context EINA_UNUSED,
 
    srcdata += src_y * sw;
    dstdata += dst_y * dw;
-   for (y = src_h; y; y--)
+
+   if (!alphaonly)
      {
-        uint32_t *s = srcdata + src_x;
-        uint8_t *d = dstdata + dst_x;
-        for (x = src_w; x; x--, d++, s++)
-          *d = DIVIDE((R_VAL(s) * WR) + (G_VAL(s) * WG) + (B_VAL(s) * WB));
-        srcdata += sw;
-        dstdata += dw;
+        for (y = src_h; y; y--)
+          {
+             uint32_t *s = srcdata + src_x;
+             uint8_t *d = dstdata + dst_x;
+             for (x = src_w; x; x--, d++, s++)
+               *d = (uint8_t) DIVIDE((R_VAL(s) * WR) + (G_VAL(s) * WG) + (B_VAL(s) * WB));
+             srcdata += sw;
+             dstdata += dw;
+          }
+     }
+   else
+     {
+        for (y = src_h; y; y--)
+          {
+             uint32_t *s = srcdata + src_x;
+             uint8_t *d = dstdata + dst_x;
+             for (x = src_w; x; x--, d++, s++)
+               *d = A_VAL(s);
+             srcdata += sw;
+             dstdata += dw;
+          }
      }
 
    return EINA_TRUE;
@@ -174,7 +193,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
 {
    unsigned int src_len, src_stride, dst_len, dst_stride;
    int sw, sh, dx, dy, dw, dh, sx, sy;
-   struct Filter_Blend_Draw_Context dc;
+   Filter_Blend_Draw_Context dc;
    Eina_Bool ret = EINA_FALSE;
    Evas_Filter_Buffer *src_fb;
    void *src = NULL, *dst = NULL;
@@ -220,6 +239,7 @@ _filter_blend_cpu_generic_do(Evas_Filter_Command *cmd, draw_func image_draw)
    EINA_SAFETY_ON_FALSE_GOTO(src && dst, end);
 
    dc.rop = cmd->draw.rop;
+   dc.alphaonly = cmd->draw.alphaonly;
    dc.color = ARGB_JOIN(cmd->draw.A, cmd->draw.R, cmd->draw.G, cmd->draw.B);
 
    ret = _mapped_blend(&dc, src, src_stride, dst, dst_stride, cmd->draw.fillmode,

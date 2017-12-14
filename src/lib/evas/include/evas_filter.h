@@ -180,10 +180,11 @@ void                     _evas_filter_source_hash_free_cb(void *data);
  * @param ox             X offset in the destination buffer
  * @param oy             Y offset in the destination buffer
  * @param fillmode       Specifies whether to repeat or stretch the input onto its destination, and on which axes
+ * @param alphaonly      If true, discard RGB during RGBA -> Alpha conversions.
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-Evas_Filter_Command     *evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy, Evas_Filter_Fill_Mode fillmode);
+Evas_Filter_Command     *evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int ox, int oy, Evas_Filter_Fill_Mode fillmode, Eina_Bool alphaonly);
 
 /**
  * @brief Apply a blur effect on a buffer
@@ -197,10 +198,11 @@ Evas_Filter_Command     *evas_filter_command_blend_add(Evas_Filter_Context *ctx,
  * @param ox             X offset in the destination buffer
  * @param oy             Y offset in the destination buffer
  * @param count          Number of times to repeat the operation (used for smooth fast blurs with box blur)
+ * @param alphaonly      If true, discard RGB during RGBA -> Alpha conversions.
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-Evas_Filter_Command     *evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy, int count);
+Evas_Filter_Command     *evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, Evas_Filter_Blur_Type type, int dx, int dy, int ox, int oy, int count, Eina_Bool alphaonly);
 
 /**
  * @brief Fill a buffer with the current color
@@ -234,10 +236,11 @@ Evas_Filter_Command     *evas_filter_command_curve_add(Evas_Filter_Context *ctx,
  * @param outbuf         Destination buffer: ALPHA or RGBA (note: must be RGBA if inbuf is RGBA)
  * @param radius         Number of pixels to grow by. If negative, shrink instead of grow
  * @param smooth         Use smooth blur and curve for grow (default: true)
+ * @param alphaonly      If true, discard RGB during RGBA -> Alpha conversions.
  * @return               Filter command ID or -1 in case of error
  * @internal
  */
-Evas_Filter_Command     *evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int radius, Eina_Bool smooth);
+Evas_Filter_Command     *evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context, int inbuf, int outbuf, int radius, Eina_Bool smooth, Eina_Bool alphaonly);
 
 /**
  * @brief Apply a displacement map to a buffer. This will move pixels from the source to the destination based on pixel per pixel offset, as defined in the displacement map

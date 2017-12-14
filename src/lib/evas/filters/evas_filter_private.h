@@ -242,6 +242,7 @@ struct _Evas_Filter_Command
          Eina_Bool down;
       } scale;
       Evas_Filter_Fill_Mode fillmode;
+      Eina_Bool alphaonly : 1;
       Eina_Bool clip_use : 1;
       Eina_Bool clip_mode_lrtb : 1;
       Eina_Bool need_temp_buffer : 1;

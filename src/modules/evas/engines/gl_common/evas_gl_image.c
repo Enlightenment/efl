@@ -1321,7 +1321,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                             dx, dy, dw, dh,
                                             mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                             r, g, b, a,
-                                            smooth, im->tex_only);
+                                            smooth, im->tex_only, EINA_FALSE);
         return;
      }
 
@@ -1377,11 +1377,14 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                        nx, ny, nw, nh,
                                        mtex, mx, my, mw, mh, mask_smooth, mask_color,
                                        r, g, b, a,
-                                       smooth, im->tex_only);
+                                       smooth, im->tex_only, EINA_FALSE);
 }
 
 void
-evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
+evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
+                          int sx, int sy, int sw, int sh,
+                          int dx, int dy, int dw, int dh,
+                          int smooth)
 {
    RGBA_Draw_Context *dc;
    int r, g, b, a;
@@ -1401,9 +1404,9 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    if (dc->mul.use)
      {
 	a = (dc->mul.col >> 24) & 0xff;
-	r = (dc->mul.col >> 16) & 0xff;
-	g = (dc->mul.col >> 8 ) & 0xff;
-	b = (dc->mul.col      ) & 0xff;
+        r = (dc->mul.col >> 16) & 0xff;
+        g = (dc->mul.col >> 8 ) & 0xff;
+        b = (dc->mul.col      ) & 0xff;
      }
    else
      {

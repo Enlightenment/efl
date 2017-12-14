@@ -44,8 +44,9 @@ typedef enum {
    SHADER_FLAG_FILTER_CURVE      = (1 << 22),
    SHADER_FLAG_FILTER_BLUR       = (1 << 23),
    SHADER_FLAG_FILTER_DIR_Y      = (1 << 24),
+   SHADER_FLAG_FILTER_ALPHA_ONLY = (1 << 25),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 25
+#define SHADER_FLAG_COUNT 26
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -73,6 +74,7 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "FILTER_CURVE",
    "FILTER_BLUR",
    "FILTER_DIR_Y",
+   "ALPHA_ONLY",
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;
@@ -734,6 +736,7 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
                                 Evas_GL_Texture *tex, Eina_Bool tex_only,
                                 Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
                                 Eina_Bool mask_color, int mw, int mh,
+                                Eina_Bool alphaonly,
                                 Shader_Sampling *psam, int *pnomul, Shader_Sampling *pmasksam)
 {
    Shader_Sampling sam = SHD_SAM11, masksam = SHD_SAM11;
@@ -817,6 +820,9 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
         CRI("Impossible shader type.");
         return 0;
      }
+
+   if (alphaonly)
+     flags |= SHADER_FLAG_FILTER_ALPHA_ONLY;
 
    // color mul
    if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
@@ -953,6 +959,7 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                   Evas_GL_Texture *tex, Eina_Bool tex_only,
                                   Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
                                   Eina_Bool mask_color, int mw, int mh,
+                                  Eina_Bool alphaonly,
                                   Shader_Sampling *psam, int *pnomul,
                                   Shader_Sampling *pmasksam)
 {
@@ -962,7 +969,7 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
    flags = evas_gl_common_shader_flags_get(gc->shared, type, map_points, npoints, r, g, b, a,
                                            sw, sh, w, h, smooth, tex, tex_only,
                                            mtex, mask_smooth, mask_color, mw, mh,
-                                           psam, pnomul, pmasksam);
+                                           alphaonly, psam, pnomul, pmasksam);
    p = eina_hash_find(gc->shared->shaders_hash, &flags);
    if (!p)
      {

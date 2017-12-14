@@ -606,7 +606,7 @@ void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
                                                     Eina_Bool mask_smooth, Eina_Bool mask_color,
                                                     int r, int g, int b, int a,
-                                                    Eina_Bool smooth, Eina_Bool tex_only);
+                                                    Eina_Bool smooth, Eina_Bool tex_only, Eina_Bool alphaonly);
 void              evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                                    Evas_GL_Texture *tex,
                                                    double sx, double sy, double sw, double sh,
@@ -667,13 +667,16 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        Evas_Colorspace cspace);
 
 // Gfx Filters
+void              evas_gl_common_filter_blend_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex,
+                                                   double sx, double sy, double sw, double sh, double dx,
+                                                   double dy, double dw, double dh, Eina_Bool alphaonly);
 void              evas_gl_common_filter_displace_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, Evas_GL_Texture *map_tex,
                                                       int x, int y, int w, int h, double dx, double dy, Eina_Bool nearest);
 void              evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex,
                                                    int x, int y, int w, int h, const uint8_t *points, int channel);
 void              evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, double sx, double sy, double sw, double sh,
                                                   double dx, double dy, double dw, double dh, const double * const values, const double * const offsets, int count, double radius,
-                                                  Eina_Bool horiz);
+                                                  Eina_Bool horiz, Eina_Bool alphaonly);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);
@@ -687,6 +690,7 @@ Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex, Eina_Bool tex_only,
                                                     Evas_GL_Texture *mtex, Eina_Bool mask_smooth,
                                                     Eina_Bool mask_color, int mw, int mh,
+                                                    Eina_Bool alphaonly,
                                                     Shader_Sampling *psam, int *pnomul,
                                                     Shader_Sampling *pmasksam);
 void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p);
