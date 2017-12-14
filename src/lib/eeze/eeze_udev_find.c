@@ -325,7 +325,6 @@ eeze_udev_find_by_filter(const char *subsystem,
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
    const char *devname;
    Eina_List *ret = NULL;
 
@@ -347,15 +346,11 @@ eeze_udev_find_by_filter(const char *subsystem,
    udev_list_entry_foreach(cur, devs)
      {
         devname = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, devname);
 
-        if (name)
-          if (!strstr(devname, name))
-            goto out;
+        if (name && (!strstr(devname, name)))
+          continue;
 
         ret = eina_list_append(ret, eina_stringshare_add(devname));
-out:
-        udev_device_unref(device);
      }
    udev_enumerate_unref(en);
    return ret;
@@ -367,7 +362,6 @@ eeze_udev_find_by_sysattr(const char *sysattr,
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
    const char *devname;
    Eina_List *ret = NULL;
 
@@ -385,9 +379,7 @@ eeze_udev_find_by_sysattr(const char *sysattr,
    udev_list_entry_foreach(cur, devs)
      {
         devname = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, devname);
         ret = eina_list_append(ret, eina_stringshare_add(devname));
-        udev_device_unref(device);
      }
    udev_enumerate_unref(en);
    return ret;
@@ -398,7 +390,6 @@ eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname)
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
    const char *devname;
    Eina_List *ret = NULL;
 
@@ -413,10 +404,7 @@ eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname)
    udev_list_entry_foreach(cur, devs)
      {
         devname = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, devname);
-        if (!device) continue;
         ret = eina_list_append(ret, eina_stringshare_add(devname));
-        udev_device_unref(device);
      }
    udev_enumerate_unref(en);
    return ret;
