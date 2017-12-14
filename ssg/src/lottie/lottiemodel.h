@@ -3,6 +3,7 @@
 
 #include<vector>
 #include"sgpoint.h"
+#include"sgrect.h"
 
 template<typename T>
 class LottieKeyFrame
@@ -19,8 +20,10 @@ class LottieProperty
 {
 public:
     LottieProperty(){}
-    constexpr bool isStatic() const {return false;}
+    constexpr bool staticType() const {return false;}
+    constexpr bool isStatic() const {return mKeyFrames.empty();}
 public:
+    T     mValue;
     std::vector<LottieKeyFrame<T>> mKeyFrames;
 };
 
@@ -30,6 +33,7 @@ class LottieProperty<T, false>
 public:
     LottieProperty(){}
     LottieProperty<T,false>(T initialvalue): mValue(initialvalue){}
+    constexpr bool staticType() const {return true;}
     constexpr bool isStatic() const {return true;}
 public:
     T     mValue;
@@ -42,9 +46,24 @@ using LottieIntProperty = LottieProperty<int, animation>;
 template<bool animation>
 using LottieFloatProperty = LottieProperty<float, animation>;
 
+template <typename T>
+struct LottiePropertyHelper
+{
+  LottiePropertyHelper(const T &value):mAnimation(false){ mProperty.mValue = value;}
+  bool mAnimation;
+  LottieProperty<T,true> mProperty;
+};
+
 template<bool animation>
 using LottiePointFProperty = LottieProperty<SGPointF, animation>;
 
+enum class LottieBlendMode
+{
+    Normal = 0,
+    Multiply = 1,
+    Screen = 2,
+    OverLay = 3
+};
 class LottieObject
 {
 public:
@@ -67,7 +86,7 @@ public:
     LottieObject::Type  mType;
 };
 
-class LottieGroup : public LottieObject
+class LottieGroupObj : public LottieObject
 {
 public:
     std::vector<LottieObject *> mChildren;
@@ -75,19 +94,33 @@ public:
     int                         mId;  // Lottie the group id  used for parenting.
 };
 
-//class LottieComposition : public LottieGroupObject
-//{
-//public:
-
-//};
-
-class LottieLayer : public LottieGroup
+class LottieComposition : public LottieGroupObj
 {
 public:
-    int         mlayerType; //lottie layer type  (solid/shape/precomp)
+    SGRect      mBound;
+    bool        mpreserveAspect = false;
+    bool        mAnimation = false;
+    long        mStartFrame = 0;
+    long        mEndFrame = 0;
+    float       mFrameRate;
 };
 
-class LottieMatrix : public LottieGroup
+class LottieLayer : public LottieGroupObj
+{
+public:
+    SGRect               mBound;
+    int                  mlayerType; //lottie layer type  (solid/shape/precomp)
+    int                  mParentId; // Lottie the id of the parent in the composition
+    int                  mId;  // Lottie the group id  used for parenting.
+    int                  mGroupType; //lottie layer type  (solid/shape/precomp)
+    long                 mStartFrame = 0;
+    long                 mEndFrame = 0;
+    long                 mStartTime;
+    LottieBlendMode      mBlendMode;
+    float                mTimeStreatch;
+};
+
+class LottieMatrix : public LottieGroupObj
 {
 public:
     LottieFloatProperty<true>   mRotation;  /* "r" */
@@ -100,12 +133,20 @@ public:
 };
 
 template<bool pos, bool size, bool roundness>
-class LottieRect : public LottieObject
+class LottieRectObject : public LottieObject
 {
 public:
     LottiePointFProperty<pos>       mPos;
     LottiePointFProperty<size>      mSize;
     LottieFloatProperty<roundness>  mRound;
+};
+
+template<bool pos, bool size>
+class LottieEllipseObject : public LottieObject
+{
+public:
+    LottiePointFProperty<pos>       mPos;
+    LottiePointFProperty<size>      mSize;
 };
 
 

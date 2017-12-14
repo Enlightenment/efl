@@ -103,34 +103,6 @@ void LookaheadParserHandler::ParseNext() {
     }
 }
 
-template <typename T>
-struct LottiePropertyHelper
-{
-  LottiePropertyHelper(const T &value):mAnimation(false), mStatic(value){}
-  bool mAnimation;
-  LottieProperty<T, false>  mStatic;
-  LottieProperty<T,true> mDyanmic;
-};
-
-struct LottieFloatPropertyHelper
-{
-    LottieFloatPropertyHelper(float initialValue):
-        mAnimation(false), mStatic(initialValue){}
-    bool mAnimation;
-    LottieFloatProperty<false> mStatic;
-    LottieFloatProperty<true> mDyanmic;
-};
-
-struct LottiePointFPropertyHelper
-{
-    LottiePointFPropertyHelper(const SGPointF &initialValue):
-        mAnimation(false), mStatic(initialValue){}
-    bool mAnimation;
-    LottiePointFProperty<false> mStatic;
-    LottiePointFProperty<true> mDyanmic;
-};
-
-
 class LottieParser : protected LookaheadParserHandler {
 public:
     LottieParser(char* str) : LookaheadParserHandler(str) {}
@@ -154,14 +126,21 @@ public:
     bool IsValid() { return st_ != kError; }
 
     void Skip(const char *key);
-    FIDocNode * parseDoc();
-    FINode * parseLayers();
-    FINode * parseLayer();
-    void parseItems(FINode *layer);
-    void parseItems1(FINode *layer);
+    SGRect getRect();
+    LottieBlendMode getBlendMode();
+
     void parseGroupItem(FINode *group);
     void parseEllipse(FINode *parent);
-    void parseRectObject();
+    LottieComposition *parseComposition();
+    void parseLayers(LottieComposition *comp);
+    LottieLayer *parseLayer();
+    void parseShapesAttr(LottieLayer *layer);
+    void parseObject(LottieGroupObj *parent);
+    LottieObject* parseObjectTypeAttr();
+    LottieObject *parseGroupObject();
+    LottieObject *parseRectObject();
+    LottieObject *parseEllipseObject();
+
     void parseArrayValue(SGPointF &pt);
     void parseArrayValue(float &val);
     template<typename T>
@@ -176,6 +155,7 @@ protected:
 bool LottieParser::EnterObject() {
     if (st_ != kEnteringObject) {
         st_  = kError;
+        RAPIDJSON_ASSERT(false);
         return false;
     }
 
@@ -186,6 +166,7 @@ bool LottieParser::EnterObject() {
 bool LottieParser::EnterArray() {
     if (st_ != kEnteringArray) {
         st_  = kError;
+        RAPIDJSON_ASSERT(false);
         return false;
     }
 
@@ -200,7 +181,19 @@ const char* LottieParser::NextObjectKey() {
         return result;
     }
 
+    /* SPECIAL CASE
+     * The parser works with a prdefined rule that it will be only
+     * while (NextObjectKey()) for each object but in case of our nested group
+     * object we can call multiple time NextObjectKey() while exiting the object
+     * so ignore those and don't put parser in the error state.
+     * */
+    if (st_ == kExitingArray || st_ == kEnteringObject ) {
+        sgDebug<<"O: Exiting nested loop";
+        return 0;
+    }
+
     if (st_ != kExitingObject) {
+        RAPIDJSON_ASSERT(false);
         st_ = kError;
         return 0;
     }
@@ -215,7 +208,16 @@ bool LottieParser::NextArrayValue() {
         return false;
     }
 
-    if (st_ == kError || st_ == kExitingObject || st_ == kHasKey) {
+    /* SPECIAL CASE
+     * same as  NextObjectKey()
+     */
+    if (st_ == kExitingObject || st_ == kEnteringArray) {
+        sgDebug<<"A: Exiting nested loop";
+        return 0;
+    }
+
+    if (st_ == kError || st_ == kHasKey) {
+        RAPIDJSON_ASSERT(false);
         st_ = kError;
         return false;
     }
@@ -226,6 +228,7 @@ bool LottieParser::NextArrayValue() {
 int LottieParser::GetInt() {
     if (st_ != kHasNumber || !v_.IsInt()) {
         st_ = kError;
+        RAPIDJSON_ASSERT(false);
         return 0;
     }
 
@@ -237,6 +240,7 @@ int LottieParser::GetInt() {
 double LottieParser::GetDouble() {
     if (st_ != kHasNumber) {
         st_  = kError;
+        RAPIDJSON_ASSERT(false);
         return 0.;
     }
 
@@ -248,6 +252,7 @@ double LottieParser::GetDouble() {
 bool LottieParser::GetBool() {
     if (st_ != kHasBool) {
         st_  = kError;
+        RAPIDJSON_ASSERT(false);
         return false;
     }
 
@@ -268,6 +273,7 @@ void LottieParser::GetNull() {
 const char* LottieParser::GetString() {
     if (st_ != kHasString) {
         st_  = kError;
+        RAPIDJSON_ASSERT(false);
         return 0;
     }
 
@@ -285,6 +291,7 @@ void LottieParser::SkipOut(int depth) {
             --depth;
         }
         else if (st_ == kError) {
+            RAPIDJSON_ASSERT(false);
             return;
         }
 
@@ -329,103 +336,110 @@ int LottieParser::PeekType() {
     return -1;
 }
 
-using namespace std;
-
 void LottieParser::Skip(const char *key)
 {
     if (PeekType() == kArrayType) {
-        if(key)
-            sgWarning<<"Lottie ARRAY attribute not supported : "<<key;
+//        if(key)
+//            sgWarning<<"Lottie ARRAY attribute not supported : "<<key;
         EnterArray();
         SkipArray();
     } else if (PeekType() == kObjectType) {
-        if(key)
-            sgWarning<<"Lottie OBJECT attribute not supported : "<<key;
+//        if(key)
+//            sgWarning<<"Lottie OBJECT attribute not supported : "<<key;
         EnterObject();
         SkipObject();
     } else {
         SkipValue();
-        if(key)
-            sgWarning<<"Lottie VALUE attribute not supported : "<<key;
+//        if(key)
+//            sgWarning<<"Lottie VALUE attribute not supported : "<<key;
     }
-    /*
-    if (PeekType() == kArrayType) {
-        cout<<"\ntry skipping array : ";
-        if (key)
-            cout<<key;
-        EnterArray();
-        while (NextArrayValue())
-            Skip(nullptr);
-
-    } else if (PeekType() == kObjectType) {
-        cout<<"\ntry skipping Object : ";
-        EnterObject();
-        while (const char* objkey = NextObjectKey())
-            Skip(objkey);
-    } else {
-        cout<<"\ntry skipping Value : ";
-        if (key)
-            cout<<key;
-        if (PeekType() == kNumberType) {
-            cout << ": skipped number";
-            GetDouble();
-        } else if (PeekType() == kStringType) {
-            cout << ": skipped string";
-            GetString();
-        } else if(PeekType() == kTrueType || PeekType() == kFalseType) {
-            cout << ": skipped boolean";
-            GetBool();
-        } else if (PeekType() == kNullType) {
-            cout << ": skipped null";
-            GetNull();
-        }
-    } */
 }
 
-FIDocNode * LottieParser::parseDoc()
+LottieBlendMode
+LottieParser::getBlendMode()
+{
+    RAPIDJSON_ASSERT(PeekType() == kNumberType);
+    LottieBlendMode mode = LottieBlendMode::Normal;
+
+    switch (GetInt()) {
+    case 1:
+        mode = LottieBlendMode::Multiply;
+        break;
+    case 2:
+        mode = LottieBlendMode::Screen;
+        break;
+    case 3:
+        mode = LottieBlendMode::OverLay;
+        break;
+    default:
+        break;
+    }
+    return mode;
+}
+SGRect LottieParser::getRect()
+{
+    SGRect r;
+    RAPIDJSON_ASSERT(PeekType() == kObjectType);
+    EnterObject();
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "l")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            r.setLeft(GetInt());
+        } else if (0 == strcmp(key, "r")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            r.setRight(GetInt());
+        } else if (0 == strcmp(key, "t")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            r.setTop(GetInt());
+        } else if (0 == strcmp(key, "b")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            r.setBottom(GetInt());
+        } else {
+            RAPIDJSON_ASSERT(false);
+        }
+    }
+    return r;
+}
+
+LottieComposition *LottieParser::parseComposition()
 {
     RAPIDJSON_ASSERT(PeekType() == kObjectType);
     EnterObject();
-    FIDocNode *doc = new FIDocNode();
+    LottieComposition *comp = new LottieComposition();
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "w")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            doc->mBound.setWidth(GetInt());
+            comp->mBound.setWidth(GetInt());
         } else if (0 == strcmp(key, "h")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            doc->mBound.setHeight(GetInt());
+            comp->mBound.setHeight(GetInt());
         } else if (0 == strcmp(key, "ip")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            doc->mStartTime = GetDouble();
+            comp->mStartFrame = GetDouble();
         } else if (0 == strcmp(key, "op")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            doc->mEndTime = GetDouble();
+            comp->mEndFrame = GetDouble();
         } else if (0 == strcmp(key, "fr")) {
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            doc->mFrameRate = GetDouble();
+            comp->mFrameRate = GetDouble();
         } else if (0 == strcmp(key, "layers")) {
-            RAPIDJSON_ASSERT(PeekType() == kArrayType);
-            FIGroupNode *composition = new FIGroupNode();
-            parseLayers();
+            parseLayers(comp);
         }
         else {
+            sgWarning<<"Composition Attribute Skipped : "<<key;
             Skip(key);
         }
     }
-    return nullptr;
+    return comp;
 }
 
-FINode * LottieParser::parseLayers()
+void LottieParser::parseLayers(LottieComposition *composition)
 {
-    FIGroupNode *composition = new FIGroupNode();
+    RAPIDJSON_ASSERT(PeekType() == kArrayType);
     EnterArray();
-    int i = 1;
     while (NextArrayValue()) {
-        RAPIDJSON_ASSERT(PeekType() == kObjectType);
-        sgDebug<<"ENTER LAYER: "<<i;
-        parseLayer();
-        sgDebug<<"EXIT LAYER: "<<i;
-        i++;
+        auto layer = parseLayer();
+        composition->mChildren.push_back(layer);
     }
 }
 
@@ -433,9 +447,11 @@ FINode * LottieParser::parseLayers()
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/layers/shape.json
  *
  */
-FINode * LottieParser::parseLayer()
+LottieLayer * LottieParser::parseLayer()
 {
-    FIGroupNode *layer = new FIGroupNode();
+    RAPIDJSON_ASSERT(PeekType() == kObjectType);
+    sgDebug<<"parse LAYER: S";
+    LottieLayer *layer = new LottieLayer();
     EnterObject();
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ty")) {    /* Type of layer: Shape. Value 4.*/
@@ -449,69 +465,103 @@ FINode * LottieParser::parseLayer()
             layer->mParentId = GetInt();
         }else if (0 == strcmp(key, "sr")) { // "Layer Time Stretching"
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
-            Skip(key);
-        } else if (0 == strcmp(key, "nm")) { /*After Effects Layer Name. Used for expressions.*/
-            RAPIDJSON_ASSERT(PeekType() == kStringType);
-            layer->name = GetString();
+            layer->mTimeStreatch = GetDouble();
+        } else if (0 == strcmp(key, "ip")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            layer->mStartFrame = GetDouble();
+        } else if (0 == strcmp(key, "op")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            layer->mEndFrame = GetDouble();
+        }  else if (0 == strcmp(key, "st")) {
+            RAPIDJSON_ASSERT(PeekType() == kNumberType);
+            layer->mStartTime = GetDouble();
+        } else if (0 == strcmp(key, "bounds")) {
+            layer->mBound = getRect();
+        } else if (0 == strcmp(key, "bm")) {
+            layer->mBlendMode = getBlendMode();
         } else if (0 == strcmp(key, "shapes")) { /* Shape list of items */
-            sgDebug<<"ENTER SHAPE";
-            RAPIDJSON_ASSERT(PeekType() == kArrayType);
-            EnterArray();
-            while (NextArrayValue()) {
-                if (PeekType() == kObjectType) {
-                    parseItems(layer);
-                } else {
-                    Skip(nullptr);
-                }
-            }
-           sgDebug<<"EXIT SHAPE";
+            parseShapesAttr(layer);
+        } else {
+            sgWarning<<"Layer Attribute Skipped : "<<key;
+            Skip(key);
+        }
+    }
+       sgDebug<<"parse LAYER: E";
+  return layer;
+}
+
+void LottieParser::parseShapesAttr(LottieLayer *layer)
+{
+    sgDebug<<"ENTER SHAPE ATTR";
+    RAPIDJSON_ASSERT(PeekType() == kArrayType);
+    EnterArray();
+    while (NextArrayValue()) {
+        parseObject(layer);
+    }
+   sgDebug<<"EXIT SHAPE ATTR";
+}
+
+LottieObject*
+LottieParser::parseObjectTypeAttr()
+{
+    RAPIDJSON_ASSERT(PeekType() == kStringType);
+    const char *type = GetString();
+    if (0 == strcmp(type, "gr")) {
+        return parseGroupObject();
+    } else if (0 == strcmp(type, "rc")) {
+        return parseRectObject();
+    } else if (0 == strcmp(type, "el")) {
+        return parseEllipseObject();
+    } else {
+        sgDebug<<"The Object Type not yet handled = "<< type;
+        return nullptr;
+    }
+}
+
+void
+LottieParser::parseObject(LottieGroupObj *parent)
+{
+    RAPIDJSON_ASSERT(PeekType() == kObjectType);
+    EnterObject();
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "ty")) {
+            auto child = parseObjectTypeAttr();
+            if (child)
+                parent->mChildren.push_back(child);
         } else {
             Skip(key);
         }
     }
 }
 
-void LottieParser::parseItems(FINode *parent)
+LottieObject *
+LottieParser::parseGroupObject()
 {
-    FINode::Type nodeType = FINode::Type::Doc;
-    EnterObject();
-    //FINode *item;
-    sgDebug<<"ENTER Parse item";
+    LottieGroupObj *group = new LottieGroupObj();
+    sgDebug<<"ENTER GROUP item";
     while (const char* key = NextObjectKey()) {
-        if (0 == strcmp(key, "ty")) {
-            const char *type = GetString();
-            sgDebug<<"Shape type :"<<type;
-            if (0 == strcmp(type, "gr")) {
-                nodeType = FINode::Type::Group;
-            } else if (0 == strcmp(type, "rc")) {
-                parseRectObject();
-            } else if (0 == strcmp(type, "el")) {
-                parseEllipse(parent);
-            } else if (0 == strcmp(type, "sh")) {
-                nodeType = FINode::Type::Path;
-            } else {
-            }
-        } else if (0 == strcmp(key, "it")) { /*After Effects Layer Name. Used for expressions.*/
-            sgDebug<<"ENTER GROUP item";
+        if (0 == strcmp(key, "it")) {
+            sgDebug<<"ENTER IT attribute";
             RAPIDJSON_ASSERT(PeekType() == kArrayType);
-            if (nodeType == FINode::Type::Group)
-                parseGroupItem(parent);
-            else {
-                assert(0);
+            EnterArray();
+            while (NextArrayValue()) {
+                RAPIDJSON_ASSERT(PeekType() == kObjectType);
+                parseObject(group);
             }
-          sgDebug<<"EXIT GROUP item";
+          sgDebug<<"EXIT IT attribute";
         } else {
             Skip(key);
         }
-
     }
-    sgDebug<<"EXIT Parse item";
+  sgDebug<<"EXIT GROUP item";
+  return group;
 }
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/rect.json
  */
-void LottieParser::parseRectObject()
+LottieObject *
+LottieParser::parseRectObject()
 {
     LottiePropertyHelper<float> roundness(0);
     while (const char* key = NextObjectKey()) {
@@ -527,7 +577,40 @@ void LottieParser::parseRectObject()
             Skip(key);
         }
     }
+    return nullptr;
 }
+
+LottieObject *
+LottieParser::parseEllipseObject()
+{
+    sgDebug<<"parse EL item START:";
+    LottiePropertyHelper<SGPointF> pos = LottiePropertyHelper<SGPointF>(SGPointF());
+    LottiePropertyHelper<SGPointF> size = LottiePropertyHelper<SGPointF>(SGPointF());
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "p")) {
+            parseProperty(pos);
+        } else if (0 == strcmp(key, "s")) {
+            parseProperty(size);
+        } else {
+            Skip(key);
+        }
+    }
+
+    if (!pos.mAnimation && !size.mAnimation) {
+        auto obj = new LottieEllipseObject<false, false>();
+        obj->mPos = std::move(pos.mProperty.mValue);
+        obj->mSize = std::move(size.mProperty.mValue);
+        return obj;
+    } else {
+        auto obj = new LottieEllipseObject<true, true>();
+        obj->mPos = std::move(pos.mProperty);
+        obj->mSize = std::move(size.mProperty);
+        return obj;
+    }
+    sgDebug<<"parse EL item END:";
+    return nullptr;
+}
+
 
 void LottieParser::parseArrayValue(SGPointF &pt)
 {
@@ -539,7 +622,7 @@ void LottieParser::parseArrayValue(SGPointF &pt)
     sgDebug<<"Value parsed as point / size"<<i;
 
     pt.setX(val[0]);
-    pt.setX(val[1]);
+    pt.setY(val[1]);
 }
 
 void LottieParser::parseArrayValue(float &val)
@@ -557,28 +640,30 @@ void LottieParser::parseKeyFrame(LottieProperty<T,true> &obj)
          if (0 == strcmp(key, "i")) {
              sgDebug<<"i";
               Skip(key);
-         } else if (0 == strcmp(key, "i")) {
+         } else if (0 == strcmp(key, "o")) {
             sgDebug<<"o";
              Skip(key);
          } else if (0 == strcmp(key, "n")) {
              sgDebug<<"n";
               Skip(key);
          } else if (0 == strcmp(key, "t")) {
-             sgDebug<<"t";
-              Skip(key);
+             keyframe.mStartFrame = GetDouble();
          } else if (0 == strcmp(key, "s")) {
              if (PeekType() == kArrayType)
                  EnterArray();
              parseArrayValue(keyframe.mStartValue);
-             sgDebug<<" S consumed";
          } else if (0 == strcmp(key, "e")) {
              if (PeekType() == kArrayType)
                  EnterArray();
              parseArrayValue(keyframe.mEndValue);
-             sgDebug<<"E consumed";
          } else {
              Skip(key);
          }
+     }
+
+     if (!obj.mKeyFrames.empty()) {
+         // update the endFrame value of current keyframe
+         obj.mKeyFrames.back().mEndFrame = keyframe.mStartFrame;
      }
    obj.mKeyFrames.push_back(keyframe);
 }
@@ -598,54 +683,25 @@ void LottieParser::parseProperty(LottiePropertyHelper<T> &obj)
                 // for key frame
                 if (PeekType() == kObjectType) {
                     obj.mAnimation = true;
-                    parseKeyFrame(obj.mDyanmic);
+                    parseKeyFrame(obj.mProperty);
                 } else if (PeekType() == kNumberType) {
-                    parseArrayValue(obj.mStatic.mValue);
+                    parseArrayValue(obj.mProperty.mValue);
                 } else {
                     sgDebug<<"Something is really wrong here ++++++++";
                     Skip(nullptr);
                 }
             }
         }  else {
-            sgDebug<<"PointFProperty ignored :";
+            sgDebug<<"Property ignored :";
             Skip(key);
         }
     }
 }
-
-void LottieParser::parseGroupItem(FINode *parent)
-{
-    FINode *group = new FIGroupNode(parent);
-    EnterArray();
-    while (NextArrayValue()) {
-        RAPIDJSON_ASSERT(PeekType() == kObjectType);
-        parseItems(group);
-    }
-}
-
-void LottieParser::parseEllipse(FINode *parent)
-{
-    sgDebug<<"parse el item :";
-    LottiePropertyHelper<SGPointF> pos = LottiePropertyHelper<SGPointF>(SGPointF());
-    LottiePropertyHelper<SGPointF> size = LottiePropertyHelper<SGPointF>(SGPointF());
-    while (const char* key = NextObjectKey()) {
-        if (0 == strcmp(key, "p")) {
-            parseProperty(pos);
-        } else if (0 == strcmp(key, "s")) {
-            parseProperty(size);
-        } else {
-            Skip(key);
-        }
-    }
-}
-
 
 SGJson::SGJson(const char *data)
 {
-    using namespace std;
-
     LottieParser r(const_cast<char *>(data));
-    r.parseDoc();
+    r.parseComposition();
 }
 
 RAPIDJSON_DIAG_POP

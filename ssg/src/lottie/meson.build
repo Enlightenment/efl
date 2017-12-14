@@ -1,7 +1,6 @@
 ssg_sources_lottie = []
 
-ssg_lottie_file = ['lottiecomposition.cpp',
-                   'lottiedrawable.cpp',
+ssg_lottie_file = ['lottiedrawable.cpp',
                    'jsontest.cpp'
                   ]
 
