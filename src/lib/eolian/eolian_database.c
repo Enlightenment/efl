@@ -11,8 +11,6 @@
 Eina_Hash *_decls      = NULL;
 Eina_Hash *_declsf     = NULL;
 
-static Eolian_Unit *_cunit = NULL;
-
 static int _database_init_count = 0;
 
 static void
@@ -542,16 +540,9 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
 }
 
 void
-database_unit_init(Eolian *state, Eolian_Unit *unit, Eina_Stringshare *fname)
+database_unit_init(Eolian *state, Eolian_Unit *unit)
 {
    unit->state = state;
-
-   if (fname)
-     {
-        Eolian_Unit *ocunit = _cunit;
-        if (ocunit)
-          eina_hash_add(ocunit->children, fname, unit);
-     }
 
    unit->children   = eina_hash_stringshared_new(NULL);
    unit->classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
@@ -560,9 +551,6 @@ database_unit_init(Eolian *state, Eolian_Unit *unit, Eina_Stringshare *fname)
    unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
-
-   if (fname)
-     _cunit = unit;
 }
 
 void
@@ -586,7 +574,7 @@ eolian_new(void)
    if (!state)
      return NULL;
 
-   database_unit_init(state, &state->unit, NULL);
+   database_unit_init(state, &state->unit);
 
    state->filenames_eo  = eina_hash_string_small_new(free);
    state->filenames_eot = eina_hash_string_small_new(free);
@@ -699,61 +687,62 @@ database_class_to_filename(const char *cname)
    return ret;
 }
 
-static Eina_Bool
-_eolian_file_parse_nodep(Eolian *state, const char *filepath)
+static Eolian_Unit *
+_eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
 {
    Eina_Bool is_eo;
    const char *eopath;
    if (_database_init_count <= 0)
-     return EINA_FALSE;
+     return NULL;
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
      {
         _eolian_log("file '%s' doesn't have a correct extension", filepath);
-        return EINA_FALSE;
+        return NULL;
      }
-   if (!(eopath = eina_hash_find(is_eo ? state->filenames_eo : state->filenames_eot, filepath)))
+   if (!(eopath = eina_hash_find(is_eo ? parent->state->filenames_eo : parent->state->filenames_eot, filepath)))
      {
         char *vpath = eina_file_path_sanitize(filepath);
-        Eina_Bool ret = eo_parser_database_fill(state, vpath, !is_eo, NULL);
+        Eolian_Unit *ret = eo_parser_database_fill(parent, vpath, !is_eo, NULL);
         free(vpath);
         return ret;
      }
-   return eo_parser_database_fill(state, eopath, !is_eo, NULL);
+   return eo_parser_database_fill(parent, eopath, !is_eo, NULL);
 }
 
 static Eina_Bool
-_parse_deferred(Eolian *state)
+_parse_deferred(Eolian_Unit *parent)
 {
-   Eina_Hash *defer = state->defer;
+   Eina_Hash *defer = parent->state->defer;
    if (!defer || !eina_hash_population(defer))
      return EINA_TRUE;
    /* clean room for more deps for later parsing */
-   state->defer = eina_hash_string_small_new(NULL);
+   parent->state->defer = eina_hash_string_small_new(NULL);
    Eina_Iterator *itr = eina_hash_iterator_data_new(defer);
    const char *dep;
    EINA_ITERATOR_FOREACH(itr, dep)
      {
-        if (!_eolian_file_parse_nodep(state, dep))
+        Eolian_Unit *pdep = _eolian_file_parse_nodep(parent, dep);
+        if (!pdep || !_parse_deferred(pdep))
           {
              eina_iterator_free(itr);
-             eina_hash_free_buckets(state->defer);
+             eina_hash_free_buckets(parent->state->defer);
              eina_hash_free(defer);
              return EINA_FALSE;
           }
      }
    eina_iterator_free(itr);
    eina_hash_free(defer);
-   /* in case more deps were queued in, parse them */
-   return _parse_deferred(state);
+   return EINA_TRUE;
 }
 
 EAPI const Eolian_Unit *
 eolian_file_parse(Eolian *state, const char *filepath)
 {
-   if (!_eolian_file_parse_nodep(state, filepath))
+   Eolian_Unit *ret = _eolian_file_parse_nodep((Eolian_Unit *)state, filepath);
+   if (!ret)
      return NULL;
-   if (!_parse_deferred(state))
+   if (!_parse_deferred(ret))
      return NULL;
    /* FIXME: pass unit properly */
    if (!database_validate(state, &state->unit))
@@ -770,8 +759,11 @@ typedef struct _Parse_Data
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Parse_Data *pd = fdata;
-   if (pd->ret) pd->ret = eo_parser_database_fill(pd->state, data, EINA_TRUE, NULL);
-   if (pd->ret) pd->ret = _parse_deferred(pd->state);
+   Eolian_Unit *unit = NULL;
+   if (pd->ret)
+     unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_TRUE, NULL);
+   pd->ret = !!unit;
+   if (pd->ret) pd->ret = _parse_deferred(unit);
    return pd->ret;
 }
 
@@ -795,8 +787,11 @@ eolian_all_eot_files_parse(Eolian *state)
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Parse_Data *pd = fdata;
-   if (pd->ret) pd->ret = eo_parser_database_fill(pd->state, data, EINA_FALSE, NULL);
-   if (pd->ret) pd->ret = _parse_deferred(pd->state);
+   Eolian_Unit *unit = NULL;
+   if (pd->ret)
+     unit = eo_parser_database_fill((Eolian_Unit *)pd->state, data, EINA_FALSE, NULL);
+   pd->ret = !!unit;
+   if (pd->ret) pd->ret = _parse_deferred(unit);
    return pd->ret;
 }
 

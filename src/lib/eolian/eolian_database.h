@@ -327,7 +327,7 @@ void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
 
 void database_doc_del(Eolian_Documentation *doc);
 
-void database_unit_init(Eolian *state, Eolian_Unit *unit, Eina_Stringshare *fname);
+void database_unit_init(Eolian *state, Eolian_Unit *unit);
 void database_unit_del(Eolian_Unit *unit);
 
 /* types */

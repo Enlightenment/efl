@@ -1035,6 +1035,12 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
    ls->icolumn         = ls->column = -1;
    ls->decpoint        = '.';
    next_char(ls);
+
+   Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
+   ls->unit = ncunit;
+   database_unit_init(state, ncunit);
+   eina_hash_add(state->units, ls->filename, ncunit);
+
    if (ls->current != 0xEF)
      return;
    next_char(ls);
@@ -1044,11 +1050,6 @@ eo_lexer_set_input(Eo_Lexer *ls, Eolian *state, const char *source)
    if (ls->current != 0xBF)
      return;
    next_char(ls);
-
-   Eolian_Unit *ncunit = calloc(1, sizeof(Eolian_Unit));
-   ls->unit = ncunit;
-   database_unit_init(state, ncunit, ls->filename);
-   eina_hash_add(state->units, ls->filename, ncunit);
 }
 
 static void

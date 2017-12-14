@@ -683,7 +683,7 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
    if (eina_hash_find(ls->state->parsing, fname))
      return NULL;
    Eolian_Class *cl = NULL;
-   if (!eo_parser_database_fill(ls->state, fname, EINA_FALSE, &cl) || !cl)
+   if (!eo_parser_database_fill(ls->unit, fname, EINA_FALSE, &cl) || !cl)
      {
         char buf[PATH_MAX];
         eo_lexer_context_restore(ls);
@@ -2496,19 +2496,30 @@ end:
    return ret;
 }
 
-Eina_Bool
-eo_parser_database_fill(Eolian *state, const char *filename, Eina_Bool eot, Eolian_Class **fcl)
+Eolian_Unit *
+eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot, Eolian_Class **fcl)
 {
-   Eolian_Class *cl = eina_hash_find(state->parsed, filename);
+   Eolian_Class *cl = eina_hash_find(parent->state->parsed, filename);
    if (cl)
      {
         if (!eot && fcl) *fcl = cl;
-        return EINA_TRUE;
+        const char *fsl = strrchr(filename, '/');
+        const char *bsl = strrchr(filename, '\\');
+        const char *fname = NULL;
+        if (fsl || bsl)
+          fname = eina_stringshare_add((fsl > bsl) ? (fsl + 1) : (bsl + 1));
+        if (fname)
+          {
+             Eolian_Unit *ret = eina_hash_find(parent->state->units, fname);
+             eina_stringshare_del(fname);
+             return ret;
+          }
+        return NULL;
      }
 
-   eina_hash_set(state->parsing, filename, (void *)EINA_TRUE);
+   eina_hash_set(parent->state->parsing, filename, (void *)EINA_TRUE);
 
-   Eo_Lexer *ls = eo_lexer_new(state, filename);
+   Eo_Lexer *ls = eo_lexer_new(parent->state, filename);
    if (!ls)
      {
         _eolian_log("unable to create lexer for file '%s'", filename);
@@ -2544,14 +2555,15 @@ eo_parser_database_fill(Eolian *state, const char *filename, Eina_Bool eot, Eoli
    if (fcl) *fcl = cl;
 
 done:
-   eina_hash_set(state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
-   eina_hash_set(state->parsing, filename, (void *)EINA_FALSE);
+   eina_hash_set(ls->state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
+   eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
+   eina_hash_add(parent->children, filename, ls->unit);
 
    eo_lexer_free(ls);
-   return EINA_TRUE;
+   return ls->unit;
 
 error:
-   eina_hash_set(state->parsing, filename, (void *)EINA_FALSE);
+   eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
    eo_lexer_free(ls);
-   return EINA_FALSE;
+   return NULL;
 }
