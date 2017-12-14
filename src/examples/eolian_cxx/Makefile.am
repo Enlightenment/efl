@@ -79,7 +79,7 @@ SRCS = \
 	eolian_cxx_simple_01.cc \
 	eolian_cxx_callbacks_01.cc \
 	ns_colourable.eo \
-	ns_colourablesquare.eo
+	ns_colourablesquare.eo \
 	$(IMPL)
 
 if HAVE_CXX
@@ -121,7 +121,9 @@ eolian_cxx_callbacks_01_SOURCES = eolian_cxx_callbacks_01.cc
 endif
 
 DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
-EXTRA_DIST = $(DATA_FILES)
+EXTRA_DIST = $(DATA_FILES) \
+ns_colourable.eo \
+ns_colourablesquare.eo
 
 %.eo.hh: %.eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
