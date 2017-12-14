@@ -303,6 +303,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
+        -- FIXME: unit
         local v = eolian.class_get_by_name(eos:unit_get(), name)
         if not v then
             return nil
@@ -318,6 +319,7 @@ M.Class = Node:clone {
         if ret then
             return ret
         end
+        -- FIXME: unit
         local v = eolian.class_get_by_file(eos:unit_get(), name)
         if not v then
             return nil
@@ -330,6 +332,7 @@ M.Class = Node:clone {
     all_get = function()
         local ret, had = get_cache(M.Class, "_cache_all")
         if not had then
+            -- FIXME: unit
             for cl in eolian.all_classes_get(eos:unit_get()) do
                 local cls = M.Class(cl)
                 if matches_filter(cls) then
@@ -723,6 +726,7 @@ M.Type = Node:clone {
     end,
 
     class_get = function(self)
+        -- FIXME: unit
         return self.type:class_get(eos:unit_get())
     end,
 
@@ -902,6 +906,7 @@ M.Typedecl = Node:clone {
     end,
 
     c_type_get = function(self)
+        -- FIXME: unit
         return self.typedecl:c_type_get(eos:unit_get())
     end,
 
@@ -937,6 +942,7 @@ M.Typedecl = Node:clone {
 
     all_aliases_get = function()
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_all_aliases_get(eos:unit_get()) do
             local tpo = M.Typedecl(tp)
             if matches_filter(tpo) then
@@ -948,6 +954,7 @@ M.Typedecl = Node:clone {
 
     all_structs_get = function()
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_all_structs_get(eos:unit_get()) do
             local tpo = M.Typedecl(tp)
             if matches_filter(tpo) then
@@ -959,6 +966,7 @@ M.Typedecl = Node:clone {
 
     all_enums_get = function()
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_all_enums_get(eos:unit_get()) do
             local tpo = M.Typedecl(tp)
             local tpn = tpo:nspaces_get()
@@ -971,6 +979,7 @@ M.Typedecl = Node:clone {
 
     aliases_by_file_get = function(fn)
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_aliases_get_by_file(eos:unit_get(), fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
@@ -979,6 +988,7 @@ M.Typedecl = Node:clone {
 
     structs_by_file_get = function(fn)
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_structs_get_by_file(eos:unit_get(), fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
@@ -987,6 +997,7 @@ M.Typedecl = Node:clone {
 
     enums_by_file_get = function(fn)
         local ret = {}
+        -- FIXME: unit
         for tp in eolian.typedecl_enums_get_by_file(eos:unit_get(), fn) do
             ret[#ret + 1] = M.Typedecl(tp)
         end
@@ -994,6 +1005,7 @@ M.Typedecl = Node:clone {
     end,
 
     alias_by_name_get = function(tn)
+        -- FIXME: unit
         local v = eolian.typedecl_alias_get_by_name(eos:unit_get(), tn)
         if not v then
             return nil
@@ -1002,6 +1014,7 @@ M.Typedecl = Node:clone {
     end,
 
     struct_by_name_get = function(tn)
+        -- FIXME: unit
         local v = eolian.typedecl_struct_get_by_name(eos:unit_get(), tn)
         if not v then
             return nil
@@ -1010,6 +1023,7 @@ M.Typedecl = Node:clone {
     end,
 
     enum_by_name_get = function(tn)
+        -- FIXME: unit
         local v = eolian.typedecl_enum_get_by_name(eos:unit_get(), tn)
         if not v then
             return nil
@@ -1292,6 +1306,7 @@ M.Variable = Node:clone {
 
     all_globals_get = function()
         local ret = {}
+        -- FIXME: unit
         for v in eolian.variable_all_globals_get(eos:unit_get()) do
             ret[#ret + 1] = M.Variable(v)
         end
@@ -1300,6 +1315,7 @@ M.Variable = Node:clone {
 
     all_constants_get = function()
         local ret = {}
+        -- FIXME: unit
         for v in eolian.variable_all_constants_get(eos:unit_get()) do
             ret[#ret + 1] = M.Variable(v)
         end
@@ -1308,6 +1324,7 @@ M.Variable = Node:clone {
 
     globals_by_file_get = function(fn)
         local ret = {}
+        -- FIXME: unit
         for v in eolian.variable_globals_get_by_file(eos:unit_get(), fn) do
             ret[#ret + 1] = M.Variable(v)
         end
@@ -1316,6 +1333,7 @@ M.Variable = Node:clone {
 
     constants_by_file_get = function(fn)
         local ret = {}
+        -- FIXME: unit
         for v in eolian.variable_constants_get_by_file(eos:unit_get(), fn) do
             ret[#ret + 1] = M.Variable(v)
         end
@@ -1323,6 +1341,7 @@ M.Variable = Node:clone {
     end,
 
     global_by_name_get = function(vn)
+        -- FIXME: unit
         local v = eolian.variable_global_get_by_name(eos:unit_get(), vn)
         if not v then
             return nil
@@ -1331,6 +1350,7 @@ M.Variable = Node:clone {
     end,
 
     constant_by_name_get = function(vn)
+        -- FIXME: unit
         local v = eolian.variable_constant_get_by_name(eos:unit_get(), vn)
         if not v then
             return nil
@@ -1346,10 +1366,12 @@ M.Expression = Node:clone {
     end,
 
     eval_enum = function(self)
+        -- FIXME: unit
         return self.expr:eval(eos:unit_get(), eolian.expression_mask.INT)
     end,
 
     eval_type = function(self, tp)
+        -- FIXME: unit
         return self.expr:eval_type(eos:unit_get(), tp.type)
     end,
 
@@ -1460,6 +1482,7 @@ M.DocTokenizer = Node:clone {
     end,
 
     ref_get = function(self, root)
+        -- FIXME: unit
         local tp, d1, d2 = self.tok:ref_get(eos:unit_get())
         local reft = eolian.doc_ref_type
         local ret = {}
@@ -1519,7 +1542,7 @@ M.parse = function(st)
             error("failed parsing eo files")
         end
     end
-    -- build reverse inheritance hierarchy
+    -- build reverse inheritance hierarchy, FIXME: unit
     for cl in eolian.all_classes_get(eos:unit_get()) do
         local cln = cl:full_name_get()
         for icl in cl:inherits_get() do
