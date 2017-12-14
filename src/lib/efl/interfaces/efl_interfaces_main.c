@@ -38,6 +38,7 @@
 #include "interfaces/efl_gfx_gradient_radial.eo.c"
 
 #include "interfaces/efl_gfx_filter.eo.c"
+#include "interfaces/efl_gfx_blur.eo.c"
 
 #include "interfaces/efl_gfx_size_hint.eo.c"
 #include "interfaces/efl_canvas.eo.c"

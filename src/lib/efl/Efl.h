@@ -123,6 +123,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_gradient_linear.eo.h"
 #include "interfaces/efl_gfx_gradient_radial.eo.h"
 #include "interfaces/efl_gfx_filter.eo.h"
+#include "interfaces/efl_gfx_blur.eo.h"
 #include "interfaces/efl_gfx_size_hint.eo.h"
 #include "interfaces/efl_gfx_color_class.eo.h"
 #include "interfaces/efl_gfx_text_class.eo.h"

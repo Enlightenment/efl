@@ -1,0 +1,41 @@
+interface Efl.Gfx.Blur
+{
+   [[A simple API to apply blur effects.
+
+     Those API's might use @Efl.Gfx.Filter internally. It might be necessary to
+     also specify the color of the blur with @Efl.Gfx.color.
+   ]]
+   methods {
+      @property radius {
+         [[The blur radius in pixels.]]
+         values {
+            rx: double; [[The horizontal blur radius.]]
+            ry: double; [[The vertical blur radius.]]
+         }
+      }
+      @property offset {
+         [[An offset relative to the original pixels.
+
+           This property allows for drop shadow effects.
+         ]]
+         values {
+            ox: double; [[Horizontal offset in pixels.]]
+            oy: double; [[Vertical offset in pixels.]]
+         }
+      }
+      @property grow {
+         [[How much the original image should be "grown" before blurring.
+
+           Growing is a combination of blur & color levels adjustment. If the
+           value of grow is positive, the pixels will appear more "fat" or "bold"
+           than the original. If the value is negative, a shrink effect happens
+           instead.
+
+           This is can be used efficiently to create glow effects.
+         ]]
+         values {
+            radius: double; [[How much to grow the original pixel data.]]
+         }
+      }
+   }
+}
