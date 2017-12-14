@@ -2,6 +2,7 @@
 #include "rapidjson/document.h"
 #include <iostream>
 #include "lottiecomposition.h"
+#include "lottiemodel.h"
 
 RAPIDJSON_DIAG_PUSH
 #ifdef __GNUC__
@@ -102,6 +103,34 @@ void LookaheadParserHandler::ParseNext() {
     }
 }
 
+template <typename T>
+struct LottiePropertyHelper
+{
+  LottiePropertyHelper(const T &value):mAnimation(false), mStatic(value){}
+  bool mAnimation;
+  LottieProperty<T, false>  mStatic;
+  LottieProperty<T,true> mDyanmic;
+};
+
+struct LottieFloatPropertyHelper
+{
+    LottieFloatPropertyHelper(float initialValue):
+        mAnimation(false), mStatic(initialValue){}
+    bool mAnimation;
+    LottieFloatProperty<false> mStatic;
+    LottieFloatProperty<true> mDyanmic;
+};
+
+struct LottiePointFPropertyHelper
+{
+    LottiePointFPropertyHelper(const SGPointF &initialValue):
+        mAnimation(false), mStatic(initialValue){}
+    bool mAnimation;
+    LottiePointFProperty<false> mStatic;
+    LottiePointFProperty<true> mDyanmic;
+};
+
+
 class LottieParser : protected LookaheadParserHandler {
 public:
     LottieParser(char* str) : LookaheadParserHandler(str) {}
@@ -132,6 +161,13 @@ public:
     void parseItems1(FINode *layer);
     void parseGroupItem(FINode *group);
     void parseEllipse(FINode *parent);
+    void parseRectObject();
+    void parseArrayValue(SGPointF &pt);
+    void parseArrayValue(float &val);
+    template<typename T>
+    void parseKeyFrame(LottieProperty<T,true> &obj);
+    template<typename T>
+    void parseProperty(LottiePropertyHelper<T> &obj);
 
 protected:
     void SkipOut(int depth);
@@ -444,10 +480,11 @@ void LottieParser::parseItems(FINode *parent)
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ty")) {
             const char *type = GetString();
+            sgDebug<<"Shape type :"<<type;
             if (0 == strcmp(type, "gr")) {
                 nodeType = FINode::Type::Group;
             } else if (0 == strcmp(type, "rc")) {
-                nodeType = FINode::Type::Rect;
+                parseRectObject();
             } else if (0 == strcmp(type, "el")) {
                 parseEllipse(parent);
             } else if (0 == strcmp(type, "sh")) {
@@ -471,6 +508,111 @@ void LottieParser::parseItems(FINode *parent)
     sgDebug<<"EXIT Parse item";
 }
 
+/*
+ * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/rect.json
+ */
+void LottieParser::parseRectObject()
+{
+    LottiePropertyHelper<float> roundness(0);
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "p")) {
+            Skip(key);
+        } else if (0 == strcmp(key, "s")) {
+            Skip(key);
+        } else if (0 == strcmp(key, "r")) {
+            parseProperty(roundness);
+        }  else if (0 == strcmp(key, "d")) {
+            Skip(key);
+        } else {
+            Skip(key);
+        }
+    }
+}
+
+void LottieParser::parseArrayValue(SGPointF &pt)
+{
+    float val[10];
+    int i=0;
+    while (NextArrayValue()) {
+        val[i++] = GetDouble();
+    }
+    sgDebug<<"Value parsed as point / size"<<i;
+
+    pt.setX(val[0]);
+    pt.setX(val[1]);
+}
+
+void LottieParser::parseArrayValue(float &val)
+{
+    sgDebug<<"Value parsed as single val";
+    val = GetDouble();
+}
+
+template<typename T>
+void LottieParser::parseKeyFrame(LottieProperty<T,true> &obj)
+{
+    EnterObject();
+    LottieKeyFrame<T> keyframe;
+     while (const char* key = NextObjectKey()) {
+         if (0 == strcmp(key, "i")) {
+             sgDebug<<"i";
+              Skip(key);
+         } else if (0 == strcmp(key, "i")) {
+            sgDebug<<"o";
+             Skip(key);
+         } else if (0 == strcmp(key, "n")) {
+             sgDebug<<"n";
+              Skip(key);
+         } else if (0 == strcmp(key, "t")) {
+             sgDebug<<"t";
+              Skip(key);
+         } else if (0 == strcmp(key, "s")) {
+             if (PeekType() == kArrayType)
+                 EnterArray();
+             parseArrayValue(keyframe.mStartValue);
+             sgDebug<<" S consumed";
+         } else if (0 == strcmp(key, "e")) {
+             if (PeekType() == kArrayType)
+                 EnterArray();
+             parseArrayValue(keyframe.mEndValue);
+             sgDebug<<"E consumed";
+         } else {
+             Skip(key);
+         }
+     }
+   obj.mKeyFrames.push_back(keyframe);
+}
+
+template<typename T>
+void LottieParser::parseProperty(LottiePropertyHelper<T> &obj)
+{
+    EnterObject();
+    while (const char* key = NextObjectKey()) {
+        if (0 == strcmp(key, "a")) {
+            obj.mAnimation = GetBool();
+            sgDebug<<"animation property :"<< obj.mAnimation;
+        } else if (0 == strcmp(key, "k")) {
+            RAPIDJSON_ASSERT(PeekType() == kArrayType);
+            EnterArray();
+            while (NextArrayValue()) {
+                // for key frame
+                if (PeekType() == kObjectType) {
+                    obj.mAnimation = true;
+                    parseKeyFrame(obj.mDyanmic);
+                } else if (PeekType() == kNumberType) {
+                    parseArrayValue(obj.mStatic.mValue);
+                } else {
+                    sgDebug<<"Something is really wrong here ++++++++";
+                    Skip(nullptr);
+                }
+            }
+        }  else {
+            sgDebug<<"PointFProperty ignored :";
+            Skip(key);
+        }
+    }
+}
+
 void LottieParser::parseGroupItem(FINode *parent)
 {
     FINode *group = new FIGroupNode(parent);
@@ -483,9 +625,17 @@ void LottieParser::parseGroupItem(FINode *parent)
 
 void LottieParser::parseEllipse(FINode *parent)
 {
-    FIEllipseNode *ellipse = new FIEllipseNode(parent);
+    sgDebug<<"parse el item :";
+    LottiePropertyHelper<SGPointF> pos = LottiePropertyHelper<SGPointF>(SGPointF());
+    LottiePropertyHelper<SGPointF> size = LottiePropertyHelper<SGPointF>(SGPointF());
     while (const char* key = NextObjectKey()) {
-        Skip(key);
+        if (0 == strcmp(key, "p")) {
+            parseProperty(pos);
+        } else if (0 == strcmp(key, "s")) {
+            parseProperty(size);
+        } else {
+            Skip(key);
+        }
     }
 }
 

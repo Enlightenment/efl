@@ -10,6 +10,8 @@ public:
     constexpr inline SGPointF(double x, double y) noexcept :mx(x), my(y){}
     constexpr inline double x() const noexcept {return mx;}
     constexpr inline double y() const noexcept {return my;}
+    inline void setX(float x) {mx = x;}
+    inline void setY(float y) {my = y;}
     inline SGPointF &operator+=(const SGPointF &p) noexcept;
     inline SGPointF &operator-=(const SGPointF &p) noexcept;
 private:
@@ -30,6 +32,8 @@ public:
     constexpr inline SGPoint(int x, int y) noexcept :mx(x), my(y){}
     constexpr inline int x() const noexcept {return mx;}
     constexpr inline int y() const noexcept {return my;}
+    inline void setX(int x) {mx = x;}
+    inline void setY(int y) {my = y;}
     inline SGPoint &operator+=(const SGPoint &p) noexcept;
     inline SGPoint &operator-=(const SGPoint &p) noexcept;
     constexpr inline bool operator==(const SGPoint &o) const;

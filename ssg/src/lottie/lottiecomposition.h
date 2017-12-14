@@ -7,6 +7,8 @@
 #include"sgdebug.h"
 #include<vector>
 
+#include"lottiemodel.h"
+
 // Format Indipendent class to generate data after parsing svg file
 
 struct FIDefNode;
@@ -154,6 +156,12 @@ struct FIRectNode : public FINode
     SGRect  mRect;
     float   mRadiusX;
     float   mRadiusY;
+};
+
+template<bool sizeAnim>
+struct LNode : public FINode
+{
+    LottieIntProperty<sizeAnim> mSizeProperty;
 };
 
 struct FILineNode : public FINode
