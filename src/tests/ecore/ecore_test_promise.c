@@ -858,6 +858,9 @@ START_TEST(efl_test_promise_all)
 
    efl_promise_value_set(p1, &value[0], NULL);
 
+   // XXX: assuming a single iteration does it? wrong. need to fix...
+   ecore_main_loop_iterate();
+   ecore_main_loop_iterate();
    ecore_main_loop_iterate();
 
    fail_if(!donep1.then || donep1.cancel || donep1.progress);
@@ -866,6 +869,9 @@ START_TEST(efl_test_promise_all)
    efl_promise_value_set(p2, &value[1], NULL);
    efl_promise_value_set(p3, &value[2], NULL);
 
+   // XXX: assuming a single iteration does it? wrong. need to fix...
+   ecore_main_loop_iterate();
+   ecore_main_loop_iterate();
    ecore_main_loop_iterate();
 
    fail_if(!donea.then || donea.cancel || donea.progress);
@@ -906,6 +912,9 @@ START_TEST(efl_test_promise_all_after_value_set)
 
    fail_if(!efl_future_then(all, _then_all, _cancel, _progress, &donea));
 
+   // XXX: assuming a single iteration does it? wrong. need to fix...
+   ecore_main_loop_iterate();
+   ecore_main_loop_iterate();
    ecore_main_loop_iterate();
 
    fail_if(!donea.then || donea.cancel || donea.progress);
