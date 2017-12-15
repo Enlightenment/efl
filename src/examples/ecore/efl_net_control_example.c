@@ -852,22 +852,28 @@ _cmd_access_point_show(Eo *ctl, size_t argc EINA_UNUSED, char **argv)
    _access_point_print(ap);
 }
 
-static void
-_access_point_connect_done(void *data, const Efl_Event *event EINA_UNUSED)
+static Eina_Value
+_access_point_connect(void *data, const Eina_Value v,
+                      const Eina_Future *dead EINA_UNUSED)
 {
    Eo *ap = data;
-   printf("INFO: access point '%s' finished connect.\n",
-          efl_net_control_access_point_name_get(ap));
-}
 
-static void
-_access_point_connect_error(void *data, const Efl_Event *event)
-{
-   Eo *ap = data;
-   Efl_Future_Event_Failure *f = event->info;
-   printf("INFO: access point '%s' could not connect: %s\n",
-          efl_net_control_access_point_name_get(ap),
-          eina_error_msg_get(f->error));
+   if (v.type == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+
+        eina_value_error_get(&v, &err);
+        printf("INFO: access point '%s' could not connect: %s\n",
+               efl_net_control_access_point_name_get(ap),
+               eina_error_msg_get(err));
+     }
+   else
+     {
+        printf("INFO: access point '%s' finished connect.\n",
+               efl_net_control_access_point_name_get(ap));
+     }
+
+   return v;
 }
 
 static void
@@ -876,11 +882,8 @@ _cmd_access_point_connect(Eo *ctl, size_t argc EINA_UNUSED, char **argv)
    Eo *ap = _access_point_find(ctl, argv[1]);
    if (!ap) return;
    printf("INFO: connecting point '%s'\n", argv[1]);
-   efl_future_then(efl_net_control_access_point_connect(ap),
-                   _access_point_connect_done,
-                   _access_point_connect_error,
-                   NULL,
-                   ap);
+   eina_future_then(efl_net_control_access_point_connect(ap),
+                    _access_point_connect, ap);
 }
 
 static void
