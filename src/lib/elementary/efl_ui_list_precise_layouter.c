@@ -129,7 +129,7 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_LayoutItem* it
    min.w += pad[0] + pad[1];
    min.h += pad[2] + pad[3];
 
-   if (item->min.h == min.h && item->min.w == min.h)
+   if (item->min.h == min.h && item->min.w == min.w)
      return;
 
    pd->min.h += min.h - item->min.h;
