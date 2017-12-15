@@ -1289,7 +1289,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd,
      {
         Eina_Position2D off;
 
-        icon = icon_func(icon_func_data, seat_sel->drag_win, &off);
+        icon = icon_func(icon_func_data, seat_sel->drag_win, drag_obj, &off);
         if (icon)
           {
              x2 = off.x;
@@ -1993,7 +1993,7 @@ _wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Obje
      {
         Eina_Position2D off;
 
-        icon = icon_func(icon_func_data, seat_sel->drag_win, &off);
+        icon = icon_func(icon_func_data, seat_sel->drag_win, drag_obj, &off);
         if (icon)
           {
              x2 = off.x;
@@ -4066,7 +4066,7 @@ _drag_anim_start(Sel_Manager_Drag_Container *dc)
    if (dc->icon_func)
      {
         Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_DND);
-        Evas_Object *final_icon = dc->icon_func(dc->icon_func_data, temp_win, NULL);
+        Evas_Object *final_icon = dc->icon_func(dc->icon_func_data, temp_win, dc->cont, NULL);
         evas_object_geometry_get(final_icon, NULL, NULL, &dc->final_icon.w, &dc->final_icon.h);
         evas_object_del(final_icon);
         evas_object_del(temp_win);

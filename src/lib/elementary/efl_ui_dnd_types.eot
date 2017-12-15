@@ -4,10 +4,10 @@ function Efl.Dnd.Drag_Icon_Create {
    [[Function pointer for creating icon at the drag side.]]
    params {
       @in win: Efl.Canvas.Object; [[The window to create the objects relative to]]
-      //@in drag_obj: Efl.Gfx;
+      @in drag_obj: Efl.Canvas.Object; [[The drag object]]
       @out off: Eina.Position2D;
    }
-   return: Efl.Canvas.Object; [[The drag icon object]] //Efl.Canvas.Object
+   return: Efl.Canvas.Object; [[The drag icon object]]
 };
 
 function Efl.Dnd.Drag_Data_Get {

@@ -119,9 +119,8 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 static Efl_Gfx *
-_drag_icon_cb(void *data, Eo *win, Eina_Position2D *off)
+_drag_icon_cb(void *data, Efl_Object *win, Efl_Object *drag_obj, Eina_Position2D *off)
 {
-   Evas_Object *lb = data;
    Evas_Object *icon;
    Evas_Coord x, y, w, h;
    int xm, ym;
@@ -129,13 +128,13 @@ _drag_icon_cb(void *data, Eo *win, Eina_Position2D *off)
    icon = elm_label_add(win);
    elm_object_text_set(icon, "dnd text");
 
-   evas_object_geometry_get(lb, &x, &y, &w, &h);
+   evas_object_geometry_get(drag_obj, &x, &y, &w, &h);
    evas_object_move(icon, x, y);
    evas_object_resize(icon, w, h);
    evas_object_show(icon);
    printf("icon: %d %d\n", w, h);
 
-   evas_pointer_canvas_xy_get(evas_object_evas_get(lb), &xm, &ym);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(drag_obj), &xm, &ym);
    if (off)
      {
         off->x = xm - (w / 2);
