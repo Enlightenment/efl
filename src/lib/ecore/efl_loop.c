@@ -51,25 +51,12 @@ Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
 
-static void
-_mainloop_singleton_cb_del(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   _mainloop_singleton = NULL;
-   _mainloop_singleton_data = NULL;
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(_mainloop_singleton_callbacks,
-                           { EFL_EVENT_DEL, _mainloop_singleton_cb_del });
-
 EOLIAN static Efl_Loop *
 _efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (_mainloop_singleton) return _mainloop_singleton;
    _mainloop_singleton = efl_add(EFL_LOOP_CLASS, NULL);
-   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton,
-                                                 EFL_LOOP_CLASS);
-   efl_event_callback_array_add(_mainloop_singleton,
-                                _mainloop_singleton_callbacks(), NULL);
+   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
    return _mainloop_singleton;
 }
 
@@ -318,12 +305,8 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    pd->loop_time = ecore_time_get();
    pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
    pd->message_handlers = eina_inarray_new(sizeof(Message_Handler), 32);
-#ifdef HAVE_EPOLL
    pd->epoll_fd = -1;
-#endif
-#ifdef USE_G_MAIN_LOOP
    pd->timer_fd = -1;
-#endif
    return obj;
 }
 
@@ -346,6 +329,12 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    pd->message_handlers = NULL;
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
+
+   if (obj == _mainloop_singleton)
+     {
+        _mainloop_singleton = NULL;
+        _mainloop_singleton_data = NULL;
+     }
 }
 
 static void
