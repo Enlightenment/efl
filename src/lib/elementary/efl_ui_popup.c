@@ -40,9 +40,6 @@ _calc_align(Eo *obj)
 
    Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
 
-   efl_gfx_position_set(pd->backwall, EINA_POSITION2D(0, 0));
-   efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
-
    Eina_Rect o_geom = efl_gfx_geometry_get(obj);
 
    Evas_Coord pw, ph;
@@ -80,10 +77,7 @@ _efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_
 {
    efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
 
-   //Add align calc only
-   Eina_Bool needs_size_calc = pd->needs_size_calc;
    elm_layout_sizing_eval(obj);
-   pd->needs_size_calc = needs_size_calc;
 }
 
 static void
@@ -312,6 +306,12 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
              _calc_align(obj);
              pd->needs_align_calc = EINA_FALSE;
           }
+
+        Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+
+        efl_gfx_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+        efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+
         pd->needs_group_calc = EINA_FALSE;
      }
 }

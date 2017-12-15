@@ -7,7 +7,6 @@ typedef struct _Efl_Ui_Popup_Anchor_Data Efl_Ui_Popup_Anchor_Data;
 struct _Efl_Ui_Popup_Anchor_Data
 {
    Eo                 *anchor;
-   Efl_Ui_Popup_Align  align;
    Efl_Ui_Popup_Align  priority[5];
    Efl_Ui_Popup_Align  used_align;
 };
