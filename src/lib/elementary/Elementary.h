@@ -349,6 +349,8 @@ typedef Eo Efl_Ui_Pager;
 
 # include <efl_page_transition.eo.h>
 # include <efl_page_transition_scroll.eo.h>
+# include <efl_page_indicator.eo.h>
+# include <efl_page_indicator_icon.eo.h>
 # include <efl_ui_pager.eo.h>
 #endif
 

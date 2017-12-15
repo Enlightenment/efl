@@ -11,7 +11,8 @@ typedef struct _Efl_Ui_Pager_Data
    Eina_List               *page_infos;
    Eina_List               *content_list;
 
-   Evas_Object             *event;
+   Eo                      *event;
+   Efl_Ui_Box              *idbox;
    Ecore_Animator          *animator;
    Ecore_Job               *job;
    Ecore_Job               *page_info_job;
@@ -48,6 +49,7 @@ typedef struct _Efl_Ui_Pager_Data
 
    Efl_Ui_Pager_Loop        loop;
    Efl_Page_Transition     *transition;
+   Efl_Page_Indicator      *indicator;
 
    Eina_Bool                move_started : 1;
    Eina_Bool                prev_block : 1;

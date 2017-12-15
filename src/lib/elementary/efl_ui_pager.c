@@ -19,6 +19,8 @@ _efl_ui_pager_update(Efl_Ui_Pager_Data *pd)
    if (pd->cnt == 0) return;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->indicator)
+     efl_page_indicator_update(pd->indicator, pd->curr.pos);
 }
 
 static void
@@ -281,6 +283,7 @@ _efl_ui_pager_efl_gfx_size_set(Eo *obj,
    pd->h = sz.h;
 
    efl_gfx_size_set(pd->event, sz);
+   efl_gfx_size_set(pd->idbox, EINA_SIZE2D(sz.w, 50));
 }
 
 EOLIAN static void
@@ -299,6 +302,7 @@ _efl_ui_pager_efl_gfx_position_set(Eo *obj,
    pd->y = pos.y;
 
    efl_gfx_position_set(pd->event, pos);
+   efl_gfx_position_set(pd->idbox, pos);
 }
 
 EOLIAN static int
@@ -318,11 +322,18 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
 
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
    efl_gfx_stack_above(pd->event, subobj);
+   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    pd->curr.page += 1;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_pack_begin(pd->indicator);
+        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+     }
 
    return EINA_TRUE;
 }
@@ -337,10 +348,17 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
 
    pd->content_list = eina_list_append(pd->content_list, subobj);
    efl_gfx_stack_above(pd->event, subobj);
+   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_pack_end(pd->indicator);
+        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+     }
 
    return EINA_TRUE;
 }
@@ -352,17 +370,25 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
                                           const Efl_Gfx *existing)
 {
    int index;
+
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    efl_gfx_stack_above(pd->event, subobj);
+   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_pack_before(pd->indicator, index);
+        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+     }
 
    return EINA_TRUE;
 }
@@ -374,17 +400,25 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
                                          const Efl_Gfx *existing)
 {
    int index;
+
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
    efl_gfx_stack_above(pd->event, subobj);
+   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page > index) pd->curr.page += 1;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_pack_after(pd->indicator, index);
+        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+     }
 
    return EINA_TRUE;
 }
@@ -396,17 +430,25 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
                                       int index)
 {
    Efl_Gfx *existing = NULL;
+
    efl_parent_set(subobj, obj);
    elm_widget_sub_object_add(obj, subobj);
 
    existing = eina_list_nth(pd->content_list, index);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    efl_gfx_stack_above(pd->event, subobj);
+   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
 
    efl_page_transition_update(pd->transition, pd->curr.pos);
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_pack_before(pd->indicator, index);
+        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+     }
 
    return EINA_TRUE;
 }
@@ -511,13 +553,6 @@ _efl_ui_pager_current_page_get(Eo *obj EINA_UNUSED,
    return pd->curr.page;
 }
 
-EOLIAN static Efl_Page_Transition *
-_efl_ui_pager_transition_get(Eo *obj EINA_UNUSED,
-                             Efl_Ui_Pager_Data *pd)
-{
-   return pd->transition;
-}
-
 EOLIAN static void
 _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
                              Efl_Ui_Pager_Data *pd,
@@ -525,6 +560,34 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
 {
    efl_page_transition_bind(transition, obj);
    pd->transition = transition;
+}
+
+EOLIAN static void
+_efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
+                            Efl_Ui_Pager_Data *pd,
+                            const Efl_Class *klass)
+{
+   if (pd->indicator)
+     {
+        efl_del(pd->indicator);
+        pd->indicator = NULL;
+     }
+
+   if (!klass)
+     {
+        efl_del(pd->idbox);
+        pd->idbox = NULL;
+        return;
+     }
+
+   if (!pd->idbox)
+     {
+        pd->idbox = efl_add(EFL_UI_BOX_CLASS, obj);
+        efl_gfx_size_set(pd->idbox, EINA_SIZE2D(pd->w, 50));
+        efl_gfx_position_set(pd->idbox, EINA_POSITION2D(pd->x, pd->y));
+     }
+
+   pd->indicator = efl_add(klass, pd->idbox);
 }
 
 EOLIAN Eina_Size2D

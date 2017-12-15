@@ -12,9 +12,19 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear)
    eo_prefix: efl_ui_pager;
    methods {
       @property transition {
-         [[Page transition effect]]
+         set {
+            [[Page transition effect]]
+         }
          values {
             transition: Efl.Page.Transition @nonull; [[transition effect]]
+         }
+      }
+      @property indicator {
+         set {
+            [[Page indicator]]
+         }
+         values {
+            klass: const(Efl.Class) @nullable; [[indicator class]]
          }
       }
       @property current_page {

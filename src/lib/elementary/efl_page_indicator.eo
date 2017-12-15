@@ -1,0 +1,7 @@
+class Efl.Page.Indicator (Efl.Object)
+{
+   [[Efl ui pager indicator class]]
+   implements {
+      Efl.Object.constructor;
+   }
+}

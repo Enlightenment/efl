@@ -152,6 +152,7 @@ elementary/themes/edc/elm/tooltip.edc \
 elementary/themes/edc/elm/uiclock.edc \
 elementary/themes/edc/elm/video.edc \
 elementary/themes/edc/elm/win.edc \
+elementary/themes/edc/elm/pager.edc \
 \
 elementary/themes/edc/O/efm_icons.edc \
 elementary/themes/edc/O/icons.edc \

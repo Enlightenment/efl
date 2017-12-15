@@ -75,6 +75,7 @@ collections {
 #include "edc/elm/code.edc"
 #include "edc/elm/ews.edc"
 #include "edc/elm/textpath.edc"
+#include "edc/elm/pager.edc"
 
 
 // desktop in general

@@ -1,0 +1,31 @@
+   group { name: "efl/pager/indicator";
+      images {
+         image: "circle.svg" COMP;
+      }
+      parts {
+         rect { "base";
+            scale;
+            desc { "default";
+               color: 0 0 0 0;
+            }
+         }
+         image { "icon";
+            scale;
+            desc { "default";
+               image.normal: "circle.svg";
+               color: 0 0 0 255;
+               min: 6 6;
+            }
+            desc { "selected";
+               inherit: "default";
+               color: 255 0 0 255;
+            }
+         }
+      }
+      script {
+         public message(Msg_Type:type, id, ...) {
+            set_tween_state(PART:"icon", getfarg(2),
+                            "default", 0.0, "selected", 0.0);
+         }
+      }
+   }
