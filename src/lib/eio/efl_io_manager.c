@@ -146,19 +146,6 @@ _file_done_cb(void *data, Eio_File *handler)
 
 /* Basic listing callbacks */
 static void
-_cleanup_string_progress(void *data)
-{
-   Eina_Array *existing = data;
-   Eina_Stringshare *s;
-   Eina_Array_Iterator it;
-   unsigned int i;
-
-   EINA_ARRAY_ITER_NEXT(existing, i, s, it)
-     eina_stringshare_del(s);
-   eina_array_free(existing);
-}
-
-static void
 _cleanup_info_progress(void *data)
 {
    Eina_Array *existing = data;
@@ -194,50 +181,6 @@ _future_string_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gather)
      eina_stringshare_del(s);
    eina_accessor_free(access);
    eina_array_free(gather);
-}
-
-static void
-_file_string_cb(void *data, Eio_File *handler, Eina_Array *gather)
-{
-   Efl_Promise *p = data;
-   Eina_Array *existing = efl_key_data_get(p, "_eio.stored");
-   void **tmp;
-
-   // If a future is set, but without progress, we should assume
-   // that we should discard all future progress. [[FIXME]]
-   if (existing)
-     {
-        tmp = realloc(existing->data, sizeof (void*) * (existing->count + gather->count));
-        if (!tmp)
-          {
-             eina_array_free(gather);
-             eina_array_free(existing);
-             efl_key_data_set(p, "_eio.stored", NULL);
-             handler->error = ENOMEM;
-             eio_file_cancel(handler);
-             return ;
-          }
-
-        existing->data = tmp;
-        memcpy(existing->data + existing->count, gather->data, gather->count * sizeof (void*));
-        existing->count += gather->count;
-        existing->total = existing->count;
-        eina_array_free(gather);
-     }
-   else
-     {
-        existing = gather;
-     }
-
-   if (!efl_key_data_get(p, "_eio.progress"))
-     {
-        efl_key_data_set(p, "_eio.stored", existing);
-        return ;
-     }
-
-   efl_promise_progress_set(p, existing);
-   efl_key_data_set(p, "_eio.stored", NULL);
-   _cleanup_string_progress(existing);
 }
 
 /* Direct listing callbacks */
