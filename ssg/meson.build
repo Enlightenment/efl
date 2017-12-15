@@ -3,7 +3,7 @@ project('scenegraph library',
         license : 'MIT',
         default_options : ['libdir=lib/ssg', 'c_std=c11', 'cpp_std=c++11'])
 ssg_lib_version = '0.0.1'
-
+add_global_arguments('-DDEMO_DIR="@0@/example/"'.format(meson.current_source_dir()), language : 'cpp')
 compiler_flags = ['-Wall','-std=c++11']
 if (build_machine.system() == 'linux')
     compiler_flags += ['-pthread']

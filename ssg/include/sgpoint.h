@@ -7,16 +7,19 @@ class SG_EXPORT SGPointF
 {
 public:
     constexpr inline SGPointF() noexcept :mx(0), my(0){}
-    constexpr inline SGPointF(double x, double y) noexcept :mx(x), my(y){}
-    constexpr inline double x() const noexcept {return mx;}
-    constexpr inline double y() const noexcept {return my;}
+    constexpr inline SGPointF(float x, float y) noexcept :mx(x), my(y){}
+    constexpr inline float x() const noexcept {return mx;}
+    constexpr inline float y() const noexcept {return my;}
     inline void setX(float x) {mx = x;}
     inline void setY(float y) {my = y;}
     inline SGPointF &operator+=(const SGPointF &p) noexcept;
     inline SGPointF &operator-=(const SGPointF &p) noexcept;
+    friend const  SGPointF operator+(const SGPointF & p1, const SGPointF & p2) {
+        return SGPointF(p1.mx + p2.mx , p1.my + p2.my);
+    }
 private:
-    double mx;
-    double my;
+    float mx;
+    float my;
 };
 
 inline SGPointF &SGPointF::operator+=(const SGPointF &p) noexcept

@@ -1,7 +1,8 @@
 ssg_sources_lottie = []
 
 ssg_lottie_file = ['lottiedrawable.cpp',
-                   'jsontest.cpp'
+                   'lottieparser.cpp',
+                   'lottiemodel.cpp'
                   ]
 
 foreach file: ssg_lottie_file

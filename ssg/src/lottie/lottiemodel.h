@@ -2,60 +2,104 @@
 #define LOTTIEMODEL_H
 
 #include<vector>
+#include<unordered_map>
 #include"sgpoint.h"
 #include"sgrect.h"
+
+
+class LottieComposition;
+class LottieLayer;
+class LottieTransform;
+class LottieShapeGroup;
+class LottieShapeObject;
+class LottieRectObject;
+class LottieEllipseObject;
+class LottieTrimObject;
+class LottieRepeaterObject;
+class LottieFillObject;
+class LottieStrokeObject;
+class LottieGroupObject;
+
+class LottieObjectVisitor
+{
+public:
+    virtual ~LottieObjectVisitor() {}
+    virtual void visit(LottieComposition *) = 0;
+    virtual void visit(LottieLayer *) = 0;
+    virtual void visit(LottieTransform *) = 0;
+    virtual void visit(LottieShapeGroup *) = 0;
+    virtual void visit(LottieShapeObject *) = 0;
+    virtual void visit(LottieRectObject *) = 0;
+    virtual void visit(LottieEllipseObject *) = 0;
+    virtual void visit(LottieTrimObject *) = 0;
+    virtual void visit(LottieRepeaterObject *) = 0;
+    virtual void visit(LottieFillObject *) = 0;
+    virtual void visit(LottieStrokeObject *) = 0;
+    virtual void visitChildren(LottieGroupObject *) = 0;
+};
+
+class LottieColor
+{
+public:
+    float r;
+    float g;
+    float b;
+};
+
+class LottieInterpolater
+{
+public:
+  SGPointF mInTangent;
+  SGPointF mOutTangent;
+};
 
 template<typename T>
 class LottieKeyFrame
 {
 public:
-    T     mStartValue;
-    T     mEndValue;
-    int   mStartFrame;
-    int   mEndFrame;
+    LottieKeyFrame():mStartValue(),
+                     mEndValue(),
+                     mStartFrame(0),
+                     mEndFrame(0),
+                     mInterpolator(nullptr),
+                     mInTangent(),
+                     mOutTangent(),
+                     mPathKeyFrame(false){}
+public:
+    T                   mStartValue;
+    T                   mEndValue;
+    int                 mStartFrame;
+    int                 mEndFrame;
+    LottieInterpolater *mInterpolator;
+
+    /* this is for interpolating position along a path
+     * Need to move to other place because its only applicable
+     * for positional property.
+     */
+    SGPointF            mInTangent;
+    SGPointF            mOutTangent;
+    bool                mPathKeyFrame;
 };
 
-template<typename T, bool animation = true>
-class LottieProperty
+template<typename T>
+class LottieAnimInfo
 {
 public:
-    LottieProperty(){}
-    constexpr bool staticType() const {return false;}
-    constexpr bool isStatic() const {return mKeyFrames.empty();}
-public:
-    T     mValue;
     std::vector<LottieKeyFrame<T>> mKeyFrames;
 };
 
 template<typename T>
-class LottieProperty<T, false>
+class LottieAnimatable
 {
 public:
-    LottieProperty(){}
-    LottieProperty<T,false>(T initialvalue): mValue(initialvalue){}
-    constexpr bool staticType() const {return true;}
-    constexpr bool isStatic() const {return true;}
+    LottieAnimatable():mValue(),mAnimInfo(nullptr){}
+    LottieAnimatable(const T &value): mValue(value), mAnimInfo(nullptr){}
+    constexpr bool isStatic() const {return ((mAnimInfo==nullptr) ? true : false);}
 public:
-    T     mValue;
+    T                     mValue;
+    LottieAnimInfo<T>    *mAnimInfo;
+    int                   mPropertyIndex; /* "ix" */
 };
-
-// Template aliasing for easy of use.
-template<bool animation>
-using LottieIntProperty = LottieProperty<int, animation>;
-
-template<bool animation>
-using LottieFloatProperty = LottieProperty<float, animation>;
-
-template <typename T>
-struct LottiePropertyHelper
-{
-  LottiePropertyHelper(const T &value):mAnimation(false){ mProperty.mValue = value;}
-  bool mAnimation;
-  LottieProperty<T,true> mProperty;
-};
-
-template<bool animation>
-using LottiePointFProperty = LottieProperty<SGPointF, animation>;
 
 enum class LottieBlendMode
 {
@@ -64,13 +108,16 @@ enum class LottieBlendMode
     Screen = 2,
     OverLay = 3
 };
+
+class LottieObjectVisitor;
 class LottieObject
 {
 public:
     enum class Type {
-        Composition,
+        Composition = 1,
         Layer,
-        Group,
+        ShapeGroup,
+        Transform,
         Fill,
         Stroke,
         GFill,
@@ -78,35 +125,61 @@ public:
         Rect,
         Ellipse,
         Shape,
-        Star
+        Star,
+        Trim,
+        Repeater
     };
-
+    virtual void accept(LottieObjectVisitor *){}
+    virtual ~LottieObject(){}
+    LottieObject(LottieObject::Type  type): mType(type){}
     bool isStatic();
 public:
     LottieObject::Type  mType;
 };
 
-class LottieGroupObj : public LottieObject
+class LottieGroupObject: public LottieObject
 {
+public:
+    LottieGroupObject(LottieObject::Type  type):LottieObject(type){}
 public:
     std::vector<LottieObject *> mChildren;
-    int                         mParentId; // Lottie the id of the parent in the composition
-    int                         mId;  // Lottie the group id  used for parenting.
 };
 
-class LottieComposition : public LottieGroupObj
+class LottieShapeGroup : public LottieGroupObject
 {
 public:
-    SGRect      mBound;
-    bool        mpreserveAspect = false;
-    bool        mAnimation = false;
-    long        mStartFrame = 0;
-    long        mEndFrame = 0;
-    float       mFrameRate;
+    void accept(LottieObjectVisitor *visitor) override
+    {visitor->visit(this); visitor->visitChildren(this);}
+
+    LottieShapeGroup():LottieGroupObject(LottieObject::Type::ShapeGroup){}
 };
 
-class LottieLayer : public LottieGroupObj
+class LottieTransform;
+class LottieComposition : public LottieGroupObject
 {
+public:
+    void accept(LottieObjectVisitor *visitor) override
+    {visitor->visit(this); visitor->visitChildren(this);}
+    LottieComposition():LottieGroupObject(LottieObject::Type::Composition){}
+public:
+    SGRect               mBound;
+    bool                 mAnimation = false;
+    long                 mStartFrame = 0;
+    long                 mEndFrame = 0;
+    float                mFrameRate;
+    long                 mStartTime;
+    LottieBlendMode      mBlendMode;
+    float                mTimeStreatch;
+    std::unordered_map<std::string, LottieInterpolater*> mInterpolatorCache;
+};
+
+class LottieLayer : public LottieGroupObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) override
+    {visitor->visit(this); visitor->visitChildren(this);}
+    LottieLayer():LottieGroupObject(LottieObject::Type::Layer),mParentId(-1),mId(-1){}
+
 public:
     SGRect               mBound;
     int                  mlayerType; //lottie layer type  (solid/shape/precomp)
@@ -118,35 +191,145 @@ public:
     long                 mStartTime;
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
+    LottieTransform     *mTransform;
 };
 
-class LottieMatrix : public LottieGroupObj
+class LottieTransform : public LottieObject
 {
 public:
-    LottieFloatProperty<true>   mRotation;  /* "r" */
-    LottiePointFProperty<true>  mScale;     /* "s" */
-    LottiePointFProperty<true>  mPosition;  /* "p" */
-    LottiePointFProperty<true>  mAnchor;    /* "a" */
-    LottieFloatProperty<true>   mOpacity;   /* "o" */
-    LottiePointFProperty<true>  mSkew;      /* "sk" */
-    LottieFloatProperty<true>   mSkewAxis;  /* "sa" */
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieTransform():LottieObject(LottieObject::Type::Transform),
+                      mRotation(0),
+                      mScale(SGPointF(100, 100)),
+                      mPosition(SGPointF(0, 0)),
+                      mAnchor(SGPointF(0, 0)),
+                      mOpacity(100),
+                      mSkew(0),
+                      mSkewAxis(0){}
+public:
+    LottieAnimatable<float>     mRotation;  /* "r" */
+    LottieAnimatable<SGPointF>  mScale;     /* "s" */
+    LottieAnimatable<SGPointF>  mPosition;  /* "p" */
+    LottieAnimatable<SGPointF>  mAnchor;    /* "a" */
+    LottieAnimatable<float>     mOpacity;   /* "o" */
+    LottieAnimatable<float>     mSkew;      /* "sk" */
+    LottieAnimatable<float>     mSkewAxis;  /* "sa" */
 };
 
-template<bool pos, bool size, bool roundness>
+class LottieFillObject : public LottieObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieFillObject():LottieObject(LottieObject::Type::Fill){}
+public:
+    LottieAnimatable<LottieColor>     mColor;   /* "c" */
+    LottieAnimatable<int>             mOpacity;  /* "o" */
+    bool                              mEnabled = true; /* "fillEnabled" */
+};
+
+class LottieStrokeObject : public LottieObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieStrokeObject():LottieObject(LottieObject::Type::Stroke){}
+public:
+    LottieAnimatable<LottieColor>     mColor;      /* "c" */
+    LottieAnimatable<int>             mOpacity;    /* "o" */
+    LottieAnimatable<float>           mWidth;      /* "w" */
+    CapStyle                          mCapStyle;   /* "lc" */
+    JoinStyle                         mJoinStyle;  /* "lj" */
+    float                             mMeterLimit; /* "ml" */
+    bool                              mEnabled = true;    /* "fillEnabled" */
+};
+
+class LottieShape
+{
+public:
+    void process(bool closed =false);
+    std::vector<SGPointF>    mInPoint;
+    std::vector<SGPointF>    mOutPoint;
+    std::vector<SGPointF>    mVertices;
+    std::vector<SGPointF>    mPoints;
+    int                      mSegments;
+};
+
+class LottieShapeObject : public LottieObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    void process();
+    LottieShapeObject():LottieObject(LottieObject::Type::Shape){}
+public:
+    LottieAnimatable<LottieShape>    mShape;
+    bool                             mClosed = false;
+};
+
 class LottieRectObject : public LottieObject
 {
 public:
-    LottiePointFProperty<pos>       mPos;
-    LottiePointFProperty<size>      mSize;
-    LottieFloatProperty<roundness>  mRound;
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieRectObject():LottieObject(LottieObject::Type::Rect),
+                       mPos(SGPointF(0,0)),
+                       mSize(SGPointF(0,0)),
+                       mRound(0){}
+public:
+    LottieAnimatable<SGPointF>    mPos;
+    LottieAnimatable<SGPointF>    mSize;
+    LottieAnimatable<float>       mRound;
 };
 
-template<bool pos, bool size>
 class LottieEllipseObject : public LottieObject
 {
 public:
-    LottiePointFProperty<pos>       mPos;
-    LottiePointFProperty<size>      mSize;
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieEllipseObject():LottieObject(LottieObject::Type::Ellipse),
+                          mPos(SGPointF(0,0)),
+                          mSize(SGPointF(0,0)){}
+public:
+    LottieAnimatable<SGPointF>   mPos;
+    LottieAnimatable<SGPointF>   mSize;
+};
+
+class LottieTrimObject : public LottieObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    enum class TrimType {
+        Simultaneously,
+        Individually
+    };
+    LottieTrimObject():LottieObject(LottieObject::Type::Trim),
+                       mStart(0),
+                       mEnd(0),
+                       mOffset(0),
+                       mTrimType(TrimType::Simultaneously){}
+public:
+    LottieAnimatable<float>             mStart;
+    LottieAnimatable<float>             mEnd;
+    LottieAnimatable<float>             mOffset;
+    LottieTrimObject::TrimType          mTrimType;
+};
+
+class LottieRepeaterObject : public LottieObject
+{
+public:
+    void accept(LottieObjectVisitor *visitor) final
+    {visitor->visit(this);}
+    LottieRepeaterObject():LottieObject(LottieObject::Type::Repeater),
+                           mCopies(0),
+                           mOffset(0),
+                           mTransform(nullptr){}
+public:
+    LottieAnimatable<float>             mCopies;
+    LottieAnimatable<float>             mOffset;
+    LottieTransform                    *mTransform;
 };
 
 
