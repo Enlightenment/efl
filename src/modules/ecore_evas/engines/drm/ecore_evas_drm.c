@@ -48,6 +48,7 @@
 
 typedef struct _Ecore_Evas_Engine_Drm_Tick
 {
+   Efl_Canvas_Output *canvas;
    Ecore_Drm2_Output *output;
    double offset, timestamp;
    Ecore_Job *tick_job;
@@ -416,7 +417,7 @@ _drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
+_drm_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 {
    Ecore_Drm2_Output *output;
    Eina_List *l;
@@ -429,8 +430,12 @@ _drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *
      {
         int relative;
 
-        relative = ecore_drm2_output_relative_mode_get(output);
+        if (!ecore_drm2_output_connected_get(output)) continue;
+        if (!ecore_drm2_output_enabled_get(output)) continue;
+
         ecore_drm2_output_info_get(output, NULL, NULL, &ow, &oh, NULL);
+
+        relative = ecore_drm2_output_relative_mode_get(output);
         switch (relative)
           {
            case ECORE_DRM2_RELATIVE_CLONE:
@@ -560,6 +565,14 @@ _drm_move(Ecore_Evas *ee, int x, int y)
 static void
 _drm_resize(Ecore_Evas *ee, int w, int h)
 {
+   Evas_Engine_Info_Drm *einfo;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Ecore_Evas_Engine_Drm_Tick *etick;
+   Eina_List *l;
+   int ox, oy, ow, oh;
+
+   edata = ee->engine.data;
+
    ee->req.w = w;
    ee->req.h = h;
    if ((ee->w == w) && (ee->h == h)) return;
@@ -567,6 +580,20 @@ _drm_resize(Ecore_Evas *ee, int w, int h)
    ee->h = h;
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
+
+   EINA_LIST_FOREACH(edata->ticks, l, etick)
+     {
+        einfo = (Evas_Engine_Info_Drm *)efl_canvas_output_engine_info_get(etick->canvas);
+        if (!einfo) continue;
+
+        ecore_drm2_output_info_get(etick->output, &ox, &oy, &ow, &oh, NULL);
+
+        efl_canvas_output_view_set(etick->canvas, ox, oy, ow, oh);
+
+        efl_canvas_output_engine_info_set(etick->canvas,
+                                          (Evas_Engine_Info *)einfo);
+     }
+
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
@@ -1215,11 +1242,13 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
         ecore_drm2_output_info_get(output, &ox, &oy, &ow, &oh, NULL);
 
         efl_canvas_output_view_set(eout, ox, oy, ow, oh);
+
         efl_canvas_output_engine_info_set(eout, (Evas_Engine_Info *)einfo);
 
         etick = calloc(1, sizeof(Ecore_Evas_Engine_Drm_Tick));
         if (etick)
           {
+             etick->canvas = eout;
              etick->output = output;
              etick->offset = 0.0;
              edata->ticks = eina_list_append(edata->ticks, etick);
@@ -1232,7 +1261,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
              ee->prop.window = ecore_drm2_output_crtc_get(output);
              ecore_drm2_device_window_set(edata->dev, ee->prop.window);
 
-             ecore_drm2_device_calibrate(edata->dev, ow, oh);
+             /* ecore_drm2_device_calibrate(edata->dev, ow, oh); */
              ecore_drm2_device_pointer_warp(edata->dev, ow / 2, oh / 2);
           }
      }
