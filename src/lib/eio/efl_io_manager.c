@@ -466,31 +466,37 @@ _efl_io_manager_stat(Eo *obj,
 
 /* eXtended attribute manipulation */
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_xattr_ls(Eo *obj,
                          Efl_Io_Manager_Data *pd EINA_UNUSED,
-                         const char *path)
+                         const char *path,
+                         void *paths_data, EflIoPath paths, Eina_Free_Cb paths_free_cb)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    h = _eio_file_xattr(path,
-                       _file_string_cb,
-                       _file_done_cb,
-                       _file_error_cb,
+                       _future_string_cb,
+                       _future_file_done_cb,
+                       _future_file_error_cb,
                        p);
    if (!h) goto end;
 
-   efl_event_callback_array_add(p, promise_progress_handling(), h);
-   return efl_promise_future_get(p);
+   // There is no race condition here as all the callback are called in the main loop after this
+   ecore_thread_local_data_add(h->thread, ".paths", paths, NULL, EINA_TRUE);
+   ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
+   eina_promise_data_set(p, h);
+
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return efl_future_Eina_FutureXXX_then(obj, future);;
 }
 
 static void

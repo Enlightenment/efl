@@ -60,8 +60,9 @@ class Efl.Io.Manager (Efl.Loop.Consumer)
       [[Lists all extended attributes asynchronously.]]
       params {
          @in path: string; [[Path we want to list entries for]]
+	 paths: EflIoPath; [[Callback called for each packet of extended attributes found.]]
       }
-      return: future<uint64, const(array<string>)>; [[Extended attributes]]
+      return: ptr(Eina.Future) @owned; [[Amount of extended attributes found]]
     }
 
     stat {
