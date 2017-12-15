@@ -52,5 +52,6 @@ efl_future_init(void)
 Eina_Bool
 efl_future_shutdown(void)
 {
+   __eina_promise_cancel_all();
    return EINA_TRUE;
 }

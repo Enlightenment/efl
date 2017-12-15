@@ -532,10 +532,17 @@ eina_promise_init(void)
    return EINA_FALSE;
 }
 
+EAPI void
+__eina_promise_cancel_all(void)
+{
+   while (_pending_futures)
+     _eina_future_cancel(_pending_futures->data, ECANCELED);
+}
+
 Eina_Bool
 eina_promise_shutdown(void)
 {
-   while (_pending_futures) _eina_future_cancel(_pending_futures->data, ECANCELED);
+   __eina_promise_cancel_all();
    eina_mempool_del(_future_mp);
    eina_mempool_del(_promise_mp);
    eina_log_domain_unregister(_promise_log_dom);
