@@ -31,10 +31,6 @@ extern Eina_Prefix *_eolian_prefix;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eolian_log_dom, __VA_ARGS__)
 
-/* a hash holding all declarations, for redef checking etc */
-extern Eina_Hash *_decls;
-extern Eina_Hash *_declsf;
-
 struct _Eolian_Unit
 {
    Eolian        *state;
@@ -45,6 +41,7 @@ struct _Eolian_Unit
    Eina_Hash     *aliases;
    Eina_Hash     *structs;
    Eina_Hash     *enums;
+   Eina_Hash     *decls;
 };
 
 struct _Eolian
@@ -66,6 +63,7 @@ struct _Eolian
    Eina_Hash *enums_f;
    Eina_Hash *globals_f;
    Eina_Hash *constants_f;
+   Eina_Hash *decls_f;
 };
 
 typedef struct _Eolian_Object
@@ -322,7 +320,8 @@ int database_shutdown(void);
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(Eolian *state, const Eolian_Unit *src);
 
-void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
+void database_decl_add(Eolian *state, Eina_Stringshare *name,
+                       Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
 
 void database_doc_del(Eolian_Documentation *doc);
@@ -338,10 +337,10 @@ void database_enum_add(Eolian *state, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
+void database_type_to_str(const Eolian_Unit *src, const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
 void database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
-Eina_Bool database_type_is_ownable(const Eolian_Type *tp);
+Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp);
 
 /* expressions */
 

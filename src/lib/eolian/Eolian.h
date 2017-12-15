@@ -1807,12 +1807,13 @@ EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
  * If the given typedecl is an alias, it returns the result of
  * eolian_type_aliased_base_get on its base type. Otherwise this returns NULL.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type declaration.
  * @return the lowest alias base or the given type.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
+EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
 
 /*
  * @brief Check if a struct or alias type declaration is extern.
@@ -1955,12 +1956,13 @@ EAPI const Eolian_Type *eolian_type_next_type_get(const Eolian_Type *tp);
  *
  * This tries to look up alias, struct and enum in that order.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the pointed to type decalration or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
+EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Unit *unit, const Eolian_Type *tp);
 
 /*
  * @brief Get the lowest base type of an alias stack.
@@ -1972,12 +1974,13 @@ EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
  * type actually is while still having convenience. Keep in mind that this stops
  * if the found type is actually a pointer (has a ptr() on it).
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the lowest alias base or the given type.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
+EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp);
 
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
@@ -2025,6 +2028,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
+ * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @param[in] ctype the context within which the C type string will be used.
  * @return The C type name assuming @c tp is not NULL.
@@ -2035,7 +2039,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
+EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Unit *unit, const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
  * @brief Get the name of the given type. For regular types, this is for

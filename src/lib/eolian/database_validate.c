@@ -173,7 +173,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
 {
    char buf[256];
 
-   if (tp->owned && !database_type_is_ownable(tp))
+   if (tp->owned && !database_type_is_ownable(src, tp))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
         return _obj_error(&tp->base, buf);
@@ -182,7 +182,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
    if (tp->is_ptr && !tp->legacy)
      {
         tp->is_ptr = EINA_FALSE;
-        Eina_Bool still_ownable = database_type_is_ownable(tp);
+        Eina_Bool still_ownable = database_type_is_ownable(src, tp);
         tp->is_ptr = EINA_TRUE;
         if (still_ownable)
           {
@@ -213,7 +213,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
                        return EINA_FALSE;
                      if ((kwid >= KW_accessor) && (kwid <= KW_list))
                        {
-                          if (!database_type_is_ownable(itp))
+                          if (!database_type_is_ownable(src, itp))
                             {
                                snprintf(buf, sizeof(buf),
                                         "%s cannot contain value types (%s)",
@@ -253,7 +253,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
                 return _validate(&tp->base);
              }
            /* user defined */
-           tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(tp);
+           tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(src, tp);
            if (!tpp)
              {
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);

@@ -8,9 +8,6 @@
 #include "eolian_database.h"
 #include "eolian_priv.h"
 
-Eina_Hash *_decls      = NULL;
-Eina_Hash *_declsf     = NULL;
-
 static int _database_init_count = 0;
 
 static void
@@ -23,8 +20,6 @@ int
 database_init()
 {
    if (_database_init_count > 0) return ++_database_init_count;
-   _decls      = eina_hash_stringshared_new(free);
-   _declsf     = eina_hash_stringshared_new(_hashlist_free);
    return ++_database_init_count;
 }
 
@@ -38,52 +33,48 @@ database_shutdown()
      }
    _database_init_count--;
 
-   if (_database_init_count == 0)
-     {
-        eina_hash_free(_decls     ); _decls      = NULL;
-        eina_hash_free(_declsf    ); _declsf     = NULL;
-     }
    return _database_init_count;
 }
 
 void
-database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
+database_decl_add(Eolian *state, Eina_Stringshare *name,
+                  Eolian_Declaration_Type type,
                   Eina_Stringshare *file, void *ptr)
 {
    Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
    decl->type = type;
    decl->name = name;
    decl->data = ptr;
-   eina_hash_set(_decls, name, decl);
-   eina_hash_set(_declsf, file, eina_list_append
-                 ((Eina_List*)eina_hash_find(_declsf, file), decl));
+   eina_hash_set(state->unit.decls, name, decl);
+   eina_hash_set(state->decls_f, file, eina_list_append
+                 ((Eina_List*)eina_hash_find(state->decls_f, file), decl));
 }
 
 EAPI const Eolian_Declaration *
-eolian_declaration_get_by_name(const Eolian_Unit *unit EINA_UNUSED, const char *name)
+eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name)
 {
-   if (!_decls) return NULL;
+   if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   const Eolian_Declaration *decl = eina_hash_find(_decls, shr);
+   const Eolian_Declaration *decl = eina_hash_find(unit->state->unit.decls, shr);
    eina_stringshare_del(shr);
    return decl;
 }
 
 EAPI Eina_Iterator *
-eolian_declarations_get_by_file(const Eolian *state EINA_UNUSED, const char *fname)
+eolian_declarations_get_by_file(const Eolian *state, const char *fname)
 {
-   if (!_declsf) return NULL;
+   if (!state) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
-   Eina_List *l = eina_hash_find(_declsf, shr);
+   Eina_List *l = eina_hash_find(state->decls_f, shr);
    eina_stringshare_del(shr);
    if (!l) return NULL;
    return eina_list_iterator_new(l);
 }
 
 EAPI Eina_Iterator *
-eolian_all_declarations_get(const Eolian_Unit *unit EINA_UNUSED)
+eolian_all_declarations_get(const Eolian_Unit *unit)
 {
-   return (_decls ? eina_hash_iterator_data_new(_decls) : NULL);
+   return (unit ? eina_hash_iterator_data_new(unit->state->unit.decls) : NULL);
 }
 
 EAPI Eolian_Declaration_Type
@@ -551,6 +542,7 @@ database_unit_init(Eolian *state, Eolian_Unit *unit)
    unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
+   unit->decls      = eina_hash_stringshared_new(free);
 }
 
 void
@@ -565,6 +557,7 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->aliases);
    eina_hash_free(unit->structs);
    eina_hash_free(unit->enums);
+   eina_hash_free(unit->decls);
 }
 
 EAPI Eolian *
@@ -591,6 +584,7 @@ eolian_new(void)
    state->enums_f     = eina_hash_stringshared_new(_hashlist_free);
    state->globals_f   = eina_hash_stringshared_new(_hashlist_free);
    state->constants_f = eina_hash_stringshared_new(_hashlist_free);
+   state->decls_f     = eina_hash_stringshared_new(_hashlist_free);
 
    return state;
 }
@@ -618,6 +612,7 @@ eolian_free(Eolian *state)
    eina_hash_free(state->enums_f);
    eina_hash_free(state->globals_f);
    eina_hash_free(state->constants_f);
+   eina_hash_free(state->decls_f);
 
    free(state);
 }

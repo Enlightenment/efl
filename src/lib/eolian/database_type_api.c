@@ -266,7 +266,7 @@ eolian_type_next_type_get(const Eolian_Type *tp)
 }
 
 EAPI const Eolian_Typedecl *
-eolian_type_typedecl_get(const Eolian_Type *tp)
+eolian_type_typedecl_get(const Eolian_Unit *unit, const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (eolian_type_type_get(tp) != EOLIAN_TYPE_REGULAR)
@@ -277,7 +277,7 @@ eolian_type_typedecl_get(const Eolian_Type *tp)
    int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
    if (!kw || kw < KW_byte || kw >= KW_true)
      {
-        Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
+        Eolian_Declaration *decl = eina_hash_find(unit->state->unit.decls, tp->full_name);
         if (decl && decl->type != EOLIAN_DECL_CLASS
                  && decl->type != EOLIAN_DECL_VAR)
           return decl->data;
@@ -293,22 +293,22 @@ eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 }
 
 EAPI const Eolian_Type *
-eolian_type_aliased_base_get(const Eolian_Type *tp)
+eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp)
 {
    if (!tp || tp->type != EOLIAN_TYPE_REGULAR || tp->is_ptr)
      return tp;
-   const Eolian_Typedecl *btp = eolian_type_typedecl_get(tp);
+   const Eolian_Typedecl *btp = eolian_type_typedecl_get(unit, tp);
    if (btp && (btp->type == EOLIAN_TYPEDECL_ALIAS))
-     return eolian_typedecl_aliased_base_get(btp);
+     return eolian_typedecl_aliased_base_get(unit, btp);
    return tp;
 }
 
 EAPI const Eolian_Type *
-eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp)
+eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp)
 {
    if (!tp || tp->type != EOLIAN_TYPEDECL_ALIAS)
      return NULL;
-   return eolian_type_aliased_base_get(tp->base_type);
+   return eolian_type_aliased_base_get(unit, tp->base_type);
 }
 
 EAPI const Eolian_Class *
@@ -349,13 +349,14 @@ eolian_typedecl_is_extern(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype)
+eolian_type_c_type_get(const Eolian_Unit *unit, const Eolian_Type *tp,
+                       Eolian_C_Type_Type ctype)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   database_type_to_str(tp, buf, NULL, ctype);
+   database_type_to_str(unit, tp, buf, NULL, ctype);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;

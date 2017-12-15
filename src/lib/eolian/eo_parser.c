@@ -866,7 +866,7 @@ parse_typedef(Eo_Lexer *ls)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->full_name, &def->name, &def->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(_decls, def->full_name);
+   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, def->full_name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
@@ -902,7 +902,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->full_name, &def->name, &def->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(_decls, def->full_name);
+   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, def->full_name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
@@ -2117,7 +2117,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &ls->tmp.kls->full_name, &ls->tmp.kls->name,
               &ls->tmp.kls->namespaces);
-   decl = (Eolian_Declaration *)eina_hash_find(_decls, ls->tmp.kls->full_name);
+   decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, ls->tmp.kls->full_name);
    if (decl)
      {
         eo_lexer_context_restore(ls);
@@ -2233,7 +2233,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            col = ls->column;
            parse_name(ls, buf);
            name = eina_stringshare_add(eina_strbuf_string_get(buf));
-           decl = (Eolian_Declaration *)eina_hash_find(_decls, name);
+           decl = (Eolian_Declaration *)eina_hash_find(ls->state->unit.decls, name);
            if (decl)
              {
                 eina_stringshare_del(name);
@@ -2271,7 +2271,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      }
    return EINA_FALSE;
 found_class:
-   database_decl_add(ls->tmp.kls->full_name, EOLIAN_DECL_CLASS,
+   database_decl_add(ls->state, ls->tmp.kls->full_name, EOLIAN_DECL_CLASS,
                      ls->tmp.kls->base.file, ls->tmp.kls);
    return EINA_TRUE;
 }

@@ -123,13 +123,13 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
         else WRN("evaluation of default value failed");
      }
    /* default value or fallback */
-   const Eolian_Type *btp = eolian_type_aliased_base_get(tp);
+   const Eolian_Type *btp = eolian_type_aliased_base_get(src, tp);
    if (eolian_type_is_ptr(btp))
      {
         eina_strbuf_append(buf, "NULL");
         return;
      }
-   const Eolian_Typedecl *tdcl = eolian_type_typedecl_get(btp);
+   const Eolian_Typedecl *tdcl = eolian_type_typedecl_get(src, btp);
    if (tdcl && (eolian_typedecl_type_get(tdcl) == EOLIAN_TYPEDECL_STRUCT))
      {
         char *sn = eo_gen_c_full_name_get(eolian_typedecl_full_name_get(tdcl));
@@ -140,7 +140,7 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
         free(sn);
         return;
      }
-   Eina_Stringshare *ctp = eolian_type_c_type_get(btp, EOLIAN_C_TYPE_DEFAULT);
+   Eina_Stringshare *ctp = eolian_type_c_type_get(src, btp, EOLIAN_C_TYPE_DEFAULT);
    if (strchr(ctp, '*'))
      {
         eina_strbuf_append(buf, "NULL");
@@ -182,7 +182,7 @@ _generate_loop_content(Eina_Strbuf **buf, const Eolian_Type *inner_type, const E
 }
 
 static void
-_generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolian_Type *inner_type, Eolian_Function_Parameter *parameter, Eina_Strbuf *param)
+_generate_iterative_free(const Eolian_Unit *src, Eina_Strbuf **buf, const Eolian_Type *type, const Eolian_Type *inner_type, Eolian_Function_Parameter *parameter, Eina_Strbuf *param)
 {
    Eina_Strbuf *iterator_header, *iter_param;
 
@@ -194,7 +194,7 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
    eina_strbuf_append_printf(iter_param, "%s_iter", eolian_parameter_name_get(parameter));
 
    //generate the field definition
-   eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(inner_type, EOLIAN_C_TYPE_DEFAULT));
+   eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(src, inner_type, EOLIAN_C_TYPE_DEFAULT));
    if(t == EOLIAN_TYPE_BUILTIN_INARRAY
       || t == EOLIAN_TYPE_BUILTIN_INLIST)
      {
@@ -328,7 +328,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
         {
            const char *prn = eolian_parameter_name_get(pr);
            const Eolian_Type *pt = eolian_parameter_type_get(pr);
-           Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
+           Eina_Stringshare *ptn = eolian_type_c_type_get(src, pt, EOLIAN_C_TYPE_PARAM);
 
            if (eina_strbuf_length_get(params))
              eina_strbuf_append(params, ", ");
@@ -400,7 +400,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
                  }
                else if (inner_type && eolian_type_is_owned(inner_type))
                  {
-                    _generate_iterative_free(&fallback_free_ownership, type, inner_type, pr, param_call);
+                    _generate_iterative_free(src, &fallback_free_ownership, type, inner_type, pr, param_call);
                  }
             }
           eina_iterator_free(itr);
@@ -429,8 +429,8 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
              const Eolian_Expression *dfv = eolian_parameter_default_value_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
-             Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
-             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
+             Eina_Stringshare *ptn = eolian_type_c_type_get(src, pt, EOLIAN_C_TYPE_PARAM);
+             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(src, pt);
 
              Eina_Bool had_star = ptn[strlen(ptn) - 1] == '*';
              const char *add_star = _get_add_star(ftype, pd);
@@ -501,7 +501,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
    if (impl_same_class && eolian_implement_is_pure_virtual(impl, ftype))
      impl_need = EINA_FALSE;
 
-   Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN)
+   Eina_Stringshare *rtpn = rtp ? eolian_type_c_type_get(src, rtp, EOLIAN_C_TYPE_RETURN)
                                 : eina_stringshare_add("void");
 
    char *cname = NULL, *cnamel = NULL, *ocnamel = NULL;
@@ -1018,8 +1018,9 @@ eo_gen_source_gen(const Eolian_Unit *src,
 }
 
 static void
-_gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
-            Eina_Bool var_as_ret, Eina_Strbuf *params, Eina_Strbuf *params_full)
+_gen_params(const Eolian_Unit *src, const Eolian_Function *fid,
+            Eolian_Function_Type ftype, Eina_Bool var_as_ret,
+            Eina_Strbuf *params, Eina_Strbuf *params_full)
 {
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
@@ -1031,7 +1032,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
         {
            const char *prn = eolian_parameter_name_get(pr);
            const Eolian_Type *pt = eolian_parameter_type_get(pr);
-           Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
+           Eina_Stringshare *ptn = eolian_type_c_type_get(src, pt, EOLIAN_C_TYPE_PARAM);
 
            eina_strbuf_append(params, ", ");
            eina_strbuf_append(params, prn);
@@ -1060,8 +1061,8 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
              Eolian_Parameter_Dir pd = eolian_parameter_direction_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
-             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);
-             Eina_Stringshare *ptn = eolian_type_c_type_get(pt, EOLIAN_C_TYPE_PARAM);
+             const Eolian_Typedecl *ptd = eolian_type_typedecl_get(src, pt);
+             Eina_Stringshare *ptn = eolian_type_c_type_get(src, pt, EOLIAN_C_TYPE_PARAM);
 
              if (ptd && eolian_typedecl_type_get(ptd) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                {
@@ -1092,9 +1093,9 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
 }
 
 static void
-_gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
-           Eolian_Function_Type ftype, Eina_Strbuf *buf,
-           const Eolian_Implement *impl, const char *dtype,
+_gen_proto(const Eolian_Unit *src, const Eolian_Class *cl,
+           const Eolian_Function *fid, Eolian_Function_Type ftype,
+           Eina_Strbuf *buf, const Eolian_Implement *impl, const char *dtype,
            const char *cnamel)
 {
    Eina_Bool impl_same_class = (eolian_implement_class_get(impl) == cl);
@@ -1141,7 +1142,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
    eina_strbuf_append(buf, "EOLIAN static ");
    if (rtp)
      {
-        Eina_Stringshare *rtpn = eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN);
+        Eina_Stringshare *rtpn = eolian_type_c_type_get(src, rtp, EOLIAN_C_TYPE_RETURN);
         eina_strbuf_append(buf, rtpn);
         eina_stringshare_del(rtpn);
      }
@@ -1162,7 +1163,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
    /* gen params here */
    Eina_Strbuf *params = eina_strbuf_new();
    Eina_Strbuf *params_full = eina_strbuf_new();
-   _gen_params(fid, ftype, var_as_ret, params, params_full);
+   _gen_params(src, fid, ftype, var_as_ret, params, params_full);
 
    if (eina_strbuf_length_get(params_full))
      eina_strbuf_append(buf, eina_strbuf_string_get(params_full));
@@ -1192,7 +1193,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
 }
 
 void
-eo_gen_impl_gen(const Eolian_Unit *src EINA_UNUSED,
+eo_gen_impl_gen(const Eolian_Unit *src,
                 const Eolian_Class *cl, Eina_Strbuf *buf)
 {
    if (!cl)
@@ -1243,14 +1244,14 @@ eo_gen_impl_gen(const Eolian_Unit *src EINA_UNUSED,
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_proto(cl, fid, ftype, buf, imp, dt, cnamel);
+                _gen_proto(src, cl, fid, ftype, buf, imp, dt, cnamel);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_proto(cl, fid, EOLIAN_PROP_SET, buf, imp, dt, cnamel);
-                _gen_proto(cl, fid, EOLIAN_PROP_GET, buf, imp, dt, cnamel);
+                _gen_proto(src, cl, fid, EOLIAN_PROP_SET, buf, imp, dt, cnamel);
+                _gen_proto(src, cl, fid, EOLIAN_PROP_GET, buf, imp, dt, cnamel);
                 break;
               default:
-                _gen_proto(cl, fid, EOLIAN_METHOD, buf, imp, dt, cnamel);
+                _gen_proto(src, cl, fid, EOLIAN_METHOD, buf, imp, dt, cnamel);
              }
         }
       eina_iterator_free(itr);

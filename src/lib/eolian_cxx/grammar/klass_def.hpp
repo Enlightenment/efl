@@ -259,7 +259,7 @@ type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_n
         
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
-   c_type = ::eolian_type_c_type_get(eolian_type, ctype);
+   c_type = ::eolian_type_c_type_get(unit, eolian_type, ctype);
    // ::eina_stringshare_del(stringshare); // this crashes
    Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
    has_own = !!::eolian_type_is_owned(eolian_type);
@@ -273,7 +273,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
        if (!stp)
          {
            bool is_undefined = false;
-           Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
+           Eolian_Typedecl const* decl = eolian_type_typedecl_get(unit, eolian_type);
            bool is_function_ptr = decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_FUNCTION_POINTER;
            if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
              {
