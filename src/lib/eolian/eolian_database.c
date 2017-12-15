@@ -8,34 +8,6 @@
 #include "eolian_database.h"
 #include "eolian_priv.h"
 
-static int _database_init_count = 0;
-
-static void
-_hashlist_free(void *data)
-{
-   eina_list_free((Eina_List*)data);
-}
-
-int
-database_init()
-{
-   if (_database_init_count > 0) return ++_database_init_count;
-   return ++_database_init_count;
-}
-
-int
-database_shutdown()
-{
-   if (_database_init_count <= 0)
-     {
-        ERR("Init count not greater than 0 in shutdown.");
-        return 0;
-     }
-   _database_init_count--;
-
-   return _database_init_count;
-}
-
 void
 database_decl_add(Eolian *state, Eina_Stringshare *name,
                   Eolian_Declaration_Type type,
@@ -560,6 +532,12 @@ database_unit_del(Eolian_Unit *unit)
    eina_hash_free(unit->decls);
 }
 
+static void
+_hashlist_free(void *data)
+{
+   eina_list_free((Eina_List*)data);
+}
+
 EAPI Eolian *
 eolian_new(void)
 {
@@ -687,8 +665,7 @@ _eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
 {
    Eina_Bool is_eo;
    const char *eopath;
-   if (_database_init_count <= 0)
-     return NULL;
+
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
      {
@@ -734,6 +711,9 @@ _parse_deferred(Eolian_Unit *parent)
 EAPI const Eolian_Unit *
 eolian_file_parse(Eolian *state, const char *filepath)
 {
+   if (!state)
+     return NULL;
+
    Eolian_Unit *ret = _eolian_file_parse_nodep((Eolian_Unit *)state, filepath);
    if (!ret)
      return NULL;
@@ -767,7 +747,7 @@ eolian_all_eot_files_parse(Eolian *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
 
-   if (_database_init_count <= 0)
+   if (!state)
      return EINA_FALSE;
 
    eina_hash_foreach(state->filenames_eot, _tfile_parse, &pd);
@@ -795,7 +775,7 @@ eolian_all_eo_files_parse(Eolian *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
 
-   if (_database_init_count <= 0)
+   if (!state)
      return EINA_FALSE;
 
    eina_hash_foreach(state->filenames_eo, _file_parse, &pd);

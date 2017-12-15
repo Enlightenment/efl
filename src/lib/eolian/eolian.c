@@ -36,7 +36,6 @@ EAPI int eolian_init(void)
         return EINA_FALSE;
      }
 
-   database_init();
    eo_lexer_init();
    return ++_eolian_init_counter;
 }
@@ -58,7 +57,6 @@ EAPI int eolian_shutdown(void)
               EINA_LOG_STATE_SHUTDOWN);
 
         eo_lexer_shutdown();
-        database_shutdown();
         eina_prefix_free(_eolian_prefix);
         _eolian_prefix = NULL;
 
