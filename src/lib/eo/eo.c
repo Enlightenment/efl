@@ -744,8 +744,9 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
         EO_OBJ_POINTER(eo_obj, obj);
         eina_log_print(_eo_log_dom, EINA_LOG_LEVEL_ERR,
                        file, api_func_name, line,
-                       "Unable to resolve op for api func %p for obj=%p (%s)", api_func, eo_obj, efl_class_name_get(eo_obj));
-        if (EINA_UNLIKELY(obj->auto_unref))
+                       "Unable to resolve op for api func %p for obj=%p (%s)",
+                       api_func, eo_obj, efl_class_name_get(eo_obj));
+        if (EINA_UNLIKELY(obj && obj->auto_unref))
           {
              if (obj->finalized && !(--obj->auto_unref))
                efl_unref(eo_obj);
