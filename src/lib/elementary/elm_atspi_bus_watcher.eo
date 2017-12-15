@@ -1,0 +1,38 @@
+import eina_types;
+
+enum Atspi.Bus.Property
+{
+   ScreenReaderEnabled,
+   IsEnabled
+}
+
+class Elm.Atspi.Bus.Watcher (Elm.Bus.Watcher)
+{
+   methods {
+        a11y_bus_address_get {
+            return: ptr(Eina.Future);
+        }
+        property_get {
+           params {
+               @in property: Atspi.Bus.Property;
+           }
+           return: bool;
+        }
+        property_try_set {
+           params {
+               @in property: Atspi.Bus.Property;
+               @in val: bool;
+           }
+        }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+        Elm.Bus.Watcher.on_registered;
+
+        Elm.Bus.Watcher.on_unregistered;
+   }
+   events {
+        property,changed: Atspi.Bus.Property; [[ called when Atspi.Bus properties has been changed]]
+   }
+}

@@ -184,8 +184,9 @@ efl_thread_win32_3.c \
 efl_thread_win32_4.c \
 efl_ui_list_example_1.c \
 efl_ui_list_example_2.c \
-efl_ui_list_example_3.c
-bus_watcher.c
+efl_ui_list_example_3.c \
+bus_watcher.c \
+atspi_bus_watcher.c
 
 SRCS += \
 bg_cxx_example_01.cc \
@@ -379,7 +380,8 @@ efl_thread_6 \
 efl_ui_list_example_1 \
 efl_ui_list_example_2 \
 efl_ui_list_example_3 \
-bus_watcher
+bus_watcher \
+atspi_bus_watcher
 #benchmark3d
 #sphere-hunter
 
