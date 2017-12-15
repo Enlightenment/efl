@@ -72,7 +72,7 @@ _ecore_main_timechanges_start(Eo *obj)
    realtime_obj =
      efl_add(EFL_LOOP_HANDLER_CLASS, obj,
              efl_loop_handler_fd_set(efl_added, fd),
-             efl_loop_handler_active_set(efl_added, ECORE_FD_READ),
+             efl_loop_handler_active_set(efl_added, EFL_LOOP_HANDLER_FLAGS_READ),
              efl_event_callback_array_add(efl_added, _event_watch(), NULL));
 #endif
 }
