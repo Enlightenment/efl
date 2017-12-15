@@ -202,8 +202,9 @@ endif
 
 EFL_INSTALL_EXEC_HOOK += \
 $(MKDIR_P) $(efl_mono_dll_dest); \
-cp -f $(srcdir)/lib/efl_mono/libefl_mono.dll $(efl_mono_dll_dest)/libefl_mono.dll; \
-cp -f $(srcdir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
+cp -f $(builddir)/lib/efl_mono/libefl_mono.dll $(efl_mono_dll_dest)/libefl_mono.dll; \
+$(MKDIR_P) $(DESTDIR)$(datadir)/efl_mono; \
+cp -f $(builddir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
 
 all-local: lib/efl_mono/libefl_mono.dll
 
