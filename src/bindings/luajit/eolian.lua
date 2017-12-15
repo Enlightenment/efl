@@ -454,9 +454,9 @@ ffi.cdef [[
     const char *eolian_variable_full_name_get(const Eolian_Variable *var);
     Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
     Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
-    const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
-    Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
-    Eina_Iterator *eolian_all_declarations_get(void);
+    const Eolian_Declaration *eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name);
+    Eina_Iterator *eolian_declarations_get_by_file(const Eolian *state, const char *fname);
+    Eina_Iterator *eolian_all_declarations_get(const Eolian_Unit *unit);
     Eolian_Declaration_Type eolian_declaration_type_get(const Eolian_Declaration *decl);
     const char *eolian_declaration_name_get(const Eolian_Declaration *decl);
     const Eolian_Class *eolian_declaration_class_get(const Eolian_Declaration *decl);
@@ -552,6 +552,11 @@ ffi.metatype("Eolian", {
 
         all_eot_files_get = function(self)
             return iterator.String_Iterator(eolian.eolian_all_eot_files_get(self))
+        end,
+
+        declarations_get_by_file = function(self, fname)
+            return Ptr_Iterator("const Eolian_Declaration*",
+                eolian.eolian_declarations_get_by_file(self, fname))
         end,
 
         unit_get = function(self)
@@ -1613,22 +1618,17 @@ M.Variable = ffi.metatype("Eolian_Variable", {
     }
 })
 
-M.declaration_get_by_name = function(name)
-    local v = eolian.eolian_declaration_get_by_name(name)
+M.declaration_get_by_name = function(unit, name)
+    local v = eolian.eolian_declaration_get_by_name(unit, name)
     if v == nil then
         return nil
     end
     return v
 end
 
-M.declarations_get_by_file = function(fname)
-    return Ptr_ITerator("const Eolian_Declaration*",
-        eolian.eolian_declarations_get_by_file(fname))
-end
-
-M.all_declarations_get = function()
+M.all_declarations_get = function(unit)
     return Ptr_Iterator("const Eolian_Declaration *",
-        eolian.eolian_all_declarations_get())
+        eolian.eolian_all_declarations_get(unit))
 end
 
 M.Declaration = ffi.metatype("Eolian_Declaration", {

@@ -1136,7 +1136,7 @@ START_TEST(eolian_decl)
    fail_if(!(unit = eolian_file_parse(eos, PACKAGE_DATA_DIR"/data/decl.eo")));
    fail_if(!(class = eolian_class_get_by_name(unit, "Decl")));
 
-   fail_if(!(itr = eolian_declarations_get_by_file("decl.eo")));
+   fail_if(!(itr = eolian_declarations_get_by_file(eos, "decl.eo")));
 
    fail_if(!eina_iterator_next(itr, (void**)&decl));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_STRUCT);
@@ -1172,10 +1172,10 @@ START_TEST(eolian_decl)
 
    fail_if(eina_iterator_next(itr, (void**)&decl));
 
-   fail_if(!(decl = eolian_declaration_get_by_name("pants")));
+   fail_if(!(decl = eolian_declaration_get_by_name(unit, "pants")));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_VAR);
 
-   fail_if(!(decl = eolian_declaration_get_by_name("A")));
+   fail_if(!(decl = eolian_declaration_get_by_name(unit, "A")));
    fail_if(eolian_declaration_type_get(decl) != EOLIAN_DECL_STRUCT);
 
    eolian_free(eos);

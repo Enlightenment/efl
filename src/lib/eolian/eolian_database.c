@@ -60,7 +60,7 @@ database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
 }
 
 EAPI const Eolian_Declaration *
-eolian_declaration_get_by_name(const char *name)
+eolian_declaration_get_by_name(const Eolian_Unit *unit EINA_UNUSED, const char *name)
 {
    if (!_decls) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
@@ -70,7 +70,7 @@ eolian_declaration_get_by_name(const char *name)
 }
 
 EAPI Eina_Iterator *
-eolian_declarations_get_by_file(const char *fname)
+eolian_declarations_get_by_file(const Eolian *state EINA_UNUSED, const char *fname)
 {
    if (!_declsf) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(fname);
@@ -81,7 +81,7 @@ eolian_declarations_get_by_file(const char *fname)
 }
 
 EAPI Eina_Iterator *
-eolian_all_declarations_get(void)
+eolian_all_declarations_get(const Eolian_Unit *unit EINA_UNUSED)
 {
    return (_decls ? eina_hash_iterator_data_new(_decls) : NULL);
 }
@@ -448,7 +448,7 @@ eolian_doc_token_ref_get(const Eolian_Unit *unit, const Eolian_Doc_Token *tok,
    memcpy(name, tok->text, nlen);
    name[nlen] = '\0';
 
-   const Eolian_Declaration *decl = eolian_declaration_get_by_name(name);
+   const Eolian_Declaration *decl = eolian_declaration_get_by_name(unit, name);
    if (decl) switch (eolian_declaration_type_get(decl))
      {
       case EOLIAN_DECL_CLASS:

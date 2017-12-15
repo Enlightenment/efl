@@ -204,12 +204,10 @@ _var_generate(const Eolian_Unit *src, const Eolian_Variable *vr, Eina_Bool legac
 }
 
 void eo_gen_types_header_gen(const Eolian_Unit *src,
-                             const char *eof, Eina_Strbuf *buf,
+                             Eina_Iterator *itr, Eina_Strbuf *buf,
                              Eina_Bool full, Eina_Bool legacy)
 {
    const Eolian_Declaration *decl;
-
-   Eina_Iterator *itr = eolian_declarations_get_by_file(eof);
    EINA_ITERATOR_FOREACH(itr, decl)
      {
         Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
@@ -256,14 +254,13 @@ void eo_gen_types_header_gen(const Eolian_Unit *src,
              eina_strbuf_free(tbuf);
           }
      }
+   eina_iterator_free(itr);
 }
 
 void eo_gen_types_source_gen(const Eolian_Unit *src,
-                             const char *eof, Eina_Strbuf *buf)
+                             Eina_Iterator *itr, Eina_Strbuf *buf)
 {
    const Eolian_Declaration *decl;
-
-   Eina_Iterator *itr = eolian_declarations_get_by_file(eof);
    EINA_ITERATOR_FOREACH(itr, decl)
      {
         Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
@@ -305,6 +302,7 @@ void eo_gen_types_source_gen(const Eolian_Unit *src,
 
         eina_strbuf_append(buf, "\n");
      }
+   eina_iterator_free(itr);
 }
 
 Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_Unit *src, const char *eof)

@@ -2398,12 +2398,13 @@ EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
 /*
  * @brief Get a declaration by name.
  *
+ * @param[in] unit the unit to look in
  * @param[in] name the declaration name.
  * @return the declaration.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
+EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get a list of declarations in a file.
@@ -2413,23 +2414,25 @@ EAPI const Eolian_Declaration *eolian_declaration_get_by_name(const char *name);
  * or a variable. This way you can get them all in the original order they
  * were declared in, which is useful during generation.
  *
+ * @param[in] state the state to look in
  * @param[in] fname the filename.
  * @return the iterator or NULL.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
+EAPI Eina_Iterator *eolian_declarations_get_by_file(const Eolian *state, const char *fname);
 
 /*
  * @brief Get an iterator to all declarations in the Eolian database.
  *
+ * @param[in] unit the unit to look in
  * @return the iterator or NULL.
  *
  * Thanks to internal caching this is an O(1) operation.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_declarations_get(void);
+EAPI Eina_Iterator *eolian_all_declarations_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get the type of a declaration

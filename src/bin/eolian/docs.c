@@ -22,7 +22,7 @@ static void
 _generate_ref(const Eolian_Unit *src, const char *refn, Eina_Strbuf *wbuf,
               Eina_Bool use_legacy)
 {
-   const Eolian_Declaration *decl = eolian_declaration_get_by_name(refn);
+   const Eolian_Declaration *decl = eolian_declaration_get_by_name(src, refn);
    if (decl)
      {
         char *n = strdup(eolian_declaration_name_get(decl));
