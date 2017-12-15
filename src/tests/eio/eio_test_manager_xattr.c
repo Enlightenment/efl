@@ -36,17 +36,16 @@ static const char *attr_data[] =
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
 static void
-_main_cb(void *data, const Efl_Event *ev)
+_main_cb(void *data, Eina_Accessor *access)
 {
-   Efl_Future_Event_Progress *progress = ev->info;
-   const Eina_Array *attrs = progress->progress;
    const char* attr;
    int *num_of_attr = (int *)data;
-   unsigned int i, j;
-   Eina_Array_Iterator it;
+   unsigned int count;
 
-   EINA_ARRAY_ITER_NEXT(attrs, j, attr, it)
+   EINA_ACCESSOR_FOREACH(access, count, attr)
      {
+        unsigned int i;
+
         for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); ++i)
           {
              if (strcmp(attr, attribute[i]) == 0)
@@ -56,28 +55,6 @@ _main_cb(void *data, const Efl_Event *ev)
                }
           }
      }
-}
-
-static void
-_done_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-
-{
-   int *num_of_attr = (int *)data;
-
-   fail_if(*num_of_attr != total_attributes);
-
-   ecore_main_loop_quit();
-}
-
-static void
-_error_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   Efl_Future_Event_Failure *failure = ev->info;
-
-   fprintf(stderr, "Something has gone wrong:%s\n", eina_error_msg_get(failure->error));
-   abort();
-
-   ecore_main_loop_quit();
 }
 
 static Eina_Value
@@ -147,7 +124,6 @@ START_TEST(eio_test_job_xattr_set)
    int num_of_attr = 0, fd;
    unsigned int i;
    Eo *job;
-   Efl_Future *ls = NULL;
    Eina_Future **futures = NULL;
 
    ecore_init();
@@ -199,8 +175,8 @@ START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   efl_future_use(&ls, efl_io_manager_xattr_ls(job, test_file_path));
-   efl_future_then(ls, _done_cb, _error_cb, _main_cb, &num_of_attr);
+   eina_future_then(efl_io_manager_xattr_ls(job, test_file_path, &num_of_attr, _main_cb, NULL),
+                    _future_done_cb, &num_of_attr);
 
    fail_if(num_of_attr != 0);
 
