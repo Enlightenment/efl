@@ -560,7 +560,7 @@ _ecore_main_fdh_glib_mark_active(Eo *obj, Efl_Loop_Data *pd)
    Ecore_Fd_Handler *fdh;
    int ret = 0;
 
-   /* call the prepare callback for all handlers */
+   // call the prepare callback for all handlers
    EINA_INLIST_FOREACH(pd->fd_handlers, fdh)
      {
         if (fdh->delete_me) continue;
@@ -577,7 +577,7 @@ _ecore_main_fdh_glib_mark_active(Eo *obj, Efl_Loop_Data *pd)
    return ret;
 }
 
-/* like we are about to enter main_loop_select in  _ecore_main_select */
+// like we are about to enter main_loop_select in  _ecore_main_select
 static gboolean
 _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                             gint    *next_time)
@@ -871,7 +871,7 @@ _ecore_main_loop_setup(Eo *obj, Efl_Loop_Data *pd)
 
         pd->epoll_pid = getpid();
 
-        /* add polls on all our file descriptors */
+        // add polls on all our file descriptors
         Ecore_Fd_Handler *fdh;
         EINA_INLIST_FOREACH(pd->fd_handlers, fdh)
           {
@@ -2382,7 +2382,7 @@ start_loop: //-*************************************************************
 
              // no timers - spin
              if (next_time < 0) action = _ecore_main_loop_spin_no_timers(obj, pd);
-             /* timers - spin */
+             // timers - spin
              else action = _ecore_main_loop_spin_timers(obj, pd);
              if (action == SPIN_RESTART) goto start_loop;
           }
