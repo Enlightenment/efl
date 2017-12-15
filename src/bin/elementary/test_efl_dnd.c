@@ -38,7 +38,7 @@ static void
 //_selection_data_ready_cb(void *data, Eo *obj, void *buf, int length)
 _selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
 {
-    printf("obj: %p, data: %s, length: %d\n", obj, (char *)seldata->data, seldata->len);
+    printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->data.mem, seldata->data.len);
 }
 
 /*
@@ -118,8 +118,8 @@ _canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
    drop_added = EINA_TRUE;
 }
 
-static Efl_Object *
-_drag_icon_cb(void *data, Eo *win, int *xoff, int *yoff)
+static Efl_Gfx *
+_drag_icon_cb(void *data, Eo *win, Eina_Position2D *off)
 {
    Evas_Object *lb = data;
    Evas_Object *icon;
@@ -136,8 +136,11 @@ _drag_icon_cb(void *data, Eo *win, int *xoff, int *yoff)
    printf("icon: %d %d\n", w, h);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(lb), &xm, &ym);
-   if (xoff) *xoff = xm - (w / 2);
-   if (yoff) *yoff = ym - (h / 2);
+   if (off)
+     {
+        off->x = xm - (w / 2);
+        off->y = ym - (h / 2);
+     }
 
    return icon;
 }
@@ -147,7 +150,7 @@ _dnd_drag_pos_cb(void *data, const Efl_Event *ev)
 {
    ERR("In");
    Efl_Dnd_Drag_Pos *pos = (Efl_Dnd_Drag_Pos *)ev->info;
-   ERR("pos: %d %d, action: %d\n", pos->x, pos->y, pos->action);
+   ERR("pos: %d %d, action: %d\n", pos->pos.x, pos->pos.y, pos->action);
 }
 
 static void
@@ -189,7 +192,7 @@ _dnd_drop_drop_cb(void *data, const Efl_Event *ev)
 {
    ERR("In");
    Efl_Selection_Data *sd = ev->info;
-   ERR("x: %d, y: %d, data: %s, len: %d, format: %d, action: %d", sd->x, sd->y, (char *)sd->data, sd->len, sd->format, sd->action);
+   ERR("x: %d, y: %d, data: %s, len: %zd, format: %d, action: %d", sd->pos.x, sd->pos.y, (char *)sd->data.mem, sd->data.len, sd->format, sd->action);
 }
 
 static void

@@ -78,56 +78,56 @@ struct _Tmp_Info
 
 struct _Saved_Type
 {
-   const char  **types;
-   char         *imgfile;
-   int           ntypes;
-   int           x, y;
-   Eina_Bool     textreq: 1;
+   const char      **types;
+   char             *imgfile;
+   int               ntypes;
+   Eina_Position2D   pos;
+   Eina_Bool         textreq: 1;
 };
 
 struct _Sel_Manager_Selection
 {
-   const char        *debug;
-   Eina_Rw_Slice         data;
-   Efl_Selection_Format     request_format;
+   const char               *debug;
+   Eina_Rw_Slice             data;
+   Efl_Selection_Format      request_format;
 #ifdef HAVE_ELEMENTARY_X
-   Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
-   Eina_Bool        (*clear)   (void);
-   void             (*request) (Ecore_X_Window, const char *target);
+   Eina_Bool               (*set) (Ecore_X_Window, const void *data, int size);
+   Eina_Bool               (*clear) (void);
+   void                    (*request) (Ecore_X_Window, const char *target);
 
-   Ecore_X_Selection  ecore_sel;
-   Ecore_X_Window     xwin;
+   Ecore_X_Selection         ecore_sel;
+   Ecore_X_Window            xwin;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   uint32_t selection_serial;
-   uint32_t drag_serial;
-   Ecore_Wl2_Offer *sel_offer;
-   Ecore_Wl2_Offer *dnd_offer;
-   Ecore_Event_Handler *offer_handler;
-   Ecore_Wl2_Window *win;
+   uint32_t                  selection_serial;
+   uint32_t                  drag_serial;
+   Ecore_Wl2_Offer          *sel_offer;
+   Ecore_Wl2_Offer          *dnd_offer;
+   Ecore_Event_Handler      *offer_handler;
+   Ecore_Wl2_Window         *win;
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
-   Ecore_Cocoa_Window *win;
-   int                    pb_count;
+   Ecore_Cocoa_Window       *win;
+   int                       pb_count;
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
-   Eina_Bool            (*set)(const Ecore_Win32_Window *window, const void *data, int size);
-   Eina_Bool            (*clear)(const Ecore_Win32_Window *window);
-   Eina_Bool            (*get)(const Ecore_Win32_Window *window , void **data, int *size);
-   Ecore_Win32_Selection  ecore_sel;
-   Ecore_Win32_Window    *win;
+   Eina_Bool               (*set)(const Ecore_Win32_Window *window, const void *data, int size);
+   Eina_Bool               (*clear)(const Ecore_Win32_Window *window);
+   Eina_Bool               (*get)(const Ecore_Win32_Window *window , void **data, int *size);
+   Ecore_Win32_Selection     ecore_sel;
+   Ecore_Win32_Window       *win;
 #endif
 
-   Efl_Selection_Format     format;
-   Efl_Selection_Action action;
-   Eina_Bool active : 1;
+   Efl_Selection_Format      format;
+   Efl_Selection_Action      action;
+   Eina_Bool                 active : 1;
 
-   Eo *owner;
+   Eo                       *owner;
 
-   Eo *request_obj;
-   void *data_func_data;
-   Efl_Selection_Data_Ready data_func;
-   Eina_Free_Cb data_func_free_cb;
+   Eo                       *request_obj;
+   void                     *data_func_data;
+   Efl_Selection_Data_Ready  data_func;
+   Eina_Free_Cb              data_func_free_cb;
 
    Sel_Manager_Seat_Selection *seat_sel;
 };
@@ -171,42 +171,39 @@ struct _Sel_Manager_Seat_Selection
 
 struct _Anim_Icon
 {
-   int start_x;
-   int start_y;
-   int start_w;
-   int start_h;
-   Evas_Object *obj;
+   Eina_Rectangle  start;
+   Evas_Object    *obj;
 };
 
 struct _Sel_Manager_Drag_Container
 {
-   Evas *e;
-   Efl_Object *cont;
-   Efl_Selection_Format format;
-   Eina_Slice data;
-   Efl_Selection_Action action;
-   Eina_List *icons;
-   Eina_Size2D final_icon;
-   Eina_Position2D down;
-   Ecore_Timer *timer;
-   Ecore_Animator *animator;
-   double time_to_drag;
-   double anim_duration;
-   void *drag_data_func_data;
-   Efl_Dnd_Drag_Data_Get drag_data_func;
-   Eina_Free_Cb drag_data_func_free_cb;
-   void *item_get_func_data;
-   Efl_Dnd_Item_Get item_get_func;
-   Eina_Free_Cb item_get_func_free_cb;
-   void *icon_func_data;
-   Efl_Dnd_Drag_Icon_Create icon_func;
-   Eina_Free_Cb icon_func_free_cb;
-   void *icon_list_func_data;
-   Efl_Dnd_Drag_Icon_List_Create icon_list_func;
-   Eina_Free_Cb icon_list_func_free_cb;
-   unsigned int seat;
+   Evas                          *e;
+   Efl_Object                    *cont;
+   Efl_Selection_Format           format;
+   Eina_Slice                     data;
+   Efl_Selection_Action           action;
+   Eina_List                     *icons;
+   Eina_Size2D                    final_icon;
+   Eina_Position2D                down;
+   Ecore_Timer                   *timer;
+   Ecore_Animator                *animator;
+   double                         time_to_drag;
+   double                         anim_duration;
+   void                          *drag_data_func_data;
+   Efl_Dnd_Drag_Data_Get          drag_data_func;
+   Eina_Free_Cb                   drag_data_func_free_cb;
+   void                          *item_get_func_data;
+   Efl_Dnd_Item_Get               item_get_func;
+   Eina_Free_Cb                   item_get_func_free_cb;
+   void                          *icon_func_data;
+   Efl_Dnd_Drag_Icon_Create       icon_func;
+   Eina_Free_Cb                   icon_func_free_cb;
+   void                          *icon_list_func_data;
+   Efl_Dnd_Drag_Icon_List_Create  icon_list_func;
+   Eina_Free_Cb                   icon_list_func_free_cb;
+   unsigned int                   seat;
 
-   Efl_Selection_Manager_Data *pd;
+   Efl_Selection_Manager_Data    *pd;
 };
 
 struct _Sel_Manager_Atom
@@ -236,34 +233,34 @@ struct _Drop_Format
 
 struct _Sel_Manager_Dropable
 {
-   Evas_Object    *obj;
-   Eina_Inlist   *format_list;
-   unsigned int seat;
+   Evas_Object             *obj;
+   Eina_Inlist             *format_list;
+   unsigned int             seat;
    struct {
-      Evas_Coord      x, y;
-      Eina_Bool       in : 1;
-      const char     *type;
+      Eina_Position2D      pos;
+      Eina_Bool             in : 1;
+      const char           *type;
       Efl_Selection_Format  format;
    } last;
 
    //for container
-   Efl_Dnd_Item_Get item_func;
-   void *item_func_data;
-   Eina_Bool is_container;
+   Efl_Dnd_Item_Get         item_func;
+   void                    *item_func_data;
+   Eina_Bool                is_container;
 };
 
 struct _Item_Container_Drop_Info
 {
-   Efl_Object *obj;
-   void *item_func_data;
-   Efl_Dnd_Item_Get item_func;
+   Efl_Object       *obj;
+   void             *item_func_data;
+   Efl_Dnd_Item_Get  item_func;
 };
 
 #ifdef HAVE_ELEMENTARY_WL2
 typedef struct _Wl_Format_Translation
 {
-  Efl_Selection_Format format;
-  char **translates;
+  Efl_Selection_Format   format;
+  char                 **translates;
 } Sel_Manager_Wl_Format_Translation;
 
 char *sm_wl_markup[] = {"application/x-elementary-markup", "", NULL};
@@ -284,7 +281,7 @@ Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
 
 struct _Efl_Selection_Manager_Data
 {
-   Eo *sel_man;
+   Eo                 *sel_man;
 #ifdef HAVE_ELEMENTARY_X
    Ecore_Event_Handler *notify_handler;
    Ecore_Event_Handler *clear_handler;
@@ -296,19 +293,19 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *end_handler;
    Ecore_Wl2_Display   *wl_display;
 #endif
-   Efl_Promise *promise;
-   Efl_Selection_Type loss_type;
+   Efl_Promise        *promise;
+   Efl_Selection_Type  loss_type;
 
-   Sel_Manager_Atom *atom_list;
-   Eina_List *seat_list;
+   Sel_Manager_Atom   *atom_list;
+   Eina_List          *seat_list;
 
-   Eina_List *drag_cont_list;
+   Eina_List          *drag_cont_list;
 
    //drop
-   Eina_List *drop_list;
-   Eina_Hash *type_hash;
-   const char *text_uri;
-   Eina_List *drop_cont_list;
+   Eina_List          *drop_list;
+   Eina_Hash          *type_hash;
+   const char         *text_uri;
+   Eina_List          *drop_cont_list;
 };
 
 #endif

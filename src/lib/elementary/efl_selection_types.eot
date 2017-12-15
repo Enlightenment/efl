@@ -36,13 +36,9 @@ enum Efl.Selection.Action
 struct Efl.Selection.Data
 {
    [[Structure holding the info about selected data]]
-   x: int; [[The coordinates of the drop (DND operations only)]]
-   y: int; [[The coordinates of the drop (DND operations only)]]
+   pos: Eina.Position2D; [[The coordinates of the drop (DND operations only)]]
    format: Efl.Selection.Format; [[The format of the selection]]
-   //data: Eina.Slice;
-   data: void_ptr; [[The selection data, type determined by format member]]
-   //len: uint; [[The length of the selection data]]
-   len: int; [[The length of the selection data]]
+   data: Eina.Slice; [[The selection data]]
    action: Efl.Selection.Action; [[The action to perform with the data @since 1.8]]
    //hovered_item: Efl.Object; [[item under the drag position. It is only available for container (CHECKING]]
    item: Efl.Object; [[item under the drag position. It is only available for container (CHECKING]]
@@ -51,7 +47,7 @@ struct Efl.Selection.Data
 function Efl.Selection.Data_Ready { //FIXME: promise
    [[Function pointer for getting selection]]
    params {
-      @in obj: ptr(Eo); //CHECKING
+      @in obj: Efl.Canvas.Object;
       @in seldata: ptr(Efl.Selection.Data);
    }
 };

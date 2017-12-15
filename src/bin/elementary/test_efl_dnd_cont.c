@@ -21,6 +21,11 @@
 #define DRAG_TIMEOUT 0.3
 #define ANIM_TIME 0.5
 
+Efl_Input_Device *seat = NULL;
+Evas_Object *bg = NULL, *vert_box = NULL;
+Evas_Object *grid = NULL;
+Eina_Bool drop_added = EINA_FALSE;
+
 static const char *img[9] =
 {
    "panel_01.jpg",
@@ -180,19 +185,19 @@ _grid_icon_list_get_cb(void *data, Efl_Object *obj)
 
 //static Elm_Object_Item *
 static Efl_Object *
-_grid_item_get_cb(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *xposret, int *yposret)
+_grid_item_get_cb(void *data, Evas_Object *obj, Eina_Position2D pos, Eina_Position2D *posret)
 {  /* This function returns pointer to item under (x,y) coords */
    //printf("<%s> <%d> obj=<%p>\n", __func__, __LINE__, obj);
    Elm_Object_Item *item = NULL;
-   item = elm_gengrid_at_xy_item_get(obj, x, y, xposret, yposret);
+   item = elm_gengrid_at_xy_item_get(obj, pos.x, pos.y, &posret->x, &posret->y);
    if (item)
      {
      printf("over <%s>, item=<%p> xposret %i yposret %i\n",
-           (char *)elm_object_item_data_get(item), item, *xposret, *yposret);
+           (char *)elm_object_item_data_get(item), item, posret->x, posret->y);
      }
    else
      {
-     printf("over none, xposret %i yposret %i\n", *xposret, *yposret);
+     printf("over none, xposret %i yposret %i\n", posret->x, posret->y);
      }
    return item;
 }
@@ -214,7 +219,7 @@ _strndup(const char *str, size_t len)
 
 static Evas_Object *
 //_gl_createicon(void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff)
-_grid_icon_get_cb(void *data, Eo *win, int *xoff, int *yoff)
+_grid_icon_get_cb(void *data, Eo *win, Eina_Position2D *off)
 {
    printf("<%s> <%d>\n", __func__, __LINE__);
    Evas_Object *grid = data;
@@ -238,15 +243,18 @@ _grid_icon_get_cb(void *data, Eo *win, int *xoff, int *yoff)
         elm_image_file_get(o, &f, &g);
         printf("%s %d: image file: %s %s\n", __func__, __LINE__, f, g);
         evas_pointer_canvas_xy_get(evas_object_evas_get(o), &xm, &ym);
-        if (xoff) *xoff = xm - (w/2);
-        if (yoff) *yoff = ym - (h/2);
+        if (off)
+          {
+             off->x = xm - (w/2);
+             off->y = ym - (h/2);
+          }
         icon = elm_icon_add(win);
         elm_image_file_set(icon, f, g);
         evas_object_size_hint_align_set(icon,
               EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_size_hint_weight_set(icon,
               EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        if (xoff && yoff) evas_object_move(icon, *xoff, *yoff);
+        if (off) evas_object_move(icon, off->x, off->y);
         evas_object_resize(icon, w, h);
      }
    else
@@ -260,7 +268,7 @@ _grid_icon_get_cb(void *data, Eo *win, int *xoff, int *yoff)
 //static const char *
 static void
 //_grid_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
-_grid_data_get_cb(void *data, Evas_Object *obj, Efl_Selection_Format *format, void **buf, int *len, Efl_Selection_Action *action)
+_grid_data_get_cb(void *data, Evas_Object *obj, Efl_Selection_Format *format, Eina_Slice *ret_data, Efl_Selection_Action *action)
 {  /* Construct a string of dragged info, user frees returned string */
    const char *drag_data = NULL;
    printf("<%s> <%d>\n", __func__, __LINE__);
@@ -287,14 +295,11 @@ _grid_data_get_cb(void *data, Evas_Object *obj, Efl_Selection_Format *format, vo
      {
         *format = EFL_SELECTION_FORMAT_TEXT;
      }
-   if (buf && drag_data)
+   if (ret_data && drag_data)
      {
-        *buf = calloc(1, data_len + 1);
-        strncpy(*buf, drag_data, data_len);
-     }
-   if (len)
-     {
-        *len = data_len;
+        ret_data->mem = calloc(1, data_len + 1);
+        strncpy((char *)ret_data->mem, drag_data, data_len);
+        ret_data->len = data_len;
      }
    if (action)
      {
@@ -326,8 +331,9 @@ static void
 _win_del(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("<%s> <%d> will del <%p>\n", __func__, __LINE__, data);
-   efl_dnd_drag_item_container_del(data);
-   efl_dnd_drop_item_container_del(data);
+   int seat_id = efl_input_device_seat_id_get(seat);
+   efl_ui_dnd_container_drag_item_del(data, seat_id);
+   efl_ui_dnd_container_drop_item_del(data, seat_id);
 
    if (gic) elm_gengrid_item_class_free(gic);
    gic = NULL;
@@ -439,7 +445,7 @@ _box_drag_drop_cb(void *data, const Efl_Event *ev)
    ERR("box drop");
    Efl_Selection_Data *sd = ev->info;
 
-   ERR("x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, (const char *)sd->data, sd->len, sd->format, sd->action, sd->item);
+   ERR("x,y: %d %d, data: %s, len: %zd, format: %d, action: %d, item: %p", sd->pos.x, sd->pos.y, (const char *)sd->data.mem, sd->data.len, sd->format, sd->action, sd->item);
 }
 
 #if 0
@@ -509,9 +515,9 @@ _grid_drop_cb(void *data, const Efl_Event *ev)
    Efl_Object *grid = data;
    Efl_Selection_Data *sd = ev->info;
 
-   ERR("grid drop: x,y: %d %d, data: %s, len: %d, format: %d, action: %d, item: %p", sd->x, sd->y, (const char *)sd->data, sd->len, sd->format, sd->action, sd->item);
-   if (sd->len < 0) return;
-   char *dd = _strndup(sd->data, sd->len);
+   ERR("grid drop: x,y: %d %d, data: %s, len: %zd, format: %d, action: %d, item: %p", sd->pos.x, sd->pos.y, (const char *)sd->data.mem, sd->data.len, sd->format, sd->action, sd->item);
+   if (sd->data.len < 0) return;
+   char *dd = _strndup(sd->data.mem, sd->data.len);
    if (!dd) return;
    char *s = _drag_data_extract(&dd);
    while (s)
@@ -525,24 +531,62 @@ _grid_drop_cb(void *data, const Efl_Event *ev)
    free(dd);
 }
 
+static void
+_canvas_focus_in_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Efl_Input_Focus *ev;
+   Evas_Object *focused;
+
+   ev = event->info;
+   seat = efl_input_device_get(ev);
+   focused = efl_input_focus_object_get(ev);
+
+   printf("Object %s was focused by seat %s\n",
+          evas_object_name_get(focused),
+          efl_name_get(seat));
+   int seat_id = efl_input_device_seat_id_get(seat);
+   if (!drop_added)
+     {
+        efl_ui_dnd_drop_target_add(bg, EFL_SELECTION_FORMAT_TEXT, seat_id);
+        efl_ui_dnd_drop_target_add(vert_box, EFL_SELECTION_FORMAT_TEXT, seat_id);
+
+        efl_ui_dnd_container_drag_item_add(grid, ANIM_TIME, DRAG_TIMEOUT,
+                                           grid, _grid_data_get_cb, NULL,
+                                           grid, _grid_item_get_cb, NULL,
+                                           grid, _grid_icon_get_cb, NULL,
+                                           grid, _grid_icon_list_get_cb, NULL,
+                                           seat_id);
+
+        efl_ui_dnd_container_drop_item_add(grid, EFL_SELECTION_FORMAT_TEXT,
+                                           grid, _grid_item_get_cb, NULL,
+                                           seat_id);
+     }
+
+   drop_added = EINA_TRUE;
+}
+
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    char buf[PATH_MAX];
-   Evas_Object *win, *bxx, *bg;
+   Evas_Object *win, *bxx;
    int i;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    win = elm_win_util_standard_add("dnd-multi-features", "DnD-Multi Features");
    elm_win_autodel_set(win, EINA_TRUE);
 
+   //getting seat
+   Evas *e = evas_object_evas_get(win);
+   efl_event_callback_add(e, EFL_EVENT_FOCUS_IN, _canvas_focus_in_cb, win);
+   //
+
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_event_callback_add(bg, EFL_DND_EVENT_DRAG_ENTER, _bg_enter_cb, bg);
-   efl_event_callback_add(bg, EFL_DND_EVENT_DRAG_POS, _bg_pos_cb, bg);
-   efl_event_callback_add(bg, EFL_DND_EVENT_DRAG_LEAVE, _bg_leave_cb, bg);
-   efl_event_callback_add(bg, EFL_DND_EVENT_DRAG_DROP, _bg_drop_cb, bg);
-   efl_dnd_drop_target_add(bg, EFL_SELECTION_FORMAT_TEXT);
+   efl_event_callback_add(bg, EFL_UI_DND_EVENT_DRAG_ENTER, _bg_enter_cb, bg);
+   efl_event_callback_add(bg, EFL_UI_DND_EVENT_DRAG_POS, _bg_pos_cb, bg);
+   efl_event_callback_add(bg, EFL_UI_DND_EVENT_DRAG_LEAVE, _bg_leave_cb, bg);
+   efl_event_callback_add(bg, EFL_UI_DND_EVENT_DRAG_DROP, _bg_drop_cb, bg);
    //elm_drop_target_add(bg, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_bg_change_cb, NULL);
    elm_win_resize_object_add(win, bg);
 
@@ -570,20 +614,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    gic->func.text_get = gl_text_get;
    gic->func.content_get = gl_content_get;
 
-   //elm_drag_item_container_add(grid, ANIM_TIME, DRAG_TIMEOUT,
-   //                            _grid_item_getcb, _grid_data_getcb);
-   efl_dnd_drag_item_container_add(grid, ANIM_TIME, DRAG_TIMEOUT,
-                                   grid, _grid_data_get_cb, NULL,
-                                   grid, _grid_item_get_cb, NULL,
-                                   grid, _grid_icon_get_cb, NULL,
-                                   grid, _grid_icon_list_get_cb, NULL);
-
-   efl_event_callback_add(grid, EFL_DND_EVENT_DRAG_ENTER, _grid_enter_cb, grid);
-   efl_event_callback_add(grid, EFL_DND_EVENT_DRAG_LEAVE, _grid_leave_cb, grid);
-   efl_event_callback_add(grid, EFL_DND_EVENT_DRAG_POS, _grid_pos_cb, grid);
-   efl_event_callback_add(grid, EFL_DND_EVENT_DRAG_DROP, _grid_drop_cb, grid);
-   efl_dnd_drop_item_container_add(grid, EFL_SELECTION_FORMAT_TEXT,
-                                   grid, _grid_item_get_cb, NULL);
+   efl_event_callback_add(grid, EFL_UI_DND_EVENT_DRAG_ENTER, _grid_enter_cb, grid);
+   efl_event_callback_add(grid, EFL_UI_DND_EVENT_DRAG_LEAVE, _grid_leave_cb, grid);
+   efl_event_callback_add(grid, EFL_UI_DND_EVENT_DRAG_POS, _grid_pos_cb, grid);
+   efl_event_callback_add(grid, EFL_UI_DND_EVENT_DRAG_DROP, _grid_drop_cb, grid);
 
    for (i = 0; i < 10; i++)
      {
@@ -602,10 +636,9 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_size_hint_weight_set(vert_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bxx, vert_box);
    evas_object_show(vert_box);
-   efl_event_callback_add(vert_box, EFL_DND_EVENT_DRAG_ENTER, _box_drag_enter_cb, vert_box);
-   efl_event_callback_add(vert_box, EFL_DND_EVENT_DRAG_LEAVE, _box_drag_leave_cb, vert_box);
-   efl_event_callback_add(vert_box, EFL_DND_EVENT_DRAG_DROP, _box_drag_drop_cb, vert_box);
-   efl_dnd_drop_target_add(vert_box, EFL_SELECTION_FORMAT_TEXT);
+   efl_event_callback_add(vert_box, EFL_UI_DND_EVENT_DRAG_ENTER, _box_drag_enter_cb, vert_box);
+   efl_event_callback_add(vert_box, EFL_UI_DND_EVENT_DRAG_LEAVE, _box_drag_leave_cb, vert_box);
+   efl_event_callback_add(vert_box, EFL_UI_DND_EVENT_DRAG_DROP, _box_drag_drop_cb, vert_box);
    //elm_drop_target_add(vert_box, ELM_SEL_FORMAT_TARGETS, NULL, NULL, NULL, NULL, NULL, NULL, _drop_box_button_new_cb, win);
 
    _5s_cancel = EINA_FALSE;
