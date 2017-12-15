@@ -4436,11 +4436,29 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
 
 EOLIAN static Eina_Bool
 _efl_selection_manager_selection_has_owner(Eo *obj, Efl_Selection_Manager_Data *pd,
-                                           Efl_Object *request, unsigned int seat)
+                                           Efl_Object *request, Efl_Selection_Type type,
+                                           unsigned int seat)
 {
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_xwin_get(request))
-     return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
+     {
+        Ecore_X_Atom xtype;
+        switch (type)
+          {
+           case EFL_SELECTION_TYPE_PRIMARY:
+              xtype = ECORE_X_ATOM_SELECTION_PRIMARY;
+              break;
+           case EFL_SELECTION_TYPE_SECONDARY:
+              xtype = ECORE_X_ATOM_SELECTION_SECONDARY;
+              break;
+           case EFL_SELECTION_TYPE_DND:
+              xtype = ECORE_X_ATOM_SELECTION_XDND;
+              break;
+           default:
+              xtype = ECORE_X_ATOM_SELECTION_CLIPBOARD;
+          }
+        return !!ecore_x_selection_owner_get(xtype);
+     }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
    Ecore_Wl2_Window *win;

@@ -76,11 +76,11 @@ _efl_selection_selection_clear(Eo *obj, void *pd, Efl_Selection_Type type, unsig
 }
 
 EOLIAN static Eina_Bool
-_efl_selection_has_owner(Eo *obj, void *pd, unsigned int seat)
+_efl_selection_has_owner(Eo *obj, void *pd, Efl_Selection_Type type, unsigned int seat)
 {
     ERR("In");
     Eo *sel_man = _selection_manager_get(obj);
-    return efl_selection_manager_selection_has_owner(sel_man, obj, seat);
+    return efl_selection_manager_selection_has_owner(sel_man, obj, type, seat);
 }
 
 //issue: selection clear only come with window-level

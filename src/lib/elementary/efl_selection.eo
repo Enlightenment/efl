@@ -32,7 +32,7 @@ mixin Efl.Selection {
       //selection_has { //change to property selection_owner
       has_owner {
          params {
-            //@in type: Efl.Selection.Type (Efl.Selection.Type.clipboard);
+            @in type: Efl.Selection.Type; [[Selection type]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
          return: bool;

@@ -31,6 +31,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
          [[Check if the request object has selection or not]]
          params {
             @in request: Efl.Object; [[the request object]]
+            @in type: Efl.Selection.Type; [[Selection type]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
          return: bool; [[EINA_TRUE if the request object has selection, otherwise, EINA_FALSE]]

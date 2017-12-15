@@ -19,7 +19,7 @@ mixin Efl.Ui.Dnd {
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
-      drag_action_set { //CHECKING
+      drag_action_set {
          [[This sets the action for the drag]]
          params {
             @in action: Efl.Selection.Action; [[Drag action]]
