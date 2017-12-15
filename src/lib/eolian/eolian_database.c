@@ -813,28 +813,28 @@ eolian_all_eo_files_parse(Eolian *state)
 }
 
 EAPI Eina_Iterator *
-eolian_all_eot_files_get(Eolian *state)
+eolian_all_eot_files_get(const Eolian *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_key_new(state->filenames_eot);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eo_files_get(Eolian *state)
+eolian_all_eo_files_get(const Eolian *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_key_new(state->filenames_eo);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eot_file_paths_get(Eolian *state)
+eolian_all_eot_file_paths_get(const Eolian *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_data_new(state->filenames_eot);
 }
 
 EAPI Eina_Iterator *
-eolian_all_eo_file_paths_get(Eolian *state)
+eolian_all_eo_file_paths_get(const Eolian *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_data_new(state->filenames_eo);

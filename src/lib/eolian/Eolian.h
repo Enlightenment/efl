@@ -523,7 +523,7 @@ EAPI const Eolian_Unit *eolian_file_parse(Eolian *state, const char *filepath);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_eo_file_paths_get(Eolian *state);
+EAPI Eina_Iterator *eolian_all_eo_file_paths_get(const Eolian *state);
 
 /*
  * @brief Get an iterator to all .eot file names with paths.
@@ -536,7 +536,7 @@ EAPI Eina_Iterator *eolian_all_eo_file_paths_get(Eolian *state);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_eot_file_paths_get(Eolian *state);
+EAPI Eina_Iterator *eolian_all_eot_file_paths_get(const Eolian *state);
 
 /*
  * @brief Get an iterator to all .eo file names (without paths).
@@ -549,7 +549,7 @@ EAPI Eina_Iterator *eolian_all_eot_file_paths_get(Eolian *state);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_eo_files_get(Eolian *state);
+EAPI Eina_Iterator *eolian_all_eo_files_get(const Eolian *state);
 
 /*
  * @brief Get an iterator to all .eot file names (without paths).
@@ -562,7 +562,7 @@ EAPI Eina_Iterator *eolian_all_eo_files_get(Eolian *state);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_all_eot_files_get(Eolian *state);
+EAPI Eina_Iterator *eolian_all_eot_files_get(const Eolian *state);
 
 /*
  * @brief Scan the given directory (recursively) and search for .eo and
