@@ -171,6 +171,12 @@ _ecore_event_message_handler_handler_del(Eo *obj EINA_UNUSED, Ecore_Event_Messag
    data = h->data;
    if (pd->handlers_walking > 0)
      {
+        if (h->to_add)
+          {
+             h->to_add = EINA_FALSE;
+             pd->handlers_add = eina_list_remove(pd->handlers_add, h);
+          }
+
         h->delete_me = EINA_TRUE;
         pd->handlers_delete = eina_list_append(pd->handlers_delete, h);
      }
@@ -284,9 +290,14 @@ _ecore_event_message_handler_efl_object_destructor(Eo *obj, Ecore_Event_Message_
           {
              free(h);
           }
-        for (i = 0; i < pd->event_type_count; i++)
+        for (i = 0; i <= pd->event_type_count; i++)
           {
-             EINA_INLIST_FREE(pd->handlers[i], h) free(h);
+             EINA_INLIST_FREE(pd->handlers[i], h)
+               {
+                  pd->handlers[i] = eina_inlist_remove(pd->handlers[i],
+                                                       EINA_INLIST_GET(h));
+                  free(h);
+               }
           }
         free(pd->handlers);
         pd->handlers = NULL;
