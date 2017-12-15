@@ -1574,6 +1574,9 @@ _ecore_main_content_clear(Efl_Loop_Data *pd)
    EINA_LIST_FREE(tmp, promise)
      ecore_loop_promise_fulfill(promise);
 
+   // FIXME
+   __eina_promise_cancel_all();
+
    while (pd->fd_handlers)
      {
         Ecore_Fd_Handler *fdh = pd->fd_handlers;

@@ -824,8 +824,11 @@ _efl_promise_all_free(Efl_Promise_All *all)
    EINA_ARRAY_ITER_NEXT(&all->members, i, fa, iterator)
      {
         if (fa->d)
-          EINA_REFCOUNT_UNREF(fa->d)
-            _efl_promise_msg_free(fa->d);
+          {
+             EINA_REFCOUNT_UNREF(fa->d)
+               _efl_promise_msg_free(fa->d);
+             fa->d = NULL;
+          }
      }
    efl_del(all->promise);
    all->promise = NULL;
@@ -839,8 +842,11 @@ _efl_promise_all_die(void *data, const Efl_Event *ev EINA_UNUSED)
 
    while ((fa = eina_array_pop(&all->members)))
      {
-        EINA_REFCOUNT_UNREF(fa->d)
-          _efl_promise_msg_free(fa->d);
+        if (fa->d)
+          {
+             EINA_REFCOUNT_UNREF(fa->d)
+               _efl_promise_msg_free(fa->d);
+          }
         assert(fa->f == NULL);
         free(fa);
      }
