@@ -5689,7 +5689,7 @@ static void
 _widget_shadow_update(Widget_Shadow *ws)
 {
    int l = 0, r = 0, t = 0, b = 0;
-   Eina_Rect srect, wrect, fill;
+   Eina_Rect srect, wrect;
    char filter[1024];
 
 #define FILTER_FMT \
@@ -5723,9 +5723,6 @@ _widget_shadow_update(Widget_Shadow *ws)
    srect.y = wrect.y + (int) (-t + ws->props.oy);
    srect.w = wrect.w + (int) (l + r);
    srect.h = wrect.h + (int) (t + b);
-   fill.size = wrect.size;
-   fill.x = 0;
-   fill.y = 0;
 
    if ((!ws->props.a && !ws->code) ||
        !efl_gfx_visible_get(ws->widget))
