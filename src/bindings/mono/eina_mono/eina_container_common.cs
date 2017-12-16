@@ -19,12 +19,6 @@ public static class ContainerCommonData
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct ConvertWrapper<T>
-{
-    public T Val {get;set;}
-}
-
-[StructLayout(LayoutKind.Sequential)]
 public struct InlistMem
 {
     public IntPtr next {get;set;}
@@ -339,11 +333,7 @@ public abstract class PrimitiveElementTraits<T>
 
     public IntPtr ManagedToNativeAlloc(T man)
     {
-        GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
-        IntPtr ptr = pinnedData.AddrOfPinnedObject();
-        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<T>());
-        pinnedData.Free();
-        return nat;
+        return PrimitiveConversion.ManagedToPointerAlloc(man);
     }
 
     public IntPtr ManagedToNativeAllocInlistNode(T man)
@@ -394,8 +384,7 @@ public abstract class PrimitiveElementTraits<T>
             eina.Log.Error("Null pointer on primitive/struct container.");
             return default(T);
         }
-        var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
-        return w.Val;
+        return PrimitiveConversion.PointerToManaged<T>(nat);
     }
 
     public T NativeToManagedRef(IntPtr nat)

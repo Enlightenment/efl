@@ -156,6 +156,13 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
+      else if (field.type.is_ptr && need_pointer_conversion(regular))
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
       else if (need_struct_conversion(regular))
         {
            if (!as_generator(
@@ -256,6 +263,13 @@ struct to_external_field_convert_generator
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = new " << type << "(_internal_struct." << string << ", false, false, false);\n")
+               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+             return false;
+        }
+      else if (field.type.is_ptr && need_pointer_conversion(regular))
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }

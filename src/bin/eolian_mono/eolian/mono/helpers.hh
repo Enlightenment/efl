@@ -33,7 +33,6 @@ inline std::string struct_full_name(attributes::struct_def const& struct_)
 inline bool is_struct_blacklisted(std::string const& full_name)
 {
    return full_name == "Efl.Event.Description"
-       // || full_name == "Eina.File"
        || full_name == "Eina.Binbuf"
        || full_name == "Eina.Slice"
        || full_name == "Eina.Rw_Slice";
@@ -53,6 +52,30 @@ inline bool need_struct_conversion(attributes::regular_type_def const* regular)
 {
    return regular && regular->is_struct() && !is_struct_blacklisted(*regular);
 }
+
+inline bool need_pointer_conversion(attributes::regular_type_def const* regular)
+{
+   if (!regular)
+     return false;
+
+   if (regular->is_enum()
+       || (regular->is_struct() && type_full_name(*regular) != "Eina.Binbuf")
+      )
+     return true;
+
+   std::set<std::string> const types {
+     "bool", "char"
+     , "byte" , "short" , "int" , "long" , "llong" , "int8" , "int16" , "int32" , "int64" , "ssize"
+     , "ubyte", "ushort", "uint", "ulong", "ullong", "uint8", "uint16", "uint32", "uint64", "size"
+     , "ptrdiff"
+     , "float", "double"
+   };
+   if (types.find(regular->base_type) != types.end())
+     return true;
+
+   return false;
+}
+
 
 }
 

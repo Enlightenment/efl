@@ -86,6 +86,36 @@ public static class MemoryNative {
     }
 }
 
+[StructLayout(LayoutKind.Sequential)]
+public struct ConvertWrapper<T>
+{
+    public T val;
+}
+
+public static class PrimitiveConversion
+{
+   public static T PointerToManaged<T>(IntPtr nat)
+   {
+       if (nat == IntPtr.Zero)
+       {
+           eina.Log.Error("Null pointer for primitive type.");
+           return default(T);
+       }
+
+       var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
+       return w.val;
+   }
+
+   public static IntPtr ManagedToPointerAlloc<T>(T man)
+   {
+       GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
+       IntPtr ptr = pinnedData.AddrOfPinnedObject();
+       IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<T>());
+       pinnedData.Free();
+       return nat;
+   }
+}
+
 public static class StringConversion
 {
     public static IntPtr ManagedStringToNativeUtf8Alloc(string managedString)

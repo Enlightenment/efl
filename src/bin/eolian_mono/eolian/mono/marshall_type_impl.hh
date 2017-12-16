@@ -149,7 +149,7 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if (regular.is_struct() && !is_struct_blacklisted(regular))
+        if (!is_ptr && regular.is_struct() && !is_struct_blacklisted(regular))
           {
              return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
                     .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
@@ -169,14 +169,21 @@ struct marshall_type_visitor_generate
         {
            return *b;
         }
+      else if (is_ptr && need_pointer_conversion(&regular))
+        {
+           regular_type_def r = regular;
+           r.base_type = " System.IntPtr";
+           r.namespaces.clear();
+           return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(r);
+        }
       else
         {
-          return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return}(regular);
+          return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(regular);
         }
    }
    bool operator()(attributes::klass_name klass_name) const
    {
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return}(klass_name);
+     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(klass_name);
      // return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const& complex) const
@@ -259,7 +266,7 @@ struct marshall_type_visitor_generate
         }
 
       //return default_match(complex);
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return}(complex);
+     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(complex);
      // return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
    }
 };

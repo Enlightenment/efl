@@ -62,6 +62,7 @@ struct visitor_generate
    std::string c_type;
    bool is_out;
    bool is_return;
+   bool is_ptr;
 
    typedef visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -102,6 +103,7 @@ struct visitor_generate
            
            , {"ptrdiff", nullptr, [&] { return replace_base_integer<ptrdiff_t>(regular); }}
            , {"intptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
+           , {"uintptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
            , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
            , {"void", nullptr, [&]
                {
