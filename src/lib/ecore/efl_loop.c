@@ -357,12 +357,16 @@ _efl_loop_arguments_cleanup(Eina_Array *arga)
    eina_array_free(arga);
 }
 
-static void
-_efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
+static Eina_Value
+_efl_loop_arguments_send(void *data, const Eina_Value v,
+                         const Eina_Future *dead EINA_UNUSED)
+
 {
    static Eina_Bool initialization = EINA_TRUE;
    Efl_Loop_Arguments arge;
    Eina_Array *arga = data;
+
+   if (v.type == EINA_VALUE_TYPE_ERROR) goto on_error;
 
    arge.argv = arga;
    arge.initialization = initialization;
@@ -370,14 +374,9 @@ _efl_loop_arguments_send(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_event_callback_call(ecore_main_loop_get(),
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
-
+on_error:
    _efl_loop_arguments_cleanup(arga);
-}
-
-static void
-_efl_loop_arguments_cancel(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _efl_loop_arguments_cleanup(data);
+   return v;
 }
 
 // It doesn't make sense to send those argument to any other mainloop
