@@ -51,7 +51,7 @@ noinst_lib_LTLIBRARIES = libexample_numberwrapper.la
 noinst_libdir = $(abs_top_builddir)
 
 libexample_numberwrapper_la_SOURCES = example_numberwrapper.c
-libexample_numberwrapper_la_LDFLAGS = -shared
+libexample_numberwrapper_la_LDFLAGS = -shared @EFL_LTMODULE_FLAGS@
 libexample_numberwrapper_la_CFLAGS = $(COMMON_FLAGS) -DEFL_BETA_API_SUPPORT
 
 GENERATED += example_numberwrapper.eo.h example_numberwrapper.eo.c EoInherit01$(EXEEXT).config

@@ -352,16 +352,17 @@ tests/efl_mono/libefl_mono_test.dll: $(efl_mono_test_eolian_mono_files) tests/ef
 AM_TESTS_ENVIRONMENT += MONO='mono'; export MONO;
 AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'; export MONO_BUILDPATH;
 AM_TESTS_ENVIRONMENT += MONO_PATH='$(TEST_PATHS)'; export MONO_PATH;
+AM_TESTS_ENVIRONMENT += EXEEXT='$(EXEEXT)'; export EXEEXT;
 if HAVE_WIN32
 AM_TESTS_ENVIRONMENT += PATH='$(PATH):$(TEST_PATHS):$(WIN_ADD_TEST_PATHS)'; export PATH;
 else
 AM_TESTS_ENVIRONMENT += LD_LIBRARY_PATH='$(LD_LIBRARY_PATH):$(TEST_PATHS)'; export LD_LIBRARY_PATH;
 endif
 
-check_PROGRAMS += tests/efl_mono/efl_mono.exe
+check_PROGRAMS += tests/efl_mono/efl_mono
 TESTS += tests/efl_mono/mono_test_driver.sh
 
-tests_efl_mono_efl_mono_exe_SOURCES = \
+tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Main.cs \
      tests/efl_mono/Eina.cs \
      tests/efl_mono/Eldbus.cs \
@@ -384,11 +385,9 @@ lib/efl_mono/libefl_mono.dll.config:
 	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
 	echo "</configuration>" >> $@
 
-tests/efl_mono/efl_mono.exe$(EXEEXT): $(tests_efl_mono_efl_mono_exe_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
-	@rm -f tests/efl_mono/efl_mono.exe
+tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll
+	@rm -f $@
 	$(AM_V_MCS) $(MCS) $(MCS_FLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^))
-
-###EXTRA_DIST2 += $(tests_efl_mono_efl_mono_exe_srcs)
 
 # Rule for generating the .cs files
 tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
