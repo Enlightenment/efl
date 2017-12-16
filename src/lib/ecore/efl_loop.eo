@@ -129,20 +129,27 @@ class Efl.Loop (Efl.Object)
          return: bool; [[$true if successfully unregistered, $false otherwise.]]
       }
       message_handler_get @class {
-         [[ ]]
+         [[Get a message handler object that is created by and owned by
+           the Efl.Loop object, so you can listen to this message type by
+           listening to message events on the handler as well as send
+           objects as events.]]
          params {
-            @in loop: Efl.Loop; [[ ]]
-            @in klass: const(Efl.Class); [[ ]]
+            @in loop: Efl.Loop; [[The loop to get the object from.]]
+            @in klass: const(Efl.Class); [[The class of the message object.]]
          }
-         return: Efl.Loop.Message.Handler; [[ ]]
+         return: Efl.Loop.Message.Handler; [[The message handler to use.]]
       }
       message_process {
-         [[ ]]
-         return: bool; [[ ]]
+         [[Process all messages in the queue that have been sent by
+           Efl.Loop.Message.Handler objects and thus call the event
+           callbacks for these messages in order in the queue. There
+           should never be a need to call this method as it is
+           automatically called as part of the loop execution.]]
+         return: bool; [[True if messages existed and were called.]]
       }
       message_exists {
-         [[ ]]
-         return: bool; [[ ]]
+         [[Checks if there are any messages on the queue to call.]]
+         return: bool; [[True if there are messages to call. ]]
       }
    }
    events {

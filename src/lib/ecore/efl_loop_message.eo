@@ -3,7 +3,8 @@ import eina_types;
 
 class Efl.Loop.Message (Efl.Object)
 {
-   [[ ]]
+   [[Base message payload object class. Inherit this and extend for
+     specific message types.]]
    methods {
    }
    implements {
