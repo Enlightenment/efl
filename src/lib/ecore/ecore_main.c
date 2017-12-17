@@ -1389,7 +1389,6 @@ _ecore_main_win32_handler_add(Eo                    *obj,
                               Ecore_Win32_Handle_Cb  func,
                               const void            *data)
 {
-   Efl_Loop_Data *pd = ML_DAT;
    Ecore_Win32_Handler *wh;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -1400,6 +1399,7 @@ _ecore_main_win32_handler_add(Eo                    *obj,
    ECORE_MAGIC_SET(wh, ECORE_MAGIC_WIN32_HANDLER);
    wh->loop = obj;
    wh->loop_data = pd;
+   wh->handler = handler;
    wh->h = (HANDLE)h;
    wh->func = func;
    wh->data = (void *)data;
@@ -1410,7 +1410,9 @@ _ecore_main_win32_handler_add(Eo                    *obj,
 }
 
 void *
-_ecore_main_win32_handler_del(Eo *obj, Efl_Loop_Data *pd, Ecore_Win32_Handler *win32_handler)
+_ecore_main_win32_handler_del(Eo *obj EINA_UNUSED,
+                              Efl_Loop_Data *pd,
+                              Ecore_Win32_Handler *win32_handler)
 {
    if (win32_handler->delete_me)
      {
@@ -1431,8 +1433,7 @@ ecore_main_win32_handler_add(void                  *h,
                              const void            *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   return _ecore_main_win32_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
-                                        ML_DAT, NULL, func, data);
+   return _ecore_main_win32_handler_add(ML_OBJ, ML_DAT, NULL, h, func, data);
 }
 
 EAPI void *
@@ -2458,7 +2459,7 @@ _ecore_main_win32_objects_wait(DWORD objects_nbr,
 {
    Ecore_Main_Win32_Thread_Data *threads_data;
    HANDLE *threads_handles;
-   DWORD threads_nbr threads_remain, objects_idx, result, i;
+   DWORD threads_nbr, threads_remain, objects_idx, result, i;
 
    if (objects_nbr < MAXIMUM_WAIT_OBJECTS)
      return MsgWaitForMultipleObjects(objects_nbr,
@@ -2584,7 +2585,6 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
                          fd_set         *exceptfds,
                          struct timeval *tv)
 {
-   Eo *obj = ML_OBJ;
    Efl_Loop_Data *pd = ML_DAT;
    HANDLE *objects;
    int *sockets;
