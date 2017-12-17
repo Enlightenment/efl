@@ -119,6 +119,8 @@ static Eina_Bool
 ecore_future_dispatched(void *data EINA_UNUSED, int type  EINA_UNUSED, void *event)
 {
    Ecore_Future_Schedule_Entry *entry = event;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(entry, EINA_FALSE);
+
    entry->event = NULL;
    entry->cb(entry->future, entry->value);
    return EINA_FALSE;
