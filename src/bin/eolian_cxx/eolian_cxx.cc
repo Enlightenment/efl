@@ -226,7 +226,7 @@ types_generate(std::string const& fname, options_type const& opts,
    using namespace efl::eolian::grammar::attributes;
 
    std::vector<function_def> functions;
-   Eina_Iterator *itr = eolian_declarations_get_by_file(fname.c_str());
+   Eina_Iterator *itr = eolian_declarations_get_by_file(opts.state, fname.c_str());
    /* const */ Eolian_Declaration *decl;
 
    // Build list of functions with their parameters
