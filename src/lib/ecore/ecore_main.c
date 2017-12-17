@@ -1967,7 +1967,7 @@ _ecore_main_fd_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 
 #ifdef _WIN32
 static void
-_ecore_main_win32_handlers_cleanup(Eo *obj, Efl_Loop_Data *pd)
+_ecore_main_win32_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    Ecore_Win32_Handler *wh;
    Eina_List *l, *l2;
