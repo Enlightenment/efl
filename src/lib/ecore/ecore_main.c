@@ -1620,7 +1620,7 @@ _ecore_main_content_clear(Efl_Loop_Data *pd)
         pd->win32_handlers = (Ecore_Win32_Handler *)
           eina_inlist_remove(EINA_INLIST_GET(pd->win32_handlers),
                              EINA_INLIST_GET(wh));
-        if (fdh->handler) efl_del(fdh->handler);
+        if (wh->handler) efl_del(wh->handler);
         else
           {
              ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
@@ -1682,7 +1682,10 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    fd_set rfds, wfds, exfds;
    Ecore_Fd_Handler *fdh;
    Eina_List *l;
-   int max_fd, ret, err_no;
+   int max_fd, ret;
+#ifndef _WIN32
+   int err_no;
+#endif
 
    t = NULL;
    if ((!ECORE_FINITE(timeout)) || (EINA_DBL_EQ(timeout, 0.0)))
@@ -1779,7 +1782,9 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
    else
      ret = general_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+#ifndef _WIN32
    err_no = errno;
+#endif
    eina_evlog("!WAKE", NULL, 0.0, NULL);
    eina_evlog(">RUN", NULL, 0.0, NULL);
 
