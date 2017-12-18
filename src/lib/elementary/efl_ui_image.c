@@ -578,7 +578,7 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;
    priv->aspect_fixed = EINA_TRUE;
-   priv->load_size = 0;
+   priv->load_size = EINA_SIZE2D(0, 0);
    priv->scale = 1.0;
    priv->scale_up = EINA_TRUE;
    priv->scale_down = EINA_TRUE;
@@ -810,6 +810,16 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
 }
 
 static void
+_efl_ui_image_load_size_set_internal(Evas_Object *obj, Efl_Ui_Image_Data *sd)
+{
+   Eina_Size2D sz = sd->load_size;
+
+   if ((sz.w <= 0) || (sz.h <= 0))
+     sz = efl_gfx_view_size_get(obj);
+   evas_object_image_load_size_set(sd->img, sz.w, sz.h);
+}
+
+static void
 _efl_ui_image_file_set_do(Evas_Object *obj)
 {
    Evas_Object *pclip = NULL;
@@ -831,13 +841,7 @@ _efl_ui_image_file_set_do(Evas_Object *obj)
 
    sd->edje = EINA_FALSE;
 
-   if (sd->load_size > 0)
-     evas_object_image_load_size_set(sd->img, sd->load_size, sd->load_size);
-   else
-     {
-        Eina_Size2D sz = efl_gfx_view_size_get(obj);
-        evas_object_image_load_size_set(sd->img, sz.w, sz.h);
-     }
+   _efl_ui_image_load_size_set_internal(obj, sd);
 }
 
 static void
@@ -1283,30 +1287,27 @@ elm_image_prescale_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_image_efl_image_load_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
+_efl_ui_image_efl_image_load_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
-   // FIXME: This should handle both dimensions!
-   if (sz.w > sz.h)
-      sd->load_size = sz.w;
-   else
-      sd->load_size = sz.h;
+   sd->load_size = sz;
+   _efl_ui_image_load_size_set_internal(obj, sd);
 }
 
 EAPI int
 elm_image_prescale_get(const Evas_Object *obj)
 {
    Eina_Size2D sz;
-
    EFL_UI_IMAGE_CHECK(obj) 0;
 
    sz = efl_image_load_size_get(obj);
-   return sz.w;
+
+   return MAX(sz.w, sz.h);
 }
 
 EOLIAN static Eina_Size2D
 _efl_ui_image_efl_image_load_load_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
-   return EINA_SIZE2D(sd->load_size, sd->load_size);
+   return sd->load_size;
 }
 
 EOLIAN static void

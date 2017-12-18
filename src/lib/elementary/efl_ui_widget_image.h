@@ -61,7 +61,7 @@ struct _Efl_Ui_Image_Data
 
    Evas_Coord            img_x, img_y, img_w, img_h;
 
-   int                   load_size;
+   Eina_Size2D           load_size;
    int                   frame_count;
    int                   cur_frame;
 

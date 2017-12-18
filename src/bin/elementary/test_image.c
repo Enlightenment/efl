@@ -658,3 +658,78 @@ test_load_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *eve
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+static void
+_cb_prescale_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *o_bg = data;
+   int size;
+   size = elm_radio_value_get((Evas_Object *)obj);
+   elm_image_prescale_set(o_bg, size);
+}
+
+void
+test_image_prescale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *im;
+   Evas_Object *box, *hbox;
+   Evas_Object *rd, *rdg;
+   char buf[PATH_MAX];
+
+
+   win = elm_win_util_standard_add("image-prescale", "Image Prescale Test");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   im = elm_image_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   elm_image_file_set(im, buf, NULL);
+   evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, im);
+   evas_object_show(im);
+
+   hbox = elm_box_add(win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 50);
+   elm_object_text_set(rd, "50");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(rd, "changed", _cb_prescale_radio_changed, im);
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   rdg = rd;
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 100);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "100");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(rd, "changed", _cb_prescale_radio_changed, im);
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 200);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "200");
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(rd, "changed", _cb_prescale_radio_changed, im);
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+
+   elm_radio_value_set(rdg, 200);
+
+   elm_box_pack_end(box, hbox);
+   evas_object_show(hbox);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
