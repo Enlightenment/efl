@@ -1,0 +1,84 @@
+import eldbus_types;
+
+function Elm.Atspi.Method.Callback
+{
+   params {
+        @in obj: Elm.Atspi.Adaptor;
+        @in access: Efl.Access;
+        @in conn: ptr(Eldbus.Connection);
+        @in msg: ptr(Eldbus.Message);
+   }
+   return: ptr(Eldbus.Message);
+};
+
+struct Elm.Arg.Info
+{
+   signature: string;
+   name: string;
+}
+
+struct Elm.Atspi.Method
+{
+   arg_in: Elm.Arg.Info;
+   arg_out: Elm.Arg.Info;
+   cb: Elm.Atspi.Method.Callback;
+}
+
+struct Elm.Atspi.Signal
+{
+   name: string;
+}
+
+struct Elm.Atspi.Property
+{
+   name: string;
+}
+
+struct Elm.Atspi.Service.Interface.Desc
+{
+   name: string;
+   methods: hash<string, ptr(Elm.Atspi.Method)>;
+   properties: hash<string, ptr(Elm.Atspi.Property)>;
+   signals: array<ptr(Elm.Atspi.Signal)>;
+}
+
+abstract Elm.Atspi.Adaptor (Efl.Object)
+{
+   [[Base class for accessibility adaptors]]
+   methods {
+        @property cache {
+             get {
+             }
+             set {
+             }
+             values {
+                  cache: Efl.Access.Cache;
+             }
+        }
+        @property interface @protected {
+             set {
+             }
+             get {
+             }
+             values {
+                  desc: const(ptr(Elm.Atspi.Service.Interface.Desc));
+             }
+        }
+        register {
+             params {
+                  @in conn: ptr(Eldbus.Connection);
+                  @in path_prefix: string;
+             }
+        }
+        unregister {
+        }
+   }
+   implements {
+        Efl.Object.constructor;
+        Efl.Object.destructor;
+   }
+   constructors {
+        .cache;
+        .interface;
+   }
+}

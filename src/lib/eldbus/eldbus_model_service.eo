@@ -1,0 +1,207 @@
+import eldbus_types;
+
+class Eldbus.Model.Service (Efl.Object, Efl.Model) {
+     methods {
+          constructor {
+               params {
+                    @in conn: ptr(Eldbus.Connection);
+                    @in path: string;
+               }
+          }
+          constructor_from_xml {
+               params {
+                    @in xml: string;
+               }
+          }
+          fallback_constructor {
+               params {
+                    @in conn: ptr(Eldbus.Connection);
+                    @in prefix: string;
+               }
+          }
+          [[ Accessible also through "name" property ]]
+          @property name {
+               values {
+                  name: string;
+               }
+          }
+          @property path {
+               values {
+                  path: string;
+               }
+          }
+          @property context {
+               values {
+                  obj: Efl.Model;
+               }
+          }
+          @property interface {
+               keys {
+                    name: string;
+               }
+               get {
+               }
+               values {
+                    ret: Eldbus.Model.Service.Interface;
+               }
+          }
+          @property node {
+               keys {
+                    name: string;
+               }
+               get {
+               }
+               params {
+                    @in: Eldbus.Model.Service.Object;
+               }
+          }
+     }
+     implements {
+     }
+     constructors {
+          .constructor;
+          .fallback_constructor;
+     }
+     events {
+     }
+}
+
+class Eldbus.Model.Service.Interface (Efl.Object, Efl.Model)
+{
+   methods {
+        constructor {
+             params {
+                  @in desc: Eldbus.Introspection.Interface;
+             }
+        }
+        [[ accessibile also through "name" property ]]
+        @property name {
+             values {
+                ret: string;
+             }
+        }
+        @property context {
+             values {
+                  obj: Efl.Model;
+             }
+        }
+        @property method {
+             keys {
+                  name: string;
+             }
+             get {
+             }
+             params {
+                  @in: Eldbus.Model.Service.Method;
+             }
+        }
+        @property signal {
+             keys {
+                  name: string;
+             }
+             get {
+             }
+             params {
+                  @in: Eldbus.Model.Service.Signal;
+             }
+        }
+        @property property {
+             keys {
+                  name: string;
+             }
+             get {
+             }
+             params {
+                  @in: Eldbus.Model.Service.Property;
+             }
+        }
+   }
+   constructors {
+        .constructor;
+   }
+}
+
+class Eldbus.Model.Service.Property (Efl.Object, Efl.Model)
+{
+   methods {
+        constructor {
+             params {
+                  @in desc: Eldbus.Introspection.Property;
+             }
+        }
+        [[ accessibile also through property "name" ]]
+        @property name {
+             values {
+                  ret : string;
+             }
+        }
+        @property context {
+             values {
+                  obj: Efl.Model;
+             }
+        }
+   }
+   constructors {
+        .constructor;
+   }
+}
+
+class Eldbus.Model.Service.Method (Efl.Object, Efl.Model)
+{
+   methods {
+        constructor {
+             params {
+                  @in desc: Eldbus.Introspection.Method;
+             }
+        }
+        @property name {
+             values {
+             }
+        }
+        bind {
+             params {
+                  @in: void_ptr;
+             }
+        }
+        @property context {
+             values {
+                  obj: Efl.Model;
+             }
+        }
+   }
+   constructors {
+        .constructor;
+   }
+}
+
+class Eldbus.Model.Service.Signal ()
+{
+   methods {
+        constructor {
+             params {
+                  @in desc: Eldbus.Introspection.Signal;
+             }
+        }
+        call {
+             params {
+                  @in args: Eldbus.Model.Arguments;
+             }
+        }
+        bind {
+             params {
+                  @in: Efl.Event.Description;
+             }
+        }
+        @property context {
+             values {
+                  obj: Efl.Model;
+             }
+        }
+   }
+   constructors {
+        .constructor;
+   }
+   events {
+        signal,called;
+   }
+}
