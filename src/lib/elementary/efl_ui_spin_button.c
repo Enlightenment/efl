@@ -285,7 +285,7 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    const char *str, *point;
    char *insert, *new_str = NULL;
    double val;
-   int max_len, len;
+   int max_len = 0, len;
 
    EINA_SAFETY_ON_NULL_RETURN(data);
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -299,15 +299,9 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    insert = *text;
    new_str = _text_insert(str, insert, elm_entry_cursor_pos_get(obj));
    if (!new_str) return;
-   max_len = log10(fabs(pd->val_max)) + 1;
+   if (strchr(new_str, '-')) max_len++;
 
-   new_str = _text_insert(str, insert, elm_entry_cursor_pos_get(obj));
-   if (pd->format_type == SPIN_FORMAT_INT)
-     {
-        len = strlen(new_str);
-        if (len < max_len) goto end;
-     }
-   else if (pd->format_type == SPIN_FORMAT_FLOAT)
+   if (pd->format_type == SPIN_FORMAT_FLOAT)
      {
         point = strchr(new_str, '.');
         if (point)
@@ -319,6 +313,11 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
                }
           }
      }
+
+   max_len += (fabs(pd->val_max) > fabs(pd->val_min)) ?
+              (log10(fabs(pd->val_max)) + 1) : (log10(fabs(pd->val_min)) + 1);
+   len = strlen(new_str);
+   if (len < max_len) goto end;
 
    val = strtod(new_str, NULL);
    if ((val < pd->val_min) || (val > pd->val_max))
