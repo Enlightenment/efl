@@ -53,6 +53,16 @@ static int locks = 0;
 #endif
 
 static void
+_efl_net_proxy_helper_delete_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   if (ev->object == _efl_net_proxy_helper_exe)
+     {
+        INF("HTTP proxy helper object died before the process exited.");
+        _efl_net_proxy_helper_exe = NULL;
+     }
+}
+
+static void
 _efl_net_proxy_helper_spawn(void)
 {
    char buf[PATH_MAX];
@@ -102,6 +112,8 @@ _efl_net_proxy_helper_spawn(void)
         locks--;
      }
    eina_spinlock_release(&_efl_net_proxy_helper_queue_lock);
+   efl_event_callback_add(_efl_net_proxy_helper_exe, EFL_EVENT_DEL,
+                          _efl_net_proxy_helper_delete_cb, NULL);
 }
 
 static void
