@@ -1202,7 +1202,7 @@ _efl_net_dialer_http_curl_start(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    // TODO: move this to be per-loop once multiple mainloops are supported
    // this would need to attach something to the loop
    cm = &_cm_global;
-   if (!cm->loop) cm->loop = efl_loop_get(o);
+   cm->loop = efl_loop_get(o);
    if (!_efl_net_dialer_http_curlm_add(cm, o, pd->easy))
      {
         ERR("dialer=%p could not add curl easy handle to multi manager", o);
