@@ -2499,6 +2499,7 @@ end:
 Eolian_Unit *
 eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot, Eolian_Class **fcl)
 {
+   Eolian_Unit *ret = NULL;
    Eolian_Class *cl = eina_hash_find(parent->state->parsed, filename);
    if (cl)
      {
@@ -2510,7 +2511,7 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
           fname = eina_stringshare_add((fsl > bsl) ? (fsl + 1) : (bsl + 1));
         if (fname)
           {
-             Eolian_Unit *ret = eina_hash_find(parent->state->units, fname);
+             ret = eina_hash_find(parent->state->units, fname);
              eina_stringshare_del(fname);
              return ret;
           }
@@ -2555,12 +2556,13 @@ eo_parser_database_fill(Eolian_Unit *parent, const char *filename, Eina_Bool eot
    if (fcl) *fcl = cl;
 
 done:
+   ret = ls->unit;
    eina_hash_set(ls->state->parsed, filename, eot ? (void *)EINA_TRUE : cl);
    eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
-   eina_hash_add(parent->children, filename, ls->unit);
+   eina_hash_add(parent->children, filename, ret);
 
    eo_lexer_free(ls);
-   return ls->unit;
+   return ret;
 
 error:
    eina_hash_set(ls->state->parsing, filename, (void *)EINA_FALSE);
