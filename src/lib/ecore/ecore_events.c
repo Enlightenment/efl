@@ -71,10 +71,22 @@ ecore_event_add(int          type,
    return (Ecore_Event *)msg;
 }
 
+static void
+_event_del_cb(void *data, const Efl_Event *ev)
+{
+   Ecore_Future_Schedule_Entry *entry = data;
+   if ((ev->object == (Eo *) entry->event) && entry->future)
+     {
+        eina_future_cancel(entry->future);
+        eina_value_flush(&entry->value);
+     }
+}
+
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
    void *data = NULL;
+   if (!event) return data;
    ecore_event_message_data_get((Eo *)event, NULL, &data, NULL, NULL);
    _efl_loop_message_unsend((Eo *)event);
    return data;
@@ -141,8 +153,9 @@ ecore_future_free(void *user_data, void *func_data EINA_UNUSED)
 static Eina_Future_Schedule_Entry *
 ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb, Eina_Future *future, Eina_Value value)
 {
-   Ecore_Future_Schedule_Entry *entry = eina_mempool_malloc(mp_future_schedule_entry,
-                                                            sizeof(Ecore_Future_Schedule_Entry));
+   Ecore_Future_Schedule_Entry *entry;
+
+   entry = eina_mempool_malloc(mp_future_schedule_entry, sizeof(*entry));
    EINA_SAFETY_ON_NULL_RETURN_VAL(entry, NULL);
    entry->base.scheduler = sched;
    entry->cb = cb;
@@ -150,6 +163,7 @@ ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb,
    entry->value = value;
    entry->event = ecore_event_add(ECORE_EV_FUTURE_ID, entry, ecore_future_free, entry);
    EINA_SAFETY_ON_NULL_GOTO(entry->event, err);
+   efl_event_callback_add((Eo *) entry->event, EFL_EVENT_DEL, _event_del_cb, entry);
    return &entry->base;
 
   err:
