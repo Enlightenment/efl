@@ -3,6 +3,8 @@
 #endif
 
 #define EFL_CANVAS_BETA
+#define EFL_UI_SCROLLBAR_PROTECTED
+#define EFL_UI_SCROLLBAR_BETA
 
 #include <Efl.h>
 
@@ -75,6 +77,8 @@
 #include "interfaces/efl_ui_draggable.eo.c"
 #include "interfaces/efl_ui_clickable.eo.c"
 #include "interfaces/efl_ui_scrollable.eo.c"
+#include "interfaces/efl_ui_scrollable_interactive.eo.c"
+#include "interfaces/efl_ui_scrollbar.eo.c"
 #include "interfaces/efl_ui_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
 

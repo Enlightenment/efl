@@ -4,12 +4,14 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_UI_SCROLL_MANAGER_PROTECTED
+#define EFL_UI_SCROLLBAR_PROTECTED
+#define EFL_UI_SCROLLBAR_BETA
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "efl_ui_image_zoomable_private.h"
-#include "elm_interface_scrollable.h"
 
 #define MY_PAN_CLASS EFL_UI_IMAGE_ZOOMABLE_PAN_CLASS
 
@@ -143,7 +145,7 @@ _calc_job_cb(void *data)
         sd->minw = minw;
         sd->minh = minh;
 
-        efl_event_callback_legacy_call(sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
+        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;
@@ -200,11 +202,11 @@ _image_place(Evas_Object *obj,
    evas_object_move(sd->img, ox + 0 - px + ax, oy + 0 - py + ay);
    evas_object_resize(sd->img, gw, gh);
 
-   if (sd->show.show)
+   if (sd->show_item)
      {
-        sd->show.show = EINA_FALSE;
-        elm_interface_scrollable_content_region_show
-              (obj, sd->show.x, sd->show.y, sd->show.w, sd->show.h);
+        sd->show_item = EINA_FALSE;
+        efl_ui_scrollable_scroll
+              (sd->smanager, sd->show, EINA_FALSE);
      }
 }
 
@@ -381,23 +383,24 @@ _efl_ui_image_zoomable_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Imag
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_pan_elm_pan_pos_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Evas_Coord x, Evas_Coord y)
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Position2D pos)
 {
-   if ((x == psd->wsd->pan_x) && (y == psd->wsd->pan_y)) return;
-   psd->wsd->pan_x = x;
-   psd->wsd->pan_y = y;
+   if ((pos.x == psd->wsd->pan_x) && (pos.y == psd->wsd->pan_y)) return;
+   psd->wsd->pan_x = pos.x;
+   psd->wsd->pan_y = pos.y;
    evas_object_smart_changed(obj);
+
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, NULL);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_pan_elm_pan_pos_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
+EOLIAN static Eina_Position2D
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
-   if (x) *x = psd->wsd->pan_x;
-   if (y) *y = psd->wsd->pan_y;
+   return EINA_POSITION2D(psd->wsd->pan_x, psd->wsd->pan_y);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_pan_elm_pan_pos_max_get(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
+EOLIAN static Eina_Position2D
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_max_get(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    Evas_Coord ow, oh;
 
@@ -406,28 +409,27 @@ _efl_ui_image_zoomable_pan_elm_pan_pos_max_get(Eo *obj, Efl_Ui_Image_Zoomable_Pa
    if (ow < 0) ow = 0;
    oh = psd->wsd->minh - oh;
    if (oh < 0) oh = 0;
-   if (x) *x = ow;
-   if (y) *y = oh;
+
+   return EINA_POSITION2D(ow, oh);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_pan_elm_pan_pos_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *_pd EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
+EOLIAN static Eina_Position2D
+_efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_min_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *_pd EINA_UNUSED)
 {
-   if (x) *x = 0;
-   if (y) *y = 0;
+   return EINA_POSITION2D(0, 0);
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_pan_elm_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Size2D
+_efl_ui_image_zoomable_pan_efl_ui_pan_content_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
-   if (w) *w = psd->wsd->minw;
-   if (h) *h = psd->wsd->minh;
+   return EINA_SIZE2D(psd->wsd->minw, psd->wsd->minh);
 }
 
 EOLIAN static void
 _efl_ui_image_zoomable_pan_efl_object_destructor(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    efl_data_unref(psd->wobj, psd->wsd);
+
    efl_destructor(efl_super(obj, MY_PAN_CLASS));
 }
 
@@ -725,28 +727,28 @@ static Eina_Bool
 _zoom_do(Evas_Object *obj,
          double t)
 {
-   Evas_Coord xx, yy, ow = 0, oh = 0;
+   Evas_Coord xx, yy;
+   Eina_Rect view = {};
 
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    sd->size.w = (sd->size.ow * (1.0 - t)) + (sd->size.nw * t);
    sd->size.h = (sd->size.oh * (1.0 - t)) + (sd->size.nh * t);
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, &ow, &oh);
-   xx = (sd->size.spos.x * sd->size.w) - (ow / 2);
-   yy = (sd->size.spos.y * sd->size.h) - (oh / 2);
+   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
+   xx = (sd->size.spos.x * sd->size.w) - (view.w / 2);
+   yy = (sd->size.spos.y * sd->size.h) - (view.h / 2);
    if (xx < 0) xx = 0;
-   else if (xx > (sd->size.w - ow))
-     xx = sd->size.w - ow;
+   else if (xx > (sd->size.w - view.w))
+     xx = sd->size.w - view.w;
    if (yy < 0) yy = 0;
-   else if (yy > (sd->size.h - oh))
-     yy = sd->size.h - oh;
+   else if (yy > (sd->size.h - view.h))
+     yy = sd->size.h - view.h;
 
-   sd->show.show = EINA_TRUE;
+   sd->show_item = EINA_TRUE;
    sd->show.x = xx;
    sd->show.y = yy;
-   sd->show.w = ow;
-   sd->show.h = oh;
+   sd->show.w = view.w;
+   sd->show.h = view.h;
 
    if (sd->orientation_changed)
      {
@@ -886,7 +888,7 @@ _efl_ui_image_zoomable_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED)
+_efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    Eina_Bool fdo = EINA_FALSE;
@@ -897,47 +899,18 @@ _efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Dat
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
 
+   efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
+
    _sizing_eval(obj);
 
    return int_ret;
 }
 
 static void
-_scroll_animate_start_cb(Evas_Object *obj,
-                         void *data EINA_UNUSED)
+_scroll_cb(void * data,
+           const Efl_Event *event EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
-}
-
-static void
-_scroll_animate_stop_cb(Evas_Object *obj,
-                        void *data EINA_UNUSED)
-{
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
-}
-
-static void
-_scroll_drag_start_cb(Evas_Object *obj,
-                      void *data EINA_UNUSED)
-{
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
-}
-
-static void
-_scroll_drag_stop_cb(Evas_Object *obj,
-                     void *data EINA_UNUSED)
-{
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
-}
-
-static void
-_scroll_cb(Evas_Object *obj,
-           void *data EINA_UNUSED)
-{
+   Evas_Object *obj = data;
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
    if (!sd->scr_timer)
@@ -948,63 +921,56 @@ _scroll_cb(Evas_Object *obj,
 
    ecore_timer_del(sd->scr_timer);
    sd->scr_timer = ecore_timer_add(0.5, _scroll_timeout_cb, obj);
-
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, NULL);
 }
 
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
+   Eina_Rect view = {};
+   Eina_Position2D pos = {};
    const char *dir = params;
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
-   Evas_Coord x = 0;
-   Evas_Coord y = 0;
-   Evas_Coord v_h = 0;
    Evas_Coord step_x = 0;
    Evas_Coord step_y = 0;
-   Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
 
-   elm_interface_scrollable_content_pos_get(obj, &x, &y);
-   elm_interface_scrollable_step_size_get(obj, &step_x, &step_y);
-   elm_interface_scrollable_page_size_get(obj, &page_x, &page_y);
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, NULL, &v_h);
+   pos = efl_ui_scrollable_content_pos_get(sd->smanager);
+   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
 
    if (!strcmp(dir, "left"))
      {
-        x -= step_x;
+        pos.x -= step_x;
      }
    else if (!strcmp(dir, "right"))
      {
-        x += step_x;
+        pos.x += step_x;
      }
    else if (!strcmp(dir, "up"))
      {
-        y -= step_y;
+        pos.y -= step_y;
      }
    else if (!strcmp(dir, "down"))
      {
-        y += step_y;
+        pos.y += step_y;
      }
    else if (!strcmp(dir, "prior"))
      {
         if (page_y < 0)
-          y -= -(page_y * v_h) / 100;
+          pos.y -= -(page_y * view.h) / 100;
         else
-          y -= page_y;
+          pos.y -= page_y;
      }
    else if (!strcmp(dir, "next"))
      {
         if (page_y < 0)
-          y += -(page_y * v_h) / 100;
+          pos.y += -(page_y * view.h) / 100;
         else
-          y += page_y;
+          pos.y += page_y;
      }
    else return EINA_FALSE;
 
-   elm_interface_scrollable_content_pos_set(obj, x, y, EINA_TRUE);
+   efl_ui_scrollable_content_pos_set(sd->smanager, pos);
    return EINA_TRUE;
 }
 
@@ -1076,7 +1042,7 @@ _bounce_eval(void *data, const Efl_Event *event EINA_UNUSED)
    sd->g_layer_zoom.imy = 0;
    sd->zoom_g_layer = EINA_FALSE;
 
-   elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+   efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_FALSE);
 
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
 }
@@ -1112,18 +1078,16 @@ _g_layer_zoom_do(Evas_Object *obj,
                  Elm_Gesture_Zoom_Info *g_layer)
 {
    int regx, regy, regw, regh, ix, iy, iw, ih;
-   Evas_Coord rx, ry, rw = 0, rh = 0;
    int xx, yy;
+   Eina_Rect view = {};
 
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    sd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
    sd->zoom = sd->g_layer_start / g_layer->zoom;
    sd->size.ow = sd->size.w;
    sd->size.oh = sd->size.h;
-   elm_interface_scrollable_content_pos_get(obj, &rx, &ry);
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, &rw, &rh);
-   if ((rw <= 0) || (rh <= 0)) return;
+   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
+   if ((view.w <= 0) || (view.h <= 0)) return;
 
    sd->size.nw = (double)sd->size.imw / sd->zoom;
    sd->size.nh = (double)sd->size.imh / sd->zoom;
@@ -1139,30 +1103,30 @@ _g_layer_zoom_do(Evas_Object *obj,
    sd->g_layer_zoom.imx = 0;
    sd->g_layer_zoom.imy = 0;
 
-   if ((xx < 0) || (rw > sd->size.nw))
+   if ((xx < 0) || (view.w > sd->size.nw))
      {
         sd->g_layer_zoom.imx = xx;
         xx = 0;
      }
-   else if ((xx + rw) > sd->size.nw)
+   else if ((xx + view.w) > sd->size.nw)
      {
-        sd->g_layer_zoom.imx = xx + rw - sd->size.nw;
-        xx = sd->size.nw - rw;
+        sd->g_layer_zoom.imx = xx + view.w - sd->size.nw;
+        xx = sd->size.nw - view.w;
      }
 
-   if ((yy < 0) || (rh > sd->size.nh))
+   if ((yy < 0) || (view.h > sd->size.nh))
      {
         sd->g_layer_zoom.imy = yy;
         yy = 0;
      }
-   else if ((yy + rh) > sd->size.nh)
+   else if ((yy + view.h) > sd->size.nh)
      {
-        sd->g_layer_zoom.imy = yy + rh - sd->size.nh;
-        yy = sd->size.nh - rh;
+        sd->g_layer_zoom.imy = yy + view.h - sd->size.nh;
+        yy = sd->size.nh - view.h;
      }
 
-   sd->size.spos.x = (double)(xx + (rw / 2)) / (double)(sd->size.nw);
-   sd->size.spos.y = (double)(yy + (rh / 2)) / (double)(sd->size.nh);
+   sd->size.spos.x = (double)(xx + (view.w / 2)) / (double)(sd->size.nw);
+   sd->size.spos.y = (double)(yy + (view.h / 2)) / (double)(sd->size.nh);
 
    _zoom_do(obj, 1.0);
 }
@@ -1175,22 +1139,21 @@ _g_layer_zoom_start_cb(void *data,
    Elm_Gesture_Zoom_Info *p = event_info;
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
    double marginx = 0, marginy = 0;
-   Evas_Coord rw = 0, rh = 0;
    int x, y, w, h;
+   Eina_Rect view = {};
 
    _efl_ui_image_zoomable_bounce_reset(obj, sd);
    sd->zoom_g_layer = EINA_TRUE;
 
-   elm_interface_scrollable_freeze_set(obj, EINA_TRUE);
+   efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_TRUE);
 
    elm_photocam_image_region_get(obj, &x, &y, &w, &h);
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, &rw, &rh);
+   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
 
-   if (rw > sd->size.nw)
-     marginx = (rw - sd->size.nw) / 2;
-   if (rh > sd->size.nh)
-     marginy = (rh - sd->size.nh) / 2;
+   if (view.w > sd->size.nw)
+     marginx = (view.w - sd->size.nw) / 2;
+   if (view.h > sd->size.nh)
+     marginy = (view.h - sd->size.nh) / 2;
 
    sd->g_layer_start = sd->zoom;
 
@@ -1220,10 +1183,8 @@ _g_layer_zoom_end_cb(void *data,
 {
    Evas_Object *obj = data;
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
-   Evas_Coord rw, rh;
 
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, &rw, &rh);
+   Eina_Rect view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
    sd->g_layer_start = 1.0;
 
    if (sd->g_layer_zoom.imx || sd->g_layer_zoom.imy)
@@ -1236,13 +1197,13 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.x_end = 0;
         sd->g_layer_zoom.bounce.y_end = 0;
 
-        if (rw > sd->size.nw &&
-            rh > sd->size.nh)
+        if (view.w > sd->size.nw &&
+            view.h > sd->size.nh)
           {
              Evas_Coord pw, ph;
              double z;
 
-             if ((sd->size.imw < rw) && (sd->size.imh < rh))
+             if ((sd->size.imw < view.w) && (sd->size.imh < view.h))
                {
                   sd->zoom = 1;
                   sd->size.nw = sd->size.imw;
@@ -1250,15 +1211,15 @@ _g_layer_zoom_end_cb(void *data,
                }
              else
                {
-                  ph = (sd->size.imh * rw) / sd->size.imw;
-                  if (ph > rh)
+                  ph = (sd->size.imh * view.w) / sd->size.imw;
+                  if (ph > view.h)
                     {
-                       pw = (sd->size.imw * rh) / sd->size.imh;
-                       ph = rh;
+                       pw = (sd->size.imw * view.h) / sd->size.imh;
+                       ph = view.h;
                     }
                   else
                     {
-                       pw = rw;
+                       pw = view.w;
                     }
                   if (sd->size.imw > sd->size.imh)
                     z = (double)sd->size.imw / pw;
@@ -1269,8 +1230,8 @@ _g_layer_zoom_end_cb(void *data,
                   sd->size.nw = pw;
                   sd->size.nh = ph;
                }
-             sd->g_layer_zoom.bounce.x_end = (sd->size.nw - rw) / 2;
-             sd->g_layer_zoom.bounce.y_end = (sd->size.nh - rh) / 2;
+             sd->g_layer_zoom.bounce.x_end = (sd->size.nw - view.w) / 2;
+             sd->g_layer_zoom.bounce.y_end = (sd->size.nh - view.h) / 2;
           }
         else
           {
@@ -1282,18 +1243,18 @@ _g_layer_zoom_end_cb(void *data,
              if (xx < 0) xx = 0;
              if (yy < 0) yy = 0;
 
-             if (rw > sd->size.nw)
-               sd->g_layer_zoom.bounce.x_end = (sd->size.nw - rw) / 2;
-             if ((xx + rw) > sd->size.nw)
-               xx = sd->size.nw - rw;
+             if (view.w > sd->size.nw)
+               sd->g_layer_zoom.bounce.x_end = (sd->size.nw - view.w) / 2;
+             if ((xx + view.w) > sd->size.nw)
+               xx = sd->size.nw - view.w;
 
-             if (rh > sd->size.nh)
-               sd->g_layer_zoom.bounce.y_end = (sd->size.nh - rh) / 2;
-             if ((yy + rh) > sd->size.nh)
-               yy = sd->size.nh - rh;
+             if (view.h > sd->size.nh)
+               sd->g_layer_zoom.bounce.y_end = (sd->size.nh - view.h) / 2;
+             if ((yy + view.h) > sd->size.nh)
+               yy = sd->size.nh - view.h;
 
-             sd->size.spos.x = (double)(xx + (rw / 2)) / (double)(sd->size.nw);
-             sd->size.spos.y = (double)(yy + (rh / 2)) / (double)(sd->size.nh);
+             sd->size.spos.x = (double)(xx + (view.w / 2)) / (double)(sd->size.nw);
+             sd->size.spos.y = (double)(yy + (view.h / 2)) / (double)(sd->size.nh);
           }
 
         sd->g_layer_zoom.bounce.t_start = t;
@@ -1304,7 +1265,7 @@ _g_layer_zoom_end_cb(void *data,
      }
    else
      {
-        elm_interface_scrollable_freeze_set(obj, EINA_FALSE);
+        efl_ui_scrollable_scroll_freeze_set(obj, EINA_FALSE);
         sd->zoom_g_layer = EINA_FALSE;
      }
 
@@ -1399,6 +1360,297 @@ _efl_ui_image_zoomable_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
    return sd->flip;
 }
 
+static void
+_efl_ui_image_zoomable_bar_read_and_update(Eo *obj)
+{
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   double vx, vy;
+
+   edje_object_part_drag_value_get
+      (wd->resize_obj, "elm.dragable.vbar", NULL, &vy);
+   edje_object_part_drag_value_get
+      (wd->resize_obj, "elm.dragable.hbar", &vx, NULL);
+   efl_ui_scrollbar_bar_position_set(sd->smanager, vx, vy);
+}
+
+static void
+_efl_ui_image_zoomable_reload_cb(void *data,
+                                 Evas_Object *obj EINA_UNUSED,
+                                 const char *emission EINA_UNUSED,
+                                 const char *source EINA_UNUSED)
+{
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
+
+   efl_ui_scrollbar_bar_visibility_update(sd->smanager);
+}
+
+static void
+_efl_ui_image_zoomable_vbar_drag_cb(void *data,
+                                    Evas_Object *obj EINA_UNUSED,
+                                    const char *emission EINA_UNUSED,
+                                    const char *source EINA_UNUSED)
+{
+   _efl_ui_image_zoomable_bar_read_and_update(data);
+
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+}
+
+static void
+_efl_ui_image_zoomable_vbar_press_cb(void *data,
+                                     Evas_Object *obj EINA_UNUSED,
+                                     const char *emission EINA_UNUSED,
+                                     const char *source EINA_UNUSED)
+{
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+}
+
+static void
+_efl_ui_image_zoomable_vbar_unpress_cb(void *data,
+                                       Evas_Object *obj EINA_UNUSED,
+                                       const char *emission EINA_UNUSED,
+                                       const char *source EINA_UNUSED)
+{
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+}
+
+static void
+_efl_ui_image_zoomable_edje_drag_start_cb(void *data,
+                                          Evas_Object *obj EINA_UNUSED,
+                                          const char *emission EINA_UNUSED,
+                                          const char *source EINA_UNUSED)
+{
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
+
+   _efl_ui_image_zoomable_bar_read_and_update(data);
+
+   sd->freeze_want = efl_ui_scrollable_scroll_freeze_get(sd->smanager);
+   efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_TRUE);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+}
+
+static void
+_efl_ui_image_zoomable_edje_drag_stop_cb(void *data,
+                                         Evas_Object *obj EINA_UNUSED,
+                                         const char *emission EINA_UNUSED,
+                                         const char *source EINA_UNUSED)
+{
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
+
+   _efl_ui_image_zoomable_bar_read_and_update(data);
+
+   efl_ui_scrollable_scroll_freeze_set(sd->smanager, sd->freeze_want);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+}
+
+static void
+_efl_ui_image_zoomable_edje_drag_cb(void *data,
+                                    Evas_Object *obj EINA_UNUSED,
+                                    const char *emission EINA_UNUSED,
+                                    const char *source EINA_UNUSED)
+{
+   _efl_ui_image_zoomable_bar_read_and_update(data);
+}
+
+static void
+_efl_ui_image_zoomable_hbar_drag_cb(void *data,
+                                    Evas_Object *obj EINA_UNUSED,
+                                    const char *emission EINA_UNUSED,
+                                    const char *source EINA_UNUSED)
+{
+   _efl_ui_image_zoomable_bar_read_and_update(data);
+
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+}
+
+static void
+_efl_ui_image_zoomable_hbar_press_cb(void *data,
+                                     Evas_Object *obj EINA_UNUSED,
+                                     const char *emission EINA_UNUSED,
+                                     const char *source EINA_UNUSED)
+{
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+}
+
+static void
+_efl_ui_image_zoomable_hbar_unpress_cb(void *data,
+                                       Evas_Object *obj EINA_UNUSED,
+                                       const char *emission EINA_UNUSED,
+                                       const char *source EINA_UNUSED)
+{
+   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+}
+
+static void
+_efl_ui_image_zoomable_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *obj = data;
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   double width = 0.0, height = 0.0;
+
+   efl_ui_scrollbar_bar_size_get(sd->smanager, &width, &height);
+   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.hbar", width, 1.0);
+   edje_object_part_drag_size_set(wd->resize_obj, "elm.dragable.vbar", 1.0, height);
+}
+
+static void
+_efl_ui_image_zoomable_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *obj = data;
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   double posx = 0.0, posy = 0.0;
+
+   efl_ui_scrollbar_bar_position_get(sd->smanager, &posx, &posy);
+   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.hbar", posx, 0.0);
+   edje_object_part_drag_value_set(wd->resize_obj, "elm.dragable.vbar", 0.0, posy);
+}
+
+static void
+_efl_ui_image_zoomable_bar_show_cb(void *data, const Efl_Event *event)
+{
+   Eo *obj = data;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+
+   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+     edje_object_signal_emit(wd->resize_obj, "elm,action,show,hbar", "elm");
+   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+     edje_object_signal_emit(wd->resize_obj, "elm,action,show,vbar", "elm");
+}
+
+static void
+_efl_ui_image_zoomable_bar_hide_cb(void *data, const Efl_Event *event)
+{
+   Eo *obj = data;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+
+   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+     edje_object_signal_emit(wd->resize_obj, "elm,action,hide,hbar", "elm");
+   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+     edje_object_signal_emit(wd->resize_obj, "elm,action,hide,vbar", "elm");
+}
+
+static void
+_efl_ui_image_zoomable_edje_object_attach(Eo *obj)
+{
+   efl_layout_signal_callback_add
+     (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag", "elm.dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
+     obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,set", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,start", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,stop", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,step", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,page", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "elm,vbar,press", "elm",
+     _efl_ui_image_zoomable_vbar_press_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "elm,vbar,unpress", "elm",
+     _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag", "elm.dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
+     obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,set", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,start", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,stop", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,step", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "drag,page", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "elm,hbar,press", "elm",
+     _efl_ui_image_zoomable_hbar_press_cb, obj);
+   efl_layout_signal_callback_add
+     (obj, "elm,hbar,unpress", "elm",
+     _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+}
+
+static void
+_efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
+{
+   efl_layout_signal_callback_del
+     (obj, "reload", "elm", _efl_ui_image_zoomable_reload_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag", "elm.dragable.vbar", _efl_ui_image_zoomable_vbar_drag_cb,
+     obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,set", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,start", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,stop", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,step", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,page", "elm.dragable.vbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "elm,vbar,press", "elm",
+     _efl_ui_image_zoomable_vbar_press_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "elm,vbar,unpress", "elm",
+     _efl_ui_image_zoomable_vbar_unpress_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag", "elm.dragable.hbar", _efl_ui_image_zoomable_hbar_drag_cb,
+     obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,set", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,start", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_start_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,stop", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_stop_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,step", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "drag,page", "elm.dragable.hbar",
+     _efl_ui_image_zoomable_edje_drag_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "elm,hbar,press", "elm",
+     _efl_ui_image_zoomable_hbar_press_cb, obj);
+   efl_layout_signal_callback_del
+     (obj, "elm,hbar,unpress", "elm",
+     _efl_ui_image_zoomable_hbar_unpress_cb, obj);
+}
+
 EOLIAN static void
 _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable_Data *priv)
 {
@@ -1417,34 +1669,24 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    elm_widget_theme_object_set
       (obj, edje, "photocam", "base", elm_widget_style_get(obj));
 
-   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_smart_member_add(priv->hit_rect, obj);
-   elm_widget_sub_object_add(obj, priv->hit_rect);
-
-   /* common scroller hit rectangle setup */
-   evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
-   evas_object_show(priv->hit_rect);
-   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
-
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   elm_interface_scrollable_objects_set(obj, edje, priv->hit_rect);
+   priv->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
 
-   elm_interface_scrollable_animate_start_cb_set(obj, _scroll_animate_start_cb);
-   elm_interface_scrollable_animate_stop_cb_set(obj, _scroll_animate_stop_cb);
-   elm_interface_scrollable_drag_start_cb_set(obj, _scroll_drag_start_cb);
-   elm_interface_scrollable_drag_stop_cb_set(obj, _scroll_drag_stop_cb);
-   elm_interface_scrollable_scroll_cb_set(obj, _scroll_cb);
+   efl_ui_mirrored_set(priv->smanager, efl_ui_mirrored_get(obj));
+   efl_ui_scrollable_bounce_enabled_set(priv->smanager, bounce, bounce);
 
-   elm_interface_scrollable_bounce_allow_set(obj, bounce, bounce);
+   priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
 
-   priv->pan_obj = efl_add(MY_PAN_CLASS, evas_object_evas_get(obj));
+   efl_ui_scroll_manager_pan_set(priv->smanager, priv->pan_obj);
+   edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
+
    pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
    efl_data_ref(obj, MY_CLASS);
    pan_data->wobj = obj;
    pan_data->wsd = priv;
 
-   elm_interface_scrollable_extern_pan_set(obj, priv->pan_obj);
+   efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
 
    priv->g_layer_start = 1.0;
    priv->zoom = 1;
@@ -1471,8 +1713,17 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    edje_object_size_min_calc(edje, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
-   _sizing_eval(obj);
+   _efl_ui_image_zoomable_edje_object_attach(obj);
 
+   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
+                          _efl_ui_image_zoomable_bar_size_changed_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
+                          _efl_ui_image_zoomable_bar_pos_changed_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW,
+                          _efl_ui_image_zoomable_bar_show_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
+                          _efl_ui_image_zoomable_bar_hide_cb, obj);
+   _sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -1500,38 +1751,38 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
    ecore_timer_del(sd->long_timer);
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
 
+   _efl_ui_image_zoomable_edje_object_detach(obj);
+   efl_del(sd->pan_obj);
+   sd->pan_obj = NULL;
+   efl_del(sd->smanager);
+   sd->smanager = NULL;
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Position2D pos)
+_efl_ui_image_zoomable_efl_gfx_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sdi EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Size2D sz)
+_efl_ui_image_zoomable_efl_gfx_size_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
    efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_gfx_size_set(sd->hit_rect, sz);
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Object *member)
+_efl_ui_image_zoomable_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, Evas_Object *member)
 {
-
    efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
-
-   if (sd->hit_rect)
-     evas_object_raise(sd->hit_rect);
 }
 
 EOLIAN static Eo *
@@ -1567,6 +1818,28 @@ _efl_ui_image_zoomable_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, 
      return efl_layout_group_size_max_get(sd->edje);
    else
      return EINA_SIZE2D(0, 0);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Eina_Bool ok;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   ok = efl_layout_signal_callback_add(wd->resize_obj, emission, source, func_cb, data);
+
+   return ok;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Eina_Bool ok;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   ok = efl_layout_signal_callback_del(wd->resize_obj, emission, source, func_cb, data);
+
+   return ok;
 }
 
 static Eina_Bool
@@ -1960,9 +2233,11 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
    double z;
    Eina_List *l;
    Efl_Ui_Image_Zoomable_Grid *g, *g_zoom = NULL;
-   Evas_Coord pw, ph, rx, ry, rw, rh;
+   Evas_Coord pw, ph;
    int zoom_changed = 0, started = 0;
    Eina_Bool an = EINA_FALSE;
+   Eina_Rect view = {};
+   Eina_Position2D pos = {};
 
    if (zoom <= (1.0 / 256.0)) zoom = (1.0 / 256.0);
    if (EINA_DBL_EQ(zoom, sd->zoom)) return;
@@ -1970,10 +2245,9 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
    sd->zoom = zoom;
    sd->size.ow = sd->size.w;
    sd->size.oh = sd->size.h;
-   elm_interface_scrollable_content_pos_get(obj, &rx, &ry);
-   elm_interface_scrollable_content_viewport_geometry_get
-         (obj, NULL, NULL, &rw, &rh);
-   if ((rw <= 0) || (rh <= 0)) return;
+   pos = efl_ui_scrollable_content_pos_get(sd->smanager);
+   view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
+   if ((view.w <= 0) || (view.h <= 0)) return;
 
    if (sd->mode == ELM_PHOTOCAM_ZOOM_MODE_MANUAL)
      {
@@ -1989,15 +2263,15 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
           }
         else
           {
-             ph = (sd->size.imh * rw) / sd->size.imw;
-             if (ph > rh)
+             ph = (sd->size.imh * view.w) / sd->size.imw;
+             if (ph > view.h)
                {
-                  pw = (sd->size.imw * rh) / sd->size.imh;
-                  ph = rh;
+                  pw = (sd->size.imw * view.h) / sd->size.imh;
+                  ph = view.h;
                }
              else
                {
-                  pw = rw;
+                  pw = view.w;
                }
              if (sd->size.imw > sd->size.imh)
                z = (double)sd->size.imw / pw;
@@ -2019,15 +2293,15 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
           }
         else
           {
-             ph = (sd->size.imh * rw) / sd->size.imw;
-             if (ph < rh)
+             ph = (sd->size.imh * view.w) / sd->size.imw;
+             if (ph < view.h)
                {
-                  pw = (sd->size.imw * rh) / sd->size.imh;
-                  ph = rh;
+                  pw = (sd->size.imw * view.h) / sd->size.imh;
+                  ph = view.h;
                }
              else
                {
-                  pw = rw;
+                  pw = view.w;
                }
              if (sd->size.imw > sd->size.imh)
                z = (double)sd->size.imw / pw;
@@ -2047,7 +2321,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
              sd->size.nw = 0;
              sd->size.nh = 0;
           }
-        else if ((sd->size.imw < rw) && (sd->size.imh < rh))
+        else if ((sd->size.imw < view.w) && (sd->size.imh < view.h))
           {
              if (!EINA_DBL_EQ(sd->zoom, 1)) zoom_changed = 1;
              sd->zoom = 1;
@@ -2056,14 +2330,14 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_set(Eo *obj, Efl_Ui_Image_Zoomable_Data 
           }
         else
           {
-             ph = (sd->size.imh * rw) / sd->size.imw;
-             if (ph > rh)
+             ph = (sd->size.imh * view.w) / sd->size.imw;
+             if (ph > view.h)
                {
-                  pw = (sd->size.imw * rh) / sd->size.imh;
-                  ph = rh;
+                  pw = (sd->size.imw * view.h) / sd->size.imh;
+                  ph = view.h;
                }
              else
-               pw = rw;
+               pw = view.w;
              if (sd->size.imw > sd->size.imh)
                z = (double)sd->size.imw / pw;
              else
@@ -2125,16 +2399,16 @@ done:
    sd->t_end = sd->t_start + _elm_config->zoom_friction;
    if ((sd->size.w > 0) && (sd->size.h > 0))
      {
-        sd->size.spos.x = (double)(rx + (rw / 2)) / (double)sd->size.w;
-        sd->size.spos.y = (double)(ry + (rh / 2)) / (double)sd->size.h;
+        sd->size.spos.x = (double)(pos.x + (view.w / 2)) / (double)sd->size.w;
+        sd->size.spos.y = (double)(pos.y + (view.h / 2)) / (double)sd->size.h;
      }
    else
      {
         sd->size.spos.x = 0.5;
         sd->size.spos.y = 0.5;
      }
-   if (rw > sd->size.w) sd->size.spos.x = 0.5;
-   if (rh > sd->size.h) sd->size.spos.y = 0.5;
+   if (view.w > sd->size.w) sd->size.spos.x = 0.5;
+   if (view.h > sd->size.h) sd->size.spos.y = 0.5;
    if (sd->size.spos.x > 1.0) sd->size.spos.x = 1.0;
    if (sd->size.spos.y > 1.0) sd->size.spos.y = 1.0;
 
@@ -2212,20 +2486,18 @@ _efl_ui_image_zoomable_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Im
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_image_zoomable_image_region_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_image_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   Evas_Coord sx, sy, sw, sh;
    Eina_Rect region = {};
 
-   elm_interface_scrollable_content_pos_get((Eo *)obj, &sx, &sy);
-   elm_interface_scrollable_content_viewport_geometry_get
-         ((Eo *)obj, NULL, NULL, &sw, &sh);
+   Eina_Position2D pos = efl_ui_scrollable_content_pos_get(sd->smanager);
+   Eina_Rect view = efl_ui_scrollable_viewport_geometry_get(sd->smanager);
 
    if (sd->size.w > 0)
      {
-        region.x = (sd->size.imw * sx) / sd->size.w;
+        region.x = (sd->size.imw * pos.x) / sd->size.w;
         if (region.x > sd->size.imw) region.x = sd->size.imw;
-        region.w = (sd->size.imw * sw) / sd->size.w;
+        region.w = (sd->size.imw * view.w) / sd->size.w;
         if (region.w > sd->size.imw) region.w = sd->size.imw;
         else if (region.w < 0)
           region.w = 0;
@@ -2233,9 +2505,9 @@ _efl_ui_image_zoomable_image_region_get(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 
    if (sd->size.h > 0)
      {
-        region.y = (sd->size.imh * sy) / sd->size.h;
+        region.y = (sd->size.imh * pos.y) / sd->size.h;
         if (region.y > sd->size.imh) region.y = sd->size.imh;
-        region.h = (sd->size.imh * sh) / sd->size.h;
+        region.h = (sd->size.imh * view.h) / sd->size.h;
         if (region.h > sd->size.imh) region.h = sd->size.imh;
         else if (region.h < 0)
           region.h = 0;
@@ -2262,19 +2534,19 @@ _efl_ui_image_zoomable_image_region_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
    _efl_ui_image_zoomable_bounce_reset(obj, sd);
    _efl_ui_image_zoomable_zoom_reset(obj, sd);
 
-   elm_interface_scrollable_content_region_show(obj, rx, ry, rw, rh);
+   efl_ui_scrollable_scroll(sd->smanager, EINA_RECT(rx, ry, rw, rh), EINA_FALSE);
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_elm_interface_scrollable_region_bring_in(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_efl_ui_image_zoomable_efl_ui_scrollable_interactive_scroll(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Rect rc, Eina_Bool animation)
 {
    int rx, ry, rw, rh;
 
    if ((sd->size.imw < 1) || (sd->size.imh < 1)) return;
-   rx = (x * sd->size.w) / sd->size.imw;
-   ry = (y * sd->size.h) / sd->size.imh;
-   rw = (w * sd->size.w) / sd->size.imw;
-   rh = (h * sd->size.h) / sd->size.imh;
+   rx = (rc.x * sd->size.w) / sd->size.imw;
+   ry = (rc.y * sd->size.h) / sd->size.imh;
+   rw = (rc.w * sd->size.w) / sd->size.imw;
+   rh = (rc.h * sd->size.h) / sd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
    if ((rx + rw) > sd->size.w) rx = sd->size.w - rw;
@@ -2283,7 +2555,7 @@ _efl_ui_image_zoomable_elm_interface_scrollable_region_bring_in(Eo *obj, Efl_Ui_
    _efl_ui_image_zoomable_bounce_reset(obj, sd);
    _efl_ui_image_zoomable_zoom_reset(obj, sd);
 
-   elm_interface_scrollable_region_bring_in(efl_super(obj, MY_CLASS), rx, ry, rw, rh);
+   efl_ui_scrollable_scroll(sd->smanager, EINA_RECT(rx, ry, rw, rh), animation);
 }
 
 EOLIAN static void
@@ -2915,7 +3187,8 @@ elm_photocam_image_region_bring_in(Evas_Object *obj,
                                    int h EINA_UNUSED)
 {
    ELM_PHOTOCAM_CHECK(obj);
-   elm_interface_scrollable_region_bring_in(obj, x, y, w, h);
+   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
+   efl_ui_scrollable_scroll(sd->smanager, EINA_RECT(x, y, w, h), EINA_TRUE);
 }
 
 EAPI void
@@ -2925,7 +3198,7 @@ elm_photocam_bounce_set(Evas_Object *obj,
 {
    ELM_PHOTOCAM_CHECK(obj);
 
-   elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
+   efl_ui_scrollable_bounce_enabled_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2935,7 +3208,7 @@ elm_photocam_bounce_get(const Evas_Object *obj,
 {
    ELM_PHOTOCAM_CHECK(obj);
 
-   elm_interface_scrollable_bounce_allow_get((Eo *)obj, h_bounce, v_bounce);
+   efl_ui_scrollable_bounce_enabled_get((Eo *)obj, h_bounce, v_bounce);
 }
 
 EAPI void

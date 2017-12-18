@@ -1,0 +1,156 @@
+import eina_types;
+
+interface Efl.Ui.Scrollable.Interactive (Efl.Ui.Scrollable)
+{
+   eo_prefix: efl_ui_scrollable;
+   methods {
+      @property content_pos {
+         [[The content position]]
+         set {
+         }
+         get {
+         }
+         values {
+            pos: Eina.Position2D; [[The position is virtual value, (0, 0) starting at the top-left.]]
+         }
+      }
+      @property content_size {
+         [[The content size]]
+         get {
+         }
+         values {
+            size: Eina.Size2D; [[The content size in pixels.]]
+         }
+      }
+      @property viewport_geometry {
+         [[The viewport geometry]]
+         get {
+         }
+         values {
+            rect: Eina.Rect; [[It is absolute geometry.]]
+         }
+      }
+      @property bounce_enabled {
+         [[Bouncing behavior
+
+           When scrolling, the scroller may "bounce" when reaching an edge of the
+           content object. This is a visual way to indicate the end has been reached.
+           This is enabled by default for both axis. This API will set if it is enabled
+           for the given axis with the boolean parameters for each axis.]]
+         set {
+         }
+         get {
+         }
+         values {
+            horiz: bool; [[Horizontal bounce policy.]]
+            vert: bool; [[Vertical bounce policy.]]
+         }
+      }
+      @property scroll_freeze {
+         [[Freeze property
+           This function will freeze scrolling movement (by input of a user).
+           Unlike efl_ui_scrollable_movement_block_set, this function freezes bidirectional.
+           If you want to freeze only one direction,
+           See @.movement_block.set.
+         ]]
+         get {
+         }
+         set {
+         }
+         values {
+            freeze: bool; [[$true if freeze, $false otherwise]]
+         }
+      }
+      @property scroll_hold {
+         [[Hold property
+           When hold turns on, it only scrolls by holding action.
+         ]]
+         get {
+         }
+         set {
+         }
+         values {
+            hold: bool; [[$true if hold, $false otherwise]]
+         }
+      }
+      @property looping {
+         [[Controls an infinite loop for a scroller.]]
+         set {
+         }
+         get {
+         }
+         values {
+            loop_h: bool; [[The scrolling horizontal loop]]
+            loop_v: bool; [[The Scrolling vertical loop]]
+         }
+      }
+      @property movement_block {
+         [[Blocking of scrolling (per axis)
+
+           This function will block scrolling movement (by input of a user) in
+           a given direction. One can disable movements in the X axis, the Y
+           axis or both. The default value is $none, where movements are
+           allowed in both directions.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            block: Efl.Ui.Scroll_Block(Efl.Ui.Scroll_Block.none); [[Which axis (or axes) to block]]
+         }
+      }
+      @property gravity {
+         [[Control scrolling gravity on the scrollable
+
+           The gravity defines how the scroller will adjust its view
+           when the size of the scroller contents increases.
+
+           The scroller will adjust the view to glue itself as follows.
+
+            x=0.0, for staying where it is relative to the left edge of the content
+            x=1.0, for staying where it is relative to the rigth edge of the content
+            y=0.0, for staying where it is relative to the top edge of the content
+            y=1.0, for staying where it is relative to the bottom edge of the content
+
+           Default values for x and y are 0.0]]
+         set {
+         }
+         get {
+         }
+         values {
+            x: double; [[Horizontal scrolling gravity]]
+            y: double; [[Vertical scrolling gravity]]
+         }
+      }
+      @property match_content {
+         [[Prevent the scrollable from being smaller than the minimum size of the content.
+
+           By default the scroller will be as small as its design allows,
+           irrespective of its content. This will make the scroller minimum size the
+           right size horizontally and/or vertically to perfectly fit its content in
+           that direction.]]
+         set {
+         }
+         values {
+            w: bool; [[Whether to limit the minimum horizontal size]]
+            h: bool; [[Whether to limit the minimum vertical size]]
+         }
+      }
+      scroll {
+         [[Show a specific virtual region within the scroller content object.
+
+           This will ensure all (or part if it does not fit) of the designated
+           region in the virtual content object (0, 0 starting at the top-left of the
+           virtual content object) is shown within the scroller. This allows the scroller to "smoothly slide"
+           to this location (if configuration in general calls for transitions). It
+           may not jump immediately to the new location and make take a while and
+           show other content along the way.
+           ]]
+         params {
+            @in rect: Eina.Rect; [[The position where to scroll. and The size user want to see]]
+            @in animation: bool; [[Whether to scroll with animation or not]]
+         }
+      }
+   }
+}

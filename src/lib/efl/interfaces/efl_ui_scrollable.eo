@@ -1,9 +1,33 @@
+enum Efl.Ui.Scroll_Block
+{
+   [[Direction in which a scroller should be blocked.
+
+     Note: These options may be effective only in case of thumbscroll (i.e.
+     when scrolling by dragging).
+
+     @since 1.21
+   ]]
+   none = 0,      [[Don't block any movement.]]
+   vertical = 1,  [[Block vertical movement.]]
+   horizontal = 2 [[Block horizontal movement.]]
+}
+
 interface Efl.Ui.Scrollable ()
 {
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
    events {
-      scroll; [[Called when scroll operation started]]
+      scroll,start; [[Called when scroll operation started]]
+      scroll; [[Called when scroll operation]]
+      scroll,stop; [[Called when scroll operation stopped]]
+      scroll,up; [[Called when scrolling to upwards]]
+      scroll,down; [[Called when scrolling to downwards]]
+      scroll,left; [[Called when scrolling to left]]
+      scroll,right; [[Called when scrolling to right]]
+      edge,up; [[Called when hitting the top edge]]
+      edge,down; [[Called when hitting the bottom edge]]
+      edge,left; [[Called when hitting the left edge]]
+      edge,right; [[Called when hitting the right edge]]
       scroll,anim,start; [[Called when scroll animation started]]
       scroll,anim,stop; [[Called when scroll animation stopped]]
       scroll,drag,start; [[Called when scroll drag started]]

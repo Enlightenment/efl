@@ -1,4 +1,4 @@
-class Efl.Ui.Image_Zoomable_Pan (Elm.Pan)
+class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
 {
    [[Elementary photocom pan class]]
    legacy_prefix: elm_photocam_pan;
@@ -8,10 +8,10 @@ class Efl.Ui.Image_Zoomable_Pan (Elm.Pan)
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_calculate;
-      Elm.Pan.content_size { get; }
-      Elm.Pan.pos { get; set; }
-      Elm.Pan.pos_min { get; }
-      Elm.Pan.pos_max { get; }
+      Efl.Ui.Pan.content_size { get; }
+      Efl.Ui.Pan.pan_position { get; set; }
+      Efl.Ui.Pan.pan_position_min { get; }
+      Efl.Ui.Pan.pan_position_max { get; }
    }
    events {
       load; [[Called when load started]]

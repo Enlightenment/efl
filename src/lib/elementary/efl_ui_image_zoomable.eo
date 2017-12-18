@@ -1,6 +1,6 @@
 class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
-                             Elm.Interface_Scrollable,
-                             Efl.Ui.Scrollable)
+                             Efl.Ui.Scrollable.Interactive,
+                             Efl.Ui.Scrollbar)
 {
    [[Elementary Image Zoomable class]]
    legacy_prefix: elm_photocam;
@@ -61,13 +61,15 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Elm.Widget.theme_apply;
       Elm.Widget.on_focus_update;
       Elm.Widget.widget_event;
-      Elm.Interface_Scrollable.region_bring_in;
+      Efl.Ui.Scrollable.Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Flipable.flip { get; set; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
+	  Efl.Layout.Signal.signal_callback_add;
+	  Efl.Layout.Signal.signal_callback_del;
       //Efl.Canvas.Layout_Group.group_data { get; }
    }
    events {

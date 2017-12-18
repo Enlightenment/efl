@@ -82,6 +82,9 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_widget_part_bg.eo \
 	lib/elementary/efl_ui_widget_part_shadow.eo \
 	lib/elementary/efl_ui_win_part.eo \
+	lib/elementary/efl_ui_scroller.eo \
+	lib/elementary/efl_ui_scroll_manager.eo \
+	lib/elementary/efl_ui_pan.eo \
 	lib/elementary/efl_access.eo \
 	lib/elementary/efl_access_action.eo \
 	lib/elementary/efl_access_component.eo \
@@ -358,6 +361,9 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_code_parse.h \
 	lib/elementary/elm_code_syntax.h \
 	lib/elementary/efl_ui_multibuttonentry.h \
+	lib/elementary/efl_ui_widget_scroller.h \
+	lib/elementary/efl_ui_widget_scroll_manager.h \
+	lib/elementary/efl_ui_widget_pan.h \
 	lib/elementary/Efl_Ui.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -748,6 +754,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_precise_layouter.c \
 	lib/elementary/efl_ui_list_segarray.c \
 	lib/elementary/efl_ui_layout_factory.c \
+	lib/elementary/efl_ui_scroller.c \
+	lib/elementary/efl_ui_scroll_manager.c \
+	lib/elementary/efl_ui_pan.c \
 	$(NULL)
 
 
@@ -915,6 +924,7 @@ bin/elementary/test_progressbar.c \
 bin/elementary/test_radio.c \
 bin/elementary/test_scaling.c \
 bin/elementary/test_scroller.c \
+bin/elementary/test_ui_scroller.c \
 bin/elementary/test_segment_control.c \
 bin/elementary/test_separator.c \
 bin/elementary/test_slider.c \

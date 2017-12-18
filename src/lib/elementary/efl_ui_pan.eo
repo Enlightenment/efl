@@ -1,0 +1,55 @@
+class Efl.Ui.Pan (Efl.Canvas.Group,
+                  Efl.Content)
+{
+   [[Elementary pan class]]
+   methods {
+      @property pan_position {
+	 [[Position]]
+         set {
+         }
+         get {
+         }
+         values {
+            position: Eina.Position2D;
+         }
+      }
+      @property content_size {
+	 [[Content size]]
+         get {
+         }
+         values {
+	    size: Eina.Size2D;
+         }
+      }
+      @property pan_position_min {
+	 [[The minimal position to scroll]]
+         get {
+         }
+         values {
+	    pos: Eina.Position2D;
+         }
+      }
+      @property pan_position_max {
+	 [[The maximal position to scroll]]
+         get {
+         }
+         values {
+	    pos: Eina.Position2D;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Gfx.visible { set; }
+      Efl.Gfx.position { set; }
+      Efl.Gfx.size { set; }
+      Efl.Content.content { set; }
+      Efl.Canvas.Group.group_calculate;
+   }
+   events {
+      content,changed; [[Called when pan content changed]]
+      viewport,changed; [[Called when pan viewport changed]]
+      position,changed; [[Called when pan position changed]]
+   }
+}

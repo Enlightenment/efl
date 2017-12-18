@@ -59,10 +59,10 @@ struct _Efl_Ui_Image_Zoomable_Grid
 
 struct _Efl_Ui_Image_Zoomable_Data
 {
-   Evas_Object                          *hit_rect;
+   Eo                                   *smanager;
+   Eo                                   *pan_obj;
    Evas_Object                          *g_layer;
 
-   Evas_Object                          *pan_obj;
 
    Evas_Coord                            pan_x, pan_y, minw, minh;
 
@@ -109,11 +109,7 @@ struct _Efl_Ui_Image_Zoomable_Data
       } spos;
    } size;
 
-   struct
-   {
-      Eina_Bool  show : 1;
-      Evas_Coord x, y, w, h;
-   } show;
+   Eina_Rect show;
 
    int          tsize;
    Evas_Object *img;  /* low res version of image (scale down == 8) */
@@ -147,11 +143,13 @@ struct _Efl_Ui_Image_Zoomable_Data
    Eina_Bool    orientation_changed : 1;
    Eina_Bool    play : 1;
    Eina_Bool    anim : 1;
+   Eina_Bool    freeze_want : 1;
+   Eina_Bool    show_item: 1;
 };
 
 struct _Efl_Ui_Image_Zoomable_Pan_Data
 {
-   Evas_Object            *wobj;
+   Eo                              *wobj;
    Efl_Ui_Image_Zoomable_Data      *wsd;
 };
 

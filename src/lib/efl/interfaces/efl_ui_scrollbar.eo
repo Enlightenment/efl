@@ -1,0 +1,70 @@
+enum Efl.Ui.Scrollbar_Mode
+{
+   auto = 0, [[Visible if necessary]]
+   on, [[Always visible]]
+   off, [[Always invisible]]
+   last [[]]
+}
+
+enum Efl.Ui.Scrollbar_Direction
+{
+   horizontal = 0,
+   vertical,
+   last
+}
+interface Efl.Ui.Scrollbar ()
+{
+   methods {
+      @property bar_mode {
+         [[Scrollbar visibility policy]]
+         set {
+         }
+         get {
+         }
+         values {
+            hbar: Efl.Ui.Scrollbar_Mode; [[Horizontal scrollbar]]
+            vbar: Efl.Ui.Scrollbar_Mode; [[Vertical scrollbar]]
+         }
+      }
+      @property bar_size {
+         [[Scrollbar size.
+           It is calculated based on viewport size-content sizes.
+         ]]
+         get {
+         }
+         values {
+            width: double; [[Value between 0.0 and 1.0]]
+            height: double; [[Value between 0.0 and 1.0]]
+         }
+      }
+      @property bar_position {
+         [[Scrollbar position.
+           It is calculated based on current position-maximum positions.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            posx: double; [[Value between 0.0 and 1.0]]
+            posy: double; [[Value between 0.0 and 1.0]]
+         }
+      }
+      bar_visibility_update @protected @beta{
+         [[ Update bar visibility.
+
+            The object will call this function whenever the bar
+            need to be shown or hidden.
+         ]]
+      }
+   }
+   events {
+      bar,press; [[Called when bar is pressed]]
+      bar,unpress; [[Called when bar is unpressed]]
+      bar,drag; [[Called when bar is dragged]]
+      bar,size,changed; [[Called when bar size is changed]]
+      bar,pos,changed; [[Called when bar position is changed]]
+      bar,show; [[Callend when bar is shown]]
+      bar,hide; [[Called when bar is hidden]]
+   }
+}
