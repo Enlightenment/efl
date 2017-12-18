@@ -364,16 +364,7 @@ _ecore_event_message_handler_efl_loop_message_handler_message_call(Eo *obj, Ecor
         if ((type == ECORE_EVENT_SIGNAL_EXIT) && (handled == 0))
           {
              Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-
-             if (loop)
-               {
-                  Eina_Value v = EINA_VALUE_EMPTY;
-                  int val = 0;
-
-                  eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-                  eina_value_set(&v, &val);
-                  efl_loop_quit(loop, v);
-               }
+             if (loop) efl_loop_quit(loop, eina_value_int_init(0));
           }
      }
 
