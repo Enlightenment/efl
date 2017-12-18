@@ -325,7 +325,8 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
              if (!efl_io_closer_closed_get(dialer))
                {
                   efl_io_reader_eos_set(dialer, EINA_TRUE);
-                  efl_io_closer_close(dialer);
+                  if (!efl_io_closer_closed_get(dialer))
+                    efl_io_closer_close(dialer);
                }
           }
 
