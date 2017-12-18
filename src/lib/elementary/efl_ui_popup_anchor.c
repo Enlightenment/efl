@@ -23,16 +23,9 @@ _anchor_calc(Eo *obj)
 
    Eina_Position2D pos = {0, 0};
 
-   Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
-   if (!parent)
-     {
-        ERR("Cannot find window parent");
-        return;
-     }
-
    Eina_Rect a_geom = efl_gfx_geometry_get(pd->anchor);
    Eina_Rect o_geom = efl_gfx_geometry_get(obj);
-   Eina_Rect p_geom = efl_gfx_geometry_get(parent);
+   Eina_Rect p_geom = efl_gfx_geometry_get(ppd->win_parent);
 
    pd->used_align = EFL_UI_POPUP_ALIGN_NONE;
 
@@ -214,14 +207,7 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    EFL_UI_POPUP_DATA_GET_OR_RETURN(data, ppd);
    EFL_UI_POPUP_ANCHOR_DATA_GET(data, pd);
 
-   Eo *parent = efl_provider_find(data, EFL_UI_WIN_CLASS);
-   if (!parent)
-     {
-        ERR("Cannot find window parent");
-        return;
-     }
-
-   efl_event_callback_del(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, data);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, data);
 
    pd->anchor = NULL;
    //Add align calc only
@@ -233,18 +219,12 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _anchor_detach(Eo *obj)
 {
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
    EFL_UI_POPUP_ANCHOR_DATA_GET(obj, pd);
 
    if (!pd->anchor) return;
 
-   Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
-   if (!parent)
-     {
-        ERR("Cannot find window parent");
-        return;
-     }
-
-   efl_event_callback_del(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
    efl_event_callback_del(pd->anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
    efl_event_callback_del(pd->anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
    efl_event_callback_del(pd->anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
@@ -260,14 +240,7 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *ancho
 
    if (anchor)
      {
-        Eo *parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
-        if (!parent)
-          {
-              ERR("Cannot find window parent");
-              return;
-          }
-
-        efl_event_callback_add(parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
+        efl_event_callback_add(ppd->win_parent, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_GFX_EVENT_RESIZE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_GFX_EVENT_MOVE, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
@@ -367,6 +340,15 @@ _efl_ui_popup_anchor_efl_object_constructor(Eo *obj,
    pd->priority[4] = EFL_UI_POPUP_ALIGN_CENTER;
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_popup_anchor_efl_object_destructor(Eo *obj,
+                                           Efl_Ui_Popup_Anchor_Data *pd EINA_UNUSED)
+{
+   _anchor_detach(obj);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "efl_ui_popup_anchor.eo.c"
