@@ -160,6 +160,8 @@ extern EAPI double _efl_startup_time;
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_win_part.eo.h>
+# include <efl_ui_bg.eo.h>
+# include <efl_ui_bg_widget.eo.h>
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_box_stack.eo.h>
@@ -187,7 +189,6 @@ extern EAPI double _efl_startup_time;
 # include <efl_ui_image_zoomable_eo.h>
 # include <efl_ui_progressbar_eo.h>
 # include <efl_ui_radio_eo.h>
-# include <efl_ui_bg_eo.h>
 # include <efl_ui_panes_eo.h>
 
 /**

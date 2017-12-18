@@ -7142,7 +7142,7 @@ _elm_win_standard_init(Eo *obj)
         /* Legacy theme compatibility */
         DBG("Detected legacy theme used for elm_bg. Swallowing object.");
         sd->csd.need_bg_solid = EINA_FALSE;
-        _elm_win_bg_set(sd, efl_add(EFL_UI_BG_CLASS, obj));
+        _elm_win_bg_set(sd, efl_add(EFL_UI_BG_WIDGET_CLASS, obj));
      }
 
    _elm_win_frame_style_update(sd, 0, 1);
@@ -7252,7 +7252,7 @@ _efl_ui_win_part_file_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
         if (file)
           {
              bg = efl_add(EFL_UI_IMAGE_CLASS, obj);
-             efl_ui_image_scale_type_set(bg, EFL_UI_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
+             efl_image_scale_type_set(bg, EFL_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
              ok = efl_file_set(bg, file, key);
              if (!ok) ELM_SAFE_DEL(bg);
              _elm_win_bg_set(sd, bg);

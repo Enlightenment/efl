@@ -54,7 +54,7 @@ test_efl_gfx_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    img = efl_add(EFL_UI_IMAGE_CLASS, win,
                  efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(64, 64)),
                  efl_file_set(efl_added, buf, NULL));
-   efl_ui_image_scale_type_set(img, EFL_UI_IMAGE_SCALE_TYPE_FILL);
+   efl_image_scale_type_set(img, EFL_IMAGE_SCALE_TYPE_FILL);
    evas_object_event_callback_add(img, EVAS_CALLBACK_RESIZE,
                                   _image_resize_cb, NULL);
 

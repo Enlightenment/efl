@@ -1,28 +1,3 @@
-enum Efl.Ui.Image.Scale_Type
-{
-   [[Enumeration that defines scale types for the object's internal image.
-
-     @since 1.18
-   ]]
-   fill,        [[Scale the internal image so that it matches 
-                  the object's area exactly.
-                  The image's aspect ratio might be changed.]]
-   fit_inside,  [[Scale the internal image
-                  so that it fits inside the object's area
-                  while maintaining the aspect ratio.
-                  At least one of the dimensions of the image
-                  should be equal to the corresponding dimension 
-                  of the object.]]
-   fit_outside, [[Scale the internal image
-                  so that it covers the entire object area
-                  while maintaining the aspect ratio.
-                  At least one of the dimensions of the image
-                  should be equal to the corresponding 
-                  dimension of the object.]]
-   tile,        [[Tile image at its original size.]]
-   none         [[Not scale the internal image]]
-}
-
 struct Efl.Ui.Image.Progress
 {
    [[
@@ -53,14 +28,6 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
    [[ Efl UI image class]]
    event_prefix: efl_ui_image;
    methods {
-      @property scale_type {
-         [[Control how the internal image is scaled.
-
-           @since 1.18]]
-         values {
-            scale_type: Efl.Ui.Image.Scale_Type; [[Image scale type]]
-         }
-      }
       @property scalable {
          [[Enable or disable scaling up or down the internal image.
 
@@ -133,6 +100,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Image.image_size { get; }
       Efl.Image.Load.load_size { get; set; }
       Efl.Image.smooth_scale { get; set; }
+      Efl.Image.scale_type { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Flipable.flip { get; set; }
       Efl.Player.playable { get; }

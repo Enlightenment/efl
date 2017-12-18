@@ -5921,7 +5921,7 @@ _efl_ui_widget_bg_get(Elm_Widget *obj)
 
    if (!bg_obj)
      {
-        bg_obj = efl_add(EFL_UI_BG_CLASS, obj);
+        bg_obj = efl_add(EFL_UI_BG_WIDGET_CLASS, obj);
         EINA_SAFETY_ON_NULL_RETURN_VAL(bg_obj, NULL);
         sd->bg = bg_obj;
         efl_canvas_group_member_add(obj, sd->bg);
@@ -5972,19 +5972,19 @@ _efl_ui_widget_part_bg_efl_gfx_color_get(Eo *obj, void *pd EINA_UNUSED, int *r, 
 }
 
 EOLIAN static void
-_efl_ui_widget_part_bg_efl_ui_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Image_Scale_Type scale_type)
+_efl_ui_widget_part_bg_efl_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Image_Scale_Type scale_type)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_ui_image_scale_type_set(bg_obj, scale_type);
+   efl_image_scale_type_set(bg_obj, scale_type);
 }
 
-EOLIAN static Efl_Ui_Image_Scale_Type
-_efl_ui_widget_part_bg_efl_ui_image_scale_type_get(Eo *obj, void *pd EINA_UNUSED)
+EOLIAN static Efl_Image_Scale_Type
+_efl_ui_widget_part_bg_efl_image_scale_type_get(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   return efl_ui_image_scale_type_get(bg_obj);
+   return efl_image_scale_type_get(bg_obj);
 }
 
 #include "efl_ui_widget_part_bg.eo.c"

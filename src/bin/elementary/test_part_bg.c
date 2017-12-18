@@ -39,7 +39,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Evas_Object *radio = data;
    Evas_Object *target;
-   Efl_Ui_Image_Scale_Type type;
+   Efl_Image_Scale_Type type;
    char buf[PATH_MAX];
 
    radio = efl_ui_radio_selected_object_get(radio);
@@ -47,9 +47,9 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_set(efl_part(target, "background"), buf, NULL);
-   type = efl_ui_image_scale_type_get(efl_part(target, "background"));
+   type = efl_image_scale_type_get(efl_part(target, "background"));
    type = (type + 1) % 5;
-   efl_ui_image_scale_type_set(efl_part(target, "background"), type);
+   efl_image_scale_type_set(efl_part(target, "background"), type);
 }
 
 static Evas_Object *
@@ -136,7 +136,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[10] = EFL_UI_FLIP_CLASS;
    content_class[11] = EFL_UI_PANES_CLASS;
    content_class[12] = EFL_UI_VIDEO_CLASS;
-   content_class[13] = EFL_UI_BG_CLASS;
+   content_class[13] = EFL_UI_BG_WIDGET_CLASS;
    content_class[14] = EFL_UI_IMAGE_CLASS;
    content_class[15] = EFL_UI_IMAGE_ZOOMABLE_CLASS;
    content_class[16] = EFL_UI_NSTATE_CLASS;

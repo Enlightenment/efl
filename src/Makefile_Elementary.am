@@ -4,6 +4,7 @@
 elm_public_eolian_files = \
 	lib/elementary/elm_widget.eo \
 	lib/elementary/efl_ui_bg.eo \
+	lib/elementary/efl_ui_bg_widget.eo \
 	lib/elementary/efl_ui_button.eo \
 	lib/elementary/efl_ui_calendar.eo \
 	lib/elementary/efl_ui_calendar_item.eo \
@@ -275,7 +276,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_box.h \
 	lib/elementary/elm_widget_bubble.h \
 	lib/elementary/efl_ui_button_private.h \
-	lib/elementary/efl_ui_bg_private.h \
+	lib/elementary/efl_ui_bg_widget_private.h \
 	lib/elementary/elm_widget_calendar.h \
 	lib/elementary/efl_ui_calendar_private.h \
 	lib/elementary/efl_ui_check_private.h \
@@ -394,7 +395,6 @@ includesub_HEADERS = \
 	lib/elementary/elm_atspi_app_object.h \
 	lib/elementary/elm_authors.h \
 	lib/elementary/elm_bg.h \
-	lib/elementary/efl_ui_bg_eo.h \
 	lib/elementary/elm_bg_legacy.h \
 	lib/elementary/elm_box.h \
 	lib/elementary/elm_box_legacy.h \
@@ -598,6 +598,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/efl_ui_bg.c \
+	lib/elementary/efl_ui_bg_widget.c \
 	lib/elementary/elm_box.c \
 	lib/elementary/elm_bubble.c \
 	lib/elementary/efl_ui_button.c \
