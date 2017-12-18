@@ -92,13 +92,10 @@ ecore_con_init(void)
    if (!ecore_init())
      goto ecore_err;
 
+   _ecore_con_log_dom = eina_log_domain_register
+         ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
    if (_ecore_con_log_dom < 0)
-     {
-        _ecore_con_log_dom = eina_log_domain_register
-          ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
-        if (_ecore_con_log_dom < 0)
-          goto ecore_con_log_error;
-     }
+     goto ecore_con_log_error;
 
    _efl_net_proxy_helper_init();
 
@@ -155,9 +152,8 @@ ecore_con_shutdown(void)
 
    ecore_con_legacy_shutdown();
 
-   /* do not unregister log domain as ecore_con_servers may be pending deletion
-    * due Ecore_Event.
-    */
+   eina_log_domain_unregister(_ecore_con_log_dom);
+   _ecore_con_log_dom = -1;
 
    ecore_shutdown();
 #ifdef _WIN32
