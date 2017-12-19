@@ -138,17 +138,21 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
-# include "efl_ui_focus_object.eo.h"
-# include "efl_ui_focus_manager.eo.h"
-# include "efl_ui_focus_manager_calc.eo.h"
-# include "efl_ui_focus_manager_sub.eo.h"
-# include "efl_ui_focus_manager_root_focus.eo.h"
-# include "efl_ui_focus_user.eo.h"
-# include "efl_ui_focus_util.eo.h"
+# include <efl_ui_focus_object.eo.h>
+# include <efl_ui_focus_manager.eo.h>
+# include <efl_ui_focus_manager_calc.eo.h>
+# include <efl_ui_focus_manager_sub.eo.h>
+# include <efl_ui_focus_manager_root_focus.eo.h>
+# include <efl_ui_focus_user.eo.h>
+# include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
+# include <elm_interface_scrollable.h>
+# include <elm_interface_scrollable.eo.h>
+# include <elm_spinner.eo.h>
+
 #endif
 
 #include <elm_tooltip.h>
@@ -217,19 +221,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_glview.h>
 #include <elm_grid.h>
 
-// Elm legacy headers that require EAPI defined
-#include <elm_spinner.eo.h>
-#include <elm_entry.eo.h>
-#include <elm_ctxpopup.eo.h>
-#include <elm_ctxpopup_item.eo.h>
-#include <elm_popup.eo.h>
-#include <elm_popup_item.eo.h>
-#include <elm_colorselector.eo.h>
-#include <elm_interface_scrollable.eo.h>
-#include <elm_systray.eo.h>
-#include <elm_notify.eo.h>
-#include <elm_hoversel.eo.h>
-
 #include <elm_hover.h>
 #include <elm_image.h>
 #include <elm_index.h>
@@ -275,7 +266,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
-#include "efl_ui_list_segarray.h"
+# include <efl_ui_list_segarray.h>
 # include <efl_config_global.eo.h>
 # include <elm_widget.eo.h>
 # include <efl_ui_widget_part.eo.h>
