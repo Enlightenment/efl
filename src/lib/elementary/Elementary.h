@@ -217,9 +217,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_glview.h>
 #include <elm_grid.h>
 
-
-#ifdef _WIN32
-#ifdef ELEMENTARY_BUILD
 // Elm legacy headers that require EAPI defined
 #include <elm_spinner.eo.h>
 #include <elm_entry.eo.h>
@@ -232,8 +229,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_systray.eo.h>
 #include <elm_notify.eo.h>
 #include <elm_hoversel.eo.h>
-#endif
-#endif
 
 #include <elm_hover.h>
 #include <elm_image.h>

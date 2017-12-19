@@ -1,4 +1,4 @@
-#include "evas_font_draw.h"
+#include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_blend_private.h"
 
