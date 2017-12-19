@@ -2775,6 +2775,7 @@ if test "x${have_darwin}" = "xyes"; then
    if test "x${have_evas_engine_gl_cocoa}" = "xyes"; then
       # If gl_cocoa is enabled, Apple's Core OpenGL (CGL) should be the default OpenGL.
       # CFLAGS and LIBS are determined by evas-gl_cocoa.
+      evas_engine_gl_cocoa_libs = "-levas"
       evas_engine_gl_common_libs="${evas_engine_gl_cocoa_libs}"
       evas_engine_gl_common_cflags="${evas_engine_gl_cocoa_cflags}"
    else
