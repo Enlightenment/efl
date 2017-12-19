@@ -411,6 +411,9 @@ START_TEST(ecore_test_ecore_file_path)
    fail_if(ret != 0);
 
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
+
+   ret = ecore_file_shutdown();
+   fail_if(ret != 0);
 }
 END_TEST
 

@@ -16,9 +16,6 @@
 #define ECORE_EVENT_CUSTOM_1 1
 #define ECORE_EVENT_CUSTOM_2 2
 
-static int _log_dom;
-#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
-
 static Eina_Bool
 _quit_cb(void *data)
 {
@@ -177,6 +174,8 @@ START_TEST(ecore_test_ecore_main_loop_timer)
 }
 END_TEST
 
+// Disabled tests: inner main loops are not supposed to work!
+#if 0
 static Eina_Bool _timer3(void *data EINA_UNUSED)
 {
    /* timer 3, do nothing */
@@ -222,8 +221,11 @@ START_TEST(ecore_test_ecore_main_loop_timer_inner)
    /*END: outer mainloop */
 
    fail_if(times != 1);
+
+   ecore_shutdown();
 }
 END_TEST
+#endif
 
 static Eina_Bool
 _fd_handler_cb(void *data, Ecore_Fd_Handler *handler EINA_UNUSED)
@@ -599,6 +601,10 @@ START_TEST(ecore_test_ecore_main_loop_event)
 }
 END_TEST
 
+#if 0
+static int _log_dom;
+#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+
 static Eina_Bool
 _timer_quit_recursive(void *data EINA_UNUSED)
 {
@@ -633,7 +639,6 @@ _event_recursive_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EI
    return EINA_FALSE;
 }
 
-
 START_TEST(ecore_test_ecore_main_loop_event_recursive)
 {
    /* This test tests if the event handlers are really called only once when
@@ -663,6 +668,7 @@ START_TEST(ecore_test_ecore_main_loop_event_recursive)
    ecore_shutdown();
 }
 END_TEST
+#endif
 
 START_TEST(ecore_test_ecore_app)
 {
@@ -741,9 +747,9 @@ START_TEST(ecore_test_ecore_main_loop_poller)
    fail_if(ecore_poller_poller_interval_get(poll3_ptr) != poll3_interval);
 
    /* Check each poller call counter */
-   fail_if(8 != poll1_counter);
-   fail_if(4 != poll2_counter);
-   fail_if(2 != poll3_counter);
+   ck_assert_int_eq(8, poll1_counter);
+   ck_assert_int_eq(4, poll2_counter);
+   ck_assert_int_eq(2, poll3_counter);
 
    /* Destroy renewable pollers */
    ecore_poller_del(poll3_ptr);
@@ -893,15 +899,15 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);
+#if 0
    tcase_add_test(tc, ecore_test_ecore_main_loop_timer_inner);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event_recursive);
+#endif
    tcase_add_test(tc, ecore_test_ecore_app);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller);
    tcase_add_test(tc, ecore_test_ecore_main_loop_poller_add_del);
    tcase_add_test(tc, ecore_test_efl_loop_fd);
-/* XXX: this seems a silly test... that we delete the loop object?
    tcase_add_test(tc, ecore_test_efl_loop_fd_lifecycle);
- */
    tcase_add_test(tc, ecore_test_efl_loop_register);
    tcase_add_test(tc, ecore_test_efl_app_version);
 }
