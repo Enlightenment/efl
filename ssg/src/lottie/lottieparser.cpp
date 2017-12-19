@@ -933,13 +933,16 @@ void LottieParser::getValue(LottieShape &obj)
 
     RAPIDJSON_ASSERT(PeekType() == kObjectType);
     EnterObject();
+    // make sure the shared_ptr is valid.
+    if (!obj.mShapeData)
+        obj.mShapeData = std::make_shared<LottieShapeData>();//(new LottieShapeData());
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "i")) {
-            parseArrayValue(obj.mInPoint);
+            parseArrayValue(obj.mShapeData.get()->mInPoint);
         } else if (0 == strcmp(key, "o")) {
-            parseArrayValue(obj.mOutPoint);
+            parseArrayValue(obj.mShapeData.get()->mOutPoint);
         } else if (0 == strcmp(key, "v")) {
-            parseArrayValue(obj.mVertices);
+            parseArrayValue(obj.mShapeData.get()->mVertices);
         } else {
             RAPIDJSON_ASSERT(0);
             Skip(nullptr);
@@ -1044,9 +1047,9 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
          if (search != compRef->mInterpolatorCache.end()) {
              keyframe.mInterpolator = search->second;
          } else {
-             keyframe.mInterpolator = new LottieInterpolater();
-             keyframe.mInterpolator->mInTangent = inTangent;
-             keyframe.mInterpolator->mOutTangent = outTangent;
+             keyframe.mInterpolator = std::make_shared<LottieInterpolater>();
+             keyframe.mInterpolator.get()->mInTangent = inTangent;
+             keyframe.mInterpolator.get()->mOutTangent = outTangent;
              compRef->mInterpolatorCache[interpolatorKey] = keyframe.mInterpolator;
          }
      } else {
@@ -1074,8 +1077,8 @@ LottieParser::parseShapeProperty(LottieAnimatable<LottieShape> &obj)
                 while (NextArrayValue()) {
                     RAPIDJSON_ASSERT(PeekType() == kObjectType);
                     if (!obj.mAnimInfo)
-                        obj.mAnimInfo = new LottieAnimInfo<LottieShape>();
-                    parseKeyFrame(*obj.mAnimInfo);
+                        obj.mAnimInfo.reset(new LottieAnimInfo<LottieShape>());
+                    parseKeyFrame(*obj.mAnimInfo.get());
                 }
             } else {
                 getValue(obj.mValue);
@@ -1106,8 +1109,8 @@ void LottieParser::parseProperty(LottieAnimatable<T> &obj)
                     /* property with keyframe info*/
                     if (PeekType() == kObjectType) {
                         if (!obj.mAnimInfo)
-                            obj.mAnimInfo = new LottieAnimInfo<T>();
-                        parseKeyFrame(*obj.mAnimInfo);
+                            obj.mAnimInfo.reset(new LottieAnimInfo<T>());
+                        parseKeyFrame(*obj.mAnimInfo.get());
                     } else {
                         /* Read before modifying.
                          * as there is no way of knowing if the
