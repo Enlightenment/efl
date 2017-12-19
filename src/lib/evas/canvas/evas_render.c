@@ -2892,6 +2892,14 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
    eina_evlog("-render_pre_objects_finalize", eo_e, 0.0, NULL);
 }
 
+EAPI void
+evas_render_pending_objects_flush(Evas *eo_e)
+{
+   Evas_Public_Data *evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(evas);
+   evas_render_pre(eo_e, evas);
+}
+
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                                   void *output, void *surface, void *context,

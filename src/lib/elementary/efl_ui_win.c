@@ -4735,6 +4735,14 @@ _indicator_del(Efl_Ui_Win_Data *sd)
    _elm_win_frame_style_update(sd, 0, 1);
 }
 
+static Eina_Value
+_win_finalize_job_cb(void *data, const Eina_Value value)
+{
+   Evas *eo_e = evas_object_evas_get(data);
+   evas_render_pending_objects_flush(eo_e);
+   return value;
+}
+
 static Eo *
 _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_Ui_Win_Type type)
 {
@@ -5420,6 +5428,11 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      {
         _elm_win_resize_job(obj);
         _elm_win_move(sd->ee);
+     }
+   else
+     {
+        eina_future_then_easy(efl_loop_job(efl_loop_get(obj)),
+                              .success = _win_finalize_job_cb, .data = obj);
      }
 
    // All normal windows are "standard" windows with EO API
