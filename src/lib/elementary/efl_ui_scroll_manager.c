@@ -1947,7 +1947,7 @@ _efl_ui_scroll_manager_mouse_move_event_cb(void *data,
    sd->down.history[0].y = ev->cur.canvas.y;
    sd->event_info = event_info;
 
-   if (!ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+   if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
      evas_post_event_callback_push(e, _efl_ui_scroll_manager_post_event_move, sd);
 
    if (sd->down.dragged)
