@@ -747,6 +747,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_precise_layouter.c \
 	lib/elementary/efl_ui_list_segarray.c \
 	lib/elementary/efl_ui_layout_factory.c \
+	lib/elementary/elm_atspi_access_adaptor.c \
+	lib/elementary/elm_atspi_adaptor_common.c \
 	$(NULL)
 
 
