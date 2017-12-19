@@ -570,24 +570,21 @@ ecore_win32_init()
         goto unregister_class;
      }
 
-   if (!ECORE_WIN32_EVENT_MOUSE_IN)
-     {
-        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_PROPERTY       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
-        ECORE_WIN32_EVENT_SELECTION_CLEAR       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_SELECTION_NOTIFY      = ecore_event_type_new();
-     }
+   ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
+   ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_PROPERTY       = ecore_event_type_new();
+   ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
+   ECORE_WIN32_EVENT_SELECTION_CLEAR       = ecore_event_type_new();
+   ECORE_WIN32_EVENT_SELECTION_NOTIFY      = ecore_event_type_new();
 
    for (i = 0; i < 77; i++)
      _ecore_win32_cursor_x[i] = _ecore_win32_cursor_x11_shaped_new(i);

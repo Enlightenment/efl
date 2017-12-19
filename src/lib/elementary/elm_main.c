@@ -755,12 +755,9 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
 #endif
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
-   if (!ELM_EVENT_POLICY_CHANGED)
-     {
-        ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
-        ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
-        ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
-     }
+   ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
+   ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
+   ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
 
    if (!ecore_file_init())
      ERR("Elementary cannot init ecore_file");

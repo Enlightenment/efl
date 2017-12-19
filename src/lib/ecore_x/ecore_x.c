@@ -589,74 +589,71 @@ _ecore_x_init2(void)
 
 #endif /* ifdef ECORE_XGESTURE */
 
-   if (!ECORE_X_EVENT_ANY)
-     {
-        ECORE_X_EVENT_ANY = ecore_event_type_new();
-        ECORE_X_EVENT_MOUSE_IN = ecore_event_type_new();
-        ECORE_X_EVENT_MOUSE_OUT = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_FOCUS_IN = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_FOCUS_OUT = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_KEYMAP = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_DAMAGE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_CREATE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_DESTROY = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_HIDE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_SHOW = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_SHOW_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_REPARENT = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_GRAVITY = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_RESIZE_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_STACK = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_STACK_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_PROPERTY = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_COLORMAP = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_MAPPING = ecore_event_type_new();
-        ECORE_X_EVENT_MAPPING_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_SELECTION_CLEAR = ecore_event_type_new();
-        ECORE_X_EVENT_SELECTION_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_SELECTION_NOTIFY = ecore_event_type_new();
-        ECORE_X_EVENT_CLIENT_MESSAGE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_SHAPE = ecore_event_type_new();
-        ECORE_X_EVENT_SCREENSAVER_NOTIFY = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_FLICK = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_PAN = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_TAP = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_HOLD = ecore_event_type_new();
-        ECORE_X_EVENT_GESTURE_NOTIFY_GROUP = ecore_event_type_new();
-        ECORE_X_EVENT_SYNC_COUNTER = ecore_event_type_new();
-        ECORE_X_EVENT_SYNC_ALARM = ecore_event_type_new();
-        ECORE_X_EVENT_SCREEN_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_RANDR_CRTC_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_RANDR_OUTPUT_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = ecore_event_type_new();
-        ECORE_X_EVENT_DAMAGE_NOTIFY = ecore_event_type_new();
+   ECORE_X_EVENT_ANY = ecore_event_type_new();
+   ECORE_X_EVENT_MOUSE_IN = ecore_event_type_new();
+   ECORE_X_EVENT_MOUSE_OUT = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_FOCUS_IN = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_FOCUS_OUT = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_KEYMAP = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_DAMAGE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_CREATE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_DESTROY = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_HIDE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_SHOW = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_SHOW_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_REPARENT = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_GRAVITY = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_RESIZE_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_STACK = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_STACK_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_PROPERTY = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_COLORMAP = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_MAPPING = ecore_event_type_new();
+   ECORE_X_EVENT_MAPPING_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_SELECTION_CLEAR = ecore_event_type_new();
+   ECORE_X_EVENT_SELECTION_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_SELECTION_NOTIFY = ecore_event_type_new();
+   ECORE_X_EVENT_CLIENT_MESSAGE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_SHAPE = ecore_event_type_new();
+   ECORE_X_EVENT_SCREENSAVER_NOTIFY = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_FLICK = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_PAN = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_TAP = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_HOLD = ecore_event_type_new();
+   ECORE_X_EVENT_GESTURE_NOTIFY_GROUP = ecore_event_type_new();
+   ECORE_X_EVENT_SYNC_COUNTER = ecore_event_type_new();
+   ECORE_X_EVENT_SYNC_ALARM = ecore_event_type_new();
+   ECORE_X_EVENT_SCREEN_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_RANDR_CRTC_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_RANDR_OUTPUT_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = ecore_event_type_new();
+   ECORE_X_EVENT_DAMAGE_NOTIFY = ecore_event_type_new();
 
-        ECORE_X_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
 
-        ECORE_X_EVENT_DESKTOP_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_STATE_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = ecore_event_type_new();
-        ECORE_X_EVENT_PING = ecore_event_type_new();
+   ECORE_X_EVENT_DESKTOP_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_WINDOW_STATE_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = ecore_event_type_new();
+   ECORE_X_EVENT_PING = ecore_event_type_new();
 
-        ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = ecore_event_type_new();
-        ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = ecore_event_type_new();
-        ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = ecore_event_type_new();
+   ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = ecore_event_type_new();
+   ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = ecore_event_type_new();
+   ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = ecore_event_type_new();
 
-        ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
-        ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
-	
-        ECORE_X_EVENT_GENERIC = ecore_event_type_new();
+   ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
+   ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
 
-	ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
-	ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
-	ECORE_X_RAW_MOTION = ecore_event_type_new();
-     }
+   ECORE_X_EVENT_GENERIC = ecore_event_type_new();
+
+   ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
+   ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
+   ECORE_X_RAW_MOTION = ecore_event_type_new();
 
    _ecore_x_modifiers_get();
 

@@ -140,20 +140,17 @@ _eio_monitor_error_cb(void *data, Eio_File *handler EINA_UNUSED, int error)
 void
 eio_monitor_init(void)
 {
-   if (EIO_MONITOR_ERROR == 0)
-     {
-        EIO_MONITOR_ERROR = ecore_event_type_new();
-        EIO_MONITOR_SELF_RENAME = ecore_event_type_new();
-        EIO_MONITOR_SELF_DELETED = ecore_event_type_new();
-        EIO_MONITOR_FILE_CREATED = ecore_event_type_new();
-        EIO_MONITOR_FILE_DELETED = ecore_event_type_new();
-        EIO_MONITOR_FILE_MODIFIED = ecore_event_type_new();
-        EIO_MONITOR_FILE_CLOSED = ecore_event_type_new();
-        EIO_MONITOR_DIRECTORY_CREATED = ecore_event_type_new();
-        EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
-        EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
-        EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
-     }
+   EIO_MONITOR_ERROR = ecore_event_type_new();
+   EIO_MONITOR_SELF_RENAME = ecore_event_type_new();
+   EIO_MONITOR_SELF_DELETED = ecore_event_type_new();
+   EIO_MONITOR_FILE_CREATED = ecore_event_type_new();
+   EIO_MONITOR_FILE_DELETED = ecore_event_type_new();
+   EIO_MONITOR_FILE_MODIFIED = ecore_event_type_new();
+   EIO_MONITOR_FILE_CLOSED = ecore_event_type_new();
+   EIO_MONITOR_DIRECTORY_CREATED = ecore_event_type_new();
+   EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
+   EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
+   EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
 
    eio_monitor_backend_init();
    eio_monitor_fallback_init();

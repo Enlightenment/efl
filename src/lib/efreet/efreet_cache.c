@@ -283,12 +283,9 @@ efreet_cache_init(void)
         ERR("Failed to create directory '%s'", buf);
     }
 
-    if (EFREET_EVENT_ICON_CACHE_UPDATE == 0)
-      {
-         EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
-         EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
-         EFREET_EVENT_DESKTOP_CACHE_BUILD = ecore_event_type_new();
-      }
+    EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
+    EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
+    EFREET_EVENT_DESKTOP_CACHE_BUILD = ecore_event_type_new();
 
     themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
     icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));

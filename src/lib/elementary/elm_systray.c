@@ -459,8 +459,7 @@ elm_need_systray(void)
 
    if (!elm_need_eldbus()) return EINA_FALSE;
 
-   if (!ELM_EVENT_SYSTRAY_READY)
-     ELM_EVENT_SYSTRAY_READY = ecore_event_type_new();
+   ELM_EVENT_SYSTRAY_READY = ecore_event_type_new();
 
    if (!_elm_systray_watcher_init()) return EINA_FALSE;
 

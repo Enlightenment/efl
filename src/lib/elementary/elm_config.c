@@ -4115,8 +4115,7 @@ _translation_init(void)
 void
 _elm_config_init(void)
 {
-   if (!ELM_EVENT_CONFIG_ALL_CHANGED)
-      ELM_EVENT_CONFIG_ALL_CHANGED = ecore_event_type_new();
+   ELM_EVENT_CONFIG_ALL_CHANGED = ecore_event_type_new();
    _desc_init();
    _elm_config_profile_derived_init();
    _profile_fetch_from_conf();

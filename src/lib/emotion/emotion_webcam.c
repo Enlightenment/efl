@@ -273,12 +273,9 @@ _emotion_enumerate_all_webcams(void)
 
 Eina_Bool emotion_webcam_init(void)
 {
-   if (EMOTION_WEBCAM_UPDATE == 0)
-     {
-        EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
-        EMOTION_WEBCAM_ADD = ecore_event_type_new();
-        EMOTION_WEBCAM_DEL = ecore_event_type_new();
-     }
+   EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
+   EMOTION_WEBCAM_ADD = ecore_event_type_new();
+   EMOTION_WEBCAM_DEL = ecore_event_type_new();
 
    eet_init();
    _emotion_webcams_edds_new();

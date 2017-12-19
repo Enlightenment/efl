@@ -33,18 +33,15 @@ elput_init(void)
         goto log_err;
      }
 
-   if (ELPUT_EVENT_SEAT_CAPS == 0)
-     {
-        ELPUT_EVENT_SEAT_CAPS = ecore_event_type_new();
-        ELPUT_EVENT_SEAT_FRAME = ecore_event_type_new();
-        ELPUT_EVENT_KEYMAP_SEND = ecore_event_type_new();
-        ELPUT_EVENT_MODIFIERS_SEND = ecore_event_type_new();
-        ELPUT_EVENT_DEVICE_CHANGE = ecore_event_type_new();
-        ELPUT_EVENT_SESSION_ACTIVE = ecore_event_type_new();
-        ELPUT_EVENT_POINTER_MOTION = ecore_event_type_new();
-        ELPUT_EVENT_SWITCH = ecore_event_type_new();
-        elput_event_session_ready = ecore_event_type_new();
-     }
+   ELPUT_EVENT_SEAT_CAPS = ecore_event_type_new();
+   ELPUT_EVENT_SEAT_FRAME = ecore_event_type_new();
+   ELPUT_EVENT_KEYMAP_SEND = ecore_event_type_new();
+   ELPUT_EVENT_MODIFIERS_SEND = ecore_event_type_new();
+   ELPUT_EVENT_DEVICE_CHANGE = ecore_event_type_new();
+   ELPUT_EVENT_SESSION_ACTIVE = ecore_event_type_new();
+   ELPUT_EVENT_POINTER_MOTION = ecore_event_type_new();
+   ELPUT_EVENT_SWITCH = ecore_event_type_new();
+   elput_event_session_ready = ecore_event_type_new();
 
    return _elput_init_count;
 

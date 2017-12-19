@@ -154,25 +154,22 @@ ecore_wl_init(const char *name)
         goto exit_ecore_event;
      }
 
-   if (!ECORE_WL_EVENT_MOUSE_IN)
-     {
-        ECORE_WL_EVENT_MOUSE_IN = ecore_event_type_new();
-        ECORE_WL_EVENT_MOUSE_OUT = ecore_event_type_new();
-        ECORE_WL_EVENT_FOCUS_IN = ecore_event_type_new();
-        ECORE_WL_EVENT_FOCUS_OUT = ecore_event_type_new();
-        ECORE_WL_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_ENTER = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_POSITION = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_LEAVE = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_DROP = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_OFFER = ecore_event_type_new();
-        ECORE_WL_EVENT_DND_END = ecore_event_type_new();
-        ECORE_WL_EVENT_DATA_SOURCE_TARGET = ecore_event_type_new();
-        ECORE_WL_EVENT_DATA_SOURCE_SEND = ecore_event_type_new();
-        ECORE_WL_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
-        ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = ecore_event_type_new();
-        ECORE_WL_EVENT_INTERFACES_BOUND = ecore_event_type_new();
-     }
+   ECORE_WL_EVENT_MOUSE_IN = ecore_event_type_new();
+   ECORE_WL_EVENT_MOUSE_OUT = ecore_event_type_new();
+   ECORE_WL_EVENT_FOCUS_IN = ecore_event_type_new();
+   ECORE_WL_EVENT_FOCUS_OUT = ecore_event_type_new();
+   ECORE_WL_EVENT_WINDOW_CONFIGURE = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_ENTER = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_POSITION = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_LEAVE = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_DROP = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_OFFER = ecore_event_type_new();
+   ECORE_WL_EVENT_DND_END = ecore_event_type_new();
+   ECORE_WL_EVENT_DATA_SOURCE_TARGET = ecore_event_type_new();
+   ECORE_WL_EVENT_DATA_SOURCE_SEND = ecore_event_type_new();
+   ECORE_WL_EVENT_SELECTION_DATA_READY = ecore_event_type_new();
+   ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = ecore_event_type_new();
+   ECORE_WL_EVENT_INTERFACES_BOUND = ecore_event_type_new();
 
    if (!(_ecore_wl_disp = calloc(1, sizeof(Ecore_Wl_Display))))
      {

@@ -684,7 +684,6 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
 void
 _ecore_evas_ews_events_init(void)
 {
-   if (ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE != 0) return;
    ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE = ecore_event_type_new();
    ECORE_EVAS_EWS_EVENT_ADD = ecore_event_type_new();
    ECORE_EVAS_EWS_EVENT_DEL = ecore_event_type_new();

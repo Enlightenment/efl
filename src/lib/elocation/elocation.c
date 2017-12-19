@@ -1253,21 +1253,18 @@ elocation_init(void)
      }
 
    /* Create all ecore event types we send out to interested applications */
-   if (ELOCATION_EVENT_IN == 0)
-     {
-        ELOCATION_EVENT_IN = ecore_event_type_new();
-        ELOCATION_EVENT_OUT = ecore_event_type_new();
-        ELOCATION_EVENT_STATUS = ecore_event_type_new();
-        ELOCATION_EVENT_POSITION = ecore_event_type_new();
-        ELOCATION_EVENT_ADDRESS = ecore_event_type_new();
-        ELOCATION_EVENT_VELOCITY = ecore_event_type_new();
-        ELOCATION_EVENT_GEOCODE = ecore_event_type_new();
-        ELOCATION_EVENT_REVERSEGEOCODE = ecore_event_type_new();
-        ELOCATION_EVENT_NMEA = ecore_event_type_new();
-        ELOCATION_EVENT_SATELLITE = ecore_event_type_new();
-        ELOCATION_EVENT_POI = ecore_event_type_new();
-        ELOCATION_EVENT_META_READY = ecore_event_type_new();
-     }
+   ELOCATION_EVENT_IN = ecore_event_type_new();
+   ELOCATION_EVENT_OUT = ecore_event_type_new();
+   ELOCATION_EVENT_STATUS = ecore_event_type_new();
+   ELOCATION_EVENT_POSITION = ecore_event_type_new();
+   ELOCATION_EVENT_ADDRESS = ecore_event_type_new();
+   ELOCATION_EVENT_VELOCITY = ecore_event_type_new();
+   ELOCATION_EVENT_GEOCODE = ecore_event_type_new();
+   ELOCATION_EVENT_REVERSEGEOCODE = ecore_event_type_new();
+   ELOCATION_EVENT_NMEA = ecore_event_type_new();
+   ELOCATION_EVENT_SATELLITE = ecore_event_type_new();
+   ELOCATION_EVENT_POI = ecore_event_type_new();
+   ELOCATION_EVENT_META_READY = ecore_event_type_new();
 
    obj_master= eldbus_object_get(conn, GEOCLUE_DBUS_NAME, GEOCLUE_OBJECT_PATH);
    if (!obj_master)
