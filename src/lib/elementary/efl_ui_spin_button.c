@@ -388,8 +388,6 @@ _toggle_entry(Evas_Object *obj)
 
            efl_ui_focus_composition_elements_set(obj, items);
         }
-
-        efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(obj), sd->ent);
      }
 }
 
