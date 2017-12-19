@@ -26,6 +26,8 @@
 #define A11Y_DBUS_PATH "/org/a11y/bus"
 #define A11Y_DBUS_INTERFACE "org.a11y.Bus"
 #define A11Y_DBUS_STATUS_INTERFACE "org.a11y.Status"
+#define A11Y_DBUS_SCREEN_READER_ENABLED_PROPERTY_NAME "ScreenReaderEnabled"
+#define A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME A11Y_DBUS_SCREEN_READER_ENABLED_PROPERTY_NAME
 #define ATSPI_DBUS_INTERFACE_EVENT_WINDOW "org.a11y.atspi.Event.Window"
 
 #define CACHE_ITEM_SIGNATURE "((so)(so)(so)a(so)assusau)"
@@ -67,7 +69,12 @@ typedef struct Key_Event_Info {
 typedef struct _Elm_Atspi_Bridge_Data
 {
    Eldbus_Connection *session_bus;
+   Eldbus_Proxy *status_proxy;
+   Eldbus_Object *bus_obj;
+   Eldbus_Pending *get_address_pending;
+
    Eldbus_Connection *a11y_bus;
+
    Eina_List *reemited_events;
    Eina_Hash *cache;
    Eldbus_Service_Interface *cache_interface;
@@ -79,7 +86,6 @@ typedef struct _Elm_Atspi_Bridge_Data
    unsigned long long object_state_broadcast_mask;
    unsigned long long window_signal_broadcast_mask;
    Ecore_Event_Filter *key_flr;
-   Eldbus_Object *bus_obj;
    Eina_List *pending_requests;
    int id;
    Eina_Hash *state_hash;
@@ -3789,10 +3795,6 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
           ERR("Cannot get bus and event from registered listener");
         else _set_broadcast_flag(event, data);
      }
-
-   if (!pd->connected)
-      efl_event_callback_legacy_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
-   pd->connected = EINA_TRUE;
 }
 
 static void
@@ -4255,16 +4257,21 @@ _interfaces_unregister(Eo *bridge)
 }
 
 static void
-_a11y_connection_shutdown(Eo *bridge)
+_elm_atspi_bridge_disconnect(Eo *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eldbus_Pending *pending;
+
+   if (pd->get_address_pending)
+     eldbus_pending_cancel(pd->get_address_pending);
+   pd->get_address_pending = NULL;
 
    if (pd->connected)
       _elm_atspi_bridge_app_unregister(bridge);
 
    if (pd->cache)
      eina_hash_free(pd->cache);
+
    pd->cache = NULL;
 
    if (pd->cache_interface)
@@ -4304,7 +4311,7 @@ _a11y_connection_shutdown(Eo *bridge)
 
 static void _disconnect_cb(void *data, Eldbus_Connection *conn EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   _a11y_connection_shutdown(data);
+   _elm_atspi_bridge_disconnect(data);
 }
 
 static void
@@ -4365,15 +4372,9 @@ _bridge_accessible_event_dispatch(void *data, const Efl_Event *event)
 }
 
 static void
-_a11y_bus_initialize(Eo *obj, const char *socket_addr)
+_a11y_bus_initialize(Eo *obj)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(obj, pd);
-
-   pd->a11y_bus = eldbus_private_address_connection_get(socket_addr);
-   if (!pd->a11y_bus)
-     return;
-
-   eldbus_connection_event_callback_add(pd->a11y_bus, ELDBUS_CONNECTION_EVENT_DISCONNECTED, _disconnect_cb, obj);
 
    // init data structures
    pd->cache = eina_hash_pointer_new(NULL);
@@ -4390,13 +4391,14 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    pd->event_hdlr = efl_access_event_handler_add(EFL_ACCESS_MIXIN, _bridge_accessible_event_dispatch, obj);
 }
 
+// 2nd step of initialization process. Make real connection with accessibility bus.
 static void
-_a11y_bus_address_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_a11y_bus_address_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *errname, *errmsg, *sock_addr = NULL;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
 
-   pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
+   pd->get_address_pending = NULL;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -4410,55 +4412,41 @@ _a11y_bus_address_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
         return;
      }
 
-   _a11y_bus_initialize((Eo*)data, sock_addr);
+   pd->a11y_bus = eldbus_private_address_connection_get(sock_addr);
+   if (!pd->a11y_bus)
+     return;
+
+   _a11y_bus_initialize((Eo*)data);
+   eldbus_connection_event_callback_add(pd->a11y_bus, ELDBUS_CONNECTION_EVENT_DISCONNECTED, _disconnect_cb, data);
+
+   pd->connected = EINA_TRUE;
 }
 
-static void _a11y_connection_init(Eo *bridge)
+/*
+ * Initialize dbus connection with accessibility dbus daemon. Initialization
+ * consists of two steps. In first address of dbus daemon is fetched
+ * asynchronously from org.a11y.Bus interface. In second step the connection
+ * is made and internal data of bridge get initialized.
+ */
+static void _elm_atspi_bridge_connect(Eo *bridge)
 {
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
-   Eina_Bool is_connected;
 
-   is_connected = elm_obj_atspi_bridge_connected_get(bridge);
+   if (elm_obj_atspi_bridge_connected_get(bridge))
+     return;
 
-   if (is_connected) return;
+   if (pd->get_address_pending)
+     eldbus_pending_cancel(pd->get_address_pending);
 
-   Eldbus_Message *m = eldbus_object_method_call_new(pd->bus_obj, A11Y_DBUS_INTERFACE, "GetAddress");
-   Eldbus_Pending *p = eldbus_object_send(pd->bus_obj, m, _a11y_bus_address_get, bridge, 100);
+   Eldbus_Message *msg = eldbus_object_method_call_new(pd->bus_obj, A11Y_DBUS_INTERFACE, "GetAddress");
+   if (!msg) return;
 
-   if (p)
-      pd->pending_requests = eina_list_append(pd->pending_requests, p);
-}
-
-static void
-_screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
-{
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
-   const char *errname, *errmsg;
-   Eina_Bool is_enabled;
-   Eldbus_Message_Iter *variant;
-
-   pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
-
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
+   pd->get_address_pending = eldbus_object_send(pd->bus_obj, msg, _a11y_bus_address_get, bridge, 100);
+   if (!pd->get_address_pending)
      {
-        WRN("%s %s", errname, errmsg);
+        eldbus_message_unref(msg);
         return;
      }
-   if (!eldbus_message_arguments_get(msg, "v", &variant))
-     {
-        ERR("'ScreenReaderEnabled' not packed into variant.");
-        return;
-     }
-   if (!eldbus_message_iter_arguments_get(variant, "b", &is_enabled))
-     {
-        ERR("Could not get 'ScreenReaderEnabled' boolean property");
-        return;
-     }
-
-   if (is_enabled)
-     _a11y_connection_init(data);
-   else
-     DBG("AT-SPI2 stack not enabled.");
 }
 
 static void _bridge_object_register(Eo *bridge, Eo *obj)
@@ -4659,82 +4647,107 @@ _elm_atspi_bridge_connected_get(Eo *obj EINA_UNUSED, Elm_Atspi_Bridge_Data *pd)
    return pd->connected;
 }
 
+static Eina_Bool
+_proxy_get_boolean_property(Eldbus_Proxy *proxy, const char *property_name, Eina_Bool *out)
+{
+   Eina_Value *value;
+   if (!proxy) return EINA_FALSE;
+   value = eldbus_proxy_property_local_get(proxy, property_name);
+   if (!value) return EINA_FALSE;
+   if (eina_value_type_get(value) != EINA_VALUE_TYPE_UCHAR)
+     return EINA_FALSE;
+   if (!eina_value_get(value, out))
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 static void
-_properties_changed_cb(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event)
+_status_proxy_property_changed(void *data, Eldbus_Proxy *proxy, void *event)
 {
    Eldbus_Proxy_Event_Property_Changed *ev = event;
    Eo *bridge = data;
-   Eina_Bool val;
-   const char *ifc = eldbus_proxy_interface_get(ev->proxy);
-   if (ev->name && !strcmp(ev->name, "ScreenReaderEnabled" ) &&
-       ifc && !strcmp(A11Y_DBUS_STATUS_INTERFACE, ifc))
+   Eina_Bool enabled;
+
+   if (!ev || !ev->name || strcmp(ev->name, A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME))
+     return;
+
+   if (!_proxy_get_boolean_property(proxy, A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME, &enabled))
      {
-        if (!eina_value_get(ev->value, &val))
-          {
-             ERR("Unable to get ScreenReaderEnabled property value");
-             return;
-          }
-        if (val)
-          _a11y_connection_init(bridge);
-        else
-          _a11y_connection_shutdown(bridge);
+        ERR("Failed to get " A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME " property");
+        return;
      }
+
+   if (enabled)
+     _elm_atspi_bridge_connect(bridge);
+   else
+     _elm_atspi_bridge_disconnect(bridge);
+}
+
+static void
+_status_proxy_property_loaded(void *data, Eldbus_Proxy *proxy, void *event EINA_UNUSED)
+{
+   Eo *bridge = data;
+   Eina_Bool enabled;
+
+   if (!_proxy_get_boolean_property(proxy, A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME, &enabled))
+     {
+        ERR("Failed to get " A11Y_DBUS_A11Y_STACK_ENABLING_PROPERTY_NAME " property");
+        return;
+     }
+
+   if (enabled)
+     _elm_atspi_bridge_connect(bridge);
+   else
+     _elm_atspi_bridge_disconnect(bridge);
 }
 
 EOLIAN Efl_Object*
 _elm_atspi_bridge_efl_object_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 {
-   Eldbus_Proxy *proxy;
-   Eldbus_Pending *req;
-
    efl_constructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 
    elm_need_eldbus();
 
-   if (!(pd->session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION)))
+   pd->session_bus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
+   if (!pd->session_bus)
+     return NULL;
+
+   pd->bus_obj = eldbus_object_get(pd->session_bus, A11Y_DBUS_NAME, A11Y_DBUS_PATH);
+   if (!pd->bus_obj)
      {
-        ERR("Unable to connect to Session Bus");
-        return NULL;
-     }
-   if (!(pd->bus_obj = eldbus_object_get(pd->session_bus, A11Y_DBUS_NAME, A11Y_DBUS_PATH)))
-     {
-        ERR("Could not get /org/a11y/bus object");
+        ERR("Could not get " A11Y_DBUS_PATH " object");
         goto obj_err;
      }
-   if (!(proxy = eldbus_proxy_get(pd->bus_obj, A11Y_DBUS_STATUS_INTERFACE)))
+   pd->status_proxy = eldbus_proxy_get(pd->bus_obj, A11Y_DBUS_STATUS_INTERFACE);
+   if (!pd->status_proxy)
      {
-        ERR("Could not get proxy object for %s interface", A11Y_DBUS_STATUS_INTERFACE);
+        ERR("Could not get proxy object for " A11Y_DBUS_STATUS_INTERFACE " interface");
         goto proxy_err;
      }
-   if (!(req = eldbus_proxy_property_get(proxy, "ScreenReaderEnabled", _screen_reader_enabled_get, obj)))
-     {
-        ERR("Could not send PropertyGet request");
-        goto proxy_err;
-     }
-   pd->pending_requests = eina_list_append(pd->pending_requests, req);
 
-   eldbus_proxy_properties_monitor(proxy, EINA_TRUE);
-   eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
-                                   _properties_changed_cb, obj);
+   eldbus_proxy_event_callback_add(pd->status_proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
+                                   _status_proxy_property_changed, obj);
+   eldbus_proxy_event_callback_add(pd->status_proxy, ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
+                                   _status_proxy_property_loaded, obj);
+   eldbus_proxy_properties_monitor(pd->status_proxy, EINA_TRUE);
 
    return obj;
 
 proxy_err:
    eldbus_object_unref(pd->bus_obj);
-   pd->bus_obj = NULL;
 obj_err:
    eldbus_connection_unref(pd->session_bus);
-   pd->session_bus = NULL;
    return NULL;
 }
 
 EOLIAN void
 _elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
 {
-   _a11y_connection_shutdown(obj);
+   _elm_atspi_bridge_disconnect(obj);
 
-   if (pd->bus_obj) eldbus_object_unref(pd->bus_obj);
-   if (pd->session_bus) eldbus_connection_unref(pd->session_bus);
+   eldbus_proxy_unref(pd->status_proxy);
+   eldbus_object_unref(pd->bus_obj);
+   eldbus_connection_unref(pd->session_bus);
 
    efl_destructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
