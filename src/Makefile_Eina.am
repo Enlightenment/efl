@@ -391,6 +391,7 @@ EXTRA_DIST2 += \
 lib/eina/eina_strbuf_template_c.x \
 lib/eina/eina_binbuf_template_c.x \
 lib/eina/eina_inline_private.h \
+lib/eina/eina_internal.h \
 tests/eina/sample.gpx \
 tests/eina/eina_suite.x \
 lib/eina/eina_config.h.in \
