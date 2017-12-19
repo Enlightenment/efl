@@ -42,7 +42,7 @@ set(PUBLIC_EO_FILES
   interfaces/efl_observer.eo
   interfaces/efl_orientation.eo
   interfaces/efl_pack.eo
-  interfaces/efl_pack_grid.eo
+  interfaces/efl_pack_table.eo
   interfaces/efl_pack_layout.eo
   interfaces/efl_pack_linear.eo
   interfaces/efl_part.eo

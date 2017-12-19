@@ -53,7 +53,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack.eo \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \
-      lib/efl/interfaces/efl_pack_grid.eo \
+      lib/efl/interfaces/efl_pack_table.eo \
       lib/efl/interfaces/efl_vpath.eo \
       lib/efl/interfaces/efl_vpath_manager.eo \
       lib/efl/interfaces/efl_vpath_file.eo \

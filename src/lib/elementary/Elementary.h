@@ -298,8 +298,8 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_box_stack.eo.h>
-# include <efl_ui_grid.eo.h>
-# include <efl_ui_grid_static.eo.h>
+# include <efl_ui_table.eo.h>
+# include <efl_ui_table_static.eo.h>
 # include <efl_ui_image.eo.h>
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>

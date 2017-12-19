@@ -1,44 +1,44 @@
 import efl_gfx_types;
 
-interface Efl.Pack.Grid (Efl.Pack.Linear)
+interface Efl.Pack.Table (Efl.Pack.Linear)
 {
-   [[2D containers aligned on a grid with rows and columns]]
+   [[2D containers aligned on a table with rows and columns]]
    eo_prefix: efl_pack;
    methods {
-      pack_grid {
-         [[Pack object at a given location in the grid.
+      pack_table {
+         [[Pack object at a given location in the table.
 
            When this container is deleted, it will request deletion on the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
          params {
-            subobj: Efl.Gfx; [[A child object to pack in this grid.]]
+            subobj: Efl.Gfx; [[A child object to pack in this table.]]
             col: int; [[Column number]]
             row: int; [[Row number]]
-            colspan: int @optional; [[0 means 1, -1 means @.grid_columns]]
-            rowspan: int @optional; [[0 means 1, -1 means @.grid_rows]]
+            colspan: int @optional; [[0 means 1, -1 means @.table_columns]]
+            rowspan: int @optional; [[0 means 1, -1 means @.table_rows]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      grid_contents_get {
-         [[Returns all objects at a given position in this grid.]]
-         return: iterator<Efl.Gfx> @owned; [[Iterator to grid contents]]
+      table_contents_get {
+         [[Returns all objects at a given position in this table.]]
+         return: iterator<Efl.Gfx> @owned; [[Iterator to table contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
             @in below: bool @optional; [[If $true get objects spanning over this cell.]]
          }
       }
-      grid_content_get {
-         [[Returns a child at a given position, see @.grid_contents_get.]]
+      table_content_get {
+         [[Returns a child at a given position, see @.table_contents_get.]]
          return: Efl.Gfx; [[Child object]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]
          }
       }
-      @property grid_position {
+      @property table_position {
          [[Position and span of the $subobj in this container, may be modified to move the $subobj]]
          get { return: bool; [[Returns false if item is not a child]] }
          keys {
@@ -51,8 +51,8 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
             rowspan: int; [[Row span]]
          }
       }
-      @property grid_size {
-         [[Combines @.grid_columns and @.grid_rows]]
+      @property table_size {
+         [[Combines @.table_columns and @.table_rows]]
          set {}
          get {}
          values {
@@ -60,7 +60,7 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
             rows: int; [[Number of rows]]
          }
       }
-      @property grid_columns {
+      @property table_columns {
       	 [[Gird columns property]]
          set { [[Specifies limit for linear adds - if direction is horizontal]] }
          get {}
@@ -68,15 +68,15 @@ interface Efl.Pack.Grid (Efl.Pack.Linear)
             cols: int; [[Number of columns]]
          }
       }
-      @property grid_rows {
-      	 [[Grid rows property]]
+      @property table_rows {
+      	 [[Table rows property]]
          set { [[Specifies limit for linear adds - if direction is vertical]] }
          get {}
          values {
             rows: int; [[Number of rows]]
          }
       }
-      @property grid_direction {
+      @property table_direction {
          [[Primary and secondary up/left/right/down directions for linear apis.
 
            Default is horizontal and vertical.

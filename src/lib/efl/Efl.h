@@ -154,7 +154,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_pack.eo.h"
 #include "interfaces/efl_pack_layout.eo.h"
 #include "interfaces/efl_pack_linear.eo.h"
-#include "interfaces/efl_pack_grid.eo.h"
+#include "interfaces/efl_pack_table.eo.h"
 
 /* Input and Output */
 #include "interfaces/efl_io_closer.eo.h"

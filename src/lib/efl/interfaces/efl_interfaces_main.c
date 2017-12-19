@@ -56,7 +56,7 @@
 #include "interfaces/efl_pack.eo.c"
 #include "interfaces/efl_pack_layout.eo.c"
 #include "interfaces/efl_pack_linear.eo.c"
-#include "interfaces/efl_pack_grid.eo.c"
+#include "interfaces/efl_pack_table.eo.c"
 
 #include "interfaces/efl_model.eo.c"
 #include "interfaces/efl_animator.eo.c"

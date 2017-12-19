@@ -30,8 +30,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_box.eo \
 	lib/elementary/efl_ui_box_flow.eo \
 	lib/elementary/efl_ui_box_stack.eo \
-	lib/elementary/efl_ui_grid.eo \
-	lib/elementary/efl_ui_grid_static.eo \
+	lib/elementary/efl_ui_table.eo \
+	lib/elementary/efl_ui_table_static.eo \
 	lib/elementary/efl_ui_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_popup.eo \
@@ -730,9 +730,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_popup_alert_scroll.c \
 	lib/elementary/efl_ui_popup_alert_text.c \
 	lib/elementary/efl_ui_popup_anchor.c \
-	lib/elementary/efl_ui_grid.c \
-	lib/elementary/efl_ui_grid_static.c \
-	lib/elementary/efl_ui_grid_private.h \
+	lib/elementary/efl_ui_table.c \
+	lib/elementary/efl_ui_table_static.c \
+	lib/elementary/efl_ui_table_private.h \
 	lib/elementary/efl_ui_text.c \
 	lib/elementary/efl_ui_clock.c \
 	lib/elementary/efl_ui_clock_private.h \
@@ -889,7 +889,7 @@ bin/elementary/test_glview_simple.c \
 bin/elementary/test_glview.c \
 bin/elementary/test_glview_manygears.c \
 bin/elementary/test_grid.c \
-bin/elementary/test_grid_static.c \
+bin/elementary/test_ui_table_static.c \
 bin/elementary/test_hover.c \
 bin/elementary/test_hoversel.c \
 bin/elementary/test_icon.c \
@@ -945,7 +945,7 @@ bin/elementary/test_transit.c \
 bin/elementary/test_transit_bezier.c \
 bin/elementary/test_ui_box.c \
 bin/elementary/test_ui_clock.c \
-bin/elementary/test_ui_grid.c \
+bin/elementary/test_ui_table.c \
 bin/elementary/test_ui_popup.c \
 bin/elementary/test_ui_textpath.c \
 bin/elementary/test_video.c \

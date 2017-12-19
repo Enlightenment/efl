@@ -2197,7 +2197,7 @@ elm_layout_box_remove_all(Eo *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_table_pack(Eo *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
-   return efl_pack_grid(efl_part(obj, part), child, col, row, colspan, rowspan);
+   return efl_pack_table(efl_part(obj, part), child, col, row, colspan, rowspan);
 }
 
 EAPI Evas_Object *

@@ -1,19 +1,19 @@
-#include "efl_ui_grid_private.h"
+#include "efl_ui_table_private.h"
 
-#define MY_CLASS EFL_UI_GRID_STATIC_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Grid_Static"
+#define MY_CLASS EFL_UI_TABLE_STATIC_CLASS
+#define MY_CLASS_NAME "Efl.Ui.Table_Static"
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
 EOLIAN static Eo *
-_efl_ui_grid_static_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_table_static_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
-   Efl_Ui_Grid_Data *gd;
+   Efl_Ui_Table_Data *gd;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
-   gd = efl_data_scope_get(obj, EFL_UI_GRID_CLASS);
+   gd = efl_data_scope_get(obj, EFL_UI_TABLE_CLASS);
    gd->req_cols = 100;
    gd->req_rows = 100;
 
@@ -21,16 +21,16 @@ _efl_ui_grid_static_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_table_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Efl_Ui_Grid_Data *gd;
-   Grid_Item *gi;
+   Efl_Ui_Table_Data *gd;
+   Table_Item *gi;
    Evas *e;
    long long xl, yl, wl, hl, vwl, vhl;
    Eina_Bool mirror;
    Eina_Rect r;
 
-   gd = efl_data_scope_get(obj, EFL_UI_GRID_CLASS);
+   gd = efl_data_scope_get(obj, EFL_UI_TABLE_CLASS);
    if (!gd->items) return;
 
    e = evas_object_evas_get(obj);
@@ -45,8 +45,8 @@ _efl_ui_grid_static_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED
 
    if (!gd->req_cols || !gd->req_rows)
      {
-        WRN("Grid_Static size must be set before using! Default to 100x100.");
-        efl_pack_grid_size_set(obj, 100, 100);
+        WRN("Table_Static size must be set before using! Default to 100x100.");
+        efl_pack_table_size_set(obj, 100, 100);
         if (!gd->req_cols || !gd->req_rows) goto err;
      }
    vwl = gd->req_cols;
@@ -74,4 +74,4 @@ err:
    efl_event_thaw(e);
 }
 
-#include "efl_ui_grid_static.eo.c"
+#include "efl_ui_table_static.eo.c"

@@ -151,8 +151,8 @@ void test_table5(void *data, Evas_Object *obj, void *event_info);
 void test_table6(void *data, Evas_Object *obj, void *event_info);
 void test_table7(void *data, Evas_Object *obj, void *event_info);
 void test_table8(void *data, Evas_Object *obj, void *event_info);
-void test_ui_grid(void *data, Evas_Object *obj, void *event_info);
-void test_ui_grid_linear(void *data, Evas_Object *obj, void *event_info);
+void test_ui_table(void *data, Evas_Object *obj, void *event_info);
+void test_ui_table_linear(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
@@ -264,7 +264,7 @@ void test_win_socket(void *data, Evas_Object *obj, void *event_info);
 void test_win_plug(void *data, Evas_Object *obj, void *event_info);
 void test_win_wm_rotation(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
-void test_grid_static(void *data, Evas_Object *obj, void *event_info);
+void test_ui_table_static(void *data, Evas_Object *obj, void *event_info);
 void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_glview_manygears(void *data, Evas_Object *obj, void *event_info);
@@ -803,9 +803,9 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Box", test_ui_box);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Grid", test_ui_grid);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Grid (Linear API)", test_ui_grid_linear);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Grid_Static", test_grid_static);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table", test_ui_table);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);

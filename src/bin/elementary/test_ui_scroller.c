@@ -83,7 +83,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_pack(bx, efl_added));
       }
 
-   gd = efl_add(EFL_UI_GRID_CLASS, bx,
+   gd = efl_add(EFL_UI_TABLE_CLASS, bx,
                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                 efl_gfx_size_hint_align_set(efl_added, 0.5, 0),
                 efl_pack(bx, efl_added));
@@ -91,14 +91,14 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
            efl_gfx_color_set(efl_added, 0, 0, 0, 0),
            efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(200, 120)),
-           efl_pack_grid(gd, efl_added, 0, 0, 1, 1));
+           efl_pack_table(gd, efl_added, 0, 0, 1, 1));
 
    sc3 = efl_add(EFL_UI_SCROLLER_CLASS, win,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                  efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
-                 efl_pack_grid(gd, efl_added, 0, 0, 1, 1));
+                 efl_pack_table(gd, efl_added, 0, 0, 1, 1));
 
-   gd2 = efl_add(EFL_UI_GRID_CLASS, sc3,
+   gd2 = efl_add(EFL_UI_TABLE_CLASS, sc3,
                  efl_content_set(sc3, efl_added));
 
    for (j = 0; j < 16; j++)
@@ -108,7 +108,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
              efl_add(EFL_UI_BUTTON_CLASS, win,
                      efl_text_set(efl_added, "Both"),
                      efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
-                     efl_pack_grid(gd2, efl_added, i, j, 1, 1));
+                     efl_pack_table(gd2, efl_added, i, j, 1, 1));
           }
      }
 

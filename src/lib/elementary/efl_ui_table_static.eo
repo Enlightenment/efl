@@ -1,6 +1,6 @@
-class Efl.Ui.Grid_Static (Efl.Ui.Grid)
+class Efl.Ui.Table_Static (Efl.Ui.Table)
 {
-   [[Efl UI grid static class]]
+   [[Efl UI table static class]]
    data: null;
    implements {
       Efl.Object.constructor;

@@ -326,22 +326,22 @@ _efl_ui_layout_part_table_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Ta
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_grid_pack_grid(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx *subobj, int col, int row, int colspan, int rowspan)
+_efl_ui_layout_part_table_efl_pack_table_pack_table(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx *subobj, int col, int row, int colspan, int rowspan)
 {
    return _efl_ui_layout_table_pack(pd->obj, pd->sd, pd->part, subobj, col, row, colspan, rowspan);
 }
 
 EOLIAN static Efl_Gfx *
-_efl_ui_layout_part_table_efl_pack_grid_grid_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int col, int row)
+_efl_ui_layout_part_table_efl_pack_table_table_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int col, int row)
 {
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    return evas_object_table_child_get(pack, col, row);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_layout_part_table_efl_pack_grid_grid_contents_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int col, int row, Eina_Bool below)
+_efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int col, int row, Eina_Bool below)
 {
-   // contents at col,row - see also Efl.Ui.Grid or edje_containers.c
+   // contents at col,row - see also Efl.Ui.Table or edje_containers.c
    // not reusing edje's iterator because the container would be wrong
 
    Eina_List *list, *l = NULL;
@@ -368,7 +368,7 @@ _efl_ui_layout_part_table_efl_pack_grid_grid_contents_get(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_grid_grid_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_layout_part_table_efl_pack_table_table_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx * subobj, int *col, int *row, int *colspan, int *rowspan)
 {
    unsigned short c, r, cs, rs;
    Eina_Bool ret;
@@ -384,14 +384,14 @@ _efl_ui_layout_part_table_efl_pack_grid_grid_position_get(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static void
-_efl_ui_layout_part_table_efl_pack_grid_grid_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int *cols, int *rows)
+_efl_ui_layout_part_table_efl_pack_table_table_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int *cols, int *rows)
 {
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    evas_object_table_col_row_size_get(pack, cols, rows);
 }
 
 EOLIAN static int
-_efl_ui_layout_part_table_efl_pack_grid_grid_columns_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_part_table_efl_pack_table_table_columns_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
 {
    int cols, rows;
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
@@ -400,7 +400,7 @@ _efl_ui_layout_part_table_efl_pack_grid_grid_columns_get(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static int
-_efl_ui_layout_part_table_efl_pack_grid_grid_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
+_efl_ui_layout_part_table_efl_pack_table_table_rows_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
 {
    int cols, rows;
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);

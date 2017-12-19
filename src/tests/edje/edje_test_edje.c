@@ -658,7 +658,7 @@ START_TEST(edje_test_table_eoapi)
 
           /* items have a text part "text" containing their position */
           sprintf(buf, "%d,%d", k, l);
-          sobj = efl_pack_grid_content_get(efl_part(obj, "table"), k, l);
+          sobj = efl_pack_table_content_get(efl_part(obj, "table"), k, l);
           fail_if(!sobj);
           //txt = efl_part_text_get(sobj, "text");
           txt = edje_object_part_text_get(sobj, "text");
@@ -673,7 +673,7 @@ START_TEST(edje_test_table_eoapi)
           i = l*2 + k;
           sobjs[i] = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
           fail_if(!sobjs[i]);
-          efl_pack_grid(efl_part(obj, "table"), sobjs[i], k, l + 2, 1, 1);
+          efl_pack_table(efl_part(obj, "table"), sobjs[i], k, l + 2, 1, 1);
        }
 
    fail_if(efl_content_count(efl_part(obj, "table")) != 8);
@@ -682,7 +682,7 @@ START_TEST(edje_test_table_eoapi)
    it = efl_content_iterate(efl_part(obj, "table"));
    EINA_ITERATOR_FOREACH(it, sobj)
      {
-        efl_pack_grid_position_get(efl_part(obj, "table"), sobj, &k, &l, &cs, &rs);
+        efl_pack_table_position_get(efl_part(obj, "table"), sobj, &k, &l, &cs, &rs);
         fail_if(cs != 1);
         fail_if(rs != 1);
         if (l >= 2)
@@ -693,14 +693,14 @@ START_TEST(edje_test_table_eoapi)
    fail_if(i != 8);
 
    /* table size and clear */
-   efl_pack_grid_size_get(efl_part(obj, "table"), &cols, &rows);
+   efl_pack_table_size_get(efl_part(obj, "table"), &cols, &rows);
    fail_if(cols != 2);
    fail_if(rows != 4);
 
    efl_pack_clear(efl_part(obj, "table"));
    fail_if(efl_content_count(efl_part(obj, "table")) != 4);
 
-   efl_pack_grid_size_get(efl_part(obj, "table"), &cols, &rows);
+   efl_pack_table_size_get(efl_part(obj, "table"), &cols, &rows);
    fail_if(cols != 2);
    fail_if(rows != 2);
 
