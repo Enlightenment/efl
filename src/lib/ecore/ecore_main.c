@@ -62,6 +62,8 @@
 
 #include "ecore_main_common.h"
 
+#include "eina_internal.h"
+
 #ifdef USE_G_MAIN_LOOP
 # include <glib.h>
 #endif

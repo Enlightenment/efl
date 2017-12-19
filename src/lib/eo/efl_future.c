@@ -3,6 +3,9 @@
 #endif
 
 #include <Eina.h>
+
+#include "eina_internal.h"
+
 #include "Eo.h"
 
 // Efl.Future implementation is an opaque type in Ecore.

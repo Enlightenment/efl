@@ -1737,15 +1737,6 @@ eina_future_race_array(Eina_Future *array[])
 #define eina_future_chain_easy(_prev, ...) eina_future_chain_easy_array(_prev, (Eina_Future_Cb_Easy_Desc[]) {__VA_ARGS__, {NULL, NULL, NULL, NULL, NULL}})
 
 /**
- * @brief Cancels all pending promise/futures.
- *
- * Internal function. Do not use.
- *
- * @internal
- */
-EAPI void __eina_promise_cancel_all(void);
-
-/**
  * @}
  */
 

@@ -6,6 +6,8 @@
 #include "eina_promise.h"
 #include "eina_mempool.h"
 #include "eina_promise_private.h"
+#include "eina_internal.h"
+
 #include <errno.h>
 #include <stdarg.h>
 #include <assert.h>
