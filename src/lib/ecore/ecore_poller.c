@@ -365,5 +365,21 @@ _ecore_poller_shutdown(void)
      {
         while ((poller = pollers[i]))
           _ecore_poller_cleanup(poller);
+        poller_counters[i] = 0;
      }
+
+   if (timer)
+     {
+        ecore_timer_del(timer);
+        timer = NULL;
+     }
+   min_interval = -1;
+   interval_incr = 0;
+   at_tick = 0;
+   just_added_poller = 0;
+   poller_delete_count = 0;
+   poller_walking = 0;
+   poll_interval = 0.125;
+   poll_cur_interval = 0.0;
+   last_tick = 0.0;
 }
