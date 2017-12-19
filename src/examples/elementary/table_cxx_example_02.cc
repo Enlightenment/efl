@@ -14,7 +14,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.text_set("Table example");
    win.autohide_set(true);
 
-   efl::ui::Grid table(instantiate, win);
+   efl::ui::Table table(instantiate, win);
    win.content_set(table);
    table.pack_padding_set(5, 5, true);
 
