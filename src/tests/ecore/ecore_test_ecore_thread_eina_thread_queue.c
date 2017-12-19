@@ -100,6 +100,9 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
         eina_thread_queue_wait_done(thq2, ref);
         if (val == 1000) break;
      }
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -160,6 +163,9 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t2)
         fail();
      }
    printf("%i messages sent\n", i);
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -273,6 +279,9 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
         if (cnt == 2000000) break;
      }
    printf("enough msgs\n");
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -360,6 +369,9 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
         if (cnt == 2000000) break;
      }
    printf("msgs ok\n");
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
@@ -679,6 +691,9 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
         if (msgcnt == 1000000) break;
      }
    printf("msg fd ok\n");
+
+   ecore_shutdown();
+   eina_shutdown();
 }
 END_TEST
 
