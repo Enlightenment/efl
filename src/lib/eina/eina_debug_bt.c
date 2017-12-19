@@ -67,7 +67,7 @@ _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
         offset = base = 0;
         // we have little choice but to hope/assume dladdr() doesn't alloc
         // anything here
-        if ((dladdr(bt[i], &info)) && (info.dli_fname[0]))
+        if ((dladdr(bt[i], &info)) && (info.dli_fname) && (info.dli_fname[0]))
           {
              offset = (unsigned long long)(uintptr_t)bt[i];
              base = (unsigned long long)(uintptr_t)info.dli_fbase;
