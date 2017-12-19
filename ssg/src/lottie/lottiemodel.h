@@ -130,6 +130,7 @@ public:
         Trim,
         Repeater
     };
+    inline LottieObject::Type type() const {return mType;}
     virtual void accept(LottieObjectVisitor *){}
     virtual ~LottieObject(){}
     LottieObject(LottieObject::Type  type): mType(type){}
@@ -166,6 +167,7 @@ class LottieTransform;
 class LottieComposition : public LottieGroupObject
 {
 public:
+    void processRepeaterObjects();
     void accept(LottieObjectVisitor *visitor) override
     {visitor->visit(this); visitor->visitChildren(this);}
     LottieComposition():LottieGroupObject(LottieObject::Type::Composition){}
@@ -341,12 +343,12 @@ public:
     LottieTrimObject::TrimType          mTrimType;
 };
 
-class LottieRepeaterObject : public LottieObject
+class LottieRepeaterObject : public LottieGroupObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
-    {visitor->visit(this);}
-    LottieRepeaterObject():LottieObject(LottieObject::Type::Repeater),
+    {visitor->visit(this); visitor->visitChildren(this);}
+    LottieRepeaterObject():LottieGroupObject(LottieObject::Type::Repeater),
                            mCopies(0),
                            mOffset(0),
                            mTransform(nullptr){}

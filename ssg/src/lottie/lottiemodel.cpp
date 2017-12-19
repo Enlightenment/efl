@@ -1,5 +1,51 @@
 #include "lottiemodel.h"
 
+
+class LottieRepeaterProcesser : public LottieObjectVisitor
+{
+public:
+    LottieRepeaterProcesser():mRepeaterFound(false){}
+    void visit(LottieComposition *obj) {}
+    void visit(LottieLayer *obj) {}
+    void visit(LottieTransform *) {}
+    void visit(LottieShapeGroup *obj) {}
+    void visit(LottieShapeObject *) {}
+    void visit(LottieRectObject *) {}
+    void visit(LottieEllipseObject *) {}
+    void visit(LottieTrimObject *) {}
+    void visit(LottieRepeaterObject *) { mRepeaterFound = true;}
+    void visit(LottieFillObject *) {}
+    void visit(LottieStrokeObject *) {}
+    void visitChildren(LottieGroupObject *obj) {
+        for(auto child :obj->mChildren) {
+            child->accept(this);
+            if (mRepeaterFound) {
+                LottieRepeaterObject *repeater = static_cast<LottieRepeaterObject *>(child);
+                LottieShapeGroup *shapeGroup = new LottieShapeGroup();
+                repeater->mChildren.push_back(shapeGroup);
+                // copy all the child of the object till repeater and
+                // move that in to a group and then add that group to
+                // the repeater object.
+                for(auto cpChild :obj->mChildren) {
+                    if (cpChild == child)
+                        break;
+                    shapeGroup->mChildren.push_back(cpChild->copy());
+                }
+                mRepeaterFound = false;
+            }
+        }
+    }
+public:
+    bool mRepeaterFound;
+};
+
+
+void LottieComposition::processRepeaterObjects()
+{
+    LottieRepeaterProcesser visitor;
+    accept(&visitor);
+}
+
 /*
  * makes a deep copy of the object as well as all its children
  *

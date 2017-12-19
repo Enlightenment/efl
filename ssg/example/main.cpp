@@ -14,7 +14,7 @@ using namespace std;
 int main()
 {
     std::string filepath = DEMO_DIR;
-    filepath += "LightBulb.json";
+    filepath += "withrepeater.json";
     initialize(GuaranteedLogger(), "/tmp/", "ssglog", 1);
     set_log_level(LogLevel::INFO);
     //SGJson json;

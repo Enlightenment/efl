@@ -467,7 +467,6 @@ void LottieParser::parseLayers(LottieComposition *composition)
 LottieLayer * LottieParser::parseLayer()
 {
     RAPIDJSON_ASSERT(PeekType() == kObjectType);
-    //sgDebug<<"parse LAYER: S";
     LottieLayer *layer = new LottieLayer();
     EnterObject();
     while (const char* key = NextObjectKey()) {
@@ -507,19 +506,16 @@ LottieLayer * LottieParser::parseLayer()
             Skip(key);
         }
     }
-       //sgDebug<<"parse LAYER: E";
   return layer;
 }
 
 void LottieParser::parseShapesAttr(LottieLayer *layer)
 {
-    //sgDebug<<"ENTER SHAPE ATTR";
     RAPIDJSON_ASSERT(PeekType() == kArrayType);
     EnterArray();
     while (NextArrayValue()) {
         parseObject(layer);
     }
-   //sgDebug<<"EXIT SHAPE ATTR";
 }
 
 LottieObject*
@@ -543,6 +539,8 @@ LottieParser::parseObjectTypeAttr()
         return parseShapeObject();
     }  else if (0 == strcmp(type, "tm")) {
         return parseTrimObject();
+    } else if (0 == strcmp(type, "rp")) {
+        return parseReapeaterObject();
     } else {
         sgDebug<<"The Object Type not yet handled = "<< type;
         return nullptr;
@@ -604,7 +602,7 @@ LottieParser::parseRectObject()
             Skip(key);
         }
     }
-    return nullptr;
+    return obj;
 }
 
 /*
@@ -632,7 +630,6 @@ LottieParser::parseEllipseObject()
 LottieObject *
 LottieParser::parseShapeObject()
 {
-    //sgDebug<<"parse Shape START:";
     LottieShapeObject *obj = new LottieShapeObject();
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ks")) {
@@ -644,7 +641,6 @@ LottieParser::parseShapeObject()
             Skip(key);
         }
     }
-    //sgDebug<<"parse Shape item END:";
     obj->process();
     return obj;
 }
@@ -850,8 +846,6 @@ void LottieParser::parseArrayValue(SGPointF &pt)
     while (NextArrayValue()) {
         val[i++] = GetDouble();
     }
-//    sgDebug<<"Value parsed as point / size"<<i;
-
     pt.setX(val[0]);
     pt.setY(val[1]);
 }
@@ -1151,7 +1145,7 @@ public:
         sgDebug<<"[SHAPE GROP: START]";
     }
     void visit(LottieShapeObject *) {
-        sgDebug<<"[SHAPE: ]";
+        sgDebug<<"[SHAPEGROUP: ]";
     }
     void visit(LottieRectObject *) {
         sgDebug<<"[RECT: ]";
@@ -1174,6 +1168,22 @@ public:
     void visitChildren(LottieGroupObject *obj) {
         for(auto child :obj->mChildren)
             child->accept(this);
+        switch (obj->type()) {
+        case LottieObject::Type::Layer:
+            sgDebug<<"[LAYER End ]";
+            break;
+        case LottieObject::Type::ShapeGroup:
+            sgDebug<<"[SHAPEGROUP End ]";
+            break;
+        case LottieObject::Type::Composition:
+            sgDebug<<"[COMP End ]";
+            break;
+        case LottieObject::Type::Repeater:
+            sgDebug<<"[REPEATER End ]";
+            break;
+        default:
+            break;
+        }
     }
 };
 
@@ -1183,6 +1193,9 @@ SGJson::SGJson(const char *data)
 
     LottieComposition *comp = r.parseComposition();
     LottieObjectInspector inspector;
+    comp->accept(&inspector);
+    comp->processRepeaterObjects();
+    sgDebug<<"********  After Repeater Processing **********";
     comp->accept(&inspector);
 }
 
