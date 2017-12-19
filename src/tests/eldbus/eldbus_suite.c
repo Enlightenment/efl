@@ -18,6 +18,7 @@ static const Efl_Test_Case etc[] = {
   { "eldbus_test_eldbus_message", eldbus_test_eldbus_message },
   { "eldbus_test_eldbus_signal_handler", eldbus_test_eldbus_signal_handler },
   { "eldbus_test_eldbus_proxy", eldbus_test_eldbus_proxy },
+  { "eldbus_test_eldbus_pending_cancel", eldbus_test_eldbus_pending_cancel },
   { NULL, NULL }
 };
 

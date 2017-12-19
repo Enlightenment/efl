@@ -15,6 +15,7 @@ set(SOURCES
   eldbus_test_eldbus_message.c
   eldbus_test_eldbus_signal_handler.c
   eldbus_test_eldbus_proxy.c
+  eldbus_test_eldbus_pending_cancel.c
   eldbus_test_fake_server_eldbus_model_proxy.c
 )
 

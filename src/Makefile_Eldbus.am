@@ -135,6 +135,7 @@ tests/eldbus/eldbus_test_eldbus_object.c \
 tests/eldbus/eldbus_test_eldbus_message.c \
 tests/eldbus/eldbus_test_eldbus_signal_handler.c \
 tests/eldbus/eldbus_test_eldbus_proxy.c \
+tests/eldbus/eldbus_test_eldbus_pending_cancel.c \
 tests/eldbus/eldbus_test_fake_server_eldbus_model_proxy.c \
 tests/eldbus/eldbus_fake_server.c \
 tests/eldbus/eldbus_suite.h
