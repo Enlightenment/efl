@@ -1,4 +1,5 @@
 #include "evas_font_private.h"
+#include "evas_font_draw.h"
 
 #ifdef EVAS_CSERVE2
 # include "../cserve2/evas_cs2_private.h"
