@@ -139,18 +139,6 @@ class Efl.Loop (Efl.Object)
          }
          return: Efl.Loop.Message.Handler; [[The message handler to use.]]
       }
-      message_process {
-         [[Process all messages in the queue that have been sent by
-           Efl.Loop.Message.Handler objects and thus call the event
-           callbacks for these messages in order in the queue. There
-           should never be a need to call this method as it is
-           automatically called as part of the loop execution.]]
-         return: bool; [[True if messages existed and were called.]]
-      }
-      message_exists {
-         [[Checks if there are any messages on the queue to call.]]
-         return: bool; [[True if there are messages to call. ]]
-      }
    }
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
