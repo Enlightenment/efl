@@ -3167,7 +3167,7 @@ struct _Eina_Value_Struct
 };
 
 #define EINA_VALUE_STRUCT_DESC_DEFINE(Name, Ops, Size, ...)             \
-  static Eina_Value_Struct_Desc *                                       \
+  static inline Eina_Value_Struct_Desc *                                \
   Name(void)                                                            \
   {                                                                     \
      Eina_Value_Struct_Member tmp[] = { __VA_ARGS__ };                  \
