@@ -3,6 +3,9 @@
 #include <iostream>
 #include "lottiecomposition.h"
 #include "lottiemodel.h"
+#include"sgelapsedtimer.h"
+
+#define DEBUG_PARSER
 
 RAPIDJSON_DIAG_PUSH
 #ifdef __GNUC__
@@ -210,7 +213,9 @@ const char* LottieParser::NextObjectKey() {
      * so ignore those and don't put parser in the error state.
      * */
     if (st_ == kExitingArray || st_ == kEnteringObject ) {
-        sgDebug<<"O: Exiting nested loop";
+#ifdef DEBUG_PARSER
+        sgDebug<<"Object: Exiting nested loop";
+#endif
         return 0;
     }
 
@@ -234,7 +239,9 @@ bool LottieParser::NextArrayValue() {
      * same as  NextObjectKey()
      */
     if (st_ == kExitingObject) {
-        sgDebug<<"A: Exiting nested loop";
+#ifdef DEBUG_PARSER
+        sgDebug<<"Array: Exiting nested loop";
+#endif
         return 0;
     }
 
@@ -443,7 +450,9 @@ LottieComposition *LottieParser::parseComposition()
         } else if (0 == strcmp(key, "layers")) {
             parseLayers(comp);
         } else {
+#ifdef DEBUG_PARSER
             sgWarning<<"Composition Attribute Skipped : "<<key;
+#endif
             Skip(key);
         }
     }
@@ -502,7 +511,9 @@ LottieLayer * LottieParser::parseLayer()
         } else if (0 == strcmp(key, "shapes")) {
             parseShapesAttr(layer);
         } else {
+#ifdef DEBUG_PARSER
             sgWarning<<"Layer Attribute Skipped : "<<key;
+#endif
             Skip(key);
         }
     }
@@ -542,7 +553,9 @@ LottieParser::parseObjectTypeAttr()
     } else if (0 == strcmp(type, "rp")) {
         return parseReapeaterObject();
     } else {
+#ifdef DEBUG_PARSER
         sgDebug<<"The Object Type not yet handled = "<< type;
+#endif
         return nullptr;
     }
 }
@@ -637,7 +650,9 @@ LottieParser::parseShapeObject()
         }  else if (0 == strcmp(key, "closed")) {
             obj->mClosed = GetBool();
         } else {
+#ifdef DEBUG_PARSER
             sgDebug<<"Shape property ignored :"<<key;
+#endif
             Skip(key);
         }
     }
@@ -679,7 +694,9 @@ LottieParser::parseTrimObject()
         }  else if (0 == strcmp(key, "m")) {
             obj->mTrimType = getTrimType();
         } else {
+#ifdef DEBUG_PARSER
             sgDebug<<"Trim property ignored :"<<key;
+#endif
             Skip(key);
         }
     }
@@ -698,7 +715,9 @@ LottieParser::parseReapeaterObject()
         } else if (0 == strcmp(key, "tr")) {
             obj->mTransform = parseTransformObject();
         } else {
+#ifdef DEBUG_PARSER
             sgDebug<<"Repeater property ignored :"<<key;
+#endif
             Skip(key);
         }
     }
@@ -750,7 +769,9 @@ LottieParser::parseFillObject()
         } else if (0 == strcmp(key, "fillEnabled")) {
             obj->mEnabled = GetBool();
         } else {
+#ifdef DEBUG_PARSER
             sgWarning<<"Fill property skipped = "<<key;
+#endif
             Skip(key);
         }
     }
@@ -819,7 +840,9 @@ LottieParser::parseStrokeObject()
             RAPIDJSON_ASSERT(PeekType() == kNumberType);
             obj->mMeterLimit = GetDouble();
         } else {
+#ifdef DEBUG_PARSER
             sgWarning<<"Stroke property skipped = "<<key;
+#endif
             Skip(key);
         }
     }
@@ -1025,7 +1048,9 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
              getValue(keyframe.mOutTangent);
              continue;
          } else {
+#ifdef DEBUG_PARSER
              sgDebug<<"key frame property skipped = "<<key;
+#endif
              Skip(key);
          }
      }
@@ -1078,7 +1103,9 @@ LottieParser::parseShapeProperty(LottieAnimatable<LottieShape> &obj)
                 getValue(obj.mValue);
             }
         } else {
+#ifdef DEBUG_PARSER
             sgDebug<<"shape property ignored = "<<key;
+#endif
             Skip(nullptr);
         }
     }
@@ -1189,14 +1216,21 @@ public:
 
 SGJson::SGJson(const char *data)
 {
+    SGElapsedTimer t;
+    t.start();
     LottieParser r(const_cast<char *>(data));
 
     LottieComposition *comp = r.parseComposition();
+#ifdef DEBUG_PARSER
     LottieObjectInspector inspector;
     comp->accept(&inspector);
+#endif
     comp->processRepeaterObjects();
+#ifdef DEBUG_PARSER
     sgDebug<<"********  After Repeater Processing **********";
     comp->accept(&inspector);
+#endif
+    sgCritical<<"Parsing time = "<<t.elapsed()<<" ms";
 }
 
 RAPIDJSON_DIAG_POP

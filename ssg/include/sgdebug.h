@@ -137,7 +137,7 @@ void initialize(NonGuaranteedLogger ngl, std::string const & log_directory,
 
 #define SGDEBUG_LOG(LEVEL) SGDebugServer() == SGDebug(LEVEL, __FILE__, __func__, __LINE__).debug()
 #define sgDebug is_logged(LogLevel::INFO) && SGDEBUG_LOG(LogLevel::INFO)
-#define sgWarning is_logged(LogLevel::INFO) && SGDEBUG_LOG(LogLevel::WARN)
-#define sgCritical is_logged(LogLevel::INFO) && SGDEBUG_LOG(LogLevel::CRIT)
+#define sgWarning is_logged(LogLevel::WARN) && SGDEBUG_LOG(LogLevel::WARN)
+#define sgCritical is_logged(LogLevel::CRIT) && SGDEBUG_LOG(LogLevel::CRIT)
 
 #endif // SGDEBUG_H
