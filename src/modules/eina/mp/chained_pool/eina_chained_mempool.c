@@ -134,10 +134,9 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
    p = malloc(pool->alloc_size);
    if (!p) return NULL;
 
-#ifdef EINA_DEBUG_MALLOC
+#if defined(EINA_DEBUG_MALLOC) && defined (HAVE_MALLOC_USABLE_SIZE)
    {
       size_t sz;
-
       sz = malloc_usable_size(p);
       if (sz - pool->minimal_size > 0)
         INF("Just allocated %0.2f%% to much memory in '%s' for one block of size %i that means %lu bytes to much.",
