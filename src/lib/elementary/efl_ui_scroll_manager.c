@@ -42,9 +42,9 @@ _scroll_manager_decel_interp(void *data EINA_UNUSED, double progress)
 static Interpolator
 _scroll_manager_interp_get(InterpType interp)
 {
-   if (interp == ACCEL)
+   if (interp == INTERP_ACCEL)
      return _scroll_manager_accel_interp;
-   else if (interp == DECEL)
+   else if (interp == INTERP_DECEL)
      return _scroll_manager_decel_interp;
    return _scroll_manager_linear_interp;
 }
@@ -745,7 +745,7 @@ _scroll_wheel_post_event_go(Efl_Ui_Scroll_Manager_Data *sd, int x, int y)
    else
      {
         cur =  efl_ui_pan_position_get(sd->pan_obj);
-        _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y, 0.5, 0.5, LINEAR);
+        _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y, 0.5, 0.5, INTERP_LINEAR);
      }
 }
 
@@ -912,7 +912,7 @@ _efl_ui_scroll_manager_scroll_to_x_animator(void *data, const Efl_Event *event E
    else progx = dt / sd->scrollto.x.dur;
 
    if (sd->scrollto.x.interp) interp = sd->scrollto.x.interp;
-   else interp = _scroll_manager_interp_get(LINEAR);
+   else interp = _scroll_manager_interp_get(INTERP_LINEAR);
 
    rx = interp(NULL, progx);
    nx = sd->scrollto.x.start + (sd->scrollto.x.end - sd->scrollto.x.start) * rx;
@@ -955,7 +955,7 @@ _efl_ui_scroll_manager_scroll_to_y_animator(void *data, const Efl_Event *event E
    else progy = dt / sd->scrollto.y.dur;
 
    if (sd->scrollto.y.interp) interp = sd->scrollto.y.interp;
-   else interp = _scroll_manager_interp_get(LINEAR);
+   else interp = _scroll_manager_interp_get(INTERP_LINEAR);
 
    ry = interp(NULL, progy);
    ny = sd->scrollto.y.start + (sd->scrollto.y.end - sd->scrollto.y.start) * ry;
@@ -1320,7 +1320,7 @@ static void _scroll_manager_momentum_animator_add(Efl_Ui_Scroll_Manager_Data *sd
    vel = sqrt(vx*vx + vy*vy);
    dur = vel / accel;
 
-   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, dstx, dsty, dur, dur, DECEL);
+   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, dstx, dsty, dur, dur, INTERP_DECEL);
 }
 
 static void
@@ -1586,7 +1586,7 @@ _scroll_manager_scrollto(Efl_Ui_Scroll_Manager_Data *sd, Evas_Coord x, Evas_Coor
    double dur = 0.0;
    Eina_Position2D cur = efl_ui_scrollable_content_pos_get(sd->obj);
    dur = _scroll_manager_animation_duration_get(x - cur.x, y - cur.y);
-   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y, dur, dur, LINEAR);
+   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y, dur, dur, INTERP_LINEAR);
 }
 
 static void

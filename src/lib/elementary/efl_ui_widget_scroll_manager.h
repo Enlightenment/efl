@@ -6,9 +6,9 @@
 typedef double (*Interpolator)(void *data, double progress);
 
 typedef enum {
-  LINEAR,
-  ACCEL,
-  DECEL,
+  INTERP_LINEAR,
+  INTERP_ACCEL,
+  INTERP_DECEL,
 } InterpType;
 
 typedef struct _Efl_Ui_Scroll_Manager_Data
