@@ -2460,7 +2460,9 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
 
    _scroll_event_object_attach(obj);
 
-   efl_ui_scrollbar_bar_visibility_update(sd->obj);
+   //FIXME : mostly bar-related callback is added after scroll manager creation,
+   // so when constructor of manager is called, callback is not registered.
+   //efl_ui_scrollbar_bar_visibility_update(sd->obj);
 
    return obj;
 }
