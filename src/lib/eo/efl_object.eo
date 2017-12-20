@@ -5,7 +5,7 @@ struct Efl.Event.Description {
     name: string; [[name of the event.]]
     unfreezable: bool; [[$true if the event cannot be frozen.]]
     legacy_is: bool; [[Internal use: $true if a legacy event.]]
-    restart: bool; [[$true if when the event is triggered again from a callback, it should start from where it was]]
+    restart: bool; [[$true if when the event is triggered again from a callback it'll start from where it was]]
 }
 
 abstract Efl.Object ()
@@ -17,18 +17,18 @@ abstract Efl.Object ()
       @property parent {
          [[The parent of an object.
 
-           Parents keep references to their children so in order to
-           delete objects that have parents you need to set parent to
-           NULL or use efl_del() that does that for you (and also unrefs
+           Parents keep references to their children. In order to
+           delete objects which have parents you need to set parent to
+           NULL or use efl_del(). This will both delete & unref
            the object).
 
            The Eo parent is conceptually user set. That means that a parent
-           should not be changed behind the scenes in a surprising manner.
+           should not be changed behind the scenes in an unexpected way.
 
            For example:
-           if you have a widget that has a box internally, and
-           when you swallow into that widget the object you swallow ends up in
-           the box, the parent should be the widget, and not the box.
+           If you have a widget that has a box internally and
+           when you 'swallow' a widget and the swallowed object ends up in
+           the box, the parent should be the widget, not the box.
          ]]
 
          set {
@@ -45,18 +45,18 @@ abstract Efl.Object ()
            Because efl_del() unrefs and reparents to NULL, it doesn't really delete the object.
 
            This method accepts a const object for convenience, so all objects
-           could be passed to it easily.
+           can be passed to it easily.
          ]]
       }
       @property name {
          [[ The name of the object.
 
            Every object can have a string name. Names may not contain
-           the following charactors:
+           the following characters:
              / ? * [ ] ! \ :
-           They are illegal. Using it in a name will result in undefined
+           Using any of these in a name will result in undefined
            behavior later on. An empty string is considered the same as a
-           NULL string or no string for the name at all.
+           NULL string or no string for the name.
          ]]
          set {
          }
@@ -69,9 +69,9 @@ abstract Efl.Object ()
       @property comment {
          [[ A human readable comment for the object
 
-           Every object can have a string comment intended for developers
+           Every object can have a string comment. This is intended for developers
            and debugging. An empty string is considered the same as a NULL
-           string or no string for the comment at all.
+           string or no string for the comment.
          ]]
          set {
          }
@@ -91,7 +91,7 @@ abstract Efl.Object ()
             efl_debug_name_override(efl_super(obj, MY_CLASS), sb);
             eina_strbuf_append_printf(sb, "new_information");
 
-            In general, more debug information should be added to $sb after
+            Usually more debug information should be added to $sb after
             calling the super function.
 
             @since 1.21
@@ -123,7 +123,7 @@ abstract Efl.Object ()
          }
       }
       @property finalized {
-         [[True if the object is already finalized, false otherwise.]]
+         [[True if the object is already finalized, otherwise false.]]
          get {
          }
          values {
@@ -131,7 +131,7 @@ abstract Efl.Object ()
          }
       }
       provider_find {
-        [[Searches up in the object tree for a provider which knows the given class/interface.
+        [[Searches upwards in the object tree for a provider which knows the given class/interface.
 
           The object from the provider will then be returned.
           The base implementation calls the provider_find function on the object parent,
@@ -168,7 +168,7 @@ abstract Efl.Object ()
            The search string can be a glob (shell style, using *). It can also
            specify class name in the format of "class:name" where ":"
            separates class and name. Both class and name can be globs.
-           If class is specified, and name is empty like "class:" then
+           If the class is specified but the name is empty like "class:" then
            the search will match any object of that class.
          ]]
          params {
@@ -179,25 +179,25 @@ abstract Efl.Object ()
       event_thaw {
          [[Thaw events of object.
 
-           Lets event callbacks be called for the object.
+           Allows event callbacks to be called for an object.
          ]]
       }
       event_freeze {
          [[Freeze events of object.
 
-           Prevents event callbacks from being called for the object.
+           Prevents event callbacks from being called for an object.
          ]]
       }
       event_global_thaw @class {
          [[Thaw events of object.
 
-           Lets event callbacks be called for the object.
+           Allows event callbacks be called for an object.
          ]]
       }
       event_global_freeze @class {
          [[Freeze events of object.
 
-           Prevents event callbacks from being called for the object.
+           Prevents event callbacks from being called for an object.
          ]]
       }
       event_callback_stop {
@@ -205,8 +205,8 @@ abstract Efl.Object ()
 
            This stops the current callback call. Any other callbacks for the
            current event will not be called. This is useful when you want to
-           filter out events. You just add higher priority events and call this
-           on certain conditions to block a certain event.
+           filter out events. Just add higher priority events and call this
+           under certain conditions to block a certain event.
          ]]
       }
       event_callback_forwarder_add {
@@ -231,8 +231,8 @@ abstract Efl.Object ()
            [[Make an object a composite object of another.
 
              The class of comp_obj must be part of the extensions of the class of the parent.
-             It is not possible to attach more then 1 composite of the same class.
-             This functions also sets the parent of comp_obj to parent.
+             It isn't possible to attach more then 1 composite of the same class.
+             This function also sets the parent of comp_obj to parent.
 
              See @.composite_detach, @.composite_part_is.
            ]]
@@ -263,15 +263,15 @@ abstract Efl.Object ()
       @property allow_parent_unref {
          [[Allow an object to be deleted by unref even if it has a parent.
 
-           This simply hides error messages warning that an object being
-           destructed still has a parent. This property is false by default.
+           This simply hides the error message warning that an object being
+           destroyed still has a parent. This property is false by default.
 
            In a normal object use case, when ownership of an object is given
-           to a caller, said ownership should be released with efl_unref(). But
-           if the object has a parent, this will print error messages, as
+           to a caller, said ownership should be released with efl_unref().
+           If the object has a parent, this will print error messages, as
            $efl_unref() is stealing the ref from the parent.
 
-           Warning: Use this function very carefully, if you are absolutely
+           Warning: Use this function very carefully, unless you're absolutely
            sure of what you are doing.
          ]]
          values {
