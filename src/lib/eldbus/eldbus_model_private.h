@@ -8,6 +8,8 @@
 #include <Eo.h>
 #include <Efl.h>
 
+#include "ecore_internal.h"
+
 typedef struct _Eldbus_Children_Slice_Promise Eldbus_Children_Slice_Promise;
 typedef struct _Eldbus_Model_Data Eldbus_Model_Data;
 

@@ -7,6 +7,8 @@
 #include <Eo.h>
 #include <Ecore.h>
 
+#include "ecore_internal.h"
+
 #include "efl_model_container_private.h"
 
 #define MY_CLASS EFL_MODEL_CONTAINER_CLASS

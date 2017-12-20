@@ -5,6 +5,8 @@
 #include <Efl.h>
 #include <Ecore.h>
 
+#include "ecore_internal.h"
+
 #define MY_CLASS EFL_MODEL_ITEM_CLASS
 
 typedef struct _Efl_Model_Item_Data Efl_Model_Item_Data;

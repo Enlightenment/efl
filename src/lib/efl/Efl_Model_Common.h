@@ -91,34 +91,4 @@ EAPI Eina_Value_Struct_Desc *efl_model_value_struct_description_new(unsigned int
  */
 EAPI void efl_model_value_struct_description_free(Eina_Value_Struct_Desc *desc);
 
-
-static inline Eina_Value
-efl_model_list_value_get(Eina_List *childrens,
-                         unsigned int start,
-                         unsigned int count)
-{
-   Eina_Value v = EINA_VALUE_EMPTY;
-   Eina_List *l;
-   Eo *child;
-
-   eina_value_array_setup(&v, EINA_VALUE_TYPE_OBJECT, eina_list_count(childrens));
-
-   EINA_LIST_FOREACH(childrens, l, child)
-     {
-        if (start != 0)
-          {
-             start--;
-             continue;
-          }
-        if (count == 0)
-          continue;
-        count--;
-
-        eina_value_array_append(&v, child);
-     }
-
-   return v;
-}
-
-
 #endif
