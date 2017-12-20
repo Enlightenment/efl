@@ -54,15 +54,15 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
       a message-based protocol over HTTP, this allows it to leverage
       on authentication, cookies, proxies and SSL/TLS.
 
-      It's worth to note that although it uses the HTTP dialer, it's
+      Although it uses the HTTP dialer, it's
       not a subclass and thus not all HTTP features are exposed as the
       WebSocket has strict requirements that must be respected.
 
       If the proxy is NULL (default), then the system proxy will be
       used. On UNIX that's the environment variable $http_proxy (or
       '$all_proxy') is used if the given address doesn't match
-      $no_proxy patterns. To disable proxy use an empty string. If
-      provided proxy must be one of the protocols:
+      $no_proxy patterns. To disable the proxy use an empty string. If
+      provided, the proxy must be one of the following protocols:
 
        - http://username:password\@proxyserver:port
        - http://username\@proxyserver:port
@@ -82,7 +82,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         ping {
             [[Sends a PING (opcode=0x9) to the server.
 
-              The server should reply with a PONG, that will be
+              The server should reply with a PONG, which will be
               emitted as "pong" event.
             ]]
 
@@ -94,10 +94,10 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         text_send {
             [[Sends an UTF-8 TEXT (opcode=0x1) to the server.
 
-              The text goes in a message will be delivered as a single
+              The message text will be delivered as a single
               entity to the remote peer.
 
-              The text is copied into a local buffer, no references
+              The text is copied into a local buffer. No references
               are kept after this method returns.
             ]]
             params {
@@ -108,7 +108,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         binary_send {
             [[Sends a binary blob (opcode=0x2) to the server.
 
-              The slice describing the blob goes in a message will be
+              The slice describing the blob goes in a message which will be
               delivered as a single entity to the remote peer.
 
               The memory is copied into a local buffer, no references
@@ -123,16 +123,16 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
             [[Requests (opcode=0x8) the server to terminate the connection.
 
               Unlike @Efl.Io.Closer.close, this won't abruptly close
-              the connection, rather will queue a message requesting
+              the connection, rather it'll queue a message requesting
               the server to gracefully close it.
 
               After this method is called you should consider the
-              object in "closing" state, no more messages can be sent
+              object in "closing" state. No more messages can be sent
               (@.text_send, @.binary_send and @.ping will fail).
 
               The object will be automatically closed with
-              @Efl.Io.Closer.close once the serve replies with his own
-              close message, that will be reported as "closed,reason".
+              @Efl.Io.Closer.close once the server replies with his own
+              close message, which will be reported as "closed,reason".
             ]]
             params {
                 reason: Efl.Net.Dialer.Websocket.Close_Reason; [[Reason for closing]]
@@ -215,7 +215,7 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
             values {
                 username: string; [[HTTP authentication username]]
                 password: string; [[HTTP authentication password]]
-                method: Efl.Net.Http.Authentication_Method @optional; [[Authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
+                method: Efl.Net.Http.Authentication_Method @optional; [[The authentication method to use. Defaults to @Efl.Net.Http.Authentication_Method.basic]]
                 restricted: bool @optional; [[Restrict method]]
             }
         }
@@ -274,21 +274,21 @@ class Efl.Net.Dialer.Websocket (Efl.Loop.Consumer, Efl.Net.Dialer) {
         @property cookie_jar {
             [[This property sets the filename where to read and write cookies.
 
-              By setting a file to load and persist cookies to, the
+              By setting a file to load and store cookies, the
               internal cookie system will be activated, automatically
               handling HTTP headers such as 'Set-cookie:' and sending
               the appropriate cookies for a server.
 
               If a new, empty session is to be used, start with an
-              empty or non-existent file such as created with
-              mkstemp() or tmpfile(). An alternative is to use an
+              empty or non-existent file such as one created with
+              mkstemp() or tmpfile(). Alternatively use an
               empty string ("") to keep it in memory.
 
-              If it is desired to start from a pre-existent cookie jar
-              but do not want to modify that, first copy that file and
+              If you want to start from a pre-existent cookie jar
+              but do not want to modify it, first copy that file and
               then pass the new, temporary file.
 
-              Likewise, if it's desired to fill some cookies to the
+              Likewise, if you want to store some cookies in the
               system, create a cookie jar and pass its path to this
               property.
 

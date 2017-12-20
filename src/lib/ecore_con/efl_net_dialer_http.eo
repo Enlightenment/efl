@@ -14,17 +14,17 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
       available as @Efl.Net.Socket.address_remote. The
       @Efl.Net.Socket.address_local is an IP:PORT pair.
 
-      The dialer can do bi-directional information exchange. It can
-      also do a PUT and upload a file, or GET and download one. Anoter
-      case is to do a POST with some form values, including a file,
-      and retrieve its headers and response body. To make usage more
-      streamlined, choose your primary interest with @.primary_mode
+      The dialer can perform bi-directional information exchanges. It can
+      also do a PUT and upload a file, or GET and download one. It can
+      also do a POST with some form values, including a file,
+      and retrieve its headers and body response. To make usage more
+      streamlined, choose your area of interest with @.primary_mode
       then get some properties such as @Efl.Io.Sizer.size to report or
-      use what matters to your use case.
+      use the information you need.
 
       If @.allow_redirects is $true, multiple "connected" and
       "resolved" signals will be dispatched, one for each
-      connection. Then @.response_status and @.response_headers_get
+      connection. In this case @.response_status and @.response_headers_get
       will keep changing. Using @.response_headers_all_get one can see
       the whole history of headers and connections.
 
@@ -35,7 +35,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
       used. On UNIX that's the environment variable $http_proxy (or
       '$all_proxy') is used if the given address doesn't match
       $no_proxy patterns. To disable proxy use an empty string. If
-      provided proxy must be one of the protocols:
+      provided, the proxy must use one of the following protocols:
 
        - http://username:password\@proxyserver:port
        - http://username\@proxyserver:port
@@ -88,7 +88,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
                  @Efl.Io.Sizer.size.get will report the
                  "Content-Length" provided by the server, if any.
 
-               If is worth to mention that one can provide and
+               You can also provide and
                retrieve these values using @.request_headers_get (to
                send) and @.response_headers_get (what was received),
                as well as using the specific properties
@@ -148,7 +148,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
             values {
                 username: string; [[HTTP authentication username]]
                 password: string; [[HTTP authentication password]]
-                method: Efl.Net.Http.Authentication_Method @optional; [[Authentication method to use, defaults to @Efl.Net.Http.Authentication_Method.basic]]
+                method: Efl.Net.Http.Authentication_Method @optional; [[Authentication method to use. Defaults to @Efl.Net.Http.Authentication_Method.basic]]
                 restricted: bool @optional; [[Restrict method]]
             }
         }
@@ -228,12 +228,12 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         @property response_status {
             [[The HTTP response status of this request.
 
-              It will be 0 if not connected, otherwise will be what is
-              returned by the server, such as.
+              This will be 0 if not connected, otherwise it'll be whatever is
+              returned by the server.
 
               See https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 
-              This will be usable after "connected" event is dispatched.
+              This will be usable after the "connected" event is dispatched.
             ]]
             get { }
             values {
@@ -244,13 +244,13 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         response_headers_get {
             [[Returns an iterator to the key-value pairs for the last response headers.
 
-              Since multiple requests can happen if @.allow_redirects
+              Since multiple requests can occur if @.allow_redirects
               is true, then all headers will be accumulated. This
               method returns only the headers for the last request.
 
-              To know all the headers, check @.response_headers_all_get.
+              To list all the headers, check @.response_headers_all_get.
 
-              This will be usable after "headers,done" event is dispatched.
+              This will be usable after the "headers,done" event is dispatched.
             ]]
             return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator for response headers]]
         }
@@ -258,10 +258,10 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         response_headers_all_get {
             [[Returns an iterator to the key-value pairs for all response headers.
 
-              Since multiple requests can happen if @.allow_redirects
+              Since multiple requests can occur if @.allow_redirects
               is true, then all headers will be accumulated. To know
-              when new request is started, check for headers with keys
-              being NULL, the value will be the "HTTP/VERSION RESPONSE"
+              when a new request's been started, check for headers with keys
+              being NULL. The value will be the "HTTP/VERSION RESPONSE"
               string received from the host, such as:
 
                 - key=NULL, value="HTTP/1.1 302 Found"
@@ -269,23 +269,23 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
                 - key=NULL, value="HTTP/1.1 200 Ok"
                 - key="Content-Type", value="text/html"
 
-              Which mean the original request had a redirect to
+              This means the original request had a redirect to
               http://someredirect.com.
 
-              To receive an iterator to just the last request, use
+              To receive an iterator to only the last request, use
               @.response_headers_get
 
-              This will be usable after "headers,done" event is dispatched.
+              This will be usable after the "headers,done" event is dispatched.
             ]]
             return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator for all response headers]]
         }
 
         response_headers_clear {
-            [[Saves some memory by disposing the received headers]]
+            [[Saves memory by disposing of the received headers]]
         }
 
         @property progress_download {
-            [[How many bytes were downloaded and how much was expected.]]
+            [[How many bytes were downloaded and how many were expected.]]
             get { }
             values {
                 downloaded: uint64 @optional; [[Downloaded bytes so far]]
@@ -294,7 +294,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         @property progress_upload {
-            [[How many bytes were uploaded and how much was expected.]]
+            [[How many bytes were uploaded and how many were expected.]]
             get { }
             values {
                 uploaded: uint64 @optional; [[Uploaded bytes so far]]
@@ -303,29 +303,29 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         }
 
         @property cookie_jar {
-            [[This property sets the filename where to read and write cookies.
+            [[This property sets the filename to read and write cookies.
 
-              By setting a file to load and persist cookies to, the
+              By setting a file to load and store cookies, the
               internal cookie system will be activated, automatically
               handling HTTP headers such as 'Set-cookie:' and sending
-              the appropriate cookies for a server.
+              the appropriate cookies for the server.
 
               If a new, empty session is to be used, start with an
               empty or non-existent file such as created with
-              mkstemp() or tmpfile(). An alternative is to use an
-              empty string ("") to keep it in memory.
+              mkstemp() or tmpfile(). Alternatively use an
+              empty string ("") to store it in memory.
 
-              If it is desired to start from a pre-existent cookie jar
-              but do not want to modify that, first copy that file and
+              If you want to start from a pre-existing cookie jar
+              but do not want to modify it, first copy that file and
               then pass the new, temporary file.
 
-              Likewise, if it's desired to fill some cookies to the
+              Likewise, if you want to add cookies to the
               system, create a cookie jar and pass its path to this
               property.
 
               \@note that whenever this property is set, even if to the
               same value, it will flush all cookies to the previously
-              set file, then erase all known cookies, then use the new
+              set file, then erase all known cookies. It will then use the new
               file (if any).
             ]]
             get { }
@@ -342,7 +342,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
             ]]
             values {
                 peer: bool; [[If $true, SSL certificate will be verified. If $false, untrusted certificates (including self signed) will be accepted.]]
-                hostname: bool; [[If $true, in addition to SSL certificate validation, the server name will be matched to certificate DNS entries]]
+                hostname: bool; [[If $true, in addition to SSL certificate validation the server name will be matched to certificate DNS entries]]
             }
         }
 

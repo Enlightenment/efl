@@ -7,7 +7,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
       created by an dialer.
 
       Since for the server 'clients' there is no accepted connection
-      it will reuse the same file decriptor and to avoid it being
+      it will reuse the same file decriptor. To avoid it being
       closed, another class Efl.Net.Server.Udp.Client is used instead.
 
       @since 1.19
@@ -38,8 +38,8 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             [[Avoids sent UDP packets being routed by a gateway, limiting them to the local network.
 
               This will use SO_DONTROUTE option to avoid gateways
-              routing sent packets to outside of local network. It's
-              useful for some protocols that only want local area to
+              routing sent packets outside the local network. It's
+              useful for some protocols that only want the local area to
               be affected.
             ]]
             get { }
@@ -147,7 +147,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
             [[Forces binding to a specific address.
 
               Some servers may request packets being sent from a
-              specific address, then one should bind to that address
+              specific address, then one binds to that address
               before proceeding to dial.
 
               If no address is provided or bind is not called, a
@@ -166,7 +166,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
         }
 
         init @protected {
-            [[Initializes the socket to communicate with given IP address]]
+            [[Initializes the socket to communicate with a given IP address]]
             params {
                 remote_address: Efl.Net.Ip_Address; [[The remote address this socket will communicate with]]
             }

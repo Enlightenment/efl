@@ -9,8 +9,8 @@ class Efl.Net.Server.Udp (Efl.Net.Server.Ip) {
             [[Avoids sent UDP packets being routed by a gateway, limiting them to the local network.
 
               This will use SO_DONTROUTE option to avoid gateways
-              routing sent packets to outside of local network. It's
-              useful for some protocols that only want local area to
+              routing sent packets to outside the local network. It's
+              useful for some protocols that only want the local area to
               be affected.
             ]]
             get { }

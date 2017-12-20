@@ -4,25 +4,25 @@ enum Efl.Net.Control.Access_Point.State {
       @since 1.19
     ]]
     idle, [[Nothing is happening with this access point]]
-    association, [[The access point is trying to associate itself, this is the first state after a connection attempt]]
-    configuration, [[The access point is configuring itself, such as DHCP]]
-    local, [[The access point is connected, but the internet connection wasn't validated]]
-    online, [[The access point is connected and the internet connected was validated]]
-    disconnect, [[The access point is disconnecting]]
-    failure, [[A connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
+    association, [[The access point is trying to associate itself. This is the first state after a connection attempt.]]
+    configuration, [[The access point is configuring itself, such as DHCP.]]
+    local, [[The access point is connected but the internet connection hasn't been validated.]]
+    online, [[The access point is connected and the internet connection has been validated.]]
+    disconnect, [[The access point is disconnecting.]]
+    failure, [[The connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
 }
 
 enum Efl.Net.Control.Access_Point.Error {
-    [[The connection error reason.
+    [[The reason for the connection error.
 
       @since 1.19
     ]]
-    none, [[All right, no errors]]
-    out_of_range, [[Wireless device is out of range]]
-    pin_missing, [[PIN was required and is missing]]
-    dhcp_failed, [[DHCP failed to provide configuration]]
-    connect_failed, [[Could not connect to access point]]
-    login_failed, [[Login or authentication information was incorrect, agent_request_input event may be emitted]]
+    none, [[All OK, no errors]]
+    out_of_range, [[Wireless device is out of range.]]
+    pin_missing, [[PIN was required and is missing.]]
+    dhcp_failed, [[DHCP failed to provide configuration.]]
+    connect_failed, [[Could not connect to access point.]]
+    login_failed, [[Login or authentication information was incorrect, agent_request_input event may be emitted.]]
 }
 
 enum Efl.Net.Control.Access_Point.Security {
@@ -42,8 +42,8 @@ enum Efl.Net.Control.Access_Point.Ipv4_Method {
 
       @since 1.19
     ]]
-    off, [[IPv4 is disabled]]
-    dhcp, [[IPv4 is configured using DHCP]]
+    off, [[IPv4 is disabled.]]
+    dhcp, [[IPv4 is configured using DHCP.]]
     manual, [[IPv4 is manually set using address, netmask and gateway]]
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv4]]
 }
@@ -53,25 +53,25 @@ enum Efl.Net.Control.Access_Point.Ipv6_Method {
 
       @since 1.19
     ]]
-    off, [[IPv6 is disabled]]
-    fixed, [[IPv6 is fixed by operator and cannot be changed]]
-    manual, [[IPv6 is manually set using address, netmask and gateway]]
-    auto_privacy_none, [[IPv6 is set using dhcp or using a tunnel6to4, no privacy extensions should be used]]
-    auto_privacy_public, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a public IP address over temporary addresses]]
-    auto_privacy_temporary, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a temporary IP address over public addresses]]
-    tunnel6to4, [[IPv6 was configured using a 6-to-4 tunnel. This cannot be set by the user, which is expected to set "auto" instead]]
+    off, [[IPv6 is disabled.]]
+    fixed, [[IPv6 is fixed by operator and cannot be changed.]]
+    manual, [[IPv6 is manually set using address, netmask and gateway.]]
+    auto_privacy_none, [[IPv6 is set using dhcp or using a tunnel6to4. No privacy extensions should be used.]]
+    auto_privacy_public, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a public IP address over temporary addresses.]]
+    auto_privacy_temporary, [[IPv6 is set using dhcp or using a tunnel6to4, privacy extensions are used and the system prefers a temporary IP address over public addresses.]]
+    tunnel6to4, [[IPv6 was configured using a 6-to-4 tunnel. This cannot be set by the user, which is set to "auto" instead]]
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv6]]
 }
 
 enum Efl.Net.Control.Access_Point.Proxy_Method {
-    [[The method used to configure Proxy.
+    [[The method used to configure Proxies.
 
       @since 1.19
     ]]
-    off, [[Direct connection to the internet, no proxy to be used]]
-    auto, [[Proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL]]
-    manual, [[Proxy is configured manually using servers and excludes]]
-    unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy]]
+    off, [[Direct connection to the internet, no proxy used.]]
+    auto, [[Proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL.]]
+    manual, [[Proxy is configured manually using servers and excludes.]]
+    unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy.]]
 }
 
 class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
@@ -80,8 +80,8 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
       The @Efl.Net.Control is composed of multiple technologies, each
       create access points to allow configuration and connection.
 
-      An application willing to just get a network connection should
-      prefer to use the \@Efl.Net.Session instead.
+      An application requiring only a network connection can just
+      use a \@Efl.Net.Session instead.
 
       @since 1.19
     ]]
@@ -114,11 +114,11 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         disconnect {
             [[Disconnects from this access point.
 
-              When disconnected a previously connected access point it
+              When disconnected previously connected access points
               won't be forgotten. The configuration and other details
-              such as priority and passphrase will be available for a
-              future re-connection with call to @.connect. If it is
-              desired to disconnect and forget all access point
+              such as priority and passphrase will be available for
+              future re-connection with a call to @.connect. If you
+              need to disconnect and forget all access point
               information, use @.forget instead.
             ]]
         }
@@ -127,15 +127,15 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
             [[Disconnects and forgets about this access point.
 
               Successful @.connect will always remember the access
-              point for future re-connections. This method reverts
-              that by disconnecting and forgetting about the access
-              point and its configuration, which will set the
+              point for future re-connections. This method overrides
+              this by disconnecting and forgetting the access
+              point and its configuration, which will set
               @.remembered to $false.
             ]]
         }
 
         @property state {
-            [[The current state of this access point.
+            [[The current state of the access point.
 
               Whenever the state changes, "changed" will be emitted.
             ]]
@@ -170,16 +170,16 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
               This property is dynamic and reflects the index of the
               access point in the current access points list. As
               access points may come and go, the value may change at
-              any time and notified with "changed" event.
+              any time and send notifications via the "changed" event.
 
               If set, then it will reorder priorities, moving all other
               services at equal or higher priority up. To move as the
               first (most priority), then use 0. To move as the last
               priority, use UINT32_MAX or the last known priority + 1.
 
-              \@note Only remembered access points may be reordered
+              \@note Only stored access points may be reordered
               among themselves. Those that are not remembered will
-              always come last in random order defined by the backend.
+              always come last in a random order defined by the backend.
             ]]
             get { }
             set { }
@@ -259,9 +259,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property name_servers {
             [[DNS (Domain Name Servers) in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_name_servers, which may generate change
-              to this property, being notified with the "changed"
+              These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -273,9 +273,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property time_servers {
             [[NTP (Time Server) in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_time_servers, which may generate change
-              to this property, being notified with the "changed"
+           These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -287,9 +287,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property domains {
             [[Searches domains in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_domains, which may generate change
-              to this property, being notified with the "changed"
+        These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -301,9 +301,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property ipv4 {
             [[IPv4 in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_ipv4, which may generate change
-              to this property, being notified with the "changed"
+             These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -318,9 +318,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property ipv6 {
             [[IPv6 in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_ipv6, which may generate change
-              to this property, being notified with the "changed"
+              These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -336,9 +336,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property proxy {
             [[Proxy in use for this access point.
 
-              These are the actual values in use, configure them using
-              @.configuration_proxy, which may generate change
-              to this property, being notified with the "changed"
+             These are the actual values used. Configure them using
+              @.configuration_name_servers. This may generate changes
+              to this property, triggering the "changed"
               event.
             ]]
             get { }
@@ -353,7 +353,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_name_servers {
             [[DNS (Domain Name Servers) configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
               "changed" event to notify of @.name_servers property
               with the actual value in use, which may differ from
@@ -369,9 +369,9 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_time_servers {
             [[NTP (Time Server) configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
-              "changed" event to notify of @.time_servers property
+              "changed" event to notify of @.name_servers property
               with the actual value in use, which may differ from
               this.
             ]]
@@ -385,7 +385,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_domains {
             [[Searches domains configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
               "changed" event to notify of @.domains property
               with the actual value in use, which may differ from
@@ -401,7 +401,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_ipv4 {
             [[IPv4 configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
               "changed" event to notify of @.ipv4 property
               with the actual value in use, which may differ from
@@ -420,7 +420,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_ipv6 {
             [[IPv6 configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
               "changed" event to notify of @.ipv6 property
               with the actual value in use, which may differ from
@@ -440,7 +440,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop.Consumer) {
         @property configuration_proxy {
             [[Proxy configured by user for this access point.
 
-              These are the user configured values, that will be
+              These are user configured values, which will be
               applied by the backend system and in turn may result in
               "changed" event to notify of @.proxy property
               with the actual value in use, which may differ from

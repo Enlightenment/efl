@@ -3,9 +3,9 @@ enum Efl.Net.Session.State {
 
       @since 1.19
     ]]
-    offline, [[No access point is connected]]
-    local, [[At least one access point was connected and the internet connectio wasn't verified]]
-    online, [[At least one access point was connected and the internet was verified]]
+    offline, [[No access point is connected.]]
+    local, [[At least one access point has connected and the internet connection hasn't been verified.]]
+    online, [[At least one access point has connected and the internet connection has been verified.]]
 }
 
 /* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
@@ -32,15 +32,15 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
 
       This API is targeted at applications that need access to the
       network, specifying the allowed bearer technologies to connect
-      to the internet, as well as if just local networking is enough
+      to the internet, as well as whether local networking is enough
       or validated internet access is required.
 
-      Some platforms may not implement the backend for this class, in
-      such cases the system will report always @.state "online"
+      Some platforms may not implement the backend for this class. In
+      this cases the system will report always @.state "online"
       (@Efl.Net.Session.State.online) and other properties will be
       NULL, such as @.name, @.interface, @.ipv4 and @.ipv6; as well as
-      @.technology is set to @Efl.Net.Session.Technology.unknown. Thus
-      if there is need to detect for an actual backend, check if the
+      @.technology is set to @Efl.Net.Session.Technology.unknown. As such
+      if you need to detect for an actual backend, check if the
       state is online but those properties are NULL or technology is
       unknown.
 
@@ -58,10 +58,10 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
         connect {
             [[Asks the session to be connected.
 
-              This method doesn't need to be called if all an
-              application want is to monitor the connectivity state,
-              like a poller that will only try to access the
-              webservice when there is an existing connection without
+              This method doesn't need to be called if an
+              application only needs to monitor the connectivity state,
+              such as  a poller which will only try to access the
+              webservice when there is an existing connection, without
               triggering one.
 
               This method is subject to backend policy. For instance,
@@ -78,7 +78,7 @@ class Efl.Net.Session (Efl.Loop.Consumer) {
             [[Indicates this session doesn't need a connection anymore.
 
               This reverses the effect of @.connect, let the system
-              disconnect if nothing else needs a connection. One may
+              disconnect if nothing else needs a connection. You can
               still use the session object to monitor the connectivity
               state via properties and "changed" event.
             ]]

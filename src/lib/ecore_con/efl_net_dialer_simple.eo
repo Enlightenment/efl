@@ -1,17 +1,17 @@
 class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
     [[Connects to a remote server offering an easy to use, buffered I/O.
 
-      The simple dialer is based on @Efl.Net.Socket.Simple, that
-      encapsulates an actual @Efl.Net.Socket, and uses it with an
-      @Efl.Io.Buffered_Stream, which creates an input @Efl.Io.Queue,
-      an output @Efl.Io.Queue and these are linked using a receiver
+      The simple dialer is based on @Efl.Net.Socket.Simple, which
+      encapsulates an actual @Efl.Net.Socket and uses it with an
+      @Efl.Io.Buffered_Stream. This creates an input @Efl.Io.Queue,
+      an output @Efl.Io.Queue. Both of these are linked using a receiver
       and a sender @Efl.Io.Copier.
 
-      The idea is that unlike traditional @Efl.Net.Socket that will
-      attempt to write directly to socket and thus may take less data
+      The idea is that unlike the traditional @Efl.Net.Socket which
+      attempts to write directly to the socket and thus may take less data
       than requested, this one will keep the pending data in its own
-      buffer, feeding to the actual socket when it
-      @Efl.Io.Writer.can_write. That makes its operation much simpler
+      buffer, feeding it to the actual socket when
+      @Efl.Io.Writer.can_write occurs. This makes its operation much simpler
       as @Efl.Io.Writer.write will always take the full data -- allows
       "write and forget", if unlimited (see
       @Efl.Io.Buffered_Stream.max_queue_size_output).
@@ -24,15 +24,15 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
       @Efl.Io.Buffered_Stream.discard or
       @Efl.Io.Buffered_Stream.clear.
 
-      Then when waiting for a complete message, just peek at its
-      contents, if not complete do nothing, if complete then either
+      When waiting for a complete message, you can then just peek at its
+      contents. If it's incomplete do nothing, if complete then either
       @Efl.Io.Reader.read to get a copy or manipulate a read-only
       reference from @Efl.Io.Buffered_Stream.slice and then
       @Efl.Io.Buffered_Stream.discard
 
       The actual dialer is created using the class given as the
       constructor property @.inner_class and can be retrieved with
-      @Efl.Io.Buffered_Stream.inner_io, which should be used with
+      @Efl.Io.Buffered_Stream.inner_io. This should be used with
       care, like extra configuration before @Efl.Net.Dialer.dial is
       called.
 

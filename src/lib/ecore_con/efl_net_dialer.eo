@@ -5,13 +5,13 @@ var Efl.Net.Dialer.Error.PROXY_AUTHENTICATION_FAILED: Eina.Error; [[The dialer f
 interface Efl.Net.Dialer (Efl.Net.Socket) {
     [[Creates a client socket to reach a remote peer.
 
-      The connection process starts when @.dial is executed, this
-      allows implementations to request more complex setup that would
-      require a live object handle that is not possible during
+      The connection process starts when @.dial is executed. This
+      allows implementations to request more complex setups
+      requiring a live object handle, which is not possible during
       construction.
 
       The socket should be considered connected and ready to use only
-      when "connected" event is dispatched, by then
+      when "connected" event is dispatched. By then
       @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write should
       change accordingly.
 
@@ -24,10 +24,10 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         dial {
             [[Dials to the remote peer.
 
-              This method starts the connection process, resolving
-              address and then proceeding to the actual connection.
+              This method starts the connection process, resolves the
+              address and then proceeds to the actual connection.
 
-              Once the connection is fully setup, "connected" event is
+              Once the connection is fully setup "connected" event is
               dispatched.
             ]]
             params {
@@ -39,7 +39,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         @property address_dial {
             [[Returns the address given to @.dial.
 
-              If the resolved address is desired, then listen to
+              If the resolved address is required, listen to
               "resolved" event and use the
               @Efl.Net.Socket.address_remote property.
             ]]
@@ -53,7 +53,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
         @property connected {
             [[Returns whenever the socket is connected or not.
 
-              Whenever this property becomes true, "connected" event
+              Whenever this property becomes true the "connected" event
               should be dispatched.
             ]]
             get { }
@@ -70,8 +70,8 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
 
                 - protocol://username:password\@proxyserver:port
 
-              Where protocol is defined per class, such as a TCP or
-              UDP dialer will use 'socks4', 'socks4a', 'socks5' or
+              Where protocol is defined by class, such as a TCP or
+              UDP, dialer will use 'socks4', 'socks4a', 'socks5' or
               'socks5h'; while http and websocket will want those or
               'http'.
 
@@ -115,7 +115,7 @@ interface Efl.Net.Dialer (Efl.Net.Socket) {
                             @Efl.Net.Socket.address_remote.
 
                             This is emitted before "connected" and may
-                            be emitted from @Efl.Object.finalize, thus
+                            be emitted from @Efl.Object.finalize. As such
                             be sure to connect the callbacks during
                             the object construction.
 

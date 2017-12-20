@@ -1,20 +1,20 @@
 interface Efl.Net.Server {
     [[The basic server interface.
 
-      It will start serving and accepting clients once @.serve is
+      This will start serving and accepting clients once @.serve is
       called and the "serving" event is dispatched.
 
-      When new clients are accepted, then "client,add" event is
+      When new clients are accepted the "client,add" event is
       dispatched with a child object implementing @Efl.Net.Socket
       interface. These implement the standard @Efl.Io.Reader,
-      @Efl.Io.Writer and @Efl.Io.Closer interfaces, thus can be used
+      @Efl.Io.Writer and @Efl.Io.Closer interfaces, so can be used
       with utilities such as @Efl.Io.Copier.
 
       @since 1.19
     ]]
 
     events {
-        client,add @hot: Efl.Net.Socket; [[A new client socket was created.
+        client,add @hot: Efl.Net.Socket; [[A new client socket has been created.
 
                                            The socket will have the
                                            server as parent and can be
@@ -26,7 +26,7 @@ interface Efl.Net.Server {
                                    excess, see @.clients_limit.
                                  ]]
 
-        error: Eina.Error; [[Some error happened and the server needs
+        error: Eina.Error; [[An error has occurred and the server needs
                              to be stopped.
                            ]]
         serving; [[Notifies the server is ready to accept clients.
@@ -37,11 +37,11 @@ interface Efl.Net.Server {
         serve {
             [[Starts serving requests.
 
-              This method starts the server, resolving address and
-              then proceeding to the actual listen(2)/bind(2)
+              This method starts the server, resolves addresses and
+              then proceeds to the actual listen(2)/bind(2)
               equivalent..
 
-              Once the connection is fully setup, "serving" event is
+              Once the connection is fully set up the "serving" event is
               dispatched.
             ]]
             params {
@@ -51,14 +51,14 @@ interface Efl.Net.Server {
         }
 
         @property address {
-            [[The address the server is bound to.
+            [[The address to which the server is bound.
 
-              The actual value depends on the type of server, like an
+              The actual value depends on the type of server, such as an
               IPv4 (ip:port) or IPv6 ([ip]:port) formatted for a
               TCP/UDP server, the path if an Unix Local...
 
-              It's always resolved, then if operations are working
-              with domain names or URL, this is the values the kernel
+              It's always resolved. If operations are working
+              with domain names or URLs, these are the values the kernel
               reports. It's similar to getsockname() in behavior.
             ]]
             get { }
@@ -69,7 +69,7 @@ interface Efl.Net.Server {
         }
 
         @property clients_count {
-            [[Number of concurrent clients accepted by this server.]]
+            [[Number of concurrent clients accepted by the server.]]
             get { }
             set @protected { }
             values {
@@ -78,7 +78,7 @@ interface Efl.Net.Server {
         }
 
         @property clients_limit {
-            [[Number of maximum concurrent clients allowed by this server.
+            [[Number of maximum concurrent clients allowed by the server.
 
               If reject_excess is set to true, then the connection
               will be accepted and immediately closed.

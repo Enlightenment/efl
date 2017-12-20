@@ -9,14 +9,14 @@ struct Efl.Net.Ip_Address.Resolve_Results {
     ]]
     request_address: string; [[The 'address' argument given to Efl.Net.Ip_Address.resolve]]
     canonical_name: string; [[The canonical name, if it was requested in flags]]
-    results: array<Efl.Net.Ip_Address>; [[The resolved objects. Do not modify this array, but you can keep reference to elements using efl_ref() and efl_unref()]]
+    results: array<Efl.Net.Ip_Address>; [[The resolved objects. Do not modify this array but you can keep reference to elements using efl_ref() and efl_unref()]]
 }
 
 class Efl.Net.Ip_Address (Efl.Object) {
     [[An Internet Protocol (IP) Address.
 
       This class is a set of helpers to translate to and from address
-      strings used in Efl.Net. For IP they take the formats:
+      strings used in Efl.Net. For IP they take the following formats:
 
         - IPv4 complete: 127.0.0.1:1234
         - IPv4 no port: 127.0.0.1
@@ -24,9 +24,9 @@ class Efl.Net.Ip_Address (Efl.Object) {
         - IPv6 no port: [::1]
         - IPv6 no braces (implies no port): ::1
 
-      However in other libraries one may use the address numbers or
-      even a 'struct sockaddr' handle and translating by yourself may
-      be too much work. To convert to a string, just create an
+      However in other libraries you can use the address numbers or
+      even a 'struct sockaddr' handle. Translating by yourself may
+      be too much work. To convert to a string just create an
       instance with @.create or @.create_sockaddr and then query
       @.string. To convert from numeric string to sockaddr, create an
       instance with @.parse and then query @.sockaddr.
@@ -58,9 +58,9 @@ class Efl.Net.Ip_Address (Efl.Object) {
         create_sockaddr @class {
             [[Creates an object given sockaddr
 
-              This is a convenience to create an object in a single call.
-              To create based on native port and address bytes,
-              use @.create, to create from string use @.parse.
+              This is a convenient way to create an object in a single call.
+              To create based on native port and address bytes
+              use @.create. To create from a string use @.parse.
             ]]
             params {
                 sockaddr: const(void_ptr) @nonull; [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
@@ -108,7 +108,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
               and port.
             ]]
             params {
-                address: string @nonull; [[The address such as enlightenment.org:http or enlightenment.org (port=0)]]
+                address: string @nonull; [[The address, such as enlightenment.org:http or enlightenment.org (port=0)]]
                 family: int @optional; [[Preferred family. AF_UNSPEC or 0 for both, otherwise one of AF_INET or AF_INET6]]
                 flags: int @optional; [[Flags to use with getaddrinfo(). If 0, default flags are used (AI_V4MAPPED | AI_ADDRCONFIG, if these exist in your system).]]
             }
@@ -134,7 +134,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
         @property family {
             [[The address family, one of AF_INET6 or AF_INET.
 
-              May only be set once, afterwards the object is not changing.
+              May only be set once. Afterwards the object does not change.
             ]]
             values {
                 family: int; [[AF_INET or AF_INET6]]
@@ -144,7 +144,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
         @property port {
             [[The address port in Host/Native endianess.
 
-              May only be set once, afterwards the object is not changing.
+              May only be set once. Afterwards the object does not change.
 
               Must be set after @.family.
             ]]
@@ -156,7 +156,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
         @property address {
             [[The bytes representing the address.
 
-              May only be set once, afterwards the object is not changing.
+              May only be set once. Afterwards the object does not change.
 
               Must be set after @.family.
             ]]
@@ -168,7 +168,7 @@ class Efl.Net.Ip_Address (Efl.Object) {
         @property sockaddr {
             [[The <netinet/in.h>-compatible 'struct sockaddr'.
 
-              May only be set once, afterwards the object is not changing.
+              May only be set once. Afterwards the object does not change.
             ]]
             values {
                 sockaddr: const(void_ptr) @nonull; [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
