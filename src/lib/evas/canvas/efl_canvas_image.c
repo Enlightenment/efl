@@ -58,7 +58,7 @@ Efl_Image_Load_Error
 _evas_image_load_error_get(const Eo *eo_obj)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   Efl_Image_Load_Error r = efl_file_load_error_get(eo_obj);
+   Efl_Image_Load_Error r = efl_file_load_error_get(efl_cast(eo_obj, EFL_FILE_MIXIN));
 
    if (r != EFL_IMAGE_LOAD_ERROR_NONE) return r;
    return o->load_error;
