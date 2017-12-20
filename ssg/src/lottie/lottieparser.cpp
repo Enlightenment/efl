@@ -135,24 +135,24 @@ public:
     JoinStyle getLineJoin();
     LottieTrimObject::TrimType getTrimType();
 
-    LottieComposition *parseComposition();
+    std::shared_ptr<LottieComposition> parseComposition();
     void parseLayers(LottieComposition *comp);
-    LottieLayer *parseLayer();
+    std::shared_ptr<LottieObject> parseLayer();
     void parseShapesAttr(LottieLayer *layer);
     void parseObject(LottieGroupObject *parent);
-    LottieObject* parseObjectTypeAttr();
-    LottieObject *parseGroupObject();
-    LottieObject *parseRectObject();
-    LottieObject *parseEllipseObject();
-    LottieObject *parseShapeObject();
+    std::shared_ptr<LottieObject> parseObjectTypeAttr();
+    std::shared_ptr<LottieObject> parseGroupObject();
+    std::shared_ptr<LottieObject> parseRectObject();
+    std::shared_ptr<LottieObject> parseEllipseObject();
+    std::shared_ptr<LottieObject> parseShapeObject();
 
-    LottieTransform *parseTransformObject();
-    LottieObject *parseFillObject();
-    LottieObject *parseGradientFillObject();
-    LottieObject *parseStrokeObject();
-    LottieObject *parseGradientStrokeObject();
-    LottieObject *parseTrimObject();
-    LottieObject *parseReapeaterObject();
+    std::shared_ptr<LottieObject> parseTransformObject();
+    std::shared_ptr<LottieObject> parseFillObject();
+    std::shared_ptr<LottieObject> parseGradientFillObject();
+    std::shared_ptr<LottieObject> parseStrokeObject();
+    std::shared_ptr<LottieObject> parseGradientStrokeObject();
+    std::shared_ptr<LottieObject> parseTrimObject();
+    std::shared_ptr<LottieObject> parseReapeaterObject();
 
     SGPointF parseInperpolatorPoint();
     void parseArrayValue(SGPointF &pt);
@@ -425,11 +425,13 @@ SGRect LottieParser::getRect()
     return r;
 }
 
-LottieComposition *LottieParser::parseComposition()
+std::shared_ptr<LottieComposition>
+LottieParser::parseComposition()
 {
     RAPIDJSON_ASSERT(PeekType() == kObjectType);
     EnterObject();
-    LottieComposition *comp = new LottieComposition();
+    std::shared_ptr<LottieComposition> sharedComposition = std::make_shared<LottieComposition>();
+    LottieComposition *comp = sharedComposition.get();
     compRef = comp;
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "w")) {
@@ -459,10 +461,11 @@ LottieComposition *LottieParser::parseComposition()
     // update the static property of Composition
     bool staticFlag = true;
     for (auto child : comp->mChildren) {
-        staticFlag &= child->isStatic();
+        staticFlag &= child.get()->isStatic();
     }
     comp->setStatic(staticFlag);
-    return comp;
+
+    return sharedComposition;
 }
 
 void LottieParser::parseLayers(LottieComposition *composition)
@@ -470,7 +473,7 @@ void LottieParser::parseLayers(LottieComposition *composition)
     RAPIDJSON_ASSERT(PeekType() == kArrayType);
     EnterArray();
     while (NextArrayValue()) {
-        auto layer = parseLayer();
+        std::shared_ptr<LottieObject> layer = parseLayer();
         composition->mChildren.push_back(layer);
     }
 }
@@ -479,10 +482,12 @@ void LottieParser::parseLayers(LottieComposition *composition)
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/layers/shape.json
  *
  */
-LottieLayer * LottieParser::parseLayer()
+std::shared_ptr<LottieObject>
+LottieParser::parseLayer()
 {
     RAPIDJSON_ASSERT(PeekType() == kObjectType);
-    LottieLayer *layer = new LottieLayer();
+    std::shared_ptr<LottieLayer> sharedLayer = std::make_shared<LottieLayer>();
+    LottieLayer *layer = sharedLayer.get();
     EnterObject();
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ty")) {    /* Type of layer: Shape. Value 4.*/
@@ -526,13 +531,13 @@ LottieLayer * LottieParser::parseLayer()
     // update the static property of layer
     bool staticFlag = true;
     for (auto child : layer->mChildren) {
-        staticFlag &= child->isStatic();
+        staticFlag &= child.get()->isStatic();
     }
 
     layer->setStatic(staticFlag &&
                      layer->mTransform->isStatic());
 
-    return layer;
+    return sharedLayer;
 }
 
 void LottieParser::parseShapesAttr(LottieLayer *layer)
@@ -544,7 +549,7 @@ void LottieParser::parseShapesAttr(LottieLayer *layer)
     }
 }
 
-LottieObject*
+std::shared_ptr<LottieObject>
 LottieParser::parseObjectTypeAttr()
 {
     RAPIDJSON_ASSERT(PeekType() == kStringType);
@@ -591,10 +596,12 @@ LottieParser::parseObject(LottieGroupObject *parent)
     }
 }
 
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseGroupObject()
 {
-    LottieShapeGroup *group = new LottieShapeGroup();
+    std::shared_ptr<LottieShapeGroup> sharedGroup = std::make_shared<LottieShapeGroup>();
+
+    LottieShapeGroup *group = sharedGroup.get();
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "it")) {
             RAPIDJSON_ASSERT(PeekType() == kArrayType);
@@ -609,19 +616,22 @@ LottieParser::parseGroupObject()
     }
     bool staticFlag = true;
     for (auto child : group->mChildren) {
-        staticFlag &= child->isStatic();
+        staticFlag &= child.get()->isStatic();
     }
     group->setStatic(staticFlag);
-    return group;
+
+    return sharedGroup;
 }
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/rect.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseRectObject()
 {
-    LottieRectObject *obj = new LottieRectObject();
+    std::shared_ptr<LottieRectObject> sharedRect = std::make_shared<LottieRectObject>();
+    LottieRectObject *obj = sharedRect.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "p")) {
             parseProperty(obj->mPos);
@@ -638,16 +648,18 @@ LottieParser::parseRectObject()
     obj->setStatic(obj->mPos.isStatic() &&
                    obj->mSize.isStatic() &&
                    obj->mRound.isStatic());
-    return obj;
+    return sharedRect;
 }
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/ellipse.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseEllipseObject()
 {
-    LottieEllipseObject *obj = new LottieEllipseObject();
+    std::shared_ptr<LottieEllipseObject> sharedEllipse = std::make_shared<LottieEllipseObject>();
+    LottieEllipseObject *obj = sharedEllipse.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "p")) {
             parseProperty(obj->mPos);
@@ -659,16 +671,18 @@ LottieParser::parseEllipseObject()
     }
     obj->setStatic(obj->mPos.isStatic() &&
                    obj->mSize.isStatic());
-    return obj;
+    return sharedEllipse;
 }
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/properties/shape.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseShapeObject()
 {
-    LottieShapeObject *obj = new LottieShapeObject();
+    std::shared_ptr<LottieShapeObject> sharedShape = std::make_shared<LottieShapeObject>();
+    LottieShapeObject *obj = sharedShape.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ks")) {
             parseShapeProperty(obj->mShape);
@@ -683,7 +697,8 @@ LottieParser::parseShapeObject()
     }
     obj->process();
     obj->setStatic(obj->mShape.isStatic());
-    return obj;
+
+    return sharedShape;
 }
 
 LottieTrimObject::TrimType
@@ -706,10 +721,12 @@ LottieParser::getTrimType()
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/trim.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseTrimObject()
 {
-    LottieTrimObject *obj = new LottieTrimObject();
+    std::shared_ptr<LottieTrimObject> sharedTrim = std::make_shared<LottieTrimObject>();
+    LottieTrimObject *obj = sharedTrim.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "s")) {
             parseProperty(obj->mStart);
@@ -729,13 +746,16 @@ LottieParser::parseTrimObject()
     obj->setStatic(obj->mStart.isStatic() &&
                    obj->mEnd.isStatic() &&
                    obj->mOffset.isStatic());
-    return obj;
+
+    return sharedTrim;
 }
 
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseReapeaterObject()
 {
-    LottieRepeaterObject *obj = new LottieRepeaterObject();
+    std::shared_ptr<LottieRepeaterObject> sharedRepeater = std::make_shared<LottieRepeaterObject>();
+    LottieRepeaterObject *obj = sharedRepeater.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "c")) {
             parseProperty(obj->mCopies);
@@ -753,17 +773,20 @@ LottieParser::parseReapeaterObject()
     obj->setStatic(obj->mCopies.isStatic() &&
                    obj->mOffset.isStatic() &&
                    obj->mTransform->isStatic());
-    return obj;
+
+    return sharedRepeater;
 }
 
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/transform.json
  */
-LottieTransform *
+std::shared_ptr<LottieObject>
 LottieParser::parseTransformObject()
 {
-    LottieTransform *obj = new LottieTransform();
+    std::shared_ptr<LottieTransform> sharedTransform = std::make_shared<LottieTransform>();
+    LottieTransform *obj = sharedTransform.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "a")) {
             parseProperty(obj->mAnchor);
@@ -790,16 +813,19 @@ LottieParser::parseTransformObject()
                    obj->mSkew.isStatic() &&
                    obj->mSkewAxis.isStatic() &&
                    obj->mOpacity.isStatic() );
-    return obj;
+
+    return sharedTransform;
 }
 
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/fill.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseFillObject()
 {
-    LottieFillObject *obj = new LottieFillObject();
+    std::shared_ptr<LottieFillObject> sharedFill = std::make_shared<LottieFillObject>();
+    LottieFillObject *obj = sharedFill.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "c")) {
             parseProperty(obj->mColor);
@@ -816,7 +842,8 @@ LottieParser::parseFillObject()
     }
     obj->setStatic(obj->mColor.isStatic() &&
                    obj->mOpacity.isStatic());
-    return obj;
+
+    return sharedFill;
 }
 
 /*
@@ -860,10 +887,12 @@ JoinStyle LottieParser::getLineJoin()
 /*
  * https://github.com/airbnb/lottie-web/blob/master/docs/json/shapes/stroke.json
  */
-LottieObject *
+std::shared_ptr<LottieObject>
 LottieParser::parseStrokeObject()
 {
-    LottieStrokeObject *obj = new LottieStrokeObject();
+    std::shared_ptr<LottieStrokeObject> sharedStroke = std::make_shared<LottieStrokeObject>();
+    LottieStrokeObject *obj = sharedStroke.get();
+
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "c")) {
             parseProperty(obj->mColor);
@@ -890,7 +919,8 @@ LottieParser::parseStrokeObject()
     obj->setStatic(obj->mColor.isStatic() &&
                    obj->mOpacity.isStatic() &&
                    obj->mWidth.isStatic());
-    return obj;
+
+    return sharedStroke;
 }
 
 void LottieParser::parseArrayValue(LottieColor &color)
@@ -1240,7 +1270,7 @@ public:
     }
     void visitChildren(LottieGroupObject *obj) {
         for(auto child :obj->mChildren)
-            child->accept(this);
+            child.get()->accept(this);
         switch (obj->type()) {
         case LottieObject::Type::Layer:
             sgDebug<<"[LAYER End ]";
@@ -1266,15 +1296,15 @@ SGJson::SGJson(const char *data)
     t.start();
     LottieParser r(const_cast<char *>(data));
 
-    LottieComposition *comp = r.parseComposition();
+    std::shared_ptr<LottieComposition> comp = r.parseComposition();
 #ifdef DEBUG_PARSER
     LottieObjectInspector inspector;
-    comp->accept(&inspector);
+    comp.get()->accept(&inspector);
 #endif
-    comp->processRepeaterObjects();
+    comp.get()->processRepeaterObjects();
 #ifdef DEBUG_PARSER
     sgDebug<<"********  After Repeater Processing **********";
-    comp->accept(&inspector);
+    comp.get()->accept(&inspector);
 #endif
     sgCritical<<"Parsing time = "<<t.elapsed()<<" ms";
 }

@@ -147,12 +147,12 @@ class LottieGroupObject: public LottieObject
 public:
     LottieGroupObject(LottieObject::Type  type):LottieObject(type){}
     LottieGroupObject(const LottieGroupObject &other);
-    ~LottieGroupObject() {
-        for(auto child : mChildren)
-            delete child;
-    }
+//    ~LottieGroupObject() {
+//        for(auto child : mChildren)
+//            delete child;
+//    }
 public:
-    std::vector<LottieObject *> mChildren;
+    std::vector<std::shared_ptr<LottieObject>> mChildren;
 };
 
 class LottieShapeGroup : public LottieGroupObject
@@ -204,7 +204,7 @@ public:
     long                 mStartTime;
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
-    LottieTransform     *mTransform;
+    std::shared_ptr<LottieObject>    mTransform;
 };
 
 class LottieTransform : public LottieObject
@@ -351,13 +351,12 @@ public:
     {visitor->visit(this); visitor->visitChildren(this);}
     LottieRepeaterObject():LottieGroupObject(LottieObject::Type::Repeater),
                            mCopies(0),
-                           mOffset(0),
-                           mTransform(nullptr){}
+                           mOffset(0){}
     LottieObject *copy() {return new LottieRepeaterObject(*this);}
 public:
     LottieAnimatable<float>             mCopies;
     LottieAnimatable<float>             mOffset;
-    LottieTransform                    *mTransform;
+    std::shared_ptr<LottieObject>       mTransform;
 };
 
 

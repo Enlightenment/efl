@@ -18,11 +18,12 @@ public:
     void visit(LottieStrokeObject *) {}
     void visitChildren(LottieGroupObject *obj) {
         for(auto child :obj->mChildren) {
-            child->accept(this);
+            child.get()->accept(this);
             if (mRepeaterFound) {
-                LottieRepeaterObject *repeater = static_cast<LottieRepeaterObject *>(child);
-                LottieShapeGroup *shapeGroup = new LottieShapeGroup();
-                repeater->mChildren.push_back(shapeGroup);
+                LottieRepeaterObject *repeater = static_cast<LottieRepeaterObject *>(child.get());
+                std::shared_ptr<LottieShapeGroup> sharedShapeGroup= std::make_shared<LottieShapeGroup>();
+                LottieShapeGroup *shapeGroup = sharedShapeGroup.get();
+                repeater->mChildren.push_back(sharedShapeGroup);
                 // copy all the child of the object till repeater and
                 // move that in to a group and then add that group to
                 // the repeater object.
@@ -31,9 +32,9 @@ public:
                         break;
                     // we shouldn't copy the trim as trim operation is
                     // already applied to the objects.
-                    if (cpChild->type() == LottieObject::Type::Trim)
+                    if (cpChild.get()->type() == LottieObject::Type::Trim)
                         continue;
-                    shapeGroup->mChildren.push_back(cpChild->copy());
+                    shapeGroup->mChildren.push_back(cpChild);
                 }
                 mRepeaterFound = false;
             }
@@ -56,8 +57,9 @@ void LottieComposition::processRepeaterObjects()
  */
 LottieGroupObject::LottieGroupObject(const LottieGroupObject &other):LottieObject(other.mType)
 {
+    sgDebug<<"We Shouldn't come here ************************";
     for(auto child: other.mChildren) {
-        mChildren.push_back(child->copy());
+        mChildren.push_back(child);
     }
 }
 
