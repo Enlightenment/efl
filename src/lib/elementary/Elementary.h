@@ -152,7 +152,6 @@ EAPI extern Elm_Version *elm_version;
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
 # include <elm_spinner.eo.h>
-
 #endif
 
 #include <elm_tooltip.h>
@@ -324,7 +323,9 @@ EAPI extern Elm_Version *elm_version;
 }
 #endif
 
-#undef EAPI
-#define EAPI
+#ifndef ELEMENTARY_BUILD
+# undef EAPI
+# define EAPI
+#endif
 
 #endif
