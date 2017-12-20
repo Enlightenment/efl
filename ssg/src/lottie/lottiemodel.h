@@ -133,10 +133,12 @@ public:
     inline LottieObject::Type type() const {return mType;}
     virtual void accept(LottieObjectVisitor *){}
     virtual ~LottieObject(){}
-    LottieObject(LottieObject::Type  type): mType(type){}
-    bool isStatic();
+    LottieObject(LottieObject::Type  type): mStatic(true), mType(type){}
+    bool isStatic() {return mStatic;}
+    void setStatic(bool value) {mStatic = value;}
     virtual LottieObject *copy() = 0;
 public:
+    bool                mStatic;
     LottieObject::Type  mType;
 };
 
@@ -178,7 +180,6 @@ public:
     long                 mStartFrame = 0;
     long                 mEndFrame = 0;
     float                mFrameRate;
-    long                 mStartTime;
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
     std::unordered_map<std::string,

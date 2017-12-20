@@ -456,6 +456,12 @@ LottieComposition *LottieParser::parseComposition()
             Skip(key);
         }
     }
+    // update the static property of Composition
+    bool staticFlag = true;
+    for (auto child : comp->mChildren) {
+        staticFlag &= child->isStatic();
+    }
+    comp->setStatic(staticFlag);
     return comp;
 }
 
@@ -511,13 +517,22 @@ LottieLayer * LottieParser::parseLayer()
         } else if (0 == strcmp(key, "shapes")) {
             parseShapesAttr(layer);
         } else {
-#ifdef DEBUG_PARSER
+    #ifdef DEBUG_PARSER
             sgWarning<<"Layer Attribute Skipped : "<<key;
-#endif
+    #endif
             Skip(key);
         }
     }
-  return layer;
+    // update the static property of layer
+    bool staticFlag = true;
+    for (auto child : layer->mChildren) {
+        staticFlag &= child->isStatic();
+    }
+
+    layer->setStatic(staticFlag &&
+                     layer->mTransform->isStatic());
+
+    return layer;
 }
 
 void LottieParser::parseShapesAttr(LottieLayer *layer)
@@ -592,7 +607,12 @@ LottieParser::parseGroupObject()
             Skip(key);
         }
     }
-  return group;
+    bool staticFlag = true;
+    for (auto child : group->mChildren) {
+        staticFlag &= child->isStatic();
+    }
+    group->setStatic(staticFlag);
+    return group;
 }
 
 /*
@@ -615,6 +635,9 @@ LottieParser::parseRectObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mPos.isStatic() &&
+                   obj->mSize.isStatic() &&
+                   obj->mRound.isStatic());
     return obj;
 }
 
@@ -634,6 +657,8 @@ LottieParser::parseEllipseObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mPos.isStatic() &&
+                   obj->mSize.isStatic());
     return obj;
 }
 
@@ -657,6 +682,7 @@ LottieParser::parseShapeObject()
         }
     }
     obj->process();
+    obj->setStatic(obj->mShape.isStatic());
     return obj;
 }
 
@@ -700,6 +726,9 @@ LottieParser::parseTrimObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mStart.isStatic() &&
+                   obj->mEnd.isStatic() &&
+                   obj->mOffset.isStatic());
     return obj;
 }
 
@@ -721,6 +750,9 @@ LottieParser::parseReapeaterObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mCopies.isStatic() &&
+                   obj->mOffset.isStatic() &&
+                   obj->mTransform->isStatic());
     return obj;
 }
 
@@ -751,6 +783,13 @@ LottieParser::parseTransformObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mAnchor.isStatic() &&
+                   obj->mPosition.isStatic() &&
+                   obj->mRotation.isStatic() &&
+                   obj->mScale.isStatic() &&
+                   obj->mSkew.isStatic() &&
+                   obj->mSkewAxis.isStatic() &&
+                   obj->mOpacity.isStatic() );
     return obj;
 }
 
@@ -775,6 +814,8 @@ LottieParser::parseFillObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mColor.isStatic() &&
+                   obj->mOpacity.isStatic());
     return obj;
 }
 
@@ -846,6 +887,9 @@ LottieParser::parseStrokeObject()
             Skip(key);
         }
     }
+    obj->setStatic(obj->mColor.isStatic() &&
+                   obj->mOpacity.isStatic() &&
+                   obj->mWidth.isStatic());
     return obj;
 }
 
@@ -1160,37 +1204,39 @@ class LottieObjectInspector : public LottieObjectVisitor
 {
 public:
     void visit(LottieComposition *obj) {
-        sgDebug<<"[COMP: START]";
+        sgDebug<<"[COMP: START: static: "<<obj->isStatic()<<"[{ stFm endFm fmRate } { "<<obj->mStartFrame<<" "<<obj->mEndFrame<<" }]";
     }
     void visit(LottieLayer *obj) {
-        sgDebug<<"[LAYER: "<<"type: "<<obj->mGroupType<<" id: "<<obj->mId<<" parent: "<<obj->mParentId;
+        sgDebug<<"[LAYER: "<<"type: "<<obj->mGroupType<<" id: "<<obj->mId<<" parent: "<<obj->mParentId
+               <<" static:"<<obj->isStatic()<<"[{ stFm endFm stTm tmStrch } { "
+               <<obj->mStartFrame<<" "<<obj->mEndFrame<<" "<<obj->mStartTime<<" "<<obj->mTimeStreatch <<" }]";
     }
-    void visit(LottieTransform *) {
-        sgDebug<<"[TRANSFORM: ]";
+    void visit(LottieTransform *t) {
+        sgDebug<<"[TRANSFORM: static: "<<t->isStatic()<<" ]";
     }
-    void visit(LottieShapeGroup *obj) {
-        sgDebug<<"[SHAPE GROP: START]";
+    void visit(LottieShapeGroup *o) {
+        sgDebug<<"[SHAPEGROP: START :   static: "<<o->isStatic()<<" ]";
     }
-    void visit(LottieShapeObject *) {
-        sgDebug<<"[SHAPEGROUP: ]";
+    void visit(LottieShapeObject *s) {
+        sgDebug<<"[SHAPE: static: "<<s->isStatic()<<" ]";
     }
-    void visit(LottieRectObject *) {
-        sgDebug<<"[RECT: ]";
+    void visit(LottieRectObject *r) {
+        sgDebug<<"[RECT:  static: "<<r->isStatic()<<" ]";
     }
-    void visit(LottieEllipseObject *) {
-        sgDebug<<"[ELLIPSE: ]";
+    void visit(LottieEllipseObject *e) {
+        sgDebug<<"[ELLIPSE: static: "<<e->isStatic()<<" ]";
     }
-    void visit(LottieTrimObject *) {
-        sgDebug<<"[TRIM: ]";
+    void visit(LottieTrimObject *t) {
+        sgDebug<<"[TRIM: static: "<<t->isStatic()<<" ]";
     }
-    void visit(LottieRepeaterObject *) {
-        sgDebug<<"[REPEATER: ]";
+    void visit(LottieRepeaterObject *r) {
+        sgDebug<<"[REPEATER: static: "<<r->isStatic()<<" ]";
     }
-    void visit(LottieFillObject *) {
-        sgDebug<<"[FILL: ]";
+    void visit(LottieFillObject *f) {
+        sgDebug<<"[FILL: static: "<<f->isStatic()<<" ]";
     }
-    void visit(LottieStrokeObject *) {
-        sgDebug<<"[STROKE: ]";
+    void visit(LottieStrokeObject *s) {
+        sgDebug<<"[STROKE: static: "<<s->isStatic()<<" ]";
     }
     void visitChildren(LottieGroupObject *obj) {
         for(auto child :obj->mChildren)

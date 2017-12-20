@@ -29,6 +29,10 @@ public:
                 for(auto cpChild :obj->mChildren) {
                     if (cpChild == child)
                         break;
+                    // we shouldn't copy the trim as trim operation is
+                    // already applied to the objects.
+                    if (cpChild->type() == LottieObject::Type::Trim)
+                        continue;
                     shapeGroup->mChildren.push_back(cpChild->copy());
                 }
                 mRepeaterFound = false;
