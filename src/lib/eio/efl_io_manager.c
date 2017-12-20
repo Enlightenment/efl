@@ -338,26 +338,6 @@ _efl_io_manager_ls(Eo *obj,
 }
 
 /* Stat function */
-EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
-                              NULL,
-                              sizeof (Eina_Stat),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, dev),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ino),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, mode),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, nlink),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, uid),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_UINT, Eina_Stat, gid),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, rdev),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, size),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blksize),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, blocks),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, atime),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, atimensec),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, mtime),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, mtimensec),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_TIMESTAMP, Eina_Stat, ctime),
-                              EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_ULONG, Eina_Stat, ctimensec));
-
 static void
 _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st)
 {
