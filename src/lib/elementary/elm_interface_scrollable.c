@@ -3955,7 +3955,7 @@ _elm_scroll_content_del_cb(void *data,
 }
 
 EOLIAN static void
-_elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Object *content)
+_elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Object *content)
 {
    Evas_Coord w = 0, h = 0;
    Evas_Object *o;

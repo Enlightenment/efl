@@ -456,7 +456,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
             scroll_right_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
-      @property content {
+      @property scrollable_content {
       	 [[Content property]]
          set {
          }
