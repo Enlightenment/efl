@@ -562,7 +562,7 @@ struct klass
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 0) {\n"
-            << scope_tab << scope_tab << scope_tab << "efl.kw_event.Description desc = new efl.kw_event.Description(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, key);\n"
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
@@ -639,7 +639,7 @@ struct klass
                 << scope_tab << "}\n"
                 << scope_tab << "private void on_" << event_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
                 << scope_tab << "{\n"
-                << scope_tab << event_args
+                << scope_tab << scope_tab << event_args
                 << scope_tab << scope_tab << "try {\n"
                 << scope_tab << scope_tab << scope_tab << "On_" << event_name << "(args);\n"
                 << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
@@ -730,7 +730,7 @@ struct klass
                      << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
                      << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)"
                      << scope_tab << "{\n"
-                     << scope_tab << event_args
+                     << scope_tab << scope_tab << event_args
                     << scope_tab << scope_tab << "try {\n"
                     << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
                     << scope_tab << scope_tab <<  "} catch (Exception e) {\n"

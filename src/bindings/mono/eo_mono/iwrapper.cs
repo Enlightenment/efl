@@ -52,8 +52,9 @@ public class Globals {
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
               System.IntPtr obj,
               // FIXME commented to allow passing null stuff during test
-              /* ref efl.kw_event.Description desc, */
-              efl.kw_event.Description desc,
+              //ref efl.kw_event.Description desc,
+              //efl.kw_event.Description desc,
+              IntPtr desc,
               short priority,
               efl.Event_Cb cb,
               System.IntPtr data);
@@ -62,7 +63,8 @@ public class Globals {
               efl.kw_event.Description desc,
               efl.Event_Cb cb,
               System.IntPtr data);
-
+    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+        efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
 
     public const int RTLD_NOW = 2;
 
