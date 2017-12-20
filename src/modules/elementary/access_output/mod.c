@@ -2,7 +2,9 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
+#include "Elementary.h"
+
+#define ELEMENTARY_BUILD
 #include "elm_module_helper.h"
 
 /* to enable this module

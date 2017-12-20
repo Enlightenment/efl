@@ -4,10 +4,12 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
-#include <Elementary.h>
-
+#include "Elementary.h"
+#include "elm_module_helper.h"
 #include "elm_priv.h"
 #include "elm_widget_web.h"
+
+#define ELEMENTARY_BUILD
 #include "elm_module_helper.h"
 #include "elm_web_none.eo.h"
 

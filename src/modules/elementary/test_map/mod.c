@@ -3,7 +3,10 @@
 #endif
 
 #include "Elementary.h"
+#include "elm_module_helper.h"
 #include "elm_widget_map.h"
+
+#define ELEMENTARY_BUILD
 #include "elm_module_helper.h"
 
 EAPI Eina_Stringshare *
