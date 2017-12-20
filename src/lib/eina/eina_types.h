@@ -61,7 +61,8 @@
  * @brief Used to export functions (by changing visibility).
  */
 #  define EAPI
-# endif
+#  define EAPI_WEAK
+#  endif
 #endif
 
 /* Weak symbols part of EFL API - Note: not weak on all platforms */
