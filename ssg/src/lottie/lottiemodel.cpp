@@ -1,4 +1,5 @@
 #include "lottiemodel.h"
+#include<stack>
 
 
 class LottieRepeaterProcesser : public LottieObjectVisitor
@@ -44,10 +45,75 @@ public:
     bool mRepeaterFound;
 };
 
+class LottiePathOperationProcesser : public LottieObjectVisitor
+{
+public:
+    LottiePathOperationProcesser():mPathOperator(false), mPaintNode(false), mPathOperationCount(0){}
+    void visit(LottieComposition *obj) {}
+    void visit(LottieLayer *obj) {}
+    void visit(LottieTransform *) {}
+    void visit(LottieShapeGroup *obj) {}
+    void visit(LottieShapeObject *) {mPaintNode = true;}
+    void visit(LottieRectObject *) {mPaintNode = true;}
+    void visit(LottieEllipseObject *) { mPaintNode = true;}
+    void visit(LottieTrimObject *) {
+        mPathOperator = true;
+    }
+    void visit(LottieRepeaterObject *) {}
+    void visit(LottieFillObject *) {}
+    void visit(LottieStrokeObject *) {}
+    void visitChildren(LottieGroupObject *obj) {
+        mPathOperator = false;
+        mPaintNode = false;
+        mPathOperationList.push_back(std::vector<std::shared_ptr<LottieObject>>());
+        for (auto i = obj->mChildren.rbegin(); i != obj->mChildren.rend(); ++i) {
+            auto child = *i;
+            child.get()->accept(this);
+            if (mPathOperator) {
+                mPathOperationList.back().push_back(child);
+                mPathOperationCount++;
+            }
+            if (mPaintNode && mPathOperationCount) {
+               // put it in the list
+               updatePaintObject(static_cast<LottieDrawableObject *>(child.get()));
+            }
+            mPathOperator = false;
+            mPaintNode = false;
+        }
+        mPathOperationCount -= mPathOperationList.back().size();
+        mPathOperationList.pop_back();
+    }
+
+    void updatePaintObject(LottieDrawableObject *drawable) {
+        sgDebug<<"For each path START";
+        for (auto i = mPathOperationList.rbegin(); i != mPathOperationList.rend(); ++i) {
+            auto trimList = *i;
+            sgDebug<<"For each level START";
+            for (auto j = trimList.rbegin(); j != trimList.rend(); ++j) {
+                drawable->mPathOperations.push_back(*j);
+                sgDebug<<"Added path operaton to ";
+            }
+            sgDebug<<"For each level END";
+        }
+        sgDebug<<"For each path END";
+    }
+public:
+    bool mPathOperator;
+    bool mPaintNode;
+    std::vector<std::vector<std::shared_ptr<LottieObject>>> mPathOperationList;
+    int mPathOperationCount;
+};
+
 
 void LottieComposition::processRepeaterObjects()
 {
     LottieRepeaterProcesser visitor;
+    accept(&visitor);
+}
+
+void LottieComposition::processPathOperatorObjects()
+{
+    LottiePathOperationProcesser visitor;
     accept(&visitor);
 }
 

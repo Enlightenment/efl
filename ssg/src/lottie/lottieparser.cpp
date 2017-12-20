@@ -1301,7 +1301,9 @@ SGJson::SGJson(const char *data)
     LottieObjectInspector inspector;
     comp.get()->accept(&inspector);
 #endif
+    comp.get()->processPathOperatorObjects();
     comp.get()->processRepeaterObjects();
+
 #ifdef DEBUG_PARSER
     sgDebug<<"********  After Repeater Processing **********";
     comp.get()->accept(&inspector);

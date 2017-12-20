@@ -147,10 +147,6 @@ class LottieGroupObject: public LottieObject
 public:
     LottieGroupObject(LottieObject::Type  type):LottieObject(type){}
     LottieGroupObject(const LottieGroupObject &other);
-//    ~LottieGroupObject() {
-//        for(auto child : mChildren)
-//            delete child;
-//    }
 public:
     std::vector<std::shared_ptr<LottieObject>> mChildren;
 };
@@ -169,6 +165,7 @@ class LottieTransform;
 class LottieComposition : public LottieGroupObject
 {
 public:
+    void processPathOperatorObjects();
     void processRepeaterObjects();
     void accept(LottieObjectVisitor *visitor) override
     {visitor->visit(this); visitor->visitChildren(this);}
