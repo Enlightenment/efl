@@ -136,7 +136,6 @@ public:
     LottieObject(LottieObject::Type  type): mStatic(true), mType(type){}
     bool isStatic() {return mStatic;}
     void setStatic(bool value) {mStatic = value;}
-    virtual LottieObject *copy() = 0;
 public:
     bool                mStatic;
     LottieObject::Type  mType;
@@ -146,7 +145,6 @@ class LottieGroupObject: public LottieObject
 {
 public:
     LottieGroupObject(LottieObject::Type  type):LottieObject(type){}
-    LottieGroupObject(const LottieGroupObject &other);
 public:
     std::vector<std::shared_ptr<LottieObject>> mChildren;
 };
@@ -158,7 +156,6 @@ public:
     {visitor->visit(this); visitor->visitChildren(this);}
 
     LottieShapeGroup():LottieGroupObject(LottieObject::Type::ShapeGroup){}
-    LottieObject *copy() {return new LottieShapeGroup(*this);}
 };
 
 class LottieTransform;
@@ -166,11 +163,11 @@ class LottieComposition : public LottieGroupObject
 {
 public:
     void processPathOperatorObjects();
+    void processPaintOperatorObjects();
     void processRepeaterObjects();
     void accept(LottieObjectVisitor *visitor) override
     {visitor->visit(this); visitor->visitChildren(this);}
     LottieComposition():LottieGroupObject(LottieObject::Type::Composition){}
-    LottieObject *copy() {return new LottieComposition(*this);}
 public:
     SGRect               mBound;
     bool                 mAnimation = false;
@@ -189,7 +186,6 @@ public:
     void accept(LottieObjectVisitor *visitor) override
     {visitor->visit(this); visitor->visitChildren(this);}
     LottieLayer():LottieGroupObject(LottieObject::Type::Layer),mParentId(-1),mId(-1){}
-    LottieObject *copy() {return new LottieLayer(*this);}
 public:
     SGRect               mBound;
     int                  mlayerType; //lottie layer type  (solid/shape/precomp)
@@ -217,7 +213,6 @@ public:
                       mOpacity(100),
                       mSkew(0),
                       mSkewAxis(0){}
-    LottieObject *copy() {return new LottieTransform(*this);}
 public:
     LottieAnimatable<float>     mRotation;  /* "r" */
     LottieAnimatable<SGPointF>  mScale;     /* "s" */
@@ -234,7 +229,6 @@ public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
     LottieFillObject():LottieObject(LottieObject::Type::Fill){}
-    LottieObject *copy() {return new LottieFillObject(*this);}
 public:
     LottieAnimatable<LottieColor>     mColor;   /* "c" */
     LottieAnimatable<int>             mOpacity;  /* "o" */
@@ -247,7 +241,6 @@ public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
     LottieStrokeObject():LottieObject(LottieObject::Type::Stroke){}
-    LottieObject *copy() {return new LottieStrokeObject(*this);}
 public:
     LottieAnimatable<LottieColor>     mColor;      /* "c" */
     LottieAnimatable<int>             mOpacity;    /* "o" */
@@ -292,7 +285,6 @@ public:
     {visitor->visit(this);}
     void process();
     LottieShapeObject():LottieDrawableObject(LottieObject::Type::Shape){}
-    LottieObject *copy() {return new LottieShapeObject(*this);}
 public:
     LottieAnimatable<LottieShape>    mShape;
     bool                             mClosed = false;
@@ -307,7 +299,6 @@ public:
                        mPos(SGPointF(0,0)),
                        mSize(SGPointF(0,0)),
                        mRound(0){}
-    LottieObject *copy() {return new LottieRectObject(*this);}
 public:
     LottieAnimatable<SGPointF>    mPos;
     LottieAnimatable<SGPointF>    mSize;
@@ -322,7 +313,6 @@ public:
     LottieEllipseObject():LottieDrawableObject(LottieObject::Type::Ellipse),
                           mPos(SGPointF(0,0)),
                           mSize(SGPointF(0,0)){}
-    LottieObject *copy() {return new LottieEllipseObject(*this);}
 public:
     LottieAnimatable<SGPointF>   mPos;
     LottieAnimatable<SGPointF>   mSize;
@@ -342,7 +332,6 @@ public:
                        mEnd(0),
                        mOffset(0),
                        mTrimType(TrimType::Simultaneously){}
-    LottieObject *copy() {return new LottieTrimObject(*this);}
 public:
     LottieAnimatable<float>             mStart;
     LottieAnimatable<float>             mEnd;
@@ -358,7 +347,6 @@ public:
     LottieRepeaterObject():LottieGroupObject(LottieObject::Type::Repeater),
                            mCopies(0),
                            mOffset(0){}
-    LottieObject *copy() {return new LottieRepeaterObject(*this);}
 public:
     LottieAnimatable<float>             mCopies;
     LottieAnimatable<float>             mOffset;

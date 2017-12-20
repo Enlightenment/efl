@@ -5,7 +5,7 @@
 #include "lottiemodel.h"
 #include"sgelapsedtimer.h"
 
-#define DEBUG_PARSER
+//#define DEBUG_PARSER
 
 RAPIDJSON_DIAG_PUSH
 #ifdef __GNUC__
@@ -1248,13 +1248,13 @@ public:
         sgDebug<<"[SHAPEGROP: START :   static: "<<o->isStatic()<<" ]";
     }
     void visit(LottieShapeObject *s) {
-        sgDebug<<"[SHAPE: static: "<<s->isStatic()<<" ]";
+        sgDebug<<"[SHAPE: static: "<<s->isStatic()<<" pthOps: "<<s->mPathOperations.size()<<" pntOps: "<<s->mPaintOperations.size()<<" ]";
     }
     void visit(LottieRectObject *r) {
-        sgDebug<<"[RECT:  static: "<<r->isStatic()<<" ]";
+        sgDebug<<"[RECT:  static: "<<r->isStatic()<<" pthOps: "<<r->mPathOperations.size()<<" pntOps: "<<r->mPaintOperations.size()<<" ]";
     }
     void visit(LottieEllipseObject *e) {
-        sgDebug<<"[ELLIPSE: static: "<<e->isStatic()<<" ]";
+        sgDebug<<"[ELLIPSE: static: "<<e->isStatic()<<" pthOps: "<<e->mPathOperations.size()<<" pntOps: "<<e->mPaintOperations.size()<<" ]";
     }
     void visit(LottieTrimObject *t) {
         sgDebug<<"[TRIM: static: "<<t->isStatic()<<" ]";
@@ -1297,17 +1297,23 @@ SGJson::SGJson(const char *data)
     LottieParser r(const_cast<char *>(data));
 
     std::shared_ptr<LottieComposition> comp = r.parseComposition();
-#ifdef DEBUG_PARSER
+//#ifdef DEBUG_PARSER
+    sgDebug<<"*******  Before processing *************\n";
+    sgDebug<<" ";
+
     LottieObjectInspector inspector;
     comp.get()->accept(&inspector);
-#endif
+//#endif
     comp.get()->processPathOperatorObjects();
+    comp.get()->processPaintOperatorObjects();
     comp.get()->processRepeaterObjects();
 
-#ifdef DEBUG_PARSER
-    sgDebug<<"********  After Repeater Processing **********";
+//#ifdef DEBUG_PARSER
+    sgDebug<<" ";
+    sgDebug<<"********  After Processing **********\n";
     comp.get()->accept(&inspector);
-#endif
+//#endif
+    sgDebug<<" ";
     sgCritical<<"Parsing time = "<<t.elapsed()<<" ms";
 }
 
