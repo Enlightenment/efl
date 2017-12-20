@@ -1293,34 +1293,35 @@ _scroll_manager_hold_animator_del(Efl_Ui_Scroll_Manager_Data *sd)
    return EINA_FALSE;
 }
 
-static void _scroll_manager_momentum_animator_add(Efl_Ui_Scroll_Manager_Data *sd, double vx, double vy)
+static void
+_scroll_manager_momentum_animator_add(Efl_Ui_Scroll_Manager_Data *sd, double vx, double vy)
 {
-  static const double friction = 5000;
-  static const double inverse_mass = 1;
-  static const double accel = friction * inverse_mass;
-  double dur = 0.0, vel = 0.0;
-  char sdx = 0, sdy = 0;
-  Evas_Coord dstx = 0, dsty = 0;
+#define FRICTION 5000
+#define INVERSE_MASS 1
+#define ACCEL (FRICTION * INVERSE_MASS)
+   double dur = 0.0;
+   char sdx = 0, sdy = 0;
+   Evas_Coord dstx = 0, dsty = 0;
 
 /*
-  if (_scroll_manager_scrollto_animator_del(sd))
-    {
-       restore current veolocity
-       add to vx/vy
-    }
+   if (_scroll_manager_scrollto_animator_del(sd))
+     {
+        restore current veolocity
+        add to vx/vy
+     }
 */
-  Eina_Position2D cur =  efl_ui_pan_position_get(sd->pan_obj);
+   Eina_Position2D cur =  efl_ui_pan_position_get(sd->pan_obj);
 
    sdx = (vx > 0) - (vx < 0);
    sdy = (vy > 0) - (vy < 0);
 
-   dstx = cur.x + sdx * (vx * vx) / (2 * accel);
-   dsty = cur.y + sdy * (vy * vy) / (2 * accel);
+   dstx = cur.x + ((sdx * vx * vx) / (double)(2 * ACCEL));
+   dsty = cur.y + ((sdy * vy * vy) / (double)(2 * ACCEL));
 
-   vel = sqrt(vx*vx + vy*vy);
-   dur = vel / accel;
+   dur = sqrt((vx * vx) + (vy * vy)) / (double)ACCEL;
 
-   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, dstx, dsty, dur, dur, INTERP_DECEL);
+   _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, dstx, dsty,
+                                         dur, dur, INTERP_DECEL);
 }
 
 static void
