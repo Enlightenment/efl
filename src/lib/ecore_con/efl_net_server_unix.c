@@ -50,7 +50,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
    const char *address = efl_net_server_address_get(o);
    struct sockaddr_un addr = { .sun_family = AF_UNIX };
    socklen_t addrlen;
-   SOCKET fd;
+   SOCKET fd = INVALID_SOCKET;
    Eina_Error err = 0;
    int r;
 
@@ -108,6 +108,17 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
              if ((err == EADDRINUSE) && (pd->unlink_before_bind) && (addr.sun_path[0] != '\0'))
                {
                   closesocket(fd);
+                  fd = INVALID_SOCKET;
+                  err = 0;
+                  continue;
+               }
+             if ((err == EADDRINUSE) && (addr.sun_path[0] != '\0') &&
+                 (connect(fd, (struct sockaddr *)&addr, addrlen) != 0))
+               {
+                  DBG("bind(" SOCKET_FMT ", %s): failed with EADDRINUSE but connect also failed, so unlink socket file and try again", fd, address);
+                  closesocket(fd);
+                  unlink(addr.sun_path);
+                  fd = INVALID_SOCKET;
                   err = 0;
                   continue;
                }
@@ -118,6 +129,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
      }
    while (pd->unlink_before_bind);
 
+   if (fd == INVALID_SOCKET) goto error;
    efl_loop_fd_set(o, fd);
 
    r = listen(fd, 0);
