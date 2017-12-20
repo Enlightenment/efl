@@ -279,25 +279,34 @@ public:
     std::shared_ptr<LottieShapeData> mShapeData;
 };
 
-class LottieShapeObject : public LottieObject
+class LottieDrawableObject : public LottieObject
+{
+public:
+    LottieDrawableObject(LottieObject::Type  type):LottieObject(type){}
+public:
+    std::vector<std::shared_ptr<LottieObject>> mPathOperations;
+    std::vector<std::shared_ptr<LottieObject>> mPaintOperations;
+};
+
+class LottieShapeObject : public LottieDrawableObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
     void process();
-    LottieShapeObject():LottieObject(LottieObject::Type::Shape){}
+    LottieShapeObject():LottieDrawableObject(LottieObject::Type::Shape){}
     LottieObject *copy() {return new LottieShapeObject(*this);}
 public:
     LottieAnimatable<LottieShape>    mShape;
     bool                             mClosed = false;
 };
 
-class LottieRectObject : public LottieObject
+class LottieRectObject : public LottieDrawableObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
-    LottieRectObject():LottieObject(LottieObject::Type::Rect),
+    LottieRectObject():LottieDrawableObject(LottieObject::Type::Rect),
                        mPos(SGPointF(0,0)),
                        mSize(SGPointF(0,0)),
                        mRound(0){}
@@ -308,12 +317,12 @@ public:
     LottieAnimatable<float>       mRound;
 };
 
-class LottieEllipseObject : public LottieObject
+class LottieEllipseObject : public LottieDrawableObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
-    LottieEllipseObject():LottieObject(LottieObject::Type::Ellipse),
+    LottieEllipseObject():LottieDrawableObject(LottieObject::Type::Ellipse),
                           mPos(SGPointF(0,0)),
                           mSize(SGPointF(0,0)){}
     LottieObject *copy() {return new LottieEllipseObject(*this);}
