@@ -41,7 +41,9 @@ local gen_func_csig = function(f, ftype)
     local rtype = f:return_type_get(ftype)
 
     local fparam = "Eo *obj"
-    if f:is_const() or f:is_class() or ftype == f.PROP_GET then
+    if f:is_class() then
+        fparam = "Efl_Class *klass"
+    elseif f:is_const() or ftype == f.PROP_GET then
         fparam = "const Eo *obj"
     end
 
