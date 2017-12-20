@@ -6,7 +6,7 @@ struct Efl.Ui.List.Item_Event
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
+class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List.Model)
 {
@@ -92,7 +92,12 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Elm.Interface_Scrollable,
       //Efl.Ui.Layout.sizing_eval;
       Efl.Ui.View.model { get; set; }
 
-      Elm.Interface_Scrollable.region_bring_in;
+      Efl.Ui.Scrollable.Interactive.viewport_geometry { get; }
+      Efl.Ui.Scrollable.Interactive.content_pos { get; set; }
+      Efl.Ui.Scrollable.Interactive.content_size { get; }
+//      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
 //      Elm.Interface.Atspi_Accessible.children { get; }
 //      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
 //      Efl.Access.Widget.Action.elm_actions { get; }

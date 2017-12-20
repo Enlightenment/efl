@@ -414,13 +414,14 @@ static void
 _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    Efl_Ui_List_SegArray_Node *node;
-   Evas_Coord ow, oh, scr_x, scr_y, ch;
+   Evas_Coord ch;
+   Eina_Rect vgmt;
+   Eina_Position2D spos;
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata;
    int i;
 
-   elm_interface_scrollable_content_viewport_geometry_get
-              (pd->modeler, NULL, NULL, &ow, &oh);
-   elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
+   vgmt = efl_ui_scrollable_viewport_geometry_get(pd->modeler);
+   spos = efl_ui_scrollable_content_pos_get(pd->modeler);
 
    ch = 0;
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
@@ -430,8 +431,7 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
         if (!nodedata || !nodedata->min.h)
           continue;
 
-        if ((scr_y < ch || scr_y < nodedata->min.h + ch) &&
-                        (scr_y + oh > ch || scr_y + oh > nodedata->min.h + ch))
+        if ((ch > spos.y || nodedata->min.h + ch > spos.y) && (ch < (spos.y + vgmt.h) || nodedata->min.h + ch < spos.y + vgmt.h))
           _node_realize(pd, node);
         else
           _node_unrealize(pd, node);
@@ -550,7 +550,8 @@ _efl_ui_list_precise_layouter_efl_ui_list_relayout_model_set(Eo *obj EINA_UNUSED
 static void
 _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
 {
-   Evas_Coord ow, oh, scr_x, scr_y;
+   Eina_Rect vgmt;
+   Eina_Position2D spos;
    double cur_pos = 0;
    Efl_Ui_List_LayoutItem* layout_item;
    Efl_Ui_List_SegArray_Node *items_node;
@@ -582,8 +583,8 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
 
    efl_ui_list_model_min_size_set(pd->modeler, pd->min);
 
-   elm_interface_scrollable_content_viewport_geometry_get(pd->modeler, NULL, NULL, &ow, &oh);
-   elm_interface_scrollable_content_pos_get(pd->modeler, &scr_x, &scr_y);
+   vgmt = efl_ui_scrollable_viewport_geometry_get(pd->modeler);
+   spos = efl_ui_scrollable_content_pos_get(pd->modeler);
 
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
    EINA_ACCESSOR_FOREACH(nodes, i, items_node)
@@ -620,9 +621,9 @@ _efl_ui_list_relayout_layout_do(Efl_Ui_List_Precise_Layouter_Data *pd)
                        cur_pos += h;
 
                        if (w < pd->min.w) w = pd->min.w;
-                       if (w > ow) w = ow;
+                       if (w > vgmt.w) w = vgmt.w;
 
-                       evas_object_geometry_set(layout_item->layout, (x + 0 - scr_x), (y + 0 - scr_y), w, h);
+                       evas_object_geometry_set(layout_item->layout, (x + 0 - spos.x), (y + 0 - spos.y), w, h);
                     }
                }
           }

@@ -1,12 +1,12 @@
-class Efl.Ui.List.Pan (Elm.Pan)
+class Efl.Ui.List.Pan (Efl.Ui.Pan)
 {
    [[Elementary Efl_Ui_List pan class]]
    implements {
       Efl.Object.destructor;
-      Elm.Pan.content_size { get; }
-      Elm.Pan.pos { get; set; }
-      Elm.Pan.pos_min { get; }
-      Elm.Pan.pos_max { get; }
+      Efl.Ui.Pan.content_size { get; }
+      Efl.Ui.Pan.pan_position { get; set; }
+      Efl.Ui.Pan.pan_position_min { get; }
+      Efl.Ui.Pan.pan_position_max { get; }
       Efl.Canvas.Group.group_calculate;
    }
    events {
