@@ -737,6 +737,10 @@ local write_scope = function(f, func)
         [func.scope.PROTECTED] = "protected",
         [func.scope.PRIVATE] = "private"
     }
+    if func:is_class() then
+        f:write_raw(" ")
+        f:write_m("class")
+    end
     if func:type_get() == func.PROPERTY then
         local ft1, ft2 = ftt[func:scope_get(func.PROP_GET)],
                          ftt[func:scope_get(func.PROP_SET)]
