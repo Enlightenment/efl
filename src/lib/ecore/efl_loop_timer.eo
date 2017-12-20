@@ -4,7 +4,7 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
      in the future and repeat that tick at a given interval.
 
      Timers require the ecore main loop to be running and functioning
-     properly. They do not guarantee exact timing, but try to work on a
+     properly. They do not guarantee exact timing but try to work on a
      "best effort" basis.
    ]]
    legacy_prefix: ecore_timer;
@@ -12,7 +12,7 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
       @property interval {
          [[Interval the timer ticks on.]]
          set {
-            [[If set during a timer call, this will affect the next interval.]]
+            [[If set during a timer call this will affect the next interval.]]
          }
          get {
          }
@@ -40,16 +40,16 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
           ]]
       }
       loop_reset {
-         [[This effectively reset a timer, but based on the time when this iteration of the main loop started.
+         [[This effectively resets a timer but based on the time when this iteration of the main loop started.
            @since 1.18
 	 ]]
       }
       delay {
-         [[Adds some delay for the next occurrence of a timer.
-           This doesn't affect the interval of a timer.
+         [[Adds a delay to the next occurrence of a timer.
+           This doesn't affect the timer interval.
          ]]
          params {
-            @in add: double; [[The amount of time to delay the timer by in seconds]]
+            @in add: double; [[The amount of time by which to delay the timer in seconds]]
          }
       }
    }
@@ -68,9 +68,9 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
        * @param timer The timer to be paused.
        *
        * The timer callback won't be called while the timer is paused. The remaining
-       * time until the timer expires will be saved, so the timer can be resumed with
+       * time until the timer expires will be saved so the timer can be resumed with
        * that same remaining time to expire, instead of expiring instantly. Use
-       * ecore_timer_thaw() to resume it.
+       * ecore_timer_thaw() to resume.
        *
        * @note Nothing happens if the timer was already paused.
        *
@@ -83,10 +83,10 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
        *
        * @param timer The timer to be resumed.
        *
-       * The timer will be resumed from its previous relative position in time. That
-       * means, if it had X seconds remaining until expire when it was paused, it will
-       * be started now with those same X seconds remaining to expire again. But
-       * notice that the interval time won't be touched by this call or by
+       * The timer will be resumed from its previous relative position. This
+       * means if it had X seconds remaining until expiry when paused, it will
+       * now start with those same X seconds remaining.
+       * The interval time won't be affected by this call nor by
        * ecore_timer_freeze().
        *
        * @see ecore_timer_freeze()

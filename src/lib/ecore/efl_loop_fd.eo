@@ -2,18 +2,18 @@ import eina_types;
 
 class Efl.Loop.Fd (Efl.Loop.Consumer)
 {
-   [[Fds are objects that what the activity on a given
+   [[Fds are objects that watch the activity on a given
      file descriptor. This file descriptor can be a
      network, a file, provided by a library.
 
-     The object will trigger relevant event depending
-     on what is happening.]]
+     The object will trigger relevant events depending
+     on what's happening.]]
 
    methods {
       @property fd {
          [[Defines which file descriptor to watch. If it is a file, use file_fd variant.]]
 	 set {
-	    [[Defines the fd to watch on.]]
+	    [[Defines the fd to watch.]]
 	 }
 	 get {
 	 }

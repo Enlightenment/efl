@@ -26,7 +26,7 @@ class Efl.Loop.Handler (Efl.Object)
          }
       }
       @property fd {
-         [[ Controls a file desciptor to listen to for I/O that points
+         [[ Controls a file desciptor to listen to for I/O, which points
          to a data pipe such as a device, socket or pipe etc. ]]
          set { }
          get { }
@@ -56,11 +56,11 @@ class Efl.Loop.Handler (Efl.Object)
       }
    }
    events {
-      read; [[ Called when a read happened on the descriptor ]]
-      write; [[ Called when a write happened on the descriptor ]]
-      error; [[ Called when a error occurred on the descriptor ]]
-      buffer; [[ Called when buffered data already read from the descriptor should be processed ]]
-      prepare; [[ Called when preparing a descriptor for listening ]]
+      read; [[ Called when a read occurs on the descriptor. ]]
+      write; [[ Called when a write occurs on the descriptor. ]]
+      error; [[ Called when a error occurrs on the descriptor. ]]
+      buffer; [[ Called when buffered data already read from the descriptor should be processed. ]]
+      prepare; [[ Called when preparing a descriptor for listening. ]]
    }
 
    implements {

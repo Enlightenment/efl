@@ -11,13 +11,13 @@ class Efl.Loop (Efl.Object)
 {
    [[The Efl Main Loop
 
-   Efl main loop provide a clean and tiny event loop library with many modules to
-   do lots of convenient things for a programmer, to save time and effort. It's
-   small and lean, designed to work from embedded systems all the way up to large
-   and powerful multi-cpu workstations. The main loop has a number of primitives to
-   be used with its main loop. It serializes all the primitives and allows for
-   great responsiveness without the need for threads (or any other concurrency), but
-   provide them if you need to.
+   The Efl main loop provides a clean and tiny event loop library with many modules to
+   do lots of convenient things for a programmer, saving time and effort. It's
+   lean and designed to work on anything from embedded systems all the way up to large
+   and powerful multi-cpu workstations. The main loop has a number of primitives you can use. 
+   It serializes these and allows for
+   greater responsiveness without the need for threads (or any other concurrency). However
+   you can provide these if you need to.
    ]]
    methods {
       @property main @class {
@@ -80,7 +80,7 @@ class Efl.Loop (Efl.Object)
          return: ptr(Eina.Future) @owned /* TODO: future<void> */; [[The future handle.]]
       }
       @property throttle {
-         [[Slow down the loop execution by forcing a sleep for a small
+         [[Slow down the loop execution by forcing sleep for a small
            period of time every time the loop iterates/loops.]]
          set {}
          get {}
@@ -89,7 +89,7 @@ class Efl.Loop (Efl.Object)
          }
       }
       @property time {
-         [[The time point when the loop was logically woken up.]]
+         [[The time point when the loop was logically woken.]]
          set {}
          get {}
          values {
@@ -143,14 +143,14 @@ class Efl.Loop (Efl.Object)
    events {
       idle,enter @restart; [[Event occurs once the main loop enters the idle state.]]
       idle,exit @restart; [[Event occurs once the main loop exits the idle state.]]
-      idle @restart; [[Event occurs once the main loop is idler. Be carefull, this will spin your CPU high if you keep listening on this event.]]
+      idle @restart; [[Event occurs once the main loop is idle. If you keep listening on this event it may increase the burden on your CPU.]]
       arguments: Efl.Loop.Arguments; [[Event happens when args are provided to the loop by args_add().]]
-      poll,high; [[Event occurs multiple time per second. The exact tick is undefined and could be adjusted system wide.]]
-      poll,medium; [[Event occurs multiple time per minute. The exact tick is undefined and could be adjusted system wide.]]
-      poll,low; [[Event occurs multiple time every 15 minutes. The exact tick is undefined and could be adjusted system wide.]]
-      pause; [[Called when the window is going not be displayed for some time]]
-      resume; [[Called before a window get rendered after a pause event]]
-      terminate; [[Called before starting the shutdown of elementary]]
+      poll,high; [[Event occurs multiple times per second. The exact tick is undefined and can be adjusted system wide.]]
+      poll,medium; [[Event occurs multiple times per minute. The exact tick is undefined and can be adjusted system wide.]]
+      poll,low; [[Event occurs multiple times every 15 minutes. The exact tick is undefined and can be adjusted system wide.]]
+      pause; [[Called when the window is not going be displayed for some time]]
+      resume; [[Called before a window is rendered after a pause event]]
+      terminate; [[Called before starting the shutdown of Elementary]]
    }
    implements {
       Efl.Object.constructor;

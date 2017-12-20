@@ -5,9 +5,9 @@ class Efl.Promise (Efl.Loop.Consumer)
    [[Efl promise class]]
    methods {
       progress_set {
-         [[Updates the progress and send it immediately to all connected Efl_Future.
+         [[Updates progress and sends it immediately to all connected Efl_Future.
 
-           The progress is not kept and when the function return it will not be accessed
+           The progress is not stored and when the function returns it will not be accessed
            anymore. The pointer is owned by the caller and will remain so after the return
 	   of the function call.
 	 ]]
@@ -18,23 +18,24 @@ class Efl.Promise (Efl.Loop.Consumer)
       @property future {
          [[Requests a new future linked to this promise.
 
-	   Efl_Future are optional and will be automatically deleted if no then callback have
+	   Efl_Future are optional and will be automatically deleted if no callbacks have
 	   been set before the next iteration of the main loop.
 	 ]]
          get {
 	    [[The returned new future.]]
          }
          values {
-            f: future<void_ptr, void_ptr>; [[Returns a future where the value will be set by calling value_set while the progress will be updated by progress_set.]]
+            f: future<void_ptr, void_ptr>; [[Returns a future where the value will be set by calling value_set whilst the progress is 
+            updated by progress_set.]]
          }
       }
       @property value {
       	 [[The value expected by all connected future.]]
          set {
 	    [[
-              This function can be called only once and you can not call #failed.set after that.
-              The value will be owned by the promise until it is destroyed. The value will be cleaned
-              when the promise and all the future depending on it are destroyed.
+              This function can be called only once. You cannot call #failed.set after doing so.
+              The value will be owned by the promise until it's destroyed. It will be cleaned
+              when the promise and all futures depending on it are destroyed.
             ]]
 	 }
 	 values {
@@ -46,7 +47,7 @@ class Efl.Promise (Efl.Loop.Consumer)
          [[Defines the failure state of this promise.]]
 	 set {
 	    [[
-              This function can be called only once and you can not call #value.set after that.
+              This function can be called only once and you cannot call #value.set after doing so.
 	    ]]
 	 }
          values {
@@ -57,18 +58,19 @@ class Efl.Promise (Efl.Loop.Consumer)
          [[Connects a future output to this promise.
 
            This helper will automatically trigger #value.set or #failed.set when the future
-           succeed or fail respectively with the value provided by the future.
+           succeeds or fails respectively, with the value provided by the future.
 	 ]]
 	 params {
-	    @in f: future<void_ptr, void_ptr>; [[The future to connect this promise to.]]
+	    @in f: future<void_ptr, void_ptr>; [[The future to connect to this promise.]]
 	 }
-	 return: bool; [[Returns $false if unable to setup the connection.]]
+	 return: bool; [[Returns $false if unable to set up the connection.]]
       }
    }
    events {
-      future,set: future<void_ptr>; [[This event is triggered whenever a future is fully set to receive all events and that the user of it do not hold any more reference on it.]]
-      future,progress,set: future<void_ptr>; [[This event is triggered whenever a future has a progress callback registered and the user does not hold any more reference on it.]]
-      future,none; [[This event is triggered whenever there is no more future connected to the promise.]]
+      future,set: future<void_ptr>; [[This event is triggered whenever a future is fully set to receive all events and the user
+      holds no more references to it.]]
+      future,progress,set: future<void_ptr>; [[This event is triggered whenever a future has a progress callback registered and the user holds no more reference to it.]]
+      future,none; [[This event is triggered whenever there are no more futures connected to the promise.]]
    }
    implements {
       Efl.Object.destructor;

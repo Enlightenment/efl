@@ -5,13 +5,13 @@ class Efl.Model.Container (Efl.Object, Efl.Model)
    [[
      Class used to create data models from Eina containers.
 
-     Each container supplied represent a series of property values, each item
+     Each container supplied represents a series of property values, each item
      being the property value for a child object (@Efl.Model.Container.Item).
 
      The data in the given containers are copied and stored internally.
 
-     Several containers can be supplied, and the number of allocated children is
-     based on the container with the biggest size.
+     Several containers can be supplied and the number of allocated children is
+     based on the container of the largest size.
    ]]
    methods {
       child_property_value_type_get {
