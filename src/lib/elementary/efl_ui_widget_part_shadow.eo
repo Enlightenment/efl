@@ -1,4 +1,4 @@
-class Efl.Ui.Widget.Part_Shadow (Efl.Ui.Widget.Part, Efl.Gfx,
+class Efl.Ui.Widget.Part_Shadow (Efl.Ui.Widget.Part, Efl.Gfx, Efl.Gfx.Color,
                                  Efl.Gfx.Blur, Efl.Gfx.Filter)
 {
    [[A drop-shadow or glow effect around any widget.
@@ -22,7 +22,7 @@ class Efl.Ui.Widget.Part_Shadow (Efl.Ui.Widget.Part, Efl.Gfx,
    ]]
    data: null;
    implements {
-      Efl.Gfx.color { set; get; }
+      Efl.Gfx.Color.color { set; get; }
       Efl.Gfx.Blur.radius { set; get; }
       Efl.Gfx.Blur.offset { set; get; }
       Efl.Gfx.Blur.grow { set; get; }

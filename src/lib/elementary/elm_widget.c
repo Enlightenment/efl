@@ -886,7 +886,7 @@ _elm_widget_efl_gfx_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool vi
 }
 
 EOLIAN static void
-_elm_widget_efl_gfx_color_set(Eo *obj, Elm_Widget_Smart_Data *pd, int r, int g, int b, int a)
+_elm_widget_efl_gfx_color_color_set(Eo *obj, Elm_Widget_Smart_Data *pd, int r, int g, int b, int a)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -5780,7 +5780,7 @@ _efl_ui_widget_part_shadow_efl_gfx_blur_radius_get(Eo *obj, void *_pd EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_widget_part_shadow_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
+_efl_ui_widget_part_shadow_efl_gfx_color_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
    Widget_Shadow *shadow = _widget_shadow_part_get(obj);
    shadow->props.r = r;
@@ -5791,7 +5791,7 @@ _efl_ui_widget_part_shadow_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int
 }
 
 EOLIAN static void
-_efl_ui_widget_part_shadow_efl_gfx_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+_efl_ui_widget_part_shadow_efl_gfx_color_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
 {
    Widget_Shadow *shadow = _widget_shadow_part_get(obj);
    if (r) *r = shadow->props.r;
@@ -5956,7 +5956,7 @@ _efl_ui_widget_part_bg_efl_file_file_get(Eo *obj, void *pd EINA_UNUSED, const ch
 }
 
 EOLIAN static void
-_efl_ui_widget_part_bg_efl_gfx_color_set(Eo *obj, void *pd EINA_UNUSED, int r, int g, int b, int a)
+_efl_ui_widget_part_bg_efl_gfx_color_color_set(Eo *obj, void *pd EINA_UNUSED, int r, int g, int b, int a)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
@@ -5964,7 +5964,7 @@ _efl_ui_widget_part_bg_efl_gfx_color_set(Eo *obj, void *pd EINA_UNUSED, int r, i
 }
 
 EOLIAN static void
-_efl_ui_widget_part_bg_efl_gfx_color_get(Eo *obj, void *pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+_efl_ui_widget_part_bg_efl_gfx_color_color_get(Eo *obj, void *pd EINA_UNUSED, int *r, int *g, int *b, int *a)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 

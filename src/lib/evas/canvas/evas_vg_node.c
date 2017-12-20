@@ -118,7 +118,7 @@ _efl_vg_efl_gfx_visible_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_efl_gfx_color_set(Eo *obj EINA_UNUSED,
+_efl_vg_efl_gfx_color_color_set(Eo *obj EINA_UNUSED,
                                     Efl_VG_Data *pd,
                                     int r, int g, int b, int a)
 {
@@ -155,7 +155,7 @@ _efl_vg_efl_gfx_color_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_efl_gfx_color_get(Eo *obj EINA_UNUSED,
+_efl_vg_efl_gfx_color_color_get(Eo *obj EINA_UNUSED,
                                     Efl_VG_Data *pd,
                                     int *r, int *g, int *b, int *a)
 {

@@ -3,7 +3,7 @@ interface Efl.Gfx.Blur
    [[A simple API to apply blur effects.
 
      Those API's might use @Efl.Gfx.Filter internally. It might be necessary to
-     also specify the color of the blur with @Efl.Gfx.color.
+     also specify the color of the blur with @Efl.Gfx.Color.color.
    ]]
    methods {
       @property radius {

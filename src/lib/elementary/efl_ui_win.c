@@ -7303,7 +7303,7 @@ _efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
 /* Efl.Part begin */
 
 static void
-_efl_ui_win_part_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
+_efl_ui_win_part_efl_gfx_color_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
@@ -7315,7 +7315,7 @@ _efl_ui_win_part_efl_gfx_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g,
 }
 
 static void
-_efl_ui_win_part_efl_gfx_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
+_efl_ui_win_part_efl_gfx_color_color_get(Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);

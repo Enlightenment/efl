@@ -19,8 +19,8 @@ struct Efl.Ui.Image.Error
 }
 
 class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
-                 Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View, 
-                 Efl.Access.Image, Efl.Access.Widget.Action,
+                 Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View,
+                 Efl.Access.Image, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation, Efl.Flipable,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal)
@@ -92,7 +92,7 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.File.mmap { set; }
-      Efl.Gfx.color { set; }
+      Efl.Gfx.Color.color { set; }
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }

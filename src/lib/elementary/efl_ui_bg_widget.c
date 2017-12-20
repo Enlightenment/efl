@@ -148,7 +148,7 @@ elm_bg_color_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_gfx_color_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, int r, int g, int b, int a)
+_efl_ui_bg_widget_efl_gfx_color_color_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Widget_Data *sd, int r, int g, int b, int a)
 {
    efl_gfx_color_set(sd->rect, r, g, b, a);
 }
@@ -164,7 +164,7 @@ elm_bg_color_get(const Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_bg_widget_efl_gfx_color_get(Eo *obj, Efl_Ui_Bg_Widget_Data *sd, int *r, int *g, int *b, int *a)
+_efl_ui_bg_widget_efl_gfx_color_color_get(Eo *obj, Efl_Ui_Bg_Widget_Data *sd, int *r, int *g, int *b, int *a)
 {
    if (!sd->rect)
      efl_gfx_color_get(efl_super(obj, MY_CLASS), r, g, b, a);

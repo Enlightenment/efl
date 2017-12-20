@@ -1,11 +1,11 @@
-class Efl.Ui.Widget.Part_Bg (Efl.Ui.Widget.Part, Efl.Ui.Bg)
+class Efl.Ui.Widget.Part_Bg (Efl.Ui.Widget.Part, Efl.Gfx.Color, Efl.Ui.Bg)
 {
    [[Elementary widget internal part background class]]
    data: null;
    implements {
       Efl.File.file { get; set; }
       //Efl.File.mmap { get; set; }
-      Efl.Gfx.color { set; get; }
+      Efl.Gfx.Color.color { set; get; }
       Efl.Image.scale_type { get; set; }
    }
 }

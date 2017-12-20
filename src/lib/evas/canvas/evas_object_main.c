@@ -2128,7 +2128,7 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
+_efl_canvas_object_efl_gfx_color_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                                      int r, int g, int b, int a)
 {
    int prev_a;
@@ -2175,7 +2175,7 @@ evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 EOLIAN static void
-_efl_canvas_object_efl_gfx_color_get(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_object_efl_gfx_color_color_get(Eo *eo_obj EINA_UNUSED,
                                     Evas_Object_Protected_Data *obj,
                                     int *r, int *g, int *b, int *a)
 {

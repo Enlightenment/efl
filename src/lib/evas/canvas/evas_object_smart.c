@@ -845,7 +845,7 @@ _efl_canvas_group_efl_canvas_object_no_render_set(Eo *eo_obj, Evas_Smart_Data *o
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_color_set(Eo *eo_obj, Evas_Smart_Data *o, int r, int g, int b, int a)
+_efl_canvas_group_efl_gfx_color_color_set(Eo *eo_obj, Evas_Smart_Data *o, int r, int g, int b, int a)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_COLOR_SET, 0, r, g, b, a))
      return;

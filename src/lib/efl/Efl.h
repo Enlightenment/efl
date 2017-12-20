@@ -115,6 +115,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Graphics */
 #include "interfaces/efl_gfx.eo.h"
+#include "interfaces/efl_gfx_color.eo.h"
 #include "interfaces/efl_gfx_buffer.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"
 #include "interfaces/efl_gfx_fill.eo.h"
