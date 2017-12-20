@@ -1,0 +1,28 @@
+option('build-id',
+  type : 'string',
+  value : 'none',
+  description : 'The build id to attach to the efl build')
+
+option('eina-magic-debug',
+  type : 'boolean',
+  value : true,
+  description : 'magic debug of eina structure'
+)
+
+option('debug-threads',
+  type : 'boolean',
+  value : false,
+  description : 'thread debugging'
+)
+
+option('build-examples',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
+
+option('build-tests',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
