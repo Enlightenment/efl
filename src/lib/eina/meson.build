@@ -231,6 +231,7 @@ if use_valgrind
    eina_deps += valgrind
 else
    config_h.set('NVALGRIND', 1)
+   valgrind = []
 endif
 
 if debug_malloc
