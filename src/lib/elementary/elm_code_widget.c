@@ -1170,6 +1170,17 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 }
 
 static void
+_elm_code_widget_scroller_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                                     void *event_info EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+
+   widget = (Elm_Code_Widget *)data;
+
+   elm_code_widget_selection_clear(widget);
+}
+
+static void
 _elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -2274,6 +2285,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_layout_content_set(obj, "elm.swallow.content", scroller);
    elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
+   evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _elm_code_widget_scroller_clicked_cb, obj);
 
    background = elm_bg_add(scroller);
    evas_object_color_set(background, 145, 145, 145, 255);
