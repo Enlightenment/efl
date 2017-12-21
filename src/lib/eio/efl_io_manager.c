@@ -52,12 +52,6 @@ struct _Job_Closure
 
 /* Helper functions */
 static void
-_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
-{
-   eio_file_cancel(data);
-}
-
-static void
 _future_file_done_cb(void *data, Eio_File *handler)
 {
    Eina_Promise *p = data;

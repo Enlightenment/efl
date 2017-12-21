@@ -545,6 +545,12 @@ Eio_File * _eio_file_xattr(const char *path,
 void _eio_string_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 void _eio_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 
+static inline void
+_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+   eio_file_cancel(data);
+}
+
 EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,
                               NULL,
                               sizeof (Eina_Stat),
