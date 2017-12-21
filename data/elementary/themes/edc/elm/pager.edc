@@ -1,6 +1,6 @@
    group { name: "efl/pager/indicator";
       images {
-         image: "circle.svg" COMP;
+         image: "ring_white_middle.png" COMP;
       }
       parts {
          rect { "base";
@@ -12,7 +12,7 @@
          image { "icon";
             scale;
             desc { "default";
-               image.normal: "circle.svg";
+               image.normal: "ring_white_middle.png";
                color: 0 0 0 255;
                min: 6 6;
             }
