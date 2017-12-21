@@ -85,7 +85,7 @@ _eolian_gen_execute(const char *eo_filename, const char *options, const char *ou
 {
    char command[PATH_MAX];
    snprintf(command, PATH_MAX,
-         EOLIAN_GEN" %s -S -I \""PACKAGE_DATA_DIR"/data\" -o %s %s",
+         EOLIAN_GEN" %s -S -I \""TESTS_SRC_DIR"/data\" -o %s %s",
          options, output_filename, eo_filename);
    return system(command);
 }
@@ -96,13 +96,13 @@ START_TEST(eolian_dev_impl_code)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_object_impl",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", "-gi", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_ref.c", output_filepath, "c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_ref.c", output_filepath, "c"));
    /* Check that nothing is added */
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl.eo", "-gi", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_ref.c", output_filepath, "c"));
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/object_impl_add.eo", "-gi", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/object_impl_add_ref.c", output_filepath, "c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_ref.c", output_filepath, "c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/object_impl_add.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/object_impl_add_ref.c", output_filepath, "c"));
 }
 END_TEST
 
@@ -113,15 +113,15 @@ START_TEST(eolian_types_generation)
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
    _remove_ref(output_filepath, "eo.stub.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/typedef.eo", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref.h", output_filepath, "eo.h"));
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/struct.eo", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/struct_ref.h", output_filepath, "eo.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/typedef.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/typedef_ref.h", output_filepath, "eo.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/struct.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/struct_ref.h", output_filepath, "eo.h"));
 
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/typedef.eo", "-gs", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/typedef_ref_stub.h", output_filepath, "eo.stub.h"));
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/struct.eo", "-gs", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/struct_ref_stub.h", output_filepath, "eo.stub.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/typedef.eo", "-gs", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/typedef_ref_stub.h", output_filepath, "eo.stub.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/struct.eo", "-gs", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/struct_ref_stub.h", output_filepath, "eo.stub.h"));
 }
 END_TEST
 
@@ -131,8 +131,8 @@ START_TEST(eolian_default_values_generation)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "-gc", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref.c", output_filepath, "eo.c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.c", output_filepath, "eo.c"));
 }
 END_TEST
 
@@ -142,8 +142,8 @@ START_TEST(eolian_override_generation)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_override",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/override.eo", "-gc", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/override_ref.c", output_filepath, "eo.c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/override.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/override_ref.c", output_filepath, "eo.c"));
 }
 END_TEST
 
@@ -153,11 +153,11 @@ START_TEST(eolian_functions_descriptions)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref_eo.h", output_filepath, "eo.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_eo.h", output_filepath, "eo.h"));
    _remove_ref(output_filepath, "eo.legacy.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/class_simple.eo", "-gl", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/class_simple_ref_legacy.h", output_filepath, "eo.legacy.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gl", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
 END_TEST
 
@@ -167,8 +167,8 @@ START_TEST(eolian_import)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_import_types",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eot.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/import_types.eot", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/import_types_ref.h", output_filepath, "eot.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/import_types.eot", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/import_types_ref.h", output_filepath, "eot.h"));
 }
 END_TEST
 
@@ -178,11 +178,11 @@ START_TEST(eolian_docs)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_docs",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/docs.eo", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/docs_ref.h", output_filepath, "eo.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref.h", output_filepath, "eo.h"));
    _remove_ref(output_filepath, "eo.legacy.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/docs.eo", "-gl", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/docs_ref_legacy.h", output_filepath, "eo.legacy.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gl", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
 END_TEST
 
@@ -194,26 +194,26 @@ START_TEST(eolian_function_pointers)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_function_pointers",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eot.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_types.eot", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_types_ref.h", output_filepath, "eot.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_types.eot", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_types_ref.h", output_filepath, "eot.h"));
 
    // .eo.h
    _remove_ref(output_filepath, "eo.h");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gh", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_ref.h", output_filepath, "eo.h"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_as_argument.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_as_argument_ref.h", output_filepath, "eo.h"));
 
    // .eo.c
    _remove_ref(output_filepath, "eo.c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gc", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_ref.c", output_filepath, "eo.c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_as_argument.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_as_argument_ref.c", output_filepath, "eo.c"));
 
    // .eo.imp.c
    _remove_ref(output_filepath, "c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
    /* Check that nothing is added */
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/function_as_argument.eo", "-gi", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/function_as_argument_impl_ref.c", output_filepath, "c"));
 }
 END_TEST
 
@@ -223,8 +223,8 @@ START_TEST(owning)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_owning",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
-   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/owning.eo", "-gc", output_filepath));
-   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/owning.eo.c", output_filepath, "eo.c"));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/owning.eo", "-gc", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/owning.eo.c", output_filepath, "eo.c"));
 
 }
 END_TEST
