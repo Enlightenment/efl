@@ -391,6 +391,7 @@ _cb_check_changed_scale_type(void *data, const Efl_Event *ev)
 
    efl_gfx_color_get(o_bg, &r, &g, &b, &a);
    printf("bg color: %d %d %d %d\n", r, g, b, a);
+   printf("bg hex color code: %s\n", efl_gfx_color_code_get(o_bg));
    fflush(stdout);
 }
 

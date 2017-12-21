@@ -139,6 +139,7 @@ lib/efl/interfaces/efl_io_queue.c \
 lib/efl/interfaces/efl_observer.c \
 lib/efl/interfaces/efl_file.c \
 lib/efl/interfaces/efl_ui_format.c \
+lib/efl/interfaces/efl_gfx_color.c \
 lib/efl/interfaces/efl_text_markup_util.c \
 $(NULL)
 

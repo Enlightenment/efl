@@ -26,7 +26,6 @@
 #include "interfaces/efl_text_markup.eo.c"
 
 #include "interfaces/efl_gfx.eo.c"
-#include "interfaces/efl_gfx_color.eo.c"
 #include "interfaces/efl_gfx_buffer.eo.c"
 #include "interfaces/efl_gfx_stack.eo.c"
 #include "interfaces/efl_gfx_fill.eo.c"

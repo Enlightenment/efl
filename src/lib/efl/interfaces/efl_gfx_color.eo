@@ -1,6 +1,7 @@
-interface Efl.Gfx.Color
+mixin Efl.Gfx.Color
 {
-   [[Efl Gfx Color interface class]]
+   [[Efl Gfx Color mixin class]]
+   data: null;
    methods {
       @property color @pure_virtual {
          set {
@@ -41,6 +42,21 @@ interface Efl.Gfx.Color
             b: int;
             a: int;
          }
+      }
+      @property color_code {
+          set {
+             [[Set the color of given Evas object to the given hex color code(#RRGGBBAA).
+               e.g. efl_gfx_color_code_set(obj, "#FFCCAACC");
+             ]]
+          }
+          get {
+             [[Get hex color code of given Evas object.
+               This returns a short lived hex color code string.
+             ]]
+          }
+          values {
+             colorcode: string; [[the hex color code.]]
+          }
       }
    }
 }
