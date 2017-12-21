@@ -41,9 +41,3 @@ ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
    return _ecore_factorized_idle_del(idle_enterer);
 }
-
-void
-_ecore_idle_enterer_call(Eo *loop)
-{
-   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
-}

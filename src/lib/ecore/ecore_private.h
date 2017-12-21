@@ -242,14 +242,6 @@ void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
 void    _ecore_factorized_idle_process(void *data, const Efl_Event *event);
 void    _ecore_factorized_idle_event_del(void *data, const Efl_Event *event);
 
-void         _ecore_idler_all_call(Eo *loop);
-int          _ecore_idler_exist(Eo *loop);
-
-void         _ecore_idle_enterer_call(Eo *loop);
-
-void         _ecore_idle_exiter_call(Eo *loop);
-
-
 Eina_Future_Scheduler *_ecore_event_future_scheduler_get(void);
 
 Eina_Bool    _ecore_event_init(void);
@@ -489,7 +481,6 @@ void ecore_loop_promise_fulfill(Efl_Promise *p);
 #define EFL_LOOP_DATA efl_data_scope_get(efl_loop_main_get(EFL_LOOP_CLASS), EFL_LOOP_CLASS)
 
 EOAPI Eina_Bool efl_loop_message_process(Eo *obj);
-EOAPI Eina_Bool efl_loop_message_exists(Eo *obj);
 
 #undef EAPI
 #define EAPI

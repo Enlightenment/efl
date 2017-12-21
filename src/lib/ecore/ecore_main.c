@@ -331,10 +331,10 @@ _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
 
    if (_ecore_main_uv_idling)
      {
-       DBG("not IDLE anymore");
-       _ecore_main_uv_idling = EINA_FALSE;
-       _ecore_idle_exiter_call(obj);
-       _ecore_animator_run_reset();
+        DBG("not IDLE anymore");
+        _ecore_main_uv_idling = EINA_FALSE;
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
+        _ecore_animator_run_reset();
      }
 
   if (status)               fdh->error_active = EINA_TRUE;
@@ -510,6 +510,23 @@ _ecore_main_fdh_poll_modify(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh
    return r;
 }
 
+static Eina_Bool
+_ecore_main_idlers_exist(Efl_Loop_Data *pd)
+{
+   return pd->idlers || eina_freeq_ptr_pending(eina_freeq_main_get());
+}
+
+static void
+_ecore_main_idler_all_call(Eo *loop)
+{
+   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   // just spin in an idler until the free queue is empty freeing 84 items
+   // from the free queue each time.for now this seems like an ok balance
+   // between going in and out of a reduce func with mutexes around it
+   // vs blocking mainloop for too long. this number is up for discussion
+   eina_freeq_reduce(eina_freeq_main_get(), 84);
+}
+
 #ifdef HAVE_EPOLL
 static inline int
 _ecore_main_fdh_epoll_mark_active(Eo *obj, Efl_Loop_Data *pd)
@@ -596,7 +613,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
         pd->loop_time = _ecore_time_loop_time = ecore_time_get();
         _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
 
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
         _ecore_glib_idle_enterer_called = FALSE;
@@ -611,8 +628,8 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
    if (g_main_loop_is_running(ecore_main_loop))
      {
         // only set idling state in dispatch
-        if (ecore_idling && (!_ecore_idler_exist(obj)) &&
-            (!efl_loop_message_exists(obj)))
+        if (ecore_idling && (!_ecore_main_idlers_exist(pd)) &&
+            (!pd->message_queue))
           {
              if (_efl_loop_timers_exists(obj, pd))
                {
@@ -655,7 +672,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
         else
           {
              *next_time = 0;
-             if (efl_loop_message_exists(obj)) ready = TRUE;
+             if (pd->message_queue) ready = TRUE;
           }
 
         if (pd->fd_handlers_with_prep) _ecore_main_prepare_handlers(obj, pd);
@@ -680,8 +697,8 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
    in_main_loop++;
    pd->in_loop = in_main_loop;
    // check if old timers expired
-   if (ecore_idling && (!_ecore_idler_exist(obj)) &&
-       (!efl_loop_message_exists(obj)))
+   if (ecore_idling && (!_ecore_main_idlers_exist(pd)) &&
+       (!pd->message_queue))
      {
         if (timer_fd >= 0)
           {
@@ -736,9 +753,9 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    _efl_loop_timer_enable_new(obj, pd);
    next_time = _efl_loop_timer_next_get(obj, pd);
 
-   events_ready = efl_loop_message_exists(obj);
+   events_ready = pd->message_queue ? 1 : 0;
    timers_ready = _efl_loop_timers_exists(obj, pd) && (0.0 == next_time);
-   idlers_ready = _ecore_idler_exist(obj);
+   idlers_ready = _ecore_main_idlers_exist(pd);
 
    in_main_loop++;
    pd->in_loop = in_main_loop;
@@ -749,21 +766,21 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    if (ecore_idling && events_ready)
      {
         _ecore_animator_run_reset();
-        _ecore_idle_exiter_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         ecore_idling = 0;
      }
    else if (!ecore_idling && !events_ready) ecore_idling = 1;
 
    if (ecore_idling)
      {
-        _ecore_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj);
 
-        events_ready = efl_loop_message_exists(obj);
+        events_ready = pd->message_queue ? 1 : 0;
 
         if (ecore_fds_ready || events_ready || timers_ready)
           {
              _ecore_animator_run_reset();
-             _ecore_idle_exiter_call(obj);
+             efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              ecore_idling = 0;
           }
      }
@@ -780,7 +797,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
         _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
 
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
         _ecore_glib_idle_enterer_called = TRUE;
@@ -822,7 +839,7 @@ _ecore_main_loop_timer_run(uv_timer_t *timer EINA_UNUSED)
    if (_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_FALSE;
-        _ecore_idle_exiter_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
    pd->loop_time = ecore_time_get();
@@ -1096,7 +1113,7 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
              _ecore_main_loop_iterate_internal(obj, pd, !may_block);
              in_main_loop--;
              pd->in_loop = in_main_loop;
-             return efl_loop_message_exists(obj);
+             return pd->message_queue ? 1 : 0;
 #else
              return g_main_context_iteration(NULL, may_block);
 #endif
@@ -1113,7 +1130,7 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
         pd->loop_time = ecore_time_get();
         _ecore_main_loop_iterate_internal(obj, pd, !may_block);
         pd->in_loop--;
-        return efl_loop_message_exists(obj);
+        return pd->message_queue ? 1 : 0;
      }
    return 0;
 }
@@ -2139,16 +2156,16 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
    if (!_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_TRUE;
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
      }
 
    if (_ecore_main_uv_idling)
      {
-        _ecore_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj);
         DBG("called idles");
-        if (_ecore_idler_exist(_obj) || efl_loop_message_exists(obj)) t = 0.0;
+        if (_ecore_main_idlers_exist(pd) || (pd->message_queue)) t = 0.0;
      }
 
    if (pd->do_quit)
@@ -2157,7 +2174,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
 
         if (_ecore_main_uv_idling)
           {
-             _ecore_idle_exiter_call(obj);
+             efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              _ecore_animator_run_reset();
              _ecore_main_uv_idling = EINA_FALSE;
           }
@@ -2209,13 +2226,12 @@ _ecore_main_loop_spin_core(Eo *obj, Efl_Loop_Data *pd)
    // as we are spinning we need to update loop time per spin
    pd->loop_time = ecore_time_get();
    // call all idlers
-   _ecore_idler_all_call(obj);
+   _ecore_main_idler_all_call(obj);
    // which returns false if no more idelrs exist
-   if (!_ecore_idler_exist(obj)) return SPIN_RESTART;
+   if (!_ecore_main_idlers_exist(pd)) return SPIN_RESTART;
    // sneaky - drop through or if checks - the first one to succeed
    // drops through and returns "continue" so further ones dont run
-   if ((_ecore_main_select(obj, pd, 0.0) > 0) ||
-       (efl_loop_message_exists(obj)) ||
+   if ((_ecore_main_select(obj, pd, 0.0) > 0) || (pd->message_queue) ||
        (_ecore_signal_count_get(obj, pd) > 0) || (pd->do_quit))
      return LOOP_CONTINUE;
    // default - spin more
@@ -2295,10 +2311,10 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
    if (obj == ML_OBJ) _ecore_signal_received_process(obj, pd);
    // if as a result of timers/animators or signals we have accumulated
    // events, then instantly handle them
-   if (efl_loop_message_exists(obj))
+   if (pd->message_queue)
      {
         // but first conceptually enter an idle state
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
         // now quickly poll to see which input fd's are active
@@ -2325,7 +2341,7 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
    else
      {
         // call idle enterers ...
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
      }
@@ -2336,7 +2352,7 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
 
    // if there are any (buffered fd handling may generate them)
    // then jump to processing them */
-   if (efl_loop_message_exists(obj))
+   if (pd->message_queue)
      {
         _ecore_main_select(obj, pd, 0.0);
         _efl_loop_timer_enable_new(obj, pd);
@@ -2346,7 +2362,7 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
    if (once_only)
      {
         // in once_only mode enter idle here instead and then return
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
         _efl_loop_timer_enable_new(obj, pd);
@@ -2373,12 +2389,12 @@ start_loop: //-*************************************************************
         _efl_loop_timer_enable_new(obj, pd);
         goto done;
      }
-   if (!efl_loop_message_exists(obj))
+   if (!pd->message_queue)
      {
         // init flags
         next_time = _efl_loop_timer_next_get(obj, pd);
         // no idlers
-        if (!_ecore_idler_exist(obj))
+        if (!_ecore_main_idlers_exist(pd))
           {
              // sleep until timeout or forever (-1.0) waiting for on fds
              _ecore_main_select(obj, pd, next_time);
@@ -2403,7 +2419,7 @@ process_all: //-*********************************************************
    if (!once_only)
      {
         _ecore_animator_run_reset(); // XXX:
-        _ecore_idle_exiter_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
      }
    // call the fd handler per fd that became alive...
    // this should read or write any data to the monitored fd and then
@@ -2413,13 +2429,13 @@ process_all: //-*********************************************************
    // process signals into events ....
    _ecore_signal_received_process(obj, pd);
    // handle events ...
-   efl_loop_message_process(obj); // XXX: event queue per loop
+   efl_loop_message_process(obj);
    _ecore_main_fd_handlers_cleanup(obj, pd);
 
    if (once_only)
      {
         // if in once_only mode handle idle exiting
-        _ecore_idle_enterer_call(obj);
+        efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
         _ecore_throttle();
         _throttle_do(pd);
      }

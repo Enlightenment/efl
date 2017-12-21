@@ -657,15 +657,6 @@ _efl_loop_message_process(Eo *obj, Efl_Loop_Data *pd)
 
 EOAPI EFL_FUNC_BODY(efl_loop_message_process, Eina_Bool, 0);
 
-EOLIAN static Eina_Bool
-_efl_loop_message_exists(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
-{
-   if (pd->message_queue) return EINA_TRUE;
-   return EINA_FALSE;
-}
-
-EOAPI EFL_FUNC_BODY(efl_loop_message_exists, Eina_Bool, 0);
-
 EWAPI void
 efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
                       const char *flavor, const char *build_id)
@@ -714,7 +705,6 @@ efl_loop_future_scheduler_get(Eo *obj)
 }
 
 #define EFL_LOOP_EXTRA_OPS \
-  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process), \
-  EFL_OBJECT_OP_FUNC(efl_loop_message_exists, _efl_loop_message_exists)
+  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process)
 
 #include "efl_loop.eo.c"
