@@ -43,6 +43,7 @@ local_module = join_paths('src', 'modules')
 local_tests = join_paths('src', 'tests')
 local_benchmark = join_paths('src', 'benchmarks')
 local_examples = join_paths('src', 'examples')
+local_scripts = join_paths('src', 'scripts')
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
@@ -70,15 +71,38 @@ config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
 
 config_dir = [include_directories('.')]
+eolian_include_directories = []
 
 subdir('header_checks')
 
+subprojects = [
+# name   | mod  | lib  | bin  | bench |
+['eina'  ,  true,  true,  true,  true],
+['eolian', false,  true,  true, false],
+['eo'    , false,  true, false,  true],
+]
+
 subdir(join_paths(local_lib, 'efl'))
 
-subdir(join_paths(local_module, 'eina'))
-subdir(join_paths(local_lib, 'eina'))
-subdir(join_paths(local_bin, 'eina'))
-subdir(join_paths(local_benchmark, 'eina'))
+foreach package : subprojects
+  package_name = package[0]
+  package_version_name = package_name + '-' + version_major
+
+  dir_package_include = join_paths(dir_include, package_version_name)
+
+  if (package[1])
+     subdir(join_paths(local_module, package_name))
+  endif
+  if (package[2])
+     subdir(join_paths(local_lib, package_name))
+  endif
+  if (package[3])
+     subdir(join_paths(local_bin, package_name))
+  endif
+  if (package[4])
+     subdir(join_paths(local_benchmark, package_name))
+  endif
+endforeach
 
 if get_option('build-tests')
   subdir(join_paths(local_tests))
@@ -87,5 +111,7 @@ endif
 if get_option('build-examples')
   subdir(join_paths(local_examples))
 endif
+
+subdir(join_paths(local_scripts))
 
 configure_file(output: 'config.h', install: false, configuration: config_h)
