@@ -87,10 +87,6 @@ struct _Ecore_Safe_Call
    Eina_Bool      suspend : 1;
 };
 
-#ifdef HAVE_SYSTEMD
-static Eina_Bool _systemd_watchdog_cb(void *data);
-#endif
-
 static void _ecore_main_loop_thread_safe_call(Ecore_Safe_Call *order);
 static void _thread_safe_cleanup(void *data);
 static void _thread_callback(void        *data,
@@ -116,7 +112,9 @@ static Ecore_Power_State _ecore_power_state = ECORE_POWER_STATE_MAINS;
 static Ecore_Memory_State _ecore_memory_state = ECORE_MEMORY_STATE_NORMAL;
 
 #ifdef HAVE_SYSTEMD
-static Ecore_Timer *_systemd_watchdog = NULL;
+static void _systemd_watchdog_cb(void *data, const Efl_Event *event);
+
+static Efl_Loop_Timer *_systemd_watchdog = NULL;
 #endif
 
 static Efl_Vpath *vpath = NULL;
@@ -324,12 +322,17 @@ ecore_init(void)
 
         sec = ((double) atoi(getenv("WATCHDOG_USEC"))) / 1000 / 1000;
 
-        _systemd_watchdog = ecore_timer_add(sec / 2, _systemd_watchdog_cb, NULL);
+        _systemd_watchdog =
+           efl_add(EFL_LOOP_TIMER_CLASS, ecore_main_loop_get(),
+                   efl_loop_timer_interval_set(efl_added, sec / 2),
+                   efl_event_callback_add(efl_added,
+                                          EFL_LOOP_TIMER_EVENT_TICK,
+                                          _systemd_watchdog_cb, NULL));
         unsetenv("WATCHDOG_USEC");
 
         INF("Setup systemd watchdog to : %f", sec);
 
-        _systemd_watchdog_cb(NULL);
+        _systemd_watchdog_cb(NULL, NULL);
      }
 #endif
 
@@ -399,7 +402,7 @@ ecore_shutdown(void)
 #ifdef HAVE_SYSTEMD
      if (_systemd_watchdog)
        {
-          ecore_timer_del(_systemd_watchdog);
+          efl_del(_systemd_watchdog);
           _systemd_watchdog = NULL;
        }
 #endif
@@ -959,11 +962,10 @@ _ecore_fps_debug_runtime_add(double t)
 }
 
 #ifdef HAVE_SYSTEMD
-static Eina_Bool
-_systemd_watchdog_cb(EINA_UNUSED void *data)
+static void
+_systemd_watchdog_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    sd_notify(0, "WATCHDOG=1");
-   return ECORE_CALLBACK_RENEW;
 }
 #endif
 

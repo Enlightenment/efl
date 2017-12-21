@@ -889,7 +889,7 @@ _impl_ecore_exe_hup(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
 }
 
 static void
-_ecore_exe_make_sure_its_dead(void *data, const Efl_Event *event EINA_UNUSED)
+_ecore_exe_make_sure_its_dead(void *data, const Efl_Event *event)
 {
    Eo *exe_obj = data;
    Ecore_Exe_Data *exe = efl_data_scope_get(exe_obj, MY_CLASS);
@@ -907,10 +907,11 @@ _ecore_exe_make_sure_its_dead(void *data, const Efl_Event *event EINA_UNUSED)
                                       efl_loop_timer_interval_set(efl_added, 10.0));
         kill(exe->pid, SIGKILL);
      }
+   efl_del(event->object);
 }
 
 static void
-_ecore_exe_make_sure_its_really_dead(void *data, const Efl_Event *event EINA_UNUSED)
+_ecore_exe_make_sure_its_really_dead(void *data, const Efl_Event *event)
 {
    Eo *exe_obj = data;
    Ecore_Exe_Data *exe = efl_data_scope_get(exe_obj, MY_CLASS);
@@ -923,9 +924,10 @@ _ecore_exe_make_sure_its_really_dead(void *data, const Efl_Event *event EINA_UNU
           INF("PID %d is not really dead.", exe->pid);
         exe->doomsday_clock = NULL;
      }
+   efl_del(event->object);
 }
 
-Ecore_Timer *
+Efl_Loop_Timer *
 _ecore_exe_doomsday_clock_get(Ecore_Exe *obj)
 {
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
@@ -934,8 +936,7 @@ _ecore_exe_doomsday_clock_get(Ecore_Exe *obj)
 }
 
 void
-_ecore_exe_doomsday_clock_set(Ecore_Exe   *obj,
-                              Ecore_Timer *dc)
+_ecore_exe_doomsday_clock_set(Ecore_Exe *obj, Efl_Loop_Timer *dc)
 {
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, MY_CLASS);
    if (!exe) return;

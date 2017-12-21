@@ -52,7 +52,7 @@ static void _ecore_signal_callback_sigpwr(int        sig,
                                           void      *foo);
 #endif
 
-static Eina_Bool _ecore_signal_exe_exit_delay(void *data);
+static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
 
 //#define MAXSIGQ 256 // 32k
 #define MAXSIGQ 64 // 8k
@@ -162,7 +162,7 @@ _ecore_signal_generic_free(void *data EINA_UNUSED, void *event)
 }
 
 void
-_ecore_signal_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+_ecore_signal_call(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    volatile sig_atomic_t n;
    sigset_t oldset, newset;
@@ -258,12 +258,15 @@ _ecore_signal_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
       * check to see for Last Words, and only delay if there are any.
       * This has it's own set of problems.
       */
-                       Ecore_Timer *doomsday_clock;
-
-                       doomsday_clock = _ecore_exe_doomsday_clock_get(e->exe);
-                       IF_FN_DEL(ecore_timer_del, doomsday_clock);
-                       doomsday_clock = ecore_timer_add
-                         (0.1, _ecore_signal_exe_exit_delay, e);
+                       Efl_Loop_Timer *doomsday_clock =
+                         _ecore_exe_doomsday_clock_get(e->exe);
+                       efl_del(doomsday_clock);
+                       doomsday_clock =
+                         efl_add(EFL_LOOP_TIMER_CLASS, obj,
+                                 efl_loop_timer_interval_set(efl_added, 0.1),
+                                 efl_event_callback_add
+                                   (efl_added, EFL_LOOP_TIMER_EVENT_TICK,
+                                    _ecore_signal_exe_exit_delay, e));
                        _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
                     }
                   else
@@ -601,18 +604,15 @@ _ecore_signal_callback_sigpwr(int        sig EINA_UNUSED,
 
 #endif
 
-static Eina_Bool
-_ecore_signal_exe_exit_delay(void *data)
+static void
+_ecore_signal_exe_exit_delay(void *data, const Efl_Event *event)
 {
-   Ecore_Exe_Event_Del *e;
+   Ecore_Exe_Event_Del *e = data;
 
-   e = data;
-   if (e)
-     {
-        _ecore_exe_doomsday_clock_set(e->exe, NULL);
-        ecore_event_add(ECORE_EXE_EVENT_DEL, e,
-                        _ecore_exe_event_del_free, NULL);
-     }
-   return ECORE_CALLBACK_CANCEL;
+   if (!e) return;
+   _ecore_exe_doomsday_clock_set(e->exe, NULL);
+   ecore_event_add(ECORE_EXE_EVENT_DEL, e,
+                   _ecore_exe_event_del_free, NULL);
+   efl_del(event->object);
 }
 

@@ -19,7 +19,7 @@ typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
 struct _Efl_Loop_Promise_Simple_Data
 {
    union {
-      Ecore_Timer *timer;
+      Efl_Loop_Timer *timer;
       Ecore_Idler *idler;
    };
    Eina_Promise *promise;
@@ -265,7 +265,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.high;
              if (!pd->pollers.high)
                {
-                  ecore_timer_del(pd->poll_high);
+                  efl_del(pd->poll_high);
                   pd->poll_high = NULL;
                }
           }
@@ -274,7 +274,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.medium;
              if (!pd->pollers.medium)
                {
-                  ecore_timer_del(pd->poll_medium);
+                  efl_del(pd->poll_medium);
                   pd->poll_medium = NULL;
                }
           }
@@ -283,7 +283,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              --pd->pollers.low;
              if (!pd->pollers.low)
                {
-                  ecore_timer_del(pd->poll_low);
+                  efl_del(pd->poll_low);
                   pd->poll_low = NULL;
                }
           }
@@ -504,21 +504,24 @@ static void
 _efl_loop_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
-   ecore_timer_del(d->timer);
+   efl_del(d->timer);
+   d->timer = NULL;
    efl_loop_promise_simple_data_mp_free(d);
 }
 
-static Eina_Bool
-_efl_loop_timeout_done(void *data)
+static void
+_efl_loop_timeout_done(void *data, const Efl_Event *event)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
+
    eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
+   d->timer = NULL;
    efl_loop_promise_simple_data_mp_free(d);
-   return EINA_FALSE;
+   efl_del(event->object);
 }
 
 static Eina_Future *
-_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
+_efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
 {
    Efl_Loop_Promise_Simple_Data *d;
    Eina_Promise *p;
@@ -526,7 +529,11 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double time)
    d = efl_loop_promise_simple_data_calloc(1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
 
-   d->timer = ecore_timer_add(time, _efl_loop_timeout_done, d);
+   d->timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
+                      efl_loop_timer_interval_set(efl_added, tim),
+                      efl_event_callback_add(efl_added,
+                                             EFL_LOOP_TIMER_EVENT_TICK,
+                                             _efl_loop_timeout_done, d));
    EINA_SAFETY_ON_NULL_GOTO(d->timer, timer_error);
 
    p = eina_promise_new(efl_loop_future_scheduler_get(obj),

@@ -108,9 +108,9 @@ struct _Efl_Loop_Data
    double               loop_time;
    Eina_Hash           *providers;
 
-   Ecore_Timer         *poll_high;
-   Ecore_Timer         *poll_medium;
-   Ecore_Timer         *poll_low;
+   Efl_Loop_Timer      *poll_high;
+   Efl_Loop_Timer      *poll_medium;
+   Efl_Loop_Timer      *poll_low;
 
    Eina_List           *exes; // only used in main loop (for now?)
 
@@ -261,9 +261,8 @@ Ecore_Event *_ecore_event_add(int type,
                               void *data);
 void         _ecore_event_call(void);
 
-Ecore_Timer *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);
-void         _ecore_exe_doomsday_clock_set(Ecore_Exe *exe,
-                                           Ecore_Timer *dc);
+Efl_Loop_Timer *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);
+void            _ecore_exe_doomsday_clock_set(Ecore_Exe *exe, Efl_Loop_Timer *dc);
 
 void      *_ecore_event_signal_user_new(void);
 void      *_ecore_event_signal_hup_new(void);
