@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifdef EINA_BENCH_HAVE_GLIB
 # include <glib.h>
