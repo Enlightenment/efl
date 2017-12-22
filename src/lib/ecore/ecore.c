@@ -788,17 +788,15 @@ _ecore_magic_fail(const void *d,
                   Ecore_Magic req_m,
                   const char *fname EINA_UNUSED)
 {
-   ERR("\n"
-       "*** ECORE ERROR: Ecore Magic Check Failed!!!\n"
-       "*** IN FUNCTION: %s()", fname);
+   ERR("*** ECORE ERROR: Ecore Magic Check Failed!!! in: %s()", fname);
    if (!d)
-     ERR("  Input handle pointer is NULL!");
+     ERR("    Input handle pointer is NULL!");
    else if (m == ECORE_MAGIC_NONE)
-     ERR("  Input handle has already been freed!");
+     ERR("    Input handle has already been freed!");
    else if (m != req_m)
-     ERR("  Input handle is wrong type\n"
-         "    Expected: %08x - %s\n"
-         "    Supplied: %08x - %s",
+     ERR("    Input handle is wrong type\n"
+         "      Expected: %08x - %s\n"
+         "      Supplied: %08x - %s",
          (unsigned int)req_m, _ecore_magic_string_get(req_m),
          (unsigned int)m, _ecore_magic_string_get(m));
 
