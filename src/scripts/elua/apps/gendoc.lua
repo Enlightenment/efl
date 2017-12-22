@@ -305,13 +305,32 @@ end
 
 -- builders
 
+local nspaces_group = function(ns)
+    if ns[1] == "efl" and (ns[2] ~= "class" and ns[2] ~= "interface" and ns[2] ~= "object" and ns[2] ~= "promise") then
+        return ns[1] .. "." .. ns[2]
+    end
+
+    return ns[1]
+end
+
+local nspaces_filter = function(items, ns)
+    local out = {}
+
+    for _, item in ipairs(items) do
+        local group = nspaces_group(item:nspaces_get())
+        if group == ns then out[#out + 1] = item end
+    end
+
+    return out
+end
+
 local build_method, build_property, build_event
 
-local build_reftable = function(f, title, ctitle, ctype, t, iscl)
+local build_reftable = function(f, title, ctype, t, iscl)
     if not t or #t == 0 then
         return
     end
-    f:write_h(title, 2)
+
     local nt = {}
     for i, v in ipairs(t) do
         nt[#nt + 1] = {
@@ -324,22 +343,15 @@ local build_reftable = function(f, title, ctitle, ctype, t, iscl)
         }
     end
     table.sort(nt, function(v1, v2) return v1[1] < v2[1] end)
-    f:write_table({ ctitle, "Brief description" }, nt)
-    f:write_nl()
+    f:write_table({ title, "Brief description" }, nt)
 end
 
-local build_ref = function()
-    local f = writer.Writer("start", "EFL Reference")
-    printgen("Generating reference...")
-
-    f:write_editable({ "reference" }, "general")
-    f:write_nl()
-
+local build_ref_group = function(f, ns, classlist, aliases, structs, enums, consts, globals)
     local classes = {}
     local ifaces = {}
     local mixins = {}
 
-    for i, cl in ipairs(dtree.Class.all_get()) do
+    for i, cl in ipairs(classlist) do
         local tp = cl:type_get()
         if tp == dtree.Class.REGULAR or tp == dtree.Class.ABSTRACT then
             classes[#classes + 1] = cl
@@ -350,24 +362,57 @@ local build_ref = function()
         end
     end
 
-    build_reftable(f, "Classes", "Class name", "class", classes, true)
-    build_reftable(f, "Interfaces", "Interface name", "interface", ifaces, true)
-    build_reftable(f, "Mixins", "Mixin name", "mixin", mixins, true)
+    local title = ns:gsub("(%l)(%w*)", function(a,b) return a:upper()..b end) --string.sub(ns, 1, 1):upper() .. string.sub(ns, 2):lower()
+    f:write_h(title, 2)
 
-    build_reftable(f, "Aliases", "Alias name", "alias",
-        dtree.Typedecl.all_aliases_get())
+    build_reftable(f, "Classes", "class", classes, true)
+    build_reftable(f, "Interfaces", "interface", ifaces, true)
+    build_reftable(f, "Mixins", "mixin", mixins, true)
 
-    build_reftable(f, "Structures", "Struct name", "struct",
-        dtree.Typedecl.all_structs_get())
+    build_reftable(f, "Aliases", "alias", aliases)
+    build_reftable(f, "Structures", "struct", structs)
+    build_reftable(f, "Enums", "enum", enums)
+    build_reftable(f, "Constants", "constant", consts)
+    build_reftable(f, "Globals", "global", globals)
 
-    build_reftable(f, "Enums", "Enum name", "enum",
-        dtree.Typedecl.all_enums_get())
+    f:write_nl()
+end
 
-    build_reftable(f, "Constants", "Constant name", "constant",
-        dtree.Variable.all_constants_get())
+local build_ref = function()
+    local f = writer.Writer("start", "EFL Reference")
+    printgen("Generating reference...")
 
-    build_reftable(f, "Globals", "Global name", "global",
-        dtree.Variable.all_globals_get())
+    f:write_editable({ "reference" }, "general")
+    f:write_nl()
+
+    local classlist = dtree.Class.all_get()
+    local aliases = dtree.Typedecl.all_aliases_get()
+    local structs = dtree.Typedecl.all_structs_get()
+    local enums = dtree.Typedecl.all_enums_get()
+    local consts = dtree.Variable.all_constants_get()
+    local globals = dtree.Variable.all_globals_get()
+
+    grouped = {}
+    groups = {}
+    for i, cl in ipairs(classlist) do
+        local ns = cl:nspaces_get()
+        local name = nspaces_group(cl:nspaces_get())
+
+        local group = grouped[name]
+        if not group then
+            group = {}
+            grouped[name] = group
+            groups[#groups + 1] = name
+        end
+
+        group[#group + 1] = cl
+    end
+    table.sort(groups)
+ 
+    for _, ns in ipairs(groups) do
+        build_ref_group(f, ns, grouped[ns], nspaces_filter(aliases, ns), nspaces_filter(structs, ns),
+                        nspaces_filter(enums, ns), nspaces_filter(consts, ns), nspaces_filter(globals, ns))
+    end
 
     f:finish()
 end
