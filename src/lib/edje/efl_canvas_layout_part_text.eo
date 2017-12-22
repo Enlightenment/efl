@@ -4,7 +4,7 @@ Efl.Text.Markup, Efl.Text.Cursor)
    [[Represents a TEXT part of a layout
 
      Its lifetime is limited to one function call only, unless an extra
-     reference is explicitely held.
+     reference is explicitly held.
    ]]
    data: null;
    implements {

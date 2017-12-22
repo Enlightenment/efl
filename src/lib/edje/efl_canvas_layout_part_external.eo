@@ -6,13 +6,13 @@ class Efl.Canvas.Layout.Part_External (Efl.Canvas.Layout.Part, Efl.Content,
    [[Class representing an external part in Edje layouts.
 
      An object of this type is an Efl.Part object, which means its lifecycle
-     is limited to one and only one function call.
+     is limited to only one function call.
 
      An external part contains one object, which can be retrieved with
      @Efl.Content.content.get(). Do not delete this object. Just like for
-     other parts, Edje is in charge of the visibility, geometry, clip, etc...
+     other parts Edje is in charge of the visibility, geometry, clip, etc.
 
-     Common usage is then, in pseudo-C:
+     Common usage in pseudo-C would be as follows:
        Eo *widget = efl_content_get(efl_part(layout, "extpartname"));
        efl_text_set(widget, "hello");
 
