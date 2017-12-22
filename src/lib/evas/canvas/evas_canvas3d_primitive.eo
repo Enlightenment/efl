@@ -33,11 +33,11 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
 
                Mode defines which function will be chosen to set data to mesh
                on call of evas_canvas3d_mesh_primitive_set. It helps to choose
-               alternative algorithm for primitive with given form
-               (like cone without base or sphere textured in alternative way).
+               an alternative algorithm for primitives with a given form,
+               such as a cone without a base or sphere textured in alternative way.
 
-               Now available next mods of primitives are
-               witout base (bases) (supported for cylinder and cone) and
+               Mods of primitives are now available
+               without base (bases) (supported for cylinder and cone) and
                with alternative UV (supported by sphere).
 
                Default form is EVAS_CANVAS3D_PRIMITIVE_MODE_DEFAULT.]]
@@ -55,11 +55,11 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
          set {
              [[Set the ratio of the given primitive.
 
-               Now ratio uses only in torus as the ratio of the
+               Ratio is used only in torus as the ratio of the
                major radius and minor radius. For this usage
                Available values is from 1.0 to infinity.
                If ratio for torus has a bad value,
-               will be used 3.0 as ratio. Like ratio of usual doughnut.
+               3.0 will be used as the ratio. 
 
                Default ratio is 3.0.]]
          }
@@ -76,11 +76,11 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
          set {
              [[Set the precision of the given primitive.
 
-               Precision uses in all non tabulated primitives and defines
-               precision of created primitives.
-               Available values is from 3 to infinity.
-               But if value will be more than 100, should be a warning
-               about possibility of incorrect or slow work.
+               Precision is used in all non tabulated primitives and defines
+               the precision of created primitives.
+               Available values range from 3 to infinity.
+               If the value is more than 100, you may see a warning
+               about possibility of incorrect values or slow processing.
 
                Default ratio is 10.]]
          }
@@ -97,14 +97,14 @@ class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object)
          set {
              [[Set the surface of the given primitive.
 
-               Surface uses only in surface primitive and defines
-               equation of filling mesh data on call of
+               Surface is used only in surface primitives and defines
+               the equation of filling mesh data on call of
                evas_canvas3d_mesh_primitive_set.
 
-               It gives possibility to create customers primitives like
+               This allows you to create customers primitives like
                shell, heart, hyperbolic paraboloid etc. See _shell_func in
                examples/evas/evas-3d-visual-test.c or _perlin_terrain in
-               modules/evas/primitives/surfaces/terrain.c as an example of usage.
+               modules/evas/primitives/surfaces/terrain.c for usage examples.
 
                Default surface is $null]]
          }

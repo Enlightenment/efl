@@ -1,28 +1,28 @@
 class Efl.Canvas.Group (Efl.Canvas.Object)
 {
-   [[A group object is a container of other canvas objects. Its children
-     move along their parent, are often clipped with a common clipper.
+   [[A group object is a container for other canvas objects. Its children
+     move along their parent and are often clipped with a common clipper.
      This is part of the legacy smart object concept.
 
-     A group is not necessarily a container (see @Efl.Container), in the
-     sense that a standard widget may not have any empty slots for content,
-     but is still a group of low-level canvas objects (clipper, raw objects,
-     etc...).
+     A group is not necessarily a container (see @Efl.Container) in the
+     sense that a standard widget may not have any empty slots for content.
+     However it's still a group of low-level canvas objects (clipper, raw objects,
+     etc.).
    ]]
    legacy_prefix: evas_object_smart;
    data: Evas_Smart_Data;
    methods {
       @property group_need_recalculate {
-         [[Indicates that the group's layout need to be recalculated.
+         [[Indicates that the group's layout needs to be recalculated.
 
            If this flag is set, then the @.group_calculate function will
            be called, during rendering phase of the canvas. After that,
            this flag will be automatically unset.
 
-           Note: just setting this flag will not make the canvas' whole scene
-           dirty, by itself, and evas_render() will have no effect. To
-           force that, use @.group_change, that will also call this function
-           automatically, with $true as parameter.
+           Note: setting this flag alone will not make the canvas' whole scene
+           dirty. Using evas_render() will have no effect. To
+           force this, use @.group_change, which will also call this function
+           automatically, with the parameter set to $true.
 
            See also @.group_calculate.
          ]]
@@ -53,7 +53,7 @@ class Efl.Canvas.Group (Efl.Canvas.Object)
          legacy: evas_object_smart_calculate;
       }
       group_members_iterate @const {
-         [[Returns an iterator over the children of this object, that are
+         [[Returns an iterator over the children of this object, which are
            canvas objects.
 
            This returns the list of "smart" children. This might be different

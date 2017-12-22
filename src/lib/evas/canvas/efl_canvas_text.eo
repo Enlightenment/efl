@@ -25,8 +25,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
       visible_range_get {
          [[Returns the currently visible range.
 
-           The given $start and $end cursor act like an out-variables here,
-           as these are set to the positions of the start and the end of the
+           The given $start and $end cursor act like out-variables here,
+           as they are set to the positions of the start and the end of the
            visible range in the text, respectively.
 
            @since 1.18
@@ -54,7 +54,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text, Efl.Text.Properties,
       }
       @property bidi_delimiters {
          [[BiDi delimiters are used for in-paragraph separation of bidi
-           segments. This is useful for example in recipients fields of
+           segments. This is useful, for example, in the recipient fields of
            e-mail clients where bidi oddities can occur when mixing RTL
            and LTR.
 

@@ -174,8 +174,8 @@ class Evas.Table (Efl.Canvas.Group)
             @in child: Efl.Canvas.Object; [[The child object to add.]]
             @out col: ushort; [[Pointer to store relative-horizontal position to place child.]]
             @out row: ushort; [[Pointer to store relative-vertical position to place child.]]
-            @out colspan: ushort; [[Pointer to store how many relative-horizontal position to use for this child.]]
-            @out rowspan: ushort; [[Pointer to store how many relative-vertical position to use for this child.]]
+            @out colspan: ushort; [[Pointer to store how many relative-horizontal positions to use for this child.]]
+            @out rowspan: ushort; [[Pointer to store how many relative-vertical positions to use for this child.]]
          }
       }
       pack {
@@ -192,8 +192,8 @@ class Evas.Table (Efl.Canvas.Group)
             @in child: Efl.Canvas.Object @nonull; [[The child object to add.]]
             @in col: ushort; [[Relative-horizontal position to place child.]]
             @in row: ushort; [[Relative-vertical position to place child.]]
-            @in colspan: ushort; [[How many relative-horizontal position to use for this child.]]
-            @in rowspan: ushort; [[How many relative-vertical position to use for this child.]]
+            @in colspan: ushort; [[How many relative-horizontal positions to use for this child.]]
+            @in rowspan: ushort; [[How many relative-vertical positions to use for this child.]]
          }
       }
       unpack {

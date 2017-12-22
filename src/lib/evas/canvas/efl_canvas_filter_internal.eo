@@ -93,11 +93,11 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
             b: int; [[Bottom]]
             x: int; [[X offset]]
             y: int; [[Y offset]]
-            do_async: bool; [[$true when the operation should be done asynchronous, $false otherwise]]
+            do_async: bool; [[$true when the operation should be done asynchronously, $false otherwise]]
          }
       }
       filter_dirty @protected @pure_virtual {
-         [[Called when the filter changes must trigger a redraw of the object.
+         [[Called when filter changes must trigger a redraw of the object.
 
            Virtual, to be implemented in the parent class.
          ]]

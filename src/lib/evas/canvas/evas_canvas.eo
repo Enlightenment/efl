@@ -29,8 +29,8 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             [[Set the default set of flags an event begins with
 
               Events in evas can have an event_flags member. This starts
-              out with  and initial value (no flags). This lets you set
-              the default flags that an event begins with to be $flags.
+              out with an initial value (no flags). This lets you set
+              the default flags that an event begins with to $flags.
 
               @since 1.2
             ]]
@@ -102,7 +102,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
             @skip called when our rectangle gets focus
             @until }
 
-            In this example the $event_info is exactly a pointer to that
+            In this example the $event_info is a pointer to that
             focused rectangle. See the full @ref Example_Evas_Events "example".
             */
             return: Efl.Canvas.Object @warn_unused; [[The object that has focus
@@ -193,9 +193,9 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
               smart calculations.
 
               Whenever evas performs smart object calculations on the whole
-              canvas it increments a counter by 1. This is the smart object
-              calculate counter that this function returns the value of.
-              It starts at the value of 0 and will increase (and eventually
+              canvas it increments a counter by 1. This function returns
+              the value of the smart object calculate counter.
+              It starts with a value of 0 and will increase (and eventually
               wrap around to negative values and so on) by 1 every time
               objects are calculated. You can use this counter to ensure
               you don't re-do calculations withint the same calculation
@@ -327,7 +327,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
               set to 1.
 
               Calling this function will return a 32-bit integer with the
-              appropriate bits set to 1 that correspond to a mouse button
+              appropriate bits set to 1, which correspond to a mouse button
               being depressed. This limits Evas to a mouse devices with a
               maximum of 32 buttons, but that is generally in excess of
               any host system's pointing device abilities.
@@ -425,9 +425,9 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
       key_modifier_add {
          [[Adds the $keyname key to the current list of modifier keys.
 
-           Modifiers are keys like shift, alt and ctrl, i.e., keys which
+           Modifiers are keys like shift, alt and ctrl, i.e. keys which
            are meant to be pressed together with others, altering the
-           behavior of the secondly pressed keys somehow. Evas is so that
+           behavior of the second keys pressed. Evas is so that
            these keys can be user defined.
 
            This call allows custom modifiers to be added to the Evas system
@@ -537,7 +537,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          ]]
       }
       focus_out {
-         [[Inform to the evas that it lost the focus from the default seat.]]
+         [[Inform the evas that it lost the focus from the default seat.]]
       }
       norender {
          [[Update the canvas internal objects but not triggering immediate
@@ -808,13 +808,13 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
            the given canvas $e.
 
            Note: This is a very low level function, which most of Evas'
-           users wouldn't care about. One would use it, for example, to
+           users wouldn't care about. You might use it, for instance, to
            grab an Evas' canvas update regions and paint them back, using
            the canvas' pixmap, on a displaying system working below Evas.
 
            Note: Evas is a stateful canvas. If no operations changing its
            state took place since the last rendering action, you won't see
-           no changes and this call will be a no-op.
+           any changes and this call will be a no-op.
          ]]
          /* FIXME-doc
          Example code follows.
@@ -945,7 +945,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas, Efl.Animator, Efl.Input.Interface,
          [[Make the canvas discard as much data as possible used by the
            engine at runtime.
 
-           This function will unload images, delete textures and much more,
+           This function will unload images, delete textures and much more
            where possible. You may also want to call @.render_idle_flush
            immediately prior to this to perhaps discard a little more,
            though this function should implicitly delete most of what

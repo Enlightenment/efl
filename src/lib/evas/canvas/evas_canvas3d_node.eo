@@ -22,7 +22,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
          [[Add a member node to the given node.
 
            Nodes can be constructed into N-ary tree structure like other ordinary scene
-           graph. Basically a node inherit transforms from its parent.
+           graphs. A node inherit transforms from its parent.
 
            See also @Evas.Canvas3D.Node.parent_get.]]
 
@@ -238,7 +238,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
             [[Set the position inheritance flag of the given node.
 
               When inheritance is enabled, a node's world space position is determined by
-              adding the parent node's world position and the node's position, otherwise,
+              adding the parent node's world position and the node's position. Otherwise
               the node's position will be the world space position.]]
          }
          get {
@@ -257,7 +257,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
 
               When inheritance is enabled, a node's world space orientation is determined
               by multiplying the parent node's world orientation and the node's
-              orientation, otherwise, the node's orientation will be the world space
+              orientation. Otherwise the node's orientation will be the world space
               orientation.]]
          }
          get {
@@ -275,7 +275,7 @@ class Evas.Canvas3D.Node (Evas.Canvas3D.Object)
             [[Set the scale inheritance flag of the given node.
 
               When inheritance is enabled, a node's world space scale is determined by
-              multiplying the parent node's world scale and the node's scale, otherwise,
+              multiplying the parent node's world scale and the node's scale. Otherwise
               the node's scale will be the world space scale.]]
          }
          get {

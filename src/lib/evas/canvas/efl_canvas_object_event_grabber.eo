@@ -12,9 +12,9 @@ class Efl.Canvas.Object.Event.Grabber (Efl.Canvas.Group)
 
      Child objects are not modified in any way, unlike other types of smart objects.
 
-     It is a user error for any child objects to be stacked above the event
-     grabber parent while the event grabber is visible.
-     A critical error will be raised if this is detected at any point.
+     No child objects should be stacked above the event
+     grabber parent while the grabber is visible.
+     A critical error will be raised if this is detected.
 
      @since 1.20
    ]]

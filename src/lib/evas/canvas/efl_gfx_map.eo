@@ -80,7 +80,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            This sets alpha flag for map rendering. If the object is a type that
            has its own alpha settings, then this will take precedence. Only
            image objects support this currently (@Efl.Canvas.Image and its
-           friends). Setting this off stops alpha blending of the map area,
+           friends). Setting this to off stops alpha blending of the map area,
            and is useful if you know the object and/or all sub-objects is 100%
            solid.
 
@@ -96,8 +96,8 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
 
            This sets/gets the fixed point's coordinate in the map. Note that points
            describe the outline of a quadrangle and are ordered either clockwise
-           or counter-clockwise. It is suggested to keep your quadrangles concave and
-           non-complex, though these polygon modes may work, they may not render
+           or counter-clockwise. Try to keep your quadrangles concave and
+           non-complex. Though these polygon modes may work, they may not render
            a desired set of output. The quadrangle will use points 0 and 1 , 1 and 2,
            2 and 3, and 3 and 0 to describe the edges of the quadrangle.
 
@@ -106,7 +106,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            X and Y rendered coordinates. It may be used for calculating fills with
            perspective correct rendering.
 
-           Remember all coordinates are canvas global ones like with move and resize
+           Remember all coordinates are canvas global ones as with move and resize
            in the canvas.
 
            This property can be read to get the 4 points positions on the
@@ -206,8 +206,8 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
       rotate_3d {
          [[Rotate the object around 3 axes in 3D.
 
-           This will rotate in 3D and not just around the "Z" axis as the case
-           with @.rotate. This will rotate around the X, Y and Z axes. The
+           This will rotate in 3D, not just around the "Z" axis as is the case
+           with @.rotate. You can rotate around the X, Y and Z axes. The
            Z axis points "into" the screen with low values at the screen and
            higher values further away. The X axis runs from left to right on
            the screen and the Y axis from top to bottom.
@@ -271,7 +271,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          }
       }
       lightning_3d {
-         [[Apply a lightning effect on the object.
+         [[Apply a lighting effect on the object.
 
            This is used to apply lighting calculations (from a single light
            source) to a given mapped object. The R, G and B values of each
@@ -310,7 +310,7 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
            mapping between spatial coordinates and screen coordinates. Any points
            on this z value will not have their X and Y values modified in the transform.
            Those further away (Z value higher) will shrink into the distance, and
-           those less than this value will expand and become bigger. The $foc value
+           those under this value will expand and become bigger. The $foc value
            determines the "focal length" of the camera. This is in reality the distance
            between the camera lens plane itself (at or closer than this rendering
            results are undefined) and the "z0" z value. This allows for some "depth"
@@ -411,12 +411,12 @@ mixin Efl.Gfx.Map (Efl.Interface, Efl.Object)
          }
       }
       lightning_3d_absolute {
-         [[Apply a lightning effect on the object.
+         [[Apply a lighting effect to the object.
 
            This is used to apply lighting calculations (from a single light
-           source) to a given mapped object. The R, G and B values of each
+           source) to a given mapped object. The RGB values of each
            vertex will be modified to reflect the lighting based on the light
-           point coordinates, the light color and the ambient color, and at
+           point coordinates, the light color, the ambient color and at
            what angle the map is facing the light source. A surface should have
            its points be declared in a clockwise fashion if the face is
            "facing" towards you (as opposed to away from you) as faces have a

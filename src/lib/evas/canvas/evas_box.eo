@@ -615,7 +615,7 @@ class Evas.Box (Efl.Canvas.Group)
            box.
 
            In a flow horizontal box, the box's child elements are placed in
-           rows (think of text as an analogy). A row has as much elements as
+           rows (think of text as an analogy). A row has as many elements as
            can fit into the box's width. The box's overall behavior is
            controlled by its properties, which are set by the
            evas_object_box_{h,v}_{align,padding}_set family of
@@ -631,7 +631,7 @@ class Evas.Box (Efl.Canvas.Group)
            justified horizontally. $align_v controls the vertical alignment
            of the entire set of rows ($0.0 to top, $1.0 to bottom). A
            value of $-1.0 to $align_v makes the box to justify the rows
-           vertically. The padding between them, in this case, is corrected so
+           vertically. The padding between them in this case is corrected so
            that the first row touches the top border and the last one touches
            the bottom border (even if they must overlap). $padding_v has no
            influence on the layout.

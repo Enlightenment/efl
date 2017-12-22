@@ -68,7 +68,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
            Please do not assume that @Efl.Gfx.Render_Op.copy mode can be
            used to "poke" holes in a window (to see through it), as only the
            compositor can ensure that. Copy mode should only be used with
-           otherwise opaque widgets, or inside non-window surfaces (eg. a
+           otherwise opaque widgets or inside non-window surfaces (eg. a
            transparent background inside a buffer canvas).
          ]]
          set {
@@ -85,17 +85,17 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
          set {
             [[Set whether an Evas object is to freeze (discard) events.
 
-              If $freeze is $true, it will make events on $obj to be
+              If $freeze is $true, it will force events on $obj to be
               discarded. Unlike @.pass_events.set, events will not be
               passed to next lower object. This API can be used for
-              blocking events while $obj is on transiting.
+              blocking events while $obj is in transition.
 
               If $freeze is $false, events will be processed on that
               object as normal.
             
               Warning: If you block only key/mouse up events with this API,
-              we won't guarantee the state of the object, that only had
-              key/mouse down events, will be.
+              you can't be sure of the state of any objects that have only
+              key/mouse down events.
 
               @since 1.1
             ]]
@@ -239,8 +239,8 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       seat_focus_add {
          [[ Add a seat to the focus list.
 
-           Evas supports that an Efl.Canvas.Object may be focused by multiple seats
-           at the same time. This function adds a new seat to the focus list, in other words,
+           Evas allows the Efl.Canvas.Object to be focused by multiple seats
+           at the same time. This function adds a new seat to the focus list. In other words,
            after the seat is added to the list this object will now be also focused by this new seat.
 
            This function generates an \@ref EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_IN event.
@@ -319,7 +319,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
       }
       @property propagate_events {
          set {
-            [[Set whether events on a smart object's member should get
+            [[Set whether events on a smart object's member should be
               propagated up to its parent.
 
               This function has no effect if $obj is not a member of a
@@ -355,7 +355,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
               They will be triggered on the next lower object (that is not
               set to pass events), instead (see \@ref evas_object_below_get).
 
-              If $pass is $false, events will be processed on that object
+              If $pass is $false events will be processed on that object
               as normal.
 
               See also @.repeat_events.set, @.propagate_events.set,
@@ -402,7 +402,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
          get {
             [[Return a list of objects currently clipped by $obj.
 
-              This returns the internal list handle that contains all
+              This returns the internal list handle containing all
               objects clipped by the object $obj. If none are clipped by
               it, the call returns $null. This list is only valid until
               the clip list is changed and should be fetched again with
@@ -531,7 +531,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, E
 
               This flag will be used to indicate to Evas that this object
               should never be rendered on the canvas under any
-              circurmstances. In particular, this is useful to avoid
+              circumstances. In particular, this is useful to avoid
               drawing clipper objects (or masks) even when they don't
               clip any object. This can also be used to replace the old
               source_visible flag with proxy objects.

@@ -8,8 +8,8 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
       size_set {
          [[Set the resolution of a scene.
 
-           A scene should be rendered to be displayed through an image
-           objects. The resolution defines size of the internal surface
+           A scene should be rendered to be displayed through image
+           objects. The resolution defines the size of the internal surface
            holding the rendered result.
          ]]
          params {
@@ -29,9 +29,9 @@ class Evas.Canvas3D.Scene (Evas.Canvas3D.Object)
       background_color_set {
          [[Set the background color of a scene.
 
-           Background color defines initial color of pixels before a scene
+           Background color defines the initial color of pixels before a scene
            is rendered. If you want to display a scene with background evas
-           objects are still  remaining as if it was the background, set
+           objects as if they're part of the background, set
            the alpha term to 0.0.
 
            Default background color is (0.0, 0.0, 0.0, 0.0).

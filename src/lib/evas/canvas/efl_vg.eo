@@ -8,17 +8,17 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicat
    methods {
       @property name {
          set {
-            [[Set an unique name from the parent point of view. $null means
+            [[Set an unique name from the parent's point of view. $null means
               no name.
 
               @since 1.16
             ]]
          }
          get {
-            [[Get an unique name from the parent point of view.
+            [[Get an unique name from the parent's point of view.
 
-              $null means no name. When set a parent after the name what
-              defined, it might be forced back to $null if the parent
+              $null means no name. When setting a parent after a name has
+              already been defined, it might be forced back to $null if the parent
               already has a node of that name.
 
               @since 1.16
@@ -47,14 +47,14 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicat
       }
       @property origin {
          set {
-            [[Sets the origin position of this node object.
+            [[Sets the origin position of the node object.
 
-              This origin position affects to node transformation.
+              This origin position affects node transformation.
 
               @since 1.14]]
          }
          get {
-            [[Gets the origin position of this node object.
+            [[Gets the origin position of the node object.
 
               @since 1.14]]
          }
@@ -83,9 +83,9 @@ abstract Efl.VG (Efl.Object, Efl.Gfx, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicat
          }
       } */
       bounds_get @pure_virtual {
-         [[Give the bounding box in screen coordinate as being drawn.
+         [[Give the bounding box in screen coordinates as being drawn.
 
-           It will start as the control box until it is refined once the shape
+           It will start as the control box until it is refined, once the shape
            is computed.
 
            @since 1.14]]

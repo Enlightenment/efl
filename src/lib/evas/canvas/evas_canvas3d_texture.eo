@@ -10,10 +10,10 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Efl.File)
             [[Set the visibility flag of the source evas object of the given
               texture.
 
-              Recommend to call \@ref evas_object_show on the source object
+              Call \@ref evas_object_show on the source object
               and control the visibility using this function.
 
-              By default, source object is visible.
+              By default the source object is visible.
 
               See also @.source_set.
             ]]
@@ -31,9 +31,9 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Efl.File)
          set {
             [[Set enable flag to generation texture unit with support atlas.
 
-              Use this flag only in case not normalize texture coordinates.
+              Use this flag only when you cannot normalize texture coordinates.
 
-              By default, is enabled.
+              By default it is enabled.
             ]]
          }
          get {
@@ -61,7 +61,7 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Efl.File)
          [[Set the data of the given texture from an evas object.
 
            Evas 3D support using existing evas object as a texture source.
-           This feature make it possible using any exisiting evas object
+           This feature make it possible using any existing evas object
            inside 3D scene.
 
            See also @.source_visible.set.
@@ -88,8 +88,8 @@ class Evas.Canvas3D.Texture (Evas.Canvas3D.Object, Efl.File)
       size_get @const {
          [[Get the size of the given texture.
 
-           If the texture has source object, the size of the source object
-           will be returned. Otherwise, the size of the data (or image file)
+           If the texture has a source object, the size of the source object
+           will be returned. Otherwise the size of the data (or image file)
            will be returned.
 
            See also @.data_set, @Efl.File.file.set, @.source_set.
