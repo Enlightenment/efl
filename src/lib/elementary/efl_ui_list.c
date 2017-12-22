@@ -270,7 +270,7 @@ _efl_ui_list_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_D
 }
 
 EOLIAN static void
-_efl_ui_list_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_List_Data *pd, Evas_Object *member)
+_efl_ui_list_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Evas_Object *member)
 {
    efl_canvas_group_member_add(efl_super(obj, MY_CLASS), member);
 }
