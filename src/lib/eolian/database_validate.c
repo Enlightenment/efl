@@ -337,6 +337,12 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
           _obj_error(&func->base, buf);
      }
 
+   /* if already validated, no need to perform the other checks...
+    * but duplicate checks need to be performed every time
+    */
+   if (func->base.validated)
+     return EINA_TRUE;
+
    if (func->get_ret_type && !_validate_type(src, func->get_ret_type))
      return EINA_FALSE;
 
@@ -380,9 +386,6 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
 static Eina_Bool
 _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
 {
-   if (!_validate_doc(src, part->doc))
-     return EINA_FALSE;
-
    const Eolian_Function *ofunc = eina_hash_find(nhash, part->name);
    if (ofunc)
      {
@@ -394,12 +397,22 @@ _validate_part(const Eolian_Unit *src, Eolian_Part *part, Eina_Hash *nhash)
         _obj_error(&part->base, buf);
      }
 
+   /* see _validate_function above */
+   if (part->base.validated)
+     return EINA_TRUE;
+
+   if (!_validate_doc(src, part->doc))
+     return EINA_FALSE;
+
    return _validate(&part->base);
 }
 
 static Eina_Bool
 _validate_event(const Eolian_Unit *src, Eolian_Event *event)
 {
+   if (event->base.validated)
+     return EINA_TRUE;
+
    if (event->type && !_validate_type(src, event->type))
      return EINA_FALSE;
 
@@ -412,6 +425,9 @@ _validate_event(const Eolian_Unit *src, Eolian_Event *event)
 static Eina_Bool
 _validate_implement(const Eolian_Unit *src, Eolian_Implement *impl)
 {
+   if (impl->base.validated)
+     return EINA_TRUE;
+
    if (!_validate_doc(src, impl->common_doc))
      return EINA_FALSE;
    if (!_validate_doc(src, impl->get_doc))
@@ -436,8 +452,7 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
    if (!cl)
      return EINA_FALSE; /* if this happens something is very wrong though */
 
-   if (cl->base.validated)
-     return EINA_TRUE;
+   Eina_Bool valid = cl->base.validated;
 
    Eina_Bool ahash = (nhash == NULL);
    if (ahash)
@@ -446,7 +461,7 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
         /* first inherit needs some checking done on it */
-        if (l == cl->inherits) switch (cl->type)
+        if (!valid && (l == cl->inherits)) switch (cl->type)
           {
            case EOLIAN_CLASS_REGULAR:
            case EOLIAN_CLASS_ABSTRACT:
@@ -494,6 +509,10 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
    EINA_LIST_FOREACH(cl->implements, l, impl)
      if (!(res = _validate_implement(src, impl)))
        goto freehash;
+
+   /* all the checks that need to be done every time are performed now */
+   if (valid)
+     goto freehash;
 
    if (!(res = _validate_doc(src, cl->doc)))
      goto freehash;
@@ -545,7 +564,7 @@ database_validate(Eolian *state, const Eolian_Unit *src)
 
    Eina_Iterator *iter = eolian_all_classes_get(src);
    EINA_ITERATOR_FOREACH(iter, cl)
-     if (cl->toplevel && !_validate_class(src, cl, NULL))
+     if (!_validate_class(src, cl, NULL))
        {
           eina_iterator_free(iter);
           return EINA_FALSE;
