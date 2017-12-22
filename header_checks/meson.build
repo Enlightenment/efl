@@ -6,17 +6,37 @@ header_checks = [
   'execinfo.h',
   'mcheck.h',
   'netinet/in.h',
+  'netinet/ssl.h',
+  'netinet/tcp.h',
+  'netinet/udp.h',
+  'net/if.h',
   'stdlib.h',
+  'mman.h',
   'sys/auxv.h',
   'sys/inotify.h',
   'sys/ioctl.h',
   'sys/mman.h',
   'sys/types.h',
   'sys/socket.h',
+  'sys/filio.h',
   'arpa/inet.h',
   'sys/epoll.h',
   'sys/un.h',
-  'dirent.h']
+  'sys/wait.h',
+  'sys/resource.h',
+  'sys/times.h',
+  'dirent.h',
+  'longinfo.h',
+  'exotic.h',
+  'ieeefp.h',
+  'node/uv.h',
+  'sys/timerfd.h',
+  'features.h',
+  'langinfo.h',
+  'locale.h',
+  'uv.h',
+  'ws2tcpip.h'
+]
 
 function_checks = [
 # function name | headers that are needed | libraries to include | Defines that are needed
@@ -47,10 +67,16 @@ function_checks = [
   ['setxattr', ['sys/types.h', 'sys/xattr.h']],
   ['siglongjmp', ['setjmp.h']],
   ['strerror_r', ['string.h']],
+  ['gettimeofday', ['sys/time.h']],
+  ['execvp', ['unistd.h']],
+  ['pause', ['unistd.h']],
+  ['isfinite', ['math.h']],
 #FIXME strlcpy is detected by meson but drops at compilation time
 #  ['strlcpy', ['string.h']],
   ['siginfo_t', ['signal.h']],
   ['strerror_r', ['string.h']],
+  ['pthread_getcpuclockid', ['pthread.h', 'time.h']],
+  ['timerfd_create', ['sys/timerfd.h']],
 #from here on we specify the dependencies
   ['dlopen', ['dlfcn.h'],                               ['dl']],
   ['dlsym', ['dlfcn.h'],                                ['dl']],
@@ -127,6 +153,10 @@ endforeach
 # The next checks are manually for now due to the fact that some names are not within the default pattern
 if (cc.has_header_symbol('sys/stat.h', 'fstatat'))
   config_h.set10('HAVE_ATFILE_SOURCE', true)
+endif
+
+if (cc.has_header('sys/mman.h'))
+  config_h.set10('HAVE_MMAN_H', true)
 endif
 
 config_h.set('VMAJ', version_major)
