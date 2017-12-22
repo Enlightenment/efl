@@ -1,5 +1,10 @@
 project('efl', ['c','cpp'], version: '1.20.99')
 
+clean_check = run_command('meson/clean_check.sh')
+if clean_check.returncode() == 0
+  error('Meson build requires a clean source tree')
+endif
+
 pkgconfig = import('pkgconfig')
 
 version_arr = meson.project_version().split('.')
