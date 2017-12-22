@@ -4,10 +4,10 @@ interface Efl.Io.Writer {
     [[Generic interface for objects that can write data from a provided memory.
 
       This interface allows external objects to transparently write
-      data to this object and be notified if more data can be written
-      or it's topped capacity.
+      data to this object and be notified whether more data can be written
+      or if it's reached capacity.
 
-      Calls to @.write() may or may not block, that's not up to this
+      Calls to @.write() may or may not block: that's not up to this
       interface to specify. The user can check with event
       "can_write,changed" or property @.can_write to known whenever a write
       could push more data.
@@ -21,7 +21,7 @@ interface Efl.Io.Writer {
 
               This operation will be executed immediately and may or
               may not block the caller thread for some time. The
-              details of blocking behavior is to be defined by the
+              details of blocking behavior is defined by the
               implementation and may be subject to other parameters
               such as non-blocking flags, maximum timeout or even
               retry attempts.

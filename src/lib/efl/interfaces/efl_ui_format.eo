@@ -24,10 +24,10 @@ mixin Efl.Ui.Format
       @property format_string {
          [[Control the format string for a given units label
 
-           If $NULL is passed on $format, it will make $obj's units
-           area to be hidden completely. If not, it'll set the <b>format
-           string</b> for the units label's text. The units label is
-           provided a floating point value, so the units text is up display
+           If $NULL is passed to $format, it will hide $obj's units
+           area completely. If not, it'll set the <b>format
+           string</b> for the units label text. The units label is
+           provided as a floating point value, so the units text can display
            at most one floating point value. Note that the units label is
            optional. Use a format string such as "%1.2f meters" for example.
 

@@ -25,8 +25,8 @@ interface Efl.Ui.Range
               Define the allowed range of values to be selected by the user.
 
               If actual value is less than $min, it will be updated to $min.
-              If it is bigger then $max, will be updated to $max. Actual value
-              can be get with @Efl.Ui.Range.range_value.get
+              If it is bigger then $max, will be updated to $max. The actual value
+              can be obtained with @Efl.Ui.Range.range_value.get
 
               The minimum and maximum values may be different for each class.
 

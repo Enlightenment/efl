@@ -33,10 +33,10 @@ interface Efl.Ui.Scrollable.Interactive (Efl.Ui.Scrollable)
       @property bounce_enabled {
          [[Bouncing behavior
 
-           When scrolling, the scroller may "bounce" when reaching an edge of the
+           When scrolling, the scroller may "bounce" when reaching the edge of the
            content object. This is a visual way to indicate the end has been reached.
-           This is enabled by default for both axis. This API will set if it is enabled
-           for the given axis with the boolean parameters for each axis.]]
+           This is enabled by default for both axes. This API will determine if it's enabled
+           for the given axis with the boolean parameters for each one.]]
          set {
          }
          get {
@@ -49,8 +49,8 @@ interface Efl.Ui.Scrollable.Interactive (Efl.Ui.Scrollable)
       @property scroll_freeze {
          [[Freeze property
            This function will freeze scrolling movement (by input of a user).
-           Unlike efl_ui_scrollable_movement_block_set, this function freezes bidirectional.
-           If you want to freeze only one direction,
+           Unlike efl_ui_scrollable_movement_block_set, this function freezes bidirectionally.
+           If you want to freeze in only one direction,
            See @.movement_block.set.
          ]]
          get {
@@ -88,7 +88,7 @@ interface Efl.Ui.Scrollable.Interactive (Efl.Ui.Scrollable)
          [[Blocking of scrolling (per axis)
 
            This function will block scrolling movement (by input of a user) in
-           a given direction. One can disable movements in the X axis, the Y
+           a given direction. You can disable movements in the X axis, the Y
            axis or both. The default value is $none, where movements are
            allowed in both directions.
          ]]

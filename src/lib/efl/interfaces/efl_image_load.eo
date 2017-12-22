@@ -20,7 +20,7 @@ interface Efl.Image.Load ()
       load_async_start {
          [[Begin preloading an image object's image data in the background.
 
-           Once the background task is done, the event $load,done will be
+           Once the background task is complete the event $load,done will be
            emitted.
          ]]
       }
@@ -28,7 +28,7 @@ interface Efl.Image.Load ()
          [[Cancel preloading an image object's image data in the background.
 
            The event $load,cancelled should be triggered soon after
-           cancellation happened, and the object should be left in a state
+           cancellation occurs and the object should be left in a state
            where it has no image data. If cancel is called too late, the image
            will be kept in memory.
          ]]
@@ -51,7 +51,7 @@ interface Efl.Image.Load ()
          [[The load size of an image.
 
            The image will be loaded into memory as if it was the specified
-           size instead of its original size. This can save a lot of memory,
+           size instead of its original size. This can save a lot of memory
            and is important for scalable types like svg.
 
            By default, the load size is not specified, so it is 0x0.
@@ -59,7 +59,7 @@ interface Efl.Image.Load ()
          set {
             [[Requests the canvas to load the image at the given size.
 
-              EFL will try to load the image at the requested size, but does
+              EFL will try to load an image of the requested size but does
               not guarantee an exact match between the request and the loaded
               image dimensions.
             ]]
@@ -110,8 +110,8 @@ interface Efl.Image.Load ()
               image's area on its image object.
 
               Note: The image loader for the image format in question has
-              to support selective region loading in order to this function
-              to take effect.
+              to support selective region loading in order for this function
+              to work.
             ]]
          }
          get {
@@ -144,11 +144,11 @@ interface Efl.Image.Load ()
       @property load_scale_down {
          [[The scale down factor is a divider on the original image size.
 
-           Setting the scale down factor can reduce load time and memory usage,
+           Setting the scale down factor can reduce load time and memory usage
            at the cost of having a scaled down image in memory.
 
            This function sets the scale down factor of a given canvas
-           image. Most useful for the SVG image loader, but also applies
+           image. Most useful for the SVG image loader but also applies
            to JPEG, PNG and BMP.
 
            Powers of two (2, 4, 8) are best supported (especially with JPEG)

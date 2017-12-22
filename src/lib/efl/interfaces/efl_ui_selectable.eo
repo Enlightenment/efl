@@ -5,11 +5,11 @@ interface Efl.Ui.Selectable ()
    events {
       selected; [[Called when selected]]
       unselected; [[Called when no longer selected]]
-      selection,paste; [[Called when selection got pasted]]
-      selection,copy; [[Called when selection was copied]]
-      selection,cut; [[Called when selection was cut]]
+      selection,paste; [[Called when selection is pasted]]
+      selection,copy; [[Called when selection is copied]]
+      selection,cut; [[Called when selection is cut]]
       selection,start; [[Called at selection start]]
-      selection,changed; [[Called when selection changed]]
-      selection,cleared; [[Called when selection was cleared]]
+      selection,changed; [[Called when selection is changed]]
+      selection,cleared; [[Called when selection is cleared]]
    }
 }

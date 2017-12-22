@@ -8,7 +8,7 @@ interface Efl.Pack.Linear (Efl.Pack)
 
            This is the same as @.pack_at($subobj, 0).
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
@@ -22,7 +22,7 @@ interface Efl.Pack.Linear (Efl.Pack)
 
            This is the same as @.pack_at($subobj, -1).
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
@@ -34,7 +34,7 @@ interface Efl.Pack.Linear (Efl.Pack)
       pack_before {
          [[Prepend item before other sub object.
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
@@ -48,7 +48,7 @@ interface Efl.Pack.Linear (Efl.Pack)
       pack_after {
          [[Append item after other sub object.
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
@@ -65,7 +65,7 @@ interface Efl.Pack.Linear (Efl.Pack)
             Valid range: -$count to +$count. -1 refers to the last element.
             Out of range indices will trigger an append.
 
-            When this container is deleted, it will request deletion on the
+            When this container is deleted, it will request deletion of the
             given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
             container without deleting it.
           ]]

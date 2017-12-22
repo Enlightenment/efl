@@ -30,7 +30,7 @@ interface Efl.Pack (Efl.Container)
            spot, replacing any already existing element or append to the end
            of the container if there is no default part.
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @.unpack to remove $subobj from this container
            without deleting it.
          ]]

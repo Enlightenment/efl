@@ -104,7 +104,7 @@ interface Efl.Model ()
                 [[Get children count.
 
                   When efl_model_load is completed efl_model_coildren_count_get
-                  can be use to get the number of children. children_count_get
+                  can be used to get the number of children. children_count_get
                   can also be used before calling children_slice_get so a valid
                   range is known. Event EFL_MODEL_CHILDREN_COUNT_CHANGED is
                   emitted when count is finished.

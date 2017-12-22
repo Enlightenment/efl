@@ -108,9 +108,9 @@ interface Efl.Text.Format {
       }
 
       @property replacement_char {
-         [[The character used to replace characters that can not be displayed
+         [[The character used to replace characters that can't be displayed
 
-           Currently, only used to replace characters if @.password
+           Currently only used to replace characters if @.password
            is enabled.
          ]]
          values {

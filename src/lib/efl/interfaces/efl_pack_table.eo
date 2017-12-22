@@ -8,7 +8,7 @@ interface Efl.Pack.Table (Efl.Pack.Linear)
       pack_table {
          [[Pack object at a given location in the table.
 
-           When this container is deleted, it will request deletion on the
+           When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]

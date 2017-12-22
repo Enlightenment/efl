@@ -26,7 +26,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             [[Adopt a read-only slice as buffer's backing store.
 
               The slice memory will not be copied and must remain
-              alive during buffer's lifetime. Usually this is
+              alive during the buffer's lifetime. Usually this is
               guaranteed by some global static-const memory or some
               parent object and this buffer being a view of that -- be
               aware of parent memory remaining alive, such as
@@ -41,7 +41,7 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
             [[Adopt a read-write slice as buffer's backing store.
 
               The slice memory will not be copied and must remain
-              alive during buffer's lifetime. Usually this is
+              alive during the buffer's lifetime. Usually this is
               guaranteed by some global static memory or some
               parent object and this buffer being a view of that -- be
               aware of parent memory remaining alive, such as
@@ -61,8 +61,8 @@ class Efl.Io.Buffer (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Ef
               This affects both @.preallocate and how buffer grows
               when @Efl.Io.Writer.write is called.
 
-              If you want a buffer of an exact size, always set the
-              limit before any further calls that can grow it.
+              If you want a buffer of an exact size always set the
+              limit before any further calls that can expand it.
             ]]
             get { }
             set {

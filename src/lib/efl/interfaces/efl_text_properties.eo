@@ -6,13 +6,13 @@ interface Efl.Text.Properties
    methods {
       @property font {
          set {
-            [[Set the font family or filename, and size on a given text object.
+            [[Set the font family, filename and size for a given text object.
 
               This function allows the font name and size of a text object to
-              be set. The font string has to follow fontconfig's convention on
+              be set. The font string has to follow fontconfig's convention for
               naming fonts, as it's the underlying library used to query system
               fonts by Evas (see the fc-list command's output, on your system,
-              to get an idea). Alternatively, one can use a full path to a font
+              to get an idea). Alternatively, youe can use the full path to a font
               file.
 
               See also @.font.get, @.font_source.get.
@@ -22,7 +22,7 @@ interface Efl.Text.Properties
             [[Retrieve the font family and size in use on a given text object.
 
               This function allows the font name and size of a text object to
-              be queried. Be aware that the font name string is still owned by
+              be queried. Remember that the font name string is still owned by
               Evas and should not have free() called on it by the caller of the
               function.
 

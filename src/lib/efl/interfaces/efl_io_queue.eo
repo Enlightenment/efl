@@ -26,7 +26,7 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
               when @Efl.Io.Writer.write is called.
 
               If you want a buffer of an exact size, always set the
-              limit before any further calls that can grow it.
+              limit before any further calls that can expand it.
             ]]
             get { }
             set {
@@ -46,9 +46,9 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
         }
 
         @property slice {
-            [[Get a temporary access to queue's internal read memory.
+            [[Gain temporary access to queue's internal read memory.
 
-              The memory pointed by slice may be changed by other
+              The memory pointed to by slice may be changed by other
               methods of this class. The event "slice,changed" will be
               called in those situations.
             ]]
@@ -70,11 +70,11 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
               data must be discarded.
 
               As an example, some protocols provide messages with a
-              "size" header, then @.slice is used to peek into the
+              "size" header, in which case @.slice is used to peek into the
               available memory to see if there is a "size" and if the
-              rest of the slice is the full payload, in this case the
-              slice may be handled to some processing function. When
-              the function is done, that amount of data must be
+              rest of the slice is the full payload. In that situation the
+              slice may be handled by a processing function. When
+              the function is complete the defined amount of data must be
               discarded -- with this function.
             ]]
             params {
@@ -83,9 +83,9 @@ class Efl.Io.Queue (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
         }
 
         clear {
-            [[Clear the queue. Same as reading all data.
+            [[Clears the queue. Same as reading all data.
 
-              This is equivalent as calling @.discard with @.usage
+              This is equivalent to calling @.discard with @.usage
               amount of bytes.
             ]]
         }
