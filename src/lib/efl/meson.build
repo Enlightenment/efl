@@ -1,22 +1,29 @@
-#FIXME
-#weird to have here ... but oooooh well and its not correct aaarg
-efl_config_h = configuration_data()
-efl_config_h.set('EFL_VERSION_MAJOR', version_major)
-efl_config_h.set('EFL_VERSION_MINOR', version_minor)
-efl_config_h.set('EFL_VERSION_MICRO', version_micro)
-efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
+efl_header_src = [
+  'Efl.h',
+  'Efl_Model_Common.h'
+]
 
-#FIXME placeholder
-efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
-efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
+efl_src = []
 
-efl_config_file = configure_file(
-  input: '../efl/Efl_Config.h.in',
-  output: 'Efl_Config.h',
-  configuration: efl_config_h)
+subdir('interfaces')
 
-install_headers(efl_config_file)
+efl_lib = library('efl',
+    efl_src, pub_eo_file_target,
+    dependencies: [eina, eo, m],
+    install: true,
+)
 
-config_dir += include_directories('.')
+efl = declare_dependency(
+  include_directories: [include_directories('.'), config_dir],
+  link_with: efl_lib,
+  dependencies: [eo],
+  sources : pub_eo_file_target
+)
 
-#end FIXME
+install_data(pub_eo_files,
+  install_dir: join_paths(eolian_include_dir, package_version_name)
+)
+
+install_headers(efl_header_src,
+  install_dir : dir_package_include,
+)

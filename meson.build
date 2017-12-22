@@ -83,9 +83,12 @@ subprojects = [
 ['eina'  ,  true,  true,  true,  true],
 ['eolian', false,  true,  true, false],
 ['eo'    , false,  true, false,  true],
+['efl'   , false,  true, false, false]
 ]
 
-subdir(join_paths(local_lib, 'efl'))
+
+# We generate Efl_Config.h and config.h later, they will be available here
+config_dir += include_directories('.')
 
 foreach package : subprojects
   package_name = package[0]
@@ -117,4 +120,30 @@ endif
 
 subdir(join_paths(local_scripts))
 
-configure_file(output: 'config.h', install: false, configuration: config_h)
+
+#
+# Configure files
+#
+
+efl_config_h = configuration_data()
+efl_config_h.set('EFL_VERSION_MAJOR', version_major)
+efl_config_h.set('EFL_VERSION_MINOR', version_minor)
+efl_config_h.set('EFL_VERSION_MICRO', version_micro)
+efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
+
+#FIXME placeholder
+efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
+efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
+
+configure_file(
+  output: 'config.h',
+  install: false,
+  configuration: config_h
+)
+
+configure_file(
+  input: join_paths('src','lib', 'efl', 'Efl_Config.h.in'),
+  output: 'Efl_Config.h',
+  install_dir : join_paths(dir_include,'efl-'+version_major),
+  configuration: efl_config_h
+)
