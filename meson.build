@@ -1,4 +1,7 @@
-project('efl', ['c','cpp'], version: '1.20.99')
+project('efl', ['c','cpp'],
+  version: '1.20.99',
+  default_options : ['buildtype=plain']
+)
 
 clean_check = run_command('meson/clean_check.sh')
 if clean_check.returncode() == 0
