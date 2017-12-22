@@ -824,12 +824,12 @@ parse_type_void(Eo_Lexer *ls)
                {
                   const char *fname = eina_hash_find(ls->state->filenames_eo, fnm);
                   eina_stringshare_del(bnm);
-                  free(fnm);
                   if (fname)
                     {
-                       _parse_dep(ls, fname, nm);
+                       eina_hash_set(ls->state->defer, fnm, fname);
                        def->type = EOLIAN_TYPE_CLASS;
                     }
+                  free(fnm);
                }
              else
                {
