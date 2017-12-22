@@ -447,16 +447,11 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
    Eolian_Part *part;
    Eolian_Implement *impl;
    Eolian_Class *icl;
-   Eina_Bool res = EINA_TRUE;
 
    if (!cl)
      return EINA_FALSE; /* if this happens something is very wrong though */
 
    Eina_Bool valid = cl->base.validated;
-
-   Eina_Bool ahash = (nhash == NULL);
-   if (ahash)
-     nhash = eina_hash_string_small_new(NULL);
 
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
@@ -486,42 +481,37 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
            default:
              break;
           }
-        if (!(res = _validate_class(src, icl, nhash)))
-          goto freehash;
+        if (!_validate_class(src, icl, nhash))
+          return EINA_FALSE;
      }
 
    EINA_LIST_FOREACH(cl->properties, l, func)
-     if (!(res = _validate_function(src, func, nhash)))
-       goto freehash;
+     if (!_validate_function(src, func, nhash))
+       return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->methods, l, func)
-     if (!(res = _validate_function(src, func, nhash)))
-       goto freehash;
+     if (!_validate_function(src, func, nhash))
+       return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!(res = _validate_event(src, event)))
-       goto freehash;
+     if (!_validate_event(src, event))
+       return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
-     if (!(res = _validate_part(src, part, nhash)))
-       goto freehash;
+     if (!_validate_part(src, part, nhash))
+       return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!(res = _validate_implement(src, impl)))
-       goto freehash;
+     if (!_validate_implement(src, impl))
+       return EINA_FALSE;
 
    /* all the checks that need to be done every time are performed now */
    if (valid)
-     goto freehash;
+     return EINA_TRUE;
 
-   if (!(res = _validate_doc(src, cl->doc)))
-     goto freehash;
-
-freehash:
-   if (ahash)
-     eina_hash_free(nhash);
-   if (!res)
+   if (!_validate_doc(src, cl->doc))
      return EINA_FALSE;
+
    return _validate(&cl->base);
 }
 
@@ -563,12 +553,18 @@ database_validate(Eolian *state, const Eolian_Unit *src)
    Eolian_Class *cl;
 
    Eina_Iterator *iter = eolian_all_classes_get(src);
+   Eina_Hash *nhash = eina_hash_string_small_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
-     if (!_validate_class(src, cl, NULL))
-       {
-          eina_iterator_free(iter);
-          return EINA_FALSE;
-       }
+     {
+        eina_hash_free_buckets(nhash);
+        if (!_validate_class(src, cl, nhash))
+          {
+             eina_iterator_free(iter);
+             eina_hash_free(nhash);
+             return EINA_FALSE;
+          }
+     }
+   eina_hash_free(nhash);
    eina_iterator_free(iter);
 
    Cb_Ret rt = { src, EINA_TRUE };
