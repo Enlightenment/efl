@@ -253,18 +253,28 @@ endif
 eina_config.set('EINA_SAFETY_CHECKS', '1')
 eina_config.set('EINA_HAVE_THREADS', '1')
 
-if cc.has_header_symbol('pthread.h', 'pthread_attr_setaffinity_np')
-   eina_config.set('EINA_HAVE_PTHREAD_AFFINITY', '1')
-endif
 
 if cc.has_header_symbol('pthread.h', 'pthread_barrier_init')
    eina_config.set('EINA_HAVE_PTHREAD_BARRIER', '1')
 endif
 
-if cc.has_header_symbol('pthread.h', 'pthread_setname_np')
+if target_machine.system() == 'linux'
+   pthread_np_header_file = 'pthread.h'
+   pthread_setname_np_api = 'pthread_setname_np'
+   pthread_args = '-D_GNU_SOURCE'
+else
+   pthread_np_header_file = 'pthread_np.h'
+   pthread_setname_np_api = 'pthread_set_name_np'
+   pthread_args = []
+endif
+
+if cc.has_header_symbol(pthread_np_header_file, pthread_setname_np_api, args : pthread_args)
    eina_config.set('EINA_HAVE_PTHREAD_SETNAME', '1')
 endif
 
+if cc.has_header_symbol(pthread_np_header_file, 'pthread_attr_setaffinity_np', args : pthread_args)
+   eina_config.set('EINA_HAVE_PTHREAD_AFFINITY', '1')
+endif
 # FIXME the author of eina_debug probebly never ran with EINA_HAVE_DEBUG_THREADS
 # however eina debug decides to init that lock and never frees it. which means
 # the code in eina_main.c will not work in the way it currently is there.
