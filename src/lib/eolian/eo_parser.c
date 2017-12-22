@@ -2056,7 +2056,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
         return;
      }
    ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits, dep);
-   dep->toplevel = EINA_FALSE;
    eo_lexer_context_pop(ls);
 }
 
@@ -2070,7 +2069,6 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    int line, col;
    Eina_Strbuf *buf = push_strbuf(ls);
    ls->tmp.kls = calloc(1, sizeof(Eolian_Class));
-   ls->tmp.kls->toplevel = EINA_TRUE;
    FILL_BASE(ls->tmp.kls->base, ls, ls->line_number, ls->column);
    eo_lexer_get(ls);
    ls->tmp.kls->type = type;
