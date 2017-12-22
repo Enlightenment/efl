@@ -445,6 +445,32 @@ _validate_class(const Eolian_Unit *src, Eolian_Class *cl, Eina_Hash *nhash)
 
    EINA_LIST_FOREACH(cl->inherits, l, icl)
      {
+        /* first inherit needs some checking done on it */
+        if (l == cl->inherits) switch (cl->type)
+          {
+           case EOLIAN_CLASS_REGULAR:
+           case EOLIAN_CLASS_ABSTRACT:
+             if (icl->type != EOLIAN_CLASS_REGULAR && icl->type != EOLIAN_CLASS_ABSTRACT)
+               {
+                  char buf[PATH_MAX];
+                  snprintf(buf, sizeof(buf), "regular classes ('%s') cannot inherit from non-regular classes ('%s')",
+                           cl->full_name, icl->full_name);
+                  return _obj_error(&cl->base, buf);
+               }
+             break;
+           case EOLIAN_CLASS_MIXIN:
+           case EOLIAN_CLASS_INTERFACE:
+             if (icl->type != EOLIAN_CLASS_MIXIN && icl->type != EOLIAN_CLASS_INTERFACE)
+               {
+                  char buf[PATH_MAX];
+                  snprintf(buf, sizeof(buf), "non-regular classes ('%s') cannot inherit from regular classes ('%s')",
+                           cl->full_name, icl->full_name);
+                  return _obj_error(&cl->base, buf);
+               }
+             break;
+           default:
+             break;
+          }
         if (!(res = _validate_class(src, icl, nhash)))
           goto freehash;
      }

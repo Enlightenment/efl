@@ -2018,8 +2018,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 }
 
 static void
-_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
-             Eolian_Class_Type type)
+_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
    const char *fname, *iname;
    char *fnm;
@@ -2055,33 +2054,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool check_inherit,
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'. Incorrect case?", iname);
         eo_lexer_syntax_error(ls, ebuf);
         return;
-     }
-   if (check_inherit) switch (type)
-     {
-      case EOLIAN_CLASS_REGULAR:
-      case EOLIAN_CLASS_ABSTRACT:
-        if (dep->type != EOLIAN_CLASS_REGULAR && dep->type != EOLIAN_CLASS_ABSTRACT)
-          {
-             char ebuf[PATH_MAX];
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "regular classes ('%s') cannot inherit from non-regular classes ('%s')",
-                      ls->tmp.kls->full_name, iname);
-             eo_lexer_syntax_error(ls, ebuf);
-          }
-        break;
-      case EOLIAN_CLASS_MIXIN:
-      case EOLIAN_CLASS_INTERFACE:
-        if (dep->type != EOLIAN_CLASS_MIXIN && dep->type != EOLIAN_CLASS_INTERFACE)
-          {
-             char ebuf[PATH_MAX];
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "non-regular classes ('%s') cannot inherit from regular classes ('%s')",
-                      ls->tmp.kls->full_name, iname);
-             eo_lexer_syntax_error(ls, ebuf);
-          }
-        break;
-      default:
-        break;
      }
    ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits, dep);
    dep->toplevel = EINA_FALSE;
@@ -2133,9 +2105,9 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         if (ls->t.token != ')')
           {
               Eina_Strbuf *ibuf = push_strbuf(ls);
-              _inherit_dep(ls, ibuf, EINA_TRUE, type);
+              _inherit_dep(ls, ibuf);
               while (test_next(ls, ','))
-                _inherit_dep(ls, ibuf, EINA_FALSE, type);
+                _inherit_dep(ls, ibuf);
               pop_strbuf(ls);
           }
         check_match(ls, ')', '(', line, col);
