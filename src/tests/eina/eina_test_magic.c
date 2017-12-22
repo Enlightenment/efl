@@ -148,10 +148,7 @@ START_TEST(eina_magic_simple)
 #endif
    TEST_MAGIC_SAFETY(__FUNCTION__,
                      "*** Eina Magic Check Failed !!!\n"
-                     "    Input handle pointer is NULL !\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
+                     "    Input handle pointer is NULL.\n"
                      "\n");
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
    fail_unless(ctx.did);
@@ -169,10 +166,7 @@ START_TEST(eina_magic_simple)
 #endif
    TEST_MAGIC_SAFETY(__FUNCTION__,
                      "*** Eina Magic Check Failed at %p !!!\n"
-                     "    Input handle has already been freed!\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
+                     "    Input handle has already been freed.\n"
                      "\n");
    ctx.expected_level = EINA_LOG_LEVEL_CRITICAL;
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);
@@ -184,12 +178,9 @@ START_TEST(eina_magic_simple)
 #endif
    TEST_MAGIC_SAFETY(__FUNCTION__,
                      "*** Eina Magic Check Failed at %p !!!\n"
-                     "    Input handle is wrong type\n"
+                     "    Input handle is wrong type.\n"
                      "    Expected: %08x - %s\n"
                      "    Supplied: %08x - %s\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
                      "\n");
    ctx.expected_level = EINA_LOG_LEVEL_CRITICAL;
    EINA_MAGIC_FAIL(ems, EINA_MAGIC_TEST);

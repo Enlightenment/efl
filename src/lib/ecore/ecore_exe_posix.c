@@ -180,9 +180,7 @@ _ecore_exe_check_errno(int         result,
        case EPERM:
        case EBUSY:
          { /* Programmer fucked up. */
-            ERR("*** NAUGHTY PROGRAMMER!!!\n"
-                "*** SPANK SPANK SPANK!!!\n"
-                "*** Now go fix your code in %s @%u. Tut tut tut!",
+            ERR("*** Race condition between open() and dup() created in %s @%u.",
                 file, line);
             result = 0;
             break;
@@ -190,10 +188,7 @@ _ecore_exe_check_errno(int         result,
 
        default:
          { /* Unsupported errno code, please add this one. */
-            ERR("*** NAUGHTY PROGRAMMER!!!\n"
-                "*** SPANK SPANK SPANK!!!\n"
-                "*** Unsupported errno code %d, please add this one.\n"
-                "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!",
+            ERR("*** Unsupported errno code %d, found in %s @%u, from %s @%u.",
                 saved_errno, __FILE__, __LINE__, file, line);
             result = 0;
             break;

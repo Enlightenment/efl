@@ -122,7 +122,7 @@ _edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig
         break;
 
       default:
-        //              ERR("SPANK SPANK SPANK !!!\nYou should never be here !");
+        //              ERR("Unknown part type. You should never be here!");
         break;
      }
    return ed->collection->broadcast_signal;

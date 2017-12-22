@@ -1072,7 +1072,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        break;
 
                      case EDJE_PART_TYPE_GRADIENT:
-                       ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
+                       ERR("YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
                            ep->name, group, eina_file_filename_get(file));
                        break;
 

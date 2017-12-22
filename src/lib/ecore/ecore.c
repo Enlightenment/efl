@@ -801,9 +801,7 @@ _ecore_magic_fail(const void *d,
          "    Supplied: %08x - %s",
          (unsigned int)req_m, _ecore_magic_string_get(req_m),
          (unsigned int)m, _ecore_magic_string_get(m));
-   ERR("*** NAUGHTY PROGRAMMER!!!\n"
-       "*** SPANK SPANK SPANK!!!\n"
-       "*** Now go fix your code. Tut tut tut!");
+
    if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 

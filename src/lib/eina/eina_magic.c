@@ -273,32 +273,23 @@ eina_magic_fail(void *d,
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_ERR,
                      file, fnc, line,
                      "*** Eina Magic Check Failed !!!\n"
-                     "    Input handle pointer is NULL !\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
+                     "    Input handle pointer is NULL.\n"
                      "\n");
    else
    if (m == EINA_MAGIC_NONE)
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
                      file, fnc, line,
                      "*** Eina Magic Check Failed at %p !!!\n"
-                     "    Input handle has already been freed!\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
+                     "    Input handle has already been freed.\n"
                      "\n", d);
    else
    if (m != req_m)
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
                      file, fnc, line,
                      "*** Eina Magic Check Failed at %p !!!\n"
-                     "    Input handle is wrong type\n"
+                     "    Input handle is wrong type.\n"
                      "    Expected: %08x - %s\n"
                      "    Supplied: %08x - %s\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
                      "\n",
                      d, req_m, eina_magic_string_get(req_m),
                      m, eina_magic_string_get(m));
@@ -306,10 +297,7 @@ eina_magic_fail(void *d,
       eina_log_print(EINA_LOG_DOMAIN_GLOBAL, EINA_LOG_LEVEL_CRITICAL,
                      file, fnc, line,
                      "*** Eina Magic Check Failed !!!\n"
-                     "    Why did you call me !\n"
-                     "*** NAUGHTY PROGRAMMER!!!\n"
-                     "*** SPANK SPANK SPANK!!!\n"
-                     "*** Now go fix your code. Tut tut tut!\n"
+                     "    Unknown reason.\n"
                      "\n");
 }
 
