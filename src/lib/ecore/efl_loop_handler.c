@@ -53,11 +53,15 @@ _handler_clear(Efl_Loop_Handler_Data *pd)
    Efl_Loop_Data *loop = pd->loop_data;
 
    if (pd->handler_fd)
-     _ecore_main_fd_handler_del(obj, loop, pd->handler_fd);
+     {
+        _ecore_main_fd_handler_del(obj, loop, pd->handler_fd);
+        pd->handler_fd = NULL;
+     }
    else if (pd->handler_win32)
-     _ecore_main_win32_handler_del(obj, loop, pd->handler_win32);
-   pd->handler_fd = NULL;
-   pd->handler_win32 = NULL;
+     {
+        _ecore_main_win32_handler_del(obj, loop, pd->handler_win32);
+        pd->handler_win32 = NULL;
+     }
 }
 
 static Ecore_Fd_Handler_Flags
@@ -108,18 +112,10 @@ _handler_reset(Eo *obj, Efl_Loop_Handler_Data *pd)
           _handler_active_update(obj, pd);
         else
           {
-             Ecore_Fd_Handler_Flags flags = _handler_flags_get(pd);
-
-             if (pd->file)
-               pd->handler_fd = _ecore_main_fd_handler_add
-                 (pd->loop, pd->loop_data, obj, pd->fd, flags,
-                  _cb_handler_fd, obj, buffer_func, buffer_data,
-                  EINA_TRUE);
-             else
-               pd->handler_fd = _ecore_main_fd_handler_add
-                 (pd->loop, pd->loop_data, obj, pd->fd, flags,
-                  _cb_handler_fd, obj, buffer_func, buffer_data,
-                  EINA_FALSE);
+             pd->handler_fd = _ecore_main_fd_handler_add
+               (pd->loop, pd->loop_data, obj, pd->fd, _handler_flags_get(pd),
+                _cb_handler_fd, obj, buffer_func, buffer_data,
+                pd->file ? EINA_TRUE : EINA_FALSE);
              if (pd->handler_fd) _handler_active_update(obj, pd);
           }
      }

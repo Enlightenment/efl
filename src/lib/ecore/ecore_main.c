@@ -1040,11 +1040,13 @@ _ecore_main_loop_clear(Eo *obj, Efl_Loop_Data *pd)
           }
 #endif
      }
+# ifdef HAVE_EPOLL
    if (pd->epoll_fd >= 0)
      {
         close(pd->epoll_fd);
         pd->epoll_fd = -1;
      }
+#endif
    if (pd->timer_fd >= 0)
      {
         close(pd->timer_fd);
@@ -1320,7 +1322,6 @@ _ecore_main_fd_handler_add(Eo                    *obj,
    pd->fd_handlers = (Ecore_Fd_Handler *)
      eina_inlist_append(EINA_INLIST_GET(pd->fd_handlers),
                         EINA_INLIST_GET(fdh));
-
    return fdh;
 }
 
@@ -1606,27 +1607,26 @@ _ecore_main_content_clear(Efl_Loop_Data *pd)
         if (fdh->handler) efl_del(fdh->handler);
         else
           {
-             ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
-             ecore_fd_handler_mp_free(fdh);
+// XXX: can't do this because this fd handler is legacy and might
+// be cleaned up later in object destructors
+//             ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
+//             ecore_fd_handler_mp_free(fdh);
           }
      }
-   if (pd)
-     {
-        if (pd->fd_handlers_with_buffer)
-          pd->fd_handlers_with_buffer =
-            eina_list_free(pd->fd_handlers_with_buffer);
-        if (pd->fd_handlers_with_prep)
-          pd->fd_handlers_with_prep =
-            eina_list_free(pd->fd_handlers_with_prep);
-        if (pd->file_fd_handlers)
-          pd->file_fd_handlers =
-            eina_list_free(pd->file_fd_handlers);
-        if (pd->fd_handlers_to_delete)
-          pd->fd_handlers_to_delete =
-            eina_list_free(pd->fd_handlers_to_delete);
-        pd->fd_handlers_to_call = NULL;
-        pd->fd_handlers_to_call_current = NULL;
-     }
+   if (pd->fd_handlers_with_buffer)
+     pd->fd_handlers_with_buffer =
+       eina_list_free(pd->fd_handlers_with_buffer);
+   if (pd->fd_handlers_with_prep)
+     pd->fd_handlers_with_prep =
+       eina_list_free(pd->fd_handlers_with_prep);
+   if (pd->file_fd_handlers)
+     pd->file_fd_handlers =
+       eina_list_free(pd->file_fd_handlers);
+   if (pd->fd_handlers_to_delete)
+     pd->fd_handlers_to_delete =
+       eina_list_free(pd->fd_handlers_to_delete);
+   pd->fd_handlers_to_call = NULL;
+   pd->fd_handlers_to_call_current = NULL;
 
    pd->do_quit = 0;
 
@@ -1662,7 +1662,6 @@ _ecore_main_shutdown(void)
         ERR("Calling ecore_shutdown() while still in the main loop!!!");
         return;
      }
-   _ecore_main_content_clear(pd);
 }
 
 static void
