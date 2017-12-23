@@ -80,17 +80,22 @@ subdir('header_checks')
 
 subprojects = [
 # name   | mod  | lib  | bin  | bench | name of static libs
-['eina'  ,  true,  true,  true,  true, []],
+['eina'  , false,  true,  true,  true, []],
 ['eolian', false,  true,  true, false, []],
 ['eo'    , false,  true, false,  true, []],
 ['efl'   , false,  true, false, false, []],
 ['emile' , false,  true, false, false, ['lz4', 'rg_etc']],
-['eet'   , false,  true,  true, false, []]
+['eet'   , false,  true,  true, false, []],
+['ecore' , false,  true, false, false, []],
 ]
 
 
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')
+
+#we have to do that first, eina modules are required by eina
+#the other modules require theire package
+subdir(join_paths(local_module, 'eina'))
 
 foreach package : subprojects
   package_name = package[0]
@@ -101,12 +106,12 @@ foreach package : subprojects
   foreach static_lib : package[5]
     subdir(join_paths('src', 'static_libs', static_lib))
   endforeach
-  
-  if (package[1])
-     subdir(join_paths(local_module, package_name))
-  endif
+
   if (package[2])
      subdir(join_paths(local_lib, package_name))
+  endif
+  if (package[1])
+     subdir(join_paths(local_module, package_name))
   endif
   if (package[3])
      subdir(join_paths(local_bin, package_name))

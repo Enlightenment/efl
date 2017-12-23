@@ -32,3 +32,39 @@ option('crypto',
   choices : ['gnutls', 'openssl', 'none'],
   value : 'openssl'
 )
+
+option('glib',
+  type : 'boolean',
+  value : true,
+  description : 'use glib or not'
+)
+
+option('g-mainloop',
+  type : 'boolean',
+  value : false,
+  description : 'use glib mainloop or not'
+)
+
+option('gstreamer',
+  type : 'boolean',
+  value : true,
+  description : 'use gstreamer 1.0 support'
+)
+
+option('libuv',
+  type : 'boolean',
+  value : false,
+  description : 'use libuv'
+)
+
+option('systemd',
+  type : 'boolean',
+  value : true,
+  description : 'use systemd support'
+)
+
+option('avahi',
+  type : 'boolean',
+  value : false,
+  description : 'disable avahi support'
+)
