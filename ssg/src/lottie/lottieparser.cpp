@@ -588,8 +588,9 @@ LottieParser::parseObject(LottieGroupObject *parent)
     while (const char* key = NextObjectKey()) {
         if (0 == strcmp(key, "ty")) {
             auto child = parseObjectTypeAttr();
-            if (child)
+            if (child) {
                 parent->mChildren.push_back(child);
+            }
         } else {
             Skip(key);
         }
@@ -610,6 +611,8 @@ LottieParser::parseGroupObject()
                 RAPIDJSON_ASSERT(PeekType() == kObjectType);
                 parseObject(group);
             }
+            group->mTransform = group->mChildren.back();
+            group->mChildren.pop_back();
         } else {
             Skip(key);
         }
@@ -618,7 +621,9 @@ LottieParser::parseGroupObject()
     for (auto child : group->mChildren) {
         staticFlag &= child.get()->isStatic();
     }
-    group->setStatic(staticFlag);
+
+    group->setStatic(staticFlag &&
+                     group->mTransform->isStatic());
 
     return sharedGroup;
 }

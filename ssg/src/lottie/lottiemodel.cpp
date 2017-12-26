@@ -48,14 +48,14 @@ public:
 class LottiePathOperationProcesser : public LottieObjectVisitor
 {
 public:
-    LottiePathOperationProcesser():mPathOperator(false), mDrawableNode(false){}
+    LottiePathOperationProcesser():mPathOperator(false), mPathNode(false){}
     void visit(LottieComposition *obj) {}
     void visit(LottieLayer *obj) {}
     void visit(LottieTransform *) {}
     void visit(LottieShapeGroup *obj) {}
-    void visit(LottieShapeObject *) {mDrawableNode = true;}
-    void visit(LottieRectObject *) {mDrawableNode = true;}
-    void visit(LottieEllipseObject *) { mDrawableNode = true;}
+    void visit(LottieShapeObject *) {mPathNode = true;}
+    void visit(LottieRectObject *) {mPathNode = true;}
+    void visit(LottieEllipseObject *) { mPathNode = true;}
     void visit(LottieTrimObject *) { mPathOperator = true;}
     void visit(LottieRepeaterObject *) {}
     void visit(LottieFillObject *) {}
@@ -63,7 +63,7 @@ public:
     void visitChildren(LottieGroupObject *obj) {
         int curOpCount = mPathOperationList.size();
         mPathOperator = false;
-        mDrawableNode = false;
+        mPathNode = false;
         for (auto i = obj->mChildren.rbegin(); i != obj->mChildren.rend(); ++i) {
             auto child = *i;
             child.get()->accept(this);
@@ -71,38 +71,37 @@ public:
                 mPathOperationList.push_back(child);
                 obj->mChildren.erase(std::next(i).base());
             }
-            if (mDrawableNode) {
-               // put it in the list
-               updateDrawableObject(static_cast<LottieDrawableObject *>(child.get()));
+            if (mPathNode) {
+               updatePathObject(static_cast<LottiePathObject *>(child.get()));
             }
             mPathOperator = false;
-            mDrawableNode = false;
+            mPathNode = false;
         }
         mPathOperationList.erase(mPathOperationList.begin() + curOpCount, mPathOperationList.end());
     }
 
-    void updateDrawableObject(LottieDrawableObject *drawable) {
+    void updatePathObject(LottiePathObject *drawable) {
         for (auto i = mPathOperationList.rbegin(); i != mPathOperationList.rend(); ++i) {
             drawable->mPathOperations.push_back(*i);
         }
     }
 public:
     bool mPathOperator;
-    bool mDrawableNode;
+    bool mPathNode;
     std::vector<std::shared_ptr<LottieObject>> mPathOperationList;
 };
 
 class LottiePaintOperationProcesser : public LottieObjectVisitor
 {
 public:
-    LottiePaintOperationProcesser():mPaintOperator(false), mDrawableNode(false){}
+    LottiePaintOperationProcesser():mPaintOperator(false), mPathNode(false){}
     void visit(LottieComposition *obj) {}
     void visit(LottieLayer *obj) {}
     void visit(LottieTransform *) {}
     void visit(LottieShapeGroup *obj) {}
-    void visit(LottieShapeObject *) {mDrawableNode = true;}
-    void visit(LottieRectObject *) {mDrawableNode = true;}
-    void visit(LottieEllipseObject *) { mDrawableNode = true;}
+    void visit(LottieShapeObject *) {mPathNode = true;}
+    void visit(LottieRectObject *) {mPathNode = true;}
+    void visit(LottieEllipseObject *) { mPathNode = true;}
     void visit(LottieTrimObject *) {}
     void visit(LottieRepeaterObject *) {}
     void visit(LottieFillObject *) { mPaintOperator = true;}
@@ -110,7 +109,7 @@ public:
     void visitChildren(LottieGroupObject *obj) {
         int curOpCount = mPaintOperationList.size();
         mPaintOperator = false;
-        mDrawableNode = false;
+        mPathNode = false;
         for (auto i = obj->mChildren.rbegin(); i != obj->mChildren.rend(); ++i) {
             auto child = *i;
             child.get()->accept(this);
@@ -118,24 +117,24 @@ public:
                 mPaintOperationList.push_back(child);
                 obj->mChildren.erase(std::next(i).base());
             }
-            if (mDrawableNode) {
+            if (mPathNode) {
                // put it in the list
-               updateDrawableObject(static_cast<LottieDrawableObject *>(child.get()));
+               updatePathObject(static_cast<LottiePathObject *>(child.get()));
             }
             mPaintOperator = false;
-            mDrawableNode = false;
+            mPathNode = false;
         }
         mPaintOperationList.erase(mPaintOperationList.begin() + curOpCount, mPaintOperationList.end());
     }
 
-    void updateDrawableObject(LottieDrawableObject *drawable) {
+    void updatePathObject(LottiePathObject *drawable) {
         for (auto i = mPaintOperationList.begin(); i != mPaintOperationList.end(); ++i) {
             drawable->mPaintOperations.push_back(*i);
         }
     }
 public:
     bool mPaintOperator;
-    bool mDrawableNode;
+    bool mPathNode;
     std::vector<std::shared_ptr<LottieObject>> mPaintOperationList;
 };
 

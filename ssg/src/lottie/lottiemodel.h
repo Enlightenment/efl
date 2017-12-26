@@ -156,6 +156,8 @@ public:
     {visitor->visit(this); visitor->visitChildren(this);}
 
     LottieShapeGroup():LottieGroupObject(LottieObject::Type::ShapeGroup){}
+public:
+    std::shared_ptr<LottieObject>    mTransform;
 };
 
 class LottieTransform;
@@ -269,33 +271,33 @@ public:
     std::shared_ptr<LottieShapeData> mShapeData;
 };
 
-class LottieDrawableObject : public LottieObject
+class LottiePathObject : public LottieObject
 {
 public:
-    LottieDrawableObject(LottieObject::Type  type):LottieObject(type){}
+    LottiePathObject(LottieObject::Type  type):LottieObject(type){}
 public:
     std::vector<std::shared_ptr<LottieObject>> mPathOperations;
     std::vector<std::shared_ptr<LottieObject>> mPaintOperations;
 };
 
-class LottieShapeObject : public LottieDrawableObject
+class LottieShapeObject : public LottiePathObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
     void process();
-    LottieShapeObject():LottieDrawableObject(LottieObject::Type::Shape){}
+    LottieShapeObject():LottiePathObject(LottieObject::Type::Shape){}
 public:
     LottieAnimatable<LottieShape>    mShape;
     bool                             mClosed = false;
 };
 
-class LottieRectObject : public LottieDrawableObject
+class LottieRectObject : public LottiePathObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
-    LottieRectObject():LottieDrawableObject(LottieObject::Type::Rect),
+    LottieRectObject():LottiePathObject(LottieObject::Type::Rect),
                        mPos(SGPointF(0,0)),
                        mSize(SGPointF(0,0)),
                        mRound(0){}
@@ -305,12 +307,12 @@ public:
     LottieAnimatable<float>       mRound;
 };
 
-class LottieEllipseObject : public LottieDrawableObject
+class LottieEllipseObject : public LottiePathObject
 {
 public:
     void accept(LottieObjectVisitor *visitor) final
     {visitor->visit(this);}
-    LottieEllipseObject():LottieDrawableObject(LottieObject::Type::Ellipse),
+    LottieEllipseObject():LottiePathObject(LottieObject::Type::Ellipse),
                           mPos(SGPointF(0,0)),
                           mSize(SGPointF(0,0)){}
 public:
