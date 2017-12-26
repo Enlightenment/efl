@@ -37,8 +37,7 @@ ecore_time_get(void)
    if (EINA_UNLIKELY(clock_gettime(_ecore_time_clock_id, &t)))
      {
         CRI("Cannot get current time");
-        // Try to at least return the latest value retrieved
-        return ecore_loop_time_get();
+        return 0.0;
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);

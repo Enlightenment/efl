@@ -127,11 +127,12 @@ _efl_loop_timer_efl_object_constructor(Eo *obj, Efl_Loop_Timer_Data *timer)
 EOLIAN static Eo *
 _efl_loop_timer_efl_object_finalize(Eo *obj, Efl_Loop_Timer_Data *pd)
 {
-   if (pd->at < ecore_loop_time_get()) pd->at = ecore_time_get() + pd->in;
-   else pd->at += pd->in;
-
    pd->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
+
+   if (pd->at < efl_loop_time_get(pd->loop))
+     pd->at = ecore_time_get() + pd->in;
+   else pd->at += pd->in;
 
    if (pd->in < 0.0)
      {
@@ -279,7 +280,7 @@ _efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
    // Do not reset the current timer while inside the callback
    if (timer->loop_data->timer_current == timer) return;
 
-   now = ecore_loop_time_get();
+   now = efl_loop_time_get(timer->loop);
    if (!timer->initialized)
      {
         timer->at = now;
@@ -532,7 +533,7 @@ _efl_loop_timer_next_get(Eo *obj, Efl_Loop_Data *pd)
    if (!object) return -1;
 
    first = _efl_loop_timer_after_get(efl_data_scope_get(object, MY_CLASS));
-   now = ecore_loop_time_get();
+   now = efl_loop_time_get(obj);
    in = first->at - now;
    if (in < 0) in = 0;
    return in;
