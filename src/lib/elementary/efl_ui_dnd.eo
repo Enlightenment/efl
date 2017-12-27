@@ -47,8 +47,6 @@ mixin Efl.Ui.Dnd {
          }
       }
    }
-   implements {
-   }
    events {
       drag,accept; [[accept drag data]]
       drag,done; [[drag is done (mouse up)]]

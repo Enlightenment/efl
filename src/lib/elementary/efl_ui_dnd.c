@@ -16,7 +16,11 @@
 //#define MY_CLASS_DRAG EFL_UI_DND_DRAG_MIXIN
 //#define MY_CLASS_DROP EFL_UI_DND_DROP_MIXIN
 
-//FIXME: Efl_Selection_Format should be changed to Efl_Data_Format
+typedef struct _Efl_Ui_Dnd_Container_Data Efl_Ui_Dnd_Container_Data;
+struct _Efl_Ui_Dnd_Container_Data
+{
+    unsigned int drag_delay_time;
+};
 
 static inline Eo*
 _selection_manager_get(Eo *obj)
@@ -85,8 +89,21 @@ _efl_ui_dnd_drop_target_del(Eo *obj, void *pd, Efl_Selection_Format format, unsi
    efl_selection_manager_drop_target_del(sel_man, obj, format, seat);
 }
 
+EOLIAN static double
+_efl_ui_dnd_container_drag_delay_time_get(Eo *obj, Efl_Ui_Dnd_Container_Data *pd)
+{
+    return pd->drag_delay_time;
+}
+
 EOLIAN static void
-_efl_ui_dnd_container_drag_item_add(Eo *obj, void *pd, double time_to_drag, double anim_time,
+_efl_ui_dnd_container_drag_delay_time_set(Eo *obj, Efl_Ui_Dnd_Container_Data *pd, double drag_delay_time)
+{
+    pd->drag_delay_time = drag_delay_time;
+}
+
+EOLIAN static void
+//_efl_ui_dnd_container_drag_item_add(Eo *obj, Efl_Ui_Dnd_Cointaner_Data *pd, double time_to_drag, double anim_time,
+_efl_ui_dnd_container_drag_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd,
                                  void *data_func_data, Efl_Dnd_Drag_Data_Get data_func, Eina_Free_Cb data_func_free_cb,
                                  void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
                                  void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
@@ -94,8 +111,10 @@ _efl_ui_dnd_container_drag_item_add(Eo *obj, void *pd, double time_to_drag, doub
                                  unsigned int seat)
 {
    ERR("In");
+   double drag_delay_time = pd->drag_delay_time;
+   double anim_time = elm_config_drag_anim_duration_get();
    Eo *sel_man = _selection_manager_get(obj);
-   efl_selection_manager_container_drag_item_add(sel_man, obj, time_to_drag, anim_time,
+   efl_selection_manager_container_drag_item_add(sel_man, obj, drag_delay_time, anim_time,
                                                  data_func_data, data_func, data_func_free_cb,
                                                  item_func_data, item_func, item_func_free_cb,
                                                  icon_func_data, icon_func, icon_func_free_cb,
@@ -104,14 +123,14 @@ _efl_ui_dnd_container_drag_item_add(Eo *obj, void *pd, double time_to_drag, doub
 }
 
 static void
-_efl_ui_dnd_container_drag_item_del(Eo *obj, void *pd, unsigned int seat)
+_efl_ui_dnd_container_drag_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
    efl_selection_manager_container_drag_item_del(sel_man, obj, seat);
 }
 EOLIAN static void
-_efl_ui_dnd_container_drop_item_add(Eo *obj, void *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb, unsigned int seat)
+_efl_ui_dnd_container_drop_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd, Efl_Selection_Format format, void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
@@ -119,7 +138,7 @@ _efl_ui_dnd_container_drop_item_add(Eo *obj, void *pd, Efl_Selection_Format form
 }
 
 EOLIAN static void
-_efl_ui_dnd_container_drop_item_del(Eo *obj, void *pd, unsigned int seat)
+_efl_ui_dnd_container_drop_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);

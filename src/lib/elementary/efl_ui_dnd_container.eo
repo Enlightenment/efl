@@ -1,15 +1,26 @@
 import efl_ui_dnd_types;
 
 mixin Efl.Ui.Dnd.Container {
-   data: null;
+   //data: null;
    methods {
+      @property drag_delay_time {
+         [[The time since mouse down happens to drag starts.]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            time: double; [[The drag delay time]]
+         }
+      }
       drag_item_add { //drag_item_callback //property
          [[This registers a drag for items in a container. Many items can be
            dragged at a time. During dragging, there are three events emitted:
            EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
          params {
-            @in time_to_drag: double; [[Time since mouse down happens to drag starts]] //drag_delay: property
-            @in anim_durataion: double; [[animation duration]]
+            //@in time_to_drag: double; [[Time since mouse down happens to drag starts]] //drag_delay: property
             //@in anim_durataion: double; [[animation duration]] //just config
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
