@@ -12,20 +12,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-typedef struct _Efl_Selection_Data_Priv Efl_Selection_Data_Priv;
-typedef struct _Efl_Selection_Atom Efl_Selection_Atom;
-
-struct _Efl_Selection_Atom
-{
-   const char    *name;
-   Ecore_X_Atom  x_atom;
-};
-
-struct _Efl_Selection_Data_Priv
-{
-
-};
-
 #define MY_CLASS EFL_SELECTION_MIXIN
 #define MY_CLASS_NAME "Efl.Selection"
 
@@ -58,7 +44,7 @@ _efl_selection_selection_get(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Sel
                                        data_func_free_cb, seat);
 }
 
-EOLIAN static void
+EOLIAN static Efl_Future *
 _efl_selection_selection_set(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
    ERR("In");
@@ -82,6 +68,14 @@ _efl_selection_has_owner(Eo *obj, void *pd, Efl_Selection_Type type, unsigned in
     Eo *sel_man = _selection_manager_get(obj);
     return efl_selection_manager_selection_has_owner(sel_man, obj, type, seat);
 }
+
+/*EOLIAN static Efl_Future *
+_efl_selection_selection_lost_notify(Eo *obj, void *pd, Efl_Selection_Type type, unsigned int seat)
+{
+    ERR("In");
+    Eo *sel_man = _selection_manager_get(obj);
+    return efl_selection_manager_selection_lost_notify(sel_man, obj, type, seat);
+}*/
 
 //issue: selection clear only come with window-level
 //if a window has two entries, selection moves from one entry to the other

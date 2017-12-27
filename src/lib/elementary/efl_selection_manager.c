@@ -700,6 +700,9 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    e.exist = !!ev->owner;
    efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
    //ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, NULL, NULL);
+
+   //should we change it to promise way?
+   //efl_promise_value_set(sel->owner, NULL, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -846,6 +849,8 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
    Ecore_X_Event_Selection_Clear *ev = event;
    Sel_Manager_Selection *sel;
    Sel_Manager_Seat_Selection *seat_sel = NULL;
+   Eina_List *l, *l_next;
+   Sel_Manager_Selection_Lost *sel_lost;
    unsigned int i;
    ERR("In");
 
@@ -872,7 +877,17 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
 
    sel = seat_sel->sel_list + i;
 
-   efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+   //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+   EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+     {
+        if ((sel_lost->request == sel->owner) &&
+            (sel_lost->type == i))
+          {
+             efl_promise_value_set(sel_lost->promise, NULL, NULL); //data, clear_func
+             seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+             free(sel_lost);
+          }
+     }
    sel->active = EINA_FALSE;
    sel->owner = NULL;
 
@@ -2262,8 +2277,24 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    sel = seat_sel->sel;
    win = _wl_window_get(owner);
 
+
    if (sel->owner != owner)
-     efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+     {
+        //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+        Eina_List *l, *l_next;
+        Sel_Manager_Selection_Lost *sel_lost;
+
+        EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+          {
+             if ((sel_lost->request == sel->owner) &&
+                 (sel_lost->type == type))
+               {
+                  efl_promise_value_set(sel_lost->promise, NULL, NULL); //data, clear_func
+                  seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+                  free(sel_lost);
+               }
+          }
+     }
 
    if (sel->owner)
      evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
@@ -3599,6 +3630,8 @@ _cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    Sel_Manager_Selection *sel;
    Ecore_Cocoa_Cnp_Type ecore_type;
    Ecore_Win32_Window *win;
+   Eina_List *l, *l_next;
+   Sel_Manager_Selection_Lost *sel_lost;
 
    sel = seat_sel->sel;
    win = _cocoa_window_get(owner);
@@ -3606,7 +3639,17 @@ _cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
      return efl_selection_manager_selection_clear(pd->sel_man, owner, type, seat_sel->seat);
    if (data.len <= 0) return;
 
-   efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+   EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+     {
+        if ((sel_lost->request == sel->owner) &&
+            (sel_lost->type == type))
+          {
+             efl_promise_value_set(sel_lost->promise, NULL, NULL); //data, clear_func
+             seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+             free(sel_lost);
+          }
+     }
+   //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
    if (sel->owner)
      evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
                                          _cocoa_sel_obj_del_cb, sel);
@@ -3800,7 +3843,23 @@ _win32_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
 
    sel = seat_sel->sel_list + type;
    if (sel->owner != owner)
-     efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+     {
+        Eina_List *l, *l_next;
+        Sel_Manager_Selection_Lost *sel_lost;
+
+        EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+          {
+             if ((sel_lost->request == sel->owner) &&
+                 (sel_lost->type == i))
+               {
+                  efl_promise_value_set(sel_lost->promise, NULL, NULL); //data, clear_func
+                  seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+                  free(sel_lost);
+               }
+          }
+
+        //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+     }
    if (sel->owner)
      evas_object_event_callback_del_full(sel->owner, EVAS_CALLBACK_DEL,
                                          _win32_sel_obj_del, sel);
@@ -4252,7 +4311,7 @@ _drag_item_container_cmp(const void *d1, const void *d2)
 }
 
 //exposed APIs
-EOLIAN static void
+EOLIAN static Efl_Future *
 _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
                                      Efl_Object *owner, Efl_Selection_Type type,
                                      Efl_Selection_Format format,
@@ -4268,7 +4327,7 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
    if (type > EFL_SELECTION_TYPE_CLIPBOARD)
      {
         ERR("Not supported format: %d", type);
-        return;
+        return NULL;
      }
 
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
@@ -4292,34 +4351,65 @@ _efl_selection_manager_selection_set(Eo *obj, Efl_Selection_Manager_Data *pd,
    sel = seat_sel->sel_list + type;
 #endif
 
-   if (!sel) return;
+   if (!sel) return NULL;
    //check if owner is changed
-   if (sel->owner != NULL &&
-       sel->owner != owner && same_win)
+   if ((sel->owner != NULL) &&
+       (sel->owner != owner) && same_win)
      {
+        Eina_List *l, *l_next;
+        Sel_Manager_Selection_Lost *sel_lost;
         /*//call selection_loss callback: should we include prev owner??
         Efl_Selection_Type *lt = malloc(sizeof(Efl_Selection_Type));
         *lt = pd->loss_type;
         efl_promise_value_set(pd->promise, lt, _selection_loss_data_clear_cb);*/
-
-        efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+        EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+          {
+             if ((sel_lost->request == sel->owner) &&
+                 (sel_lost->type == type))
+               {
+                  efl_promise_value_set(sel_lost->promise, NULL, NULL);
+                  seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+                  free(sel_lost);
+               }
+          }
+        //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
      }
 
    sel->owner = owner;
 #ifdef HAVE_ELEMENTARY_X
    sel->xwin = xwin;
 
-   return _x11_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
+   _x11_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   return _wl_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
+   _wl_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_COCOA
-   return _cocoa_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
+   _cocoa_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
-   return _win32_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
+   _win32_efl_sel_manager_selection_set(pd, owner, type, format, data, seat_sel);
 #endif
+
+   Efl_Promise *p;
+   Eo *loop;
+
+   loop = efl_loop_get(owner);
+   p = efl_add(EFL_PROMISE_CLASS, loop);
+   if (!p) return NULL;
+
+   Sel_Manager_Selection_Lost *sel_lost = calloc(1, sizeof(Sel_Manager_Selection_Lost));
+   if (!sel_lost)
+     {
+        //efl_promise_value_set(p, NULL);
+        return NULL;
+     }
+   sel_lost->request = owner;
+   sel_lost->type = type;
+   sel_lost->promise = p;
+   seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
+
+   return efl_promise_future_get(p);
 }
 
 //TODO: add support for local
@@ -4407,7 +4497,20 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
      }
    else
      {
-        efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
+        Eina_List *l, *l_next;
+        Sel_Manager_Selection_Lost *sel_lost;
+
+        EINA_LIST_FOREACH_SAFE(seat_sel->sel_lost_list, l, l_next, sel_lost)
+          {
+             if ((sel_lost->request == sel->owner) &&
+                 (sel_lost->type == type))
+               {
+                  efl_promise_value_set(sel_lost->promise, NULL, NULL); //data, clear_func
+                  seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
+                  free(sel_lost);
+               }
+          }
+        //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_LOST, NULL);
         seat_sel->sel_list[type].owner = NULL;
      }
 #endif

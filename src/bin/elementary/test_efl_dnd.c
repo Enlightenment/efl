@@ -41,7 +41,6 @@ _selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
     printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->data.mem, seldata->data.len);
 }
 
-/*
 static void
 _selection_lost_cb(void *data, Efl_Event const *event)
 {
@@ -49,6 +48,7 @@ _selection_lost_cb(void *data, Efl_Event const *event)
     ERR("obj: %p has lost selection; %p", obj, event->object);
 }
 
+/*
 static void
 _selection_failure_cb(void *data, Efl_Event const *event)
 {
@@ -91,9 +91,15 @@ static void
 _selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Eina_Slice sel_data = EINA_SLICE_STR("new");
-   efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS, sel_data, 1);
+   Efl_Future *f = efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS, sel_data, 1);
    //fl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
 	//  "new", 4, 1);
+   int seat_id = efl_input_device_seat_id_get(seat);
+   if (f)
+   {
+       printf("register future callbacks\n");
+       efl_future_then(f, _selection_lost_cb, NULL, NULL, obj);
+   }
 }
 
 static void
@@ -326,7 +332,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Selection Set");
    evas_object_smart_callback_add(bt, "clicked", _selection_set_btn_cb, win);
-   efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOST, _selection_lost_event_cb, NULL);
+   //efl_event_callback_add(bt, EFL_SELECTION_EVENT_SELECTION_LOST, _selection_lost_event_cb, NULL);
+   //
+
+
    evas_object_show(bt);
    elm_box_pack_end(hbox, bt);
 

@@ -10,6 +10,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
             @in data: Eina.Slice;
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
+         return: future<void_ptr>; [[Future for tracking when the selection is lost]]
       }
       selection_get @beta {
          params {
@@ -36,7 +37,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
          }
          return: bool; [[EINA_TRUE if the request object has selection, otherwise, EINA_FALSE]]
       }
-      drag_start @beta {
+     drag_start @beta {
          [[This starts a drag and drop process at the drag side.
            During dragging, there are three events emitted as belows:
               - EFL_UI_DND_EVENT_DRAG_POS
@@ -72,9 +73,6 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
            EFL_UI_DND_EVENT_DRAG_POS, EFL_UI_DND_EVENT_DRAG_ACCEPT, EFL_UI_DND_EVENT_DRAG_DONE.]]
          params {
             @in cont: Efl.Object; [[Container object]]
-            //@in format: Efl.Selection.Format; [[The data format]]
-            //@in buf: const(void_ptr); [[Drag data]]
-            //@in len: int; [[Drag data's length]]
             @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
             @in anim_duration: double; [[animation duration]]
             @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
@@ -126,7 +124,5 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-   }
-   events {
    }
 }

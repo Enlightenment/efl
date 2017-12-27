@@ -132,6 +132,15 @@ struct _Sel_Manager_Selection
    Sel_Manager_Seat_Selection *seat_sel;
 };
 
+typedef struct _Sel_Manager_Selection_Lost Sel_Manager_Selection_Lost;
+
+struct _Sel_Manager_Selection_Lost
+{
+    Efl_Object *request;
+    Efl_Promise *promise;
+    Efl_Selection_Type type;
+};
+
 struct _Sel_Manager_Seat_Selection
 {
    unsigned int seat;
@@ -148,6 +157,7 @@ struct _Sel_Manager_Seat_Selection
    Sel_Manager_Selection *sel_list;
 #endif
 
+   Sel_Manager_Selection_Lost *sel_lost_list;
    //drag
    Eo *drag_obj;
    Efl_Selection_Action drag_action;
@@ -293,7 +303,7 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *end_handler;
    Ecore_Wl2_Display   *wl_display;
 #endif
-   Efl_Promise        *promise;
+   //Efl_Promise        *promise;
    Efl_Selection_Type  loss_type;
 
    Sel_Manager_Atom   *atom_list;
