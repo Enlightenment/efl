@@ -1,5 +1,25 @@
-
 ecore_con_deps = []
+
+pub_legacy_eo_files = [
+  'ecore_con_eet_base.eo',
+  'ecore_con_eet_server_obj.eo',
+  'ecore_con_eet_client_obj.eo'
+]
+
+pub_eo_file_target = []
+foreach eo_file : pub_legacy_eo_files
+  pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
+    input : eo_file,
+    output : [eo_file + '.h', eo_file + '.legacy.h',],
+    install : true,
+    install_dir : dir_package_include,
+    command : [eolian_gen, '-I', meson.current_source_dir(), eolian_include_directories,
+                           '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
+                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
+                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
+                           '-gchl', '@INPUT@'])
+
+endforeach
 
 pub_eo_files = [
   'efl_net_socket.eo',
@@ -29,9 +49,6 @@ pub_eo_files = [
   'efl_net_control.eo',
   'efl_net_session.eo',
   'efl_net_ip_address.eo',
-  'ecore_con_eet_base.eo',
-  'ecore_con_eet_server_obj.eo',
-  'ecore_con_eet_client_obj.eo'
 ]
 
 if target_machine.system() == 'windows'
@@ -139,15 +156,15 @@ else
   ]
 endif
 
-if get_option('network-backend') == 'connman'
-  ecore_con_src = [
+if get_option('network-backend') == 'none'
+  ecore_con_src += [
     'efl_net_control_access_point-none.c',
     'efl_net_control_technology-none.c',
     'efl_net_control-none.c',
     'efl_net_session-none.c'
   ]
 else 
-  ecore_con_src = [
+  ecore_con_src += [
     'efl_net-connman.h',
     'efl_net-connman.c',
     'efl_net_control_access_point-connman.c',
@@ -155,11 +172,19 @@ else
     'efl_net_control-connman.c',
     'efl_net_session-connman.c'
   ]
+  ecore_con_deps += eldbus
+endif
+
+
+if (get_option('crypto') == 'gnutls')
+  ecore_con_deps += gnutls
+elif (get_option('crypto') == 'openssl')
+  ecore_con_deps += openssl
 endif
 
 ecore_con_lib = library('ecore_con',
     ecore_con_src, pub_eo_file_target,
-    dependencies: [ecore, ecore_con_deps, http_parser],
+    dependencies: [ecore, ecore_con_deps, http_parser, eldbus, eet, systemd, dl],
     include_directories : config_dir,
     install: true,
 )

@@ -91,7 +91,7 @@ subprojects = [
 ['ecore' ,  true, false, false, false, []], #ecores modules depend on eldbus
 ['ecore_audio' , false,  true, false, false, []],
 ['ecore_avahi' , false,  true, false, false, []],
-['ecore_con' , false, true, false, false, []],
+['ecore_con' , false,  true,  true, false, ['http-parser']],
 ['ecore_file' , false,  true, false, false, []],
 ]
 
@@ -101,8 +101,6 @@ config_dir += include_directories('.')
 
 #we have to do that first, eina modules are required by eina
 #the other modules require theire package
-
-subdir(join_paths('src', 'static_libs', 'http-parser'))
 subdir(join_paths(local_module, 'eina'))
 
 foreach package : subprojects
