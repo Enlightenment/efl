@@ -1,91 +1,101 @@
 #ifndef ELM_PRIV_H
-#define ELM_PRIV_H
-#ifdef HAVE_ELEMENTARY_X
-#include <Ecore_X.h>
-#endif
-#ifdef HAVE_ELEMENTARY_FB
-#include <Ecore_Fb.h>
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-#include <Ecore_Wl2.h>
-#endif
-#ifdef HAVE_ELEMENTARY_DRM
-#include <Ecore_Drm2.h>
-#endif
-#ifdef HAVE_ELEMENTARY_COCOA
-# include <Ecore_Cocoa.h>
-#endif
-#ifdef HAVE_ELEMENTARY_WIN32
-#include <Ecore_Win32.h>
-#endif
+# define ELM_PRIV_H
+# ifdef HAVE_ELEMENTARY_X
+#  include <Ecore_X.h>
+# endif
+# ifdef HAVE_ELEMENTARY_FB
+#  include <Ecore_Fb.h>
+# endif
+# ifdef HAVE_ELEMENTARY_WL2
+#  include <Ecore_Wl2.h>
+# endif
+# ifdef HAVE_ELEMENTARY_DRM
+#  include <Ecore_Drm2.h>
+# endif
+# ifdef HAVE_ELEMENTARY_COCOA
+#  include <Ecore_Cocoa.h>
+# endif
+# ifdef HAVE_ELEMENTARY_WIN32
+#  include <Ecore_Win32.h>
+# endif
 
-#include <Eio.h>
+# include <Eio.h>
 
 // Evas internal EO APIs
-#include "Evas_Internal.h"
+# include "Evas_Internal.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
+# ifdef EAPI
+#  undef EAPI
+# endif
+# ifdef EWAPI
+#  undef EWAPI
+# endif
 
-#ifdef _WIN32
-# ifdef ELEMENTARY_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
+# ifdef _WIN32
+#  ifdef ELEMENTARY_BUILD
+#   ifdef DLL_EXPORT
+#    define EAPI __declspec(dllexport)
+#   else
+#    error "no DLL_EXPORT"
+#    define EAPI
+#   endif /* ! DLL_EXPORT */
 #  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
+#   define EAPI __declspec(dllimport)
+#  endif /* ! EFL_EVAS_BUILD */
+#  define EAPI_WEAK
 # else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#  ifdef __GNUC__
+#   if __GNUC__ >= 4
+#    define EAPI __attribute__ ((visibility("default")))
+#    define EAPI_WEAK __attribute__ ((weak))
+#   else
+#    define EAPI
+#    define EAPI_WEAK
+#   endif
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
+# endif /* ! _WIN32 */
+
+# define EWAPI EAPI EAPI_WEAK
+
+# include "elm_widget.h"
+# include "elm_access.eo.h"
+# include "elm_code_private.h"
+# include "efl_ui_focus_parent_provider.eo.h"
+# include "efl_ui_focus_parent_provider_standard.eo.h"
+# include "elm_widget_item_static_focus.eo.h"
+
+# ifdef HAVE_LANGINFO_H
+#  include <langinfo.h>
+# endif
+
+# define CRI(...)      EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
+# define ERR(...)      EINA_LOG_DOM_ERR(_elm_log_dom, __VA_ARGS__)
+# define WRN(...)      EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
+# define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
+# define DBG(...)      EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
+
+# ifdef ENABLE_NLS
+#  include <libintl.h>
+#  define E_(string)    _elm_dgettext(string)
 # else
-#  define EAPI
+#  ifndef setlocale
+#   define setlocale(c, l)
+#  endif
+#  ifndef libintl_setlocale
+#   define libintl_setlocale(c, l)
+#  endif
+#  ifndef bindtextdomain
+#   define bindtextdomain(domain, dir)
+#  endif
+#  ifndef libintl_bindtextdomain
+#   define libintl_bindtextdomain(domain, dir)
+#  endif
+#  define E_(string) (string)
 # endif
-#endif /* ! _WIN32 */
-
-#include "elm_widget.h"
-#include "elm_access.eo.h"
-#include "elm_code_private.h"
-#include "efl_ui_focus_parent_provider.eo.h"
-#include "efl_ui_focus_parent_provider_standard.eo.h"
-#include "elm_widget_item_static_focus.eo.h"
-
-#ifdef HAVE_LANGINFO_H
-# include <langinfo.h>
-#endif
-
-#define CRI(...)      EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
-#define ERR(...)      EINA_LOG_DOM_ERR(_elm_log_dom, __VA_ARGS__)
-#define WRN(...)      EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
-#define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
-
-#ifdef ENABLE_NLS
-# include <libintl.h>
-# define E_(string)    _elm_dgettext(string)
-#else
-# ifndef setlocale
-#  define setlocale(c, l)
-# endif
-# ifndef libintl_setlocale
-#  define libintl_setlocale(c, l)
-# endif
-# ifndef bindtextdomain
-#  define bindtextdomain(domain, dir)
-# endif
-# ifndef libintl_bindtextdomain
-#  define libintl_bindtextdomain(domain, dir)
-# endif
-# define E_(string) (string)
-#endif
-#define N_(string) (string)
+# define N_(string) (string)
 
 typedef struct _Elm_Theme_Files          Elm_Theme_Files;
 typedef struct _Edje_Signal_Data         Edje_Signal_Data;
@@ -133,15 +143,15 @@ struct _Elm_Theme
 /* increment this whenever we change config enough that you need new
  * defaults for elm to work.
  */
-#define ELM_CONFIG_EPOCH           0x0002
+# define ELM_CONFIG_EPOCH           0x0002
 /* increment this whenever a new set of config values are added but
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x000f
-#define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
-#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
-                                    ELM_CONFIG_FILE_GENERATION)
+# define ELM_CONFIG_FILE_GENERATION 0x000f
+# define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
+# define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
+                                     ELM_CONFIG_FILE_GENERATION)
 /* NB: profile configuration files (.src) must have their
  * "config_version" entry's value up-to-date with ELM_CONFIG_VERSION
  * (in decimal)!! */
@@ -149,44 +159,44 @@ struct _Elm_Theme
 /* note: always remember to sync it with elm_config.c */
 extern const char *_elm_engines[];
 
-#define ELM_SOFTWARE_X11      (_elm_engines[0])
-#define ELM_SOFTWARE_FB       (_elm_engines[1])
-#define ELM_OPENGL_X11        (_elm_engines[2])
-#define ELM_SOFTWARE_WIN32    (_elm_engines[3])
-#define ELM_SOFTWARE_SDL      (_elm_engines[4])
-#define ELM_OPENGL_SDL        (_elm_engines[5])
-#define ELM_BUFFER            (_elm_engines[6])
-#define ELM_EWS               (_elm_engines[7])
-#define ELM_OPENGL_COCOA      (_elm_engines[8])
-#define ELM_WAYLAND_SHM       (_elm_engines[9])
-#define ELM_WAYLAND_EGL       (_elm_engines[10])
-#define ELM_DRM               (_elm_engines[11])
-#define ELM_SOFTWARE_DDRAW    (_elm_engines[12])
+# define ELM_SOFTWARE_X11      (_elm_engines[0])
+# define ELM_SOFTWARE_FB       (_elm_engines[1])
+# define ELM_OPENGL_X11        (_elm_engines[2])
+# define ELM_SOFTWARE_WIN32    (_elm_engines[3])
+# define ELM_SOFTWARE_SDL      (_elm_engines[4])
+# define ELM_OPENGL_SDL        (_elm_engines[5])
+# define ELM_BUFFER            (_elm_engines[6])
+# define ELM_EWS               (_elm_engines[7])
+# define ELM_OPENGL_COCOA      (_elm_engines[8])
+# define ELM_WAYLAND_SHM       (_elm_engines[9])
+# define ELM_WAYLAND_EGL       (_elm_engines[10])
+# define ELM_DRM               (_elm_engines[11])
+# define ELM_SOFTWARE_DDRAW    (_elm_engines[12])
 
-#define ELM_FONT_TOKEN_STYLE  ":style="
+# define ELM_FONT_TOKEN_STYLE  ":style="
 
-#define ELM_ACCESS_MODE_OFF   EINA_FALSE
-#define ELM_ACCESS_MODE_ON    EINA_TRUE
+# define ELM_ACCESS_MODE_OFF   EINA_FALSE
+# define ELM_ACCESS_MODE_ON    EINA_TRUE
 
-#define ELM_ATSPI_MODE_OFF   EINA_FALSE
-#define ELM_ATSPI_MODE_ON    EINA_TRUE
+# define ELM_ATSPI_MODE_OFF   EINA_FALSE
+# define ELM_ATSPI_MODE_ON    EINA_TRUE
 
 /* convenience macro to compress code and avoid typos */
-#undef CEIL
-#define CEIL(a)   (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
-#undef IS_INSIDE
-#define IS_INSIDE(x, y, xx, yy, ww, hh) \
-  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
-  ((x) >= (xx)) && ((y) >= (yy)))
+# undef CEIL
+# define CEIL(a)   (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
+# undef IS_INSIDE
+# define IS_INSIDE(x, y, xx, yy, ww, hh) \
+   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
+    ((x) >= (xx)) && ((y) >= (yy)))
 
 
-#define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
-#define ELM_SAFE_DEL(_h) do { efl_del(_h); _h = NULL; } while (0)
+# define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
+# define ELM_SAFE_DEL(_h) do { efl_del(_h); _h = NULL; } while (0)
 
-#define ELM_PRIV_STATIC_VARIABLE_DECLARE(name, signal, type) \
+# define ELM_PRIV_STATIC_VARIABLE_DECLARE(name, signal, type) \
    static const char name[] = signal;
 
-#define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
+# define ELM_PRIV_SMART_CALLBACKS_DESC(name, signal, type) \
    {name, type},
 
 struct _Elm_Config_Flags
@@ -679,9 +689,9 @@ void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 void                 _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar);
 void                 _elm_menu_menu_bar_hide(Eo *obj);
 
-#ifdef HAVE_ELEMENTARY_WL2
+# ifdef HAVE_ELEMENTARY_WL2
 void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor);
-#endif
+# endif
 
 void _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj);
 void _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj);
@@ -732,11 +742,11 @@ extern const char SIG_LAYOUT_UNFOCUSED[];
 
 extern Eina_Bool _config_profile_lock;
 
-#ifdef HAVE_ELEMENTARY_WL2
+# ifdef HAVE_ELEMENTARY_WL2
 extern Ecore_Wl2_Display *_elm_wl_display;
-#endif
+# endif
 
-#ifdef ENABLE_NLS
+# ifdef ENABLE_NLS
 /* Our gettext wrapper, used to disable translation of elm if the app
  * is not translated. */
 static inline const char *
@@ -750,7 +760,7 @@ _elm_dgettext(const char *string)
    return dgettext(PACKAGE, string);
 }
 
-#endif
+# endif
 
 /* Used by the paste handler */
 void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
@@ -770,26 +780,26 @@ const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo
 const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
 //void elm_layout_sizing_eval_eoapi(Eo *obj);
 
-#define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
+# define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
    static const Elm_Layout_Part_Alias_Description * \
    _##_pfx##_##_typ##_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED) \
    { \
       return _##_typ##_aliases; \
    }
 
-#define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
+# define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
    EFL_OBJECT_OP_FUNC(elm_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
 
-#define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
-#define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
+# define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
+# define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
 
-#define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
-#define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
+# define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
+# define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
 
-#define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
+# define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
 
-#define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
+# define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
 _##_pfx##_elm_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
 { \
@@ -818,8 +828,5 @@ efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
       default: return !!def_val;
      }
 }
-
-#undef EAPI
-#define EAPI
 
 #endif
