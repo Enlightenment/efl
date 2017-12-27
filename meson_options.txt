@@ -63,14 +63,21 @@ option('systemd',
   description : 'use systemd support'
 )
 
-option('avahi',
-  type : 'boolean',
-  value : false,
-  description : 'disable avahi support'
-)
-
 option('pulseaudio',
   type : 'boolean',
   value : true,
   description : 'pulseaudio support' 
+)
+
+option('avahi',
+  type : 'boolean',
+  value : true,
+  description : 'avahi support' 
+)
+
+option('network-backend',
+  type : 'combo',
+  choices : ['connman', 'none'],
+  value : 'none',
+  description : 'connman support' 
 )
