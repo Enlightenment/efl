@@ -81,3 +81,27 @@ option('network-backend',
   value : 'none',
   description : 'connman support' 
 )
+
+option('xpresent',
+  type : 'boolean',
+  value : false,
+  description : 'xpresent support' 
+)
+
+option('xgesture',
+  type : 'boolean',
+  value : false,
+  description : 'xgesture support' 
+)
+
+option('xi2',
+  type : 'boolean',
+  value : true,
+  description : 'xi2 support' 
+)
+
+option('xi22',
+  type : 'boolean',
+  value : false,
+  description : 'xi22 support' 
+)

@@ -93,7 +93,8 @@ subprojects = [
 ['ecore_avahi' , false,  true, false, false, []],
 ['ecore_con' , false,  true,  true, false, ['http-parser']],
 ['ecore_file' , false,  true, false, false, []],
-['ecore_input', false,  true, false, false, []]
+['ecore_input', false,  true, false, false, []],
+['ecore_x', false,  true, false, false, []],
 ]
 
 
