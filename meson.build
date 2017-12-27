@@ -99,6 +99,7 @@ subprojects = [
 ['ecore_x', false,  true, false, false, []],
 ['ecore_fb', false,  true, false, false, []],
 ['ecore_wl2', false,  true, false, false, ['libdrm']],
+['ecore_ipc', false,  true, false, false, []]
 ]
 
 
