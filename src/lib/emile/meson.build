@@ -19,11 +19,13 @@ emile_dep += jpeg
 emile_dep += dependency('zlib')
 
 if (get_option('crypto') == 'gnutls')
-  emile_dep += dependency('gnutls')
+  gnutls = dependency('gnutls')
+  emile_dep += gnutls
   emile_src += 'emile_cipher_gnutls.c'
   config_h.set('HAVE_GNUTLS', '1')
 elif (get_option('crypto') == 'openssl')
-  emile_dep += dependency('openssl')
+  openssl = dependency('openssl')
+  emile_dep += openssl
   emile_src += 'emile_cipher_openssl.c'
   config_h.set('HAVE_OPENSSL', '1')
 else
