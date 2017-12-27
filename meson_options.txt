@@ -105,3 +105,9 @@ option('xi22',
   value : false,
   description : 'xi22 support' 
 )
+
+option('tslib',
+  type : 'boolean',
+  value : true,
+  description : 'tslib support' 
+)

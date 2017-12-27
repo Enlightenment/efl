@@ -95,6 +95,7 @@ subprojects = [
 ['ecore_file' , false,  true, false, false, []],
 ['ecore_input', false,  true, false, false, []],
 ['ecore_x', false,  true, false, false, []],
+['ecore_fb', false,  true, false, false, []],
 ]
 
 
