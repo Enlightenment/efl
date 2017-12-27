@@ -5,7 +5,8 @@ ssg_util_file = ['sgregion.cpp',
                  'sgpath.cpp',
                  'sgmatrix.cpp',
                  'sgelapsedtimer.cpp',
-                 'sgdebug.cpp'
+                 'sgdebug.cpp',
+                 'sginterpolator.cpp'
                 ]
 
 foreach file: ssg_util_file

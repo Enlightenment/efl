@@ -6,6 +6,7 @@
 #include<unordered_map>
 #include"sgpoint.h"
 #include"sgrect.h"
+#include"sginterpolator.h"
 
 
 class LottieComposition;
@@ -47,12 +48,6 @@ public:
     float b;
 };
 
-class LottieInterpolater
-{
-public:
-  SGPointF mInTangent;
-  SGPointF mOutTangent;
-};
 
 template<typename T>
 class LottieKeyFrame
@@ -71,7 +66,7 @@ public:
     T                   mEndValue;
     int                 mStartFrame;
     int                 mEndFrame;
-    std::shared_ptr<LottieInterpolater> mInterpolator;
+    std::shared_ptr<SGInterpolator> mInterpolator;
 
     /* this is for interpolating position along a path
      * Need to move to other place because its only applicable
@@ -179,7 +174,7 @@ public:
     LottieBlendMode      mBlendMode;
     float                mTimeStreatch;
     std::unordered_map<std::string,
-                       std::shared_ptr<LottieInterpolater>> mInterpolatorCache;
+                       std::shared_ptr<SGInterpolator>> mInterpolatorCache;
 };
 
 class LottieLayer : public LottieGroupObject

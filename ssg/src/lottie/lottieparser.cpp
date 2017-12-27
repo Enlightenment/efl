@@ -1145,9 +1145,7 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
          if (search != compRef->mInterpolatorCache.end()) {
              keyframe.mInterpolator = search->second;
          } else {
-             keyframe.mInterpolator = std::make_shared<LottieInterpolater>();
-             keyframe.mInterpolator.get()->mInTangent = inTangent;
-             keyframe.mInterpolator.get()->mOutTangent = outTangent;
+             keyframe.mInterpolator = std::make_shared<SGInterpolator>(SGInterpolator(inTangent, outTangent));
              compRef->mInterpolatorCache[interpolatorKey] = keyframe.mInterpolator;
          }
      } else {
