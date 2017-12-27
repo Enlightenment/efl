@@ -164,3 +164,10 @@ config_h.set('VMIN', version_minor)
 config_h.set('VMIC', version_micro)
 config_h.set('VREV', '0')
 config_h.set_quoted('SHARED_LIB_SUFFIX', '.so')
+
+#jpeg detection ... life is a bit more complex there 
+
+jpeg = dependency('libjpeg', required: false)
+if jpeg.found() == false
+  jpeg = cc.find_library('jpeg')
+endif

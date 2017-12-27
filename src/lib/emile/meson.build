@@ -15,7 +15,7 @@ emile_src = [
 ]
 
 emile_dep = []
-emile_dep += cc.find_library('jpeg')
+emile_dep += jpeg
 emile_dep += dependency('zlib')
 
 if (get_option('crypto') == 'gnutls')

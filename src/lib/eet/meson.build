@@ -17,7 +17,7 @@ eet_src = [
   'eet_utils.c',
 ]
 
-eet_deps += cc.find_library('jpeg')
+eet_deps += jpeg
 eet_deps += rg_etc
 
 eet_lib = library('eet',
