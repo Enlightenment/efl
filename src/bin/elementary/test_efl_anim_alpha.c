@@ -86,20 +86,19 @@ test_efl_anim_alpha(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
-   efl_animation_target_set(show_anim, btn);
    efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
 
    //Hide Animation
    Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 1.0);
-   efl_animation_target_set(hide_anim, btn);
    efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->show_anim = show_anim;
    ad->hide_anim = hide_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);

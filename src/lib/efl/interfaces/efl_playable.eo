@@ -25,11 +25,5 @@ interface Efl.Playable
                   seekable: bool; [[$true if seekable.]]
              }
         }
-        @property progress {
-             [[ TODO: need to be protected. ]]
-             values {
-                  progress: double;
-             }
-        }
    }
 }

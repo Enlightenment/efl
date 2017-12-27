@@ -1,5 +1,28 @@
 #include "efl_animation_player_private.h"
 
+static void
+_target_del_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Animation_Player_Data *pd = data;
+   pd->target = NULL;
+}
+
+EOLIAN static void
+_efl_animation_player_target_set(Eo *eo_obj EINA_UNUSED,
+                                 Efl_Animation_Player_Data *pd,
+                                 Efl_Canvas_Object *target)
+{
+   efl_event_callback_add(target, EFL_EVENT_DEL, _target_del_cb, pd);
+
+   pd->target = target;
+}
+
+EOLIAN static Efl_Canvas_Object *
+_efl_animation_player_target_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Player_Data *pd)
+{
+   return pd->target;
+}
+
 EOLIAN static void
 _efl_animation_player_auto_del_set(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Player_Data *pd,
@@ -76,7 +99,7 @@ _animator_cb(void *data)
         pd->progress = (double)(pd->is_direction_forward);
      }
 
-   efl_playable_progress_set(anim, pd->progress);
+   efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 
    Efl_Animation_Player_Running_Event_Info event_info;
    event_info.progress = pd->progress;
@@ -170,6 +193,7 @@ _efl_animation_player_efl_player_start(Eo *eo_obj,
 
    _start(eo_obj, pd);
 }
+
 EOLIAN static void
 _efl_animation_player_efl_player_stop(Eo *eo_obj,
                                       Efl_Animation_Player_Data *pd)
@@ -195,7 +219,7 @@ _efl_animation_player_efl_player_stop(Eo *eo_obj,
      {
          pd->progress = 0.0;
      }
-   efl_playable_progress_set(anim, pd->progress);
+   efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
    if (play)
      efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
 
@@ -268,7 +292,8 @@ _efl_animation_player_efl_player_position_set(Eo *eo_obj,
 
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
    double length = efl_player_length_get(anim);
-   efl_playable_progress_set(anim, sec/ length );
+   pd->progress = sec / length;
+   efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 }
 
 EOLIAN static double

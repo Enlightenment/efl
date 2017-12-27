@@ -86,20 +86,19 @@ test_efl_anim_scale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(scale_double_anim, 1.0);
-   efl_animation_target_set(scale_double_anim, btn);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(scale_half_anim, 1.0);
-   efl_animation_target_set(scale_half_anim, btn);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL,
+                          efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
@@ -156,20 +155,19 @@ test_efl_anim_scale_relative(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(scale_double_anim, 1.0);
-   efl_animation_target_set(scale_double_anim, btn);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(scale_half_anim, 1.0);
-   efl_animation_target_set(scale_half_anim, btn);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
    //Register callback called when animation ends
@@ -223,20 +221,19 @@ test_efl_anim_scale_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_absolute_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, 0, 0);
    efl_animation_duration_set(scale_double_anim, 1.0);
-   efl_animation_target_set(scale_double_anim, btn);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_absolute_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, 0, 0);
    efl_animation_duration_set(scale_half_anim, 1.0);
-   efl_animation_target_set(scale_half_anim, btn);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
    //Register callback called when animation ends

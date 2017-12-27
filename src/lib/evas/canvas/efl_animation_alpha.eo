@@ -19,6 +19,6 @@ class Efl.Animation.Alpha (Efl.Animation)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Playable.progress { set; }
+      Efl.Animation.animation_apply;
    }
 }

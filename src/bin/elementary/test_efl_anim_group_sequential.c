@@ -87,22 +87,18 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    //Rotate from 0 to 45 degrees Animation
    Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, 0.5, 0.5);
-   efl_animation_target_set(cw_45_degrees_anim, btn);
 
    //Scale Animation to zoom in
    Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
    efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
-   efl_animation_target_set(scale_double_anim, btn);
 
    //Hide Animation
    Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
-   efl_animation_target_set(hide_anim, btn);
 
    //Hide Sequential Group Animation
    Efl_Animation *sequential_hide_anim = efl_add(EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS, NULL);
    efl_animation_duration_set(sequential_hide_anim, 1.0);
-   efl_animation_target_set(sequential_hide_anim, btn);
    efl_animation_final_state_keep_set(sequential_hide_anim, EINA_TRUE);
 
    //Add animations to group animation
@@ -129,7 +125,6 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    //Show Sequential Group Animation
    Efl_Animation *sequential_show_anim = efl_add(EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS, NULL);
-   efl_animation_target_set(sequential_show_anim, btn);
    efl_animation_final_state_keep_set(sequential_show_anim, EINA_TRUE);
    //efl_animation_duration_set() is called for each animation not to set the same duration
 
@@ -143,7 +138,8 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
    //Initialize App Data
    ad->sequential_show_anim = sequential_show_anim;
    ad->sequential_hide_anim = sequential_hide_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);

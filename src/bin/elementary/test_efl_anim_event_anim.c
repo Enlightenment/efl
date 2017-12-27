@@ -60,7 +60,6 @@ test_efl_anim_event_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
-   efl_animation_target_set(show_anim, btn);
    efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
    efl_canvas_object_event_animation_set(btn, EFL_GFX_EVENT_SHOW, show_anim);
 
@@ -71,7 +70,6 @@ test_efl_anim_event_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 1.0);
-   efl_animation_target_set(hide_anim, btn);
    efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
    efl_canvas_object_event_animation_set(btn, EFL_GFX_EVENT_HIDE, hide_anim);
 

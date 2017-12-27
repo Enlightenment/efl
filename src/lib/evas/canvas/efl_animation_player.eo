@@ -21,6 +21,16 @@ class Efl.Animation.Player (Efl.Object, Efl.Player)
             auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
          }
       }
+      @property target {
+         [[Target object property]]
+         set {
+         }
+         get {
+         }
+         values {
+            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

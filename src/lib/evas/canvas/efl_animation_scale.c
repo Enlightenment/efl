@@ -24,7 +24,7 @@ _scale_get(Eo *target)
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_set(Eo *eo_obj,
+_efl_animation_scale_scale_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Animation_Scale_Data *pd,
                                double from_scale_x,
                                double from_scale_y,
@@ -44,29 +44,11 @@ _efl_animation_scale_scale_set(Eo *eo_obj,
    pd->rel_pivot.cx = cx;
    pd->rel_pivot.cy = cy;
 
-   //Update absolute pivot based on relative pivot
-   Evas_Coord x = 0;
-   Evas_Coord y = 0;
-   Evas_Coord w = 0;
-   Evas_Coord h = 0;
-
-   if (pivot)
-     evas_object_geometry_get(pivot, &x, &y, &w, &h);
-   else
-     {
-        Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-        if (target)
-          evas_object_geometry_get(target, &x, &y, &w, &h);
-     }
-
-   pd->abs_pivot.cx = x + (w * cx);
-   pd->abs_pivot.cy = y + (h * cy);
-
    pd->use_rel_pivot = EINA_TRUE;
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_get(Eo *eo_obj,
+_efl_animation_scale_scale_get(Eo *eo_obj EINA_UNUSED,
                                Efl_Animation_Scale_Data *pd,
                                double *from_scale_x,
                                double *from_scale_y,
@@ -76,27 +58,10 @@ _efl_animation_scale_scale_get(Eo *eo_obj,
                                double *cx,
                                double *cy)
 {
-   //Update relative pivot based on absolute pivot
    if (!pd->use_rel_pivot)
      {
-        Evas_Coord x = 0;
-        Evas_Coord y = 0;
-        Evas_Coord w = 0;
-        Evas_Coord h = 0;
-
-        Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-        if (target)
-          evas_object_geometry_get(target, &x, &y, &w, &h);
-
-        if (w != 0)
-          pd->rel_pivot.cx = (double)(pd->abs_pivot.cx - x) / w;
-        else
-          pd->rel_pivot.cx = 0.0;
-
-        if (h != 0)
-          pd->rel_pivot.cy = (double)(pd->abs_pivot.cy - y) / h;
-        else
-          pd->rel_pivot.cy = 0.0;
+        ERR("Animation is done in absolute value.");
+        return;
      }
 
    if (from_scale_x)
@@ -122,7 +87,7 @@ _efl_animation_scale_scale_get(Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_absolute_set(Eo *eo_obj,
+_efl_animation_scale_scale_absolute_set(Eo *eo_obj EINA_UNUSED,
                                         Efl_Animation_Scale_Data *pd,
                                         double from_scale_x,
                                         double from_scale_y,
@@ -140,33 +105,11 @@ _efl_animation_scale_scale_absolute_set(Eo *eo_obj,
    pd->abs_pivot.cx = cx;
    pd->abs_pivot.cy = cy;
 
-   //Update relative pivot based on absolute pivot
-   Evas_Coord x = 0;
-   Evas_Coord y = 0;
-   Evas_Coord w = 0;
-   Evas_Coord h = 0;
-
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (target)
-     evas_object_geometry_get(target, &x, &y, &w, &h);
-
-   pd->rel_pivot.obj = NULL;
-
-   if (w != 0)
-     pd->rel_pivot.cx = (double)(cx - x) / w;
-   else
-     pd->rel_pivot.cx = 0.0;
-
-   if (h != 0)
-     pd->rel_pivot.cy = (double)(cy - y) / h;
-   else
-     pd->rel_pivot.cy = 0.0;
-
    pd->use_rel_pivot = EINA_FALSE;
 }
 
 EOLIAN static void
-_efl_animation_scale_scale_absolute_get(Eo *eo_obj,
+_efl_animation_scale_scale_absolute_get(Eo *eo_obj EINA_UNUSED,
                                         Efl_Animation_Scale_Data *pd,
                                         double *from_scale_x,
                                         double *from_scale_y,
@@ -175,25 +118,10 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj,
                                         Evas_Coord *cx,
                                         Evas_Coord *cy)
 {
-   //Update absolute pivot based on relative pivot
    if (pd->use_rel_pivot)
      {
-        Evas_Coord x = 0;
-        Evas_Coord y = 0;
-        Evas_Coord w = 0;
-        Evas_Coord h = 0;
-
-        if (pd->rel_pivot.obj)
-          evas_object_geometry_get(pd->rel_pivot.obj, &x, &y, &w, &h);
-        else
-          {
-             Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-             if (target)
-               evas_object_geometry_get(target, &x, &y, &w, &h);
-          }
-
-        pd->abs_pivot.cx = x + (w * pd->rel_pivot.cx);
-        pd->abs_pivot.cy = y + (h * pd->rel_pivot.cy);
+        ERR("Animation is done in relative value.");
+        return;
      }
 
    if (from_scale_x)
@@ -215,18 +143,17 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj,
      *cy = pd->abs_pivot.cy;
 }
 
-EOLIAN static void
-_efl_animation_scale_efl_playable_progress_set(Eo *eo_obj,
-                            Efl_Animation_Scale_Data *pd,
-                            double progress)
+EOLIAN static double
+_efl_animation_scale_efl_animation_animation_apply(Eo *eo_obj,
+                                                   Efl_Animation_Scale_Data *pd,
+                                                   double progress,
+                                                   Efl_Canvas_Object *target)
 {
    Efl_Animation_Scale_Property prev_scale;
    Efl_Animation_Scale_Property new_scale;
 
-   efl_playable_progress_set(efl_super(eo_obj, MY_CLASS), progress);
-   progress = efl_playable_progress_get(eo_obj);
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (!target) return;
+   progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
+   if (!target) return progress;
 
    prev_scale = _scale_get(target);
    new_scale.scale_x = GET_STATUS(pd->from.scale_x, pd->to.scale_x, progress);
@@ -235,16 +162,20 @@ _efl_animation_scale_efl_playable_progress_set(Eo *eo_obj,
    if (pd->use_rel_pivot)
      {
         efl_gfx_map_zoom(target,
-                         new_scale.scale_x / prev_scale.scale_x, new_scale.scale_y / prev_scale.scale_y,
-                         pd->rel_pivot.obj,
+                         new_scale.scale_x / prev_scale.scale_x,
+                         new_scale.scale_y / prev_scale.scale_y,
+                         (pd->rel_pivot.obj) ? pd->rel_pivot.obj : target,
                          pd->rel_pivot.cx, pd->rel_pivot.cy);
      }
    else
      {
         efl_gfx_map_zoom_absolute(target,
-                                  new_scale.scale_x / prev_scale.scale_x, new_scale.scale_y / prev_scale.scale_y,
+                                  new_scale.scale_x / prev_scale.scale_x,
+                                  new_scale.scale_y / prev_scale.scale_y,
                                   pd->abs_pivot.cx, pd->abs_pivot.cy);
      }
+
+   return progress;
 }
 
 EOLIAN static Efl_Object *

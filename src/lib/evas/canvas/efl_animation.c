@@ -2,32 +2,6 @@
 
 #define MY_CLASS EFL_ANIMATION_CLASS
 
-static void
-_target_del_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Eo *eo_obj = data;
-
-   EFL_ANIMATION_DATA_GET(eo_obj, pd);
-
-   pd->target = NULL;
-}
-
-EOLIAN static void
-_efl_animation_target_set(Eo *eo_obj,
-                          Efl_Animation_Data *pd,
-                          Efl_Canvas_Object *target)
-{
-   efl_event_callback_add(target, EFL_EVENT_DEL, _target_del_cb, eo_obj);
-
-   pd->target = target;
-}
-
-EOLIAN static Efl_Canvas_Object *
-_efl_animation_target_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd)
-{
-   return pd->target;
-}
-
 EOLIAN static void
 _efl_animation_duration_set(Eo *eo_obj EINA_UNUSED,
                             Efl_Animation_Data *pd,
@@ -124,29 +98,17 @@ _efl_animation_interpolator_get(Eo *eo_obj EINA_UNUSED,
    return pd->interpolator;
 }
 
-EOLIAN static void
-_efl_animation_efl_playable_progress_set(Eo *eo_obj, Efl_Animation_Data *pd, double progress)
+EOLIAN static double
+_efl_animation_animation_apply(Eo *eo_obj,
+                               Efl_Animation_Data *pd EINA_UNUSED,
+                               double progress,
+                               Efl_Canvas_Object *target EINA_UNUSED)
 {
    Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
    if (interpolator)
-     pd->progress = efl_interpolator_interpolate(interpolator, progress);
-   else
-     pd->progress = progress;
-}
+     progress = efl_interpolator_interpolate(interpolator, progress);
 
-EOLIAN static double
-_efl_animation_efl_playable_progress_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd)
-{
-   return pd->progress;
-}
-
-EOLIAN static void
-_efl_animation_efl_object_destructor(Eo *eo_obj, Efl_Animation_Data *pd)
-{
-   if (pd->target)
-     efl_event_callback_del(pd->target, EFL_EVENT_DEL, _target_del_cb, eo_obj);
-
-   efl_destructor(efl_super(eo_obj, MY_CLASS));
+   return progress;
 }
 
 EOLIAN static double
@@ -162,9 +124,9 @@ _efl_animation_efl_playable_length_get(Eo *eo_obj, Efl_Animation_Data *pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_animation_efl_playable_playable_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd)
+_efl_animation_efl_playable_playable_get(Eo *eo_obj EINA_UNUSED, Efl_Animation_Data *pd EINA_UNUSED)
 {
-   return !!(pd->target);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool

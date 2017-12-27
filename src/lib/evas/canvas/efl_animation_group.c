@@ -7,12 +7,6 @@ _efl_animation_group_animation_add(Eo *eo_obj,
 {
    if (!animation) return;
 
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-
-   //TODO: check when child target is different.
-   if (target)
-     efl_animation_target_set(animation, target);
-
    double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
    /* if group animation duration is available value, then the duration is
     * propagated to its child. */
@@ -40,21 +34,6 @@ _efl_animation_group_animations_get(Eo *eo_obj EINA_UNUSED,
                                     Efl_Animation_Group_Data *pd)
 {
    return pd->animations;
-}
-
-EOLIAN static void
-_efl_animation_group_efl_animation_target_set(Eo *eo_obj,
-                                              Efl_Animation_Group_Data *pd,
-                                              Efl_Canvas_Object *target)
-{
-   Eina_List *l;
-   Efl_Animation *anim;
-   EINA_LIST_FOREACH(pd->animations, l, anim)
-     {
-        efl_animation_target_set(anim, target);
-     }
-
-   efl_animation_target_set(efl_super(eo_obj, MY_CLASS), target);
 }
 
 EOLIAN static void

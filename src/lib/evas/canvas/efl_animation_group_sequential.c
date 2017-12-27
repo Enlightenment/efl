@@ -2,10 +2,11 @@
 
 #define MY_CLASS EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS
 
-EOLIAN static void
-_efl_animation_group_sequential_efl_playable_progress_set(Eo *eo_obj,
-                                                          void *_pd EINA_UNUSED,
-                                                          double progress)
+EOLIAN static double
+_efl_animation_group_sequential_efl_animation_animation_apply(Eo *eo_obj,
+                                                              void *_pd EINA_UNUSED,
+                                                              double progress,
+                                                              Efl_Canvas_Object *target)
 {
    double group_length, group_elapsed_time;
    double anim_length, anim_duration, anim_start_delay, anim_progress, anim_play_time, anim_position;
@@ -13,10 +14,9 @@ _efl_animation_group_sequential_efl_playable_progress_set(Eo *eo_obj,
    double temp;
    int anim_repeated_count;
 
-   efl_playable_progress_set(efl_super(eo_obj, MY_CLASS), progress);
-   progress = efl_playable_progress_get(eo_obj);
+   progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
    Eina_List *group_anim = efl_animation_group_animations_get(eo_obj);
-   if (!group_anim) return;
+   if (!group_anim) return progress;
 
    group_length = efl_playable_length_get(eo_obj);
    group_elapsed_time = group_length * progress;
@@ -37,7 +37,7 @@ _efl_animation_group_sequential_efl_playable_progress_set(Eo *eo_obj,
                anim_progress = 1.0;
              else
                anim_progress = 0.0;
-             efl_playable_progress_set(anim, anim_progress);
+             efl_animation_apply(anim, anim_progress, target);
              total_anim_elapsed_time = temp;
              continue;
           }
@@ -49,10 +49,12 @@ _efl_animation_group_sequential_efl_playable_progress_set(Eo *eo_obj,
         anim_progress = MIN((anim_position / anim_duration), 1.0);
         if (FINAL_STATE_IS_REVERSE(anim))
           anim_progress = 1.0 - anim_progress;
-        efl_playable_progress_set(anim, anim_progress);
+        efl_animation_apply(anim, anim_progress, target);
 
         break;
      }
+
+   return progress;
 }
 
 EOLIAN static double

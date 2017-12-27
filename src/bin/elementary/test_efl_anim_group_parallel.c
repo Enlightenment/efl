@@ -99,7 +99,6 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    //Show Parallel Group Animation
    Efl_Animation *parallel_show_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, NULL);
    efl_animation_duration_set(parallel_show_anim, 1.0);
-   efl_animation_target_set(parallel_show_anim, btn);
    efl_animation_final_state_keep_set(parallel_show_anim, EINA_TRUE);
 
    //Add animations to group animation
@@ -123,7 +122,6 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    //Hide Parallel Group Animation
    Efl_Animation *parallel_hide_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, NULL);
    efl_animation_duration_set(parallel_hide_anim, 1.0);
-   efl_animation_target_set(parallel_hide_anim, btn);
    efl_animation_final_state_keep_set(parallel_hide_anim, EINA_TRUE);
 
    //Add animations to group animation
@@ -135,7 +133,8 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    //Initialize App Data
    ad->parallel_show_anim = parallel_show_anim;
    ad->parallel_hide_anim = parallel_hide_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);

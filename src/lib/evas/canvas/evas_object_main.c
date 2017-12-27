@@ -177,17 +177,18 @@ static void _animation_intercept_hide(void *data, Evas_Object *eo_obj);
 static void _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 static void
-_animation_end_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_animation_end_cb(void *data, const Efl_Event *event)
 {
-   Event_Animation *event_anim = data;
-   Evas_Object *target = efl_animation_target_get(event_anim->anim);
-   Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(target);
+  Evas_Object_Protected_Data *obj;
+  Event_Animation *event_anim = data;
 
+   obj = EVAS_OBJECT_DATA_SAFE_GET(efl_animation_player_target_get(event->object));
    if (!obj) return;
-   if (efl_animation_player_animation_get(obj->anim_player) != event_anim->anim)
+
+   if (efl_animation_player_animation_get(event->object) != event_anim->anim)
      return;
 
-   _hide(target, obj);
+   _hide(obj->object, obj);
 }
 
 static void
@@ -213,18 +214,14 @@ _event_anim_free(Event_Animation *event_anim, Evas_Object_Protected_Data *obj)
         //Deallocate memory and Unset callbacks for Hide event
         if (event_anim->desc == EFL_GFX_EVENT_HIDE)
           {
-             Efl_Canvas_Object *target =
-                efl_animation_target_get(event_anim->anim);
-
-             evas_object_intercept_hide_callback_del(target,
+             evas_object_intercept_hide_callback_del(obj->object,
                                                      _animation_intercept_hide);
              efl_event_callback_del(obj->anim_player,
                                     EFL_ANIMATION_PLAYER_EVENT_ENDED,
                                     _animation_end_cb,
                                     event_anim);
-             double progress = efl_playable_progress_get(event_anim->anim);
-             if (progress > 0.0 && (1.0 - progress) > DBL_EPSILON)
-               efl_gfx_visible_set(target, EINA_FALSE);
+             if (efl_player_play_get(obj->anim_player))
+               efl_gfx_visible_set(obj->object, EINA_FALSE);
           }
      }
 
@@ -1121,8 +1118,7 @@ _efl_canvas_object_efl_object_event_callback_call(Eo *eo_obj,
    //Start animation corresponding to the current event
    if (desc)
      {
-        if (desc != EFL_GFX_EVENT_HIDE)
-        //if (!_efl_animation_event_type_is_inform_call(desc))
+        if ((desc != EFL_GFX_EVENT_HIDE) && desc != (EFL_GFX_EVENT_SHOW))
           {
              Event_Animation *event_anim = _event_animation_find(obj, desc);
              if (event_anim)
@@ -1151,8 +1147,7 @@ _efl_canvas_object_efl_object_event_callback_legacy_call(Eo *eo_obj,
    //Start animation corresponding to the current event
    if (desc)
      {
-        if (desc != EFL_GFX_EVENT_HIDE)
-        //if (!_efl_animation_event_type_is_inform_call(desc))
+        if ((desc != EFL_GFX_EVENT_HIDE) && desc != (EFL_GFX_EVENT_SHOW))
           {
              Event_Animation *event_anim = _event_animation_find(obj, desc);
              if (event_anim)
@@ -2669,7 +2664,8 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
 
    if (!pd->anim_player)
      {
-        pd->anim_player = efl_add(EFL_ANIMATION_PLAYER_CLASS, eo_obj);
+        pd->anim_player = efl_add(EFL_ANIMATION_PLAYER_CLASS, eo_obj,
+                                  efl_animation_player_target_set(efl_added, eo_obj));
      }
 
    if (event_anim)
@@ -2687,16 +2683,10 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
 
    event_anim = calloc(1, sizeof(Event_Animation));
 
-   //Set target object for the given animation
-   Efl_Canvas_Object *target = efl_animation_target_get(animation);
-   if (!target)
-     target = eo_obj;
-   efl_animation_target_set(animation, target);
-
    //Set callback for Hide event
    if (desc == EFL_GFX_EVENT_HIDE)
      {
-        evas_object_intercept_hide_callback_add(target,
+        evas_object_intercept_hide_callback_add(eo_obj,
                                                 _animation_intercept_hide,
                                                 event_anim);
         efl_event_callback_add(pd->anim_player,

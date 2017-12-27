@@ -4,16 +4,6 @@ class Efl.Animation (Efl.Object, Efl.Playable)
 {
    [[Efl animation class]]
    methods {
-      @property target {
-         [[Target object property]]
-         set {
-         }
-         get {
-         }
-         values {
-            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
-         }
-      }
       @property final_state_keep {
          [[Keep final state property]]
          set {
@@ -74,12 +64,17 @@ class Efl.Animation (Efl.Object, Efl.Playable)
             interpolator: Efl.Object; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
          }
       }
+      animation_apply {
+         params {
+            @in progress: double;
+            @in target: Efl.Canvas.Object;
+         }
+         return: double; [[Final applied progress.]]
+      }
    }
    implements {
-      Efl.Object.destructor;
       Efl.Playable.length { get; }
       Efl.Playable.seekable { get; }
       Efl.Playable.playable { get; }
-      Efl.Playable.progress { get; set; }
    }
 }

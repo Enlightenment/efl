@@ -187,7 +187,6 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         Efl_Animation *anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, NULL);
         efl_animation_translate_set(anim, 0, 0, (WIN_W - BTN_W), 0);
         efl_animation_duration_set(anim, 2.0);
-        efl_animation_target_set(anim, btn);
         efl_animation_final_state_keep_set(anim, EINA_FALSE);
 
         Efl_Interpolator *interp = _interpolator_create(i);
@@ -196,7 +195,8 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
         //Create Animation Object from Animation
         Efl_Animation_Player *anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL,
-                                                 efl_animation_player_animation_set(efl_added, anim));
+                                                 efl_animation_player_animation_set(efl_added, anim),
+                                                 efl_animation_player_target_set(efl_added, btn));
         ad->anim_obj[i] = anim_obj;
 
         //Register callback called when animation starts

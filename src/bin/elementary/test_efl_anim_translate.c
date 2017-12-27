@@ -86,20 +86,19 @@ test_efl_anim_translate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    Efl_Animation *translate_rb_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, NULL);
    efl_animation_translate_set(translate_rb_anim, 0, 0, 100, 100);
    efl_animation_duration_set(translate_rb_anim, 1.0);
-   efl_animation_target_set(translate_rb_anim, btn);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top relatively
    Efl_Animation *translate_lt_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, NULL);
    efl_animation_translate_set(translate_lt_anim, 100, 100, 0, 0);
    efl_animation_duration_set(translate_lt_anim, 1.0);
-   efl_animation_target_set(translate_lt_anim, btn);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->translate_rb_anim = translate_rb_anim;
    ad->translate_lt_anim = translate_lt_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
    //Register callback called when animation ends
@@ -153,21 +152,20 @@ test_efl_anim_translate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_U
    Efl_Animation *translate_rb_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, NULL);
    efl_animation_translate_absolute_set(translate_rb_anim, 0, 0, 100, 100);
    efl_animation_duration_set(translate_rb_anim, 1.0);
-   efl_animation_target_set(translate_rb_anim, btn);
    efl_animation_final_state_keep_set(translate_rb_anim, EINA_TRUE);
 
    //Translate Animation to left top absolutely
    Efl_Animation *translate_lt_anim = efl_add(EFL_ANIMATION_TRANSLATE_CLASS, NULL);
    efl_animation_translate_absolute_set(translate_lt_anim, 100, 100, 0, 0);
    efl_animation_duration_set(translate_lt_anim, 1.0);
-   efl_animation_target_set(translate_lt_anim, btn);
    efl_animation_final_state_keep_set(translate_lt_anim, EINA_TRUE);
 
    //Initialize App Data
    ad->translate_rb_anim = translate_rb_anim;
    ad->translate_lt_anim = translate_lt_anim;
    ad->is_btn_translated = EINA_FALSE;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
+                          efl_animation_player_target_set(efl_added, btn));
    //Register callback called when animation starts
    efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
    //Register callback called when animation ends

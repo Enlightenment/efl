@@ -8,6 +8,6 @@ class Efl.Animation.Group.Parallel (Efl.Animation.Group)
    }
    implements {
       Efl.Animation.duration { get; }
-      Efl.Playable.progress { set; }
+      Efl.Animation.animation_apply;
    }
 }

@@ -30,6 +30,7 @@ typedef struct _Efl_Animation_Player_Data
      } time;
 
    Efl_Animation                   *animation;
+   Efl_Canvas_Object               *target;
 
    double                           progress;
    double                           play_speed;
