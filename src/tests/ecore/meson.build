@@ -16,9 +16,35 @@ ecore_suite_src = [
   'ecore_suite.h'
 ]
 
+ecore_suite_deps = [m]
+ecore_suite_deps += ecore
+ecore_suite_deps += ecore_file
+ecore_suite_deps += ecore_evas
+ecore_suite_deps += ecore_input
+ecore_suite_deps += ecore_imf
+
+if get_option('ecore_audio')
+  ecore_suite_deps += ecore_audio
+  ecore_suite_src += 'ecore_test_ecore_audio.c'
+endif
+
+if get_option('ecore_fb')
+  ecore_suite_deps += ecore_fb
+  ecore_suite_src += 'ecore_test_ecore_fb.c'
+endif
+
+if get_option('ecore_drm2')
+  ecore_suite_deps += ecore_drm2
+endif
+
+if get_option('ecore_x')
+  ecore_suite_src += 'ecore_test_ecore_x.c'
+  ecore_suite_deps += ecore_x
+endif
+
 ecore_suite = executable('ecore_suite',
   ecore_suite_src,
-  dependencies: [ecore, ecore_imf, ecore_evas, ecore_input, ecore_file, check],
+  dependencies: [ecore_suite_deps, check],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']

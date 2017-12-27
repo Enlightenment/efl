@@ -88,6 +88,7 @@ subprojects = [
 ['eet'   , false,  true,  true, false, []],
 ['ecore' , false,  true, false, false, []],
 ['eldbus', false,  true,  true, false, []],
+['ecore' ,  true, false, false, false, []], #ecores modules depend on eldbus
 ['ecore_audio' , false,  true, false, false, []],
 ]
 
