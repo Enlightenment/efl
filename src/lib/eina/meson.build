@@ -250,6 +250,15 @@ if default_mempool
    eina_config.set('EINA_DEFAULT_MEMPOOL', '1')
 endif
 
+if get_option('systemd') == true
+  systemd = dependency('libsystemd')
+  eina_deps += systemd
+  config_h.set('HAVE_SYSTEMD', '1')
+else
+  systemd = []
+endif
+
+
 eina_config.set('EINA_SAFETY_CHECKS', '1')
 eina_config.set('EINA_HAVE_THREADS', '1')
 
