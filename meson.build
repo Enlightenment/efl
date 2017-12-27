@@ -85,6 +85,7 @@ subprojects = [
 ['eo'    , false,  true, false,  true, []],
 ['efl'   , false,  true, false, false, []],
 ['emile' , false,  true, false, false, ['lz4', 'rg_etc']],
+['eet'   , false,  true,  true, false, []]
 ]
 
 
