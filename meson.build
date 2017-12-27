@@ -79,11 +79,12 @@ eolian_include_directories = []
 subdir('header_checks')
 
 subprojects = [
-# name   | mod  | lib  | bin  | bench |
-['eina'  ,  true,  true,  true,  true],
-['eolian', false,  true,  true, false],
-['eo'    , false,  true, false,  true],
-['efl'   , false,  true, false, false]
+# name   | mod  | lib  | bin  | bench | name of static libs
+['eina'  ,  true,  true,  true,  true, []],
+['eolian', false,  true,  true, false, []],
+['eo'    , false,  true, false,  true, []],
+['efl'   , false,  true, false, false, []],
+['emile' , false,  true, false, false, ['lz4', 'rg_etc']],
 ]
 
 
@@ -96,6 +97,10 @@ foreach package : subprojects
 
   dir_package_include = join_paths(dir_include, package_version_name)
 
+  foreach static_lib : package[5]
+    subdir(join_paths('src', 'static_libs', static_lib))
+  endforeach
+  
   if (package[1])
      subdir(join_paths(local_module, package_name))
   endif

@@ -26,3 +26,9 @@ option('build-tests',
   value : true,
   description : 'build examples'
 )
+
+option('crypto',
+  type : 'combo',
+  choices : ['gnutls', 'openssl', 'none'],
+  value : 'openssl'
+)
