@@ -77,6 +77,8 @@ config_dir = [include_directories('.')]
 eolian_include_directories = []
 
 subdir('header_checks')
+subdir(join_paths('src', 'wayland_protocol'))
+
 
 subprojects = [
 # name   | mod  | lib  | bin  | bench | name of static libs
@@ -96,6 +98,7 @@ subprojects = [
 ['ecore_input', false,  true, false, false, []],
 ['ecore_x', false,  true, false, false, []],
 ['ecore_fb', false,  true, false, false, []],
+['ecore_wl2', false,  true, false, false, ['libdrm']],
 ]
 
 
