@@ -84,6 +84,7 @@ typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 
 typedef struct _Efl_Loop_Timer_Data Efl_Loop_Timer_Data;
+typedef struct _Efl_Loop_Future_Scheduler Efl_Loop_Future_Scheduler;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 
 typedef struct _Message_Handler Message_Handler;
@@ -103,10 +104,21 @@ struct _Message
    Eina_Bool delete_me;
 };
 
+struct _Efl_Loop_Future_Scheduler
+{
+   Eina_Future_Scheduler  eina_future_scheduler;
+   Eo                    *loop;
+   Efl_Loop_Data         *loop_data;
+};
+
 struct _Efl_Loop_Data
 {
    double               loop_time;
    Eina_Hash           *providers;
+
+   Efl_Loop_Future_Scheduler future_scheduler;
+
+   Efl_Loop_Message_Handler *future_message_handler;
 
    Efl_Loop_Timer      *poll_high;
    Efl_Loop_Timer      *poll_medium;

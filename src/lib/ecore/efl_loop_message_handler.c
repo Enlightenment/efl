@@ -90,6 +90,8 @@ _efl_loop_message_handler_message_call(Eo *obj, Efl_Loop_Message_Handler_Data *p
           msg->delete_me = EINA_TRUE;
         break;
      }
+   efl_event_callback_call(message, EFL_LOOP_MESSAGE_EVENT_MESSAGE,
+                           message);
    efl_event_callback_call(obj, EFL_LOOP_MESSAGE_HANDLER_EVENT_MESSAGE,
                            message);
    // XXX: implement message object cache...

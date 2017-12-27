@@ -1,0 +1,21 @@
+import efl_types;
+import eina_types;
+
+class Efl.Loop.Message.Future (Efl.Loop.Message)
+{
+   [[ Used internally for futures on the loop ]]
+   methods {
+      @property data {
+         [[ ]]
+         set { }
+         get { }
+         values {
+            data: void_ptr; [[ ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

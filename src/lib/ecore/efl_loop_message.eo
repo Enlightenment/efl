@@ -7,6 +7,9 @@ class Efl.Loop.Message (Efl.Object)
      specific message types.]]
    methods {
    }
+   events {
+      message: Efl.Loop.Message; [[The message payload data]]
+   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

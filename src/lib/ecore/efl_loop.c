@@ -307,6 +307,8 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    pd->message_handlers = eina_inarray_new(sizeof(Message_Handler), 32);
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
+   pd->future_message_handler = efl_loop_message_handler_get
+     (EFL_LOOP_CLASS, obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS);
    return obj;
 }
 
@@ -314,6 +316,8 @@ EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
    _ecore_main_content_clear(pd);
+
+   pd->future_message_handler = NULL;
 
    eina_hash_free(pd->providers);
    pd->providers = NULL;
@@ -325,8 +329,11 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    efl_del(pd->poll_high);
    pd->poll_high = NULL;
 
-   eina_inarray_free(pd->message_handlers);
-   pd->message_handlers = NULL;
+   if (pd->message_handlers)
+     {
+        eina_inarray_free(pd->message_handlers);
+        pd->message_handlers = NULL;
+     }
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 
@@ -439,10 +446,10 @@ ecore_loop_promise_unregister(Efl_Loop *l, Efl_Promise *p)
 static Eina_Future *
 _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
+   Eina_Future_Scheduler *sched = efl_loop_future_scheduler_get(obj);
    // NOTE: Eolian should do efl_future_then() to bind future to object.
    return efl_future_Eina_FutureXXX_then
-     (obj, eina_future_resolved(efl_loop_future_scheduler_get(obj),
-                                EINA_VALUE_EMPTY));
+     (obj, eina_future_resolved(sched, EINA_VALUE_EMPTY));
 }
 
 EOLIAN static void
@@ -479,6 +486,7 @@ _efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d;
    Eina_Promise *p;
+   Eina_Future_Scheduler *sched = efl_loop_future_scheduler_get(obj);
 
    d = efl_loop_promise_simple_data_calloc(1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
@@ -486,8 +494,7 @@ _efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    d->idler = ecore_idler_add(_efl_loop_idle_done, d);
    EINA_SAFETY_ON_NULL_GOTO(d->idler, idler_error);
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _efl_loop_idle_cancel, d);
+   p = eina_promise_new(sched, _efl_loop_idle_cancel, d);
    // d is dead if p is NULL
    EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
    d->promise = p;
@@ -504,8 +511,11 @@ static void
 _efl_loop_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
-   efl_del(d->timer);
-   d->timer = NULL;
+   if (d->timer)
+     {
+        efl_del(d->timer);
+        d->timer = NULL;
+     }
    efl_loop_promise_simple_data_mp_free(d);
 }
 
@@ -520,11 +530,19 @@ _efl_loop_timeout_done(void *data, const Efl_Event *event)
    efl_del(event->object);
 }
 
+static void
+_efl_loop_timeout_del(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Loop_Promise_Simple_Data *d = data;
+   d->timer = NULL;
+}
+
 static Eina_Future *
 _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
 {
    Efl_Loop_Promise_Simple_Data *d;
    Eina_Promise *p;
+   Eina_Future_Scheduler *sched = efl_loop_future_scheduler_get(obj);
 
    d = efl_loop_promise_simple_data_calloc(1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(d, NULL);
@@ -533,11 +551,14 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
                       efl_loop_timer_interval_set(efl_added, tim),
                       efl_event_callback_add(efl_added,
                                              EFL_LOOP_TIMER_EVENT_TICK,
-                                             _efl_loop_timeout_done, d));
+                                             _efl_loop_timeout_done, d),
+                      efl_event_callback_add(efl_added,
+                                             EFL_EVENT_DEL,
+                                             _efl_loop_timeout_del, d)
+                     );
    EINA_SAFETY_ON_NULL_GOTO(d->timer, timer_error);
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _efl_loop_timeout_cancel, d);
+   p = eina_promise_new(sched, _efl_loop_timeout_cancel, d);
    // d is dead if p is NULL
    EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
    d->promise = p;
@@ -699,7 +720,20 @@ efl_loop_future_scheduler_get(Eo *obj)
    if (!obj) return NULL;
 
    if (efl_isa(obj, EFL_LOOP_CLASS))
-     return _ecore_event_future_scheduler_get();
+     {
+        Efl_Loop_Data *pd = efl_data_scope_get(obj, EFL_LOOP_CLASS);
+
+        if (!pd) return NULL;
+        if (!pd->future_scheduler.loop)
+          {
+             Eina_Future_Scheduler *sched =
+               _ecore_event_future_scheduler_get();
+             pd->future_scheduler.eina_future_scheduler = *sched;
+             pd->future_scheduler.loop = obj;
+             pd->future_scheduler.loop_data = pd;
+          }
+        return &(pd->future_scheduler.eina_future_scheduler);
+     }
 
    return efl_loop_future_scheduler_get(efl_loop_get(obj));
 }

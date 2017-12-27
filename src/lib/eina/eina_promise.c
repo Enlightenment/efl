@@ -3,6 +3,7 @@
 #endif
 
 #include "eina_private.h"
+#include "eina_lock.h"
 #include "eina_promise.h"
 #include "eina_mempool.h"
 #include "eina_promise_private.h"
@@ -117,6 +118,7 @@ struct _Eina_Future {
 
 static Eina_Mempool *_promise_mp = NULL;
 static Eina_Mempool *_future_mp = NULL;
+static Eina_Lock _pending_futures_lock;
 static Eina_List *_pending_futures = NULL;
 static int _promise_log_dom = -1;
 
@@ -407,7 +409,9 @@ _eina_future_dispatch(Eina_Future *f, Eina_Value value)
 static void
 _scheduled_entry_cb(Eina_Future *f, Eina_Value value)
 {
+   eina_lock_take(&_pending_futures_lock);
    _pending_futures = eina_list_remove(_pending_futures, f);
+   eina_lock_release(&_pending_futures_lock);
    f->scheduled_entry = NULL;
    _eina_future_dispatch(f, value);
 }
@@ -436,7 +440,9 @@ _eina_future_cancel(Eina_Future *f, int err)
      {
         eina_future_schedule_entry_recall(f->scheduled_entry);
         f->scheduled_entry = NULL;
+        eina_lock_take(&_pending_futures_lock);
         _pending_futures = eina_list_remove(_pending_futures, f);
+        eina_lock_release(&_pending_futures_lock);
      }
 
    if (f->promise)
@@ -470,7 +476,9 @@ _eina_future_schedule(Eina_Promise *p,
                                                f, value);
    EINA_SAFETY_ON_NULL_GOTO(f->scheduled_entry, err);
    assert(f->scheduled_entry->scheduler != NULL);
+   eina_lock_take(&_pending_futures_lock);
    _pending_futures = eina_list_append(_pending_futures, f);
+   eina_lock_release(&_pending_futures_lock);
    DBG("The promise %p schedule the future %p with cb: %p and data: %p",
        p, f, f->cb, f->data);
    return;
@@ -523,6 +531,8 @@ eina_promise_init(void)
                                  NULL, sizeof(Eina_Future), 512);
    EINA_SAFETY_ON_NULL_GOTO(_future_mp, err_future);
 
+   eina_lock_recursive_new(&_pending_futures_lock);
+
    return EINA_TRUE;
 
  err_future:
@@ -537,14 +547,17 @@ eina_promise_init(void)
 EAPI void
 __eina_promise_cancel_all(void)
 {
+   eina_lock_take(&_pending_futures_lock);
    while (_pending_futures)
      _eina_future_cancel(_pending_futures->data, ECANCELED);
+   eina_lock_release(&_pending_futures_lock);
 }
 
 Eina_Bool
 eina_promise_shutdown(void)
 {
    __eina_promise_cancel_all();
+   eina_lock_free(&_pending_futures_lock);
    eina_mempool_del(_future_mp);
    eina_mempool_del(_promise_mp);
    eina_log_domain_unregister(_promise_log_dom);

@@ -1,0 +1,21 @@
+import efl_types;
+import eina_types;
+
+class Efl.Loop.Message.Future.Handler (Efl.Loop.Message.Handler)
+{
+   [[ Internal use for future on an efl loop - replacing legacy ecore events ]]
+   methods {
+      message_type_add {
+         [[ ]]
+         return: Efl.Loop.Message.Future; [[ ]]
+      }
+   }
+   events {
+      message,future: Efl.Loop.Message.Future; [[ ]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Loop.Message.Handler.message_call; [[ ]]
+   }
+}

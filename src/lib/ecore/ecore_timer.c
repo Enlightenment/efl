@@ -460,7 +460,10 @@ _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Obje
    _efl_loop_timer_util_loop_clear(pd);
 
    pd->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-   pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
+   if (pd->loop)
+     pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
+   else
+     pd->loop_data = NULL;
 
    if (efl_parent_get(obj) != parent) return;
 

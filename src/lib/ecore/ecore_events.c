@@ -12,16 +12,16 @@ typedef struct _Ecore_Future_Schedule_Entry
    Eina_Future_Schedule_Entry base;
    Eina_Future_Scheduler_Cb cb;
    Eina_Future *future;
-   Ecore_Event *event;
+   Eo *event;
    Eina_Value value;
 } Ecore_Future_Schedule_Entry;
 
 //////
 // XXX: still using legacy ecore events
-static Ecore_Event_Handler *future_handler             = NULL;
+//static Ecore_Event_Handler *future_handler             = NULL;
 static Eina_Bool            shutting_down              = EINA_FALSE;
 static Eina_Mempool        *mp_future_schedule_entry   = NULL;
-static int                  ECORE_EV_FUTURE_ID         = -1;
+//static int                  ECORE_EV_FUTURE_ID         = -1;
 //
 //////
 
@@ -71,17 +71,6 @@ ecore_event_add(int          type,
    return (Ecore_Event *)msg;
 }
 
-static void
-_event_del_cb(void *data, const Efl_Event *ev)
-{
-   Ecore_Future_Schedule_Entry *entry = data;
-   if ((ev->object == (Eo *) entry->event) && entry->future)
-     {
-        eina_future_cancel(entry->future);
-        eina_value_flush(&entry->value);
-     }
-}
-
 EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
@@ -127,8 +116,11 @@ ecore_event_current_event_get(void)
    return ecore_event_message_handler_current_event_get(_event_msg_handler);
 }
 
+/* XXX:
 static Eina_Bool
-ecore_future_dispatched(void *data EINA_UNUSED, int type  EINA_UNUSED, void *event)
+ecore_future_dispatched(void *data EINA_UNUSED,
+                        int type EINA_UNUSED,
+                        void *event)
 {
    Ecore_Future_Schedule_Entry *entry = event;
    EINA_SAFETY_ON_NULL_RETURN_VAL(entry, EINA_FALSE);
@@ -139,7 +131,8 @@ ecore_future_dispatched(void *data EINA_UNUSED, int type  EINA_UNUSED, void *eve
 }
 
 static void
-ecore_future_free(void *user_data, void *func_data EINA_UNUSED)
+ecore_future_free(void *user_data,
+                  void *func_data EINA_UNUSED)
 {
    Ecore_Future_Schedule_Entry *entry = user_data;
    if (entry->event)
@@ -149,10 +142,35 @@ ecore_future_free(void *user_data, void *func_data EINA_UNUSED)
      }
    eina_mempool_free(mp_future_schedule_entry, entry);
 }
+*/
+
+static void
+_future_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Ecore_Future_Schedule_Entry *entry = data;
+   entry->event = NULL;
+   entry->cb(entry->future, entry->value);
+}
+
+static void
+_event_del_cb(void *data, const Efl_Event *ev)
+{
+   Ecore_Future_Schedule_Entry *entry = data;
+   if ((ev->object == (Eo *) entry->event) && entry->future)
+     {
+        eina_future_cancel(entry->future);
+        eina_value_flush(&entry->value);
+     }
+   eina_mempool_free(mp_future_schedule_entry, entry);
+}
 
 static Eina_Future_Schedule_Entry *
-ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb, Eina_Future *future, Eina_Value value)
+ecore_future_schedule(Eina_Future_Scheduler *sched,
+                      Eina_Future_Scheduler_Cb cb,
+                      Eina_Future *future,
+                      Eina_Value value)
 {
+   Efl_Loop_Future_Scheduler *loopsched = (Efl_Loop_Future_Scheduler *)sched;
    Ecore_Future_Schedule_Entry *entry;
 
    entry = eina_mempool_malloc(mp_future_schedule_entry, sizeof(*entry));
@@ -161,9 +179,19 @@ ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb,
    entry->cb = cb;
    entry->future = future;
    entry->value = value;
-   entry->event = ecore_event_add(ECORE_EV_FUTURE_ID, entry, ecore_future_free, entry);
+   entry->event = efl_loop_message_future_handler_message_type_add
+     (loopsched->loop_data->future_message_handler);
    EINA_SAFETY_ON_NULL_GOTO(entry->event, err);
-   efl_event_callback_add((Eo *) entry->event, EFL_EVENT_DEL, _event_del_cb, entry);
+   efl_loop_message_future_data_set(entry->event, entry);
+   efl_loop_message_handler_message_send
+     (loopsched->loop_data->future_message_handler, entry->event);
+// XXX:
+//   entry->event = ecore_event_add(ECORE_EV_FUTURE_ID, entry,
+//                                  ecore_future_free, entry);
+   efl_event_callback_add((Eo *)entry->event, EFL_LOOP_MESSAGE_EVENT_MESSAGE,
+                          _future_dispatch_cb, entry);
+   efl_event_callback_add((Eo *)entry->event, EFL_EVENT_DEL,
+                          _event_del_cb, entry);
    return &entry->base;
 
   err:
@@ -174,12 +202,17 @@ ecore_future_schedule(Eina_Future_Scheduler *sched, Eina_Future_Scheduler_Cb cb,
 static void
 ecore_future_recall(Eina_Future_Schedule_Entry *s_entry)
 {
+   Eo *msg;
+
    if (shutting_down) return;
    Ecore_Future_Schedule_Entry *entry = (Ecore_Future_Schedule_Entry *)s_entry;
    EINA_SAFETY_ON_NULL_RETURN(entry->event);
-   ecore_event_del(entry->event);
+// XXX:
+//   ecore_event_del(entry->event);
+   msg = entry->event;
    eina_value_flush(&entry->value);
    entry->event = NULL;
+   efl_del(msg);
 }
 
 static Eina_Future_Scheduler ecore_future_scheduler = {
@@ -238,24 +271,28 @@ _ecore_event_init(void)
    //////
    // XXX: ecore future still using legacy...
    shutting_down = EINA_FALSE;
-   ECORE_EV_FUTURE_ID = ecore_event_type_new();
-   future_handler = ecore_event_handler_add(ECORE_EV_FUTURE_ID, ecore_future_dispatched, NULL);
-   EINA_SAFETY_ON_NULL_GOTO(future_handler, err_handler);
+//   ECORE_EV_FUTURE_ID = ecore_event_type_new();
+//   future_handler = ecore_event_handler_add(ECORE_EV_FUTURE_ID, ecore_future_dispatched, NULL);
+//   EINA_SAFETY_ON_NULL_GOTO(future_handler, err_handler);
    //FIXME: Is 512 too high?
-   mp_future_schedule_entry = eina_mempool_add(choice, "Ecore_Future_Event",
-                                               NULL, sizeof(Ecore_Future_Schedule_Entry),
-                                               512);
-   EINA_SAFETY_ON_NULL_GOTO(mp_future_schedule_entry, err_pool);
+   if (!mp_future_schedule_entry)
+     {
+        mp_future_schedule_entry = eina_mempool_add
+          (choice, "Ecore_Future_Event", NULL,
+           sizeof(Ecore_Future_Schedule_Entry), 512);
+        EINA_SAFETY_ON_NULL_GOTO(mp_future_schedule_entry, err_pool);
+     }
    //
    //////
 
    return EINA_TRUE;
 
  err_pool:
-   ecore_event_handler_del(future_handler);
-   future_handler = NULL;
- err_handler:
-   ECORE_EV_FUTURE_ID = -1;
+// XXX:
+//   ecore_event_handler_del(future_handler);
+//   future_handler = NULL;
+// err_handler:
+//   ECORE_EV_FUTURE_ID = -1;
    return EINA_FALSE;
 }
 
@@ -266,9 +303,9 @@ _ecore_event_shutdown(void)
 
    //////
    // XXX: ecore future still using legacy...
-   ecore_event_handler_del(future_handler);
-   future_handler = NULL;
-   ECORE_EV_FUTURE_ID = -1;
+//   ecore_event_handler_del(future_handler);
+//   future_handler = NULL;
+//   ECORE_EV_FUTURE_ID = -1;
    //
    //////
 
