@@ -68,3 +68,9 @@ option('avahi',
   value : false,
   description : 'disable avahi support'
 )
+
+option('pulseaudio',
+  type : 'boolean',
+  value : true,
+  description : 'pulseaudio support' 
+)
