@@ -87,6 +87,8 @@ subprojects = [
 ['emile' , false,  true, false, false, ['lz4', 'rg_etc']],
 ['eet'   , false,  true,  true, false, []],
 ['ecore' , false,  true, false, false, []],
+['eldbus', false,  true,  true, false, []],
+['ecore_audio' , false,  true, false, false, []],
 ]
 
 
