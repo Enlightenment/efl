@@ -81,26 +81,26 @@ subdir(join_paths('src', 'wayland_protocol'))
 
 
 subprojects = [
-# name   | mod  | lib  | bin  | bench | name of static libs
-['eina'  , false,  true,  true,  true, []],
-['eolian', false,  true,  true, false, []],
-['eo'    , false,  true, false,  true, []],
-['efl'   , false,  true, false, false, []],
-['emile' , false,  true, false, false, ['lz4', 'rg_etc']],
-['eet'   , false,  true,  true, false, []],
-['ecore' , false,  true, false, false, []],
-['eldbus', false,  true,  true, false, []],
-['ecore' ,  true, false, false, false, []], #ecores modules depend on eldbus
-['ecore_audio' , false,  true, false, false, []],
-['ecore_avahi' , false,  true, false, false, []],
-['ecore_con' , false,  true,  true, false, ['http-parser']],
-['ecore_file' , false,  true, false, false, []],
-['ecore_input', false,  true, false, false, []],
-['ecore_x', false,  true, false, false, []],
-['ecore_fb', false,  true, false, false, []],
-['ecore_wl2', false,  true, false, false, ['libdrm']],
-['ecore_ipc', false,  true, false, false, []],
-['ecore_buffer',  true,  true, true, false, []]
+# name              | mod  | lib  | bin  | bench | tests | examples | name of static libs
+['eina'             , false,  true,  true,  true,  true,  true, []],
+['eolian'           , false,  true,  true, false,  true, false, []],
+['eo'               , false,  true, false,  true,  true, false, []],
+['efl'              , false,  true, false, false,  true, false, []],
+['emile'            , false,  true, false, false,  true,  true, ['lz4', 'rg_etc']],
+['eet'              , false,  true,  true, false,  true,  true, []],
+['ecore'            , false,  true, false, false, false, false, []],
+['eldbus'           , false,  true,  true, false,  true,  true, []],
+['ecore'            ,  true, false, false, false, false, false, []], #ecores modules depend on eldbus
+['ecore_audio'      , false,  true, false, false, false, false, []],
+['ecore_avahi'      , false,  true, false, false, false,  true, []],
+['ecore_con'        , false,  true,  true, false,  true, false, ['http-parser']],
+['ecore_file'       , false,  true, false, false, false, false, []],
+['ecore_input'      , false,  true, false, false, false, false, []],
+['ecore_x'          , false,  true, false, false, false, false, []],
+['ecore_fb'         , false,  true, false, false, false, false, []],
+['ecore_wl2'        , false,  true, false, false, false, false, ['libdrm']],
+['ecore_ipc'        , false,  true, false, false, false, false, []],
+['ecore_buffer'     ,  true,  true,  true, false, false, false, []],
 ]
 
 
@@ -111,15 +111,19 @@ config_dir += include_directories('.')
 #the other modules require theire package
 subdir(join_paths(local_module, 'eina'))
 
+test_dirs = []
+example_dirs = []
+
 foreach package : subprojects
   package_name = package[0]
   package_version_name = package_name + '-' + version_major
 
   if get_option(package_name)
+    config_h.set('HAVE_'+package_name.to_upper(), '1')
 
     dir_package_include = join_paths(dir_include, package_version_name)
 
-    foreach static_lib : package[5]
+    foreach static_lib : package[7]
       subdir(join_paths('src', 'static_libs', static_lib))
     endforeach
 
@@ -135,6 +139,13 @@ foreach package : subprojects
     if (package[4])
        subdir(join_paths(local_benchmark, package_name))
     endif
+    if (package[5])
+       test_dirs += [package_name]
+    endif
+    if (package[6])
+       example_dirs += [package_name]
+    endif
+    
     set_variable('build_'+package_name, true)
   else
     set_variable('build_'+package_name, false)
@@ -146,11 +157,16 @@ foreach package : subprojects
 endforeach
 
 if get_option('build-tests')
-  subdir(join_paths(local_tests))
+  check = dependency('check')
+  foreach test : test_dirs
+      subdir(join_paths(local_tests, test))
+  endforeach
 endif
 
 if get_option('build-examples')
-  subdir(join_paths(local_examples))
+  foreach example : example_dirs
+      subdir(join_paths(local_examples, example))
+  endforeach
 endif
 
 subdir(join_paths(local_scripts))

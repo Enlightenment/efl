@@ -1,5 +1,0 @@
-subdir('eina')
-subdir('emile')
-subdir('eet')
-subdir('eldbus')
-subdir('ecore_avahi')
