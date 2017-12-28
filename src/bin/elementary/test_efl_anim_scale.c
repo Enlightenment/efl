@@ -7,7 +7,7 @@ typedef struct _App_Data
 {
    Efl_Animation        *scale_double_anim;
    Efl_Animation        *scale_half_anim;
-   Efl_Animation_Object *anim_obj;
+   Efl_Animation_Player *anim_obj;
 
    Eina_Bool             is_btn_scaled;
 } App_Data;
@@ -19,19 +19,15 @@ _anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_anim_ended_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   App_Data *ad = data;
-
    printf("Animation has been ended!\n");
-
-   ad->anim_obj = NULL;
 }
 
 static void
 _anim_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Animation_Object_Running_Event_Info *event_info = event->info;
+   Efl_Animation_Player_Running_Event_Info *event_info = event->info;
    double progress = event_info->progress;
    printf("Animation is running! Current progress(%lf)\n", progress);
 }
@@ -41,35 +37,23 @@ _btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    App_Data *ad = data;
 
-   if (ad->anim_obj)
-     efl_animation_object_cancel(ad->anim_obj);
-
    ad->is_btn_scaled = !(ad->is_btn_scaled);
 
    if (ad->is_btn_scaled)
      {
         //Create Animation Object from Animation
-        ad->anim_obj = efl_animation_object_create(ad->scale_double_anim);
-        elm_object_text_set(obj, "Start Scale Animation to zoom out");
+        efl_animation_player_animation_set(ad->anim_obj, ad->scale_double_anim);
+        efl_text_set(obj, "Start Scale Animation to zoom out");
      }
    else
      {
         //Create Animation Object from Animation
-        ad->anim_obj = efl_animation_object_create(ad->scale_half_anim);
-        elm_object_text_set(obj, "Start Scale Animation to zoom in");
+        efl_animation_player_animation_set(ad->anim_obj, ad->scale_half_anim);
+        efl_text_set(obj, "Start Scale Animation to zoom in");
      }
 
-   //Register callback called when animation starts
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_STARTED, _anim_started_cb, NULL);
-
-   //Register callback called when animation ends
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_ENDED, _anim_ended_cb, ad);
-
-   //Register callback called while animation is executed
-   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_OBJECT_EVENT_RUNNING, _anim_running_cb, NULL);
-
    //Let Animation Object start animation
-   efl_animation_object_start(ad->anim_obj);
+   efl_player_start(ad->anim_obj);
 }
 
 static void
@@ -115,7 +99,17 @@ test_efl_anim_scale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = NULL;
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL);
+
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, ad);
+
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
+
    ad->is_btn_scaled = EINA_FALSE;
 
    //Button to start animation
@@ -175,7 +169,14 @@ test_efl_anim_scale_relative(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = NULL;
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, ad);
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
+
    ad->is_btn_scaled = EINA_FALSE;
 
    //Button to start animation
@@ -235,7 +236,14 @@ test_efl_anim_scale_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = NULL;
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win);
+   //Register callback called when animation starts
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb, NULL);
+   //Register callback called when animation ends
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, _anim_ended_cb, ad);
+   //Register callback called while animation is executed
+   efl_event_callback_add(ad->anim_obj, EFL_ANIMATION_PLAYER_EVENT_RUNNING, _anim_running_cb, NULL);
+
    ad->is_btn_scaled = EINA_FALSE;
 
    //Button to start animation

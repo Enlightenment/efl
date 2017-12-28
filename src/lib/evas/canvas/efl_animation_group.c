@@ -8,10 +8,12 @@ _efl_animation_group_animation_add(Eo *eo_obj,
    if (!animation) return;
 
    Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
+
+   //TODO: check when child target is different.
    if (target)
      efl_animation_target_set(animation, target);
 
-   double duration = efl_animation_duration_get(eo_obj);
+   double duration = efl_animation_duration_get(efl_super(eo_obj, MY_CLASS));
    /* if group animation duration is available value, then the duration is
     * propagated to its child. */
    if (duration != EFL_ANIMATION_GROUP_DURATION_NONE)
@@ -114,8 +116,7 @@ _efl_animation_group_efl_object_constructor(Eo *eo_obj,
    pd->animations = NULL;
 
    //group animation does not affect its child duration by default.
-   efl_animation_duration_set(efl_super(eo_obj, MY_CLASS),
-                              EFL_ANIMATION_GROUP_DURATION_NONE);
+   efl_animation_duration_set(eo_obj, EFL_ANIMATION_GROUP_DURATION_NONE);
 
    return eo_obj;
 }

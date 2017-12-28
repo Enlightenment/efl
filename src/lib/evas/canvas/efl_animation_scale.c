@@ -1,5 +1,28 @@
 #include "efl_animation_scale_private.h"
 
+#define MY_CLASS EFL_ANIMATION_SCALE_CLASS
+
+static Efl_Animation_Scale_Property
+_scale_get(Eo *target)
+{
+   double x1, x2, x3, y1, y2, y3, w, h;
+   Efl_Animation_Scale_Property scale;
+   Eina_Rect geometry;
+
+   geometry = efl_gfx_geometry_get(target);
+   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_map_coord_absolute_get(target, 1, &x2, &y2, NULL);
+   efl_gfx_map_coord_absolute_get(target, 2, &x3, &y3, NULL);
+
+   w = sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+   h = sqrt(((x3 - x2) * (x3 - x2)) + ((y3 - y2) * (y3 - y2)));
+
+   scale.scale_x = w / geometry.w;
+   scale.scale_y = h / geometry.h;
+
+   return scale;
+}
+
 EOLIAN static void
 _efl_animation_scale_scale_set(Eo *eo_obj,
                                Efl_Animation_Scale_Data *pd,
@@ -192,52 +215,36 @@ _efl_animation_scale_scale_absolute_get(Eo *eo_obj,
      *cy = pd->abs_pivot.cy;
 }
 
-EOLIAN static Efl_Animation_Object *
-_efl_animation_scale_efl_animation_object_create(Eo *eo_obj,
-                                                 Efl_Animation_Scale_Data *pd)
+EOLIAN static void
+_efl_animation_scale_efl_playable_progress_set(Eo *eo_obj,
+                            Efl_Animation_Scale_Data *pd,
+                            double progress)
 {
-   Efl_Animation_Object_Scale *anim_obj
-      = efl_add(EFL_ANIMATION_OBJECT_SCALE_CLASS, NULL);
+   Efl_Animation_Scale_Property prev_scale;
+   Efl_Animation_Scale_Property new_scale;
 
+   efl_playable_progress_set(efl_super(eo_obj, MY_CLASS), progress);
+   progress = efl_playable_progress_get(eo_obj);
    Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   efl_animation_object_target_set(anim_obj, target);
+   if (!target) return;
 
-   Eina_Bool state_keep = efl_animation_final_state_keep_get(eo_obj);
-   efl_animation_object_final_state_keep_set(anim_obj, state_keep);
-
-   double duration = efl_animation_duration_get(eo_obj);
-   efl_animation_object_duration_set(anim_obj, duration);
-
-   double start_delay_time = efl_animation_start_delay_get(eo_obj);
-   efl_animation_object_start_delay_set(anim_obj, start_delay_time);
-
-   Efl_Animation_Object_Repeat_Mode repeat_mode =
-      (Efl_Animation_Object_Repeat_Mode)efl_animation_repeat_mode_get(eo_obj);
-   efl_animation_object_repeat_mode_set(anim_obj, repeat_mode);
-
-   int repeat_count = efl_animation_repeat_count_get(eo_obj);
-   efl_animation_object_repeat_count_set(anim_obj, repeat_count);
-
-   Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
-   efl_animation_object_interpolator_set(anim_obj, interpolator);
+   prev_scale = _scale_get(target);
+   new_scale.scale_x = GET_STATUS(pd->from.scale_x, pd->to.scale_x, progress);
+   new_scale.scale_y = GET_STATUS(pd->from.scale_y, pd->to.scale_y, progress);
 
    if (pd->use_rel_pivot)
      {
-        efl_animation_object_scale_set(anim_obj,
-                                       pd->from.scale_x, pd->from.scale_y,
-                                       pd->to.scale_x, pd->to.scale_y,
-                                       pd->rel_pivot.obj,
-                                       pd->rel_pivot.cx, pd->rel_pivot.cy);
+        efl_gfx_map_zoom(target,
+                         new_scale.scale_x / prev_scale.scale_x, new_scale.scale_y / prev_scale.scale_y,
+                         pd->rel_pivot.obj,
+                         pd->rel_pivot.cx, pd->rel_pivot.cy);
      }
    else
      {
-        efl_animation_object_scale_absolute_set(anim_obj,
-                                                pd->from.scale_x, pd->from.scale_y,
-                                                pd->to.scale_x, pd->to.scale_y,
-                                                pd->abs_pivot.cx, pd->abs_pivot.cy);
+        efl_gfx_map_zoom_absolute(target,
+                                  new_scale.scale_x / prev_scale.scale_x, new_scale.scale_y / prev_scale.scale_y,
+                                  pd->abs_pivot.cx, pd->abs_pivot.cy);
      }
-
-   return anim_obj;
 }
 
 EOLIAN static Efl_Object *
@@ -248,6 +255,8 @@ _efl_animation_scale_efl_object_constructor(Eo *eo_obj,
 
    pd->from.scale_x = 1.0;
    pd->from.scale_y = 1.0;
+   pd->to.scale_x = 1.0;
+   pd->to.scale_y = 1.0;
 
    pd->rel_pivot.obj = NULL;
    pd->rel_pivot.cx = 0.5;

@@ -5,7 +5,7 @@
 
 typedef struct _App_Data
 {
-   Efl_Animation_Object *target;
+   Efl_Animation_Player *target;
 
    Eina_Bool             is_btn_visible;
 } App_Data;
@@ -61,6 +61,7 @@ test_efl_anim_event_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 1.0);
    efl_animation_target_set(show_anim, btn);
+   efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
    efl_canvas_object_event_animation_set(btn, EFL_GFX_EVENT_SHOW, show_anim);
 
    //Show button after setting event animation to show animation for show event
@@ -71,6 +72,7 @@ test_efl_anim_event_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 1.0);
    efl_animation_target_set(hide_anim, btn);
+   efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
    efl_canvas_object_event_animation_set(btn, EFL_GFX_EVENT_HIDE, hide_anim);
 
    //Initialize App Data

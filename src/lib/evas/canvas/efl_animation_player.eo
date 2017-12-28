@@ -1,10 +1,16 @@
 import efl_animation_types;
 
-class Efl.Animation.Object (Efl.Object)
+class Efl.Animation.Player (Efl.Object, Efl.Player)
 {
    [[Efl animation object class]]
-   data: Efl_Animation_Object_Data;
    methods {
+      @property animation {
+         set {}
+         get {}
+         values {
+            animation: Efl.Animation;
+         }
+      }
       @property auto_del {
          [[Auto delete property]]
          set {
@@ -15,28 +21,21 @@ class Efl.Animation.Object (Efl.Object)
             auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
          }
       }
-      start {
-         [[Start animation.]]
-      }
-      cancel {
-         [[Cancel animation.]]
-      }
-      pause {
-         [[Pause animation.]]
-      }
-      resume {
-         [[Resume animation.]]
-      }
-      progress_set @protected {
-         [[Display the moment of animation according to the given progress.]]
-         params {
-            @in progress: double; [[The value between 0.0 and 1.0 which indicates the progress of the animation]]
-         }
-      }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Player.start;
+      Efl.Player.stop;
+      Efl.Player.play { get; set; }
+      Efl.Player.playable { get; }
+      Efl.Player.position { get; set; }
+      Efl.Player.progress { get;}
+      Efl.Player.play_speed { get; set; }
+      //Efl.Player.volume { get; set; }
+      //Efl.Player.mute { get; set; }
+      Efl.Player.length { get; }
+      Efl.Player.seekable { get; }
    }
    events {
       started; [[Animation is started.]]

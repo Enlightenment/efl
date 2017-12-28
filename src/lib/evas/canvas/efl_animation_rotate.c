@@ -1,5 +1,20 @@
 #include "efl_animation_rotate_private.h"
 
+#define MY_CLASS EFL_ANIMATION_ROTATE_CLASS
+
+static double
+_rotation_get(Eo *target)
+{
+   double x1, x2, y1, y2;
+   double theta;
+
+   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_map_coord_absolute_get(target, 1, &x2, &y2, NULL);
+   theta = atan((y2 - y1) / (x2 - x1));
+
+   return theta * 180 / M_PI;
+}
+
 EOLIAN static void
 _efl_animation_rotate_rotate_set(Eo *eo_obj,
                                  Efl_Animation_Rotate_Data *pd,
@@ -166,54 +181,37 @@ _efl_animation_rotate_rotate_absolute_get(Eo *eo_obj,
      *cy = pd->abs_pivot.cy;
 }
 
-EOLIAN static Efl_Animation_Object *
-_efl_animation_rotate_efl_animation_object_create(Eo *eo_obj,
-                                                  Efl_Animation_Rotate_Data *pd)
+EOLIAN static void
+_efl_animation_rotate_efl_playable_progress_set(Eo *eo_obj,
+                                                Efl_Animation_Rotate_Data *pd,
+                                                double progress)
 {
-   Efl_Animation_Object_Rotate *anim_obj
-      = efl_add(EFL_ANIMATION_OBJECT_ROTATE_CLASS, NULL);
+   Efl_Canvas_Object *target;
+   double new_degree;
+   double prev_degree;
 
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   efl_animation_object_target_set(anim_obj, target);
+   efl_playable_progress_set(efl_super(eo_obj, MY_CLASS), progress);
+   progress = efl_playable_progress_get(eo_obj);
 
-   Eina_Bool state_keep = efl_animation_final_state_keep_get(eo_obj);
-   efl_animation_object_final_state_keep_set(anim_obj, state_keep);
+   target = efl_animation_target_get(eo_obj);
+   if (!target) return;
 
-   double duration = efl_animation_duration_get(eo_obj);
-   efl_animation_object_duration_set(anim_obj, duration);
-
-   double start_delay_time = efl_animation_start_delay_get(eo_obj);
-   efl_animation_object_start_delay_set(anim_obj, start_delay_time);
-
-   Efl_Animation_Object_Repeat_Mode repeat_mode =
-      (Efl_Animation_Object_Repeat_Mode)efl_animation_repeat_mode_get(eo_obj);
-   efl_animation_object_repeat_mode_set(anim_obj, repeat_mode);
-
-   int repeat_count = efl_animation_repeat_count_get(eo_obj);
-   efl_animation_object_repeat_count_set(anim_obj, repeat_count);
-
-   Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
-   efl_animation_object_interpolator_set(anim_obj, interpolator);
+   prev_degree = _rotation_get(target);
+   new_degree = GET_STATUS(pd->from.degree, pd->to.degree, progress);
 
    if (pd->use_rel_pivot)
      {
-        efl_animation_object_rotate_set(anim_obj,
-                                        pd->from.degree,
-                                        pd->to.degree,
-                                        pd->rel_pivot.obj,
-                                        pd->rel_pivot.cx,
-                                        pd->rel_pivot.cy);
+        efl_gfx_map_rotate(target,
+                           new_degree - prev_degree,
+                           pd->rel_pivot.obj,
+                           pd->rel_pivot.cx, pd->rel_pivot.cy);
      }
    else
      {
-        efl_animation_object_rotate_absolute_set(anim_obj,
-                                                 pd->from.degree,
-                                                 pd->to.degree,
-                                                 pd->abs_pivot.cx,
-                                                 pd->abs_pivot.cy);
+        efl_gfx_map_rotate_absolute(target,
+                                    new_degree - prev_degree,
+                                    pd->abs_pivot.cx, pd->abs_pivot.cy);
      }
-
-   return anim_obj;
 }
 
 EOLIAN static Efl_Object *
