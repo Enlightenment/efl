@@ -512,6 +512,7 @@ class Class(EolianBaseObject):
 
     def functions_get(self, ftype):
         return Iterator(Function, lib.eolian_class_functions_get(self._obj, ftype))
+
     @property
     def methods(self):
         return self.functions_get(Eolian_Function_Type.METHOD)
@@ -886,9 +887,10 @@ class Type(EolianBaseObject):  # OK  (4 eolian issue)
         return Eolian_Type_Builtin_Type(lib.eolian_type_builtin_type_get(self._obj))
 
     # TODO FIXME STRANGE API (need Eolian_Unit*)
-    #  @property
-    #  def c_type(self):
+    @property
+    def c_type(self):
         #  return _str_to_py(lib.eolian_type_c_type_get(self._obj))
+        return 'FIXME'
 
     # TODO FIXME STRANGE API (need Eolian_Unit*)
     #  @property

@@ -1,0 +1,43 @@
+
+================================================================================
+Namespace:    ${namespace}$  ${namespaces}$
+================================================================================
+
+Classes:
+========
+<!--(for cls in classes)-->
+ * ${cls.full_name}$   (${cls.type}$)
+<!--(else)-->
+ no classes available
+<!--(end)-->
+
+Aliases:
+========
+<!--(for typedecl in aliases)-->
+ * ${typedecl.full_name}$
+<!--(else)-->
+ no alias available
+<!--(end)-->
+
+Structs:
+========
+<!--(for typedecl in structs)-->
+ * ${typedecl.full_name}$
+    <!--(for field in typedecl.struct_fields)-->
+    ${field}$
+    <!--(end)-->
+<!--(else)-->
+ no structs available
+<!--(end)-->
+
+Enums:
+======
+<!--(for typedecl in enums)-->
+ * ${typedecl.full_name}$
+    <!--(for field in typedecl.enum_fields)-->
+    ${field}$
+    <!--(end)-->
+<!--(else)-->
+ no enums available
+<!--(end)-->
+

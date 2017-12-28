@@ -1,0 +1,45 @@
+
+================================================================================
+Class:        ${cls.full_name}$
+================================================================================
+Class type:   ${cls.type}$
+Base Class:   ${cls.base_class.full_name if cls.base_class else None}$
+Inherits:     ${list(cls.inherits)}$
+InheritsFull: ${cls.inherits_full}$
+Namespaces:   ${list(cls.namespaces)}$
+File:         ${cls.file}$
+Ctor enable:  ${cls.ctor_enable}$
+Dtor enable:  ${cls.dtor_enable}$
+
+Constructors:
+=============
+<!--(for ctor in cls.constructors)-->
+ * ${ctor}$
+<!--(else)-->
+ no constructors available
+<!--(end)-->
+
+Methods:
+========
+<!--(for func in cls.methods)-->
+ * ${func.name}$(...) ${func.method_scope}$
+<!--(else)-->
+ no methods available
+<!--(end)-->
+
+Properties:
+===========
+<!--(for func in cls.properties)-->
+ * ${func.name}$ (<!--(for v in func.getter_values)-->${v.type.c_type}$ ${v.name}$, <!--(end)-->)
+<!--(else)-->
+ no properties available
+<!--(end)-->
+
+Events:
+=======
+<!--(for event in cls.events)-->
+ * ${event.name}$ -> ${event.c_name}$
+<!--(else)-->
+ no events available
+<!--(end)-->
+
