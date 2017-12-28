@@ -115,24 +115,34 @@ foreach package : subprojects
   package_name = package[0]
   package_version_name = package_name + '-' + version_major
 
-  dir_package_include = join_paths(dir_include, package_version_name)
+  if get_option(package_name)
 
-  foreach static_lib : package[5]
-    subdir(join_paths('src', 'static_libs', static_lib))
-  endforeach
+    dir_package_include = join_paths(dir_include, package_version_name)
 
-  if (package[2])
-     subdir(join_paths(local_lib, package_name))
+    foreach static_lib : package[5]
+      subdir(join_paths('src', 'static_libs', static_lib))
+    endforeach
+
+    if (package[2])
+       subdir(join_paths(local_lib, package_name))
+    endif
+    if (package[1])
+       subdir(join_paths(local_module, package_name))
+    endif
+    if (package[3])
+       subdir(join_paths(local_bin, package_name))
+    endif
+    if (package[4])
+       subdir(join_paths(local_benchmark, package_name))
+    endif
+    set_variable('build_'+package_name, true)
+  else
+    set_variable('build_'+package_name, false)
+    
+    message(package_name+' disabled!')
+
   endif
-  if (package[1])
-     subdir(join_paths(local_module, package_name))
-  endif
-  if (package[3])
-     subdir(join_paths(local_bin, package_name))
-  endif
-  if (package[4])
-     subdir(join_paths(local_benchmark, package_name))
-  endif
+
 endforeach
 
 if get_option('build-tests')

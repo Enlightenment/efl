@@ -1,3 +1,111 @@
+option('eina',
+  type : 'boolean',
+  value : true,
+  description : 'build eina'
+)
+
+option('eo',
+  type : 'boolean',
+  value : true,
+  description : 'build eo'
+)
+
+option('eolian',
+  type : 'boolean',
+  value : true,
+  description : 'build eolian'
+)
+
+option('eet',
+  type : 'boolean',
+  value : true,
+  description : 'build eet'
+)
+
+option('emile',
+  type : 'boolean',
+  value : true,
+  description : 'build emile'
+)
+
+option('efl',
+  type : 'boolean',
+  value : true,
+  description : 'build efl'
+)
+
+option('ecore',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore'
+)
+
+option('eldbus',
+  type : 'boolean',
+  value : true,
+  description : 'build eldbus'
+)
+
+option('ecore_audio',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_audio'
+)
+
+option('ecore_con',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_con'
+)
+
+option('ecore_file',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_file'
+)
+
+option('ecore_avahi',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_avahi'
+)
+
+option('ecore_input',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_input'
+)
+
+option('ecore_x',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_x'
+)
+
+option('ecore_fb',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_fb'
+)
+
+option('ecore_buffer',
+  type : 'boolean',
+  value : false,
+  description : 'build ecore_buffer'
+)
+
+option('ecore_wl2',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_wl2'
+)
+
+option('ecore_ipc',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_ipc'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',
