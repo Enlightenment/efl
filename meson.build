@@ -78,7 +78,10 @@ config_dir = [include_directories('.')]
 eolian_include_directories = []
 
 subdir('header_checks')
-subdir(join_paths('src', 'wayland_protocol'))
+
+if get_option('ecore_wl2') == true or get_option('ecore_buffer') == true
+  subdir(join_paths('src', 'wayland_protocol'))
+endif
 
 
 subprojects = [
