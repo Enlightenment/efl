@@ -15,6 +15,7 @@
 #include "interfaces/efl_image_animated.eo.c"
 #include "interfaces/efl_image_load.eo.c"
 #include "interfaces/efl_part.eo.c"
+#include "interfaces/efl_playable.eo.c"
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_text.eo.c"
 #include "interfaces/efl_text_properties.eo.c"

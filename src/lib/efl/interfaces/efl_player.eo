@@ -2,8 +2,14 @@ interface Efl.Player
 {
    [[Efl media player interface]]
    methods {
+        start {
+           [[Start a playing playable object.]]
+        }
+        stop {
+          [[Stop playable object.]]
+        }
         @property playable {
-             [[Whether or not the object data can be played.]]
+             [[Whether or not the playable can be played.]]
              get {
              }
              values {
