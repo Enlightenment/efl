@@ -112,6 +112,12 @@ option('ecore_ipc',
   description : 'build ecore_ipc'
 )
 
+option('ector',
+  type : 'boolean',
+  value : true,
+  description : 'build ector'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',
