@@ -108,6 +108,7 @@ subprojects = [
 ['ecore_buffer'     ,  true,  true,  true, false, false, false, []],
 ['ector'            , false,  true, false, false,  true, false, ['draw', 'triangulator', 'freetype']],
 ['elput'            , false,  true, false, false,  true, false, []],
+['ecore_drm2'       , false,  true, false, false, false, false, []],
 ]
 
 
