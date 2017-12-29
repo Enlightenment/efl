@@ -107,6 +107,7 @@ subprojects = [
 ['ecore_ipc'        , false,  true, false, false, false, false, []],
 ['ecore_buffer'     ,  true,  true,  true, false, false, false, []],
 ['ector'            , false,  true, false, false,  true, false, ['draw', 'triangulator', 'freetype']],
+['elput'            , false,  true, false, false,  true, false, []],
 ]
 
 

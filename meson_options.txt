@@ -118,6 +118,12 @@ option('ector',
   description : 'build ector'
 )
 
+option('elput',
+  type : 'boolean',
+  value : true,
+  description : 'build elput'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',
