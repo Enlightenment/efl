@@ -30,6 +30,7 @@ if host_os == 'linux'
 endif
 
 module_arch = '@0@-@1@-@2@'.format(host_os, host_machine.cpu_family(), meson.project_version())
+module_files = []
 
 #install paths
 dir_prefix    = get_option('prefix')
@@ -95,6 +96,7 @@ subprojects = [
 ['ecore_avahi'      , false,  true, false, false, false,  true, []],
 ['ecore_con'        , false,  true,  true, false,  true, false, ['http-parser']],
 ['ecore_file'       , false,  true, false, false, false, false, []],
+['eeze'             ,  true,  true, false, false,  true, false, []],
 ['ecore_input'      , false,  true, false, false, false, false, []],
 ['ecore_x'          , false,  true, false, false, false, false, []],
 ['ecore_fb'         , false,  true, false, false, false, false, []],
@@ -117,11 +119,11 @@ example_dirs = []
 foreach package : subprojects
   package_name = package[0]
   package_version_name = package_name + '-' + version_major
-
   if get_option(package_name)
     config_h.set('HAVE_'+package_name.to_upper(), '1')
 
     dir_package_include = join_paths(dir_include, package_version_name)
+    dir_package_modules = join_paths(dir_lib, package_name, 'modules')
 
     foreach static_lib : package[7]
       subdir(join_paths('src', 'static_libs', static_lib))
@@ -171,6 +173,7 @@ endif
 
 subdir(join_paths(local_scripts))
 
+meson.add_install_script('meson/meson_modules.sh', module_files)
 
 #
 # Configure files

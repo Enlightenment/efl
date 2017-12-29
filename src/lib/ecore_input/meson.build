@@ -12,6 +12,9 @@ ecore_input_src = [
   'ecore_input_private.h'
 ]
 
+if get_option('eeze')
+  ecore_input_deps += eeze
+endif
 
 ecore_input_lib = library('ecore_input',
     ecore_input_src, pub_eo_file_target,

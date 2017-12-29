@@ -46,6 +46,12 @@ option('eldbus',
   description : 'build eldbus'
 )
 
+option('eeze',
+  type : 'boolean',
+  value : true,
+  description : 'build eeze'
+)
+
 option('ecore_audio',
   type : 'boolean',
   value : true,
@@ -218,4 +224,22 @@ option('tslib',
   type : 'boolean',
   value : true,
   description : 'tslib support' 
+)
+
+option('eject-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('mount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('unmount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
 )
