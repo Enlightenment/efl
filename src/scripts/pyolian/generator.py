@@ -15,9 +15,6 @@ For example (from this source folder):
 
 ...of course you can pass any other class or namespace to the example above.
 
-You can also import this module and use the provided Template class if you
-are more confortable from within python.
-
 The generator is based on the great pyratemp engine (THANKS!), you can find
 the full template syntax at: www.simple-is-better.org/template/pyratemp.html
 
@@ -30,12 +27,27 @@ Just keep in mind the syntax is a bit different in this implementation:
     comment_start = "#!"
     comment_end   = "!#"
 
+
+You can also import this module and use the provided Template class if you
+are more confortable from within python. To import from outside this directory
+you need to hack sys.path in a way that this folder will be available on
+PYTHON_PATH, fe:
+
+  pyolian_path = os.path.join(EFL_ROOT_PATH, 'src', 'scripts')
+  sys.path.insert(0, pyolian_path)
+  from pyolian.generator import Template
+
+
 """
 import os
 import datetime
 
-import eolian
-import pyratemp
+try:
+    from . import eolian
+    from . import pyratemp
+except ImportError:
+    import eolian
+    import pyratemp
 
 
 # logging utils

@@ -14,11 +14,23 @@ You can directly use the python API provided here if you need direct access
 to eolian, or we suggest to look at the template-based generator.py if you just
 need to generate some sort of text files out of the eolian database.
 
+To use this library from outside this directory, you need to hack sys.path in
+a way that this folder will be available on PYTHON_PATH, fe:
+
+  pyolian_path = os.path.join(EFL_ROOT_PATH, 'src', 'scripts')
+  sys.path.insert(0, pyolian_path)
+  from pyolian import eolian
+  from pyolian.generator import Template
+
 """
 from enum import IntEnum
 from ctypes import cast, byref, c_char_p, c_void_p
 
-from eolian_lib import lib
+try:
+    from .eolian_lib import lib
+except ImportError:
+    from eolian_lib import lib
+    
 
 
 ###  Eolian Enums  ############################################################

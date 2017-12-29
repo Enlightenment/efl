@@ -41,6 +41,8 @@ tags
 *.eot.cs
 *.eo.lua
 *.luac
+*.pyc
+__pycache__
 .dir-locals.el
 /efl-*-doc.tar.bz2
 /ar-lib
