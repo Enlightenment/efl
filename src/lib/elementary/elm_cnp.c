@@ -5076,6 +5076,7 @@ _tmpinfo_free(Tmp_Info *info)
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
+#if 0
 EAPI Eina_Bool
 elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
@@ -5105,7 +5106,9 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 #endif
    return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 }
+#endif
 
+/*
 EAPI void
 elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
                                     Elm_Selection_Loss_Cb func,
@@ -5130,8 +5133,9 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
      _win32_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif
    _local_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
-}
+}*/
 
+/*
 EAPI Eina_Bool
 elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 {
@@ -5157,8 +5161,9 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
      return _win32_elm_object_cnp_selection_clear(win, obj, selection);
 #endif
    return _local_elm_object_cnp_selection_clear(obj, selection);
-}
+}*/
 
+/*
 EAPI Eina_Bool
 elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
@@ -5187,13 +5192,14 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
      return _win32_elm_cnp_selection_get(win, obj, selection, format, datacb, udata);
 #endif
    return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
-}
+}*/
 
 ////////////////////////////////////////////////////////////////////////////
 
 /**
  * Add a widget as drop target.
  */
+/*
 EAPI Eina_Bool
 elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_State entercb, void *enterdata,
@@ -5217,8 +5223,9 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    return _local_elm_drop_target_add(obj, format, entercb, enterdata,
                                      leavecb, leavedata, poscb, posdata,
                                      dropcb, dropdata);
-}
+}*/
 
+#if 0
 EAPI Eina_Bool
 elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_State entercb, void *enterdata,
@@ -5247,7 +5254,9 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
    return _local_elm_drop_target_del(obj, format, entercb, enterdata,
            leavecb, leavedata, poscb, posdata, dropcb, dropdata);
 }
+#endif
 
+/*
 EAPI Eina_Bool
 elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                Elm_Xdnd_Action action,
@@ -5278,8 +5287,9 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                                 dragpos, dragdata,
                                 acceptcb, acceptdata,
                                 dragdone, donecbdata);
-}
+}*/
 
+/*
 EAPI Eina_Bool
 elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 {
@@ -5293,8 +5303,9 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
      return _wl_elm_drag_action_set(obj, action);
 #endif
    return _local_elm_drag_action_set(obj, action);
-}
+}*/
 
+/*
 EAPI Eina_Bool
 elm_selection_selection_has_owner(Evas_Object *obj)
 {
@@ -5319,6 +5330,7 @@ elm_cnp_clipboard_selection_has_owner(Evas_Object *win)
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, EINA_FALSE);
    return elm_selection_selection_has_owner(win);
 }
+*/
 
 /* START - Support elm containers for Drag and Drop */
 /* START - Support elm containers for Drop */
@@ -5404,12 +5416,14 @@ elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
    return EINA_FALSE;
 }
 
+/*
 EAPI Eina_Bool
 elm_drop_item_container_del(Evas_Object *obj)
 {
    return elm_drop_item_container_del_internal(obj, EINA_TRUE);
-}
+}*/
 
+#if 0
 EAPI Eina_Bool
 elm_drop_item_container_add(Evas_Object *obj,
       Elm_Sel_Format format,
@@ -5446,9 +5460,11 @@ elm_drop_item_container_add(Evas_Object *obj,
 
    return EINA_TRUE;
 }
+#endif
 /* END   - Support elm containers for Drop */
 
 /* START - Support elm containers for Drag */
+#if 0
 static int
 _drag_item_container_cmp(const void *d1,
                const void *d2)
@@ -5806,9 +5822,11 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
 
    return EINA_TRUE;
 }
+#endif
 /* END   - Support elm containers for Drag */
 /* END   - Support elm containers for Drag and Drop */
 
+/*
 EAPI Eina_Bool
 elm_drag_cancel(Evas_Object *obj)
 {
@@ -5849,4 +5867,5 @@ end:
    doaccept = EINA_FALSE;
    return EINA_TRUE;
 }
+*/
 

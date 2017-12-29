@@ -1277,7 +1277,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd,
    sel_debug("sizeof: %ld %ld", sizeof(&sel), sizeof(Sel_Manager_Selection));
    actx = _x11_dnd_action_rev_map(seat_sel->drag_action);
    ecore_x_dnd_source_action_set(actx);
-   ecore_x_pointer_grab(xwin);
+   //ecore_x_pointer_grab(xwin); //disable for debugging
    seat_sel->mouse_up_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
                                             _x11_drag_mouse_up, seat_sel);
    seat_sel->dnd_status_handler = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
@@ -2532,7 +2532,8 @@ _wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
      evas_device_seat_id_get(seat));
 }
 
-static Ecore_Wl2_Window *
+//static Ecore_Wl2_Window *
+Ecore_Wl2_Window *
 _wl_window_get(const Evas_Object *obj)
 {
    Evas_Object *top;

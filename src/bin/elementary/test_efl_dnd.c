@@ -48,6 +48,12 @@ _selection_lost_cb(void *data, Efl_Event const *event)
     ERR("obj: %p has lost selection; %p", obj, event->object);
 }
 
+static void
+_selection_lost_cb2(void *data, Efl_Event const *event)
+{
+    Eo *obj = data;
+    ERR("Lost2: obj: %p has lost selection; %p", obj, event->object);
+}
 /*
 static void
 _selection_failure_cb(void *data, Efl_Event const *event)
@@ -90,15 +96,17 @@ _selection_get_btn_cb(void *data, Evas_Object *obj, void *event_info)
 static void
 _selection_set_btn_cb(void *data, Evas_Object *obj, void *event_info)
 {
-   Eina_Slice sel_data = EINA_SLICE_STR("new");
-   Efl_Future *f = efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS, sel_data, 1);
-   //fl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
-	//  "new", 4, 1);
    int seat_id = efl_input_device_seat_id_get(seat);
+   Eina_Slice sel_data = EINA_SLICE_STR("new");
+   Efl_Future *f = efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS, sel_data, seat_id);
+   efl_selection_set(obj, EFL_SELECTION_TYPE_CLIPBOARD, EFL_SELECTION_FORMAT_TARGETS, sel_data, seat_id);
+   //efl_selection_set(obj, EFL_SELECTION_TYPE_PRIMARY, EFL_SELECTION_FORMAT_TARGETS,
+	//  "new", 4, 1);
    if (f)
    {
        printf("register future callbacks\n");
        efl_future_then(f, _selection_lost_cb, NULL, NULL, obj);
+       efl_future_then(f, _selection_lost_cb2, NULL, NULL, obj);
    }
 }
 
