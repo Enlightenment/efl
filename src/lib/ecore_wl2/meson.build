@@ -21,6 +21,7 @@ ecore_wl2_deps += dependency('wayland-client')
 ecore_wl2_deps += dependency('wayland-server')
 ecore_wl2_deps += dependency('xkbcommon')
 ecore_wl2_deps += wayland_protocol
+ecore_wl2_deps += dependency('wayland-client')
 
 ecore_wl2_lib = library('ecore_wl2',
     ecore_wl2_src, pub_eo_file_target,

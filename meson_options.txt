@@ -136,6 +136,25 @@ option('ecore_cocoa',
   description : 'build ecore_cocoa'
 )
 
+option('evas_goal',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('opengl',
+  type : 'combo',
+  choices : ['full', 'es-egl', 'none'],
+  value : 'none',
+  description : 'build evas'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',
@@ -266,4 +285,24 @@ option('unmount-path',
   type : 'string',
   value : 'detect',
   description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('evas-modules',
+  type : 'combo',
+  choices : ['shared', 'static'],
+  value : 'shared',
+  description : 'how to build the evas modules' 
+)
+
+option('evas-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm'],
+  value : []
+)
+
+option('harfbuzz',
+  type : 'boolean',
+  value : false,
+  description : 'harfbuzz support' 
 )

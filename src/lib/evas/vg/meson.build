@@ -1,0 +1,1 @@
+evas_src += files(['evas_vg_cache.c'])

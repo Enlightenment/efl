@@ -36,6 +36,7 @@ endif
 
 module_arch = '@0@-@1@-@2@'.format(host_os, host_machine.cpu_family(), meson.project_version())
 module_files = []
+evas_loader_map = []
 
 #install paths
 dir_prefix    = get_option('prefix')
@@ -114,8 +115,9 @@ subprojects = [
 ['elput'            , false,  true, false, false,  true, false, []],
 ['ecore_drm2'       , false,  true, false, false, false, false, []],
 ['ecore_cocoa'      , false,  true, false, false, false, false, []],
+['evas'             ,  true,  true, false, false,  true, false, ['vg_common', 'libunibreak']],
+['evas_goal'        , false,  true, false, false, false, false, []],
 ]
-
 
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')
@@ -159,16 +161,18 @@ foreach package : subprojects
     if (package[6])
        example_dirs += [package_name]
     endif
-    
+
     set_variable('build_'+package_name, true)
   else
     set_variable('build_'+package_name, false)
-    
+
     message(package_name+' disabled!')
 
   endif
 
 endforeach
+
+subdir(join_paths('src', 'generic', 'evas'))
 
 if get_option('build-tests')
   check = dependency('check')
@@ -186,6 +190,13 @@ endif
 subdir(join_paths(local_scripts))
 
 meson.add_install_script('meson/meson_modules.sh', module_files)
+
+foreach evas_loader_map_inst : evas_loader_map
+  evas_loader_original = evas_loader_map_inst[0]
+  evas_loader_link_types = evas_loader_map_inst[1]
+
+  meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
+endforeach
 
 #
 # Configure files

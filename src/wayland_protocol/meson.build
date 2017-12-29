@@ -1,6 +1,8 @@
 wayland_scanner_bin = find_program('wayland-scanner')
 
-wayland_protocols = dependency('wayland-protocols')
+#make it typo proof
+_wayland_protocols = dependency('wayland-protocols')
+wayland_client = dependency('wayland-client')
 
 wl_protocol_local = [
   'efl-aux-hints.xml',
@@ -17,7 +19,7 @@ wl_protocol_sys = [
 
 foreach sys_protocol : wl_protocol_sys
 	wl_protocol_local += [ 
-		join_paths(wayland_protocols.get_pkgconfig_variable('pkgdatadir'), 'unstable',
+		join_paths(_wayland_protocols.get_pkgconfig_variable('pkgdatadir'), 'unstable',
 			sys_protocol)]
 endforeach
 
@@ -50,4 +52,5 @@ wayland_protocol = declare_dependency(
 	include_directories: include_directories('.'),
 	link_with: wayland_protocol_lib,
   sources: gen_obj,
+  dependencies : [wayland_client]
 )
