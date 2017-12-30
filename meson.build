@@ -1,6 +1,7 @@
 project('efl', ['c','cpp'],
   version: '1.20.99',
-  default_options : ['buildtype=plain']
+  default_options : ['buildtype=plain'],
+  meson_version : '>=0.44'
 )
 
 if target_machine.system() == 'darwin'
