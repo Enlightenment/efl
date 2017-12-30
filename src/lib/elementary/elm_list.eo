@@ -29,7 +29,7 @@ enum Elm.List.Mode
             is naturally bound by the list object's maximum size hints, set
             externally.]]
    expand, [[Besides setting a minimum size on the transverse axis, just like
-             on @Elm.List.Mode.limit, the list will set a minimum size on th
+             on @Elm.List.Mode.limit, the list will set a minimum size on the
              longitudinal axis, trying to reserve space to all its children to
              be visible at a time. . This is naturally bound by the list
              object's maximum size hints, set externally.]]
