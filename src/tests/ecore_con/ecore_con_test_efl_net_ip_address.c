@@ -510,7 +510,7 @@ END_TEST
 START_TEST(ecore_test_efl_net_ip_address_ipv4_create_sockaddr_fail)
 {
    struct sockaddr_in addr = {
-     .sin_family = 1234,
+     .sin_family = AF_UNSPEC,
    };
    Eo *o;
 
