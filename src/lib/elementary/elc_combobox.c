@@ -174,6 +174,7 @@ _table_resize(void *data)
              // take the first, and update according to that
              evas_object_geometry_get(elm_object_item_track(eina_list_data_get(realized)), NULL, NULL,
                                       NULL, &h);
+             eina_list_free(realized);
           }
 
         sd->item_height = h;
