@@ -364,5 +364,10 @@ eina = declare_dependency(
   link_with: eina_lib,
 )
 
-install_headers(public_headers)
-install_headers(public_sub_headers, subdir : 'eina')
+install_headers(public_headers, 
+  install_dir : dir_package_include,
+)
+install_headers(public_sub_headers, 
+  install_dir : dir_package_include,
+  subdir : 'eina'
+)
