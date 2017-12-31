@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <libgen.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"

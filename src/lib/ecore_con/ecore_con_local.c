@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
+#include <libgen.h>
 
 #ifdef HAVE_SYSTEMD
 # include <systemd/sd-daemon.h>

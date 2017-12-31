@@ -3,6 +3,7 @@
 #endif
 
 #include <stdint.h>
+#include <libgen.h>
 
 #include <Efl.h>
 #include <Eina.h>

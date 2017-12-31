@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#include <libgen.h>
+
 #define ELM_INTERNAL_API_ARGESFSDFEFC
 
 #include "elm_suite.h"

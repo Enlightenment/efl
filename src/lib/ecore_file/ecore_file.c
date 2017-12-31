@@ -5,11 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-# include <libgen.h>
-#endif
+#include <unistd.h>
+#include <libgen.h>
 
 #ifdef _WIN32
 # include <direct.h>
