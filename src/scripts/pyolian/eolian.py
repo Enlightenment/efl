@@ -251,7 +251,6 @@ class Iterator(object):
 
     def __next__(self):
         if not self._iter or not self._iter.value:
-            print("NULL Iterator... Error ?")
             raise StopIteration
         if not lib.eina_iterator_next(self._iter, byref(self._tmp)):
             lib.eina_iterator_free(self._iter)
@@ -271,6 +270,12 @@ class EolianBaseObject(object):
         else:
             raise TypeError('Invalid constructor of type: %s for class: %s' % (
                             type(c_obj_pointer), self.__class__.__name__))
+
+    def __eq__(self, other):
+        return self._obj.value == other._obj.value
+
+    def __hash__(self):
+        return self._obj.value
 
 
 ###  Main Eolian Unit  ########################################################
@@ -504,6 +509,10 @@ class Class(EolianBaseObject):
         return Iterator(_str_to_py, lib.eolian_class_namespaces_get(self._obj))
 
     @property
+    def namespace(self):
+        return '.'.join(self.namespaces)
+
+    @property
     def file(self):
         return _str_to_py(lib.eolian_class_file_get(self._obj))
 
@@ -660,7 +669,7 @@ class Function(EolianBaseObject):
     @property
     def full_c_setter_name_legacy(self):
         return self.full_c_name_get(Eolian_Function_Type.PROP_SET, True)
-    
+
     @property
     def type(self):
         return Eolian_Function_Type(lib.eolian_function_type_get(self._obj))
@@ -837,10 +846,10 @@ class Implement(EolianBaseObject):
         c_cls = lib.eolian_implement_class_get(self._obj)
         return Class(c_cls) if c_cls else None
 
-    def function_get(self, ftype=Eolian_Function_Type.UNRESOLVED):
-        c_func = lib.eolian_implement_function_get(self._obj, ftype)
+    @property
+    def function(self):
+        c_func = lib.eolian_implement_function_get(self._obj, None)
         return Function(c_func) if c_func else None
-    # TODO implement util properties for function_get
 
     def documentation_get(self, ftype=Eolian_Function_Type.METHOD):
         c_doc = lib.eolian_implement_documentation_get(self._obj, ftype)
@@ -867,6 +876,17 @@ class Implement(EolianBaseObject):
     def is_prop_get(self):
         return bool(lib.eolian_implement_is_prop_get(self._obj))
 
+    @property
+    def is_property(self):
+        return self.is_prop_get or self.is_prop_set
+
+    @property
+    def is_method(self):
+        return not self.is_property
+
+    def is_overridden(self, cls):
+        return cls.name == self.class_.name  # TODO equality inside class
+
 
 class Type(EolianBaseObject):  # OK  (4 eolian issue)
     def __repr__(self):
@@ -883,8 +903,11 @@ class Type(EolianBaseObject):  # OK  (4 eolian issue)
 
     @property
     def namespaces(self):
-        return Iterator(_str_to_py,
-                        lib.eolian_type_namespaces_get(self._obj))
+        return Iterator(_str_to_py, lib.eolian_type_namespaces_get(self._obj))
+
+    @property
+    def namespace(self):
+        return '.'.join(self.namespaces)
 
     @property
     def free_func(self):
@@ -976,8 +999,11 @@ class Typedecl(EolianBaseObject):  # OK (2 TODO)
 
     @property
     def namespaces(self):
-        return Iterator(_str_to_py,
-                        lib.eolian_typedecl_namespaces_get(self._obj))
+        return Iterator(_str_to_py, lib.eolian_typedecl_namespaces_get(self._obj))
+
+    @property
+    def namespace(self):
+        return '.'.join(self.namespaces)
 
     @property
     def free_func(self):
@@ -1133,8 +1159,11 @@ class Variable(EolianBaseObject):
 
     @property
     def namespaces(self):
-        return Iterator(_str_to_py,
-                        lib.eolian_variable_namespaces_get(self._obj))
+        return Iterator(_str_to_py, lib.eolian_variable_namespaces_get(self._obj))
+
+    @property
+    def namespace(self):
+        return '.'.join(self.namespaces)
 
     @property
     def type(self):

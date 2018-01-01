@@ -269,7 +269,7 @@ lib.eolian_implement_class_get.argtypes = [c_void_p,]
 lib.eolian_implement_class_get.restype = c_void_p
 
 # EAPI const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
-lib.eolian_implement_function_get.argtypes = [c_void_p, c_int]
+lib.eolian_implement_function_get.argtypes = [c_void_p, c_void_p]
 lib.eolian_implement_function_get.restype = c_void_p
 
 # EAPI const Eolian_Documentation *eolian_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type f_type);

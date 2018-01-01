@@ -23,6 +23,21 @@ SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
 state = None
 
 
+class TestBaseObject(unittest.TestCase):
+    def test_base_object_equality(self):
+        cls1 = state.class_get_by_name('Efl.Loop.Timer')
+        cls2 = state.class_get_by_file('efl_loop_timer.eo')
+        self.assertIsInstance(cls1, eolian.Class)
+        self.assertIsInstance(cls2, eolian.Class)
+        self.assertEqual(cls1, cls2)
+
+        enum1 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
+        enum2 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
+        self.assertIsInstance(enum1, eolian.Typedecl)
+        self.assertIsInstance(enum2, eolian.Typedecl)
+        self.assertEqual(enum1, enum2)
+
+
 class TestEolianUnit(unittest.TestCase):
     def test_file_listing(self):
         l = list(state.all_eo_file_paths)
@@ -179,6 +194,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertFalse(f.return_is_warn_unused(eolian.Eolian_Function_Type.METHOD))
         self.assertFalse(f.object_is_const)
         self.assertEqual(f.class_.full_name, 'Efl.Loop.Timer')
+        self.assertIsInstance(f.implement, eolian.Implement)
 
     def test_function_parameter(self):
         cls = state.class_get_by_name('Efl.Loop.Timer')
@@ -202,7 +218,7 @@ class TestEolianImplement(unittest.TestCase):
         self.assertIsInstance(im, eolian.Implement)
         self.assertEqual(im.full_name, 'Efl.Loop.Timer.delay')
         self.assertIsInstance(im.class_, eolian.Class)
-        self.assertIsInstance(im.function_get(), eolian.Function) # TODO is UNRESOLVED correct ?
+        self.assertIsInstance(im.function, eolian.Function)
         self.assertIsInstance(im.documentation_get(), eolian.Documentation) # TODO is UNRESOLVED correct ?
         self.assertFalse(im.is_auto())
         self.assertFalse(im.is_empty())
