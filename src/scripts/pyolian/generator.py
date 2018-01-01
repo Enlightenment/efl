@@ -50,13 +50,6 @@ except ImportError:
     import pyratemp
 
 
-# logging utils
-be_verbose = True
-def ERR(*args): print(*(('PYOLIANGEN    ERROR:', ) + args))
-def WRN(*args): print(*(('PYOLIANGEN    WARNING:', ) + args))
-def INF(*args): print(*(('PYOLIANGEN   ', ) + args))
-
-
 # Use .eo files from the source tree (not the installed ones)
 script_path = os.path.dirname(os.path.realpath(__file__))
 root_path = os.path.abspath(os.path.join(script_path, '..', '..', '..'))
@@ -118,6 +111,22 @@ class Template(pyratemp.Template):
             # Eolian info
             #  'eolian_version': eolian.__version__,
             #  'eolian_version_info': eolian.__version_info__,
+            # Eolian Classes
+            'Class': eolian.Class,
+            'Part': eolian.Part,
+            'Constructor': eolian.Constructor,
+            'Event': eolian.Event,
+            'Function': eolian.Function,
+            'Function_Parameter': eolian.Function_Parameter,
+            'Implement': eolian.Implement,
+            'Type': eolian.Type,
+            'Typedecl': eolian.Typedecl,
+            'Enum_Type_Field': eolian.Enum_Type_Field,
+            'Struct_Type_Field': eolian.Struct_Type_Field,
+            'Expression': eolian.Expression,
+            'Variable': eolian.Variable,
+            'Declaration': eolian.Declaration,
+            'Documentation': eolian.Documentation,
             # Eolian Enums
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
             'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,
@@ -146,7 +155,7 @@ class Template(pyratemp.Template):
                                    renderer_class=renderer_class,
                                    eval_class=eval_class)
 
-    def render(self, filename=None, cls=None, ns=None,
+    def render(self, filename=None, verbose=True, cls=None, ns=None,
                      struct=None, enum=None, alias=None, **kargs):
         # Build the context for the template
         ctx = {}
@@ -172,9 +181,9 @@ class Template(pyratemp.Template):
             ctx['enums']   = [ e for e in eolian_db.typedecl_all_enums
                                     if e.full_name.startswith(ns + '.') ]
 
-        if filename is not None:
-            INF('generating "%s" from template "%s"' % (
-                filename, self.template_filename))
+        if verbose and filename:
+            print('generating "{}" from template "{}"'.format(
+                  filename, self.template_filename))
 
         # render with the augmented context
         output = self(**ctx)
