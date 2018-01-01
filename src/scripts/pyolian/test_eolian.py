@@ -30,12 +30,27 @@ class TestBaseObject(unittest.TestCase):
         self.assertIsInstance(cls1, eolian.Class)
         self.assertIsInstance(cls2, eolian.Class)
         self.assertEqual(cls1, cls2)
+        self.assertEqual(cls1, 'Efl.Loop.Timer')
+        self.assertEqual(cls2, 'Efl.Loop.Timer')
+        self.assertNotEqual(cls1, 'another string')
+        self.assertNotEqual(cls1, 1234)
+        self.assertNotEqual(cls1, None)
+        self.assertNotEqual(cls1, 0)
 
         enum1 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
         enum2 = state.typedecl_enum_get_by_name('Efl.Ui.Focus.Direction')
         self.assertIsInstance(enum1, eolian.Typedecl)
         self.assertIsInstance(enum2, eolian.Typedecl)
         self.assertEqual(enum1, enum2)
+        self.assertEqual(enum1, 'Efl.Ui.Focus.Direction')
+        self.assertEqual(enum2, 'Efl.Ui.Focus.Direction')
+        self.assertNotEqual(enum1, 'another string')
+        self.assertNotEqual(enum1, 1234)
+        self.assertNotEqual(enum1, None)
+        self.assertNotEqual(enum1, 0)
+
+        self.assertNotEqual(cls1, enum1)
+        
 
 
 class TestEolianUnit(unittest.TestCase):
@@ -152,7 +167,10 @@ class TestEolianClass(unittest.TestCase):
         self.assertIsNone(cls.eo_prefix)  # TODO fin a class with a value
         self.assertIsNone(cls.event_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
-        self.assertEqual(len(list(cls.inherits)), 1)
+        self.assertEqual(cls.base_class.full_name, 'Efl.Loop.Consumer')
+        self.assertEqual([c.full_name for c in cls.inherits], ['Efl.Loop.Consumer'])
+        self.assertEqual([c.full_name for c in cls.inherits_full], ['Efl.Loop.Consumer', 'Efl.Object'])
+        self.assertEqual([c.full_name for c in cls.hierarchy], ['Efl.Loop.Consumer', 'Efl.Object'])
         self.assertFalse(cls.ctor_enable)
         self.assertFalse(cls.dtor_enable)
         self.assertEqual(cls.c_get_function_name, 'efl_loop_timer_class_get')
@@ -225,6 +243,8 @@ class TestEolianImplement(unittest.TestCase):
         self.assertFalse(im.is_pure_virtual())
         self.assertFalse(im.is_prop_set)
         self.assertFalse(im.is_prop_get)
+        self.assertFalse(im.is_property)
+        self.assertTrue(im.is_method)
 
 
 class TestEolianEvent(unittest.TestCase):

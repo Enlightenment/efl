@@ -272,7 +272,14 @@ class EolianBaseObject(object):
                             type(c_obj_pointer), self.__class__.__name__))
 
     def __eq__(self, other):
-        return self._obj.value == other._obj.value
+        if isinstance(other, EolianBaseObject):
+            return self._obj.value == other._obj.value
+        elif isinstance(other, str):
+            if hasattr(self, 'full_name'):
+                return self.full_name == other
+            elif hasattr(self, 'name'):
+                return self.name == other
+        return False
 
     def __hash__(self):
         return self._obj.value
@@ -496,6 +503,15 @@ class Class(EolianBaseObject):
                 do_class_recursive(other)
 
         do_class_recursive(self)
+        return L
+
+    @property
+    def hierarchy(self):
+        L = []
+        base = self.base_class
+        while base:
+            L.append(base)
+            base = base.base_class
         return L
 
     @property
@@ -883,9 +899,6 @@ class Implement(EolianBaseObject):
     @property
     def is_method(self):
         return not self.is_property
-
-    def is_overridden(self, cls):
-        return cls.name == self.class_.name  # TODO equality inside class
 
 
 class Type(EolianBaseObject):  # OK  (4 eolian issue)
