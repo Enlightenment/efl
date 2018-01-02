@@ -174,8 +174,8 @@ class Template(pyratemp.Template):
             ctx['alias'] = eolian_db.typedecl_alias_get_by_name(alias)
 
         if verbose and filename:
-            print('generating "{}" from template "{}"'.format(
-                  filename, self.template_filename))
+            print("rendering: {} => {}".format(
+                  self.template_filename, filename))
 
         # render with the augmented context
         output = self(**ctx)

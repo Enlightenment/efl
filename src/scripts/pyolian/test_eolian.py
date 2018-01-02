@@ -154,7 +154,7 @@ class TestEolianNamespace(unittest.TestCase):
         for ns in state.all_namespaces:
             self.assertIsInstance(ns, eolian.Namespace)
             count += 1
-        self.assertGreater(count, 100)
+        self.assertGreater(count, 200)
 
     def test_namespace_equality(self):
         ns1 = eolian.Namespace(state, 'Efl.Io')

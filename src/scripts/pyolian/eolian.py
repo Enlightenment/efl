@@ -24,6 +24,7 @@ a way that this folder will be available on PYTHON_PATH, fe:
 
 """
 from enum import IntEnum
+import atexit
 from ctypes import cast, byref, c_char_p, c_void_p, c_int
 import ctypes
 
@@ -32,6 +33,7 @@ try:
 except ImportError:
     from eolian_lib import lib
 
+_already_halted = False
 
 ###  Eolian Enums  ############################################################
 
@@ -303,13 +305,16 @@ class Eolian_Unit(EolianBaseObject):
     @property
     def all_namespaces(self):
         # TODO find a better way to find namespaces (maybe inside eolian?)
-        nspaces = []
-        for cls in self.all_classes:
-            ns = Namespace(self, cls.namespace)
-            if not ns in nspaces:
-                nspaces.append(ns)
-        nspaces.sort()
-        return nspaces
+        nspaces = set()
+        for obj in self.all_classes:
+            nspaces.add(Namespace(self, obj.namespace))
+        for obj in self.typedecl_all_aliases:
+            nspaces.add(Namespace(self, obj.namespace))
+        for obj in self.typedecl_all_structs:
+            nspaces.add(Namespace(self, obj.namespace))
+        for obj in self.typedecl_all_enums:
+            nspaces.add(Namespace(self, obj.namespace))
+        return sorted(nspaces)
 
     def namespace_get_by_name(self, name):
         return Namespace(self, name)
@@ -392,10 +397,8 @@ class Eolian(Eolian_Unit):
         self._obj = lib.eolian_new()  # Eolian *
 
     def __del__(self):
-        # TODO I'm not sure about this, It is automatically called on gc, that
-        #      is fired after atexit (eolian_shutdown). Thus causing a segfault
-        #      if the user do not call del before exit.
-        lib.eolian_free(self._obj)
+        if not _already_halted:  # do not free after eolian_shutdown
+            lib.eolian_free(self._obj)
 
     def file_parse(self, filepath):
         c_unit = lib.eolian_file_parse(self._obj, _str_to_bytes(filepath))
@@ -448,6 +451,9 @@ class Namespace(object):
 
     def __gt__(self, other):
         return self.name > other.name
+
+    def __hash__(self):
+        return hash(self._name)
 
     @property
     def name(self):
@@ -1420,10 +1426,13 @@ def _str_to_py(s):
 
 
 ###  module init/shutdown  ####################################################
+def _cleanup():
+    global _already_halted
+    lib.eolian_shutdown()
+    _already_halted = True
 
-import atexit
 lib.eolian_init()
-atexit.register(lambda: lib.eolian_shutdown())
+atexit.register(_cleanup)
 
 
 ###  API coverage statistics  #################################################
