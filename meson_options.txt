@@ -152,6 +152,17 @@ option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
   value : 'none',
+)
+
+option('ecore_input_evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ecore_evas',
+  type : 'boolean',
+  value : true,
   description : 'build evas'
 )
 

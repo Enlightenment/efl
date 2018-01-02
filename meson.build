@@ -116,8 +116,10 @@ subprojects = [
 ['elput'            , false,  true, false, false,  true, false, []],
 ['ecore_drm2'       , false,  true, false, false, false, false, []],
 ['ecore_cocoa'      , false,  true, false, false, false, false, []],
-['evas'             ,  true,  true, false, false,  true, false, ['vg_common', 'libunibreak']],
+['evas'             ,  true,  true, false, false,  true,  true, ['vg_common', 'libunibreak']],
 ['evas_goal'        , false,  true, false, false, false, false, []],
+['ecore_input_evas' , false,  true, false, false, false, false, []],
+['ecore_evas'       ,  true,  true, false, false, false, false, []],
 ]
 
 # We generate Efl_Config.h and config.h later, they will be available here
