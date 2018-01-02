@@ -17,6 +17,13 @@ eet_src = [
   'eet_utils.c',
 ]
 
+
+if (get_option('crypto') == 'gnutls')
+  eet_deps += gnutls
+elif (get_option('crypto') == 'openssl')
+  eet_deps += openssl
+endif
+
 eet_deps += jpeg
 eet_deps += rg_etc
 
