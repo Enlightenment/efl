@@ -310,7 +310,7 @@ main(int argc, char **argv)
      fprintf(stderr, "INFO:     * %s\n", str);
    eina_iterator_free(it);
 
-   server = efl_add(EFL_NET_SERVER_TCP_CLASS, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   server = efl_add(EFL_NET_SERVER_TCP_CLASS, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_ip_ipv6_only_set(efl_added, EINA_FALSE), /* optional, but helps testing IPv4 on IPv6 servers */
                     efl_net_server_fd_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
                     efl_net_server_fd_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */

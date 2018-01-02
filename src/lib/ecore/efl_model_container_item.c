@@ -44,7 +44,7 @@ _efl_model_container_item_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_
    Eina_Stringshare *prop_name;
    Child_Property_Data *cpd;
    void *data, *new_data;
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    if (!sd->parent_data)
@@ -105,7 +105,7 @@ _efl_model_container_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_
    Eina_Stringshare *prop_name;
    Child_Property_Data *cpd;
    Eina_Value *value;
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    if (!sd->parent_data)
@@ -152,7 +152,7 @@ _efl_model_container_item_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_
 EOLIAN static Efl_Future *
 _efl_model_container_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED, unsigned int start EINA_UNUSED, unsigned int count EINA_UNUSED)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    efl_promise_value_set(promise, NULL, NULL);
@@ -163,7 +163,7 @@ _efl_model_container_item_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_
 EOLIAN static Efl_Future *
 _efl_model_container_item_efl_model_children_count_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd EINA_UNUSED)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    unsigned int *count = calloc(1, sizeof(unsigned int));

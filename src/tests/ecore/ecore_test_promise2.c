@@ -156,7 +156,7 @@ _simple_timeout(void *data)
 static Eina_Future_Scheduler *
 _future_scheduler_get(void)
 {
-   return efl_loop_future_scheduler_get(ecore_main_loop_get());
+   return efl_loop_future_scheduler_get(efl_main_loop_get());
 }
 
 static PromiseCtx *
@@ -490,7 +490,7 @@ START_TEST(efl_test_timeout)
    Eina_Bool done = EINA_FALSE;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_timeout(ecore_main_loop_get(), 0.0001),
+   f = eina_future_then(efl_loop_timeout(efl_main_loop_get(), 0.0001),
                         _promise_empty_done, &done);
    fail_if(!f);
    ecore_main_loop_begin();
@@ -506,7 +506,7 @@ START_TEST(efl_test_job)
    Eina_Bool done = EINA_FALSE;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_job(ecore_main_loop_get()),
+   f = eina_future_then(efl_loop_job(efl_main_loop_get()),
                         _promise_empty_done, &done);
    fail_if(!f);
    ecore_main_loop_begin();
@@ -522,7 +522,7 @@ START_TEST(efl_test_idle)
    Eina_Bool done = EINA_FALSE;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_idle(ecore_main_loop_get()),
+   f = eina_future_then(efl_loop_idle(efl_main_loop_get()),
                         _promise_empty_done, &done);
    fail_if(!f);
    ecore_main_loop_begin();

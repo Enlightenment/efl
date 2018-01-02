@@ -176,7 +176,7 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj EINA_UNUS
                }
              else
                {
-                  Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+                  Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
                   Efl_Future *rfuture = efl_promise_future_get(promise);
                   Eina_Value* true_value = eina_value_new(EINA_VALUE_TYPE_UCHAR);
                   eina_value_set(true_value, EINA_TRUE);

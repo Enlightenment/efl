@@ -165,7 +165,7 @@ _render_cb(void *obj, const Efl_Event *event EINA_UNUSED)
    return;
 
  on_error:
-   efl_event_callback_del(ecore_main_loop_get(),
+   efl_event_callback_del(efl_main_loop_get(),
                          EFL_LOOP_EVENT_IDLE_ENTER,
                          _render_cb,
                          obj);
@@ -187,7 +187,7 @@ _set_render_policy_callback(Evas_Object *obj)
               evas_object_image_data_update_add(wd->resize_obj, 0, 0, sd->w, sd->h);
            }
          // Delete idle_enterer if it for some reason is around
-         efl_event_callback_del(ecore_main_loop_get(),
+         efl_event_callback_del(efl_main_loop_get(),
                                EFL_LOOP_EVENT_IDLE_ENTER,
                                _render_cb,
                                obj);
@@ -202,7 +202,7 @@ _set_render_policy_callback(Evas_Object *obj)
 
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
         if (evas_object_image_pixels_dirty_get(wd->resize_obj) && !sd->render_idle_enterer)
-          sd->render_idle_enterer = efl_event_callback_priority_add(ecore_main_loop_get(),
+          sd->render_idle_enterer = efl_event_callback_priority_add(efl_main_loop_get(),
                                                                    EFL_LOOP_EVENT_IDLE_ENTER,
                                                                    EFL_CALLBACK_PRIORITY_BEFORE,
                                                                    _render_cb,
@@ -300,7 +300,7 @@ _elm_glview_efl_canvas_group_group_del(Eo *obj, Elm_Glview_Data *sd)
    //TODO:will be optimised
    efl_event_callback_legacy_call(obj, ELM_GLVIEW_EVENT_DESTROYED, NULL);
 
-   efl_event_callback_del(ecore_main_loop_get(),
+   efl_event_callback_del(efl_main_loop_get(),
                          EFL_LOOP_EVENT_IDLE_ENTER,
                          _render_cb,
                          obj);
@@ -532,7 +532,7 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
    evas_object_image_data_update_add(wd->resize_obj, 0, 0, sd->w, sd->h);
    if (sd->render_policy == ELM_GLVIEW_RENDER_POLICY_ALWAYS &&
        !sd->render_idle_enterer)
-     sd->render_idle_enterer = efl_event_callback_priority_add(ecore_main_loop_get(),
+     sd->render_idle_enterer = efl_event_callback_priority_add(efl_main_loop_get(),
                                                               EFL_LOOP_EVENT_IDLE_ENTER,
                                                               EFL_CALLBACK_PRIORITY_BEFORE,
                                                               _render_cb, obj);

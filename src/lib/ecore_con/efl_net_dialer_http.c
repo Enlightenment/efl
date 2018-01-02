@@ -863,7 +863,7 @@ _efl_net_dialer_http_curl_safe_end(Eo *o, Efl_Net_Dialer_Http_Data *pd, CURL *ea
    /* object deleted from CURL callback, CURL* easy was
     * dissociated and we must delete it ourselves.
     */
-   f = efl_loop_job(ecore_main_loop_get());
+   f = efl_loop_job(efl_main_loop_get());
    eina_future_then_from_desc(f, eina_future_cb_easy(.success = _efl_net_dialer_http_curl_cleanup,
                                                      .error = _efl_net_dialer_http_curl_cleanup_error,
                                                      .data = easy));

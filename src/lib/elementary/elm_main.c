@@ -1191,16 +1191,16 @@ elm_quicklaunch_fork(int    argc,
      {
         if (qre_pause && qre_resume && qre_terminate)
           {
-             efl_event_callback_array_add(ecore_main_loop_get(), _qre_main_ex(), NULL);
+             efl_event_callback_array_add(efl_main_loop_get(), _qre_main_ex(), NULL);
           }
         else
           {
-             efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
+             efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, qre_main, NULL);
           }
 
         ecore_init_ex(argc, argv);
 
-        ret = efl_loop_exit_code_process(efl_loop_begin(ecore_main_loop_get()));
+        ret = efl_loop_exit_code_process(efl_loop_begin(efl_main_loop_get()));
 
         ecore_shutdown_ex();
 
@@ -1347,12 +1347,12 @@ elm_policy_set(unsigned int policy,
      {
         if (value == ELM_POLICY_EXIT_WINDOWS_DEL)
           {
-             efl_event_callback_add(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+             efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
                                     _on_terminate, NULL);
           }
         else
           {
-             efl_event_callback_del(ecore_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
+             efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE,
                                     _on_terminate, NULL);
           }
      }

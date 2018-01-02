@@ -637,7 +637,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   server = efl_add(cls, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   server = efl_add(cls, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_clients_limit_set(efl_added,
                                                      clients_limit,
                                                      clients_reject_excess), /* optional */

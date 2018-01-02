@@ -1635,7 +1635,7 @@ ecore_thread_future_run(Ecore_Thread_Future_Cb heavy, const void *data, Eina_Fre
 
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
 
-   efl_wref_add(efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get()), &p);
+   efl_wref_add(efl_add(EFL_PROMISE_CLASS, efl_main_loop_get()), &p);
    if (!p) goto end;
 
    efl_object_override(p, &thread_safe_call);

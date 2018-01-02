@@ -382,7 +382,7 @@ EAPI Ecore_Ipc_Server *
 ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    char *address = NULL;
    Eina_Error err;
 #ifdef EFL_NET_SERVER_UNIX_CLASS
@@ -404,7 +404,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
 
         new_mask = S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
 
-        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, ecore_main_loop_get(),
+        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, efl_main_loop_get(),
                               efl_net_server_unix_leading_directories_create_set(efl_added, EINA_TRUE, S_IRUSR | S_IWUSR | S_IXUSR));
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
      }
@@ -418,7 +418,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         new_mask = 0;
         local_system = EINA_TRUE;
 
-        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, ecore_main_loop_get());
+        svr->server = efl_add(EFL_NET_SERVER_UNIX_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
      }
 #endif /* EFL_NET_SERVER_UNIX_CLASS */
@@ -431,7 +431,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         // TODO: specify SECURITY_ATTRIBUTES to use or some
         // Efl_Net_Server_Windows API to limit access
 
-        svr->server = efl_add(EFL_NET_SERVER_WINDOWS_CLASS, ecore_main_loop_get());
+        svr->server = efl_add(EFL_NET_SERVER_WINDOWS_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
      }
    else if ((type & ECORE_IPC_TYPE) == ECORE_IPC_LOCAL_SYSTEM)
@@ -442,7 +442,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
         // TODO: specify SECURITY_ATTRIBUTES to use or some
         // Efl_Net_Server_Windows API to limit access
 
-        svr->server = efl_add(EFL_NET_SERVER_WINDOWS_CLASS, ecore_main_loop_get());
+        svr->server = efl_add(EFL_NET_SERVER_WINDOWS_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->server, error_server);
      }
 #endif /* EFL_NET_SERVER_WINDOWS_CLASS */
@@ -653,7 +653,7 @@ EAPI Ecore_Ipc_Server *
 ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    char *address = NULL;
    Eina_Error err;
 
@@ -681,7 +681,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
              goto error_dialer;
           }
 
-        svr->dialer.dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, ecore_main_loop_get());
+        svr->dialer.dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->dialer.dialer, error_dialer);
      }
    else if ((type & ECORE_IPC_TYPE) == ECORE_IPC_LOCAL_SYSTEM)
@@ -689,7 +689,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
         address = ecore_con_local_path_new(EINA_TRUE, name, port);
         EINA_SAFETY_ON_NULL_GOTO(address, error_dialer);
 
-        svr->dialer.dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, ecore_main_loop_get());
+        svr->dialer.dialer = efl_add(EFL_NET_DIALER_UNIX_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->dialer.dialer, error_dialer);
      }
 #endif /* EFL_NET_DIALER_UNIX_CLASS */
@@ -699,7 +699,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
         address = ecore_con_local_path_new(EINA_FALSE, name, port);
         EINA_SAFETY_ON_NULL_GOTO(address, error_dialer);
 
-        svr->dialer.dialer = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ecore_main_loop_get());
+        svr->dialer.dialer = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->dialer.dialer, error_dialer);
      }
    else if ((type & ECORE_IPC_TYPE) == ECORE_IPC_LOCAL_SYSTEM)
@@ -707,7 +707,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
         address = ecore_con_local_path_new(EINA_TRUE, name, port);
         EINA_SAFETY_ON_NULL_GOTO(address, error_dialer);
 
-        svr->dialer.dialer = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ecore_main_loop_get());
+        svr->dialer.dialer = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, efl_main_loop_get());
         EINA_SAFETY_ON_NULL_GOTO(svr->dialer.dialer, error_dialer);
      }
 #endif /* EFL_NET_DIALER_WINDOWS_CLASS */

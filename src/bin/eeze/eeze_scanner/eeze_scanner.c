@@ -494,7 +494,7 @@ main(void)
         goto end;
      }
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
 
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, loop,

@@ -56,7 +56,7 @@ _promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
 static Eina_Future_Scheduler *
 _future_scheduler_get(void)
 {
-   return efl_loop_future_scheduler_get(ecore_main_loop_get());
+   return efl_loop_future_scheduler_get(efl_main_loop_get());
 }
 
 static Ctx *

@@ -824,7 +824,7 @@ _eio_model_efl_object_provider_find(Eo *obj, Eio_Model_Data *priv EINA_UNUSED, c
 
    // Provide main loop even if we don't have a loop user parent
    if (!provider && (klass == EFL_LOOP_CLASS) && eina_main_loop_is())
-     return ecore_main_loop_get();
+     return efl_main_loop_get();
 
    return provider;
 }

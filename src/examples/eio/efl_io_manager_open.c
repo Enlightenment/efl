@@ -65,7 +65,7 @@ void open_file(const char *path)
 {
    Efl_Io_Manager *job;
 
-   job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
+   job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
 
    eina_future_chain(efl_io_manager_open(job, path, EINA_FALSE),
                      { .cb = _open_cb, .data = job },

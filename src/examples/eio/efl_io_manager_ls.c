@@ -50,7 +50,7 @@ progress_cb(void *data EINA_UNUSED, Eina_Accessor *access)
 
 void list_files(void *data)
 {
-   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, ecore_main_loop_get());
+   Efl_Io_Manager *job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
    const char *path = data;
 
    eina_future_then(efl_io_manager_ls(job, path, NULL, progress_cb, NULL), done_cb, NULL);

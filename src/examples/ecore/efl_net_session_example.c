@@ -152,7 +152,7 @@ main(int argc, char **argv)
           }
      }
 
-   session = efl_add(EFL_NET_SESSION_CLASS, ecore_main_loop_get(),
+   session = efl_add(EFL_NET_SESSION_CLASS, efl_main_loop_get(),
                      efl_event_callback_array_add(efl_added, session_events_cbs(), NULL));
    if (!session)
      {

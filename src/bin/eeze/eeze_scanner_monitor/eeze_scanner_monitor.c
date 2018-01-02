@@ -151,7 +151,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         goto error_path;
      }
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
 
 #ifdef EFL_NET_DIALER_UNIX_CLASS
    dialer = efl_add(EFL_NET_DIALER_SIMPLE_CLASS, loop,

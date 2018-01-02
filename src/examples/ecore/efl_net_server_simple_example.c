@@ -441,7 +441,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   simple_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, ecore_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   simple_server = efl_add(EFL_NET_SERVER_SIMPLE_CLASS, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
                            efl_net_server_simple_inner_class_set(efl_added, cls), /* alternatively you could create the inner server and set with efl_net_server_simple_inner_server_set() */
                            efl_net_server_clients_limit_set(efl_added,
                                                             clients_limit,

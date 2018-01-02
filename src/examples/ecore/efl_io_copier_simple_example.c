@@ -31,7 +31,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    ecore_init();
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
    input = efl_add(EFL_IO_STDIN_CLASS, loop);
    output = efl_add(EFL_IO_STDOUT_CLASS, loop);
    copier = efl_add(EFL_IO_COPIER_CLASS, loop,

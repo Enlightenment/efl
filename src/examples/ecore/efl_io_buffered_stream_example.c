@@ -237,7 +237,7 @@ main(int argc, char **argv)
     * Efl.Net.Dialer.Tcp depend on main loop, thus their parent must
     * be a loop provider. We use the loop itself.
     */
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
 
    /* The TCP client to use to send/receive network data */
    dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, loop,

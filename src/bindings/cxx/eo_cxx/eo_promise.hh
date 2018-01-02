@@ -30,7 +30,7 @@ struct promise_common
    explicit promise_common(std::nullptr_t) : _promise(nullptr) {}
    promise_common()
    {
-      _promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+      _promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    }
    ~promise_common()
    {

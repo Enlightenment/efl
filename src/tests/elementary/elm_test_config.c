@@ -13,7 +13,7 @@ START_TEST (elm_config_eoapi)
 {
    elm_init(1, NULL);
 
-   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
 #define CONFIG_CHK(opt, typ, val) do { \
@@ -150,7 +150,7 @@ START_TEST (elm_config_win)
 {
    elm_init(1, NULL);
 
-   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
    Eo *win = efl_add(EFL_UI_WIN_CLASS, NULL);
@@ -185,7 +185,7 @@ START_TEST (elm_config_profiles)
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)
 
-   Eo *cfg = efl_provider_find(ecore_main_loop_get(), EFL_CONFIG_INTERFACE);
+   Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
    for (int hidden = 0; hidden <= 1; hidden++)

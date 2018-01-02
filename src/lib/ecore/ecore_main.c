@@ -1058,7 +1058,7 @@ void
 _ecore_main_loop_init(void)
 {
    DBG("_ecore_main_loop_init");
-   if (!ecore_main_loop_get()) ERR("Cannot create main loop object");
+   if (!efl_main_loop_get()) ERR("Cannot create main loop object");
    _ecore_main_loop_setup(ML_OBJ, ML_DAT);
 }
 

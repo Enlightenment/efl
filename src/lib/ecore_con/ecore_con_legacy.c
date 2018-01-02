@@ -818,7 +818,7 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Eina_Value v,
                                   const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Client *cl = data;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    Eo *inner_socket;
    Eo *socket;
    Eo *tcp_socket;
@@ -1604,7 +1604,7 @@ _ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
                                  const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    Eo *ssl_ctx;
    Eo *inner_server;
    Eo *server;
@@ -1674,7 +1674,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(loop, NULL);
 
    svr = _ecore_con_server_new(EINA_FALSE, compl_type, name, port, data);
@@ -1937,7 +1937,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
                                  const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    Eo *ssl_ctx;
    Eo *inner_dialer;
    Eo *dialer;
@@ -2027,7 +2027,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
                                          const Eina_Future *dead EINA_UNUSED)
 {
    Ecore_Con_Server *svr = data;
-   Eo *loop = ecore_main_loop_get();
+   Eo *loop = efl_main_loop_get();
    Eo *ssl_ctx;
    Eo *inner_dialer;
    Eo *dialer;
@@ -2131,7 +2131,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 
    type = compl_type & ECORE_CON_TYPE;
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(loop, NULL);
 
    svr = _ecore_con_server_new(EINA_TRUE, compl_type, name, port, data);

@@ -1423,7 +1423,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    ecore_init();
    ecore_con_init();
 
-   ctl = efl_add(EFL_NET_CONTROL_CLASS, ecore_main_loop_get(),
+   ctl = efl_add(EFL_NET_CONTROL_CLASS, efl_main_loop_get(),
                  efl_event_callback_array_add(efl_added, ctl_events_cbs(), NULL));
    if (!ctl)
      {
@@ -1432,8 +1432,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         goto end;
      }
 
-   input = efl_add(EFL_IO_STDIN_CLASS, ecore_main_loop_get());
-   copier = efl_add(EFL_IO_COPIER_CLASS, ecore_main_loop_get(),
+   input = efl_add(EFL_IO_STDIN_CLASS, efl_main_loop_get());
+   copier = efl_add(EFL_IO_COPIER_CLASS, efl_main_loop_get(),
                     efl_io_copier_source_set(efl_added, input),
                     efl_io_copier_line_delimiter_set(efl_added, line_delimiter),
                     efl_io_copier_buffer_limit_set(efl_added, 8192),

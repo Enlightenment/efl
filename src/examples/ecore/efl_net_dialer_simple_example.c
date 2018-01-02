@@ -326,7 +326,7 @@ main(int argc, char **argv)
 
    if (quit_option) goto end;
 
-   loop = ecore_main_loop_get();
+   loop = efl_main_loop_get();
 
    args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
    if (args < 0)

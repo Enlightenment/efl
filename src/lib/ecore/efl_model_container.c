@@ -236,7 +236,7 @@ _efl_model_container_efl_model_properties_get(Eo *obj EINA_UNUSED, Efl_Model_Con
 Efl_Future *
 _efl_model_container_efl_model_property_set(Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd EINA_UNUSED, const char *property EINA_UNUSED, const Eina_Value *value EINA_UNUSED)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
@@ -247,7 +247,7 @@ Efl_Future *
 _efl_model_container_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd EINA_UNUSED, const char *property EINA_UNUSED)
 {
 
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    efl_promise_failed_set(promise, EFL_MODEL_ERROR_NOT_FOUND);
@@ -257,7 +257,7 @@ _efl_model_container_efl_model_property_get(Eo *obj EINA_UNUSED, Efl_Model_Conta
 static Efl_Future *
 _efl_model_container_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd, unsigned int start, unsigned int count)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    Eina_Accessor* accessor = efl_model_list_slice(sd->children, start, count);
@@ -269,7 +269,7 @@ _efl_model_container_efl_model_children_slice_get(Eo *obj EINA_UNUSED, Efl_Model
 static Efl_Future *
 _efl_model_container_efl_model_children_count_get(Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd)
 {
-   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, ecore_main_loop_get());
+   Efl_Promise *promise = efl_add(EFL_PROMISE_CLASS, efl_main_loop_get());
    Efl_Future* future = efl_promise_future_get(promise);
 
    unsigned int *count = calloc(1, sizeof(unsigned int));

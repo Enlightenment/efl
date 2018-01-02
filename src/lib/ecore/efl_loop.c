@@ -61,7 +61,7 @@ _efl_loop_main_get(Efl_Class *klass EINA_UNUSED, void *_pd EINA_UNUSED)
 }
 
 EAPI Eo *
-ecore_main_loop_get(void)
+efl_main_loop_get(void)
 {
    return efl_loop_main_get(EFL_LOOP_CLASS);
 }
@@ -112,7 +112,7 @@ efl_exit(int exit_code)
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
    eina_value_set(&v, &exit_code);
-   efl_loop_quit(ecore_main_loop_get(), v);
+   efl_loop_quit(efl_main_loop_get(), v);
 }
 
 EOLIAN static Efl_Object *
@@ -368,7 +368,7 @@ _efl_loop_arguments_send(void *data, const Eina_Value v,
    arge.initialization = initialization;
    initialization = EINA_FALSE;
 
-   efl_event_callback_call(ecore_main_loop_get(),
+   efl_event_callback_call(efl_main_loop_get(),
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
 on_error:
    _efl_loop_arguments_cleanup(arga);
@@ -389,9 +389,9 @@ ecore_loop_arguments_send(int argc, const char **argv)
    for (i = 0; i < argc; i++)
      eina_array_push(arga, eina_stringshare_add(argv[i]));
 
-   job = eina_future_then(efl_loop_job(ecore_main_loop_get()),
+   job = eina_future_then(efl_loop_job(efl_main_loop_get()),
                           _efl_loop_arguments_send, arga);
-   efl_future_Eina_FutureXXX_then(ecore_main_loop_get(), job);
+   efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
 }
 
 // Only one main loop handle for now

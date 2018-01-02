@@ -80,7 +80,7 @@ EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);
 #include "efl_interpolator_cubic_bezier.eo.h"
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
-EAPI Eo *ecore_main_loop_get(void);
+EAPI Eo *efl_main_loop_get(void);
 
 typedef struct _Efl_Future_Composite_Progress Efl_Future_All_Progress;
 
