@@ -737,7 +737,7 @@ lib.eolian_documentation_since_get.restype = c_char_p
 
 #  # EAPI const char *eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret);
 lib.eolian_documentation_tokenize.argtypes = [c_char_p, c_void_p]
-lib.eolian_documentation_tokenize.restype = c_char_p
+lib.eolian_documentation_tokenize.restype = c_void_p  # this need to be passed back as char*
 
 # EAPI void eolian_doc_token_init(Eolian_Doc_Token *tok);
 lib.eolian_doc_token_init.argtypes = [c_void_p,]

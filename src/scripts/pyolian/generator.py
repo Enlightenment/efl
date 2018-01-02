@@ -127,6 +127,7 @@ class Template(pyratemp.Template):
             'Variable': eolian.Variable,
             'Declaration': eolian.Declaration,
             'Documentation': eolian.Documentation,
+            'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
             'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,

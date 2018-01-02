@@ -24,13 +24,13 @@ a way that this folder will be available on PYTHON_PATH, fe:
 
 """
 from enum import IntEnum
-from ctypes import cast, byref, c_char_p, c_void_p
+from ctypes import cast, byref, c_char_p, c_void_p, c_int
+import ctypes
 
 try:
     from .eolian_lib import lib
 except ImportError:
     from eolian_lib import lib
-    
 
 
 ###  Eolian Enums  ############################################################
@@ -1235,11 +1235,16 @@ class Declaration(EolianBaseObject):
         return Variable(c_var) if c_var else None
 
 
+class _Eolian_Doc_Token_Struct(ctypes.Structure):
+    _fields_ = [("type", c_int),
+                ("text", c_char_p),
+                ("text_end", c_char_p)]
+
 class Documentation(EolianBaseObject):
     # def __repr__(self):
         # return "<eolian.Documentation '{0.name}'>".format(self)
 
-    # this is too much for py, just use string.split('\n\n')
+    # this is too much for py, just use string.split('\n\n') instead
     # def string_split(self, string):
     #    c_list = lib.eolian_documentation_string_split
 
@@ -1254,6 +1259,64 @@ class Documentation(EolianBaseObject):
     @property
     def since(self):
         return _str_to_py(lib.eolian_documentation_since_get(self._obj))
+
+    @property
+    def summary_tokens(self):
+        """ return a list of paragraphs, each one is a list of tokens """
+        return self._tokenize(self.summary)
+
+    @property
+    def description_tokens(self):
+        """ return a list of paragraphs, each one is a list of tokens """
+        return self._tokenize(self.description)
+
+    @classmethod
+    def _tokenize(cls, full_text):
+        paragraphs = []
+        if not full_text:
+            return paragraphs
+
+        tok = _Eolian_Doc_Token_Struct()
+        for paragraph in full_text.split('\n\n'):
+            tokens = []
+            c_paragraph = _str_to_bytes(paragraph)  # keep c_paragraph alive !
+
+            lib.eolian_doc_token_init(byref(tok))
+            next_chunk = lib.eolian_documentation_tokenize(c_paragraph, byref(tok))
+            while next_chunk:
+                typ = lib.eolian_doc_token_type_get(byref(tok))
+                txt = lib.eolian_doc_token_text_get(byref(tok))
+                #  ref =  # TODO ... Stupido parametro '*unit'  :(
+                tokens.append(Documentation_Token(typ, txt))
+                lib.free(c_void_p(txt))
+                next_chunk = lib.eolian_documentation_tokenize(c_char_p(next_chunk), byref(tok))
+            paragraphs.append(tokens)
+
+        return paragraphs
+
+
+class Documentation_Token(object):
+    def __init__(self, c_token_type, c_text):
+        self._type = Eolian_Doc_Token_Type(c_token_type)
+        self._text = _str_to_py(c_text)
+        self._ref = None  # TODO
+
+    def __repr__(self):
+        t = self.text if len(self.text) < 40 else self.text[:40] + '...'
+        return "<eolian.Doc_Token ({}), text='{}', len={}>".format(
+                self.type.name, t, len(self.text))
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def text(self):
+        return self._text
+
+    @property
+    def ref(self):
+        return self._ref
 
 
 ###  internal string encode/decode  ###########################################
