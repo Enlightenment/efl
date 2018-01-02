@@ -50,7 +50,6 @@ class TestBaseObject(unittest.TestCase):
         self.assertNotEqual(enum1, 0)
 
         self.assertNotEqual(cls1, enum1)
-        
 
 
 class TestEolianUnit(unittest.TestCase):
@@ -147,6 +146,71 @@ class TestEolianUnit(unittest.TestCase):
             self.assertIsInstance(cls, eolian.Class)
             all_count += 1
         self.assertGreater(all_count, 400)
+
+
+class TestEolianNamespace(unittest.TestCase):
+    def test_all_namespace(self):
+        count = 0
+        for ns in state.all_namespaces:
+            self.assertIsInstance(ns, eolian.Namespace)
+            count += 1
+        self.assertGreater(count, 100)
+
+    def test_namespace_equality(self):
+        ns1 = eolian.Namespace(state, 'Efl.Io')
+        ns2 = eolian.Namespace(state, 'Efl.Net')
+        self.assertIsInstance(ns1, eolian.Namespace)
+        self.assertIsInstance(ns2, eolian.Namespace)
+        self.assertNotEqual(ns1, ns2)
+        self.assertEqual(ns1, eolian.Namespace(state, 'Efl.Io'))
+        self.assertEqual(ns2, eolian.Namespace(state, 'Efl.Net'))
+
+    def test_namespace_sorting(self):
+        nspaces = state.all_namespaces
+        nspaces.sort(reverse=True)
+        self.assertGreater(nspaces[0], nspaces[-1])
+        self.assertLess(nspaces[1], nspaces[0])
+
+    def test_namespace_by_name(self):
+        ns = eolian.Namespace(state, 'Efl.Net')
+        self.assertIsInstance(ns, eolian.Namespace)
+        self.assertEqual(ns.name, 'Efl.Net')
+        self.assertEqual(ns.namespaces, ['Efl', 'Net'])
+
+        ns = state.namespace_get_by_name('Efl')
+        self.assertIsInstance(ns, eolian.Namespace)
+        self.assertEqual(ns.name, 'Efl')
+
+        self.assertGreater(len(ns.classes), 30)
+        for cls in ns.classes:
+            self.assertIsInstance(cls, eolian.Class)
+        self.assertGreater(len(ns.regulars), 4)
+        for cls in ns.regulars:
+            self.assertIsInstance(cls, eolian.Class)
+            self.assertEqual(cls.type, eolian.Eolian_Class_Type.REGULAR)
+        self.assertGreater(len(ns.mixins), 0)
+        for cls in ns.mixins:
+            self.assertIsInstance(cls, eolian.Class)
+            self.assertEqual(cls.type, eolian.Eolian_Class_Type.MIXIN)
+        self.assertGreater(len(ns.interfaces), 15)
+        for cls in ns.interfaces:
+            self.assertIsInstance(cls, eolian.Class)
+            self.assertEqual(cls.type, eolian.Eolian_Class_Type.INTERFACE)
+
+        self.assertGreater(len(ns.enums), 1)
+        for td in ns.enums:
+            self.assertIsInstance(td, eolian.Typedecl)
+            self.assertEqual(td.type, eolian.Eolian_Typedecl_Type.ENUM)
+        self.assertGreater(len(ns.aliases), 0)
+        for td in ns.aliases:
+            self.assertIsInstance(td, eolian.Typedecl)
+            # TODO eolian_typedecl_all_aliases_get also return FUNCTION_POINTER
+            # is this correct? or an eolian bug ?
+            #  self.assertEqual(td.type, eolian.Eolian_Typedecl_Type.ALIAS)
+        self.assertGreater(len(ns.structs), 2)
+        for td in ns.structs:
+            self.assertIsInstance(td, eolian.Typedecl)
+            self.assertEqual(td.type, eolian.Eolian_Typedecl_Type.STRUCT)
 
 
 class TestEolianClass(unittest.TestCase):

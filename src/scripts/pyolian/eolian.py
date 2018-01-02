@@ -301,6 +301,20 @@ class Eolian_Unit(EolianBaseObject):
         return Iterator(Class, lib.eolian_all_classes_get(self._obj))
 
     @property
+    def all_namespaces(self):
+        # TODO find a better way to find namespaces (maybe inside eolian?)
+        nspaces = []
+        for cls in self.all_classes:
+            ns = Namespace(self, cls.namespace)
+            if not ns in nspaces:
+                nspaces.append(ns)
+        nspaces.sort()
+        return nspaces
+
+    def namespace_get_by_name(self, name):
+        return Namespace(self, name)
+
+    @property
     def typedecl_all_enums(self):
         return Iterator(Typedecl, lib.eolian_typedecl_all_enums_get(self._obj))
 
@@ -414,6 +428,72 @@ class Eolian(Eolian_Unit):
 
     def all_eot_files_parse(self):
         return bool(lib.eolian_all_eot_files_parse(self._obj))
+
+
+###  Namespace Utility Class  #################################################
+
+class Namespace(object):
+    def __init__(self, unit, namespace_name):
+        self._name = namespace_name
+        self._unit = unit
+
+    def __repr__(self):
+        return "<eolian.Namespace '{0._name}'>".format(self)
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __gt__(self, other):
+        return self.name > other.name
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def namespaces(self):
+        return self._name.split('.')
+
+    @property
+    def classes(self):
+        return [ c for c in self._unit.all_classes
+                if c.namespace == self._name ]
+
+    @property
+    def regulars(self):
+        return [ c for c in self._unit.all_classes
+                if c.type == Eolian_Class_Type.REGULAR and
+                   c.namespace == self._name]
+
+    @property
+    def mixins(self):
+        return [ c for c in self._unit.all_classes
+                if c.type == Eolian_Class_Type.MIXIN and
+                   c.namespace == self._name]
+
+    @property
+    def interfaces(self):
+        return [ c for c in self._unit.all_classes
+                if c.type == Eolian_Class_Type.INTERFACE and
+                   c.namespace == self._name]
+
+    @property
+    def aliases(self):
+        return [ td for td in self._unit.typedecl_all_aliases
+                if td.namespace == self._name]
+
+    @property
+    def structs(self):
+        return [ td for td in self._unit.typedecl_all_structs
+                if td.namespace == self._name]
+
+    @property
+    def enums(self):
+        return [ td for td in self._unit.typedecl_all_enums
+                if td.namespace == self._name]
 
 
 ###  Eolian Classes  ##########################################################
@@ -1240,6 +1320,7 @@ class _Eolian_Doc_Token_Struct(ctypes.Structure):
                 ("text", c_char_p),
                 ("text_end", c_char_p)]
 
+
 class Documentation(EolianBaseObject):
     # def __repr__(self):
         # return "<eolian.Documentation '{0.name}'>".format(self)
@@ -1343,7 +1424,6 @@ def _str_to_py(s):
 import atexit
 lib.eolian_init()
 atexit.register(lambda: lib.eolian_shutdown())
-
 
 
 ###  API coverage statistics  #################################################

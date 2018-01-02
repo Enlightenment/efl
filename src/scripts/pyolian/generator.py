@@ -90,9 +90,9 @@ class Template(pyratemp.Template):
 
     Args:
         filename: Template file to load. (REQUIRED)
-        data: User provided context for the template.
+        context: User provided context for the template (dict).
     """
-    def __init__(self, filename, encoding='utf-8', data=None, escape=None,
+    def __init__(self, filename, encoding='utf-8', context=None, escape=None,
                        loader_class=pyratemp.LoaderFile,
                        parser_class=pyratemp.Parser,
                        renderer_class=pyratemp.Renderer,
@@ -101,8 +101,8 @@ class Template(pyratemp.Template):
         # Build the global context for the template
         global_ctx = {}
         # user provided context (low pri)
-        if data:
-            global_ctx.update(data)
+        if context:
+            global_ctx.update(context)
         # standard names (not overwritables)
         global_ctx.update({
             # Template info
@@ -164,23 +164,14 @@ class Template(pyratemp.Template):
             ctx.update(kargs)
         if cls:
             ctx['cls'] = eolian_db.class_get_by_name(cls)
+        if ns:
+            ctx['namespace'] = eolian_db.namespace_get_by_name(ns)
         if struct:
             ctx['struct'] = eolian_db.typedecl_struct_get_by_name(struct)
         if enum:
             ctx['enum'] = eolian_db.typedecl_enum_get_by_name(enum)
         if alias:
             ctx['alias'] = eolian_db.typedecl_alias_get_by_name(alias)
-        if ns:
-            ctx['namespace'] = ns
-            ctx['namespaces'] = ns.split('.')
-            ctx['classes'] = [ c for c in eolian_db.all_classes
-                                    if c.full_name.startswith(ns + '.') ]
-            ctx['aliases'] = [ a for a in eolian_db.typedecl_all_aliases
-                                    if a.full_name.startswith(ns + '.') ]
-            ctx['structs'] = [ s for s in eolian_db.typedecl_all_structs
-                                    if s.full_name.startswith(ns + '.') ]
-            ctx['enums']   = [ e for e in eolian_db.typedecl_all_enums
-                                    if e.full_name.startswith(ns + '.') ]
 
         if verbose and filename:
             print('generating "{}" from template "{}"'.format(
@@ -205,7 +196,7 @@ class Template(pyratemp.Template):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Pyolian generator.')
+    parser = argparse.ArgumentParser(description='Pyolian template based generator.')
     parser.add_argument('template',
                         help='The template file to use. (REQUIRED)')
     parser.add_argument('--output', '-o', metavar='FILE', default=None,

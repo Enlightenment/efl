@@ -1,19 +1,35 @@
 
 ================================================================================
-Namespace:    ${namespace}$  ${namespaces}$
+Namespace:    ${namespace.name}$  ${namespace.namespaces}$
 ================================================================================
 
-Classes:
-========
-<!--(for cls in classes)-->
- * ${cls.full_name}$   (${cls.type}$)
+Regular Classes:
+================
+<!--(for cls in namespace.regulars)-->
+ * ${cls.full_name}$ (${cls.type.name.lower()}$)
+<!--(else)-->
+ no classes available
+<!--(end)-->
+
+Interfaces:
+===========
+<!--(for cls in namespace.interfaces)-->
+ * ${cls.full_name}$ (${cls.type.name.lower()}$)
+<!--(else)-->
+ no classes available
+<!--(end)-->
+
+Mixins:
+=======
+<!--(for cls in namespace.mixins)-->
+ * ${cls.full_name}$ (${cls.type.name.lower()}$)
 <!--(else)-->
  no classes available
 <!--(end)-->
 
 Aliases:
 ========
-<!--(for typedecl in aliases)-->
+<!--(for typedecl in namespace.aliases)-->
  * ${typedecl.full_name}$
 <!--(else)-->
  no alias available
@@ -21,10 +37,10 @@ Aliases:
 
 Structs:
 ========
-<!--(for typedecl in structs)-->
+<!--(for typedecl in namespace.structs)-->
  * ${typedecl.full_name}$
     <!--(for field in typedecl.struct_fields)-->
-    ${field}$
+    ${field.type.name}$ ${field.name}$
     <!--(end)-->
 <!--(else)-->
  no structs available
@@ -32,10 +48,10 @@ Structs:
 
 Enums:
 ======
-<!--(for typedecl in enums)-->
+<!--(for typedecl in namespace.enums)-->
  * ${typedecl.full_name}$
     <!--(for field in typedecl.enum_fields)-->
-    ${field}$
+    ${field.c_name}$ = ${field.value.serialize}$
     <!--(end)-->
 <!--(else)-->
  no enums available
