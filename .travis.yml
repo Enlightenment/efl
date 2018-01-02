@@ -8,9 +8,6 @@ os: linux
 services:
   - docker
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-deps.sh ; fi
-
 matrix:
   include:
     - env: DISTRO=Ubuntu1710
@@ -25,6 +22,27 @@ matrix:
 # Xcode 7.3.1, OS X 10.11
 # Xcode 8.3.3, OS X 10.12
 
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-deps.sh ; fi
+
+before_script:
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
+        docker pull stefanschmidt1/ci-support-files:$DISTRO
+      fi
+
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then docker build -f  .ci/Dockerfile-$DISTRO . ; fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
+        docker run -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO /src/.ci/ci-linux-build.sh
+      fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-build.sh ; fi
+
+after_success:
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
+        docker login -u stefanschmidt1 -p "$DOCKER_PASSWORD"
+        docker tag stefanschmidt1/ci-support-files:$DISTRO stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
+        docker push stefanschmidt1/ci-support-files:$DISTRO
+        docker push stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
+      fi
