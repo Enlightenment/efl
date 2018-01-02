@@ -21,6 +21,9 @@ bin_eolian_js_eolian_js_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 bin_eolian_js_eolian_js_LDADD = @USE_EO_LIBS@ @USE_EOLIAN_LIBS@
 bin_eolian_js_eolian_js_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@ @USE_EOLIAN_INTERNAL_LIBS@
 
+# generate C++ bindings before compiling C++ files for JS binding
+bin/eolian_js/bin_eolian_js_eolian_js-main.$(OBJEXT): $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh)
+
 include Makefile_Eolian_Js_Helper.am
 
 ### Unit tests
