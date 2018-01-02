@@ -163,7 +163,7 @@ struct _Cnp_Data_Cb_Wrapper
 };
 
 static void
-_selection_data_ready_cb(void *data, Eo *obj, Efl_Selection_Data *seldata)
+_selection_data_ready_cb(void *data, Efl_Object *obj, Efl_Selection_Data *seldata)
 {
     printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->data.mem, seldata->data.len);
     Cnp_Data_Cb_Wrapper *wdata = data;
@@ -294,8 +294,8 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    seatid = _wl_default_seat_id_get(obj);
 #endif
 
-   efl_selection_manager_selection_has_owner(sel_man, obj,
-                                             EFL_SELECTION_TYPE_CLIPBOARD, seatid);
+   return efl_selection_manager_selection_has_owner(sel_man, obj,
+                                                    EFL_SELECTION_TYPE_CLIPBOARD, seatid);
 }
 
 EAPI Eina_Bool
@@ -307,8 +307,8 @@ elm_cnp_clipboard_selection_has_owner(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_selection_has_owner(sel_man, obj,
-                                             EFL_SELECTION_TYPE_CLIPBOARD, seatid);
+   return efl_selection_manager_selection_has_owner(sel_man, obj,
+                                                    EFL_SELECTION_TYPE_CLIPBOARD, seatid);
 }
 
 /*EOLIAN static Efl_Future *

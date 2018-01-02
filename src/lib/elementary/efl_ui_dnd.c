@@ -62,11 +62,11 @@ _efl_ui_dnd_drag_cancel(Eo *obj, void *pd, unsigned int seat)
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_action_set(Eo *obj, void *pd , Efl_Selection_Action action, unsigned int seat)
+_efl_ui_dnd_drag_action_set(Eo *obj, void *pd, Efl_Selection_Action action, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
-   efl_selection_manager_drag_action_set(sel_man, action, seat);
+   efl_selection_manager_drag_action_set(sel_man, obj, action, seat);
 }
 
 
@@ -360,7 +360,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 }
 
 EAPI Eina_Bool
-elm_drag_action_set(Evas_Object *obj EINA_UNUSED, Elm_Xdnd_Action action)
+elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 {
    Eo *sel_man = _selection_manager_get(obj);
    int seatid = 1;
@@ -368,7 +368,7 @@ elm_drag_action_set(Evas_Object *obj EINA_UNUSED, Elm_Xdnd_Action action)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_drag_action_set(sel_man, action, seatid);
+   efl_selection_manager_drag_action_set(sel_man, obj, action, seatid);
 
    return EINA_TRUE;
 }

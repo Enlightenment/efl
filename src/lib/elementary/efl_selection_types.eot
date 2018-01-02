@@ -47,7 +47,7 @@ struct Efl.Selection.Data
 function Efl.Selection.Data_Ready { //FIXME: promise
    [[Function pointer for getting selection]]
    params {
-      @in obj: Efl.Canvas.Object;
+      @in obj: Efl.Object;
       @in seldata: ptr(Efl.Selection.Data);
    }
 };

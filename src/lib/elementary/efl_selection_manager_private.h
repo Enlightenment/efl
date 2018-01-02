@@ -1,6 +1,7 @@
 #ifndef EFL_SELECTION_MANAGER_PRIVATE_H
 #define EFL_SELECTION_MANAGER_PRIVATE_H
 
+//#define HAVE_ELEMENTARY_WIN32
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -122,9 +123,8 @@ struct _Sel_Manager_Selection
    Efl_Selection_Action      action;
    Eina_Bool                 active : 1;
 
-   Eo                       *owner;
-
-   Eo                       *request_obj;
+   Efl_Object               *owner;
+   Efl_Object               *request_obj;
    void                     *data_func_data;
    Efl_Selection_Data_Ready  data_func;
    Eina_Free_Cb              data_func_free_cb;
@@ -157,7 +157,7 @@ struct _Sel_Manager_Seat_Selection
    Sel_Manager_Selection *sel_list;
 #endif
 
-   Sel_Manager_Selection_Lost *sel_lost_list;
+   Eina_List *sel_lost_list;
    //drag
    Eo *drag_obj;
    Efl_Selection_Action drag_action;
