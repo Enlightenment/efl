@@ -18,7 +18,7 @@ struct _Efl_Loop_Message_Future_Handler_Data
 //////////////////////////////////////////////////////////////////////////
 
 EOLIAN static Efl_Loop_Message_Future *
-_efl_loop_message_future_handler_message_type_add(Eo *obj, Efl_Loop_Message_Future_Handler_Data *pd)
+_efl_loop_message_future_handler_message_type_add(Eo *obj, Efl_Loop_Message_Future_Handler_Data *pd EINA_UNUSED)
 {
    // XXX: implemented event obj cache
    return efl_add(EFL_LOOP_MESSAGE_FUTURE_CLASS, obj);
