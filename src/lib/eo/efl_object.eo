@@ -159,7 +159,7 @@ abstract Efl.Object ()
          ]]
       }
       finalize {
-         [[Called at the end of #eo_add. Should not be called, just overridden.]]
+         [[Called at the end of efl_add. Should not be called, just overridden.]]
          return: Efl.Object; [[The new object created, can be NULL if aborting]]
       }
       name_find @const {
