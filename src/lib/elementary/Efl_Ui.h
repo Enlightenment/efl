@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-#ifdef _MSC_VER
-# include <Evil.h>
-#endif
-
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>

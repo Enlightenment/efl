@@ -272,10 +272,6 @@
 
 #include <Efl_Config.h>
 
-#ifdef _MSC_VER
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 #include <Eo.h>
 #include <Efl.h>

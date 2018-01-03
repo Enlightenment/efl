@@ -3,10 +3,6 @@
 
 #include <Efl_Config.h>
 
-#ifdef _MSC_VER
-# include <Evil.h>
-#endif
-
 #ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 #endif
