@@ -62,7 +62,7 @@ EAPI int efl_loop_exit_code_process(Eina_Value *value);
 
 #include "efl_loop_consumer.eo.h"
 
-EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(Eo *obj);
+EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);
 
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"

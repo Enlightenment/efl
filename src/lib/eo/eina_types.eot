@@ -79,4 +79,5 @@ struct @extern Eina.Rw_Slice {
 
 struct @extern Eina.Value.Type; [[Eina value type]]
 struct @extern Eina.Future; [[Eina_Future handle]]
+struct @extern Eina.Future.Scheduler; [[Eina_Future_Scheduler handle]]
 struct @extern Eina.Promise; [[Eina_Promise handle]]
