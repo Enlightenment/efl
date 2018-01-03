@@ -1767,9 +1767,9 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 
 /**
- * @brief Iterates over all the opened Edje file.
+ * @brief Iterates over all the opened Edje files.
  *
- * @return an iterator of Eina_File currently opened Edje file.
+ * @return an iterator of Eina_File for all currently open Edje files.
  *
  * @since 1.14
  */
