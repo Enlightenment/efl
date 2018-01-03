@@ -21,11 +21,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
-
-#ifndef _MSC_VER
-# include <stdint.h>
+#include <stdint.h>
 #include <unistd.h>
-#endif
 
 #ifdef _WIN32
 # include <Evil.h>

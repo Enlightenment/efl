@@ -270,7 +270,7 @@ struct _Embryo_Program
    void          *data;
 };
 
-#if defined (_MSC_VER) || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+#if (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
 # pragma pack(1)
 # define EMBRYO_STRUCT_PACKED
 #elif defined (__GNUC__) || (defined (__SUNPRO_C) && __SUNPRO_C >= 0x5100)
@@ -306,7 +306,7 @@ struct _Embryo_Header
    int nametable; /* name table, file version 7 only */
 } EMBRYO_STRUCT_PACKED;
 
-#if defined _MSC_VER || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+#if (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
 # pragma pack()
 #endif
 

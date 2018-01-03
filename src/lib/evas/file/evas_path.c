@@ -13,10 +13,8 @@
 #include <sys/stat.h>
 /* get the casefold feature! */
 #include <fnmatch.h>
-#ifndef _MSC_VER
-# include <unistd.h>
-# include <sys/param.h>
-#endif
+#include <unistd.h>
+#include <sys/param.h>
 
 #ifdef _WIN32
 # include <Evil.h>

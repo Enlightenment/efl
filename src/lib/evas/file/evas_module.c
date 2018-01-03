@@ -147,7 +147,6 @@ evas_module_paths_init(void)
      evas_module_paths = _evas_module_append(evas_module_paths, path);
 
    /* 2. PREFIX/lib/evas/modules/ */
-#ifndef _MSC_VER
    path = PACKAGE_LIB_DIR "/evas/modules";
    if (!eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
      {
@@ -155,7 +154,6 @@ evas_module_paths_init(void)
         if (path)
           evas_module_paths = _evas_module_append(evas_module_paths, path);
      }
-#endif
 }
 
 #define EVAS_EINA_STATIC_MODULE_DEFINE(Tn, Name) \

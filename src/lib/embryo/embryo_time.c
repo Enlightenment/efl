@@ -5,10 +5,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-#ifdef _MSC_VER
-# include <winsock2.h>
-#endif
-
 #ifdef _WIN32
 # include <Evil.h>
 #endif

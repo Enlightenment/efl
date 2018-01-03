@@ -28,26 +28,16 @@
 # include <ieeefp.h> // for Solaris
 #endif
 
-#ifdef _MSC_VER
-# include <float.h>
-#endif
-
 #ifdef HAVE_ISFINITE
 # define ECORE_FINITE(t)  isfinite(t)
 #else
-# ifdef _MSC_VER
-#  define ECORE_FINITE(t) _finite(t)
-# else
-#  define ECORE_FINITE(t) finite(t)
-# endif
+# define ECORE_FINITE(t) finite(t)
 #endif
 
 //#define FIX_HZ 1
 
 #ifdef FIX_HZ
-# ifndef _MSC_VER
-#  include <sys/param.h>
-# endif
+# include <sys/param.h>
 # ifndef HZ
 #  define HZ 100
 # endif

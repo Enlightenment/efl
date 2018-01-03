@@ -51,16 +51,7 @@
 
 #include "embryo_cc_sc.h"
 
-#if defined _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4125)	/* decimal digit terminates octal escape sequence */
-#endif
-
 #include "embryo_cc_sc7.scp"
-
-#if defined _MSC_VER
-#pragma warning(pop)
-#endif
 
 static void         stgstring(char *start, char *end);
 static void         stgopt(char *start, char *end);

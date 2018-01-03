@@ -2,9 +2,7 @@
 # include <config.h>
 #endif
 
-#ifndef _MSC_VER
-# include <unistd.h>
-#endif
+#include <unistd.h>
 #include <errno.h>
 
 #ifdef _WIN32

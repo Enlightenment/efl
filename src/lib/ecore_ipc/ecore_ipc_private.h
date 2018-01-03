@@ -38,7 +38,7 @@ typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
 #define ECORE_IPC_TYPE 0x0f
 #define ECORE_IPC_SSL  0xf0
 
-#if defined (_MSC_VER) || (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
+#if (defined (__SUNPRO_C) && __SUNPRO_C < 0x5100)
 # pragma pack(1)
 # define ECORE_IPC_STRUCT_PACKED
 #elif defined (__GNUC__) || (defined (__SUNPRO_C) && __SUNPRO_C >= 0x5100)

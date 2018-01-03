@@ -106,9 +106,7 @@ _edje_module_init(void)
    /* 1. libedje.so/../edje/modules/ */
    paths[0] = eina_module_symbol_path_get(_edje_module_init, "/edje/modules");
    /* 2. PREFIX/edje/modules/ */
-#ifndef _MSC_VER
    paths[1] = strdup(PACKAGE_LIB_DIR "/edje/modules");
-#endif
 
    for (j = 0; j < ((sizeof (paths) / sizeof (char *)) - 1); ++j)
      for (i = j + 1; i < sizeof (paths) / sizeof (char *); ++i)

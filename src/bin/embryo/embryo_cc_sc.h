@@ -35,13 +35,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <setjmp.h>
-
-#ifndef _MSC_VER
-# include <stdint.h>
-#else
-# include <stddef.h>
-# include <Evil.h>
-#endif
+#include <stdint.h>
 
 #include "embryo_cc_amx.h"
 

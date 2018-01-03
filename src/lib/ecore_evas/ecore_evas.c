@@ -11,10 +11,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
 # include <sys/mman.h>

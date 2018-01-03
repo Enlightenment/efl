@@ -26,10 +26,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifdef _MSC_VER
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_rbtree.h"
@@ -143,7 +139,7 @@ struct _Eina_Hash_Each
 
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \
-  || defined(_MSC_VER) || defined (__BORLANDC__) || defined (__TURBOC__)
+  || defined (__BORLANDC__) || defined (__TURBOC__)
 # define get16bits(d) (*((const uint16_t *)(d)))
 #endif
 

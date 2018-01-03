@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef _MSC_VER
-# include <process.h>
-#endif
-
 #ifdef _WIN32
 # include <Evil.h>
 #endif
