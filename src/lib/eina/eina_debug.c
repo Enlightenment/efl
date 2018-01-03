@@ -617,11 +617,11 @@ _thread_start(Eina_Debug_Session *session)
 #ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
 #endif
-   sigprocmask(SIG_BLOCK, &newset, &oldset);
+   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
 
    err = pthread_create(&monitor_thread, NULL, _monitor, session);
 
-   sigprocmask(SIG_SETMASK, &oldset, NULL);
+   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
    if (err != 0)
      {
         e_debug("EINA DEBUG ERROR: Can't create monitor debug thread!");
