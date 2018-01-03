@@ -935,7 +935,7 @@ EAPI Eina_Future *eina_future_rejected(Eina_Future_Scheduler *scheduler, Eina_Er
  *   f = eina_future_then_easy(f, .success = _future_cb1, .success_type = EINA_VALUE_TYPE_INT);
  *   // _future_cb2 will be executed after _future_cb1()
  *   f = eina_future_then_easy(f, .success = _future_cb2, .success_type = EINA_VALUE_TYPE_STRING);
- *   // _future_cb2 will be executed after _future_cb2()
+ *   // _future_cb3 will be executed after _future_cb2()
  *   f = eina_future_then_easy(f, .success = _future_cb3, .success_type = EINA_VALUE_TYPE_DOUBLE);
  *   // If an error happens _future_err will be called
  *   eina_future_then_easy(f, .error = _future_err);
