@@ -107,7 +107,7 @@ struct _Message
 struct _Efl_Loop_Future_Scheduler
 {
    Eina_Future_Scheduler  eina_future_scheduler;
-   Eo                    *loop;
+   const Eo              *loop;
    Efl_Loop_Data         *loop_data;
 };
 
