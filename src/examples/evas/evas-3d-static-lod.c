@@ -28,8 +28,8 @@
 #define  WIDTH          600
 #define  HEIGHT         600
 #define  NUMBER_MESHS   2
-#define  NEAR           90.0
-#define  FAR            1000.0
+#define  DNEAR           90.0
+#define  DFAR            1000.0
 
 static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/lod/iso_sphere";
 
@@ -86,8 +86,8 @@ _animate_scene(void *data)
         else
            z += 4.0;
 
-        if (z == NEAR * 2.0) pass = EINA_FALSE;
-        if (z == FAR / 2.0) pass = EINA_TRUE;
+        if (z == DNEAR * 2.0) pass = EINA_FALSE;
+        if (z == DFAR / 2.0) pass = EINA_TRUE;
 
         evas_canvas3d_node_position_set(scene->camera_node, x , y , z);
         evas_canvas3d_node_look_at_set(scene->camera_node, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0,
@@ -113,7 +113,7 @@ _camera_setup(Scene_Data *data)
 {
    data->camera = efl_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
 
-   evas_canvas3d_camera_projection_perspective_set(data->camera, NEAR, 1.0, 2.0, FAR);
+   evas_canvas3d_camera_projection_perspective_set(data->camera, DNEAR, 1.0, 2.0, DFAR);
 
    data->camera_node =
       efl_add(EVAS_CANVAS3D_NODE_CLASS, evas,
@@ -146,8 +146,8 @@ static void
 _mesh_setup(Scene_Data *data)
 {
    int i = 0;
-   Evas_Real distances[NUMBER_MESHS + 2] = {NEAR, 150.0, 300.0, 500.0};
-   Evas_Real m_distances[NUMBER_MESHS + 2] = {NEAR, 200.0, 500.0, 500.0};
+   Evas_Real distances[NUMBER_MESHS + 2] = {DNEAR, 150.0, 300.0, 500.0};
+   Evas_Real m_distances[NUMBER_MESHS + 2] = {DNEAR, 200.0, 500.0, 500.0};
 
    /* Setup material. */
    data->material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
