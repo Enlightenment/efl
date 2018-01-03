@@ -13,8 +13,8 @@ before_install:
 
 matrix:
   include:
-    - env: DISTRO=Ubuntu1704
-    - env: DISTRO=Fedora26
+    - env: DISTRO=Ubuntu1710
+    - env: DISTRO=Fedora27
     - env: DISTRO=Debian91
     - os: osx
       osx_image: xcode7.3
