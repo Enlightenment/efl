@@ -714,8 +714,8 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    return &version;
 }
 
-EOLIAN static Eina_Future_Scheduler *
-_efl_loop_future_scheduler_get(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+EAPI Eina_Future_Scheduler *
+efl_loop_future_scheduler_get(Eo *obj)
 {
    if (!obj) return NULL;
 

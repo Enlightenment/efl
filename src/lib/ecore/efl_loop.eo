@@ -47,17 +47,6 @@ class Efl.Loop (Efl.Object)
             @cref version: Efl.Version; [[Efl version]]
          }
       }
-      @property future_scheduler {
-         [[The future scheduler for the current loop.
-
-           If no future scheduler has been created for the loop then a new one
-           will be set up.
-         ]]
-         get {}
-         values {
-            future_scheduler: ptr(Eina.Future.Scheduler); [[The current loop' sfuture scheduler.]]
-         }
-      }
       iterate {
          [[Runs a single iteration of the main loop to process everything on the
          queue.]]
