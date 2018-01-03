@@ -15,7 +15,6 @@
 #include "evil_test_environment.h"
 #include "evil_test_gettimeofday.h"
 #include "evil_test_link.h"
-#include "evil_test_memcpy.h"
 #include "evil_test_mkstemp.h"
 #include "evil_test_pipe.h"
 #include "evil_test_print.h"
