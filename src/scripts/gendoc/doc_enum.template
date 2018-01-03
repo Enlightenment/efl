@@ -1,0 +1,39 @@
+<!--(include)-->doc_macros.include<!--(end)-->#!
+~~Title: ${enum.full_name}$~~
+====== ${enum.full_name}$ (enum) ======
+
+${BEST_SUMMARY(obj=enum)}$
+
+${BEST_DESCRIPTION(obj=enum)}$
+
+${BEST_SINCE(obj=enum)}$
+
+${OBJECT_STATIC_CONTENT(obj=enum, section='description')}$
+
+===== Fields =====
+
+${OBJECT_STATIC_CONTENT(obj=enum, section='fields')}$
+
+<!--(for field in enum.enum_fields)-->
+  * **${field.name}$** - ${BEST_SUMMARY(obj=field)}$
+<!--(end)-->
+
+===== Signature =====
+
+<code>
+enum {
+<!--(for field in enum.enum_fields)-->
+    ${field.name}$: ${field.value.serialize}$,
+<!--(end)-->
+}
+</code>
+
+===== C Signature =====
+
+<code>
+typedef enum {
+<!--(for field in enum.enum_fields)-->
+    ${field.c_name}$ = ${field.value.serialize}$,
+<!--(end)-->
+} ${enum.full_name.replace('.', '_')}$;
+</code>

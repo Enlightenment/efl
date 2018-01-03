@@ -1,0 +1,106 @@
+<!--(include)-->doc_macros.include<!--(end)-->#!
+~~Title: ${cls.full_name}$~~
+====== ${cls.full_name}$ (${CLS_TYPE}$) ======
+
+${BEST_SUMMARY(obj=cls)}$
+
+${BEST_DESCRIPTION(obj=cls)}$
+
+${BEST_SINCE(obj=cls)}$
+
+${OBJECT_STATIC_CONTENT(obj=cls, section='description')}$
+
+<!--(if len(list(cls.inherits)) > 0)-->
+===== Inheritance =====
+
+  <!--(for inherit in cls.hierarchy)-->
+ => ${CLS_LINK(cls=inherit)}$#!
+  <!--(end)-->
+
+++++ Full hierarchy |
+
+  <!--(for inherit in cls.inherits)-->
+  * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+    <!--(for inherit in inherit.inherits)-->
+    * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+      <!--(for inherit in inherit.inherits)-->
+      * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+        <!--(for inherit in inherit.inherits)-->
+        * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+          <!--(for inherit in inherit.inherits)-->
+          * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+            <!--(for inherit in inherit.inherits)-->
+            * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+              <!--(for inherit in inherit.inherits)-->
+              * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+                <!--(for inherit in inherit.inherits)-->
+                * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+                  <!--(for inherit in inherit.inherits)-->
+                  * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+                    <!--(for inherit in inherit.inherits)-->
+                    * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
+                    <!--(end)-->
+                  <!--(end)-->
+                <!--(end)-->
+              <!--(end)-->
+            <!--(end)-->
+          <!--(end)-->
+        <!--(end)-->
+      <!--(end)-->
+    <!--(end)-->
+  <!--(end)-->
+
+++++
+<!--(end)-->
+
+===== Properties =====
+
+<!--(for impl in cls.implements)-->
+  <!--(if impl.is_property)-->
+${IMPLEMENT_FULL(impl=impl, cls=cls)}$
+\\
+  <!--(end)-->
+<!--(else)-->
+No properties defined in this class.
+<!--(end)-->
+
+===== Methods =====
+
+<!--(for impl in cls.implements)-->
+  <!--(if impl.is_method)-->
+${IMPLEMENT_FULL(impl=impl, cls=cls)}$
+\\
+  <!--(end)-->
+<!--(else)-->
+No Methods defined in this class.
+<!--(end)-->
+
+===== Inherited members =====
+
+<!--(for cls2 in cls.inherits_full)-->
+^ ${CLS_LINK(cls=cls2)}$ //(${CLS_TYPE(cls=cls2)}$)//^^^
+  <!--(for impl in cls2.implements)-->
+| ${FUNC_SCOPE(func=impl.function)}$ #!
+| **${FUNC_LINK(func=impl.function)}$** #!
+| ${BEST_SUMMARY(obj=impl)}$ |
+  <!--(end)-->
+<!--(else)-->
+No inherits defined in this class.
+<!--(end)-->
+
+===== Events =====
+
+<!--(for i, ev in enumerate(cls.events))-->
+  <!--(if i == 0)-->
+^ Local implemented ^^ event info ^
+  <!--(end)-->
+| ''${ev.name}$'' | ${BEST_SUMMARY(obj=ev)}$ ${OBJECT_SCOPE(obj=ev)}$ ${EVENT_TAGS}$| ${TYPE_LINK(type=ev.type) if ev.type else 'None'}$ |
+<!--(end)-->
+<!--(for cls2 in cls.inherits_full)-->
+  <!--(for i, ev in enumerate(cls2.events))-->
+    <!--(if i == 0)-->
+^ Inherited from ${CLS_LINK(cls=cls2)}$ //(${CLS_TYPE(cls=cls2)}$)// ^^ event info ^
+    <!--(end)-->
+| ''${ev.name}$'' | ${BEST_SUMMARY(obj=ev)}$ ${OBJECT_SCOPE(obj=ev)}$ ${EVENT_TAGS}$ | ${TYPE_LINK(type=ev.type) if ev.type else 'None'}$ |
+  <!--(end)-->
+<!--(end)-->

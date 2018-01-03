@@ -1,0 +1,52 @@
+<!--(include)-->doc_macros.include<!--(end)-->#!
+~~Title: EFL Reference~~
+{{page>:develop:api-include:reference:general&nouser&nolink&nodate}}
+
+<!--(for ns in nspaces)-->
+   <!--(if ns.name.startswith('Efl'))-->
+===== ${ns.name}$ =====
+
+      <!--(for i, cls in enumerate(ns.regulars))-->
+         <!--(if i == 0)-->
+^ Classes ^^
+         <!--(end)-->
+| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+      <!--(end)-->
+#!
+      <!--(for i, cls in enumerate(ns.interfaces))-->
+         <!--(if i == 0)-->
+^ Interfaces ^^
+         <!--(end)-->
+| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+      <!--(end)-->
+#!
+      <!--(for i, cls in enumerate(ns.mixins))-->
+         <!--(if i == 0)-->
+^ Mixins ^^
+         <!--(end)-->
+| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+      <!--(end)-->
+#!
+      <!--(for i, typedecl in enumerate(ns.aliases))-->
+         <!--(if i == 0)-->
+^ Aliases ^^
+         <!--(end)-->
+| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+      <!--(end)-->
+#!
+      <!--(for i, typedecl in enumerate(ns.structs))-->
+         <!--(if i == 0)-->
+^ Structures ^^
+         <!--(end)-->
+| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+      <!--(end)-->
+#!
+      <!--(for i, typedecl in enumerate(ns.enums))-->
+         <!--(if i == 0)-->
+^ Enumerations ^^
+         <!--(end)-->
+| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+      <!--(end)-->
+
+   <!--(end)-->
+<!--(end)-->

@@ -1,0 +1,253 @@
+#!##############################################################################
+#!####  BEST_SUMMARY(obj)  #####################################################
+#!##############################################################################
+<!--(macro BEST_SUMMARY)-->
+   <!--(if isinstance(obj, Implement))-->
+      <!--(if obj.documentation_get(obj.function.type))-->
+${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).summary_tokens)}$#!
+      <!--(else)-->
+         <!--(for parent_impl in obj.class_.implements)-->
+            <!--(if parent_impl.function.name == obj.function.name)-->
+               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
+${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).summary_tokens)}$#!
+               <!--(end)-->
+            <!--(end)-->
+         <!--(end)-->
+      <!--(end)-->
+   <!--(elif obj.documentation)-->
+${UNTOKENIZE(tokens=obj.documentation.summary_tokens)}$#!
+   <!--(else)-->
+**MISSING DOCS !!!!!**#!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  BEST_DESCRIPTION(obj)  #################################################
+#!##############################################################################
+<!--(macro BEST_DESCRIPTION)-->
+   <!--(if isinstance(obj, Implement))-->
+      <!--(if obj.documentation_get(obj.function.type))-->
+${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).description_tokens)}$#!
+      <!--(else)-->
+         <!--(for parent_impl in obj.class_.implements)-->
+            <!--(if parent_impl.function.name == obj.function.name)-->
+               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
+${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).description_tokens)}$#!
+               <!--(end)-->
+            <!--(end)-->
+         <!--(end)-->
+      <!--(end)-->
+   <!--(elif obj.documentation)-->
+${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
+   <!--(else)-->
+**MISSING DOCS !!!!!**#!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  BEST_SINCE(obj)  #######################################################
+#!##############################################################################
+<!--(macro BEST_SINCE)-->
+   <!--(if obj.documentation and obj.documentation.since)-->
+//Since ${obj.documentation.since}$//
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  UNTOKENIZE(tokens)  ####################################################
+#!##############################################################################
+<!--(macro UNTOKENIZE)-->
+   <!--(for i, paragraph in enumerate(tokens))-->
+${'\n\n' if i else ''}$#!
+      <!--(for token in paragraph)-->
+         <!--(if token.type == Eolian_Doc_Token_Type.TEXT)-->
+%%${token.text}$%%#!
+         <!--(elif token.type == Eolian_Doc_Token_Type.REF)-->
+**REF ${token.text}$ ${token.ref}$ ??**#!
+         <!--(elif token.type == Eolian_Doc_Token_Type.MARKUP_MONOSPACE)-->
+''${token.text}$''#!
+         <!--(elif token.type == Eolian_Doc_Token_Type.MARK_NOTE)-->
+<note>
+${token.text}$
+</note>
+         <!--(elif token.type == Eolian_Doc_Token_Type.MARK_WARNING)-->
+<note warning>
+${token.text}$
+</note>
+         <!--(elif token.type == Eolian_Doc_Token_Type.MARK_REMARK)-->
+<note tip>
+${token.text}$
+</note>
+         <!--(elif token.type == Eolian_Doc_Token_Type.MARK_TODO)-->
+<note>
+**TODO:** ${token.text}$
+</note>
+         <!--(else)-->
+**USUPPORTED TOKEN TYPE ${token}$**
+         <!--(end)-->
+      <!--(end)-->
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  CLS_TYPE(cls)  #########################################################
+#!##############################################################################
+<!--(macro CLS_TYPE)-->
+   <!--(if cls.type == Eolian_Class_Type.REGULAR)-->
+class#!
+   <!--(elif cls.type == Eolian_Class_Type.ABSTRACT)-->
+class#!
+   <!--(elif cls.type == Eolian_Class_Type.MIXIN)-->
+mixin#!
+   <!--(elif cls.type == Eolian_Class_Type.INTERFACE)-->
+interface#!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  CLS_LINK(cls)  #########################################################
+#!##############################################################################
+<!--(macro CLS_LINK)-->
+[[:develop:api#!
+   <!--(for n in cls.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${cls.name.lower()}$|${cls.full_name}$]]
+<!--(end)-->
+#!##############################################################################
+#!####  EVENT_LINK(cls, ev)  ###################################################
+#!##############################################################################
+<!--(macro EVENT_LINK)-->
+[[:develop:api#!
+   <!--(for n in cls.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${cls.name.lower()}$#!
+:event#!
+:${ev.name.lower().replace(',','_')}$|${ev.name}$]]
+<!--(end)-->
+#!##############################################################################
+#!####  TYPEDECL_LINK(typedecl)  ###############################################
+#!##############################################################################
+<!--(macro TYPEDECL_LINK)-->
+[[:develop:api#!
+   <!--(for n in typedecl.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${typedecl.name.lower()}$|${typedecl.full_name}$]]
+<!--(end)-->
+#!##############################################################################
+#!####  TYPE_LINK(type)  #######################################################
+#!##############################################################################
+<!--(macro TYPE_LINK)-->
+[[:develop:api#!
+   <!--(for n in type.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${type.name.lower()}$|${type.full_name}$]]
+<!--(end)-->
+#!##############################################################################
+#!####  FUNC_LINK(func)  #######################################################
+#!##############################################################################
+<!--(macro FUNC_LINK)-->
+[[:develop:api#!
+   <!--(for n in func.class_.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+   <!--(if func.type == Eolian_Function_Type.METHOD)-->
+:method#!
+   <!--(else)-->
+:property#!
+   <!--(end)-->
+:${func.name}$|${func.name}$]]
+<!--(end)-->
+#!##############################################################################
+#!####  FUNC_SCOPE(func)  ######################################################
+#!##############################################################################
+<!--(macro FUNC_SCOPE)-->
+   <!--(if func.is_class)-->
+ ''class method'' #!
+   <!--(end)-->
+   <!--(if func.type == Eolian_Function_Type.PROPERTY)-->
+      <!--(if func.getter_scope == Eolian_Object_Scope.PROTECTED)-->
+ ''protected get'' #!
+      <!--(elif func.getter_scope == Eolian_Object_Scope.PRIVATE)-->
+ ''private get'' #!
+      <!--(end)-->
+      <!--(if func.setter_scope == Eolian_Object_Scope.PROTECTED)-->
+ ''protected set'' #!
+      <!--(elif func.setter_scope == Eolian_Object_Scope.PRIVATE)-->
+ ''private set'' #!
+      <!--(end)-->
+   <!--(elif func.type == Eolian_Function_Type.METHOD)-->
+      <!--(if func.method_scope == Eolian_Object_Scope.PROTECTED)-->
+ ''protected'' #!
+      <!--(elif func.method_scope == Eolian_Object_Scope.PRIVATE)-->
+ ''private'' #!
+      <!--(end)-->
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  OBJECT_SCOPE(obj)  #####################################################
+#!##############################################################################
+<!--(macro OBJECT_SCOPE)-->
+   <!--(if obj.scope == Eolian_Object_Scope.PROTECTED)-->
+ ''private'' #!
+   <!--(elif obj.scope == Eolian_Object_Scope.PRIVATE)-->
+ ''protected'' #!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  EVENT_TAGS(ev)  ########################################################
+#!##############################################################################
+<!--(macro EVENT_TAGS)-->
+   <!--(if ev.is_hot)-->
+ ''hot'' #!
+   <!--(elif ev.is_restart)-->
+ ''restart'' #!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  IMPLEMENT_FULL(impl, cls)  #############################################
+#!##############################################################################
+<!--(macro IMPLEMENT_FULL)-->
+**${FUNC_LINK(func=impl.function)}$** #!
+(#!
+   <!--(if impl.is_property)-->
+      <!--(for i, val in enumerate(impl.function.getter_values or impl.function.setter_values))-->
+${', ' if i else ''}$${val.type.name}$#!
+      <!--(end)-->
+   <!--(elif impl.is_method)-->
+      <!--(for i, param in enumerate(impl.function.parameters))-->
+${', ' if i else ''}$#!
+//${param.type.name}$// ''${param.direction.name.lower()}$'' **${param.name}$**#!
+      <!--(end)-->
+   <!--(end)-->
+)#!
+   <!--(if impl.is_prop_get and impl.is_prop_set)-->
+ ''rw'' #!
+   <!--(elif impl.is_prop_get)-->
+ ''read only'' #!
+   <!--(elif impl.is_prop_set)-->
+ ''write only'' #!
+   <!--(elif impl.is_method)-->
+      <!--(if impl.function.method_return_type)-->
+ => //${impl.function.method_return_type.name}$// #!
+      <!--(else)-->
+ => //None// #!
+      <!--(end)-->
+   <!--(end)-->
+${FUNC_SCOPE(func=impl.function)}$#!
+   <!--(if impl.class_ != cls)-->
+//[Overridden from ${CLS_LINK(cls=impl.class_)}$]// #!
+   <!--(end)-->
+\\
+> ${BEST_SUMMARY(obj=impl)}$
+<!--(end)-->
+#!##############################################################################
+#!####  OBJECT_STATIC_CONTENT(obj, section)  ###################################
+#!##############################################################################
+<!--(macro OBJECT_STATIC_CONTENT)-->
+{{page>:develop:api-include#!
+   <!--(for ns in obj.namespaces)-->
+:${ns.lower()}$#!
+   <!--(end)-->
+:${obj.name.lower()}$#!
+:{section}#!
+&nouser&nolink&nodate}}
+<!--(end)-->

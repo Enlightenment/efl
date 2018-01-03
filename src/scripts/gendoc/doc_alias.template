@@ -1,0 +1,24 @@
+<!--(include)-->doc_macros.include<!--(end)-->#!
+~~Title: ${alias.full_name}$~~
+====== ${alias.full_name}$ (alias) ======
+
+${BEST_SUMMARY(obj=alias)}$
+
+${BEST_DESCRIPTION(obj=alias)}$
+
+${BEST_SINCE(obj=alias)}$
+
+${OBJECT_STATIC_CONTENT(obj=alias, section='description')}$
+
+===== Signature =====
+
+<code>
+TODO
+</code>
+
+===== C signature =====
+
+<code>
+TODO
+</code>
+
