@@ -130,6 +130,12 @@ option('elput',
   description : 'build elput'
 )
 
+option('ecore_cocoa',
+  type : 'boolean',
+  value : false,
+  description : 'build ecore_cocoa'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',

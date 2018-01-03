@@ -3,6 +3,11 @@ project('efl', ['c','cpp'],
   default_options : ['buildtype=plain']
 )
 
+if target_machine.system() == 'darwin'
+  add_languages('objc')
+endif
+
+
 clean_check = run_command('meson/clean_check.sh')
 if clean_check.returncode() == 0
   error('Meson build requires a clean source tree')
@@ -109,6 +114,7 @@ subprojects = [
 ['ector'            , false,  true, false, false,  true, false, ['draw', 'triangulator', 'freetype']],
 ['elput'            , false,  true, false, false,  true, false, []],
 ['ecore_drm2'       , false,  true, false, false, false, false, []],
+['ecore_cocoa'      , false,  true, false, false, false, false, []],
 ]
 
 
