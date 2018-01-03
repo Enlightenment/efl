@@ -5585,3 +5585,23 @@ efl_wl_extracted_surface_object_find(void *surface_resource)
 
    return cs->obj;
 }
+
+Evas_Object *
+efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface)
+{
+   Comp_Surface *cs;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+   if (!eina_streq(evas_object_type_get(surface), "comp_surface")) abort();
+
+   cs = evas_object_smart_data_get(surface);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!cs->extracted, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cs->dead, NULL);
+
+   if (cs->parent)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!cs->parent->extracted, NULL);
+        return cs->parent->obj;
+     }
+   return NULL;
+}
