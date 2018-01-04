@@ -360,6 +360,7 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
    const Emotion_Engine *engine;
    void *data;
    Eina_Module *m;
+   char *disp = NULL;
 
    _emotion_modules_load();
 
@@ -368,6 +369,13 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
         name = getenv("EMOTION_ENGINE");
         DBG("using EMOTION_ENGINE=%s", name);
      }
+
+   if (getenv("WAYLAND_DISPLAY"))
+     {
+        disp = eina_strdup(getenv("DISPLAY"));
+        unsetenv("DISPLAY");
+     }
+
 
    if (name)
      {
@@ -401,6 +409,8 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
              if (data)
                {
                   INF("Using requested engine %s, data=%p", name, data);
+                  if (disp) setenv("DISPLAY", disp, 1);
+                  free(disp);
                   return _emotion_engine_instance_new(engine, obj, data);
                }
 
@@ -418,11 +428,15 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
         if (data)
           {
              INF("Using fallback engine %s, data=%p", engine->name, data);
+             if (disp) setenv("DISPLAY", disp, 1);
+             free(disp);
              return _emotion_engine_instance_new(engine, obj, data);
           }
      }
 
    ERR("No engine worked");
+   if (disp) setenv("DISPLAY", disp, 1);
+   free(disp);
    return NULL;
 }
 
