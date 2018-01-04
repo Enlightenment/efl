@@ -159,7 +159,8 @@ _efl_ui_popup_alert_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_
 
    if (ppd->needs_group_calc)
      {
-        _sizing_eval(obj, pd);
+        if (ppd->needs_size_calc)
+          _sizing_eval(obj, pd);
 
         //Not to calculate size by super class
         ppd->needs_size_calc = EINA_FALSE;
