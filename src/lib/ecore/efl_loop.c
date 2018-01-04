@@ -717,6 +717,8 @@ _efl_loop_efl_version_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 EAPI Eina_Future_Scheduler *
 efl_loop_future_scheduler_get(const Eo *obj)
 {
+   Efl_Loop *loop;
+
    if (!obj) return NULL;
 
    if (efl_isa(obj, EFL_LOOP_CLASS))
@@ -734,8 +736,14 @@ efl_loop_future_scheduler_get(const Eo *obj)
           }
         return &(pd->future_scheduler.eina_future_scheduler);
      }
+   if (efl_isa(obj, EFL_LOOP_CONSUMER_CLASS))
+     return efl_loop_future_scheduler_get(efl_loop_get(obj));
 
-   return efl_loop_future_scheduler_get(efl_loop_get(obj));
+   loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   if (loop)
+     return efl_loop_future_scheduler_get(loop);
+
+   return NULL;
 }
 
 #define EFL_LOOP_EXTRA_OPS \
