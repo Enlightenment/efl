@@ -751,10 +751,10 @@ efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb cancel_cb, const void
 EAPI Eina_Promise *
 efl_loop_main_promise_new(Eina_Promise_Cancel_Cb cancel_cb, const void *data)
 {
-   Efl_Loop *main;
+   Efl_Loop *main_loop;
 
-   main = efl_loop_main_get(EFL_LOOP_CLASS);
-   return eina_promise_new(efl_loop_future_scheduler_get(main),
+   main_loop = efl_loop_main_get(EFL_LOOP_CLASS);
+   return eina_promise_new(efl_loop_future_scheduler_get(main_loop),
                            cancel_cb, data);
 }
 
