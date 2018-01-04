@@ -247,7 +247,7 @@ struct _Sel_Manager_Dropable
    Eina_Inlist             *format_list;
    unsigned int             seat;
    struct {
-      Eina_Position2D      pos;
+      Eina_Position2D       pos;
       Eina_Bool             in : 1;
       const char           *type;
       Efl_Selection_Format  format;
@@ -256,7 +256,7 @@ struct _Sel_Manager_Dropable
    //for container
    Efl_Dnd_Item_Get         item_func;
    void                    *item_func_data;
-   Eina_Bool                is_container;
+   Eina_Bool                is_container : 1;
 };
 
 struct _Item_Container_Drop_Info
@@ -303,7 +303,6 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *end_handler;
    Ecore_Wl2_Display   *wl_display;
 #endif
-   //Efl_Promise        *promise;
    Efl_Selection_Type  loss_type;
 
    Sel_Manager_Atom   *atom_list;

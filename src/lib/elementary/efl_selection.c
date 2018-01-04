@@ -279,7 +279,7 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type type,
    if (!ldata) return;
    ldata->obj = obj;
    ldata->type = type;
-   ldata->udata = data;
+   ldata->udata = (void *)data;
    ldata->loss_cb = func;
    lost_cb_list = eina_list_append(lost_cb_list, ldata);
 }

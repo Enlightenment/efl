@@ -918,7 +918,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
    if (!seat_sel)
      return EINA_FALSE;
 
-   sel_debug("selection notify callback: %d",ev->selection);
+   sel_debug("selection notify callback: %d", ev->selection);
    switch (ev->selection)
      {
       case ECORE_X_SELECTION_PRIMARY:
@@ -956,6 +956,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                   sel_debug("Found something: %s", pd->atom_list[i].name);
 
                   success = pd->atom_list[i].x_data_preparer(seat_sel, ev, &ddata, &tmp_info);
+                  sel_debug("ddata: %s (%d)", (const char *)ddata.data.mem, ddata.data.len);
                   if ((pd->atom_list[i].format == EFL_SELECTION_FORMAT_IMAGE) &&
                       (seat_sel->saved_types->imgfile))
                     break;
@@ -979,7 +980,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                  ddata.action = sel->action;
                                  if (!dropable->is_container)
                                    {
-                                      sel_debug("has dropable");
+                                      sel_debug("normal dnd, not container");
                                       ddata.pos = seat_sel->saved_types->pos;
                                    }
                                  else
@@ -1002,9 +1003,14 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                       ERR("last format: %d, df format: %d", dropable->last.format, df->format);
                                     if (df->format & dropable->last.format)
                                       {
+                                         sel_debug("calling Drop event on: %p", dropable->obj);
                                          efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                                       }
                                    }
+                              }
+                            else
+                              {
+                                 sel_debug("dnd: has NO dropable");
                               }
                          }
                        /* We have to finish DnD, no matter what */
@@ -4303,6 +4309,7 @@ _anim_icons_make(Sel_Manager_Drag_Container *dc)
 
    if (dc->icon_list_func)
      {
+        ERR("calling icon_list_func");
         icon_list = dc->icon_list_func(dc->icon_list_func_data, dc->cont);
      }
    EINA_LIST_FREE(icon_list, obj)
@@ -4335,6 +4342,7 @@ _cont_obj_drag_done_cb(void *data, const Efl_Event *ev)
 static Eina_Bool
 _cont_obj_drag_start(void *data)
 {
+   ERR("going to start draging");
    Sel_Manager_Drag_Container *dc = data;
 
    dc->timer = NULL;
@@ -4408,6 +4416,7 @@ _drag_anim_start(Sel_Manager_Drag_Container *dc)
 static Eina_Bool
 _cont_obj_anim_start(void *data)
 {
+   ERR("In");
    sel_debug("In");
    Sel_Manager_Drag_Container *dc = data;
    Efl_Object *it = NULL;
@@ -4415,6 +4424,7 @@ _cont_obj_anim_start(void *data)
 
    if (dc->item_get_func)
      {
+        ERR("calling item_get_func");
         it = dc->item_get_func(dc->item_get_func_data, dc->cont, dc->down, &posret);
      }
    dc->timer = NULL;
@@ -4430,10 +4440,12 @@ _cont_obj_anim_start(void *data)
 
    if (dc->drag_data_func)
      {
+        ERR("calling getting drag_data_func");
         dc->drag_data_func(dc->drag_data_func_data, dc->cont,
                            &dc->format, &dc->data, &dc->action);
         if (EINA_DBL_EQ(dc->anim_duration, 0.0))
           {
+             ERR("has no anim_duration, start directly");
              _cont_obj_drag_start(dc);
           }
         else
@@ -4441,10 +4453,12 @@ _cont_obj_anim_start(void *data)
              dc->icons = _anim_icons_make(dc);
              if (dc->icons)
                {
+                  ERR("has icons");
                   _drag_anim_start(dc);
                }
              else
                {
+                  ERR("does not have icons, wait for: %.1f", dc->anim_duration);
                   // even if we don't manage the icons animation, we have
                   // to wait until it is finished before beginning drag.
                   dc->timer = ecore_timer_add(dc->anim_duration,
@@ -4459,6 +4473,7 @@ _cont_obj_anim_start(void *data)
 static void
 _abort_drag(Evas_Object *obj, Sel_Manager_Drag_Container *dc)
 {
+   ERR("In");
    evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_MOVE,
                                        _cont_obj_mouse_move_cb, dc);
    evas_object_event_callback_del_full(dc->cont, EVAS_CALLBACK_MOUSE_UP,
@@ -4498,6 +4513,7 @@ _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _anim_data_free(Sel_Manager_Drag_Container *dc)
 {
+   ERR("In");
    if (dc)
      {
         ELM_SAFE_FREE(dc->animator, ecore_animator_del);
@@ -4515,6 +4531,7 @@ _anim_data_free(Sel_Manager_Drag_Container *dc)
 static void
 _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   ERR("In");
    Sel_Manager_Drag_Container *dc = data;
 
    if (((Evas_Event_Mouse_Up *)event_info)->button != 1)
@@ -4532,6 +4549,7 @@ _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _cont_obj_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
+   ERR("In");
    Sel_Manager_Drag_Container *dc = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (ev->button != 1)

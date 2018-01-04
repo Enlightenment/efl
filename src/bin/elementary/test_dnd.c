@@ -520,7 +520,7 @@ _5s_timeout_gone(void *data)
 static Evas_Object *
 _gl_createicon(void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff)
 {
-   printf("<%s> <%d>\n", __func__, __LINE__);
+   printf("<%s> <%d>, data: %p\n", __func__, __LINE__, data);
    Evas_Object *icon = NULL;
    Evas_Object *o = elm_object_item_part_content_get(data, "elm.swallow.icon");
 
@@ -541,6 +541,11 @@ _gl_createicon(void *data, Evas_Object *win, Evas_Coord *xoff, Evas_Coord *yoff)
               EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         if (xoff && yoff) evas_object_move(icon, *xoff, *yoff);
         evas_object_resize(icon, w, h);
+        printf("%s %d: created icon %p with size: %d %d\n", __FUNCTION__, __LINE__, icon, w, h);
+     }
+   else
+     {
+        printf("%s %d: icon part of item is NULL -> NULL icon\n", __FUNCTION__, __LINE__);
      }
 
    return icon;
@@ -629,6 +634,10 @@ _grid_get_drag_data(Evas_Object *obj, Elm_Object_Item *it, Eina_List **items)
         void *p = eina_list_search_unsorted(*items, _item_ptr_cmp, it);
         if (!p)
           *items = eina_list_append(*items, it);
+     }
+   else
+     {
+        printf("<%s> <%d> it does not exist\n", __func__, __LINE__);
      }
    drag_data = _drag_data_build(items);
    printf("<%s> <%d> Sending <%s>\n", __func__, __LINE__, drag_data);
@@ -748,6 +757,7 @@ _grid_data_getcb(Evas_Object *obj,  /* The genlist object */
    info->format = ELM_SEL_FORMAT_TARGETS;
    info->createicon = _gl_createicon;
    info->createdata = it;
+   printf("%s %d: createdata (it): %p", __FUNCTION__, __LINE__, it);
    info->dragstart = _gl_dragstart;
    info->icons = _grid_icons_get(obj);
    info->dragdone = _gl_dragdone;
@@ -1062,6 +1072,7 @@ static Eina_Bool _drop_bg_change_cb(void *data EINA_UNUSED, Evas_Object *obj, El
    if (!dd) return EINA_FALSE;
    char *p = dd;
    char *s = _drag_data_extract(&p);
+   printf("%s %d: got final data: '%s'\n", __FUNCTION__, __LINE__, s);
    elm_bg_file_set(obj, s, NULL);
    free(dd);
 
