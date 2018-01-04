@@ -2,15 +2,15 @@ interface Efl.Ui.Translatable
 {
    [[Interface for all translatable text APIs.
 
-     This is intended for translation of human readable on-screen text strings,
+     This is intended for translation of human readable on-screen text strings
      but may also be used in text-to-speech situations.
    ]]
    methods {
       @property translatable_text {
          [[A unique string to be translated.
            
-           Often this will be a human-readable string (eg. in English) but it
-           might as well be a unique string identifier that must then be
+           Often this will be a human-readable string (e.g. in English) but it
+           can also be a unique string identifier that must then be
            translated to the current locale with $dgettext() or any similar
            mechanism.
 
@@ -39,12 +39,12 @@ interface Efl.Ui.Translatable
          [[Requests this object to update its text strings for the current
            locale.
 
-           For the moment, strings are translated with $dgettext, so support for
+           Currently strings are translated with $dgettext, so support for
            this function may depend on the platform. It is up to the application
-           to provide their own translation data.
+           to provide its own translation data.
 
            This function is a hook meant to be implemented by any object that
-           supports translation. This might be called whenever a new object is
+           supports translation. This can be called whenever a new object is
            created or when the current locale changes, for instance. This should
            only trigger further calls to @.translation_update to children
            objects.

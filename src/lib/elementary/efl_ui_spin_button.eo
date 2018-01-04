@@ -4,8 +4,8 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
    [[A Button Spin.
 
      This is a widget which allows the user to increase or decrease
-     numeric values using arrow buttons, or edit values directly, clicking
-     over it and typing the new value.
+     numeric values using the arrow buttons or to edit values directly by clicking
+     over them and inputting new ones.
 
      @since 1.21
    ]]
@@ -14,17 +14,17 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
          [[Control whether the spin should circulate value when it reaches its minimum or maximum value.
 
            Disabled by default. If disabled, when the user tries to increment the
-           value,
+           value
            but displayed value plus step value is bigger than maximum value,
            the new value will be the maximum value.
-           The same happens when the user tries to decrement it,
+           The same happens when the user tries to decrement it
            but the value less step is less than minimum value. In this case,
            the new displayed value will be the minimum value.
 
-           When this is enabled, when the user tries to increment the value,
+           If enabled, when the user tries to increment the value
            but displayed value plus step value is bigger than maximum value,
-           the new value will be the minimum value. When the the user tries to
-           decrement it, but the value less step is less than minimum value,
+           the new value will become the minimum value. When the the user tries to
+           decrement it, if the value minus step is less than minimum value,
            the new displayed value will be the maximum value.
 
            E.g.:
@@ -33,8 +33,8 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
            $step = 20
            $displayed = 20
 
-           When the user decrement value (using left or bottom arrow), it will
-           displays $50.]]
+           When the user decrements the value (using left or bottom arrow), it will
+           display $50.]]
          set {
          }
          get {
@@ -44,15 +44,15 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
          }
       }
       @property editable {
-         [[Control whether the spin can be directly edited by the user or not.
+         [[Control whether the spin can be directly edited by the user.
 
-           Spin objects can have edition disabled, in which state they will
-           be changed only by arrows.
-           Useful for contexts
-           where you don't want your users to interact with it writing the value.
-           Specially
-           when using special values, the user can see real value instead
-           of special label on edition.]]
+           Spin objects can have editing disabled, in which case they can only
+           be changed by using arrows.
+           This is useful for situations
+           where you don't want your users to write their own value.
+           It's especially useful
+           when using special values. The user can see the real values instead
+           of special label when editing.]]
          set {
          }
          get {
@@ -75,6 +75,6 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      delay,changed; [[Called when spin delay changed]]
+      delay,changed; [[Called when spin delay is changed.]]
    }
 }

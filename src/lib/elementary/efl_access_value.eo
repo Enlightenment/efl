@@ -8,7 +8,7 @@ interface Efl.Access.Value ()
             [[Gets value displayed by a accessible widget.]]
          }
          set {
-            return: bool; [[$true if setting widgets value has succeed, $false otherwise.]]
+            return: bool; [[$true if setting widgets value has succeeded, otherwise $false .]]
          }
          values {
             value: double; [[Value of widget casted to floating point number.]]

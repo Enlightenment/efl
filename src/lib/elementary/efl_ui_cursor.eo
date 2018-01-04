@@ -6,17 +6,17 @@ interface Efl.Ui.Cursor ()
      The Elementary cursor is an internal smart object used to customize the
      mouse cursor displayed over objects (or widgets). In the most common
      scenario, the cursor decoration comes from the graphical engine Elementary
-     is running on. Those engines may provide different decorations for cursors,
-     and Elementary provides functions to choose them (think of X11 cursors, as
-     an example).
+     is running on. These engines may provide different decorations for cursors,
+     and Elementary provides functions to choose them for instance
+     X11 cursors.
 
-     By default, Elementary searches cursors only from engine. There's also the
-     possibility of, besides using engine provided cursors, also use the ones
+     By default, Elementary searches cursors only from the engine. Besides
+     using cursors provided by the you can also use those
      coming from Edje theme files. Both globally and per widget, Elementary
-     makes it possible for one to make the cursors lookup to be held on engines
-     only or on Elementary's theme file, too. To set cursor's hot spot, two data
-     items should be added to cursor's theme: "hot_x" and "hot_y", that are the
-     offset from upper-left corner of the cursor (coordinates 0,0).
+     can help you store cursors in engines
+     only or in Elementary's theme file. To set cursor's hot spot two data
+     items must be added to the cursor's theme: "hot_x" and "hot_y" are the
+     offset from the upper-left corner of the cursor (coordinates 0,0).
    ]]
    legacy_prefix: elm_object;
    methods {
@@ -24,7 +24,7 @@ interface Efl.Ui.Cursor ()
          [[The cursor to be shown when mouse is over the object
 
            This is the cursor that will be displayed when mouse is over the
-           object. The object can have only one cursor set to it, so if
+           object. The object can have only one cursor set to it so if
            @.cursor.set is called twice for an object, the previous set
            will be unset.
 

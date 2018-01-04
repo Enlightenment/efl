@@ -8,7 +8,7 @@ mixin Efl.Ui.Focus.Object
     ]]
     methods {
         @property focus_geometry {
-            [[The geometry to use to calculate the relations to other objects.]]
+            [[The geometry used to calculate relationships between other objects.]]
             get {
 
             }
@@ -17,13 +17,13 @@ mixin Efl.Ui.Focus.Object
             }
         }
         @property focus {
-            [[This gets called by the manager and should never be called by
-              someone else.
+            [[This is called by the manager and should never be called by
+              anyone else.
 
-             It can be used by an implementation of a focus object to adapt to
-             changes that are needed.
+             It can be used by configuring a focus object to adapt to
+             any changes that are required.
 
-             The function is emitting the focus state events, if focus is
+             The function emits the focus state events, if focus is
              different to the previous state.
             ]]
             get {
@@ -37,9 +37,9 @@ mixin Efl.Ui.Focus.Object
             }
         }
         prepare_logical {
-            [[Tells the object that the children of it will be queried soon by the given manager.
+            [[Tells the object that its children will be queried soon by the given manager.
 
-              Deleting items in the manager in this call will result in undefied behaviour and may crash. Dont do that!
+              Deleting manager items in this call will result in undefied behaviour and may cause your system to crash.
             ]]
         }
     }

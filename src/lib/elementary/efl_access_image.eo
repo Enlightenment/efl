@@ -8,7 +8,7 @@ mixin Efl.Access.Image ()
          get @pure_virtual {
          }
          keys {
-            screen_coords: bool; [[$true if we got the screen coordinates, $false otherwise]] 
+            screen_coords: bool; [[$true if we have the screen coordinates, otherwise $false]] 
          }
          values {
             x: int; [[X coordinate]]

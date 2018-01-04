@@ -16,7 +16,7 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
       @property selection_cursors {
          [[The cursors used for selection handling.
 
-           If the cursors are equal, there is
+           If the cursors are equal there's
            no selection.
 
            You are allowed to retain and modify them. Modifying them modifies
@@ -31,8 +31,8 @@ interface Efl.Ui.Text.Interactive (Efl.Text, Efl.Text.Font,
       @property editable {
          [[Whether the entry is editable.
 
-           By default text interactives are editable. However, setting this
-           property to $false will make it so key input will be disregarded.
+           By default text interactives are editable. However setting this
+           property to $false will make it so that key input will be disregarded.
          ]]
          set {
          }

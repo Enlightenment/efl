@@ -10,10 +10,10 @@ class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
          set {
             [[Set the step by which slider indicator will move.
 
-              This value is used when draggable object is moved automatically
-              i.e., in case of key event when up/down/left/right key is pressed
-              or in case when accessibility is set and flick event is used to
-              inc/dec slider values. By default step value is equal to 0.05.
+              This value is used when a draggable object is moved automatically
+              such as when key events like the up/down/left/right key are pressed
+              or in case accessibility is set and flick event is used to
+              inc/dec slider values. By default step value is 0.05.
 
               @since 1.8
             ]]

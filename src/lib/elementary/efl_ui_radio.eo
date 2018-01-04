@@ -5,30 +5,30 @@ class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
    methods {
       @property state_value {
          set {
-            [[Set the integer value that this radio object represents
+            [[Set the integer value that this radio object represents.
 
               This sets the value of the radio.
             ]]
          }
          get {
-            [[Get the integer value that this radio object represents
+            [[Get the integer value that this radio object represents.
 
               This gets the value of the radio.
             ]]
          }
          values {
-            value: int; [[The value to use if this radio object is selected]]
+            value: int; [[The value to use if this radio object is selected.]]
          }
       }
       @property value_pointer {
          set {
-            [[Set a convenience pointer to a integer to change when radio group
+            [[Set a convenience pointer to an integer, which changes when radio group
               value changes.
 
-              This sets a pointer to a integer, that, in addition to the radio
-              objects state will also be modified directly. To stop setting the
-              object pointed to simply use NULL as the valuep argument. If
-              valuep is not NULL, then when this is called, the radio objects
+              This sets a pointer to an integer that in addition to the radio
+              object state will also be modified directly. To stop setting the
+              object pointed to, simply use NULL as the valuep argument. If
+              valuep is not NULL then when called, the radio object
               state will also be modified to reflect the value of the integer
               valuep points to, just like calling elm_radio_value_set().
             ]]

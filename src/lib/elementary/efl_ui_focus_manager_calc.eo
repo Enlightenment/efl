@@ -1,8 +1,8 @@
 class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
-      Each registered item will get a other registered object into each
-      direction, you can get those items for the currently focused item if
+      Each registered item will get an other registered object in each
+      direction. You can get items for the currently focused item if
       you call request move.
 
       @since 1.20
@@ -26,10 +26,10 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
             return : bool; [[$true if successful, $false otherwise]]
         }
         register_logical {
-            [[Register a new item just for the logical parent.
+            [[Register a new item only for the logical parent.
 
               The item can never get focus, it just helps to build a tree out
-              of the items that are getting focus.
+              of the items that are.
             ]]
             params {
                 child : Efl.Ui.Focus.Object @nonull; [[The object to register]]
@@ -48,7 +48,7 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
             ]]
             params {
                 child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
-                redirect : Efl.Ui.Focus.Manager; [[Once $child got focused this
+                redirect : Efl.Ui.Focus.Manager; [[Once $child is focused this
                     element will be set as redirect]]
             }
             return : bool; [[$true if successful, $false otherwise]]
@@ -73,7 +73,7 @@ class Efl.Ui.Focus.Manager.Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         update_order {
             [[Give the given order to the parent's child.
 
-              Children from the list which are no real children are ignored.
+              Children from the list which are not true children are ignored.
             ]]
             params {
                 parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]

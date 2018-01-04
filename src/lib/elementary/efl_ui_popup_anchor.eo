@@ -4,9 +4,9 @@ class Efl.Ui.Popup_Anchor(Efl.Ui.Popup)
    methods {
       @property anchor {
          set {
-            [[Set anchor popup follows the anchor object.
+            [[Set anchor popup to follow an anchor object.
               If anchor object is moved or parent window is resized, the anchor popup moves to the new position.
-              If anchor object is set NULL, the anchor popup stop to following anchor object.
+              If anchor object is set to NULL, the anchor popup stops following the anchor object.
               When the popup is moved by using gfx_position_set, anchor is set NULL.
               ]]
          }

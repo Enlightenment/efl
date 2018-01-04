@@ -105,7 +105,7 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            By default all directions are disabled, so you may want to
            enable the desired directions for flipping if you need
            interactive flipping. You must call this function once for
-           each direction that should be enabled.
+           each direction that's enabled.
 
            You can also set the appropriate hit area size by calling
            @.interaction_direction_hitsize_set. By default, a minimum
@@ -132,8 +132,8 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            This effectively hides the currently visible content and shows
            the hidden one.
 
-           There a number of possible animations to use for the flipping,
-           these being #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
+           There a number of possible animations to use for flipping,
+           namely #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
            visible content around a horizontal axis in the middle of its
            height, the other content is shown as the other side of the flip),
            #ELM_FLIP_ROTATE_Y_CENTER_AXIS (rotate the currently visible
@@ -146,22 +146,22 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            content around a diagonal axis in the middle of its height, the
            other content is hown as the other side of the flip).
            #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
-           left as if the flip was a cube, the other content is show as the
+           left as if the flip was a cube, the other content is shown as the
            right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the
            currently visible content to the right as if the flip was a
-           cube, the other content is show as the left face of the cube),
+           cube, the other content is shown as the left face of the cube),
            #ELM_FLIP_CUBE_UP (rotate the currently visible content up as if
-           the flip was a cube, the other content is show as the bottom face
+           the flip was a cube, the other content is shown as the bottom face
            of the cube), #ELM_FLIP_CUBE_DOWN (rotate the currently visible
-           content down as if the flip was a cube, the other content is show
+           content down as if the flip was a cube, the other content is shown
            as the upper face of the cube), #ELM_FLIP_PAGE_LEFT (move the
            currently visible content to the left as if the flip was a book,
            the other content is shown as the page below that),
            #ELM_FLIP_PAGE_RIGHT (move the currently visible content to the
-           right s if the flip was a book, the other content is shown as the
-           page below that), #ELM_FLIP_PAGE_UP (move the currently visible
+           right as if the flip was a book, the other content is shown as the
+           page below it), #ELM_FLIP_PAGE_UP (move the currently visible
            content up as if the flip was a book, the other content is shown
-           as the page below that), #ELM_FLIP_PAGE_DOWN (move the
+           as the page below it), #ELM_FLIP_PAGE_DOWN (move the
            currently visible content down as if the flip was a book, the
            other content is shown as the page below that) and #ELM_FLIP_CROSS_FADE
            (fade out the currently visible content, while fading in the
@@ -182,8 +182,8 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            This effectively hides the currently visible content and shows
            he hidden one.
 
-           There a number of possible animations to use for the flipping,
-           these being #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
+           There a number of possible animations to use for flipping,
+           namely #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
            visible content around a horizontal axis in the middle of its
            height, the other content is shown as the other side of the flip),
            #ELM_FLIP_ROTATE_Y_CENTER_AXIS (rotate the currently visible
@@ -194,24 +194,24 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
            other content is shown as the other side of the flip),
            #ELM_FLIP_ROTATE_YZ_CENTER_AXIS (rotate the currently visible
            content around a diagonal axis in the middle of its height, the
-           other content is hown as the other side of the flip).
+           other content is shown as the other side of the flip).
            #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
            left as if the flip was a cube, the other content is show as the
            right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the
            currently visible content to the right as if the flip was a
            cube, the other content is show as the left face of the cube),
            #ELM_FLIP_CUBE_UP (rotate the currently visible content up as if
-           the flip was a cube, the other content is show as the bottom face
+           the flip was a cube, the other content is shown as the bottom face
            of the cube), #ELM_FLIP_CUBE_DOWN (rotate the currently visible
-           content down as if the flip was a cube, the other content is show
+           content down as if the flip was a cube, the other content is shown
            as the upper face of the cube), #ELM_FLIP_PAGE_LEFT (move the
            currently visible content to the left as if the flip was a book,
            the other content is shown as the page below that),
            #ELM_FLIP_PAGE_RIGHT (move the currently visible content to the
-           right s if the flip was a book, the other content is shown as the
-           page below that), #ELM_FLIP_PAGE_UP (move the currently visible
+           right as if the flip was a book, the other content is shown as the
+           page below it), #ELM_FLIP_PAGE_UP (move the currently visible
            content up as if the flip was a book, the other content is shown
-           as the page below that) and #ELM_FLIP_PAGE_DOWN (move the
+           as the page below it) and #ELM_FLIP_PAGE_DOWN (move the
            currently visible content down as if the flip was a book, the
            other content is shown as the page below that).
          ]]

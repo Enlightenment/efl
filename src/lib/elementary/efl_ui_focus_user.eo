@@ -7,8 +7,8 @@ interface Efl.Ui.Focus.User {
         @property focus_manager {
             [[Describes which manager is used to register.
 
-              If a instance of this interface is the root of a manager this instance should not have the manager where it is root as this property. This other manager then this instance will be set as focused in the other manager.
-              This instance should be regiered there with it own manager as redirect.
+              If an instance of this interface is the root of a manager, this instance should not have a manager where as root of this property. The other manager in this instance will be set as focused in the corresponding manager.
+              This instance should be registered with its own manager as redirect.
             ]]
             get {}
             values {

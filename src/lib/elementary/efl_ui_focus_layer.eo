@@ -1,9 +1,9 @@
 mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manager) {
    [[This defines the inheriting widget as focus layer
 
-     A focus layer is a layer that will, for the time of existance or visibility, be the upper most layer that gets input, and handles all focus related events, its NOT possible to escape this layer with focus movement.
+     A focus layer is the uppermost one which received input and handles all focus related events for as long as it exists and is visible. It's NOT possible to escape this layer with focus movement.
 
-     Once the object is hidden or destructed the focus will go back to the mainwindow, where it has been before.
+     Once the object is hidden or destroyed the focus will go back to the mainwindow, where it was before.
    ]]
    methods {
      @property enable @protected {
@@ -15,7 +15,7 @@ mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manag
      @property behaviour @protected {
         [[Constructor for setting the behaviour of the layer]]
         values {
-           enable_on_visible : bool;  [[$true means layer will set itself once the inheriting widget gets visible, $false means the layer does not get enabled automatically]]
+           enable_on_visible : bool;  [[$true means layer will set itself once the inheriting widget becomes visible, $false means the layer isn't enabled automatically]]
            cycle : bool; [[If $true the focus will cycle in the layer, if $false]]
         }
      }

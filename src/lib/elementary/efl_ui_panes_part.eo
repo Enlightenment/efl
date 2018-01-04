@@ -4,8 +4,8 @@ class Efl.Ui.Panes.Part (Efl.Ui.Layout.Part_Content)
    data: null;
    methods {
       @property hint_min_allow {
-          [[Allow user to set size hints to be respected and ignore combined
-            min size. If this flag is set, the minimum size set by
+          [[Allows the user to set size hints to be respected and ignored combined
+            with a minimum size. If this flag is set, the minimum size set by
             @Efl.Gfx.Size.Hint.hint_min.set is respected forcefully.
           ]]
           values {

@@ -120,7 +120,7 @@ enum Efl.Access.Role
 
 enum Efl.Access.State_Type
 {
-   [[Describes a possible states of an object visible to accessibility clients.]]
+   [[Describes the possible states for an object visible to accessibility clients.]]
    legacy: efl_access_state;
    invalid, [[State: invalid]]
    active, [[State: active]]
@@ -168,7 +168,7 @@ enum Efl.Access.State_Type
 
 enum Efl.Access.Relation_Type
 {
-   [[Describes relation between two objects.]]
+   [[Describes the relationship between two objects.]]
    legacy: efl_access_relation;
    null, [[No relation]]
    label_for, [[Label for relation]]
@@ -397,15 +397,15 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          [[The translation domain of "name" and "description"
            properties.
 
-           Translation domain should be set if application wants to support i18n
+           Translation domain should be set if the application wants to support i18n
            for accessibily "name" and "description" properties.
 
-           When translation domain is set values of "name" and "description"
-           properties will be translated with dgettext function using
-           current translation domain as "domainname" parameter.
+           When translation domain is set, values of "name" and "description"
+           properties will be translated with the dgettext function using the
+           current translation domain as the "domainname" parameter.
 
-           It is application developer responsibility to ensure that
-           translation files are loaded and binded to translation domain
+           It is the application developer's responsibility to ensure that
+           translation files are loaded and bound to the translation domain
            when accessibility is enabled.]]
          get {
          }
@@ -428,7 +428,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
       relationship_append @beta {
          [[Defines the relationship between two accessible objects.
 
-           Adds unique relation between source object and relation_object of a
+           Adds a unique relationship between source object and relation_object of a
            given type.
 
            Relationships can be queried by Assistive Technology clients to
@@ -448,7 +448,7 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
          [[Removes the relationship between two accessible objects.
 
           If relation_object is NULL function removes all relations
-          of given type.
+          of the given type.
          ]]
          params {
             @in type: Efl.Access.Relation_Type; [[Relation type]]
@@ -471,13 +471,13 @@ mixin Efl.Access (Efl.Interface, Efl.Object)
       Efl.Object.destructor;
    }
    events {
-      property,changed: string; [[Called when roperty has changed]]
+      property,changed: string; [[Called when property has changed]]
       children,changed: Efl.Access.Event.Children_Changed.Data; [[Called when children have changed]]
-      state,changed: Efl.Access.Event.State_Changed.Data; [[Called when tate has changed]]
-      bounds,changed: Efl.Access.Event.Geometry_Changed.Data; [[Called when bounds have changed]]
+      state,changed: Efl.Access.Event.State_Changed.Data; [[Called when state has changed]]
+      bounds,changed: Efl.Access.Event.Geometry_Changed.Data; [[Called when boundaries have changed]]
       visible,data,changed; [[Called when visibility has changed]]
       active,descendant,changed; [[Called when active state of descendant has changed]]
-      added; [[Called when item was added]]
-      removed; [[Called when item was removed]]
+      added; [[Called when item is added]]
+      removed; [[Called when item is removed]]
    }
 }

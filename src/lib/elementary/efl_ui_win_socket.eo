@@ -18,10 +18,10 @@ class Efl.Ui.Win_Socket (Efl.Ui.Win)
             @in svcnum: int; [[A number (any value, 0 being the common default)
                                to differentiate multiple instances of services
                                with the same name.]]
-            @in svcsys: bool; [[A boolean that if true, specifies to create a
-                                system-wide service all users can connect to,
+            @in svcsys: bool; [[A boolean which when true specifies the creation of a
+                                system-wide service to which all users can connect,
                                 otherwise the service is private to the user
-                                id that created the service.]]
+                                id that created it.]]
          }
       }
    }

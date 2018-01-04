@@ -6,15 +6,15 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
       @property pulse_mode {
          [[Control whether a given progress bar widget is at "pulsing mode" or not.
 
-           By default, progress bars will display values from the low to
-           high value boundaries. There are, though, contexts in which the
-           progress of a given task is unknown. For such cases,
-           one can set a progress bar widget to a "pulsing state", to give
-           the user an idea that some computation is being held, but
-           without exact progress values. In the default theme, it will
-           animate its bar with the contents filling in constantly and back
-           to non-filled, in a loop. To start and stop this pulsing
-           animation, one has to explicitly call elm_progressbar_pulse().
+           By default progress bars display values from low to
+           high boundaries. There are situations however in which the
+           progress of a given task is unknown. In these cases,
+           you can set a progress bar widget to a "pulsing state" to give
+           the user an idea that some computation is being done
+           without showing the precise progress rate. In the default theme, it will
+           animate the bar with content, switching constantly between filling it and back
+           to non-filled in a loop. To start and stop this pulsing
+           animation you need to explicitly call elm_progressbar_pulse().
 
            @since 1.20
          ]]

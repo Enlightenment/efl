@@ -10,7 +10,7 @@ class Efl.Ui.List.Pan (Efl.Ui.Pan)
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      item,focused; [[Called when item got focus]]
-      item,unfocused; [[Called when item lost focus]]
+      item,focused; [[Called when item is focused.]]
+      item,unfocused; [[Called when item has lost focus.]]
    }
 }

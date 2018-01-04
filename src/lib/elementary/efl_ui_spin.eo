@@ -4,7 +4,7 @@ class Efl.Ui.Spin (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
    [[A Spin.
 
      This is a widget which allows the user to increase or decrease numeric values
-     using user interactions. It's base type of widget to picking a value and showing value.
+     using user interactions. It's a basic type of widget for choosing and displaying values.
 
      @since 1.21
    ]]

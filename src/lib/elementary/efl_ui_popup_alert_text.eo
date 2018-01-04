@@ -8,9 +8,9 @@ class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
          set {
             [[Set the expandable of popup.
 
-              If the contents of the popup has min size, popup will be increased by min size to the y direction.
-              If max hint is set, it will be increased to value of max hint,
-              and then scrolling will occur.
+              If the contents of the popup has min size, the popup will be increased by min size along the Y axis.
+              If max hint is set it will be increased to the value of max hint
+              and scrolling will occur.
             ]]
          }
          values {

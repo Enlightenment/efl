@@ -27,7 +27,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       @property input_panel_show_on_demand {
          set {
-            [[Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            [[Set the attribute to show the input panel in case of only a user's explicit Mouse Up event.
               It doesn't request to show the input panel even though it has focus.
 
               @since 1.9
@@ -63,8 +63,8 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             [[Control pasting of text and images for the widget.
 
               Normally the entry allows both text and images to be pasted.
-              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
-              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
+              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE this prevents images from being copied or pasted.
+              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT this remove all tags in text .
 
               Note: This only changes the behaviour of text.
             ]]
@@ -96,7 +96,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       @property selection_handler_disabled {
          set {
-            [[This disabled the entry's selection handlers.]]
+            [[This disables the entry's selection handlers.]]
          }
          get {
             [[This returns whether the entry's selection handlers are disabled.]]
@@ -138,8 +138,8 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          set {
             [[Sets the entry to password mode.
 
-              In password mode, entries are implicitly single line and the display of
-              any text in them is replaced with asterisks (*).
+              In password mode entries are implicitly single line and the display of
+              any text inside them is replaced with asterisks (*).
             ]]
          }
          get {
@@ -163,13 +163,13 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       @property prediction_allow {
          set {
-            [[Set whether the entry should allow to use the text prediction.]]
+            [[Set whether the entry should allow predictive text.]]
          }
          get {
-            [[Get whether the entry should allow to use the text prediction.]]
+            [[Get whether the entry allows predictive text.]]
          }
          values {
-            prediction: bool; [[Whether the entry should allow to use the text prediction.]]
+            prediction: bool; [[Whether the entry should allow predictive text.]]
          }
       }
       @property input_hint {
@@ -223,7 +223,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          set {
             [[Set whether the return key on the input panel is disabled automatically when entry has no text.
 
-              If $enabled is $true, The return key on input panel is disabled when the entry has no text.
+              If $enabled is $true, the return key on input panel is disabled when the entry has no text.
               The return key on the input panel is automatically enabled when the entry has text.
               The default value is $false.
             ]]
@@ -242,7 +242,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          }
       }
       input_panel_show {
-         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types and so on.
 
            Note that input panel is shown or hidden automatically according to the focus state of entry widget.
            This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
@@ -284,7 +284,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       input_panel_imdata_get @const {
          [[Get the specific data of the current input panel.]]
          params {
-            @inout data: void; [[The specific data to be got from the input panel.]]
+            @inout data: void; [[The specific data to be obtained from the input panel.]]
             @out len: int; [[The length of data.]]
          }
       }
@@ -325,11 +325,11 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       context_menu_item_add {
          [[This adds an item to the entry's contextual menu.
 
-           A longpress on an entry will make the contextual menu show up, if this
-           hasn't been disabled with @.context_menu_disabled.set.
-           By default, this menu provides a few options like enabling selection mode,
-           which is useful on embedded devices that need to be explicit about it,
-           and when a selection exists it also shows the copy and cut actions.
+           A longpress on an entry will make the contextual menu show up unless this
+           has been disabled with @.context_menu_disabled.set.
+           By default this menu provides a few options like enabling selection mode,
+           which is useful on embedded devices that need to be explicit about it.
+           When a selection exists it also shows the copy and cut actions.
 
            With this function, developers can add other options to this menu to
            perform any action they deem necessary.
@@ -393,21 +393,21 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Ui.Text.Interactive.editable { set; }
    }
    events {
-      activated; [[Called when entry got activated]]
-      changed; [[Called when entry changed]]
+      activated; [[Called when entry is activated]]
+      changed; [[Called when entry changes]]
       changed,user: Efl.Ui.Text.Change_Info;
          [[The text object has changed due to user interaction]]
       validate; [[Called when validating]]
       context,open; [[Called when context menu was opened]]
-      anchor,clicked; [[Called when anchor was clicked]]
-      rejected; [[Called when entry was rejected]]
+      anchor,clicked; [[Called when anchor is clicked]]
+      rejected; [[Called when entry is rejected]]
       maxlength,reached; [[Called when maximum entry length has been reached]]
       preedit,changed; [[Called when entry preedit changed]]
       press; [[Called when entry pressed]]
-      redo,request; [[Called when redo was requested]]
-      undo,request; [[Called when undo was requested]]
+      redo,request; [[Called when redo is requested]]
+      undo,request; [[Called when undo is requested]]
       text,set,done; [[Called when text set finished]]
-      aborted; [[Called when entry was aborted]]
+      aborted; [[Called when entry is aborted]]
       anchor,down; [[Called on anchor down]]
       anchor,hover,opened; [[Called when hover opened]]
       anchor,in; [[Called on anchor in]]

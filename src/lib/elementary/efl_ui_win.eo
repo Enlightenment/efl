@@ -2,7 +2,7 @@ enum Efl.Ui.Win.Type
 {
    [[Defines the types of window that can be created
 
-     These are hints set on the window so that a running Window Manager knows
+     These are hints set on a window so that a running Window Manager knows
      how the window should be handled and/or what kind of decorations it
      should have.
 
@@ -50,7 +50,7 @@ enum Efl.Ui.Win.Keyboard_Mode
 {
    [[The different layouts that can be requested for the virtual keyboard.
 
-     When the application window is being managed by Illume, it may request
+     When the application window is being managed by Illume it may request
      any of the following layouts for the virtual keyboard.
    ]]
    legacy: efl_ui_win_keyboard;
@@ -79,14 +79,14 @@ enum Efl.Ui.Win.Indicator_Mode
    legacy: efl_ui_win_indicator;
 
    off, [[Request to deactivate the indicator]]
-   bg_opaque, [[The icon of indicator is opaque, the background of indicator is also opaque.
-                The content of window is located the end of indicator.
+   bg_opaque, [[The indicator icon is opaque, as is the indicator background.
+                The content of window is located at the end of the indicator.
                 The area of indicator and window content are not overlapped]]
    bg_transparent, [[The icon of indicator is opaque, but the background is transparent.
                      The content of window is located under the indicator in Z-order.
                      The area of indicator and window content are overlapped]]
-   hidden [[The indicator is hidden, So user can see only the content of window like the video mode.
-            If user flicks the upper side of window, the incator is shown temporarily.]]
+   hidden [[The indicator is hidden so user can see only the content of window such as in video mode.
+            If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
 enum Efl.Ui.Win.Keygrab_Mode
@@ -96,15 +96,15 @@ enum Efl.Ui.Win.Keygrab_Mode
 
    legacy: efl_ui_win_keygrab;
    unknown = 0, [[Unknown keygrab mode]]
-   shared = (1 << 8), [[Getting the grabbed-key together with the other client
+   shared = (1 << 8), [[Get the grabbed-key together with the other client
                         windows]]
-   topmost = (1 << 9), [[Getting the grabbed-key only when window is top of the
+   topmost = (1 << 9), [[Get the grabbed-key only when window is top of the
                          stack]]
-   exclusive = (1 << 10), [[Getting the grabbed-key exclusively regardless of
+   exclusive = (1 << 10), [[Get the grabbed-key exclusively regardless of
                             window's position]]
-   override_exclusive = (1 << 11) [[Getting the grabbed-key exclusively
-                                    regardless of window's position. Being
-                                    overrided the grab by the other client
+   override_exclusive = (1 << 11) [[Get the grabbed-key exclusively
+                                    regardless of window's position. This is
+                                    overrided by grabs from the other client
                                     window]]
 }
 
@@ -131,11 +131,11 @@ enum Efl.Ui.Win.Move_Resize_Mode
    [[Define the move or resize mode of window.
 
      The user can request the display server to start moving or resizing
-     the window by combining these modes. However, only limited combinations
+     the window by combining these modes. However only limited combinations
      are allowed.
 
-     Currently, only the following 9 combinations are allowed, and possibly
-     more combinations may be added in the future:
+     Currently, only the following 9 combinations are permitted. 
+     More combinations may be added in future:
      1. move,
      2. top,
      3. bottom,
@@ -169,14 +169,14 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
    event_prefix: efl_ui_win;
    methods {
       @property indicator_mode {
-           [[In some environments, like phones, you may have an indicator that
+           [[In some environments you may have an indicator that
            shows battery status, reception, time etc. This is the indicator.
 
-           Sometimes you don't want it because you provide the same functionality
+           Sometimes you don't want this because you provide the same functionality
            inside your app, so this will request that the indicator is disabled in
-           this circumstance. The default is depend on the environments.
-           For example, like phones, default is to enable the indicator.
-           But like TV, default is to disable the indicator.
+           such circumstances. The default settings depends on the environment.
+           For example, on phones, the default is to enable the indicator.
+           The indicator is disabled on devices like televisions however.
 
            @since 1.18
          ]]
@@ -237,7 +237,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       @property screen_constrain {
          set {
             [[Constrain the maximum width and height of a window to the
-              width and height of its screen.
+              width and height of the screen.
 
               When $constrain is $true, $obj will never resize larger than
               the screen.
@@ -245,7 +245,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
          }
          get {
             [[Get the constraints on the maximum width and height of a
-              window relative to the width and height of its screen.
+              window relative to the width and height of the screen.
 
               When this function returns $true, $obj will never resize
               larger than the screen.
@@ -260,7 +260,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             [[Set the window to be skipped by keyboard focus.
 
               This sets the window to be skipped by normal keyboard input.
-              This means a window manager will be asked to not focus this
+              This means a window manager will be asked not to focus this
               window as well as omit it from things like the taskbar, pager,
               "alt-tab" list etc. etc.
 
@@ -268,8 +268,8 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
               the first time, otherwise it may have no effect.
 
               Use this for windows that have only output information or
-              might only be interacted with by the mouse or fingers, and
-              never for typing input. Be careful that this may have
+              might only be interacted with by the mouse or touchscreen,
+              never for typing. This may have
               side-effects like making the window non-accessible in
               some cases unless the window is specially handled. Use
               this with care.
@@ -290,7 +290,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
 
            When this property is set to $true, the window will be automatically
            hidden when this event occurs, after the signal is emitted. If this
-           property is $false, nothing will happen, beyond the event emission.
+           property is $false nothing will happen, beyond the event emission.
 
            C applications can use this option along with the quit policy
            $ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN which allows exiting EFL's main
@@ -311,10 +311,10 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
               This sets an image to be used as the icon for the given
               window, in the window manager decoration part. The exact
               pixel dimensions of the object (not object size) will be
-              used, and the image pixels will be used as-is when this
+              used and the image pixels will be used as-is when this
               function is called. If the image object has been updated,
               then call this function again to source the image pixels
-              and put them on the window's icon. Note that only objects of
+              and place them in the window's icon. Note that only objects of
               type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
             ]]
             values {
@@ -415,7 +415,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             [[Set the noblank property of a window.
 
               The "noblank" property is a way to request the display on
-              which the window is shown does not blank, screensave or
+              which the window is shown does not blank, go to screensaver or
               otherwise hide or obscure the window. It is intended for
               uses such as media playback on a television where a user
               may not want to be interrupted by an idle screen. The
@@ -439,7 +439,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
          set {
             [[Set the borderless state of a window.
 
-              This function requests the Window Manager to not draw any
+              This function requests the Window Manager not to draw any
               decoration around the window.
             ]]
          }
@@ -482,7 +482,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
            The window name is a construction property that can only be set at
            creation time, before finalize. In C this means inside $efl_add().
 
-           Note: Once set, it can NOT be modified afterward.
+           Note: Once set, it cannot be modified afterwards.
          ]]
          set {
             [[Name can on be set before finalize.]]
@@ -504,7 +504,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
            The window type is a construction property that can only be set at
            creation time, before finalize. In C this means inside $efl_add().
 
-           Note: Once set, it can NOT be modified afterward.
+           Note: Once set, it cannot be modified afterward.
          ]]
          set {
             [[Type can on be set before finalize.]]
@@ -521,7 +521,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       @property accel_preference {
          [[The hardware acceleration preference for this window.
 
-           This is a constructor function, and can only be called before
+           This is a constructor function and can only be called before
            @Efl.Object.finalize.
 
            This property overrides the global EFL configuration option
@@ -529,15 +529,15 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
            syntax.
 
            The $accel string is a freeform C string that indicates
-           what kind of acceleration is preferred. Here "acceleration" majorly
-           means to rendering and which hardware unit application renders GUIs
-           with. This may or may not be honored, but a best attempt will
+           what kind of acceleration is preferred. Here "acceleration" generally
+           refers to rendering and the hardware with which the unit application renders GUIs.
+           This may or may not be honored but a best attempt will
            be made. Known strings are as follows:
 
            "gl", "opengl" - try use OpenGL.
-           "3d" - try and use a 3d acceleration unit.
+           "3d" - try to use a 3d acceleration unit.
            "hw", "hardware", "accel" - try any acceleration unit (best possible)
-           "none" - use no acceleration. try use software (since 1.16)
+           "none" - use no acceleration but software instead (since 1.16)
 
            Since 1.14, it is also possible to specify some GL properties for the GL
            window surface. This allows applications to use GLView with depth, stencil
@@ -581,7 +581,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
               If $alpha is true, the alpha channel of the canvas will be
               enabled possibly making parts of the window completely or
               partially transparent. This is also subject to the underlying
-              system supporting it, like for example, running under a
+              system supporting it, for example a system using a
               compositing manager.
 
               Note: Alpha window can be enabled automatically by window
@@ -604,19 +604,19 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             [[Get the stack ID string of the window as an opaque string.
 
               This ID is immutable and can never be modified. It will be
-              an opaque string that has no specific desfined format or
-              content other than it being a string (no character with a
+              an opaque string that has no specific defined format or
+              content other than being a string (no character with a
               value of 0).
 
               This string is intended for use as a stack master ID to be
               use by other windows to make this window part of a stack
-              of windows to be placed on top of eachother as if they are
-              a series of dialogs or questions one after the other and
-              that you may go back through history.]]
+              of windows to be placed on top of each other as if they are
+              a series of dialogs or questions one after the other, allowing
+              you to go back through history.]]
          }
          values {
-            id: string; [[An opaque string that has no specific format,
-                          but identified a specific unique window on the
+            id: string; [[An opaque string that has no specific format
+                          but identifies a specific unique window on the
                           display.]]
          }
       }
@@ -627,14 +627,14 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
               This sets the ID string to be used as the master top-level
               window as the base of a stack of windows. This must be set
               before the first time the window is shown and should never
-              be changed after that point in time ever again.]]
+              be changed afterwards.]]
          }
          get {
             [[Get the stack master Id that has been set.]]
          }
          values {
             id: string; [[An opaque string that has no specific format,
-                          but identified a specific unique window on the
+                          but identifies a specific unique window on the
                           display.]]
          }
       }
@@ -643,11 +643,11 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
 
            This is a boolean flag that determines if this window will
            become the base of a stack at all. You must enable this
-           on a base (bottom of a window stack for things to work
+           on a base (the bottom of a window stack) for things to work
            correctly.
 
            This state should be set before a window is shown for the
-           first time and never changed again after that.]]
+           first time and never changed afterwards.]]
 
          set {}
          get {}
@@ -671,18 +671,18 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
 
            Note: This is just a request that a Window Manager may ignore,
            so calling this function does not ensure in any way that the
-           window will be the active one after it.
+           window will be the active one afterwards.
          ]]
       }
       center {
-         [[Center a window on its screen.
+         [[Center a window on the screen.
 
            This function centers window $obj horizontally and/or vertically
            based on the values of $h and $v.
 
            Note: This is just a request that a Window Manager may ignore,
            so calling this function does not ensure in any way that the
-           window will be centered after it.
+           window will be centered afterwards.
          ]]
          params {
             @in h: bool; [[If $true, center horizontally. If $false, do not change horizontal location.]]
@@ -756,7 +756,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
            8. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.left
            9. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.right
 
-           In particular move and resize can not happen simultaneously.
+           In particular move and resize cannot happen simultaneously.
 
            Note: the result of this API can only guarantee that the request has
            been forwarded to the server, but there is no guarantee that the
@@ -831,24 +831,24 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       .accel_preference;
    }
    events {
-      delete,request; [[Called when the window got a delete request]]
-      withdrawn; [[Called when window was withdrawn]]
-      iconified; [[Called when window was iconified]]
-      normal; [[Called when window got into normal state]]
-      stick; [[Called when window was set sticky]]
-      unstick; [[Called when window is no  longer set sticky]]
-      fullscreen; [[Called when window was set fullscreen]]
-      unfullscreen; [[Called when window is no longer set fullscreen]]
-      maximized; [[Called when window is set maximized]]
-      unmaximized; [[Called when window is no longer set maximized]]
+      delete,request; [[Called when the window receives a delete request]]
+      withdrawn; [[Called when window is withdrawn]]
+      iconified; [[Called when window is iconified]]
+      normal; [[Called when window is set to normal state]]
+      stick; [[Called when window is set as sticky]]
+      unstick; [[Called when window is no  longer set as sticky]]
+      fullscreen; [[Called when window is set to fullscreen]]
+      unfullscreen; [[Called when window is no longer set to fullscreen]]
+      maximized; [[Called when window is set to maximized]]
+      unmaximized; [[Called when window is no longer set to maximized]]
       ioerr; [[Called on input output error]] /*FIXME Better explanation needed */
-      indicator,prop,changed; [[Called when indicator property changed]]
-      rotation,changed; [[Called when window rotation changed]]
-      profile,changed; [[Called when profile changed]]
-      wm,rotation,changed; [[Called when window manager rotation changed]]
-      theme,changed; [[Called when theme changed]]
-      elm,action,block_menu; [[Called when elementary block menu action happened]]
-      pause; [[Called when the window is going not be displayed for some time]]
-      resume; [[Called before a window get rendered after a pause event]]
+      indicator,prop,changed; [[Called when indicator is property changed]]
+      rotation,changed; [[Called when window rotation is changed]]
+      profile,changed; [[Called when profile is changed]]
+      wm,rotation,changed; [[Called when window manager rotation is changed]]
+      theme,changed; [[Called when theme is changed]]
+      elm,action,block_menu; [[Called when elementary block menu action occurs]]
+      pause; [[Called when the window is not going be displayed for some time]]
+      resume; [[Called before a window is rendered after a pause event]]
    }
 }

@@ -8,15 +8,15 @@ class Efl.Ui.Popup_Alert_Scroll(Efl.Ui.Popup_Alert)
          set {
             [[Set the expandable max size of popup.
 
-              If the given max_size is -1, then popup appears with its size.
-              However, if the given max_size is bigger than 0, then popup size is upto the given max_size. If popup content's min size is bigger than the given max_size, then scroller appears in the popup content area.
+              If the given max_size is -1, then a popup appears with its size.
+              However, if the given max_size is bigger than 0 the popup size is up to the given max_size. If popup content's min size is bigger than the given max_size the scroller appears in the popup content area.
             ]]
          }
          get {
             [[Get the expandable max size of popup.
 
               If the given max_size is -1, then popup appears with its size.
-              However, if the given max_size is bigger than 0, then popup size is upto the given max_size. If popup content's min size is bigger than the given max_size, then scroller appears in the popup content area.
+              However, if the given max_size is bigger than 0 the popup size is up to the given max_size. If popup content's min size is bigger than the given max_size the scroller appears in the popup content area.
             ]]
          }
          values {
