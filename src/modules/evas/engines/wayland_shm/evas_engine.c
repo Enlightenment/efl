@@ -17,8 +17,8 @@ int _evas_engine_way_shm_log_dom = -1;
 /* evas function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
-Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
-Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
+static Evas_Native_Tbm_Surface_Image_Set_Call  glsym__evas_native_tbm_surface_image_set = NULL;
+static Evas_Native_Tbm_Surface_Stride_Get_Call  glsym__evas_native_tbm_surface_stride_get = NULL;
 
 /* engine structure data */
 typedef struct _Render_Engine Render_Engine;

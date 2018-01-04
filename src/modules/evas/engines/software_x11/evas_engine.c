@@ -24,8 +24,8 @@
 #include <Ecore.h>
 #include <Eina.h>
 
-Evas_Native_Tbm_Surface_Image_Set_Call glsym__evas_native_tbm_surface_image_set = NULL;
-Evas_Native_Tbm_Surface_Stride_Get_Call glsym__evas_native_tbm_surface_stride_get = NULL;
+static Evas_Native_Tbm_Surface_Image_Set_Call glsym__evas_native_tbm_surface_image_set = NULL;
+static Evas_Native_Tbm_Surface_Stride_Get_Call glsym__evas_native_tbm_surface_stride_get = NULL;
 int _evas_engine_soft_x11_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
