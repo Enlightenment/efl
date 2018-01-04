@@ -187,6 +187,7 @@ ecore_con_lib = library('ecore_con',
     dependencies: [ecore, ecore_con_deps, http_parser, eldbus, eet, systemd, dl],
     include_directories : config_dir,
     install: true,
+    c_args : package_c_args,
 )
 
 ecore_con = declare_dependency(

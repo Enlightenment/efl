@@ -34,6 +34,7 @@ eolian_lib = library('eolian', eolian_src,
     include_directories: config_dir,
     dependencies: eina,
     install: true,
+    c_args : package_c_args,
 )
 
 eolian = declare_dependency(

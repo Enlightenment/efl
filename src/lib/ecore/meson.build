@@ -180,6 +180,7 @@ ecore_lib = library('ecore',
     dependencies: [eina, eo, efl, m, ecore_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
+    c_args : package_c_args,
 )
 
 ecore = declare_dependency(

@@ -73,7 +73,6 @@ config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_BIN_DIR', dir_bin)
 config_h.set_quoted('PACKAGE_LIB_DIR', dir_lib)
 config_h.set_quoted('PACKAGE_BUILD_DIR', meson.current_source_dir())
-config_h.set_quoted('PACKAGE_DATA_DIR', join_paths(dir_data, meson.project_name()))
 config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
@@ -131,6 +130,7 @@ example_dirs = []
 foreach package : subprojects
   package_name = package[0]
   package_version_name = package_name + '-' + version_major
+  package_c_args = ['-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"']
   if get_option(package_name)
     config_h.set('HAVE_'+package_name.to_upper(), '1')
 

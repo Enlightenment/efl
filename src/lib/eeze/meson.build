@@ -77,6 +77,7 @@ eeze_lib = library('eeze',
     dependencies: [ecore, ecore_file, eeze_deps],
     include_directories : config_dir,
     install: true,
+    c_args : package_c_args,
 )
 
 eeze = declare_dependency(
