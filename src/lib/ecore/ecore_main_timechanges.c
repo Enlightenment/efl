@@ -81,8 +81,9 @@ void
 _ecore_main_timechanges_stop(Eo *obj EINA_UNUSED)
 {
 #ifdef HAVE_SYS_TIMERFD_H
-   if (!realtime_obj) return;
-   efl_del(realtime_obj);
+   Eo *o = realtime_obj;
+   if (!o) return;
    realtime_obj = NULL;
+   efl_del(o);
 #endif
 }
