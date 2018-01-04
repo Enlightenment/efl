@@ -613,11 +613,11 @@ ecore_evas_init(void)
    if (++_ecore_evas_init_count != 1)
      return _ecore_evas_init_count;
 
-   if (!evas_init())
-     return --_ecore_evas_init_count;
-
    if (!ecore_init())
      goto shutdown_evas;
+
+   if (!evas_init())
+     return --_ecore_evas_init_count;
 
    _ecore_evas_log_dom = eina_log_domain_register
      ("ecore_evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
@@ -704,8 +704,8 @@ ecore_evas_shutdown(void)
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
    _ecore_evas_log_dom = -1;
-   ecore_shutdown();
    evas_shutdown();
+   ecore_shutdown();
 
    return _ecore_evas_init_count;
 }
