@@ -826,17 +826,29 @@ class Function(EolianBaseObject):
         return Iterator(Function_Parameter,
                         lib.eolian_function_parameters_get(self._obj))
 
-    def values_get(self, ftype):
+    def values_get(self, ftype): # TODO rename in property_values_get (or implement a proper Property class?)
         return Iterator(Function_Parameter,
                         lib.eolian_property_values_get(self._obj, ftype))
 
     @property
-    def getter_values(self):
+    def getter_values(self): # TODO rename ...
         return self.values_get(Eolian_Function_Type.PROP_GET)
 
     @property
-    def setter_values(self):
+    def setter_values(self): # TODO rename ...
         return self.values_get(Eolian_Function_Type.PROP_SET)
+
+    def keys_get(self, ftype): # TODO rename in property_keys_get (or implement a proper Property class?)
+        return Iterator(Function_Parameter,
+                        lib.eolian_property_keys_get(self._obj, ftype))
+
+    @property
+    def getter_keys(self): # TODO rename ...
+        return self.keys_get(Eolian_Function_Type.PROP_GET)
+
+    @property
+    def setter_keys(self): # TODO rename ...
+        return self.keys_get(Eolian_Function_Type.PROP_SET)
 
     def return_type_get(self, ftype):
         c_type = lib.eolian_function_return_type_get(self._obj, ftype)
@@ -845,7 +857,7 @@ class Function(EolianBaseObject):
     def return_default_value(self, ftye):
         c_expr = lib.eolian_function_return_default_value_get(sel._obj, ftype)
         return Expression(c_expr) if c_expr else None
-        
+
     def return_documentation(self, ftype):
         c_doc = lib.eolian_function_return_documentation_get(self._obj, ftype)
         return Documentation(c_doc) if c_doc else None
@@ -893,15 +905,6 @@ class Function_Parameter(EolianBaseObject):
     @property
     def name(self):
         return _str_to_py(lib.eolian_parameter_name_get(self._obj))
-
-    # @property
-    # def name_fixed(self):
-        # name = _str_to_py(lib.eolian_parameter_name_get(self._obj))
-        # if name in PY_KW:
-            # return name + '_'
-        # return name
-
-    # name = name_fixed
 
     @property
     def direction(self):

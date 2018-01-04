@@ -2,7 +2,9 @@
 #!####  BEST_SUMMARY(obj)  #####################################################
 #!##############################################################################
 <!--(macro BEST_SUMMARY)-->
-   <!--(if isinstance(obj, Implement))-->
+   <!--(if isinstance(obj, Documentation))-->
+${UNTOKENIZE(tokens=obj.summary_tokens)}$#!
+   <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).summary_tokens)}$#!
       <!--(else)-->
@@ -14,7 +16,7 @@ ${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).sum
             <!--(end)-->
          <!--(end)-->
       <!--(end)-->
-   <!--(elif obj.documentation)-->
+   <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.summary_tokens)}$#!
    <!--(else)-->
 **MISSING DOCS !!!!!**#!
@@ -24,7 +26,9 @@ ${UNTOKENIZE(tokens=obj.documentation.summary_tokens)}$#!
 #!####  BEST_DESCRIPTION(obj)  #################################################
 #!##############################################################################
 <!--(macro BEST_DESCRIPTION)-->
-   <!--(if isinstance(obj, Implement))-->
+   <!--(if isinstance(obj, Documentation))-->
+${UNTOKENIZE(tokens=obj.description_tokens)}$#!
+   <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).description_tokens)}$#!
       <!--(else)-->
@@ -36,7 +40,7 @@ ${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).des
             <!--(end)-->
          <!--(end)-->
       <!--(end)-->
-   <!--(elif obj.documentation)-->
+   <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
    <!--(else)-->
 **MISSING DOCS !!!!!**#!
@@ -46,7 +50,21 @@ ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
 #!####  BEST_SINCE(obj)  #######################################################
 #!##############################################################################
 <!--(macro BEST_SINCE)-->
-   <!--(if obj.documentation and obj.documentation.since)-->
+   <!--(if isinstance(obj, Documentation) and obj.since)-->
+//Since ${obj.since}$//
+   <!--(elif isinstance(obj, Implement))-->
+      <!--(if obj.documentation_get(obj.function.type))-->
+//Since ${obj.documentation_get(obj.function.type).since}$//
+      <!--(else)-->
+         <!--(for parent_impl in obj.class_.implements)-->
+            <!--(if parent_impl.function.name == obj.function.name)-->
+               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
+//Since ${parent_impl.documentation_get(parent_impl.function.type).since}$//
+               <!--(end)-->
+            <!--(end)-->
+         <!--(end)-->
+      <!--(end)-->
+   <!--(elif obj and obj.documentation and obj.documentation.since)-->
 //Since ${obj.documentation.since}$//
    <!--(end)-->
 <!--(end)-->
@@ -203,6 +221,74 @@ interface#!
    <!--(end)-->
 <!--(end)-->
 #!##############################################################################
+#!####  IMPLEMENT_TAGS(impl)  ##################################################
+#!##############################################################################
+<!--(macro IMPLEMENT_TAGS)-->
+   <!--(if impl.is_prop_get and impl.is_prop_set)-->
+ ''rw'' #!
+   <!--(elif impl.is_prop_get)-->
+ ''read only'' #!
+   <!--(elif impl.is_prop_set)-->
+ ''write only'' #!
+   <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  PARAM_DIRECTION_TAG(param)  ############################################
+#!##############################################################################
+<!--(macro PARAM_DIRECTION_TAG)-->
+      <!--(if param.direction == Eolian_Parameter_Dir.IN)-->
+ ''in'' #!
+      <!--(elif param.direction == Eolian_Parameter_Dir.OUT)-->
+ ''out'' #!
+      <!--(elif param.direction == Eolian_Parameter_Dir.INOUT)-->
+ ''inout'' #!
+      <!--(end)-->
+<!--(end)-->
+#!##############################################################################
+#!####  METHOD_PARAMS(func)  ###################################################
+#!##############################################################################
+<!--(macro METHOD_PARAMS)-->
+
+   <!--(for i, par in enumerate(func.parameters))-->
+      <!--(if i == 0)-->
+^ parameters ^ type ^ description ^
+      <!--(end)-->
+|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.full_name}$ #!
+|${BEST_SUMMARY(obj=par)}$ ${BEST_DESCRIPTION(obj=par)}$|
+   <!--(else)-->
+**This function do not accept any parameter.**
+   <!--(end)-->
+
+   <!--(if func.method_return_type)-->
+${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
+^ return ^ description ^
+|**${func.method_return_type.full_name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
+   <!--(else)-->
+**This function do not return anything.**
+   <!--(end)-->
+
+<!--(end)-->
+#!##############################################################################
+#!####  PROPERTY_PARAMS(func)  #################################################
+#!##############################################################################
+<!--(macro PROPERTY_PARAMS)-->
+
+   <!--(for i, val in enumerate(func.getter_values or func.setter_values))-->
+      <!--(if i == 0)-->
+^ values ^ type ^ description ^
+      <!--(end)-->
+|**${val.name}$**|${val.type.full_name}$|${BEST_SUMMARY(obj=val)}$|
+   <!--(end)-->
+
+   <!--(for i, key in enumerate(func.getter_keys or func.setter_keys))-->
+      <!--(if i == 0)-->
+^ keys ^ type ^ description ^
+      <!--(end)-->
+|**${key.name}$**|${key.type.full_name}$|${BEST_SUMMARY(obj=key)}$|
+   <!--(end)-->
+
+<!--(end)-->
+#!##############################################################################
 #!####  IMPLEMENT_FULL(impl, cls)  #############################################
 #!##############################################################################
 <!--(macro IMPLEMENT_FULL)-->
@@ -218,14 +304,9 @@ ${', ' if i else ''}$#!
 //${param.type.name}$// ''${param.direction.name.lower()}$'' **${param.name}$**#!
       <!--(end)-->
    <!--(end)-->
-)#!
-   <!--(if impl.is_prop_get and impl.is_prop_set)-->
- ''rw'' #!
-   <!--(elif impl.is_prop_get)-->
- ''read only'' #!
-   <!--(elif impl.is_prop_set)-->
- ''write only'' #!
-   <!--(elif impl.is_method)-->
+) #!
+${IMPLEMENT_TAGS}$ #!
+   <!--(if impl.is_method)-->
       <!--(if impl.function.method_return_type)-->
  => //${impl.function.method_return_type.name}$// #!
       <!--(else)-->
@@ -237,7 +318,20 @@ ${FUNC_SCOPE(func=impl.function)}$#!
 //[Overridden from ${CLS_LINK(cls=impl.class_)}$]// #!
    <!--(end)-->
 \\
-> ${BEST_SUMMARY(obj=impl)}$
+
+> ${BEST_SUMMARY(obj=impl)}$ ${BEST_SINCE(obj=impl)}$
+
+++++ more... |
+
+${BEST_DESCRIPTION(obj=impl)}$
+
+   <!--(if impl.is_method)-->
+${METHOD_PARAMS(func=impl.function)}$
+   <!--(else)-->
+${PROPERTY_PARAMS(func=impl.function)}$
+   <!--(end)-->
+++++
+
 <!--(end)-->
 #!##############################################################################
 #!####  OBJECT_STATIC_CONTENT(obj, section)  ###################################
