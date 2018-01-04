@@ -12,7 +12,7 @@ mixin Efl.Selection {
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in data: Eina.Slice;
-            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+            @in seat: uint;[[Specified seat for multiple seats case.]]
          }
          return: future<void_ptr>; [[Future for tracking when the selection is lost]]
       }
@@ -21,20 +21,20 @@ mixin Efl.Selection {
             @in type: Efl.Selection.Type; [[Selection Type]]
             @in format: Efl.Selection.Format; [[Selection Format]]
             @in data_func: Efl.Selection.Data_Ready; [[Data ready function pointer]]
-            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+            @in seat: uint;[[Specified seat for multiple seats case.]]
          }
       }
       selection_clear {
          params {
             @in type: Efl.Selection.Type; [[Selection Type]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       //selection_has { //change to property selection_owner
       has_owner {
          params {
             @in type: Efl.Selection.Type; [[Selection type]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
          return: bool;
       }

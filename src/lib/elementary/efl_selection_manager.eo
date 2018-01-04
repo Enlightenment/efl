@@ -50,7 +50,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
             @in data: Eina.Slice;
             @in action: Efl.Selection.Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       drag_action_set @beta {
@@ -58,14 +58,14 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
          params {
             @in drag_obj: Efl.Object; [[The drag object]]
             @in action: Efl.Selection.Action; [[Drag action]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       drag_cancel @beta {
          [[This cancels the on-going drag]]
          params {
             @in drag_obj: Efl.Object; [[The drag object]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       container_drag_item_add @beta {
@@ -80,14 +80,14 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
             @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
             @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case]]
+            @in seat: uint; [[Specified seat for multiple seats case]]
          }
       }
       container_drag_item_del @beta {
          [[Remove drag function of items in the container object.]]
          params {
             @in cont: Efl.Object; [[Container object]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case]]
+            @in seat: uint; [[Specified seat for multiple seats case]]
          }
       }
       drop_target_add @beta {
@@ -96,7 +96,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
          params {
             @in target_obj: Efl.Object; [[The drop target]]
             @in format: Efl.Selection.Format; [[Accepted data format]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
          return: bool; [[$true on success, $false otherwise]]
       }
@@ -104,7 +104,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
          params {
             @in target_obj: Efl.Object; [[The drop target]]
             @in format: Efl.Selection.Format; [[Accepted data format]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       container_drop_item_add @beta {
@@ -112,13 +112,13 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
             @in cont: Efl.Object; [[Container object]]
             @in format: Efl.Selection.Format; [[Accepted data formats]]
             @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       container_drop_item_del @beta {
          params {
             @in cont: Efl.Object; [[Container object]]
-            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
    }
