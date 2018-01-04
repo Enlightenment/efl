@@ -13,7 +13,7 @@ before_install:
 
 matrix:
   include:
-    - env: DISTRO=Ubuntu1710
+    - env: DISTRO=Ubuntu1704
     - env: DISTRO=Fedora27
     - env: DISTRO=Debian91
     - env: DISTRO=Archlinux
