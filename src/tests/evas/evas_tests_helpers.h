@@ -1,6 +1,8 @@
 #ifndef EVAS_TEST_HELPERS_H
 #define EVAS_TEST_HELPERS_H
 
+#include <Ecore_Evas.h>
+
 /* FIXME: Currently depends on the buffer engine, should we do anything
  * fancier? */
 
@@ -13,7 +15,7 @@ do \
    evas_object_del(tb); \
    evas_textblock_style_free(st); \
    evas_free(evas); \
-   evas_shutdown(); \
+   ecore_evas_shutdown(); \
 } \
 while (0)
 
@@ -23,7 +25,7 @@ _setup_evas()
    Evas *evas;
    Evas_Engine_Info *einfo;
 
-   evas_init();
+   ecore_evas_init();
    evas = evas_new();
 
    evas_output_method_set(evas, evas_render_method_lookup("buffer"));

@@ -3,6 +3,7 @@
 #endif
 
 #include <Evas.h>
+#include <Ecore_Evas.h>
 
 #include "evas_suite.h"
 #include "../efl_check.h"
@@ -36,12 +37,12 @@ main(int argc, char **argv)
    putenv("EFL_RUN_IN_TREE=1");
 #endif
 
-   evas_init();
+   ecore_evas_init();
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Evas", etc);
 
-   evas_shutdown();
+   ecore_evas_shutdown();
 
    return (failed_count == 0) ? 0 : 255;
 }

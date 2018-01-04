@@ -26,8 +26,8 @@ START_TEST(evas_object_various)
 
 
    /* Twice because EVAS_TEST_INIT_EVAS inits it twice. */
-   evas_shutdown();
-   evas_shutdown();
+   ecore_evas_shutdown();
+   ecore_evas_shutdown();
 }
 END_TEST
 

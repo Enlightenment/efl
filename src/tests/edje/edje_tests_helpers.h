@@ -1,6 +1,8 @@
 #ifndef EDJE_TEST_HELPERS_H
 #define EDJE_TEST_HELPERS_H
 
+#include <Ecore_Evas.h>
+
 /* FIXME: Currently depends on the buffer engine, should we do anything
  * fancier? */
 
@@ -11,7 +13,7 @@
     {			      \
       edje_shutdown();	      \
       evas_free(evas);	      \
-      evas_shutdown();	      \
+      ecore_evas_shutdown();  \
     }			      \
   while (0)
 
@@ -21,7 +23,7 @@ _setup_evas()
    Evas *evas;
    Evas_Engine_Info *einfo;
 
-   evas_init();
+   ecore_evas_init();
    edje_init();
 
    evas = evas_new();

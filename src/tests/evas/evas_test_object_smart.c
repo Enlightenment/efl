@@ -11,6 +11,7 @@
 
 #include <Eina.h>
 #include <Evas.h>
+#include <Ecore_Evas.h>
 
 #include "evas_suite.h"
 #include "evas_tests_helpers.h"
@@ -42,7 +43,7 @@ do \
 { \
    evas_object_del(smart_obj); \
    evas_free(evas); \
-   evas_shutdown(); \
+   ecore_evas_shutdown(); \
 } \
 while (0)
 

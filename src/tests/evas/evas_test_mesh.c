@@ -146,7 +146,7 @@ START_TEST(evas_object_mesh_loader_saver)
    unlink(tmp);
 
    evas_free(e);
-   evas_shutdown();
+   ecore_evas_shutdown();
 }
 END_TEST
 
