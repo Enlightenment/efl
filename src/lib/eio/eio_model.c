@@ -818,7 +818,7 @@ _eio_model_efl_object_parent_get(Eo *obj , Eio_Model_Data *priv)
 }
 
 EOLIAN static Eo *
-_eio_model_efl_object_provider_find(Eo *obj, Eio_Model_Data *priv EINA_UNUSED, const Efl_Class *klass)
+_eio_model_efl_object_provider_find(const Eo *obj, Eio_Model_Data *priv EINA_UNUSED, const Efl_Class *klass)
 {
    Eo *provider = efl_provider_find(efl_super(obj, MY_CLASS), klass);
 

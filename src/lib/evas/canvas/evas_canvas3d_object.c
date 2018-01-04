@@ -17,7 +17,7 @@ _evas_canvas3d_object_efl_object_constructor(Eo *obj, Evas_Canvas3D_Object_Data 
 }
 
 EOLIAN static Evas *
- _evas_canvas3d_object_efl_object_provider_find(Eo *obj, Evas_Canvas3D_Object_Data *pd, const Efl_Class *klass)
+ _evas_canvas3d_object_efl_object_provider_find(const Eo *obj, Evas_Canvas3D_Object_Data *pd, const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
      return pd->evas;

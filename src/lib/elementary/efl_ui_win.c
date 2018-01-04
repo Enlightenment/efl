@@ -7061,7 +7061,8 @@ _efl_ui_win_efl_input_state_lock_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Dat
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_win_efl_object_provider_find(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED,
+_efl_ui_win_efl_object_provider_find(const Eo *obj,
+                                     Efl_Ui_Win_Data *pd EINA_UNUSED,
                                      const Efl_Object *klass)
 {
     if (klass == EFL_UI_WIN_CLASS)

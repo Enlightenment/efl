@@ -692,7 +692,7 @@ _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static Efl_Object *
-_efl_object_provider_find(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Object *klass)
+_efl_object_provider_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Object *klass)
 {
    if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;

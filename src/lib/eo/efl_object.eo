@@ -130,7 +130,7 @@ abstract Efl.Object ()
             finalized: bool; [[$true if the object is finalized, $false otherwise]]
          }
       }
-      provider_find {
+      provider_find @const {
         [[Searches upwards in the object tree for a provider which knows the given class/interface.
 
           The object from the provider will then be returned.

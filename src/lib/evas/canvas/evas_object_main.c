@@ -2427,7 +2427,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
 }
 
 EOLIAN static Eo *
-_efl_canvas_object_efl_object_provider_find(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Class *klass)
+_efl_canvas_object_efl_object_provider_find(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
      {

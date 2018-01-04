@@ -50,7 +50,7 @@ _efl_input_event_fake_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN static Efl_Object *
-_efl_input_event_efl_object_provider_find(Eo *obj, void *pd EINA_UNUSED, const Efl_Object *klass)
+_efl_input_event_efl_object_provider_find(const Eo *obj, void *pd EINA_UNUSED, const Efl_Object *klass)
 {
    // Note: provider_find should probably return self if self is a klass object
    if (klass == EVAS_CANVAS_CLASS)

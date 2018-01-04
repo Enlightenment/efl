@@ -8749,7 +8749,7 @@ _elm_genlist_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Genlis
 }
 
 EOLIAN static Efl_Object*
-_elm_genlist_efl_object_provider_find(Eo *obj, Elm_Genlist_Data *pd, const Efl_Object *klass)
+_elm_genlist_efl_object_provider_find(const Eo *obj, Elm_Genlist_Data *pd, const Efl_Object *klass)
 {
    if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
      return pd->provider;

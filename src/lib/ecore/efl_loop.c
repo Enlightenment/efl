@@ -116,11 +116,11 @@ efl_exit(int exit_code)
 }
 
 EOLIAN static Efl_Object *
-_efl_loop_efl_object_provider_find(Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
+_efl_loop_efl_object_provider_find(const Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
 {
    Efl_Object *r;
 
-   if (klass == EFL_LOOP_CLASS) return obj;
+   if (klass == EFL_LOOP_CLASS) return (Efl_Object *) obj;
 
    r = eina_hash_find(pd->providers, &klass);
    if (r) return r;

@@ -1090,10 +1090,10 @@ _efl_ui_focus_manager_calc_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_focus_manager_calc_efl_object_provider_find(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, const Efl_Object *klass)
+_efl_ui_focus_manager_calc_efl_object_provider_find(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, const Efl_Object *klass)
 {
    if (klass == MY_CLASS)
-     return obj;
+     return (Efl_Object *) obj;
 
    return efl_provider_find(efl_super(obj, MY_CLASS), klass);
 }

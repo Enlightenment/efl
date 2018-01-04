@@ -5470,7 +5470,7 @@ _elm_widget_item_efl_access_component_alpha_get(Eo *obj EINA_UNUSED, Elm_Widget_
 }
 
 EOLIAN static Efl_Object *
-_elm_widget_efl_object_provider_find(Eo *obj, Elm_Widget_Smart_Data *pd, const Efl_Object *klass)
+_elm_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd, const Efl_Object *klass)
 {
    Efl_Object *lookup = NULL;
 

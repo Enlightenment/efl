@@ -829,8 +829,9 @@ evas_data_argb_unpremul(unsigned int *data, unsigned int len)
 }
 
 EOLIAN static Eo *
-_evas_canvas_efl_object_provider_find(Eo *eo_e, Evas_Public_Data *e EINA_UNUSED,
-                                   const Efl_Class *klass)
+_evas_canvas_efl_object_provider_find(const Eo *eo_e,
+                                      Evas_Public_Data *e EINA_UNUSED,
+                                      const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
      return eo_e;

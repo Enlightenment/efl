@@ -1507,7 +1507,7 @@ _elm_menu_efl_access_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Menu_
 }
 
 EOLIAN static Efl_Object*
-_elm_menu_efl_object_provider_find(Eo *obj, Elm_Menu_Data *pd, const Efl_Object *klass)
+_elm_menu_efl_object_provider_find(const Eo *obj, Elm_Menu_Data *pd, const Efl_Object *klass)
 {
    Efl_Object *result;
 
