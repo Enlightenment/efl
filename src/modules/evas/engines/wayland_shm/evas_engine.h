@@ -115,12 +115,4 @@ void *_evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int
 void _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, int h);
 void _evas_outbuf_redraws_clear(Outbuf *ob);
 
-Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
-void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
-void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
-int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
-void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-
-
 #endif
