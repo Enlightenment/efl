@@ -95,7 +95,7 @@ static const char *
 _drm2_device_find(Elput_Manager *em, const char *seat)
 {
    Eina_List *devs, *l;
-   const char *dev, *ret = NULL;
+   const char *dev, *ret = NULL, *chosen_dev = NULL;
    Eina_Bool found = EINA_FALSE;
    Eina_Bool platform = EINA_FALSE;
    Eina_Bool modeset;
@@ -141,6 +141,7 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
                {
                   const char *id;
 
+                  chosen_dev = dev;
                   id = eeze_udev_syspath_get_sysattr(dparent, "boot_vga");
                   if (id)
                     {
@@ -160,9 +161,9 @@ cont:
         if (found) break;
      }
 
-   if (!found) goto out;
+   if (!chosen_dev) goto out;
 
-   ret = eeze_udev_syspath_get_devpath(dev);
+   ret = eeze_udev_syspath_get_devpath(chosen_dev);
 
 out:
    EINA_LIST_FREE(devs, dev)
