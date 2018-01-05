@@ -12,6 +12,8 @@ matrix:
   include:
     - env: DISTRO=Ubuntu1710
     - env: DISTRO=Fedora27
+    - env: DISTRO=Fedora27 CI_BUILD_TYPE=wayland
+    - env: DISTRO=Fedora27 CI_BUILD_TYPE=misc
     - env: DISTRO=Debian91
     - env: DISTRO=Archlinux
     - os: osx
@@ -31,7 +33,7 @@ before_script:
 script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
-        docker run -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO /src/.ci/ci-linux-build.sh
+        docker run -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO /src/.ci/ci-linux-build.sh $CI_BUILD_TYPE
       fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-build.sh ; fi
 
