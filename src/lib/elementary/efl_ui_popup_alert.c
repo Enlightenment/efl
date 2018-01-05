@@ -67,10 +67,10 @@ _positive_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
-   Efl_Ui_Popup_Alert_Clicked_Event event;
+   Efl_Ui_Popup_Alert_Button_Clicked_Event event;
    event.button_type = EFL_UI_POPUP_ALERT_BUTTON_POSITIVE;
 
-   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_CLICKED, &event);
+   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, &event);
 }
 
 static void
@@ -78,10 +78,10 @@ _negative_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
-   Efl_Ui_Popup_Alert_Clicked_Event event;
+   Efl_Ui_Popup_Alert_Button_Clicked_Event event;
    event.button_type = EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE;
 
-   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_CLICKED, &event);
+   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, &event);
 }
 
 static void
@@ -89,10 +89,10 @@ _user_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *popup_obj = data;
 
-   Efl_Ui_Popup_Alert_Clicked_Event event;
+   Efl_Ui_Popup_Alert_Button_Clicked_Event event;
    event.button_type = EFL_UI_POPUP_ALERT_BUTTON_USER;
 
-   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_CLICKED, &event);
+   efl_event_callback_call(popup_obj, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, &event);
 }
 
 EOLIAN static void
