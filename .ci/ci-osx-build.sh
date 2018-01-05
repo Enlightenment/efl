@@ -12,5 +12,5 @@ export PATH="$(brew --prefix gettext)/bin:$PATH"
 # Normal build test of all targets
 ./autogen.sh $COPTS $@
 make -j $PARALLEL_JOBS
-#make -j $PARALLEL_JOBS examples
+make -j $PARALLEL_JOBS examples
 #make -j $PARALLEL_JOBS benchmark
