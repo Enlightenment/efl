@@ -4409,8 +4409,9 @@ _drag_anim_start(Sel_Manager_Drag_Container *dc)
    dc->timer = NULL;
    if (dc->icon_func)
      {
+        Eina_Position2D pos_ret;
         Evas_Object *temp_win = elm_win_add(NULL, "Temp", ELM_WIN_DND);
-        Evas_Object *final_icon = dc->icon_func(dc->icon_func_data, temp_win, dc->cont, NULL);
+        Evas_Object *final_icon = dc->icon_func(dc->icon_func_data, temp_win, dc->cont, &pos_ret);
         evas_object_geometry_get(final_icon, NULL, NULL, &dc->final_icon.w, &dc->final_icon.h);
         evas_object_del(final_icon);
         evas_object_del(temp_win);

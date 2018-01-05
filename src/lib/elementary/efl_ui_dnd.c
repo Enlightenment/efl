@@ -224,7 +224,6 @@ struct _Dnd_Cont_Drop
 
 struct _Item_Container_Drag_Info
 {
-   Eina_List *icons;
    Elm_Drag_User_Info user_info;
    Elm_Object_Item *it;
    Elm_Item_Container_Data_Get_Cb data_get_cb;
@@ -766,7 +765,7 @@ _cont_drag_icon_list_create(void *data, Efl_Object *obj EINA_UNUSED)
    Item_Container_Drag_Info *di;
 
    di = data;
-   return di->icons;
+   return di->user_info.icons;
 }
 
 static Efl_Object *
