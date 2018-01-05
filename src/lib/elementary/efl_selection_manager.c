@@ -989,7 +989,8 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                       Eina_Position2D pos, posret;
                                       evas_object_geometry_get(dropable->obj, &pos.x, &pos.y, NULL, NULL);
                                       //get item
-                                      pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + pos.x, seat_sel->saved_types->pos.y + pos.y);
+                                      pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + pos.x,
+                                                            seat_sel->saved_types->pos.y + pos.y);
                                       ERR("x, y: %d %d, x, y0: %d %d", seat_sel->saved_types->pos.x, seat_sel->saved_types->pos.y, pos.x, pos.y);
                                       Efl_Object *it = NULL;
                                       if (dropable->item_func)
@@ -1098,6 +1099,7 @@ _x11_general_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSE
    //Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
    //Sel_Manager_Seat_Selection *seat_sel = _sel_manager_seat_selection_get(pd, 1);
 
+   sel_debug("general converter");
    Sel_Manager_Selection *sel = *(Sel_Manager_Selection **)data;
    //if (_get_selection_type(data, seat_sel) == EFL_SELECTION_FORMAT_NONE)
    if (sel->format == EFL_SELECTION_FORMAT_NONE)
@@ -1116,7 +1118,11 @@ _x11_general_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSE
      {
         if (sel->data.mem)
           {
-             if (data_ret) *data_ret = strdup(sel->data.mem);
+             if (data_ret)
+               {
+                  *data_ret = strdup(sel->data.mem);
+                  ((char **)(data_ret))[0][sel->data.len] = 0;
+               }
              if (size_ret) *size_ret = strlen(sel->data.mem);
           }
         else
@@ -1136,6 +1142,7 @@ _x11_targets_converter(char *target EINA_UNUSED, void *data, int size EINA_UNUSE
    Sel_Manager_Selection *sel;
    Efl_Selection_Format seltype;
 
+   sel_debug("target converter");
    if (!data_ret) return EINA_FALSE;
    //Efl_Selection_Manager_Data *pd = *(Efl_Selection_Manager_Data **)data;
 

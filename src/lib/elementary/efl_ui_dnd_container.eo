@@ -1,7 +1,6 @@
 import efl_ui_dnd_types;
 
 mixin Efl.Ui.Dnd.Container {
-   //data: null;
    methods {
       @property drag_delay_time {
          [[The time since mouse down happens to drag starts.]]
@@ -47,8 +46,5 @@ mixin Efl.Ui.Dnd.Container {
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
-   }
-   events {
-      drag,item,container,drop; [[called when the selected data is 'dropped' on container]]
    }
 }
