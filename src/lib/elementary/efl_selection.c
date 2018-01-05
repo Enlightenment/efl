@@ -44,7 +44,7 @@ _efl_selection_selection_get(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Sel
                                        data_func_free_cb, seat);
 }
 
-EOLIAN static Efl_Future *
+EOLIAN static Eina_Future *
 _efl_selection_selection_set(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
    ERR("In");
@@ -191,23 +191,26 @@ struct _Sel_Lost_Data
    Elm_Selection_Loss_Cb loss_cb;
 };
 
-static void
-_selection_lost_cb(void *data, const Efl_Event *event)
+static Eina_Value
+_selection_lost_cb(void *data, const Eina_Value value)
 {
    Eina_List *l, *l2;
    Sel_Lost_Data *ldata, *ldata2;
 
-    ldata = data;
-    ERR("Lost2: data: %p has lost selection; %p", ldata, event->object);
-    EINA_LIST_FOREACH_SAFE(lost_cb_list, l, l2, ldata2)
-      {
-         if ((ldata->obj == ldata2->obj) &&
-             (ldata->type == ldata2->type))
-           {
-              ldata2->loss_cb(ldata2->udata, ldata2->type);
-              lost_cb_list = eina_list_remove(lost_cb_list, ldata2);
-           }
-      }
+   ldata = data;
+   ERR("selection has lost");
+   EINA_LIST_FOREACH_SAFE(lost_cb_list, l, l2, ldata2)
+     {
+        if ((ldata->obj == ldata2->obj) &&
+            (ldata->type == ldata2->type))
+          {
+             ldata2->loss_cb(ldata2->udata, ldata2->type);
+             lost_cb_list = eina_list_remove(lost_cb_list, ldata2);
+          }
+     }
+   free(ldata);
+
+   return value;
 }
 
 EAPI Eina_Bool
@@ -236,7 +239,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
    int seatid = 1;
-   Efl_Future *f;
+   Eina_Future *f;
    Sel_Lost_Data *ldata;
    Eo *sel_man = _selection_manager_get(obj);
    Eina_Slice data;
@@ -252,7 +255,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
 
    ldata->obj = obj;
    ldata->type = type;
-   efl_future_then(f, _selection_lost_cb, NULL, NULL, ldata);
+   eina_future_then_easy(f, _selection_lost_cb, NULL, NULL, EINA_VALUE_TYPE_UINT, ldata);
 
    return EINA_TRUE;
 }

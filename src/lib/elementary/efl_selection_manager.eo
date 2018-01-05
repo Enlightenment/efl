@@ -10,7 +10,7 @@ class Efl.Selection.Manager (Efl.Object, Efl.Ui.Dnd) {
             @in data: Eina.Slice;
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
-         return: future<void_ptr>; [[Future for tracking when the selection is lost]]
+         return: ptr(Eina.Future); [[Future for tracking when the selection is lost]]
       }
       selection_get @beta {
          params {

@@ -137,7 +137,7 @@ typedef struct _Sel_Manager_Selection_Lost Sel_Manager_Selection_Lost;
 struct _Sel_Manager_Selection_Lost
 {
     Efl_Object *request;
-    Efl_Promise *promise;
+    Eina_Promise *promise;
     Efl_Selection_Type type;
 };
 
