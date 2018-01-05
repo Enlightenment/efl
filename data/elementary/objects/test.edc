@@ -1011,4 +1011,46 @@ collections {
          }
       }
    }
+   group { "focus_test_6";
+      parts {
+         rect { "list_bg";
+            description { state: "default";
+               color: 200 0 0 100;
+               rel1.to: "list_swallow";
+               rel2.to: "list_swallow";
+            }
+         }
+         rect { "box_bg";
+            description { state: "default";
+               color: 0 200 0 100;
+               rel1.to: "box";
+               rel2.to: "box";
+            }
+         }
+         box { "box";
+            description { state: "default";
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 0.1;
+               box {
+                  layout: "horizontal";
+                  padding: 4 4;
+                  align: 1.0 0.5;
+                  min: 1 0;
+               }
+            }
+         }
+         swallow { "list_swallow"; 
+            description { state: "default";
+               rel1.relative: 0.0 0.2;
+               rel2.relative: 0.5 1.0;
+            }
+         }
+         swallow { "label_swallow"; 
+            description { state: "default";
+               rel1.relative: 0.0 0.1;
+               rel2.relative: 1.0 0.2;
+            }
+         }
+      }
+   }
 }

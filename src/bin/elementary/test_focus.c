@@ -1077,3 +1077,75 @@ test_focus5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
+
+/**** focus 6 ****/
+static char *
+_focus6_gl_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                    const char *part EINA_UNUSED)
+{
+   char buf[32];
+   snprintf(buf, sizeof(buf), "Focus item %d", (int)(uintptr_t)data);
+   return strdup(buf);
+}
+void
+test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *ly, *lb, *btn, *gl;
+   Elm_Genlist_Item_Class *itc;
+   Elm_Object_Item *it;
+   char buf[PATH_MAX];
+   int i;
+
+   win = elm_win_util_standard_add("focus6", "Focus 6");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+
+   // main layout
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "focus_test_6");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, ly);
+   evas_object_show(ly);
+
+   lb = elm_label_add(ly);
+   elm_object_text_set(lb, "The game is to reach the buttons and the list items"
+                           " using only the keyboard");
+   elm_layout_content_set(ly, "label_swallow", lb);
+
+   // genlist in a swallow
+   gl = elm_genlist_add(ly);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_layout_content_set(ly, "list_swallow", gl);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _focus6_gl_text_get;
+   for (i = 0; i < 3; i++)
+     {
+        it = elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+        /* This is another bug! This focus item at start do not work */
+        // if (i == 1)
+           // elm_object_item_focus_set(it, EINA_TRUE);
+     }
+   elm_genlist_item_class_free(itc);
+
+   // 3 buttons in an edje box
+   for (i = 0; i < 3; i++)
+     {
+        btn = elm_button_add(ly);
+        elm_object_text_set(btn, "btn");
+        elm_layout_box_append(ly, "box", btn);
+        evas_object_show(btn);
+        /* focus should start from second button */
+        if (i == 1)
+          elm_object_focus_set(btn, EINA_TRUE);
+     }
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}
