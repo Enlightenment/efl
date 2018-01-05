@@ -168,7 +168,8 @@ if get_option('g-mainloop') == true
 endif
 
 if get_option('gstreamer') == true
-  ecore_deps += dependency('gstreamer-1.0')
+  gstreamer = dependency('gstreamer-1.0')
+  ecore_deps += gstreamer
 endif
 
 if get_option('systemd') == true
