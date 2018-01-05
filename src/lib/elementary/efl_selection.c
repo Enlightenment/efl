@@ -33,7 +33,7 @@ _selection_manager_get(Eo *obj)
 }
 
 EOLIAN static void
-_efl_selection_selection_get(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format,
+_efl_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format,
                                      void *data_func_data, Efl_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
 {
    ERR("In");
@@ -45,7 +45,7 @@ _efl_selection_selection_get(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Sel
 }
 
 EOLIAN static Eina_Future *
-_efl_selection_selection_set(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
+_efl_selection_selection_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
@@ -54,7 +54,7 @@ _efl_selection_selection_set(Eo *obj, void *pd, Efl_Selection_Type type, Efl_Sel
 }
 
 EOLIAN static void
-_efl_selection_selection_clear(Eo *obj, void *pd, Efl_Selection_Type type, unsigned int seat)
+_efl_selection_selection_clear(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
 {
    ERR("In");
    Eo *sel_man = _selection_manager_get(obj);
@@ -62,7 +62,7 @@ _efl_selection_selection_clear(Eo *obj, void *pd, Efl_Selection_Type type, unsig
 }
 
 EOLIAN static Eina_Bool
-_efl_selection_has_owner(Eo *obj, void *pd, Efl_Selection_Type type, unsigned int seat)
+_efl_selection_has_owner(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
 {
     ERR("In");
     Eo *sel_man = _selection_manager_get(obj);

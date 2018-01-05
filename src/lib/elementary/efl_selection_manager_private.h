@@ -190,7 +190,7 @@ struct _Sel_Manager_Drag_Container
    Evas                          *e;
    Efl_Object                    *cont;
    Efl_Selection_Format           format;
-   Eina_Slice                     data;
+   Eina_Rw_Slice                     data;
    Efl_Selection_Action           action;
    Eina_List                     *icons;
    Eina_Size2D                    final_icon;
