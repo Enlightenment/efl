@@ -40,7 +40,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
      {
         Eolian_Type_Type tpt = ::eolian_type_type_get(tp);
           {
-             tp = ::eolian_type_aliased_base_get(tp);
+             tp = ::eolian_type_aliased_base_get(NULL, tp);
              tpt = ::eolian_type_type_get(tp);
              if (tpt == EOLIAN_TYPE_CLASS)
                {
@@ -56,7 +56,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
                }
              else if (tpt == EOLIAN_TYPE_REGULAR)
                {
-                  auto tpd = eolian_type_typedecl_get(tp);
+                  auto tpd = eolian_type_typedecl_get(NULL, tp);
                   if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
                     {
                        auto struct_type_full_name = ::eolian_type_full_name_get(tp);

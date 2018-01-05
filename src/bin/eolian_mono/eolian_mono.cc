@@ -159,7 +159,6 @@ run(options_type const& opts)
    if (klass)
      {
        efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
-       std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
        if (!eolian_mono::klass
          .generate(iterator, klass_def, context))
