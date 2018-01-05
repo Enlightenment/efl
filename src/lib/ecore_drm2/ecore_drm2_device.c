@@ -161,11 +161,9 @@ cont:
         if (found) break;
      }
 
-   if (!chosen_dev) goto out;
+   if (chosen_dev)
+     ret = eeze_udev_syspath_get_devpath(chosen_dev);
 
-   ret = eeze_udev_syspath_get_devpath(chosen_dev);
-
-out:
    EINA_LIST_FREE(devs, dev)
      eina_stringshare_del(dev);
 
