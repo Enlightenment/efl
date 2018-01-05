@@ -1,8 +1,5 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
-#include <Ecore_Con.h>
 
 static int retval = EXIT_SUCCESS;
 static Eina_List *commands = NULL;
@@ -92,14 +89,14 @@ _stream_error(void *data EINA_UNUSED, const Efl_Event *event)
    fprintf(stderr, "INFO: %s error: #%d '%s'\n",
            efl_name_get(event->object), *perr, eina_error_msg_get(*perr));
    retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
 _stream_eos(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: %s eos, quit\n", efl_name_get(event->object));
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(stream_cbs,
@@ -174,8 +171,9 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *address = NULL;
    char *line_delimiter_str = NULL;
@@ -200,12 +198,9 @@ main(int argc, char **argv)
    };
    Eina_Error err;
    int args;
-   Eo *dialer, *loop;
+   Eo *dialer;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
@@ -215,7 +210,7 @@ main(int argc, char **argv)
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
@@ -235,12 +230,10 @@ main(int argc, char **argv)
    /*
     * some objects such as the Efl.Io.Buffered_Stream and
     * Efl.Net.Dialer.Tcp depend on main loop, thus their parent must
-    * be a loop provider. We use the loop itself.
+    * be a loop provider. We use the loop itself that come from event.
     */
-   loop = efl_main_loop_get();
-
    /* The TCP client to use to send/receive network data */
-   dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, loop,
+   dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, ev->object,
                     efl_name_set(efl_added, "dialer"),
                     efl_event_callback_add(efl_added, EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected, NULL));
    if (!dialer)
@@ -263,7 +256,7 @@ main(int argc, char **argv)
     *
     * On incoming data we peek at it with slice_get() and then clear().
     */
-   stream = efl_add(EFL_IO_BUFFERED_STREAM_CLASS, loop,
+   stream = efl_add(EFL_IO_BUFFERED_STREAM_CLASS, ev->object,
                     efl_name_set(efl_added, "stream"),
                     efl_io_buffered_stream_inner_io_set(efl_added, dialer), /* mandatory! */
                     efl_io_buffered_stream_line_delimiter_set(efl_added, line_delimiter),
@@ -289,7 +282,7 @@ main(int argc, char **argv)
         goto error_dialing;
      }
 
-   ecore_main_loop_begin();
+   return ;
 
  error_dialing:
    efl_io_closer_close(stream);
@@ -303,8 +296,7 @@ main(int argc, char **argv)
         free(cmd);
      }
 
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(retval));
 }
+
+EFL_MAIN();
