@@ -10,166 +10,175 @@
 #include <signal.h>
 #include <unistd.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <pthread.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
 
 /* make mono happy - this is evil though... */
 #undef SIGPWR
-/* valgrind in some versions/setups uses SIGRT's... hmmm */
+
+#define ECORE_SIGNAL_THREAD 1
+
+static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
+static void _ecore_signal_waitpid(Eina_Bool once, siginfo_t info);
+static void _ecore_signal_generic_free(void *data, void *event);
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-static void _ecore_signal_callback_set(int            sig,
-                                       Signal_Handler func);
-static void _ecore_signal_callback_ignore(int        sig,
-                                          siginfo_t *si,
-                                          void      *foo);
-static void _ecore_signal_callback_sigchld(int        sig,
-                                           siginfo_t *si,
-                                           void      *foo);
-static void _ecore_signal_callback_sigusr1(int        sig,
-                                           siginfo_t *si,
-                                           void      *foo);
-static void _ecore_signal_callback_sigusr2(int        sig,
-                                           siginfo_t *si,
-                                           void      *foo);
-static void _ecore_signal_callback_sighup(int        sig,
-                                          siginfo_t *si,
-                                          void      *foo);
-static void _ecore_signal_callback_sigquit(int        sig,
-                                           siginfo_t *si,
-                                           void      *foo);
-static void _ecore_signal_callback_sigint(int        sig,
-                                          siginfo_t *si,
-                                          void      *foo);
-static void _ecore_signal_callback_sigterm(int        sig,
-                                           siginfo_t *si,
-                                           void      *foo);
-#ifdef SIGPWR
-static void _ecore_signal_callback_sigpwr(int        sig,
-                                          siginfo_t *si,
-                                          void      *foo);
+#ifdef ECORE_SIGNAL_THREAD
+static Eina_Thread sig_thread;
+static Eina_Bool sig_thread_exists = EINA_FALSE;
 #endif
+static int sig_pipe[2] = { -1, -1 }; // [0] == read, [1] == write
+static Eo *sig_pipe_handler = NULL;
 
-static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
-
-//#define MAXSIGQ 256 // 32k
-#define MAXSIGQ 64 // 8k
-
-static volatile sig_atomic_t sig_count     = 0;
-static volatile sig_atomic_t sigchld_count = 0;
-static volatile sig_atomic_t sigusr1_count = 0;
-static volatile sig_atomic_t sigusr2_count = 0;
-static volatile sig_atomic_t sighup_count  = 0;
-static volatile sig_atomic_t sigquit_count = 0;
-static volatile sig_atomic_t sigint_count  = 0;
-static volatile sig_atomic_t sigterm_count = 0;
-#ifdef SIGPWR
-static volatile sig_atomic_t sigpwr_count  = 0;
-#endif
-
-static volatile siginfo_t sigchld_info[MAXSIGQ];
-static volatile siginfo_t sigusr1_info[MAXSIGQ];
-static volatile siginfo_t sigusr2_info[MAXSIGQ];
-static volatile siginfo_t sighup_info [MAXSIGQ];
-static volatile siginfo_t sigquit_info[MAXSIGQ];
-static volatile siginfo_t sigint_info [MAXSIGQ];
-static volatile siginfo_t sigterm_info[MAXSIGQ];
-#ifdef SIGPWR
-static volatile siginfo_t sigpwr_info [MAXSIGQ];
-#endif
-
-#if defined(SIG_ATOMIC_MAX)
-# if SIG_ATOMIC_MAX == INT64_MAX
-/* Basically FreeBSD on 64bits */
-#  define PRIdSIGATOMIC PRId64
-# elif SIG_ATOMIC_MAX == UINT64_MAX
-#  define PRIdSIGATOMIC PRIu64
-# elif SIG_ATOMIC_MAX == UINT32_MAX
-#  define PRIdSIGATOMIC PRIu32
-# else
-/* everybody else seems to go for int */
-#  define PRIdSIGATOMIC PRId32
-# endif
-#else
-# define PRIdSIGATOMIC "d"
-#endif
-
-void
-_ecore_signal_shutdown(void)
+typedef struct _Signal_Data
 {
-   _ecore_signal_callback_set(SIGPIPE, (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGALRM, (Signal_Handler)SIG_DFL);
-   // XXX: consider using new clone4 features:
-   // http://code.qt.io/cgit/qt/qtbase.git/tree/src/3rdparty/forkfd/forkfd.c
-   // https://lkml.org/lkml/2015/3/12/1060
-   // https://lkml.org/lkml/2015/3/12/1044
-   _ecore_signal_callback_set(SIGCHLD, (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGUSR1, (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGUSR2, (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGHUP,  (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGQUIT, (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGINT,  (Signal_Handler)SIG_DFL);
-   _ecore_signal_callback_set(SIGTERM, (Signal_Handler)SIG_DFL);
+   int sig;
+   siginfo_t info;
+} Signal_Data;
+
+static Eina_Bool
+_ecore_signal_pipe_read(void)
+{
+   Signal_Data sdata;
+   int ret;
+
+   ret = read(sig_pipe[0], &sdata, sizeof(sdata));
+   if (ret != sizeof(sdata)) return EINA_FALSE;
+   switch (sdata.sig)
+     {
+      case SIGPIPE:
+        break;
+      case SIGALRM:
+        break;
+      case SIGCHLD:
+        _ecore_signal_waitpid(EINA_FALSE, sdata.info);
+        break;
+      case SIGUSR1:
+      case SIGUSR2:
+          {
+             Ecore_Event_Signal_User *e = _ecore_event_signal_user_new();
+             if (e)
+               {
+                  if (sdata.sig == SIGUSR1) e->number = 1;
+                  else e->number = 2;
+                  e->data = sdata.info;
+                  ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
+                                  _ecore_signal_generic_free, NULL);
+               }
+          }
+        break;
+      case SIGHUP:
+          {
+             Ecore_Event_Signal_Hup *e = _ecore_event_signal_hup_new();
+             if (e)
+               {
+                  e->data = sdata.info;
+                  ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e,
+                                  _ecore_signal_generic_free, NULL);
+               }
+          }
+        break;
+      case SIGQUIT:
+      case SIGINT:
+      case SIGTERM:
+          {
+             Ecore_Event_Signal_Exit *e = _ecore_event_signal_exit_new();
+             if (e)
+               {
+                  if (sdata.sig == SIGQUIT) e->quit = 1;
+                  else if (sdata.sig == SIGINT) e->interrupt = 1;
+                  else e->terminate = 1;
+                  e->data = sdata.info;
+                  ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
+                                  _ecore_signal_generic_free, NULL);
+               }
+          }
+        break;
 #ifdef SIGPWR
-   _ecore_signal_callback_set(SIGPWR,  (Signal_Handler)SIG_DFL);
-   sigpwr_count  = 0;
+      case SIGPWR:
+          {
+             Ecore_Event_Signal_Power *e = _ecore_event_signal_power_new();
+             if (e)
+               {
+                  e->data = sdata.info;
+                  ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e,
+                                  _ecore_signal_generic_free, NULL);
+               }
+          }
+        break;
 #endif
-   sigchld_count = 0;
-   sigusr1_count = 0;
-   sigusr2_count = 0;
-   sighup_count  = 0;
-   sigquit_count = 0;
-   sigint_count  = 0;
-   sigterm_count = 0;
-   sig_count     = 0;
-}
-
-void
-_ecore_signal_init(void)
-{
-   _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback_ignore);
-   _ecore_signal_callback_set(SIGALRM, _ecore_signal_callback_ignore);
-   _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_sigchld);
-   _ecore_signal_callback_set(SIGUSR1, _ecore_signal_callback_sigusr1);
-   _ecore_signal_callback_set(SIGUSR2, _ecore_signal_callback_sigusr2);
-   _ecore_signal_callback_set(SIGHUP,  _ecore_signal_callback_sighup);
-   _ecore_signal_callback_set(SIGQUIT, _ecore_signal_callback_sigquit);
-   _ecore_signal_callback_set(SIGINT,  _ecore_signal_callback_sigint);
-   _ecore_signal_callback_set(SIGTERM, _ecore_signal_callback_sigterm);
-#ifdef SIGPWR
-   _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_sigpwr);
-#endif
-}
-
-void
-_ecore_signal_received_process(Eo *obj, Efl_Loop_Data *pd)
-{
-   while (_ecore_signal_count_get(obj, pd)) _ecore_signal_call(obj, pd);
-}
-
-int
-_ecore_signal_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
-{
-   return sig_count;
+      default:
+        break;
+     }
+   return EINA_TRUE;
 }
 
 static void
-_ecore_signal_generic_free(void *data EINA_UNUSED, void *event)
+_ecore_signal_cb_read(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   free(event);
+   while (_ecore_signal_pipe_read());
 }
 
-void
-_ecore_signal_call(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
+static void
+_ecore_signal_cb_del(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   volatile sig_atomic_t n;
-   sigset_t oldset, newset;
-   int tot;
+   if (event->object == sig_pipe_handler) sig_pipe_handler = NULL;
+}
 
-   if (sig_count == 0) return;
-   eina_evlog("+signals", NULL, 0.0, NULL);
+EFL_CALLBACKS_ARRAY_DEFINE(_event_watch,
+                             { EFL_LOOP_HANDLER_EVENT_READ, _ecore_signal_cb_read },
+                             { EFL_EVENT_DEL, _ecore_signal_cb_del });
+
+static void
+_ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
+{
+   Signal_Data sdata;
+
+   sdata.sig = sig;
+   sdata.info = *si;
+   if (sdata.sig >= 0) write(sig_pipe[1], &sdata, sizeof(sdata));
+}
+
+static void
+_ecore_signal_callback_set(int sig, Signal_Handler func)
+{
+   struct sigaction sa;
+
+#ifdef ECORE_SIGNAL_THREAD
+   if (eina_thread_self() != sig_thread)
+     {
+        fprintf(stderr, "Ecore sig handler NOT called from sigwatcher thread\n");
+     }
+#endif
+   sa.sa_sigaction = func;
+   sa.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&sa.sa_mask);
+   sigaction(sig, &sa, NULL);
+}
+
+static void
+_signalhandler_setup(void)
+{
+   sigset_t newset;
+
+   _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGALRM, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGUSR1, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGUSR2, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGHUP,  _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGQUIT, _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGINT,  _ecore_signal_callback);
+   _ecore_signal_callback_set(SIGTERM, _ecore_signal_callback);
+#ifdef SIGPWR
+   _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback);
+#endif
+
+#ifndef _WIN32
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
    sigaddset(&newset, SIGALRM);
@@ -180,429 +189,137 @@ _ecore_signal_call(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    sigaddset(&newset, SIGQUIT);
    sigaddset(&newset, SIGINT);
    sigaddset(&newset, SIGTERM);
-#ifdef SIGPWR
+# ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
+# endif
+   pthread_sigmask(SIG_UNBLOCK, &newset, NULL);
 #endif
-   sigprocmask(SIG_BLOCK, &newset, &oldset);
-   if (sigchld_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGCHLD in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigchld_count, MAXSIGQ);
-   tot = sigchld_count + sigusr1_count + sigusr2_count +
-     sighup_count + sigquit_count + sigint_count + sigterm_count
-#ifdef SIGPWR
-     + sigpwr_count
+}
+
+static void *
+_ecore_signal_thread_watcher(void *data EINA_UNUSED, Eina_Thread t)
+{
+   eina_thread_cancellable_set(EINA_FALSE, NULL);
+   eina_thread_name_set(t, "Esigwatcher");
+   _signalhandler_setup();
+   for (;;) pause();
+   return NULL;
+}
+
+static void
+_ecore_signal_pipe_init(void)
+{
+   if (sig_pipe[0] == -1)
+     {
+        if (pipe(sig_pipe) != 0)
+          {
+             sig_pipe[0] = -1;
+             return;
+          }
+        eina_file_close_on_exec(sig_pipe[0], EINA_TRUE);
+        eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
+        fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK);
+     }
+#ifdef ECORE_SIGNAL_THREAD
+   if (!sig_thread_exists)
+     {
+        if (!eina_thread_create(&sig_thread, EINA_THREAD_NORMAL,
+                                -1, _ecore_signal_thread_watcher, NULL))
+          {
+             close(sig_pipe[0]);
+             close(sig_pipe[1]);
+             sig_pipe[0] = -1;
+             sig_pipe[1] = -1;
+             return;
+          }
+        sig_thread_exists = EINA_TRUE;
+     }
+#else
+   _signalhandler_setup();
 #endif
-     ;
+   if (!sig_pipe_handler)
+     sig_pipe_handler =
+       efl_add(EFL_LOOP_HANDLER_CLASS, ML_OBJ,
+               efl_loop_handler_fd_set(efl_added, sig_pipe[0]),
+               efl_loop_handler_active_set(efl_added, EFL_LOOP_HANDLER_FLAGS_READ),
+               efl_event_callback_array_add(efl_added, _event_watch(), NULL));
+}
 
-   if (sig_count != tot)
+static void
+_ecore_signal_pipe_shutdown(void)
+{
+   if (sig_pipe[0] != -1)
      {
-        ERR("sig_count (%"PRIdSIGATOMIC") != actual totals (%i) ",
-            sig_count, tot);
-        sig_count = tot;
+        close(sig_pipe[0]);
+        close(sig_pipe[1]);
+        sig_pipe[0] = -1;
+        sig_pipe[1] = -1;
      }
-
-   for (n = 0; n < sigchld_count; n++)
+   if (sig_pipe_handler)
      {
-        pid_t pid;
-        int status;
-
-        while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
-          {
-             Ecore_Exe_Event_Del *e;
-
-             /* FIXME: If this process is set respawn, respawn with a suitable backoff
-              * period for those that need too much respawning.
-              */
-             e = _ecore_exe_event_del_new();
-             if (e)
-               {
-                  if (WIFEXITED(status))
-                    {
-                       e->exit_code = WEXITSTATUS(status);
-                       e->exited = 1;
-                    }
-                  else if (WIFSIGNALED(status))
-                    {
-                       e->exit_signal = WTERMSIG(status);
-                       e->signalled = 1;
-                    }
-                  e->pid = pid;
-                  e->exe = _ecore_exe_find(pid);
-
-                  if ((n < MAXSIGQ) && (sigchld_info[n].si_signo))
-                    e->data = sigchld_info[n];  /* No need to clone this. */
-
-                  if ((e->exe) &&
-                      (ecore_exe_flags_get(e->exe) &
-                       (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
-                    {
-     /* We want to report the Last Words of the exe, so delay this event.
-      * This is twice as relevant for stderr.
-      * There are three possibilities here -
-      *  1 There are no Last Words.
-      *  2 There are Last Words, they are not ready to be read.
-      *  3 There are Last Words, they are ready to be read.
-      *
-      * For 1 we don't want to delay, for 3 we want to delay.
-      * 2 is the problem.  If we check for data now and there
-      * is none, then there is no way to differentiate 1 and 2.
-      * If we don't delay, we may loose data, but if we do delay,
-      * there may not be data and the exit event never gets sent.
-      *
-      * Any way you look at it, there has to be some time passed
-      * before the exit event gets sent.  So the strategy here is
-      * to setup a timer event that will send the exit event after
-      * an arbitrary, but brief, time.
-      *
-      * This is probably paranoid, for the less paraniod, we could
-      * check to see for Last Words, and only delay if there are any.
-      * This has it's own set of problems.
-      */
-                       Efl_Loop_Timer *doomsday_clock =
-                         _ecore_exe_doomsday_clock_get(e->exe);
-                       efl_del(doomsday_clock);
-                       doomsday_clock =
-                         efl_add(EFL_LOOP_TIMER_CLASS, obj,
-                                 efl_loop_timer_interval_set(efl_added, 0.1),
-                                 efl_event_callback_add
-                                   (efl_added, EFL_LOOP_TIMER_EVENT_TICK,
-                                    _ecore_signal_exe_exit_delay, e));
-                       _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
-                    }
-                  else
-                    {
-                       ecore_event_add(ECORE_EXE_EVENT_DEL, e,
-                                       _ecore_exe_event_del_free, NULL);
-                    }
-               }
-          }
-        sig_count--;
+        efl_del(sig_pipe_handler);
+        sig_pipe_handler = NULL;
      }
-   sigchld_count = 0;
+}
 
-   if (sigusr1_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGUSR1 in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigusr1_count, MAXSIGQ);
-   for (n = 0; n < sigusr1_count; n++)
-     {
-        Ecore_Event_Signal_User *e;
-
-        e = _ecore_event_signal_user_new();
-        if (e)
-          {
-             e->number = 1;
-
-             if ((n < MAXSIGQ) && (sigusr1_info[n].si_signo))
-               e->data = sigusr1_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigusr1_count = 0;
-
-   if (sigusr2_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGUSR2 in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigusr2_count, MAXSIGQ);
-   for (n = 0; n < sigusr2_count; n++)
-     {
-        Ecore_Event_Signal_User *e;
-
-        e = _ecore_event_signal_user_new();
-        if (e)
-          {
-             e->number = 2;
-
-             if ((n < MAXSIGQ) && (sigusr2_info[n].si_signo))
-               e->data = sigusr2_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigusr2_count = 0;
-
-   if (sighup_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGHUP in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sighup_count, MAXSIGQ);
-   for (n = 0; n < sighup_count; n++)
-     {
-        Ecore_Event_Signal_Hup *e;
-
-        e = _ecore_event_signal_hup_new();
-        if (e)
-          {
-             if ((n < MAXSIGQ) && (sighup_info[n].si_signo))
-               e->data = sighup_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sighup_count = 0;
-
-   if (sigquit_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGQUIT in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigquit_count, MAXSIGQ);
-   for (n = 0; n < sigquit_count; n++)
-     {
-        Ecore_Event_Signal_Exit *e;
-
-        e = _ecore_event_signal_exit_new();
-        if (e)
-          {
-             e->quit = 1;
-
-             if ((n < MAXSIGQ) && (sigquit_info[n].si_signo))
-               e->data = sigquit_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigquit_count = 0;
-
-   if (sigint_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGINT in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigint_count, MAXSIGQ);
-   for (n = 0; n < sigint_count; n++)
-     {
-        Ecore_Event_Signal_Exit *e;
-
-        e = _ecore_event_signal_exit_new();
-        if (e)
-          {
-             e->interrupt = 1;
-
-             if ((n < MAXSIGQ) && (sigint_info[n].si_signo))
-               e->data = sigint_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigint_count = 0;
-
-   if (sigterm_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGTERM in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigterm_count, MAXSIGQ);
-   for (n = 0; n < sigterm_count; n++)
-     {
-        Ecore_Event_Signal_Exit *e;
-
-        e = _ecore_event_signal_exit_new();
-        if (e)
-          {
-             e->terminate = 1;
-
-             if ((n < MAXSIGQ) && (sigterm_info[n].si_signo))
-               e->data = sigterm_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigterm_count = 0;
-
-#ifdef SIGPWR
-   if (sigpwr_count > MAXSIGQ)
-     WRN("%"PRIdSIGATOMIC" SIGPWR in queue. max queue size %i. losing "
-         "siginfo for extra signals.", sigpwr_count, MAXSIGQ);
-   for (n = 0; n < sigpwr_count; n++)
-     {
-        Ecore_Event_Signal_Power *e;
-
-        e = _ecore_event_signal_power_new();
-        if (e)
-          {
-             if ((n < MAXSIGQ) && (sigpwr_info[n].si_signo))
-               e->data = sigpwr_info[n];
-
-             ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e,
-                             _ecore_signal_generic_free, NULL);
-          }
-        sig_count--;
-     }
-   sigpwr_count = 0;
+static void
+_ecore_signal_cb_fork(void *data EINA_UNUSED)
+{
+   _ecore_signal_pipe_shutdown();
+#ifdef ECORE_SIGNAL_THREAD
+   sig_thread_exists = EINA_FALSE;
 #endif
-   sig_count = 0;
-
-   sigprocmask(SIG_SETMASK, &oldset, NULL);
-   eina_evlog("-signals", NULL, 0.0, NULL);
+   _ecore_signal_pipe_init();
 }
 
-static void
-_ecore_signal_callback_set(int            sig,
-                           Signal_Handler func)
+void
+_ecore_signal_init(void)
 {
-   struct sigaction sa;
+#ifndef _WIN32
+   sigset_t newset;
 
-   sa.sa_sigaction = func;
-   sa.sa_flags = SA_RESTART | SA_SIGINFO;
-   sigemptyset(&sa.sa_mask);
-   sigaction(sig, &sa, NULL);
-}
-
-static void
-_ecore_signal_callback_ignore(int        sig EINA_UNUSED,
-                              siginfo_t *si EINA_UNUSED,
-                              void      *foo EINA_UNUSED)
-{
-}
-
-static void
-_ecore_signal_callback_sigchld(int        sig EINA_UNUSED,
-                               siginfo_t *si,
-                               void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigchld_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigchld_info[n] = *si;
-        else
-          sigchld_info[n].si_signo = 0;
-     }
-
-   sigchld_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigusr1(int        sig EINA_UNUSED,
-                               siginfo_t *si,
-                               void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigusr1_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigusr1_info[n] = *si;
-        else
-          sigusr1_info[n].si_signo = 0;
-     }
-   sigusr1_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigusr2(int        sig EINA_UNUSED,
-                               siginfo_t *si,
-                               void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigusr2_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigusr2_info[n] = *si;
-        else
-          sigusr2_info[n].si_signo = 0;
-     }
-   sigusr2_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sighup(int        sig EINA_UNUSED,
-                              siginfo_t *si,
-                              void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sighup_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sighup_info[n] = *si;
-        else
-          sighup_info[n].si_signo = 0;
-     }
-   sighup_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigquit(int        sig EINA_UNUSED,
-                               siginfo_t *si,
-                               void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigquit_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigquit_info[n] = *si;
-        else
-          sigquit_info[n].si_signo = 0;
-     }
-   sigquit_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigint(int        sig EINA_UNUSED,
-                              siginfo_t *si,
-                              void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigint_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigint_info[n] = *si;
-        else
-          sigint_info[n].si_signo = 0;
-     }
-   sigint_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigterm(int        sig EINA_UNUSED,
-                               siginfo_t *si,
-                               void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigterm_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigterm_info[n] = *si;
-        else
-          sigterm_info[n].si_signo = 0;
-     }
-   sigterm_count++;
-   sig_count++;
-}
-
-#ifdef SIGPWR
-static void
-_ecore_signal_callback_sigpwr(int        sig EINA_UNUSED,
-                              siginfo_t *si,
-                              void      *foo EINA_UNUSED)
-{
-   volatile sig_atomic_t n;
-   n = sigpwr_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigpwr_info[n] = *si;
-        else
-          sigpwr_info[n].si_signo = 0;
-     }
-   sigpwr_count++;
-   sig_count++;
-}
-
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+# ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+# endif
+   pthread_sigmask(SIG_BLOCK, &newset, NULL);
 #endif
+   _ecore_signal_pipe_init();
+   ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
+}
+
+void
+_ecore_signal_shutdown(void)
+{
+   ecore_fork_reset_callback_del(_ecore_signal_cb_fork, NULL);
+   _ecore_signal_pipe_shutdown();
+   // we probably should restore.. but not a good idea
+   // pthread_sigmask(SIG_SETMASK, &sig_oldset, NULL);
+}
+
+void
+_ecore_signal_received_process(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   // do nothing - the efl loop handler read event will handle it
+}
+
+int
+_ecore_signal_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
+{
+   // we will always have 0 signals be3cause they will instead be read from
+   // a pipe fd and placed in a queue/list that
+   // _ecore_signal_received_process() will then walk and process/do
+   return 0;
+}
 
 static void
 _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event)
@@ -616,3 +333,77 @@ _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event)
    efl_del(event->object);
 }
 
+static void
+_ecore_signal_waitpid(Eina_Bool once, siginfo_t info)
+{
+   pid_t pid;
+   int status;
+
+   while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
+     {
+        Ecore_Exe_Event_Del *e = _ecore_exe_event_del_new();
+
+        //FIXME: If this process is set respawn, respawn with a suitable backoff
+        // period for those that need too much respawning.
+        if (e)
+          {
+             if (WIFEXITED(status))
+               {
+                  e->exit_code = WEXITSTATUS(status);
+                  e->exited = 1;
+               }
+             else if (WIFSIGNALED(status))
+               {
+                  e->exit_signal = WTERMSIG(status);
+                  e->signalled = 1;
+               }
+             e->pid = pid;
+             e->exe = _ecore_exe_find(pid);
+             e->data = info;  // No need to clone this.
+             if ((e->exe) &&
+                 (ecore_exe_flags_get(e->exe) &
+                  (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
+               {
+                  /* We want to report the Last Words of the exe, so delay this event.
+                   * This is twice as relevant for stderr.
+                   * There are three possibilities here -
+                   *  1 There are no Last Words.
+                   *  2 There are Last Words, they are not ready to be read.
+                   *  3 There are Last Words, they are ready to be read.
+                   *
+                   * For 1 we don't want to delay, for 3 we want to delay.
+                   * 2 is the problem.  If we check for data now and there
+                   * is none, then there is no way to differentiate 1 and 2.
+                   * If we don't delay, we may loose data, but if we do delay,
+                   * there may not be data and the exit event never gets sent.
+                   *
+                   * Any way you look at it, there has to be some time passed
+                   * before the exit event gets sent.  So the strategy here is
+                   * to setup a timer event that will send the exit event after
+                   * an arbitrary, but brief, time.
+                   *
+                   * This is probably paranoid, for the less paraniod, we could
+                   * check to see for Last Words, and only delay if there are any.
+                   * This has it's own set of problems. */
+                  efl_del(_ecore_exe_doomsday_clock_get(e->exe));
+
+                  Efl_Loop_Timer *doomsday_clock =
+                    efl_add(EFL_LOOP_TIMER_CLASS, ML_OBJ,
+                            efl_loop_timer_interval_set(efl_added, 0.1),
+                            efl_event_callback_add
+                            (efl_added, EFL_LOOP_TIMER_EVENT_TICK,
+                             _ecore_signal_exe_exit_delay, e));
+                  _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
+               }
+             else ecore_event_add(ECORE_EXE_EVENT_DEL, e,
+                                  _ecore_exe_event_del_free, NULL);
+          }
+        if (once) break;
+     }
+}
+
+static void
+_ecore_signal_generic_free(void *data EINA_UNUSED, void *event)
+{
+   free(event);
+}
