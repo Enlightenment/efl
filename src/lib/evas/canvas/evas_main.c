@@ -834,7 +834,7 @@ _evas_canvas_efl_object_provider_find(const Eo *eo_e,
                                       const Efl_Class *klass)
 {
    if (klass == EVAS_CANVAS_CLASS)
-     return eo_e;
+     return (Eo *)eo_e;
    else if (klass == EFL_LOOP_CLASS)
      return efl_main_loop_get();
    else if (klass == EFL_GESTURE_MANAGER_CLASS)

@@ -7066,7 +7066,7 @@ _efl_ui_win_efl_object_provider_find(const Eo *obj,
                                      const Efl_Object *klass)
 {
     if (klass == EFL_UI_WIN_CLASS)
-      return obj;
+      return (Eo *)obj;
 
     if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
       return pd->provider;
