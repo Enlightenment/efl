@@ -15,6 +15,7 @@ wl_protocol_local = [
 wl_protocol_sys = [
   join_paths('xdg-shell', 'xdg-shell-unstable-v6.xml'),
   join_paths('linux-dmabuf', 'linux-dmabuf-unstable-v1.xml'),
+  join_paths('text-input', 'text-input-unstable-v1.xml'),
 ]
 
 foreach sys_protocol : wl_protocol_sys

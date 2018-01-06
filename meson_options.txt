@@ -166,6 +166,12 @@ option('ecore_evas',
   description : 'build evas'
 )
 
+option('ecore_imf',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',

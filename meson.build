@@ -120,6 +120,7 @@ subprojects = [
 ['evas_goal'        , false,  true, false, false, false, false, []],
 ['ecore_input_evas' , false,  true, false, false, false, false, []],
 ['ecore_evas'       ,  true,  true, false, false, false, false, []],
+['ecore_imf'        ,  true,  true, false, false, false, false, []],
 ]
 
 # We generate Efl_Config.h and config.h later, they will be available here
