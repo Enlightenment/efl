@@ -351,6 +351,10 @@ endif
 
 #for the case that the iconv library is not part of libc but rather libiconv or smth. like that
 iconv = dependency('iconv', required: false)
+if iconv.found() == false
+  iconv = cc.find_library('iconv', required: false)
+endif
+
 execinfo = cc.find_library('execinfo', required: false)
 
 eina_lib = shared_library('eina', sources,
