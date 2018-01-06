@@ -54,7 +54,7 @@ function_checks = [
   ['getpwent', ['sys/types.h', 'pwd.h']],
   ['getuid', ['unistd.h']],
   ['getxattr', ['sys/types.h', 'sys/xattr.h']],
-  ['iconv_t', ['iconv.h']],
+  ['iconv', ['iconv.h']],
   ['listxattr', ['sys/types.h', 'sys/xattr.h']],
   ['mallinfo', ['malloc.h']],
   ['malloc_info', ['malloc.h']],
