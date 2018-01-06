@@ -1092,7 +1092,7 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 {
    Evas_Object *win, *ly, *lb, *btn, *gl;
    Elm_Genlist_Item_Class *itc;
-   Elm_Object_Item *it;
+//   Elm_Object_Item *it;
    char buf[PATH_MAX];
    int i;
 
@@ -1126,8 +1126,9 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    itc->func.text_get = _focus6_gl_text_get;
    for (i = 0; i < 3; i++)
      {
-        it = elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
-                                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+//        it = 
+        elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
         /* This is another bug! This focus item at start do not work */
         // if (i == 1)
            // elm_object_item_focus_set(it, EINA_TRUE);
