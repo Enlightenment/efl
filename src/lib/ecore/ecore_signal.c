@@ -41,7 +41,7 @@ typedef struct _Signal_Data
 } Signal_Data;
 
 static Eina_Bool
-_ecore_signal_pipe_read(void)
+_ecore_signal_pipe_read(Eo *obj)
 {
    Signal_Data sdata;
    int ret;
@@ -69,6 +69,14 @@ _ecore_signal_pipe_read(void)
                   ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
                                   _ecore_signal_generic_free, NULL);
                }
+             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+             if (loop)
+               {
+                  if (sdata.sig == SIGUSR1)
+                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR1, NULL);
+                  else
+                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR2, NULL);
+               }
           }
         break;
       case SIGHUP:
@@ -80,6 +88,9 @@ _ecore_signal_pipe_read(void)
                   ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e,
                                   _ecore_signal_generic_free, NULL);
                }
+             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+             if (loop)
+               efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_HUP, NULL);
           }
         break;
       case SIGQUIT:
@@ -120,7 +131,7 @@ _ecore_signal_pipe_read(void)
 static void
 _ecore_signal_cb_read(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   while (_ecore_signal_pipe_read());
+   while (_ecore_signal_pipe_read(event->object));
 }
 
 static void
