@@ -382,10 +382,10 @@ em_add(const Emotion_Engine *api EINA_UNUSED,
 #ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
 #endif
-   sigprocmask(SIG_BLOCK, &newset, &oldset);
+   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
    pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
    pthread_create(&ev->slave_th, NULL, _em_slave, ev);
-   sigprocmask(SIG_SETMASK, &oldset, NULL);
+   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
 
    pthread_detach(ev->slave_th);
    _em_slave_event(ev, 1, NULL);
