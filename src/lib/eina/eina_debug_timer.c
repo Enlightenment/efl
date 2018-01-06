@@ -160,7 +160,28 @@ eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data
    _timer_append(t);
    if (!_thread_runs)
      {
+#ifndef _WIN32
+        sigset_t oldset, newset;
+
+        sigemptyset(&newset);
+        sigaddset(&newset, SIGPIPE);
+        sigaddset(&newset, SIGALRM);
+        sigaddset(&newset, SIGCHLD);
+        sigaddset(&newset, SIGUSR1);
+        sigaddset(&newset, SIGUSR2);
+        sigaddset(&newset, SIGHUP);
+        sigaddset(&newset, SIGQUIT);
+        sigaddset(&newset, SIGINT);
+        sigaddset(&newset, SIGTERM);
+# ifdef SIGPWR
+        sigaddset(&newset, SIGPWR);
+# endif
+        pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+#endif
         int err = pthread_create(&_thread, NULL, _monitor, NULL);
+#ifndef _WIN32
+        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
+#endif
         if (err != 0)
           {
              e_debug("EINA DEBUG ERROR: Can't create debug timer thread!");

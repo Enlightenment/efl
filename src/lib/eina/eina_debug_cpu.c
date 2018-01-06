@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -294,12 +295,32 @@ Eina_Bool
 _eina_debug_cpu_init(void)
 {
    // if it's already running - we're good.
+#ifndef _WIN32
    if (!_sysmon_thread_runs)
      {
         int err;
+        sigset_t oldset, newset;
+
         eina_lock_new(&_sysmon_lock);
         eina_lock_take(&_sysmon_lock);
+        sigemptyset(&newset);
+        sigaddset(&newset, SIGPIPE);
+        sigaddset(&newset, SIGALRM);
+        sigaddset(&newset, SIGCHLD);
+        sigaddset(&newset, SIGUSR1);
+        sigaddset(&newset, SIGUSR2);
+        sigaddset(&newset, SIGHUP);
+        sigaddset(&newset, SIGQUIT);
+        sigaddset(&newset, SIGINT);
+        sigaddset(&newset, SIGTERM);
+#ifdef SIGPWR
+        sigaddset(&newset, SIGPWR);
+#endif
+        pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+
         err = pthread_create(&_sysmon_thread, NULL, _sysmon, NULL);
+
+        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
         if (err != 0)
           {
              e_debug("EINA DEBUG ERROR: Can't create debug sysmon thread!");
@@ -308,6 +329,7 @@ _eina_debug_cpu_init(void)
         _sysmon_thread_runs = EINA_TRUE;
      }
    eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
+#endif
    return EINA_TRUE;
 }
 
