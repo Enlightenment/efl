@@ -513,7 +513,11 @@ _efl_object_name_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char
              name_glob = _hasglob(search_name);
              EINA_INLIST_FOREACH(pd->children, child_eo)
                {
+#ifdef EO_NO_PTR_INDIRECTION
+                  child = (Eo*)child_eo;
+#else
                   child = _eo_obj_id_get(child_eo);
+#endif
                   name = efl_name_get(child);
                   klass_name = efl_class_name_get(efl_class_get(child));
                   if (_name_match(klass, klass_glob, klass_name) &&
@@ -531,7 +535,11 @@ _efl_object_name_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char
                   // we have a glob - fnmatch
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
+#ifdef EO_NO_PTR_INDIRECTION
+                       child = (Eo*)child_eo;
+#else
                        child = _eo_obj_id_get(child_eo);
+#endif
                        name = efl_name_get(child);
                        if ((name) && (_name_match(search, EINA_TRUE, name)))
                          return child;
@@ -544,7 +552,11 @@ _efl_object_name_find(const Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char
                   // fast path for simple "name"
                   EINA_INLIST_FOREACH(pd->children, child_eo)
                     {
+#ifdef EO_NO_PTR_INDIRECTION
+                       child = (Eo*)child_eo;
+#else
                        child = _eo_obj_id_get(child_eo);
+#endif
                        name = efl_name_get(child);
                        if ((name) && (_name_match(search, EINA_FALSE, name)))
                          return child;
@@ -717,7 +729,11 @@ _efl_children_iterator_next(Eo_Children_Iterator *it, void **data)
    if (data)
      {
         _Eo_Object *eo_obj = EINA_INLIST_CONTAINER_GET(it->current, _Eo_Object);
+#ifdef EO_NO_PTR_INDIRECTION
+        *data = eo_obj;
+#else
         *data = _eo_obj_id_get(eo_obj);
+#endif
      }
    it->current = it->current->next;
 
@@ -2070,8 +2086,13 @@ err_parent_back:
 children:
    while (pd->children)
      {
+#ifdef EO_NO_PTR_INDIRECTION
+        child = (Eo*)EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object);
+#else
         child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
+#endif
         efl_parent_set(child, NULL);
+
      }
    goto children_back;
 

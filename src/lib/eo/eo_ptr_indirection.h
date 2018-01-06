@@ -56,7 +56,7 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
    _Eo_Object *obj; \
    do { \
       obj = _eo_obj_pointer_get((Eo_Id)obj_id, __FUNCTION__, __FILE__, __LINE__); \
-      if (!obj) goto label; \
+      if (EINA_UNLIKELY(!obj)) goto label; \
    } while (0)
 
 #define EO_OBJ_POINTER_GOTO_PROXY(obj_id, obj, label) \
@@ -132,8 +132,13 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
       if (!klass) goto label; \
    } while (0)
 
-#define EO_OBJ_DONE(obj_id) \
+#ifdef EO_NO_PTR_INDIRECTION
+# define EO_OBJ_DONE(obj_id) \
+   _eo_obj_pointer_done((Eo_Id)_eo_obj_id_get((const _Eo_Object*)obj_id))
+#else
+# define EO_OBJ_DONE(obj_id) \
    _eo_obj_pointer_done((Eo_Id)obj_id)
+#endif
 
 #ifdef EFL_DEBUG
 static inline void _eo_print(Eo_Id_Table_Data *tdata);

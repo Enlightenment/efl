@@ -8,6 +8,8 @@
 # undef EAPI
 #endif
 
+#define EO_NO_PTR_INDIRECTION
+
 #define EOLIAN
 
 /* When used, this indicates that the function is an Eo API. */
@@ -1240,6 +1242,12 @@ __##Name##_failed: \
 #define _EFL_OBJECT_API_AFTER_HOOK
 #define _EFL_OBJECT_API_CALL_HOOK(x) x
 
+#ifdef EO_NO_PTR_INDIRECTION
+# define _EO_CALL_OBJ() (Eo*)___call.obj
+#else
+# define _EO_CALL_OBJ() ___call.eo_id
+#endif
+
 // to define an EAPI function
 #define _EFL_OBJECT_FUNC_BODY(Name, ObjType, Ret, DefRet, ErrorCase) \
   Ret \
@@ -1249,7 +1257,7 @@ __##Name##_failed: \
      Ret _r; \
      EFL_FUNC_COMMON_OP(obj, Name, DefRet); \
      _EFL_OBJECT_API_BEFORE_HOOK \
-     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data)); \
+     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(_EO_CALL_OBJ(), ___call.data)); \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return _r; \
@@ -1263,7 +1271,7 @@ __##Name##_failed: \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data); \
      EFL_FUNC_COMMON_OP(obj, Name, ); \
      _EFL_OBJECT_API_BEFORE_HOOK \
-     _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data)); \
+     _EFL_OBJECT_API_CALL_HOOK(_func_(_EO_CALL_OBJ(), ___call.data)); \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return; \
@@ -1278,7 +1286,7 @@ __##Name##_failed: \
      Ret _r; \
      EFL_FUNC_COMMON_OP(obj, Name, DefRet); \
      _EFL_OBJECT_API_BEFORE_HOOK \
-     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data, Arguments)); \
+     _r = _EFL_OBJECT_API_CALL_HOOK(_func_(_EO_CALL_OBJ(), ___call.data, Arguments)); \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return _r; \
@@ -1292,7 +1300,7 @@ __##Name##_failed: \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      EFL_FUNC_COMMON_OP(obj, Name, ); \
      _EFL_OBJECT_API_BEFORE_HOOK \
-     _EFL_OBJECT_API_CALL_HOOK(_func_(___call.eo_id, ___call.data, Arguments)); \
+     _EFL_OBJECT_API_CALL_HOOK(_func_(_EO_CALL_OBJ(), ___call.data, Arguments)); \
      _efl_object_call_end(&___call); \
      _EFL_OBJECT_API_AFTER_HOOK \
      return; \

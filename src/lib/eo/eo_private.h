@@ -226,7 +226,11 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 }
 
 /* Retrieves the pointer to the object from the id */
+#ifdef EO_NO_PTR_INDIRECTION
+#define _eo_obj_pointer_get(ObjId, Func, File, Line) ((_Eo_Object *)(ObjId))
+#else
 _Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file, int line);
+#endif
 
 static inline
 Efl_Class *_eo_class_id_get(const _Efl_Class *klass)
@@ -254,11 +258,19 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
 
    const _Efl_Class *klass = obj->klass;
 
+#ifdef EO_NO_PTR_INDIRECTION
+   efl_event_callback_call((Eo*)obj, EFL_EVENT_DEL, NULL);
+#else
    efl_event_callback_call(_eo_obj_id_get(obj), EFL_EVENT_DEL, NULL);
+#endif
 
    _eo_condtor_reset(obj);
 
+#ifdef EO_NO_PTR_INDIRECTION
+   efl_destructor((Eo*)obj);
+#else
    efl_destructor(_eo_obj_id_get(obj));
+#endif
 
    if (!obj->condtor_done)
      {
@@ -272,7 +284,11 @@ _efl_del_internal(_Eo_Object *obj, const char *func_name, const char *file, int 
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->opt->composite_objects, itr, itr_n, emb_obj)
           {
+#ifdef EO_NO_PTR_INDIRECTION
+             efl_composite_detach((Eo*)obj, emb_obj);
+#else
              efl_composite_detach(_eo_obj_id_get(obj), emb_obj);
+#endif
           }
      }
 
@@ -325,7 +341,11 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
 
         if (obj->opt->del_intercept)
           {
+#ifdef EO_NO_PTR_INDIRECTION
+             Eo *obj_id = (Eo*)obj;
+#else
              Eo *obj_id = _eo_obj_id_get(obj);
+#endif
              efl_ref(obj_id);
              obj->opt->del_intercept(obj_id);
              return;
