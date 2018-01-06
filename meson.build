@@ -100,7 +100,7 @@ subprojects = [
 ['eet'              , false,  true,  true, false,  true,  true, []],
 ['ecore'            , false,  true, false, false, false, false, []],
 ['eldbus'           , false,  true,  true, false,  true,  true, []],
-['ecore'            ,  true, false, false, false, false,  true, []], #ecores modules depend on eldbus
+['ecore'            ,  true, false, false, false,  true,  true, []], #ecores modules depend on eldbus
 ['ecore_audio'      , false,  true, false, false, false, false, []],
 ['ecore_avahi'      , false,  true, false, false, false,  true, []],
 ['ecore_con'        , false,  true,  true, false,  true, false, ['http-parser']],
