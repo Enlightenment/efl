@@ -10,6 +10,7 @@
 #include <eo_js_namespace.hh>
 #include <eo_js_struct.hh>
 #include <eo_js_construct_from_eo.hh>
+#include <eo_js_namespace_accessor.hh>
 
 #endif
 

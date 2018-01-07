@@ -56,29 +56,33 @@ bin_efl_js_eflv8js_LDADD = \
 
 endif
 
-bindings/js/efl_js/eolian_js_bindings.cc: $(GENERATED_JS_BINDINGS)
-	@echo @ECHO_E@ "#ifdef HAVE_CONFIG_H" > $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include \"config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include \"elementary_config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Efl.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Efl_Config.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Ecore.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Eo.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Ecore_Con.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Ecore_Audio.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Evas.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Edje.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Ecore_Con_Eet.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Emotion.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <Elementary.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "extern \"C\" {" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "#include <elm_widget.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@echo @ECHO_E@ "}\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
-	@for i in $(GENERATED_JS_BINDINGS); do echo "#include <$$i>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc; done
+# @echo @ECHO_E@ "#ifdef HAVE_CONFIG_H" > $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include \"config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include \"elementary_config.h\"" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#endif\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Efl.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Efl_Config.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Ecore.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Eo.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Ecore_Con.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Ecore_Audio.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Evas.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Edje.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Ecore_Con_Eet.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Emotion.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#define ELM_INTERNAL_API_ARGESFSDFEFC" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Elementary.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "extern \"C\" {" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <elm_widget.h>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "}\n" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Eina_Js.hh>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
+# @echo @ECHO_E@ "#include <Eo_Js.hh>" >> $(top_builddir)/src/bindings/js/efl_js/eolian_js_bindings.cc
 
-CLEANFILES += bindings/js/efl_js/eolian_js_bindings.cc
+bindings/js/efl_js/eolian_js_bindings.hh: $(GENERATED_JS_BINDINGS)
+	@echo @ECHO_E@ "" > $@
+	@for i in $(GENERATED_JS_BINDINGS); do echo "#include <$$i>" >> $@; done
+
+CLEANFILES += bindings/js/efl_js/eolian_js_bindings.hh
 
 ## Install Ecore-JS headers
 installed_ecorejsheadersdir = $(includedir)/ecore-js-@VMAJ@
@@ -160,8 +164,7 @@ bindings/js/eio_js/eio_js.cc \
 bindings/js/efl_js/efl_js.cc \
 bindings/js/ethumb_js/ethumb_js_client.cc
 
-nodist_bindings_js_efl_js_libefl_js_la_SOURCES = \
-bindings/js/efl_js/eolian_js_bindings.cc
+bindings/js/efl_js/bindings_js_efl_js_libefl_js_la-efl_js.l$(OBJEXT): bindings/js/efl_js/eolian_js_bindings.hh
 
 bindings/js/efl_js/efl_js.cc $(bindings_js_efl_js_libefl_js_la_SOURCES): $(ecore_eolian_cxx_public_hh) $(ecore_eolian_cxx_public_impl_hh) $(eo_eolian_cxx_public_hh) $(eo_eolian_cxx_public_impl_hh) $(efl_eolian_cxx_public_hh) $(efl_eolian_cxx_public_impl_hh) lib/ecore/Ecore.eo.hh
 
@@ -169,6 +172,7 @@ bindings_js_efl_js_libefl_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -I$(top_builddir)/src/lib/evas/canvas/ \
+-I$(top_builddir)/src/lib/evas/gesture/ \
 -I$(top_builddir)/src/lib/ecore/ \
 -I$(top_srcdir)/src/bindings/js/eina_js \
 -I$(top_srcdir)/src/bindings/js/ecore_js \

@@ -538,20 +538,57 @@ int main(int argc, char** argv)
 
    EINA_CXX_DOM_LOG_DBG(eolian::js::domain) << "output was opened";
 
+   
    std::ostream_iterator<char> iterator = std::ostream_iterator<char>(os);
-
-   efl::eolian::grammar::attributes::klass_def klass_def(klass, eolian_unit);
-   std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
    // probably not eot file
    if(klass)
      {
+       os << "#ifndef EFL_JAVASCRIPT_EOLIAN_GENERATE_REGISTER_CALL\n";
+       // function to iterate through all inheritance class
+       std::function<void(Eolian_Class const*, std::function<void(Eolian_Class const*)>)>
+         recurse_inherits
+         = [&] (Eolian_Class const* klass, std::function<void(Eolian_Class const*)> function)
+         {
+           for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
+                 , last; first != last; ++first)
+             {
+               EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
+               Eolian_Class const* base = ::eolian_class_get_by_name(eolian_unit, &*first);
+               if(base)
+                 {
+                   function(base);
+                   recurse_inherits(base, function);
+                 }
+             }
+         };
+
+       os << "extern \"C\" {\n\n";
+     
+       auto includes_fun = [&os] (Eolian_Class const* klass)
+         {
+           os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+         };
+       // generate include for all inheritance
+       recurse_inherits(klass, includes_fun);
+       os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+       
+       os << "}\n\n";
+
        using efl::eolian::grammar::attributes::unused;
+       using efl::eolian::grammar::context_null;
        efl::eolian::grammar::attributes::klass_def klass_def(klass, eolian_unit);
-       if (!eolian::js::grammar::class_registration.generate(iterator, klass_def, unused))
+       if (!eolian::js::grammar::class_registration.generate(iterator, klass_def, context_null{}))
        {
          throw std::runtime_error("Failed to generate class");
        }
+
+       os << "#else\n";
+       // if (!eolian::js::grammar::call_registration.generate(iterator, klass_def, context_null{}))
+       // {
+       //   throw std::runtime_error("Failed to generate class");
+       // }
+       os << "#endif\n";
      }
    
    // std::vector<Eolian_Function const*> constructor_functions;
