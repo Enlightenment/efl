@@ -87,7 +87,7 @@ _move_resize_cb(void *data EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_route_elm_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
+_elm_route_efl_ui_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));

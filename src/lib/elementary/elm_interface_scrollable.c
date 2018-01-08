@@ -2946,7 +2946,7 @@ _elm_widget_parents_bounce_get(Eo *obj, Eina_Bool *horiz, Eina_Bool *vert)
    do
      {
         parent_obj = elm_widget_parent_get(parent_obj);
-        if ((!parent_obj) || (!efl_isa(parent_obj, ELM_WIDGET_CLASS))) break;
+        if ((!parent_obj) || (!efl_isa(parent_obj, EFL_UI_WIDGET_CLASS))) break;
 
         if (efl_isa(parent_obj, ELM_INTERFACE_SCROLLABLE_MIXIN))
           {
@@ -4663,7 +4663,7 @@ EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, do
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_interface_scrollable_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_interface_scrollable_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 

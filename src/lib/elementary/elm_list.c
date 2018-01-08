@@ -358,7 +358,7 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
 }
 
 static Eina_Bool
-_elm_list_elm_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
+_elm_list_efl_ui_widget_event_direction(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
 {
    Elm_Object_Item *eo_it = NULL;
    ELM_LIST_DATA_GET(obj, sd);
@@ -486,56 +486,56 @@ static Eina_Bool _key_action_move(Evas_Object *obj, const char *params)
    /* TODO: fix logic for horizontal mode */
    if (!strcmp(dir, "left"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_LEFT, EINA_FALSE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_LEFT, EINA_FALSE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "left_multi"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_LEFT, EINA_TRUE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_LEFT, EINA_TRUE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "right"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_RIGHT, EINA_FALSE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_RIGHT, EINA_FALSE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "right_multi"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_RIGHT, EINA_TRUE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_RIGHT, EINA_TRUE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "up"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_UP, EINA_FALSE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "up_multi"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_UP, EINA_TRUE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_UP, EINA_TRUE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "down"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_FALSE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
      }
    else if (!strcmp(dir, "down_multi"))
      {
-        if (_elm_list_elm_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_TRUE))
+        if (_elm_list_efl_ui_widget_event_direction(obj, ELM_FOCUS_DOWN, EINA_TRUE))
           return EINA_TRUE;
         else
           return EINA_FALSE;
@@ -1033,7 +1033,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
+_elm_list_efl_ui_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
 {
    if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
@@ -1074,7 +1074,7 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_list_elm_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
 {
    Elm_Object_Item *eo_it;
    Eina_List *n;
@@ -1236,7 +1236,7 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_list_efl_ui_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
@@ -1288,7 +1288,7 @@ _elm_list_elm_widget_on_focus_update(Eo *obj, Elm_List_Data *sd, Elm_Object_Item
 }
 
 EOLIAN static Eina_Bool
-_elm_list_elm_widget_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_Object *sobj)
+_elm_list_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_List_Data *sd, Evas_Object *sobj)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_it;
@@ -2488,7 +2488,7 @@ _elm_list_efl_canvas_group_group_member_add(Eo *obj, Elm_List_Data *sd, Evas_Obj
 }
 
 EOLIAN static void
-_elm_list_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool acs)
+_elm_list_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool acs)
 {
    Eina_List *elist = NULL;
    Elm_Object_Item *eo_it;
@@ -3077,7 +3077,7 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Rect
-_elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_efl_ui_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -3092,7 +3092,7 @@ _elm_list_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_List_
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_list_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_efl_ui_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    return sd->focused_item;
 }

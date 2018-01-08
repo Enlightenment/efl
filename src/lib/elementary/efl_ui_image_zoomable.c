@@ -863,7 +863,7 @@ _mouse_up_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_image_zoomable_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
@@ -888,7 +888,7 @@ _efl_ui_image_zoomable_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Image_Zoomable
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_image_zoomable_elm_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    Eina_Bool fdo = EINA_FALSE;

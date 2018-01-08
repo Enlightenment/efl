@@ -4,7 +4,8 @@
 
 #define EFL_ACCESS_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define ELM_WIDGET_PROTECTED
+#define EFL_UI_WIDGET_PROTECTED
+//#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 
@@ -522,12 +523,12 @@ _base_shift_by_arrow(Evas_Object *arrow,
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_ctxpopup_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    /* Skipping elm_layout widget_sub_object_add in order to ignore size hint changes.
     * Note: It is not clear WHY we are doing this. Same reason as genlist?
     */
-   return elm_widget_sub_object_add(efl_cast(obj, ELM_WIDGET_CLASS), sobj);
+   return elm_widget_sub_object_add(efl_cast(obj, EFL_UI_WIDGET_CLASS), sobj);
 }
 
 EOLIAN static void
@@ -667,7 +668,7 @@ _on_content_resized(void *data,
 
 //FIXME: lost the content size when theme hook is called.
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_ctxpopup_elm_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -1031,7 +1032,7 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
 }
 
 EOLIAN static Eina_Bool
-_elm_ctxpopup_elm_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
+_elm_ctxpopup_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
 {
    if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
@@ -1118,7 +1119,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 }
 
 EOLIAN static void
-_elm_ctxpopup_elm_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_ctxpopup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
    //default parent is to be hover parent
    elm_ctxpopup_hover_parent_set(obj, parent);
@@ -1445,7 +1446,7 @@ _elm_ctxpopup_efl_ui_menu_selected_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Da
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_ctxpopup_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_ui_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
 {
    if (!sd->list) return NULL;
 

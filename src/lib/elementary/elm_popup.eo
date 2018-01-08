@@ -168,12 +168,12 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
-      Elm.Widget.widget_parent { set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.widget_parent { set; }
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.state_set { get; }

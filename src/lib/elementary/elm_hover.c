@@ -298,7 +298,7 @@ _hov_show_do(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_hover_elm_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -361,7 +361,7 @@ _on_smt_sub_changed(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_hover_elm_widget_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
+_elm_hover_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -378,7 +378,7 @@ _elm_hover_elm_widget_widget_sub_object_add(Eo *obj, Elm_Hover_Data *sd, Evas_Ob
 }
 
 EOLIAN static Eina_Bool
-_elm_hover_elm_widget_widget_sub_object_del(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
+_elm_hover_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Hover_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -751,7 +751,7 @@ elm_hover_parent_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_hover_elm_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
+_elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
 {
    _elm_hover_parent_detach(obj);
 
@@ -787,7 +787,7 @@ elm_hover_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_hover_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
+_elm_hover_efl_ui_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
 {
    return sd->parent;
 }

@@ -304,7 +304,7 @@ class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {

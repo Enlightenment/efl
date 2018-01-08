@@ -182,7 +182,7 @@ _elm_label_horizontal_size_policy_update(Eo *obj, Elm_Label_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
+_elm_label_efl_ui_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

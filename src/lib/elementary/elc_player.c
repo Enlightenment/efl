@@ -185,7 +185,7 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
+_elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));

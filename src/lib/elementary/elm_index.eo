@@ -197,8 +197,8 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Efl.Access.children { get; }
    }

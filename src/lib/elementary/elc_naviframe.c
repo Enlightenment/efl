@@ -60,7 +60,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_naviframe_elm_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA_UNUSED,
+_elm_naviframe_efl_ui_widget_resize_object_set(Eo *obj, Elm_Naviframe_Data *pd EINA_UNUSED,
                                             Efl_Canvas_Object *sobj)
 {
    if (!sobj || !efl_finalized_get(obj)) goto super;
@@ -392,7 +392,7 @@ _item_title_enabled_update(Elm_Naviframe_Item_Data *nit, Eina_Bool transition)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_naviframe_elm_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
+_elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
    const char *style = NULL, *sstyle = NULL;
@@ -1507,7 +1507,7 @@ _key_action_item_pop(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_naviframe_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool is_access)
+_elm_naviframe_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Eina_Bool is_access)
 {
    Elm_Naviframe_Item_Data *it;
 

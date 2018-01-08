@@ -163,8 +163,8 @@ class Elm.Clock (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.on_access_update;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.theme_apply;
    }
    events {
       changed; [[The clock's user changed the time]]

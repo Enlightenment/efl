@@ -262,7 +262,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_elm_scroller_efl_ui_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    Evas_Coord x = 0;
    Evas_Coord y = 0;
@@ -388,7 +388,7 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_scroller_elm_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
+_elm_scroller_efl_ui_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -417,7 +417,7 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_widget_sub_object_del(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *sobj)
+_elm_scroller_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Scroller_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
    int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -1336,7 +1336,7 @@ _elm_scroller_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Bool
-_elm_scroller_elm_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_scroller_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    //undepended from logical or not we always reigster as full with ourself as redirect
    configured_state->logical = EINA_TRUE;

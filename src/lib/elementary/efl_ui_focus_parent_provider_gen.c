@@ -8,7 +8,7 @@
 
 typedef struct {
    Eina_Hash *map;
-   Elm_Widget *container;
+   Efl_Ui_Widget *container;
    Efl_Ui_Focus_Parent_Provider *provider;
 } Efl_Ui_Focus_Parent_Provider_Gen_Data;
 
@@ -27,7 +27,7 @@ _efl_ui_focus_parent_provider_gen_content_item_map_get(Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static void
-_efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Elm_Widget *container)
+_efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Widget *container)
 {
    EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(obj));
 
@@ -38,7 +38,7 @@ _efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Pro
    pd->provider = efl_provider_find(efl_parent_get(pd->container), EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE);
 }
 
-EOLIAN static Elm_Widget*
+EOLIAN static Efl_Ui_Widget*
 _efl_ui_focus_parent_provider_gen_container_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd)
 {
    return pd->container;
@@ -53,7 +53,7 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
 
    if (elm_widget_parent_widget_get(widget) != pd->container)
      {
-        Elm_Widget *parent = elm_widget_parent_widget_get(widget);
+        Efl_Ui_Widget *parent = elm_widget_parent_widget_get(widget);
         //move forward so we get the last widget above the gengrid level, this may be the widget out of the map
         do {
           above_gengrid = parent;

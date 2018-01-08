@@ -98,7 +98,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_flip_elm_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
+_efl_ui_flip_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -119,7 +119,7 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_flip_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -139,7 +139,7 @@ _efl_ui_flip_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Flip_Data *_pd EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Object *sobj)
+_efl_ui_flip_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Flip_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -1743,7 +1743,7 @@ _flip_content_set(Evas_Object *obj,
         //evas_object_smart_member_add(content, obj);
         evas_object_clip_set
           (content, front ? sd->front.clip : sd->back.clip);
-        if (efl_isa(content, ELM_WIDGET_CLASS) && sd->state != front)
+        if (efl_isa(content, EFL_UI_WIDGET_CLASS) && sd->state != front)
           elm_widget_tree_unfocusable_set(content, EINA_TRUE);
      }
 
@@ -1965,9 +1965,9 @@ _internal_elm_flip_go_to(Evas_Object *obj,
         else elm_object_focus_set(sd->back.content, EINA_TRUE);
      }
 
-   if (sd->front.content && efl_isa(sd->front.content, ELM_WIDGET_CLASS))
+   if (sd->front.content && efl_isa(sd->front.content, EFL_UI_WIDGET_CLASS))
      elm_widget_tree_unfocusable_set(sd->front.content, !front);
-   if (sd->back.content && efl_isa(sd->back.content, ELM_WIDGET_CLASS))
+   if (sd->back.content && efl_isa(sd->back.content, EFL_UI_WIDGET_CLASS))
      elm_widget_tree_unfocusable_set(sd->back.content, front);
 
 

@@ -14,14 +14,14 @@ struct Efl.Ui.Widget.Focus_State {
 }
 
 /* ATTENTION: Rename to Efl.Ui.Widget is imminent. */
-abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
-                     Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
-                     Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
-                     Efl.Ui.Translatable)
+abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
+                        Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
+                        Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
+                        Efl.Ui.Translatable)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;
-   eo_prefix: efl_ui_widget;
+   //eo_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
@@ -158,7 +158,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
       @property widget_parent @protected {
          [[The internal parent of this widget.
 
-           @Elm.Widget objects have a parent hierarchy that may differ slightly
+           @Efl.Ui.Widget objects have a parent hierarchy that may differ slightly
            from their @Efl.Object or @Efl.Canvas.Object hierarchy. This is
            meant for internal handling.
 
@@ -169,7 +169,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
             legacy: elm_widget_parent_get; /* internal in legacy */
          }
          values {
-            parent: Elm.Widget @nullable; [[Widget parent object]]
+            parent: Efl.Ui.Widget @nullable; [[Widget parent object]]
          }
       }
       @property widget_top {
@@ -194,7 +194,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
             legacy: elm_widget_top_get; /* internal in legacy */
          }
          values {
-            top: Elm.Widget; [[Top widget, usually a window.]]
+            top: Efl.Ui.Widget; [[Top widget, usually a window.]]
          }
       }
 
@@ -553,7 +553,7 @@ abstract Elm.Widget (Efl.Canvas.Group, Efl.Access,
                [[The focus manager to register with.]]
             @inout configured_state : Efl.Ui.Widget.Focus_State;
                [[The evalulated Focus state that should be used.]]
-            @in redirect : Elm.Widget;
+            @in redirect : Efl.Ui.Widget;
                [[A redirect that will be set by the elm.widget implementation.]]
          }
          return: bool; [[Returns whether the widget is registered or not.]]

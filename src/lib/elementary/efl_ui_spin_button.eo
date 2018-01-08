@@ -64,9 +64,9 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
    }
    implements {
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.on_focus_update;
       Efl.Ui.Range.range_value { set; }
       Efl.Access.name { get; }
       Efl.Access.Value.value_and_text { get; set; }

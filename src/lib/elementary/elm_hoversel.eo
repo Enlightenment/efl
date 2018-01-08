@@ -95,10 +95,10 @@ class Elm.Hoversel (Efl.Ui.Button, Efl.Ui.Selectable,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Gfx.visible { set; }
-      Elm.Widget.widget_parent { set; }
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.widget_parent { set; }
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.children { get; }

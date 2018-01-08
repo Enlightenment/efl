@@ -1811,7 +1811,7 @@ _elm_code_widget_scroll_event_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_elm_code_widget_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -2242,7 +2242,7 @@ _elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+_elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Eo *edje;
    int r, g, b, a;
@@ -2275,7 +2275,7 @@ _elm_code_widget_alpha_set(Eo *obj, Elm_Code_Widget_Data *pd, int alpha)
 {
    pd->alpha = alpha;
 
-   _elm_code_widget_elm_widget_theme_apply(obj, pd);
+   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 }
 
 EOLIAN static void
@@ -2288,7 +2288,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
-   _elm_code_widget_elm_widget_theme_apply(obj, pd);
+   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 
    efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);

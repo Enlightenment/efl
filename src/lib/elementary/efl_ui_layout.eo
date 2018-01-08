@@ -1,4 +1,4 @@
-class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
+class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Model.Factory.Connect,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group)
@@ -19,7 +19,7 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
          set {
             [[Sets the edje group from the elementary theme that will be used
               as layout. Note that $style will be the new style of this object,
-              as in an @Elm.Widget.style. As a consequence this function can
+              as in an @Efl.Ui.Widget.style. As a consequence this function can
               only be called during construction of the object, before finalize.
 
               If this returns $false the widget is very likely to become
@@ -59,11 +59,11 @@ class Efl.Ui.Layout (Elm.Widget, Efl.Part, Efl.Container, Efl.File,
       Efl.Layout.Group.group_data { get; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
-      Elm.Widget.widget_sub_object_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_disabled_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.on_focus_update;
       Efl.Container.content_count;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;

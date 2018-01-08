@@ -433,7 +433,7 @@ _index_priority_change(void *data, Elm_Index_Item_Data *it)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_index_elm_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
+_elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Object_Item *eo_item;
@@ -1178,7 +1178,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_index_elm_widget_on_access_update(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_index_efl_ui_widget_on_access_update(Eo *obj, Elm_Index_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_index_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_index_smart_focus_next_enable);

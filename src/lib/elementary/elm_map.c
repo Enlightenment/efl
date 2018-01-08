@@ -3945,7 +3945,7 @@ _elm_map_pan_efl_gfx_position_set(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNUSED, Ei
 }
 
 EOLIAN static Eina_Bool
-_elm_map_elm_widget_on_focus_update(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_map_efl_ui_widget_on_focus_update(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
@@ -3985,7 +3985,7 @@ _elm_map_pan_class_constructor(Efl_Class *klass)
 #include "elm_map_pan.eo.c"
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_map_elm_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
+_elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;

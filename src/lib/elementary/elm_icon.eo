@@ -9,7 +9,7 @@ class Elm.Icon (Efl.Ui.Image)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.File.file { set; }
    }
    events {

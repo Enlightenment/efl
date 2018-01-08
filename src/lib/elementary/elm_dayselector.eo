@@ -151,7 +151,7 @@ class Elm.Dayselector (Efl.Ui.Layout)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
       Efl.Part.part;
    }

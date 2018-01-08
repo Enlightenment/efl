@@ -793,7 +793,7 @@ _get_drop_format(Evas_Object *obj)
 
 /* we can't reuse layout's here, because it's on entry_edje only */
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
+_elm_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
 {
    const char *emission;
 
@@ -853,7 +853,7 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
@@ -865,7 +865,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
-   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
    if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -1300,7 +1300,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_entry_efl_ui_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    _elm_entry_focus_update(obj, sd);
 
@@ -1308,7 +1308,7 @@ _elm_entry_elm_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_It
 }
 
 EOLIAN static Eina_Rect
-_elm_entry_elm_widget_interest_region_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_widget_interest_region_get(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord cx, cy, cw, ch;
    Evas_Coord edx, edy;
@@ -1346,7 +1346,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
@@ -5440,7 +5440,7 @@ _activate(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_elm_entry_efl_ui_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
    _activate(obj);

@@ -30,8 +30,8 @@ class Efl.Ui.Nstate(Efl.Ui.Button)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
    }
    events {
       changed; [[Called when the value changed.]]

@@ -316,7 +316,7 @@ typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
-#include "elm_widget.eo.h"
+#include "efl_ui_widget.eo.h"
 
 /**
  * @addtogroup Widget
@@ -474,7 +474,7 @@ typedef Elm_Widget_Smart_Data Efl_Ui_Widget_Data;
  * @}
  */
 
-/**< base structure for all widget items that are not Elm_Widget themselves */
+/**< base structure for all widget items that are not Efl_Ui_Widget themselves */
 typedef struct _Elm_Widget_Item_Data Elm_Widget_Item_Data;
 typedef struct _Elm_Widget_Item_Signal_Data Elm_Widget_Item_Signal_Data;
 
@@ -761,11 +761,11 @@ EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 const char*           _elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name);
 const char*           _elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name);
 
-Efl_Canvas_Object *   _efl_ui_widget_bg_get(Elm_Widget *obj);
+Efl_Canvas_Object *   _efl_ui_widget_bg_get(Efl_Ui_Widget *obj);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
-  ptr = efl_data_scope_get(o, ELM_WIDGET_CLASS);  \
+  ptr = efl_data_scope_get(o, EFL_UI_WIDGET_CLASS);  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        CRI("no widget data for object %p (%s)",      \
@@ -774,7 +774,7 @@ Efl_Canvas_Object *   _efl_ui_widget_bg_get(Elm_Widget *obj);
     }
 
 #define ELM_WIDGET_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_WIDGET_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_WIDGET_CLASS))) \
     return
 
 #define ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, ...)              \
@@ -836,15 +836,15 @@ elm_widget_is_legacy(const Eo *obj)
    Elm_Widget_Smart_Data *sd;
 
    if (_elm_legacy_add) return EINA_TRUE;
-   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
+   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, EFL_UI_WIDGET_CLASS);
    return sd ? sd->legacy : EINA_FALSE;
 }
 
 /** Takes in any canvas object and returns the first smart parent that is a widget */
-static inline Elm_Widget *
+static inline Efl_Ui_Widget *
 evas_object_widget_parent_find(Evas_Object *o)
 {
-   while (o && !efl_isa(o, ELM_WIDGET_CLASS))
+   while (o && !efl_isa(o, EFL_UI_WIDGET_CLASS))
      evas_object_smart_parent_get(o);
    return o;
 }
@@ -860,8 +860,8 @@ EAPI Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                               Eina_Bool is_text);
 
 /* Internal EO APIs */
-const char *elm_widget_default_content_part_get(const Eo *obj);
-const char *elm_widget_default_text_part_get(const Eo *obj);
+const char *efl_ui_widget_default_content_part_get(const Eo *obj);
+const char *efl_ui_widget_default_text_part_get(const Eo *obj);
 
 
 #define ELM_WIDGET_ITEM_PROTECTED

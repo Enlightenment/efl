@@ -526,17 +526,17 @@ _wheel_indicator_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-// _slider_elm_widget_widget_event
+// _slider_efl_ui_widget_widget_event
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(slider, Efl_Ui_Slider_Data)
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_efl_ui_slider_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
    Eo *ev = eo_event->info;
 
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        if (!_slider_elm_widget_widget_event(obj, sd, eo_event, src))
+        if (!_slider_efl_ui_widget_widget_event(obj, sd, eo_event, src))
           return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)
@@ -565,7 +565,7 @@ _efl_ui_slider_elm_widget_widget_event(Eo *obj, Efl_Ui_Slider_Data *sd, const Ef
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Efl_Ui_Activate act)
+_efl_ui_slider_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Data *sd, Efl_Ui_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act == EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
@@ -779,7 +779,7 @@ _efl_ui_slider_theme_group_get(Evas_Object *obj, Efl_Ui_Slider_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_slider_elm_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
+_efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
@@ -1299,7 +1299,7 @@ _efl_ui_slider_step_get(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_slider_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_slider_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 

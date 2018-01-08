@@ -173,7 +173,7 @@ _elm_bubble_efl_canvas_group_group_add(Eo *obj, Elm_Bubble_Data *priv)
 }
 
 EOLIAN static void
-_elm_bubble_elm_widget_on_access_update(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Eina_Bool is_access)
+_elm_bubble_efl_ui_widget_on_access_update(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED, Eina_Bool is_access)
 {
    ELM_BUBBLE_CHECK(obj);
 

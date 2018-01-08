@@ -533,14 +533,14 @@ class Elm.Genlist (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Object.provider_find;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_add;
-      Elm.Widget.on_access_update;
-      Elm.Widget.focus_highlight_geometry { get; }
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
-      Elm.Widget.focused_item { get; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.focus_highlight_geometry { get; }
+      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focused_item { get; }
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.bounce_allow { get; set; }
       Elm.Interface_Scrollable.policy { get; set; }
@@ -556,7 +556,7 @@ class Elm.Genlist (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.clear;
       Efl.Ui.Focus.Composition.prepare;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Widget.focus_state_apply;
    }
    events {
       item,focused; [[Called when genlist item got focus]]

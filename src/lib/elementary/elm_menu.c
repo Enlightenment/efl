@@ -219,7 +219,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
-   hover = efl_data_scope_get(sd->hv, ELM_WIDGET_CLASS);
+   hover = efl_data_scope_get(sd->hv, EFL_UI_WIDGET_CLASS);
    edje_object_part_geometry_get(hover->resize_obj, "bottom", NULL,
                                  NULL, &bw, &bh);
    evas_object_size_hint_min_set(obj, bw, bh);
@@ -232,7 +232,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_menu_elm_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -804,7 +804,7 @@ elm_menu_add(Evas_Object *parent)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_menu_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_menu_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -867,7 +867,7 @@ elm_menu_parent_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_menu_elm_widget_widget_parent_set(Eo *obj, Elm_Menu_Data *sd, Evas_Object *parent)
+_elm_menu_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Menu_Data *sd, Evas_Object *parent)
 {
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;
@@ -975,7 +975,7 @@ elm_menu_item_next_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_menu_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    return sd->parent;
 }

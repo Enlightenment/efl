@@ -148,7 +148,7 @@ _icon_signal_emit(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_radio_elm_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
@@ -325,7 +325,7 @@ _efl_ui_radio_selected_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_radio_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_efl_ui_radio_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;

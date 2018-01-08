@@ -63,7 +63,7 @@ _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_inwin_elm_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
+_elm_inwin_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_win_resize_object_add(parent, obj);
 

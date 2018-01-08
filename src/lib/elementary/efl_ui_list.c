@@ -667,7 +667,7 @@ _efl_ui_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_list_elm_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_list_efl_ui_widget_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,

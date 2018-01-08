@@ -96,7 +96,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
 
         EINA_SAFETY_ON_NULL_GOTO(elem, cont);
 
-        if (!efl_isa(elem, ELM_WIDGET_CLASS))
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
           {
              if (efl_isa(elem, EFL_UI_FOCUS_OBJECT_MIXIN))
                {
@@ -111,7 +111,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
                }
              else
                {
-                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_INTERFACE or ELM_WIDGET_CLASS");
+                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_INTERFACE or EFL_UI_WIDGET_CLASS");
                   continue;
                }
           }
@@ -130,7 +130,7 @@ _efl_ui_focus_composition_composition_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_F
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_efl_ui_focus_composition_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect)
 {
    Eina_Bool registered;
 

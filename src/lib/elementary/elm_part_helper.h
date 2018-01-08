@@ -24,13 +24,13 @@ struct _Elm_Part_Data
    static const char * _ ## type ## _default_content_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED) { return part; }
 
 #define ELM_PART_CONTENT_DEFAULT_OPS(type) \
-   EFL_OBJECT_OP_FUNC(elm_widget_default_content_part_get, _ ## type ## _default_content_part_get)
+   EFL_OBJECT_OP_FUNC(efl_ui_widget_default_content_part_get, _ ## type ## _default_content_part_get)
 
 #define ELM_PART_TEXT_DEFAULT_GET(type, part) \
    static const char * _ ## type ## _default_text_part_get(const Eo *obj EINA_UNUSED, void *sd EINA_UNUSED) { return part; }
 
 #define ELM_PART_TEXT_DEFAULT_OPS(type) \
-   EFL_OBJECT_OP_FUNC(elm_widget_default_text_part_get, _ ## type ## _default_text_part_get)
+   EFL_OBJECT_OP_FUNC(efl_ui_widget_default_text_part_get, _ ## type ## _default_text_part_get)
 
 #define ELM_PART_CONTENT_DEFAULT_IMPLEMENT(type, typedata) \
    EOLIAN static Eina_Bool \

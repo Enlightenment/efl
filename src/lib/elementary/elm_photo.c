@@ -50,7 +50,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_photo_elm_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
+_elm_photo_efl_ui_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);

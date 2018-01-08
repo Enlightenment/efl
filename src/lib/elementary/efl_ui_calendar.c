@@ -528,7 +528,7 @@ _spinner_buttons_add(Evas_Object *obj, Efl_Ui_Calendar_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_calendar_elm_widget_theme_apply(Eo *obj, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Calendar_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -863,7 +863,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_calendar_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_calendar_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -957,7 +957,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_efl_ui_calendar_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_efl_ui_calendar_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _efl_ui_calendar_smart_focus_next_enable = acs;
    _access_obj_process(obj, _efl_ui_calendar_smart_focus_next_enable);

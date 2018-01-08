@@ -108,10 +108,10 @@ class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_highlight_geometry { get; }
-      Elm.Widget.on_access_update;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_highlight_geometry { get; }
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.children { get; }
    }

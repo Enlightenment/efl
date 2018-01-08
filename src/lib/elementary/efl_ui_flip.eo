@@ -26,7 +26,7 @@ enum Efl.Ui.Flip.Interaction
    page [[Page interaction]]
 }
 
-class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
+class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack.Linear, Efl.Part)
 {
    [[Efl UI flip class]]
    legacy_prefix: elm_flip;
@@ -229,9 +229,9 @@ class Efl.Ui.Flip (Elm.Widget, Efl.Pack.Linear, Efl.Part)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_sub_object_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Container.content_remove;

@@ -1318,7 +1318,7 @@ _color_bars_add(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i;
    Eina_List *elist;
@@ -2243,7 +2243,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static Eina_Rect
-_elm_colorselector_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_ui_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd)
 {
    if (sd->focused_item && (sd->focused == ELM_COLORSELECTOR_PALETTE))
      {
@@ -2257,7 +2257,7 @@ _elm_colorselector_elm_widget_focus_highlight_geometry_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static void
-_elm_colorselector_elm_widget_on_access_update(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_colorselector_efl_ui_widget_on_access_update(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_colorselector_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_colorselector_smart_focus_next_enable);

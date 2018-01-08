@@ -49,7 +49,7 @@ _mirrored_set(Evas_Object *obj,
 {
    ELM_PANEL_DATA_GET(obj, sd);
 
-   if ((sd->content) && (efl_isa(sd->content, ELM_WIDGET_CLASS)))
+   if ((sd->content) && (efl_isa(sd->content, EFL_UI_WIDGET_CLASS)))
      efl_ui_mirrored_set(sd->content, rtl);
    elm_panel_orient_set(obj, elm_panel_orient_get(obj));
 }
@@ -214,7 +214,7 @@ _scrollable_layout_theme_set(Eo *obj, Elm_Panel_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_ui_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 {
    const char *str;
    Evas_Coord minw = 0, minh = 0;
@@ -703,10 +703,10 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(panel, Elm_Panel_Data)
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_widget_event(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_panel_efl_ui_widget_widget_event(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src)
 {
    if (src != obj) return EINA_FALSE;
-   return _panel_elm_widget_widget_event(obj, pd, eo_event, src);
+   return _panel_efl_ui_widget_widget_event(obj, pd, eo_event, src);
 }
 
 static Eina_Bool
@@ -932,7 +932,7 @@ _elm_panel_efl_canvas_group_group_member_add(Eo *obj, Elm_Panel_Data *sd, Evas_O
 }
 
 EOLIAN static void
-_elm_panel_elm_widget_on_access_update(Eo *obj, Elm_Panel_Data *_pd, Eina_Bool is_access)
+_elm_panel_efl_ui_widget_on_access_update(Eo *obj, Elm_Panel_Data *_pd, Eina_Bool is_access)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Elm_Panel_Data *sd = _pd;
@@ -1050,7 +1050,7 @@ _elm_panel_toggle(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Rect
-_elm_panel_elm_widget_interest_region_get(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_ui_widget_interest_region_get(Eo *obj, Elm_Panel_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -1220,7 +1220,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_panel_elm_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
+_elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
 {
    if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;

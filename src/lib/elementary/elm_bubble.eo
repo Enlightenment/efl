@@ -38,7 +38,7 @@ class Elm.Bubble (Efl.Ui.Layout, Efl.Ui.Clickable)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.on_access_update;
+      Efl.Ui.Widget.on_access_update;
       Efl.Part.part;
    }
 }

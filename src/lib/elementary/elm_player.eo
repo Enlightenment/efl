@@ -7,8 +7,8 @@ class Elm.Player (Efl.Ui.Layout, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
    }

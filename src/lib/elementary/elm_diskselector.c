@@ -812,7 +812,7 @@ _theme_data_get(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
+_elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item_Data *it;
@@ -872,7 +872,7 @@ _elm_diskselector_elm_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *sobj)
+_elm_diskselector_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Diskselector_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -897,7 +897,7 @@ _elm_diskselector_elm_widget_widget_sub_object_del(Eo *obj, Elm_Diskselector_Dat
 }
 
 EOLIAN static Eina_Bool
-_elm_diskselector_elm_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_diskselector_efl_ui_widget_on_focus_update(Eo *obj, Elm_Diskselector_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
@@ -1398,7 +1398,7 @@ _elm_diskselector_efl_canvas_group_group_member_add(Eo *obj, Elm_Diskselector_Da
 }
 
 EOLIAN static void
-_elm_diskselector_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_diskselector_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_diskselector_smart_focus_next_enable = acs;
 }

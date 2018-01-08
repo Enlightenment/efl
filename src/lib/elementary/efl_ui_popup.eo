@@ -58,7 +58,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set;}
       Efl.Gfx.visible { set; }
-      Elm.Widget.widget_parent { set; }
+      Efl.Ui.Widget.widget_parent { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part;

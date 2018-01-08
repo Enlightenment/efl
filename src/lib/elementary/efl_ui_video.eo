@@ -64,7 +64,7 @@ class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
       class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

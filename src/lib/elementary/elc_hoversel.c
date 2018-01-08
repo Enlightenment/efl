@@ -62,7 +62,7 @@ _elm_hoversel_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Ho
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    Eina_List *l;
@@ -669,7 +669,7 @@ _elm_hoversel_efl_gfx_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static void
-_elm_hoversel_elm_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
+_elm_hoversel_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_hoversel_hover_parent_set(obj, parent);
 }
@@ -1000,12 +1000,12 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
 
 EOLIAN static Eina_Bool
-_elm_hoversel_elm_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
    if (efl_ui_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
      return EINA_TRUE; // note: this was FALSE but likely wrong
 
-   return _hoversel_elm_widget_widget_event(obj, sd, eo_event, src);
+   return _hoversel_efl_ui_widget_widget_event(obj, sd, eo_event, src);
 }
 
 static void

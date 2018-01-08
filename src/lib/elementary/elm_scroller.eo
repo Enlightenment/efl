@@ -47,16 +47,16 @@ class Elm.Scroller (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Canvas.Group.group_member_add;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_activate;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Widget.focus_state_apply;
    }
    events {
       scroll,page,changed; [[Called when scroll page changed]]

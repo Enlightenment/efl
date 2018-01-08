@@ -59,7 +59,7 @@ _elm_plug_resized(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_elm_plug_elm_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_plug_efl_ui_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -81,7 +81,7 @@ _elm_plug_elm_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_I
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_plug_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));

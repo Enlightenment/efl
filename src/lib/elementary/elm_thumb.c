@@ -287,7 +287,7 @@ _thumb_finish(Elm_Thumb_Data *sd,
           ELM_SAFE_FREE(sd->thumb.thumb_key, eina_stringshare_del);
           ELM_SAFE_FREE(sd->view, evas_object_del);
 
-          wd = efl_data_scope_get(sd->obj, ELM_WIDGET_CLASS);
+          wd = efl_data_scope_get(sd->obj, EFL_UI_WIDGET_CLASS);
           edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           efl_event_callback_legacy_call(sd->obj, ELM_THUMB_EVENT_LOAD_ERROR, NULL);
        }

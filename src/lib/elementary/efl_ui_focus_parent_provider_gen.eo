@@ -4,13 +4,13 @@ class Efl.Ui.Focus.Parent_Provider.Gen(Efl.Object, Efl.Ui.Focus.Parent_Provider)
       @property content_item_map {
          [[Content item map property]]
          values {
-            map : hash<Elm.Widget, Elm.Widget.Item>; [[Item map]]
+            map : hash<Efl.Ui.Widget, Elm.Widget.Item>; [[Item map]]
          }
       }
       @property container {
          [[Container property]]
          values {
-            container : Elm.Widget; [[Container widget]]
+            container : Efl.Ui.Widget; [[Container widget]]
          }
       }
    }

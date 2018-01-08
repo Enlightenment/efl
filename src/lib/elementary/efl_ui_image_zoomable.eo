@@ -1,4 +1,4 @@
-class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
+class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
                              Efl.Ui.Scrollable.Interactive,
                              Efl.Ui.Scrollbar)
 {
@@ -58,9 +58,9 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
       Efl.Ui.Zoom.zoom { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Widget.widget_event;
       Efl.Ui.Scrollable.Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }

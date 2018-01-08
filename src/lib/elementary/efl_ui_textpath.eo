@@ -51,7 +51,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text {get; set;}
       Efl.Part.part;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
    }

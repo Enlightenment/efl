@@ -15,10 +15,10 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Efl.Ui.Autorepeat.autorepeat_gap_timeout { set; get; }
       Efl.Ui.Autorepeat.autorepeat_enabled { set; get; }
       Efl.Ui.Autorepeat.autorepeat_supported { get;}
-      Elm.Widget.on_access_activate;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part;
       Efl.Content.content { get; set; }

@@ -94,7 +94,7 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
+_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
 {
    pd->win_parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!pd->win_parent)

@@ -50,9 +50,9 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_add;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Ui.Format.format_cb { set; }

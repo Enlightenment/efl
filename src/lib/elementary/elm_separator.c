@@ -17,7 +17,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_separator"
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_separator_elm_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
+_elm_separator_efl_ui_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

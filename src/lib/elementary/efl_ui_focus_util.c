@@ -18,7 +18,7 @@ _manager_changed(void *data, const Efl_Event *event EINA_UNUSED)
 EOLIAN static void
 _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_User *user)
 {
-   Elm_Widget *top, *o;
+   Efl_Ui_Widget *top, *o;
    Efl_Ui_Focus_Manager *m;
    m = efl_ui_focus_user_focus_manager_get(user);
 

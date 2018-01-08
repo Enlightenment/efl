@@ -117,7 +117,7 @@ _efl_ui_check_efl_access_state_set_get(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUS
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
 EOLIAN static Eina_Bool
-_efl_ui_check_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_check_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -132,7 +132,7 @@ _efl_ui_check_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Check_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_check_elm_widget_on_access_activate(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_efl_ui_check_efl_ui_widget_on_access_activate(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
@@ -150,7 +150,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_check_elm_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
+_efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

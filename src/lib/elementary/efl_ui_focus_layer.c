@@ -17,7 +17,7 @@ typedef struct {
 } Efl_Ui_Focus_Layer_Data;
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_elm_widget_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_focus_layer_efl_ui_widget_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
    return efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj, efl_ui_focus_manager_root_set(efl_added, root));
 }
@@ -65,7 +65,7 @@ _efl_ui_focus_layer_efl_ui_focus_user_focus_manager_get(Eo *obj, Efl_Ui_Focus_La
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_layer_elm_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state EINA_UNUSED, Efl_Ui_Widget_Focus_State *configured_state EINA_UNUSED, Elm_Widget *redirect EINA_UNUSED)
+_efl_ui_focus_layer_efl_ui_widget_focus_state_apply(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state EINA_UNUSED, Efl_Ui_Widget_Focus_State *configured_state EINA_UNUSED, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    return EINA_FALSE;
 }

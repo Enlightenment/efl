@@ -217,7 +217,7 @@ _update_list(Elm_Segment_Control_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
+_elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_List *l;
    Eina_Bool rtl;
@@ -246,7 +246,7 @@ _elm_segment_control_elm_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_segment_control_elm_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
+_elm_segment_control_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
 {
    if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
      return EINA_FALSE;
@@ -662,7 +662,7 @@ _access_obj_process(Elm_Segment_Control_Data *sd, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_segment_control_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd, Eina_Bool acs)
+_elm_segment_control_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd, Eina_Bool acs)
 {
    _elm_segment_control_smart_focus_next_enable = acs;
    _access_obj_process(sd, _elm_segment_control_smart_focus_next_enable);

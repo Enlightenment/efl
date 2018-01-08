@@ -543,7 +543,7 @@ _efl_ui_textpath_efl_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_textpath_elm_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_FAILED;
 

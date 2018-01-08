@@ -157,11 +157,11 @@ enum Efl.Ui.Win.Move_Resize_Mode
    right = (1 << 4)    [[Start resizing window to the right]]
 }
 
-class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
-               Efl.Access.Component, Efl.Access.Widget.Action,
-               Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
-               Efl.Ui.Focus.Manager )
+class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
+                  Efl.Access.Component, Efl.Access.Widget.Action,
+                  Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
+                  Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
+                  Efl.Ui.Focus.Manager )
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
@@ -784,14 +784,14 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       Efl.Gfx.Stack.raise; [[Places the window at the top of the stack, so
                              that it's not covered by any other window.]]
       Efl.Gfx.Stack.lower; [[This action is ignored by the Window.]]
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.focus { get; }
-      Elm.Widget.focus_highlight_style { get; set; }
-      Elm.Widget.focus_highlight_enabled { get; set; }
-      Elm.Widget.focus_highlight_animate { get; set; }
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_event;
-      Elm.Widget.focus_manager_create;
+      Efl.Ui.Widget.focus_highlight_style { get; set; }
+      Efl.Ui.Widget.focus_highlight_enabled { get; set; }
+      Efl.Ui.Widget.focus_highlight_animate { get; set; }
+      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focus_manager_create;
       Efl.Access.parent { get; }
       Efl.Access.state_set { get; }
       Efl.Access.name { get; }

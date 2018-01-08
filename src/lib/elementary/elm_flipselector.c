@@ -351,7 +351,7 @@ _item_new(Evas_Object *obj,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_flipselector_elm_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
 {
    const char *max_len;
 

@@ -18,7 +18,7 @@ struct Efl.Ui.Image.Error
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
+class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Image, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation, Efl.Flipable,
@@ -116,8 +116,8 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Ui.Draggable.drag_target { get; set; }
       Efl.Ui.Model.Connect.connect;
       Efl.Ui.View.model { get; set; }
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Image.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }

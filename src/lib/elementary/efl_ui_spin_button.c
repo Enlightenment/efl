@@ -536,7 +536,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_elm_widget_widget_event(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_efl_ui_spin_button_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -568,7 +568,7 @@ _efl_ui_spin_button_elm_widget_widget_event(Eo *obj, Efl_Ui_Spin_Button_Data *sd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_spin_button_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -714,7 +714,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_spin_button_elm_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

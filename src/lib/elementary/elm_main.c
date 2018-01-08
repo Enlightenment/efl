@@ -1712,7 +1712,7 @@ EAPI void
 elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
-   Elm_Widget *top = elm_object_top_widget_get(obj);
+   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
    efl_ui_focus_manager_move(top, dir);
@@ -1722,7 +1722,7 @@ EAPI Evas_Object *
 elm_object_focus_next_object_get(const Evas_Object  *obj,
                                  Elm_Focus_Direction dir)
 {
-   Elm_Widget *top = elm_object_top_widget_get(obj);
+   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    return efl_ui_focus_manager_request_move(top, dir);

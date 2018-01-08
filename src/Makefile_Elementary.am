@@ -2,7 +2,7 @@
 ### Library
 
 elm_public_eolian_files = \
-	lib/elementary/elm_widget.eo \
+	lib/elementary/efl_ui_widget.eo \
 	lib/elementary/efl_ui_bg.eo \
 	lib/elementary/efl_ui_bg_widget.eo \
 	lib/elementary/efl_ui_button.eo \
@@ -711,7 +711,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_view_list.c \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \
-	lib/elementary/elm_widget.c \
+	lib/elementary/efl_ui_widget.c \
 	lib/elementary/efl_ui_win.c \
 	lib/elementary/efl_ui_win_inlined.c \
 	lib/elementary/efl_ui_win_socket.c \

@@ -605,7 +605,7 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
+_elm_clock_efl_ui_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -765,7 +765,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_clock_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_clock_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Clock_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_clock_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_clock_smart_focus_next_enable);

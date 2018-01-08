@@ -113,7 +113,7 @@ _mirroredness_change_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_actionslider_elm_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
+_elm_actionslider_efl_ui_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
 {
    Eina_Bool mirrored;
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;

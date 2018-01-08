@@ -311,8 +311,8 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Elm.Widget.widget_event;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
    }
    constructors {
       .code;

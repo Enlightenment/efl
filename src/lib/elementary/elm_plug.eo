@@ -1,4 +1,4 @@
-class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
+class Elm.Plug (Efl.Ui.Widget, Efl.Ui.Clickable)
 {
    [[Elementary plug class]]
    legacy_prefix: elm_plug;
@@ -33,8 +33,8 @@ class Elm.Plug (Elm.Widget, Efl.Ui.Clickable)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_focus_update;
    }
    events {
       image,deleted; [[Called when image was deleted]]

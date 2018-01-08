@@ -4,7 +4,7 @@ class Elm.Fileselector_Button (Efl.Ui.Button, Elm.Interface.Fileselector)
    event_prefix: elm_fileselector_button;
    implements {
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.expandable { get; set; }

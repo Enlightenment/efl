@@ -85,8 +85,8 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
 //      Elm.Widget.activate;
 //      Elm.Widget.focused_item { get; }
 //      Elm.Widget.focused_object { get; }
-      Elm.Widget.focus_manager_create;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.focus_manager_create;
+      Efl.Ui.Widget.widget_event;
 
 //      Efl.Ui.Focus.Manager.focus {set; }
       //Efl.Ui.Layout.sizing_eval;

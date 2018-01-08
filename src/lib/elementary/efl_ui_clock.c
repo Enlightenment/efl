@@ -449,7 +449,7 @@ _efl_ui_clock_edit_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_clock_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -466,7 +466,7 @@ _efl_ui_clock_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd, Elm_Obj
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Clock_Data *sd, Eina_Bool disabled)
+_efl_ui_clock_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Clock_Data *sd, Eina_Bool disabled)
 {
    Clock_Field *field;
    unsigned int idx = 0;
@@ -501,7 +501,7 @@ _efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_clock_elm_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

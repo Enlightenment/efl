@@ -746,7 +746,7 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_toolbar_efl_ui_widget_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
@@ -1462,7 +1462,7 @@ _elm_toolbar_highlight_in_theme(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
    double scale = 0;
@@ -2883,7 +2883,7 @@ _access_obj_process(Elm_Toolbar_Data * sd, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_toolbar_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, Eina_Bool acs)
+_elm_toolbar_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd, Eina_Bool acs)
 {
    _elm_toolbar_smart_focus_next_enable = acs;
    _access_obj_process(sd, _elm_toolbar_smart_focus_next_enable);
@@ -2929,7 +2929,7 @@ _elm_toolbar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Toolbar_Item_Data *
 }
 
 EOLIAN static Eina_Rect
-_elm_toolbar_elm_widget_focus_highlight_geometry_get(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_widget_focus_highlight_geometry_get(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Eina_Rect r = {};
 
@@ -2953,7 +2953,7 @@ elm_toolbar_add(Evas_Object *parent)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_elm_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect EINA_UNUSED)
+_elm_toolbar_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    configured_state->logical = EINA_TRUE;
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
@@ -3900,7 +3900,7 @@ _elm_toolbar_item_efl_access_state_set_get(Eo *eo_it, Elm_Toolbar_Item_Data *ite
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_toolbar_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    return sd->focused_item;
 }

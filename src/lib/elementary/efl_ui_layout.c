@@ -335,7 +335,7 @@ _visuals_refresh(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+_efl_ui_layout_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -378,7 +378,7 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
+_efl_ui_layout_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Efl_Ui_Theme_Apply theme_apply = EFL_UI_THEME_APPLY_FAILED;
 
@@ -390,7 +390,7 @@ _efl_ui_layout_elm_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_layout_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -416,7 +416,7 @@ _efl_ui_layout_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_layout_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -433,7 +433,7 @@ _efl_ui_layout_elm_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Layout_Data *_pd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *sobj)
+_efl_ui_layout_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *sd, Evas_Object *sobj)
 {
    Eina_List *l;
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
@@ -853,7 +853,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
    EFL_UI_LAYOUT_CHECK(obj) EINA_FALSE;
    if (!swallow)
      {
-        swallow = elm_widget_default_content_part_get(obj);
+        swallow = efl_ui_widget_default_content_part_get(obj);
         if (!swallow) return EINA_FALSE;
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
@@ -937,7 +937,7 @@ elm_layout_content_get(const Evas_Object *obj, const char *swallow)
    EFL_UI_LAYOUT_CHECK(obj) NULL;
    if (!swallow)
      {
-        swallow = elm_widget_default_content_part_get(obj);
+        swallow = efl_ui_widget_default_content_part_get(obj);
         if (!swallow) return NULL;
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
@@ -971,7 +971,7 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
    EFL_UI_LAYOUT_CHECK(obj) NULL;
    if (!swallow)
      {
-        swallow = elm_widget_default_content_part_get(obj);
+        swallow = efl_ui_widget_default_content_part_get(obj);
         if (!swallow) return NULL;
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
@@ -2222,7 +2222,7 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
 {
    if (!part)
      {
-        part = elm_widget_default_text_part_get(obj);
+        part = efl_ui_widget_default_text_part_get(obj);
         if (!part) return EINA_FALSE;
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
@@ -2237,7 +2237,7 @@ elm_layout_text_get(const Eo *obj, const char *part)
 {
    if (!part)
      {
-        part = elm_widget_default_text_part_get(obj);
+        part = efl_ui_widget_default_text_part_get(obj);
         if (!part) return NULL;
      }
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))

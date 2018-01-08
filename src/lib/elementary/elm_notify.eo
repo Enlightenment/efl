@@ -1,4 +1,4 @@
-class Elm.Notify (Elm.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part)
+class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part)
 {
    [[Elementary notification class]]
    legacy_prefix: elm_notify;
@@ -83,9 +83,9 @@ class Elm.Notify (Elm.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Part)
       Efl.Gfx.visible { set; }
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
-      Elm.Widget.widget_parent { get; set; }
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_parent { get; set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part;

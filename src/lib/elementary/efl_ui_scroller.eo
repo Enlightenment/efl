@@ -10,7 +10,7 @@ class Efl.Ui.Scroller (Efl.Ui.Layout,
       Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Content.content { set; }
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Scrollable.Interactive.content_size{ get; }
       Efl.Ui.Scrollable.Interactive.viewport_geometry{ get; }
       Efl.Ui.Scrollable.Interactive.bounce_enabled { set; get; }

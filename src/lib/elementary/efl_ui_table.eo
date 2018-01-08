@@ -1,11 +1,11 @@
-class Efl.Ui.Table (Elm.Widget, Efl.Pack.Table, Efl.Pack.Layout,
+class Efl.Ui.Table (Efl.Ui.Widget, Efl.Pack.Table, Efl.Pack.Layout,
                    Efl.Ui.Direction)
 {
    [[Efl UI table class]]
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       //Efl.Container.content_remove; // TODO
       Efl.Container.content_iterate;
       Efl.Container.content_count;

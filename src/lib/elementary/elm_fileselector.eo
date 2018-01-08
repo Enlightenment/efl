@@ -35,9 +35,9 @@ class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_event;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_state_apply;
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.selected_model_get;
       Elm.Interface.Fileselector.selected_model_set;

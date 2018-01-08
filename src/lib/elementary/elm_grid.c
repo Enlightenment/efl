@@ -17,7 +17,7 @@
 static void
 _elm_grid_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
 {
-   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_grid_children_get(wpd->resize_obj);
 
    efl_ui_focus_composition_elements_set(obj, order);
@@ -32,7 +32,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_grid_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
+_elm_grid_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 

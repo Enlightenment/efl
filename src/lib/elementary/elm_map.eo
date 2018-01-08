@@ -69,7 +69,7 @@ enum Elm.Map.Route_Method
 }
 
 
-class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
+class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
                Efl.Access.Widget.Action,
                Efl.Ui.Clickable)
 {
@@ -630,9 +630,9 @@ class Elm.Map (Elm.Widget, Elm.Interface_Scrollable,
       Efl.Gfx.position { set; }
       Efl.Gfx.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {

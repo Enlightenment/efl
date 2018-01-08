@@ -27,14 +27,14 @@ static void
 _elm_box_efl_ui_focus_composition_prepare(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
 {
    Eina_List *n, *nn;
-   Elm_Widget *elem;
+   Efl_Ui_Widget *elem;
 
-   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_box_children_get(wpd->resize_obj);
 
    EINA_LIST_FOREACH_SAFE(order, n, nn, elem)
      {
-        if (!efl_isa(elem, ELM_WIDGET_CLASS))
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
           order = eina_list_remove(order, elem);
      }
 
@@ -58,7 +58,7 @@ _child_removed_cb_proxy(void *data, const Efl_Event *event)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_box_elm_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
+_elm_box_efl_ui_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -97,7 +97,7 @@ _on_size_hints_changed(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_box_elm_widget_widget_sub_object_del(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *child)
+_elm_box_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *child)
 {
    Eina_Bool int_ret = EINA_FALSE;
 

@@ -49,7 +49,7 @@ _efl_access_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void 
    Elm_Config_Binding_Key *binding;
    int tmp = 0;
 
-   if (!efl_isa(obj, ELM_WIDGET_CLASS))
+   if (!efl_isa(obj, EFL_UI_WIDGET_CLASS))
       return NULL;
 
    actions = efl_access_widget_action_elm_actions_get(obj);

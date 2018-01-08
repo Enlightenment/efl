@@ -351,7 +351,7 @@ _populate_theme_scroll(Elm_Popup_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
    Eina_List *elist;
@@ -506,7 +506,7 @@ _elm_popup_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd
 }
 
 EOLIAN static Eina_Bool
-_elm_popup_elm_widget_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *sobj)
+_elm_popup_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *sobj)
 {
    Elm_Popup_Item_Data *it;
    Eina_Bool int_ret = EINA_FALSE;
@@ -1484,7 +1484,7 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
 }
 
 EOLIAN static void
-_elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
+_elm_popup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);
@@ -1503,7 +1503,7 @@ _elm_popup_elm_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object
 }
 
 EOLIAN static void
-_elm_popup_elm_widget_on_access_update(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Eina_Bool is_access)
+_elm_popup_efl_ui_widget_on_access_update(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Eina_Bool is_access)
 {
    _access_obj_process(obj, is_access);
 }

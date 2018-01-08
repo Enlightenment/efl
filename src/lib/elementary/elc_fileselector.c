@@ -232,7 +232,7 @@ _model_str_property_set(Efl_Model *model, const char *property_name, const char 
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
+_elm_fileselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 {
    const char *style;
    const char *data;
@@ -3067,7 +3067,7 @@ _elm_fileselector_elm_interface_fileselector_sort_method_get(Eo *obj EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
-_elm_fileselector_elm_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_elm_fileselector_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect)
 {
    Eina_Bool ret = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
