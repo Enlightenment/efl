@@ -40,6 +40,8 @@ lib/ecore_wl2/www-client-protocol.h \
 lib/ecore_wl2/www-protocol.c \
 lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
 lib/ecore_wl2/linux-dmabuf-unstable-v1-client-protocol.h \
+lib/ecore_wl2/xdg-shell-client-protocol.h \
+lib/ecore_wl2/xdg-shell-protocol.c \
 lib/ecore_wl2/xdg-shell-unstable-v6-client-protocol.h \
 lib/ecore_wl2/xdg-shell-unstable-v6-protocol.c \
 lib/ecore_wl2/text-input-unstable-v1-client-protocol.h \
@@ -59,6 +61,8 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
  lib/ecore_wl2/www-protocol.c \
  lib/ecore_wl2/teamwork-protocol.c \
  lib/ecore_wl2/teamwork-client-protocol.h \
+ lib/ecore_wl2/xdg-shell-client-protocol.h \
+ lib/ecore_wl2/xdg-shell-protocol.c \
  lib/ecore_wl2/xdg-shell-unstable-v6-client-protocol.h \
  lib/ecore_wl2/xdg-shell-unstable-v6-protocol.c \
  lib/ecore_wl2/linux-dmabuf-unstable-v1-protocol.c \
@@ -69,5 +73,7 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
  lib/ecore_wl2/text-input-unstable-v1-protocol.c \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
+
+EXTRA_DIST2 += lib/ecore_wl2/window_v6.x
 
 endif

@@ -2141,7 +2141,7 @@ AC_ARG_ENABLE([wayland],
    [want_wayland="no"])
 
 if test "${want_wayland}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0 wayland-scanner >= 1.11.0 wayland-protocols >= 1.9])
+   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0 wayland-scanner >= 1.11.0 wayland-protocols >= 1.12])
    PKG_CHECK_MODULES([WAYLAND], [wayland-scanner >= 1.11.0],
     [
       AC_ARG_VAR([wayland_scanner], [The wayland-scanner executable])

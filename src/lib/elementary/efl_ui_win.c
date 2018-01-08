@@ -4176,7 +4176,10 @@ _elm_win_frame_cb_menu(void *data,
       EINA_ITERATOR_FOREACH(it, input) break;
       eina_iterator_free(it);
    }
-   if (sd->wl.win->zxdg_toplevel)
+   if (sd->wl.win->xdg_toplevel)
+     xdg_toplevel_show_window_menu(sd->wl.win->xdg_toplevel,
+                                       ecore_wl2_input_seat_get(input), 0, x, y);
+   else if (sd->wl.win->zxdg_toplevel)
      zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
 #else

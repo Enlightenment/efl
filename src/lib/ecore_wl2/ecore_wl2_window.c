@@ -8,6 +8,15 @@
 void
 _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window)
 {
+   if (window->xdg_popup) xdg_popup_destroy(window->xdg_popup);
+   window->xdg_popup = NULL;
+
+   if (window->xdg_toplevel) xdg_toplevel_destroy(window->xdg_toplevel);
+   window->xdg_toplevel = NULL;
+
+   if (window->xdg_surface) xdg_surface_destroy(window->xdg_surface);
+   window->xdg_surface = NULL;
+
    if (window->zxdg_popup) zxdg_popup_v6_destroy(window->zxdg_popup);
    window->zxdg_popup = NULL;
 
@@ -109,143 +118,7 @@ _configure_complete(Ecore_Wl2_Window *window)
 
 }
 
-static void
-_zxdg_surface_cb_configure(void *data, struct zxdg_surface_v6 *zxdg_surface EINA_UNUSED, uint32_t serial)
-{
-   Ecore_Wl2_Window *window;
-
-   window = data;
-   window->def_config.serial = serial;
-
-   if (window->pending.configure)
-     {
-        window->saved.w = window->set_config.geometry.w;
-        window->saved.h = window->set_config.geometry.h;
-        _configure_complete(window);
-     }
-   if (window->pending.configure && window->updating)
-     ERR("Window shouldn't be rendering before initial configure");
-
-   if (!window->updating)
-     _ecore_wl2_window_configure_send(window);
-}
-
-static const struct zxdg_surface_v6_listener _zxdg_surface_listener =
-{
-   _zxdg_surface_cb_configure,
-};
-
-static void
-_zxdg_toplevel_cb_configure(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel EINA_UNUSED, int32_t width, int32_t height, struct wl_array *states)
-{
-   Ecore_Wl2_Window *win = data;
-   uint32_t *s;
-
-   win->def_config.minimized = EINA_FALSE;
-   win->def_config.maximized = EINA_FALSE;
-   win->def_config.fullscreen = EINA_FALSE;
-   win->def_config.focused = EINA_FALSE;
-   win->def_config.resizing = EINA_FALSE;
-   win->def_config.geometry.w = width;
-   win->def_config.geometry.h = height;
-
-   wl_array_for_each(s, states)
-     {
-        switch (*s)
-          {
-           case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
-             win->def_config.maximized = EINA_TRUE;
-             break;
-           case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
-             win->def_config.fullscreen = EINA_TRUE;
-             break;
-           case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
-             win->def_config.resizing = EINA_TRUE;
-             break;
-           case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
-             win->def_config.focused = EINA_TRUE;
-             win->def_config.minimized = EINA_FALSE;
-           default:
-             break;
-          }
-     }
-}
-
-static void
-_zxdg_toplevel_cb_close(void *data, struct zxdg_toplevel_v6 *zxdg_toplevel EINA_UNUSED)
-{
-   Ecore_Wl2_Window *win;
-
-   win = data;
-   if (!win) return;
-
-   ecore_wl2_window_free(win);
-}
-
-static const struct zxdg_toplevel_v6_listener _zxdg_toplevel_listener =
-{
-   _zxdg_toplevel_cb_configure,
-   _zxdg_toplevel_cb_close,
-};
-
-static void
-_zxdg_popup_cb_configure(void *data, struct zxdg_popup_v6 *zxdg_popup EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t width, int32_t height)
-{
-   Ecore_Wl2_Window *win = data;
-   win->def_config.geometry.w = width;
-   win->def_config.geometry.h = height;
-}
-
-static void
-_zxdg_popup_cb_done(void *data, struct zxdg_popup_v6 *zxdg_popup EINA_UNUSED)
-{
-   Ecore_Wl2_Window *win;
-
-   win = data;
-   if (!win) return;
-
-   if (win->grab) _ecore_wl2_input_ungrab(win->grab);
-}
-
-static const struct zxdg_popup_v6_listener _zxdg_popup_listener =
-{
-   _zxdg_popup_cb_configure,
-   _zxdg_popup_cb_done,
-};
-
-static void
-_ecore_wl2_window_zxdg_popup_create(Ecore_Wl2_Window *win)
-{
-   struct zxdg_positioner_v6 *pos;
-
-   EINA_SAFETY_ON_NULL_RETURN(win->parent);
-   pos = zxdg_shell_v6_create_positioner(win->display->wl.zxdg_shell);
-   if (!pos) return;
-
-   zxdg_positioner_v6_set_anchor_rect(pos, win->set_config.geometry.x,
-                                      win->set_config.geometry.y,
-                                      1, 1);
-   zxdg_positioner_v6_set_size(pos, win->set_config.geometry.w,
-                               win->set_config.geometry.h);
-   zxdg_positioner_v6_set_anchor(pos, ZXDG_POSITIONER_V6_ANCHOR_TOP |
-                                 ZXDG_POSITIONER_V6_ANCHOR_LEFT);
-   zxdg_positioner_v6_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
-                                  ZXDG_POSITIONER_V6_ANCHOR_RIGHT);
-
-   win->zxdg_popup = zxdg_surface_v6_get_popup(win->zxdg_surface,
-                               win->parent->zxdg_surface, pos);
-
-   zxdg_positioner_v6_destroy(pos);
-   if (win->grab)
-     zxdg_popup_v6_grab(win->zxdg_popup, win->grab->wl.seat,
-                        wl_display_get_serial(win->display->wl.display));
-   zxdg_popup_v6_set_user_data(win->zxdg_popup, win);
-   zxdg_popup_v6_add_listener(win->zxdg_popup, &_zxdg_popup_listener, win);
-
-   win->pending.configure = EINA_TRUE;
-
-   ecore_wl2_window_commit(win, EINA_TRUE);
-}
+#include "window_v6.x"
 
 static void
 _www_surface_end_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
@@ -310,66 +183,209 @@ _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window)
                             window);
 }
 
+
+static void
+_xdg_surface_cb_configure(void *data, struct xdg_surface *xdg_surface EINA_UNUSED, uint32_t serial)
+{
+   Ecore_Wl2_Window *window;
+
+   window = data;
+   window->def_config.serial = serial;
+
+   if (window->pending.configure)
+     {
+        window->saved.w = window->set_config.geometry.w;
+        window->saved.h = window->set_config.geometry.h;
+        _configure_complete(window);
+     }
+   if (window->pending.configure && window->updating)
+     ERR("Window shouldn't be rendering before initial configure");
+
+   if (!window->updating)
+     _ecore_wl2_window_configure_send(window);
+}
+
+static const struct xdg_surface_listener _xdg_surface_listener =
+{
+   _xdg_surface_cb_configure,
+};
+
+static void
+_xdg_toplevel_cb_configure(void *data, struct xdg_toplevel *xdg_toplevel EINA_UNUSED, int32_t width, int32_t height, struct wl_array *states)
+{
+   Ecore_Wl2_Window *win = data;
+   uint32_t *s;
+
+   win->def_config.minimized = EINA_FALSE;
+   win->def_config.maximized = EINA_FALSE;
+   win->def_config.fullscreen = EINA_FALSE;
+   win->def_config.focused = EINA_FALSE;
+   win->def_config.resizing = EINA_FALSE;
+   win->def_config.geometry.w = width;
+   win->def_config.geometry.h = height;
+
+   wl_array_for_each(s, states)
+     {
+        switch (*s)
+          {
+           case ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED:
+             win->def_config.maximized = EINA_TRUE;
+             break;
+           case ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN:
+             win->def_config.fullscreen = EINA_TRUE;
+             break;
+           case ZXDG_TOPLEVEL_V6_STATE_RESIZING:
+             win->def_config.resizing = EINA_TRUE;
+             break;
+           case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
+             win->def_config.focused = EINA_TRUE;
+             win->def_config.minimized = EINA_FALSE;
+           default:
+             break;
+          }
+     }
+}
+
+static void
+_xdg_toplevel_cb_close(void *data, struct xdg_toplevel *xdg_toplevel EINA_UNUSED)
+{
+   Ecore_Wl2_Window *win;
+
+   win = data;
+   if (!win) return;
+
+   ecore_wl2_window_free(win);
+}
+
+static const struct xdg_toplevel_listener _xdg_toplevel_listener =
+{
+   _xdg_toplevel_cb_configure,
+   _xdg_toplevel_cb_close,
+};
+
+static void
+_xdg_popup_cb_configure(void *data, struct xdg_popup *xdg_popup EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t width, int32_t height)
+{
+   Ecore_Wl2_Window *win = data;
+   win->def_config.geometry.w = width;
+   win->def_config.geometry.h = height;
+}
+
+static void
+_xdg_popup_cb_done(void *data, struct xdg_popup *xdg_popup EINA_UNUSED)
+{
+   Ecore_Wl2_Window *win;
+
+   win = data;
+   if (!win) return;
+
+   if (win->grab) _ecore_wl2_input_ungrab(win->grab);
+}
+
+static const struct xdg_popup_listener _xdg_popup_listener =
+{
+   _xdg_popup_cb_configure,
+   _xdg_popup_cb_done,
+};
+
+static void
+_ecore_wl2_window_xdg_popup_create(Ecore_Wl2_Window *win)
+{
+   struct xdg_positioner *pos;
+
+   EINA_SAFETY_ON_NULL_RETURN(win->parent);
+   pos = xdg_wm_base_create_positioner(win->display->wl.xdg_wm_base);
+   if (!pos) return;
+
+   xdg_positioner_set_anchor_rect(pos, win->set_config.geometry.x,
+                                      win->set_config.geometry.y,
+                                      1, 1);
+   xdg_positioner_set_size(pos, win->set_config.geometry.w,
+                               win->set_config.geometry.h);
+   xdg_positioner_set_anchor(pos, XDG_POSITIONER_ANCHOR_TOP_LEFT);
+   xdg_positioner_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
+                                  ZXDG_POSITIONER_V6_ANCHOR_RIGHT);
+
+   win->xdg_popup = xdg_surface_get_popup(win->xdg_surface,
+                               win->parent->xdg_surface, pos);
+
+   xdg_positioner_destroy(pos);
+   if (win->grab)
+     xdg_popup_grab(win->xdg_popup, win->grab->wl.seat,
+                        wl_display_get_serial(win->display->wl.display));
+   xdg_popup_set_user_data(win->xdg_popup, win);
+   xdg_popup_add_listener(win->xdg_popup, &_xdg_popup_listener, win);
+
+   win->pending.configure = EINA_TRUE;
+
+   ecore_wl2_window_commit(win, EINA_TRUE);
+}
+
+static void
+_window_shell_surface_create(Ecore_Wl2_Window *window)
+{
+   if (window->xdg_surface) return;
+   window->xdg_surface =
+     xdg_wm_base_get_xdg_surface(window->display->wl.xdg_wm_base,
+                                   window->surface);
+   xdg_surface_set_user_data(window->xdg_surface, window);
+   xdg_surface_add_listener(window->xdg_surface,
+                                &_xdg_surface_listener, window);
+
+   window->xdg_configure_ack = xdg_surface_ack_configure;
+   window->pending.configure = EINA_TRUE;
+   if (window->display->wl.efl_hints)
+     {
+        if (window->aspect.set)
+          efl_hints_set_aspect(window->display->wl.efl_hints, window->xdg_surface,
+            window->aspect.w, window->aspect.h, window->aspect.aspect);
+        if (window->weight.set)
+          efl_hints_set_weight(window->display->wl.efl_hints, window->xdg_surface,
+            window->weight.w, window->weight.h);
+     }
+
+   if (window->type == ECORE_WL2_WINDOW_TYPE_MENU)
+     _ecore_wl2_window_xdg_popup_create(window);
+   else
+     {
+        struct xdg_toplevel *ptop = NULL;
+
+        window->xdg_toplevel =
+          xdg_surface_get_toplevel(window->xdg_surface);
+        xdg_toplevel_set_user_data(window->xdg_toplevel, window);
+        xdg_toplevel_add_listener(window->xdg_toplevel,
+                                      &_xdg_toplevel_listener, window);
+
+        if (window->title)
+          xdg_toplevel_set_title(window->xdg_toplevel, window->title);
+        if (window->class)
+          xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
+
+        window->xdg_set_min_size = xdg_toplevel_set_min_size;
+        window->xdg_set_max_size = xdg_toplevel_set_max_size;
+
+        if (window->parent)
+          ptop = window->parent->xdg_toplevel;
+
+        if (ptop)
+          xdg_toplevel_set_parent(window->xdg_toplevel, ptop);
+
+        if (window->set_config.maximized)
+          xdg_toplevel_set_maximized(window->xdg_toplevel);
+
+        if (window->set_config.fullscreen)
+          xdg_toplevel_set_fullscreen(window->xdg_toplevel, NULL);
+     }
+
+   ecore_wl2_window_commit(window, EINA_TRUE);
+}
+
 void
 _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
 {
    if (!window->surface) return;
-   if ((window->display->wl.zxdg_shell) && (!window->zxdg_surface))
-     {
-        window->zxdg_surface =
-          zxdg_shell_v6_get_xdg_surface(window->display->wl.zxdg_shell,
-                                        window->surface);
-        zxdg_surface_v6_set_user_data(window->zxdg_surface, window);
-        zxdg_surface_v6_add_listener(window->zxdg_surface,
-                                     &_zxdg_surface_listener, window);
-
-        window->zxdg_configure_ack = zxdg_surface_v6_ack_configure;
-        window->pending.configure = EINA_TRUE;
-        if (window->display->wl.efl_hints)
-          {
-             if (window->aspect.set)
-               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_surface,
-                 window->aspect.w, window->aspect.h, window->aspect.aspect);
-             if (window->weight.set)
-               efl_hints_set_weight(window->display->wl.efl_hints, window->zxdg_surface,
-                 window->weight.w, window->weight.h);
-          }
-
-        if (window->type == ECORE_WL2_WINDOW_TYPE_MENU)
-          _ecore_wl2_window_zxdg_popup_create(window);
-        else
-          {
-             struct zxdg_toplevel_v6 *ptop = NULL;
-
-             window->zxdg_toplevel =
-               zxdg_surface_v6_get_toplevel(window->zxdg_surface);
-             zxdg_toplevel_v6_set_user_data(window->zxdg_toplevel, window);
-             zxdg_toplevel_v6_add_listener(window->zxdg_toplevel,
-                                           &_zxdg_toplevel_listener, window);
-
-             if (window->title)
-               zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
-             if (window->class)
-               zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
-
-             window->zxdg_set_min_size = zxdg_toplevel_v6_set_min_size;
-             window->zxdg_set_max_size = zxdg_toplevel_v6_set_max_size;
-
-             if (window->parent)
-               ptop = window->parent->zxdg_toplevel;
-
-             if (ptop)
-               zxdg_toplevel_v6_set_parent(window->zxdg_toplevel, ptop);
-
-             if (window->set_config.maximized)
-               zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
-
-             if (window->set_config.fullscreen)
-               zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
-          }
-
-        ecore_wl2_window_commit(window, EINA_TRUE);
-     }
+   if (window->display->wl.xdg_wm_base) _window_shell_surface_create(window);
+   if (window->display->wl.zxdg_shell) _window_v6_shell_surface_create(window);
 
    if (window->display->wl.session_recovery)
      {
@@ -377,6 +393,12 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
           {
              zwp_e_session_recovery_set_uuid(window->display->wl.session_recovery,
                                              window->surface, window->uuid);
+             if (window->xdg_surface)
+               xdg_surface_set_window_geometry(window->xdg_surface,
+                                                   window->set_config.geometry.x,
+                                                   window->set_config.geometry.y,
+                                                   window->set_config.geometry.w,
+                                                   window->set_config.geometry.h);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
                                                    window->set_config.geometry.x,
@@ -571,6 +593,9 @@ ecore_wl2_window_hide(Ecore_Wl2_Window *window)
    window->req_config.serial = 0;
    window->def_config.serial = 0;
    window->zxdg_configure_ack = NULL;
+   window->xdg_configure_ack = NULL;
+   window->xdg_set_min_size = NULL;
+   window->xdg_set_max_size = NULL;
    window->zxdg_set_min_size = NULL;
    window->zxdg_set_max_size = NULL;
 }
@@ -637,6 +662,9 @@ ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input)
 
    window->moving = EINA_TRUE;
 
+   if (window->xdg_toplevel)
+     xdg_toplevel_move(window->xdg_toplevel, input->wl.seat,
+                           window->display->serial);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_move(window->zxdg_toplevel, input->wl.seat,
                            window->display->serial);
@@ -651,6 +679,9 @@ ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int lo
    if (!input)
      input = EINA_INLIST_CONTAINER_GET(window->display->inputs, Ecore_Wl2_Input);
 
+   if (window->xdg_toplevel)
+     xdg_toplevel_resize(window->xdg_toplevel, input->wl.seat,
+                             window->display->serial, location);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_resize(window->zxdg_toplevel, input->wl.seat,
                              window->display->serial, location);
@@ -847,11 +878,15 @@ ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized)
         if (!window->set_config.fullscreen)
           window->saved = window->set_config.geometry;
 
+        if (window->xdg_toplevel)
+          xdg_toplevel_set_maximized(window->xdg_toplevel);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
      }
    else
      {
+        if (window->xdg_toplevel)
+          xdg_toplevel_unset_maximized(window->xdg_toplevel);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_unset_maximized(window->zxdg_toplevel);
      }
@@ -889,11 +924,15 @@ ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen)
         if (!window->set_config.maximized)
           window->saved = window->set_config.geometry;
 
+        if (window->xdg_toplevel)
+          xdg_toplevel_set_fullscreen(window->xdg_toplevel, NULL);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
      }
    else
      {
+        if (window->xdg_toplevel)
+          xdg_toplevel_unset_fullscreen(window->xdg_toplevel);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_unset_fullscreen(window->zxdg_toplevel);
      }
@@ -924,6 +963,8 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
    eina_stringshare_replace(&window->title, title);
    if (!window->title) return;
 
+   if (window->xdg_toplevel)
+     xdg_toplevel_set_title(window->xdg_toplevel, window->title);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_set_title(window->zxdg_toplevel, window->title);
 }
@@ -936,6 +977,8 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
    eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
 
+   if (window->xdg_toplevel)
+     xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
    if (window->zxdg_toplevel)
      zxdg_toplevel_v6_set_app_id(window->zxdg_toplevel, window->class);
 }
@@ -992,11 +1035,26 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
 
    if (iconified)
      {
+        if (window->xdg_toplevel)
+          xdg_toplevel_set_minimized(window->xdg_toplevel);
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
      }
    else
      {
+        if (window->xdg_toplevel)
+          {
+             struct wl_array states;
+             uint32_t *s;
+
+             wl_array_init(&states);
+             s = wl_array_add(&states, sizeof(*s));
+             *s = XDG_TOPLEVEL_STATE_ACTIVATED;
+             _xdg_toplevel_cb_configure(window, window->xdg_toplevel,
+                                         window->set_config.geometry.w,
+                                         window->set_config.geometry.h, &states);
+             wl_array_release(&states);
+          }
         if (window->zxdg_toplevel)
           {
              struct wl_array states;
@@ -1044,7 +1102,7 @@ EAPI Eina_Bool
 ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, EINA_FALSE);
-   return !!window->zxdg_surface;
+   return !!window->zxdg_surface || !!window->xdg_surface;
 }
 
 EAPI Eina_Bool
@@ -1352,9 +1410,9 @@ ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int
    window->aspect.aspect = aspect;
    window->aspect.set = 1;
    if (!window->display->wl.efl_hints) return;
-   if (window->zxdg_surface)
+   if (window->xdg_surface)
      efl_hints_set_aspect(window->display->wl.efl_hints,
-                          window->zxdg_surface, w, h, aspect);
+                          window->xdg_surface, w, h, aspect);
 }
 
 EAPI void
@@ -1373,9 +1431,9 @@ ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h)
    window->weight.h = hh;
    window->weight.set = 1;
    if (!window->display->wl.efl_hints) return;
-   if (window->zxdg_surface)
+   if (window->xdg_surface)
      efl_hints_set_weight(window->display->wl.efl_hints,
-                          window->zxdg_surface, ww, hh);
+                          window->xdg_surface, ww, hh);
 }
 
 static void
@@ -1401,29 +1459,45 @@ static struct wl_callback_listener _frame_listener =
 static void
 _maximized_set(Ecore_Wl2_Window *window)
 {
-   EINA_SAFETY_ON_NULL_RETURN(window->zxdg_toplevel);
+   EINA_SAFETY_ON_FALSE_RETURN(window->zxdg_toplevel || window->xdg_toplevel);
 
    if (window->set_config.maximized)
      {
         window->saved = window->set_config.geometry;
-        zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
+        if (window->xdg_toplevel)
+          xdg_toplevel_set_maximized(window->xdg_toplevel);
+        if (window->zxdg_toplevel)
+          zxdg_toplevel_v6_set_maximized(window->zxdg_toplevel);
      }
    else
-     zxdg_toplevel_v6_unset_maximized(window->zxdg_toplevel);
+     {
+        if (window->xdg_toplevel)
+          xdg_toplevel_unset_maximized(window->xdg_toplevel);
+        if (window->zxdg_toplevel)
+          zxdg_toplevel_v6_unset_maximized(window->zxdg_toplevel);
+     }
 }
 
 static void
 _fullscreen_set(Ecore_Wl2_Window *window)
 {
-   EINA_SAFETY_ON_NULL_RETURN(window->zxdg_toplevel);
+   EINA_SAFETY_ON_FALSE_RETURN(window->zxdg_toplevel || window->xdg_toplevel);
 
    if (window->set_config.fullscreen)
      {
         window->saved = window->set_config.geometry;
-        zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
+        if (window->xdg_toplevel)
+          xdg_toplevel_set_fullscreen(window->xdg_toplevel, NULL);
+        if (window->zxdg_toplevel)
+          zxdg_toplevel_v6_set_fullscreen(window->zxdg_toplevel, NULL);
      }
    else
-     zxdg_toplevel_v6_unset_fullscreen(window->zxdg_toplevel);
+     {
+        if (window->xdg_toplevel)
+          xdg_toplevel_unset_fullscreen(window->xdg_toplevel);
+        if (window->zxdg_toplevel)
+          zxdg_toplevel_v6_unset_fullscreen(window->zxdg_toplevel);
+     }
 }
 
 static void
@@ -1493,12 +1567,21 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         window->callback = wl_surface_frame(window->surface);
         wl_callback_add_listener(window->callback, &_frame_listener, window);
         /* Dispatch any state we've been saving along the way */
-        if (window->pending.geom && window->zxdg_toplevel)
-          zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                              window->set_config.geometry.x,
-                                              window->set_config.geometry.y,
-                                              window->set_config.geometry.w,
-                                              window->set_config.geometry.h);
+        if (window->pending.geom)
+          {
+             if (window->xdg_toplevel)
+               xdg_surface_set_window_geometry(window->xdg_surface,
+                                                   window->set_config.geometry.x,
+                                                   window->set_config.geometry.y,
+                                                   window->set_config.geometry.w,
+                                                   window->set_config.geometry.h);
+             if (window->zxdg_surface)
+               zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
+                                                   window->set_config.geometry.x,
+                                                   window->set_config.geometry.y,
+                                                   window->set_config.geometry.w,
+                                                   window->set_config.geometry.h);
+          }
         if (window->pending.opaque)
           _opaque_set(window);
 
@@ -1520,6 +1603,9 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
 
    if (window->req_config.serial != window->set_config.serial)
      {
+        if (window->xdg_configure_ack)
+           window->xdg_configure_ack(window->xdg_surface,
+                                      window->req_config.serial);
         if (window->zxdg_configure_ack)
            window->zxdg_configure_ack(window->zxdg_surface,
                                       window->req_config.serial);

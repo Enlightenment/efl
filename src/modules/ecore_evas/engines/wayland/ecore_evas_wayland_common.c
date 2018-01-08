@@ -241,6 +241,17 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    ee->w = w;
    ee->h = h;
 
+   if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel && wdata->win->pending.min)
+     {
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+        wdata->win->pending.min = 0;
+     }
+   if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel && wdata->win->pending.max)
+     {
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+        wdata->win->pending.max = 0;
+     }
+
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
      {
         wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);
@@ -524,6 +535,9 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
             wdata->win->req_config.serial && wdata->win->surface &&
             ((!state_change) || ((pfw == fw) && (pfh == fh))))
           {
+             if (wdata->win->xdg_configure_ack)
+               wdata->win->xdg_configure_ack(wdata->win->xdg_surface,
+                                              wdata->win->req_config.serial);
              if (wdata->win->zxdg_configure_ack)
                wdata->win->zxdg_configure_ack(wdata->win->zxdg_surface,
                                               wdata->win->req_config.serial);
@@ -1558,6 +1572,11 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    ee->prop.min.w = w;
    ee->prop.min.h = h;
    wdata = ee->engine.data;
+   if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel)
+     {
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, w, h);
+        wdata->win->pending.min = 0;
+     }
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
      {
         wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w, h);
@@ -1581,6 +1600,11 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    ee->prop.max.w = w;
    ee->prop.max.h = h;
    wdata = ee->engine.data;
+   if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel)
+     {
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, w, h);
+        wdata->win->pending.max = 0;
+     }
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
      {
         wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w, h);
@@ -2067,6 +2091,16 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
      {
         int fw, fh;
 
+        if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel && wdata->win->pending.min)
+          {
+             wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ee->prop.min.w, ee->prop.min.h);
+             wdata->win->pending.min = 0;
+          }
+        if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel && wdata->win->pending.max)
+          {
+             wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ee->prop.max.w, ee->prop.max.h);
+             wdata->win->pending.max = 0;
+          }
         if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel && wdata->win->pending.min)
           {
              wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ee->prop.min.w, ee->prop.min.h);

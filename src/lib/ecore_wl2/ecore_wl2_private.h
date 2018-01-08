@@ -12,6 +12,7 @@
 
 # include "session-recovery-client-protocol.h"
 
+# include "xdg-shell-client-protocol.h"
 # include "xdg-shell-unstable-v6-client-protocol.h"
 # include "efl-aux-hints-client-protocol.h"
 
@@ -88,6 +89,7 @@ struct _Ecore_Wl2_Display
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
         struct zxdg_shell_v6 *zxdg_shell;
+        struct xdg_wm_base *xdg_wm_base;
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
@@ -181,11 +183,19 @@ struct _Ecore_Wl2_Window
    void *buffer;
    struct wl_callback *callback;
    struct www_surface *www_surface;
+   struct xdg_surface *xdg_surface;
+   struct xdg_toplevel *xdg_toplevel;
+   struct xdg_popup *xdg_popup;
+
    struct zxdg_surface_v6 *zxdg_surface;
    struct zxdg_toplevel_v6 *zxdg_toplevel;
    struct zxdg_popup_v6 *zxdg_popup;
 
    Eina_Stringshare *uuid;
+
+   void (*xdg_configure_ack)(struct xdg_surface *surface, uint32_t serial);
+   void (*xdg_set_min_size)(struct xdg_toplevel *toplevel, int32_t w, int32_t h);
+   void (*xdg_set_max_size)(struct xdg_toplevel *toplevel, int32_t w, int32_t h);
 
    void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
    void (*zxdg_set_min_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);

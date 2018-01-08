@@ -59,6 +59,17 @@ static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener =
 };
 
 static void
+_xdg_shell_cb_ping(void *data EINA_UNUSED, struct xdg_wm_base *shell, uint32_t serial)
+{
+   xdg_wm_base_pong(shell, serial);
+}
+
+static const struct xdg_wm_base_listener _xdg_shell_listener =
+{
+   _xdg_shell_cb_ping,
+};
+
+static void
 _zxdg_shell_cb_ping(void *data EINA_UNUSED, struct zxdg_shell_v6 *shell, uint32_t serial)
 {
    zxdg_shell_v6_pong(shell, serial);
@@ -337,13 +348,13 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.efl_hints = wl_registry_bind(registry, id, &efl_hints_interface, MIN(version, 2));
         EINA_INLIST_FOREACH(ewd->windows, window)
           {
-             if (!window->zxdg_surface) continue;
+             if (!window->xdg_surface) continue;
              if (window->aspect.set)
-               efl_hints_set_aspect(window->display->wl.efl_hints, window->zxdg_surface,
+               efl_hints_set_aspect(window->display->wl.efl_hints, window->xdg_surface,
                  window->aspect.w, window->aspect.h, window->aspect.aspect);
              if (window->weight.set)
                efl_hints_set_weight(window->display->wl.efl_hints,
-                 window->zxdg_surface, window->weight.w, window->weight.h);
+                 window->xdg_surface, window->weight.w, window->weight.h);
           }
      }
 
@@ -438,6 +449,7 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.session_recovery)
      zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
    if (ewd->wl.www) www_destroy(ewd->wl.www);
+   if (ewd->wl.xdg_wm_base) xdg_wm_base_destroy(ewd->wl.xdg_wm_base);
    if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
    if (ewd->wl.data_device_manager)
@@ -488,6 +500,9 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
         _ecore_wl2_window_semi_free(window);
         window->set_config.serial = 0;
         window->req_config.serial = 0;
+        window->xdg_configure_ack = NULL;
+        window->xdg_set_min_size = NULL;
+        window->xdg_set_max_size = NULL;
         window->zxdg_configure_ack = NULL;
         window->zxdg_set_min_size = NULL;
         window->zxdg_set_max_size = NULL;
@@ -611,6 +626,7 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
    const char **itr;
    const char *shells[] =
      {
+        "xdg_wm_base",
         "zxdg_shell_v6",
         NULL
      };
@@ -626,7 +642,16 @@ _ecore_wl2_shell_bind(Ecore_Wl2_Display *ewd)
 
    if (!global) return;
 
-   if (!strcmp(global->interface, "zxdg_shell_v6"))
+   if (!strcmp(global->interface, "xdg_wm_base"))
+     {
+        ewd->wl.xdg_wm_base =
+          wl_registry_bind(ewd->wl.registry, global->id,
+                           &xdg_wm_base_interface, 1);
+        xdg_wm_base_add_listener(ewd->wl.xdg_wm_base,
+                                   &_xdg_shell_listener, NULL);
+        ewd->shell_done = EINA_TRUE;
+     }
+   else if (!strcmp(global->interface, "zxdg_shell_v6"))
      {
         ewd->wl.zxdg_shell =
           wl_registry_bind(ewd->wl.registry, global->id,
