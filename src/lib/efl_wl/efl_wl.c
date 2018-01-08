@@ -26,7 +26,7 @@
  * the opaque struct client side.
  */
 #include <wayland-server.h>
-#include "xdg-shell-unstable-v6-server-protocol.h"
+#include "xdg-shell-server-protocol.h"
 #include "efl-hints-server-protocol.h"
 #include "dmabuf.h"
 
@@ -281,9 +281,9 @@ typedef struct Shell_Positioner
    struct wl_resource *res;
    Evas_Coord_Size size;
    Eina_Rectangle anchor_rect;
-   enum zxdg_positioner_v6_anchor anchor;
-   enum zxdg_positioner_v6_gravity gravity;
-   enum zxdg_positioner_v6_constraint_adjustment constrain;
+   enum xdg_positioner_anchor anchor;
+   enum xdg_positioner_gravity gravity;
+   enum xdg_positioner_constraint_adjustment constrain;
    Evas_Coord_Point offset;
 } Shell_Positioner;
 
@@ -734,19 +734,19 @@ resource_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resou
 static int
 _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
 {
-   enum zxdg_positioner_v6_anchor an = ZXDG_POSITIONER_V6_ANCHOR_NONE;
-   enum zxdg_positioner_v6_gravity grav = ZXDG_POSITIONER_V6_GRAVITY_NONE;
+   enum xdg_positioner_anchor an = XDG_POSITIONER_ANCHOR_NONE;
+   enum xdg_positioner_gravity grav = XDG_POSITIONER_GRAVITY_NONE;
 
    if (invert)
      {
-        if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_RIGHT;
-        else if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_LEFT;
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_RIGHT;
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_LEFT;
+        if (sp->anchor == XDG_POSITIONER_ANCHOR_LEFT)
+          an = XDG_POSITIONER_ANCHOR_RIGHT;
+        else if (sp->anchor == XDG_POSITIONER_ANCHOR_RIGHT)
+          an = XDG_POSITIONER_ANCHOR_LEFT;
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_LEFT)
+          grav |= XDG_POSITIONER_GRAVITY_RIGHT;
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_RIGHT)
+          grav |= XDG_POSITIONER_GRAVITY_LEFT;
      }
    else
      {
@@ -755,20 +755,20 @@ _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
      }
 
    /* left edge */
-   if (an & ZXDG_POSITIONER_V6_ANCHOR_LEFT)
+   if (an == XDG_POSITIONER_ANCHOR_LEFT)
      x += sp->anchor_rect.x;
    /* right edge */
-   else if (an & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)
+   else if (an == XDG_POSITIONER_ANCHOR_RIGHT)
      x += sp->anchor_rect.x + sp->anchor_rect.w;
    /* center */
    else
      x += sp->anchor_rect.x + (sp->anchor_rect.w / 2);
 
    /* flip left over anchor */
-   if (grav & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+   if (grav & XDG_POSITIONER_GRAVITY_LEFT)
      x -= sp->size.w;
    /* center on anchor */
-   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
+   else if (!(grav & XDG_POSITIONER_GRAVITY_RIGHT))
      x -= sp->size.w / 2;
    return x;
 }
@@ -776,19 +776,19 @@ _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
 static int
 _apply_positioner_y(int y, Shell_Positioner *sp, Eina_Bool invert)
 {
-   enum zxdg_positioner_v6_anchor an = ZXDG_POSITIONER_V6_ANCHOR_NONE;
-   enum zxdg_positioner_v6_gravity grav = ZXDG_POSITIONER_V6_GRAVITY_NONE;
+   enum xdg_positioner_anchor an = XDG_POSITIONER_ANCHOR_NONE;
+   enum xdg_positioner_gravity grav = XDG_POSITIONER_GRAVITY_NONE;
 
    if (invert)
      {
-        if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_BOTTOM;
-        else if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_TOP;
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_BOTTOM;
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_TOP;
+        if (sp->anchor == XDG_POSITIONER_ANCHOR_TOP)
+          an = XDG_POSITIONER_ANCHOR_BOTTOM;
+        else if (sp->anchor == XDG_POSITIONER_ANCHOR_BOTTOM)
+          an = XDG_POSITIONER_ANCHOR_TOP;
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_TOP)
+          grav |= XDG_POSITIONER_GRAVITY_BOTTOM;
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_BOTTOM)
+          grav |= XDG_POSITIONER_GRAVITY_TOP;
      }
    else
      {
@@ -797,20 +797,20 @@ _apply_positioner_y(int y, Shell_Positioner *sp, Eina_Bool invert)
      }
 
    /* up edge */
-   if (an & ZXDG_POSITIONER_V6_ANCHOR_TOP)
+   if (an == XDG_POSITIONER_ANCHOR_TOP)
      y += sp->anchor_rect.y;
    /* bottom edge */
-   else if (an & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)
+   else if (an == XDG_POSITIONER_ANCHOR_BOTTOM)
      y += sp->anchor_rect.y + sp->anchor_rect.h;
    /* center */
    else
      y += sp->anchor_rect.y + (sp->anchor_rect.h / 2);
 
    /* flip up over anchor */
-   if (grav & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+   if (grav & XDG_POSITIONER_GRAVITY_TOP)
      y -= sp->size.h;
    /* center on anchor */
-   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
+   else if (!(grav & XDG_POSITIONER_GRAVITY_BOTTOM))
      y -= sp->size.h / 2;
    return y;
 }
@@ -823,19 +823,19 @@ _apply_positioner_slide(Comp_Surface *cs, Shell_Positioner *sp, int *x, int *y, 
    evas_object_geometry_get(cs->parent->obj, &px, &py, NULL, NULL);
    evas_object_geometry_get(cs->c->obj, &cx, &cy, NULL, NULL);
    px -= cx, py -= cy;
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
        (!CONTAINS(zx, zy, zw, zh, *x, zy, *w, 1)))
      {
         int sx = *x;
 
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_LEFT)
           {
              if (*x + *w > zx + zw)
                sx = MAX(zx + zw - *w, px + sp->anchor_rect.x - *w);
              else if (*x < zx)
                sx = MIN(zx, px + sp->anchor_rect.x + sp->anchor_rect.w);
           }
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_RIGHT)
           {
              if (*x < zx)
                sx = MIN(zx, *x + sp->anchor_rect.x + sp->anchor_rect.w);
@@ -846,19 +846,19 @@ _apply_positioner_slide(Comp_Surface *cs, Shell_Positioner *sp, int *x, int *y, 
           *x = sx;
      }
    if (!CONSTRAINED(*w, *h, *x, *y)) return EINA_TRUE;
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, *y, 1, *h)))
      {
         int sy = *y;
 
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_TOP)
           {
              if (*y + *h > zy + zh)
                sy = MAX(zy + zh - *h, py + sp->anchor_rect.y - *h);
              else if (*y < zy)
                sy = MIN(zy, py + sp->anchor_rect.y + sp->anchor_rect.h);
           }
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_BOTTOM)
           {
              if (*y < zy)
                sy = MIN(zy, py + sp->anchor_rect.y + sp->anchor_rect.h);
@@ -913,7 +913,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
     - slide
     - resize
     */
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X) &&
        (!CONTAINS(zx, zy, zw, zh, x, zy, w, 1)))
      {
         int fx;
@@ -928,7 +928,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
         if (w > 0) evas_object_resize(cs->obj, w, h);
         return;
      }
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, y, 1, h)))
      {
         int fy;
@@ -957,7 +957,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
         return;
      }
 
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
        (!CONTAINS(zx, zy, zw, zh, x, zy, w, 1)))
      {
         w = zx + zw - x;
@@ -968,7 +968,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
              return;
           }
      }
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, y, 1, h)))
      {
         h = zy + zh - y;
@@ -1225,17 +1225,17 @@ shell_surface_send_configure(Comp_Surface *cs)
         evas_object_geometry_get(cs->obj, &x, &y, &w, &h);
         evas_object_geometry_get(cs->parent->obj, &px, &py, NULL, NULL);
         serial = wl_display_next_serial(cs->c->display);
-        zxdg_popup_v6_send_configure(cs->role, x - px, y - py, w, h);
-        zxdg_surface_v6_send_configure(cs->shell.surface, serial);
+        xdg_popup_send_configure(cs->role, x - px, y - py, w, h);
+        xdg_surface_send_configure(cs->shell.surface, serial);
         return;
      }
    wl_array_init(&states);
    s = wl_array_add(&states, sizeof(uint32_t));
-   *s = ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN;
+   *s = XDG_TOPLEVEL_STATE_FULLSCREEN;
    if (cs->shell.activated)
      {
         s = wl_array_add(&states, sizeof(uint32_t));
-        *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+        *s = XDG_TOPLEVEL_STATE_ACTIVATED;
         if (!cs->extracted)
           evas_object_raise(cs->obj);
         if (cs->parent)
@@ -1249,8 +1249,8 @@ shell_surface_send_configure(Comp_Surface *cs)
      evas_object_geometry_get(cs->obj, NULL, NULL, &w, &h);
    else
      evas_object_geometry_get(cs->c->clip, NULL, NULL, &w, &h);
-   zxdg_toplevel_v6_send_configure(cs->role, w, h, &states);
-   zxdg_surface_v6_send_configure(cs->shell.surface, serial);
+   xdg_toplevel_send_configure(cs->role, w, h, &states);
+   xdg_surface_send_configure(cs->shell.surface, serial);
    wl_array_release(&states);
    if (cs->shell.activated)
      {
@@ -1381,6 +1381,15 @@ comp_surface_commit_image_state(Comp_Surface *cs, Comp_Buffer *buffer, Evas_Obje
 }
 
 static void
+shell_surface_reset(Comp_Surface *cs)
+{
+   EINA_RECTANGLE_SET(&cs->shell.geom, 0, 0, 0, 0);
+   eina_stringshare_replace(&cs->shell.title, NULL);
+   eina_stringshare_replace(&cs->shell.app_id, NULL);
+   cs->shell.activated = 0;
+}
+
+static void
 comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
 {
    int x, y;
@@ -1406,6 +1415,11 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
              evas_object_hide(cs->obj);
              EINA_LIST_FOREACH(cs->proxies, l, o)
                evas_object_hide(o);
+             if (cs->shell.surface)
+               {
+                  cs->shell.new = 1;
+                  shell_surface_reset(cs);
+               }
           }
      }
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
@@ -1606,6 +1620,13 @@ comp_surface_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *re
    struct wl_shm_buffer *shmbuff;
    struct linux_dmabuf_buffer *dmabuf;
 
+   if (cs->shell.new)
+     {
+        wl_resource_post_error(cs->shell.surface, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
+        return;
+     }
+
    comp_surface_buffer_detach(&cs->pending.buffer);
    cs->pending.attach = 1;
    if (!buffer_resource) return;
@@ -1751,6 +1772,13 @@ comp_surface_commit(struct wl_client *client, struct wl_resource *resource)
    Comp_Subsurface *css;
    Eina_List *l;
    Comp_Buffer_State *cbs = &cs->pending;
+
+   if (cs->shell.popup && (!cs->parent))
+     {
+        wl_resource_post_error(cs->shell.surface, XDG_WM_BASE_ERROR_INVALID_POPUP_PARENT,
+                               "popup surface has no parent");
+        return;
+     }
 
    cs->commit = 1;
    if (cs->subsurface)
@@ -2368,7 +2396,7 @@ comp_surface_smart_hide(Evas_Object *obj)
    if (!cs->shell.activated) return;
    cs->shell.activated = 0;
    if (cs->shell.popup && cs->role)
-     zxdg_popup_v6_send_popup_done(cs->role);
+     xdg_popup_send_popup_done(cs->role);
    if (cs->parent && cs->shell.popup) return;
    /* attempt to revert focus based on stacking order */
    if (cs->parent)
@@ -3092,6 +3120,7 @@ shell_surface_toplevel_impl_destroy(struct wl_resource *resource)
 
    cs->role = NULL;
    evas_object_hide(cs->obj);
+   shell_surface_reset(cs);
    if (!cs->parent) return;
    comp_surface_reparent(cs, NULL);
 }
@@ -3160,7 +3189,7 @@ shell_surface_toplevel_unset_fullscreen(){}
 static void
 shell_surface_toplevel_set_minimized(){}
 
-static const struct zxdg_toplevel_v6_interface shell_surface_toplevel_interface =
+static const struct xdg_toplevel_interface shell_surface_toplevel_interface =
 {
    resource_destroy,
    shell_surface_toplevel_set_parent,
@@ -3185,18 +3214,18 @@ shell_surface_toplevel_create(struct wl_client *client EINA_UNUSED, struct wl_re
 
    if (cs->buffer[0] || cs->pending.buffer)
      {
-        wl_resource_post_error(resource, ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+        wl_resource_post_error(resource, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
                                "buffer attached/committed before configure");
         return;
      }
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_ROLE,
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_ROLE,
                                "surface already has assigned role");
         return;
      }
 
-   cs->role = wl_resource_create(client, &zxdg_toplevel_v6_interface, 1, id);
+   cs->role = wl_resource_create(client, &xdg_toplevel_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_toplevel_interface, cs, shell_surface_toplevel_impl_destroy);
    cs->shell.new = 1;
 }
@@ -3214,14 +3243,14 @@ shell_surface_popup_grab(struct wl_client *client EINA_UNUSED, struct wl_resourc
      }
    if (cs->mapped)
      {
-        wl_resource_post_error(resource, ZXDG_POPUP_V6_ERROR_INVALID_GRAB,
+        wl_resource_post_error(resource, XDG_POPUP_ERROR_INVALID_GRAB,
                                 "grab requested on mapped popup");
         return;
      }
 
    if (cs->parent->shell.popup && (s->grab != cs->parent))
      {
-        wl_resource_post_error(resource, ZXDG_POPUP_V6_ERROR_INVALID_GRAB,
+        wl_resource_post_error(resource, XDG_POPUP_ERROR_INVALID_GRAB,
                                 "grab requested on ungrabbed nested popup");
         return;
      }
@@ -3229,7 +3258,7 @@ shell_surface_popup_grab(struct wl_client *client EINA_UNUSED, struct wl_resourc
    cs->shell.grabs = eina_list_append(cs->shell.grabs, s);
 }
 
-static const struct zxdg_popup_v6_interface shell_surface_popup_interface =
+static const struct xdg_popup_interface shell_surface_popup_interface =
 {
    resource_destroy,
    shell_surface_popup_grab,
@@ -3244,6 +3273,7 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
    cs->role = NULL;
    evas_object_hide(cs->obj);
    cs->shell.popup = 0;
+   shell_surface_reset(cs);
    EINA_LIST_FREE(cs->shell.grabs, s)
      if (s->grab == cs)
        {
@@ -3254,7 +3284,7 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
             s->grab = NULL;
        }
    if (cs->children)
-     wl_resource_post_error(cs->shell.surface, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES,
+     wl_resource_post_error(cs->shell.surface, XDG_WM_BASE_ERROR_DEFUNCT_SURFACES,
                             "popups dismissed out of order");
    if (cs->parent)
      comp_surface_reparent(cs, NULL);
@@ -3267,28 +3297,23 @@ shell_surface_popup_create(struct wl_client *client, struct wl_resource *resourc
 
    if (cs->buffer[0] || cs->pending.buffer)
      {
-        wl_resource_post_error(resource, ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+        wl_resource_post_error(resource, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
                                "buffer attached/committed before configure");
         return;
      }
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_ROLE,
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_ROLE,
                                "surface already has assigned role");
         return;
      }
-   if (!parent_resource)
-     {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_INVALID_POPUP_PARENT,
-                               "popup surface has no parent");
-        return;
-     }
 
-   cs->role = wl_resource_create(client, &zxdg_popup_v6_interface, 1, id);
+   cs->role = wl_resource_create(client, &xdg_popup_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_popup_interface, cs, shell_surface_popup_impl_destroy);
    cs->shell.new = 1;
    cs->shell.popup = 1;
-   comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
+   if(parent_resource)
+     comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
    cs->shell.positioner = wl_resource_get_user_data(positioner_resource);
    _apply_positioner(cs, cs->shell.positioner);
    evas_object_smart_callback_call(cs->c->obj, "popup_added", cs->obj);
@@ -3298,7 +3323,14 @@ static void
 _validate_size(struct wl_resource *resource, int32_t value)
 {
    if (value <= 0)
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid size passed");
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size passed");
+}
+
+static void
+_validate_size_negative(struct wl_resource *resource, int32_t value)
+{
+   if (value < 0)
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size passed");
 }
 
 static void
@@ -3318,44 +3350,37 @@ shell_positioner_set_anchor_rect(struct wl_client *wl_client EINA_UNUSED, struct
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   _validate_size(resource, w);
-   _validate_size(resource, h);
+   _validate_size_negative(resource, w);
+   _validate_size_negative(resource, h);
 
    EINA_RECTANGLE_SET(&p->anchor_rect, x, y, w, h);
 }
 
 static void
-shell_positioner_set_anchor(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_anchor anchor)
+shell_positioner_set_anchor(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_anchor anchor)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   if ((anchor & (ZXDG_POSITIONER_V6_ANCHOR_TOP | ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)) ==
-       (ZXDG_POSITIONER_V6_ANCHOR_TOP | ZXDG_POSITIONER_V6_ANCHOR_BOTTOM))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid anchor values passed");
-   else if ((anchor & (ZXDG_POSITIONER_V6_ANCHOR_LEFT | ZXDG_POSITIONER_V6_ANCHOR_RIGHT)) ==
-       (ZXDG_POSITIONER_V6_ANCHOR_LEFT | ZXDG_POSITIONER_V6_ANCHOR_RIGHT))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid anchor values passed");
-   else
-     p->anchor = anchor;
+   p->anchor = anchor;
 }
 
 static void
-shell_positioner_set_gravity(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_gravity gravity)
+shell_positioner_set_gravity(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_gravity gravity)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   if ((gravity & (ZXDG_POSITIONER_V6_GRAVITY_TOP | ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)) ==
-       (ZXDG_POSITIONER_V6_GRAVITY_TOP | ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid gravity values passed");
-   else if ((gravity & (ZXDG_POSITIONER_V6_GRAVITY_LEFT | ZXDG_POSITIONER_V6_GRAVITY_RIGHT)) ==
-       (ZXDG_POSITIONER_V6_GRAVITY_LEFT | ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid gravity values passed");
+   if ((gravity & (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM)) ==
+       (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM))
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
+   else if ((gravity & (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT)) ==
+       (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT))
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
    else
      p->gravity = gravity;
 }
 
 static void
-shell_positioner_set_constraint_adjustment(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_constraint_adjustment constraint_adjustment)
+shell_positioner_set_constraint_adjustment(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_constraint_adjustment constraint_adjustment)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
@@ -3371,7 +3396,7 @@ shell_positioner_set_offset(struct wl_client *client EINA_UNUSED, struct wl_reso
    p->offset.y = y;
 }
 
-static const struct zxdg_positioner_v6_interface shell_positioner_interface =
+static const struct xdg_positioner_interface shell_positioner_interface =
 {
    resource_destroy,
    shell_positioner_set_size,
@@ -3401,8 +3426,9 @@ shell_positioner_create(struct wl_client *client, struct wl_resource *resource, 
    Shell_Positioner *sp;
 
    sd = wl_resource_get_user_data(resource);
-   res = wl_resource_create(client, &zxdg_positioner_v6_interface, 1, id);
+   res = wl_resource_create(client, &xdg_positioner_interface, 1, id);
    sp = calloc(1, sizeof(Shell_Positioner));
+   sp->anchor_rect.w = sp->anchor_rect.h = -1;
    sp->sd = sd;
    sp->res = res;
    sd->positioners = eina_inlist_append(sd->positioners, EINA_INLIST_GET(sp));
@@ -3422,7 +3448,7 @@ shell_surface_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_reso
 {
 }
 
-static const struct zxdg_surface_v6_interface shell_surface_interface =
+static const struct xdg_surface_interface shell_surface_interface =
 {
    resource_destroy,
    shell_surface_toplevel_create,
@@ -3438,12 +3464,13 @@ shell_surface_impl_destroy(struct wl_resource *resource)
 
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
         wl_resource_destroy(cs->role);
      }
    cs->shell.surface = NULL;
    cs->shell.data->surfaces = eina_list_remove(cs->shell.data->surfaces, cs);
    cs->shell.data = NULL;
+   shell_surface_reset(cs);
    while (cs->children)
      {
         ccs = EINA_INLIST_CONTAINER_GET(cs->children, Comp_Surface);
@@ -3464,7 +3491,7 @@ shell_surface_create(struct wl_client *client, struct wl_resource *resource, uin
         return;
      }
 
-   cs->shell.surface = wl_resource_create(client, &zxdg_surface_v6_interface, 1, id);
+   cs->shell.surface = wl_resource_create(client, &xdg_surface_interface, 1, id);
    cs->shell.data = sd;
    wl_resource_set_implementation(cs->shell.surface, &shell_surface_interface, cs, shell_surface_impl_destroy);
    sd->surfaces = eina_list_append(sd->surfaces, cs);
@@ -3478,7 +3505,7 @@ shell_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, u
    sd->ping = 0;
 }
 
-static const struct zxdg_shell_v6_interface shell_interface =
+static const struct xdg_wm_base_interface shell_interface =
 {
    resource_destroy,
    shell_positioner_create,
@@ -3517,7 +3544,7 @@ shell_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    sd->c = c;
    c->shells = eina_inlist_append(c->shells, EINA_INLIST_GET(sd));
 
-   res = wl_resource_create(client, &zxdg_shell_v6_interface, version, id);
+   res = wl_resource_create(client, &xdg_wm_base_interface, version, id);
    sd->res = res;
    wl_resource_set_implementation(res, &shell_interface, sd, shell_unbind);
 }
@@ -5074,7 +5101,7 @@ comp_smart_add(Evas_Object *obj)
    wl_global_create(c->display, &wl_compositor_interface, 4, c, comp_bind);
    wl_global_create(c->display, &wl_subcompositor_interface, 1, c, subcomp_bind);
    wl_global_create(c->display, &wl_output_interface, 2, c, output_bind);
-   wl_global_create(c->display, &zxdg_shell_v6_interface, 1, c, shell_bind);
+   wl_global_create(c->display, &xdg_wm_base_interface, 1, c, shell_bind);
    wl_global_create(c->display, &wl_data_device_manager_interface, 3, c, data_device_manager_bind);
    wl_global_create(c->display, &efl_hints_interface, 1, c, efl_hints_bind);
    wl_display_init_shm(c->display);

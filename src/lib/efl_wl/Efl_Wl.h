@@ -34,7 +34,7 @@
 /**
  * @defgroup Efl_Wl_Group EFL Wayland
  *
- * A multiseat Wayland compositor in an Evas object.
+ * A multiseat xdg-shell compliant Wayland compositor in an Evas object.
  * All toplevel windows will be sized to the size of the compositor object.
  * @since 1.20
  * @{

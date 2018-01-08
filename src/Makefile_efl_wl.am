@@ -14,8 +14,8 @@ lib/efl_wl/dmabuf.h
 nodist_lib_efl_wl_libefl_wl_la_SOURCES = \
 lib/efl_wl/linux-dmabuf-unstable-v1-protocol.c \
 lib/efl_wl/linux-dmabuf-unstable-v1-server-protocol.h \
-lib/efl_wl/xdg-shell-unstable-v6-protocol.c \
-lib/efl_wl/xdg-shell-unstable-v6-server-protocol.h \
+lib/efl_wl/xdg-shell-protocol.c \
+lib/efl_wl/xdg-shell-server-protocol.h \
 lib/efl_wl/efl-hints-protocol.c \
 lib/efl_wl/efl-hints-server-protocol.h
 
