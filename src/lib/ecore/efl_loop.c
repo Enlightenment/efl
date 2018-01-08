@@ -143,8 +143,18 @@ _efl_loop_efl_object_provider_find(const Eo *obj, Efl_Loop_Data *pd, const Efl_O
 EAPI int
 efl_loop_exit_code_process(Eina_Value *value)
 {
-   const Eina_Value_Type *t = eina_value_type_get(value);
+   Eina_Value def = EINA_VALUE_EMPTY;
+   const Eina_Value_Type *t;
    int r = 0;
+
+   if (value == NULL ||
+       !value->type)
+     {
+        def = eina_value_int_init(0);
+        value = &def;
+     }
+
+   t = eina_value_type_get(value);
 
    if (t == EINA_VALUE_TYPE_UCHAR ||
        t == EINA_VALUE_TYPE_USHORT ||
