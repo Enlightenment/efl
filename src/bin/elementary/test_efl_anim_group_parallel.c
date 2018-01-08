@@ -85,19 +85,19 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
 
    //Show Animation
-   Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
+   Efl_Animation *show_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, 0.5, 0.5);
 
    //Scale Animation to zoom out
-   Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
+   Efl_Animation *scale_half_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, win);
    efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
 
    //Show Parallel Group Animation
-   Efl_Animation *parallel_show_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, NULL);
+   Efl_Animation *parallel_show_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, win);
    efl_animation_duration_set(parallel_show_anim, 1.0);
    efl_animation_final_state_keep_set(parallel_show_anim, EINA_TRUE);
 
@@ -108,19 +108,19 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
 
    //Hide Animation
-   Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, NULL);
+   Efl_Animation *hide_anim = efl_add(EFL_ANIMATION_ALPHA_CLASS, win);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, NULL, 0.5, 0.5);
 
    //Scale Animation to zoom in
-   Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, NULL);
+   Efl_Animation *scale_double_anim = efl_add(EFL_ANIMATION_SCALE_CLASS, win);
    efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
 
    //Hide Parallel Group Animation
-   Efl_Animation *parallel_hide_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, NULL);
+   Efl_Animation *parallel_hide_anim = efl_add(EFL_ANIMATION_GROUP_PARALLEL_CLASS, win);
    efl_animation_duration_set(parallel_hide_anim, 1.0);
    efl_animation_final_state_keep_set(parallel_hide_anim, EINA_TRUE);
 

@@ -53,9 +53,13 @@ _efl_animation_player_animation_set(Eo *eo_obj,
         return;
      }
 
-   if (pd->animation && efl_player_play_get(eo_obj))
-     efl_player_stop(eo_obj);
+   if (pd->animation)
+     {
+        efl_player_stop(eo_obj);
+        efl_unref(pd->animation);
+     }
    pd->animation = anim;
+   efl_ref(pd->animation);
 }
 
 EOLIAN static Efl_Animation *
@@ -365,11 +369,11 @@ _efl_animation_player_efl_object_destructor(Eo *eo_obj,
         pd->animator = NULL;
 
         //Reset the state of the target to the initial state
-        if (!pd->keep_final_state)
-          efl_player_stop(eo_obj);
+        efl_player_stop(eo_obj);
 
         efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
      }
+   efl_unref(pd->animation);
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }

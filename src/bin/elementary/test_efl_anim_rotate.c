@@ -83,13 +83,13 @@ test_efl_anim_rotate(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_show(btn);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0,NULL, 0.5, 0.5);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, NULL, 0.5, 0.5);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
@@ -150,13 +150,13 @@ test_efl_anim_rotate_relative(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
    evas_object_show(pivot);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(cw_45_degrees_anim, 0.0, 45.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_set(ccw_45_degrees_anim, 45.0, 0.0, pivot, 0.5, 0.5);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
@@ -218,13 +218,13 @@ test_efl_anim_rotate_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
    evas_object_show(abs_center);
 
    //Rotate from 0 to 45 degrees Animation
-   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *cw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_absolute_set(cw_45_degrees_anim, 0.0, 45.0, 0, 0);
    efl_animation_duration_set(cw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(cw_45_degrees_anim, EINA_TRUE);
 
    //Rotate from 45 to 0 degrees Animation
-   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, NULL);
+   Efl_Animation *ccw_45_degrees_anim = efl_add(EFL_ANIMATION_ROTATE_CLASS, win);
    efl_animation_rotate_absolute_set(ccw_45_degrees_anim, 45.0, 0.0, 0, 0);
    efl_animation_duration_set(ccw_45_degrees_anim, 1.0);
    efl_animation_final_state_keep_set(ccw_45_degrees_anim, EINA_TRUE);
