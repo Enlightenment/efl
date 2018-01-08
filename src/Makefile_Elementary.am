@@ -127,6 +127,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
+	lib/elementary/efl_selection_manager.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -226,7 +227,9 @@ elm_legacy_eolian_files = \
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot \
 	lib/elementary/efl_ui.eot \
-	lib/elementary/efl_ui_list_types.eot
+	lib/elementary/efl_ui_list_types.eot \
+	lib/elementary/efl_selection_types.eot \
+	lib/elementary/efl_ui_dnd_types.eot
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
 elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
@@ -757,6 +760,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_scroller.c \
 	lib/elementary/efl_ui_scroll_manager.c \
 	lib/elementary/efl_ui_pan.c \
+	lib/elementary/efl_selection_manager.c \
 	$(NULL)
 
 

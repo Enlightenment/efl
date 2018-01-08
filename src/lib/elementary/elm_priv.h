@@ -66,6 +66,7 @@
 # include "efl_ui_focus_parent_provider.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
 # include "elm_widget_item_static_focus.eo.h"
+#include "efl_selection_manager.eo.h"
 
 # ifdef HAVE_LANGINFO_H
 #  include <langinfo.h>
