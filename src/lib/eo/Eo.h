@@ -1165,7 +1165,7 @@ typedef struct _Efl_Object_Op_Call_Data
    void         *extn4; // for future use to avoid ABI issues
 } Efl_Object_Op_Call_Data;
 
-#define EFL_OBJECT_CALL_CACHE_SIZE 1
+#define EFL_OBJECT_CALL_CACHE_SIZE 0
 
 typedef struct _Efl_Object_Call_Cache_Index
 {
@@ -1193,7 +1193,7 @@ typedef struct _Efl_Object_Call_Cache
 # endif
 #endif
    Efl_Object_Op               op;
-   unsigned int        generation;
+//   unsigned int        generation;
 } Efl_Object_Call_Cache;
 
 // to pass the internal function call to EFL_FUNC_BODY (as Func parameter)
@@ -1238,7 +1238,7 @@ __##Name##_op_create: EINA_COLD \
    if (EINA_UNLIKELY(___cache.op != EFL_NOOP)) memset(&___cache, 0, sizeof(___cache)); \
    ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
    if (___cache.op == EFL_NOOP) goto __##Name##_failed; \
-   ___cache.generation = _efl_object_init_generation; \
+   /*___cache.generation = _efl_object_init_generation;*/ \
    goto __##Name##_op_create_done; \
 __##Name##_failed: EINA_COLD\
    ErrorCase \
