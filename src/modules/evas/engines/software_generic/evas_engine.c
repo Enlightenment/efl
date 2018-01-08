@@ -4420,20 +4420,6 @@ eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int width, int height,
    return buf;
 }
 
-static Efl_Gfx_Render_Op
-_evas_render_op_to_ector_rop(Evas_Render_Op op)
-{
-   switch (op)
-     {
-      case EVAS_RENDER_BLEND:
-         return EFL_GFX_RENDER_OP_BLEND;
-      case EVAS_RENDER_COPY:
-         return EFL_GFX_RENDER_OP_COPY;
-      default:
-         return EFL_GFX_RENDER_OP_BLEND;
-     }
-}
-
 static void
 _draw_thread_ector_cleanup(Evas_Thread_Command_Ector *ector)
 {
@@ -4518,9 +4504,8 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
 
    ector.r = renderer; // This has already been refcounted by Evas_Object_VG
    ector.clips = c;
-   ector.render_op = _evas_render_op_to_ector_rop(dc->render_op);
-   ector.mul_col = ector_color_multiply(dc->mul.use ? dc->mul.col : 0xffffffff,
-                                        dc->col.col);;
+   ector.render_op = EFL_GFX_RENDER_OP_BLEND;
+   ector.mul_col = 0xffffffff;
    ector.free_it = EINA_FALSE;
 
    if (do_async)

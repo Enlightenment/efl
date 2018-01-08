@@ -2546,20 +2546,6 @@ eng_ector_buffer_new(void *engine, Evas *evas, int w, int h,
                   evas_ector_gl_buffer_prepare(efl_added, engine, w, h, cspace, flags));
 }
 
-static Efl_Gfx_Render_Op
-_evas_render_op_to_ector_rop(Evas_Render_Op op)
-{
-   switch (op)
-     {
-      case EVAS_RENDER_BLEND:
-         return EFL_GFX_RENDER_OP_BLEND;
-      case EVAS_RENDER_COPY:
-         return EFL_GFX_RENDER_OP_COPY;
-      default:
-         return EFL_GFX_RENDER_OP_BLEND;
-     }
-}
-
 static void
 eng_ector_renderer_draw(void *engine EINA_UNUSED, void *output,
                         void *context EINA_UNUSED, void *surface EINA_UNUSED,
@@ -2575,7 +2561,7 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *output,
         eng_image_size_get(engine, glimg, &w, &h);
         eina_array_push(c, eina_rectangle_new(0, 0, w, h));
 
-        ector_renderer_draw(renderer, _evas_render_op_to_ector_rop(EVAS_RENDER_COPY), c, 0xffffffff);
+        ector_renderer_draw(renderer, EFL_GFX_RENDER_OP_BLEND, c, 0xffffffff);
 
         while ((r = eina_array_pop(c)))
           eina_rectangle_free(r);
