@@ -23,7 +23,7 @@ public class Example
         popup.SetVisible(true);
         popup.SetButton(efl.ui.popup_alert.Button.Positive, "Ok");
         popup.SetSize(150, 30);
-        popup.CLICKED += (object sender, efl.ui.CLICKED_Args e) => {
+        popup.BUTTON_CLICKED += (object sender, efl.ui.BUTTON_CLICKED_Args e) => {
             popup.SetParent(null);
             popup.Del();
         };
