@@ -417,21 +417,21 @@ _efl_super_cast(const Eo *eo_id, const Efl_Class *cur_klass, Eina_Bool super)
 
    return (Eo *) eo_id;
 
-do_klass:
+do_klass: EINA_COLD
    // efl_super(Class) is extremely rarely used, so TLS write is fine
    EINA_SAFETY_ON_FALSE_RETURN_VAL(super, NULL);
    _super_klass = super_klass;
    return (Eo *) eo_id;
 
-err:
+err: EINA_COLD
    _EO_POINTER_ERR(cur_klass, "Class (%p) is an invalid ref.", cur_klass);
    return NULL;
 #ifdef EO_DEBUG
-err_obj:
+err_obj: EINA_COLD
    _EO_POINTER_ERR(eo_id, "Object (%p) is an invalid ref, class=%p (%s).", eo_id, cur_klass, efl_class_name_get(cur_klass));
    return NULL;
 #endif
-err_obj_hierarchy:
+err_obj_hierarchy: EINA_COLD
    _EO_POINTER_ERR(eo_id, "Object (%p) class=%p (%s) is not an instance of class=%p (%s).", eo_id, efl_class_get(eo_id), efl_class_name_get(eo_id), cur_klass, efl_class_name_get(cur_klass));
    return NULL;
 }
@@ -619,15 +619,15 @@ composite_continue:
             file, line, func_name, cache->op, main_klass->desc->name);
         goto err;
      }
-err_cache_op:
+err_cache_op: EINA_COLD
    ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
        file, line, (!is_obj ? "class" : "regular"),
        func_name, klass->desc->name);
    goto err;
-err_func_src:
+err_func_src: EINA_COLD
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
        file, line, func_name, cache->op, klass->desc->name);
-err:
+err: EINA_COLD
    if (is_obj)
      {
         if (EINA_UNLIKELY(obj->auto_unref != 0))
@@ -642,13 +642,13 @@ err:
 
    // yes - special "move out of hot path" code blobs with goto's for
    // speed reasons to have intr prefetches work better and miss less
-ok_cur_klass:
+ok_cur_klass: EINA_HOT
    func = _eo_kls_itr_next(klass, cur_klass, cache->op, super);
    if (!func) goto end;
    klass = func->src;
    goto ok_cur_klass_back;
 
-ok_klass:
+ok_klass: EINA_HOT
      {
         EO_CLASS_POINTER_GOTO_PROXY(eo_id, _klass, err_klass);
         klass = _klass;
@@ -660,7 +660,7 @@ ok_klass:
      }
    goto ok_klass_back;
 
-obj_super:
+obj_super: EINA_HOT
    {
       cur_klass = obj->cur_klass;
       super = obj->super;
@@ -679,7 +679,7 @@ obj_super:
    }
    goto obj_super_back;
 
-err_klass:
+err_klass: EINA_COLD
    _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
    return EINA_FALSE;
 }

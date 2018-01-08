@@ -10,6 +10,10 @@
 
 #define EO_NO_PTR_INDIRECTION
 
+#define EINA_COLD __attribute__ ((cold));
+#define EINA_HOT __attribute__ ((hot));
+
+
 #define EOLIAN
 
 /* When used, this indicates that the function is an Eo API. */
@@ -1229,13 +1233,13 @@ typedef struct _Efl_Object_Call_Cache
 // of the cacheline that was already fetched should yield better cache
 // hits.
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet, ErrorCase) \
-__##Name##_op_create: \
+__##Name##_op_create: EINA_COLD \
    if (EINA_UNLIKELY(___cache.op != EFL_NOOP)) memset(&___cache, 0, sizeof(___cache)); \
    ___cache.op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
    if (___cache.op == EFL_NOOP) goto __##Name##_failed; \
    ___cache.generation = _efl_object_init_generation; \
    goto __##Name##_op_create_done; \
-__##Name##_failed: \
+__##Name##_failed: EINA_COLD\
    ErrorCase \
    return DefRet;
 #define _EFL_OBJECT_API_BEFORE_HOOK
