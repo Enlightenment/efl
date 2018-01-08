@@ -984,76 +984,32 @@ struct _Eo_Callback_Description
    Eina_Bool func_array : 1;
 };
 
-static int _eo_callbacks                  = 0;
 static Eina_Mempool *_eo_callback_mempool = NULL;
-static int _efl_pending_futures = 0;
 static Eina_Mempool *_efl_pending_future_mempool = NULL;
-
-static void
-_mempool_data_free(Eina_Mempool **mp, int *usage, void *data)
-{
-   if (!data) return;
-   eina_mempool_free(*mp, data);
-   (*usage)--;
-   if (*usage == 0)
-     {
-        eina_mempool_del(*mp);
-        *mp = NULL;
-     }
-}
-
-static void *
-_mempool_data_alloc(Eina_Mempool **mp, int *usage, size_t size)
-{
-   Eo_Callback_Description *cb;
-   // very unlikely  that the mempool isnt initted, so take all the init code
-   // and move it out of l1 instruction cache space so we dont pollute the
-   // l1 cache with unused code 99% of the time
-   if (!*mp) goto init_mempool;
-init_mempool_back:
-
-   cb = eina_mempool_calloc(*mp, size);
-   if (cb)
-     {
-        (*usage)++;
-        return cb;
-     }
-   if (*usage != 0) return NULL;
-   eina_mempool_del(*mp);
-   *mp = NULL;
-   return NULL;
-init_mempool:
-   *mp = eina_mempool_add
-   ("chained_mempool", NULL, NULL, size, 256);
-   if (!*mp) return NULL;
-   goto init_mempool_back;
-}
 
 static void
 _eo_callback_free(Eo_Callback_Description *cb)
 {
-   _mempool_data_free(&_eo_callback_mempool, &_eo_callbacks, cb);
+   eina_mempool_free(_eo_callback_mempool, cb);
 }
 
 static Eo_Callback_Description *
 _eo_callback_new(void)
 {
-   return _mempool_data_alloc(&_eo_callback_mempool, &_eo_callbacks,
+   return eina_mempool_calloc(_eo_callback_mempool,
                               sizeof(Eo_Callback_Description));
 }
 
 static void
 _efl_pending_future_free(Efl_Future_Pending *pending)
 {
-   _mempool_data_free(&_efl_pending_future_mempool,
-                      &_efl_pending_futures, pending);
+   eina_mempool_free(_efl_pending_future_mempool, pending);
 }
 
 static Efl_Future_Pending *
 _efl_pending_future_new(void)
 {
-   return _mempool_data_alloc(&_efl_pending_future_mempool,
-                              &_efl_pending_futures,
+   return eina_mempool_calloc(_efl_pending_future_mempool,
                               sizeof(Efl_Future_Pending));
 }
 
@@ -1226,8 +1182,6 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
           (pd->callbacks[j]->priority >= cb->priority)) j++;
 
    // Increase the callbacks storage by 16 entries at a time
-   if (_eo_nostep_alloc == -1) _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
-
    if (_eo_nostep_alloc || (pd->callbacks_count & 0xF) == 0x0)
      {
         Eo_Callback_Description **tmp;
@@ -1237,7 +1191,7 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
 
         tmp = realloc(pd->callbacks,
                       new_len * sizeof(Eo_Callback_Description *));
-        if (!tmp) return;
+        if (EINA_UNLIKELY(!tmp)) return;
         pd->callbacks = tmp;
      }
 
@@ -1259,7 +1213,7 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
      }
 }
 
-static unsigned char
+static unsigned short
 _efl_event_generation(Efl_Object_Data *pd)
 {
    if (!pd->event_frame) return 0;
@@ -1278,13 +1232,13 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    Eo_Callback_Description *cb = _eo_callback_new();
 
    // very unlikely so improve l1 instr cache by using goto
-   if (!cb || !desc || !func) goto err;
+   if (EINA_UNLIKELY(!cb || !desc || !func)) goto err;
    cb->items.item.desc = desc;
    cb->items.item.func = func;
    cb->func_data = (void *)user_data;
    cb->priority = priority;
    cb->generation = _efl_event_generation(pd);
-   if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
+   if (cb->generation) pd->need_cleaning = EINA_TRUE;
 
    _eo_callbacks_sorted_insert(pd, cb);
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -1297,7 +1251,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
 
    return EINA_TRUE;
 
-err:
+err: EINA_COLD
    ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p", cb, desc, func);
    _eo_callback_free(cb);
    return EINA_FALSE;
@@ -1474,7 +1428,12 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    Efl_Event ev;
    unsigned int idx;
    Eina_Bool callback_already_stopped, ret;
-   Efl_Event_Callback_Frame frame;
+   Efl_Event_Callback_Frame frame = {
+      .next = NULL,
+      .idx = 0,
+      .inserted_before = 0,
+      .generation = 1,
+   };
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
 #ifdef EFL_EVENT_SPECIAL_SKIP
@@ -1486,8 +1445,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
 #endif
 
-   memset(&frame, 0, sizeof(Efl_Event_Callback_Frame));
-   frame.generation = 1;
    if (pd->event_frame)
      frame.generation = ((Efl_Event_Callback_Frame*)pd->event_frame)->generation + 1;
 
@@ -2151,11 +2108,23 @@ _efl_object_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
    event_freeze_count = 0;
    _legacy_events_hash = eina_hash_stringshared_new(_legacy_events_hash_free_cb);
+
+   _eo_callback_mempool =
+      eina_mempool_add("chained_mempool", NULL, NULL,
+                       sizeof(Eo_Callback_Description), 256);
+
+   _efl_pending_future_mempool =
+      eina_mempool_add("chained_mempool", NULL, NULL,
+                       sizeof(Efl_Future_Pending), 256);
+
+   _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
 }
 
 EOLIAN static void
 _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
+   eina_mempool_del(_efl_pending_future_mempool);
+   eina_mempool_del(_eo_callback_mempool);
    eina_hash_free(_legacy_events_hash);
 }
 
