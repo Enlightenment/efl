@@ -1775,19 +1775,19 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
      }
    return isa;
 
-err_shared_class:
+err_shared_class: EINA_COLD
    _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
    EO_OBJ_DONE(eo_id);
-err_shared_obj:
+err_shared_obj: EINA_COLD
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
    return EINA_FALSE;
 
-err_class:
+err_class: EINA_COLD
    _EO_POINTER_ERR(klass_id, "Class (%p) is an invalid ref.", klass_id);
 err_obj:
    return EINA_FALSE;
 
-err:
+err: EINA_COLD
    ERR("Object %p is not a valid object in this context: object domain: %d, "
        "current domain: %d, local domain: %d, available domains: [%s %s %s %s]."
        " Are you trying to access this object from another thread?",
