@@ -17,7 +17,7 @@ struct Efl.Ui.Widget.Focus_State {
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
                         Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
                         Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
-                        Efl.Ui.Translatable, Efl.Selection)
+                        Efl.Ui.Translatable, Efl.Selection, Efl.Ui.Dnd)
 {
    [[Elementary widget abstract class]]
    legacy_prefix: elm_widget;

@@ -864,7 +864,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                     if (df->format & dropable->last.format)
                                       {
                                          sel_debug("calling Drop event on: %p", dropable->obj);
-                                         //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
+                                         efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                                       }
                                    }
                               }
@@ -1221,7 +1221,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                }
           }
         if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
-        //efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_DONE, NULL);
+        efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_DONE, NULL);
         if (seat_sel->drag_win)
           {
              if (seat_sel->drag_obj)
@@ -1275,7 +1275,7 @@ _x11_drag_move(void *data, Ecore_X_Xdnd_Position *pos)
    dp.pos.y = pos->position.y;
    dp.action = seat_sel->drag_action;
    //for drag side
-   //efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_POS, &dp);
+   efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_POS, &dp);
 }
 
 static void
@@ -1310,7 +1310,7 @@ _x11_dnd_status(void *data, int etype EINA_UNUSED, void *ev)
      {
         sel_debug("Won't accept accept\n");
      }
-   //efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_ACCEPT, &seat_sel->accept);
+   efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_ACCEPT, &seat_sel->accept);
 
    return EINA_TRUE;
 }
@@ -1500,10 +1500,8 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
              pos_data.action = action;
              EINA_INLIST_FOREACH_SAFE(dropable->format_list, itr, df)
                {
-                if (df->format & dropable->last.format)
-                  {
-                     //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
-                  }
+                  if (df->format & dropable->last.format)
+                    efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
                }
           }
         else
@@ -1519,13 +1517,13 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                   Drop_Format *df;
                   EINA_INLIST_FOREACH_SAFE(dropable->format_list, itr, df)
                     {
-                       //if (df->format &dropable->last.format)
-                       //  efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
+                       if (df->format &dropable->last.format)
+                         efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
                     }
                   EINA_INLIST_FOREACH_SAFE(last_dropable->format_list, itr, df)
                     {
-                       //if (df->format & last_dropable->last.format)
-                       //  efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
+                       if (df->format & last_dropable->last.format)
+                         efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
                     }
                }
              else // leave last obj
@@ -1537,8 +1535,8 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                   Drop_Format *df;
                   EINA_INLIST_FOREACH_SAFE(last_dropable->format_list, itr, df)
                     {
-                       //if (df->format & last_dropable->last.format)
-                       //  efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
+                       if (df->format & last_dropable->last.format)
+                         efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
                     }
                }
           }
@@ -1576,8 +1574,8 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                {
                   if (df->format & dropable->last.format)
                     {
-                         //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
-                         //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
+                       efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
+                       efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
                     }
                }
           }
@@ -1927,8 +1925,8 @@ found:
                        ddata.format = EFL_SELECTION_FORMAT_IMAGE;
                        ddata.data.mem = (char *)seat_sel->saved_types->imgfile;
                        ddata.data.len = strlen(ddata.data.mem);
-                       //if (df->format & dropable->last.format)
-                       //  efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
+                       if (df->format & dropable->last.format)
+                         efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                     }
                   else
                     {
@@ -2599,7 +2597,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
    if (ev->serial != sel->drag_serial)
     return ECORE_CALLBACK_RENEW;
 
-   //efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_DONE, NULL);
+   efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_DONE, NULL);
    if (seat_sel->drag_win)
      {
         if (!seat_sel->accept)
@@ -3178,9 +3176,7 @@ _wl_dropable_handle(Sel_Manager_Seat_Selection *seat_sel, Sel_Manager_Dropable *
         EINA_INLIST_FOREACH_SAFE(dropable->format_list, itr, df)
           {
              if (df->format & dropable->last.format)
-               {
-                  //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
-               }
+               efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
           }
 
         return;
@@ -3194,8 +3190,8 @@ _wl_dropable_handle(Sel_Manager_Seat_Selection *seat_sel, Sel_Manager_Dropable *
 
         EINA_INLIST_FOREACH_SAFE(last_dropable->format_list, itr, df)
           {
-             //if (df->format & last_dropable->last.format)
-             //  efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
+             if (df->format & last_dropable->last.format)
+               efl_event_callback_call(last_dropable->obj, EFL_UI_DND_EVENT_DRAG_LEAVE, NULL);
           }
      }
    /* We enter the new dropable */
@@ -3229,8 +3225,8 @@ _wl_dropable_handle(Sel_Manager_Seat_Selection *seat_sel, Sel_Manager_Dropable *
           {
              if (df->format & dropable->last.format)
                {
-                  //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
-                  //efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
+                  efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_ENTER, NULL);
+                  efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_POS, &pos_data);
                }
           }
      }
@@ -3322,8 +3318,8 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
 
                        EINA_INLIST_FOREACH_SAFE(dropable->format_list, itr, df)
                          {
-                            //if (df->format & dropable->last.format)
-                            //  efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
+                            if (df->format & dropable->last.format)
+                              efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                          }
                     }
                }
@@ -3509,7 +3505,7 @@ _wl_dnd_position(void *data, int type EINA_UNUSED, void *event)
      }
 
    seat_sel->accept = will_accept;
-   //efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_ACCEPT, &seat_sel->accept);
+   efl_event_callback_call(seat_sel->drag_obj, EFL_UI_DND_EVENT_DRAG_ACCEPT, &seat_sel->accept);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -4268,7 +4264,7 @@ _cont_obj_drag_start(void *data)
    Sel_Manager_Drag_Container *dc = data;
 
    dc->timer = NULL;
-   //efl_event_callback_add(dc->cont, EFL_UI_DND_EVENT_DRAG_DONE, _cont_obj_drag_done_cb, dc);
+   efl_event_callback_add(dc->cont, EFL_UI_DND_EVENT_DRAG_DONE, _cont_obj_drag_done_cb, dc);
    elm_widget_scroll_freeze_push(dc->cont);
    efl_selection_manager_drag_start(dc->pd->sel_man, dc->cont, dc->format,
                                     eina_rw_slice_slice_get(dc->data), dc->action,
