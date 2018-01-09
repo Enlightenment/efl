@@ -1,14 +1,10 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 #ifdef HAVE_SYS_SOCKET_H
  #include <sys/socket.h>
 #endif
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <ctype.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_Bool monitoring = EINA_TRUE;
 
 static const char *
@@ -1184,10 +1180,10 @@ _cmd_access_point_configure_proxy(Eo *ctl, size_t argc, char **argv)
 }
 
 static void
-_cmd_quit(Eo *ctl EINA_UNUSED, size_t argc EINA_UNUSED, char **argv EINA_UNUSED)
+_cmd_quit(Eo *ctl, size_t argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    printf("INFO: bye!\n");
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(ctl), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -1412,28 +1408,47 @@ EFL_CALLBACKS_ARRAY_DEFINE(ctl_events_cbs,
                            { EFL_NET_CONTROL_EVENT_AGENT_BROWSER_URL, _ctl_agent_browser_url },
                            { EFL_NET_CONTROL_EVENT_AGENT_REQUEST_INPUT, _ctl_agent_request_input });
 
-int
-main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+static Eo *copier = NULL;
+
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   efl_del(copier);
+   copier = NULL;
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    Eo *ctl;
    Eo *input;
-   Eo *copier;
    Eina_Slice line_delimiter = EINA_SLICE_STR("\n");
 
-   ecore_init();
-   ecore_con_init();
-
-   ctl = efl_add(EFL_NET_CONTROL_CLASS, efl_main_loop_get(),
+   ctl = efl_add(EFL_NET_CONTROL_CLASS, ev->object,
                  efl_event_callback_array_add(efl_added, ctl_events_cbs(), NULL));
    if (!ctl)
      {
         fputs("ERROR: Could not create Efl.Net.Control object.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
-   input = efl_add(EFL_IO_STDIN_CLASS, efl_main_loop_get());
-   copier = efl_add(EFL_IO_COPIER_CLASS, efl_main_loop_get(),
+   input = efl_add(EFL_IO_STDIN_CLASS, ev->object);
+   copier = efl_add(EFL_IO_COPIER_CLASS, ev->object,
                     efl_io_copier_source_set(efl_added, input),
                     efl_io_copier_line_delimiter_set(efl_added, line_delimiter),
                     efl_io_copier_buffer_limit_set(efl_added, 8192),
@@ -1443,15 +1458,10 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    printf("INFO: monitoring is on, disable with 'monitor off'. See 'help'.\n");
    printf("INFO: type commands, if unsure try: 'help'\n");
 
-   ecore_main_loop_begin();
-
-   efl_del(copier);
-   efl_del(input);
-   efl_del(ctl);
+   return ;
 
  end:
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
