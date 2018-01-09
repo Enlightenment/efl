@@ -324,6 +324,7 @@ EAPI extern Elm_Version *elm_version;
 # include "efl_selection_types.eot.h"
 # include "efl_ui_dnd_types.eot.h"
 # include <efl_ui_pan.eo.h>
+# include "efl_selection.eo.h"
 #endif
 
 /* include deprecated calls last of all */

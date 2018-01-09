@@ -753,7 +753,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    e.type = type;
    e.seat = 1; /* under x11 this is always the default seat */
    e.exist = !!ev->owner;
-   //efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
    //ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, NULL, NULL);
 
    return ECORE_CALLBACK_RENEW;
@@ -2512,7 +2512,7 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
    e.display = ecore_wl2_display_connect(ecore_wl2_display_name_get(ev->display));
    e.exist = !!ecore_wl2_dnd_selection_get(seat);
    //ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, _wl_selection_changed_free, ev->display);
-   //efl_event_callback_call(sel->request_obj, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->request_obj, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
 }
