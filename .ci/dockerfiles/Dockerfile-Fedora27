@@ -9,9 +9,3 @@ RUN dnf install --assumeyes wayland-protocols-devel libwayland-client libwayland
 
 # Install misc build dependencies
 RUN dnf install --assumeyes lz4-devel harfbuzz-devel libXpresent-devel libwebp-devel hyphen-devel lua-devel
-
-# Build
-RUN mkdir -p /src/
-WORKDIR /src/
-COPY . /src/
-RUN .ci/ci-linux-build.sh

@@ -10,9 +10,3 @@ RUN pacman -S --noconfirm git bullet libjpeg-turbo gst-plugins-base \
          libspectre libraw librsvg wayland-protocols \
          git ninja clang gcc pkgconfig check autoconf make base-devel \
          mesa poppler
-
-# Build
-RUN mkdir -p /src/
-WORKDIR /src/
-COPY . /src/
-RUN .ci/ci-linux-build.sh
