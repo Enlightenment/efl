@@ -25,7 +25,6 @@ _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file, int
    _eo_log_obj_report((Eo_Id)obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
 
-#ifndef EO_NO_PTR_INDIRECTION
 static void
 _eo_obj_pointer_invalid(const Eo_Id obj_id,
                         Eo_Id_Data *data,
@@ -190,4 +189,3 @@ err:
    _eo_obj_pointer_invalid(obj_id, data, domain, func_name, file, line);
    return NULL;
 }
-#endif

@@ -368,10 +368,6 @@ _eo_table_data_table_get(Eo_Id_Data *data, Efl_Id_Domain domain)
 static inline Eina_Bool
 _eo_id_domain_compatible(const Eo *o1, const Eo *o2)
 {
-#ifdef EO_NO_PTR_INDIRECTION
-   o1 = _eo_obj_id_get((const _Eo_Object*)o1);
-   o2 = _eo_obj_id_get((const _Eo_Object*)o2);
-#endif
    Efl_Id_Domain domain1 = ((Eo_Id)o1 >> SHIFT_DOMAIN) & MASK_DOMAIN;
    Efl_Id_Domain domain2 = ((Eo_Id)o2 >> SHIFT_DOMAIN) & MASK_DOMAIN;
    if (domain1 == domain2) return EINA_TRUE;
@@ -513,9 +509,6 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
    data = _eo_table_data_get();
    if (parent_id)
      {
-#ifdef EO_NO_PTR_INDIRECTION
-        parent_id = (const Eo *)(((const Eo_Header *)parent_id)->id);
-#endif
         Efl_Id_Domain domain = ((Eo_Id)parent_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
         tdata = _eo_table_data_table_get(data, domain);
      }

@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-#include <signal.h>
-
 #if defined HAVE_DLADDR && ! defined _WIN32
 # include <dlfcn.h>
 #endif
@@ -305,11 +303,7 @@ _vtable_func_clean_all(Eo_Vtable *vtable)
 
 /* END OF DICH */
 
-#ifdef EO_NO_PTR_INDIRECTION
-# define _EO_ID_GET(Id) (((const Eo_Header *) (Id))->id)
-#else
-# define _EO_ID_GET(Id) ((Eo_Id) (Id))
-#endif
+#define _EO_ID_GET(Id) ((Eo_Id) (Id))
 
 
 static inline Eina_Bool
@@ -329,11 +323,7 @@ _eo_is_a_class(const Eo *eo_id)
 static inline _Efl_Class *
 _eo_class_pointer_get(const Efl_Class *klass_id)
 {
-#ifdef EO_NO_PTR_INDIRECTION
-   return (_Efl_Class *)klass_id;
-#else
    return ID_CLASS_GET((Eo_Id)klass_id);
-#endif
 }
 
 static const char *
@@ -462,11 +452,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
 
-#ifdef EO_NO_PTR_INDIRECTION
-   call->eo_id = _eo_obj_id_get((const _Eo_Object*)eo_id);
-#else
    call->eo_id = eo_id;
-#endif
 
    is_obj = _eo_is_a_obj(eo_id);
 
@@ -636,7 +622,7 @@ err: EINA_COLD
                efl_unref(eo_id);
           }
         _efl_unref(obj);
-        EO_OBJ_DONE(eo_id);
+        _eo_obj_pointer_done((Eo_Id)eo_id);
      }
    return EINA_FALSE;
 
@@ -692,10 +678,10 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
         if (EINA_UNLIKELY(call->obj->auto_unref != 0))
           {
              if (call->obj->finalized && !(--call->obj->auto_unref))
-               efl_unref((Eo*)(call->obj));
+               efl_unref(call->eo_id);
           }
         _efl_unref(call->obj);
-        EO_OBJ_DONE(call->obj);
+        _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
 }
 
@@ -906,9 +892,7 @@ err_klass:
 EAPI Eo *
 _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref EINA_UNUSED, Eina_Bool is_fallback)
 {
-#ifndef EO_NO_PTR_INDIRECTION
    const char *func_name = __FUNCTION__;
-#endif
    _Eo_Object *obj;
    Eo_Stack_Frame *fptr = NULL;
 
@@ -943,11 +927,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    obj->klass = klass;
 
    obj->header.id = _eo_id_allocate(obj, parent_id);
-#ifdef EO_NO_PTR_INDIRECTION
-   Eo *eo_id = (Eo *)obj;
-#else
    Eo *eo_id = _eo_obj_id_get(obj);
-#endif
 
    _eo_log_obj_ref_op(obj, EO_REF_OP_NEW);
 
@@ -963,11 +943,7 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    // not likely so use goto to alleviate l1 instruction cache of rare code
    if (!eo_id) goto err_noid;
    // not likely so use goto to alleviate l1 instruction cache of rare code
-#ifdef EO_NO_PTR_INDIRECTION
-   else if (eo_id != (Eo*)obj) goto ok_nomatch;
-#else
    else if (eo_id != _eo_obj_id_get(obj)) goto ok_nomatch;
-#endif
 ok_nomatch_back:
    if (is_fallback) fptr->obj = eo_id;
    if (parent_id) EO_OBJ_DONE(parent_id);
@@ -978,11 +954,7 @@ ok_nomatch:
         EO_OBJ_POINTER_GOTO_PROXY(eo_id, new_obj, err_newid);
         /* We have two refs at this point. */
         _efl_unref(obj);
-#ifdef EO_NO_PTR_INDIRECTION
-        efl_del((Eo*)obj);
-#else
         efl_del((Eo *)obj->header.id);
-#endif
         _efl_ref(new_obj);
         EO_OBJ_DONE(eo_id);
      }
@@ -993,11 +965,7 @@ err_noid:
        file, line, klass->desc->name);
    /* We have two refs at this point. */
    _efl_unref(obj);
-#ifdef EO_NO_PTR_INDIRECTION
-   efl_del((Eo*)obj);
-#else
    efl_del((Eo *) obj->header.id);
-#endif
 err_newid:
    if (parent_id) EO_OBJ_DONE(parent_id);
    return NULL;
@@ -1048,11 +1016,7 @@ err_condtor:
      }
 cleanup:
    _efl_unref(obj);
-#ifdef EO_NO_PTR_INDIRECTION
-   efl_del((Eo*)obj);
-#else
    efl_del((Eo *) obj->header.id);
-#endif
    EO_OBJ_DONE(eo_id);
    return NULL;
 }
@@ -1178,11 +1142,7 @@ efl_class_get(const Eo *eo_id)
      }
 
    EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
-#ifdef EO_NO_PTR_INDIRECTION
-   klass = (const Efl_Class *)obj->klass;
-#else
    klass = _eo_class_id_get(obj->klass);
-#endif
    EO_OBJ_DONE(eo_id);
    return klass;
 
@@ -1354,11 +1314,7 @@ static Eina_Bool
 _eo_class_initializer(_Efl_Class *klass)
 {
    if (klass->desc->class_initializer)
-#ifdef EO_NO_PTR_INDIRECTION
-     return klass->desc->class_initializer((Efl_Class *)klass);
-#else
      return klass->desc->class_initializer(_eo_class_id_get(klass));
-#endif
 
    return EINA_TRUE;
 }
@@ -1369,11 +1325,7 @@ _eo_class_constructor(_Efl_Class *klass)
    klass->constructed = EINA_TRUE;
 
    if (klass->desc->class_constructor)
-#ifdef EO_NO_PTR_INDIRECTION
-     klass->desc->class_constructor((Efl_Class *)klass);
-#else
      klass->desc->class_constructor(_eo_class_id_get(klass));
-#endif
 }
 
 static void
@@ -1703,11 +1655,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* If functions haven't been set, invoke it with an empty ops structure. */
    if (!klass->functions_set)
      {
-#ifdef EO_NO_PTR_INDIRECTION
-        efl_class_functions_set((const Efl_Class*)klass, NULL, NULL);
-#else
         efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
-#endif
      }
 
    /* Mark which classes we implement */
@@ -1720,11 +1668,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
 
    DBG("Finished building class '%s'", klass->desc->name);
 
-#ifdef EO_NO_PTR_INDIRECTION
-   return (const Efl_Class*) klass;
-#else
    return _eo_class_id_get(klass);
-#endif
 }
 
 EAPI Eina_Bool
@@ -1777,21 +1721,6 @@ err:
 EAPI Eina_Bool
 efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
-#ifdef EO_NO_PTR_INDIRECTION
-   if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
-
-   EO_OBJ_POINTER_GOTO(eo_id, obj, fail);
-   EO_CLASS_POINTER_GOTO(klass_id, klass, fail);
-
-   const op_type_funcs *func = _vtable_func_get
-      (EO_VTABLE(obj), klass->base_id + klass->ops_count);
-
-   return (func && (func->func == _eo_class_isa_func));
-fail:
-   raise(SIGABRT);
-   return EINA_FALSE;
-
-#else
    Efl_Id_Domain domain;
    Eo_Id_Data *data;
    Eo_Id_Table_Data *tdata;
@@ -1877,7 +1806,6 @@ err: EINA_COLD
        (data->tables[0]) ? "0" : " ", (data->tables[1]) ? "1" : " ",
        (data->tables[2]) ? "2" : " ", (data->tables[3]) ? "3" : " ");
    return EINA_FALSE;
-#endif
 }
 
 EAPI Eo *
@@ -1886,9 +1814,7 @@ efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
    efl_ref(obj_id);
 
 #ifdef EO_DEBUG
-# ifndef EO_NO_PTR_INDIRECTION
    const char *func_name = __FUNCTION__;
-# endif
    EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, obj_id);
 
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
@@ -2202,9 +2128,7 @@ efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_C
 {
    void *ret = NULL;
    _Efl_Class *klass = NULL;
-#ifndef EO_NO_PTR_INDIRECTION
    const char *func_name = __FUNCTION__;
-#endif
    EO_OBJ_POINTER_RETURN_VAL_PROXY(obj_id, obj, NULL);
    EO_OBJ_POINTER_PROXY(ref_obj_id, ref_obj);
    if (ref_obj)
@@ -2567,19 +2491,12 @@ efl_domain_data_return(Efl_Id_Domain domain)
 EAPI Eina_Bool
 efl_compatible(const Eo *obj, const Eo *obj_target)
 {
-#ifdef EO_NO_PTR_INDIRECTION
-   CRI("UNSUPPORTED");
-   (void) obj;
-   (void) obj_target;
-   return EINA_FALSE;
-#else
    Efl_Id_Domain domain1 = ((Eo_Id)obj >> SHIFT_DOMAIN) & MASK_DOMAIN;
    Efl_Id_Domain domain2 = ((Eo_Id)obj_target >> SHIFT_DOMAIN) & MASK_DOMAIN;
    if (domain1 == domain2) return EINA_TRUE;
    DBG("Object %p and %p are not compatible. Domain %i and %i do not match",
        obj, obj_target, domain1, domain2);
    return EINA_FALSE;
-#endif
 }
 
 EAPI Eina_Bool
@@ -2672,15 +2589,10 @@ efl_debug_name_get(const Eo *obj_id)
      }
    else
      {
-#ifdef EO_NO_PTR_INDIRECTION
-        Efl_Class *klass_obj = (Efl_Class*)obj->cur_klass;
-#else
-        Efl_Class *klass_obj = (Efl_Class *) obj->cur_klass->header.id;
-#endif
         if (obj->super)
-          efl_debug_name_override(efl_super(obj_id, klass_obj), sb);
+          efl_debug_name_override(efl_super(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
         else
-          efl_debug_name_override(efl_cast(obj_id, klass_obj), sb);
+          efl_debug_name_override(efl_cast(obj_id, (Efl_Class *) obj->cur_klass->header.id), sb);
         obj->super = EINA_FALSE;
         obj->cur_klass = NULL;
      }
