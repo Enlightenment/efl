@@ -326,6 +326,7 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_pan.eo.h>
 # include <efl_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
+# include <efl_ui_dnd_container.eo.h>
 #endif
 
 /* include deprecated calls last of all */
