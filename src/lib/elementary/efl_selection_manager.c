@@ -19,7 +19,6 @@
 # define sel_debug(x...) do { } while (0)
 #endif
 
-static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 static void _anim_data_free(Sel_Manager_Drag_Container *dc);
 static void _cont_obj_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -30,13 +29,18 @@ void efl_selection_manager_selection_clear(Eo *obj, Efl_Object *owner, Efl_Selec
 void efl_selection_manager_drag_start(Eo *obj, Efl_Object *drag_obj, Efl_Selection_Format format, Eina_Slice data, Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb, unsigned int seat);
 
 #ifdef HAVE_ELEMENTARY_X
+static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 static Ecore_X_Atom _x11_dnd_action_rev_map(Efl_Selection_Action action);
 static Ecore_X_Window _x11_xwin_get(const Evas_Object *obj);
 #endif
 
 #ifdef HAVE_ELEMENTARY_WL2
 static Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
-static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, const Evas_Object *obj, unsigned int seat_id);
+static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id);
+#endif
+
+#ifdef HAVE_ELEMENTARY_WIN32
+static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 #endif
 
 static inline void
@@ -155,6 +159,37 @@ _sel_manager_seat_selection_init(Efl_Selection_Manager_Data *pd, unsigned int se
 #endif
 
    return seat_sel;
+}
+
+static void
+_sel_manager_promise_cancel(void *data, const Eina_Promise *dead_future EINA_UNUSED)
+{
+   Sel_Manager_Selection_Lost *sel_lost = data;
+   //FIXME: remove from sel_lost_list in seat_sel
+   free(sel_lost);
+}
+
+static inline Eina_Future *
+_update_sel_lost_list(Efl_Object *obj, Efl_Selection_Type type,
+                      Sel_Manager_Seat_Selection *seat_sel)
+{
+   Eina_Promise *p;
+   Sel_Manager_Selection_Lost *sel_lost;
+
+   sel_lost = calloc(1, sizeof(Sel_Manager_Selection_Lost));
+   if (!sel_lost)
+     return NULL;
+   sel_lost->request = obj;
+   sel_lost->type = type;
+   seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
+
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
+                        _sel_manager_promise_cancel, NULL);
+   eina_promise_data_set(p, sel_lost);
+   if (!p) return NULL;
+   sel_lost->promise = p;
+
+   return eina_future_new(p);
 }
 
 /* TODO: this should not be an actual tempfile, but rather encode the object
@@ -901,7 +936,6 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
    Eina_List *l, *l_next;
    Sel_Manager_Selection_Lost *sel_lost;
    unsigned int i;
-   ERR("In");
 
    seat_sel = _sel_manager_seat_selection_get(pd, 1);
    if (!seat_sel)
@@ -1082,37 +1116,6 @@ _x11_text_converter(char *target, void *data, int size EINA_UNUSED, void **data_
    return EINA_TRUE;
 }
 
-static void
-_sel_manager_promise_cancel(void *data, const Eina_Promise *dead_future EINA_UNUSED)
-{
-   Sel_Manager_Selection_Lost *sel_lost = data;
-   //FIXME: remove from sel_lost_list in seat_sel
-   free(sel_lost);
-}
-
-static inline Eina_Future *
-_update_sel_lost_list(Efl_Object *obj, Efl_Selection_Type type,
-                      Sel_Manager_Seat_Selection *seat_sel)
-{
-   Eina_Promise *p;
-   Sel_Manager_Selection_Lost *sel_lost;
-
-   sel_lost = calloc(1, sizeof(Sel_Manager_Selection_Lost));
-   if (!sel_lost)
-     return NULL;
-   sel_lost->request = obj;
-   sel_lost->type = type;
-   seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
-
-   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _sel_manager_promise_cancel, NULL);
-   eina_promise_data_set(p, sel_lost);
-   if (!p) return NULL;
-   sel_lost->promise = p;
-
-   return eina_future_new(p);
-}
-
 static Eina_Future *
 _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *owner,
                                    Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data,
@@ -1138,7 +1141,7 @@ _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *o
    sel->format = format;
 
    sel->set(xwin, &sel, sizeof(&sel));
-   sel_debug("data: %p (%ld)", &sel, sizeof(&sel));
+   sel_debug("data: %p (%zu)", &sel, sizeof(&sel));
 
    return _update_sel_lost_list(owner, type, seat_sel);
 }
@@ -1964,7 +1967,6 @@ _x11_sel_manager_drop_target_add(Efl_Selection_Manager_Data *pd, Efl_Object *tar
                                  Efl_Selection_Format format, Ecore_X_Window xwin,
                                  unsigned int seat)
 {
-   ERR("In");
    Sel_Manager_Dropable *dropable = NULL;
    Eina_List *l;
    Eina_Bool have_drop_list = EINA_FALSE;
@@ -2076,10 +2078,10 @@ _wl_drag_source_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *
 }
 
 static void
-_wl_efl_sel_manager_drag_start(Eo *obj, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj,
+_wl_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Selection_Manager_Data *pd, Efl_Object *drag_obj,
                                Efl_Selection_Format format, Eina_Slice data,
                                Efl_Selection_Action action, void *icon_func_data,
-                               Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
+                               Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb EINA_UNUSED,
                                Ecore_Wl2_Window *win, unsigned int seat)
 {
    Ecore_Evas *ee;
@@ -2481,11 +2483,11 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    return _update_sel_lost_list(owner, type, seat_sel);
 }
 
-static void
+/*static void
 _wl_selection_changed_free(void *data, void *ev EINA_UNUSED)
 {
    ecore_wl2_display_disconnect(data);
-}
+}*/
 
 static Eina_Bool
 _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
@@ -2622,7 +2624,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Ecore_Wl2_Input *
-_wl_seat_get(Ecore_Wl2_Window *win, const Evas_Object *obj, unsigned int seat_id)
+_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
 {
    Eo *seat, *parent2, *ewin;
    Ecore_Wl2_Input *input = NULL;
@@ -2719,7 +2721,6 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Offer_Data_Ready *ev = event;
    Sel_Manager_Selection *sel = data;
-   ERR("in");
 
    if (sel->sel_offer != ev->offer) return ECORE_CALLBACK_PASS_ON;
 
@@ -2783,7 +2784,7 @@ _wl_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Manag
    sel->data_func = data_func;
    sel->data_func_free_cb = data_func_free_cb;
 
-   input = _wl_seat_get(win, request, seat_sel->seat);
+   input = _wl_seat_get(win, (Efl_Object *)request, seat_sel->seat);
    offer = ecore_wl2_dnd_selection_get(input);
 
    //there can be no selection available
@@ -4279,7 +4280,6 @@ _drag_anim_play(void *data, double pos)
 {
    Sel_Manager_Drag_Container *dc = data;
 
-   ERR("In");
    if (dc->animator)
      {
         Eina_List *l;
@@ -4317,7 +4317,6 @@ _drag_anim_play(void *data, double pos)
 static inline void
 _drag_anim_start(Sel_Manager_Drag_Container *dc)
 {
-   ERR("In");
 
    dc->timer = NULL;
    if (dc->icon_func)
@@ -4904,7 +4903,6 @@ EOLIAN static void
 _efl_selection_manager_container_drop_item_del(Eo *obj EINA_UNUSED, Efl_Selection_Manager_Data *pd,
                                                Efl_Object *cont, unsigned int seat EINA_UNUSED)
 {
-   ERR("In");
    _drop_item_container_del(pd, cont, EINA_TRUE);
 }
 

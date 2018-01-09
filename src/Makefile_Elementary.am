@@ -618,7 +618,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_calendar.c \
 	lib/elementary/efl_ui_check.c \
 	lib/elementary/elm_clock.c \
-	lib/elementary/elm_cnp.c \
 	lib/elementary/elm_code_line.c \
 	lib/elementary/elm_code_text.c \
 	lib/elementary/elm_code_indent.c \
