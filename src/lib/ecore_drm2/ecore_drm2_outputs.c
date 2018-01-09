@@ -1473,17 +1473,24 @@ EAPI int
 ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 {
    int ret = -1;
-   Eina_List *l;
-   Ecore_Drm2_Plane_State *pstate;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
 
-   EINA_LIST_FOREACH(output->plane_states, l, pstate)
+   if (_ecore_drm2_use_atomic)
      {
-        if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
-        ret = pstate->supported_rotations;
-        break;
+        Ecore_Drm2_Plane_State *pstate;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(output->plane_states, l, pstate)
+          {
+             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+             ret = pstate->supported_rotations;
+             break;
+          }
      }
+   else
+     return (ECORE_DRM2_ROTATION_NORMAL | ECORE_DRM2_ROTATION_90 |
+             ECORE_DRM2_ROTATION_180 | ECORE_DRM2_ROTATION_270);
 
    return ret;
 }
