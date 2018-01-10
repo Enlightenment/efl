@@ -239,6 +239,42 @@ enum Elm.Input.Hints
    sensitive_data      = 1 << 1,   [[Typed text should not be stored.
 
                                      @since 1.12]]
+   autofill_credit_card_expiration_date   = 0x100, [[ Autofill hint for a credit card expiration date
+
+                                                      @since 1.21]]
+   autofill_credit_card_expiration_day    = 0x200, [[Autofill hint for a credit card expiration day
+
+                                                     @since 1.21]]
+   autofill_credit_card_expiration_month  = 0x300, [[ Autofill hint for a credit card expiration month
+
+                                                      @since 1.21]]
+   autofill_credit_card_expiration_year   = 0x400, [[ Autofill hint for a credit card expiration year
+
+                                                      @since 1.21]]
+   autofill_credit_card_number            = 0x500, [[ Autofill hint for a credit card number
+
+                                                      @since 1.21]]
+   autofill_credit_card_security_code     = 0x600, [[ Autofill hint for a credit card security code
+
+                                                      @since 1.21]]
+   autofill_email_address                 = 0x700, [[ Autofill hint for an email address
+
+                                                      @since 1.21]]
+   autofill_name                          = 0x800, [[ Autofill hint for a user's real name
+
+                                                      @since 1.21]]
+   autofill_phone                         = 0x900, [[ Autofill hint for a phone number
+
+                                                      @since 1.21]]
+   autofill_postal_address                = 0xA00, [[ Autofill hint for a postal address
+
+                                                      @since 1.21]]
+   autofill_postal_code                   = 0xB00, [[ Autofill hint for a postal code
+
+                                                      @since 1.21]]
+   autofill_id                            = 0xC00  [[ Autofill hint for a user's ID
+
+                                                      @since 1.21]]
 }
 
 enum Elm.Cnp_Mode
