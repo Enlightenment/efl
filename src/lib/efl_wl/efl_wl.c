@@ -1412,7 +1412,8 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
           }
         else
           {
-             evas_object_hide(cs->obj);
+             if (!cs->extracted)
+               evas_object_hide(cs->obj);
              EINA_LIST_FOREACH(cs->proxies, l, o)
                evas_object_hide(o);
              if (cs->shell.surface)
@@ -1426,7 +1427,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
 
    if (buffer && (!cs->mapped))
      {
-        if (cs->role)
+        if (cs->role && (!cs->extracted))
           evas_object_show(cs->obj);
      }
 
