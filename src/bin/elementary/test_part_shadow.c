@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_WIDGET_PROTECTED
+#define EFL_UI_WIDGET_PROTECTED
 #include <Elementary.h>
 
 typedef struct Test_Data
