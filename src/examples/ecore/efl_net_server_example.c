@@ -1,11 +1,7 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_Bool echo = EINA_FALSE;
 static double timeout = 10.0;
 
@@ -77,7 +73,7 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    fprintf(stderr, "ERROR: echo copier %p failed %d '%s', close and del.\n",
            copier, *perr, eina_error_msg_get(*perr));
@@ -182,7 +178,7 @@ _send_copier_error(void *data, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    offset = efl_io_buffer_position_read_get(buffer);
    slice = efl_io_buffer_slice_get(buffer);
@@ -263,7 +259,7 @@ _recv_copier_error(void *data, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    slice = efl_io_buffer_slice_get(buffer);
    fprintf(stderr,
@@ -410,8 +406,7 @@ _server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "ERROR: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -536,8 +531,39 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *server = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (server)
+     {
+        efl_del(server);
+        server = NULL;
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    const Efl_Class *cls;
    char *protocol = NULL;
@@ -591,34 +617,27 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *server;
    Eina_Error err;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (!protocol)
      {
         fputs("ERROR: missing protocol.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -637,7 +656,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   server = efl_add(cls, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   server = efl_add(cls, ev->object, /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_clients_limit_set(efl_added,
                                                      clients_limit,
                                                      clients_reject_excess), /* optional */
@@ -733,7 +752,7 @@ main(int argc, char **argv)
           }
      }
 
-   ecore_main_loop_begin();
+   return ;
 
  end_server:
    efl_del(server);
@@ -742,8 +761,8 @@ main(int argc, char **argv)
  end:
    EINA_LIST_FREE(udp_mcast_groups, str)
      free(str);
-   ecore_con_shutdown();
-   ecore_shutdown();
 
-   return retval;
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
