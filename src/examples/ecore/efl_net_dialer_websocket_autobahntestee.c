@@ -1,12 +1,8 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 #include <ctype.h>
 
-static int retval = EXIT_SUCCESS;
 static char *address = NULL;
 static char *agent = "efl_net_dialer_websocket";
 static unsigned int start_index = 0;
@@ -234,7 +230,7 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
    const Eina_Error *perr = event->info;
    fprintf(stderr, "ERROR: %s error: %d '%s'\n",
            efl_name_get(dialer), *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -257,16 +253,16 @@ EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
                            { EFL_EVENT_DEL, _del });
 
 static Eo *
-_websocket_new(const char *name)
+_websocket_new(const char *name, Eo *loop)
 {
    Eo *dialer;
 
-   dialer = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, efl_main_loop_get(),
+   dialer = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, loop,
                     efl_name_set(efl_added, name),
                     efl_event_callback_array_add(efl_added, dialer_cbs(), NULL));
    if (!dialer)
      {
-        retval = EXIT_FAILURE;
+        efl_loop_quit(loop, eina_value_int_init(EXIT_FAILURE));
         fprintf(stderr, "ERROR: could not create WebSockets dialer '%s'\n", name);
         return NULL;
      }
@@ -285,7 +281,7 @@ _closed_quit(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 static void
-_tests_finished(void)
+_tests_finished(Eo *loop)
 {
    Eo *dialer;
    char url[4096];
@@ -320,7 +316,7 @@ _tests_finished(void)
         return;
      }
 
-   dialer = _websocket_new("update-reports");
+   dialer = _websocket_new("update-reports", loop);
    if (!dialer)
      {
         ecore_main_loop_quit();
@@ -332,11 +328,10 @@ _tests_finished(void)
    err = efl_net_dialer_dial(dialer, url);
    if (err != 0)
      {
-        retval = EXIT_FAILURE;
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 url, eina_error_msg_get(err));
         efl_del(dialer);
-        ecore_main_loop_quit();
+        efl_loop_quit(loop, eina_value_int_init(EXIT_FAILURE));
         return;
      }
 
@@ -369,7 +364,7 @@ _echo_binary(void *data EINA_UNUSED, const Efl_Event *event)
    efl_net_dialer_websocket_binary_send(dialer, *slice);
 }
 
-static Eina_Bool _websocket_test_next_case_tuple(void);
+static Eina_Bool _websocket_test_next_case_tuple(Eo *loop);
 
 static void
 _test_next_case_closed(void *data EINA_UNUSED, const Efl_Event *event)
@@ -377,8 +372,8 @@ _test_next_case_closed(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *dialer = event->object;
    efl_del(dialer);
 
-   if (!_websocket_test_next_case_tuple())
-     _tests_finished();
+   if (!_websocket_test_next_case_tuple(efl_loop_get(event->object)))
+     _tests_finished(efl_loop_get(event->object));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_test_next_case_tuple_cbs,
@@ -387,7 +382,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_test_next_case_tuple_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _test_next_case_closed });
 
 static Eina_Bool
-_websocket_test_next_case_tuple(void)
+_websocket_test_next_case_tuple(Eo *loop)
 {
    Eo *dialer;
    char url[4096];
@@ -423,7 +418,7 @@ _websocket_test_next_case_tuple(void)
    snprintf(name, sizeof(name), "test_case=%s", str);
    free(str);
 
-   dialer = _websocket_new(name);
+   dialer = _websocket_new(name, loop);
    if (!dialer) return EINA_FALSE;
 
    efl_event_callback_array_add(dialer, _test_next_case_tuple_cbs(), NULL);
@@ -431,10 +426,10 @@ _websocket_test_next_case_tuple(void)
    err = efl_net_dialer_dial(dialer, url);
    if (err != 0)
      {
-        retval = EXIT_FAILURE;
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 url, eina_error_msg_get(err));
         efl_del(dialer);
+        efl_loop_quit(loop, eina_value_int_init(EXIT_FAILURE));
         return EINA_FALSE;
      }
 
@@ -443,7 +438,7 @@ _websocket_test_next_case_tuple(void)
    return EINA_TRUE;
 }
 
-static Eina_Bool _websocket_test_index(unsigned int idx);
+static Eina_Bool _websocket_test_index(unsigned int idx, Eo *loop);
 
 static void
 _test_index_closed(void *data EINA_UNUSED, const Efl_Event *event)
@@ -451,8 +446,8 @@ _test_index_closed(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *dialer = event->object;
    efl_del(dialer);
 
-   if (!_websocket_test_index(current_index + 1))
-     _tests_finished();
+   if (!_websocket_test_index(current_index + 1, efl_loop_get(event->object)))
+     _tests_finished(efl_loop_get(event->object));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_test_index_cbs,
@@ -461,7 +456,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_test_index_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _test_index_closed });
 
 static Eina_Bool
-_websocket_test_index(unsigned int idx)
+_websocket_test_index(unsigned int idx, Eo *loop)
 {
    Eo *dialer;
    char url[4096];
@@ -491,7 +486,7 @@ _websocket_test_index(unsigned int idx)
 
    snprintf(name, sizeof(name), "test_case=%u", idx);
 
-   dialer = _websocket_new(name);
+   dialer = _websocket_new(name, loop);
    if (!dialer) return EINA_FALSE;
 
    efl_event_callback_array_add(dialer, _test_index_cbs(), NULL);
@@ -499,10 +494,10 @@ _websocket_test_index(unsigned int idx)
    err = efl_net_dialer_dial(dialer, url);
    if (err != 0)
      {
-        retval = EXIT_FAILURE;
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 url, eina_error_msg_get(err));
         efl_del(dialer);
+        efl_loop_quit(loop, eina_value_int_init(EXIT_FAILURE));
         return EINA_FALSE;
      }
 
@@ -538,8 +533,8 @@ _load_tests_closed(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *dialer = event->object;
    efl_del(dialer);
 
-   if (!_websocket_test_index(start_index))
-     _tests_finished();
+   if (!_websocket_test_index(start_index, efl_loop_get(event->object)))
+     _tests_finished(efl_loop_get(event->object));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_load_tests_cbs,
@@ -547,7 +542,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_load_tests_cbs,
                            { EFL_IO_CLOSER_EVENT_CLOSED, _load_tests_closed });
 
 static Eina_Bool
-_websocket_load_tests(void)
+_websocket_load_tests(Eo *loop)
 {
    Eo *dialer;
    char url[4096];
@@ -568,7 +563,7 @@ _websocket_load_tests(void)
         return EINA_FALSE;
      }
 
-   dialer = _websocket_new("get-case-count");
+   dialer = _websocket_new("get-case-count", loop);
    if (!dialer) return EINA_FALSE;
 
    efl_event_callback_array_add(dialer, _load_tests_cbs(), NULL);
@@ -576,10 +571,10 @@ _websocket_load_tests(void)
    err = efl_net_dialer_dial(dialer, url);
    if (err != 0)
      {
-        retval = EXIT_FAILURE;
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 url, eina_error_msg_get(err));
         efl_del(dialer);
+        efl_loop_quit(loop, eina_value_int_init(EXIT_FAILURE));
         return EINA_FALSE;
      }
 
@@ -620,8 +615,36 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (pending)
+     {
+        efl_del(pending);
+        pending = NULL;
+     }
+   if (verbose) fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
@@ -646,48 +669,41 @@ main(int argc, char **argv)
    int args;
    Eina_Bool r;
 
-   ecore_init();
-   ecore_con_init();
-   ecore_con_url_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (case_tuples)
-     r = _websocket_test_next_case_tuple();
+     r = _websocket_test_next_case_tuple(ev->object);
    else if (start_index == end_index)
-     r = _websocket_test_index(start_index);
+     r = _websocket_test_index(start_index, ev->object);
    else
-     r = _websocket_load_tests();
+     r = _websocket_load_tests(ev->object);
 
    if (r)
      {
         ecore_main_loop_begin();
-        if (verbose) fprintf(stderr, "INFO: main loop finished. retval=%d\n", retval);
      }
 
    if (pending)
      efl_del(pending);
 
- end:
-   ecore_con_url_shutdown();
-   ecore_con_shutdown();
-   ecore_shutdown();
+   return ;
 
-   return retval;
+ end:
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
