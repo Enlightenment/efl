@@ -2028,38 +2028,44 @@ EOLIAN static void
 _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 {
    Eo *child;
-   Efl_Object_Extension *ext;
-   _Eo_Object *obj_data2 = NULL;
 
    DBG("%p - %s.", obj, efl_class_name_get(obj));
 
    // special removal - remove from children list by hand after getting
    // child handle in case unparent method is overridden and does
    // extra things like removes other children too later on in the list
-   // this is a goto because more often than not objects do not have children
-   // so it's unlikely they will need the child cleanup code to so to have
-   // better l1 cache instruction coherency, move this to the end
-   if (pd->children) goto children;
-children_back:
+   if (EINA_UNLIKELY(pd->children != NULL))
+     {
+        while (pd->children)
+          {
+             child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
+             efl_parent_set(child, NULL);
+          }
+     }
 
-   // If we are a composite object, detach children. it is quite unlikely
-   // we are a composite object, so put the core of this handling
-   // at the end out of l1 cache prefetch
+   // If we are a composite object, detach children.
      {
         EO_OBJ_POINTER_RETURN(obj, obj_data);
-        obj_data2 = obj_data;
-        if (obj_data->opt->composite_objects) goto composite_obj;
-composite_obj_back:
+        if (EINA_UNLIKELY(obj_data->opt->composite_objects != NULL))
+          {
+             Eina_List *itr, *next;
+             Eo *emb_obj_id;
+
+             EINA_LIST_FOREACH_SAFE(obj_data->opt->composite_objects, itr, next, emb_obj_id)
+               efl_composite_detach(obj, emb_obj_id);
+          }
         EO_OBJ_DONE(obj);
      }
 
    if (pd->ext && pd->ext->composite_parent)
      efl_composite_detach(pd->ext->composite_parent, obj);
 
-   // parent still being here is unlikely, so move error handling out of the
-   // code execution path
-   if (pd->parent) goto err_parent;
-err_parent_back:
+   if (EINA_UNLIKELY(pd->parent != NULL))
+     {
+        if (EINA_LIKELY(!pd->allow_parent_unref))
+          ERR("Object '%p' still has a parent at the time of destruction.", obj);
+        efl_parent_set(obj, NULL);
+     }
 
    _efl_pending_futures_clear(pd);
    _wref_destruct(pd);
@@ -2074,50 +2080,19 @@ err_parent_back:
    _eo_generic_data_del_all(obj, pd);
    _eo_callback_remove_all(pd);
 
-   ext = pd->ext;
-   // it is rather likely we dont have any extension section for most objects
-   // so return immediately here to avoid pulling in more instructions to
-   // the 1l cache if we can
-   if (!ext)
+   if (EINA_UNLIKELY(pd->ext != NULL))
      {
-        _eo_condtor_done(obj);
-        return;
+        Efl_Object_Extension *ext = pd->ext;
+        eina_stringshare_del(ext->name);
+        ext->name = NULL;
+        eina_stringshare_del(ext->comment);
+        ext->comment = NULL;
+        while (pd->ext && ext->futures)
+          efl_future_cancel(eina_list_data_get(ext->futures));
+        _efl_object_extension_noneed(pd);
      }
-   eina_stringshare_del(ext->name);
-   ext->name = NULL;
-   eina_stringshare_del(ext->comment);
-   ext->comment = NULL;
-   while (pd->ext && ext->futures)
-     efl_future_cancel(eina_list_data_get(ext->futures));
-   _efl_object_extension_noneed(pd);
+
    _eo_condtor_done(obj);
-   return;
-
-children:
-   while (pd->children)
-     {
-        child = _eo_obj_id_get(EINA_INLIST_CONTAINER_GET(pd->children, _Eo_Object));
-        efl_parent_set(child, NULL);
-     }
-   goto children_back;
-
-composite_obj:
-     {
-        Eina_List *itr, *next;
-        Eo *emb_obj_id;
-
-        EINA_LIST_FOREACH_SAFE(obj_data2->opt->composite_objects, itr, next, emb_obj_id)
-          {
-             efl_composite_detach(obj, emb_obj_id);
-          }
-     }
-   goto composite_obj_back;
-
-err_parent:
-   if (EINA_LIKELY(!pd->allow_parent_unref))
-     ERR("Object '%p' still has a parent at the time of destruction.", obj);
-   efl_parent_set(obj, NULL);
-   goto err_parent_back;
 }
 
 EOLIAN static void
