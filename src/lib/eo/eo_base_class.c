@@ -59,6 +59,7 @@ typedef struct
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
+   Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
 } Efl_Object_Data;
 
 typedef enum
@@ -146,10 +147,12 @@ _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
       case DATA_PTR:
         break;
       case DATA_OBJ:
+        // FIXME: should this use "destruct" event instead?
         efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
         efl_unref(node->d.obj);
         break;
       case DATA_OBJ_WEAK:
+        // FIXME: should this use "destruct" event instead?
         efl_event_callback_del(node->d.obj, EFL_EVENT_DEL, _key_generic_cb_del, node);
         break;
       case DATA_VAL:
@@ -1068,6 +1071,8 @@ _special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_del_count);
+   else if (it->desc == EFL_EVENT_DESTRUCT)
+     pd->has_destroyed_event_cb = EINA_TRUE;
 }
 
 static inline void
@@ -1126,6 +1131,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
+   pd->has_destroyed_event_cb = EINA_FALSE;
 #ifdef EFL_EVENT_SPECIAL_SKIP
    pd->event_cb_efl_event_callback_add_count = 0;
    pd->event_cb_efl_event_callback_del_count = 0;
@@ -1284,6 +1290,8 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
 #ifdef EFL_EVENT_SPECIAL_SKIP
    _special_event_count_inc(pd, &(cb->items.item));
 #endif
+   if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
+     pd->has_destroyed_event_cb = EINA_TRUE;
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
@@ -1389,6 +1397,16 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
 #ifdef EFL_EVENT_SPECIAL_SKIP
    for (it = cb->items.item_array; it->func; it++)
      _special_event_count_inc(pd, it);
+#else
+   if (!pd->has_destroyed_event_cb)
+     {
+        for (it = cb->items.item_array; it->func; it++)
+          if (it->desc == EFL_EVENT_DESTRUCT)
+            {
+               pd->has_destroyed_event_cb = EINA_TRUE;
+               break;
+            }
+     }
 #endif
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)array);
@@ -2044,8 +2062,16 @@ composite_obj_back:
 err_parent_back:
 
    _efl_pending_futures_clear(pd);
-   _eo_generic_data_del_all(obj, pd);
    _wref_destruct(pd);
+
+   // this isn't 100% correct, as the object is still "slightly" alive at this
+   // point (so efl_destructed_is() returns false), but triggering the
+   // "destruct" event here is the simplest, safest solution.
+   if (EINA_UNLIKELY(pd->has_destroyed_event_cb))
+     _event_callback_call(obj, pd, EFL_EVENT_DESTRUCT, NULL, EINA_FALSE);
+
+   // remove generic data after this final event, in case they are used in a cb
+   _eo_generic_data_del_all(obj, pd);
    _eo_callback_remove_all(pd);
 
    ext = pd->ext;

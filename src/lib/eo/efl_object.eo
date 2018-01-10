@@ -288,6 +288,9 @@ abstract Efl.Object ()
       callback,add @hot; [[A callback was added.]]
       callback,del @hot; [[A callback was deleted.]]
       del @hot; [[Object is being deleted.]]
+      destruct @hot; [[Object has been fully destroyed. It can not be used
+         beyond this point. This event should only serve to clean up any
+         dangling pointer.]]
    }
 }
 

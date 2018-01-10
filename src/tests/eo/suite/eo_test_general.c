@@ -1719,6 +1719,44 @@ START_TEST(efl_cast_test)
 }
 END_TEST
 
+static void _destruct_test_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   int *var = data;
+   *var = 1;
+}
+
+static void _destruct_test_destruct_cb(void *data, const Efl_Event *ev)
+{
+   int *var = data;
+   *var *= 2;
+
+   ck_assert_int_eq(efl_ref_count(ev->object), 0);
+
+   // test disabled: object isn't yet marked as destructed (we're inside the
+   // base class destructor here).
+   //ck_assert_int_ne(efl_destructed_is(ev->object), 0);
+}
+
+START_TEST(efl_object_destruct_test)
+{
+   int var = 0;
+   Eo *obj;
+
+   efl_object_init();
+
+   obj = efl_add(SIMPLE_CLASS, NULL);
+   fail_if(efl_ref_count(obj) != 1);
+   efl_event_callback_add(obj, EFL_EVENT_DEL, _destruct_test_del_cb, &var);
+   efl_event_callback_add(obj, EFL_EVENT_DESTRUCT, _destruct_test_destruct_cb, &var);
+   efl_del(obj);
+
+   // var should be 2 if del then destruct, 0 otherwise
+   ck_assert_int_eq(var, 2);
+
+   efl_object_shutdown();
+}
+END_TEST
+
 static void
 _auto_unref_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -1797,5 +1835,6 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_rec_interface);
    tcase_add_test(tc, eo_domain);
    tcase_add_test(tc, efl_cast_test);
+   tcase_add_test(tc, efl_object_destruct_test);
    tcase_add_test(tc, efl_object_auto_unref_test);
 }
