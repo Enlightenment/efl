@@ -127,6 +127,8 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
         if (!modeset)
           goto cont;
 
+        chosen_dev = dev;
+
         dparent = eeze_udev_syspath_get_parent_filtered(dev, "pci", NULL);
         if (!dparent)
           {
@@ -141,7 +143,6 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
                {
                   const char *id;
 
-                  chosen_dev = dev;
                   id = eeze_udev_syspath_get_sysattr(dparent, "boot_vga");
                   if (id)
                     {
