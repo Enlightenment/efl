@@ -1487,8 +1487,9 @@ EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    Node *node, *last;
-   Efl_Ui_Focus_Object *last_focusable = NULL;
+   Efl_Ui_Focus_Object *last_focusable = NULL, *new_focusable;
    Efl_Ui_Focus_Manager *redirect_manager;
+   Node_Type node_type;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1531,6 +1532,19 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           return;
      }
 
+   node_type = node->type;
+   new_focusable = node->focusable;
+
+   redirect_manager = node->redirect_manager;
+
+   last = eina_list_last_data_get(pd->focus_stack);
+   if (last)
+     last_focusable = last->focusable;
+
+   //remove the object from the list and add it again
+   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+   pd->focus_stack = eina_list_append(pd->focus_stack, node);
+
    if (pd->redirect)
      {
         Efl_Ui_Focus_Manager *m = obj;
@@ -1545,30 +1559,20 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           }
      }
 
-   redirect_manager = node->redirect_manager;
-
-   last = eina_list_last_data_get(pd->focus_stack);
-   if (last)
-     last_focusable = last->focusable;
-
-   //remove the object from the list and add it again
-   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
-   pd->focus_stack = eina_list_append(pd->focus_stack, node);
+   //set to NULL here, from the event earlier this pointer could be dead.
+   node = NULL;
 
    /*
      Only emit those signals if we are already at the top of the focus stack.
      Otherwise focus_get in the callback to that signal might return false.
     */
-   if (node->type == NODE_TYPE_NORMAL)
+   if (node_type == NODE_TYPE_NORMAL)
      {
         //populate the new change
         efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
-        efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
+        efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
-
-   //set to NULL here, from the event earlier this pointer could be dead.
-   node = NULL;
 
    //now check if this is also a listener object
    if (redirect_manager)
