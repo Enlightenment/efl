@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
-#include <dirent.h>
 
 #define LIST_ITEM_MAX 20
 
@@ -87,31 +86,32 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 static void
 _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
 {
-   DIR *d;
-   struct dirent *de;
    Eina_List *l;
    char *real;
-   const char *home_env = NULL;
    unsigned int x = 0;
 
    if (!dirs)
      {
-        home_env = eina_environment_home_get();
-        if (!home_env) return;
-        if (!(d = opendir(home_env))) return;
-        while ((de = readdir(d)) && (x < LIST_ITEM_MAX))
+        Eina_Iterator *it;
+        const char *name;
+
+        it = eina_file_ls(eina_environment_home_get());
+        EINA_ITERATOR_FOREACH(it, name)
           {
-             char buff[PATH_MAX];
-
-             if (de->d_name[0] == '.') continue;
-             snprintf(buff, sizeof(buff), "%s/%s", home_env, de->d_name);
-
-             if (!ecore_file_is_dir(buff)) continue;
-             x++;
-             real = ecore_file_realpath(buff);
-             dirs = eina_list_sorted_insert(dirs, EINA_COMPARE_CB(strcoll), real);
+             if (x >= LIST_ITEM_MAX)
+               break;
+             if ((ecore_file_file_get(name)[0] != '.') &&
+                 ecore_file_is_dir(name))
+               {
+                  x++;
+                  real = ecore_file_realpath(name);
+                  dirs = eina_list_sorted_insert(dirs,
+                                                 EINA_COMPARE_CB(strcoll),
+                                                 real);
+                  eina_stringshare_del(name);
+               }
           }
-        closedir(d);
+        eina_iterator_free(it);
      }
    EINA_LIST_FOREACH(dirs, l, real)
      {
@@ -131,25 +131,24 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
 static Eina_Bool
 _dir_has_subs(const char *path)
 {
-   DIR *d;
-   struct dirent *de;
+   Eina_Iterator *it;
+   const char *name;
    Eina_Bool result = EINA_FALSE;
 
-   if (!path) return result;
-   if (!(d = opendir(path))) return result;
-   while ((de = readdir(d)))
+   it = eina_file_ls(path);
+   EINA_ITERATOR_FOREACH(it, name)
      {
-        char buff[PATH_MAX];
+        Eina_Bool is_dir;
 
-        if (de->d_name[0] == '.') continue;
-        snprintf(buff, sizeof(buff), "%s/%s", path, de->d_name);
-        if (ecore_file_is_dir(buff))
+        is_dir = ecore_file_is_dir(name);
+        eina_stringshare_del(name);
+        if (is_dir)
           {
              result = EINA_TRUE;
              break;
           }
      }
-   closedir(d);
+   eina_iterator_free(it);
    return result;
 }
 
