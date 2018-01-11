@@ -230,10 +230,8 @@ typedef struct
    _Eo_Object *ptr;
    /* Indicates where to find the next entry to recycle */
    Table_Index next_in_fifo;
-   /* Active flag */
-   unsigned int active     : 1;
    /* Generation */
-   unsigned int generation : BITS_GENERATION_COUNTER;
+   unsigned int generation;
 
 } _Eo_Id_Entry;
 
@@ -296,6 +294,9 @@ struct _Eo_Id_Data
 extern Eina_TLS          _eo_table_data;
 extern Eo_Id_Data       *_eo_table_data_shared;
 extern Eo_Id_Table_Data *_eo_table_data_shared_data;
+extern Eo_Id_Data _eo_main_table_data;
+extern Eo_Id_Table_Data _eo_table_main_table_data;
+
 
 static inline Eo_Id_Table_Data *
 _eo_table_data_table_new(Efl_Id_Domain domain)
@@ -317,10 +318,28 @@ _eo_table_data_table_new(Efl_Id_Domain domain)
    return tdata;
 }
 
+
+static inline Eo_Id_Data *
+_eo_main_table_data_new(void)
+{
+   Eo_Id_Data *const d = &_eo_main_table_data;
+   d->local_domain = EFL_ID_DOMAIN_MAIN;
+   d->domain_stack[d->stack_top] = EFL_ID_DOMAIN_MAIN;
+   d->tables[EFL_ID_DOMAIN_MAIN] = &_eo_table_main_table_data;
+
+   /* Init table */
+   _eo_table_main_table_data.generation = rand() % MAX_GENERATIONS;
+
+   return d;
+}
+
 static inline Eo_Id_Data *
 _eo_table_data_new(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data;
+
+   if (domain == EFL_ID_DOMAIN_MAIN)
+      return _eo_main_table_data_new();
 
    data = calloc(1, sizeof(Eo_Id_Data));
    if (!data) return NULL;
@@ -344,12 +363,6 @@ static inline Eo_Id_Data *
 _eo_table_data_get(void)
 {
    Eo_Id_Data *data = eina_tls_get(_eo_table_data);
-   if (EINA_LIKELY(data != NULL)) return data;
-
-   data = _eo_table_data_new(EFL_ID_DOMAIN_THREAD);
-   if (!data) return NULL;
-
-   eina_tls_set(_eo_table_data, data);
    return data;
 }
 
@@ -720,9 +733,12 @@ _eo_free_ids_tables(Eo_Id_Data *data)
      }
    if (tdata->empty_table) _eo_id_mem_free(tdata->empty_table);
    tdata->empty_table = tdata->current_table = NULL;
-   _eo_table_data_table_free(tdata);
-   data->tables[data->local_domain] = NULL;
-   free(data);
+   if (data->local_domain != EFL_ID_DOMAIN_MAIN)
+     {
+        _eo_table_data_table_free(tdata);
+        data->tables[data->local_domain] = NULL;
+        free(data);
+     }
 }
 
 #ifdef EFL_DEBUG

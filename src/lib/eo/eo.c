@@ -439,7 +439,7 @@ efl_cast(const Eo *eo_id, const Efl_Class *cur_klass)
 }
 
 EAPI Eina_Bool
-_efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *cache, const char *file, int line)
+_efl_object_call_resolve(Eo *restrict eo_id, const char *restrict func_name, Efl_Object_Op_Call_Data *restrict call, Efl_Object_Call_Cache *restrict cache, const char *restrict file, int line)
 {
    const _Efl_Class *klass, *inputklass, *main_klass;
    const _Efl_Class *cur_klass = NULL;
@@ -486,8 +486,6 @@ obj_super_back:
 ok_klass_back:
 
    inputklass = main_klass =  klass;
-
-   if (!cache->op) goto err_cache_op;
 
    /* If we have a current class, we need to itr to the next. */
    if (cur_klass)
@@ -2293,6 +2291,8 @@ efl_object_init(void)
    return EINA_TRUE;
 }
 
+void eo_dump_stats(void);
+
 EAPI Eina_Bool
 efl_object_shutdown(void)
 {
@@ -2346,6 +2346,7 @@ efl_object_shutdown(void)
    ++_efl_object_init_generation;
 
    eina_shutdown();
+   eo_dump_stats();
    return EINA_FALSE;
 }
 

@@ -41,6 +41,9 @@
 
 #ifdef __cplusplus
 extern "C" {
+# define __restrict__
+#else
+# define __restrict__ restrict
 #endif
 
 /**
@@ -1340,7 +1343,7 @@ EAPI Efl_Object_Op _efl_object_api_op_id_get(const void *api_func) EINA_DEPRECAT
 EAPI Efl_Object_Op _efl_object_op_api_id_get(const void *api_func, const Eo *obj, const char *api_func_name, const char *file, int line) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
 
 // gets the real function pointer and the object data
-EAPI Eina_Bool _efl_object_call_resolve(Eo *obj, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Call_Cache *callcache, const char *file, int line);
+EAPI Eina_Bool _efl_object_call_resolve(Eo *__restrict__ obj, const char *__restrict__ func_name, Efl_Object_Op_Call_Data *__restrict__ call, Efl_Object_Call_Cache *__restrict__ callcache, const char *__restrict__ file, int line);
 
 // end of the eo call barrier, unref the obj
 EAPI void _efl_object_call_end(Efl_Object_Op_Call_Data *call);

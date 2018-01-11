@@ -226,7 +226,7 @@ Eo *_eo_header_id_get(const Eo_Header *header)
 }
 
 /* Retrieves the pointer to the object from the id */
-_Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file, int line);
+_Eo_Object *_eo_obj_pointer_get(const Eo_Id obj_id, const char *restrict func_name, const char *restrict file, int line);
 
 static inline
 Efl_Class *_eo_class_id_get(const _Efl_Class *klass)
@@ -378,5 +378,6 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
 
 Eina_Bool efl_future_init(void);
 Eina_Bool efl_future_shutdown(void);
+Eina_Bool eo_main_table_data_init(void);
 
 #endif
