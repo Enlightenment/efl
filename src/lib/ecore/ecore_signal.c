@@ -20,18 +20,12 @@
 /* make mono happy - this is evil though... */
 #undef SIGPWR
 
-//#define ECORE_SIGNAL_THREAD 1
-
 static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
 static void _ecore_signal_waitpid(Eina_Bool once, siginfo_t info);
 static void _ecore_signal_generic_free(void *data, void *event);
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-#ifdef ECORE_SIGNAL_THREAD
-static Eina_Thread sig_thread;
-static Eina_Bool sig_thread_exists = EINA_FALSE;
-#endif
 static int sig_pipe[2] = { -1, -1 }; // [0] == read, [1] == write
 static Eo *sig_pipe_handler = NULL;
 
@@ -150,10 +144,6 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
 {
    Signal_Data sdata;
 
-#ifdef ECORE_SIGNAL_THREAD
-   if (eina_thread_self() != sig_thread)
-     fprintf(stderr, "Ecore sig handler NOT called from sigwatcher thread\n");
-#endif
    sdata.sig = sig;
    sdata.info = *si;
    if (sdata.sig >= 0)
@@ -211,18 +201,6 @@ _signalhandler_setup(void)
 #endif
 }
 
-#ifdef ECORE_SIGNAL_THREAD
-static void *
-_ecore_signal_thread_watcher(void *data EINA_UNUSED, Eina_Thread t)
-{
-   eina_thread_cancellable_set(EINA_FALSE, NULL);
-   eina_thread_name_set(t, "Esigwatcher");
-   _signalhandler_setup();
-   for (;;) pause();
-   return NULL;
-}
-#endif
-
 static void
 _ecore_signal_pipe_init(void)
 {
@@ -237,23 +215,7 @@ _ecore_signal_pipe_init(void)
         eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
         fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK);
      }
-#ifdef ECORE_SIGNAL_THREAD
-   if (!sig_thread_exists)
-     {
-        if (!eina_thread_create(&sig_thread, EINA_THREAD_NORMAL,
-                                -1, _ecore_signal_thread_watcher, NULL))
-          {
-             close(sig_pipe[0]);
-             close(sig_pipe[1]);
-             sig_pipe[0] = -1;
-             sig_pipe[1] = -1;
-             return;
-          }
-        sig_thread_exists = EINA_TRUE;
-     }
-#else
    _signalhandler_setup();
-#endif
    if (!sig_pipe_handler)
      sig_pipe_handler =
        efl_add(EFL_LOOP_HANDLER_CLASS, ML_OBJ,
@@ -283,35 +245,12 @@ static void
 _ecore_signal_cb_fork(void *data EINA_UNUSED)
 {
    _ecore_signal_pipe_shutdown();
-#ifdef ECORE_SIGNAL_THREAD
-   sig_thread_exists = EINA_FALSE;
-#endif
    _ecore_signal_pipe_init();
 }
 
 void
 _ecore_signal_init(void)
 {
-#ifdef ECORE_SIGNAL_THREAD
-# ifndef _WIN32
-   sigset_t newset;
-
-   sigemptyset(&newset);
-   sigaddset(&newset, SIGPIPE);
-   sigaddset(&newset, SIGALRM);
-   sigaddset(&newset, SIGCHLD);
-   sigaddset(&newset, SIGUSR1);
-   sigaddset(&newset, SIGUSR2);
-   sigaddset(&newset, SIGHUP);
-   sigaddset(&newset, SIGQUIT);
-   sigaddset(&newset, SIGINT);
-   sigaddset(&newset, SIGTERM);
-#  ifdef SIGPWR
-   sigaddset(&newset, SIGPWR);
-#  endif
-   pthread_sigmask(SIG_BLOCK, &newset, NULL);
-# endif
-#endif
    _ecore_signal_pipe_init();
    ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
 }
