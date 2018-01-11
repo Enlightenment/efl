@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <pthread.h>
 
 #include "Ecore.h"
@@ -155,7 +156,12 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
 #endif
    sdata.sig = sig;
    sdata.info = *si;
-   if (sdata.sig >= 0) write(sig_pipe[1], &sdata, sizeof(sdata));
+   if (sdata.sig >= 0)
+     {
+        int err = errno;
+        write(sig_pipe[1], &sdata, sizeof(sdata));
+        errno = err;
+     }
 }
 
 static void
