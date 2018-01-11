@@ -3461,12 +3461,21 @@ _tls_check(void)
 }
 #endif
 
+static inline int
+_check_gl(void)
+{
+   if (!gl_lib_init()) return 0;
+   return 1;
+}
+
 static void *
 eng_gl_surface_create(void *data EINA_UNUSED, void *config, int w, int h)
 {
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_GL_Config *cfg;
+
+   if (!_check_gl()) return NULL;
 
    sfc = calloc(1, sizeof(Render_Engine_GL_Surface));
    if (!sfc) return NULL;
@@ -3568,6 +3577,8 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
 
+   if (!_check_gl()) return 0;
+
    sfc = (Render_Engine_GL_Surface*)surface;
 
    if (!sfc) return 0;
@@ -3598,11 +3609,7 @@ eng_gl_context_create(void *data EINA_UNUSED, void *share_context, int version,
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
 
-   if (!_tls_check() && !gl_lib_init())
-     {
-        WRN("Failed to initialize Evas GL (with OSMesa)");
-        return NULL;
-     }
+   if (!_check_gl()) return NULL;
 
    if (version != EVAS_GL_GLES_2_X)
      {
@@ -3648,6 +3655,8 @@ eng_gl_context_destroy(void *data EINA_UNUSED, void *context)
 #ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
 
+   if (!_check_gl()) return 0;
+
    ctx = (Render_Engine_GL_Context*)context;
 
    if (!ctx) return 0;
@@ -3676,6 +3685,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    Render_Engine_GL_Context *ctx;
    OSMesaContext share_ctx;
    GLboolean ret;
+
+   if (!_check_gl()) return 0;
 
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
@@ -3760,6 +3771,8 @@ static void *
 eng_gl_proc_address_get(void *data EINA_UNUSED, const char *name)
 {
 #ifdef EVAS_GL
+   if (!_check_gl()) return NULL;
+
    if (_sym_OSMesaGetProcAddress) return _sym_OSMesaGetProcAddress(name);
    return dlsym(RTLD_DEFAULT, name);
 #else
@@ -3774,6 +3787,8 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_Native_Surface *ns;
+
+   if (!_check_gl()) return 0;
 
    sfc = (Render_Engine_GL_Surface*)surface;
    ns  = (Evas_Native_Surface*)native_surface;
@@ -3792,7 +3807,6 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 #endif
 }
 
-
 static void *
 eng_gl_api_get(void *data EINA_UNUSED, int version)
 {
@@ -3800,8 +3814,7 @@ eng_gl_api_get(void *data EINA_UNUSED, int version)
      return NULL;
 
 #ifdef EVAS_GL
-   if (!_tls_init)
-     gl_lib_init();
+   if (!_check_gl()) return NULL;
 
    return &gl_funcs;
 #else
@@ -4803,25 +4816,25 @@ static Evas_Func func =
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
      NULL, // No need to set output for software engine
-     NULL, // need software mesa for gl rendering <- gl_surface_create
+     eng_gl_surface_create, // need software mesa for gl rendering <- gl_surface_create
      NULL, // need software mesa for gl rendering <- gl_pbuffer_surface_create
-     NULL, // need software mesa for gl rendering <- gl_surface_destroy
-     NULL, // need software mesa for gl rendering <- gl_context_create
-     NULL, // need software mesa for gl rendering <- gl_context_destroy
-     NULL, // need software mesa for gl rendering <- gl_make_current
-     NULL, // need software mesa for gl rendering <- gl_string_query
-     NULL, // need software mesa for gl rendering <- gl_proc_address_get
-     NULL, // need software mesa for gl rendering <- gl_native_surface_get
-     NULL, // need software mesa for gl rendering <- gl_api_get
+     eng_gl_surface_destroy, // need software mesa for gl rendering <- gl_surface_destroy
+     eng_gl_context_create, // need software mesa for gl rendering <- gl_context_create
+     eng_gl_context_destroy, // need software mesa for gl rendering <- gl_context_destroy
+     eng_gl_make_current, // need software mesa for gl rendering <- gl_make_current
+     eng_gl_string_query, // need software mesa for gl rendering <- gl_string_query
+     eng_gl_proc_address_get, // need software mesa for gl rendering <- gl_proc_address_get
+     eng_gl_native_surface_get, // need software mesa for gl rendering <- gl_native_surface_get
+       eng_gl_api_get, // need software mesa for gl rendering <- gl_api_get
      NULL, // need software mesa for gl rendering <- gl_direct_override
      NULL, // need software mesa for gl rendering <- gl_get_pixels_set
      NULL, // need software mesa for gl rendering <- gl_surface_lock
      NULL, // need software mesa for gl rendering <- gl_surface_read_pixels
      NULL, // need software mesa for gl rendering <- gl_surface_unlock
-     NULL, // need software mesa for gl rendering <- gl_error_get
-     NULL, // need software mesa for gl rendering <- gl_current_context_get
-     NULL, // need software mesa for gl rendering <- gl_current_surface_get
-     NULL, // need software mesa for gl rendering <- gl_rotation_angle_get
+     eng_gl_error_get, // need software mesa for gl rendering <- gl_error_get
+     eng_gl_current_context_get, // need software mesa for gl rendering <- gl_current_context_get
+     eng_gl_current_surface_get, // need software mesa for gl rendering <- gl_current_surface_get
+     eng_gl_rotation_angle_get, // need software mesa for gl rendering <- gl_rotation_angle_get
      NULL, // need software mesa for gl rendering <- gl_surface_query
      NULL, // need software mesa for gl rendering <- gl_surface_direct_renderable_get
      NULL, // need software mesa for gl rendering <- gl_image_direct_set
@@ -5873,6 +5886,7 @@ gl_lib_init(void)
 {
 #ifdef EVAS_GL
    // Current ctx & sfc stuff
+   if (gl_lib_handle) return 1;
    if (!_tls_check()) return 0;
 
    // dlopen OSMesa
@@ -5888,23 +5902,33 @@ gl_lib_init(void)
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so", RTLD_NOW);
    if (!gl_lib_handle)
      {
-        DBG("Unable to open libOSMesa:  %s", dlerror());
+        WRN("Unable to open libOSMesa:  %s", dlerror());
+        DBG("Unable to support EvasGL in this engine module. Install OSMesa to get it running");
         return 0;
      }
 
    //------------------------------------------------//
-   if (!glue_sym_init()) return 0;
-   if (!gl_sym_init()) return 0;
+   if (!glue_sym_init())
+     {
+        WRN("Unable to glue OSMesa syms");
+        return 0;
+     }
+   if (!gl_sym_init())
+     {
+        WRN("Unable to init OSMesa syms");
+        return 0;
+     }
 
    override_gl_apis(&gl_funcs);
 
    return 1;
 #else
+   WRN("Evas GL not compiled in");
    return 0;
 #endif
 }
 
-
+/*
 static void
 init_gl(void)
 {
@@ -5923,7 +5947,6 @@ init_gl(void)
         ORD(gl_string_query);           // FIXME: Need to implement
         ORD(gl_proc_address_get);       // FIXME: Need to implement
         ORD(gl_native_surface_get);
-        ORD(gl_api_get);
         ORD(gl_error_get);
         ORD(gl_current_context_get);
         ORD(gl_current_surface_get);
@@ -5931,7 +5954,7 @@ init_gl(void)
 #undef ORD
      }
 }
-
+*/
 
 /*
  *****
@@ -5982,7 +6005,8 @@ module_open(Evas_Module *em)
                       NULL, sizeof(Evas_Thread_Command_Ector_Surface), 128);
 
    ector_init();
-   init_gl();
+// do on demand when first evas_gl_api_get is called...
+//   init_gl();
    ector_glsym_set(dlsym, RTLD_DEFAULT);
    evas_common_pipe_init();
 
