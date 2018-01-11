@@ -1,15 +1,11 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 #include <ctype.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_List *pending_send = NULL;
 static size_t pending_send_offset = 0;
-static Eo *ssl_ctx;
+static Eo *ssl_ctx = NULL;
 
 static void
 _ssl_ready(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
@@ -22,7 +18,7 @@ _ssl_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: SSL error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -51,8 +47,7 @@ _ssl_can_read(void *data EINA_UNUSED, const Efl_Event *event)
           {
              if (err == EAGAIN) return;
              fprintf(stderr, "ERROR: could not read: %s\n", eina_error_msg_get(err));
-             retval = EXIT_FAILURE;
-             ecore_main_loop_quit();
+             efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
              return;
           }
 
@@ -65,7 +60,7 @@ static void
 _ssl_eos(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "INFO: SSL eos\n");
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -97,8 +92,7 @@ _ssl_can_write(void *data EINA_UNUSED, const Efl_Event *event)
           {
              if (err == EAGAIN) return;
              fprintf(stderr, "ERROR: could not write: %s\n", eina_error_msg_get(err));
-             retval = EXIT_FAILURE;
-             ecore_main_loop_quit();
+             efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
              return;
           }
 
@@ -149,8 +143,7 @@ _connected(void *data EINA_UNUSED, const Efl_Event *event)
    if (!ssl)
      {
         fprintf(stderr, "ERROR: failed to wrap dialer=%p in SSL\n", event->object);
-        retval = EXIT_FAILURE;
-        ecore_main_loop_quit();
+        efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
         return;
      }
 
@@ -179,7 +172,7 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
@@ -283,8 +276,60 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *dialer = NULL;
+
+#ifndef USE_DEFAULT_CONTEXT
+static Eina_List *certificates = NULL;
+static Eina_List *private_keys = NULL;
+static Eina_List *crls = NULL;
+static Eina_List *cas = NULL;
+#endif
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   if (dialer || ssl_ctx)
+     {
+#ifndef USE_DEFAULT_CONTEXT
+        char *str;
+#endif
+
+        efl_io_closer_close(dialer); /* just del won't do as ssl has an extra ref */
+        efl_del(dialer);
+        dialer = NULL;
+
+        efl_del(ssl_ctx);
+        ssl_ctx = NULL;
+
+        EINA_LIST_FREE(pending_send, str) free(str);
+
+#ifndef USE_DEFAULT_CONTEXT
+        EINA_LIST_FREE(certificates, str) free(str);
+        EINA_LIST_FREE(private_keys, str) free(str);
+        EINA_LIST_FREE(crls, str) free(str);
+        EINA_LIST_FREE(cas, str) free(str);
+#endif
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *address = NULL;
    char *line_delimiter_str = NULL;
@@ -294,10 +339,6 @@ main(int argc, char **argv)
    Eina_Iterator *it;
    char *verify_mode_choice = "required";
    char *cipher_choice = "auto";
-   Eina_List *certificates = NULL;
-   Eina_List *private_keys = NULL;
-   Eina_List *crls = NULL;
-   Eina_List *cas = NULL;
    Eina_Bool default_paths_load = EINA_TRUE;
    Efl_Net_Ssl_Verify_Mode verify_mode = EFL_NET_SSL_VERIFY_MODE_OPTIONAL;
    Efl_Net_Ssl_Cipher cipher = EFL_NET_SSL_CIPHER_AUTO;
@@ -336,29 +377,27 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *dialer, *loop;
+   Eo *loop;
    Eina_Error err;
 
    ecore_init();
    ecore_con_init();
 
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   loop = efl_main_loop_get();
+   loop = ev->object;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -435,7 +474,6 @@ main(int argc, char **argv)
    if (!ssl_ctx)
      {
         fprintf(stderr, "ERROR: could not create the SSL context!\n");
-        retval = EXIT_FAILURE;
         goto no_ssl_ctx;
      }
 
@@ -481,13 +519,10 @@ main(int argc, char **argv)
      {
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 address, eina_error_msg_get(err));
-        retval = EXIT_FAILURE;
         goto no_mainloop;
      }
 
-   ecore_main_loop_begin();
-
-   fprintf(stderr, "INFO: main loop finished.\n");
+   return ;
 
  no_mainloop:
    efl_io_closer_close(dialer); /* just del won't do as ssl has an extra ref */
@@ -505,8 +540,7 @@ main(int argc, char **argv)
    EINA_LIST_FREE(cas, str) free(str);
 #endif
 
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
