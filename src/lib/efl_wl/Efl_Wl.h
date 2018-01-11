@@ -158,7 +158,7 @@ EAPI Eina_Bool efl_wl_surface_extract(Evas_Object *surface);
 EAPI Evas_Object *efl_wl_extracted_surface_object_find(void *surface_resource);
 
 /**
- * Get the Evas_Object for an extracted surface's parent
+ * Get the Evas_Object for an extracted surface's parent, or NULL if the parent is not extracted
  *
  * @note Passing anything other than a valid, extracted surface guarantees a crash.
  *

@@ -5628,7 +5628,7 @@ efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface)
 
    if (cs->parent)
      {
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!cs->parent->extracted, NULL);
+        if (!cs->parent->extracted) return NULL;
         return cs->parent->obj;
      }
    return NULL;
