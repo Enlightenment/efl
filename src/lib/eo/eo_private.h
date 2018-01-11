@@ -116,6 +116,8 @@ struct _Eo_Object
      Eina_Bool finalized:1;
      Eina_Bool super:1;
 
+     Eina_Bool invalidate_triggered:1;
+     Eina_Bool invalidated:1;
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;
@@ -296,84 +298,142 @@ _efl_ref(_Eo_Object *obj)
 }
 
 #define _efl_unref(obj) _efl_unref_internal(obj, __FUNCTION__, __FILE__, __LINE__)
+#define _efl_invalidate(obj) _efl_invalidate_internal(obj, __FUNCTION__, __FILE__, __LINE__)
+
+// returns true if del was intercepted
+static inline void
+_efl_invalidate_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
+{
+   Eo *obj_id = _eo_obj_id_get(obj);
+
+   if (EINA_UNLIKELY(obj->invalidated))
+     {
+        ERR("in %s:%d: func '%s' Object %p already invalidated.",
+            file, line, func_name, obj_id);
+        _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                           __FUNCTION__, __FILE__, __LINE__);
+        return;
+     }
+
+   if (EINA_UNLIKELY(obj->invalidate_triggered))
+     {
+        ERR("in %s:%d: func '%s' Object %p invalidate already triggered. "
+            "You wrongly call efl_invalidate() within an invalidator.",
+            file, line, func_name, obj_id);
+        _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                           __FUNCTION__, __FILE__, __LINE__);
+        return;
+     }
+
+   obj->refcount++;
+   obj->invalidate_triggered = EINA_TRUE;
+   obj->condtor_done = EINA_FALSE;
+   efl_event_callback_call(obj_id, EFL_EVENT_INVALIDATE, NULL);
+   efl_invalidator(obj_id);
+   obj->refcount--;
+
+   if (EINA_UNLIKELY(!obj->condtor_done))
+     {
+        ERR("in %s:%d: func '%s' Object %p of class '%s' - Not all of the "
+            "object invalidators have been executed.",
+            file, line, func_name, obj_id, obj->klass->desc->name);
+        obj->condtor_done = EINA_FALSE;
+     }
+
+   obj->invalidated = EINA_TRUE;
+   obj->invalidate_triggered = EINA_FALSE;
+}
+
 static inline void
 _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, int line)
 {
+   Eo *obj_id;
+
    --(obj->refcount);
-   if (EINA_UNLIKELY(obj->refcount <= 0))
+
+   if (EINA_LIKELY(obj->refcount > 0))
+     return;
+
+   obj_id = _eo_obj_id_get(obj);
+   if (obj->refcount < 0)
      {
-        if (obj->refcount < 0)
-          {
-             ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.", file, line, func_name, obj, obj->refcount);
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
-             return;
-          }
+        ERR("in %s:%d: func '%s' Obj:%p. Refcount (%d) < 0. Too many unrefs.",
+            file, line, func_name, obj, obj->refcount);
+        _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                           __FUNCTION__, __FILE__, __LINE__);
+        return;
+     }
 
-        if (obj->destructed)
-          {
-             ERR("in %s:%d: func '%s' Object %p already destructed.", file, line, func_name, _eo_obj_id_get(obj));
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
-             return;
-          }
+   if (!obj->invalidated)
+     {
+        _efl_invalidate_internal(obj, func_name, file, line);
+     }
 
-        if (obj->del_triggered)
-          {
-             ERR("in %s:%d: func '%s' Object %p deletion already triggered. You wrongly call efl_unref() within a destructor.", file, line, func_name, _eo_obj_id_get(obj));
-             _eo_log_obj_report((Eo_Id)_eo_obj_id_get(obj), EINA_LOG_LEVEL_ERR, __FUNCTION__, __FILE__, __LINE__);
-             return;
-          }
+   if (obj->destructed)
+     {
+        ERR("in %s:%d: func '%s' Object %p already destructed.",
+            file, line, func_name, obj_id);
+        _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                           __FUNCTION__, __FILE__, __LINE__);
+        return;
+     }
 
-        if (obj->opt->del_intercept)
-          {
-             Eo *obj_id = _eo_obj_id_get(obj);
-             efl_ref(obj_id);
-             obj->opt->del_intercept(obj_id);
-             return;
-          }
+   if (obj->del_triggered)
+     {
+        ERR("in %s:%d: func '%s' Object %p deletion already triggered. "
+            "You wrongly call efl_unref() within a destructor.",
+            file, line, func_name, obj_id);
+        _eo_log_obj_report((Eo_Id) obj_id, EINA_LOG_LEVEL_ERR,
+                           __FUNCTION__, __FILE__, __LINE__);
+        return;
+     }
 
-        obj->del_triggered = EINA_TRUE;
+   if (obj->opt->del_intercept)
+     {
+        obj->opt->del_intercept(efl_ref(obj_id));
+        return;
+     }
 
-        _efl_del_internal(obj, func_name, file, line);
+   obj->del_triggered = EINA_TRUE;
+   _efl_del_internal(obj, func_name, file, line);
 
-        if (EINA_LIKELY(!obj->manual_free))
-          {
+   if (EINA_LIKELY(!obj->manual_free))
+     {
 #ifdef EO_DEBUG
-             /* If for some reason it's not empty, clear it. */
-             Eo *obj_id = _eo_obj_id_get(obj);
-             while (obj->xrefs)
+        /* If for some reason it's not empty, clear it. */
+        while (obj->xrefs)
+          {
+             Eina_Inlist *nitr = obj->xrefs->next;
+             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+             ERR("in %s:%d: func '%s' Object %p is still referenced by object %p. Origin: %s:%d",
+                 file, line, func_name, obj_id, xref->ref_obj, xref->file, xref->line);
+             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+             obj->xrefs = nitr;
+          }
+        while (obj->data_xrefs)
+          {
+             Eina_Inlist *nitr = obj->data_xrefs->next;
+             Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+             if (obj_id == xref->ref_obj)
                {
-                  Eina_Inlist *nitr = obj->xrefs->next;
-                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-                  ERR("in %s:%d: func '%s' Object %p is still referenced by object %p. Origin: %s:%d",
-                      file, line, func_name, obj_id, xref->ref_obj, xref->file, xref->line);
-                  eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
-                  obj->xrefs = nitr;
+                  WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
+                      file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
                }
-             while (obj->data_xrefs)
+             else
                {
-                  Eina_Inlist *nitr = obj->data_xrefs->next;
-                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
-                  if (obj_id == xref->ref_obj)
-                    {
-                       WRN("in %s:%d: func '%s' Object %p still has a reference to its own data (subclass: %s). Origin: %s:%d",
-                           file, line, func_name, obj_id, xref->data_klass, xref->file, xref->line);
-                    }
-                  else
-                    {
-                       ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
-                           file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
-                    }
+                  ERR("in %s:%d: func '%s' Data of object %p (subclass: %s) is still referenced by object %p. Origin: %s:%d",
+                      file, line, func_name, obj_id, xref->data_klass, xref->ref_obj, xref->file, xref->line);
+               }
 
-                  eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
-                  obj->data_xrefs = nitr;
-               }
+             eina_freeq_ptr_main_add(xref, free, sizeof(*xref));
+             obj->data_xrefs = nitr;
+          }
 #endif
 
-             _eo_free(obj, EINA_FALSE);
-          }
-        else
-          _efl_ref(obj); /* If we manual free, we keep a phantom ref. */
+        _eo_free(obj, EINA_FALSE);
      }
+   else
+     _efl_ref(obj); /* If we manual free, we keep a phantom ref. */
 }
 
 Eina_Bool efl_future_init(void);

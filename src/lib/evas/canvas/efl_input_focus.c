@@ -32,7 +32,11 @@ _del_hook(Eo *evt)
    else
      {
         efl_del_intercept_set(evt, NULL);
-        efl_del(evt);
+        // FIXME
+        if (efl_parent_get(evt))
+          efl_parent_set(evt, NULL);
+        else
+          efl_unref(evt);
      }
 }
 

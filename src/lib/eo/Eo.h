@@ -1589,6 +1589,23 @@ EAPI Eo *efl_ref(const Eo *obj);
 EAPI void efl_unref(const Eo *obj);
 
 /**
+ * @brief Invalidate an object.
+ *
+ * @param obj The object to invalidate
+ *
+ * This does not change the reference count of this object, but if this
+ * @p obj's parent is the sole reference owner, @p obj will be deleted
+ * immediately. Otherwise the object will be deleted as soon as its reference
+ * count reaches zero (by unparenting it).
+ *
+ * This calls the invalidator method.
+ *
+ * @see efl_ref()
+ * @see efl_ref_count()
+ */
+EAPI void efl_invalidate(const Eo *obj);
+
+/**
  * @brief Return the ref count of the object passed.
  * @param obj the object to work on.
  * @return the ref count of the object.

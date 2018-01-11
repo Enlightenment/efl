@@ -123,11 +123,23 @@ abstract Efl.Object ()
          }
       }
       @property finalized {
-         [[True if the object is already finalized, otherwise false.]]
-         get {
-         }
+         [[Whether the object is already finalized
+
+           This is $true after @.finalize.
+         ]]
+         get {}
          values {
             finalized: bool; [[$true if the object is finalized, $false otherwise]]
+         }
+      }
+      @property invalidated {
+         [[Whether the object is already invalidated.
+
+           This is $true after @.invalidator.
+         ]]
+         get {}
+         values {
+            invalid: bool; [[$true if the object is invalidated, $false otherwise]]
          }
       }
       provider_find @const {
@@ -146,21 +158,50 @@ abstract Efl.Object ()
         return : Efl.Object; [[Object from the provider list]]
       }
       constructor {
-         [[Call the object's constructor.
+         [[Called when an object begins its creation.
 
-           Should not be used with #eo_do. Only use it with #eo_do_super.
+           This is called at the beginning of $efl_add, before @.finalize.
+
+           Should not be called directly. Only use it with $efl_super. All
+           implementations must call $efl_super recursively.
          ]]
          return: Efl.Object; [[The new object created, can be NULL if aborting]]
-      }
-      destructor {
-         [[Call the object's destructor.
-
-           Should not be used with #eo_do. Only use it with #eo_do_super.
-         ]]
       }
       finalize {
-         [[Called at the end of efl_add. Should not be called, just overridden.]]
+         [[Called at the end of the creation of an object.
+
+           This is called at the end of $efl_add, after @.constructor and after
+           all initialization calls passed inside $efl_add. Implement this to
+           perform final initialization based on the setup calls made inside
+           $efl_add.
+
+           Should not be called directly. Only use it with $efl_super. All
+           implementations must call $efl_super recursively.
+         ]]
          return: Efl.Object; [[The new object created, can be NULL if aborting]]
+      }
+      invalidator {
+         [[Called when an object is invalidated, about to be destroyed.
+
+           This happens before @.destructor and should be implemented to clean
+           up an object, in particular remove all the references it holds.
+           The @.parent should still be valid.
+
+           Should not be called directly. Only use it with $efl_super. All
+           implementations must call $efl_super recursively.
+         ]]
+      }
+      destructor {
+         [[Called when an object is finally being destroyed.
+
+           This happens after @.invalidator. At this point the object has no
+           remaining reference left, and the destructor should be implemented
+           to free up any remaining resources (
+           The @.parent should not be valid anymore.
+
+           Should not be called directly. Only use it with $efl_super. All
+           implementations must call $efl_super recursively.
+         ]]
       }
       name_find @const {
          [[Find a child object with the given name and return it.
@@ -287,7 +328,13 @@ abstract Efl.Object ()
    events {
       callback,add @hot; [[A callback was added.]]
       callback,del @hot; [[A callback was deleted.]]
-      del @hot; [[Object is being deleted.]]
+      invalidate @hot;
+         [[The object is being invalidated. Some object may listen to this
+           event on their children and unreference them at this point.
+           This is emitted before calls to @.invalidator begin.]]
+      del @hot;
+         [[Object is being deleted. This is emitted before calls to
+           @.destructor begin.]]
       destruct @hot; [[Object has been fully destroyed. It can not be used
          beyond this point. This event should only serve to clean up any
          dangling pointer.]]

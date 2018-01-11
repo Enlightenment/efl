@@ -1022,6 +1022,7 @@ efl_reuse(const Eo *eo_id)
    efl_object_override(obj, NULL);
    if (!efl_parent_get(obj))
      _efl_object_parent_sink_set(obj, EINA_FALSE);
+   _obj->invalidated = EINA_FALSE;
 
 #ifdef EO_DEBUG
    _eo_log_obj_ref_op(_obj, EO_REF_OP_REUSE);
@@ -1900,6 +1901,21 @@ efl_ref_count(const Eo *obj_id)
    ref = obj->user_refcount;
    EO_OBJ_DONE(obj_id);
    return ref;
+}
+
+EAPI void
+efl_invalidate(const Eo *obj_id)
+{
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
+   if (obj->invalidated) goto err;
+   _efl_invalidate(obj);
+   EO_OBJ_DONE(obj_id);
+   return;
+
+err:
+   ERR("Obj:%s@%p. Object is already invalid, can not be destructed further.",
+       obj->klass->desc->name, obj_id);
+   EO_OBJ_DONE(obj_id);
 }
 
 EAPI int

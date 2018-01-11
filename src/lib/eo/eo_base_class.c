@@ -54,12 +54,13 @@ typedef struct
    unsigned short             event_cb_efl_event_callback_add_count;
    unsigned short             event_cb_efl_event_callback_del_count;
    unsigned short             event_cb_efl_event_del_count;
+   unsigned short             event_cb_efl_event_invalidate_count;
 #endif
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  parent_sunk : 1; // If parent ref has already been settled (parent has been set, or we are in add_ref mode
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
-   Eina_Bool                  has_destroyed_event_cb : 1; // No proper count: minor optimization triggered at destruction only
+   Eina_Bool                  has_destruct_event_cb : 1; // No proper count: minor optimization triggered at destruction only
 } Efl_Object_Data;
 
 typedef enum
@@ -595,6 +596,7 @@ _efl_object_debug_name_override(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA
 EOLIAN static void
 _efl_object_del(const Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
+   efl_invalidate(obj);
    if (efl_parent_get((Eo *) obj))
      {
         efl_parent_set((Eo *) obj, NULL);
@@ -692,6 +694,16 @@ _efl_object_finalized_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
    finalized = obj->finalized;
    EO_OBJ_DONE(obj_id);
    return finalized;
+}
+
+EOLIAN static Eina_Bool
+_efl_object_invalidated_get(Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
+{
+   Eina_Bool invalidated;
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
+   invalidated = obj->invalidated;
+   EO_OBJ_DONE(obj_id);
+   return invalidated;
 }
 
 EOLIAN static Efl_Object *
@@ -1069,10 +1081,12 @@ _special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
    else if (it->desc == EFL_EVENT_CALLBACK_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
+   else if (it->desc == EFL_EVENT_INVALIDATE)
+     CB_COUNT_INC(pd->event_cb_efl_event_invalidate_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_del_count);
    else if (it->desc == EFL_EVENT_DESTRUCT)
-     pd->has_destroyed_event_cb = EINA_TRUE;
+     pd->has_destruct_event_cb = EINA_TRUE;
 }
 
 static inline void
@@ -1082,6 +1096,8 @@ _special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_add_count);
    else if (it->desc == EFL_EVENT_CALLBACK_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
+   else if (it->desc == EFL_EVENT_INVALIDATE)
+     CB_COUNT_INC(pd->event_cb_efl_event_invalidate_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
 }
@@ -1131,10 +1147,11 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    eina_freeq_ptr_main_add(pd->callbacks, free, 0);
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
-   pd->has_destroyed_event_cb = EINA_FALSE;
+   pd->has_destruct_event_cb = EINA_FALSE;
 #ifdef EFL_EVENT_SPECIAL_SKIP
    pd->event_cb_efl_event_callback_add_count = 0;
    pd->event_cb_efl_event_callback_del_count = 0;
+   pd->event_cb_efl_event_invalidate_count = 0;
    pd->event_cb_efl_event_del_count = 0;
 #endif
 }
@@ -1291,7 +1308,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    _special_event_count_inc(pd, &(cb->items.item));
 #endif
    if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
-     pd->has_destroyed_event_cb = EINA_TRUE;
+     pd->has_destruct_event_cb = EINA_TRUE;
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
@@ -1398,12 +1415,12 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    for (it = cb->items.item_array; it->func; it++)
      _special_event_count_inc(pd, it);
 #else
-   if (!pd->has_destroyed_event_cb)
+   if (!pd->has_destruct_event_cb)
      {
         for (it = cb->items.item_array; it->func; it++)
           if (it->desc == EFL_EVENT_DESTRUCT)
             {
-               pd->has_destroyed_event_cb = EINA_TRUE;
+               pd->has_destruct_event_cb = EINA_TRUE;
                break;
             }
      }
@@ -1482,6 +1499,8 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_callback_add_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_CALLBACK_DEL) &&
             (pd->event_cb_efl_event_callback_del_count == 0)) return EINA_FALSE;
+   else if ((desc == EFL_EVENT_INVALIDATE) &&
+            (pd->event_cb_efl_event_invalidate_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_DEL) &&
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
 #endif
@@ -2025,6 +2044,14 @@ _efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
+_efl_object_invalidator(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
+{
+   DBG("%p - %s.", obj, efl_class_name_get(obj));
+
+   _eo_condtor_done(obj);
+}
+
+EOLIAN static void
 _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
 {
    Eo *child;
@@ -2073,7 +2100,7 @@ _efl_object_destructor(Eo *obj, Efl_Object_Data *pd)
    // this isn't 100% correct, as the object is still "slightly" alive at this
    // point (so efl_destructed_is() returns false), but triggering the
    // "destruct" event here is the simplest, safest solution.
-   if (EINA_UNLIKELY(pd->has_destroyed_event_cb))
+   if (EINA_UNLIKELY(pd->has_destruct_event_cb))
      _event_callback_call(obj, pd, EFL_EVENT_DESTRUCT, NULL, EINA_FALSE);
 
    // remove generic data after this final event, in case they are used in a cb
