@@ -19,7 +19,7 @@
 /* make mono happy - this is evil though... */
 #undef SIGPWR
 
-#define ECORE_SIGNAL_THREAD 1
+//#define ECORE_SIGNAL_THREAD 1
 
 static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
 static void _ecore_signal_waitpid(Eina_Bool once, siginfo_t info);
@@ -149,6 +149,10 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
 {
    Signal_Data sdata;
 
+#ifdef ECORE_SIGNAL_THREAD
+   if (eina_thread_self() != sig_thread)
+     fprintf(stderr, "Ecore sig handler NOT called from sigwatcher thread\n");
+#endif
    sdata.sig = sig;
    sdata.info = *si;
    if (sdata.sig >= 0) write(sig_pipe[1], &sdata, sizeof(sdata));
@@ -159,12 +163,6 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
 {
    struct sigaction sa;
 
-#ifdef ECORE_SIGNAL_THREAD
-   if (eina_thread_self() != sig_thread)
-     {
-        fprintf(stderr, "Ecore sig handler NOT called from sigwatcher thread\n");
-     }
-#endif
    sa.sa_sigaction = func;
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
@@ -207,6 +205,7 @@ _signalhandler_setup(void)
 #endif
 }
 
+#ifdef ECORE_SIGNAL_THREAD
 static void *
 _ecore_signal_thread_watcher(void *data EINA_UNUSED, Eina_Thread t)
 {
@@ -216,6 +215,7 @@ _ecore_signal_thread_watcher(void *data EINA_UNUSED, Eina_Thread t)
    for (;;) pause();
    return NULL;
 }
+#endif
 
 static void
 _ecore_signal_pipe_init(void)
@@ -286,7 +286,8 @@ _ecore_signal_cb_fork(void *data EINA_UNUSED)
 void
 _ecore_signal_init(void)
 {
-#ifndef _WIN32
+#ifdef ECORE_SIGNAL_THREAD
+# ifndef _WIN32
    sigset_t newset;
 
    sigemptyset(&newset);
@@ -299,10 +300,11 @@ _ecore_signal_init(void)
    sigaddset(&newset, SIGQUIT);
    sigaddset(&newset, SIGINT);
    sigaddset(&newset, SIGTERM);
-# ifdef SIGPWR
+#  ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
-# endif
+#  endif
    pthread_sigmask(SIG_BLOCK, &newset, NULL);
+# endif
 #endif
    _ecore_signal_pipe_init();
    ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
