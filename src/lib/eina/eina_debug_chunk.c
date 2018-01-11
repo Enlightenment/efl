@@ -24,6 +24,11 @@
 #  include "config.h"
 # endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+
 #ifdef HAVE_MMAP
 # include <sys/mman.h>
 
@@ -50,9 +55,15 @@ _eina_debug_chunk_need(int size)
 {
    void *ptr;
 
-   ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED) return NULL;
+#ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) ptr = malloc(size);
+   else
+#endif
+     {
+        ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (ptr == MAP_FAILED) return NULL;
+     }
    return ptr;
 }
 
@@ -60,7 +71,11 @@ _eina_debug_chunk_need(int size)
 static void
 _eina_debug_chunk_noneed(void *ptr, int size)
 {
-   munmap(ptr, size);
+#ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free(ptr);
+   else
+#endif
+     munmap(ptr, size);
 }
 
 // push a new bit of mem on our growing stack of mem - given our workload,

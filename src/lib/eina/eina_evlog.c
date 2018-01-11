@@ -20,6 +20,11 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+
 #include "Eina.h"
 #include "eina_evlog.h"
 #include "eina_debug.h"
@@ -97,13 +102,19 @@ alloc_buf(Eina_Evlog_Buf *b, unsigned int size)
    if (b->buf) return;
    b->size = size;
    b->top = 0;
-# ifdef HAVE_MMAP
-   b->buf = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                 MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (b->buf == MAP_FAILED) b->buf = NULL;
-# else
-   b->buf = malloc(size);
+#ifdef HAVE_MMAP
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) b->buf = malloc(size);
+   else
 # endif
+     {
+        b->buf = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                      MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (b->buf == MAP_FAILED) b->buf = NULL;
+     }
+#else
+   b->buf = malloc(size);
+#endif
    b->overflow = 0;
 }
 
@@ -111,11 +122,15 @@ static void
 free_buf(Eina_Evlog_Buf *b)
 {
    if (!b->buf) return;
-# ifdef HAVE_MMAP
-   munmap(b->buf, b->size);
-# else
-   free(b->buf);
+#ifdef HAVE_MMAP
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free(b->buf);
+   else
 # endif
+   munmap(b->buf, b->size);
+#else
+   free(b->buf);
+#endif
    b->buf = NULL;
    b->size = 0;
    b->top = 0;

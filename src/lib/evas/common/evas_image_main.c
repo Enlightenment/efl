@@ -17,6 +17,7 @@
 //#include "evas_cs.h"
 
 #ifdef HAVE_VALGRIND
+# include <valgrind.h>
 # include <memcheck.h>
 #endif
 
@@ -114,6 +115,10 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
 #endif
    int siz, block_size = 8;
    Eina_Bool reset_borders = EINA_TRUE;
+
+#ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) evas_image_no_mmap = 1;
+#endif
 
    if (EINA_UNLIKELY(evas_image_no_mmap == -1))
      {

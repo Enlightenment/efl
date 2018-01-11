@@ -1383,10 +1383,16 @@ static inline void
 _eo_classes_release(void)
 {
 #ifdef HAVE_MMAP
-   size_t size;
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free(_eo_classes);
+   else
+# endif
+     {
+        size_t size;
 
-   size = _eo_classes_alloc * sizeof(_Efl_Class *);
-   if (_eo_classes) munmap(_eo_classes, size);
+        size = _eo_classes_alloc * sizeof(_Efl_Class *);
+        if (_eo_classes) munmap(_eo_classes, size);
+     }
 #else
    free(_eo_classes);
 #endif
@@ -1405,17 +1411,33 @@ _eo_classes_expand(void)
    if (_eo_classes_last_id <= _eo_classes_alloc) return;
    psize = _eo_classes_alloc * sizeof(_Efl_Class *);
 #ifdef HAVE_MMAP
-   _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Efl_Class *));
-   newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED)
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND)
      {
-        ERR("mmap of eo class table region failed!");
-        abort();
+        _eo_classes_alloc += 128;
+        newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
+        ptr = realloc(_eo_classes, newsize);
+        if (!ptr)
+          {
+             ERR("realloc of eo class table region faile!!");
+             abort();
+          }
      }
-   if (psize > 0) memcpy(ptr, _eo_classes, psize);
-   if (_eo_classes) munmap(_eo_classes, psize);
+   else
+# endif
+     {
+        _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Efl_Class *));
+        newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
+        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (ptr == MAP_FAILED)
+          {
+             ERR("mmap of eo class table region failed!");
+             abort();
+          }
+        if (psize > 0) memcpy(ptr, _eo_classes, psize);
+        if (_eo_classes) munmap(_eo_classes, psize);
+     }
 #else
    _eo_classes_alloc += 128;
    newsize = _eo_classes_alloc * sizeof(_Efl_Class *);

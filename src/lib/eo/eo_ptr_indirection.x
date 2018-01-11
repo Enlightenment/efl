@@ -6,6 +6,11 @@
 #include <sys/mman.h>
 #endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+
 /* Start of pointer indirection:
  *
  * This feature is responsible of hiding from the developer the real pointer of
@@ -149,23 +154,29 @@ static void *
 _eo_id_mem_alloc(size_t size)
 {
 #ifdef HAVE_MMAP
-   void *ptr;
-   Mem_Header *hdr;
-   size_t newsize;
-   newsize = MEM_PAGE_SIZE * ((size + MEM_HEADER_SIZE + MEM_PAGE_SIZE - 1) / 
-                              MEM_PAGE_SIZE);
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED)
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) return malloc(size);
+   else
+# endif
      {
-        ERR("mmap of eo id table region failed!");
-        return NULL;
+        void *ptr;
+        Mem_Header *hdr;
+        size_t newsize;
+        newsize = MEM_PAGE_SIZE * ((size + MEM_HEADER_SIZE + MEM_PAGE_SIZE - 1) / 
+                                   MEM_PAGE_SIZE);
+        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (ptr == MAP_FAILED)
+          {
+             ERR("mmap of eo id table region failed!");
+             return NULL;
+          }
+        hdr = ptr;
+        hdr->size = newsize;
+        hdr->magic = MEM_MAGIC;
+        /* DBG("asked:%lu allocated:%lu wasted:%lu bytes", size, newsize, (newsize - size)); */
+        return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
      }
-   hdr = ptr;
-   hdr->size = newsize;
-   hdr->magic = MEM_MAGIC;
-   /* DBG("asked:%lu allocated:%lu wasted:%lu bytes", size, newsize, (newsize - size)); */
-   return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
 #else
    return malloc(size);
 #endif
@@ -184,15 +195,21 @@ static void
 _eo_id_mem_free(void *ptr)
 {
 #ifdef HAVE_MMAP
-   Mem_Header *hdr;
-   if (!ptr) return;
-   hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
-   if (hdr->magic != MEM_MAGIC)
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free(ptr);
+   else
+# endif
      {
-        ERR("unmap of eo table region has bad magic!");
-        return;
+        Mem_Header *hdr;
+        if (!ptr) return;
+        hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
+        if (hdr->magic != MEM_MAGIC)
+          {
+             ERR("unmap of eo table region has bad magic!");
+             return;
+          }
+        munmap(hdr, hdr->size);
      }
-   munmap(hdr, hdr->size);
 #else
    free(ptr);
 #endif
@@ -203,15 +220,21 @@ static void
 _eo_id_mem_protect(void *ptr, Eina_Bool may_not_write)
 {
 # ifdef HAVE_MMAP
-   Mem_Header *hdr;
-   if (!ptr) return;
-   hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
-   if (hdr->magic != MEM_MAGIC)
+#  ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) { return; }
+   else
+#  endif
      {
-        ERR("mprotect of eo table region has bad magic!");
-        return;
+        Mem_Header *hdr;
+        if (!ptr) return;
+        hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
+        if (hdr->magic != MEM_MAGIC)
+          {
+             ERR("mprotect of eo table region has bad magic!");
+             return;
+          }
+        mprotect(hdr, hdr->size, PROT_READ | ( may_not_write ? 0 : PROT_WRITE) );
      }
-   mprotect(hdr, hdr->size, PROT_READ | ( may_not_write ? 0 : PROT_WRITE) );
 # endif
 }
 # define   PROTECT(_ptr_)   _eo_id_mem_protect((_ptr_), EINA_TRUE)
