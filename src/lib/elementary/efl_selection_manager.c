@@ -2658,7 +2658,7 @@ _wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
         return input;
      }
 
-   seat = evas_canvas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT);
+   seat = evas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT);
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    return ecore_wl2_display_input_find(ecore_wl2_window_display_get(win),
      evas_device_seat_id_get(seat));
