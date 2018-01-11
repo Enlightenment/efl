@@ -998,6 +998,8 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
    tt->del_cb = del_cb;
 
    if (!just_created) _elm_tooltip_reconfigure_job_start(tt);
+   else if (efl_canvas_pointer_inside_get(eventarea, NULL) && (!tt->tooltip))
+     _elm_tooltip_show(tt);
    return;
 
  error:
