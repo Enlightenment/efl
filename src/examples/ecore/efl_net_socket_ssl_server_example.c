@@ -1,11 +1,7 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 
-static int retval = EXIT_SUCCESS;
 static double timeout = 30.0;
 static Eo *ssl_ctx = NULL;
 
@@ -77,7 +73,7 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    fprintf(stderr, "ERROR: echo copier %p failed %d '%s', close and del.\n",
            copier, *perr, eina_error_msg_get(*perr));
@@ -113,8 +109,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
    if (!ssl)
      {
         fprintf(stderr, "ERROR: failed to wrap client=%p in SSL\n", client);
-        retval = EXIT_FAILURE;
-        ecore_main_loop_quit();
+        efl_loop_quit(efl_loop_get(client), eina_value_int_init(EXIT_FAILURE));
         return;
      }
 
@@ -145,8 +140,7 @@ _server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "ERROR: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -201,16 +195,57 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *server = NULL;
+static Eina_List *certificates = NULL;
+static Eina_List *private_keys = NULL;
+static Eina_List *crls = NULL;
+static Eina_List *cas = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (server || ssl_ctx)
+     {
+        char *str;
+
+        efl_del(server);
+        server = NULL;
+
+        efl_del(ssl_ctx);
+        ssl_ctx = NULL;
+
+        EINA_LIST_FREE(certificates, str) free(str);
+        EINA_LIST_FREE(private_keys, str) free(str);
+        EINA_LIST_FREE(crls, str) free(str);
+        EINA_LIST_FREE(cas, str) free(str);
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *address = NULL;
    char *cipher_choice = "auto";
    char *str;
-   Eina_List *certificates = NULL;
-   Eina_List *private_keys = NULL;
-   Eina_List *crls = NULL;
-   Eina_List *cas = NULL;
    Efl_Net_Ssl_Cipher cipher = EFL_NET_SSL_CIPHER_AUTO;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
@@ -234,27 +269,21 @@ main(int argc, char **argv)
    };
    int args;
    Eina_Iterator *it;
-   Eo *server;
    Eina_Error err;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -282,7 +311,6 @@ main(int argc, char **argv)
    if (!ssl_ctx)
      {
         fprintf(stderr, "ERROR: could not create the SSL context!\n");
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -310,7 +338,7 @@ main(int argc, char **argv)
      fprintf(stderr, "INFO:     * %s\n", str);
    eina_iterator_free(it);
 
-   server = efl_add(EFL_NET_SERVER_TCP_CLASS, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   server = efl_add(EFL_NET_SERVER_TCP_CLASS, ev->object, /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_ip_ipv6_only_set(efl_added, EINA_FALSE), /* optional, but helps testing IPv4 on IPv6 servers */
                     efl_net_server_fd_reuse_address_set(efl_added, EINA_TRUE), /* optional, but nice for testing */
                     efl_net_server_fd_reuse_port_set(efl_added, EINA_TRUE), /* optional, but nice for testing... not secure unless you know what you're doing */
@@ -329,7 +357,7 @@ main(int argc, char **argv)
         goto end_server;
      }
 
-   ecore_main_loop_begin();
+   return ;
 
  end_server:
    efl_del(server);
@@ -343,8 +371,7 @@ main(int argc, char **argv)
    EINA_LIST_FREE(crls, str) free(str);
    EINA_LIST_FREE(cas, str) free(str);
 
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
