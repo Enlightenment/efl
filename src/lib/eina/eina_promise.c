@@ -315,11 +315,15 @@ _eina_promise_cancel(Eina_Promise *p)
 }
 
 static void
-_eina_promise_value_steal_and_link(Eina_Value value, Eina_Future *f)
+_eina_promise_value_steal_and_link(Eina_Future_Scheduler *scheduler,
+                                   Eina_Value value,
+                                   Eina_Future *f)
 {
    Eina_Promise *p = _eina_value_promise_steal(&value);
    DBG("Promise %p stolen from value", p);
    eina_value_flush(&value);
+   // In the case of continue promise, define a scheduler when steal&link
+   if (!p->scheduler) p->scheduler = scheduler;
    if (f) _eina_promise_link(p, f);
    else _eina_promise_unlink(p);
 }
@@ -377,7 +381,7 @@ _eina_value_is(const Eina_Value v1, const Eina_Value v2)
 }
 
 static void
-_eina_future_dispatch(Eina_Future *f, Eina_Value value)
+_eina_future_dispatch(Eina_Future_Scheduler *scheduler, Eina_Future *f, Eina_Value value)
 {
     Eina_Value next_value = _eina_future_dispatch_internal(&f, value);
     if (!_eina_value_is(next_value, value)) eina_value_flush(&value);
@@ -386,7 +390,7 @@ _eina_future_dispatch(Eina_Future *f, Eina_Value value)
          if (next_value.type == &EINA_VALUE_TYPE_PROMISE)
            {
               DBG("There are no more futures, but next_value is a promise setting p->future to NULL.");
-              _eina_promise_value_steal_and_link(next_value, NULL);
+              _eina_promise_value_steal_and_link(scheduler, next_value, NULL);
            }
          else eina_value_flush(&next_value);
          return;
@@ -401,19 +405,22 @@ _eina_future_dispatch(Eina_Future *f, Eina_Value value)
               eina_value_pget(&next_value, &p);
               DBG("Future %p will wait for a new promise %p", f, p);
            }
-         _eina_promise_value_steal_and_link(next_value, f);
+         _eina_promise_value_steal_and_link(scheduler, next_value, f);
       }
-    else _eina_future_dispatch(f, next_value);
+    else _eina_future_dispatch(scheduler, f, next_value);
  }
 
 static void
 _scheduled_entry_cb(Eina_Future *f, Eina_Value value)
 {
+   // This function is called by the scheduler, so it has to be defined
+   Eina_Future_Scheduler *scheduler = f->scheduled_entry->scheduler;
+
    eina_lock_take(&_pending_futures_lock);
    _pending_futures = eina_list_remove(_pending_futures, f);
    eina_lock_release(&_pending_futures_lock);
    f->scheduled_entry = NULL;
-   _eina_future_dispatch(f, value);
+   _eina_future_dispatch(scheduler, f, value);
 }
 
 void
@@ -471,6 +478,11 @@ _eina_future_schedule(Eina_Promise *p,
                       Eina_Future *f,
                       Eina_Value value)
 {
+   if (!p->scheduler)
+     {
+        ERR("Trying to resolve a continue promise during a future callback. Directly return Eina_Value instead.");
+        goto err;
+     }
    f->scheduled_entry = p->scheduler->schedule(p->scheduler,
                                                _scheduled_entry_cb,
                                                f, value);
@@ -495,7 +507,8 @@ _eina_promise_deliver(Eina_Promise *p,
      {
         Eina_Future *f = p->future;
         _eina_promise_unlink(p);
-        if (value.type == &EINA_VALUE_TYPE_PROMISE) _eina_promise_value_steal_and_link(value, f);
+        if (value.type == &EINA_VALUE_TYPE_PROMISE)
+          _eina_promise_value_steal_and_link(p->scheduler, value, f);
         else _eina_future_schedule(p, f, value);
      }
    else
@@ -598,7 +611,8 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
      {
         _eina_promise_value_dbg("Clean contenxt - Resolving promise", p, v);
         _eina_promise_unlink(p);
-        _eina_future_dispatch(f, v);
+        // This function is called on a promise created with a scheduler, not a continue one.
+        _eina_future_dispatch(p->scheduler, f, v);
      }
    eina_mempool_free(_promise_mp, p);
 }
@@ -689,6 +703,25 @@ eina_promise_new(Eina_Future_Scheduler *scheduler,
    p->data = data;
    p->scheduler = scheduler;
    DBG("Creating new promise - Promise:%p, cb: %p, data:%p", p,
+       p->cancel, p->data);
+   return p;
+}
+
+EAPI Eina_Promise *
+eina_promise_continue_new(const Eina_Future *dead_future,
+                          Eina_Promise_Cancel_Cb cancel_cb, const void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cancel_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dead_future, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(dead_future->scheduled_entry != NULL, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(dead_future->promise != NULL, NULL);
+
+   Eina_Promise *p = eina_mempool_calloc(_promise_mp, sizeof(Eina_Promise));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
+   p->cancel = cancel_cb;
+   p->data = data;
+   p->scheduler = NULL;
+   DBG("Creating continuing new promise - Promise:%p, cb: %p, data:%p", p,
        p->cancel, p->data);
    return p;
 }

@@ -531,6 +531,7 @@ struct _Eina_Future_Desc {
  * @return A promise or @c NULL on error.
  * @see eina_future_cancel()
  * @see eina_future_new()
+ * @see eina_promise_continue_new()
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
  * @see eina_promise_data_get()
@@ -541,6 +542,72 @@ struct _Eina_Future_Desc {
  * @{
  */
 EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Creates a new promise from a dead_future.
+ *
+ * This function creates a new promise from a future currently being resolved which can be
+ * used to create a #Eina_Value with eina_promise_as_value(). Every time a promise is
+ * created a #Eina_Promise_Cancel_Cb must be provided which is used to free resources
+ * that were created.
+ *
+ * A promise may be canceled directly by calling
+ * @c eina_future_cancel(eina_future_new(eina_promise_new(...)))
+ * that is, cancelling any future that is chained to receive the results.
+ *
+ * However promises can be canceled indirectly by other entities.
+ * These other entities will call `eina_future_cancel()` themselves,
+ * however you may not be aware of that. Some common sources
+ * of indirect cancellations:
+ *
+ * @li A subsystem was shutdown, cancelling all pending futures (ie: ecore_shutdown())
+ *
+ * @li An EO object was linked to the promise or future, then if the object dies (last reference
+ * is gone), then the pending promises and futures will be canceled.
+ *
+ * @li Some other entity (library provider or library user) chained and canceled his future,
+ * which will result in your future being canceled.
+ *
+ * Since a promise may be canceled indirectaly (by code sections that goes beyond your scope)
+ * you should always provide a cancel callback, even if you think you'll not need it.
+ *
+ * Here's a typical example:
+ *
+ * @code
+ *
+ * Eina_Value
+ * _future_resolve(void *data, const Eina_Value v, const Eina_Future *dead_future)
+ * {
+ *    Eina_Promise *p;
+ *    p = eina_promise_continue_new(dead_future, _promise_cancel, NULL);
+ *    return eina_promise_as_value(p);
+ * }
+ * @endcode
+ *
+ * If you already have a value and want to create a future that will
+ * resolve to it directly use the eina_future_resolved(), it has the
+ * same effect as creating a promise and immediately resolving it.
+ *
+ * @note This function is to be used solely inside of a future resolve callback with
+ * the Eina_Value being returned from it.
+ *
+ * @param dead_future The future being resolved to get a scheduler from.
+ * @param cancel_cb A callback used to inform that the promise was canceled. Use
+ * this callback to @c free @p data. @p cancel_cb must not be @c NULL !
+ * @param data Data to @p cancel_cb.
+ * @return A promise or @c NULL on error.
+ * @see eina_future_cancel()
+ * @see eina_future_new()
+ * @see eina_promise_new()
+ * @see eina_promise_resolve()
+ * @see eina_promise_reject()
+ * @see eina_promise_data_get()
+ * @see eina_promise_as_value()
+ * @see #Eina_Future_Scheduler
+ * @see #Eina_Future_Scheduler_Entry
+ * @see #Eina_Future_Scheduler_Cb
+ */
+EAPI Eina_Promise *eina_promise_continue_new(const Eina_Future *dead_future, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Gets the data attached to the promise.
