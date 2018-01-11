@@ -533,12 +533,9 @@ static void
 _efl_loop_timeout_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
+
    if (d->timer)
-     {
-        efl_del(d->timer);
-        d->timer = NULL;
-     }
-   efl_loop_promise_simple_data_mp_free(d);
+     efl_del(d->timer);
 }
 
 static void
@@ -548,7 +545,6 @@ _efl_loop_timeout_done(void *data, const Efl_Event *event)
 
    eina_promise_resolve(d->promise, EINA_VALUE_EMPTY);
    d->timer = NULL;
-   efl_loop_promise_simple_data_mp_free(d);
    efl_del(event->object);
 }
 
@@ -556,7 +552,9 @@ static void
 _efl_loop_timeout_del(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Loop_Promise_Simple_Data *d = data;
+
    d->timer = NULL;
+   efl_loop_promise_simple_data_mp_free(d);
 }
 
 static Eina_Future *
