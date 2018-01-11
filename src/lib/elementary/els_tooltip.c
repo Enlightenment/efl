@@ -426,6 +426,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x = 0.0, rel_y = 0.0;
    Eina_Bool inside_eventarea;
+   Eina_Bool new_content = EINA_FALSE;
 
    _elm_tooltip_reconfigure_job_stop(tt);
 
@@ -520,8 +521,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
           }
         edje_object_part_swallow
           (tt->tooltip, "elm.swallow.content", tt->content);
-        evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-           _elm_tooltip_content_changed_hints_cb, tt);
+        new_content = EINA_TRUE;
         evas_object_event_callback_add(tt->content, EVAS_CALLBACK_DEL,
            _elm_tooltip_content_del_cb, tt);
 
@@ -530,6 +530,16 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    TTDBG("*******RECALC\n");
    evas_object_size_hint_combined_min_get(tt->content, &ominw, &ominh);
+   /* force size hints to update */
+   if ((!ominw) || (!ominh))
+     {
+        evas_object_smart_need_recalculate_set(tt->content, 1);
+        evas_object_smart_calculate(tt->content);
+        evas_object_size_hint_combined_min_get(tt->content, &ominw, &ominh);
+     }
+   if (new_content)
+     evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+           _elm_tooltip_content_changed_hints_cb, tt);
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
    if (eminw && (ominw < eminw)) ominw = eminw;
