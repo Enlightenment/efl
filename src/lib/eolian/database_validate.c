@@ -225,7 +225,6 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
                   }
                 return _validate(&tp->base);
              }
-           Eolian_Typedecl *tpp;
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->full_name);
            if (id)
@@ -253,21 +252,22 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
                 return _validate(&tp->base);
              }
            /* user defined */
-           tpp = (Eolian_Typedecl *)eolian_type_typedecl_get(src, tp);
-           if (!tpp)
+           tp->tdecl = (Eolian_Typedecl *)eolian_type_typedecl_get(src, tp);
+           if (!tp->tdecl)
              {
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
                 return _obj_error(&tp->base, buf);
              }
-           if (!_validate_typedecl(src, tpp))
+           if (!_validate_typedecl(src, tp->tdecl))
              return EINA_FALSE;
-           if (tpp->freefunc && !tp->freefunc)
-             tp->freefunc = eina_stringshare_ref(tpp->freefunc);
+           if (tp->tdecl->freefunc && !tp->freefunc)
+             tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
            return _validate(&tp->base);
         }
       case EOLIAN_TYPE_CLASS:
         {
-           if (!eolian_type_class_get(src, tp))
+           tp->klass = (Eolian_Class *)eolian_type_class_get(src, tp);
+           if (!tp->klass)
              {
                 snprintf(buf, sizeof(buf), "undefined class %s "
                          "(likely wrong namespacing)", tp->full_name);
