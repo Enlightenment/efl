@@ -35,8 +35,8 @@ struct converting_argument_generator
      attributes::qualifier_def qualifier = param.type.original_type.visit(attributes::get_qualifier_visitor{});
      if (param.type.original_type.visit(this->is_function_ptr))
        {
-          // FIXME: This supports only one function pointer.
-          return as_generator("fw->data_to_c(), fw->func_to_c(), fw->free_to_c()")
+          return as_generator("fw_" << param.param_name << "->data_to_c(), fw_" << param.param_name << "->func_to_c(), fw_"
+                              << param.param_name << "->free_to_c()")
                 .generate(sink, param, ctx);
        }
      else

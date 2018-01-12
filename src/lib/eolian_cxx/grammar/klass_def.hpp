@@ -703,7 +703,6 @@ struct function_def
 
   std::vector<std::string> opening_statements() const
   {
-     // FIXME: Supports only one function pointer
      std::vector<std::string> statements;
      char template_typename = 'F';
      for (auto const& param : this->parameters)
@@ -714,7 +713,7 @@ struct function_def
             {
                char typenam[2] = { 0, };
                typenam[0] = template_typename++;
-               std::string statement = "auto fw = new ::efl::eolian::function_wrapper<";
+               std::string statement = "auto fw_" + param.param_name + " = new ::efl::eolian::function_wrapper<";
                statement += param.type.c_type + ", " + typenam + ">(" + param.param_name + ");";
                statements.push_back(statement);
             }
