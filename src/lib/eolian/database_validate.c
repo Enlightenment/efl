@@ -64,6 +64,9 @@ static Eina_Bool _validate_expr(const Eolian_Unit *src,
                                 Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
+static Eina_Bool _validate_function(const Eolian_Unit *src,
+                                    Eolian_Function *func,
+                                    Eina_Hash *nhash);
 
 typedef struct _Cb_Ret
 {
@@ -145,7 +148,8 @@ _validate_typedecl(const Eolian_Unit *src, Eolian_Typedecl *tp)
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
-        // FIXME validate functions here
+        if (!_validate_function(src, tp->function_pointer, NULL))
+          return EINA_FALSE;
         return _validate(&tp->base);
       default:
         return EINA_FALSE;
@@ -172,7 +176,6 @@ static Eina_Bool
 _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
 {
    char buf[256];
-
    if (tp->owned && !database_type_is_ownable(src, tp))
      {
         snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->full_name);
@@ -326,7 +329,7 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
         else _duplicates_warn = atoi(s);
      }
 
-   const Eolian_Function *ofunc = eina_hash_find(nhash, func->name);
+   const Eolian_Function *ofunc = nhash ? eina_hash_find(nhash, func->name) : NULL;
    if (EINA_UNLIKELY(ofunc && (_duplicates_warn > 0)))
      {
         snprintf(buf, sizeof(buf),
@@ -377,7 +380,7 @@ _validate_function(const Eolian_Unit *src, Eolian_Function *func, Eina_Hash *nha
      return EINA_FALSE;
 
    /* just for now, when dups become errors there will be no need to check */
-   if (!ofunc)
+   if (!ofunc && nhash)
      eina_hash_add(nhash, func->name, func);
 
    return _validate(&func->base);
