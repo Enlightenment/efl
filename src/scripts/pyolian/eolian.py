@@ -1080,11 +1080,10 @@ class Type(EolianBaseObject):  # OK  (4 TODO Unit*)
         c_type = lib.eolian_type_next_type_get(self._obj)
         return Type(c_type) if c_type else None 
 
-    # TODO FIXME STRANGE API (need Eolian_Unit*)
-    #  @cached_property
-    #  def aliased_base(self):
-        #  c_type = lib.eolian_type_aliased_base_get(self._obj)
-        #  return Type(c_type) if c_type else None 
+    @cached_property
+    def aliased_base(self):
+        c_type = lib.eolian_type_aliased_base_get(self._obj)
+        return Type(c_type) if c_type else None
 
     @cached_property
     def class_(self):
@@ -1172,11 +1171,10 @@ class Typedecl(EolianBaseObject):  # OK (2 TODO Unit*)
         c_type = lib.eolian_typedecl_base_type_get(self._obj)
         return Type(c_type) if c_type else None
 
-    # TODO FIX THIS, need Eolian_Unit* param  ???
-    #  @cached_property
-    #  def aliased_base(self):
-        #  c_type = lib.eolian_typedecl_aliased_base_get(self._obj)
-        #  return Type(c_type) if c_type else None
+    @cached_property
+    def aliased_base(self):
+        c_type = lib.eolian_typedecl_aliased_base_get(self._obj)
+        return Type(c_type) if c_type else None
 
     @cached_property
     def documentation(self):

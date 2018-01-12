@@ -282,22 +282,22 @@ eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
 }
 
 EAPI const Eolian_Type *
-eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp)
+eolian_type_aliased_base_get(const Eolian_Type *tp)
 {
    if (!tp || tp->type != EOLIAN_TYPE_REGULAR || tp->is_ptr)
      return tp;
-   const Eolian_Typedecl *btp = database_type_decl_find(unit, tp);
+   const Eolian_Typedecl *btp = eolian_type_typedecl_get(tp);
    if (btp && (btp->type == EOLIAN_TYPEDECL_ALIAS))
-     return eolian_typedecl_aliased_base_get(unit, btp);
+     return eolian_typedecl_aliased_base_get(btp);
    return tp;
 }
 
 EAPI const Eolian_Type *
-eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp)
+eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp)
 {
    if (!tp || tp->type != EOLIAN_TYPEDECL_ALIAS)
      return NULL;
-   return eolian_type_aliased_base_get(unit, tp->base_type);
+   return eolian_type_aliased_base_get(tp->base_type);
 }
 
 EAPI const Eolian_Class *

@@ -496,10 +496,9 @@ lib.eolian_typedecl_file_get.restype = c_char_p
 lib.eolian_typedecl_base_type_get.argtypes = [c_void_p,]
 lib.eolian_typedecl_base_type_get.restype = c_void_p
 
-# TODO FIXME STRANGE API (need Eolian_Unit*)
-# EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
-#  lib.eolian_typedecl_aliased_base_get.argtypes = [c_void_p, c_void_p,]
-#  lib.eolian_typedecl_aliased_base_get.restype = c_void_p
+# EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
+lib.eolian_typedecl_aliased_base_get.argtypes = [c_void_p,]
+lib.eolian_typedecl_aliased_base_get.restype = c_void_p
 
 # EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 lib.eolian_typedecl_is_extern.argtypes = [c_void_p,]
@@ -554,10 +553,9 @@ lib.eolian_type_next_type_get.restype = c_void_p
 lib.eolian_type_typedecl_get.argtypes = [c_void_p,]
 lib.eolian_type_typedecl_get.restype = c_void_p
 
-# TODO FIXME STRANGE API (need Eolian_Unit*)
-# EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp);
-#  lib.eolian_type_aliased_base_get.argtypes = [c_void_p,]
-#  lib.eolian_type_aliased_base_get.restype = c_void_p
+# EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
+lib.eolian_type_aliased_base_get.argtypes = [c_void_p,]
+lib.eolian_type_aliased_base_get.restype = c_void_p
 
 # EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
 lib.eolian_type_class_get.argtypes = [c_void_p,]

@@ -364,7 +364,7 @@ START_TEST(eolian_typedef)
 
    /* Lowest alias base */
    fail_if(!(tdl = eolian_typedecl_alias_get_by_name(unit, "Evas.Coord3")));
-   fail_if(!(type = eolian_typedecl_aliased_base_get(unit, tdl)));
+   fail_if(!(type = eolian_typedecl_aliased_base_get(tdl)));
    fail_if(strcmp(eolian_type_name_get(type), "int"));
 
    /* Complex type */

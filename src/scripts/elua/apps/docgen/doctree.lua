@@ -710,8 +710,7 @@ M.Type = Node:clone {
     end,
 
     typedecl_get = function(self)
-        -- FIXME: unit
-        local v = self.type:typedecl_get(eos:unit_get())
+        local v = self.type:typedecl_get()
         if not v then
             return nil
         end
@@ -719,8 +718,7 @@ M.Type = Node:clone {
     end,
 
     aliased_base_get = function(self)
-        -- FIXME: unit
-        local v = self.type:aliased_base_get(eos:unit_get())
+        local v = self.type:aliased_base_get()
         if not v then
             return nil
         end
@@ -896,8 +894,7 @@ M.Typedecl = Node:clone {
     end,
 
     aliased_base_get = function(self)
-        -- FIXME: unit
-        local v = self.typedecl:aliased_base_get(eos:unit_get())
+        local v = self.typedecl:aliased_base_get()
         if not v then
             return nil
         end

@@ -123,7 +123,7 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
         else WRN("evaluation of default value failed");
      }
    /* default value or fallback */
-   const Eolian_Type *btp = eolian_type_aliased_base_get(src, tp);
+   const Eolian_Type *btp = eolian_type_aliased_base_get(tp);
    if (eolian_type_is_ptr(btp))
      {
         eina_strbuf_append(buf, "NULL");

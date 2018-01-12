@@ -1807,13 +1807,12 @@ EAPI const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp)
  * If the given typedecl is an alias, it returns the result of
  * eolian_type_aliased_base_get on its base type. Otherwise this returns NULL.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type declaration.
  * @return the lowest alias base or the given type.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
+EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Check if a struct or alias type declaration is extern.
@@ -1973,13 +1972,12 @@ EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
  * type actually is while still having convenience. Keep in mind that this stops
  * if the found type is actually a pointer (has a ptr() on it).
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the lowest alias base or the given type.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp);
+EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
