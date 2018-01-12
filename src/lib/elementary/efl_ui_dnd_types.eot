@@ -27,7 +27,7 @@ function Efl.Dnd.Item_Get {
       @in pos: Eina.Position2D; [[The coordinates to get item]]
       @out posret: Eina.Position2D; [[position relative to item (left (-1), middle (0), right (1)]]
    }
-   return: ptr(Eo); [[Object under x,y coordinates or NULL if not found]]
+   return: Efl.Object; [[Object under x,y coordinates or NULL if not found]]
 };
 
 function Efl.Dnd.Drag_Icon_List_Create {
@@ -37,7 +37,7 @@ function Efl.Dnd.Drag_Icon_List_Create {
    params {
       @in obj: Efl.Canvas.Object; [[The container object]]
    }
-   return: ptr(Eina_List);
+   return: list<Efl.Canvas.Object>;
 };
 
 struct Efl.Dnd.Drag_Accept {

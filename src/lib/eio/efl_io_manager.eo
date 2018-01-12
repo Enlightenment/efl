@@ -17,7 +17,7 @@ function EflIoPath {
 function EflIoDirectInfo {
   [[EflIoDirectInfo function]]
   params {
-     @in entries: accessor<Eina.File.Direct.Info>; [[Accessor to an array of info.]]
+     @in entries: accessor<ptr(Eina.File.Direct.Info)>; [[Accessor to an array of info.]]
   }
 };
 
