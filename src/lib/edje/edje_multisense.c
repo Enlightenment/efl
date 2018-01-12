@@ -203,31 +203,43 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
              if (!out)
                {
 
-#ifdef _WIN32
+# ifdef _WIN32
                   out = efl_add(ECORE_AUDIO_OUT_WASAPI_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#else
-#if HAVE_PULSE
+# else
+#  ifdef HAVE_PULSE
                   out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#endif
-#endif
+#  endif
+# endif
                   if (out) outs++;
                }
              if (!out)
                {
-#ifdef _WIN32
-                  ERR("Could not create multisense audio out (wasapi)");
-#else
-#if HAVE_PULSE
-                  ERR("Could not create multisense audio out (pulse)");
-#endif
-#endif
+                  static Eina_Bool complained = EINA_FALSE;
+
+                  if (!complained)
+                    {
+                       complained = EINA_TRUE;
+# ifdef _WIN32
+                       ERR("Could not create multisense audio out (wasapi)");
+# else
+#  ifdef HAVE_PULSE
+                       ERR("Could not create multisense audio out (pulse)");
+#  endif
+# endif
+                    }
                   efl_del(in);
                   return EINA_FALSE;
                }
              ret = ecore_audio_obj_out_input_attach(out, in);
              if (!ret)
                {
-                  ERR("Could not attach input");
+                  static Eina_Bool complained = EINA_FALSE;
+
+                  if (!complained)
+                    {
+                       complained = EINA_TRUE;
+                       ERR("Could not attach input");
+                    }
                   efl_del(in);
                   return EINA_FALSE;
                }
@@ -279,13 +291,13 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
 
              if (!out)
                {
-#ifdef _WIN32
+# ifdef _WIN32
                   out = efl_add(ECORE_AUDIO_OUT_WASAPI_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_WASAPI_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#else
-#if HAVE_PULSE
+# else
+#  ifdef HAVE_PULSE
                   out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL, efl_event_callback_add(efl_added, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, _out_fail, NULL));
-#endif
-#endif
+#  endif
+# endif
                   if (out) outs++;
                }
 
