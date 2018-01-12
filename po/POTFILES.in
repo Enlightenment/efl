@@ -111,7 +111,6 @@ src/lib/elementary/elm_calendar.c
 src/lib/elementary/efl_ui_calendar.c
 src/lib/elementary/efl_ui_check.c
 src/lib/elementary/elm_clock.c
-src/lib/elementary/elm_cnp.c
 src/lib/elementary/elm_colorselector.c
 src/lib/elementary/elm_config.c
 src/lib/elementary/elm_conform.c
