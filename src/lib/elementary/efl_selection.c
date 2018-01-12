@@ -107,7 +107,8 @@ _wl_window_get(const Evas_Object *obj)
    return win;
 }
 
-int _wl_default_seat_id_get(Evas_Object *obj)
+int
+_wl_default_seat_id_get(Evas_Object *obj)
 {
    Ecore_Wl2_Window *win = _wl_window_get(obj);
    Eo *seat, *parent2, *ewin;
@@ -211,7 +212,7 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
    if (!wdata) return EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   seatid = _wl_default_seat_id_get((Evas_Object *)obj);
 #endif
    wdata->udata = udata;
    wdata->datacb = datacb;
