@@ -97,11 +97,7 @@ ecore_audio_pulse_lib_load(void)
 {
    if (ecore_audio_pulse_lib)
      {
-        if (!ecore_audio_pulse_lib->mod)
-          {
-             ERR("Cannot find libpulse at runtime!");
-             return EINA_FALSE;
-          }
+        if (!ecore_audio_pulse_lib->mod) return EINA_FALSE;
         return EINA_TRUE;
      }
 
@@ -167,6 +163,7 @@ err:
      {
         eina_module_free(ecore_audio_pulse_lib->mod);
         ecore_audio_pulse_lib->mod = NULL;
+        ERR("Cannot find libpulse at runtime!");
      }
    return EINA_FALSE;
 }
@@ -190,11 +187,7 @@ ecore_audio_sndfile_lib_load(void)
 {
    if (ecore_audio_sndfile_lib)
      {
-        if (!ecore_audio_sndfile_lib->mod)
-          {
-             ERR("Cannot find libsndfile at runtime!");
-             return EINA_FALSE;
-          }
+        if (!ecore_audio_sndfile_lib->mod) return EINA_FALSE;
         return EINA_TRUE;
      }
 
@@ -243,6 +236,7 @@ err:
      {
         eina_module_free(ecore_audio_sndfile_lib->mod);
         ecore_audio_sndfile_lib->mod = NULL;
+        ERR("Cannot find libsndfile at runtime!");
      }
    return EINA_FALSE;
 }
