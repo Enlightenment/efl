@@ -266,7 +266,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
         }
       case EOLIAN_TYPE_CLASS:
         {
-           tp->klass = (Eolian_Class *)eolian_type_class_get(src, tp);
+           tp->klass = (Eolian_Class *)eolian_class_get_by_name(src, tp->full_name);
            if (!tp->klass)
              {
                 snprintf(buf, sizeof(buf), "undefined class %s "

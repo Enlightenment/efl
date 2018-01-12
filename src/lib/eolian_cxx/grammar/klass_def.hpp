@@ -385,7 +385,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
        break;
      case EOLIAN_TYPE_CLASS:
        {
-          Eolian_Class const* klass = eolian_type_class_get(unit, eolian_type);
+          Eolian_Class const* klass = eolian_type_class_get(eolian_type);
           original_type = klass_name(klass, {qualifiers(eolian_type), {}});
        }
        break;

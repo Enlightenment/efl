@@ -1087,11 +1087,10 @@ class Type(EolianBaseObject):  # OK  (4 TODO Unit*)
         #  c_type = lib.eolian_type_aliased_base_get(self._obj)
         #  return Type(c_type) if c_type else None 
 
-    # TODO FIXME STRANGE API (need Eolian_Unit*)
-    #  @cached_property
-    #  def class_(self):
-        #  c_cls = lib.eolian_type_class_get(self._obj)
-        #  return Class(c_cls) if c_cls else None
+    @cached_property
+    def class_(self):
+        c_cls = lib.eolian_type_class_get(self._obj)
+        return Class(c_cls) if c_cls else None
 
     @cached_property
     def file(self):

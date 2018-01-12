@@ -560,10 +560,9 @@ lib.eolian_type_next_type_get.restype = c_void_p
 #  lib.eolian_type_aliased_base_get.argtypes = [c_void_p,]
 #  lib.eolian_type_aliased_base_get.restype = c_void_p
 
-# TODO FIXME STRANGE API (need Eolian_Unit*)
-# EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Unit *unit, const Eolian_Type *tp);
-#  lib.eolian_type_class_get.argtypes = [c_void_p,]
-#  lib.eolian_type_class_get.restype = c_void_p
+# EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+lib.eolian_type_class_get.argtypes = [c_void_p,]
+lib.eolian_type_class_get.restype = c_void_p
 
 # EAPI Eina_Bool eolian_type_is_owned(const Eolian_Type *tp);
 lib.eolian_type_is_owned.argtypes = [c_void_p,]

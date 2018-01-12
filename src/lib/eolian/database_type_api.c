@@ -312,12 +312,12 @@ eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl 
 }
 
 EAPI const Eolian_Class *
-eolian_type_class_get(const Eolian_Unit *unit, const Eolian_Type *tp)
+eolian_type_class_get(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    if (eolian_type_type_get(tp) != EOLIAN_TYPE_CLASS)
      return NULL;
-   return eolian_class_get_by_name(unit, tp->full_name);
+   return tp->klass;
 }
 
 EAPI Eina_Bool

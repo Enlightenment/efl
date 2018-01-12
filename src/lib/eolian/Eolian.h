@@ -1985,13 +1985,12 @@ EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Unit *unit, co
 /*
  * @brief Get the class associated with an EOLIAN_TYPE_CLASS type.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the class or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Unit *unit, const Eolian_Type *tp);
+EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
 
 /*
  * @brief Get whether the given type is owned.
