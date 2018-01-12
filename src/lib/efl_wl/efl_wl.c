@@ -2178,9 +2178,9 @@ comp_surface_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
      axis = WL_POINTER_AXIS_HORIZONTAL_SCROLL;
 
    if (ev->z < 0)
-     dir = -wl_fixed_from_int(abs(ev->z));
+     dir = -wl_fixed_from_int(abs(10 * ev->z));
    else
-     dir = wl_fixed_from_int(ev->z);
+     dir = wl_fixed_from_int(10 * ev->z);
 
    if (cs->dead) return;
    s = seat_find(data, ev->dev);
