@@ -522,7 +522,7 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
                      const Eolian_Type *etp = eolian_typedecl_base_type_get(etpd);
                      if (!etp || etp->type != EOLIAN_TYPE_REGULAR)
                        break;
-                     etpd = eolian_type_typedecl_get(unit, etp);
+                     etpd = database_type_decl_find(unit, etp);
                   }
 
                 if (!etpd) etpd = eolian_typedecl_enum_get_by_name(unit, fulln);

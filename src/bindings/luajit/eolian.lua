@@ -399,7 +399,7 @@ ffi.cdef [[
     const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_type_next_type_get(const Eolian_Type *tp);
     const Eolian_Type *eolian_typedecl_base_type_get(const Eolian_Typedecl *tp);
-    const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Unit *unit, const Eolian_Type *tp);
+    const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
 
     const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Unit *unit, const Eolian_Type *tp);
     const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
@@ -841,8 +841,8 @@ M.Type = ffi.metatype("Eolian_Type", {
             return v
         end,
 
-        typedecl_get = function(self, unit)
-            local v = eolian.eolian_type_typedecl_get(unit, self)
+        typedecl_get = function(self)
+            local v = eolian.eolian_type_typedecl_get(self)
             if v == nil then return nil end
             return v
         end,

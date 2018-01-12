@@ -1956,13 +1956,12 @@ EAPI const Eolian_Type *eolian_type_next_type_get(const Eolian_Type *tp);
  *
  * This tries to look up alias, struct and enum in that order.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @return the pointed to type decalration or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Unit *unit, const Eolian_Type *tp);
+EAPI const Eolian_Typedecl *eolian_type_typedecl_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the lowest base type of an alias stack.

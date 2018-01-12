@@ -16,7 +16,7 @@ _gen_param(const Eolian_Unit *src, Eina_Strbuf *buf,
            Eolian_Function_Parameter *pr, Eolian_Function_Type ftype, int *rpid)
 {
    const Eolian_Type *prt = eolian_parameter_type_get(pr);
-   const Eolian_Typedecl *ptd = eolian_type_typedecl_get(src, prt);
+   const Eolian_Typedecl *ptd = eolian_type_typedecl_get(prt);
    const char *prn = eolian_parameter_name_get(pr);
    Eina_Stringshare *prtn = eolian_type_c_type_get(src, prt, EOLIAN_C_TYPE_PARAM);
 

@@ -252,7 +252,7 @@ _validate_type(const Eolian_Unit *src, Eolian_Type *tp)
                 return _validate(&tp->base);
              }
            /* user defined */
-           tp->tdecl = (Eolian_Typedecl *)eolian_type_typedecl_get(src, tp);
+           tp->tdecl = database_type_decl_find(src, tp);
            if (!tp->tdecl)
              {
                 snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);

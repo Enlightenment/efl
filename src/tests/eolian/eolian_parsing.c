@@ -724,7 +724,7 @@ START_TEST(eolian_struct)
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "Named"));
    fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_REGULAR);
-   fail_if(eolian_typedecl_type_get(eolian_type_typedecl_get(unit, ftype))
+   fail_if(eolian_typedecl_type_get(eolian_type_typedecl_get(ftype))
        != EOLIAN_TYPEDECL_STRUCT);
 
    /* opaque struct */
@@ -736,7 +736,7 @@ START_TEST(eolian_struct)
    fail_if(!(type = eolian_function_return_type_get(func, EOLIAN_METHOD)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
    fail_if(!eolian_type_is_ptr(type));
-   fail_if(!(tdl = eolian_type_typedecl_get(unit, type)));
+   fail_if(!(tdl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
 
    eolian_free(eos);
@@ -1536,7 +1536,7 @@ START_TEST(eolian_function_types)
    fail_if(eolian_type_is_owned(type));
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(strcmp(type_name, "VoidFunc"));
-   fail_if(!(arg_decl = eolian_type_typedecl_get(unit, type)));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
@@ -1547,7 +1547,7 @@ START_TEST(eolian_function_types)
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(strcmp(type_name, "SimpleFunc"));
-   fail_if(!(arg_decl = eolian_type_typedecl_get(unit, type)));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(eina_iterator_next(iter, &dummy));
@@ -1589,7 +1589,7 @@ START_TEST(eolian_function_as_arguments)
    fail_if(eolian_type_is_owned(type));
    fail_if(!(type_name = eolian_type_name_get(type)));
    fail_if(strcmp(type_name, "SimpleFunc"));
-   fail_if(!(arg_decl = eolian_type_typedecl_get(unit, type)));
+   fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(arg_decl) != EOLIAN_TYPEDECL_FUNCTION_POINTER);
 
    fail_if(eina_iterator_next(iter, &dummy));

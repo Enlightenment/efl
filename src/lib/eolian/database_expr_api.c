@@ -34,7 +34,7 @@ _eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)
              {
-                const Eolian_Typedecl *base = eolian_type_typedecl_get(unit, type);
+                const Eolian_Typedecl *base = database_type_decl_find(unit, type);
                 if (!base)
                   return err;
                 if (base->type == EOLIAN_TYPEDECL_ALIAS)

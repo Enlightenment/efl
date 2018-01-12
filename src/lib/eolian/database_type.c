@@ -79,7 +79,7 @@ database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp)
         const char *ct = eo_lexer_get_c_type(kw);
         if (!ct)
           {
-             const Eolian_Typedecl *tpp = eolian_type_typedecl_get(unit, tp);
+             const Eolian_Typedecl *tpp = database_type_decl_find(unit, tp);
              if (!tpp)
                return EINA_FALSE;
              if (tpp->type == EOLIAN_TYPEDECL_FUNCTION_POINTER)
@@ -268,4 +268,24 @@ database_typedecl_to_str(const Eolian_Unit *src, const Eolian_Typedecl *tp,
       default:
         break;
      }
+}
+
+Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_Type *tp)
+{
+   if (tp->type != EOLIAN_TYPE_REGULAR)
+     return NULL;
+   if (tp->tdecl)
+     return tp->tdecl;
+   /* try looking up if it belongs to a struct, enum or an alias... otherwise
+    * return NULL, but first check for builtins
+    */
+   int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
+   if (!kw || kw < KW_byte || kw >= KW_true)
+     {
+        Eolian_Declaration *decl = eina_hash_find(unit->state->unit.decls, tp->full_name);
+        if (decl && decl->type != EOLIAN_DECL_CLASS
+                 && decl->type != EOLIAN_DECL_VAR)
+          return decl->data;
+     }
+   return NULL;
 }

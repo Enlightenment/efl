@@ -1065,11 +1065,10 @@ class Type(EolianBaseObject):  # OK  (4 TODO Unit*)
         #  return _str_to_py(lib.eolian_type_c_type_get(self._obj))
         return 'FIXME'
 
-    # TODO FIXME STRANGE API (need Eolian_Unit*)
-    #  @cached_property
-    #  def typedecl(self):
-        #  c_tdecl = lib.eolian_type_typedecl_get(self._obj)
-        #  return Typedecl(c_tdecl) if c_tdecl else None
+    @cached_property
+    def typedecl(self):
+        c_tdecl = lib.eolian_type_typedecl_get(self._obj)
+        return Typedecl(c_tdecl) if c_tdecl else None
 
     @cached_property
     def base_type(self):

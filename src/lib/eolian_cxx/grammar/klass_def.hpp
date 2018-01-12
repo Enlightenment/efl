@@ -353,7 +353,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
        if (!stp)
          {
            bool is_undefined = false;
-           Eolian_Typedecl const* decl = eolian_type_typedecl_get(unit, eolian_type);
+           Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
            typedecl_type type_type = (decl ? typedecl_type_get(decl) : typedecl_type::unknown);
            if(decl && eolian_typedecl_type_get(decl) == EOLIAN_TYPEDECL_ALIAS)
              {
