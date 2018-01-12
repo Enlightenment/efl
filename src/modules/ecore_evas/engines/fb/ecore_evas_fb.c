@@ -4,7 +4,6 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
-#include <dirent.h>
 
 #include <Eina.h>
 #include <Ecore.h>

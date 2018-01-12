@@ -8,7 +8,7 @@
  * @defgroup Evil_Pwd_Group Pwd.h functions
  * @ingroup Evil
  *
- * This header provides functions ported from Unix in dirent.h.
+ * This header provides functions ported from Unix in pwd.h.
  *
  * @{
  */
