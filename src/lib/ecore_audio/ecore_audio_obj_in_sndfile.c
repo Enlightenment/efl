@@ -203,7 +203,6 @@ _ecore_audio_in_sndfile_efl_object_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile
 {
   Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
 
-  if (!ESF_LOAD()) return;
   if (obj->handle)
     ESF_CALL(sf_close)(obj->handle);
 
