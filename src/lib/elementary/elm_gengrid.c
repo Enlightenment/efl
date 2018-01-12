@@ -991,6 +991,7 @@ _item_text_realize(Elm_Gen_Item *it,
    const Eina_List *l;
    const char *key;
    char *s;
+   char buf[256];
 
    if (!it->itc->func.text_get) return;
 
@@ -1007,10 +1008,16 @@ _item_text_realize(Elm_Gen_Item *it,
           {
              edje_object_part_text_escaped_set(target, key, s);
              free(s);
+
+             snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
+             edje_object_signal_emit(target, buf, "elm");
           }
         else
           {
              edje_object_part_text_set(target, key, "");
+
+             snprintf(buf, sizeof(buf), "elm,state,%s,hidden", key);
+             edje_object_signal_emit(target, buf, "elm");
           }
         if (_elm_config->atspi_mode)
           efl_access_name_changed_signal_emit(EO_OBJ(it));
@@ -1027,6 +1034,7 @@ _item_content_realize(Elm_Gen_Item *it,
    Evas_Object *content;
    Eina_List *source;
    const char *key;
+   char buf[256];
    ELM_GENGRID_DATA_GET(it->base->widget, sd);
 
    if (!parts)
@@ -1055,7 +1063,12 @@ _item_content_realize(Elm_Gen_Item *it,
              if (it->itc->func.content_get)
                content = it->itc->func.content_get
                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-             if (!content) goto out;
+             if (!content)
+              {
+                 snprintf(buf, sizeof(buf), "elm,state,%s,hidden", key);
+                 edje_object_signal_emit(target, buf, "elm");
+                 goto out;
+              }
           }
         eina_hash_add(sd->content_item_map, &content, it->base->eo_obj);
         *contents = eina_list_append(*contents, content);
@@ -1063,9 +1076,16 @@ _item_content_realize(Elm_Gen_Item *it,
           {
              ERR("%s (%p) can not be swallowed into %s",
                  evas_object_type_get(content), content, key);
+
+             snprintf(buf, sizeof(buf), "elm,state,%s,hidden", key);
+             edje_object_signal_emit(target, buf, "elm");
              evas_object_del(content);
              goto out;
           }
+
+        snprintf(buf, sizeof(buf), "elm,state,%s,visible", key);
+        edje_object_signal_emit(target, buf, "elm");
+
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           elm_widget_disabled_set(content, EINA_TRUE);
 
