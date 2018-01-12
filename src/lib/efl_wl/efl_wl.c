@@ -3787,7 +3787,11 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
         eina_tiler_clear(cs->pending.input);
         evas_object_pass_events_set(cs->obj, 1);
      }
-   if (s->ptr.cursor.surface) s->ptr.cursor.surface->cursor = 0;
+   if (s->ptr.cursor.surface)
+     {
+        s->ptr.cursor.surface->cursor = 0;
+        s->ptr.cursor.surface->role = NULL;
+     }
 
    if (s->ptr.in)
      {
