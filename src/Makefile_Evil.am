@@ -21,7 +21,6 @@ lib/evil/evil_string.h \
 lib/evil/evil_time.h \
 lib/evil/evil_unistd.h \
 lib/evil/evil_util.h \
-lib/evil/dirent.h \
 lib/evil/fnmatch.h \
 lib/evil/pwd.h
 
@@ -30,7 +29,6 @@ dist_evilmmanheaders_DATA = \
 lib/evil/sys/mman.h
 
 lib_evil_libevil_la_SOURCES = \
-lib/evil/evil_dirent.c \
 lib/evil/evil_dlfcn.c \
 lib/evil/evil_fcntl.c \
 lib/evil/evil_fnmatch.c \
