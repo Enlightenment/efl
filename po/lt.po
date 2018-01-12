@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#: src/lib/elementary/elm_config.c:4086
+#: src/lib/elementary/elm_config.c:4092
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2017-12-20 00:20+0900\n"
+"POT-Creation-Date: 2018-01-12 21:52+0900\n"
 "PO-Revision-Date: 2014-02-21 22:38+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian <lt@li.org>\n"
@@ -261,7 +261,7 @@ msgid "Cancel"
 msgstr "Atsisakyti"
 
 #: src/lib/elementary/elc_hoversel.c:436 src/lib/elementary/efl_ui_button.c:263
-#: src/lib/elementary/efl_ui_check.c:197 src/lib/elementary/elm_gengrid.c:1483
+#: src/lib/elementary/efl_ui_check.c:197 src/lib/elementary/elm_gengrid.c:1503
 #: src/lib/elementary/elm_genlist.c:1750 src/lib/elementary/elm_list.c:2157
 #: src/lib/elementary/efl_ui_radio.c:198
 #: src/lib/elementary/elm_segment_control.c:529
@@ -437,7 +437,7 @@ msgstr ""
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4109
+#: src/lib/elementary/elm_config.c:4115
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -469,7 +469,7 @@ msgstr "Pasirinkti"
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elementary/elm_gengrid.c:1513
+#: src/lib/elementary/elm_gengrid.c:1533
 msgid "Gengrid Item"
 msgstr ""
 
