@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <immintrin.h>
 #include "eo_ptr_indirection.h"
 
 extern Eina_Thread _efl_object_main_thread;
@@ -95,7 +96,24 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *restrict func_name, const ch
       &&do_domain_thread,
       &&do_domain_other,
    };
-   const unsigned int domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+
+   /* DOMAIN, GENERATION, OBJ_TAG, ENTRY */
+   const __m256i src = _mm256_set_epi64x(obj_id, obj_id, obj_id, obj_id);
+   const __m256i shift = _mm256_set_epi64x(SHIFT_DOMAIN, 0, 0, SHIFT_ENTRY_ID);
+   const __m256i masks = _mm256_set_epi64x(MASK_DOMAIN, MASK_GENERATIONS, MASK_OBJ_TAG, MASK_ENTRY_ID);
+
+   const __m256i shifted = _mm256_srav_epi32(src, shift);
+   const __m256i result = _mm256_and_si256(shifted, masks);
+
+   const int64_t domain = _mm256_extract_epi64(result, 3);
+   const int64_t generation = _mm256_extract_epi64(result, 2);
+   const int64_t tag_bit = _mm256_extract_epi64(result, 1);
+   const int64_t entry_id = _mm256_extract_epi64(result, 0);
+
+//   printf("===> dom=%lli gen=0x%llx tag=0x%llx entry=%lli\n", domain, generation, tag_bit, entry_id);
+
+
+//   const unsigned int domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    goto *jump[domain];
 
 do_domain_main: EINA_HOT
@@ -105,11 +123,11 @@ do_domain_main: EINA_HOT
           return _eo_main_id_table.cache.object;
 
         /* XXX This could definitely be done in one go with vectorization */
-        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        const unsigned int generation = obj_id & MASK_GENERATIONS;
+ //       const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+ //       const unsigned int generation = obj_id & MASK_GENERATIONS;
 
-        // get tag bit to check later down below - pipelining
-        const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
+ //       // get tag bit to check later down below - pipelining
+ //       const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (EINA_UNLIKELY(!tag_bit ||
                  (entry_id >= _eo_main_id_table.count)))
           goto main_err;
@@ -146,11 +164,11 @@ do_domain_other: EINA_COLD
         if (obj_id == table->cache.id)
            return table->cache.object;
 
-        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        const unsigned int generation = obj_id & MASK_GENERATIONS;
+ //       const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+ //       const unsigned int generation = obj_id & MASK_GENERATIONS;
 
-        // get tag bit to check later down below - pipelining
-        const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
+ //       // get tag bit to check later down below - pipelining
+ //       const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (EINA_UNLIKELY(!tag_bit ||
                           (entry_id >= table->count))) goto err;
 
@@ -183,11 +201,11 @@ do_domain_shared: EINA_COLD
         // by EO_OBJ_DONE() to release
           return table->cache.object;
 
-        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        const unsigned int generation = obj_id & MASK_GENERATIONS;
+ //       const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+ //       const unsigned int generation = obj_id & MASK_GENERATIONS;
 
-        // get tag bit to check later down below - pipelining
-        const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
+ //       // get tag bit to check later down below - pipelining
+ //       const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
         if (EINA_UNLIKELY((!tag_bit ||
                            entry_id >= table->count))) goto err_shared;
 

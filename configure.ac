@@ -550,6 +550,7 @@ EFLALL_CFLAGS="${EFLALL_CFLAGS}"
 ## CPU architecture specific assembly
 
 build_cpu_mmx="no"
+build_cpu_avx2="no"
 build_cpu_sse3="no"
 build_cpu_altivec="no"
 build_cpu_neon="no"
@@ -566,6 +567,7 @@ AC_ARG_ENABLE([neon],
    ])
 
 SSE3_CFLAGS=""
+AVX2_CFLAGS=""
 ALTIVEC_CFLAGS=""
 NEON_CFLAGS=""
 
@@ -581,10 +583,23 @@ case $host_cpu in
        [build_cpu_sse3="no"])
     AC_MSG_CHECKING([whether to build SSE3 code])
     AC_MSG_RESULT([${build_cpu_sse3}])
-
     if test "x$build_cpu_sse3" = "xyes" ; then
        SSE3_CFLAGS="-msse3"
     fi
+
+
+    AC_CHECK_HEADER([avxintrin.h],
+       [
+        AC_DEFINE(BUILD_AVX2, 1, [Build AVX2 Code])
+        build_cpu_avx2="yes"
+       ],
+       [build_cpu_avx2="no"])
+    AC_MSG_CHECKING([whether to build AVX2 code])
+    AC_MSG_RESULT([${build_cpu_avx2}])
+
+#    if test "x$build_cpu_avx2" = "xyes" ; then
+       AVX2_CFLAGS="-mavx2"
+ #   fi
     ;;
   *power* | *ppc*)
     build_cpu_altivec="yes"
@@ -665,6 +680,7 @@ esac
 
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
+AC_SUBST([AVX2_CFLAGS])
 AC_SUBST([NEON_CFLAGS])
 
 #### Checks for linker characteristics

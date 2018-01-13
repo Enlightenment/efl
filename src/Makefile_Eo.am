@@ -37,6 +37,7 @@ lib/eo/efl_future.c
 lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 @EO_CFLAGS@ \
+@AVX2_CFLAGS@ \
 @VALGRIND_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
 lib_eo_libeo_la_DEPENDENCIES = @EO_INTERNAL_LIBS@
