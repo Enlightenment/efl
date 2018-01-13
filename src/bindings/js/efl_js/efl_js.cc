@@ -7,14 +7,26 @@
 #include <Efl.h>
 #include <Efl_Config.h>
 #include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Eina.hh>
+#include <Eo.h>
+#include <Ecore_Con.h>
+#include <Ecore_Audio.h>
+#include <Evas.h>
+#include <Edje.h>
+#include <Ecore_Con_Eet.h>
+#include <Emotion.h>
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+#include <Elementary.h>
+extern "C" {
+#include <elm_widget.h>
+}
+
 #include <Eina_Js.hh>
 #include <Ecore_Js.hh>
 #include <Eio_Js.hh>
 #include <Eldbus_Js.hh>
 #include <Ethumb_Js.hh>
-#include <Elementary.h>
+
+#include <eo_js_list.hh>
 
 #include <iostream>
 
@@ -36,22 +48,142 @@
 # endif
 #endif /* ! _WIN32 */
 
+// include registrations
+#include <eo_js_namespace_tree.hh>
+
+struct object_registration_win
+{
+  void operator()(v8::Handle<v8::Object>, v8::Isolate*) const
+  {
+    std::cout << "called " << __func__ << std::endl;
+  }
+};
+
+
+struct object_registration_abc
+{
+  void operator()(v8::Handle<v8::Object>, v8::Isolate*) const
+  {
+    std::cout << "called " << __func__ << std::endl;
+  }
+};
+
 namespace {
 
+namespace _mpl {
+
+#include <eolian_js_bindings.js.hh>
+
+// struct efl_elementary_classes
+// {
+//   typedef efl::eo::js::list
+//   <efl::eo::js::class_object<efl::eo::js::name<'W', 'i', 'n'>, std::false_type>> type;
+// };
+
+// struct afl_elementary_classes
+// {
+//   typedef efl::eo::js::list
+//   <efl::eo::js::class_object<efl::eo::js::name<'W', 'i', 'n'>, std::false_type>> type;
+// };
+  
+// struct efl_namespaces
+// {
+//   typedef efl::eo::js::list
+//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'l', 'e', 'm', 'e', 'n', 't', 'a', 'r', 'y'>, std::false_type, efl_elementary_classes, efl::eo::js::empty>> type;
+// };
+
+// struct afl_namespaces
+// {
+//   typedef efl::eo::js::list
+//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'l', 'e', 'm', 'e', 'n', 't', 'a', 'r', 'y'>, std::false_type, afl_elementary_classes, efl::eo::js::empty>> type;
+// };
+  
+// struct global_namespaces
+// {
+//   typedef efl::eo::js::list
+//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'f', 'l'>, std::false_type
+//                                  , efl::eo::js::empty, efl_namespaces>
+//    , efl::eo::js::namespace_object<efl::eo::js::name<'A', 'f', 'l'>, std::false_type
+//                                    , efl::eo::js::empty, afl_namespaces>
+//   > type;
+// };
+
+typedef efl::eo::js::namespace_object<efl::eo::js::name<>
+                                      , _classes, _namespaces
+                                      > global_namespace;
+
+}
+
+template <typename T>
+struct is_registered
+{
+  static bool yes;
+  
+};
+
+template <typename T> bool is_registered<T>::yes = false;
+
+template <typename T>
+void namespace_accessor_get(v8::Local<v8::Name> name, v8::PropertyCallbackInfo<v8::Value> const& info);
+  
+struct found_item
+{
+  efl::eina::string_view name;
+  v8::PropertyCallbackInfo<v8::Value> const& info;
+  
+  template <typename Name, typename Classes, typename InnerNamespaces>
+  void operator()(efl::eo::js::namespace_object<Name, Classes, InnerNamespaces> const) const
+  {
+    typedef efl::eo::js::namespace_object<Name, Classes, InnerNamespaces> type;
+    std::cout << "returned namespace item" << std::endl;
+    if(is_registered<type>::yes)
+    {
+      std::cout << "Already registered" << std::endl;
+    }
+    else
+    {
+      std::cout << "Not registered yet" << std::endl;
+      is_registered<type>::yes = true;
+
+      v8::Isolate* isolate = info.GetIsolate();
+      v8::Local<v8::ObjectTemplate> ns_object = ::efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate);
+      ns_object->SetHandler({&namespace_accessor_get<type>});
+      auto obj = ns_object->NewInstance();
+      info.This()->Set(::efl::eina::js::compatibility_new<v8::String>(isolate, name.data())
+                       , obj);
+
+      info.GetReturnValue().Set(obj);
+    }
+  }
+
+  template <typename Name, typename Registration>
+  void operator()(efl::eo::js::class_object<Name, Registration> const) const
+  {
+    //std::cout << "returned class item" << std::endl;
+    // must register
+  }
+};
+
+template <typename T>
 void namespace_accessor_get(v8::Local<v8::Name> name, v8::PropertyCallbackInfo<v8::Value> const& info)
 {
   std::cout << "was it here?" << std::endl;
   v8::Local<v8::String> name_str = name->ToString();
   assert(!!*name_str);
   v8::String::Utf8Value value(info.GetIsolate(), name_str);
-  std::cout << *value << std::endl;
+  std::cout << "searching for " << *value << std::endl;
 
-  if(info.Data()->IsNullOrUndefined())
-    {
-      std::cout << "no value already assigned" << std::endl;
-    }
-  else
-    std::cout << "value already assigned" << std::endl;
+  // if(info.Data()->IsNullOrUndefined())
+  //   {
+  //     std::cout << "no value already assigned" << std::endl;
+  //   }
+  // else
+  //   std::cout << "value already assigned" << std::endl;
+
+  efl::eina::string_view string = *value;
+  
+  efl::eo::js::search_separate(string, T{}
+                              , found_item{string, info});
 }
   
 }
@@ -87,11 +219,13 @@ EAPI void init(v8::Local<v8::Object> exports, v8::Local<v8::Object> module)
           {
             auto evas = ::efl::eina::js::compatibility_new<v8::Object>(isolate);
             ns_obj = ::efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate);
-            ns_obj->SetHandler({&namespace_accessor_get});
+            ns_obj->SetHandler({&namespace_accessor_get<_mpl::global_namespace>});
             auto obj = ns_obj->NewInstance();
             obj->Set(::efl::eina::js::compatibility_new<v8::String>(isolate, "evas"), evas);
             module->Set(::efl::eina::js::compatibility_new<v8::String>(isolate, "exports"), obj);
           }
+
+          // _mpl::foo();
      }
    catch(...)
      {
