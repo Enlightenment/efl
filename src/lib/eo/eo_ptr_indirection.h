@@ -139,12 +139,12 @@ void _eo_pointer_error(const Eo *obj_id, const char *func_name, const char *file
 static inline void _eo_print(Eo_Id_Table_Data *tdata);
 #endif
 
-extern Eina_TLS _eo_table_data;
+//extern Eina_TLS _eo_table_data;
 
-#include "eo_ptr_indirection.x"
+#include "eo_ptr_indirection2.x"
 
-extern Eo_Id_Data *_eo_table_data_shared;
-extern Eo_Id_Table_Data *_eo_table_data_shared_data;
+//extern Eo_Id_Data *_eo_table_data_shared;
+//extern Eo_Id_Table_Data *_eo_table_data_shared_data;
 
 #endif
 

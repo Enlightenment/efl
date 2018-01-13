@@ -8,12 +8,14 @@ extern Eina_Thread _efl_object_main_thread;
 
 //////////////////////////////////////////////////////////////////////////
 
-Eina_TLS          _eo_table_data;
-Eo_Id_Data       *_eo_table_data_shared = NULL;
-Eo_Id_Table_Data *_eo_table_data_shared_data = NULL;
+Eo_Id_Data       *_eo_table_data_shared;
+Eo_Id_Table *_eo_table_data_shared_data;
 
-Eo_Id_Data _eo_main_table_data;
-Eo_Id_Table_Data _eo_table_main_table_data;
+
+Eo_Id_Data _eo_main_id_data;
+Eo_Id_Table _eo_main_id_table;
+
+Eo_Id_Data *_eo_id_data;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +76,7 @@ _eo_obj_pointer_invalid(const Eo_Id obj_id,
                   (data->tables[2]) ? "2" : " ",
                   (data->tables[3]) ? "3" : " ",
                   (unsigned long)(obj_id & MASK_GENERATIONS),
-                  (unsigned long)(obj_id >> SHIFT_ENTRY_ID) & (MAX_ENTRY_ID | MAX_TABLE_ID | MAX_MID_TABLE_ID),
+                  (unsigned long)((obj_id >> SHIFT_ENTRY_ID)) & MASK_ENTRY_ID,
                   (int)(obj_id >> REF_TAG_SHIFT) & 0x1);
    _eo_log_obj_report(obj_id, EINA_LOG_LEVEL_ERR, func_name, file, line);
 }
@@ -98,48 +100,37 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *restrict func_name, const ch
 
 do_domain_main: EINA_HOT
      {
-        __builtin_prefetch(&_eo_table_main_table_data, 0, 3);
-        if (obj_id == _eo_table_main_table_data.cache.id)
-          return _eo_table_main_table_data.cache.object;
+//        __builtin_prefetch(&_eo_main_id_table, 0, 3);
+        if (obj_id == _eo_main_id_table.cache.id)
+          return _eo_main_id_table.cache.object;
 
         /* XXX This could definitely be done in one go with vectorization */
-        const unsigned int mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        const unsigned int table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
-        const unsigned int entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        const Generation_Counter generation = obj_id & MASK_GENERATIONS;
+        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+        const unsigned int generation = obj_id & MASK_GENERATIONS;
 
         // get tag bit to check later down below - pipelining
         const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
-        if (EINA_UNLIKELY(!tag_bit)) goto main_err;
+        if (EINA_UNLIKELY(!tag_bit ||
+                 (entry_id >= _eo_main_id_table.count)))
+          goto main_err;
 
-        __builtin_prefetch(&(_eo_table_main_table_data.eo_ids_tables[mid_table_id]), 0, 3);
 
-        // Check the validity of the entry
-        if (EINA_LIKELY(_eo_table_main_table_data.eo_ids_tables[mid_table_id] != NULL))
+        register const Eo_Id_Entry *const entry = &(_eo_main_id_table.entries[entry_id]);
+//        __builtin_prefetch(entry, 0, 0);
+        if (EINA_LIKELY(entry->data.generation == generation))
           {
-             register const _Eo_Ids_Table *const tab =
-                _eo_table_main_table_data.eo_ids_tables[mid_table_id][table_id];
-
-             if (EINA_LIKELY(tab != NULL))
-               {
-                  register const _Eo_Id_Entry *const entry = &(tab->entries[entry_id]);
-                  if (EINA_LIKELY(entry->active && (entry->generation == generation)))
-                    {
-                       // Cache the result of that lookup
-                       _eo_table_main_table_data.cache.object = entry->ptr;
-                       _eo_table_main_table_data.cache.id = obj_id;
-                       return _eo_table_main_table_data.cache.object;
-                    }
-               }
+             // Cache the result of that lookup
+             _eo_main_id_table.cache.object = entry->data.ptr;
+             _eo_main_id_table.cache.id = obj_id;
+             return _eo_main_id_table.cache.object;
           }
-
 
         goto main_err;
      }
 
 
 main_err: EINA_COLD
-   _eo_obj_pointer_invalid(obj_id, &_eo_main_table_data, domain, func_name, file, line);
+   _eo_obj_pointer_invalid(obj_id, &_eo_main_id_data, domain, func_name, file, line);
    return NULL;
 
 
@@ -147,55 +138,30 @@ main_err: EINA_COLD
 do_domain_thread: EINA_COLD
 do_domain_other: EINA_COLD
      {
-        _Eo_Id_Entry *entry;
-        Generation_Counter generation;
-        unsigned int mid_table_id, table_id, entry_id;
-        Eo_Id tag_bit;
-        Eo_Id_Data *data;
-        Eo_Id_Table_Data *tdata;
+        Eo_Id_Data *const data = _eo_id_data_get();
+        Eo_Id_Table *const table = _eo_id_data_table_get(data, domain);
+        if (EINA_UNLIKELY(!table)) goto err;
 
 
-        // NULL objects will just be sensibly ignored. not worth complaining
-        // every single time.
+        if (obj_id == table->cache.id)
+           return table->cache.object;
 
-        data = _eo_table_data_get();
-        EINA_PREFETCH(&(data->tables[0]));
-        tdata = _eo_table_data_table_get(data, domain);
-        EINA_PREFETCH(&(tdata->cache.id));
-        if (EINA_UNLIKELY(!tdata)) goto err;
-
-
-        if (obj_id == tdata->cache.id)
-           return tdata->cache.object;
-
-        mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
-        table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
-        entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        generation = obj_id & MASK_GENERATIONS;
+        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+        const unsigned int generation = obj_id & MASK_GENERATIONS;
 
         // get tag bit to check later down below - pipelining
-        tag_bit = (obj_id) & MASK_OBJ_TAG;
-        if (EINA_UNLIKELY(!obj_id)) goto err_null;
-        else if (EINA_UNLIKELY(!tag_bit)) goto err;
+        const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
+        if (EINA_UNLIKELY(!tag_bit ||
+                          (entry_id >= table->count))) goto err;
 
-        // Check the validity of the entry
-        if (tdata->eo_ids_tables[mid_table_id])
-        {
-           _Eo_Ids_Table *tab = TABLE_FROM_IDS;
-
-           if (tab)
-           {
-              entry = &(tab->entries[entry_id]);
-              if (entry->active && (entry->generation == generation))
-              {
-                 // Cache the result of that lookup
-                 tdata->cache.object = entry->ptr;
-                 tdata->cache.id = obj_id;
-                 return entry->ptr;
-              }
-           }
-        }
+        register const Eo_Id_Entry *const entry = &(table->entries[entry_id]);
+        if (EINA_LIKELY(entry->data.generation == generation))
+          {
+             // Cache the result of that lookup
+             table->cache.object = entry->data.ptr;
+             table->cache.id = obj_id;
+             return entry->data.ptr;
+          }
         goto err;
 
 err_null: EINA_COLD
@@ -207,57 +173,34 @@ err: EINA_COLD
 
 do_domain_shared: EINA_COLD
      {
-        _Eo_Id_Entry *entry;
-        Generation_Counter generation;
-        unsigned int mid_table_id, table_id, entry_id;
-        Eo_Id tag_bit;
-        Eo_Id_Data *data;
-        Eo_Id_Table_Data *tdata;
+        Eo_Id_Data *const data = _eo_table_data_shared;
+        Eo_Id_Table *const table = _eo_table_data_shared_data;
 
-        data = _eo_table_data_get();
-        EINA_PREFETCH(&(data->tables[0]));
-        tdata = _eo_table_data_table_get(data, domain);
-        EINA_PREFETCH(&(tdata->cache.id));
-        if (EINA_UNLIKELY(!tdata)) goto err_shared_err;
-
-
-        eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
-        if (EINA_LIKELY(obj_id == tdata->cache.id))
+        eina_lock_take(&(table->obj_lock));
+        if (EINA_LIKELY(obj_id == table->cache.id))
         // yes we return keeping the lock locked. thats why
         // you must call _eo_obj_pointer_done() wrapped
         // by EO_OBJ_DONE() to release
-          return tdata->cache.object;
+          return table->cache.object;
 
-        mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
-        table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
-        entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
-        generation = obj_id & MASK_GENERATIONS;
+        const size_t entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
+        const unsigned int generation = obj_id & MASK_GENERATIONS;
 
         // get tag bit to check later down below - pipelining
-        tag_bit = (obj_id) & MASK_OBJ_TAG;
-        if (!obj_id) goto err_shared_null;
-        else if (!tag_bit) goto err_shared;
+        const Eo_Id tag_bit = (obj_id) & MASK_OBJ_TAG;
+        if (EINA_UNLIKELY((!tag_bit ||
+                           entry_id >= table->count))) goto err_shared;
 
-        // Check the validity of the entry
-        if (tdata->eo_ids_tables[mid_table_id])
+        Eo_Id_Entry *const entry = &(table->entries[entry_id]);
+        if (EINA_LIKELY(entry->data.generation == generation))
           {
-             _Eo_Ids_Table *tab = TABLE_FROM_IDS;
-
-             if (tab)
-               {
-                  entry = &(tab->entries[entry_id]);
-                  if (entry->active && (entry->generation == generation))
-                    {
-                       // Cache the result of that lookup
-                       tdata->cache.object = entry->ptr;
-                       tdata->cache.id = obj_id;
-                       // yes we return keeping the lock locked. thats why
-                       // you must call _eo_obj_pointer_done() wrapped
-                       // by EO_OBJ_DONE() to release
-                       return entry->ptr;
-                    }
-               }
+             // Cache the result of that lookup
+             table->cache.object = entry->data.ptr;
+             table->cache.id = obj_id;
+             // yes we return keeping the lock locked. thats why
+             // you must call _eo_obj_pointer_done() wrapped
+             // by EO_OBJ_DONE() to release
+             return entry->data.ptr;
           }
         goto err_shared;
 

@@ -546,7 +546,6 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
         if (tdata->generation >= MAX_GENERATIONS) tdata->generation = 1;
         /* Fill the entry and return it's Eo Id */
         entry->ptr = (_Eo_Object *)obj;
-        entry->active = 1;
         entry->generation = tdata->generation;
         PROTECT(tdata->current_table);
         id = EO_COMPOSE_FINAL_ID(tdata->current_table->partial_id,
@@ -574,7 +573,6 @@ _eo_id_allocate(const _Eo_Object *obj, const Eo *parent_id)
         if (tdata->generation == MAX_GENERATIONS) tdata->generation = 1;
         /* Fill the entry and return it's Eo Id */
         entry->ptr = (_Eo_Object *)obj;
-        entry->active = 1;
         entry->generation = tdata->generation;
         PROTECT(tdata->current_table);
         id = EO_COMPOSE_FINAL_ID(tdata->current_table->partial_id,
@@ -611,12 +609,12 @@ _eo_id_release(const Eo_Id obj_id)
         if (tdata->eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
           {
              entry = &(table->entries[entry_id]);
-             if (entry && entry->active && (entry->generation == generation))
+             if (entry->generation == generation)
                {
                   UNPROTECT(table);
                   table->free_entries++;
                   // Disable the entry
-                  entry->active = 0;
+                  entry->generation = 0;
                   entry->next_in_fifo = -1;
                   // Push the entry into the fifo
                   if (table->fifo_tail == -1)
@@ -661,12 +659,12 @@ _eo_id_release(const Eo_Id obj_id)
         if (tdata->eo_ids_tables[mid_table_id] && (table = TABLE_FROM_IDS))
           {
              entry = &(table->entries[entry_id]);
-             if (entry && entry->active && (entry->generation == generation))
+             if (entry->generation == generation)
                {
                   UNPROTECT(table);
                   table->free_entries++;
                   // Disable the entry
-                  entry->active = 0;
+                  entry->generation = 0;
                   entry->next_in_fifo = -1;
                   // Push the entry into the fifo
                   if (table->fifo_tail == -1)
@@ -759,7 +757,7 @@ _eo_print(Eo_Id_Table_Data *tdata)
                        for (Table_Index entry_id = 0; entry_id < MAX_ENTRY_ID; entry_id++)
                          {
                             entry = &(TABLE_FROM_IDS->entries[entry_id]);
-                            if (entry->active)
+                            if (entry->generation != 0)
                               {
                                  printf("%ld: %p -> (%p, %p, %p, %p)\n", obj_number++,
                                        entry->ptr,

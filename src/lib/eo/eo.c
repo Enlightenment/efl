@@ -1719,46 +1719,44 @@ err:
 EAPI Eina_Bool
 efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
-   Efl_Id_Domain domain;
-   Eo_Id_Data *data;
-   Eo_Id_Table_Data *tdata;
-   Eina_Bool isa = EINA_FALSE;
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
-   domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
-   data = _eo_table_data_get();
-   tdata = _eo_table_data_table_get(data, domain);
-   if (EINA_UNLIKELY(!tdata)) goto err;
 
+   const Efl_Id_Domain domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
+   Eo_Id_Data *const data = _eo_id_data_get();
+   Eo_Id_Table *const table = _eo_id_data_table_get(data, domain);
+   if (EINA_UNLIKELY(!table)) goto err;
+
+   Eina_Bool isa = EINA_FALSE;
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
      {
-        if ((tdata->cache.isa_id == eo_id) &&
-            (tdata->cache.klass == klass_id))
+        if ((table->cache.isa_id == eo_id) &&
+            (table->cache.klass == klass_id))
           {
-             isa = tdata->cache.isa;
+             isa = table->cache.isa;
              return isa;
           }
 
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
-        const op_type_funcs *func = _vtable_func_get
+        const op_type_funcs *const func = _vtable_func_get
           (EO_VTABLE(obj), klass->base_id + klass->ops_count);
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
-        tdata->cache.isa_id = eo_id;
-        tdata->cache.klass = klass_id;
+        table->cache.isa_id = eo_id;
+        table->cache.klass = klass_id;
         // Currently implemented by reusing the LAST op id. Just marking it with
         // _eo_class_isa_func.
-        isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
+        isa = table->cache.isa = (func && (func->func == _eo_class_isa_func));
      }
    else
      {
         eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
 
-        if ((tdata->cache.isa_id == eo_id) &&
-            (tdata->cache.klass == klass_id))
+        if ((table->cache.isa_id == eo_id) &&
+            (table->cache.klass == klass_id))
           {
-             isa = tdata->cache.isa;
+             isa = table->cache.isa;
              // since this is the cache we hope this gets a lot of hits and
              // thus lets assume the hit is the mot important thing thus
              // put the lock release and return here inline in the l1
@@ -1769,15 +1767,15 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 
         EO_OBJ_POINTER_GOTO(eo_id, obj, err_shared_obj);
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_shared_class);
-        const op_type_funcs *func = _vtable_func_get
+        const op_type_funcs *const func = _vtable_func_get
           (EO_VTABLE(obj), klass->base_id + klass->ops_count);
 
         // Caching the result as we do a lot of serial efl_isa due to evas_object_image using it.
-        tdata->cache.isa_id = eo_id;
-        tdata->cache.klass = klass_id;
+        table->cache.isa_id = eo_id;
+        table->cache.klass = klass_id;
         // Currently implemented by reusing the LAST op id. Just marking it with
         // _eo_class_isa_func.
-        isa = tdata->cache.isa = (func && (func->func == _eo_class_isa_func));
+        isa = table->cache.isa = (func && (func->func == _eo_class_isa_func));
         EO_OBJ_DONE(eo_id);
         eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
      }
@@ -2177,12 +2175,12 @@ efl_data_xunref_internal(const Eo *obj_id, void *data, const Eo *ref_obj_id)
    EO_OBJ_DONE(obj_id);
 }
 
-static void
-_eo_table_del_cb(void *in)
-{
-   Eo_Id_Data *data = in;
-   _eo_free_ids_tables(data);
-}
+//static void
+//_eo_table_del_cb(void *in)
+//{
+//   Eo_Id_Data *data = in;
+//   _eo_free_ids_tables(data);
+//}
 
 /* FIXME: Support other domains and tables, at the moment only the main
  * domain and table.
@@ -2244,7 +2242,7 @@ efl_object_init(void)
    _ops_storage = eina_hash_string_superfast_new(NULL);
 #endif
 
-   _eo_table_data_shared = _eo_table_data_new(EFL_ID_DOMAIN_SHARED);
+   _eo_table_data_shared = _eo_id_data_new(EFL_ID_DOMAIN_SHARED);
    if (!_eo_table_data_shared)
      {
         ERR("Could not allocate shared table data");
@@ -2253,20 +2251,13 @@ efl_object_init(void)
    _eo_table_data_shared_data = _eo_table_data_shared->tables[EFL_ID_DOMAIN_SHARED];
 
    // specially force eoid data to be creanted so we can switch it to domain 0
-   Eo_Id_Data *data = _eo_table_data_new(EFL_ID_DOMAIN_MAIN);
-   _eo_gdb_main_domain = data;
-   if (!data)
+   _eo_id_data = _eo_id_data_new(EFL_ID_DOMAIN_MAIN);
+   _eo_gdb_main_domain = _eo_id_data;
+   if (EINA_UNLIKELY(!_eo_id_data))
      {
         ERR("Could not allocate main table data");
         return EINA_FALSE;
      }
-   if (!eina_tls_cb_new(&_eo_table_data, _eo_table_del_cb))
-     {
-        ERR("Could not allocate TLS for eo domain data");
-        _eo_table_del_cb(data);
-        return EINA_FALSE;
-     }
-   eina_tls_set(_eo_table_data, data);
    _efl_object_main_thread = eina_thread_self();
 
 #ifdef EO_DEBUG
@@ -2326,11 +2317,10 @@ efl_object_shutdown(void)
    eina_spinlock_free(&_ops_storage_lock);
    eina_lock_free(&_efl_class_creation_lock);
 
-   _eo_free_ids_tables(_eo_table_data_get());
-   eina_tls_free(_eo_table_data);
+//   _eo_free_ids_tables(_eo_id_data_get());
    if (_eo_table_data_shared)
      {
-        _eo_free_ids_tables(_eo_table_data_shared);
+        //_eo_free_ids_tables(_eo_table_data_shared);
         _eo_table_data_shared = NULL;
         _eo_table_data_shared_data = NULL;
      }
@@ -2354,21 +2344,21 @@ efl_object_shutdown(void)
 EAPI Efl_Id_Domain
 efl_domain_get(void)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    return data->local_domain;
 }
 
 EAPI Efl_Id_Domain
 efl_domain_current_get(void)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    return data->domain_stack[data->stack_top];
 }
 
 EAPI Eina_Bool
 efl_domain_switch(Efl_Id_Domain domain)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD) ||
        (domain == EFL_ID_DOMAIN_SHARED))
      {
@@ -2378,12 +2368,12 @@ efl_domain_switch(Efl_Id_Domain domain)
    if (data)
      {
         if (data->local_domain == domain) return EINA_TRUE;
-        _eo_free_ids_tables(data);
+        //_eo_free_ids_tables(data);
      }
-   data = _eo_table_data_new(domain);
+   data = _eo_id_data_new(domain);
    data->local_domain = domain;
    data->domain_stack[data->stack_top] = domain;
-   eina_tls_set(_eo_table_data, data);
+   _eo_id_data = data;
    return EINA_TRUE;
 }
 
@@ -2410,21 +2400,21 @@ _efl_domain_pop(Eo_Id_Data *data)
 EAPI Eina_Bool
 efl_domain_current_push(Efl_Id_Domain domain)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    return _efl_domain_push(data, domain);
 }
 
 EAPI void
 efl_domain_current_pop(void)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    _efl_domain_pop(data);
 }
 
 EAPI Eina_Bool
 efl_domain_current_set(Efl_Id_Domain domain)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD))
      {
         ERR("Invalid domain %i being set", domain);
@@ -2437,14 +2427,14 @@ efl_domain_current_set(Efl_Id_Domain domain)
 EAPI Efl_Domain_Data *
 efl_domain_data_get(void)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    return (Efl_Domain_Data *)data;
 }
 
 EAPI Efl_Id_Domain
 efl_domain_data_adopt(Efl_Domain_Data *data_in)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
    Eo_Id_Data *data_foreign = (Eo_Id_Data *)data_in;
 
    if (!data_foreign)
@@ -2472,7 +2462,7 @@ efl_domain_data_adopt(Efl_Domain_Data *data_in)
 EAPI Eina_Bool
 efl_domain_data_return(Efl_Id_Domain domain)
 {
-   Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *data = _eo_id_data_get();
 
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD))
      {
@@ -3290,86 +3280,86 @@ eo_classes_iterator_new(void)
    return (Eina_Iterator *)it;
 }
 
-typedef struct
-{
-   Eina_Iterator iterator;
-   Eo_Id_Table_Data *tdata;
-   Table_Index mid_table_id;
-   Table_Index table_id;
-   Table_Index entry_id;
-} _Eo_Objects_Iterator;
-
-static Eina_Bool
-_eo_objects_iterator_next(Eina_Iterator *it, void **data)
-{
-   Table_Index mid_table_id, table_id, entry_id;
-   Eo_Id_Table_Data *tdata;
-   _Eo_Objects_Iterator *eo_it = (_Eo_Objects_Iterator *)it;
-   if (!eo_it->tdata) return EINA_FALSE;
-
-   tdata = eo_it->tdata;
-   mid_table_id = eo_it->mid_table_id;
-   table_id = eo_it->table_id;
-   entry_id = eo_it->entry_id;
-   while (mid_table_id < MAX_MID_TABLE_ID)
-     {
-        if (tdata->eo_ids_tables[mid_table_id])
-          {
-             while (table_id < MAX_TABLE_ID)
-               {
-                  if (TABLE_FROM_IDS)
-                    {
-                       while (entry_id < MAX_ENTRY_ID)
-                         {
-                            _Eo_Id_Entry *entry = &(TABLE_FROM_IDS->entries[entry_id]);
-                            if (entry->active)
-                              {
-                                 Eo *obj = _eo_header_id_get((Eo_Header *) entry->ptr);
-                                 *data = obj;
-                                 eo_it->mid_table_id = mid_table_id;
-                                 eo_it->table_id = table_id;
-                                 eo_it->entry_id = entry_id + 1;
-                                 return EINA_TRUE;
-                              }
-                            entry_id++;
-                         }
-                       entry_id = 0;
-                    }
-                  table_id++;
-               }
-             table_id = 0;
-          }
-        mid_table_id++;
-     }
-   return EINA_FALSE;
-}
-
-static void
-_eo_objects_iterator_free(Eina_Iterator *it)
-{
-   EINA_MAGIC_SET(it, EINA_MAGIC_NONE);
-   free(it);
-}
-
-EAPI Eina_Iterator *
-eo_objects_iterator_new(void)
-{
-   _Eo_Objects_Iterator *it;
-   Eo_Id_Table_Data *tdata = _eo_table_data_table_get(_eo_table_data_get(), EFL_ID_DOMAIN_MAIN);
-
-   if (!tdata) return NULL;
-
-   it = calloc(1, sizeof (*it));
-   if (!it) return NULL;
-
-   it->tdata = tdata;
-   it->iterator.version = EINA_ITERATOR_VERSION;
-   it->iterator.next = _eo_objects_iterator_next;
-   it->iterator.free = _eo_objects_iterator_free;
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-
-   return (Eina_Iterator *)it;
-}
+///typedef struct
+///{
+///   Eina_Iterator iterator;
+///   Eo_Id_Table_Data *tdata;
+///   Table_Index mid_table_id;
+///   Table_Index table_id;
+///   Table_Index entry_id;
+///} _Eo_Objects_Iterator;
+///
+///static Eina_Bool
+///_eo_objects_iterator_next(Eina_Iterator *it, void **data)
+///{
+///   Table_Index mid_table_id, table_id, entry_id;
+///   Eo_Id_Table_Data *tdata;
+///   _Eo_Objects_Iterator *eo_it = (_Eo_Objects_Iterator *)it;
+///   if (!eo_it->tdata) return EINA_FALSE;
+///
+///   tdata = eo_it->tdata;
+///   mid_table_id = eo_it->mid_table_id;
+///   table_id = eo_it->table_id;
+///   entry_id = eo_it->entry_id;
+///   while (mid_table_id < MAX_MID_TABLE_ID)
+///     {
+///        if (tdata->eo_ids_tables[mid_table_id])
+///          {
+///             while (table_id < MAX_TABLE_ID)
+///               {
+///                  if (TABLE_FROM_IDS)
+///                    {
+///                       while (entry_id < MAX_ENTRY_ID)
+///                         {
+///                            _Eo_Id_Entry *entry = &(TABLE_FROM_IDS->entries[entry_id]);
+///                            if (entry->generation != 0)
+///                              {
+///                                 Eo *obj = _eo_header_id_get((Eo_Header *) entry->ptr);
+///                                 *data = obj;
+///                                 eo_it->mid_table_id = mid_table_id;
+///                                 eo_it->table_id = table_id;
+///                                 eo_it->entry_id = entry_id + 1;
+///                                 return EINA_TRUE;
+///                              }
+///                            entry_id++;
+///                         }
+///                       entry_id = 0;
+///                    }
+///                  table_id++;
+///               }
+///             table_id = 0;
+///          }
+///        mid_table_id++;
+///     }
+///   return EINA_FALSE;
+///}
+///
+///static void
+///_eo_objects_iterator_free(Eina_Iterator *it)
+///{
+///   EINA_MAGIC_SET(it, EINA_MAGIC_NONE);
+///   free(it);
+///}
+///
+///EAPI Eina_Iterator *
+///eo_objects_iterator_new(void)
+///{
+///   _Eo_Objects_Iterator *it;
+///   Eo_Id_Table_Data *tdata = _eo_id_data_table_get(_eo_id_data_get(), EFL_ID_DOMAIN_MAIN);
+///
+///   if (!tdata) return NULL;
+///
+///   it = calloc(1, sizeof (*it));
+///   if (!it) return NULL;
+///
+///   it->tdata = tdata;
+///   it->iterator.version = EINA_ITERATOR_VERSION;
+///   it->iterator.next = _eo_objects_iterator_next;
+///   it->iterator.free = _eo_objects_iterator_free;
+///   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+///
+///   return (Eina_Iterator *)it;
+///}
 
 static Eina_Bool
 _eo_value_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
