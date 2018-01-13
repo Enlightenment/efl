@@ -57,6 +57,7 @@ struct _Ecore_Audio_Out_Wasapi_Data
    IAudioRenderClient   *render;
    IAudioStreamVolume   *volume;
    WAVEFORMATEXTENSIBLE *wave_format;
+   Ecore_Win32_Handler  *handler;
    HANDLE                event;
    UINT32                NumBufferFrames;
    Eina_Bool             spec_format;
@@ -97,20 +98,25 @@ _ecore_audio_out_wasapi_ecore_audio_volume_set(Eo *eo_obj EINA_UNUSED, Ecore_Aud
      }
 }
 
+static void
+_clear(Ecore_Audio_Out_Wasapi_Data *_pd)
+{
+   if (_pd->event)   CloseHandle(_pd->event);
+   if (_pd->handler) ecore_main_win32_handler_del(_pd->handler);
+   if (_pd->render)  _pd->render->lpVtbl->Release(_pd->render);
+   if (_pd->client)  _pd->client->lpVtbl->Release(_pd->client);
+
+   _pd->event   = NULL;
+   _pd->handler = NULL;
+   _pd->render  = NULL;
+   _pd->client  = NULL;
+   _pd->play    = EINA_FALSE;
+}
 
 static void
 _close_cb(void  *data, const Efl_Event *event EINA_UNUSED)
 {
-   Ecore_Audio_Out_Wasapi_Data *_pd = data;
-
-   if (_pd->event)  CloseHandle(_pd->event);
-   if (_pd->render) _pd->render->lpVtbl->Release(_pd->render);
-   if (_pd->client) _pd->client->lpVtbl->Release(_pd->client);
-
-   _pd->event  = NULL;
-   _pd->render = NULL;
-   _pd->client = NULL;
-   _pd->play = EINA_FALSE;
+   _clear(data);
 }
 
 static void
@@ -224,7 +230,9 @@ _write_cb(void  *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 
    if (_pd->client) _pd->client->lpVtbl->Stop(_pd->client);
 
-   ecore_main_win32_handler_del(_pd->event);
+   if (_pd->handler) ecore_main_win32_handler_del(_pd->handler);
+   _pd->handler = NULL;
+
    efl_event_callback_call(_pd->out, ECORE_AUDIO_OUT_WASAPI_EVENT_STOP, NULL);
 
    _pd->play = EINA_FALSE;
@@ -589,8 +597,9 @@ _ecore_audio_out_wasapi_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Wasap
 }
 
 EOLIAN static void
-_ecore_audio_out_wasapi_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Wasapi_Data *_pd EINA_UNUSED)
+_ecore_audio_out_wasapi_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Wasapi_Data *_pd)
 {
+   _clear(_pd);
    client_connect_count--;
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 
