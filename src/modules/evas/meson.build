@@ -78,7 +78,6 @@ foreach engine_conf : engines
         evas_static_list += declare_dependency(
           include_directories: [include_directories('.')] + config_dir + [engine_include_dir],
           link_with: tmp,
-          sources : engine_src,
           dependencies: [evas_pre],
         )
         if engine == 'gl_generic'
