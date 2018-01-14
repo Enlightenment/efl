@@ -306,11 +306,16 @@ end
 -- builders
 
 local nspaces_group = function(ns)
-    if ns[1] == "efl" and (ns[2] ~= "class" and ns[2] ~= "interface" and ns[2] ~= "object" and ns[2] ~= "promise") then
-        return ns[1] .. "." .. ns[2]
+    if #ns <= 2 then
+        return ns[1]
     end
 
-    return ns[1]
+    if ns[1] == "efl" and (ns[2] == "class" or ns[2] == "interface" or
+                           ns[2] == "object" or ns[2] == "promise") then
+        return ns[1]
+    end
+
+    return ns[1] .. "." .. ns[2]
 end
 
 local nspaces_filter = function(items, ns)
