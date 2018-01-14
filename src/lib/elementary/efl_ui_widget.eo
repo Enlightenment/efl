@@ -19,7 +19,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
                         Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
                         Efl.Ui.Translatable, Efl.Selection, Efl.Ui.Dnd)
 {
-   [[Elementary widget abstract class]]
+   [[Efl UI widget abstract class]]
    legacy_prefix: elm_widget;
    //eo_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
