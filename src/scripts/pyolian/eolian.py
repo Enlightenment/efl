@@ -1026,7 +1026,7 @@ class Implement(EolianBaseObject):
         return not self.is_property
 
 
-class Type(EolianBaseObject):  # OK  (4 TODO Unit*)
+class Type(EolianBaseObject):  # OK  (1 TODO Unit*)
     def __repr__(self):
         #  return "<eolian.Type '{0.full_name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
         return "<eolian.Type '{0.full_name}', type={0.type!s}>".format(self)
@@ -1107,7 +1107,7 @@ class Type(EolianBaseObject):  # OK  (4 TODO Unit*)
         return bool(lib.eolian_type_is_ptr(self._obj))
 
 
-class Typedecl(EolianBaseObject):  # OK (2 TODO Unit*)
+class Typedecl(EolianBaseObject):  # OK (1 TODO Unit*)
     def __repr__(self):
         return "<eolian.Typedecl '{0.full_name}', type={0.type!s}>".format(self)
 

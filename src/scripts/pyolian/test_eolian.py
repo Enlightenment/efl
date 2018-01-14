@@ -65,7 +65,7 @@ class TestEolianUnit(unittest.TestCase):
         l = list(state.all_eot_file_paths)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
-        
+
         l = list(state.all_eot_files)
         self.assertGreater(len(l), 10)
         self.assertTrue(l[0].endswith('.eot'))
@@ -264,7 +264,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertEqual(f.full_c_setter_name_legacy, 'ecore_timer_delay_set')
         self.assertIsNone(f.method_return_type)  # TODO correct ?
         self.assertIsNone(f.setter_return_type)  # TODO correct ?
-        self.assertIsNone(f.getter_return_type)  # TODO correct ?    
+        self.assertIsNone(f.getter_return_type)  # TODO correct ?
         self.assertFalse(f.is_legacy_only(eolian.Eolian_Function_Type.PROP_GET))
         self.assertFalse(f.is_class)
         self.assertFalse(f.is_beta)
@@ -445,28 +445,73 @@ class TestEolianTypedecl(unittest.TestCase):
     def test_typedecl_alias(self):
         alias = state.typedecl_alias_get_by_name('Eina.Error')
         self.assertIsInstance(alias, eolian.Typedecl)
+        self.assertEqual(alias.type, eolian.Eolian_Typedecl_Type.ALIAS)
         self.assertEqual(alias.name, 'Error')
+        self.assertEqual(alias.full_name, 'Eina.Error')
+        self.assertIsInstance(alias.aliased_base, eolian.Type)
+        self.assertEqual(alias.aliased_base.name, 'int')
 
 
 class TestEolianType(unittest.TestCase):
-    def test_type_regular(self):
+    def test_type_regular_builtin(self):
         cls = state.class_get_by_name('Efl.Loop.Timer')
         func = cls.function_get_by_name('delay')
         param = list(func.parameters)[0]
-        t = param.type
+        t = param.type  # type: double
         self.assertIsInstance(t, eolian.Type)
         self.assertEqual(t.name, 'double')
         self.assertEqual(t.full_name, 'double')
         self.assertEqual(t.type, eolian.Eolian_Type_Type.REGULAR)
         self.assertEqual(t.builtin_type, eolian.Eolian_Type_Builtin_Type.DOUBLE)
-        self.assertEqual(t.file, 'efl_loop_timer.eo')
+        self.assertEqual(t.file, 'efl_loop_timer.eo') # TODO is this correct ?
         self.assertIsNone(t.base_type)  # TODO find a better test
         self.assertIsNone(t.next_type)  # TODO find a better test
         self.assertFalse(t.is_owned)
         self.assertFalse(t.is_const)
         self.assertFalse(t.is_ptr)
-        #  self.assertEqual(list(t.namespaces), [])   # TODO find a better test
-        self.assertIsNone(t.free_func)  # TODO find a better test
+        self.assertEqual(list(t.namespaces), [])
+        self.assertIsNone(t.free_func)
+        self.assertIsNone(t.class_)
+        self.assertEqual(t, t.aliased_base)  # TODO find a better test
+
+    def test_type_regular(self):
+        cls = state.class_get_by_name('Efl.Gfx')
+        func = cls.function_get_by_name('geometry')
+        param = list(func.setter_values)[0]
+        t = param.type  # type: Eina.Rect
+        self.assertIsInstance(t, eolian.Type)
+        self.assertEqual(t.name, 'Rect')
+        self.assertEqual(t.full_name, 'Eina.Rect')
+        self.assertEqual(t.type, eolian.Eolian_Type_Type.REGULAR)
+        self.assertEqual(t.builtin_type, eolian.Eolian_Type_Builtin_Type.INVALID)
+        self.assertEqual(t.file, 'efl_gfx.eo')  # TODO is this correct ?
+        self.assertEqual(list(t.namespaces), ['Eina'])
+        self.assertEqual(t.free_func, 'eina_rectangle_free')
+        self.assertIsNone(t.class_)
+        self.assertEqual(t, t.aliased_base)
+
+        td = t.typedecl
+        self.assertIsInstance(td, eolian.Typedecl)
+        self.assertEqual(td.full_name, 'Eina.Rect')
+
+    def test_type_class(self):
+        cls = state.class_get_by_name('Efl.Content')
+        func = cls.function_get_by_name('content')
+        param = list(func.setter_values)[0]
+        t = param.type  # type: Efl.Gfx (class interface)
+        self.assertIsInstance(t, eolian.Type)
+        self.assertEqual(t.name, 'Gfx')
+        self.assertEqual(t.full_name, 'Efl.Gfx')
+        self.assertEqual(t.type, eolian.Eolian_Type_Type.CLASS)
+        self.assertEqual(t.builtin_type, eolian.Eolian_Type_Builtin_Type.INVALID)
+        self.assertEqual(t.file, 'efl_content.eo')  # TODO is this correct ?
+        self.assertEqual(list(t.namespaces), ['Efl'])
+        self.assertEqual(t.free_func, 'efl_del')
+        self.assertEqual(t, t.aliased_base)
+
+        cls = t.class_
+        self.assertIsInstance(cls, eolian.Class)
+        self.assertEqual(cls.full_name, 'Efl.Gfx')
 
 
 class TestEolianDeclaration(unittest.TestCase):
@@ -501,7 +546,7 @@ class TestEolianExpression(unittest.TestCase):
         self.assertIsInstance(unary, eolian.Expression)
         self.assertEqual(unary.type, eolian.Eolian_Expression_Type.DOUBLE)
         self.assertEqual(float(exp.serialize), 1.0)
-        
+
         # TODO test_expression_binary
         #  exp.binary_operator # TODO find a better test (only works for BINARY expr)
         #  exp.binary_lhs # TODO find a better test (only works for BINARY expr)
@@ -526,7 +571,7 @@ if __name__ == '__main__':
     # Parse all known eo files
     if not state.all_eot_files_parse():
         raise(RuntimeError('Eolian, failed to parse all EOT files'))
-        
+
     if not state.all_eo_files_parse():
         raise(RuntimeError('Eolian, failed to parse all EO files'))
 
