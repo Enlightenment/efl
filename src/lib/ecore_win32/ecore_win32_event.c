@@ -1776,6 +1776,9 @@ _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Create *e;
 
+   if (msg->window == ecore_win32_monitor_window)
+     return;
+
    INF("window create notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Create));
@@ -1792,6 +1795,9 @@ void
 _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Destroy *e;
+
+   if (msg->window == ecore_win32_monitor_window)
+     return;
 
    INF("window destroy notify");
 

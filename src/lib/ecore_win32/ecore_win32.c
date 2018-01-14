@@ -527,6 +527,8 @@ ecore_win32_init()
         goto shutdown_ecore_event;
      }
 
+   ecore_win32_monitor_init();
+
    icon = LoadImage(_ecore_win32_instance,
                     MAKEINTRESOURCE(IDI_ICON),
                     IMAGE_ICON,
@@ -589,8 +591,6 @@ ecore_win32_init()
    for (i = 0; i < 77; i++)
      _ecore_win32_cursor_x[i] = _ecore_win32_cursor_x11_shaped_new(i);
 
-   ecore_win32_monitor_init();
-
    return _ecore_win32_init_count;
 
  unregister_class:
@@ -625,8 +625,6 @@ ecore_win32_shutdown()
    if (--_ecore_win32_init_count != 0)
      return _ecore_win32_init_count;
 
-   ecore_win32_monitor_shutdown();
-
    for (i = 0; i < 77; i++)
      ecore_win32_cursor_free(_ecore_win32_cursor_x[i]);
 
@@ -650,6 +648,8 @@ ecore_win32_shutdown()
 
    if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
      INF("UnregisterClass() failed");
+
+   ecore_win32_monitor_shutdown();
 
    if (!FreeLibrary(_ecore_win32_instance))
      INF("FreeLibrary() failed");
