@@ -471,7 +471,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
    drop_list = efl_key_data_get(obj, "__drop_list");
    drop = eina_list_data_get(drop_list);
    if (drop &&
-       (drop->format == drop->format) &&
+       (drop->format == format) &&
        (drop->enter->state_cb == enter_cb) &&
        (drop->enter->state_data == enter_data) &&
        (drop->leave->state_cb == leave_cb) &&
