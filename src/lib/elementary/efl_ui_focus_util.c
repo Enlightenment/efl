@@ -25,7 +25,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    top = elm_widget_top_get(user);
 
    o = efl_key_data_get(top, "__delayed_focus_set");
-   efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, o);
+   if (o) efl_event_callback_del(o, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed, o);
    efl_key_data_set(top, "__delayed_focus_set", NULL);
 
    if (!m)

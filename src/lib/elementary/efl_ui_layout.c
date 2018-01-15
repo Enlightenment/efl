@@ -165,7 +165,11 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
 {
    char buf[1024];
    const char *type;
+   Eo *edje;
    int i;
+
+   edje = elm_widget_resize_object_get(sd->obj);
+   if (!edje) return;
 
    //FIXME: Don't limit to the icon and end here.
    // send signals for all contents after elm 2.0
@@ -184,11 +188,10 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
    snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
             visible ? "visible" : "hidden");
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
-   edje_object_signal_emit(wd->resize_obj, buf, "elm");
+   edje_object_signal_emit(edje, buf, "elm");
 
    /* themes might need immediate action here */
-   edje_object_message_signal_process(wd->resize_obj);
+   edje_object_message_signal_process(edje);
 }
 
 static inline void
@@ -640,17 +643,14 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    Efl_Ui_Layout_Sub_Connect *sc;
    Edje_Signal_Data *esd;
    Evas_Object *child;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_layout_freeze(obj);
 
-   EINA_LIST_FREE(sd->subs, sub_d)
-     {
-        eina_stringshare_del(sub_d->part);
-        free(sub_d);
-     }
+   EINA_LIST_FOREACH_SAFE(sd->subs, l, ll, sub_d)
+     efl_ui_widget_sub_object_del(obj, sub_d->obj);
 
    EINA_LIST_FREE(sd->parts_cursors, pc)
      _part_cursor_free(pc);
@@ -943,6 +943,13 @@ elm_layout_content_get(const Evas_Object *obj, const char *swallow)
    else if (!_elm_layout_part_aliasing_eval(obj, &swallow, EINA_FALSE))
      return NULL;
 
+   if (!efl_layout_group_part_exist_get(obj, swallow))
+     {
+        DBG("No such part '%s' in group '%s'",
+            swallow, elm_widget_theme_element_get(obj));
+        return NULL;
+     }
+
    return efl_content_get(efl_part(obj, swallow));
 }
 
@@ -951,6 +958,7 @@ _efl_ui_layout_content_get(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
    const Eina_List *l;
    Efl_Ui_Layout_Sub_Object_Data *sub_d;
+   Eo *handle;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -962,7 +970,8 @@ _efl_ui_layout_content_get(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
      }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-   return efl_content_get(efl_part(wd->resize_obj, part));
+   handle = efl_part(wd->resize_obj, part);
+   return handle ? efl_content_get(handle) : NULL;
 }
 
 EAPI Evas_Object *
@@ -2430,17 +2439,18 @@ elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, con
 EOLIAN static Eo *
 _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
 {
-   Efl_Canvas_Layout_Part_Type type;
+   Efl_Canvas_Layout_Part_Type type = EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
 
    // Check part type without using edje_object_part_object_get(), as this
    // can cause recalc, which has side effects... and could be slow.
-   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
 
    if (eina_streq(part, "background"))
      {
+        if (efl_layout_group_part_exist_get(wd->resize_obj, part))
+          type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
         if (type != EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
           {
              if (type < EFL_CANVAS_LAYOUT_PART_TYPE_LAST &&
@@ -2459,6 +2469,10 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, 
    else if (eina_streq(part, "shadow"))
      return efl_part(efl_super(obj, MY_CLASS), part);
 
+   if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
+     goto no_part;
+
+   type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
    if (type >= EFL_CANVAS_LAYOUT_PART_TYPE_LAST)
      {
         ERR("Invalid type found for part '%s' in group '%s'", part, elm_widget_theme_element_get(obj));
@@ -2476,11 +2490,14 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, 
       case EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_NONE:
-        WRN("No such part '%s' in group '%s'", part, elm_widget_theme_element_get(obj));
-        return NULL;
+        goto no_part;
       default:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CLASS, obj, part);
      }
+
+no_part:
+   WRN("No such part '%s' in group '%s'", part, elm_widget_theme_element_get(obj));
+   return NULL;
 }
 
 static const char *

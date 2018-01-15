@@ -311,7 +311,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      {
         new = parent;
      }
-   else
+   else if (parent)
      {
         new = efl_ui_focus_user_focus_manager_get(parent);
         provider = parent;
@@ -2439,10 +2439,14 @@ _efl_ui_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabl
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_widget_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_disabled_get(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
+   Eo *parent;
+
    if (sd->disabled) return EINA_TRUE;
-   return elm_widget_disabled_get(elm_widget_parent_get(obj));
+   if ((parent = elm_widget_parent_get(obj)) != NULL)
+     return elm_widget_disabled_get(parent);
+   return EINA_FALSE;
 }
 
 EOLIAN static void
@@ -5480,7 +5484,7 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    if (pd->provider_lookup) return NULL;
    pd->provider_lookup = EINA_TRUE;
 
-   lookup = efl_provider_find(pd->parent_obj, klass);
+   if (pd->parent_obj) lookup = efl_provider_find(pd->parent_obj, klass);
    if (!lookup) lookup = efl_provider_find(efl_super(obj, MY_CLASS), klass);
 
    pd->provider_lookup = EINA_FALSE;

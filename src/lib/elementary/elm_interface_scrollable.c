@@ -82,7 +82,8 @@ _round(double value, int pos)
 static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
-   evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
+   if (psd->content)
+     evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
 }
 
 EOLIAN static void

@@ -81,6 +81,8 @@ typedef struct {
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
+   Eo *manager;
+
    EINA_SAFETY_ON_NULL_RETURN(pd->root);
 
    if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
@@ -89,7 +91,12 @@ _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
    //so we dont run infinitly this does not fix it, but at least we only have a error
    EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable) == obj);
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(pd->root->focusable), pd->root->focusable);
+   manager = efl_ui_focus_user_focus_manager_get(pd->root->focusable);
+   if (manager)
+     efl_ui_focus_manager_focus_set(manager, pd->root->focusable);
+   else
+      DBG("No focus manager for focusable %s@%p",
+          efl_class_name_get(pd->root->focusable), pd->root->focusable);
 }
 
 static Efl_Ui_Focus_Direction
@@ -1569,8 +1576,10 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    if (node_type == NODE_TYPE_NORMAL)
      {
         //populate the new change
-        efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
-        efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
+        if (last_focusable)
+          efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
+        if (new_focusable)
+          efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
 

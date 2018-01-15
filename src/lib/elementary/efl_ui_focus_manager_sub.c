@@ -137,10 +137,10 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    Eina_List *n;
    Efl_Ui_Focus_User *b;
    Efl_Ui_Focus_Manager *manager;
-   manager = efl_ui_focus_user_focus_manager_get(ev->object);
 
    if (!ev->info) return;
 
+   manager = efl_ui_focus_user_focus_manager_get(ev->object);
    EINA_LIST_FOREACH(pd->current_border, n, b)
      {
         if (b == ev->object) continue;
@@ -156,13 +156,12 @@ _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Efl_Ui_Focus_User *b;
    Eina_List *n;
 
-
    logical = efl_ui_focus_user_focus_parent_get(obj);
    manager = efl_ui_focus_user_focus_manager_get(obj);
 
    //unregister from the old
-   efl_event_callback_array_del(pd->manager, parent_manager(), obj);
-   efl_event_callback_array_add(manager, parent_manager(), obj);
+   if (pd->manager) efl_event_callback_array_del(pd->manager, parent_manager(), obj);
+   if (manager) efl_event_callback_array_add(manager, parent_manager(), obj);
 
    EINA_LIST_FOREACH(pd->current_border , n, b)
      {
@@ -203,7 +202,7 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
 {
    _border_unregister(obj, pd);
 
-   efl_event_callback_array_del(pd->manager, parent_manager(), obj);
+   if (pd->manager) efl_event_callback_array_del(pd->manager, parent_manager(), obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
