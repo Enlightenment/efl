@@ -78,7 +78,6 @@ elementary/themes/edc/slider.edc \
 elementary/themes/edc/spectrum.edc \
 elementary/themes/edc/start.edc \
 elementary/themes/edc/syscon.edc \
-elementary/themes/edc/sys.edc \
 elementary/themes/edc/systray.edc \
 elementary/themes/edc/tasks.edc \
 elementary/themes/edc/temperature.edc \
