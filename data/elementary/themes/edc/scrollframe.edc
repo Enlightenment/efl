@@ -1,6 +1,4 @@
 group { name: "e/widgets/scrollframe";
-   images.image: "inset_shadow.png" COMP;
-   images.image: "bevel_in.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "runner_horiz.png" COMP;
    images.image: "runner_vert.png" COMP;
@@ -356,29 +354,6 @@ group { name: "e/widgets/scrollframe";
             rel2.offset: -2 -2;
             rel2.to_x: "sb_vbar";
             rel2.to_y: "sb_hbar";
-         }
-      }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel1.offset: -1 -1;
-            rel2.to: "bg";
-            rel2.offset: 0 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
          }
       }
       part { name: "runner_vbar"; mouse_events: 0;
