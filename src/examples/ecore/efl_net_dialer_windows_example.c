@@ -230,3 +230,5 @@ efl_main(void *data EINA_UNUSED,
 
    efl_loop_quit(ev->object, eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();
