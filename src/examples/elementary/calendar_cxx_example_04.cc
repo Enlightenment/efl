@@ -1,6 +1,6 @@
 #include <Elementary.hh>
 
-#warning This example can't be implemented with EO APIs... FIXME
+#warning This example can not be implemented with EO APIs... FIXME
 
 using efl::eo::instantiate;
 
