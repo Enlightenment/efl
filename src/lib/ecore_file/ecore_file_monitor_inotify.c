@@ -153,7 +153,7 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
 static Eina_Bool
 _ecore_file_monitor_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 {
-   Eina_List *l, *ll;
+   Eina_List *l, *ll, *ll2;
    Ecore_File_Monitor *em;
    char buffer[16384];
    struct inotify_event *event;
@@ -173,7 +173,7 @@ _ecore_file_monitor_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd
         i += event_size;
 
         l = _ecore_file_monitor_inotify_monitor_find(event->wd);
-        EINA_LIST_FOREACH(l, ll, em)
+        EINA_LIST_FOREACH_SAFE(l, ll, ll2, em)
           _ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
      }
 
