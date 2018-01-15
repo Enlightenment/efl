@@ -95,7 +95,24 @@ _elm_code_widget_efl_object_finalize(Eo *obj, Elm_Code_Widget_Data *pd)
 EOLIAN static void
 _elm_code_widget_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
+}
 
+unsigned int
+_elm_code_widget_wrap_rows_get(Elm_Code_Widget *widget, Elm_Code_Line *line)
+{
+   unsigned int cols;
+
+   if (!line)
+     return 1;
+
+   // TODO handle unicode and tabs
+   cols = elm_code_widget_columns_get(widget);
+   cols -= elm_obj_code_widget_text_left_gutter_width_get(widget);
+
+   if (line->length < cols)
+     return 1;
+
+   return (int)((double)(line->length + cols - 1) / cols);
 }
 
 void
@@ -372,10 +389,10 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
 
 static void
 _elm_code_widget_fill_selection(Elm_Code_Widget *widget, Elm_Code_Line *line, Evas_Object *grid,
-                                int gutter, int w)
+                                int gutter, int w, unsigned int rows)
 {
    Elm_Code_Widget_Data *pd;
-   unsigned int x, start, end;
+   unsigned int x, r, start, end;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Selection_Data *selection;
 
@@ -401,11 +418,14 @@ _elm_code_widget_fill_selection(Elm_Code_Widget *widget, Elm_Code_Line *line, Ev
    cells = evas_object_textgrid_cellrow_get(grid, 0);
    for (x = gutter + start - 1; x < gutter + end && x < (unsigned int) w; x++)
      cells[x].bg = ELM_CODE_WIDGET_COLOR_SELECTION;
-   if (end == (unsigned int) w)
+   if (end == (unsigned int) w && rows > 1)
      {
-        cells = evas_object_textgrid_cellrow_get(grid, 1);
-        for (x = gutter; x < gutter + end && x < (unsigned int) w; x++)
-          cells[x].bg = ELM_CODE_WIDGET_COLOR_SELECTION;
+        for (r = 1; r < rows; r++)
+          {
+             cells = evas_object_textgrid_cellrow_get(grid, r);
+             for (x = gutter; x < gutter + end && x < (unsigned int) w; x++)
+               cells[x].bg = ELM_CODE_WIDGET_COLOR_SELECTION;
+          }
      }
 }
 
@@ -414,7 +434,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    char *chr;
    Eina_Unicode unichr;
-   unsigned int length, x, charwidth, w;
+   unsigned int length, x, charwidth, w, rows, r;
    int chrpos, gutter;
    Evas_Object *grid;
    Evas_Textgrid_Cell *cells;
@@ -430,14 +450,16 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    w = elm_code_widget_columns_get(widget);
    grid = eina_list_nth(pd->grids, line->number - 1);
    cells = evas_object_textgrid_cellrow_get(grid, 0);
+   rows = _elm_code_widget_wrap_rows_get(widget, line);
 
-   _elm_code_widget_fill_empty_line(widget, cells, w, line);
+   for (r = 0; r < rows; r++)
+     _elm_code_widget_fill_empty_line(widget, evas_object_textgrid_cellrow_get(grid, r), w, line);
    _elm_code_widget_fill_line_gutter(widget, cells, w, line);
-   _elm_code_widget_fill_empty_line(widget, evas_object_textgrid_cellrow_get(grid, 1), w, line);
 
    length = elm_code_widget_line_text_column_width_get(widget, line);
    chrpos = 0;
    chr = (char *)elm_code_line_text_get(line, NULL);
+   // TODO wrap content
    for (x = gutter; x < (unsigned int) w && x < length + gutter; x+=charwidth)
      {
         unichr = eina_unicode_utf8_next_get(chr, &chrpos);
@@ -451,15 +473,15 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
      }
-
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
-   _elm_code_widget_fill_selection(widget, line, grid, gutter, w);
+
+   _elm_code_widget_fill_selection(widget, line, grid, gutter, w, rows);
 
    _elm_code_widget_fill_cursor(widget, line->number, gutter, w);
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
-   evas_object_textgrid_update_add(grid, 0, 0, w, 2);
+   evas_object_textgrid_update_add(grid, 0, 0, w, rows);
 }
 
 static void
@@ -739,7 +761,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
 
    if (y >= 0 && ch > 0)
-     guess = ((double) y / (ch*2)) + 1;
+     guess = ((double) y / ch) + 1;
    if (guess > 1)
      {
         number = guess;
@@ -1976,8 +1998,9 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    Evas_Object *grid;
    Evas_Coord ww, wh, old_width, old_height;
    int w, h, cw = 0, ch = 0, gutter;
-   unsigned int line_width;
+   unsigned int line_width, rows;
    Elm_Code_Widget_Data *pd;
+   Eina_Bool wrap = EINA_TRUE;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_obj_code_widget_text_left_gutter_width_get(widget);
@@ -2004,20 +2027,26 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
 
    _elm_code_widget_ensure_n_grid_rows(widget, h);
    _elm_code_widget_cell_size_get(widget, &cw, &ch);
-   if (w*cw > ww)
+   if (!wrap && w*cw > ww)
      ww = w*cw;
    if (h*ch > wh)
      wh = h*ch;
 
-   if (cw > 0 && ww/cw > w)
+   if (wrap || (cw > 0 && ww/cw > w))
      pd->col_count = ww/cw;
    else
      pd->col_count = w;
 
    EINA_LIST_FOREACH(pd->grids, item, grid)
      {
-        evas_object_textgrid_size_set(grid, pd->col_count, 2);
-        evas_object_size_hint_min_set(grid, ww, ch * 2);
+        int oldw, oldh;
+        rows = _elm_code_widget_wrap_rows_get(widget, line);
+        evas_object_textgrid_size_get(grid, &oldw, &oldh);
+
+        ecore_thread_main_loop_begin();
+        evas_object_textgrid_size_set(grid, pd->col_count, rows);
+        evas_object_size_hint_min_set(grid, ww, ch * rows);
+        ecore_thread_main_loop_end();
      }
 
    if (!newline)
