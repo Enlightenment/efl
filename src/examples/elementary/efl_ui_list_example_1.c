@@ -44,7 +44,7 @@ _unrealized_cb(void *data EINA_UNUSED, const Efl_Event *event)
 static Efl_Model*
 _make_model()
 {
-   Eina_Value vtext, vstyle;
+   Eina_Value vtext;
    Efl_Model_Item *model, *child;
    unsigned int i, s;
    char buf[256];
@@ -72,7 +72,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Efl_Ui_Layout_Factory *factory;
-   Evas_Object *win, *li, *bx, *vbx;
+   Evas_Object *win, *li, *bx;
    Eo *model;
 
    win = elm_win_util_standard_add("viewlist", "Viewlist");
