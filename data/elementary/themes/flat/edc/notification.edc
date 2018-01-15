@@ -136,7 +136,6 @@ group { name: "e/modules/notification/main";
                min: 0 1;
             }
             visible: 0;
->>>>>>> flat theme work
          }
       }
       part { name: "notification.text.title"; type: TEXT; mouse_events: 0;

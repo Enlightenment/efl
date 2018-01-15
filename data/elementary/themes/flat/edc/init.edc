@@ -187,5 +187,14 @@ group { name: "e/init/extra_screen";
       program { name: "exit2";
          action: SIGNAL_EMIT "e,state,done_ok" "e";
       }
+      program { signal: "e,state,done"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 1.0 CURRENT;
+         target: "blanker";
+         after: "exit2";
+      }
+      program { name: "exit2";
+         action: SIGNAL_EMIT "e,state,done_ok" "e";
+      }
    }
 }
