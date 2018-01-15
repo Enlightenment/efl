@@ -3325,7 +3325,7 @@ _efl_canvas_layout_efl_layout_group_group_size_min_get(Eo *obj EINA_UNUSED, Edje
 }
 
 EOLIAN Eina_Size2D
-_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed EINA_UNUSED)
+_efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_Size2D sz;
 
@@ -3341,6 +3341,19 @@ _efl_canvas_layout_efl_layout_group_group_size_max_get(Eo *obj EINA_UNUSED, Edje
    if (sz.w == 0) sz.w = EDJE_INF_MAX_W;
    if (sz.h == 0) sz.h = EDJE_INF_MAX_H;
    return sz;
+}
+
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_layout_group_part_exist_get(Eo *obj EINA_UNUSED, Edje *ed, const char *part)
+{
+   Edje_Real_Part *rp;
+
+   if (!part) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(&ed, part);
+   if (!rp) return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 EOLIAN void

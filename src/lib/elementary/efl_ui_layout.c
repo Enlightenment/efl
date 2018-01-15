@@ -1575,6 +1575,14 @@ _efl_ui_layout_efl_layout_group_group_size_max_get(Eo *obj, Efl_Ui_Layout_Data *
    return efl_layout_group_size_max_get(wd->resize_obj);
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_layout_efl_layout_group_part_exist_get(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, const char *part)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   return efl_layout_group_part_exist_get(wd->resize_obj, part);
+}
+
 /* layout's sizing evaluation is deferred. evaluation requests are
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
