@@ -1,0 +1,893 @@
+group { name: "e/gadget/luncher/bar";
+   data {
+      item: styles "default engage";
+   }
+   parts {
+      part { name: "e.swallow.drop"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "e.swallow.bar";
+            rel2.to: "e.swallow.bar";
+         }
+      }
+      part { name: "e.swallow.bar"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+         }
+      }
+   }
+}
+
+group { name: "e/gadget/luncher/grid";
+   parts {
+      part { name: "e.swallow.drop"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "e.swallow.grid";
+            rel2.to: "e.swallow.grid";
+         }
+      }
+      part { name: "e.swallow.grid"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+         }
+      }
+   }
+}
+
+group { name: "e/gadget/luncher/icon";
+   script {
+      public urgent;
+   }
+   parts {
+      part { name: "item_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "sizer";
+            rel2.to: "sizer";
+            rel1.offset: -100 -100;
+            rel2.offset: 99 99;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "sizer"; type: RECT;
+         clip_to: "item_clip";
+         mouse_events: 0;
+         description {
+            align: 0.5 0.5;
+            state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "background"; type: RECT;
+         clip_to: "item_clip";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to: "sizer";
+            rel2.to: "sizer";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 50;
+         }
+      }
+      part { name: "indicator"; type: RECT;
+         clip_to: "item_clip";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            color: 255 255 255 0;
+         }
+         description { state: "on_left" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0.0 0.025;
+            rel1.offset: 0 1;
+            rel2.relative: 0.05 0.975;
+            color: 51 153 255 255;
+         }
+         description { state: "on_top" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0.025 0.0;
+            rel1.offset: 1 0;
+            rel2.relative: 0.975 0.05;
+            color: 51 153 255 255;
+         }
+         description { state: "on_right" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0.95 0.025;
+            rel1.offset: 0 1;
+            rel2.relative: 1.0 0.975;
+            color: 51 153 255 255;
+         }
+         description { state: "on_bottom" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0.025 0.95;
+            rel1.offset: 1 0;
+            rel2.relative: 0.975 1.0;
+            color: 51 153 255 255;
+         }
+      }
+      part { name: "e.swallow.icon"; type: SWALLOW;
+         clip_to: "item_clip";
+         mouse_events: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.to: "sizer";
+            rel2.to: "sizer";
+         }
+         description { state: "on_left" 0.0;
+            inherit: "default" 0.0;
+            align: 1.0 0.5;
+            rel1.relative: 0.065 0.0;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -1;
+         }
+         description { state: "on_top" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 0.065;
+            rel1.offset: 1 1;
+            rel2.offset: -1 -2;
+         }
+         description { state: "on_right" 0.0;
+            inherit: "default" 0.0;
+            align: 0.0 0.5;
+            rel2.relative: 0.945 1.0;
+            rel1.offset: 2 1;
+            rel2.offset: -1 -1;
+         }
+         description { state: "on_bottom" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 0.0;
+            rel2.relative: 1.0 0.945;
+            rel1.offset: 1 2;
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "obackground"; type: RECT;
+         repeat_events: 1;
+         clip_to: "item_clip";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.to: "sizer";
+            rel2.to: "sizer";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: -0.5 -0.5;
+            rel2.relative: 1.5 1.5;
+         }
+         description { state: "huge" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: -2.0  -2.0;
+            rel2.relative: 3.0  3.0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "e.swallow.overlay"; type: PROXY;
+         clip_to: "obackground";
+         repeat_events: 1;
+         description {
+            state: "default" 0.0;
+            source: "e.swallow.icon";
+            proxy.source_clip: 0;
+            rel1.to: "obackground";
+            rel2.to: "obackground";
+         }
+      }
+   }
+   programs {
+      program { name: "set_default";
+         signal: "e,state,default"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.2;
+         target: "sizer";
+      }
+      program { name: "focused";
+         signal: "e,state,focused"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         transition: LINEAR 0.5;
+         target: background;
+      }
+      program { name: "unfocused";
+         signal: "e,state,unfocused"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.5;
+         target: background;
+      }
+      program { name: "starting";
+         signal: "e,state,starting"; source: "e";
+         after: "exec_start";
+         after: "tracking";
+      }
+      program { name: "tracking";
+         action: STATE_SET "disabled" 0.0;
+         target: "item_clip";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "started";
+         signal: "e,state,started"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "item_clip";
+         transition: DECELERATE 0.1;
+      }
+      program { name: "icon_on_left";
+         signal: "e,state,on,left"; source: "e";
+         action: STATE_SET "on_left" 0.0;
+         target: "indicator";
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_on_top";
+         signal: "e,state,on,top"; source: "e";
+         action: STATE_SET "on_top" 0.0;
+         target: "indicator";
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_on_right";
+         signal: "e,state,on,right"; source: "e";
+         action: STATE_SET "on_right" 0.0;
+         target: "indicator";
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_on_bottom";
+         signal: "e,state,on,bottom"; source: "e";
+         action: STATE_SET "on_bottom" 0.0;
+         target: "indicator";
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_left";
+         signal: "e,state,off,left"; source: "e";
+         action: STATE_SET "on_left" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_top";
+         signal: "e,state,off,top"; source: "e";
+         action: STATE_SET "on_top" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_right";
+         signal: "e,state,off,right"; source: "e";
+         action: STATE_SET "on_right" 0.0;
+         target: "e.swallow.icon";
+         transition: ACCELERATE 0.1;
+      }
+      program { name: "icon_off_bottom";
+         signal: "e,state,off,bottom"; source: "e";
+         action: STATE_SET "on_bottom" 0.0;
+         target: "e.swallow.icon";
+         transition: DECELERATE 0.1;
+      }
+      program { name: "icon_off";
+         signal: "e,state,off,*"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "indicator";        
+         transition: DECELERATE 0.1;
+      }
+      program { name: "urgent";
+         signal: "e,state,urgent"; source: "e";
+         after: "go_urgent";
+      }
+      program { name: "normal";
+         signal: "e,state,normal"; source: "e";
+         after: "go_normal";
+      }
+      program { name: "go_urgent";
+         script {
+           set_state(PART:"obackground", "visible", 0.0);
+           set_int(urgent, 1);
+         }
+         after: "go_urgent2";
+      }
+      program { name: "go_urgent2";
+         action: STATE_SET "hidden" 0.0;
+         transition: LINEAR 0.5;
+         target: "obackground";
+         sequence {
+            script {
+               if (get_int(urgent) == 1)
+                 run_program(get_program_id("go_urgent"));
+            }
+         }
+      }
+      program { name: "go_normal";
+         script {
+            stop_program(get_program_id("go_normal2"));
+            set_int(urgent, 0);
+         }
+         after: "go_normal2";
+      }
+      program { name: "go_normal2";
+         action: STATE_SET "default" 0.0;
+         target: "obackground";
+      }
+      program { name: "exec_start";
+         signal: "e,action,start"; source: "e";
+         action: ACTION_STOP;
+         target: "go_urgent";
+         target: "go_urgent2";
+         target: "go_normal";
+         target: "go_normal2";
+         target: "go_big";
+         target: "go_big2";
+         after: "go_big";
+      }
+      program { name: "go_big";
+         action: STATE_SET "visible" 0.0;
+         target: "obackground";
+         after: "go_big2";
+      }
+      program { name: "go_big2";
+         action: STATE_SET "huge" 0.0;
+         transition: LINEAR 0.5;
+         target: "obackground";
+      }
+   }
+}
+
+group { name: "e/gadget/luncher/preview"; 
+   parts {
+      part { name: "base"; type: RECT;
+         description { state: "default";
+            color: 255 255 255 0;
+            rel1.offset: -1 -1;
+            rel2.offset: 0 0;
+            link.base: "e,state,unfocused" "e";
+            link.transition: DECEL 0.1;
+         }
+         description { state: "focused";
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
+            link.base: "e,state,focused" "e";
+            link.transition: ACCEL 0.1;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default";
+            link.base: "e,state,visible" "e";
+            link.transition: ACCEL 0.1;
+         }
+         description { state: "invisible";
+            inherit: "default" 0.0;
+            color: 255 255 255 75;
+            link.base: "e,state,invisible" "e";
+            link.transition: DECEL 0.1;
+         }
+      }
+      part { name: "e.swallow.title"; type: SWALLOW; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel1.to_x: "e.swallow.icon";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 1 1;
+            rel2.to_x: "e.swallow.icon";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         description { state: "menu" 0.0;
+            min: 120 0;
+            align: 0.5 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -1;
+         }
+      }
+      part { name: "border"; type: RECT; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default";
+            rel1.to: "e.swallow.icon";
+            rel2.to: "e.swallow.icon";
+            rel1.offset: -1 -1;
+            rel2.offset: 0 0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+         description { state: "menu";
+            inherit: "default" 0.0;
+            visible: 0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0; 
+         clip_to: "clip";
+         description { state: "default";
+            align: 0.5 0.5;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.to_y: "e.swallow.title";
+            rel1.relative: 0.0 1.0;
+            rel2.offset: 0 -3;
+         }
+         description { state: "menu";
+            inherit: "default" 0.0;
+            min: 48 48;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { name: "go_menu";
+         signal: "e,state,icon,menu"; source: "e";
+         action: STATE_SET "menu" 0.0;
+         target: "border";
+         target: "e.swallow.title";
+         target: "e.swallow.icon";
+      }
+      program { name: "go_alpha";
+         signal: "e,state,icon,alpha"; source: "e";
+         action: STATE_SET "menu" 0.0;
+         target: "border";
+      }
+   }
+}
+
+group { "elm/label/base/luncher_preview";
+   mouse_events: 0;
+   parts {
+      part { name: "elm.text"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default";
+            color_class: "menu_item"; 
+            text { font: FNBD; size: 10;
+               min: 0 1;
+               align: 0.5 0.5;
+               text_class: "menu_item";
+            }
+         }
+      }
+   }
+}
+
+group { name: "elm/tooltip/base/luncher";
+   min: 30 30;
+   data.item: "pad_x" "10";
+   data.item: "pad_y" "10";
+   data.item: "pad_border_x" "1";
+   data.item: "pad_border_y" "1";
+   /* tooltip is hidden after this amount.
+    Keep in sync with hide animations */
+   data.item: "hide_timeout" "0.35";
+   // if in a window... it's transparent!
+   data.item: "transparent" "enabled";
+   images.image: "tooltip-base.png" COMP;
+   images.image: "tooltip-corner-top-left-tip.png" COMP;
+   images.image: "tooltip-corner-top-right-tip.png" COMP;
+   images.image: "tooltip-corner-bottom-left-tip.png" COMP;
+   images.image: "tooltip-corner-bottom-right-tip.png" COMP;
+   images.image: "tooltip-edge-left-tip.png" COMP;
+   images.image: "tooltip-edge-right-tip.png" COMP;
+   images.image: "tooltip-edge-bottom-tip.png" COMP;
+   images.image: "tooltip-edge-top-tip.png" COMP;
+   script {
+      hide_corners() {
+         set_state(PART:"corner-top-left", "default", 0.0);
+         set_state(PART:"corner-top-right", "default", 0.0);
+         set_state(PART:"corner-bottom-left", "default", 0.0);
+         set_state(PART:"corner-bottom-right", "default", 0.0);
+      }
+      hide_edges() {
+         set_state(PART:"clipper-edge-left", "default", 0.0);
+         set_state(PART:"clipper-edge-right", "default", 0.0);
+         set_state(PART:"clipper-edge-top", "default", 0.0);
+         set_state(PART:"clipper-edge-bottom", "default", 0.0);
+      }
+      show_corner_top_left() {
+         set_state(PART:"corner-top-left", "visible", 0.0);
+         set_state(PART:"corner-top-right", "default", 0.0);
+         set_state(PART:"corner-bottom-left", "default", 0.0);
+         set_state(PART:"corner-bottom-right", "default", 0.0);
+         hide_edges();
+      }
+      show_corner_top_right() {
+         set_state(PART:"corner-top-right", "visible", 0.0);
+         set_state(PART:"corner-top-left", "default", 0.0);
+         set_state(PART:"corner-bottom-left", "default", 0.0);
+         set_state(PART:"corner-bottom-right", "default", 0.0);
+         hide_edges();
+      }
+      show_corner_bottom_left() {
+         set_state(PART:"corner-bottom-left", "visible", 0.0);
+         set_state(PART:"corner-bottom-right", "default", 0.0);
+         set_state(PART:"corner-top-left", "default", 0.0);
+         set_state(PART:"corner-top-right", "default", 0.0);
+         hide_edges();
+      }
+      show_corner_bottom_right() {
+         set_state(PART:"corner-bottom-right", "visible", 0.0);
+         set_state(PART:"corner-bottom-left", "default", 0.0);
+         set_state(PART:"corner-top-left", "default", 0.0);
+         set_state(PART:"corner-top-right", "default", 0.0);
+         hide_edges();
+      }
+      show_edge_left(Float:val) {
+         set_state(PART:"clipper-edge-left", "visible", 0.0);
+         set_drag(PART:"edge-drag-left", 0.0, val);
+         set_state(PART:"clipper-edge-right", "default", 0.0);
+         set_state(PART:"clipper-edge-top", "default", 0.0);
+         set_state(PART:"clipper-edge-bottom", "default", 0.0);
+         hide_corners();
+      }
+      show_edge_right(Float:val) {
+         set_state(PART:"clipper-edge-right", "visible", 0.0);
+         set_drag(PART:"edge-drag-right", 0.0, val);
+         set_state(PART:"clipper-edge-left", "default", 0.0);
+         set_state(PART:"clipper-edge-top", "default", 0.0);
+         set_state(PART:"clipper-edge-bottom", "default", 0.0);
+         hide_corners();
+      }
+      show_edge_top(Float:val) {
+         set_state(PART:"clipper-edge-top", "visible", 0.0);
+         set_drag(PART:"edge-drag-top", val, 0.0);
+         set_state(PART:"clipper-edge-bottom", "default", 0.0);
+         set_state(PART:"clipper-edge-left", "default", 0.0);
+         set_state(PART:"clipper-edge-right", "default", 0.0);
+         hide_corners();
+      }
+      show_edge_bottom(Float:val) {
+         set_state(PART:"clipper-edge-bottom", "visible", 0.0);
+         set_drag(PART:"edge-drag-bottom", val, 0.0);
+         set_state(PART:"clipper-edge-top", "default", 0.0);
+         set_state(PART:"clipper-edge-left", "default", 0.0);
+         set_state(PART:"clipper-edge-right", "default", 0.0);
+         hide_corners();
+      }
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT_SET) && (id == 1)) {
+            new Float:x, Float:y;
+
+            x = getfarg(2);
+            y = getfarg(3);
+
+            if (x < 0.0) {
+               if (y < 0.0) show_corner_top_left();
+               else if (y > 1.0) show_corner_bottom_left();
+               else show_edge_left(y);
+            } else if (x > 1.0) {
+               if (y < 0.0) show_corner_top_right();
+               else if (y > 1.0) show_corner_bottom_right();
+               else show_edge_right(y);
+            } else {
+               if (y < 0.0) show_edge_top(x);
+               else if (y > 1.0) show_edge_bottom(x);
+               else {
+                  hide_corners();
+                  hide_edges();
+               }
+            }
+         }
+      }
+   }
+   parts {
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1 { to: "pop"; offset: 0 0; }
+            rel2 { to: "pop"; offset: -1 -1; }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "pop"; mouse_events: 0;
+         clip_to: "clipper";
+         type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1 {
+               to: "elm.swallow.content";
+               offset: -3 7;
+            }
+            rel2 {
+               to: "elm.swallow.content";
+               offset: 3 -6;
+            }
+            color: 15 15 15 175;
+         }
+      }
+      #define TT_CORNER(name_, rx, ry, ax, ay, ox, oy)             \
+      part { name: "corner-"name_; mouse_events: 0;                \
+         clip_to: "clipper";                                       \
+         scale: 1;                                                 \
+         description { state: "default" 0.0;                       \
+            visible: 0;                                            \
+            align: ax ay;                                          \
+            FIXED_SIZE(12, 12)                                     \
+            rel1 {                                                 \
+               relative: rx ry;                                    \
+               offset: ox oy;                                      \
+               to: "pop";                                          \
+            }                                                      \
+            rel2 {                                                 \
+               relative: rx ry;                                    \
+               offset: ox oy;                                      \
+               to: "pop";                                          \
+            }                                                      \
+            image.normal: "tooltip-corner-"name_"-tip.png";        \
+         }                                                         \
+         description { state: "visible" 0.0;                       \
+            inherit: "default" 0.0;                                \
+            visible: 1;                                            \
+         }                                                         \
+      }
+      TT_CORNER("top-left", 0, 0, 0, 0, -4, -5);
+      TT_CORNER("top-right", 1, 0, 1, 0, 3, -5);
+      TT_CORNER("bottom-left", 0, 1, 0, 1, -4, 2);
+      TT_CORNER("bottom-right", 1, 1, 1, 1, 3, 2);
+      #undef TT_CORNER
+
+      #define TT_EDGE_VERT(name_, rx, ax, ox)                      \
+      part { name: "clipper-edge-"name_; type: RECT;               \
+         clip_to: "clipper";                                       \
+         description { state: "default" 0.0;                       \
+            visible: 0;                                            \
+            min: 9 13;                                             \
+            align: ax 0.5;                                         \
+            fixed: 1 1;                                            \
+            rel1 {                                                 \
+               relative: rx 0.0;                                   \
+               offset: ox 0;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+            rel2 {                                                 \
+               relative: rx 1.0;                                   \
+               offset: ox 0;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+         }                                                         \
+         description { state: "visible" 0.0;                       \
+            inherit: "default" 0.0;                                \
+            visible: 1;                                            \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-area-"name_; type: RECT; mouse_events: 0; \
+         clip_to: "clipper-edge-"name_;                            \
+         scale: 1;                                                 \
+         description { state: "default" 0.0;                       \
+            color: 0 0 0 0;                                        \
+            min: 9 13;                                             \
+            align: ax 0.5;                                         \
+            fixed: 1 1;                                            \
+            rel1 {                                                 \
+               relative: rx 0.0;                                   \
+               offset: ox 0;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+            rel2 {                                                 \
+               relative: rx 1.0;                                   \
+               offset: ox 0;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-drag-"name_; type: RECT; mouse_events: 0; \
+         clip_to: "clipper-edge-"name_;                            \
+         scale: 1;                                                 \
+         dragable {                                                \
+            x: 0 0 0;                                              \
+            y: 1 1 0;                                              \
+            confine: "edge-area-"name_;                            \
+         }                                                         \
+         description { state: "default" 0.0;                       \
+            color: 0 0 0 0;                                        \
+            min: 9 13;                                             \
+            rel1.to: "edge-area-"name_;                            \
+            rel2.to: "edge-area-"name_;                            \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-img-"name_; mouse_events: 0;              \
+         clip_to: "clipper-edge-"name_;                            \
+         description { state: "default" 0.0;                       \
+            FIXED_SIZE(9, 13)                                      \
+            align: ax 0.5;                                         \
+            rel1.to: "edge-drag-"name_;                            \
+            rel2.to: "edge-drag-"name_;                            \
+            image.normal: "tooltip-edge-"name_"-tip.png";          \
+         }                                                         \
+      }
+      TT_EDGE_VERT("left", 0, 1, -3);
+      TT_EDGE_VERT("right", 1, 0, 2);
+      #undef TT_EDGE_VERT
+
+      #define TT_EDGE_HORIZ(name_, ry, ay, oy)                     \
+      part { name: "clipper-edge-"name_; type: RECT;               \
+         clip_to: "clipper";                                       \
+         scale: 1;                                                 \
+         description { state: "default" 0.0;                       \
+            visible: 0;                                            \
+            min: 11 9;                                             \
+            align: 0.5 ay;                                         \
+            fixed: 1 1;                                            \
+            rel1 {                                                 \
+               relative: 0.0 ry;                                   \
+               offset: 0 oy;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+            rel2 {                                                 \
+               relative: 1.0 ry;                                   \
+               offset: 0 oy;                                       \
+               to: "elm.swallow.content";                          \
+            }                                                      \
+         }                                                         \
+         description { state: "visible" 0.0;                       \
+            inherit: "default" 0.0;                                \
+            visible: 1;                                            \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-area-"name_; type: RECT; mouse_events: 0; \
+         clip_to: "clipper-edge-"name_;                            \
+         scale: 1;                                                 \
+         description { state: "default" 0.0;                       \
+            color: 0 0 0 0;                                        \
+            min: 11 9;                                             \
+            align: 0.5 ay;                                         \
+            fixed: 1 1;                                            \
+            rel1.to: "clipper-edge-"name_;                         \
+            rel2.to: "clipper-edge-"name_;                         \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-drag-"name_; type: RECT; mouse_events: 0; \
+         clip_to: "clipper-edge-"name_;                            \
+         scale: 1;                                                 \
+         dragable {                                                \
+            x: 1 1 0;                                              \
+            y: 0 0 0;                                              \
+            confine: "edge-area-"name_;                            \
+         }                                                         \
+         description { state: "default" 0.0;                       \
+            color: 0 0 0 0;                                        \
+            min: 11 9;                                             \
+            rel1.to: "edge-area-"name_;                            \
+            rel2.to: "edge-area-"name_;                            \
+         }                                                         \
+      }                                                            \
+      part { name: "edge-img-"name_; mouse_events: 0;              \
+         clip_to: "clipper-edge-"name_;                            \
+         scale: 1;                                                 \
+         description { state: "default" 0.0;                       \
+            FIXED_SIZE(11, 9)                                      \
+            align: 0.5 ay;                                         \
+            rel1.to: "edge-drag-"name_;                            \
+            rel2.to: "edge-drag-"name_;                            \
+            image.normal: "tooltip-edge-"name_"-tip.png";          \
+         }                                                         \
+      }
+      TT_EDGE_HORIZ("top", 0, 1, -1);
+      TT_EDGE_HORIZ("bottom", 1, 0, 1);
+      #undef TT_EDGE_HORIZ
+      part { name: "clipper_content"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+            rel1.to: "elm.swallow.content";
+            rel2.to: "elm.swallow.content";
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         clip_to: "clipper_content";
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+         }
+      }
+      programs {
+         program { name: "show0";
+            signal: "elm,action,show"; source: "elm";
+            action: ACTION_STOP;
+            target: "hide0";
+            target: "hide1";
+            target: "hide2";
+            target: "hide3";
+            after: "show1";
+            after: "show2";
+         }
+         program { name: "show1";
+            action: STATE_SET "visible" 0.0;
+            transition: LINEAR 0.0;
+            target: "clipper";
+         }
+         program { name: "show2";
+            in: 0.0 0.0;
+            action: STATE_SET "visible" 0.0;
+            transition: LINEAR 0.0;
+            target: "clipper_content";
+         }
+         program { name: "hide0";
+            signal: "elm,action,hide"; source: "elm";
+            action: ACTION_STOP;
+            target: "show0";
+            target: "show1";
+            target: "show2";
+            after: "hide1";
+            after: "hide2";
+            after: "hide3";
+         }
+         program { name: "hide1";
+            script {
+               hide_corners();
+               hide_edges();
+            }
+         }
+         program { name: "hide2";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.0;
+            target: "clipper_content";
+         }
+         program { name: "hide3";
+            in: 0.0 0.0;
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.0;
+            target: "clipper";
+         }
+      }
+   }
+}
+
+group { name: "elm/gengrid/item/luncher/default";
+   data.item: "contents" "elm.swallow.icon";
+   parts {
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "icon_area";
+            rel1.offset: 0 0;
+            rel2.to: "icon_area";
+            rel2.offset: 0 0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "icon_area"; type: RECT;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.offset: 0 0;
+            rel2.offset: 0 0;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "icon_area";
+         description { state: "default" 0.0;
+            rel1.to: "icon_area";
+            rel2.to: "icon_area";
+         }
+      }
+   }
+}

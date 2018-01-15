@@ -1,0 +1,237 @@
+group { name: "e/widgets/about/main";
+   // data.item: "borderless" "1";
+   // data.item: "shaped" "1";
+   images.image: "snow.jpg" LOSSY 90;
+   images.image: "grad-v-light.png" COMP;
+   set { name: "logo_mono";
+      image { image: "logo.png" COMP;  size: 601 601 99999 99999; }
+      image { image: "logo2.png" COMP; size: 301 301   600   600; }
+      image { image: "logo3.png" COMP; size: 151 151   300   300; }
+      image { image: "logo4.png" COMP; size:  76  76   150   150; }
+      image { image: "logo5.png" COMP; size:  0    0    75    75; }
+   }
+   styles {
+      style { name: "about_style";
+         base: "font="FN" font_size=10 align=center text_class=tb_plain color=#fff wrap=word";
+         tag: "hilight" "+ font="FNBD" text_class=tb_light color=#fff align=center";
+         tag: "title" "+ font_size=16 font="FNBD" text_class=tb_big";
+         tag: "/title" "- \n \n";
+         tag: "br" "\n";
+      }
+      style { name: "authors_style";
+         base: "font="FNBD" font_size=10 align=left text_class=tb_plain color=#0004 wrap=none";
+         tag: "hilight" "+ font="FNBD" text_class=tb_light color=#fff";
+         tag: "title" "+ font_size=16 font="FNBD" text_class=tb_big";
+         tag: "/title" "- \n \n";
+         tag: "br" "\n";
+      }
+   }
+   min: 320 360;
+   parts {
+      part { name: "sizer"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 320 360;
+         }
+      }
+      part { name: "image";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "snow.jpg";
+            aspect: 1.0 1.0; aspect_preference: NONE;
+         }
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "e.textblock.authors"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            max: 20000 20000;
+            min: 160 0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 13 13;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -14 13;
+            align: 0.5 0.0;
+            text { style: "authors_style";
+               min: 0 1;
+               align: 0.5 0.0;
+            }
+         }
+         description { state: "up" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 13 -14;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -14 -14;
+            align: 0.5 1.0;
+         }
+      }
+      program { name: "show1";
+         signal: "show"; source: "";
+         action: STATE_SET "up" 0.0;
+         transition: LINEAR 60.0;
+         target: "e.textblock.authors";
+         after: "show2";
+      }
+      program { name: "show2";
+         action: STATE_SET "default" 0.0;
+         target: "e.textblock.authors";
+         after: "show1";
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "e.textblock.about"; type: TEXTBLOCK; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            max: 20000 20000;
+            min: 160 0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 13 13;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -14 13;
+            align: 0.5 0.0;
+            text { style: "about_style";
+               min: 0 1;
+               align: 0.5 0.0;
+            }
+         }
+         description { state: "up" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 13 -14;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -14 -14;
+            align: 0.5 1.0;
+         }
+      }
+      program { name: "show3";
+         signal: "show"; source: "";
+         action: STATE_SET "up" 0.0;
+         transition: LINEAR 25.0;
+         target: "e.textblock.about";
+         after: "show4";
+      }
+      program { name: "show4";
+         action: STATE_SET "default" 0.0;
+         target: "e.textblock.about";
+         after: "show3";
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "shad";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "grad-v-light.png";
+            min: 0 256;
+            align: 0.5 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+            fill.size.relative: 0.0 1.0;
+            fill.size.offset: 64 0;
+            fill.smooth: 0;
+         }
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "logo";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "logo_mono";
+            align: 0.5 0.0;
+            rel1.offset: 0 13;
+            rel2.offset: -1 13;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+            FIXED_SIZE(75, 75)
+         }
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "e.text.title"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel1.offset: 0 13;
+            rel2.offset: -1 13;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+            rel1.to: "logo";
+            rel2.to: "logo";
+            color: 255 255 255 255;
+            text { font: FNBD; size: 16;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "about_title";
+            }
+         }
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "e.text.version"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel1.offset: 0 13;
+            rel2.offset: -1 13;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+            rel1.to: "e.text.title";
+            rel2.to: "e.text.title";
+            color: 255 255 255 255;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "about_version";
+            }
+         }
+      }
+      ////////////////////////////////////////////////////////////////
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: -6 -6;
+            rel1.to: "e.text.label";
+            rel2.offset: 5 5;
+            rel2.to: "e.text.label";
+            color: 48 48 48 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 32 32 32 255;
+         }
+      }
+      part { name: "e.text.label"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 0 -19;
+            rel1.relative: 0.5 1.0;
+            rel2.offset: -1 -19;
+            rel2.relative: 0.5 1.0;
+            color: 160 160 160 255;
+            align: 0.5 1.0;
+            min: 80 10;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "button";
+            }
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      program {
+         signal: "mouse,down,1*"; source: "base";
+         action: STATE_SET "clicked" 0.0;
+         target: "base";
+         target: "e.text.label";
+      }
+      program {
+         signal: "mouse,up,1"; source: "base";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "e.text.label";
+      }
+      program {
+         signal: "mouse,clicked,1*"; source: "base";
+         action: SIGNAL_EMIT "e,action,close" "";
+      }
+   }
+}

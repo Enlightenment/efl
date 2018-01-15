@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="network-cellular-3g.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.7676601"
+     inkscape:cx="77.24482"
+     inkscape:cy="82.666717"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="573"
+     inkscape:window-y="46"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     style="fill:#3399ff"
+     inkscape:connector-curvature="0"
+     d="m 13.950099,22.61477 c -3.9509812,0 -7.1317356,3.180754 -7.1317356,7.131736 v 71.317364 c 0,3.95099 3.1807544,7.13174 7.1317356,7.13174 h 99.844311 c 3.95099,0 7.13174,-3.18075 7.13174,-7.13174 V 29.746506 c 0,-3.950982 -3.18075,-7.131736 -7.13174,-7.131736 H 13.950099 z m 14.263474,14.263473 h 7.131737 v 21.39521 h 21.395208 v 28.526946 c 0,3.950982 -3.180754,7.131736 -7.131736,7.131736 H 42.477046 V 72.536925 H 21.081836 V 44.00998 c 0,-3.950982 3.180755,-7.131737 7.131737,-7.131737 z m 39.22455,0 h 35.658687 c 1.97549,0 3.56586,1.590377 3.56586,3.565868 V 51.141716 H 78.135728 V 79.668663 H 92.399201 V 72.536925 H 85.267465 V 58.273453 h 21.395205 v 32.092814 c 0,1.975491 -1.59037,3.565868 -3.56586,3.565868 H 67.438123 c -1.975491,0 -3.565867,-1.590377 -3.565867,-3.565868 V 40.444111 c 0,-1.975491 1.590376,-3.565868 3.565867,-3.565868 z"
+     id="path4" />
+</svg>

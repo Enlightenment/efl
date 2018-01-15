@@ -1,0 +1,227 @@
+#define DATETIME_FIELD(_pos) \
+   swallow { "field"#_pos; \
+      scale; \
+      clip_to: "clip"; \
+      desc { "default"; \
+         hid; \
+         min: 0 0; \
+         align: 0.0 0.5; \
+         fixed: 1 1; \
+         rel1.relative: 1.0 0.0; \
+         rel1.to: "separator"#_pos; \
+         rel2.relative: 1.0 1.0; \
+         rel2.to: "separator"#_pos; \
+      } \
+      desc { "enable"; \
+         inherit: "default"; \
+         vis; \
+         min: 8 10; \
+      } \
+   } \
+   programs{ \
+      program { "field_"#_pos"enabled"; \
+         signal: "field"#_pos",enable"; \
+         source: "elm"; \
+         action: STATE_SET "enable"; \
+         target: "field"#_pos; \
+      } \
+      program { "field_"#_pos"disabled"; \
+         signal: "field"#_pos",disable"; \
+         source: "elm"; \
+         action: STATE_SET "default"; \
+         target: "field"#_pos; \
+      } \
+   }
+#define DATETIME_SEPARATOR(_pos, _after) \
+   text { "separator"#_pos; \
+      scale; \
+      effect: SHADOW BOTTOM; \
+      clip_to: "disclip"; \
+      desc { "default"; \
+         hid; \
+         min: 0 0; \
+         align: 0.0 0.5; \
+         fixed: 1 0; \
+         rel1 { \
+            relative: 1.0 0.0; \
+            to: "field"#_after; \
+         } \
+         rel2 { \
+            relative: 1.0 1.0; \
+            to: "field"#_after; \
+         } \
+         color_class: "datetime_separator_text"; \
+         text { \
+            font: "Sans"; size: 10; \
+            min: 1 0; \
+            ellipsis: -1; \
+            align: 0.5 0.5; \
+            text_class: "datetime_separator_text"; \
+         } \
+      } \
+      desc { "enable"; \
+         inherit: "default"; \
+         vis; \
+         min: 8 10; \
+      } \
+   } \
+   text { "separator"#_pos"d"; \
+      scale; \
+      effect: SHADOW BOTTOM; \
+      clip_to: "disclip2"; \
+      desc { "default"; \
+         hid; \
+         rel1.to: "separator"#_pos; \
+         rel2.to: "separator"#_pos; \
+         color_class: "datetime_separator_text_disabled"; \
+         text { \
+            text_source: "separator"#_pos; \
+            font: "Sans"; size: 10; \
+            text_class: "datetime_separator_text_disabled"; \
+         } \
+      } \
+      desc { "enable"; \
+         inherit: "default"; \
+         vis; \
+      } \
+   } \
+   programs { \
+      program { \
+         signal: "field"#_after",enable"; \
+         source: "elm"; \
+         action: STATE_SET "enable"; \
+         target: "separator"#_pos; \
+         target: "separator"#_pos"d"; \
+      } \
+      program { \
+         signal: "field"#_after",disable"; \
+         source: "elm"; \
+         action: STATE_SET "default"; \
+         target: "separator"#_pos; \
+         target: "separator"#_pos"d"; \
+      } \
+   }
+
+group { "efl/uiclock";
+   parts {
+      rect { "bg";
+         desc { "default";
+            color_class: "datetime_bg";
+         }
+      }
+      rect { "clip";
+         desc { "default";
+            rel1.to: "separator0";
+            rel2.to: "separator7";
+         }
+      }
+      rect { "disclip";
+         clip_to: "clip";
+         desc { "default";
+            rel1.to: "separator0";
+            rel2.to: "separator7";
+         }
+         desc { "disabled";
+           inherit: "default";
+           hid;
+         }
+      }
+      rect { "disclip2";;
+         clip_to: "clip";
+         desc { "default";
+            rel1.to: "separator0";
+            rel2.to: "separator7";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      spacer { "separator0";;
+         scale;
+         desc { "default";
+            min: 8 10;
+            align: 0.0 0.5;
+            fixed: 1 0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      DATETIME_FIELD(0)
+      DATETIME_SEPARATOR(1,0)
+      DATETIME_FIELD(1)
+      DATETIME_SEPARATOR(2,1)
+      DATETIME_FIELD(2)
+      DATETIME_SEPARATOR(3,2)
+      DATETIME_FIELD(3)
+      DATETIME_SEPARATOR(4,3)
+      DATETIME_FIELD(4)
+      DATETIME_SEPARATOR(5,4)
+      DATETIME_FIELD(5)
+      DATETIME_SEPARATOR(6,5)
+      DATETIME_FIELD(6)
+      DATETIME_SEPARATOR(7,6)
+      DATETIME_FIELD(7)
+      DATETIME_SEPARATOR(8,7)
+      spacer { "separator9";;
+         desc { "default";
+            rel1.to: "separator7";
+            rel1.relative: 1.0 0.0;
+            min: 8 10;
+         }
+      }
+      rect { "discover";;
+         desc { "default";
+            rel1.to: "separator0";
+            rel2.to: "separator7";
+            hid;
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "elm.access";
+         repeat;
+         desc { "default";
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,state,disabled";
+         source: "elm";
+         action: STATE_SET "disabled";
+         target: "disclip";
+         target: "disclip2";
+         target: "discover";
+      }
+      program {
+         signal: "elm,state,enabled";
+         source: "elm";
+         action: STATE_SET "default";
+         target: "disclip";
+         target: "disclip2";
+         target: "discover";
+      }
+   }
+}
+#undef DATETIME_SEPARATOR
+#undef DATETIME_FIELD
+
+// AM_PM_BUTTON
+group { "efl/uiclock/ampm"
+   inherit: "efl/button";
+}
+
+//ENTRY
+group { "efl/uiclock/text"
+   inherit: "efl/text";
+   alias: "efl/uiclock/text/single";
+   alias: "efl/uiclock/text/single-noedit";
+}
+group { "efl/uiclock/text/selection"
+   inherit: "efl/text/selection";
+}

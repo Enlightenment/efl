@@ -1,0 +1,186 @@
+group { name: "e/gadget/cpumonitor/main";
+   alias: "e/gadget/cpumonitor/main_vert";
+   parts {
+      part { name: "e.swallow.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+   }
+}
+group { name: "e/gadget/cpumonitor/core/main";
+   image: "cpu_bar.png" COMP;
+   image: "cpu_green_on.png" COMP;
+   image: "cpu_yellow_on.png" COMP;
+   image: "cpu_red_on.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            new val = getarg(2);
+            if (val > (100 / 7 * 1)) set_state(PART:"led1", "on",  0.0);
+            else                     set_state(PART:"led1", "off", 0.0);
+            if (val > (100 / 7 * 2)) set_state(PART:"led2", "on",  0.0);
+            else                     set_state(PART:"led2", "off", 0.0);
+            if (val > (100 / 7 * 3)) set_state(PART:"led3", "on",  0.0);
+            else                     set_state(PART:"led3", "off", 0.0);
+            if (val > (100 / 7 * 4)) set_state(PART:"led4", "on",  0.0);
+            else                     set_state(PART:"led4", "off", 0.0);
+            if (val > (100 / 7 * 5)) set_state(PART:"led5", "on",  0.0);
+            else                     set_state(PART:"led5", "off", 0.0);
+            if (val > (100 / 7 * 6)) set_state(PART:"led6", "on",  0.0);
+            else                     set_state(PART:"led6", "off", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "bg";
+         desc { "default";
+            aspect: (10 / 54) (10 / 54);
+            aspect_preference: VERTICAL;
+            image.normal: "cpu_bar.png";
+         }
+         part { name: "led1";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 5);
+               rel2.relative: 1.0 (1.0 / 6 * 6);
+               image.normal: "cpu_green_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led2";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 4);
+               rel2.relative: 1.0 (1.0 / 6 * 5);
+               image.normal: "cpu_green_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led3";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 3);
+               rel2.relative: 1.0 (1.0 / 6 * 4);
+               image.normal: "cpu_green_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led4";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 2);
+               rel2.relative: 1.0 (1.0 / 6 * 3);
+               image.normal: "cpu_yellow_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led5";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 1);
+               rel2.relative: 1.0 (1.0 / 6 * 2);
+               image.normal: "cpu_yellow_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led6";
+            desc { "default"; hid;
+               rel1.relative: 0.0 (1.0 / 6 * 0);
+               rel2.relative: 1.0 (1.0 / 6 * 1);
+               image.normal: "cpu_red_on.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+      }
+   }
+}
+
+group { name: "e/gadget/cpumonitor/core/main_vert";
+   image: "cpu_bar_vert.png" COMP;
+   image: "cpu_green_on_vert.png" COMP;
+   image: "cpu_yellow_on_vert.png" COMP;
+   image: "cpu_red_on_vert.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            new val = getarg(2);
+            if (val > (100 / 7 * 1)) set_state(PART:"led1", "on",  0.0);
+            else                     set_state(PART:"led1", "off", 0.0);
+            if (val > (100 / 7 * 2)) set_state(PART:"led2", "on",  0.0);
+            else                     set_state(PART:"led2", "off", 0.0);
+            if (val > (100 / 7 * 3)) set_state(PART:"led3", "on",  0.0);
+            else                     set_state(PART:"led3", "off", 0.0);
+            if (val > (100 / 7 * 4)) set_state(PART:"led4", "on",  0.0);
+            else                     set_state(PART:"led4", "off", 0.0);
+            if (val > (100 / 7 * 5)) set_state(PART:"led5", "on",  0.0);
+            else                     set_state(PART:"led5", "off", 0.0);
+            if (val > (100 / 7 * 6)) set_state(PART:"led6", "on",  0.0);
+            else                     set_state(PART:"led6", "off", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "bg";
+         desc { "default";
+            aspect: (54 / 10) (54 / 10);
+            aspect_preference: HORIZONTAL;
+            image.normal: "cpu_bar_vert.png";
+         }
+         part { name: "led1";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 0) 0.0;
+               rel2.relative: (1.0 / 6 * 1) 1.0;
+               image.normal: "cpu_green_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led2";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 1) 0.0;
+               rel2.relative: (1.0 / 6 * 2) 1.0;
+               image.normal: "cpu_green_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led3";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 2) 0.0;
+               rel2.relative: (1.0 / 6 * 3) 1.0;
+               image.normal: "cpu_green_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led4";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 3) 0.0;
+               rel2.relative: (1.0 / 6 * 4) 1.0;
+               image.normal: "cpu_yellow_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led5";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 4) 0.0;
+               rel2.relative: (1.0 / 6 * 5) 1.0;
+               image.normal: "cpu_yellow_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+         part { name: "led6";
+            desc { "default"; hid;
+               rel1.relative: (1.0 / 6 * 5) 0.0;
+               rel2.relative: (1.0 / 6 * 6) 1.0;
+               image.normal: "cpu_red_on_vert.png";
+            }
+            desc { "on";  inherit: "default"; vis; }
+            desc { "off"; inherit: "default"; hid; }
+         }
+      }
+   }
+}

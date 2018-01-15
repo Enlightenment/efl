@@ -1,0 +1,558 @@
+#define FLIP_PICKER_MAX_LEN (50 + 1)
+#define FLIP_PICKER_MAX_LEN_STR "50"
+
+group { name: "elm/flipselector/base/default";
+   images.image: "flip_shad.png" COMP;
+   images.image: "sym_up_light_normal.png" COMP;
+   images.image: "sym_down_light_normal.png" COMP;
+   images.image: "sym_up_dark_normal.png" COMP;
+   images.image: "sym_down_dark_normal.png" COMP;
+   images.image: "shine.png" COMP;
+   images.image: "win_shadow.png" COMP;
+   images.image: "bevel_out.png" COMP;
+
+   data.item: "max_len" FLIP_PICKER_MAX_LEN_STR;
+
+   //FIXME: quick successive clicks on, say, up, lead to nastiness
+   script {
+      public cur, prev, next, lock;
+
+      flip_up(str[]) {
+         new tmp[FLIP_PICKER_MAX_LEN];
+         if (get_int(lock) == 1) {
+            replace_str(next, 0, str);
+            return;
+         }
+         fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+         set_text(PART:"bottom_text_prev", tmp);
+         set_state(PART:"elm.top", "shrink", 0.0);
+         set_text(PART:"elm.top", tmp);
+         set_state(PART:"elm.top", "default", 0.0);
+         set_text(PART:"elm.top", tmp);
+
+         replace_str(prev, 0, tmp);
+
+         set_state(PART:"elm.bottom", "default", 0.0);
+         set_text(PART:"elm.bottom", str);
+         set_state(PART:"elm.bottom", "shrink", 0.0);
+         set_text(PART:"elm.bottom", str);
+         set_text(PART:"top_text_prev", str);
+
+         replace_str(cur, 0, str);
+
+         set_state(PART:"bottom_cur", "shrink", 0.0);
+         set_state(PART:"top_cur", "default", 0.0);
+
+         set_int(lock, 1);
+         set_state(PART:"bottom_shadow", "default", 0.0);
+         anim(0.2, "animator_top_down", 1);
+      }
+      flip_dn(str[]) {
+         new tmp[FLIP_PICKER_MAX_LEN];
+         if (get_int(lock) == 1) {
+            replace_str(next, 0, str);
+            return;
+         }
+
+         fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+         set_text(PART:"top_text_prev", tmp);
+         set_state(PART:"elm.bottom", "shrink", 0.0);
+         set_text(PART:"elm.bottom", tmp);
+         set_state(PART:"elm.bottom", "default", 0.0);
+         set_text(PART:"elm.bottom", tmp);
+
+         replace_str(prev, 0, tmp);
+
+         set_state(PART:"elm.top", "default", 0.0);
+         set_text(PART:"elm.top", str);
+         set_state(PART:"elm.top", "shrink", 0.0);
+         set_text(PART:"elm.top", str);
+         set_text(PART:"bottom_text_prev", str);
+
+         replace_str(cur, 0, str);
+
+         set_state(PART:"bottom_cur", "default", 0.0);
+         set_state(PART:"top_cur", "shrink", 0.0);
+
+         set_int(lock, 1);
+         set_state(PART:"bottom_shadow", "full", 0.0);
+         anim(0.2, "animator_bottom_up", 1);
+      }
+      public animator_bottom_down(val, Float:pos) {
+         new tmp[FLIP_PICKER_MAX_LEN];
+
+         set_tween_state(PART:"elm.bottom", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"bottom_cur", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"bottom_shadow", pos, "half", 0.0, "full", 0.0);
+         set_state(PART:"bottom_shine_cur", "visible", 0.0);
+
+         if (pos >= 1.0) {
+            set_state(PART:"bottom_shadow", "default", 0.0);
+            set_state(PART:"bottom_shine_cur", "default", 0.0);
+            set_int(lock, 0);
+            fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
+            if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
+               replace_str(next, 0, "");
+               flip_up(tmp);
+            }
+         }
+      }
+      public animator_top_down(val, Float:pos) {
+         set_tween_state(PART:"elm.top", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"top_cur", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"bottom_shadow", pos, "default", 0.0, "half",
+                         0.0);
+         if (pos >= 1.0)
+           {
+              set_state(PART:"top_shine_cur", "default", 0.0);
+              anim(0.2, "animator_bottom_down", val);
+           }
+      }
+      public animator_bottom_up(val, Float:pos) {
+         set_tween_state(PART:"elm.bottom", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"bottom_cur", pos, "default", 0.0, "shrink", 0.0);
+         set_tween_state(PART:"bottom_shadow", pos, "full", 0.0, "half", 0.0);
+
+         if (pos >= 1.0) anim(0.2, "animator_top_up", val);
+      }
+      public animator_top_up(val, Float:pos) {
+         new tmp[FLIP_PICKER_MAX_LEN];
+
+         set_tween_state(PART:"elm.top", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"top_cur", pos, "shrink", 0.0, "default", 0.0);
+         set_tween_state(PART:"bottom_shadow", pos, "half", 0.0, "default",
+                         0.0);
+         set_state(PART:"top_shine_cur", "visible", 0.0);
+
+         if (pos >= 1.0) {
+            set_state(PART:"bottom_shadow", "default", 0.0);
+            set_int(lock, 0);
+
+            fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
+            if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
+               replace_str(next, 0, "");
+               flip_dn(tmp);
+            }
+         }
+      }
+      public message(Msg_Type:type, id, ...) {
+         /* flip down */
+         if ((type == MSG_STRING) && (id == 1)) {
+            new value[FLIP_PICKER_MAX_LEN];
+            snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
+            flip_up(value);
+         /* flip up */
+         } else  if ((type == MSG_STRING) && (id == 2)) {
+            new value[FLIP_PICKER_MAX_LEN];
+            snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
+            flip_dn(value);
+         }
+      }
+   }
+   parts {
+      part { name: "base_shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            WIN_SHADOW;
+         }
+      }
+      part { name: "base"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 6 6;
+            rel2.offset: -7 -7;
+         }
+      }
+      part { name: "bottom"; type: RECT;
+         description { state: "default" 0.0;
+            rel1 { to: "base"; relative: 0.0 0.5; }
+            rel2.to: "base";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "top"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2 { to: "base"; relative: 1.0 0.5; }
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "bottom_prev";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "bottom";
+            rel2.to: "bottom";
+            color: 72 72 72 255;
+         }
+      }
+      part { name: "bottom_text_prev"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         clip_to: "bottom_clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel1.to_y: "arrow_top";
+            rel1.relative: 0.0 0.7;
+            rel1.offset: 2 0;
+            rel2.to: "base";
+            rel2.to_y: "arrow_bottom";
+            rel2.relative: 1.0 0.3;
+            rel2.offset: -3 -1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+            color: FN_COL_DEFAULT;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+         }
+      }
+      part { name: "bottom_shadow"; mouse_events: 0;
+         clip_to: "bottom_clipper";
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.to: "bottom";
+            rel2 { to: "bottom"; relative: 1.0 0.0; }
+            image.normal: "flip_shad.png";
+            fill.smooth: 0;
+         }
+         description { state: "half" 0.0;
+            inherit: "default" 0.0;
+            fixed: 0 0;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "full" 0.0;
+            inherit: "default" 0.0;
+            fixed: 0 0;
+            rel2.relative: 1.0 2.0;
+         }
+      }
+      part { name: "bottom_cur"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "bottom";
+            rel2.to: "bottom";
+            color: 72 72 72 255;
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            fixed: 0 1;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      part { name: "bottom_shine_cur"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1 { to: "bottom_cur"; relative: 0 1; }
+            rel2.to: "bottom_cur";
+            image.normal: "shine.png";
+            min: 0 1;
+            fixed: 0 1;
+            align: 0.5 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.bottom"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         clip_to: "bottom_clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel1.to_y: "arrow_top";
+            rel1.relative: 0.0 0.7;
+            rel1.offset: 2 0;
+            rel2.to: "base";
+            rel2.to_y: "arrow_bottom";
+            rel2.relative: 1.0 0.3;
+            rel2.offset: -3 -1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+            color: FN_COL_DEFAULT;
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            color: 128 128 128 255;
+            visible: 0;
+            rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+         }
+      }
+      part { name: "top_prev"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "top";
+            rel2.to: "top";
+            color: 56 56 56 255;
+         }
+      }
+      part { name: "top_text_prev"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         clip_to: "top_clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel1.to_y: "arrow_top";
+            rel1.relative: 0.0 0.7;
+            rel1.offset: 2 0;
+            rel2.to: "base";
+            rel2.to_y: "arrow_bottom";
+            rel2.relative: 1.0 0.3;
+            rel2.offset: -3 -1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+               source: "elm.top";
+            }
+            color: FN_COL_GREY_192;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_GREY_16;
+         }
+      }
+      part { name: "top_shine_prev"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "top_prev";
+            rel2 { to: "top_prev"; relative: 1 0; }
+            image.normal: "shine.png";
+            min: 0 1;
+            fixed: 0 1;
+            align: 0.5 0;
+         }
+      }
+      part { name: "top_cur"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "top";
+            rel2.to: "top";
+            color: 56 56 56 255;
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            fixed: 0 1;
+            rel1.relative: 0.0 1.0;
+            color: 40 40 40 255;
+         }
+      }
+      part { name: "elm.top"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         clip_to: "top_clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.offset: 2 2;
+            rel2.to: "base";
+            rel2.offset: -3 -3;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+            color: FN_COL_GREY_192;
+         }
+         description { state: "shrink" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.0 0.5;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_GREY_16;
+         }
+      }
+      part { name: "top_shine_cur"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "top_cur";
+            rel2 { to: "top_cur"; relative: 1 0; }
+            image.normal: "shine.png";
+            min: 0 1;
+            fixed: 0 1;
+            align: 0.5 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            rel1.to: "base";
+            rel2.to: "base";
+            fill.smooth: 0;
+         }
+      }
+      part { name: "arrow_top"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 0.0;
+            rel1.to: "top";
+            rel2.to: "top";
+            image.normal: "sym_up_light_normal.png";
+            color: 192 192 192 255;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_up_dark_normal.png";
+         }
+      }
+      part { name: "arrow_bottom"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 1.0;
+            rel1.to: "bottom";
+            rel2.to: "bottom";
+            image.normal: "sym_down_light_normal.png";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_down_dark_normal.png";
+         }
+      }
+      part { name: "top_clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "top";
+            rel2.to: "top";
+         }
+      }
+      part { name: "bottom_clipper"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "bottom";
+            rel2.to: "bottom";
+         }
+      }
+      part { name: "event_blocker"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "load"; source: "";
+         script {
+            append_str(cur, "");
+            append_str(prev, "");
+            append_str(next, "");
+            set_int(lock, 0);
+         }
+      }
+      program {
+         signal: "elm,state,button,hidden"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow_top";
+         target: "arrow_bottom";
+         target: "top";
+         target: "bottom";
+      }
+      program {
+         signal: "elm,state,button,visible"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow_top";
+         target: "arrow_bottom";
+         target: "top";
+         target: "bottom";
+      }
+      program { name: "up";
+         signal: "mouse,down,1"; source: "top";
+         action: SIGNAL_EMIT "elm,action,up,start" "elm";
+      }
+      program { name: "up,stop";
+         signal: "mouse,up,1"; source: "top";
+         action: SIGNAL_EMIT "elm,action,up,stop" "elm";
+      }
+      program { name: "down";
+         signal: "mouse,down,1"; source: "bottom";
+         action: SIGNAL_EMIT "elm,action,down,start" "elm";
+      }
+      program { name: "down,stop";
+         signal: "mouse,up,1"; source: "bottom";
+         action: SIGNAL_EMIT "elm,action,down,stop" "elm";
+      }
+      program { name: "disable";
+         signal: "elm,state,disabled"; source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            set_state(PART:"event_blocker", "disabled", 0.0);
+            set_state(PART:"elm.bottom", "disabled", 0.0);
+            set_state(PART:"elm.top", "disabled", 0.0);
+            set_state(PART:"bottom_text_prev", "disabled", 0.0);
+            set_state(PART:"top_text_prev", "disabled", 0.0);
+
+            get_state(PART:"arrow_bottom", st, 30, vl);
+            if (strcmp(st, "hidden"))
+              set_state(PART:"arrow_bottom", "disabled", 0.0);
+
+            get_state(PART:"arrow_top", st, 30, vl);
+            if (strcmp(st, "hidden"))
+              set_state(PART:"arrow_top", "disabled", 0.0);
+
+            get_state(PART:"top_cur", st, 30, vl);
+            if (strcmp(st, "shrink"))
+              set_state(PART:"top_shine_cur", "visible", 0.0);
+         }
+      }
+      program { name: "enable";
+         signal: "elm,state,enabled"; source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            set_state(PART:"event_blocker", "default", 0.0);
+            set_state(PART:"elm.bottom", "default", 0.0);
+            set_state(PART:"elm.top", "default", 0.0);
+            set_state(PART:"bottom_text_prev", "default", 0.0);
+            set_state(PART:"top_text_prev", "default", 0.0);
+
+            get_state(PART:"arrow_bottom", st, 30, vl);
+            if (strcmp(st, "hidden"))
+              set_state(PART:"arrow_bottom", "default", 0.0);
+
+            get_state(PART:"arrow_top", st, 30, vl);
+            if (strcmp(st, "hidden"))
+              set_state(PART:"arrow_top", "default", 0.0);
+         }
+      }
+   }
+}

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="call-stop.svg"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   inkscape:export-filename="/home/dave/e/core/efl/data/elementary/themes/fdo/actions/128-svg/call-stop.png">
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="28.610559"
+     inkscape:cy="61.964031"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="false"
+     borderlayer="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-grids="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2981"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="4px"
+       spacingy="4px"
+       dotted="false" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,120"
+       id="guide2999" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="120,128"
+       id="guide3001" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,8"
+       id="guide3003" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="8,128"
+       id="guide3005" />
+  </sodipodi:namedview>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#3399ff;fill-opacity:1;display:inline"
+     d="m 16.216765,32.618737 c 1.787491,-1.126861 10.369559,-5.294072 13.929503,-6.762873 4.94527,-2.040428 13.800226,-4.385195 19.220042,-5.089474 6.476865,-0.841608 11.794546,-0.897235 21.20034,-0.221832 14.438718,1.036743 26.578948,4.099211 36.88633,9.30479 4.7505,2.399269 6.37829,3.577171 9.14157,6.61524 5.52041,6.065454 8.23065,15.635078 6.18324,21.812327 -0.58084,1.752369 -0.99511,2.278986 -4.01885,5.108782 -3.84676,3.600059 -4.62739,3.912059 -7.23649,2.896319 C 107.35516,64.65931 91.249371,56.827789 90.594043,56.105516 89.51251,54.913485 88.688489,50.252664 88.77294,45.805045 88.866666,40.867432 88.510216,40.423617 83.245207,38.921375 72.493377,35.85419 62.102062,35.283413 51.5488,37.180379 c -5.47446,0.983982 -12.230357,2.913352 -13.219525,3.775199 -1.40524,1.224356 -1.578077,2.089866 -1.2128,6.064139 0.429411,4.670533 0.383184,10.249461 -0.09545,11.528193 -0.488092,1.303615 -0.605841,1.349631 -10.269172,4.014463 -4.529827,1.249198 -9.580966,2.654424 -11.224833,3.12253 -1.64381,0.468321 -3.356921,0.796439 -3.807005,0.729248 C 10.252011,66.19499 5.6937809,59.875281 4.8889774,56.942497 4.0720352,53.966544 4.9258937,47.900581 6.7002142,44.08018 8.5478888,40.101025 13.159585,34.546977 16.216918,32.618607 z"
+     id="path4609"
+     sodipodi:nodetypes="cssssssssssssssssssssc"
+     inkscape:export-filename="/home/matthieu/Interne/Communication/Site Web/Version 3.0/Accueil temporaire/images/phone_square.png"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+  <path
+     style="fill:#3399ff;fill-opacity:1;stroke:none;display:inline"
+     d="m 84.451931,90.22586 -20.31938,29.80952 -20.66871,-29.80952 13.21633,0 0,-26.166666 14.90476,0 0,26.166666 z"
+     id="Symbol"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccc" />
+</svg>

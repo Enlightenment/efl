@@ -1,0 +1,732 @@
+#define COMP_EFFECT_DURATION 0.4
+#define COMP_EFFECT_DURATION_FAST 0.2
+
+group { name: "e/comp/effects/none";
+   parts {
+      part { name: "e.swallow.content"; type: SWALLOW;
+        description { state: "default" 0.0;
+        }
+      }
+   }
+}
+
+/* non-auto effects are assumed to be run frame by frame by an animator */
+group { name: "e/comp/effects/move";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* x,y coords to move to */
+            new x, y;
+
+            x = getarg(2);
+            y = getarg(3);
+
+            custom_state(PART:"mover", "default", 0.0);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, x, y);
+         }
+      }
+   }
+   parts {
+      part { name: "mover"; type: SPACER;
+        description { state: "default" 0.0;
+        }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+        description { state: "default" 0.0;
+           rel1.to: "mover";
+           rel2.to: "mover";
+        }
+      }
+   }
+   programs {
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+/* auto effects are "start and forget" */
+group { name: "e/comp/effects/auto/pane";
+   //data.item: "noclip" "1"; //setting this prevents object from being clipped to its zone during effect
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* border geom[4] / screen size[2] / desk change direction[2] */
+            new x, y, sw, sh, dx, dy;
+
+            sw = getarg(6);
+            sh = getarg(7);
+            dx = getarg(8);
+            dy = getarg(9);
+
+            x = round(sw*dx*1.5);
+            y = round(sh*dy*1.5);
+
+            custom_state(PART:"mover", "default", 0.0);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, x, y);
+         }
+      }
+   }
+   parts {
+      part { name: "mover"; type: SPACER;
+        description { state: "default" 0.0;
+        }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+        description { state: "default" 0.0;
+           rel1.to: "mover";
+           rel2.to: "mover";
+        }
+      }
+   }
+   programs {
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+group { name: "e/comp/effects/auto/diagonal";
+   inherit: "e/comp/effects/auto/pane";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* border geom / screen size / desk change direction */
+            new x, y, w, h, sw, sh, mx, my, bx, by;
+            new Float:fx, Float:fy, Float:ang, Float:len, Float:lmax, Float:rad;
+
+            x = getarg(2);
+            y = getarg(3);
+            w = getarg(4);
+            h = getarg(5);
+            sw = getarg(6);
+            sh = getarg(7);
+            custom_state(PART:"mover", "default", 0.0);
+
+            mx = sw/2;
+            my = sh/2;
+
+            bx = x+(w/2)-mx;
+            by = y+(h/2)-my;
+            if (bx == 0) bx = 1;
+            if (by == 0) by = 1;
+            fx = bx/(w/2);
+            fy = by/(h/2);
+            ang = atan(fy/fx);
+            if (fx < 0.0)
+              ang = PI+ang;
+            len = sqrt((bx*bx)+(by*by));
+            lmax = sqrt(((sw/2)*(sw/2))+((sh/2)*(sh/2)));
+            rad = sqrt((w*w)+(h*h))/2.0;
+            x = round(cos(ang)*(lmax-len+rad));
+            y = round(sin(ang)*(lmax-len+rad));
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, x, y);
+         }
+      }
+   }
+}
+
+group { name: "e/comp/effects/auto/zoom";
+   inherit: "e/comp/effects/auto/diagonal";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1) {
+              /* starting from offscreen */
+              set_state_val(PART:"mover", STATE_REL1, 0.3, 0.3);
+              set_state_val(PART:"mover", STATE_REL2, 0.7, 0.7);
+              set_state(PART:"mover", "custom", 0.0);
+              set_state(PART:"clip", "hidden", 0.0);
+            } else {
+              /* starting from normal position */
+              set_state_val(PART:"mover", STATE_REL1, -1.7, -1.7);
+              set_state_val(PART:"mover", STATE_REL2, 1.7, 1.7);
+              set_state(PART:"mover", "default", 0.0);
+              set_state(PART:"clip", "default", 0.0);
+            }
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* border geom / screen size / desk change direction */
+            new x, y, w, h, sw, sh, mx, my, bx, by;
+            new Float:fx, Float:fy, Float:ang, Float:len, Float:lmax, Float:rad;
+
+            x = getarg(2);
+            y = getarg(3);
+            w = getarg(4);
+            h = getarg(5);
+            sw = getarg(6);
+            sh = getarg(7);
+            custom_state(PART:"mover", "default", 0.0);
+
+            mx = sw/2;
+            my = sh/2;
+
+            bx = x+(w/2)-mx;
+            by = y+(h/2)-my;
+            if (bx == 0) bx = 1;
+            if (by == 0) by = 1;
+            fx = bx/(w/2);
+            fy = by/(h/2);
+            ang = atan(fy/fx);
+            if (fx < 0.0)
+              ang = PI+ang;
+            len = sqrt((bx*bx)+(by*by));
+            lmax = sqrt(((sw/2)*(sw/2))+((sh/2)*(sh/2)));
+            rad = sqrt((w*w)+(h*h))/2.0;
+            x = round(cos(ang)*(lmax-len+rad));
+            y = round(sin(ang)*(lmax-len+rad));
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, x, y);
+         }
+      }
+   }
+   parts {
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         insert_after: "mover";
+         description { state: "default";
+            rel1.to: "mover";
+            rel1.offset: -20 -20;
+            rel2.to: "mover";
+            rel2.offset: 20 20;
+            color: 255 255 255 255;
+         }
+         description { state: "hidden";
+            rel1.to: "mover";
+            rel2.to: "mover";
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "e.swallow.content"; clip_to: "clip";
+      }
+   }
+   programs {
+      program {
+         name: "show2";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "hidden" 0.0;
+         transition: ACCELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+      }
+      program {
+         name: "hide2";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: ACCELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+      }
+   }
+}
+
+group { name: "e/comp/effects/auto/blend";
+   //data.item: "noclip" "1"; //setting this prevents object from being clipped to its zone during effect
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1) {
+              /* starting from hidden */
+              set_state(PART:"clip", "hidden", 0.0);
+            } else {
+              set_state(PART:"clip", "default", 0.0);
+            }
+         }
+      }
+   }
+   parts {
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel1.to: "e.swallow.content";
+            rel1.offset: -20 -20;
+            rel2.to: "e.swallow.content";
+            rel2.offset: 20 20;
+            color: 255 255 255 255;
+         }
+         description { state: "hidden";
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+        clip_to: "clip";
+        description { state: "default" 0.0;
+        }
+      }
+   }
+   programs {
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "default";
+         action: STATE_SET "hidden" 0.0;
+         transition: LINEAR COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "hidden";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+group { name: "e/comp/effects/auto/grow";
+   inherit: "e/comp/effects/auto/pane";
+   //data.item: "noclip" "1"; //setting this prevents object from being clipped to its zone during effect
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* border geom[4] / screen size[2] / desk change direction[2] */
+            new dx, dy;
+            new Float:r1x = 0.0, Float:r1y = 0.0, Float:r2x = 1.0, Float:r2y = 1.0;
+
+            dx = getarg(8);
+            dy = getarg(9);
+
+            custom_state(PART:"mover", "default", 0.0);
+            if (dx == 1) r1x = 1.0;
+            else if (dx == -1) r2x = 0.0;
+            if (dy == 1) r1y = 1.0;
+            else if (dy == -1) r2y = 0.0;
+            set_state_val(PART:"mover", STATE_REL1, r1x, r1y);
+            set_state_val(PART:"mover", STATE_REL2, r2x, r2y);
+         }
+      }
+   }
+}
+
+group { name: "e/comp/effects/visibility/vertical";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"clip", "hid", 0.0);
+            else
+              set_state(PART:"clip", "default", 0.0);
+         }
+      }
+   }
+   parts {
+      rect { "clip";
+        desc { rel2.offset: 10 10; }
+        desc { "hid";
+           rel2.relative: 1 0;
+           rel2.offset: 10 10;
+        }
+      }
+      swallow { "e.swallow.content"; clip: "clip"; }
+   }
+   programs {
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "default";
+         action: STATE_SET "hid" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "hid";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+group { name: "e/comp/effects/visibility/tooltip";
+   data.item: "need_pointer" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* absolute object geom[4] / screen size[2] / relative pointer xy[2] */
+            new x, y;
+            new ow, oh;
+            new sx2, sy2;
+            new Float:rx1 = 0.0, Float:rx2 = 1.0, Float:ry1 = 0.0, Float:ry2 = 1.0;
+
+            x = getarg(8);
+            y = getarg(9);
+
+            ow = getarg(4);
+            oh = getarg(5);
+            sx2 = x;
+            sy2 = y;
+            custom_state(PART:"mover", "default", 0.0);
+            if (x <= 0) {
+               rx2 = 0.0;
+            } else {
+               if (x < ow)
+                 sx2 = x - ow;
+               else
+                 rx1 = 1.0;
+            }
+            if (y <= 0) {
+               ry2 = 0.0;
+            } else {
+               if (y < oh)
+                 sy2 = y - oh;
+               else
+                 ry1 = 1.0;
+            }
+            set_state_val(PART:"mover", STATE_ALIGNMENT, 0, 0);
+            set_state_val(PART:"mover", STATE_REL1, rx1, ry1);
+            set_state_val(PART:"mover", STATE_REL2, rx2, ry2);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, sx2, sy2);
+         }
+      }
+   }
+   parts {
+      spacer { "mover"; }
+      swallow { "e.swallow.content";
+         desc { rel.to: "mover"; }
+      }
+   }
+   programs {
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+group { name: "e/comp/effects/iconify/default";
+   alias: "e/comp/effects/iconify/ibar";
+   alias: "e/comp/effects/iconify/ibox";
+   alias: "e/comp/effects/iconify/tasks";
+   alias: "e/comp/effects/iconify/luncher";
+   inherit: "e/comp/effects/auto/pane";
+   data.item: "noclip" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            // border geom[4] / destination[4]
+            new x, y, w, h;
+            new dx, dy, dw, dh;
+            x = getarg(2);
+            y = getarg(3);
+            w = getarg(4);
+            h = getarg(5);
+            dx = getarg(6);
+            dy = getarg(7);
+            dw = getarg(8);
+            dh = getarg(9);
+            x = x + (w / 2);
+            y = y + (h / 2);
+            dx = dx - x;
+            dy = dy - y;
+            custom_state(PART:"mover", "default", 0.0);
+            set_state_val(PART:"mover", STATE_REL1, 1.0, 1.0);
+            set_state_val(PART:"mover", STATE_REL2, 0.0, 0.0);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, dx, dy);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, dx + dw - 1, dy + dh - 1);
+         }
+      }
+   }
+   programs {
+      program {
+         name: "show"; //iconify
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: ACCELERATE_FACTOR COMP_EFFECT_DURATION 2 CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "hide"; //uniconify
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE_FACTOR COMP_EFFECT_DURATION_FAST 2 CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
+#if 0 //this is weirdly broken with proxy visibility somehow...
+group { name: "e/comp/effects/auto/rotate";
+   inherit: "e/comp/effects/auto/pane";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+
+            if (st == 1) {
+               set_state(PART:"mover", "custom", 0.0);
+               set_state(PART:"proxy", "hidden", 0.0);
+            } else {
+               set_state(PART:"mover", "default", 0.0);
+               set_state(PART:"proxy", "default", 0.0);
+            }
+         }
+#if 0
+         else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* desk change direction */
+            new Float:mx, Float:my;
+            mx = get_float(getarg(8) * 180);
+            my = get_float(getarg(9) * 180);
+            custom_state(PART:"proxy", "hidden", 0.0);
+            set_state_val(PART:"proxy", STATE_MAP_ROT_Y, mx);
+            set_state_val(PART:"proxy", STATE_MAP_ROT_X, my);
+         }
+#endif
+      }
+   }
+   parts {
+      part { name: "proxy"; type: PROXY; mouse_events: 0;
+         insert_after: "e.swallow.content";
+         description { state: "default";
+            source: "e.swallow.content";
+            map {
+               on: 1;
+               perspective_on: 1;
+               perspective: "e.swallow.content";
+               smooth: 1;
+               rotation.y: 0;
+               rotation.x: 0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default";
+            map.rotation.y: -180;
+            map.rotation.x: -180;
+            proxy.source_visible: 0;
+            map.backface_cull: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         name: "show2";
+         signal: "e,action,go";
+         source: "e";
+         action: STATE_SET "hidden" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "proxy";
+      }
+      program {
+         name: "hide2";
+         signal: "e,action,go";
+         source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "proxy";
+      }
+   }
+}
+#endif

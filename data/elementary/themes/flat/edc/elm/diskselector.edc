@@ -1,0 +1,389 @@
+group { name: "elm/diskselector/base/default";
+   images {
+      image: "bar_shine.png" COMP;
+   }
+
+   parts {
+      part { name: "bg";
+         type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 25 25 25 255;
+         }
+      }
+      part { name: "shine_center";
+         mouse_events:  0;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            image.normal: "bar_shine.png";
+            color: 255 255 255 127;
+         }
+      }
+      part { name: "clipper";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+      }
+      part { name: "elm.swallow.content";
+         clip_to: "clipper";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
+   }
+}
+
+group { name: "elm/diskselector/item/default";
+
+   data {
+      item: "len_threshold" "14";
+      item: "display_item_num" "3";
+      item: "min_height" "-1";
+      item: "min_width" "-1";
+   }
+
+   parts {
+      part { name: "elm.swallow.icon";
+         type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1 {
+               relative: 0 0;
+               offset: 1 1;
+            }
+            rel2 {
+               relative: 0 1;
+               offset: 1 -2;
+            }
+         }
+         description { state: "show" 0.0;
+            inherit: "default" 0.0;
+            min: 10 10;
+            aspect: 1.0 1.0;
+         }
+         description { state: "default_small" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 0.2;
+            rel2.relative: 0 0.8;
+            min: 10 10;
+            aspect: 1.0 1.0;
+         }
+         description { state: "left_side" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0 0.2;
+            rel2.relative: 0 0.8;
+            color: 255 255 255 160;
+            min: 10 10;
+            aspect: 1.0 1.0;
+         }
+         description { state: "right_side" 0.0;
+            inherit: "left_side" 0.0;
+            rel1.relative: 0.4 0.2;
+            rel2.relative: 0.4 0.8;
+            color: 255 255 255 160;
+            min: 10 10;
+            aspect: 1.0 1.0;
+         }
+         description { state: "icon_only" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+            min: 10 10;
+            aspect: 1.0 1.0;
+         }
+      }
+      part { name: "elm.text";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 1 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            visible: 0;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               align: 0.5 0.5;
+               min: 0 1;
+            }
+         }
+         description { state: "show" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "default_small" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.size: 10;
+         }
+         description { state: "left_side" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_GREY_152;
+            text.size: 8;
+            visible: 1;
+            text.align: 0.2 0.5;
+         }
+         description { state: "right_side" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_GREY_152;
+            visible: 1;
+            text.size: 8;
+            text.align: 0.8 0.5;
+         }
+         description { state: "text_only" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
+         description { state: "text_only_left_side" 0.0;
+            inherit: "left_side" 0.0;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
+         description { state: "text_only_right_side" 0.0;
+            inherit: "right_side" 0.0;
+            visible: 1;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
+      }
+      part { name: "over1";
+         type: RECT;
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+
+   programs {
+      script {
+         public item_style; // 0:icon and text, 1:text only, 2:con only
+      }
+      program { name: "center_text";
+         signal: "elm,state,center"; source: "elm";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "icon_only", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "show", 0.0);
+                 set_state(PART:"elm.swallow.icon", "show", 0.0);
+              }
+         }
+      }
+      program { name: "center_small_text";
+         signal: "elm,state,center_small"; source: "elm";
+         action: STATE_SET "default_small" 0.0;
+         target: "elm.text";
+         target: "elm.swallow.icon";
+      }
+      program { name: "l_side_text";
+         signal: "elm,state,left_side"; source: "elm";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only_left_side", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "left_side", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "left_side", 0.0);
+                 set_state(PART:"elm.swallow.icon", "left_side", 0.0);
+              }
+         }
+      }
+      program { name: "r_side_text";
+         signal: "elm,state,right_side"; source: "elm";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only_right_side", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "right_side", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "right_side", 0.0);
+                 set_state(PART:"elm.swallow.icon", "right_side", 0.0);
+              }
+         }
+      }
+      program { name: "icon_only";
+         signal: "elm,state,icon,only"; source: "elm";
+         script {
+            set_state(PART:"elm.swallow.icon", "icon_only", 0.0);
+            set_int(item_style, 2);
+         }
+      }
+      program { name: "text_only";
+         signal: "elm,state,text,only"; source: "elm";
+         script {
+            set_state(PART:"elm.text", "text_only", 0.0);
+            set_int(item_style, 1);
+         }
+      }
+      program { name: "text_icon";
+         signal: "elm,state,text,icon"; source: "elm";
+         script {
+            set_int(item_style, 0);
+         }
+      }
+      program { name: "field_click";
+         signal: "mouse,clicked,1"; source: "over1";
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// diskselector item : datetime style
+///////////////////////////////////////////////////////////////////////////////
+group { name: "elm/diskselector/item/datetime/default";
+   data {
+      item: "len_threshold" "10";
+      item: "min_height" "-1";
+      item: "min_width" "-1";
+   }
+   parts {
+     part { name: "elm.text"; type: TEXT;
+        mouse_events: 0;
+        scale: 1;
+        description { state: "default" 0.0;
+           min: 10 10;
+           align: 0.0 0.0;
+           color: FN_COL_GREY_172;
+           visible: 1;
+           text {
+              font: "Sans,Edje-Vera";
+              size: 10;
+              min: 1 1;
+              ellipsis: -1;
+           }
+        }
+        description { state: "center_sel" 0.0;
+           inherit: "default" 0.0;
+           color: FN_COL_WHITE;
+        }
+        description { state: "left_side" 0.0;
+           inherit: "default" 0.0;
+           color: FN_COL_GREY_152;
+           text.align: 0.2 0.5;
+        }
+        description { state: "left_side_sel" 0.0;
+           inherit: "default" 0.0;
+           color: FN_COL_WHITE;
+           text.align: 0.2 0.5;
+        }
+        description { state: "right_side" 0.0;
+           inherit: "default" 0.0;
+           color: FN_COL_GREY_152;
+           text.align: 0.8 0.5;
+        }
+        description { state: "right_side_sel" 0.0;
+           inherit: "default" 0.0;
+           color: FN_COL_WHITE;
+           text.align: 0.8 0.5;
+        }
+     }
+     part { name: "over1";
+        type: RECT;
+        mouse_events: 1;
+        repeat_events: 1;
+        ignore_flags: ON_HOLD;
+        description {
+           state: "default" 0.0;
+           color: 0 0 0 0;
+        }
+     }
+   }
+   programs {
+      script {
+         public field_pos; // center = 0,left = 1, right =2.
+         public field_selected; //field is selected(1) or not(0).
+
+         public update_state() {
+            new pos, is_sel;
+            pos = get_int(field_pos)
+            is_sel = get_int(field_selected);
+            if (is_sel == 1)
+              {
+                 if (pos == 0)
+                   set_state(PART:"elm.text", "center_sel", 0.0);
+                 else if (pos == 1)
+                   set_state(PART:"elm.text", "left_side_sel", 0.0);
+                 else if (pos == 2)
+                   set_state(PART:"elm.text", "right_side_sel", 0.0);
+              }
+            else if (is_sel == 0)
+              {
+                 if (pos == 0)
+                   set_state(PART:"elm.text", "default", 0.0);
+                 else if (pos == 1)
+                   set_state(PART:"elm.text", "left_side", 0.0);
+                 else if (pos == 2)
+                   set_state(PART:"elm.text", "right_side", 0.0);
+              }
+         }
+      }
+      program { name: "selected_text";
+         signal: "elm,state,selected"; source: "elm";
+         script {
+            set_int(field_selected, 1);
+            update_state();
+         }
+      }
+      program { name: "default_text";
+         signal: "elm,state,default"; source: "elm";
+         script {
+            set_int(field_selected, 0);
+            update_state();
+         }
+      }
+      program { name: "center_text";
+         signal: "elm,state,center"; source: "elm";
+         script {
+            set_int(field_pos, 0);
+            update_state();
+         }
+      }
+      program { name: "center_small_text";
+         signal: "elm,state,center_small"; source: "elm";
+         script {
+            set_int(field_pos, 0);
+            update_state();
+         }
+      }
+      program { name: "l_side_text";
+         signal: "elm,state,left_side"; source: "elm";
+         script {
+            set_int(field_pos, 1);
+            update_state();
+         }
+      }
+      program { name: "r_side_text";
+         signal: "elm,state,right_side"; source: "elm";
+         script {
+            set_int(field_pos, 2);
+            update_state();
+         }
+      }
+      program { name: "field_click";
+         signal: "mouse,clicked,1"; source: "over1";
+         action: SIGNAL_EMIT "elm,action,click" "elm";
+      }
+   }
+}

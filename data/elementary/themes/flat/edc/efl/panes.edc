@@ -1,0 +1,52 @@
+/* panes widget style information
+
+   [SIGNAL]
+      elm,panes,fixed: Used for elm_panes_fixed_set()
+      elm,panes,unfixed: Used for elm_panes_fixed_set()
+
+   [SIGNAL EMIT]
+      elm,action,click: Used for "clicked" smart callback.
+      elm,action,click,double: Used for "clicked,double" smart callback.
+      elm,action,press: Used for "press" smart callback.
+      elm,action,unpress: Used for "unpress" smart callback.
+*/
+
+group { "efl/panes/vertical";
+   inherit: "elm/panes/vertical/default";
+   parts {
+      alias: "first" "elm.swallow.left";
+      alias: "second" "elm.swallow.right";
+   }
+}
+
+group { "efl/panes/horizontal";
+   inherit: "elm/panes/horizontal/default";
+   parts {
+      alias: "first" "elm.swallow.left";
+      alias: "second" "elm.swallow.right";
+   }
+}
+
+group { "efl/panes/vertical:flush";
+   inherit: "elm/panes/vertical/flush";
+}
+
+group { "efl/panes/horizontal:flush";
+   inherit: "elm/panes/horizontal/flush";
+}
+
+group { "efl/panes/vertical:left-fold";
+   inherit: "elm/panes/vertical/left-fold";
+}
+
+group { "efl/panes/vertical:right-fold";
+   inherit: "elm/panes/vertical/right-fold";
+}
+
+group { "efl/panes/horizontal:up-fold";
+   inherit: "elm/panes/horizontal/up-fold";
+}
+
+group { "efl/panes/horizontal:down-fold";
+   inherit: "elm/panes/horizontal/down-fold";
+}

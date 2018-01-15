@@ -1,0 +1,26 @@
+group { name: "e/modules/bluez4/main";
+   images.image: "bt_base.png" COMP;
+   max: 160 160;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            aspect: (160/144) (160/144); aspect_preference: BOTH;
+            image.normal: "bt_base.png";
+         }
+      }
+   }
+}
+
+group { name: "e/modules/bluez4/inactive";
+   images.image: "bt_base.png" COMP;
+   max: 160 160;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            aspect: (160/144) (160/144); aspect_preference: BOTH;
+            image.normal: "bt_base.png";
+            color: 255 255 255 128;
+         }
+      }
+   }
+}

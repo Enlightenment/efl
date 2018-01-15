@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="bluetooth-disabled.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.9140625"
+     inkscape:cx="62.339321"
+     inkscape:cy="61.005059"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="560"
+     inkscape:window-y="16"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     style="fill:#d40000"
+     inkscape:connector-curvature="0"
+     d="m 64.357243,16.15897 c -29.097039,0 -52.684588,19.205509 -52.684588,43.0117 0,15.1646 9.609668,28.537267 24.078175,36.220653 -0.550225,4.005212 -3.161735,13.934427 -15.023012,17.287147 15.362826,1.66963 25.65937,-5.87125 31.076004,-11.52477 4.028791,0.80706 8.220773,1.2348 12.553421,1.2348 29.09704,0 52.684597,-19.410981 52.684597,-43.21783 0,-23.80685 -23.587557,-43.0117 -52.684597,-43.0117 z M 51.186095,32.622904 64.357243,45.794052 77.528391,32.622904 90.699539,45.794052 77.528391,58.9652 90.699539,72.136347 77.528391,85.307495 64.357243,72.136347 51.186095,85.307495 38.014948,72.136347 51.186095,58.9652 38.014948,45.794052 51.186095,32.622904 z"
+     id="path4" />
+</svg>

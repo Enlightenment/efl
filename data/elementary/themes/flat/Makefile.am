@@ -1,0 +1,1556 @@
+EDJE_CC_ELM_FLAGS_FLAT = \
+@ELM_EDJE_DEFINES@ \
+-id $(top_srcdir)/data/elementary/themes/flat/img \
+-id $(top_srcdir)/data/elementary/themes/flat/fdo \
+-fd $(top_srcdir)/data/elementary/themes/flat/fnt \
+-sd $(top_srcdir)/data/elementary/themes/flat/snd \
+-l $(top_srcdir)/COPYING \
+-a $(top_srcdir)/AUTHORS \
+-fastdecomp
+
+
+elementary_themes_flat_files = \
+elementary/themes/flat/flat.edc \
+\
+elementary/themes/flat/colorclasses.edc \
+elementary/themes/flat/fonts.edc \
+elementary/themes/flat/macros.edc \
+\
+elementary/themes/flat/edc/about-e.edc \
+elementary/themes/flat/edc/about-theme.edc \
+elementary/themes/flat/edc/appmenu.edc \
+elementary/themes/flat/edc/background.edc \
+elementary/themes/flat/edc/backlight.edc \
+elementary/themes/flat/edc/battery.edc \
+elementary/themes/flat/edc/batman.edc \
+elementary/themes/flat/edc/bluez4.edc \
+elementary/themes/flat/edc/border.edc \
+elementary/themes/flat/edc/border-icons.edc \
+elementary/themes/flat/edc/bryce.edc \
+elementary/themes/flat/edc/bryce_editor.edc \
+elementary/themes/flat/edc/button.edc \
+elementary/themes/flat/edc/check.edc \
+elementary/themes/flat/edc/clock.edc \
+elementary/themes/flat/edc/colors.edc \
+elementary/themes/flat/edc/colorwell.edc \
+elementary/themes/flat/edc/comp.edc \
+elementary/themes/flat/edc/comp_compat.edc \
+elementary/themes/flat/edc/comp_effects.edc \
+elementary/themes/flat/edc/conf.edc \
+elementary/themes/flat/edc/connman.edc \
+elementary/themes/flat/edc/cpufreq.edc \
+elementary/themes/flat/edc/cpumonitor.edc \
+elementary/themes/flat/edc/cslider.edc \
+elementary/themes/flat/edc/desklock.edc \
+elementary/themes/flat/edc/deskmirror.edc \
+elementary/themes/flat/edc/deskpreview.edc \
+elementary/themes/flat/edc/dialog.edc \
+elementary/themes/flat/edc/edgebindings.edc \
+elementary/themes/flat/edc/entry.edc \
+elementary/themes/flat/edc/evrything.edc \
+elementary/themes/flat/edc/fileman.edc \
+elementary/themes/flat/edc/fontpreview.edc \
+elementary/themes/flat/edc/frame.edc \
+elementary/themes/flat/edc/gadman.edc \
+elementary/themes/flat/edc/ibar-ibox.edc \
+elementary/themes/flat/edc/icons.edc \
+elementary/themes/flat/edc/ilist.edc \
+elementary/themes/flat/edc/illume.edc \
+elementary/themes/flat/edc/init.edc \
+elementary/themes/flat/edc/label.edc \
+elementary/themes/flat/edc/luncher.edc \
+elementary/themes/flat/edc/memusage.edc \
+elementary/themes/flat/edc/menu.edc \
+elementary/themes/flat/edc/mixer.edc \
+elementary/themes/flat/edc/music_control.edc \
+elementary/themes/flat/edc/netstatus.edc \
+elementary/themes/flat/edc/notification.edc \
+elementary/themes/flat/edc/packagekit.edc \
+elementary/themes/flat/edc/pager.edc \
+elementary/themes/flat/edc/pager16.edc \
+elementary/themes/flat/edc/pointer.edc \
+elementary/themes/flat/edc/preview.edc \
+elementary/themes/flat/edc/radio.edc \
+elementary/themes/flat/edc/randr.edc \
+elementary/themes/flat/edc/scrollframe.edc \
+elementary/themes/flat/edc/shelf.edc \
+elementary/themes/flat/edc/slider.edc \
+elementary/themes/flat/edc/spectrum.edc \
+elementary/themes/flat/edc/start.edc \
+elementary/themes/flat/edc/syscon.edc \
+elementary/themes/flat/edc/sys.edc \
+elementary/themes/flat/edc/systray.edc \
+elementary/themes/flat/edc/tasks.edc \
+elementary/themes/flat/edc/temperature.edc \
+elementary/themes/flat/edc/textblock.edc \
+elementary/themes/flat/edc/time.edc \
+elementary/themes/flat/edc/toolbar.edc \
+elementary/themes/flat/edc/transitions.edc \
+elementary/themes/flat/edc/wallpaper.edc \
+elementary/themes/flat/edc/winlist.edc \
+elementary/themes/flat/edc/wireless.edc \
+elementary/themes/flat/edc/wizard.edc \
+elementary/themes/flat/edc/xkbswitch.edc \
+\
+elementary/themes/flat/edc/elm/access.edc \
+elementary/themes/flat/edc/elm/actionslider.edc \
+elementary/themes/flat/edc/elm/bg.edc \
+elementary/themes/flat/edc/elm/border.edc \
+elementary/themes/flat/edc/elm/bubble.edc \
+elementary/themes/flat/edc/elm/button.edc \
+elementary/themes/flat/edc/elm/calendar.edc \
+elementary/themes/flat/edc/elm/check.edc \
+elementary/themes/flat/edc/elm/clock.edc \
+elementary/themes/flat/edc/elm/code.edc \
+elementary/themes/flat/edc/elm/colorsel.edc \
+elementary/themes/flat/edc/elm/colorclass.edc \
+elementary/themes/flat/edc/elm/conform.edc \
+elementary/themes/flat/edc/elm/ctxpopup.edc \
+elementary/themes/flat/edc/elm/cursor.edc \
+elementary/themes/flat/edc/elm/dayselector.edc \
+elementary/themes/flat/edc/elm/diskselector.edc \
+elementary/themes/flat/edc/elm/entry.edc \
+elementary/themes/flat/edc/elm/ews.edc \
+elementary/themes/flat/edc/elm/fileselector.edc \
+elementary/themes/flat/edc/elm/flipselector.edc \
+elementary/themes/flat/edc/elm/focus.edc \
+elementary/themes/flat/edc/elm/frame.edc \
+elementary/themes/flat/edc/elm/gengrid.edc \
+elementary/themes/flat/edc/elm/genlist.edc \
+elementary/themes/flat/edc/elm/hover.edc \
+elementary/themes/flat/edc/elm/icon.edc \
+elementary/themes/flat/edc/elm/icon_fdo.edc \
+elementary/themes/flat/edc/elm/index.edc \
+elementary/themes/flat/edc/elm/inwin.edc \
+elementary/themes/flat/edc/elm/label.edc \
+elementary/themes/flat/edc/elm/layout.edc \
+elementary/themes/flat/edc/elm/list.edc \
+elementary/themes/flat/edc/elm/map.edc \
+elementary/themes/flat/edc/elm/menu.edc \
+elementary/themes/flat/edc/elm/multibuttonentry.edc \
+elementary/themes/flat/edc/elm/naviframe.edc \
+elementary/themes/flat/edc/elm/notify.edc \
+elementary/themes/flat/edc/elm/panel.edc \
+elementary/themes/flat/edc/elm/panes.edc \
+elementary/themes/flat/edc/elm/photocam.edc \
+elementary/themes/flat/edc/elm/photo.edc \
+elementary/themes/flat/edc/elm/player.edc \
+elementary/themes/flat/edc/elm/pointer.edc \
+elementary/themes/flat/edc/elm/popup.edc \
+elementary/themes/flat/edc/elm/progress.edc \
+elementary/themes/flat/edc/elm/radio.edc \
+elementary/themes/flat/edc/elm/scroller.edc \
+elementary/themes/flat/edc/elm/segment_control.edc \
+elementary/themes/flat/edc/elm/separator.edc \
+elementary/themes/flat/edc/elm/slider.edc \
+elementary/themes/flat/edc/elm/slideshow.edc \
+elementary/themes/flat/edc/elm/spinner.edc \
+elementary/themes/flat/edc/elm/textpath.edc \
+elementary/themes/flat/edc/elm/thumb.edc \
+elementary/themes/flat/edc/elm/toolbar.edc \
+elementary/themes/flat/edc/elm/tooltip.edc \
+elementary/themes/flat/edc/elm/uiclock.edc \
+elementary/themes/flat/edc/elm/video.edc \
+elementary/themes/flat/edc/elm/win.edc \
+\
+elementary/themes/flat/edc/O/efm_icons.edc \
+elementary/themes/flat/edc/O/icons.edc \
+\
+elementary/themes/flat/img/access_glow.png \
+elementary/themes/flat/img/add_glow_small.png \
+elementary/themes/flat/img/ball_small_glow_intense.png \
+elementary/themes/flat/img/ball_small_glow.png \
+elementary/themes/flat/img/bar_shine.png \
+elementary/themes/flat/img/bat_base.png \
+elementary/themes/flat/img/bat_bottom0.png \
+elementary/themes/flat/img/bat_bottom1.png \
+elementary/themes/flat/img/bat_shadow.png \
+elementary/themes/flat/img/bat_shine.png \
+elementary/themes/flat/img/bat_top0.png \
+elementary/themes/flat/img/bat_top1.png \
+elementary/themes/flat/img/batman_overlay.png \
+elementary/themes/flat/img/bevel_curved_horiz_out.png \
+elementary/themes/flat/img/bevel_curved_vert_out.png \
+elementary/themes/flat/img/bevel_dark_in.png \
+elementary/themes/flat/img/bevel_dark_out.png \
+elementary/themes/flat/img/bevel_horiz_out.png \
+elementary/themes/flat/img/bevel_in.png \
+elementary/themes/flat/img/bevel_out.png \
+elementary/themes/flat/img/bg_glow_in.png \
+elementary/themes/flat/img/bg_radgrad.png \
+elementary/themes/flat/img/big_arrow_down.png \
+elementary/themes/flat/img/big_arrow_down_shadow.png \
+elementary/themes/flat/img/big_arrow_left.png \
+elementary/themes/flat/img/big_arrow_left_shadow.png \
+elementary/themes/flat/img/big_arrow_right.png \
+elementary/themes/flat/img/big_arrow_right_shadow.png \
+elementary/themes/flat/img/big_arrow_up.png \
+elementary/themes/flat/img/big_arrow_up_shadow.png \
+elementary/themes/flat/img/box_glow.png \
+elementary/themes/flat/img/box_outline.png \
+elementary/themes/flat/img/bt_base.png \
+elementary/themes/flat/img/bt_sig_1.png \
+elementary/themes/flat/img/bt_sig_2.png \
+elementary/themes/flat/img/btn_round_0.png \
+elementary/themes/flat/img/btn_round_1.png \
+elementary/themes/flat/img/btn_round_2.png \
+elementary/themes/flat/img/bub_base_b0.png \
+elementary/themes/flat/img/bub_base_b1.png \
+elementary/themes/flat/img/bub_base_b2.png \
+elementary/themes/flat/img/bub_base_bl.png \
+elementary/themes/flat/img/bub_base_br.png \
+elementary/themes/flat/img/bub_base_tl.png \
+elementary/themes/flat/img/bub_base_tr.png \
+elementary/themes/flat/img/bub_over_bot.png \
+elementary/themes/flat/img/bub_over_top.png \
+elementary/themes/flat/img/bulb_glow.png \
+elementary/themes/flat/img/bulb_off.png \
+elementary/themes/flat/img/bulb_on.png \
+elementary/themes/flat/img/bulb_over.png \
+elementary/themes/flat/img/button_clicked.png \
+elementary/themes/flat/img/button_normal.png \
+elementary/themes/flat/img/cell_base.png \
+elementary/themes/flat/img/cell_sig_1.png \
+elementary/themes/flat/img/cell_sig_2.png \
+elementary/themes/flat/img/cell_sig_3.png \
+elementary/themes/flat/img/cell_sig_4.png \
+elementary/themes/flat/img/clock_base.png \
+elementary/themes/flat/img/color_picker_alpha.png \
+elementary/themes/flat/img/color_picker_brightness.png \
+elementary/themes/flat/img/color_picker_color.png \
+elementary/themes/flat/img/color_picker_opacity.png \
+elementary/themes/flat/img/col_sel_end_bottom.png \
+elementary/themes/flat/img/col_sel_end_left.png \
+elementary/themes/flat/img/col_sel_end_right.png \
+elementary/themes/flat/img/col_sel_end_top.png \
+elementary/themes/flat/img/cpu_bar.png \
+elementary/themes/flat/img/cpu_green_on.png \
+elementary/themes/flat/img/cpu_red_on.png \
+elementary/themes/flat/img/cpu_yellow_on.png \
+elementary/themes/flat/img/cpu_bar_vert.png \
+elementary/themes/flat/img/cpu_green_on_vert.png \
+elementary/themes/flat/img/cpu_red_on_vert.png \
+elementary/themes/flat/img/cpu_yellow_on_vert.png \
+elementary/themes/flat/img/darken_rounded_square_half_h.png \
+elementary/themes/flat/img/darken_rounded_square_half.png \
+elementary/themes/flat/img/darken_rounded_square.png \
+elementary/themes/flat/img/darken_square.png \
+elementary/themes/flat/img/day_left_normal.png \
+elementary/themes/flat/img/day_left_press.png \
+elementary/themes/flat/img/day_left_selected.png \
+elementary/themes/flat/img/day_middle_normal.png \
+elementary/themes/flat/img/day_middle_press.png \
+elementary/themes/flat/img/day_middle_selected.png \
+elementary/themes/flat/img/day_right_normal.png \
+elementary/themes/flat/img/day_right_press.png \
+elementary/themes/flat/img/day_right_selected.png \
+elementary/themes/flat/img/day_single_normal.png \
+elementary/themes/flat/img/day_single_press.png \
+elementary/themes/flat/img/day_single_selected.png \
+elementary/themes/flat/img/diagonal_stripes.png \
+elementary/themes/flat/img/digit_0.png \
+elementary/themes/flat/img/digit_1.png \
+elementary/themes/flat/img/digit_2.png \
+elementary/themes/flat/img/digit_3.png \
+elementary/themes/flat/img/digit_4.png \
+elementary/themes/flat/img/digit_5.png \
+elementary/themes/flat/img/digit_6.png \
+elementary/themes/flat/img/digit_7.png \
+elementary/themes/flat/img/digit_8.png \
+elementary/themes/flat/img/digit_9.png \
+elementary/themes/flat/img/digit_am.png \
+elementary/themes/flat/img/digit_na.png \
+elementary/themes/flat/img/digit_nm.png \
+elementary/themes/flat/img/digit_pm.png \
+elementary/themes/flat/img/O/digit_0.png \
+elementary/themes/flat/img/O/digit_1.png \
+elementary/themes/flat/img/O/digit_2.png \
+elementary/themes/flat/img/O/digit_3.png \
+elementary/themes/flat/img/O/digit_4.png \
+elementary/themes/flat/img/O/digit_5.png \
+elementary/themes/flat/img/O/digit_6.png \
+elementary/themes/flat/img/O/digit_7.png \
+elementary/themes/flat/img/O/digit_8.png \
+elementary/themes/flat/img/O/digit_9.png \
+elementary/themes/flat/img/O/digit_am.png \
+elementary/themes/flat/img/O/digit_na.png \
+elementary/themes/flat/img/O/digit_nm.png \
+elementary/themes/flat/img/O/digit_pm.png \
+elementary/themes/flat/img/dot_pattern.png \
+elementary/themes/flat/img/downlight_glow_left.png \
+elementary/themes/flat/img/downlight_glow.png \
+elementary/themes/flat/img/downlight_glow_right.png \
+elementary/themes/flat/img/downlight_glow_up.png \
+elementary/themes/flat/img/efm_generic_icon_base_empty.png \
+elementary/themes/flat/img/efm_generic_icon_base.png \
+elementary/themes/flat/img/efm_generic_icon_content_audio.png \
+elementary/themes/flat/img/efm_generic_icon_content_cad.png \
+elementary/themes/flat/img/efm_generic_icon_content_code.png \
+elementary/themes/flat/img/efm_generic_icon_content_db.png \
+elementary/themes/flat/img/efm_generic_icon_content_doc.png \
+elementary/themes/flat/img/efm_generic_icon_content_draw.png \
+elementary/themes/flat/img/efm_generic_icon_content_executable.png \
+elementary/themes/flat/img/efm_generic_icon_content_font.png \
+elementary/themes/flat/img/efm_generic_icon_content_formula.png \
+elementary/themes/flat/img/efm_generic_icon_content_image.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_block.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_char.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_dir.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_fifo.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_file.png \
+elementary/themes/flat/img/efm_generic_icon_content_inode_socket.png \
+elementary/themes/flat/img/efm_generic_icon_content_install.png \
+elementary/themes/flat/img/efm_generic_icon_content_iso.png \
+elementary/themes/flat/img/efm_generic_icon_content_lib.png \
+elementary/themes/flat/img/efm_generic_icon_content_logo.png \
+elementary/themes/flat/img/efm_generic_icon_content_lo.png \
+elementary/themes/flat/img/efm_generic_icon_content_pdf.png \
+elementary/themes/flat/img/efm_generic_icon_content_perl.png \
+elementary/themes/flat/img/efm_generic_icon_content_pres.png \
+elementary/themes/flat/img/efm_generic_icon_content_ps.png \
+elementary/themes/flat/img/efm_generic_icon_content_python.png \
+elementary/themes/flat/img/efm_generic_icon_content_ruby.png \
+elementary/themes/flat/img/efm_generic_icon_content_script.png \
+elementary/themes/flat/img/efm_generic_icon_content_spread.png \
+elementary/themes/flat/img/efm_generic_icon_content_template.png \
+elementary/themes/flat/img/efm_generic_icon_content_text.png \
+elementary/themes/flat/img/efm_generic_icon_content_translate.png \
+elementary/themes/flat/img/efm_generic_icon_content_trash.png \
+elementary/themes/flat/img/efm_generic_icon_content_unknown.png \
+elementary/themes/flat/img/efm_generic_icon_content_video.png \
+elementary/themes/flat/img/efm_generic_icon_content_web.png \
+elementary/themes/flat/img/efm_generic_icon_over_empty.png \
+elementary/themes/flat/img/efm_generic_icon_over.png \
+elementary/themes/flat/img/efm_generic_icon_shadow_empty.png \
+elementary/themes/flat/img/efm_generic_icon_shadow.png \
+elementary/themes/flat/img/efm_generic_icon_content_cad.png \
+elementary/themes/flat/img/efm_generic_icon_content_iso.png \
+elementary/themes/flat/img/efm_generic_icon_content_lib.png \
+elementary/themes/flat/img/efm_generic_icon_content_ruby.png \
+elementary/themes/flat/img/efm_generic_icon_content_trash.png \
+elementary/themes/flat/img/emo-angry.png \
+elementary/themes/flat/img/emo-angry-shout.png \
+elementary/themes/flat/img/emo-crazy-laugh.png \
+elementary/themes/flat/img/emo-evil-laugh.png \
+elementary/themes/flat/img/emo-evil.png \
+elementary/themes/flat/img/emo-goggle-smile.png \
+elementary/themes/flat/img/emo-grumpy.png \
+elementary/themes/flat/img/emo-grumpy-smile.png \
+elementary/themes/flat/img/emo-guilty.png \
+elementary/themes/flat/img/emo-guilty-smile.png \
+elementary/themes/flat/img/emo-haha.png \
+elementary/themes/flat/img/emo-half-smile.png \
+elementary/themes/flat/img/emo-happy-panting.png \
+elementary/themes/flat/img/emo-happy.png \
+elementary/themes/flat/img/emo-indifferent.png \
+elementary/themes/flat/img/emo-kiss.png \
+elementary/themes/flat/img/emo-knowing-grin.png \
+elementary/themes/flat/img/emo-laugh.png \
+elementary/themes/flat/img/emo-little-bit-sorry.png \
+elementary/themes/flat/img/emo-love-lots.png \
+elementary/themes/flat/img/emo-love.png \
+elementary/themes/flat/img/emo-minimal-smile.png \
+elementary/themes/flat/img/emo-not-happy.png \
+elementary/themes/flat/img/emo-not-impressed.png \
+elementary/themes/flat/img/emo-omg.png \
+elementary/themes/flat/img/emo-opensmile.png \
+elementary/themes/flat/img/emo-smile.png \
+elementary/themes/flat/img/emo-sorry.png \
+elementary/themes/flat/img/emo-squint-laugh.png \
+elementary/themes/flat/img/emo-surprised.png \
+elementary/themes/flat/img/emo-suspicious.png \
+elementary/themes/flat/img/emo-tongue-dangling.png \
+elementary/themes/flat/img/emo-tongue-poke.png \
+elementary/themes/flat/img/emo-uh.png \
+elementary/themes/flat/img/emo-unhappy.png \
+elementary/themes/flat/img/emo-very-sorry.png \
+elementary/themes/flat/img/emo-what.png \
+elementary/themes/flat/img/emo-wink.png \
+elementary/themes/flat/img/emo-worried.png \
+elementary/themes/flat/img/emo-wtf.png \
+elementary/themes/flat/img/eth.png \
+elementary/themes/flat/img/exlclam.png \
+elementary/themes/flat/img/flip_base_shad.png \
+elementary/themes/flat/img/flip_shad.png \
+elementary/themes/flat/img/frame_rounded.png \
+elementary/themes/flat/img/glow_exclam.png \
+elementary/themes/flat/img/glow_lock_double.png \
+elementary/themes/flat/img/glow_lock_locked.png \
+elementary/themes/flat/img/glow_lock_unlocked.png \
+elementary/themes/flat/img/glow_med_white.png \
+elementary/themes/flat/img/glow_round_corners.png \
+elementary/themes/flat/img/glow_round_corners_small.png \
+elementary/themes/flat/img/glow_small.png \
+elementary/themes/flat/img/handle_pick_up_left.png \
+elementary/themes/flat/img/handle_pick_up_right.png \
+elementary/themes/flat/img/hole_pixel.png \
+elementary/themes/flat/img/holes_horiz.png \
+elementary/themes/flat/img/holes_tiny_glow_horiz.png \
+elementary/themes/flat/img/holes_tiny_glow_vert.png \
+elementary/themes/flat/img/holes_tiny_horiz.png \
+elementary/themes/flat/img/holes_tiny_vert.png \
+elementary/themes/flat/img/holes_vert.png \
+elementary/themes/flat/img/hole_tiny.png \
+elementary/themes/flat/img/home_glow.png \
+elementary/themes/flat/img/home_hilight.png \
+elementary/themes/flat/img/home_inset.png \
+elementary/themes/flat/img/horiz_bar_inset.png \
+elementary/themes/flat/img/horiz_glow_run_big.png \
+elementary/themes/flat/img/horiz_glow_run.png \
+elementary/themes/flat/img/horiz_glow_range.png \
+elementary/themes/flat/img/horiz_glow_run_rev.png \
+elementary/themes/flat/img/horizontal_separated_bar_glow.png \
+elementary/themes/flat/img/horizontal_separated_bar_small_glow.png \
+elementary/themes/flat/img/icon_apps.png \
+elementary/themes/flat/img/icon_arrow_down_left.png \
+elementary/themes/flat/img/icon_arrow_down.png \
+elementary/themes/flat/img/icon_arrow_down_right.png \
+elementary/themes/flat/img/icon_arrow_left.png \
+elementary/themes/flat/img/icon_arrow_right.png \
+elementary/themes/flat/img/icon_arrow_up_left.png \
+elementary/themes/flat/img/icon_arrow_up.png \
+elementary/themes/flat/img/icon_arrow_up_right.png \
+elementary/themes/flat/img/icon_border_border.png \
+elementary/themes/flat/img/icon_border_close.png \
+elementary/themes/flat/img/icon_border_kill.png \
+elementary/themes/flat/img/icon_border_lock.png \
+elementary/themes/flat/img/icon_border_maximize.png \
+elementary/themes/flat/img/icon_border_minimize.png \
+elementary/themes/flat/img/icon_border_more.png \
+elementary/themes/flat/img/icon_border_move.png \
+elementary/themes/flat/img/icon_border_pager.png \
+elementary/themes/flat/img/icon_border_pin.png \
+elementary/themes/flat/img/icon_border_properties.png \
+elementary/themes/flat/img/icon_border_remember.png \
+elementary/themes/flat/img/icon_border_resize.png \
+elementary/themes/flat/img/icon_border_sendto.png \
+elementary/themes/flat/img/icon_border_shaded.png \
+elementary/themes/flat/img/icon_border_skip.png \
+elementary/themes/flat/img/icon_border_stack_bot.png \
+elementary/themes/flat/img/icon_border_stack_norm.png \
+elementary/themes/flat/img/icon_border_stack_top.png \
+elementary/themes/flat/img/icon_chat.png \
+elementary/themes/flat/img/icon_check_flat.png \
+elementary/themes/flat/img/icon_clock.png \
+elementary/themes/flat/img/icon_close.png \
+elementary/themes/flat/img/icon_delete.png \
+elementary/themes/flat/img/icon_edit.png \
+elementary/themes/flat/img/icon_eject_mono.png \
+elementary/themes/flat/img/icon_eject.png \
+elementary/themes/flat/img/icon_enlightenment.png \
+elementary/themes/flat/img/icon_file.png \
+elementary/themes/flat/img/icon_folder.png \
+elementary/themes/flat/img/icon_forward_mono.png \
+elementary/themes/flat/img/icon_forward.png \
+elementary/themes/flat/img/icon_head.png \
+elementary/themes/flat/img/icon_home.png \
+elementary/themes/flat/img/icon_info_mono.png \
+elementary/themes/flat/img/icon_info.png \
+elementary/themes/flat/img/icon_mute_mono.png \
+elementary/themes/flat/img/icon_mute.png \
+elementary/themes/flat/img/icon_next_mono.png \
+elementary/themes/flat/img/icon_next.png \
+elementary/themes/flat/img/icon_pause_mono.png \
+elementary/themes/flat/img/icon_pause.png \
+elementary/themes/flat/img/icon_play_mono.png \
+elementary/themes/flat/img/icon_play.png \
+elementary/themes/flat/img/icon_preferences-applications-personal.png \
+elementary/themes/flat/img/icon_preferences-applications-screen-lock.png \
+elementary/themes/flat/img/icon_preferences-applications-screen-unlock.png \
+elementary/themes/flat/img/icon_preferences-composite.png \
+elementary/themes/flat/img/icon_preferences-desklock-locale.png \
+elementary/themes/flat/img/icon_preferences-desktop-environments.png \
+elementary/themes/flat/img/icon_preferences-desktop-signal-bindings.png \
+elementary/themes/flat/img/icon_preferences-interaction.png \
+elementary/themes/flat/img/icon_preferences-variables.png \
+elementary/themes/flat/img/icon_prev_mono.png \
+elementary/themes/flat/img/icon_prev.png \
+elementary/themes/flat/img/icon_refresh.png \
+elementary/themes/flat/img/icon_rewind_mono.png \
+elementary/themes/flat/img/icon_rewind.png \
+elementary/themes/flat/img/icon_search.png  \
+elementary/themes/flat/img/icon_spanner.png  \
+elementary/themes/flat/img/icon_splat.png \
+elementary/themes/flat/img/icon_splat_half.png \
+elementary/themes/flat/img/icon_stop_mono.png \
+elementary/themes/flat/img/icon_stop.png \
+elementary/themes/flat/img/icon_system-lock-screen.png \
+elementary/themes/flat/img/icon_system-log-out.png \
+elementary/themes/flat/img/icon_system.png \
+elementary/themes/flat/img/icon_system-restart.png \
+elementary/themes/flat/img/icon_system-shutdown.png \
+elementary/themes/flat/img/icon_system-suspend-hibernate.png \
+elementary/themes/flat/img/icon_system-suspend.png \
+elementary/themes/flat/img/icon_volume_mono.png \
+elementary/themes/flat/img/icon_volume.png \
+elementary/themes/flat/img/icon_wallpaper_center.png \
+elementary/themes/flat/img/icon_wallpaper_fill.png \
+elementary/themes/flat/img/icon_wallpaper_pan.png \
+elementary/themes/flat/img/icon_wallpaper_stretch.png \
+elementary/themes/flat/img/icon_wallpaper_tile.png \
+elementary/themes/flat/img/icon_wallpaper_within.png \
+elementary/themes/flat/img/icon_warning.png \
+elementary/themes/flat/img/ic_win_move.png \
+elementary/themes/flat/img/ic_win_resize.png \
+elementary/themes/flat/img/img_example_1.png \
+elementary/themes/flat/img/img_example_2.png \
+elementary/themes/flat/img/inset_bar_horiz_base.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_base_double.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_base.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_inv_base_double.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_inv_base.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_inv_light.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_light.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_mid_base.png \
+elementary/themes/flat/img/inset_bar_horiz_glow_mid_light.png \
+elementary/themes/flat/img/inset_bar_horiz_inside_base.png \
+elementary/themes/flat/img/inset_bar_horiz_inside_light.png \
+elementary/themes/flat/img/inset_bar_horiz_light.png \
+elementary/themes/flat/img/inset_bar_vert_base.png \
+elementary/themes/flat/img/inset_bar_vert_glow_base_double.png \
+elementary/themes/flat/img/inset_bar_vert_glow_base.png \
+elementary/themes/flat/img/inset_bar_vert_glow_inv_base_double.png \
+elementary/themes/flat/img/inset_bar_vert_glow_inv_base.png \
+elementary/themes/flat/img/inset_bar_vert_glow_inv_light.png \
+elementary/themes/flat/img/inset_bar_vert_glow_light.png \
+elementary/themes/flat/img/inset_bar_vert_glow_mid_base.png \
+elementary/themes/flat/img/inset_bar_vert_glow_mid_light.png \
+elementary/themes/flat/img/inset_bar_vert_inside_base.png \
+elementary/themes/flat/img/inset_bar_vert_inside_light.png \
+elementary/themes/flat/img/inset_bar_vert_light.png \
+elementary/themes/flat/img/inset_circle_tiny.png \
+elementary/themes/flat/img/inset_round_hilight.png \
+elementary/themes/flat/img/inset_round_shading.png \
+elementary/themes/flat/img/inset_round_shadow.png \
+elementary/themes/flat/img/inset_shadow_circle_tiny.png \
+elementary/themes/flat/img/inset_shadow.png \
+elementary/themes/flat/img/inset_shadow_tiny.png \
+elementary/themes/flat/img/kbd_glow.png \
+elementary/themes/flat/img/kbd_hilight.png \
+elementary/themes/flat/img/kbd_inset.png \
+elementary/themes/flat/img/knob_round_busy.png \
+elementary/themes/flat/img/knob_round_small_busy.png \
+elementary/themes/flat/img/knob_round_small_normal.png \
+elementary/themes/flat/img/knob_round_small_selected.png \
+elementary/themes/flat/img/knob_sz_04.png \
+elementary/themes/flat/img/knob_sz_06.png \
+elementary/themes/flat/img/knob_sz_08.png \
+elementary/themes/flat/img/knob_sz_10.png \
+elementary/themes/flat/img/knob_sz_12.png \
+elementary/themes/flat/img/knob_sz_14.png \
+elementary/themes/flat/img/knob_sz_16.png \
+elementary/themes/flat/img/knob_sz_18.png \
+elementary/themes/flat/img/knob_sz_20.png \
+elementary/themes/flat/img/knob_sz_22.png \
+elementary/themes/flat/img/knob_sz_24.png \
+elementary/themes/flat/img/led_dark.png \
+elementary/themes/flat/img/led_dot_white.png \
+elementary/themes/flat/img/led_light.png \
+elementary/themes/flat/img/led_red_light.png \
+elementary/themes/flat/img/led_square_base.png \
+elementary/themes/flat/img/led_square_glow.png \
+elementary/themes/flat/img/led_square_shading.png \
+elementary/themes/flat/img/led_square_shadow.png \
+elementary/themes/flat/img/led_square_shine.png \
+elementary/themes/flat/img/led_strobe.png \
+elementary/themes/flat/img/led_tiny_blue.png \
+elementary/themes/flat/img/led_tiny_green.png \
+elementary/themes/flat/img/led_tiny_orange.png \
+elementary/themes/flat/img/lock_insecure.png \
+elementary/themes/flat/img/lock_locked.png \
+elementary/themes/flat/img/logo_blue_bottom.png \
+elementary/themes/flat/img/logo_blue_small_glow.png \
+elementary/themes/flat/img/logo_blue_small.png \
+elementary/themes/flat/img/map_circle.png \
+elementary/themes/flat/img/map_marker.png \
+elementary/themes/flat/img/map_scale.png \
+elementary/themes/flat/img/media_busy_progress.png \
+elementary/themes/flat/img/mem_bar.png \
+elementary/themes/flat/img/mem_on.png \
+elementary/themes/flat/img/mem_bar_vert.png \
+elementary/themes/flat/img/mem_on_vert.png \
+elementary/themes/flat/img/mini_blue_glow_arrow_0.png \
+elementary/themes/flat/img/mini_blue_glow_arrow_1.png \
+elementary/themes/flat/img/mini_blue_glow_arrow_2.png \
+elementary/themes/flat/img/mini_blue_glow_arrow_3.png \
+elementary/themes/flat/img/mini_box_bevel_shadow.png \
+elementary/themes/flat/img/mini_box_glow.png \
+elementary/themes/flat/img/music_control_icon.png \
+elementary/themes/flat/img/netstatus_base.png \
+elementary/themes/flat/img/netstatus_over.png \
+elementary/themes/flat/img/netstatus_tx.png \
+elementary/themes/flat/img/netstatus_rx.png \
+elementary/themes/flat/img/outline_glow.png \
+elementary/themes/flat/img/packagekit_base.png \
+elementary/themes/flat/img/pointer_entry_bar.png \
+elementary/themes/flat/img/pointer_glow.png \
+elementary/themes/flat/img/pointer_mono.png \
+elementary/themes/flat/img/pointer.png \
+elementary/themes/flat/img/pointer_hand1.png \
+elementary/themes/flat/img/ring_shadow.png \
+elementary/themes/flat/img/ring_white_blue_glow.png \
+elementary/themes/flat/img/ring_white_middle.png \
+elementary/themes/flat/img/rounded_square.png \
+elementary/themes/flat/img/runner_glow_horiz.png \
+elementary/themes/flat/img/runner_glow_vert.png \
+elementary/themes/flat/img/runner_horiz.png \
+elementary/themes/flat/img/runner_vert.png \
+elementary/themes/flat/img/screen_base.png \
+elementary/themes/flat/img/screen_bg.png \
+elementary/themes/flat/img/screen_circular_shadow.png \
+elementary/themes/flat/img/screen_fg.png \
+elementary/themes/flat/img/separator_horiz.png \
+elementary/themes/flat/img/shadow_angled_in_light.png \
+elementary/themes/flat/img/shadow_angled_in_sides.png \
+elementary/themes/flat/img/shadow_horiz.png \
+elementary/themes/flat/img/shadow_inset_bevels.png \
+elementary/themes/flat/img/shadow_inset_light.png \
+elementary/themes/flat/img/shadow_rounded_horiz.png \
+elementary/themes/flat/img/shadow_rounded_vert.png \
+elementary/themes/flat/img/shadow_square_tiny.png \
+elementary/themes/flat/img/shadow_vertical_dark.png \
+elementary/themes/flat/img/shadow_vert.png \
+elementary/themes/flat/img/shine.png \
+elementary/themes/flat/img/slider_run_base_horiz.png \
+elementary/themes/flat/img/slider_run_base_light_horiz.png \
+elementary/themes/flat/img/slider_run_base_light_vert.png \
+elementary/themes/flat/img/slider_run_base_vert.png \
+elementary/themes/flat/img/slider_run_bevel_horiz.png \
+elementary/themes/flat/img/slider_run_bevel_vert.png \
+elementary/themes/flat/img/slot_horiz_bottom.png \
+elementary/themes/flat/img/slot_horiz_top.png \
+elementary/themes/flat/img/spanner_glow.png \
+elementary/themes/flat/img/spanner_hilight.png \
+elementary/themes/flat/img/spanner_inset.png \
+elementary/themes/flat/img/speaker.png \
+elementary/themes/flat/img/split_h_glow.png \
+elementary/themes/flat/img/split_h_hilight.png \
+elementary/themes/flat/img/split_h_inset.png \
+elementary/themes/flat/img/split_none_glow.png \
+elementary/themes/flat/img/split_none_hilight.png \
+elementary/themes/flat/img/split_none_inset.png \
+elementary/themes/flat/img/split_v_glow.png \
+elementary/themes/flat/img/split_v_hilight.png \
+elementary/themes/flat/img/split_v_inset.png \
+elementary/themes/flat/img/sym_check_alum.png \
+elementary/themes/flat/img/sym_close_dark_normal.png \
+elementary/themes/flat/img/sym_close_dark_selected.png \
+elementary/themes/flat/img/sym_close_light_normal.png \
+elementary/themes/flat/img/sym_close_light_selected.png \
+elementary/themes/flat/img/sym_down_dark_normal.png \
+elementary/themes/flat/img/sym_down_dark_selected.png \
+elementary/themes/flat/img/sym_down_glow_normal.png \
+elementary/themes/flat/img/sym_down_light_normal.png \
+elementary/themes/flat/img/sym_down_light_selected.png \
+elementary/themes/flat/img/sym_heart_glow_normal.png \
+elementary/themes/flat/img/sym_heart_light_normal.png \
+elementary/themes/flat/img/sym_icon_op_ask.png \
+elementary/themes/flat/img/sym_icon_op_copy.png \
+elementary/themes/flat/img/sym_icon_op_move.png \
+elementary/themes/flat/img/sym_left_dark_normal.png \
+elementary/themes/flat/img/sym_left_glow_normal.png \
+elementary/themes/flat/img/sym_left_light_normal.png \
+elementary/themes/flat/img/sym_radio_alum.png \
+elementary/themes/flat/img/sym_reload_glow_normal.png \
+elementary/themes/flat/img/sym_reload_light_normal.png \
+elementary/themes/flat/img/sym_right_dark_normal.png \
+elementary/themes/flat/img/sym_right_glow_normal.png \
+elementary/themes/flat/img/sym_right_light_normal.png \
+elementary/themes/flat/img/sym_up_dark_normal.png \
+elementary/themes/flat/img/sym_up_dark_selected.png \
+elementary/themes/flat/img/sym_up_glow_normal.png \
+elementary/themes/flat/img/sym_up_light_normal.png \
+elementary/themes/flat/img/sym_up_light_selected.png \
+elementary/themes/flat/img/tacho_base.png \
+elementary/themes/flat/img/tacho_hand_big2.png \
+elementary/themes/flat/img/tacho_hand_big3.png \
+elementary/themes/flat/img/tacho_hand_big4.png \
+elementary/themes/flat/img/tacho_hand_big.png \
+elementary/themes/flat/img/tacho_hand_big_shadow.png \
+elementary/themes/flat/img/tacho_hand_small_min2.png \
+elementary/themes/flat/img/tacho_hand_small_min3.png \
+elementary/themes/flat/img/tacho_hand_small_min4.png \
+elementary/themes/flat/img/tacho_hand_small_min.png \
+elementary/themes/flat/img/tacho_hand_small_shadow.png \
+elementary/themes/flat/img/therm_content.png \
+elementary/themes/flat/img/therm_shadow.png \
+elementary/themes/flat/img/therm_shine.png \
+elementary/themes/flat/img/tooltip-base.png \
+elementary/themes/flat/img/tooltip-corner-bottom-left-tip.png \
+elementary/themes/flat/img/tooltip-corner-bottom-right-tip.png \
+elementary/themes/flat/img/tooltip-corner-top-left-tip.png \
+elementary/themes/flat/img/tooltip-corner-top-right-tip.png \
+elementary/themes/flat/img/tooltip-edge-bottom-tip.png \
+elementary/themes/flat/img/tooltip-edge-left-tip.png \
+elementary/themes/flat/img/tooltip-edge-right-tip.png \
+elementary/themes/flat/img/tooltip-edge-top-tip.png \
+elementary/themes/flat/img/vert_bar_inset.png \
+elementary/themes/flat/img/vert_glow_run.png \
+elementary/themes/flat/img/vert_glow_range.png \
+elementary/themes/flat/img/vert_glow_run_rev.png \
+elementary/themes/flat/img/vertical_separated_bar_glow.png \
+elementary/themes/flat/img/vertical_separated_bar_disabled.png \
+elementary/themes/flat/img/vgrad_med_curved.png \
+elementary/themes/flat/img/vgrad_med_darker.png \
+elementary/themes/flat/img/vgrad_med_dark.png \
+elementary/themes/flat/img/vgrad_med_dark_sparkle.png \
+elementary/themes/flat/img/vgrad_med_lighter.png \
+elementary/themes/flat/img/vgrad_med_lighter_sparkle.png \
+elementary/themes/flat/img/vgrad_med.png \
+elementary/themes/flat/img/vgrad_shadow_bi.png \
+elementary/themes/flat/img/vgrad_tall.png \
+elementary/themes/flat/img/white_bar_vert_glow.png \
+elementary/themes/flat/img/wifi_base.png \
+elementary/themes/flat/img/wifi_shadow.png \
+elementary/themes/flat/img/wifi_sig_1.png \
+elementary/themes/flat/img/wifi_sig_2.png \
+elementary/themes/flat/img/wifi_sig_3.png \
+elementary/themes/flat/img/win_glow.png \
+elementary/themes/flat/img/win_shadow.png \
+elementary/themes/flat/img/win_menu_shadow.png \
+\
+elementary/themes/flat/img/O/about_bot.png \
+elementary/themes/flat/img/O/about_mid.png \
+elementary/themes/flat/img/O/about_top.png \
+elementary/themes/flat/img/O/arrow_down.png \
+elementary/themes/flat/img/O/arrow_up.png \
+elementary/themes/flat/img/O/batt_base.png \
+elementary/themes/flat/img/O/batt_level.png \
+elementary/themes/flat/img/O/batt_over.png \
+elementary/themes/flat/img/O/batt_power.png \
+elementary/themes/flat/img/O/bg_shadow.png \
+elementary/themes/flat/img/O/big_arrow_up.png \
+elementary/themes/flat/img/O/bnw.png \
+elementary/themes/flat/img/O/bt_base1.png \
+elementary/themes/flat/img/O/bt_base2.png \
+elementary/themes/flat/img/O/bt_dis_base.png \
+elementary/themes/flat/img/O/bt_dis_hilight.png \
+elementary/themes/flat/img/O/bt_dis_shine.png \
+elementary/themes/flat/img/O/bt_glow.png \
+elementary/themes/flat/img/O/bt_hilight.png \
+elementary/themes/flat/img/O/bt_shine.png \
+elementary/themes/flat/img/O/bt_sm_base1.png \
+elementary/themes/flat/img/O/bt_sm_base2.png \
+elementary/themes/flat/img/O/bt_sm_hilight.png \
+elementary/themes/flat/img/O/bt_sm_shine.png \
+elementary/themes/flat/img/O/bulb-0.png \
+elementary/themes/flat/img/O/bulb-1.png \
+elementary/themes/flat/img/O/bulb-2.png \
+elementary/themes/flat/img/O/busy-1.png \
+elementary/themes/flat/img/O/busy-2.png \
+elementary/themes/flat/img/O/busy-3.png \
+elementary/themes/flat/img/O/busy-4.png \
+elementary/themes/flat/img/O/busy-5.png \
+elementary/themes/flat/img/O/busy-6.png \
+elementary/themes/flat/img/O/busy-7.png \
+elementary/themes/flat/img/O/busy-8.png \
+elementary/themes/flat/img/O/busy-9.png \
+elementary/themes/flat/img/O/dia_botshad.png \
+elementary/themes/flat/img/O/dia_grad.png \
+elementary/themes/flat/img/O/e17_mini_button_shadow2.png \
+elementary/themes/flat/img/O/everything_box.png \
+elementary/themes/flat/img/O/everything_item_bg.png \
+elementary/themes/flat/img/O/exq-bglight.png \
+elementary/themes/flat/img/O/exq-dot-glow.png \
+elementary/themes/flat/img/O/exq-dot.png \
+elementary/themes/flat/img/O/exq-logo.png \
+elementary/themes/flat/img/O/exq-vgrad.png \
+elementary/themes/flat/img/O/gadman_border.png \
+elementary/themes/flat/img/O/gadman_bottom.png \
+elementary/themes/flat/img/O/gadman_frame.png \
+elementary/themes/flat/img/O/gadman_left.png \
+elementary/themes/flat/img/O/gadman_right.png \
+elementary/themes/flat/img/O/gadman_top.png \
+elementary/themes/flat/img/O/glow.png \
+elementary/themes/flat/img/O/icon_active.png \
+elementary/themes/flat/img/O/icon_add_fav.png \
+elementary/themes/flat/img/O/icon_add.png \
+elementary/themes/flat/img/O/icon_advanced.png \
+elementary/themes/flat/img/O/icon_applications_ibar.png \
+elementary/themes/flat/img/O/icon_applications_new.png \
+elementary/themes/flat/img/O/icon_applications.png \
+elementary/themes/flat/img/O/icon_applications_restart.png \
+elementary/themes/flat/img/O/icon_applications_startup.png \
+elementary/themes/flat/img/O/icon_autoscroll.png \
+elementary/themes/flat/img/O/icon_behavior.png \
+elementary/themes/flat/img/O/icon_border_border.png \
+elementary/themes/flat/img/O/icon_border_close.png \
+elementary/themes/flat/img/O/icon_border_kill.png \
+elementary/themes/flat/img/O/icon_border_lock.png \
+elementary/themes/flat/img/O/icon_border_maximize.png \
+elementary/themes/flat/img/O/icon_border_minimize.png \
+elementary/themes/flat/img/O/icon_border_more.png \
+elementary/themes/flat/img/O/icon_border_pager.png \
+elementary/themes/flat/img/O/icon_border_pin.png \
+elementary/themes/flat/img/O/icon_border_properties.png \
+elementary/themes/flat/img/O/icon_border_remember.png \
+elementary/themes/flat/img/O/icon_border_sendto.png \
+elementary/themes/flat/img/O/icon_border_shaded.png \
+elementary/themes/flat/img/O/icon_border_skip.png \
+elementary/themes/flat/img/O/icon_border_stack_bot.png \
+elementary/themes/flat/img/O/icon_border_stack_norm.png \
+elementary/themes/flat/img/O/icon_border_stack_top.png \
+elementary/themes/flat/img/O/icon_check.png \
+elementary/themes/flat/img/O/icon_close.png \
+elementary/themes/flat/img/O/icon_colors.png \
+elementary/themes/flat/img/O/icon_config.png \
+elementary/themes/flat/img/O/icon_configuration.png \
+elementary/themes/flat/img/O/icon_del.png \
+elementary/themes/flat/img/O/icon_desklock_menu.png \
+elementary/themes/flat/img/O/icon_desklock.png \
+elementary/themes/flat/img/O/icon_desktops.png \
+elementary/themes/flat/img/O/icon_directories.png \
+elementary/themes/flat/img/O/icon_down_arrow.png \
+elementary/themes/flat/img/O/icon_dummy.png \
+elementary/themes/flat/img/O/icon_efm_arrange_name.png \
+elementary/themes/flat/img/O/icon_efm_arrange.png \
+elementary/themes/flat/img/O/icon_efm_arrange_time.png \
+elementary/themes/flat/img/O/icon_efm_cd.png \
+elementary/themes/flat/img/O/icon_efm_copy.png \
+elementary/themes/flat/img/O/icon_efm_cut.png \
+elementary/themes/flat/img/O/icon_efm_delete.png \
+elementary/themes/flat/img/O/icon_efm_desktop.png \
+elementary/themes/flat/img/O/icon_efm_dnd_ask.png \
+elementary/themes/flat/img/O/icon_efm_dnd_copy.png \
+elementary/themes/flat/img/O/icon_efm_dnd_move.png \
+elementary/themes/flat/img/O/icon_efm_eject.png \
+elementary/themes/flat/img/O/icon_efm_file_del.png \
+elementary/themes/flat/img/O/icon_efm_file.png \
+elementary/themes/flat/img/O/icon_efm_flash.png \
+elementary/themes/flat/img/O/icon_efm_folder.png \
+elementary/themes/flat/img/O/icon_efm_hdd.png \
+elementary/themes/flat/img/O/icon_efm_home.png \
+elementary/themes/flat/img/O/icon_efm_new_dir.png \
+elementary/themes/flat/img/O/icon_efm_new.png \
+elementary/themes/flat/img/O/icon_efm_open.png \
+elementary/themes/flat/img/O/icon_efm_paste.png \
+elementary/themes/flat/img/O/icon_efm_properties.png \
+elementary/themes/flat/img/O/icon_efm_refresh.png \
+elementary/themes/flat/img/O/icon_efm_rename.png \
+elementary/themes/flat/img/O/icon_efm_root.png \
+elementary/themes/flat/img/O/icon_efm_select.png \
+elementary/themes/flat/img/O/icon_efm_sort.png \
+elementary/themes/flat/img/O/icon_efm_tmp.png \
+elementary/themes/flat/img/O/icon_efm_usbmedia.png \
+elementary/themes/flat/img/O/icon_efm_view_details.png \
+elementary/themes/flat/img/O/icon_efm_view_name.png \
+elementary/themes/flat/img/O/icon_efm_view.png \
+elementary/themes/flat/img/O/icon_efm_vol_mounted.png \
+elementary/themes/flat/img/O/icon_efm_vol_unmounted.png \
+elementary/themes/flat/img/O/icon_engine.png \
+elementary/themes/flat/img/O/icon_evry_clipboard.png \
+elementary/themes/flat/img/O/icon_extensions.png \
+elementary/themes/flat/img/O/icon_favorites.png \
+elementary/themes/flat/img/O/icon_file_icons.png \
+elementary/themes/flat/img/O/icon_fonts.png \
+elementary/themes/flat/img/O/icon_gadget.png \
+elementary/themes/flat/img/O/icon_globe.png \
+elementary/themes/flat/img/O/icon_gradient.png \
+elementary/themes/flat/img/O/icon_halt.png \
+elementary/themes/flat/img/O/icon_hibernate.png \
+elementary/themes/flat/img/O/icon_icon_theme.png \
+elementary/themes/flat/img/O/icon_illume.png \
+elementary/themes/flat/img/O/icon_imc.png \
+elementary/themes/flat/img/O/icon_interaction.png \
+elementary/themes/flat/img/O/icon_intl.png \
+elementary/themes/flat/img/O/icon_keyboard.png \
+elementary/themes/flat/img/O/icon_keys.png \
+elementary/themes/flat/img/O/icon_left_arrow.png \
+elementary/themes/flat/img/O/icon_logout.png \
+elementary/themes/flat/img/O/icon_look.png \
+elementary/themes/flat/img/O/icon_lost_windows.png \
+elementary/themes/flat/img/O/icon_menu_settings.png \
+elementary/themes/flat/img/O/icon_menus.png \
+elementary/themes/flat/img/O/icon_mime_audio_generic.png \
+elementary/themes/flat/img/O/icon_mime_bdf.png \
+elementary/themes/flat/img/O/icon_mime_c.png \
+elementary/themes/flat/img/O/icon_mime_css.png \
+elementary/themes/flat/img/O/icon_mime_deb.png \
+elementary/themes/flat/img/O/icon_mime_doc.png \
+elementary/themes/flat/img/O/icon_mime_executable_generic.png \
+elementary/themes/flat/img/O/icon_mime_font_generic.png \
+elementary/themes/flat/img/O/icon_mime_h.png \
+elementary/themes/flat/img/O/icon_mime_html.png \
+elementary/themes/flat/img/O/icon_mime_image_generic.png \
+elementary/themes/flat/img/O/icon_mime_o.png \
+elementary/themes/flat/img/O/icon_mime_package.png \
+elementary/themes/flat/img/O/icon_mime_patch.png \
+elementary/themes/flat/img/O/icon_mime_pcf.png \
+elementary/themes/flat/img/O/icon_mime_pdf.png \
+elementary/themes/flat/img/O/icon_mime_plain.png \
+elementary/themes/flat/img/O/icon_mime_sh.png \
+elementary/themes/flat/img/O/icon_mime_text_generic.png \
+elementary/themes/flat/img/O/icon_mime_ttf.png \
+elementary/themes/flat/img/O/icon_mime_video_generic.png \
+elementary/themes/flat/img/O/icon_mime_xcf.png \
+elementary/themes/flat/img/O/icon_mixer.png \
+elementary/themes/flat/img/O/icon_modules.png \
+elementary/themes/flat/img/O/icon_mouse_clean.png \
+elementary/themes/flat/img/O/icon_mouse_extra.png \
+elementary/themes/flat/img/O/icon_mouse_left.png \
+elementary/themes/flat/img/O/icon_mouse_middle.png \
+elementary/themes/flat/img/O/icon_mouse.png \
+elementary/themes/flat/img/O/icon_mouse_right.png \
+elementary/themes/flat/img/O/icon_mouse_wheel.png \
+elementary/themes/flat/img/O/icon_new.png \
+elementary/themes/flat/img/O/icon_pager.png \
+elementary/themes/flat/img/O/icon_performance.png \
+elementary/themes/flat/img/O/icon_power_management.png \
+elementary/themes/flat/img/O/icon_profiles.png \
+elementary/themes/flat/img/O/icon_reboot.png \
+elementary/themes/flat/img/O/icon_reset.png \
+elementary/themes/flat/img/O/icon_resize.png \
+elementary/themes/flat/img/O/icon_right_arrow.png \
+elementary/themes/flat/img/O/icon_run.png \
+elementary/themes/flat/img/O/icon_scale.png \
+elementary/themes/flat/img/O/icon_screen_around.png \
+elementary/themes/flat/img/O/icon_screen_hflip.png \
+elementary/themes/flat/img/O/icon_screen_left.png \
+elementary/themes/flat/img/O/icon_screen_normal.png \
+elementary/themes/flat/img/O/icon_screen_resolution.png \
+elementary/themes/flat/img/O/icon_screen_right.png \
+elementary/themes/flat/img/O/icon_screensaver.png \
+elementary/themes/flat/img/O/icon_screen_setup.png \
+elementary/themes/flat/img/O/icon_screenshot.png \
+elementary/themes/flat/img/O/icon_screen_vflip.png \
+elementary/themes/flat/img/O/icon_shelf_bottom_desk.png \
+elementary/themes/flat/img/O/icon_shelf_bottom_left.png \
+elementary/themes/flat/img/O/icon_shelf_bottom.png \
+elementary/themes/flat/img/O/icon_shelf_bottom_right.png \
+elementary/themes/flat/img/O/icon_shelf_custom.png \
+elementary/themes/flat/img/O/icon_shelf_dock.png \
+elementary/themes/flat/img/O/icon_shelf_left_bottom.png \
+elementary/themes/flat/img/O/icon_shelf_left.png \
+elementary/themes/flat/img/O/icon_shelf_left_top.png \
+elementary/themes/flat/img/O/icon_shelf_menu_bar.png \
+elementary/themes/flat/img/O/icon_shelf_panel.png \
+elementary/themes/flat/img/O/icon_shelf.png \
+elementary/themes/flat/img/O/icon_shelf_right_bottom.png \
+elementary/themes/flat/img/O/icon_shelf_right.png \
+elementary/themes/flat/img/O/icon_shelf_right_top.png \
+elementary/themes/flat/img/O/icon_shelf_top_desk.png \
+elementary/themes/flat/img/O/icon_shelf_top_left.png \
+elementary/themes/flat/img/O/icon_shelf_top.png \
+elementary/themes/flat/img/O/icon_shelf_top_right.png \
+elementary/themes/flat/img/O/icon_startup.png \
+elementary/themes/flat/img/O/icon_suspend.png \
+elementary/themes/flat/img/O/icon_swap.png \
+elementary/themes/flat/img/O/icon_system.png \
+elementary/themes/flat/img/O/icon_theme.png \
+elementary/themes/flat/img/O/icon_toolbar.png \
+elementary/themes/flat/img/O/icon_transitions.png \
+elementary/themes/flat/img/O/icon_up_arrow.png \
+elementary/themes/flat/img/O/icon_wallpaper_center_flat.png \
+elementary/themes/flat/img/O/icon_wallpaper_center.png \
+elementary/themes/flat/img/O/icon_wallpaper_grad_screen.png \
+elementary/themes/flat/img/O/icon_wallpaper.png \
+elementary/themes/flat/img/O/icon_wallpaper_screen.png \
+elementary/themes/flat/img/O/icon_warning.png \
+elementary/themes/flat/img/O/icon_window_focus.png \
+elementary/themes/flat/img/O/icon_window_geometry.png \
+elementary/themes/flat/img/O/icon_window_manipulation.png \
+elementary/themes/flat/img/O/icon_window_process_management.png \
+elementary/themes/flat/img/O/icon_window_remembers.png \
+elementary/themes/flat/img/O/icon_windows.png \
+elementary/themes/flat/img/O/icon_winlist.png \
+elementary/themes/flat/img/O/icon_win_move.png \
+elementary/themes/flat/img/O/icon_win_resize.png \
+elementary/themes/flat/img/O/illume-home.png \
+elementary/themes/flat/img/O/illume-kbd-on.png \
+elementary/themes/flat/img/O/illume-kbd.png \
+elementary/themes/flat/img/O/illume-mode-dual-left.png \
+elementary/themes/flat/img/O/illume-mode-dual-top.png \
+elementary/themes/flat/img/O/illume-mode-single.png \
+elementary/themes/flat/img/O/inset_raised.png \
+elementary/themes/flat/img/O/inset_sunk.png \
+elementary/themes/flat/img/O/logo_black_128.png \
+elementary/themes/flat/img/O/logo_white_128.png \
+elementary/themes/flat/img/O/mixer_high_left.png \
+elementary/themes/flat/img/O/mixer_high_right.png \
+elementary/themes/flat/img/O/mixer_low_left.png \
+elementary/themes/flat/img/O/mixer_low_right.png \
+elementary/themes/flat/img/O/mixer_med_left.png \
+elementary/themes/flat/img/O/mixer_med_right.png \
+elementary/themes/flat/img/O/mixer.png \
+elementary/themes/flat/img/O/outline.png \
+elementary/themes/flat/img/O/randr_icon_off.png \
+elementary/themes/flat/img/O/randr_icon_on.png \
+elementary/themes/flat/img/O/randr_monitor.png \
+elementary/themes/flat/img/O/randr_stand.png \
+elementary/themes/flat/img/O/sb_runnerh.png \
+elementary/themes/flat/img/O/sb_runnerv.png \
+elementary/themes/flat/img/O/silk.png \
+elementary/themes/flat/img/O/t0.png \
+elementary/themes/flat/img/O/t0-sh.png \
+elementary/themes/flat/img/O/t1.png \
+elementary/themes/flat/img/O/t1-sh.png \
+elementary/themes/flat/img/O/t2.png \
+elementary/themes/flat/img/O/tacho_bg.png \
+elementary/themes/flat/img/O/tacho_fg.png \
+elementary/themes/flat/img/O/temp_base.png \
+elementary/themes/flat/img/O/temp_mid.png \
+elementary/themes/flat/img/O/temp_over.png \
+elementary/themes/flat/img/O/theme-label.png \
+elementary/themes/flat/img/O/toolbar_sel.png \
+elementary/themes/flat/img/O/topsh.png \
+elementary/themes/flat/img/O/transition_vswipe.png \
+elementary/themes/flat/img/O/vgrad_dark.png \
+elementary/themes/flat/img/O/vgrad_light.png \
+elementary/themes/flat/img/O/wizard_bt1.png \
+elementary/themes/flat/img/O/wizard_bt2.png \
+elementary/themes/flat/img/O/wizard_pattern.png \
+elementary/themes/flat/img/O/wp-bot1.png \
+elementary/themes/flat/img/O/wp-bot2.png \
+elementary/themes/flat/img/O/wp-tb1.png \
+elementary/themes/flat/img/O/wp-tb2.png \
+elementary/themes/flat/img/O/wp-tb3.png \
+elementary/themes/flat/img/O/wp-tbs.png \
+\
+elementary/themes/flat/snd/kbd-tap2.wav \
+elementary/themes/flat/snd/kbd-tap3.wav \
+elementary/themes/flat/snd/kbd-tap4.wav \
+elementary/themes/flat/snd/kbd-tap5.wav \
+elementary/themes/flat/snd/kbd-tap.wav
+
+efl_ui_themes_flat_files = \
+elementary/themes/flat/edc/efl/bg.edc \
+elementary/themes/flat/edc/efl/border.edc \
+elementary/themes/flat/edc/efl/button.edc \
+elementary/themes/flat/edc/efl/calendar.edc \
+elementary/themes/flat/edc/efl/check.edc \
+elementary/themes/flat/edc/efl/uiclock.edc \
+elementary/themes/flat/edc/efl/cursor.edc \
+elementary/themes/flat/edc/efl/focus.edc \
+elementary/themes/flat/edc/efl/frame.edc \
+elementary/themes/flat/edc/efl/multibuttonentry.edc \
+elementary/themes/flat/edc/efl/nstate.edc \
+elementary/themes/flat/edc/efl/panes.edc \
+elementary/themes/flat/edc/efl/photocam.edc \
+elementary/themes/flat/edc/efl/popup.edc \
+elementary/themes/flat/edc/efl/progress.edc \
+elementary/themes/flat/edc/efl/radio.edc \
+elementary/themes/flat/edc/efl/scroller.edc \
+elementary/themes/flat/edc/efl/slider.edc \
+elementary/themes/flat/edc/efl/spin.edc \
+elementary/themes/flat/edc/efl/spin_button.edc \
+elementary/themes/flat/edc/efl/text.edc \
+elementary/themes/flat/edc/efl/textpath.edc \
+elementary/themes/flat/edc/efl/tooltip.edc \
+elementary/themes/flat/edc/efl/video.edc \
+elementary/themes/flat/edc/efl/list.edc \
+elementary/themes/flat/edc/efl/win.edc
+
+elementary_fdo_actions_128_flat_files = \
+	elementary/themes/flat/fdo/actions/128/address-book-new.png \
+	elementary/themes/flat/fdo/actions/128/application-exit.png \
+	elementary/themes/flat/fdo/actions/128/appointment-new.png \
+	elementary/themes/flat/fdo/actions/128/call-start.png \
+	elementary/themes/flat/fdo/actions/128/call-stop.png \
+	elementary/themes/flat/fdo/actions/128/contact-new.png \
+	elementary/themes/flat/fdo/actions/128/document-close.png \
+	elementary/themes/flat/fdo/actions/128/document-export.png \
+	elementary/themes/flat/fdo/actions/128/document-import.png \
+	elementary/themes/flat/fdo/actions/128/document-new.png \
+	elementary/themes/flat/fdo/actions/128/document-open.png \
+	elementary/themes/flat/fdo/actions/128/document-open-recent.png \
+	elementary/themes/flat/fdo/actions/128/document-page-setup.png \
+	elementary/themes/flat/fdo/actions/128/document-print.png \
+	elementary/themes/flat/fdo/actions/128/document-print-preview.png \
+	elementary/themes/flat/fdo/actions/128/document-properties.png \
+	elementary/themes/flat/fdo/actions/128/document-revert.png \
+	elementary/themes/flat/fdo/actions/128/document-save-as.png \
+	elementary/themes/flat/fdo/actions/128/document-save.png \
+	elementary/themes/flat/fdo/actions/128/document-send.png \
+	elementary/themes/flat/fdo/actions/128/edit-clear.png \
+	elementary/themes/flat/fdo/actions/128/edit-copy.png \
+	elementary/themes/flat/fdo/actions/128/edit-cut.png \
+	elementary/themes/flat/fdo/actions/128/edit-delete.png \
+	elementary/themes/flat/fdo/actions/128/edit-find.png \
+	elementary/themes/flat/fdo/actions/128/edit-find-replace.png \
+	elementary/themes/flat/fdo/actions/128/edit-paste.png \
+	elementary/themes/flat/fdo/actions/128/edit-redo.png \
+	elementary/themes/flat/fdo/actions/128/edit-select-all.png \
+	elementary/themes/flat/fdo/actions/128/edit-undo.png \
+	elementary/themes/flat/fdo/actions/128/folder-copy.png \
+	elementary/themes/flat/fdo/actions/128/folder-move.png \
+	elementary/themes/flat/fdo/actions/128/folder-new.png \
+	elementary/themes/flat/fdo/actions/128/format-indent-less.png \
+	elementary/themes/flat/fdo/actions/128/format-indent-more.png \
+	elementary/themes/flat/fdo/actions/128/format-justify-center.png \
+	elementary/themes/flat/fdo/actions/128/format-justify-fill.png \
+	elementary/themes/flat/fdo/actions/128/format-justify-left.png \
+	elementary/themes/flat/fdo/actions/128/format-justify-right.png \
+	elementary/themes/flat/fdo/actions/128/format-text-bold.png \
+	elementary/themes/flat/fdo/actions/128/format-text-direction-ltr.png \
+	elementary/themes/flat/fdo/actions/128/format-text-direction-rtl.png \
+	elementary/themes/flat/fdo/actions/128/format-text-italic.png \
+	elementary/themes/flat/fdo/actions/128/format-text-strikethrough.png \
+	elementary/themes/flat/fdo/actions/128/format-text-underline.png \
+	elementary/themes/flat/fdo/actions/128/go-bottom.png \
+	elementary/themes/flat/fdo/actions/128/go-down.png \
+	elementary/themes/flat/fdo/actions/128/go-first.png \
+	elementary/themes/flat/fdo/actions/128/go-home.png \
+	elementary/themes/flat/fdo/actions/128/go-jump.png \
+	elementary/themes/flat/fdo/actions/128/go-last.png \
+	elementary/themes/flat/fdo/actions/128/go-next.png \
+	elementary/themes/flat/fdo/actions/128/go-previous.png \
+	elementary/themes/flat/fdo/actions/128/go-top.png \
+	elementary/themes/flat/fdo/actions/128/go-up.png \
+	elementary/themes/flat/fdo/actions/128/help-about.png \
+	elementary/themes/flat/fdo/actions/128/help-contents.png \
+	elementary/themes/flat/fdo/actions/128/help-faq.png \
+	elementary/themes/flat/fdo/actions/128/insert-image.png \
+	elementary/themes/flat/fdo/actions/128/insert-link.png \
+	elementary/themes/flat/fdo/actions/128/insert-object.png \
+	elementary/themes/flat/fdo/actions/128/insert-text.png \
+	elementary/themes/flat/fdo/actions/128/list-add.png \
+	elementary/themes/flat/fdo/actions/128/list-remove.png \
+	elementary/themes/flat/fdo/actions/128/mail-forward.png \
+	elementary/themes/flat/fdo/actions/128/mail-mark-important.png \
+	elementary/themes/flat/fdo/actions/128/mail-mark-junk.png \
+	elementary/themes/flat/fdo/actions/128/mail-mark-notjunk.png \
+	elementary/themes/flat/fdo/actions/128/mail-mark-read.png \
+	elementary/themes/flat/fdo/actions/128/mail-mark-unread.png \
+	elementary/themes/flat/fdo/actions/128/mail-message-new.png \
+	elementary/themes/flat/fdo/actions/128/mail-reply-all.png \
+	elementary/themes/flat/fdo/actions/128/mail-reply-sender.png \
+	elementary/themes/flat/fdo/actions/128/mail-send.png \
+	elementary/themes/flat/fdo/actions/128/mail-send-receive.png \
+	elementary/themes/flat/fdo/actions/128/media-eject.png \
+	elementary/themes/flat/fdo/actions/128/media-playback-pause.png \
+	elementary/themes/flat/fdo/actions/128/media-playback-start.png \
+	elementary/themes/flat/fdo/actions/128/media-playback-stop.png \
+	elementary/themes/flat/fdo/actions/128/media-record.png \
+	elementary/themes/flat/fdo/actions/128/media-seek-backward.png \
+	elementary/themes/flat/fdo/actions/128/media-seek-forward.png \
+	elementary/themes/flat/fdo/actions/128/media-skip-backward.png \
+	elementary/themes/flat/fdo/actions/128/media-skip-forward.png \
+	elementary/themes/flat/fdo/actions/128/object-flip-horizontal.png \
+	elementary/themes/flat/fdo/actions/128/object-flip-vertical.png \
+	elementary/themes/flat/fdo/actions/128/object-rotate-left.png \
+	elementary/themes/flat/fdo/actions/128/object-rotate-right.png \
+	elementary/themes/flat/fdo/actions/128/process-stop.png \
+	elementary/themes/flat/fdo/actions/128/system-lock-screen.png \
+	elementary/themes/flat/fdo/actions/128/system-log-out.png \
+	elementary/themes/flat/fdo/actions/128/system-reboot.png \
+	elementary/themes/flat/fdo/actions/128/system-run.png \
+	elementary/themes/flat/fdo/actions/128/system-search.png \
+	elementary/themes/flat/fdo/actions/128/system-shutdown.png \
+	elementary/themes/flat/fdo/actions/128/tools-check-spelling.png \
+	elementary/themes/flat/fdo/actions/128/view-close.png \
+	elementary/themes/flat/fdo/actions/128/view-fullscreen.png \
+	elementary/themes/flat/fdo/actions/128/view-list-compact.png \
+	elementary/themes/flat/fdo/actions/128/view-list-details.png \
+	elementary/themes/flat/fdo/actions/128/view-list-icons.png \
+	elementary/themes/flat/fdo/actions/128/view-refresh.png \
+	elementary/themes/flat/fdo/actions/128/view-restore.png \
+	elementary/themes/flat/fdo/actions/128/view-sort-ascending.png \
+	elementary/themes/flat/fdo/actions/128/view-sort-descending.png \
+	elementary/themes/flat/fdo/actions/128/window-close.png \
+	elementary/themes/flat/fdo/actions/128/window-new.png \
+	elementary/themes/flat/fdo/actions/128/zoom-fill.png \
+	elementary/themes/flat/fdo/actions/128/zoom-fit-best.png \
+	elementary/themes/flat/fdo/actions/128/zoom-fit.png \
+	elementary/themes/flat/fdo/actions/128/zoom-in.png \
+	elementary/themes/flat/fdo/actions/128/zoom-original.png \
+	elementary/themes/flat/fdo/actions/128/zoom-out.png
+
+elementary_fdo_categories_16_flat_files = \
+	elementary/themes/flat/fdo/categories/16/applications-accessories.png \
+	elementary/themes/flat/fdo/categories/16/applications-development.png \
+	elementary/themes/flat/fdo/categories/16/applications-games.png \
+	elementary/themes/flat/fdo/categories/16/applications-graphics.png \
+	elementary/themes/flat/fdo/categories/16/applications-internet.png \
+	elementary/themes/flat/fdo/categories/16/applications-multimedia.png \
+	elementary/themes/flat/fdo/categories/16/applications-office.png \
+	elementary/themes/flat/fdo/categories/16/applications-other.png \
+	elementary/themes/flat/fdo/categories/16/applications-science.png \
+	elementary/themes/flat/fdo/categories/16/applications-system.png \
+	elementary/themes/flat/fdo/categories/16/applications-utilities.png \
+	elementary/themes/flat/fdo/categories/16/preferences-desktop.png \
+	elementary/themes/flat/fdo/categories/16/preferences-other.png \
+	elementary/themes/flat/fdo/categories/16/preferences-system.png
+
+elementary_fdo_categories_128_flat_files = \
+	elementary/themes/flat/fdo/categories/128/applications-accessories.png \
+	elementary/themes/flat/fdo/categories/128/applications-development.png \
+	elementary/themes/flat/fdo/categories/128/applications-games.png \
+	elementary/themes/flat/fdo/categories/128/applications-graphics.png \
+	elementary/themes/flat/fdo/categories/128/applications-internet.png \
+	elementary/themes/flat/fdo/categories/128/applications-multimedia.png \
+	elementary/themes/flat/fdo/categories/128/applications-office.png \
+	elementary/themes/flat/fdo/categories/128/applications-other.png \
+	elementary/themes/flat/fdo/categories/128/applications-science.png \
+	elementary/themes/flat/fdo/categories/128/applications-system.png \
+	elementary/themes/flat/fdo/categories/128/applications-utilities.png \
+	elementary/themes/flat/fdo/categories/128/preferences-desktop.png \
+	elementary/themes/flat/fdo/categories/128/preferences-other.png \
+	elementary/themes/flat/fdo/categories/128/preferences-system.png
+
+elementary_fdo_emblems_96_flat_files = \
+	elementary/themes/flat/fdo/emblems/96/emblem-default.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-documents.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-downloads.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-favorite.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-important.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-mail.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-photos.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-readonly.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-shared.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-symbolic-link.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-synchronized.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-synchronizing.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-system.png \
+	elementary/themes/flat/fdo/emblems/96/emblem-unreadable.png
+
+elementary_fdo_places_16_flat_files = \
+	elementary/themes/flat/fdo/places/16/folder-documents.png \
+	elementary/themes/flat/fdo/places/16/folder-download.png \
+	elementary/themes/flat/fdo/places/16/folder-drag-accept.png \
+	elementary/themes/flat/fdo/places/16/folder-home.png \
+	elementary/themes/flat/fdo/places/16/folder-music.png \
+	elementary/themes/flat/fdo/places/16/folder-open.png \
+	elementary/themes/flat/fdo/places/16/folder-pictures.png \
+	elementary/themes/flat/fdo/places/16/folder.png \
+	elementary/themes/flat/fdo/places/16/folder-recent.png \
+	elementary/themes/flat/fdo/places/16/folder-remote.png \
+	elementary/themes/flat/fdo/places/16/folder-videos.png \
+	elementary/themes/flat/fdo/places/16/folder-visiting.png \
+	elementary/themes/flat/fdo/places/16/network-server.png \
+	elementary/themes/flat/fdo/places/16/network-workgroup.png \
+	elementary/themes/flat/fdo/places/16/start-here.png \
+	elementary/themes/flat/fdo/places/16/user-desktop.png
+
+elementary_fdo_places_128_flat_files = \
+	elementary/themes/flat/fdo/places/128/folder-documents.png \
+	elementary/themes/flat/fdo/places/128/folder-drag-accept.png \
+	elementary/themes/flat/fdo/places/128/folder-download.png \
+	elementary/themes/flat/fdo/places/128/folder-home.png \
+	elementary/themes/flat/fdo/places/128/folder-music.png \
+	elementary/themes/flat/fdo/places/128/folder-open.png \
+	elementary/themes/flat/fdo/places/128/folder-pictures.png \
+	elementary/themes/flat/fdo/places/128/folder.png \
+	elementary/themes/flat/fdo/places/128/folder-publicshare.png \
+	elementary/themes/flat/fdo/places/128/folder-recent.png \
+	elementary/themes/flat/fdo/places/128/folder-remote.png \
+	elementary/themes/flat/fdo/places/128/folder-templates.png \
+	elementary/themes/flat/fdo/places/128/folder-videos.png \
+	elementary/themes/flat/fdo/places/128/folder-visiting.png \
+	elementary/themes/flat/fdo/places/128/network-server.png \
+	elementary/themes/flat/fdo/places/128/network-workgroup.png \
+	elementary/themes/flat/fdo/places/128/start-here.png \
+	elementary/themes/flat/fdo/places/128/user-bookmarks.png \
+	elementary/themes/flat/fdo/places/128/user-desktop.png \
+	elementary/themes/flat/fdo/places/128/user-home.png \
+	elementary/themes/flat/fdo/places/128/user-trash.png
+
+elementary_fdo_status_128_flat_files = \
+	elementary/themes/flat/fdo/status/128/appointment-missed.png \
+	elementary/themes/flat/fdo/status/128/appointment-soon.png \
+	elementary/themes/flat/fdo/status/128/audio-volume-high.png \
+	elementary/themes/flat/fdo/status/128/audio-volume-low.png \
+	elementary/themes/flat/fdo/status/128/audio-volume-medium.png \
+	elementary/themes/flat/fdo/status/128/audio-volume-muted.png \
+	elementary/themes/flat/fdo/status/128/audio-volume.png \
+	elementary/themes/flat/fdo/status/128/battery-caution-charging.png \
+	elementary/themes/flat/fdo/status/128/battery-caution.png \
+	elementary/themes/flat/fdo/status/128/battery-empty-charging.png \
+	elementary/themes/flat/fdo/status/128/battery-empty.png \
+	elementary/themes/flat/fdo/status/128/battery-full-charging.png \
+	elementary/themes/flat/fdo/status/128/battery-full.png \
+	elementary/themes/flat/fdo/status/128/battery-good-charging.png \
+	elementary/themes/flat/fdo/status/128/battery-good.png \
+	elementary/themes/flat/fdo/status/128/battery-low-charging.png \
+	elementary/themes/flat/fdo/status/128/battery-low.png \
+	elementary/themes/flat/fdo/status/128/bluetooth-active.png \
+	elementary/themes/flat/fdo/status/128/bluetooth-disabled.png \
+	elementary/themes/flat/fdo/status/128/changes-allow.png \
+	elementary/themes/flat/fdo/status/128/changes-prevent.png \
+	elementary/themes/flat/fdo/status/128/dialog-error.png \
+	elementary/themes/flat/fdo/status/128/dialog-information.png \
+	elementary/themes/flat/fdo/status/128/dialog-password.png \
+	elementary/themes/flat/fdo/status/128/dialog-question.png \
+	elementary/themes/flat/fdo/status/128/dialog-warning.png \
+	elementary/themes/flat/fdo/status/128/mail-attachment.png \
+	elementary/themes/flat/fdo/status/128/mail-read.png \
+	elementary/themes/flat/fdo/status/128/mail-replied.png \
+	elementary/themes/flat/fdo/status/128/mail-unread.png \
+	elementary/themes/flat/fdo/status/128/mail-signed.png \
+	elementary/themes/flat/fdo/status/128/mail-signed-verified.png \
+	elementary/themes/flat/fdo/status/128/media-playlist-repeat.png \
+	elementary/themes/flat/fdo/status/128/media-playlist-shuffle.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-3g.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-4g.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-connected.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-edge.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-gprs.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-acquiring.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-excellent.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-good.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-none.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-ok.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-signal-weak.png \
+	elementary/themes/flat/fdo/status/128/network-cellular-umts.png \
+	elementary/themes/flat/fdo/status/128/network-error.png \
+	elementary/themes/flat/fdo/status/128/network-idle.png \
+	elementary/themes/flat/fdo/status/128/network-offline.png \
+	elementary/themes/flat/fdo/status/128/network-receive.png \
+	elementary/themes/flat/fdo/status/128/network-transmit.png \
+	elementary/themes/flat/fdo/status/128/network-transmit-receive.png \
+	elementary/themes/flat/fdo/status/128/network-vpn-acquiring.png \
+	elementary/themes/flat/fdo/status/128/network-vpn.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-acquiring.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-encrypted.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-signal-excellent.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-signal-good.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-signal-none.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-signal-ok.png \
+	elementary/themes/flat/fdo/status/128/network-wireless-signal-weak.png \
+	elementary/themes/flat/fdo/status/128/non-starred.png \
+	elementary/themes/flat/fdo/status/128/printer-error.png \
+	elementary/themes/flat/fdo/status/128/printer-printing.png \
+	elementary/themes/flat/fdo/status/128/printer-warning.png \
+	elementary/themes/flat/fdo/status/128/security-high.png \
+	elementary/themes/flat/fdo/status/128/security-low.png \
+	elementary/themes/flat/fdo/status/128/security-medium.png \
+	elementary/themes/flat/fdo/status/128/software-update-available.png \
+	elementary/themes/flat/fdo/status/128/software-update-urgent.png \
+	elementary/themes/flat/fdo/status/128/task-due.png \
+	elementary/themes/flat/fdo/status/128/task-past-due.png \
+	elementary/themes/flat/fdo/status/128/starred.png \
+	elementary/themes/flat/fdo/status/128/user-available.png \
+	elementary/themes/flat/fdo/status/128/user-away.png \
+	elementary/themes/flat/fdo/status/128/user-busy.png \
+	elementary/themes/flat/fdo/status/128/user-idle.png \
+	elementary/themes/flat/fdo/status/128/user-invisible.png \
+	elementary/themes/flat/fdo/status/128/user-offline.png \
+	elementary/themes/flat/fdo/status/128/user-trash-full.png \
+	elementary/themes/flat/fdo/status/128/weather-clear-night.png \
+	elementary/themes/flat/fdo/status/128/weather-clear.png \
+	elementary/themes/flat/fdo/status/128/weather-clouds-night.png \
+	elementary/themes/flat/fdo/status/128/weather-clouds.png \
+	elementary/themes/flat/fdo/status/128/weather-few-clouds-night.png \
+	elementary/themes/flat/fdo/status/128/weather-few-clouds.png \
+	elementary/themes/flat/fdo/status/128/weather-fog.png \
+	elementary/themes/flat/fdo/status/128/weather-overcast.png \
+	elementary/themes/flat/fdo/status/128/weather-severe-alert.png \
+	elementary/themes/flat/fdo/status/128/weather-showers.png \
+	elementary/themes/flat/fdo/status/128/weather-showers-scattered.png \
+	elementary/themes/flat/fdo/status/128/weather-snow.png \
+	elementary/themes/flat/fdo/status/128/weather-storm.png
+
+elementary_fdo_devices_128_flat_files = \
+	elementary/themes/flat/fdo/devices/128/audio-card.png \
+	elementary/themes/flat/fdo/devices/128/audio-input-microphone.png \
+	elementary/themes/flat/fdo/devices/128/battery.png \
+	elementary/themes/flat/fdo/devices/128/camera-photo.png \
+	elementary/themes/flat/fdo/devices/128/camera.png \
+	elementary/themes/flat/fdo/devices/128/camera-web.png \
+	elementary/themes/flat/fdo/devices/128/camera-video.png \
+	elementary/themes/flat/fdo/devices/128/computer-laptop.png \
+	elementary/themes/flat/fdo/devices/128/computer.png \
+	elementary/themes/flat/fdo/devices/128/drive-harddisk-ieee1394.png \
+	elementary/themes/flat/fdo/devices/128/drive-harddisk.png \
+	elementary/themes/flat/fdo/devices/128/drive-harddisk-usb.png \
+	elementary/themes/flat/fdo/devices/128/drive-optical.png \
+	elementary/themes/flat/fdo/devices/128/drive-removable-media-ieee1394.png \
+	elementary/themes/flat/fdo/devices/128/drive-removable-media.png \
+	elementary/themes/flat/fdo/devices/128/drive-removable-media-usb.png \
+	elementary/themes/flat/fdo/devices/128/input-gaming.png \
+	elementary/themes/flat/fdo/devices/128/input-keyboard.png \
+	elementary/themes/flat/fdo/devices/128/input-mouse.png \
+	elementary/themes/flat/fdo/devices/128/input-tablet.png \
+	elementary/themes/flat/fdo/devices/128/media-flash-cf.png \
+	elementary/themes/flat/fdo/devices/128/media-flash-ms.png \
+	elementary/themes/flat/fdo/devices/128/media-flash.png \
+	elementary/themes/flat/fdo/devices/128/media-flash-sd.png \
+	elementary/themes/flat/fdo/devices/128/media-flash-sm.png \
+	elementary/themes/flat/fdo/devices/128/media-floppy.png \
+	elementary/themes/flat/fdo/devices/128/media-memory.png \
+	elementary/themes/flat/fdo/devices/128/media-optical-audio.png \
+	elementary/themes/flat/fdo/devices/128/media-optical-bd.png \
+	elementary/themes/flat/fdo/devices/128/media-optical-cd.png \
+	elementary/themes/flat/fdo/devices/128/media-optical-dvd.png \
+	elementary/themes/flat/fdo/devices/128/media-optical.png \
+	elementary/themes/flat/fdo/devices/128/media-tape.png \
+	elementary/themes/flat/fdo/devices/128/media-zip.png \
+	elementary/themes/flat/fdo/devices/128/modem.png \
+	elementary/themes/flat/fdo/devices/128/multimedia-player.png \
+	elementary/themes/flat/fdo/devices/128/network-wired.png \
+	elementary/themes/flat/fdo/devices/128/network-wireless.png \
+	elementary/themes/flat/fdo/devices/128/pda.png \
+	elementary/themes/flat/fdo/devices/128/phone.png \
+	elementary/themes/flat/fdo/devices/128/printer.png \
+	elementary/themes/flat/fdo/devices/128/processor.png \
+	elementary/themes/flat/fdo/devices/128/scanner.png \
+	elementary/themes/flat/fdo/devices/128/video-display.png
+
+elementary_fdo_apps_64_flat_files = \
+	elementary/themes/flat/fdo/apps/64/preferences-color.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-display.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-font.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-keyboard.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-locale.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-multimedia.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-screensaver.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-theme.png \
+	elementary/themes/flat/fdo/apps/64/preferences-desktop-wallpaper.png \
+	elementary/themes/flat/fdo/apps/64/preferences-profile.png \
+	elementary/themes/flat/fdo/apps/64/system-file-manager.png
+
+elementary_fdo_intl_128_flat_files = \
+	elementary/themes/flat/fdo/intl/128/flag-ad.png \
+	elementary/themes/flat/fdo/intl/128/flag-af.png \
+	elementary/themes/flat/fdo/intl/128/flag-al.png \
+	elementary/themes/flat/fdo/intl/128/flag-am.png \
+	elementary/themes/flat/fdo/intl/128/flag-ar.png \
+	elementary/themes/flat/fdo/intl/128/flag-at.png \
+	elementary/themes/flat/fdo/intl/128/flag-au.png \
+	elementary/themes/flat/fdo/intl/128/flag-az.png \
+	elementary/themes/flat/fdo/intl/128/flag-ba.png \
+	elementary/themes/flat/fdo/intl/128/flag-bd.png \
+	elementary/themes/flat/fdo/intl/128/flag-be.png \
+	elementary/themes/flat/fdo/intl/128/flag-bg.png \
+	elementary/themes/flat/fdo/intl/128/flag-br.png \
+	elementary/themes/flat/fdo/intl/128/flag-bt.png \
+	elementary/themes/flat/fdo/intl/128/flag-bw.png \
+	elementary/themes/flat/fdo/intl/128/flag-by.png \
+	elementary/themes/flat/fdo/intl/128/flag-ca.png \
+	elementary/themes/flat/fdo/intl/128/flag-cd.png \
+	elementary/themes/flat/fdo/intl/128/flag-ch.png \
+	elementary/themes/flat/fdo/intl/128/flag-cm.png \
+	elementary/themes/flat/fdo/intl/128/flag-cn.png \
+	elementary/themes/flat/fdo/intl/128/flag-cz.png \
+	elementary/themes/flat/fdo/intl/128/flag-de.png \
+	elementary/themes/flat/fdo/intl/128/flag-dk.png \
+	elementary/themes/flat/fdo/intl/128/flag-ee.png \
+	elementary/themes/flat/fdo/intl/128/flag-es.png \
+	elementary/themes/flat/fdo/intl/128/flag-et.png \
+	elementary/themes/flat/fdo/intl/128/flag-fi.png \
+	elementary/themes/flat/fdo/intl/128/flag-fo.png \
+	elementary/themes/flat/fdo/intl/128/flag-fr.png \
+	elementary/themes/flat/fdo/intl/128/flag-gb.png \
+	elementary/themes/flat/fdo/intl/128/flag-ge.png \
+	elementary/themes/flat/fdo/intl/128/flag-gh.png \
+	elementary/themes/flat/fdo/intl/128/flag-gn.png \
+	elementary/themes/flat/fdo/intl/128/flag-gr.png \
+	elementary/themes/flat/fdo/intl/128/flag-hr.png \
+	elementary/themes/flat/fdo/intl/128/flag-hu.png \
+	elementary/themes/flat/fdo/intl/128/flag-ie.png \
+	elementary/themes/flat/fdo/intl/128/flag-il.png \
+	elementary/themes/flat/fdo/intl/128/flag-in.png \
+	elementary/themes/flat/fdo/intl/128/flag-iq.png \
+	elementary/themes/flat/fdo/intl/128/flag-ir.png \
+	elementary/themes/flat/fdo/intl/128/flag-is.png \
+	elementary/themes/flat/fdo/intl/128/flag-it.png \
+	elementary/themes/flat/fdo/intl/128/flag-jp.png \
+	elementary/themes/flat/fdo/intl/128/flag-ke.png \
+	elementary/themes/flat/fdo/intl/128/flag-kg.png \
+	elementary/themes/flat/fdo/intl/128/flag-kh.png \
+	elementary/themes/flat/fdo/intl/128/flag-kr.png \
+	elementary/themes/flat/fdo/intl/128/flag-ku.png \
+	elementary/themes/flat/fdo/intl/128/flag-kz.png \
+	elementary/themes/flat/fdo/intl/128/flag-la.png \
+	elementary/themes/flat/fdo/intl/128/flag-lk.png \
+	elementary/themes/flat/fdo/intl/128/flag-lt.png \
+	elementary/themes/flat/fdo/intl/128/flag-lv.png \
+	elementary/themes/flat/fdo/intl/128/flag-ma.png \
+	elementary/themes/flat/fdo/intl/128/flag-md.png \
+	elementary/themes/flat/fdo/intl/128/flag-me.png \
+	elementary/themes/flat/fdo/intl/128/flag-mk.png \
+	elementary/themes/flat/fdo/intl/128/flag-ml.png \
+	elementary/themes/flat/fdo/intl/128/flag-mm.png \
+	elementary/themes/flat/fdo/intl/128/flag-mn.png \
+	elementary/themes/flat/fdo/intl/128/flag-mt.png \
+	elementary/themes/flat/fdo/intl/128/flag-mv.png \
+	elementary/themes/flat/fdo/intl/128/flag-my.png \
+	elementary/themes/flat/fdo/intl/128/flag-ng.png \
+	elementary/themes/flat/fdo/intl/128/flag-nl.png \
+	elementary/themes/flat/fdo/intl/128/flag-no.png \
+	elementary/themes/flat/fdo/intl/128/flag-np.png \
+	elementary/themes/flat/fdo/intl/128/flag-ph.png \
+	elementary/themes/flat/fdo/intl/128/flag-pk.png \
+	elementary/themes/flat/fdo/intl/128/flag-pl.png \
+	elementary/themes/flat/fdo/intl/128/flag-pt.png \
+	elementary/themes/flat/fdo/intl/128/flag-ro.png \
+	elementary/themes/flat/fdo/intl/128/flag-rs.png \
+	elementary/themes/flat/fdo/intl/128/flag-ru.png \
+	elementary/themes/flat/fdo/intl/128/flag-se.png \
+	elementary/themes/flat/fdo/intl/128/flag-si.png \
+	elementary/themes/flat/fdo/intl/128/flag-sk.png \
+	elementary/themes/flat/fdo/intl/128/flag-sn.png \
+	elementary/themes/flat/fdo/intl/128/flag-sy.png \
+	elementary/themes/flat/fdo/intl/128/flag-th.png \
+	elementary/themes/flat/fdo/intl/128/flag-tj.png \
+	elementary/themes/flat/fdo/intl/128/flag-tm.png \
+	elementary/themes/flat/fdo/intl/128/flag-tr.png \
+	elementary/themes/flat/fdo/intl/128/flag-tw.png \
+	elementary/themes/flat/fdo/intl/128/flag-tz.png \
+	elementary/themes/flat/fdo/intl/128/flag-ua.png \
+	elementary/themes/flat/fdo/intl/128/flag-us.png \
+	elementary/themes/flat/fdo/intl/128/flag-uz.png \
+	elementary/themes/flat/fdo/intl/128/flag-vn.png \
+	elementary/themes/flat/fdo/intl/128/flag-za.png
+
+
+elementary_fdo_flat_files = \
+	$(elementary_fdo_actions_128_flat_files) \
+	$(elementary_fdo_categories_16_flat_files) \
+	$(elementary_fdo_categories_128_flat_files) \
+	$(elementary_fdo_emblems_96_flat_files) \
+	$(elementary_fdo_places_16_flat_files) \
+	$(elementary_fdo_places_128_flat_files) \
+	$(elementary_fdo_status_128_flat_files) \
+	$(elementary_fdo_devices_128_flat_files) \
+	$(elementary_fdo_apps_64_flat_files) \
+	$(elementary_fdo_intl_128_flat_files)
+
+
+EXTRA_DIST += $(elementary_themes_flat_files) $(efl_ui_themes_flat_files) $(elementary_fdo_flat_files)
+
+elementaryflatfilesdir = $(datadir)/elementary/themes
+elementaryflatfiles_DATA = elementary/themes/flat/flat.edj
+CLEANFILES += elementary/themes/flat/flat.edj
+
+elementary/themes/flat/flat.edj: elementary/themes/flat/flat.edc $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files) $(top_builddir)/src/bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/themes/flat/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS_FLAT) $< $@
+
+# fdo icon theme
+
+elementaryfdoflatdir = $(datadir)/icons/Enlightenment-Flat/
+elementaryfdoflat_DATA = elementary/themes/flat/fdo/index.theme elementary/themes/flat/fdo/README
+
+EXTRA_DIST += $(elementaryfdoflat_DATA)
+
+elementaryfdoflat_actions_128dir = $(datadir)/icons/Enlightenment-Flat/actions/128
+elementaryfdoflat_actions_128_DATA = $(elementary_fdo_actions_128_files)
+
+elementaryfdoflat_categories_16dir = $(datadir)/icons/Enlightenment-Flat/categories/16
+elementaryfdoflat_categories_16_DATA = $(elementary_fdo_categories_16_files)
+
+elementaryfdoflat_categories_128dir = $(datadir)/icons/Enlightenment-Flat/categories/128
+elementaryfdoflat_categories_128_DATA = $(elementary_fdo_categories_128_files)
+
+elementaryfdoflat_emblems_96dir = $(datadir)/icons/Enlightenment-Flat/emblems/96
+elementaryfdoflat_emblems_96_DATA = $(elementary_fdo_emblems_96_files)
+
+elementaryfdoflat_places_16dir = $(datadir)/icons/Enlightenment-Flat/places/16
+elementaryfdoflat_places_16_DATA = $(elementary_fdo_places_16_files)
+
+elementaryfdoflat_places_128dir = $(datadir)/icons/Enlightenment-Flat/places/128
+elementaryfdoflat_places_128_DATA = $(elementary_fdo_places_128_files)
+
+elementaryfdoflat_status_128dir = $(datadir)/icons/Enlightenment-Flat/status/128
+elementaryfdoflat_status_128_DATA = $(elementary_fdo_status_128_files)
+
+elementaryfdoflat_devices_128dir = $(datadir)/icons/Enlightenment-Flat/devices/128
+elementaryfdoflat_devices_128_DATA = $(elementary_fdo_devices_128_files)
+
+elementaryfdoflat_apps_64dir = $(datadir)/icons/Enlightenment-Flat/apps/64
+elementaryfdoflat_apps_64_DATA = $(elementary_fdo_apps_64_files)
+
+elementaryfdoflat_intl_128dir = $(datadir)/icons/Enlightenment-Flat/intl/128
+elementaryfdoflat_intl_128_DATA = $(elementary_fdo_intl_128_files)
+

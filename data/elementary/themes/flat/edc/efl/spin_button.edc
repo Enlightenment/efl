@@ -1,0 +1,228 @@
+group { "efl/spin_button";
+   images.image: "vert_bar_inset.png" COMP;
+   parts {
+      rect { "clip";
+         desc { "default";
+            rel.to: "elm.swallow.text_button";
+         }
+      }
+      rect { "bg";
+         scale;
+         desc { "default";
+            color_class: "spinner_bg";
+         }
+      }
+      image { "inset"; nomouse;
+         desc { "default";
+            rel1.offset: 0 1;
+            rel2.offset: -1 -2;
+            image.normal: "vert_bar_inset.png";
+            image.border: 1 1 8 6;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      rect { "access";
+         repeat;
+         desc { "default";
+            fixed: 1 1;
+            color: 0 0 0 0;
+            rel1.to: "inset";
+            rel2.to: "inset";
+            hid;
+         }
+         desc { "active";
+            inherit: "default";
+            vis;
+         }
+      }
+      swallow { "elm.swallow.entry";
+         clip: "clip";
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "elm.swallow.text_button";
+            rel2.to: "elm.swallow.text_button";
+            hid;
+         }
+         desc { "active";
+            inherit: "default";
+            vis;
+         }
+      }
+      swallow { "elm.swallow.dec_button";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            rel1.to: "inset";
+            rel1.offset: 1 1;
+            rel2.to: "inset";
+            rel2.offset: 1 -2;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+            min: 15 15;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+         }
+      }
+      swallow { "elm.swallow.inc_button";
+         scale;
+         desc { "default";
+            fixed: 1 0;
+            rel1.to: "inset";
+            rel1.offset: 1 1;
+            rel1.relative: 1.0 0.0;
+            rel2.to: "inset";
+            rel2.offset: 1 -2;
+            align: 1.0 0.5;
+            min: 15 15;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+         }
+      }
+      swallow { "elm.swallow.text_button";
+         scale;
+         desc { "default";
+            vis;
+            rel1.to_y: "inset";
+            rel1.to_x: "elm.swallow.dec_button";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 1;
+            rel2.to_y: "inset";
+            rel2.to_x: "elm.swallow.inc_button";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -2 -2;
+         }
+         desc { "inactive";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect { "disabler";
+         norepeat;
+         nomouse;
+         desc { "default";
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+   }
+   programs {
+      program { "entry_active";
+         signal: "elm,state,entry,active";
+         source: "elm";
+         action: STATE_SET "active";
+         target: "elm.swallow.entry";
+      }
+      program { "entry_inactive";
+         signal: "elm,state,entry,inactive";
+         source: "elm";
+         action: STATE_SET "default";
+         target: "elm.swallow.entry";
+      }
+      program { "text_button_active";
+         signal: "elm,state,button,active";
+         source: "elm";
+         action: STATE_SET "default";
+         target: "elm.swallow.text_button";
+      }
+      program { "text_button_inactive";
+         signal: "elm,state,button,inactive";
+         source: "elm";
+         action: STATE_SET "inactive";
+         target: "elm.swallow.text_button";
+      }
+      program { "access_activate";
+         signal: "elm,state,access,active";
+         source: "elm";
+         action:  STATE_SET "active";
+         target: "access";
+      }
+      program { "access_inactivate";
+         signal: "elm,state,access,inactive";
+         source: "elm";
+         action:  STATE_SET "default";
+         target: "access";
+      }
+      program { "disable";
+         signal: "elm,state,disabled";
+         source: "elm";
+         action: STATE_SET "disabled";
+         target: "disabler";
+      }
+      program { "enable";
+         signal: "elm,state,enabled";
+         source: "elm";
+         action: STATE_SET "default";
+         target: "disabler";
+      }
+   }
+}
+
+group { "efl/spin_button:vertical";
+   inherit: "efl/spin_button";
+   parts {
+      swallow { "elm.swallow.inc_button";
+         scale;
+         desc { "default";
+            rel1.to: "inset";
+            rel1.offset: 1 1;
+            rel1.relative: 1.0 0.0;
+            rel2.to: "inset";
+            rel2.offset: 1 -2;
+            align: 1.0 0.5;
+         }
+      }
+      swallow { "elm.swallow.text_button";
+         scale;
+         desc { "default";
+            vis;
+            rel1.to_y: "inset";
+            rel1.to_x: "elm.swallow.dec_button";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 1;
+            rel2.to_y: "inset";
+            rel2.to_x: "elm.swallow.inc_button";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -2 -2;
+         }
+         desc { "active";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.swallow.dec_button";
+         scale;
+         desc { "default";
+            rel1.to: "inset";
+            rel1.offset: 1 1;
+            rel2.to: "inset";
+            rel2.offset: 1 -2;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+         }
+      }
+   }
+}
+
+group { "efl/spin_button/inc_button";
+   inherit: "elm/button/base/spinner/increase/default";
+}
+
+group { "efl/spin_button/dec_button";
+   inherit: "elm/button/base/spinner/decrease/default";
+}
+
+group { "efl/spin_button/text_button";
+   inherit: "elm/button/base/spinner/default";
+   alias: "efl/spin_button/text_button:vertical";
+}
+
+group { "efl/spin_button/inc_button:vertical";
+   inherit: "elm/button/base/spinner/increase/vertical";
+}
+
+group { "efl/spin_button/dec_button:vertical";
+   inherit: "elm/button/base/spinner/decrease/vertical";
+}

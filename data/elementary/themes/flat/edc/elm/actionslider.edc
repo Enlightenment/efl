@@ -1,0 +1,292 @@
+group { name: "elm/actionslider/base/default";
+   images.image: "bevel_in.png" COMP;
+   images.image: "button_normal.png" COMP;
+   images.image: "button_clicked.png" COMP;
+   images.image: "glow_small.png" COMP;
+   images.image: "inset_shadow.png" COMP;
+   parts {
+      part { name: "bg"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+            min: 48 10;
+            color: DARK_GREY_BG_COLOR;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: DARK_GREY_BG_DISABLED_COLOR;
+         }
+      }
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "inset_shadow.png";
+            image.border: 5 5 7 3;
+            image.middle: 0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            fill.smooth: 0;
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "inset"; mouse_events:  0;
+         description { state: "default" 0.0;
+            image.normal: "bevel_in.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "icon.dragable.area"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+         }
+      }
+      part { name: "elm.text.left"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: FN_COL_DEFAULT;
+            color_class: "button_text";
+            text { font: FN; size: 10;
+               align: 0.05 0.5;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "button";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+            color_class: "button_text_disabled";
+         }
+      }
+      part { name: "elm.text.center"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: FN_COL_DEFAULT;
+            color_class: "check_off_text";
+            text { font: FN; size: 10;
+               align: 0.5 0.5;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "check_off_text";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+            color_class: "button_text_disabled";
+         }
+      }
+      part { name: "elm.text.right"; type: TEXT;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: FN_COL_DEFAULT;
+            color_class: "check_off_text";
+            text { font: FN; size: 10;
+               align: 0.95 0.5;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "check_off_text";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+            color_class: "button_text_disabled";
+         }
+      }
+      part { name: "elm.drag_button_base"; type: SWALLOW; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 40 10;
+            align: 0.5 0.5;
+            rel1.to: "icon.dragable.area";
+            rel2 {
+               relative: 0.0 1.0;
+               to: "icon.dragable.area";
+            }
+         }
+         dragable {
+            confine: "icon.dragable.area";
+            x: 1 1 0;
+            y: 0 0 0;
+         }
+      }
+      part { name: "elm.drag_button"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 40 10;
+            color: 0 0 0 0;
+            rel1.to_x: "elm.drag_button_base";
+            rel1.to_y: "icon.dragable.area";
+            rel2.to_x: "elm.drag_button_base";
+            rel2.to_y: "icon.dragable.area";
+         }
+         dragable {
+            events: "elm.drag_button_base";
+         }
+      }
+      part { name: "glow_button"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: 0 -1;
+            rel1.to: "drag_button";
+            rel2.offset: -1 -2;
+            rel2.to: "drag_button";
+            image {
+               normal: "glow_small.png";
+               border: 7 7 7 7;
+               middle: NONE;
+            }
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "drag_button"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "elm.drag_button";
+            rel1.offset: -1 0;
+            rel2.to: "elm.drag_button";
+            rel2.offset: 0 0;
+            image {
+               normal: "button_normal.png";
+               border: 4 4 3 5;
+               middle: SOLID;
+            }
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "button_clicked.png";
+            image.border: 5 5 4 6;
+         }
+      }
+      part { name: "elm.text.indicator"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1 {
+               to: "elm.drag_button";
+               offset: 5 2;
+            }
+            rel2 {
+               to: "elm.drag_button";
+               offset: -5 -3;
+            }
+            color: FN_COL_DEFAULT;
+            color_class: "check_off_text";
+            text {
+               font: FN; size: 10;
+               align: 0.5 0.5;
+               min: 0 1;
+               text_class: "check_off_text";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: FN_COL_DISABLE;
+            color_class: "button_text_disabled";
+         }
+      }
+      part { name: "disabler";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,up,1"; source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm,action,up,drag_button" "elm";
+         after: "button_unclick_anim";
+      }
+      program { name: "button_unclick_anim";
+         action: STATE_SET "default" 0.0;
+         target: "drag_button";
+         target: "glow_button";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "elm.drag_button";
+         action: SIGNAL_EMIT "elm,action,down,drag_button" "elm";
+         after: "button_click_anim";
+      }
+      program { name: "button_click_anim";
+         action: STATE_SET "clicked" 0.0;
+         target: "drag_button";
+         target: "glow_button";
+      }
+      program {
+         signal: "mouse,move"; source: "elm.drag_button_base";
+         action: SIGNAL_EMIT "elm,action,move,drag_button" "elm";
+      }
+      program {
+         signal: "mouse,down,1*"; source: "elm.text.right";
+         action: SIGNAL_EMIT "elm,action,down,right" "elm";
+      }
+     program {
+         signal: "mouse,down,1*"; source: "elm.text.left";
+         action: SIGNAL_EMIT "elm,action,down,left" "elm";
+      }
+     program {
+         signal: "mouse,down,1*"; source: "elm.text.center";
+         action: SIGNAL_EMIT "elm,action,down,center" "elm";
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "bg";
+         target: "disabler";
+         target: "elm.text.left";
+         target: "elm.text.center";
+         target: "elm.text.right";
+         target: "elm.text.indicator";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "bg";
+         target: "disabler";
+         target: "elm.text.left";
+         target: "elm.text.center";
+         target: "elm.text.right";
+         target: "elm.text.indicator";
+      }
+   }
+}
+
+group { name: "elm/actionslider/base/bar";
+   inherit: "elm/actionslider/base/default";
+   images.image: "horiz_glow_run_big.png" COMP;
+   parts {
+      part { name: "bar"; mouse_events: 0;
+         insert_before: "elm.drag_button_base";
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel1.offset: 1 4;
+            rel2 {
+               relative: 0.0 1.0;
+               offset: 3 -5;
+               to_x: "elm.drag_button_base";
+               to_y: "bg";
+            }
+            image {
+               normal: "horiz_glow_run_big.png";
+               border: 0 4 0 0;
+            }
+         }
+      }
+   }
+}

@@ -120,6 +120,7 @@ EXTRA_DIST += $(eluafiles_DATA)
 # themes
 
 include elementary/themes/dark/Makefile.am
+include elementary/themes/flat/Makefile.am
 
 # desktop files
 

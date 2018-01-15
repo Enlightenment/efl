@@ -1,0 +1,218 @@
+group { name: "e/gadget/memusage/main";
+   image: "mem_bar.png" COMP;
+   image: "mem_on.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+
+            new val = getarg(2); // mem usage (percentage)
+            if (val > (100 / 9 * 1)) set_state(PART:"mem_led1", "on",  0.0);
+            else                     set_state(PART:"mem_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"mem_led2", "on",  0.0);
+            else                     set_state(PART:"mem_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"mem_led3", "on",  0.0);
+            else                     set_state(PART:"mem_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"mem_led4", "on",  0.0);
+            else                     set_state(PART:"mem_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"mem_led5", "on",  0.0);
+            else                     set_state(PART:"mem_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"mem_led6", "on",  0.0);
+            else                     set_state(PART:"mem_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"mem_led7", "on",  0.0);
+            else                     set_state(PART:"mem_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"mem_led8", "on",  0.0);
+            else                     set_state(PART:"mem_led8", "off", 0.0);
+
+            val = getarg(3); // swap usage (percentage)
+            if (val > (100 / 9 * 1)) set_state(PART:"swp_led1", "on",  0.0);
+            else                     set_state(PART:"swp_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"swp_led2", "on",  0.0);
+            else                     set_state(PART:"swp_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"swp_led3", "on",  0.0);
+            else                     set_state(PART:"swp_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"swp_led4", "on",  0.0);
+            else                     set_state(PART:"swp_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"swp_led5", "on",  0.0);
+            else                     set_state(PART:"swp_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"swp_led6", "on",  0.0);
+            else                     set_state(PART:"swp_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"swp_led7", "on",  0.0);
+            else                     set_state(PART:"swp_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"swp_led8", "on",  0.0);
+            else                     set_state(PART:"swp_led8", "off", 0.0);
+
+            // other values received but not used in the default theme:
+            // val = getarg(4);   // mem_total (kb)
+            // val = getarg(5);   // mem_used (kb)
+            // val = getarg(6);   // mem_cached (kb)
+            // val = getarg(7);   // mem_buffers (kb)
+            // val = getarg(8);   // mem_shared (kb)
+            // val = getarg(9);   // swp_total (kb)
+            // val = getarg(10);  // swp_used (kb)
+         }
+      }
+   }
+   parts {
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+            aspect: (28 / 56) (28 / 56);
+            aspect_preference: BOTH;
+         }
+      }
+
+      #define LED(_name_, _pos_)                            \
+         part { name: _name_;                               \
+            desc { "default"; hid;                          \
+               rel1.relative: 0.0 (1.0 / 8 * (_pos_ - 1));  \
+               rel2.relative: 1.0 (1.0 / 8 * _pos_);        \
+               image.normal: "mem_on.png";                  \
+            }                                               \
+            desc { "on";  inherit: "default"; vis; }        \
+            desc { "off"; inherit: "default"; hid; }        \
+         }                                                  \
+
+      part { name: "mem";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.5 1.0;
+            image.normal: "mem_bar.png";
+         }
+         LED("mem_led1", 8)
+         LED("mem_led2", 7)
+         LED("mem_led3", 6)
+         LED("mem_led4", 5)
+         LED("mem_led5", 4)
+         LED("mem_led6", 3)
+         LED("mem_led7", 2)
+         LED("mem_led8", 1)
+      }
+
+      part { name: "swp";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 1.0 1.0;
+            image.normal: "mem_bar.png";
+         }
+         LED("swp_led1", 8)
+         LED("swp_led2", 7)
+         LED("swp_led3", 6)
+         LED("swp_led4", 5)
+         LED("swp_led5", 4)
+         LED("swp_led6", 3)
+         LED("swp_led7", 2)
+         LED("swp_led8", 1)
+      }
+
+      #undef LED
+   }
+}
+
+group { name: "e/gadget/memusage/main_vert";
+   image: "mem_bar_vert.png" COMP;
+   image: "mem_on_vert.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            // mem
+            new val = getarg(2);
+            if (val > (100 / 9 * 1)) set_state(PART:"mem_led1", "on",  0.0);
+            else                     set_state(PART:"mem_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"mem_led2", "on",  0.0);
+            else                     set_state(PART:"mem_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"mem_led3", "on",  0.0);
+            else                     set_state(PART:"mem_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"mem_led4", "on",  0.0);
+            else                     set_state(PART:"mem_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"mem_led5", "on",  0.0);
+            else                     set_state(PART:"mem_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"mem_led6", "on",  0.0);
+            else                     set_state(PART:"mem_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"mem_led7", "on",  0.0);
+            else                     set_state(PART:"mem_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"mem_led8", "on",  0.0);
+            else                     set_state(PART:"mem_led8", "off", 0.0);
+
+            // swap
+            val = getarg(3);
+            if (val > (100 / 9 * 1)) set_state(PART:"swp_led1", "on",  0.0);
+            else                     set_state(PART:"swp_led1", "off", 0.0);
+            if (val > (100 / 9 * 2)) set_state(PART:"swp_led2", "on",  0.0);
+            else                     set_state(PART:"swp_led2", "off", 0.0);
+            if (val > (100 / 9 * 3)) set_state(PART:"swp_led3", "on",  0.0);
+            else                     set_state(PART:"swp_led3", "off", 0.0);
+            if (val > (100 / 9 * 4)) set_state(PART:"swp_led4", "on",  0.0);
+            else                     set_state(PART:"swp_led4", "off", 0.0);
+            if (val > (100 / 9 * 5)) set_state(PART:"swp_led5", "on",  0.0);
+            else                     set_state(PART:"swp_led5", "off", 0.0);
+            if (val > (100 / 9 * 6)) set_state(PART:"swp_led6", "on",  0.0);
+            else                     set_state(PART:"swp_led6", "off", 0.0);
+            if (val > (100 / 9 * 7)) set_state(PART:"swp_led7", "on",  0.0);
+            else                     set_state(PART:"swp_led7", "off", 0.0);
+            if (val > (100 / 9 * 8)) set_state(PART:"swp_led8", "on",  0.0);
+            else                     set_state(PART:"swp_led8", "off", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "base"; type: SPACER;
+         description { state: "default" 0.0;
+            aspect: (56 / 28) (56 / 28);
+            aspect_preference: BOTH;
+         }
+      }
+
+      #define LED(_name_, _pos_)                            \
+         part { name: _name_;                               \
+            desc { "default"; hid;                          \
+               rel1.relative: (1.0 / 8 * (_pos_ - 1)) 0.0;  \
+               rel2.relative: (1.0 / 8 * _pos_) 1.0;        \
+               image.normal: "mem_on_vert.png";             \
+            }                                               \
+            desc { "on";  inherit: "default"; vis; }        \
+            desc { "off"; inherit: "default"; hid; }        \
+         }                                                  \
+
+      part { name: "mem";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.5;
+            image.normal: "mem_bar_vert.png";
+         }
+         LED("mem_led1", 1)
+         LED("mem_led2", 2)
+         LED("mem_led3", 3)
+         LED("mem_led4", 4)
+         LED("mem_led5", 5)
+         LED("mem_led6", 6)
+         LED("mem_led7", 7)
+         LED("mem_led8", 8)
+      }
+
+      part { name: "swp";
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -2;
+            image.normal: "mem_bar_vert.png";
+         }
+         LED("swp_led1", 1)
+         LED("swp_led2", 2)
+         LED("swp_led3", 3)
+         LED("swp_led4", 4)
+         LED("swp_led5", 5)
+         LED("swp_led6", 6)
+         LED("swp_led7", 7)
+         LED("swp_led8", 8)
+      }
+
+      #undef LED
+   }
+}

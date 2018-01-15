@@ -1,0 +1,5252 @@
+/* genlist widget item style information
+
+   [SIGNAL]
+      elm,state,focused: Emitted when an item is focused only when an item's "focus_highlight" is "on".
+      elm,state,unfocused: Emitted when an item is unfocused only when an item's "focus_highlight" is "on".
+*/
+
+#define ODD(_NAME, _SRC) \
+   group { _NAME; \
+      inherit: _SRC; \
+      parts { \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS(_NAME, _SRC) \
+   group { _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+
+#define TREEPAD 19
+
+group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   
+   images.image: "shadow_square_tiny.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
+   
+   parts {
+      image { "shadow_vbar";
+         desc { "default";
+            rel1.offset: -3 -2;
+            rel1.to: "base_vbar";
+            rel2.offset: 2 4;
+            rel2.to: "base_vbar";
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+         }
+      }
+      image { "base_vbar";
+         desc { "default";
+            image.normal: "vgrad_med_lighter.png";
+            fill.smooth: 0;
+            min: 5 13;
+            TILED_HORIZ(120)
+         }
+      }
+      image { "bevel_vbar";
+         desc { "default";
+            rel1.to: "base_vbar";
+            rel2.to: "base_vbar";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+            min: 5 5;
+         }
+      }
+      
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: FN_COL_DEFAULT;
+            color_class: "list_group_item";
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_group_item";
+            }
+            link.base: "elm,state,enabled";
+         }
+         desc { "disabled";
+            inherit: "default";
+            color: FN_COL_DISABLE;
+            color_class: "list_group_item_disabled";
+            link.base: "elm,state,disabled";
+         }
+      }
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+         }
+      }
+      swallow { "elm.swallow.end"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+      }
+      image { "bar";
+         desc { "default";
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            fixed: 0 1;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: -3 -6;
+            rel2.offset: 2 3;
+            link.base: "elm,state,enabled";
+         }
+         desc { "disabled";
+            inherit: "default";
+             color: 255 255 255 64;
+             link.base: "elm,state,disabled";
+         }
+      }
+   }
+}
+group { "elm/genlist/item_compress/group_index/default"; nomouse;
+   inherit: "elm/genlist/item/group_index/default";
+   parts {
+      text { "elm.text";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
+   images.image: "bevel_curved_horiz_out.png" COMP;
+   images.image: "shadow_rounded_horiz.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   target_group: "default" "elm.text" "label2" "label3";
+   parts {
+       rect { "event"; mouse;
+          desc { "default";
+             color: 0 0 0 0;
+             link.base: "elm,state,enabled";
+          }
+          desc { "disabled";
+             inherit: "default";
+             hid;
+             link.base: "elm,state,disabled";
+          }
+       }
+       rect { "base";
+          desc { "default";
+             color: 64 64 64 255;
+             color_class: "list_item_base";
+             link.base: "elm,state,even";
+          }
+          desc { "odd";
+             color: 56 56 56 255;
+             color_class: "list_item_base_odd";
+             link.base: "elm,state,odd";
+          }
+       }
+       image { "bevel";
+          desc { "default";
+             image.normal: "bevel_curved_horiz_out.png";
+             image.border: 0 0 2 2;
+             image.middle: 0;
+             fill.smooth: 0;
+          }
+       }
+       image { "sel_shadow";
+          desc { "default";
+             image.normal: "shadow_rounded_horiz.png";
+             image.border: 0 0 9 9;
+             rel1.offset: 0 -4;
+             rel2.offset: -1 5;
+             fill.smooth: 0;
+             link.base: "elm,state,unselected";
+             hid;
+          }
+          desc { "selected";
+             inherit: "default";
+             link.base: "elm,state,selected";
+             vis;
+          }
+       }
+       image { "sel_base";
+          desc { "default";
+             image.normal: "vgrad_med_dark.png";
+             fill.smooth: 0;
+             hid;
+             TILED_HORIZ(120)
+             link.base: "elm,state,unselected";
+          }
+          desc { "selected";
+             inherit: "default";
+             link.base: "elm,state,selected";
+             vis;
+          }
+       }
+       image { "sel_bevel";
+          desc { "default";
+             image.normal: "bevel_horiz_out.png";
+             image.border: 0 0 2 2;
+             image.middle: 0;
+             fill.smooth: 0;
+             link.base: "elm,state,unselected";
+             hid;
+          }
+          desc { "selected";
+             inherit: "default";
+             link.base: "elm,state,selected";
+             vis;
+          }
+       }
+   }
+}
+
+group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
+    images.image: "shine.png" COMP;
+    parts {
+       image { "sel_shine";
+          desc { "default";
+             image.normal: "shine.png";
+             rel1.offset: 0 -2;
+             rel1.to: "sel_base";
+             rel2.relative: 1.0 0.0;
+             rel2.offset: -1 2;
+             rel2.to: "sel_base";
+             hid;
+             FIXED_SIZE(69, 5)
+             link.base: "elm,state,unselected";
+          }
+          desc { "selected";
+             inherit: "default";
+             vis;
+             link.base: "elm,state,selected";
+          }
+       }
+       rect { "event_block"; mouse;
+          desc { "default";
+             color: 0 0 0 0;
+             hid;
+             link.base: "elm,state,enabled";
+          }
+          desc { "disabled";
+             inherit: "default";
+             vis;
+             link.base: "elm,state,disabled";
+          }
+       }
+    }
+}
+
+group { "genlist_noarrow"; inherit_only: 1; program_source: "elm";
+   parts { 
+      rect { "arrow"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            min: 15 15;
+            aspect: 1.0 1.0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -2 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -2 -3;
+            color: 0 0 0 0;
+         }
+      }
+   }
+}
+
+group { "elm/genlist/item/default/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3"; inherit: "label2";
+         effect: GLOW;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel2.offset: -1 1;
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         target_groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      swallow { "elm.swallow.end"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/default/default", "elm/genlist/item/default/default")
+COMPRESS("elm/genlist/item_compress/default/default", "elm/genlist/item/default/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/default/default", "elm/genlist/item/default/default")
+
+group { "elm/genlist/item/default_style/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   styles.style { "genlist_style";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#fff style=shadow,bottom shadow_color=#00000080 text_class=list_item";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   styles.style { "genlist_style_selected";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#3399ffff style=shadow,bottom shadow_color=#00000080 text_class=list_item_selected";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   styles.style { "genlist_style_disabled";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=list_item";
+      tag: "br" "\n";
+      tag: "ps" "ps";
+      tag: "hilight" "+ font_weight=Bold";
+      tag: "b" "+ font_weight=Bold";
+      tag: "tab" "\t";
+   }
+   
+   inherit: "genlist_base";
+   parts {
+        
+      //##//
+      textblock { "elm.text";
+         scale;
+         desc { "default";
+            rel1.offset: 2 7;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -4;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+               style: "genlist_style";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      textblock { "label2";
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+               style: "genlist_style_disabled";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      textblock { "label3"; inherit: "label2";
+         desc { "default";
+            color_class: "list_item_selected";
+            text.style: "genlist_style_selected";
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      swallow { "elm.swallow.end"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+      
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/default_style/default", "elm/genlist/item/default_style/default")
+COMPRESS("elm/genlist/item_compress/default_style/default", "elm/genlist/item/default_style/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/default_style/default", "elm/genlist/item/default_style/default")
+
+group { "elm/genlist/item/indent/default"; nomouse;
+   inherit: "elm/genlist/item/default/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_noarrow";
+}
+
+ODD("elm/genlist/item_odd/indent/default", "elm/genlist/item/indent/default")
+COMPRESS("elm/genlist/item_compress/indent/default", "elm/genlist/item/indent/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/indent/default", "elm/genlist/item/indent/default")
+
+group { "elm/genlist/item/one_icon/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 0 1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3"; inherit: "label2";
+         effect: GLOW;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel2.offset: -1 1;
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         target_groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         target_groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         target_groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/one_icon/default", "elm/genlist/item/one_icon/default")
+COMPRESS("elm/genlist/item_compress/one_icon/default", "elm/genlist/item/one_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/one_icon/default", "elm/genlist/item/one_icon/default")
+
+group { "elm/genlist/item/end_icon/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.icon";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/end_icon/default", "elm/genlist/item/end_icon/default")
+COMPRESS("elm/genlist/item_compress/end_icon/default", "elm/genlist/item/end_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/end_icon/default", "elm/genlist/item/end_icon/default")
+
+group { "elm/genlist/item/no_icon/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/no_icon/default", "elm/genlist/item/no_icon/default")
+COMPRESS("elm/genlist/item_compress/no_icon/default", "elm/genlist/item/no_icon/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/no_icon/default", "elm/genlist/item/no_icon/default")
+
+group { "elm/genlist/item/full/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "contents" "elm.swallow.content";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      swallow { "elm.swallow.content"; mouse;
+         scale;
+         desc { "default";
+            min: 19 19;
+            rel1.offset: -1 2;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+         }
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/full/default", "elm/genlist/item/full/default")
+group { "elm/genlist/item_compress/full/default";
+   inherit: "elm/genlist/item/full/default";
+}
+group { "elm/genlist/item_compress_odd/full/default";
+   inherit: "elm/genlist/item_odd/full/default";
+}
+
+group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
+   images.image: "sym_left_light_normal.png" COMP;
+   images.image: "sym_left_glow_normal.png" COMP;
+   images.image: "sym_left_dark_normal.png" COMP;
+   images.image: "sym_right_light_normal.png" COMP;
+   images.image: "sym_right_glow_normal.png" COMP;
+   images.image: "sym_right_dark_normal.png" COMP;
+   images.image: "sym_down_light_normal.png" COMP;
+   images.image: "sym_down_glow_normal.png" COMP;
+   images.image: "sym_down_dark_normal.png" COMP;
+
+   parts {
+      image { "arrow_img_l";
+         clip_to: "arrow_clip_l";
+         scale;
+         ignore_flags: ON_HOLD;
+         desc { "default";
+            fixed: 1 1;
+            min: 15 15;
+            max: 15 15;
+            rel1.to: "arrow";
+            rel2.to: "arrow";
+            image.normal: "sym_right_light_normal.png";
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_right_glow_normal.png";
+         }
+         desc { "disabled";
+            inherit: "default";
+            image.normal: "sym_right_dark_normal.png";
+         }
+         desc { "default" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_light_normal.png";
+         }
+         desc { "selected" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_glow_normal.png";
+         }
+         desc { "disabled" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_dark_normal.png";
+         }
+      }
+      image { "arrow_img_r";
+         clip_to: "arrow_clip_r";
+         scale;
+         ignore_flags: ON_HOLD;
+         desc { "default";
+            fixed: 1 1;
+            min: 15 15;
+            max: 15 15;
+            rel1.to: "arrow";
+            rel2.to: "arrow";
+            image.normal: "sym_left_light_normal.png";
+         }
+         desc { "selected";
+            inherit: "default";
+            image.normal: "sym_left_glow_normal.png";
+         }
+         desc { "disabled";
+            inherit: "default";
+            image.normal: "sym_left_dark_normal.png";
+         }
+         desc { "default" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_light_normal.png";
+         }
+         desc { "selected" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_glow_normal.png";
+         }
+         desc { "disabled" 1.0;
+            inherit: "default";
+            image.normal: "sym_down_dark_normal.png";
+         }
+      }
+      rect { "arrow"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            min: 15 15;
+            aspect: 1.0 1.0;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -2 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -2 -3;
+            color: 0 0 0 0;
+         }
+      }
+      rect { "arrow_clip_l";
+         desc { "default";
+            rel1.to: "arrow_img_l";
+            rel2.to: "arrow_img_l";
+            vis;
+            link.base: "edje,state,ltr" "edje";
+         }
+         desc { "rtl";
+            hid;
+            link.base: "edje,state,rtl" "edje";
+         }
+      }
+      rect { "arrow_clip_r";
+         desc { "default";
+            rel1.to: "arrow_img_r";
+            rel2.to: "arrow_img_r";
+            hid;
+            link.base: "edje,state,ltr" "edje";
+         }
+         desc { "rtl";
+            vis;
+            link.base: "edje,state,rtl" "edje";
+         }
+      }
+      program {
+         signal: "mouse,up,1"; source: "arrow";
+         action: SIGNAL_EMIT "elm,action,expand,toggle" "elm";
+      }
+      program { "arr1";
+         signal: "elm,state,expanded";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", st, 1.0);
+            set_state(PART:"arrow_img_r", st, 1.0);
+         }
+      }
+      program { "arr2";
+         signal: "elm,state,contracted";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", st, 0.0);
+            set_state(PART:"arrow_img_r", st, 0.0);
+         }
+      }
+      program { "arr3";
+         signal: "elm,state,selected";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "selected", vl);
+            set_state(PART:"arrow_img_r", "selected", vl);
+         }
+      }
+      program { "arr4";
+         signal: "elm,state,unselected";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "default", vl);
+            set_state(PART:"arrow_img_r", "default", vl);
+         }
+      }
+      program { "arr5";
+         signal: "elm,state,enabled";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "default", vl);
+            set_state(PART:"arrow_img_r", "default", vl);
+         }
+      }
+      program { "arr6";
+         signal: "elm,state,disabled";
+         script {
+            new st[31], Float:vl;
+            get_state(PART:"arrow_img_l", st, 30, vl);
+            set_state(PART:"arrow_img_l", "disabled", vl);
+            set_state(PART:"arrow_img_r", "disabled", vl);
+         }
+      }
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//-- tree
+//-- tree_odd
+//-- tree_compress
+//-- tree_compress_odd
+group { "elm/genlist/tree/default/default"; nomouse;
+   inherit: "elm/genlist/item/default/default";
+   // XXX: these need to be... done specially.
+//   alias: "elm/genlist/tree/tree_effect/default";
+//   alias: "elm/genlist/item/tree_effect/default";
+//   alias: "elm/genlist/tree/effect_parts/default";
+//   alias: "elm/genlist/item/effect_parts/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/default/default", "elm/genlist/tree/default/default")
+COMPRESS("elm/genlist/tree_compress/default/default", "elm/genlist/tree/default/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/default/default", "elm/genlist/tree/default/default")
+
+group { "elm/genlist/tree/default_style/default";
+   inherit: "elm/genlist/item/default_style/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/default_style/default", "elm/genlist/tree/default_style/default")
+COMPRESS("elm/genlist/tree_compress/default_style/default", "elm/genlist/tree/default_style/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/default_style/default", "elm/genlist/tree/default_style/default")
+
+group { "elm/genlist/tree/one_icon/default";
+   inherit: "elm/genlist/item/one_icon/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/one_icon/default", "elm/genlist/tree/one_icon/default")
+COMPRESS("elm/genlist/tree_compress/one_icon/default", "elm/genlist/tree/one_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/one_icon/default", "elm/genlist/tree/one_icon/default")
+
+group { "elm/genlist/tree/end_icon/default";
+   inherit: "elm/genlist/item/end_icon/default";
+   parts {
+      text { "elm.text";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "selected";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "disabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/end_icon/default", "elm/genlist/tree/end_icon/default")
+COMPRESS("elm/genlist/tree_compress/end_icon/default", "elm/genlist/tree/end_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/end_icon/default", "elm/genlist/tree/end_icon/default")
+
+group { "elm/genlist/tree/no_icon/default";
+   inherit: "elm/genlist/item/no_icon/default";
+   parts {
+      text { "elm.text";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "selected";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "disabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/no_icon/default", "elm/genlist/tree/no_icon/default")
+COMPRESS("elm/genlist/tree_compress/no_icon/default", "elm/genlist/tree/no_icon/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/no_icon/default", "elm/genlist/tree/no_icon/default")
+
+group { "elm/genlist/tree/full/default";
+   inherit: "elm/genlist/item/full/default";
+   parts {
+      swallow { "elm.swallow.content";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "selected";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "disabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/full/default", "elm/genlist/tree/full/default")
+group { "elm/genlist/tree_compress/full/default";
+   inherit: "elm/genlist/tree/full/default";
+}
+group { "elm/genlist/tree_compress_odd/full/default";
+   inherit: "elm/genlist/tree_odd/full/default";
+}
+
+
+group { "elm/genlist/tree/tree_effect/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   broadcast_signal: 1;
+   program_source: "elm";
+   parts {
+      alias: "elm.swallow.pad" "group:elm.swallow.pad";
+      alias: "elm.swallow.icon" "group:elm.swallow.icon";
+      alias: "elm.swallow.end" "group:elm.swallow.end";
+      alias: "elm.text" "group:elm.text";
+      rect { "point"; mouse;
+         scale;
+         desc { "default";
+            fixed: 1 1;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      rect { "event"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+      group { "group"; mouse;
+         source: "elm/genlist/tree/default/default";
+         desc { "default";
+            map {
+               perspective: "point";
+               on: 1;
+               smooth: 1;
+               perspective_on: 1;
+               backface_cull: 1;
+               rotation {
+                  center: "point";
+                  x: 0;
+                  y: 0;
+                  z: 0;
+               }
+            }
+            link.base: "elm,state,show";
+         }
+         desc { "hide";
+//            hid;
+            link.base: "elm,state,hide";
+         }
+         desc { "map_transition";
+            inherit: "default";
+            color: 50 50 50 255;
+            map.rotation.x: -90;
+            link { base: "elm,action,flip_item";
+               after: "rot2";
+            }
+         }
+         desc { "map_rotate";
+            inherit: "default";
+            link { base: "elm,state,contract_flip";
+               after: "rotb2";
+            }
+         }
+      }
+   }
+   programs {
+      program { "rot2";
+         action: STATE_SET "map_rotate";
+         transition: LINEAR 0.2;
+         target: "group";
+         after: "rot3";
+      }
+      program { "rot3";
+         action: STATE_SET "default";
+         target: "group";
+      }
+      program { "rotb2";
+         action: STATE_SET "map_transition";
+         transition: LINEAR 0.5;
+         target: "group";
+         after: "rotb3";
+      }
+      program { "rotb3";
+         action: STATE_SET "hide";
+         target: "group";
+      }
+      program {
+         signal: "mouse,up,1";
+         source: "group:arrow";
+         action:  SIGNAL_EMIT "elm,action,expand,toggle" "elm";
+      }
+   }
+}
+
+group { "elm/genlist/item/tree_effect/default";
+   inherit: "elm/genlist/tree/tree_effect/default";
+   parts {
+      group { "group";
+         source: "elm/genlist/item/default/default";
+      }
+   }
+}
+
+group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text";
+   data.item: "contents" "elm.swallow.icon";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.to_y: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: 0 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.5 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default";
+         target: "elm.text.flip";
+      }
+      //##//
+      text { "sizer.content";
+         scale;
+         desc { "default";
+            fixed: 1 1;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            align: 0.5 0.0;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+               text_class: "list_item";
+               text: "M";
+            }
+            hid;
+         }
+      }
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 1;
+            aspect: 1.0 1.0;
+            rel1.to: "sizer.content";
+            rel2.to: "sizer.content";
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+COMPRESS("elm/genlist/item_compress/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/genlist/item/icon_top_text_bottom/default")
+
+group { "elm/genlist/tree/icon_top_text_bottom/default";
+   inherit: "elm/genlist/item/icon_top_text_bottom/default";
+   parts {
+      image { "sizer.content";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+      text { "elm.text";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+COMPRESS("elm/genlist/tree_compress/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/genlist/tree/icon_top_text_bottom/default")
+
+#define COMPRESS_SUB(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.text.sub"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               fixed: 0 1; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_SUB_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.text.sub"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { "elm/genlist/item/double_label/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text elm.text.sub";
+   data.item: "contents" "elm.swallow.icon elm.swallow.end";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 0.0;
+            rel2.to_x: "elm.swallow.end";
+            rel2.to_y: "elm.text.sub";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "elm.text.sub";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.offset: -3 -3;
+            rel2.relative: 0.0 1.0;
+            rel2.to_x: "elm.swallow.end";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label4";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.sub";
+            rel2.to: "elm.text.sub";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.sub";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label5";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.sub";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.sub";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.sub";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      target_group: "subgroup" "elm.text.sub" "label4" "label5";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default" "subgroup";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default" "subgroup";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default" "subgroup";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default" "subgroup";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default" "subgroup";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default" "subgroup";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.icon"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      swallow { "elm.swallow.end"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/double_label/default", "elm/genlist/item/double_label/default")
+COMPRESS_SUB("elm/genlist/item_compress/double_label/default", "elm/genlist/item/double_label/default")
+COMPRESS_SUB_ODD("elm/genlist/item_compress_odd/double_label/default", "elm/genlist/item/double_label/default")
+
+group { "elm/genlist/tree/double_label/default";
+   inherit: "elm/genlist/item/double_label/default";
+   parts {
+      swallow { "elm.swallow.icon";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+            rel2.to_x: "arrow";
+            rel2.offset: 1 -3;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/double_label/default", "elm/genlist/tree/double_label/default")
+COMPRESS_SUB("elm/genlist/tree_compress/double_label/default", "elm/genlist/tree/double_label/default")
+COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genlist/tree/double_label/default")
+
+#define COMPRESS_T1T2(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.title.1"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.title.2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label6"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label7"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_T1T2_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.title.1"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.title.2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label6"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label7"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { "elm/genlist/item/message/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text elm.title.1 elm.title.2";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 2;
+            rel2.relative: 1.0 0.0;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+            fixed: 0 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 1 1;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            fixed: 1 1;
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      //##//
+      text { "elm.title.1";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.to_y: "elm.text";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.title.2";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label4";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.title.1";
+            rel2.to: "elm.title.1";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.title.1";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label5";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.title.1";
+            rel2.offset: -1 1;
+            rel2.to: "elm.title.1";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.title.1";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      //##//
+      text { "elm.title.2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 1.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 1.0;
+               text_class: "list_item";
+            }
+            fixed: 0 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label6";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.title.2";
+            rel2.to: "elm.title.2";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.title.2";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label7";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.title.2";
+            rel2.offset: -1 2;
+            rel2.to: "elm.title.2";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.title.2";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      target_group: "message" "elm.title.1" "elm.title.2" "label4" "label5" "label6" "label7";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default" "message";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default" "message";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default" "message";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default" "message";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default" "message";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default" "message";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/message/default", "elm/genlist/item/message/default")
+COMPRESS_T1T2("elm/genlist/item_compress/message/default", "elm/genlist/item/message/default")
+COMPRESS_T1T2_ODD("elm/genlist/item_compress_odd/message/default", "elm/genlist/item/message/default")
+
+group { "elm/genlist/item/media/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text.title elm.text.album-artist";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text.title";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.text.album-artist";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.title";
+            rel2.to: "elm.text.title";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.title";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.title";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text.title";
+            rel2.to_y: "elm.text.title";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "elm.text.album-artist";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label4";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.album-artist";
+            rel2.to: "elm.text.album-artist";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.album-artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label5";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.album-artist";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.album-artist";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.album-artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      target_group: "media" "elm.text.title" "label2" "label3" "elm.text.album-artist" "label4" "label5";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "media";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "media";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "media";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "media";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "media";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "media";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+#define COMPRESS_MEDIA(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text.title"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.text.album-artist"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_MEDIA_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text.title"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "elm.text.album-artist"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label4"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label5"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+ODD("elm/genlist/item_odd/media/default", "elm/genlist/item/media/default")
+COMPRESS_MEDIA("elm/genlist/item_compress/media/default", "elm/genlist/item/media/default")
+COMPRESS_MEDIA_ODD("elm/genlist/item_compress_odd/media/default", "elm/genlist/item/media/default")
+      
+group { "elm/genlist/item/media-album/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text.title elm.text.trackno elm.text.length";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text.trackno";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: 2 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.to_y: "elm.text.length";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+            fixed: 1 0;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.trackno";
+            rel2.to: "elm.text.trackno";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.trackno";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.trackno";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.trackno";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.trackno";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text.trackno";
+            rel2.to_y: "elm.text.trackno";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "dot";
+         scale;
+         desc { "default";
+            hid;
+            fixed: 1 1;
+            align: 0.0 0.0;
+            rel1.to: "elm.text.trackno";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 2 0;
+            rel2.to: "elm.text.trackno";
+            rel2.offset: 2 -1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text: ":";
+            }
+         }
+         desc { "visible";
+            inherit: "default";
+         }
+      }
+      text { "elm.text.title";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "dot";
+            rel1.to_y: "elm.text.trackno";
+            rel2.offset: -3 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.to_y: "elm.text.trackno";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label6";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.title";
+            rel2.to: "elm.text.title";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label7";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.title";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.title";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.title";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      
+      text { "elm.text.length";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label4";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.length";
+            rel2.to: "elm.text.length";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.length";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label5";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.length";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.length";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.length";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      target_group: "media-album" "elm.text.trackno" "label2" "label3" "elm.text.title" "label6" "label7" "elm.text.length" "label4" "label5";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "media-album";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "media-album";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "media-album";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "media-album";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "media-album";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "media-album";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/media-album/default", "elm/genlist/item/media-album/default")
+group { "elm/genlist/item_compress/media-album/default";
+   inherit: "elm/genlist/item/media-album/default";
+   parts {
+      text { "elm.text.title";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label2";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label3";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "elm.text.length";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label4";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label5";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+   }
+}
+group { "elm/genlist/item_compress_odd/media-album/default";
+   inherit: "elm/genlist/item_odd/media-album/default";
+   parts {
+      text { "elm.text.title";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label2";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label3";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "elm.text.length";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label4";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label5";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+group { "elm/genlist/item/media-preview/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text elm.text.artist";
+   data.item: "contents" "elm.swallow.preview";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.preview";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.text.artist";
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            align: 0.0 0.0;
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.0;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "elm.text.artist";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: 2 -3;
+            rel1.relative: 1.0 1.0;
+            rel1.to_x: "elm.swallow.preview";
+            rel2.offset: -3 -3;
+            rel2.relative: 1.0 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item_sub";
+            align: 0.0 1.0;
+            text { font: FN; size: 8;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label4";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.artist";
+            rel2.to: "elm.text.artist";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_sub_disabled";
+            text { font: FN; size: 8;
+               text_source: "elm.text.artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label5";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -4;
+            rel1.to: "elm.text.artist";
+            rel2.offset: -1 0;
+            rel2.to: "elm.text.artist";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_sub_selected";
+            text { font: FN; size: 8;
+               text_source: "elm.text.artist";
+               align: 0.0 1.0;
+               text_class: "list_item_sub";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      target_group: "media-preview" "elm.text.artist" "label4" "label5";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "default" "media-preview";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "default" "media-preview";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "default" "media-preview";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "default" "media-preview";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "default" "media-preview";
+         target: "elm.text.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "default" "media-preview";
+         target: "elm.text.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      swallow { "elm.swallow.preview"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 2;
+            rel2.to_x: "elm.swallow.pad";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -3;
+            link.base: "elm,state,flip,disabled";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+            link.base: "elm,state,flip,enabled";
+         }
+      }
+      //##//
+
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/media-preview/default", "elm/genlist/item/media-preview/default")
+group { "elm/genlist/item_compress/media-preview/default";
+   inherit: "elm/genlist/item/media-preview/default";
+   parts {
+      text { "elm.text";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label2";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label3";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "elm.text.artist";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label4";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label5";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+   }
+}
+group { "elm/genlist/item_odd_compress/media-preview/default";
+   inherit: "elm/genlist/item_odd/media-preview/default";
+   parts {
+      text { "elm.text";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label2";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label3";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "elm.text.artist";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label4";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+      text { "label5";
+         desc { "default";
+            text.min: 0 1;
+         }
+         desc { "selected";
+            text.min: 0 1;
+         }
+         desc { "disabled";
+            text.min: 0 1;
+         }
+         desc { "flip_enabled";
+            text.min: 0 1;
+         }
+      }
+   }
+}
+
+#define COMPRESS_MODE(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text.mode"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+      } \
+   }
+#define COMPRESS_MODE_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         text { "elm.text.mode"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label2"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         text { "label3"; \
+            desc { "default"; \
+               text.min: 0 1; \
+            } \
+            desc { "selected"; \
+               text.min: 0 1; \
+            } \
+            desc { "disabled"; \
+               text.min: 0 1; \
+            } \
+            desc { "flip_enabled"; \
+               text.min: 0 1; \
+            } \
+         } \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { "elm/genlist/item/mode/default"; nomouse;
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   data.item: "texts" "elm.text.mode";
+   data.item: "mode_part" "elm.swallow.original";
+   data.item: "treesize" TREEPAD;
+   data.item: "flips" "elm.text.mode.flip";
+   inherit: "genlist_base";
+   parts {
+
+      //##//
+      text { "elm.text.mode";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.offset: 2 3;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.pad";
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "list_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2";
+         effect: SHADOW BOTTOM;
+         scale;
+         desc { "default";
+            rel1.to: "elm.text.mode";
+            rel2.to: "elm.text.mode";
+            color: FN_COL_DISABLE;
+            color_class: "list_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "elm.text.mode";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label3";
+         effect: GLOW;
+         scale;
+         desc { "default";
+            rel1.offset: -2 -3;
+            rel1.to: "elm.text.mode";
+            rel2.offset: -1 1;
+            rel2.to: "elm.text.mode";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "list_item_selected";
+            text { font: FN; size: 10;
+               text_source: "elm.text.mode";
+               align: 0.0 0.5;
+               text_class: "list_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.text.mode.flip"; mouse;
+         scale;
+         desc { "default";
+            hid;
+            rel1.to_y: "elm.text.mode";
+            rel2.to_y: "elm.text.mode";
+         }
+         desc { "flip_enabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      target_group: "mode" "elm.text.mode" "label2" "label3";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "mode";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "mode";
+      }
+      program {
+         signal: "elm,state,disabled";
+         action: STATE_SET "disabled";
+         groups: "mode";
+      }
+      program {
+         signal: "elm,state,enabled";
+         action: STATE_SET "default";
+         groups: "mode";
+      }
+      program {
+         signal: "elm,state,flip,enabled";
+         action: STATE_SET "flip_enabled";
+         groups: "mode";
+         target: "elm.text.mode.flip";
+      }
+      program {
+         signal: "elm,state,flip,disabled";
+         action: STATE_SET "default";
+         groups: "mode";
+         target: "elm.text.mode.flip";
+      }
+      //##//
+      swallow { "elm.swallow.pad"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+         }
+      }
+      //##//
+      rect { "event_block_layer"; mouse;
+         desc { "default";
+            rel1.to: "base";
+            rel2.to: "base";
+            color: 0 0 0 0;
+         }
+         desc { "repeat_events";
+            inherit: "default";
+            hid;
+         }
+      }
+      spacer { "pers";
+         desc { "default";
+            fixed: 0 1;
+            rel1.relative: 0.0 1.0;
+         }
+      }
+      swallow { "elm.swallow.original"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+         }
+         desc { "slide";
+            inherit: "default";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+         }
+         desc { "rotate";
+            inherit: "default";
+            map {
+               perspective: "pers";
+               on: 1;
+               smooth: 1;
+               perspective_on: 1;
+               backface_cull: 1;
+               rotation {
+                  center: "pers";
+               }
+            }
+         }
+         desc { "rotate2";
+            inherit: "rotate";
+            map.rotation.x: 90.0;
+         }
+      }
+      program {
+         signal: "elm,state,slide,active";
+         action: STATE_SET "slide";
+         target: "elm.swallow.original";
+         transition: ACCELERATE 0.5 CURRENT;
+         after: "unblock_event";
+      }
+      program { "unblock_event";
+         action: STATE_SET "repeat_events";
+         target: "event_block_layer";
+      }
+      program {
+         signal: "elm,state,slide,passive";
+         action: STATE_SET "default";
+         target: "event_block_layer";
+         after: "slide_left2";
+      }
+      program { "slide_left2";
+         action: STATE_SET "default";
+         target: "elm.swallow.original";
+         transition: DECELERATE 0.5 CURRENT;
+         after: "slide_left_finished";
+      }
+      program { "slide_left_finished";
+         action: SIGNAL_EMIT "elm,state,slide,passive,finished" "elm";
+      }
+      program {      
+         signal: "elm,state,rotate,active";
+         action: STATE_SET "rotate";
+         target: "elm.swallow.original";
+         after: "rotate_on2";
+      }
+      program { "rotate_on2";
+         action: STATE_SET "rotate2";
+         target: "elm.swallow.original";
+         transition: LINEAR 0.5;
+         after: "unblock_event";
+      }
+      program {
+         signal: "elm,state,rotate,passive";
+         action: STATE_SET "default";
+         target: "event_block_layer";
+         after: "rotate_off2";
+      }
+      program { "rotate_off2";
+         action: STATE_SET "rotate";
+         transition: LINEAR 0.5;
+         target: "elm.swallow.original";
+         after: "rotate_off3";
+      }
+      program { "rotate_off3";
+         action: STATE_SET "default";
+         target: "elm.swallow.original";
+         after: "rotate_off_finished";
+      }
+      program { "rotate_off_finished";
+         action: SIGNAL_EMIT "elm,state,rotate,passive,finished" "elm";
+      }
+      
+   }
+   inherit: "genlist_top";
+}
+ODD("elm/genlist/item_odd/mode/default", "elm/genlist/item/mode/default")
+COMPRESS_MODE("elm/genlist/item_compress/mode/default", "elm/genlist/item/mode/default")
+COMPRESS_MODE_ODD("elm/genlist/item_compress_odd/mode/default", "elm/genlist/item/mode/default")
+
+group { "elm/genlist/tree/mode/default";
+   inherit: "elm/genlist/item/mode/default";
+   parts {
+      text { "elm.text.mode";
+         desc { "default";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+         desc { "flip_enabled";
+            rel1.to_x: "arrow";
+            rel1.offset: 1 2;
+         }
+      }
+   }
+   inherit: "genlist_arrow";
+}
+ODD("elm/genlist/tree_odd/mode/default", "elm/genlist/tree/mode/default")
+COMPRESS_MODE("elm/genlist/tree_compress/mode/default", "elm/genlist/tree/mode/default")
+COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tree/mode/default")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define COMPRESS_EDIT(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+   }
+#define COMPRESS_EDIT_ODD(_NAME, _SRC) \
+   group { name: _NAME; \
+      inherit: _SRC; \
+      parts { \
+         rect { "base"; \
+            desc { "default"; \
+               color: 56 56 56 255; \
+               color_class: "list_item_base_odd"; \
+            } \
+         } \
+      } \
+   }
+group { "elm/genlist/item/edit/default"; nomouse;
+   data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_horiz_out.png" COMP;
+   images.image: "shadow_horiz.png" COMP;
+   program_source: "elm";
+   parts {
+      rect { "base";
+         desc { "default";
+            color: 64 64 64 255;
+            color_class: "list_item_base";
+         }
+         desc { "odd";
+            color: 56 56 56 255;
+            color_class: "list_item_base_odd";
+         }
+      }
+      program {
+         signal: "elm,state,odd";
+         action: STATE_SET "odd" 1.0;
+         target: "base";
+      }
+      program {
+         signal: "elm,state,even";
+         action: STATE_SET "default";
+         target: "base";
+      }
+      
+      image { "sel_shadow1";
+         desc { "default";
+            image.normal: "shadow_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            rel2.to_x: "elm.swallow.decorate.content";
+            rel2.relative: 0.0 1.0;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_shadow2";
+         desc { "default";
+            image.normal: "shadow_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.to_x: "elm.swallow.decorate.content";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_base";
+         desc { "default";
+            image.normal: "vgrad_med_dark.png";
+            fill.smooth: 0;
+            hid;
+            TILED_HORIZ(120)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_bevel";
+         desc { "default";
+            image.normal: "bevel_horiz_out.png";
+            image.border: 0 0 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      target_group: "edit" "sel_base" "sel_bevel" "sel_shadow1" "sel_shadow2";
+      program {
+         signal: "elm,state,selected";
+         action: STATE_SET "selected";
+         groups: "edit";
+      }
+      program {
+         signal: "elm,state,unselected";
+         action: STATE_SET "default";
+         groups: "edit";
+      }
+
+      swallow { "elm.edit.icon.1"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 1.0 0.5;
+            rel2.relative: 0.0 1.0;
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
+         }
+         desc { "on";
+            inherit: "default";
+            align: 0.0 0.5;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      swallow { "elm.edit.icon.2"; mouse;
+         desc { "default";
+            fixed: 1 0;
+            align: 0.0 0.5;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 2;
+            rel2.offset: 1 -3;
+         }
+         desc { "on";
+            inherit: "default";
+            align: 1.0 0.5;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      
+      swallow { "elm.swallow.decorate.content"; mouse;
+         desc { "default";
+         }
+         desc { "on";
+            inherit: "default";
+            rel1.to_x: "elm.edit.icon.1";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 3 0;
+            rel2.to_x: "elm.edit.icon.2";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -2 -1;
+         }
+      }
+      target_group: "decorate" "elm.swallow.decorate.content" "elm.edit.icon.1" "elm.edit.icon.2";
+      program {
+         signal: "elm,state,decorate,enabled,effect";
+         action: STATE_SET "on";
+         groups: "decorate";
+         transition: DECELERATE 0.5;
+      }
+      program {
+         signal: "elm,state,decorate,disabled,effect";
+         action: STATE_SET "default";
+         groups: "decorate";
+         transition: ACCELERATE 0.5;
+      }
+      program {
+         signal: "elm,state,decorate,enabled";
+         action: STATE_SET "on";
+         groups: "decorate";
+      }
+      program {
+         signal: "elm,state,decorate,disabled";
+         action: STATE_SET "default";
+         groups: "decorate";
+      }
+   }
+}
+ODD("elm/genlist/item_odd/edit/default", "elm/genlist/item/edit/default")
+COMPRESS_EDIT("elm/genlist/item_compress/edit/default", "elm/genlist/item/edit/default")
+COMPRESS_EDIT_ODD("elm/genlist/item_compress_odd/edit/default", "elm/genlist/item/edit/default")
+
+group { "elm/genlist/tree/edit/default";
+   inherit: "elm/genlist/item/edit/default";
+}
+ODD("elm/genlist/tree_odd/edit/default", "elm/genlist/tree/edit/default")
+COMPRESS_EDIT("elm/genlist/tree_compress/edit/default", "elm/genlist/tree/edit/default")
+COMPRESS_EDIT_ODD("elm/genlist/tree_compress_odd/edit/default", "elm/genlist/tree/edit/default")
+
+#undef ODD
+#undef COMPRESS
+#undef COMPRESS_ODD
+#undef TREEPAD
+#undef TREEIMGS
+#undef ARROW
+#undef GENLIST_PART_MAP_START
+#undef GENLIST_PART_MAP_FINISH
+#undef COMPRESS_SUB
+#undef COMPRESS_SUB_ODD
+#undef COMPRESS_T1T2
+#undef COMPRESS_T1T2_ODD
+#undef COMPRESS_MEDIA
+#undef COMPRESS_MEDIA_ODD
+#undef COMPRESS_MODE
+#undef COMPRESS_MODE_ODD
+#undef COMPRESS_EDIT
+#undef COMPRESS_EDIT_ODD

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="dialog-password.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.9140625"
+     inkscape:cx="62.339321"
+     inkscape:cy="61.005059"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="572"
+     inkscape:window-y="47"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+  <path
+     style="fill:#3399ff"
+     inkscape:connector-curvature="0"
+     d="m 30.182636,20.315368 c -10.408235,0 -18.787426,8.379191 -18.787426,18.787426 v 37.574849 c 0,10.40823 8.379191,18.78743 18.787426,18.78743 h 11.506921 c -0.07815,-0.58617 -0.234467,-1.03707 -0.234467,-1.64578 V 80.435129 h -3.757484 c -6.244941,0 -11.272456,-5.027516 -11.272456,-11.272456 V 46.617764 c 0,-6.244941 5.027515,-11.272456 11.272456,-11.272456 h 52.60479 c 6.24494,0 11.272454,5.027515 11.272454,11.272456 v 22.544909 c 0,6.24494 -5.027514,11.272456 -11.272454,11.272456 H 86.544911 V 65.405188 L 56.48503,87.950103 86.544911,110.49501 V 95.465073 h 11.272454 c 10.408235,0 18.787425,-8.3792 18.787425,-18.78743 V 39.102794 c 0,-10.408235 -8.37919,-18.787426 -18.787425,-18.787426 z"
+     id="path4-0" />
+</svg>

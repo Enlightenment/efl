@@ -1,0 +1,58 @@
+/* simple layout to pack our scrolling content into an elm_layout */
+group { name: "elm/code/layout/default";
+   data {
+      item: "font.name" "Mono";
+      item: "font.size" "10";
+   }
+   parts {
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            fixed: 0 1;
+
+            rel2 {
+               relative: 1.0 1.0;
+               offset: 0 0;
+            }
+         }
+      }
+   }
+}
+
+color_classes {
+    color_class { name: "elm/code/status/default"; color: 36 36 36 255; }
+    color_class { name: "elm/code/status/current"; color: 12 12 12 255; }
+    color_class { name: "elm/code/status/ignored"; color: 36 36 36 255; }
+    color_class { name: "elm/code/status/note"; color: 221 119 17 255;  }
+    color_class { name: "elm/code/status/warning"; color: 221 119 17 255; }
+    color_class { name: "elm/code/status/error"; color: 204 17 17 255; }
+    color_class { name: "elm/code/status/fatal"; color: 204 17 17 255; }
+    color_class { name: "elm/code/status/added"; color: 36 96 36 255; }
+    color_class { name: "elm/code/status/removed"; color: 96 36 36 255; }
+    color_class { name: "elm/code/status/changed"; color: 36 36 96 255; }
+    color_class { name: "elm/code/status/passed"; color: 54 96 54 255; }
+    color_class { name: "elm/code/status/failed"; color: 96 54 54 255; }
+    color_class { name: "elm/code/status/todo"; color: 51 85 187 255; }
+
+    color_class { name: "elm/code/token/default"; color: 187 187 187 255; }
+    color_class { name: "elm/code/token/comment"; color: 85 85 85 255; }
+    color_class { name: "elm/code/token/string"; color: 255 136 119 255; }
+    color_class { name: "elm/code/token/number"; color: 170 153 34 255; }
+    color_class { name: "elm/code/token/brace"; color: 170 102 170 255; }
+    color_class { name: "elm/code/token/type"; color: 255 255 255 255; }
+    color_class { name: "elm/code/token/class"; color: 255 255 255 255; }
+    color_class { name: "elm/code/token/function"; color: 255 255 255 255; }
+    color_class { name: "elm/code/token/param"; color: 187 187 187 255; }
+    color_class { name: "elm/code/token/keyword"; color: 68 136 204 255; }
+    color_class { name: "elm/code/token/preprocessor"; color: 102 255 85 255; }
+    color_class { name: "elm/code/token/added"; color: 54 255 54 255; }
+    color_class { name: "elm/code/token/removed"; color: 255 54 54 255; }
+    color_class { name: "elm/code/token/changed"; color: 54 54 255 255; }
+    color_class { name: "elm/code/token/match"; color: 187 187 51 255; }
+
+    color_class { name: "elm/code/widget/color/selection"; color: 51 153 255 255; }
+    color_class { name: "elm/code/widget/color/gutter/bg"; color: 75 75 75 255; }
+    color_class { name: "elm/code/widget/color/gutter/fg"; color: 139 139 139 255; }
+    color_class { name: "elm/code/widget/color/gutter/scope/bg"; color: 54 54 54 255; }
+    color_class { name: "elm/code/widget/color/whitespace"; color: 50 50 50 127; }
+}

@@ -1,0 +1,10 @@
+group { "efl/nstate";
+   inherit: "efl/button";
+   programs {
+      program {
+         signal: "mouse,clicked,1"; source: "event";
+         action: SIGNAL_EMIT "elm,action,state,changed" "elm";
+      }
+   }
+}
+

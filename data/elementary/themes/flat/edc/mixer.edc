@@ -1,0 +1,130 @@
+group { name: "e/modules/mixer/main";
+   alias: "e/gadget/mixer/main";
+   alias: "e/gadget/mixer/main_vert";
+   images.image: "speaker.png" COMP;
+   images.image: "speaker_clip.png" COMP;
+   images.image: "speaker_vol.png" COMP;
+   images.image: "led_dot_white.png" COMP;
+   max: 160 160;
+   min: 16 16;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            new m, l, r;
+
+            m = getarg(2);
+            l = getarg(3);
+            r = getarg(4);
+
+            if (m) {
+               run_program(PROGRAM:"mute");
+            } else {
+               run_program(PROGRAM:"unmute");
+            }
+
+            custom_state(PART:"vol-l", "default", 0.0);
+            set_state_val(PART:"vol-l", STATE_REL1,
+                          (float(100 - l) * 0.5) / 100.0,
+                          (float(100 - l) * 1.0) / 100.0);
+            set_state_val(PART:"vol-l", STATE_REL2,
+                          0.5 + ((float(l) * 0.5) / 100.0),
+                          1.0);
+            set_state(PART:"vol-l", "custom", 0.0);
+
+            custom_state(PART:"vol-r", "default", 0.0);
+            set_state_val(PART:"vol-r", STATE_REL1,
+                          (float(100 - r) * 0.5) / 100.0,
+                          (float(100 - r) * 1.0) / 100.0);
+            set_state_val(PART:"vol-r", STATE_REL2,
+                          0.5 + ((float(r) * 0.5) / 100.0),
+                          1.0);
+            set_state(PART:"vol-r", "custom", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: (25/380) (25/380);
+            rel2.relative: (365/380) (365/380);
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "speaker.png";
+         }
+      }
+      part { name: "state"; type: RECT;
+         description { state: "default" 0.0;
+            color: 51 153 255 255;
+         }
+         description { state: "mute" 0.0;
+            inherit: "default" 0.0;
+            color: 255 153 51 255;
+         }
+      }
+      part { name: "state-l"; type: RECT;
+         clip_to: "state";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.5 1.0;
+         }
+      }
+      part { name: "state-r"; type: RECT;
+         clip_to: "state";
+         description { state: "default" 0.0;
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "vclip-l";
+         clip_to: "state-l";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "speaker_clip.png";
+         }
+      }
+      part { name: "vclip-r";
+         clip_to: "state-r";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "speaker_clip.png";
+         }
+      }
+      part { name: "vol-l";
+         clip_to: "vclip-l";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "speaker_vol.png";
+         }
+      }
+      part { name: "vol-r";
+         clip_to: "vclip-r";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.offset: 0 0;
+            image.normal: "speaker_vol.png";
+         }
+      }
+      part { name: "over"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+      }
+   }
+   programs {
+      program { name: "mute";
+         action: STATE_SET "mute" 0.0;
+         transition: LINEAR 0.3;
+         target: "state";
+      }
+      program { name: "unmute";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.2;
+         target: "state";
+      }
+   }
+}
+
+

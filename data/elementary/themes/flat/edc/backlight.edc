@@ -1,0 +1,51 @@
+group { name: "e/modules/backlight/main";
+   alias: "e/gadget/backlight/main";
+   alias: "e/gadget/backlight/main_vert";
+   alias: "e/modules/backlight/main_vert";
+   images.image: "bulb_middle.png" COMP;
+   images.image: "bulb_over.png" COMP;
+   min: 16 16;
+   max: 160 160;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_FLOAT) && (id == 0)) {
+            new Float:val;
+            val = getfarg(2);
+            set_tween_state(PART:"glow", val, "default", 0.0, "full", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "bulb_middle.png";
+            color: 32 32 32 255;
+         }
+      }
+      part { name: "glow";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel1.relative: 0.5 0.5;
+            rel2.to: "base";
+            rel2.relative: 0.5 0.5;
+            image.normal: "bulb_middle.png";
+            color: 255 255 255 0;
+         }
+         description { state: "full" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "over";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "bulb_over.png";
+         }
+      }
+   }
+}
+

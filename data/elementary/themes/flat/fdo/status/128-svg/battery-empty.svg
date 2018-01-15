@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg3027"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="battery-caution.svg">
+  <defs
+     id="defs3029" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="68.843267"
+     inkscape:cy="77.767844"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg3027"
+     showgrid="false"
+     inkscape:window-width="1013"
+     inkscape:window-height="847"
+     inkscape:window-x="506"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3032">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#d40000"
+     inkscape:connector-curvature="0"
+     d="m 25.214285,111.66406 c 0,4.97066 4.004542,8.9788 8.978795,8.9788 h 61.055803 c 4.970657,0 8.978797,-4.00814 8.978797,-8.9788 V 29.059151 c 0,-4.974252 -4.00814,-8.978794 -8.978797,-8.978794 H 82.67857 V 9.3058025 c 0,-1.9897001 -1.601817,-3.5915172 -3.591518,-3.5915172 H 50.35491 c -1.989702,0 -3.591518,1.6018171 -3.591518,3.5915172 V 20.080357 H 34.19308 c -4.974253,0 -8.978795,4.004542 -8.978795,8.978794 z M 39.580357,100.8895 V 39.833705 c 0,-2.988143 2.402725,-5.387278 5.387276,-5.387278 H 84.47433 c 2.98455,0 5.387276,2.402727 5.387276,5.387278 V 100.8895 c 0,2.98816 -2.399134,5.38728 -5.387276,5.38728 H 44.967633 c -2.984551,0 -5.387276,-2.39912 -5.387276,-5.38728 z"
+     id="path4" />
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-924.36218)" />
+</svg>

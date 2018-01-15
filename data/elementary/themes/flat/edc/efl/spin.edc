@@ -1,0 +1,25 @@
+group { "efl/spin";
+   parts {
+      rect { "bg";
+         scale;
+         desc { "default";
+            color: 0 0 0 0;
+         }
+      }
+      text { "elm.text";
+         nomouse;
+         scale;
+         desc { "default";
+            color: FN_COL_DEFAULT;
+            text {
+               font: FNBD;
+               size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+            rel.to: "bg";
+         }
+      }
+   }
+}

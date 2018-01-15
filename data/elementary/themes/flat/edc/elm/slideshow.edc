@@ -1,0 +1,349 @@
+group { name: "elm/slideshow/base/default";
+   data {
+      item: transitions "fade black_fade horizontal vertical square";
+      item: layouts "fullscreen not_fullscreen";
+   }
+   parts {
+      part { name: "whole"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+         }
+      }
+      part { name: "image_1_whole"; type: RECT;
+         description { state: "default" 0.0;
+         }
+         description { state: "fade_prev_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "black_fade_prev_next_init" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "black_fade_prev_next" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 255;
+         }
+         description { state: "horizontal_next_init" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "horizontal_next" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: -1.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "horizontal_prev_init" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "horizontal_prev" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+         }
+         description { state: "vertical_next_init" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "vertical_next" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "vertical_prev_init" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "vertical_prev" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+         }
+         description { state: "square_prev_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "image_2_whole"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "fade_prev_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "black_fade_prev_next_init" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "black_fade_prev_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "horizontal_next_init" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+            color: 255 255 255 255;
+         }
+         description { state: "horizontal_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "horizontal_prev_init" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: -1.0 0.0;
+            rel2.relative: 0.0 1.0;
+            color: 255 255 255 255;
+         }
+         description { state: "horizontal_prev" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "vertical_next_init" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 2.0;
+            color: 255 255 255 255;
+         }
+         description { state: "vertical_next" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "vertical_prev_init" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 -1.0;
+            rel2.relative: 1.0 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "vertical_prev" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "square_prev_next_init" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+            color: 255 255 255 255;
+         }
+         description { state: "square_prev_next" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "elm.swallow.1"; type: SWALLOW;
+         clip_to: "image_1_whole";
+         description { state: "default" 0.0;
+            rel1.to: "image_1_whole";
+            rel2.to: "image_1_whole";
+         }
+         description { state: "not_fullscreen" 0.0;
+            rel1.relative: 0.1 0.1;
+            rel1.to: "image_1_whole";
+            rel2.relative: 0.9 0.9;
+            rel2.to: "image_1_whole";
+         }
+      }
+      part { name: "elm.swallow.2"; type: SWALLOW;
+         clip_to: "image_2_whole";
+         description {
+            state: "default" 0.0;
+            rel1.to: "image_2_whole";
+            rel2.to: "image_2_whole";
+         }
+         description { state: "not_fullscreen" 0.0;
+            rel1.relative: 0.1 0.1;
+            rel1.to: "image_2_whole";
+            rel2.relative: 0.9 0.9;
+            rel2.to: "image_2_whole";
+         }
+      }
+      part { name: "events_catcher"; type: RECT; repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,layout,fullscreen"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.1";
+         target: "elm.swallow.2";
+         transition: SINUSOIDAL 1.0;
+      }
+      program {
+         signal: "elm,layout,not_fullscreen"; source: "elm";
+         action: STATE_SET "not_fullscreen" 0.0;
+         target: "elm.swallow.1";
+         target: "elm.swallow.2";
+         transition: SINUSOIDAL 1.0;
+      }
+      //
+      program {
+         signal: "elm,fade,next"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "fade_next_2";
+      }
+      program { name: "fade_next_2";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,fade,previous"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "fade_previous_2";
+      }
+      program { name: "fade_previous_2";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,black_fade,next"; source: "elm";
+         action: STATE_SET "black_fade_prev_next_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "black_fade_next_2";
+      }
+      program { name: "black_fade_next_2";
+         action: STATE_SET "black_fade_prev_next" 0.0;
+         target: "image_1_whole";
+         transition: SINUSOIDAL 0.75;
+         after: "black_fade_next_3";
+      }
+      program { name: "black_fade_next_3";
+         action: STATE_SET "black_fade_prev_next" 0.0;
+         target: "image_2_whole";
+         transition: SINUSOIDAL 0.75;
+         after: "end";
+      }
+      program {
+         signal: "elm,black_fade,previous"; source: "elm";
+         action: STATE_SET "black_fade_prev_next_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "black_fade_previous_2";
+      }
+      program { name: "black_fade_previous_2";
+         action: STATE_SET "black_fade_prev_next" 0.0;
+         target: "image_1_whole";
+         transition: SINUSOIDAL 0.75;
+         after: "black_fade_previous_3";
+      }
+      program { name: "black_fade_previous_3";
+         action: STATE_SET "black_fade_prev_next" 0.0;
+         target: "image_2_whole";
+         transition: SINUSOIDAL 0.75;
+         after: "end";
+      }
+      program {
+         signal: "elm,horizontal,next"; source: "elm";
+         action: STATE_SET "horizontal_next_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "horizontal_next_2";
+      }
+      program { name: "horizontal_next_2";
+         action: STATE_SET "horizontal_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program { name: "horizontal_previous";
+         signal: "elm,horizontal,previous"; source: "elm";
+         action: STATE_SET "horizontal_prev_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "horizontal_previous_2";
+      }
+      program { name: "horizontal_previous_2";
+         action: STATE_SET "horizontal_prev" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,vertical,next"; source: "elm";
+         action: STATE_SET "vertical_next_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "vertical_next_2";
+      }
+      program { name: "vertical_next_2";
+         action: STATE_SET "vertical_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,vertical,previous"; source: "elm";
+         action: STATE_SET "vertical_prev_init" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "vertical_previous_2";
+      }
+      program { name: "vertical_previous_2";
+         action: STATE_SET "vertical_prev" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,square,next"; source: "elm";
+         action: STATE_SET "square_prev_next_init" 0.0;
+         target: "image_2_whole";
+         after: "square_next_2";
+      }
+      program { name: "square_next_2";
+         action: STATE_SET "square_prev_next" 0.0;
+         target: "image_2_whole";
+         target: "image_1_whole";
+         transition: SINUSOIDAL 1.5;
+         after: "end";
+      }
+      program {
+         signal: "elm,square,previous"; source: "elm";
+         action: STATE_SET "square_prev_next_init" 0.0;
+         target: "image_2_whole";
+         after: "square_next_2";
+      }
+      program {
+         signal: "elm,none,next"; source: "elm";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "end";
+      }
+      program {
+         signal: "elm,none,previous"; source: "elm";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "end";
+      }
+      program { name: "end";
+         action: SIGNAL_EMIT "elm,end" "elm";
+      }
+      program {
+         signal: "elm,anim,end"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+      }
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////

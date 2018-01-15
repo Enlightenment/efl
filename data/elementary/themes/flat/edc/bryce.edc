@@ -1,0 +1,361 @@
+group { name: "e/bryce/default/base"; nomouse;
+   data {
+      /* this tells e the number of pixels of the bryce to leave "exposed"
+       * when auto-hiding the bryce */
+      item: "hidden_state_size" "2";
+   }
+   images.image: "vgrad_med.png" COMP;
+   images.image: "vgrad_tall.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "holes_vert.png" COMP;
+   images.image: "holes_horiz.png" COMP;
+   images.image: "shine.png" COMP;
+   parts {
+      rect { "mouse"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+      part { name: "bg";
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med.png";
+            fill.smooth: 0;
+            TILED_HORIZ(120)
+            color_class: "bryce_base";
+         }
+         description { state: "vert" 0.0;
+            image.normal: "vgrad_tall.png";
+            fill.smooth: 0;
+            TILED_HORIZ(40)
+            color_class: "bryce_base";
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "dots_start";
+         description { state: "default" 0.0;
+            image.normal: "holes_vert.png";
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 5 -3;
+            FIXED_SIZE(4, 14)
+         }
+         description { state: "vert" 0.0;
+            image.normal: "holes_horiz.png";
+            rel1.offset: 2 2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 5;
+            FIXED_SIZE(14, 4)
+         }
+      }
+      part { name: "dots_end";
+         description { state: "default" 0.0;
+            image.normal: "holes_vert.png";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -6 2;
+            rel2.offset: -3 -3;
+            FIXED_SIZE(4, 14)
+         }
+         description { state: "vert" 0.0;
+            image.normal: "holes_horiz.png";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 2 -6;
+            rel2.offset: -3 -3;
+            FIXED_SIZE(14, 4)
+         }
+      }
+      spacer { "sizer";
+         description { state: "default" 0.0;
+            rel1.offset: 1 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "dots_start";
+            rel2.offset: -2 -1;
+            rel2.to_x: "dots_end";
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: 0 1;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "dots_start";
+            rel2.offset: -1 -2;
+            rel2.to_y: "dots_end";
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
+         }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            FIXED_SIZE(69, 5)
+         }
+      }
+      rect { "text_fader"; mouse;
+         desc { hid;
+            color: 0 0 0 0;
+         }
+         desc { "active";
+            color: 0 0 0 192;
+         }
+      }
+      text { "e.text"; scale;
+         effect: SHADOW BOTTOM;
+         desc { hid;
+            color: 255 255 255 0;
+            text { font: "Sans:style=Bold"; size: 14;
+               ellipsis: -1;
+            }
+         }
+         desc { "active"; inherit; vis;
+            color: 255 255 255 255;
+         }
+      }
+      program { signal: "e,action,resize"; source: "e";
+         action: STATE_SET "active";
+         transition: LINEAR 0.1;
+         targets: "e.text" "text_fader";
+         sequence {
+            action: ACTION_STOP;
+            target: "text_hide";
+            action: STATE_SET "default";
+            name: "text_hide";
+            in: 1.0 0;
+            transition: LINEAR 0.2;
+            targets: "e.text" "text_fader";
+         }
+      }
+      programs  {
+#define ORIENT_SATE(_ORIENT, _STATE) \
+         program { \
+            signal: "e,state,orient,"_ORIENT; source: "e"; \
+            action: STATE_SET _STATE 0.0; \
+            target: "bg"; \
+            target: "sizer"; \
+            target: "dots_start"; \
+            target: "dots_end"; \
+         }
+      }
+      ORIENT_SATE("horizontal", "default")
+      ORIENT_SATE("vertical", "vert")
+#undef ORIENT_SATE
+   }
+}
+
+group { name: "e/bryce/invisible/base"; nomouse;
+   inherit: "e/bryce/default/base";
+   data.item: "noshadow" "1";
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "vert" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "dots_start";
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            min: 0 0;
+            max: 0 0;
+            visible: 0;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            min: 0 0;
+            max: 0 0;
+            visible: 0;
+         }
+      }
+      part { name: "dots_end";
+         description { state: "default" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            min: 0 0;
+            max: 0 0;
+            visible: 0;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            min: 0 0;
+            max: 0 0;
+            visible: 0;
+         }
+      }
+   }
+}
+
+group { name: "e/bryce/translucent/base"; nomouse;
+   inherit: "e/bryce/default/base";
+   data.item: "noshadow" "1";
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+         description { state: "vert" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            color: 127 127 127 135;
+         }
+      }
+   }
+}
+
+group { name: "e/bryce/default/inset"; nomouse;
+   alias: "e/bryce/invisible/inset";
+   alias: "e/bryce/translucent/inset";
+   images.image: "horiz_bar_inset.png" COMP;
+   images.image: "vert_bar_inset.png" COMP;
+   parts {
+      rect { "mouse"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      spacer { "sizer";
+         description { state: "default" 0.0;
+            rel1.offset: 4 1;
+            rel2.offset: -5 -2;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: 1 4;
+            rel2.offset: -2 -5;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
+         }
+      }
+      part { name: "inset";
+         description { state: "default" 0.0;
+            rel1.offset: 2 0;
+            rel2.offset: -3 -1;
+            image.normal: "horiz_bar_inset.png";
+            image.border: 7 7 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+         description { state: "vert" 0.0;
+            rel1.offset: 0 2;
+            rel2.offset: -1 -3;
+            image.normal: "vert_bar_inset.png";
+            image.border: 1 1 8 6;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      rect { "events"; repeat; mouse;
+         desc { color: 0 0 0 0; }
+      }
+   }
+   programs {
+#define ORIENT_SATE(_ORIENT, _STATE) \
+         program { \
+            signal: "e,state,orient,"_ORIENT; source: "e"; \
+            action: STATE_SET _STATE 0.0; \
+            target: "sizer"; \
+            target: "inset"; \
+         }
+      ORIENT_SATE("horizontal", "default")
+      ORIENT_SATE("vertical", "vert")
+#undef ORIENT_SATE
+   }
+}
+
+group { name: "e/bryce/default/plain"; nomouse;
+   alias: "e/bryce/invisible/plain";
+   alias: "e/bryce/translucent/plain";
+   parts {
+      rect { "mouse"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      spacer { "sizer";
+         desc {
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
+         }
+      }
+      rect { "events"; repeat; mouse;
+         desc { color: 0 0 0 0; }
+      }
+   }
+}
+
+group { "elm/scroller/base/bryce";
+   parts {
+      rect { "clip";
+         desc {
+            rel1.offset: 0 -99999;
+            rel2.offset: -1 99999;
+            link.base: "e,state,orient,horizontal" "e";
+         }
+         desc { "vert";
+            rel1.offset: -99999 0;
+            rel2.offset: 99999 -1;
+            link.base: "e,state,orient,vertical" "e";
+         }
+      }
+      swallow { "elm.swallow.content" clip: "clip"; }
+   }
+}
