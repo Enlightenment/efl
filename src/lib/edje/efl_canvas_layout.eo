@@ -116,6 +116,7 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
       Efl.Layout.Group.group_data { get; }
+      Efl.Layout.Group.part_exist { get; }
       Efl.Layout.Signal.message_send;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
