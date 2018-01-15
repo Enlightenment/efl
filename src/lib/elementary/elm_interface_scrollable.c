@@ -780,6 +780,13 @@ _elm_scroll_scroll_bar_visibility_adjust(
    _elm_scroll_scroll_bar_auto_visibility_adjust(sid);
 }
 
+static inline Eina_Bool
+_elm_scroll_has_bars(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   return edje_object_part_exists(sid->edje_obj, "elm.dragable.hbar") ||
+         edje_object_part_exists(sid->edje_obj, "elm.dragable.vbar");
+}
+
 static void
 _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
 {
@@ -801,6 +808,10 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         edje_object_calc_force(sid->edje_obj);
         edje_object_part_geometry_get
           (sid->edje_obj, "elm.swallow.content", NULL, NULL, &vw, &vh);
+
+        if (!_elm_scroll_has_bars(sid))
+          goto skip_bars;
+
         w = sid->content_info.w;
         if (w < 1) w = 1;
         size = (double)vw / (double)w;
@@ -887,16 +898,21 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
      {
         Evas_Coord px = 0, py = 0, minx = 0, miny = 0;
 
-        edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
-        edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+        if (_elm_scroll_has_bars(sid))
+          {
+             edje_object_part_drag_size_set
+                   (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+             edje_object_part_drag_size_set
+                   (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+          }
         elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
         elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
         elm_obj_pan_pos_set(sid->pan_obj, minx, miny);
         if ((px != minx) || (py != miny))
           edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
      }
+
+skip_bars:
    _elm_scroll_scroll_bar_visibility_adjust(sid);
    sid->size_adjust_recurse--;
    if (sid->size_adjust_recurse <= 0)
@@ -919,6 +935,7 @@ _elm_scroll_scroll_bar_read_and_update(
        || (sid->down.bounce_y_animator) || (sid->down.momentum_animator)
        || (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
      return;
+   if (!_elm_scroll_has_bars(sid)) return;
    edje_object_part_drag_value_get
      (sid->edje_obj, "elm.dragable.vbar", NULL, &vy);
    edje_object_part_drag_value_get
@@ -1576,10 +1593,13 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
    else if (vy > 1.0)
      vy = 1.0;
 
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+   if (_elm_scroll_has_bars(sid))
+     {
+        edje_object_part_drag_value_set
+              (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
+        edje_object_part_drag_value_set
+              (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
+     }
 
    if (!sid->loop_h && !sid->down.bounce_x_animator)
      {
@@ -3680,6 +3700,10 @@ _scroll_edje_object_attach(Evas_Object *obj)
 
    edje_object_signal_callback_add
      (sid->edje_obj, "reload", "elm", _elm_scroll_reload_cb, sid);
+
+   if (!_elm_scroll_has_bars(sid))
+     return;
+
    edje_object_signal_callback_add
      (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
      sid);
@@ -3758,6 +3782,9 @@ _scroll_edje_object_detach(Evas_Object *obj)
      (sid->edje_obj, EVAS_CALLBACK_RESIZE, _on_edje_resize, sid);
    evas_object_event_callback_del_full
      (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
+
+   if (!_elm_scroll_has_bars(sid))
+     return;
 
    edje_object_signal_callback_del_full
      (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_vbar_drag_cb,
@@ -3879,16 +3906,19 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
 
    if (!sid->edje_obj) return;
 
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
-   edje_object_part_drag_value_set
-     (sid->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
-   if ((!sid->content) && (!sid->extern_pan))
+   if (_elm_scroll_has_bars(sid))
      {
-        edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
-        edje_object_part_drag_size_set
-          (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+        edje_object_part_drag_value_set
+              (sid->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
+        edje_object_part_drag_value_set
+              (sid->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
+        if ((!sid->content) && (!sid->extern_pan))
+          {
+             edje_object_part_drag_size_set
+                   (sid->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+             edje_object_part_drag_size_set
+                   (sid->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+          }
      }
    if (sid->pan_obj)
      {
