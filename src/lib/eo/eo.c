@@ -40,6 +40,8 @@ EAPI Eina_Lock _efl_class_creation_lock;
 EAPI unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
+static unsigned int efl_del_api_generation = 0;
+static Efl_Object_Op _efl_del_api_op_id = 0;
 
 typedef enum _Eo_Ref_Op {
    EO_REF_OP_NONE,
@@ -100,6 +102,8 @@ static inline void *_efl_data_scope_get(const _Eo_Object *obj, const _Efl_Class 
 static inline void *_efl_data_xref_internal(const char *file, int line, _Eo_Object *obj, const _Efl_Class *klass, const _Eo_Object *ref_obj);
 static inline void _efl_data_xunref_internal(_Eo_Object *obj, void *data, const _Eo_Object *ref_obj);
 static void _vtable_init(Eo_Vtable *vtable, size_t size);
+
+static inline Efl_Object_Op _efl_object_api_op_id_get_internal(const void *api_func);
 
 /* Start of Dich */
 
@@ -449,7 +453,7 @@ _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Da
    Eina_Bool is_obj;
    Eina_Bool super = EINA_TRUE;
 
-   if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
+   if (EINA_UNLIKELY(!eo_id)) goto on_null;
 
    call->eo_id = eo_id;
 
@@ -623,6 +627,16 @@ obj_super:
 
 err_klass:
    _EO_POINTER_ERR(eo_id, "in %s:%d: func '%s': obj_id=%p is an invalid ref.", file, line, func_name, eo_id);
+   return EINA_FALSE;
+
+on_null:
+   if (EINA_UNLIKELY(efl_del_api_generation != _efl_object_init_generation))
+     {
+        _efl_del_api_op_id = _efl_object_api_op_id_get_internal(EFL_FUNC_COMMON_OP_FUNC(efl_del));
+        efl_del_api_generation = _efl_object_init_generation;
+     }
+   if (op != _efl_del_api_op_id)
+     WRN("NULL passed to function %s().", func_name);
    return EINA_FALSE;
 }
 
