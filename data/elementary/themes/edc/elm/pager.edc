@@ -1,12 +1,45 @@
-   group { name: "efl/pager/indicator";
+   group { name: "elm/pager/base/default";
+      parts {
+         spacer { "base";
+            scale;
+            desc { "default";
+            }
+         }
+         swallow { "elm.swallow.background";
+            scale;
+            desc { "default";
+            }
+         }
+         swallow { "page_root";
+            scale;
+            desc { "default";
+            }
+         }
+         swallow { "indicator";
+            scale;
+            desc { "default";
+               rel2.relative: 1.0 0.0;
+               align: 0.5 0.0;
+               min: 0 50;
+            }
+         }
+         swallow { "event";
+            scale;
+            repeat_events: 1;
+            desc { "default";
+            }
+         }
+      }
+   }
+
+   group { name: "elm/pager/indicator/default";
       images {
          image: "ring_white_middle.png" COMP;
       }
       parts {
-         rect { "base";
+         spacer { "base";
             scale;
             desc { "default";
-               color: 0 0 0 0;
             }
          }
          image { "icon";

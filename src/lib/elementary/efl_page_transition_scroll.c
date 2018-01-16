@@ -37,6 +37,7 @@ _page_info_allocate(Efl_Page_Transition_Scroll_Data *pd,
         pi->temp = eina_rectangle_new(0, 0, 0, 0);
 
         pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
+        efl_canvas_group_member_add(spd->pager.group, pi->obj);
         pd->page_infos = eina_list_append(pd->page_infos, pi);
      }
 
@@ -212,11 +213,12 @@ _move_cb(void *data, const Efl_Event *ev)
 EOLIAN static void
 _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
                                                      Efl_Page_Transition_Scroll_Data *pd,
-                                                     Eo *pager)
+                                                     Eo *pager,
+                                                     Efl_Canvas_Group *group)
 {
    EFL_PAGE_TRANSITION_DATA_GET(obj, spd);
 
-   efl_page_transition_bind(efl_super(obj, MY_CLASS), pager);
+   efl_page_transition_bind(efl_super(obj, MY_CLASS), pager, group);
 
    efl_event_callback_add(spd->pager.obj, EFL_GFX_EVENT_RESIZE, _resize_cb, obj);
    efl_event_callback_add(spd->pager.obj, EFL_GFX_EVENT_MOVE, _move_cb, obj);
@@ -473,6 +475,7 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
           {
              pi = calloc(1, sizeof(*pi));
              pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
+             efl_canvas_group_member_add(spd->pager.group, pi->obj);
              pi->content_num = -1;
              pi->content = NULL;
              pi->geometry = eina_rectangle_new(0, 0, 0, 0);
@@ -489,6 +492,7 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
 
              pi = calloc(1, sizeof(*pi));
              pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
+             efl_canvas_group_member_add(spd->pager.group, pi->obj);
              pi->content_num = -1;
              pi->content = NULL;
              pi->geometry = eina_rectangle_new(0, 0, 0, 0);

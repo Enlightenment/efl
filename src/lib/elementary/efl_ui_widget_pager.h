@@ -11,6 +11,7 @@ typedef struct _Efl_Ui_Pager_Data
    Eina_List               *page_infos;
    Eina_List               *content_list;
 
+   Eo                      *page_root;
    Eo                      *event;
    Efl_Ui_Box              *idbox;
    Ecore_Animator          *animator;

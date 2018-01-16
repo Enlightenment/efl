@@ -6,6 +6,7 @@ class Efl.Page.Transition (Efl.Object)
          [[set object]]
          params {
             @in pager: Efl.Ui.Pager; [[pager object]]
+            @in group: Efl.Canvas.Group; [[a dummy object for layer adjustment]]
          }
       }
    }

@@ -8,6 +8,7 @@ struct _Efl_Page_Transition_Data
 {
    struct {
       Efl_Object           *obj;
+      Efl_Canvas_Group     *group;
       Evas_Coord            x, y, w, h;
    } pager;
 

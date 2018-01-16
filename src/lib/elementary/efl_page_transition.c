@@ -30,11 +30,13 @@ _efl_page_transition_padding_size_set(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_page_transition_bind(Eo *obj EINA_UNUSED,
                           Efl_Page_Transition_Data *pd,
-                          Eo *pager)
+                          Eo *pager,
+                          Efl_Canvas_Group *group)
 {
    EFL_UI_PAGER_DATA_GET(pager, ppd);
 
    pd->pager.obj = pager;
+   pd->pager.group = group;
 
    pd->pager.x = ppd->x;
    pd->pager.y = ppd->y;

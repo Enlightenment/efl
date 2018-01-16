@@ -1,0 +1,7 @@
+group { "efl/pager";
+   inherit: "elm/pager/base/default";
+}
+
+group { "efl/pager/indicator";
+   inherit: "elm/pager/indicator/default";
+}

@@ -238,6 +238,8 @@ _event_handler_create(Eo *obj, Efl_Ui_Pager_Data *pd)
    evas_object_color_set(pd->event, 0, 0, 0, 0);
    evas_object_repeat_events_set(pd->event, EINA_TRUE);
 
+   efl_content_set(efl_part(obj, "event"), pd->event);
+
    efl_event_callback_add(pd->event, EFL_EVENT_POINTER_DOWN,
                           _mouse_down_cb, obj);
    efl_event_callback_add(pd->event, EFL_EVENT_POINTER_UP,
@@ -260,9 +262,31 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->curr.page = 0;
    pd->curr.pos = 0.0;
 
-   _event_handler_create(obj, pd);
-
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   return obj;
+}
+
+EOLIAN static Eo *
+_efl_ui_pager_efl_object_finalize(Eo *obj,
+                                  Efl_Ui_Pager_Data *pd)
+{
+   Efl_Ui_Theme_Apply theme_apply;
+   Eo *page_root;
+
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+
+   theme_apply = efl_ui_layout_theme_set(obj, "pager", "base",
+                                         efl_ui_widget_style_get(obj));
+
+   if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
+     CRI("Failed to set layout!");
+
+   page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
+   pd->page_root = page_root;
+   efl_content_set(efl_part(obj, "page_root"), page_root);
+
+   _event_handler_create(obj, pd);
 
    return obj;
 }
@@ -281,9 +305,6 @@ _efl_ui_pager_efl_gfx_size_set(Eo *obj,
 
    pd->w = sz.w;
    pd->h = sz.h;
-
-   efl_gfx_size_set(pd->event, sz);
-   efl_gfx_size_set(pd->idbox, EINA_SIZE2D(sz.w, 50));
 }
 
 EOLIAN static void
@@ -300,9 +321,6 @@ _efl_ui_pager_efl_gfx_position_set(Eo *obj,
 
    pd->x = pos.x;
    pd->y = pos.y;
-
-   efl_gfx_position_set(pd->event, pos);
-   efl_gfx_position_set(pd->idbox, pos);
 }
 
 EOLIAN static int
@@ -321,8 +339,6 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
    elm_widget_sub_object_add(obj, subobj);
 
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
-   efl_gfx_stack_above(pd->event, subobj);
-   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    pd->curr.page += 1;
@@ -347,8 +363,6 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
    elm_widget_sub_object_add(obj, subobj);
 
    pd->content_list = eina_list_append(pd->content_list, subobj);
-   efl_gfx_stack_above(pd->event, subobj);
-   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
 
@@ -376,8 +390,6 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
-   efl_gfx_stack_above(pd->event, subobj);
-   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
@@ -406,8 +418,6 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
-   efl_gfx_stack_above(pd->event, subobj);
-   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page > index) pd->curr.page += 1;
@@ -436,8 +446,6 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
 
    existing = eina_list_nth(pd->content_list, index);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
-   efl_gfx_stack_above(pd->event, subobj);
-   efl_gfx_stack_above(pd->idbox, subobj);
 
    pd->cnt += 1;
    if (pd->curr.page >= index) pd->curr.page += 1;
@@ -558,7 +566,7 @@ _efl_ui_pager_transition_set(Eo *obj EINA_UNUSED,
                              Efl_Ui_Pager_Data *pd,
                              Efl_Page_Transition *transition)
 {
-   efl_page_transition_bind(transition, obj);
+   efl_page_transition_bind(transition, obj, pd->page_root);
    pd->transition = transition;
 }
 
@@ -583,8 +591,7 @@ _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
    if (!pd->idbox)
      {
         pd->idbox = efl_add(EFL_UI_BOX_CLASS, obj);
-        efl_gfx_size_set(pd->idbox, EINA_SIZE2D(pd->w, 50));
-        efl_gfx_position_set(pd->idbox, EINA_POSITION2D(pd->x, pd->y));
+        efl_content_set(efl_part(obj, "indicator"), pd->idbox);
      }
 
    pd->indicator = efl_add(klass, pd->idbox);

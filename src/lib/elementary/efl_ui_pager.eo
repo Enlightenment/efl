@@ -5,7 +5,7 @@ enum Efl.Ui.Pager.Loop
    enabled
 }
 
-class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear)
+class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack.Linear)
 {
    [[Efl ui pager class]]
    event_prefix: efl_ui_pager;
@@ -57,6 +57,7 @@ class Efl.Ui.Pager (Elm.Widget, Efl.Pack.Linear)
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Gfx.size { set; }
       Efl.Gfx.position { set; }
       Efl.Container.content_count;
