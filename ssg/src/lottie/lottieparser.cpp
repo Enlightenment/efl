@@ -1093,6 +1093,7 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
     SGPointF inTangent;
     SGPointF outTangent;
     const char *interpolatorKey = nullptr;
+    bool hold = false;
      while (const char* key = NextObjectKey()) {
          if (0 == strcmp(key, "i")) {
              inTangent = parseInperpolatorPoint();
@@ -1126,6 +1127,9 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
              keyframe.mPathKeyFrame = true;
              getValue(keyframe.mOutTangent);
              continue;
+         } else if (0 == strcmp(key, "h")) {
+             hold = true;
+             continue;
          } else {
 #ifdef DEBUG_PARSER
              sgDebug<<"key frame property skipped = "<<key;
@@ -1137,6 +1141,13 @@ void LottieParser::parseKeyFrame(LottieAnimInfo<T> &obj)
      if (!obj.mKeyFrames.empty()) {
          // update the endFrame value of current keyframe
          obj.mKeyFrames.back().mEndFrame = keyframe.mStartFrame;
+     }
+
+     if (hold) {
+         interpolatorKey = "hold_interpolator";
+         inTangent = SGPointF();
+         outTangent = SGPointF();
+         keyframe.mEndValue = keyframe.mStartValue;
      }
 
      // Try to find the interpolator from cache
@@ -1293,6 +1304,20 @@ public:
     }
 };
 
+
+std::unique_ptr<LottieDrawable>
+createDrawableTree(std::shared_ptr<LottieObject> model)
+{
+      std::unique_ptr<LottieDrawable> obj(new LottieDrawable(model));
+      if (model->hasChildren()) {
+          LottieGroupObject *group = static_cast<LottieGroupObject *>(model.get());
+          for (auto child : group->mChildren) {
+              obj->mChildren.push_back(createDrawableTree(child));
+          }
+      }
+      return obj;
+}
+
 SGJson::SGJson(const char *data)
 {
     SGElapsedTimer t;
@@ -1318,6 +1343,8 @@ SGJson::SGJson(const char *data)
 //#endif
     sgDebug<<" ";
     sgCritical<<"Parsing time = "<<t.elapsed()<<" ms";
+    std::unique_ptr<LottieDrawable> drawable = createDrawableTree(comp);
+    mComposition = comp;
 }
 
 RAPIDJSON_DIAG_POP

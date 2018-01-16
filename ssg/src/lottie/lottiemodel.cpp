@@ -213,4 +213,3 @@ void LottieShape::process(bool closed)
     if (mShapeData)
         mShapeData.get()->process(closed);
 }
-

@@ -131,6 +131,7 @@ public:
     LottieObject(LottieObject::Type  type): mStatic(true), mType(type){}
     bool isStatic() {return mStatic;}
     void setStatic(bool value) {mStatic = value;}
+    virtual bool hasChildren() {return false;}
 public:
     bool                mStatic;
     LottieObject::Type  mType;
@@ -140,6 +141,7 @@ class LottieGroupObject: public LottieObject
 {
 public:
     LottieGroupObject(LottieObject::Type  type):LottieObject(type){}
+    virtual bool hasChildren() {return true;}
 public:
     std::vector<std::shared_ptr<LottieObject>> mChildren;
 };
@@ -350,6 +352,13 @@ public:
     std::shared_ptr<LottieObject>       mTransform;
 };
 
-
+class LottieDrawable
+{
+public:
+    LottieDrawable(std::shared_ptr<LottieObject> model):mModelData(model){}
+public:
+    std::shared_ptr<LottieObject>    mModelData;
+    std::vector<std::unique_ptr<LottieDrawable>> mChildren;
+};
 
 #endif // LOTTIEMODEL_H
