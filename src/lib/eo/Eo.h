@@ -1177,10 +1177,12 @@ typedef struct _Efl_Object_Op_Call_Data
 
 // cache OP id, get real fct and object data then do the call
 #define EFL_FUNC_COMMON_OP(Obj, Name, DefRet) \
-   static Efl_Object_Op ___op; /* static 0 by default */ \
+   static Efl_Object_Op ___op = 0; \
+   static unsigned int ___generation = 0; \
    Efl_Object_Op_Call_Data ___call; \
    _Eo_##Name##_func _func_;                                            \
-   if (EINA_UNLIKELY(___op == EFL_NOOP)) \
+   if (EINA_UNLIKELY((___op == EFL_NOOP) ||                       \
+                     (___generation != _efl_object_init_generation))) \
      goto __##Name##_op_create; /* yes a goto - see below */ \
    __##Name##_op_create_done: EINA_HOT; \
    if (EINA_UNLIKELY(!_efl_object_call_resolve( \
@@ -1199,6 +1201,7 @@ typedef struct _Efl_Object_Op_Call_Data
 #define EFL_FUNC_COMMON_OP_END(Obj, Name, DefRet, ErrorCase) \
 __##Name##_op_create: EINA_COLD; \
    ___op = _efl_object_op_api_id_get(EFL_FUNC_COMMON_OP_FUNC(Name), Obj, #Name, __FILE__, __LINE__); \
+   ___generation = _efl_object_init_generation; \
    if (EINA_UNLIKELY(___op == EFL_NOOP)) goto __##Name##_failed; \
    goto __##Name##_op_create_done; \
 __##Name##_failed: EINA_COLD; \
