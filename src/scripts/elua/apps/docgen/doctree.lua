@@ -1366,13 +1366,11 @@ M.Expression = Node:clone {
     end,
 
     eval_enum = function(self)
-        -- FIXME: unit
-        return self.expr:eval(eos:unit_get(), eolian.expression_mask.INT)
+        return self.expr:eval(eolian.expression_mask.INT)
     end,
 
     eval_type = function(self, tp)
-        -- FIXME: unit
-        return self.expr:eval_type(eos:unit_get(), tp.type)
+        return self.expr:eval_type(tp.type)
     end,
 
     serialize = function(self)

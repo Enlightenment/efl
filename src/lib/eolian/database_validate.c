@@ -308,6 +308,9 @@ _validate_param(const Eolian_Unit *src, Eolian_Function_Parameter *param)
    if (!_validate_type(src, param->type))
      return EINA_FALSE;
 
+   if (param->value && !_validate_expr(src, param->value, param->type, 0))
+     return EINA_FALSE;
+
    if (!_validate_doc(src, param->doc))
      return EINA_FALSE;
 

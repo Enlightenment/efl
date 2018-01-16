@@ -1077,7 +1077,7 @@ struct enum_value_def
       name = eolian_typedecl_enum_field_name_get(enum_field);
       c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
       auto exp = eolian_typedecl_enum_field_value_get(enum_field, EINA_TRUE);
-      value = eolian_expression_eval(unit, exp, EOLIAN_MASK_INT); // FIXME hardcoded int
+      value = eolian_expression_eval(exp, EOLIAN_MASK_INT); // FIXME hardcoded int
       documentation = eolian_typedecl_enum_field_documentation_get(enum_field);
   }
 };

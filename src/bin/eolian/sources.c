@@ -108,7 +108,7 @@ _append_defval(const Eolian_Unit *src, Eina_Strbuf *buf,
 {
    if (exp)
      {
-        Eolian_Value val = eolian_expression_eval_type(src, exp, tp);
+        Eolian_Value val = eolian_expression_eval_type(exp, tp);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         if (lit)
           {
@@ -474,7 +474,7 @@ _gen_func(const Eolian_Unit *src, const Eolian_Class *cl,
                }
              else if ((ftype != EOLIAN_PROP_SET) && dfv)
                {
-                  Eolian_Value val = eolian_expression_eval(src, dfv, EOLIAN_MASK_ALL);
+                  Eolian_Value val = eolian_expression_eval(dfv, EOLIAN_MASK_ALL);
                   if (val.type)
                     {
                        Eina_Stringshare *vals = eolian_expression_value_to_literal(&val);

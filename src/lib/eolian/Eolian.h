@@ -2086,7 +2086,6 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
 /*
  * @brief Evaluate an Eolian expression.
  *
- * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] mask the mask of allowed values (can combine with bitwise OR).
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -2096,12 +2095,11 @@ EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask m);
+EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
  * @brief Evaluate an Eolian expression given a type instead of a mask.
  *
- * @param[in] unit the unit to look in
  * @param[in] expr the expression.
  * @param[in] type the type the expression is assigned to.
  * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
@@ -2111,7 +2109,7 @@ EAPI Eolian_Value eolian_expression_eval(const Eolian_Unit *unit, const Eolian_E
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr, const Eolian_Type *type);
+EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type);
 
 /*
  * @brief Convert the result of expression evaluation to a literal as in how

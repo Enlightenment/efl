@@ -470,7 +470,7 @@ eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
         }
       case EOLIAN_EXPR_STRING:
         {
-           if (!(mask & EOLIAN_MASK_STRING))
+           if (!(mask & EOLIAN_MASK_STRING) && !(mask & EOLIAN_MASK_NULL))
              return expr_type_error(expr, EOLIAN_MASK_STRING, mask);
            *out = *expr;
            return EINA_TRUE;
