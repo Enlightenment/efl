@@ -204,8 +204,16 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    Eo *first_content, *second_content;
    Eina_Size2D min;
 
-   first_content = efl_content_get(efl_part(obj, "first"));
-   second_content = efl_content_get(efl_part(obj, "second"));
+   if (elm_widget_is_legacy(obj))
+     {
+        first_content = efl_content_get(efl_part(obj, "elm.swallow.left"));
+        second_content = efl_content_get(efl_part(obj, "elm.swallow.right"));
+     }
+   else
+     {
+        first_content = efl_content_get(efl_part(obj, "first"));
+        second_content = efl_content_get(efl_part(obj, "second"));
+     }
 
    if (first_content)
      {
