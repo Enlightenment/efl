@@ -365,11 +365,11 @@ _bounce_cb(void *data)
         unsigned long long tll, t0ll, tdll;
 
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
-        t0ll = (t0.tv_sec * 1000000000) + t0.tv_nsec;
-        tll = (t.tv_sec * 1000000000) + t.tv_nsec;
+        t0ll = (((unsigned long long)t0.tv_sec) * 1000000000ULL) + t0.tv_nsec;
+        tll = (((unsigned long long)t.tv_sec) * 1000000000ULL) + t.tv_nsec;
         tdll = tll - t0ll;
         printf("NS since 2 = %llu , %llu frames = %llu / frame\n",
-               tdll, frames, tdll / (unsigned long long)frames);
+               tdll, frames, tdll / frames);
 #endif
         if (getenv("ELM_TEST_AUTOBOUNCE")) elm_exit();
      }
