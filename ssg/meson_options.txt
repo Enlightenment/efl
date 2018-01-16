@@ -1,6 +1,6 @@
 option('test',
    type: 'boolean',
-   value: true,
+   value: false,
    description: 'enable unit test')
 
 option('example',
