@@ -3985,10 +3985,12 @@ seat_destroy(Comp_Seat *s)
 static void
 comp_gl_shutdown(Comp *c)
 {
-   if (c->glapi->evasglUnbindWaylandDisplay)
+   if (c->glapi && c->glapi->evasglUnbindWaylandDisplay)
      c->glapi->evasglUnbindWaylandDisplay(c->gl, c->display);
-   evas_gl_surface_destroy(c->gl, c->glsfc);
-   evas_gl_context_destroy(c->gl, c->glctx);
+   if (c->glsfc)
+     evas_gl_surface_destroy(c->gl, c->glsfc);
+   if (c->glctx)
+     evas_gl_context_destroy(c->gl, c->glctx);
    evas_gl_free(c->gl);
    evas_gl_config_free(c->glcfg);
    c->glsfc = NULL;
@@ -4001,13 +4003,18 @@ static void
 comp_gl_init(Comp *c)
 {
    c->glctx = evas_gl_context_create(c->gl, NULL);
+   if (!c->glctx) goto end;
    c->glcfg = evas_gl_config_new();
+   if (!c->glcfg) goto end;
    c->glsfc = evas_gl_surface_create(c->gl, c->glcfg, 1, 1);
-   evas_gl_make_current(c->gl, c->glsfc, c->glctx);
+   if (!c->glsfc) goto end;
+   if (!evas_gl_make_current(c->gl, c->glsfc, c->glctx)) goto end;
    c->glapi = evas_gl_context_api_get(c->gl, c->glctx);
-   if ((!c->glapi->evasglBindWaylandDisplay) ||
-       (!c->glapi->evasglBindWaylandDisplay(c->gl, c->display)))
-     comp_gl_shutdown(c);
+   if (c->glapi->evasglBindWaylandDisplay &&
+       c->glapi->evasglBindWaylandDisplay(c->gl, c->display))
+     return;
+end:
+   comp_gl_shutdown(c);
 }
 
 static void
