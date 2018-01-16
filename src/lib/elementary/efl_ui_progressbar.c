@@ -635,6 +635,10 @@ _efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl
 /* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
+ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
+ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
+ELM_PART_CONTENT_DEFAULT_GET(efl_ui_progressbar, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
 ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_progressbar)
