@@ -10,9 +10,9 @@ _edje_part_invalid_call(Eo *proxy, const char *function)
 {
    PROXY_DATA_GET(proxy, pd);
 
-   // FIXME: Add if (!optional)
-   WRN("No such part '%s' in group '%s' in call to %s().",
+   WRN("No such part '%s' in group '%s' in call to %s(). Ignored.",
        pd->part, pd->ed ? pd->ed->group : NULL, function);
+   efl_event_callback_call(pd->obj, EFL_LAYOUT_EVENT_PART_INVALID, (void *) pd->part);
 }
 
 #pragma GCC diagnostic push

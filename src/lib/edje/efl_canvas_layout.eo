@@ -10,6 +10,7 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
 {
    [[Edje object class]]
    legacy_prefix: edje_object;
+   event_prefix: efl_layout;
    data: Edje;
    methods {
       @property animation {
@@ -89,6 +90,10 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
             device: Efl.Input.Device; [[The seat device]]
          }
       }
+   }
+   events {
+      part,invalid @beta: string; [[Emitted when trying to use an invalid part.
+                                    The value passed is the part name.]]
    }
    implements {
       Efl.Gfx.visible { set; }
