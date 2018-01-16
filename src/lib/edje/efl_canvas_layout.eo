@@ -102,6 +102,7 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Gfx.Color_Class.color_class_description { get; }
       Efl.Gfx.Color_Class.color_class_del;
       Efl.Gfx.Color_Class.color_class_clear;
+      Efl.Gfx.Color_Class.color_class_code { get; set; }
       Efl.Gfx.Text_Class.text_class { get; set; }
       Efl.Gfx.Text_Class.text_class_del;
       Efl.Gfx.Size_Class.size_class { get; set; }

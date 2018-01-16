@@ -4,6 +4,8 @@
 #include "../evas/canvas/evas_line.eo.h"
 #include "../evas/canvas/evas_text.eo.h"
 
+#include "../efl/interfaces/efl_gfx_color_internal.h"
+
 typedef struct _Edje_Box_Layout Edje_Box_Layout;
 struct _Edje_Box_Layout
 {
@@ -996,6 +998,29 @@ _efl_canvas_layout_efl_gfx_color_class_color_class_clear(Eo *obj EINA_UNUSED, Ed
         _edje_emit(ed, "color_class,del", color_class);
         free(color_class);
      }
+}
+
+EOLIAN void
+_efl_canvas_layout_efl_gfx_color_class_color_class_code_set(Eo *obj, Edje *pd EINA_UNUSED, const char *color_class,
+                                                            Efl_Gfx_Color_Class_Layer layer, const char *colorcode)
+{
+   int len;
+   unsigned char r, g, b, a;
+
+   len = _gfx_color_format_clean_param(colorcode);
+
+   _gfx_color_format_color_parse(colorcode, len, &r, &g, &b, &a);
+   efl_gfx_color_class_set(obj, color_class, layer, r, g, b, a);
+}
+
+EOLIAN const char *
+_efl_canvas_layout_efl_gfx_color_class_color_class_code_get(Eo *obj, Edje *pd EINA_UNUSED, const char *color_class,
+                                                            Efl_Gfx_Color_Class_Layer layer)
+{
+   int r, g, b, a;
+
+   efl_gfx_color_class_get(obj, color_class, layer, &r, &g, &b, &a);
+   return eina_slstr_printf("#%02X%02X%02X%02X", r, g, b, a);
 }
 
 typedef struct _Edje_File_Color_Class_Iterator Edje_File_Color_Class_Iterator;

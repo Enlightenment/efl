@@ -1,5 +1,23 @@
 #include "efl_gfx_color_internal.h"
 
+EAPI int
+_gfx_color_format_clean_param(Eina_Tmpstr *s)
+{
+   Eina_Tmpstr *ss;
+   char *ds;
+   int len = 0;
+
+   ds = (char*) s;
+   for (ss = s; *ss; ss++, ds++, len++)
+     {
+        if ((*ss == '\\') && *(ss + 1)) ss++;
+        if (ds != ss) *ds = *ss;
+     }
+   *ds = 0;
+
+   return len;
+}
+
 static int
 _hex_string_get(char ch, Eina_Bool *ok)
 {
@@ -25,7 +43,7 @@ _hex_string_get(char ch, Eina_Bool *ok)
  * @param[out] b The Blue value - NOT NULL.
  * @param[out] a The Alpha value - NOT NULL.
  */
-Eina_Bool
+EAPI Eina_Bool
 _gfx_color_format_color_parse(const char *str, int slen,
                               unsigned char *r, unsigned char *g,
                               unsigned char *b, unsigned char *a)
