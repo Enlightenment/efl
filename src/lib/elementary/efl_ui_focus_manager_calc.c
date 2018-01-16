@@ -1552,7 +1552,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    pd->focus_stack = eina_list_remove(pd->focus_stack, node);
    pd->focus_stack = eina_list_append(pd->focus_stack, node);
 
-   if (pd->redirect)
+   //unset redirect manager for the case that its a different one to the one we want
+   if (pd->redirect && pd->redirect != redirect_manager)
      {
         Efl_Ui_Focus_Manager *m = obj;
 
