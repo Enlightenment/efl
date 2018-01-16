@@ -439,7 +439,7 @@ typedef struct _Elm_Widget_Smart_Data
    } logical;
    struct {
       Efl_Ui_Focus_Manager *manager;
-      Efl_Ui_Focus_User *provider;
+      Efl_Ui_Focus_Object *provider;
    } manager;
 
    Eina_Bool                     scroll_x_locked : 1;

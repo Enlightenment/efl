@@ -59,7 +59,7 @@ _efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_efl_ui_focus_user_focus_manager_get(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
+_efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
    return elm_widget_top_get(obj);
 }

@@ -664,7 +664,7 @@ _elm_hover_efl_gfx_visible_set(Eo *obj, Elm_Hover_Data *pd, Eina_Bool vis)
      {
         _hov_show_do(obj);
         //we just set ourself as redirect in the next upper manager
-        pd->redirected = efl_ui_focus_user_focus_manager_get(pd->target);
+        pd->redirected = efl_ui_focus_object_focus_manager_get(pd->target);
         efl_ui_focus_manager_redirect_set(pd->redirected, obj);
      }
    else

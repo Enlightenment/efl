@@ -313,7 +313,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
    else if (parent)
      {
-        new = efl_ui_focus_user_focus_manager_get(parent);
+        new = efl_ui_focus_object_focus_manager_get(parent);
         provider = parent;
      }
 
@@ -322,13 +322,13 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         old = pd->manager.manager;
 
         if (pd->manager.provider)
-          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
 
         pd->manager.manager = new;
         pd->manager.provider = provider;
 
         if (pd->manager.provider)
-          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
      }
 
    return old;
@@ -541,13 +541,13 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    if (old_registered_parent != pd->focus.parent)
      {
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_USER_EVENT_LOGICAL_CHANGED, old_registered_parent);
+             EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, old_registered_parent);
      }
 
    if (old_registered_manager != pd->focus.manager)
      {
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, old_registered_manager);
+             EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, old_registered_manager);
      }
 
 }
@@ -5200,7 +5200,7 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    if (sd->manager.provider)
      {
-        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
         sd->manager.provider = NULL;
      }
    efl_access_attributes_clear(obj);
@@ -5494,13 +5494,13 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_widget_efl_ui_focus_user_focus_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_efl_ui_focus_object_focus_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.parent;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_widget_efl_ui_focus_user_focus_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_efl_ui_focus_object_focus_manager_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.manager;
 }

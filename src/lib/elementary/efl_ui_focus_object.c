@@ -28,4 +28,3 @@ _efl_ui_focus_object_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Object_Data *pd
 
 
 #include "efl_ui_focus_object.eo.c"
-#include "efl_ui_focus_user.eo.c"

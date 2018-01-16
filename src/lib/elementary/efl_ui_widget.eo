@@ -9,15 +9,15 @@ function Efl.Ui.Scrollable_On_Show_Region {
 struct Efl.Ui.Widget.Focus_State {
    [[All relevant fields needed for the current state of focus registeration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
-   parent : Efl.Ui.Focus.User; [[The parent the widget is using as logical parent]]
+   parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
 /* ATTENTION: Rename to Efl.Ui.Widget is imminent. */
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
-                        Efl.Access.Component, Efl.Ui.Focus.User, Efl.Part,
-                        Efl.Ui.Focus.Object, Efl.Ui.Base, Efl.Ui.Cursor,
-                        Efl.Ui.Translatable, Efl.Selection, Efl.Ui.Dnd)
+                        Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
+                        Efl.Ui.Base, Efl.Ui.Cursor, Efl.Ui.Translatable,
+                        Efl.Selection, Efl.Ui.Dnd)
 {
    [[Efl UI widget abstract class]]
    legacy_prefix: elm_widget;
@@ -598,8 +598,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       Efl.Access.parent { get; }
       Efl.Access.attributes { get; }
       Efl.Access.Component.focus_grab;
-      Efl.Ui.Focus.User.focus_manager { get; }
-      Efl.Ui.Focus.User.focus_parent { get; }
+      Efl.Ui.Focus.Object.focus_manager { get; }
+      Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.Base.mirrored { get; set; }

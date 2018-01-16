@@ -13,13 +13,13 @@ _focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_sub_main_efl_ui_focus_user_focus_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_focus_manager_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_manager");
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_sub_main_efl_ui_focus_user_focus_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focus_object_focus_parent_get(Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_parent");
 }
@@ -96,7 +96,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_composite_attach(focus_main, subm);
 
-   efl_event_callback_call(focus_main, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, NULL);
+   efl_event_callback_call(focus_main, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, NULL);
 
    efl_ui_focus_manager_calc_register_logical(manager, focus_main, root_manager, subm);
 

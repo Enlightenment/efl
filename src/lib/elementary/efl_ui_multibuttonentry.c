@@ -1677,7 +1677,7 @@ static void
 _legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_user_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
 }
 
 EOLIAN static Eo *
@@ -1689,7 +1689,7 @@ _efl_ui_multibuttonentry_efl_object_constructor(Eo *obj, Efl_Ui_Multibuttonentry
    efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
    //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_USER_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }

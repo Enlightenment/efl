@@ -86,12 +86,12 @@ _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
    EINA_SAFETY_ON_NULL_RETURN(pd->root);
 
    if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
-     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable));
+     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable));
 
    //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable) == obj);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_object_focus_manager_get(pd->root->focusable) == obj);
 
-   manager = efl_ui_focus_user_focus_manager_get(pd->root->focusable);
+   manager = efl_ui_focus_object_focus_manager_get(pd->root->focusable);
    if (manager)
      efl_ui_focus_manager_focus_set(manager, pd->root->focusable);
    else

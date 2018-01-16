@@ -136,12 +136,16 @@ extern EAPI double _efl_startup_time;
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
 
+//define focus manager earlier since focus object and manager is circular
+typedef Eo Efl_Ui_Focus_Manager;
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_user.eo.h>
+# include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>

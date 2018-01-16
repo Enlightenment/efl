@@ -1586,13 +1586,13 @@ elm_object_focus_get(const Evas_Object *obj)
    if (!elm_widget_is(obj))
      return evas_object_focus_get(obj);
 
-   m = efl_ui_focus_user_focus_manager_get(obj);
+   m = efl_ui_focus_object_focus_manager_get(obj);
 
    //no manager means not registered
    if (!m) return EINA_FALSE;
 
    //assertion: our redirect manager m is in the redirect chain
-   m = efl_ui_focus_user_focus_manager_get(obj);
+   m = efl_ui_focus_object_focus_manager_get(obj);
 
    //if obj is the redriect manager its kind of focused
    if (efl_ui_focus_manager_redirect_get(m) == obj) return EINA_TRUE;
@@ -1607,7 +1607,7 @@ elm_object_focus_get(const Evas_Object *obj)
      {
         if (focused_child == obj) return EINA_TRUE;
 
-        focused_child = efl_ui_focus_user_focus_parent_get(focused_child);
+        focused_child = efl_ui_focus_object_focus_parent_get(focused_child);
      }
 
    return efl_ui_focus_object_focus_get(obj);
@@ -1635,8 +1635,8 @@ elm_object_focus_set(Evas_Object *obj,
           efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
         else
           {
-             if (efl_ui_focus_manager_focus_get(efl_ui_focus_user_focus_manager_get(obj)) == obj)
-               efl_ui_focus_manager_pop_history_stack(efl_ui_focus_user_focus_manager_get(obj));
+             if (efl_ui_focus_manager_focus_get(efl_ui_focus_object_focus_manager_get(obj)) == obj)
+               efl_ui_focus_manager_pop_history_stack(efl_ui_focus_object_focus_manager_get(obj));
           }
      }
    else
