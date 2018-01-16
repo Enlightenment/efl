@@ -182,13 +182,21 @@ _efl_canvas_layout_efl_gfx_position_set(Eo *obj, Edje *ed, Eina_Position2D pos)
         ep = ed->table_parts[i];
         if ((ep->type == EDJE_RP_TYPE_TEXT) && (ep->typedata.text))
           {
-             evas_object_move(ep->object,
-                              ed->x + ep->x + ep->typedata.text->offset.x,
-                              ed->y + ep->y + ep->typedata.text->offset.y);
+             if (ep->object)
+               evas_object_move(ep->object,
+                                ed->x + ep->x + ep->typedata.text->offset.x,
+                                ed->y + ep->y + ep->typedata.text->offset.y);
+             else if (ep->type != EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+               WRN("No object for part '%s' in group '%s'",
+                   ep->part ? ep->part->name : "<invalid>", ed->group);
           }
         else
           {
-             evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
+             if (ep->object)
+               evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
+             else if (ep->type != EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
+               WRN("No object for part '%s' in group '%s'",
+                   ep->part ? ep->part->name : "<invalid>", ed->group);
              if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
                  (ep->typedata.swallow))
                {

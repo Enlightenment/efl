@@ -830,6 +830,13 @@ EAPI extern Eina_Bool _elm_legacy_add;
 #define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
    efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
 
+static inline Eo *
+elm_widget_resize_object_get(const Eo *obj)
+{
+   Elm_Widget_Smart_Data *wd = efl_data_scope_safe_get(obj, EFL_UI_WIDGET_CLASS);
+   return wd ? wd->resize_obj : NULL;
+}
+
 static inline Eina_Bool
 elm_widget_is_legacy(const Eo *obj)
 {

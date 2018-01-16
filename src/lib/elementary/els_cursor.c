@@ -212,6 +212,8 @@ _elm_cursor_set_hot_spots(Elm_Cursor *cur)
    Evas_Coord cx, cy, cw, ch, x, y, w, h;
    int prev_hot_x, prev_hot_y;
 
+   if (!cur->visible) return;
+
    prev_hot_x = cur->hot_x;
    prev_hot_y = cur->hot_y;
 

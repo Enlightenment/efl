@@ -3297,7 +3297,11 @@ _efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
    if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return NULL;
+   if (EINA_UNLIKELY(!rp))
+     {
+        WRN("No such part '%s' in group '%s'.", part, ed->group);
+        return NULL;
+     }
 
    if (rp->part->type == EDJE_PART_TYPE_BOX)
      return _edje_box_internal_proxy_get(obj, ed, rp);
