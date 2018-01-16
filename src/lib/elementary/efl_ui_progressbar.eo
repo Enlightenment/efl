@@ -1,6 +1,6 @@
 class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
-                          Efl.Ui.Direction, Efl.Access.Value,
-                          Efl.Text, Efl.Content)
+                          Efl.Ui.Direction, Efl.Access.Value, Efl.Ui.Translatable,
+                          Efl.Text, Efl.Content, Efl.Text.Markup)
 {
    [[Elementary progressbar class]]
    methods {
@@ -60,8 +60,10 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
       Efl.Part.part;
       Efl.Access.Value.value_and_text { get; }
       Efl.Text.text { get; set; }
+      Efl.Text.Markup.markup { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
+      Efl.Ui.Translatable.translatable_text { get; set; }
    }
    events {
       changed; [[Called when progressbar changed]]
