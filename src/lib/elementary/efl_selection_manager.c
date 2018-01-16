@@ -12,7 +12,7 @@
 
 #define MY_CLASS EFL_SELECTION_MANAGER_CLASS
 
-#define DEBUGON 1
+//#define DEBUGON 1
 #ifdef DEBUGON
 # define sel_debug(fmt, args...) fprintf(stderr, __FILE__":%s:%d : " fmt "\n", __FUNCTION__, __LINE__, ##args)
 #else
