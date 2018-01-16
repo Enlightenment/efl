@@ -1227,7 +1227,7 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
 
    if (sd->scrollable)
      {
-        if (disabled)
+        if (disabled && sd->callback_added)
           {
              evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down);
@@ -1237,8 +1237,10 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
                                             _on_mouse_up);
              evas_object_event_callback_del(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
                                             _event_mouse_up);
+
+             sd->callback_added = EINA_FALSE;
           }
-        else
+        else if (!disabled && !sd->callback_added)
           {
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down, sd);
@@ -1248,6 +1250,8 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
                                             _on_mouse_up, sd);
              evas_object_event_callback_add(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
                                             _event_mouse_up, obj);
+
+             sd->callback_added = EINA_TRUE;
           }
      }
 
@@ -1370,7 +1374,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
         elm_interface_scrollable_single_direction_set
               (obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
 
-        if (!elm_widget_disabled_get(obj))
+        if (!elm_widget_disabled_get(obj) && !sd->callback_added)
           {
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down, sd);
@@ -1380,6 +1384,8 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
                                             _on_mouse_up, sd);
              evas_object_event_callback_add(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
                                             _event_mouse_up, obj);
+
+             sd->callback_added = EINA_TRUE;
           }
 
      }
@@ -1387,11 +1393,16 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
      {
         elm_interface_scrollable_content_set(obj, NULL);
 
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down);
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move);
-        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up);
-        evas_object_event_callback_del(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
-                                       _event_mouse_up);
+        if (sd->callback_added)
+          {
+             evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down);
+             evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE, _on_mouse_move);
+             evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up);
+             evas_object_event_callback_del(sd->scr_event, EVAS_CALLBACK_MOUSE_UP,
+                                            _event_mouse_up);
+
+             sd->callback_added = EINA_FALSE;
+          }
 
         elm_widget_resize_object_set(obj, NULL);
         elm_widget_sub_object_add(obj, sd->scr_edje);
