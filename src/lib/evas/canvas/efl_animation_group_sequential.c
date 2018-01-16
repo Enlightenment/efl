@@ -1,94 +1,81 @@
 #include "efl_animation_group_sequential_private.h"
 
-EOLIAN static void
-_efl_animation_group_sequential_efl_animation_group_animation_add(Eo *eo_obj,
-                                                                  Efl_Animation_Group_Sequential_Data *pd EINA_UNUSED,
-                                                                  Efl_Animation *animation)
+#define MY_CLASS EFL_ANIMATION_GROUP_SEQUENTIAL_CLASS
+
+EOLIAN static double
+_efl_animation_group_sequential_efl_animation_animation_apply(Eo *eo_obj,
+                                                              void *_pd EINA_UNUSED,
+                                                              double progress,
+                                                              Efl_Canvas_Object *target)
 {
-   if (!animation) return;
+   double group_length, group_elapsed_time;
+   double anim_length, anim_duration, anim_start_delay, anim_progress, anim_play_time, anim_position;
+   double total_anim_elapsed_time = 0.0;
+   double temp;
+   int anim_repeated_count;
 
-   efl_animation_group_animation_add(efl_super(eo_obj, MY_CLASS), animation);
-}
+   progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
+   Eina_List *group_anim = efl_animation_group_animations_get(eo_obj);
+   if (!group_anim) return progress;
 
-EOLIAN static void
-_efl_animation_group_sequential_efl_animation_group_animation_del(Eo *eo_obj,
-                                                                  Efl_Animation_Group_Sequential_Data *pd EINA_UNUSED,
-                                                                  Efl_Animation *animation)
-{
-   if (!animation) return;
+   group_length = efl_playable_length_get(eo_obj);
+   group_elapsed_time = group_length * progress;
 
-   efl_animation_group_animation_del(efl_super(eo_obj, MY_CLASS), animation);
+   Eina_List *l;
+   Efl_Animation *anim;
+   EINA_LIST_FOREACH(group_anim, l, anim)
+     {
+        anim_start_delay = efl_animation_start_delay_get(anim);
+        anim_length = efl_playable_length_get(anim) + anim_start_delay;
+        anim_duration = efl_animation_duration_get(anim);
+
+        //Check whether this animation is playing.
+        temp = total_anim_elapsed_time + anim_length + anim_start_delay;
+        if (temp <= group_elapsed_time)
+          {
+             if (efl_animation_final_state_keep_get(anim) && (!FINAL_STATE_IS_REVERSE(anim)))
+               anim_progress = 1.0;
+             else
+               anim_progress = 0.0;
+             efl_animation_apply(anim, anim_progress, target);
+             total_anim_elapsed_time = temp;
+             continue;
+          }
+
+        anim_play_time = group_elapsed_time - total_anim_elapsed_time - anim_start_delay;
+        //TODO: check infinite repeat
+        anim_repeated_count = (int)(anim_play_time / anim_length);
+        anim_position = MAX(((anim_play_time - anim_duration * anim_repeated_count)), 0.0);
+        anim_progress = MIN((anim_position / anim_duration), 1.0);
+        if (FINAL_STATE_IS_REVERSE(anim))
+          anim_progress = 1.0 - anim_progress;
+        efl_animation_apply(anim, anim_progress, target);
+
+        break;
+     }
+
+   return progress;
 }
 
 EOLIAN static double
-_efl_animation_group_sequential_efl_animation_total_duration_get(Eo *eo_obj,
-                                                                 Efl_Animation_Group_Sequential_Data *pd EINA_UNUSED)
+_efl_animation_group_sequential_efl_animation_duration_get(Eo *eo_obj, void *_pd EINA_UNUSED)
 {
+   double total_duration = 0.0;
+   double child_total_duration;
+
    Eina_List *animations = efl_animation_group_animations_get(eo_obj);
    if (!animations) return 0.0;
 
-   double total_duration = 0.0;
    Eina_List *l;
    Efl_Animation *anim;
    EINA_LIST_FOREACH(animations, l, anim)
      {
-        double child_total_duration = efl_animation_total_duration_get(anim);
-
-        double start_delay = efl_animation_start_delay_get(anim);
-        if (start_delay > 0.0)
-          child_total_duration += start_delay;
-
-        int child_repeat_count = efl_animation_repeat_count_get(anim);
-        if (child_repeat_count > 0)
-          child_total_duration *= (child_repeat_count + 1);
-
+        child_total_duration = efl_playable_length_get(anim);
+        child_total_duration += efl_animation_start_delay_get(anim);
         total_duration += child_total_duration;
      }
+
    return total_duration;
-}
-
-EOLIAN static Efl_Animation_Object *
-_efl_animation_group_sequential_efl_animation_object_create(Eo *eo_obj,
-                                                            Efl_Animation_Group_Sequential_Data *pd EINA_UNUSED)
-{
-   Efl_Animation_Object_Group_Sequential *group_anim_obj
-      = efl_add(EFL_ANIMATION_OBJECT_GROUP_SEQUENTIAL_CLASS, NULL);
-
-   Eina_List *animations = efl_animation_group_animations_get(eo_obj);
-   Eina_List *l;
-   Efl_Animation *child_anim;
-   Efl_Animation_Object *child_anim_obj;
-
-   EINA_LIST_FOREACH(animations, l, child_anim)
-     {
-        child_anim_obj = efl_animation_object_create(child_anim);
-        efl_animation_object_group_object_add(group_anim_obj, child_anim_obj);
-     }
-
-   Efl_Canvas_Object *target = efl_animation_target_get(eo_obj);
-   if (target)
-     efl_animation_object_target_set(group_anim_obj, target);
-
-   Eina_Bool state_keep = efl_animation_final_state_keep_get(eo_obj);
-   efl_animation_object_final_state_keep_set(group_anim_obj, state_keep);
-
-   double duration = efl_animation_duration_get(eo_obj);
-   efl_animation_object_duration_set(group_anim_obj, duration);
-
-   double start_delay_time = efl_animation_start_delay_get(eo_obj);
-   efl_animation_object_start_delay_set(group_anim_obj, start_delay_time);
-
-   Efl_Animation_Object_Repeat_Mode repeat_mode =
-      (Efl_Animation_Object_Repeat_Mode)efl_animation_repeat_mode_get(eo_obj);
-   efl_animation_object_repeat_mode_set(group_anim_obj, repeat_mode);
-
-   int repeat_count = efl_animation_repeat_count_get(eo_obj);
-   efl_animation_object_repeat_count_set(group_anim_obj, repeat_count);
-
-   Efl_Interpolator *interpolator = efl_animation_interpolator_get(eo_obj);
-   efl_animation_object_interpolator_set(group_anim_obj, interpolator);
-
-   return group_anim_obj;
 }
 
 #include "efl_animation_group_sequential.eo.c"

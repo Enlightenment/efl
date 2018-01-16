@@ -1,0 +1,29 @@
+interface Efl.Playable
+{
+   [[Efl media playable interface]]
+   methods {
+        @property length {
+             [[Get the length of play for the media file.]]
+             get {
+             }
+             values {
+                  length: double; [[The length of the stream in seconds.]]
+             }
+        }
+        @property playable {
+             get {
+             }
+             values {
+                  playable: bool;
+             }
+        }
+        @property seekable {
+             [[Get whether the media file is seekable.]]
+             get {
+             }
+             values {
+                  seekable: bool; [[$true if seekable.]]
+             }
+        }
+   }
+}

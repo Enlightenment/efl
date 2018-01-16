@@ -3,13 +3,11 @@ import efl_animation_types;
 class Efl.Animation.Group.Parallel (Efl.Animation.Group)
 {
    [[Efl group parallel animation class]]
-   data: Efl_Animation_Group_Parallel_Data;
+   data: null;
    methods {
    }
    implements {
-      Efl.Animation.object_create;
-      Efl.Animation.Group.animation_add;
-      Efl.Animation.Group.animation_del;
-      Efl.Animation.total_duration { get; }
+      Efl.Animation.duration { get; }
+      Efl.Animation.animation_apply;
    }
 }

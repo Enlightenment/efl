@@ -2,9 +2,7 @@
 
 #include "evas_common_private.h"
 #include <Ecore.h>
-
-#define MY_CLASS EFL_ANIMATION_ROTATE_CLASS
-#define MY_CLASS_NAME efl_class_name_get(MY_CLASS)
+#include "efl_animation_private.h"
 
 #define EFL_ANIMATION_ROTATE_DATA_GET(o, pd) \
    Efl_Animation_Rotate_Data *pd = efl_data_scope_get(o, EFL_ANIMATION_ROTATE_CLASS)

@@ -135,4 +135,36 @@ EAPI void elm_video_play_position_set(Evas_Object *obj, double position);
  */
 EAPI double elm_video_play_position_get(const Evas_Object *obj);
 
+/**
+ * @brief Get whether the video actually playing.
+ * You should consider watching event on the object instead of
+ * polling the object state.
+ *
+ * @return @c true if the video is playing, @c false otherwise.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI Eina_Bool elm_video_is_playing_get(Evas_Object *obj);
+
+/**
+ * @brief Start playing a video.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_play(Evas_Object *obj);
+
+/**
+ * @brief Stop a video.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_stop(Evas_Object *obj);
+
+/**
+ * @brief Pause a video.
+ *
+ * @ingroup Elm_Video
+ */
+EAPI void elm_video_pause(Evas_Object *obj);
+
 #include "efl_ui_video.eo.legacy.h"

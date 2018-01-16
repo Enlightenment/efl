@@ -1,20 +1,9 @@
 import efl_animation_types;
 
-class Efl.Animation (Efl.Object)
+class Efl.Animation (Efl.Object, Efl.Playable)
 {
    [[Efl animation class]]
-   data: Efl_Animation_Data;
    methods {
-      @property target {
-         [[Target object property]]
-         set {
-         }
-         get {
-         }
-         values {
-            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
-         }
-      }
       @property final_state_keep {
          [[Keep final state property]]
          set {
@@ -22,7 +11,7 @@ class Efl.Animation (Efl.Object)
          get {
          }
          values {
-            keep_final_state: bool; [[$true to keep final state, $false otherwise.]]
+            keep: bool; [[$true to keep final state, $false otherwise.]]
          }
       }
       @property duration {
@@ -32,15 +21,7 @@ class Efl.Animation (Efl.Object)
          get {
          }
          values {
-            duration: double; [[Duration value.]]
-         }
-      }
-      @property total_duration {
-         [[Total duration property]]
-         get {
-         }
-         values {
-            total_duration: double; [[Total duration value.]]
+            sec: double; [[Duration value.]]
          }
       }
       @property repeat_mode {
@@ -70,7 +51,7 @@ class Efl.Animation (Efl.Object)
          get {
          }
          values {
-            delay_time: double; [[Delay time, in seconds, from when the animation starts until the animation is animated]]
+            sec: double; [[Delay time, in seconds, from when the animation starts until the animation is animated]]
          }
       }
       @property interpolator {
@@ -83,13 +64,17 @@ class Efl.Animation (Efl.Object)
             interpolator: Efl.Object; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
          }
       }
-      object_create {
-         [[Create object of the animation.]]
-         return: Efl.Animation.Object; [[Created object of the animation]]
+      animation_apply {
+         params {
+            @in progress: double;
+            @in target: Efl.Canvas.Object;
+         }
+         return: double; [[Final applied progress.]]
       }
    }
    implements {
-      Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Playable.length { get; }
+      Efl.Playable.seekable { get; }
+      Efl.Playable.playable { get; }
    }
 }
