@@ -2518,7 +2518,7 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_wl_selection_send(void *data, int type, void *event)
+_wl_selection_send(void *data, int type EINA_UNUSED, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
    char *buf;
@@ -3304,7 +3304,7 @@ _wl_dropable_data_handle(Sel_Manager_Selection *sel, Ecore_Wl2_Event_Offer_Data_
                             //for container
                             Efl_Object *it = NULL;
                             Evas_Coord x0 = 0, y0 = 0;
-                            Eina_Position2D pos, posret;
+                            Eina_Position2D pos, posret = {};
 
                             evas_object_geometry_get(dropable->obj, &x0, &y0, NULL, NULL);
                             pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + x0,
