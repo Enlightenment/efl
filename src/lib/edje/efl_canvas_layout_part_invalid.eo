@@ -1,0 +1,76 @@
+import edje_types;
+
+class Efl.Canvas.Layout.Part_Invalid (Efl.Canvas.Layout.Part, Efl.Content,
+                                      Efl.Pack.Linear, Efl.Ui.Direction,
+                                      Efl.Pack.Table, Efl.Text,
+                                      Efl.Text.Markup, Efl.Text.Cursor)
+{
+   [[Common class for part proxy objects for @Efl.Canvas.Layout.
+
+     As an @Efl.Part implementation class, all objects of this class are meant
+     to be used for one and only one function call. In pseudo-code, the use
+     of object of this type looks like the following:
+       rect = layout.part("somepart").geometry_get();
+
+     @since 1.20
+   ]]
+   data: null;
+   implements {
+      // Efl.Canvas.Layout.Part
+      Efl.Canvas.Layout.Part.state { get; }
+      Efl.Canvas.Layout.Part.part_type { get; }
+      Efl.Gfx.geometry { get; }
+      Efl.Ui.Drag.drag_value { set; get; }
+      Efl.Ui.Drag.drag_size { set; get; }
+      Efl.Ui.Drag.drag_dir { get; }
+      Efl.Ui.Drag.drag_step { set; get; }
+      Efl.Ui.Drag.drag_step_move;
+      Efl.Ui.Drag.drag_page { set; get; }
+      Efl.Ui.Drag.drag_page_move;
+      // Efl.Canvas.Layout.Part_Swallow & External
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      // Efl.Canvas.Layout.Part_Text
+      Efl.Text.text { set; get; }
+      Efl.Text.Markup.markup { get; set; }
+      Efl.Text.Cursor.cursor { get; }
+      Efl.Text.Cursor.cursor_paragraph_first;
+      Efl.Text.Cursor.cursor_paragraph_last;
+      Efl.Text.Cursor.cursor_position { set; get; }
+      Efl.Text.Cursor.cursor_coord_set;
+      Efl.Text.Cursor.cursor_line_char_first;
+      Efl.Text.Cursor.cursor_line_char_last;
+      Efl.Text.Cursor.cursor_char_next;
+      Efl.Text.Cursor.cursor_char_prev;
+      Efl.Text.Cursor.cursor_line_jump_by;
+      Efl.Text.Cursor.cursor_copy;
+      Efl.Text.Cursor.cursor_content { get; }
+      Efl.Text.Cursor.cursor_geometry { get; }
+      Efl.Text.Markup.cursor_markup_insert;
+      // Efl.Canvas.Layout.Part_Box
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Container.content_remove;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack.Linear.pack_begin;
+      Efl.Pack.Linear.pack_end;
+      Efl.Pack.Linear.pack_before;
+      Efl.Pack.Linear.pack_after;
+      Efl.Pack.Linear.pack_at;
+      Efl.Pack.Linear.pack_content_get;
+      Efl.Pack.Linear.pack_unpack_at;
+      Efl.Pack.Linear.pack_index_get;
+      Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
+      // Efl.Canvas.Layout.Part_Table
+      Efl.Pack.Table.pack_table;
+      Efl.Pack.Table.table_content_get;
+      Efl.Pack.Table.table_contents_get;
+      Efl.Pack.Table.table_position { get; }
+      Efl.Pack.Table.table_size { get; }
+      Efl.Pack.Table.table_columns { get; }
+      Efl.Pack.Table.table_rows { get; }
+   }
+}

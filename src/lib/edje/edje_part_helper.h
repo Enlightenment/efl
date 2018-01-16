@@ -1,5 +1,4 @@
 #include "edje_private.h"
-#include "efl_canvas_layout_part.eo.h"
 
 typedef struct _Efl_Canvas_Layout_Part_Data Efl_Canvas_Layout_Part_Data;
 
@@ -80,24 +79,22 @@ _ ## type ## _shutdown(void) \
 } \
 \
 Eo * \
-_edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp) \
+_edje_ ## type ## _internal_proxy_get(Edje_Object *obj EINA_UNUSED, Edje *ed, Edje_Real_Part *rp, const char *part) \
 { \
    Efl_Canvas_Layout_Part_Data *pd; \
    Eo *proxy = PROXY_STATIC_VAR(type); \
-   \
    pd = proxy ? efl_data_scope_get(proxy, EFL_CANVAS_LAYOUT_PART_CLASS) : NULL; \
    if (!pd) \
      { \
-        if (EINA_UNLIKELY(PROXY_STATIC_VAR(type) != NULL)) \
+        if (EINA_UNLIKELY(proxy != NULL)) \
           ERR("Found invalid handle for efl_part. Reset."); \
-        proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, rp->part->name)); \
-        goto end ; \
+        proxy = efl_add(KLASS, ed->obj, _edje_real_part_set(efl_added, ed, rp, part)); \
      } \
-   else PROXY_STATIC_VAR(type) = NULL; \
-   \
-   _edje_real_part_set(proxy, ed, rp, rp->part->name); \
-   \
-end: \
+   else \
+     { \
+        PROXY_STATIC_VAR(type) = NULL; \
+        _edje_real_part_set(proxy, ed, rp, part); \
+     } \
    __VA_ARGS__; \
    if (!no_del_cb) efl_del_intercept_set(proxy, _ ## type ## _del_cb); \
    efl_allow_parent_unref_set(proxy, 1); \

@@ -3297,26 +3297,28 @@ _efl_canvas_layout_efl_part_part(Eo *obj, Edje *ed, const char *part)
    if ((!ed) || (!part)) return NULL;
 
    rp = _edje_real_part_recursive_get(&ed, part);
-   if (EINA_UNLIKELY(!rp))
+   if (!rp)
      {
-        WRN("No such part '%s' in group '%s'.", part, ed->group);
-        return NULL;
+        // Note: This could be disabled if debug is not required.
+        static const Edje_Real_Part _invalid_part = {};
+        rp = (Edje_Real_Part *) &_invalid_part;
+        return _edje_invalid_internal_proxy_get(obj, ed, rp, part);
      }
 
    if (rp->part->type == EDJE_PART_TYPE_BOX)
-     return _edje_box_internal_proxy_get(obj, ed, rp);
+     return _edje_box_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TABLE)
-     return _edje_table_internal_proxy_get(obj, ed, rp);
+     return _edje_table_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_SWALLOW)
-     return _edje_swallow_internal_proxy_get(obj, ed, rp);
+     return _edje_swallow_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-     return _edje_external_internal_proxy_get(obj, ed, rp);
+     return _edje_external_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TEXT)
-      return _edje_text_internal_proxy_get(obj, ed, rp);
+     return _edje_text_internal_proxy_get(obj, ed, rp, rp->part->name);
    else if (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-      return _edje_text_internal_proxy_get(obj, ed, rp);
+     return _edje_text_internal_proxy_get(obj, ed, rp, rp->part->name);
    else
-     return _edje_other_internal_proxy_get(obj, ed, rp);
+     return _edje_other_internal_proxy_get(obj, ed, rp, rp->part->name);
 }
 
 EOLIAN Eina_Size2D

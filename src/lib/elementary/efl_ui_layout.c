@@ -2462,9 +2462,8 @@ _efl_ui_layout_efl_part_part(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, 
 
    if (!efl_layout_group_part_exist_get(wd->resize_obj, part))
      {
-        WRN("No such part '%s' in group '%s'",
-            part, elm_widget_theme_element_get(obj));
-        return NULL;
+        // edje part will handle the error message
+        return efl_part(wd->resize_obj, part);
      }
 
    type = efl_canvas_layout_part_type_get(efl_part(wd->resize_obj, part));
