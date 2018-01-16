@@ -1026,7 +1026,7 @@ class Implement(EolianBaseObject):
         return not self.is_property
 
 
-class Type(EolianBaseObject):  # OK  (1 TODO Unit*)
+class Type(EolianBaseObject):
     def __repr__(self):
         #  return "<eolian.Type '{0.full_name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
         return "<eolian.Type '{0.full_name}', type={0.type!s}>".format(self)
@@ -1059,11 +1059,9 @@ class Type(EolianBaseObject):  # OK  (1 TODO Unit*)
     def builtin_type(self):
         return Eolian_Type_Builtin_Type(lib.eolian_type_builtin_type_get(self._obj))
 
-    # TODO FIXME STRANGE API (need Eolian_Unit*)
     @cached_property
     def c_type(self):
-        #  return _str_to_py(lib.eolian_type_c_type_get(self._obj))
-        return 'FIXME'
+        return _str_to_py(lib.eolian_type_c_type_get(self._obj))
 
     @cached_property
     def typedecl(self):
@@ -1107,7 +1105,7 @@ class Type(EolianBaseObject):  # OK  (1 TODO Unit*)
         return bool(lib.eolian_type_is_ptr(self._obj))
 
 
-class Typedecl(EolianBaseObject):  # OK (1 TODO Unit*)
+class Typedecl(EolianBaseObject):
     def __repr__(self):
         return "<eolian.Typedecl '{0.full_name}', type={0.type!s}>".format(self)
 
@@ -1127,10 +1125,9 @@ class Typedecl(EolianBaseObject):  # OK (1 TODO Unit*)
     def type(self):
         return Eolian_Typedecl_Type(lib.eolian_typedecl_type_get(self._obj))
 
-    # TODO FIX THIS, need Eolian_Unit* param  ???
-    #  @cached_property
-    #  def c_type(self):
-        #  return _str_to_py(lib.eolian_typedecl_c_type_get(self._obj))
+    @cached_property
+    def c_type(self):
+        return _str_to_py(lib.eolian_typedecl_c_type_get(self._obj))
 
     @property
     def namespaces(self):

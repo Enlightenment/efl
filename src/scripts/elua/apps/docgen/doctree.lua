@@ -743,7 +743,7 @@ M.Type = Node:clone {
     end,
 
     c_type_get = function(self)
-        return self.type:c_type_get(eos:unit_get(), eolian.c_type_type.DEFAULT)
+        return self.type:c_type_get(eolian.c_type_type.DEFAULT)
     end,
 
     name_get = function(self)
@@ -906,8 +906,7 @@ M.Typedecl = Node:clone {
     end,
 
     c_type_get = function(self)
-        -- FIXME: unit
-        return self.typedecl:c_type_get(eos:unit_get())
+        return self.typedecl:c_type_get()
     end,
 
     name_get = function(self)

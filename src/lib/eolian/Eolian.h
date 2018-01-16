@@ -1827,7 +1827,6 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type declaration.
  * @return The C type name assuming @c tp is not NULL.
  *
@@ -1837,7 +1836,7 @@ EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Unit *unit, const Eolian_Typedecl *tp);
+EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the name of the given type declaration. Keep in mind that the
@@ -2024,7 +2023,6 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 /*
  * @brief Get the full C type name of the given type.
  *
- * @param[in] unit the unit to look in
  * @param[in] tp the type.
  * @param[in] ctype the context within which the C type string will be used.
  * @return The C type name assuming @c tp is not NULL.
@@ -2035,7 +2033,7 @@ EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Unit *unit, const Eolian_Type *tp, Eolian_C_Type_Type ctype);
+EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
 
 /*
  * @brief Get the name of the given type. For regular types, this is for

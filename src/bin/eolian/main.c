@@ -386,8 +386,8 @@ _write_source(const Eolian *eos, const Eolian_Unit *src, const char *ofname,
    Eina_Strbuf *buf = eina_strbuf_new();
 
    const Eolian_Class *cl = eolian_class_get_by_file(src, ifname);
-   eo_gen_types_source_gen(src, eolian_declarations_get_by_file(eos, ifname), buf);
-   eo_gen_source_gen(src, cl, buf);
+   eo_gen_types_source_gen(eolian_declarations_get_by_file(eos, ifname), buf);
+   eo_gen_source_gen(cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
      {
         if (_write_file(ofname, buf))
@@ -414,7 +414,7 @@ _write_impl(const Eolian_Unit *src, const char *ofname, const char *ifname)
    if (!_read_file(ofname, &buf))
      return EINA_FALSE;
 
-   eo_gen_impl_gen(src, cl, buf);
+   eo_gen_impl_gen(cl, buf);
    Eina_Bool ret = _write_file(ofname, buf);
    eina_strbuf_free(buf);
    return ret;
