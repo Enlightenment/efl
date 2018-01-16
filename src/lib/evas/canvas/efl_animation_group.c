@@ -23,7 +23,7 @@ _efl_animation_group_animation_add(Eo *eo_obj,
 EOLIAN static void
 _efl_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
                                    Efl_Animation_Group_Data *pd,
-                                   Efl_Animation*animation)
+                                   Efl_Animation *animation)
 {
    Eina_List *list;
    if (!animation) return;
@@ -36,7 +36,8 @@ _efl_animation_group_animation_del(Eo *eo_obj EINA_UNUSED,
      }
    else
      {
-        ERR("Animation(%p) is not in the group animation.");
+        ERR("Animation(%s@%p) is not in the group animation.",
+            efl_class_name_get(animation), animation);
      }
 }
 
@@ -117,7 +118,7 @@ _efl_animation_group_efl_object_destructor(Eo *eo_obj,
 {
    Efl_Animation *anim;
 
-   EINA_LIST_FREE(pd->animations, anim);
+   EINA_LIST_FREE(pd->animations, anim)
      efl_unref(anim);
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
