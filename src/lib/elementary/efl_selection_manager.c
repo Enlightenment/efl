@@ -882,7 +882,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                                  else
                                    {
                                       sel_debug("Drop on container");
-                                      Eina_Position2D pos, posret;
+                                      Eina_Position2D pos, posret = {0, 0};
                                       evas_object_geometry_get(dropable->obj, &pos.x, &pos.y, NULL, NULL);
                                       //get item
                                       pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + pos.x,
@@ -1490,7 +1490,7 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                }
              else
                {
-                  Eina_Position2D posret;
+                  Eina_Position2D posret = {0, 0};
                   Efl_Object *it = NULL;
 
                   if (dropable->item_func)
@@ -1563,7 +1563,7 @@ _x11_dnd_dropable_handle(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *d
                }
              else
                {
-                  Eina_Position2D posret;
+                  Eina_Position2D posret = {0, 0};
                   Efl_Object *it = NULL;
                   if (dropable->item_func)
                     it = dropable->item_func(dropable->item_func_data, dropable->obj,
@@ -1907,7 +1907,7 @@ found:
                   //for container
                   Efl_Object *it = NULL;
                   Evas_Coord x0 = 0, y0 = 0;
-                  Eina_Position2D pos, posret;
+                  Eina_Position2D pos, posret = {0, 0};
 
                   evas_object_geometry_get(dropable->obj, &x0, &y0, NULL, NULL);
                   pos = EINA_POSITION2D(seat_sel->saved_types->pos.x + x0,
@@ -4393,9 +4393,9 @@ _abort_drag(Evas_Object *obj EINA_UNUSED, Sel_Manager_Drag_Container *dc)
 }
 
 static void
-_cont_obj_mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
+_cont_obj_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   Sel_Manager_Drag_Container *dc = dc;
+   Sel_Manager_Drag_Container *dc = data;
    Evas_Event_Mouse_Move *ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
