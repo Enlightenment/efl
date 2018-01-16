@@ -566,11 +566,7 @@ composite_continue:
             file, line, func_name, op, main_klass->desc->name);
         goto err;
      }
-err_cache_op:
-   ERR("%s:%d: unable to resolve %s api func '%s' in class '%s'.",
-       file, line, (!is_obj ? "class" : "regular"),
-       func_name, klass->desc->name);
-   goto err;
+
 err_func_src:
    ERR("in %s:%d: you called a pure virtual func '%s' (%d) of class '%s'.",
        file, line, func_name, op, klass->desc->name);
