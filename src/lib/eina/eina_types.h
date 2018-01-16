@@ -184,6 +184,14 @@
 #  define EINA_PURE
 # endif
 
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+#  define EINA_HOT __attribute__ ((hot))
+#  define EINA_COLD __attribute__ ((cold))
+# else
+#  define EINA_HOT
+#  define EINA_COLD
+# endif
+
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
 #  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 3)
 #   define EINA_PRINTF(fmt, arg) __attribute__((__format__ (__gnu_printf__, fmt, arg)))

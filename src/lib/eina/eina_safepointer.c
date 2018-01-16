@@ -370,7 +370,7 @@ eina_safepointer_init(void)
 
    DBG("entry[Size, Align] = { %zu, %u }",
        sizeof (Eina_Memory_Entry), eina_mempool_alignof(sizeof (Eina_Memory_Entry)));
-   DBG("table[Size, Align] = { %zu, %u }\n",
+   DBG("table[Size, Align] = { %zu, %u }",
        sizeof (Eina_Memory_Table), eina_mempool_alignof(sizeof (Eina_Memory_Table)));
 
    return EINA_TRUE;
