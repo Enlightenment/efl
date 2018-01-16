@@ -292,9 +292,9 @@ _validate_expr(const Eolian_Unit *src, Eolian_Expression *expr,
 {
    Eolian_Value val;
    if (tp)
-     val = eolian_expression_eval_type(src, expr, tp);
+     val = database_expr_eval_type(src, expr, tp);
    else
-     val = eolian_expression_eval(src, expr, msk);
+     val = database_expr_eval(src, expr, msk);
 
    if (val.type == EOLIAN_EXPR_UNKNOWN)
      return EINA_FALSE;

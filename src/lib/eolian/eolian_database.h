@@ -296,10 +296,13 @@ struct _Eolian_Expression
       };
       struct
       {
-         Eolian_Unary_Operator unop;
+         union
+         {
+            Eolian_Unary_Operator unop;
+            Eolian_Value_Union value;
+         };
          Eolian_Expression *expr;
       };
-      Eolian_Value_Union value;
    };
    Eina_Bool weak_lhs :1;
    Eina_Bool weak_rhs :1;
@@ -347,8 +350,8 @@ Eina_Bool database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *t
 
 /* expressions */
 
-Eolian_Value database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr, Eolian_Expression_Mask mask);
-Eolian_Value database_expr_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr, const Eolian_Type *type);
+Eolian_Value database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr, Eolian_Expression_Mask mask);
+Eolian_Value database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr, const Eolian_Type *type);
 void database_expr_del(Eolian_Expression *expr);
 void database_expr_print(Eolian_Expression *expr);
 

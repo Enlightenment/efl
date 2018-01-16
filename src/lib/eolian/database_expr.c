@@ -183,11 +183,11 @@ promote(Eolian_Expression *a, Eolian_Expression *b)
 }
 
 static Eina_Bool eval_exp(const Eolian_Unit *unit,
-                          const Eolian_Expression *expr,
+                          Eolian_Expression *expr,
                           Eolian_Expression_Mask mask, Eolian_Expression *out);
 
 static Eina_Bool
-eval_unary(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_unary(const Eolian_Unit *unit, Eolian_Expression *expr,
            Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
    switch (expr->unop)
@@ -273,7 +273,7 @@ eval_unary(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 static Eina_Bool
-eval_promote_num(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_promote_num(const Eolian_Unit *unit, Eolian_Expression *expr,
                  Eolian_Expression *lhs, Eolian_Expression *rhs, int mask,
                  int emask)
 {
@@ -296,7 +296,7 @@ eval_promote_num(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 static Eina_Bool
-eval_binary(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_binary(const Eolian_Unit *unit, Eolian_Expression *expr,
             Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
 #define APPLY_CASE(id, expr, lhs, rhs, fnm, op) \
@@ -437,7 +437,7 @@ split_enum_name(const char *str, char **ename, char **memb)
 }
 
 static Eina_Bool
-eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
+eval_exp(const Eolian_Unit *unit, Eolian_Expression *expr,
          Eolian_Expression_Mask mask, Eolian_Expression *out)
 {
    switch (expr->type)
@@ -498,9 +498,16 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
         }
       case EOLIAN_EXPR_NAME:
         {
+           if (!unit)
+             {
+                if (!expr->expr)
+                  return expr_error(expr, "undefined value");
+                return eval_exp(NULL, expr->expr, mask, out);
+             }
+
            const Eolian_Variable *var = eolian_variable_constant_get_by_name
              (unit, expr->value.s);
-           const Eolian_Expression *exp = NULL;
+           Eolian_Expression *exp = NULL;
 
            if (!var)
              {
@@ -534,18 +541,19 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
                   }
 
                 fl = eolian_typedecl_enum_field_get(etpd, memb);
-                if (fl) exp = eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
+                if (fl) exp = (Eolian_Expression *)eolian_typedecl_enum_field_value_get(fl, EINA_TRUE);
                 free(fulln);
 
                 if (!exp)
                   return expr_error(expr, "invalid enum field");
              }
            else
-             exp = var->value;
+             exp = (Eolian_Expression *)var->value;
 
            if (!exp)
              return expr_error(expr, "undefined variable");
 
+           expr->expr = exp;
            return eval_exp(unit, exp, mask, out);
         }
       case EOLIAN_EXPR_UNARY:
@@ -561,7 +569,7 @@ eval_exp(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 Eolian_Value
-database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
+database_expr_eval(const Eolian_Unit *unit, Eolian_Expression *expr,
                    Eolian_Expression_Mask mask)
 {
    Eolian_Expression out;
@@ -577,7 +585,7 @@ database_expr_eval(const Eolian_Unit *unit, const Eolian_Expression *expr,
 }
 
 Eolian_Value
-database_expr_eval_type(const Eolian_Unit *unit, const Eolian_Expression *expr,
+database_expr_eval_type(const Eolian_Unit *unit, Eolian_Expression *expr,
                         const Eolian_Type *type)
 {
     Eolian_Value err;
