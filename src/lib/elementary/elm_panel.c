@@ -343,7 +343,7 @@ static void
 _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
 {
    ELM_PANEL_DATA_GET(obj, sd);
-   int x = 0, y = 0, cx, cy;
+   int x = 0, y = 0;
    Eina_Bool horizontal = EINA_FALSE;
 
    elm_widget_tree_unfocusable_set(obj, EINA_TRUE);
@@ -367,25 +367,6 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
            x = w * sd->content_size_ratio;
          horizontal = EINA_TRUE;
          break;
-     }
-
-   elm_interface_scrollable_content_pos_get(obj, &cx, &cy);
-
-   if ((x == cx) && (y == cy))
-     {
-        if (!sd->freeze)
-          {
-             if (horizontal)
-               elm_interface_scrollable_movement_block_set
-                  (EFL_UI_SCROLL_BLOCK_HORIZONTAL);
-             else
-               elm_interface_scrollable_movement_block_set
-                  (EFL_UI_SCROLL_BLOCK_VERTICAL);
-             sd->freeze = EINA_TRUE;
-             elm_layout_signal_emit(sd->scr_ly, "elm,state,content,hidden", "elm");
-          }
-
-        return;
      }
 
    if (anim)
