@@ -506,7 +506,7 @@ lib.eolian_typedecl_is_extern.restype = c_bool
 
 # EAPI Eina_Stringshare *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
 lib.eolian_typedecl_c_type_get.argtypes = [c_void_p,]
-lib.eolian_typedecl_c_type_get.restype = None
+lib.eolian_typedecl_c_type_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI Eina_Stringshare *eolian_typedecl_name_get(const Eolian_Typedecl *tp);
 lib.eolian_typedecl_name_get.argtypes = [c_void_p,]
@@ -573,7 +573,7 @@ lib.eolian_type_is_ptr.argtypes = [c_void_p,]
 lib.eolian_type_is_ptr.restype = c_bool
 
 # EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
-lib.eolian_type_c_type_get.argtypes = [c_void_p,]
+lib.eolian_type_c_type_get.argtypes = [c_void_p, c_int]
 lib.eolian_type_c_type_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI Eina_Stringshare *eolian_type_name_get(const Eolian_Type *tp);

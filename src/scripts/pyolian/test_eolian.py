@@ -410,6 +410,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsNone(td.function_pointer)  # TODO find a better test
         self.assertFalse(td.is_extern)
         self.assertEqual(len(list(td.enum_fields)), 3)
+        self.assertEqual(td.c_type, 'enum Efl_Net_Http_Version { v1_0 = 100, v1_1 = 101, v2_0 = 200 }')
 
     def test_typedecl_enum_field(self):
         td = state.typedecl_enum_get_by_name('Efl.Net.Http.Version')
@@ -433,6 +434,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertIsNone(td.function_pointer)  # TODO find a better test
         self.assertFalse(td.is_extern)
         self.assertEqual(len(list(td.struct_fields)), 4)
+        self.assertEqual(td.c_type, 'struct Efl_Gfx_Color32 { uint8_t r; uint8_t g; uint8_t b; uint8_t a; }')
 
     def test_typedecl_struct_field(self):
         td = state.typedecl_struct_get_by_name('Efl.Gfx.Color32')
@@ -450,6 +452,7 @@ class TestEolianTypedecl(unittest.TestCase):
         self.assertEqual(alias.full_name, 'Eina.Error')
         self.assertIsInstance(alias.aliased_base, eolian.Type)
         self.assertEqual(alias.aliased_base.name, 'int')
+        self.assertEqual(alias.c_type, 'typedef int Eina_Error')
 
 
 class TestEolianType(unittest.TestCase):
@@ -474,6 +477,10 @@ class TestEolianType(unittest.TestCase):
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)  # TODO find a better test
 
+        self.assertEqual(t.c_type_default, 'double')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'double')
+        self.assertEqual(t.c_type_return, 'double')
+
     def test_type_regular(self):
         cls = state.class_get_by_name('Efl.Gfx')
         func = cls.function_get_by_name('geometry')
@@ -489,6 +496,10 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.free_func, 'eina_rectangle_free')
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)
+
+        self.assertEqual(t.c_type_default, 'Eina_Rect')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'Eina_Rect')
+        self.assertEqual(t.c_type_return, 'Eina_Rect')
 
         td = t.typedecl
         self.assertIsInstance(td, eolian.Typedecl)
@@ -508,6 +519,10 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(list(t.namespaces), ['Efl'])
         self.assertEqual(t.free_func, 'efl_del')
         self.assertEqual(t, t.aliased_base)
+
+        self.assertEqual(t.c_type_default, 'Efl_Gfx *')  # TODO find a better test
+        self.assertEqual(t.c_type_param, 'Efl_Gfx *')
+        self.assertEqual(t.c_type_return, 'Efl_Gfx *')
 
         cls = t.class_
         self.assertIsInstance(cls, eolian.Class)
