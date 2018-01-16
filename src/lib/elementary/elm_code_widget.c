@@ -2250,6 +2250,9 @@ _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
    unsigned int i;
    Evas_Object *grid;
 
+   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+     return EFL_UI_THEME_APPLY_FAILED;
+
    edje = elm_layout_edje_get(obj);
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -2285,12 +2288,12 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    const char *fontname, *fontsize;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
    _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 
-   efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
