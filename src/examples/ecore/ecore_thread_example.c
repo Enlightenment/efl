@@ -3,7 +3,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <unistd.h>
 
 #include <Ecore.h>
@@ -91,13 +90,9 @@ _feedback_job(void *data EINA_UNUSED, Ecore_Thread *th)
    time_t t;
    int i, count;
    Feedback_Thread_Data *ftd = NULL;
-#ifdef _WIN32
-   HANDLE h;
-   WIN32_FIND_DATA fd;
-#else
-   DIR *dir;
-#endif
+   Eina_Iterator *it;
    App_Msg *msg;
+   char *name;
 
    count = (int)(uintptr_t)ecore_thread_global_data_find("count");
    for (i = 0; i < count; i++)
@@ -115,45 +110,26 @@ _feedback_job(void *data EINA_UNUSED, Ecore_Thread *th)
    if (!ftd)
      return;
 
-#ifdef _WIN32
-   h = FindFirstFile(ftd->base, &fd);
-   if (h == INVALID_HANDLE_VALUE)
+   it = eina_file_ls(ftd->base);
+   if (!it)
      goto the_end;
-#else
-   dir = opendir(ftd->base);
-   if (!dir)
-     goto the_end;
-#endif
 
    msg = calloc(1, sizeof(App_Msg));
 
    t = time(NULL);
-   while (time(NULL) < t + 2)
+   EINA_ITERATOR_FOREACH(it, name)
      {
-#ifdef _WIN32
-        if (strlen(fd.cFileName) >= 10)
-          msg->list = eina_list_append(msg->list,
-                                       strdup(fd.cFileName));
-        FindNextFile(h, &fd);
-#else
-        struct dirent entry, *result;
-
-        if (readdir_r(dir, &entry, &result))
-          break;
-        if (!result)
-          break;
-
-        if (strlen(result->d_name) >= 10)
-          msg->list = eina_list_append(msg->list,
-                                       strdup(result->d_name));
-#endif
+        if (time(NULL) >= (t + 2))
+          {
+             eina_stringshare_del(name);
+             break;
+          }
+        if (eina_stringshare_strlen(name) >= 10)
+          msg->list = eina_list_append(msg->list, strdup(name));
+        eina_stringshare_del(name);
      }
 
-#ifdef _WIN32
-   FindClose(h);
-#else
-   closedir(dir);
-#endif
+   eina_iterator_free(it);
    ecore_thread_feedback(th, msg);
 
 the_end:
@@ -350,17 +326,29 @@ main(int argc, char *argv[])
         ecore_thread_global_data_add("count", (void *)3, NULL, EINA_FALSE);
         ftd = calloc(1, sizeof(Feedback_Thread_Data));
         ftd->name = strdup("data0");
+#ifdef _WIN32
+        ftd->base = strdup("c:/windows/System32");
+#else
         ftd->base = strdup("/usr/bin");
+#endif
         eina_lock_new(&ftd->mutex);
         ecore_thread_global_data_add(ftd->name, ftd, NULL, EINA_TRUE);
         ftd = calloc(1, sizeof(Feedback_Thread_Data));
         ftd->name = strdup("data1");
+#ifdef _WIN32
+        ftd->base = strdup("c:/windows/Fonts");
+#else
         ftd->base = strdup("/usr/lib");
+#endif
         eina_lock_new(&ftd->mutex);
         ecore_thread_global_data_add(ftd->name, ftd, NULL, EINA_TRUE);
         ftd = calloc(1, sizeof(Feedback_Thread_Data));
         ftd->name = strdup("data2");
-        ftd->base = strdup("/usr/share");
+#ifdef _WIN32
+        ftd->base = strdup("c:/windows/Help");
+#else
+        ftd->base = strdup("/usr/lib");
+#endif
         eina_lock_new(&ftd->mutex);
         ecore_thread_global_data_add(ftd->name, ftd, NULL, EINA_TRUE);
      }
