@@ -2411,8 +2411,11 @@ comp_surface_smart_hide(Evas_Object *obj)
              if (!evas_object_visible_get(lcs->obj)) continue;
              if ((!lcs->shell.surface) || (!lcs->role)) continue;
              lcs->shell.activated = 1;
-             if (lcs->shell.popup && (!lcs->extracted))
-               evas_object_raise(lcs->obj);
+             if (lcs->shell.popup)
+               {
+                  if (!lcs->extracted)
+                    evas_object_raise(lcs->obj);
+               }
              else
                shell_surface_send_configure(lcs);
              return;
