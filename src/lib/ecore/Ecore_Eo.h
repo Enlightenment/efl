@@ -101,32 +101,6 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);
 
-/**
- * Sync with main loop and lock it out and begin a mainloop eo context
- * 
- * @result The number of time ecore_thread_main_loop_begin() has been called
- * in this thread. If not, it returns @c -1.
- * 
- * This function suspends the main loop in a safe state and then lets
- * use any EFL call you want after it returns as if it were running in the
- * main loop (except it's called from the calling thread). Be careful since
- * the main loop is blocked until you call efl_main_loop_release(). This is
- * the only sane way to achieve pseudo thread safety.
- *
- * Note that until the main loop is blocked, this function stalls until the
- * main loop comes to a safe point to be paused.
- */
-EAPI int efl_main_loop_steal(void);
-
-/* Release a main loop lock taken by efl_main_loop_steal()
- * 
- * @result The number of times efl_main_loop_release() needs to be called
- * before the main loop is unlocked again. @c -1 will be returned if you
- * are trying to unlock when no matching call to efl_main_loop_steal() was
- * made by this thread.
- */
-EAPI int efl_main_loop_release(void);
-
 typedef struct _Efl_Future_Composite_Progress Efl_Future_All_Progress;
 
 struct _Efl_Future_Composite_Progress

@@ -66,18 +66,6 @@ efl_main_loop_get(void)
    return efl_loop_main_get(EFL_LOOP_CLASS);
 }
 
-EAPI int
-efl_main_loop_steal(void)
-{
-   return ecore_thread_main_loop_begin();
-}
-
-EAPI int
-efl_main_loop_release(void)
-{
-   return ecore_thread_main_loop_end();
-}
-
 EOLIAN static void
 _efl_loop_iterate(Eo *obj, Efl_Loop_Data *pd)
 {
