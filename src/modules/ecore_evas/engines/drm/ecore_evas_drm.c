@@ -417,7 +417,7 @@ _drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_drm_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
+_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h)
 {
    Ecore_Drm2_Output *output;
    Eina_List *l;
