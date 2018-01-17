@@ -2390,9 +2390,6 @@ comp_surface_smart_del(Evas_Object *obj)
 {
    Comp_Surface *cs = evas_object_smart_data_get(obj);
 
-   if ((cs->c) && (cs->c->active_surface == cs))
-     cs->c->active_surface = NULL;
-
    array_clear(&cs->input_rects);
    array_clear(&cs->opaque_rects);
    eina_tiler_free(cs->opaque);
