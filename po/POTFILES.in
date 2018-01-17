@@ -49,6 +49,7 @@ src/bin/elementary/test_panes.c
 src/bin/elementary/test_photo.c
 src/bin/elementary/test_photocam.c
 src/bin/elementary/test_progressbar.c
+src/bin/elementary/test_ui_progressbar.c
 src/bin/elementary/test_radio.c
 src/bin/elementary/test_scaling.c
 src/bin/elementary/test_scroller.c

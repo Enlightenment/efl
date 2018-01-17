@@ -4,5 +4,6 @@ class Efl.Ui.Progressbar.Part (Efl.Ui.Layout.Part, Efl.Ui.Range)
    data: null;
    implements {
       Efl.Ui.Range.range_value { set; get; }
+      Efl.Ui.Range.range_min_max {get; set; }
    }
 }

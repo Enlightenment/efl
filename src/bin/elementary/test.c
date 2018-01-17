@@ -170,6 +170,7 @@ void test_win_state2(void *data, Evas_Object *obj, void *event_info);
 void test_win_stack(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar2(void *data, Evas_Object *obj, void *event_info);
+void test_ui_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector(void *data, Evas_Object *obj, void *event_info);
 void test_separator(void *data, Evas_Object *obj, void *event_info);
 void test_scroller(void *data, Evas_Object *obj, void *event_info);
@@ -1045,6 +1046,7 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Progressbar", test_ui_progressbar);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider", test_ui_slider);

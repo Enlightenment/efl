@@ -32,6 +32,9 @@ struct _Efl_Ui_Progressbar_Data
 
    Evas_Coord            size; /**< Width or height of progressbar */
    double                val; /**< Value of progressbar */
+   
+   double                val_min;
+   double                val_max;
 
    Eina_List            *progress_status; /**< The list of _Elm_Progress_Status. To save the progress value(in percentage) each part of given progress bar */
 
@@ -52,6 +55,7 @@ struct _Efl_Ui_Progress_Status
 {
    const char           *part_name;
    double                val;
+   double                val_min, val_max;
 };
 
 /**
