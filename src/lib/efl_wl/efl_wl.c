@@ -2490,7 +2490,10 @@ comp_surface_smart_hide(Evas_Object *obj)
              return;
           }
         if (!cs->parent->shell.popup)
-          pcs = cs->parent;
+          {
+             pcs = cs->parent;
+             if (!pcs->mapped) pcs = NULL;
+          }
      }
    if (cs->c->seats)
      comp_seats_redo_enter(cs->c, pcs);
