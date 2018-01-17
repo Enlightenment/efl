@@ -94,9 +94,9 @@ _animator_cb(void *data)
         pd->progress += vector;
 
         if (pd->progress > 1.0)
-          pd->progress = 1,0;
+          pd->progress = 1.0;
         else if (pd->progress < 0.0)
-          pd->progress = 0,0;
+          pd->progress = 0.0;
      }
    else
      {
