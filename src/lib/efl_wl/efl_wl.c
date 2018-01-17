@@ -5063,6 +5063,7 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
      }
    s->event_propagate = 0;
+   if (!s->ptr.in) return;
    s->ptr.in = 0;
    ecore_evas_cursor_device_unset(ecore_evas_ecore_evas_get(e), ev->dev);
    if (s->ptr.efl.obj)
