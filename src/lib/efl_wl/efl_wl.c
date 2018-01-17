@@ -1393,6 +1393,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
    Eina_List *l;
    Evas_Object *o;
    Comp_Buffer *buffer = NULL;
+   Eina_Bool newly_new = EINA_FALSE;
 
    if (state->attach)
      {
@@ -1416,6 +1417,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
              if (cs->shell.surface)
                {
                   cs->shell.new = 1;
+                  newly_new = EINA_TRUE;
                   shell_surface_reset(cs);
                }
           }
@@ -1440,7 +1442,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
      }
-   else if (cs->shell.new)
+   else if (cs->shell.new && (!newly_new))
      shell_surface_init(cs);
 
    state->attach = 0;
