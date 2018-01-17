@@ -296,12 +296,12 @@ _elm_theme_object_icon_set(Evas_Object *o,
 }
 
 Efl_Ui_Theme_Apply
-_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool is_legacy EINA_UNUSED)
+_elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool is_legacy)
 {
    Eina_File *file;
    char buf2[1024];
-//   const char *group_sep = "/";
-//   const char *style_sep = ":";
+   const char *group_sep = "/";
+   const char *style_sep = ":";
 
    if ((!clas) || !o) return EFL_UI_THEME_APPLY_FAILED;
    if (!th) th = &(theme_default);
