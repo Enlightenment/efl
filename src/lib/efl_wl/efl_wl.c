@@ -2398,7 +2398,7 @@ comp_surface_smart_show(Evas_Object *obj)
 static void
 comp_surface_smart_hide(Evas_Object *obj)
 {
-   Comp_Surface *lcs, *cs = evas_object_smart_data_get(obj);
+   Comp_Surface *pcs = NULL, *lcs, *cs = evas_object_smart_data_get(obj);
 
    evas_object_hide(cs->clip);
    cs->mapped = 0;
@@ -2426,9 +2426,11 @@ comp_surface_smart_hide(Evas_Object *obj)
                shell_surface_send_configure(lcs);
              return;
           }
+        if (!cs->parent->shell.popup)
+          pcs = cs->parent;
      }
    if (cs->c->seats)
-     comp_seats_redo_enter(cs->c, NULL);
+     comp_seats_redo_enter(cs->c, pcs);
 }
 
 static void
