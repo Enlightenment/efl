@@ -68,45 +68,13 @@ struct object_registration_abc
   }
 };
 
+#include <eolian_include_generated.js.hh>
+
 namespace {
 
 namespace _mpl {
 
 #include <eolian_js_bindings.js.hh>
-
-// struct efl_elementary_classes
-// {
-//   typedef efl::eo::js::list
-//   <efl::eo::js::class_object<efl::eo::js::name<'W', 'i', 'n'>, std::false_type>> type;
-// };
-
-// struct afl_elementary_classes
-// {
-//   typedef efl::eo::js::list
-//   <efl::eo::js::class_object<efl::eo::js::name<'W', 'i', 'n'>, std::false_type>> type;
-// };
-  
-// struct efl_namespaces
-// {
-//   typedef efl::eo::js::list
-//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'l', 'e', 'm', 'e', 'n', 't', 'a', 'r', 'y'>, std::false_type, efl_elementary_classes, efl::eo::js::empty>> type;
-// };
-
-// struct afl_namespaces
-// {
-//   typedef efl::eo::js::list
-//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'l', 'e', 'm', 'e', 'n', 't', 'a', 'r', 'y'>, std::false_type, afl_elementary_classes, efl::eo::js::empty>> type;
-// };
-  
-// struct global_namespaces
-// {
-//   typedef efl::eo::js::list
-//   <efl::eo::js::namespace_object<efl::eo::js::name<'E', 'f', 'l'>, std::false_type
-//                                  , efl::eo::js::empty, efl_namespaces>
-//    , efl::eo::js::namespace_object<efl::eo::js::name<'A', 'f', 'l'>, std::false_type
-//                                    , efl::eo::js::empty, afl_namespaces>
-//   > type;
-// };
 
 typedef efl::eo::js::namespace_object<efl::eo::js::name<>
                                       , _classes, _namespaces
@@ -135,7 +103,7 @@ struct found_item
   void operator()(efl::eo::js::namespace_object<Name, Classes, InnerNamespaces> const) const
   {
     typedef efl::eo::js::namespace_object<Name, Classes, InnerNamespaces> type;
-    std::cout << "returned namespace item" << std::endl;
+    std::cout << "returned namespace item " << typeid(typename type::name).name() << std::endl;
     if(is_registered<type>::yes)
     {
       std::cout << "Already registered" << std::endl;
@@ -159,7 +127,29 @@ struct found_item
   template <typename Name, typename Registration>
   void operator()(efl::eo::js::class_object<Name, Registration> const) const
   {
-    //std::cout << "returned class item" << std::endl;
+    typedef efl::eo::js::class_object<Name, Registration> type;
+    std::cout << "returned class item " << typeid(typename type::name).name() << std::endl;
+    if(is_registered<type>::yes)
+    {
+      std::cout << "Already registered" << std::endl;
+    }
+    else
+    {
+      std::cout << "Not registered yet" << std::endl;
+      is_registered<type>::yes = true;
+
+      auto registered = Registration{}(info.This(), info.GetIsolate());
+
+      v8::Isolate* isolate = info.GetIsolate();
+      info.This()->Set(::efl::eina::js::compatibility_new<v8::String>(isolate, name.data())
+                       , registered);
+      info.GetReturnValue().Set(registered);
+    }
+  }
+
+  void operator()(efl::eo::js::empty const) const
+  {
+    std::cout << "not found" << std::endl;
     // must register
   }
 };

@@ -84,6 +84,19 @@ get(infinite_tuple<T> const& tuple)
 {
   return tuple_element<N, infinite_tuple<T>>::get(tuple);
 }
+
+template <int N, typename T, typename Enable = typename std::enable_if<type_traits::is_tuple<T>::value>::type>
+typename tuple_element<N, T>::type&
+get(T& tuple)
+{
+  return tuple_element<N, T>::get(tuple);
+}
+template <int N, typename T, typename Enable = typename std::enable_if<type_traits::is_tuple<T>::value>::type>
+typename tuple_element<N, T const>::type&
+get(T const& tuple)
+{
+  return tuple_element<N, T const>::get(tuple);
+}
   
 }
 
@@ -141,19 +154,23 @@ lazy_offset_tuple<N + I, Tuple> pop_front_n(lazy_offset_tuple<N, Tuple> tuple, t
 template <typename Generator, typename OutputIterator, typename Attribute, typename Context>
 bool generate(Generator const& gen, OutputIterator sink, Attribute const& attribute, Context const& context
               , typename std::enable_if
-              <type_traits::is_explicit_tuple<Attribute>::value
+              <type_traits::is_tuple<Attribute>::value
               && !type_traits::accepts_tuple<Generator>::value
+              && !type_traits::accepts_specific_tuple<Generator, Attribute>::value
               && type_traits::attributes_needed<Generator>::value != 0
               >::type* = 0)
 {
+   using attributes::get;
+   using std::get;
    return gen.generate(sink, get<0>(attribute), context);
 }
 
 template <typename Generator, typename OutputIterator, typename Attribute, typename Context>
 bool generate(Generator const& gen, OutputIterator sink, Attribute const& attribute, Context const& context
               , typename std::enable_if
-              <type_traits::is_explicit_tuple<Attribute>::value
-              && type_traits::accepts_tuple<Generator>::value
+              <type_traits::is_tuple<Attribute>::value
+              && (type_traits::accepts_tuple<Generator>::value
+                  || type_traits::accepts_specific_tuple<Generator, Attribute>::value)
               && type_traits::attributes_needed<Generator>::value != 0
               >::type* = 0)
 {
@@ -173,13 +190,13 @@ bool generate(Generator const& gen, OutputIterator sink, Attribute const&
 template <typename Generator, typename OutputIterator, typename Attribute, typename Context>
 bool generate(Generator const& gen, OutputIterator sink, Attribute const& attribute, Context const& context
               , typename std::enable_if
-              <!type_traits::is_explicit_tuple<Attribute>::value
+              <!type_traits::is_tuple<Attribute>::value
               && type_traits::attributes_needed<Generator>::value != 0
               >::type* = 0)
 {
    return gen.generate(sink, attribute, context);
 }
-  
+
 } } } }
 
 #endif

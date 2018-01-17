@@ -9,6 +9,7 @@ namespace efl { namespace eolian { namespace grammar {
 template <typename Tuple, int...S>
 struct reorder_tuple
 {
+  static_assert(type_traits::is_tuple<Tuple>::value);
   Tuple* tuple;
 };
 
@@ -41,7 +42,7 @@ struct tuple_element<N, reorder_tuple<Tuple, S...>>
   template <int I>
   static type const& get_impl(reorder_tuple<Tuple, S...> const& t
                               , std::integral_constant<int, I>)
-  { using std::get; return get<index::value>(*t.tuple); }
+  { using std::get; using attributes::get; return get<index::value>(*t.tuple); }
   static type const& get(reorder_tuple<Tuple, S...> const& t)
   { return get_impl(t, index{}); }
 };
@@ -82,6 +83,8 @@ template <int...S, typename Tuple>
 struct is_explicit_tuple<reorder_tuple<Tuple, S...>> : std::true_type {};
 template <int...S, typename Tuple>
 struct is_tuple<reorder_tuple<Tuple, S...>> : std::true_type {};
+template <typename G, int...S>
+struct accepts_tuple<attribute_reorder_generator<G, S...>> : std::true_type {};
 }
       
 } } }

@@ -57,6 +57,9 @@ struct is_tuple<T volatile&> : is_tuple<T> {};
 
 template <typename T>
 struct is_tuple<T, typename std::enable_if<!std::is_const<T>::value && is_std_tuple<T>::value>::type> : std::true_type {};
+
+template <typename Generator, typename Tuple, typename Enable = void>
+struct accepts_specific_tuple : std::false_type {};
   
 } } } }
 

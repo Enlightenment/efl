@@ -56,14 +56,26 @@ bin_efl_js_eflv8js_LDADD = \
 
 endif
 
-ordered_generated_js_bindings = $(sort $(GENERATED_JS_BINDINGS))
-
 AM_V_EOLJS_LINK = $(am__v_EOLJS_LINK_@AM_V@)
 am__v_EOLJS_LINK_ = $(am__v_EOLJS_LINK_@AM_DEFAULT_V@)
 am__v_EOLJS__LINK_0 = @echo "  EOLJS_LINK  " $@;
 
-bindings/js/efl_js/eolian_js_bindings.js.hh: $(GENERATED_JS_BINDINGS:%.eo.js.cc=%.eo) $(_EOLIAN_JS_DEP)
-	$(AM_V_EOLJS_LINK)$(EOLIAN_JS) -l $(EOLIAN_FLAGS) -o $@ $(filter %.eo, $(^))
+$(elm_legacy_eolian_files:%.eo=%.eo.js.cc): %.eo.js.cc : %.eo $(_EOLIAN_JS_DEP)
+	$(AM_V_EOLJS)$(EOLIAN_JS) $(EOLIAN_FLAGS) -d -o $@ $<
+
+bindings/js/efl_js/eolian_include_generated.js.hh: $(GENERATED_JS_BINDINGS) $(elm_legacy_eolian_files:%.eo=%.eo.js.cc)
+	@echo @ECHO_E@ "" > $@
+	@for i in $(^); do echo "#include <$$i>" >> $@; done
+
+CLEANFILES += bindings/js/efl_js/eolian_js_bindings.js.hh
+
+bindings/js/efl_js/eolian_js_bindings.js.hh bindings/js/efl_js/eolian_js_bindings.js.hh.params: $(GENERATED_JS_BINDINGS:%.eo.js.cc=%.eo) $(_EOLIAN_JS_DEP)
+	echo > $@.params
+	for i in $(addprefix -l ,$(addprefix $(srcdir)/,$(elm_legacy_eolian_files))); do echo "$$i" >> $@.params; done
+	echo -o >> $@.params
+	echo $@ >> $@.params
+	for i in $(filter %.eo, $(^)); do echo "$$i" >> $@.params;done
+	$(AM_V_EOLJS_LINK)$(EOLIAN_JS) --link --params $@.params $(EOLIAN_FLAGS)
 
 CLEANFILES += bindings/js/efl_js/eolian_js_bindings.js.hh
 
@@ -147,7 +159,7 @@ bindings/js/eio_js/eio_js.cc \
 bindings/js/efl_js/efl_js.cc \
 bindings/js/ethumb_js/ethumb_js_client.cc
 
-bindings/js/efl_js/bindings_js_efl_js_libefl_js_la-efl_js.l$(OBJEXT): bindings/js/efl_js/eolian_js_bindings.js.hh
+bindings/js/efl_js/bindings_js_efl_js_libefl_js_la-efl_js.l$(OBJEXT): bindings/js/efl_js/eolian_js_bindings.js.hh bindings/js/efl_js/eolian_include_generated.js.hh
 
 bindings/js/efl_js/efl_js.cc $(bindings_js_efl_js_libefl_js_la_SOURCES): $(ecore_eolian_cxx_public_hh) $(ecore_eolian_cxx_public_impl_hh) $(eo_eolian_cxx_public_hh) $(eo_eolian_cxx_public_impl_hh) $(efl_eolian_cxx_public_hh) $(efl_eolian_cxx_public_impl_hh) lib/ecore/Ecore.eo.hh
 

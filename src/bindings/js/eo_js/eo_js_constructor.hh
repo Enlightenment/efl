@@ -17,6 +17,7 @@ namespace efl { namespace eo { namespace js {
 
 inline eina::js::compatibility_return_type constructor(eina::js::compatibility_callback_info_type args)
 {
+  std::cout << "constructor for Eo object" << std::endl;
   if(args.IsConstructCall())
     {
        std::size_t argc = args.Length();
@@ -34,6 +35,7 @@ inline eina::js::compatibility_return_type constructor(eina::js::compatibility_c
        // constructor with parent
        else if(argc == 1)
          {
+            std::cout << "Constructor has 1 param" << std::endl;
             auto arg_0 = args[0];
             v8::Local<v8::Object> obj_arg0;
             v8::Local<v8::Object> self = args.This();
@@ -42,12 +44,14 @@ inline eina::js::compatibility_return_type constructor(eina::js::compatibility_c
             if(arg_0->IsObject() && (obj_arg0 = arg_0->ToObject())->InternalFieldCount() == 1
                && (external = v8::External::Cast(*obj_arg0->GetInternalField(0)))) // parent
               {
+                 std::cout << "param is parent" << std::endl;
                  Eo* parent = static_cast<Eo*>(external->Value());
                  eo = _efl_add_internal_start(__FILE__, __LINE__, kls, parent, EINA_TRUE, EINA_TRUE);
                  self->SetInternalField(0, eina::js::compatibility_new<v8::External>(args.GetIsolate(), eo));
               }
-            else if(arg_0->IsObject() && (function = v8::Function::Cast(*obj_arg0->GetInternalField(0))))
+            else if((std::cout << "else" << std::endl),arg_0->IsObject() && (function = v8::Function::Cast(*arg_0)))
               {
+                 std::cout << "param is lambda" << std::endl;
                  eo = _efl_add_internal_start(__FILE__, __LINE__, kls, NULL, EINA_TRUE, EINA_TRUE);
                  self->SetInternalField(0, eina::js::compatibility_new<v8::External>(args.GetIsolate(), eo));
                  
@@ -62,6 +66,7 @@ inline eina::js::compatibility_return_type constructor(eina::js::compatibility_c
                 // TypeError
               }
             self->SetInternalField(0, eina::js::compatibility_new<v8::External>(args.GetIsolate(), _efl_add_end(eo, EINA_TRUE, EINA_TRUE)));
+            std::cout << "set internal field" << std::endl;
             return eina::js::compatibility_return();
          }
        // constructor with parent and lambda

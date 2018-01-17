@@ -9,10 +9,10 @@ inline void accessor_get(v8::Local<v8::Name> name, v8::PropertyCallbackInfo<v8::
   
 }
 
-inline v8::Local<v8::Object> create_namespace_object()
-{
+// inline v8::Local<v8::Object> create_namespace_object()
+// {
   
-}
+// }
 
       
 } } }

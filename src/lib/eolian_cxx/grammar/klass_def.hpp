@@ -747,6 +747,27 @@ struct tuple_element<2ul, function_def>
    static type const& get(function_def const& f) { return f.parameters; }
 };
 
+template <>
+struct tuple_element<0ul, function_def const>
+{
+   typedef type_def const type;
+   static type const& get(function_def const& f) { return f.return_type; }
+};
+
+template <>
+struct tuple_element<1ul, function_def const>
+{
+   typedef std::string const type;
+   static type const& get(function_def const& f) { return f.name; }
+};
+
+template <>
+struct tuple_element<2ul, function_def const>
+{
+   typedef std::vector<parameter_def> const type;
+   static type const& get(function_def const& f) { return f.parameters; }
+};
+
 // template <int N>
 // struct tuple_element<N, function_def const> : tuple_element<N, function_def> {};
 // template <int N>
@@ -1261,7 +1282,11 @@ namespace type_traits {
 template <>
 struct is_tuple<attributes::parameter_def> : std::true_type {};
 template <>
+struct is_tuple<attributes::function_def> : std::true_type {};
+template <>
 struct is_tuple<attributes::event_def> : std::true_type {};
+template <>
+struct is_tuple<attributes::klass_name> : std::true_type {};
   
 }
 

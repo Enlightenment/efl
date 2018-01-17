@@ -73,7 +73,7 @@ struct class_object
   typedef Name name;
   typedef Registration registration;
 };
-      
+
 template <typename NameLhs, typename NameRhs>
 struct name_less;
 
@@ -129,6 +129,29 @@ struct name_less_predicate
   {};
 };
 
+struct name_size_predicate
+{
+  template <typename A0, typename A1>
+  struct apply;
+
+  template <typename Name1, typename Name2, typename...Others1, typename...Others2>
+  struct apply<namespace_object<Name1, Others1...>, namespace_object<Name2, Others2...>>
+    : std::integral_constant<bool, (name_size<Name1>::value < name_size<Name2>::value)>
+  {};
+  template <typename Name1, typename Name2, typename...Others1, typename...Others2>
+  struct apply<class_object<Name1, Others1...>, class_object<Name2, Others2...>>
+    : std::integral_constant<bool, (name_size<Name1>::value < name_size<Name2>::value)>
+  {};
+  template <typename Name1, typename Name2, typename...Others1, typename...Others2>
+  struct apply<namespace_object<Name1, Others1...>, class_object<Name2, Others2...>>
+    : std::integral_constant<bool, (name_size<Name1>::value < name_size<Name2>::value)>
+  {};
+  template <typename Name1, typename Name2, typename...Others1, typename...Others2>
+  struct apply<class_object<Name1, Others1...>, namespace_object<Name2, Others2...>>
+    : std::integral_constant<bool, (name_size<Name1>::value < name_size<Name2>::value)>
+  {};
+};
+      
 template <typename A0, typename A1>
 struct pair
 {
@@ -143,22 +166,68 @@ struct map_op
   struct apply;
 
   template <typename A0>
-  struct apply<list<>, A0>
+  struct apply<list<>, A0
+               , typename std::enable_if
+               <
+                   (Index < name_size<typename A0::name>::value)
+               >::type
+               >
   {
     typedef list<pair<name_at_c<Index, typename A0::name>
                      , list<A0>>> type;
   };
 
+  // Ignore A0
+  template <typename A0>
+  struct apply<list<>, A0
+               , typename std::enable_if
+               <
+                   (Index >= name_size<typename A0::name>::value)
+               >::type
+               >
+  {
+    typedef list<> type;
+  };
+  
+  template <typename C, typename A0, typename Enable = void>
+  struct apply2;
+
   template <typename C, typename...Items, typename...Pairs, typename A0>
   struct apply<list<pair<C, list<Items...>>, Pairs...>, A0
-               , typename std::enable_if<(name_at_c<Index, typename A0::name>::value == C::value)>::type>
+               , typename std::enable_if
+               <
+                   (Index < name_size<typename A0::name>::value)
+               >::type>
+    : apply2<list<pair<C, list<Items...>>, Pairs...>, A0>
+  {};
+
+  // Ignore A0
+  template <typename C, typename...Items, typename...Pairs, typename A0>
+  struct apply<list<pair<C, list<Items...>>, Pairs...>, A0
+               , typename std::enable_if
+               <
+                   (Index >= name_size<typename A0::name>::value)
+               >::type>
+  {
+    typedef list<pair<C, list<Items...>>, Pairs...> type;
+  };
+  
+  template <typename C, typename...Items, typename...Pairs, typename A0>
+  struct apply2<list<pair<C, list<Items...>>, Pairs...>, A0
+               , typename std::enable_if
+               <
+                   (name_at_c<Index, typename A0::name>::value == C::value)
+               >::type>
   {
     typedef list<pair<C, list<A0, Items...>>, Pairs...> type;
   };
 
   template <typename C, typename List, typename...Pairs, typename A0>
-  struct apply<list<pair<C, List>, Pairs...>, A0
-               , typename std::enable_if<!(name_at_c<Index, typename A0::name>::value == C::value)>::type>
+  struct apply2<list<pair<C, List>, Pairs...>, A0
+               , typename std::enable_if
+               <
+                   !(name_at_c<Index, typename A0::name>::value == C::value)
+               >::type>
   {
     typedef list<pair<name_at_c<Index, typename A0::name>, list<A0>>, pair<C, List>, Pairs...> type;
   };
@@ -217,12 +286,32 @@ struct switch_case_call
       template <typename F>
       constexpr void operator()(eina::string_view string, F const f) const
       {
-        std::cout << "Found character " << C << std::endl;
+        std::cout << "Found character " << C << " size " << string.size() << std::endl;
         typedef typename list_find_if<Map, find_char_pair>::type type;
         typedef typename type::second objects;
-        typedef typename list_max<name_less_predicate, objects>::type max_type;
+        typedef typename list_max<name_size_predicate, objects>::type max_type;
+        typedef typename list_min<name_size_predicate, objects>::type min_type;
 
-        search_separate_switch_case<Index+1>(string, objects{}
+        static_assert(name_size<typename min_type::name>::value <=
+                      name_size<typename max_type::name>::value);
+        
+        if(string.size() < name_size<typename min_type::name>::value)
+          {
+            std::cout << "failed min size " <<  name_size<typename min_type::name>::value
+                      << " min is " << typeid(min_type).name() << " all "
+                      << typeid(objects).name() << std::endl;
+            f(empty{});
+            return;
+          }
+        
+        // hope for ellision
+        if(name_size<typename min_type::name>::value == Index+1)
+          {
+            if(string.size() == name_size<typename min_type::name>::value)
+                return f(min_type{});
+          }
+
+          search_separate_switch_case<Index+1>(string, objects{}
           , f
           , std::integral_constant<bool, (name_size<typename max_type::name>::value == Index+1)>{});
       }
@@ -251,6 +340,7 @@ void search_separate_switch_case(eina::string_view string, list<Objects...>
                                  , F const f
                                  , std::false_type)
 {
+  // typedef typename list_sort<name_less_predicate, list<Objects...>>::type sorted_list;
   typedef typename map_chars<Index, list<Objects...>>::type map;
   typedef typename create_switch<map>::type switch_type;
 

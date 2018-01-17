@@ -438,9 +438,11 @@ int main(int argc, char** argv)
   namespace format = eolian::js::format;
 
   std::vector<std::string> include_paths;
-  std::string out_file, in_file;
+  std::string out_file, in_file, params_file;
   std::vector<std::string> in_files;
   bool linking = false;
+  std::set<Eolian_Class const*> legacy_klasses;
+  bool dummy_generation = false;
 
   efl::eina::eina_init eina_init;
   struct eolian_init
@@ -453,49 +455,197 @@ int main(int argc, char** argv)
     {
        { "in",        required_argument, 0,  'I' },
        { "out-file",  required_argument, 0,  'o' },
+       { "legacy",    required_argument, 0,  'l' },
        { "version",   no_argument,       0,  'v' },
        { "help",      no_argument,       0,  'h' },
-       { "link",      no_argument,       0,  'l' },
+       { "link",      no_argument,       0,  'i' },
+       { "params",    required_argument, 0,  'p' },
+       { "dummy",     no_argument,       0,  'd' },
        { 0,           0,                 0,   0  }
     };
-   const char* options = "I:D:o:c:arvhl";
+   const char* options = "I:o:l:p:vhid";
 
-   // get command line options
-   int c, idx;
-   while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
+   Eolian* eolian = eolian_new();
+   Eolian_Unit* eolian_unit = static_cast<Eolian_Unit*>(static_cast<void*>(eolian));
+
+   auto cmd_options = [&] (char c)
      {
         if (c == 'I')
           {
-            include_paths.push_back(optarg);
-            std::cout << "-I" << optarg << std::endl;
+            if (!::eolian_directory_scan(eolian, optarg))
+              {
+                EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+                << "Couldn't load eolian from '" << optarg << "'.";
+              }
           }
         else if (c == 'o')
           {
             if(!out_file.empty())
               {
                 // _usage(argv[0]);
-                return 1;
+                exit(1);
               }
+            std::cout << "out file " << optarg << std::endl;
             out_file = optarg;
           }
         else if (c == 'h')
           {
              // _usage(argv[0]);
-            return 1;
+            exit(1);
           }
         else if (c == 'v')
           {
              // _print_version();
              // if (argc == 2) exit(EXIT_SUCCESS);
           }
-        else if(c == 'l')
+        else if(c == 'i')
           {
             linking = true;
           }
+        else if(c == 'l')
+          {
+            // legacy  file
+            // std::cout << "legacy file|" << optarg << '|' << std::endl;
+            // if (!::eolian_file_parse(eolian, optarg))
+            //   {
+            //      std::cout
+            //        << "Failed parsing: " << optarg << "." << std::endl;
+            //      EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+            //        << "Failed parsing: " << optarg << ".";
+            //      assert(false && "Error parsing input file");
+            //   }
+            // char* dup = strdup(optarg);
+            // char *bn = basename(dup);
+            
+            // Eolian_Class const* klass = ::eolian_class_get_by_file(eolian_unit, bn);
+
+            // free(dup);
+            
+            // std::cout << " class pointer " << klass << std::endl;
+            // assert(!!klass);
+            // legacy_klasses.insert(klass);
+          }
+        else if(c == 'p')
+          {
+            params_file = optarg;
+          }
+        else if(c == 'd')
+          {
+            dummy_generation = true;
+          }
+     };
+   
+   // get command line options
+   int c, idx = 0;
+   while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
+     {
+       std::cout << "reading, idx " << idx << " optind " << optind << std::endl;
+       std::cout << "char " << (char)c << std::endl;
+       cmd_options(c);
      }
 
-   std::cout << "optind " << optind << " argc " << argc << std::endl;
+     if(!linking)
+       {
+         if (optind == argc-1)
+           {
+             in_file = argv[optind];
+           }
+       }
+     else
+       {
+         if (!::eolian_all_eot_files_parse(eolian))
+           {
+             EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+               << "Eolian failed parsing eot files";
+             assert(false && "Error parsing eot files");
+           }
+         int optional_index = optind;
+         while (optional_index != argc)
+           {
+             std::cout << "opening " << argv[optional_index] << std::endl;
+             if (!::eolian_file_parse(eolian, argv[optional_index]))
+               {
+                 std::cout
+                   << "Failed parsing: " << argv[optional_index] << "." << std::endl;
+                 EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+                   << "Failed parsing: " << argv[optional_index] << ".";
+                 assert(false && "Error parsing input file");
+               }
+             in_files.push_back(argv[optind]);
+             optional_index++;
+           }
+       }
+   
+   if(!params_file.empty())
+     {
+       std::ifstream param_stream(params_file.c_str());
+       if(param_stream.is_open())
+         {
+           std::vector<std::string> lines{argv[0]};
+           std::string line;
+           while(std::getline(param_stream, line))
+             {
+               std::cout << "line read " << line << std::endl;
+               if(!line.empty())
+                 lines.push_back(line);
+             }
 
+           std::vector<const char*> more_args(lines.size());
+           std::size_t i = 0;
+           for(auto&& l : lines)
+             {
+               more_args[i] = l.c_str();
+               ++i;
+             }
+           optind = 1;
+           idx = 0;
+           while ( (c = getopt_long(lines.size(), const_cast<char*const*>(&more_args[0]), options, long_options, &idx)) != -1)
+             {
+               std::cout << "reading, idx " << idx << " optind " << optind << std::endl;
+               std::cout << "char " << (char)c << std::endl;
+               cmd_options(c);
+             }
+           std::cout << "while finished idx " << idx << " optind " << optind << std::endl;
+
+           if(!linking)
+             {
+               if (optind == more_args.size()-1)
+                 {
+                   in_file = lines[optind];
+                 }
+             }
+           else
+             {
+               if (!::eolian_all_eot_files_parse(eolian))
+                 {
+                   EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+                     << "Eolian failed parsing eot files";
+                   assert(false && "Error parsing eot files");
+                 }
+               int optional_index = optind;
+               std::cout << "optional_index " << optional_index << std::endl;
+               assert(optional_index <= more_args.size());
+               while (optional_index != more_args.size())
+                 {
+                   std::cout << "opening in params " << lines[optional_index] << std::endl;
+                   if (!::eolian_file_parse(eolian, lines[optional_index].c_str()))
+                     {
+                       std::cout
+                         << "Failed parsing: " << lines[optional_index] << "." << std::endl;
+                       EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+                         << "Failed parsing: " << lines[optional_index] << ".";
+                       assert(false && "Error parsing input file");
+                     }
+                   in_files.push_back(lines[optional_index]);
+                   optional_index++;
+                 }
+             }
+
+         }
+     }
+
+   std::cout << "going on" << std::endl;
+   
    std::ofstream os (out_file.c_str());
    if(!os.is_open())
      {
@@ -507,27 +657,7 @@ int main(int argc, char** argv)
 
    if(!linking)
    {
-     Eolian* eolian = eolian_new();
-     Eolian_Unit* eolian_unit = static_cast<Eolian_Unit*>(static_cast<void*>(eolian));
-
-     if (optind == argc-1)
-       {
-         in_file = argv[optind];
-       }
-     
      // Add include paths to eolian library
-     for(auto src : include_paths)
-       if (!::eolian_directory_scan(eolian, src.c_str()))
-         {
-           EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
-             << "Couldn't load eolian from '" << src << "'.";
-         }
-     if (!::eolian_all_eot_files_parse(eolian))
-       {
-         EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
-           << "Eolian failed parsing eot files";
-         assert(false && "Error parsing eot files");
-       }
      if (!::eolian_file_parse(eolian, in_file.c_str()))
        {
          EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
@@ -557,22 +687,18 @@ int main(int argc, char** argv)
      // probably not eot file
      if(klass)
        {
-         os << "#if !defined(EFL_JAVASCRIPT_EOLIAN_GENERATE_REGISTER_STRUCT)\n";
+         //os << "#if !defined(EFL_JAVASCRIPT_EOLIAN_GENERATE_REGISTER_STRUCT)\n";
          // function to iterate through all inheritance class
          std::function<void(Eolian_Class const*, std::function<void(Eolian_Class const*)>)>
            recurse_inherits
            = [&] (Eolian_Class const* klass, std::function<void(Eolian_Class const*)> function)
            {
-             for(efl::eina::iterator<const char> first ( ::eolian_class_inherits_get(klass))
-                   , last; first != last; ++first)
+             for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass))
+                   , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
                {
-                 EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << &*first << std::endl;
-                 Eolian_Class const* base = ::eolian_class_get_by_name(eolian_unit, &*first);
-                 if(base)
-                   {
-                     function(base);
-                     recurse_inherits(base, function);
-                   }
+                 Eolian_Class const* base = &*inherit_iterator;
+                 function(base);
+                 recurse_inherits(base, function);
                }
            };
 
@@ -591,46 +717,70 @@ int main(int argc, char** argv)
          using efl::eolian::grammar::attributes::unused;
          using efl::eolian::grammar::context_null;
          efl::eolian::grammar::attributes::klass_def klass_def(klass, eolian_unit);
-         if (!eolian::js::grammar::class_registration.generate(iterator, klass_def, context_null{}))
+         using efl::eolian::grammar::lower_case;
+         using efl::eolian::grammar::string;
+         using efl::eolian::grammar::as_generator;
+         if(!dummy_generation)
            {
-             throw std::runtime_error("Failed to generate class");
+             context_null context;
+             
+             as_generator("namespace efl { namespace js { namespace binding { namespace {\n")
+               .generate(iterator, unused, context);
+             
+             {
+               for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass))
+                     , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
+                 {
+                   efl::eolian::grammar::attributes::klass_def klass_def
+                     ( &*inherit_iterator, eolian_unit);
+                   as_generator
+                     (
+                      "static void register_prototype_"
+                      << lower_case[*(string << "_")]
+                      << lower_case[string]
+                      << "(v8::Handle<v8::Object>, v8::Local<v8::ObjectTemplate>, v8::Isolate*);\n"
+                     ).generate(iterator, std::make_tuple(klass_def.namespaces, klass_def.cxx_name), context);
+                 }
+             }
+
+             if (!eolian::js::grammar::class_registration.generate(iterator, klass_def, context))
+               {
+                 throw std::runtime_error("Failed to generate class");
+               }
+
+             as_generator("} } } } // namespace efl { namespace js { namespace binding { namespace {\n\n")
+               .generate(iterator, unused, context);
+           }
+         else
+           {
+             as_generator
+               (
+                 "namespace efl { namespace js { namespace binding { namespace {\n"
+                 "static void register_prototype_"
+                 << lower_case[*(string << "_")]
+                 << lower_case[string]
+                 << "(v8::Handle<v8::Object>, v8::Local<v8::ObjectTemplate>, v8::Isolate*)\n"
+                    "{\n}\n"
+                    "} } } }\n\n"
+                ).generate(iterator, std::make_tuple(klass_def.namespaces, klass_def.cxx_name), context_null{});
            }
 
-         os << "#else\n";
+         //os << "#else\n";
          // if (!eolian::js::grammar::call_registration.generate(iterator, klass_def, context_null{}))
          // {
          //   throw std::runtime_error("Failed to generate class");
          // }
-         os << "#endif\n";
+         //os << "#endif\n";
        }
      }
    else
      {
-       Eolian* eolian = eolian_new();
-       Eolian_Unit* eolian_unit = static_cast<Eolian_Unit*>(static_cast<void*>(eolian));
-
-       for(auto src : include_paths)
-         if (!::eolian_directory_scan(eolian, src.c_str()))
-           {
-             EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
-               << "Couldn't load eolian from '" << src << "'.";
-           }
-
-       int optional_index = optind;
-       while (optional_index != argc)
-         {
-           std::cout << "opening " << argv[optional_index] << std::endl;
-           if (!::eolian_file_parse(eolian, argv[optional_index]))
-             {
-               std::cout
-                 << "Failed parsing: " << argv[optional_index] << "." << std::endl;
-               EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
-                 << "Failed parsing: " << argv[optional_index] << ".";
-               assert(false && "Error parsing input file");
-             }
-           // in_files.push_back(argv[optind]);
-           optional_index++;
-         }
+       // for(auto src : include_paths)
+       //   if (!::eolian_directory_scan(eolian, src.c_str()))
+       //     {
+       //       EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+       //         << "Couldn't load eolian from '" << src << "'.";
+       //     }
 
        // if(!::eolian_all_eo_files_parse(eolian))
        //   {
@@ -638,23 +788,48 @@ int main(int argc, char** argv)
        //       << "Eolian failed parsing eo files";
        //     assert(false && "Error parsing eot files");
        //   }
-       if (!::eolian_all_eot_files_parse(eolian))
-         {
-           EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
-             << "Eolian failed parsing eot files";
-           assert(false && "Error parsing eot files");
-         }
+       // if (!::eolian_all_eot_files_parse(eolian))
+       //   {
+       //     EINA_CXX_DOM_LOG_WARN(eolian::js::domain)
+       //       << "Eolian failed parsing eot files";
+       //     assert(false && "Error parsing eot files");
+       //   }
 
        // ns -> items
-       std::map<std::string, std::set<std::string>> all_names;
+       std::map<std::string, std::set<std::string>> namespace_map;
+       std::map<std::string, std::set<std::string>> class_map;
 
-       efl::eina::iterator<Eolian_Class const> klasses (eolian_all_classes_get(eolian_unit));
-       for(;klasses != efl::eina::iterator<Eolian_Class const>{}
-             ;++klasses)
+       auto fix_name = [] (std::string& name)
          {
+           std::transform(name.begin()
+                          , name.end()
+                          , name.begin()
+                          , [] (char c)
+         {
+           c = ::tolower(c);
+           if(c == '.')
+             c = '_';
+           return c;
+         });
+         };
+       
+       // efl::eina::iterator<Eolian_Class const> klasses (eolian_all_classes_get(eolian_unit));
+       // for(;klasses != efl::eina::iterator<Eolian_Class const>{}
+       //       ;++klasses)
+       for(auto&& file : in_files)
+         {
+           // if(legacy_klasses.find(&*klasses) != legacy_klasses.end())
+           //   continue;
+           char* dup = strdup(file.c_str());
+           char *bn = basename(dup);
+            
+           Eolian_Class const* klass = ::eolian_class_get_by_file(eolian_unit, bn);
+           
            std::string outer_namespace; // starts with global
-           std::string name = ::eolian_class_full_name_get(&*klasses);
+           std::string name = ::eolian_class_full_name_get(klass);
 
+           std::cout << "not considered legacy " << name << std::endl;
+           
            auto iterator_old = name.begin();
            auto iterator = std::find(iterator_old, name.end(), '.');
            while(iterator != name.end())
@@ -663,7 +838,8 @@ int main(int argc, char** argv)
 
                // std::cout << "outer namespace " << outer_namespace << " name " << namespace_name << std::endl;
                
-               all_names[outer_namespace].insert(namespace_name);
+               // other identifiers are namespaces
+               namespace_map[outer_namespace].insert(namespace_name);
                iterator_old = std::next(iterator);
                if(outer_namespace.empty())
                  outer_namespace = namespace_name;
@@ -675,39 +851,28 @@ int main(int argc, char** argv)
                // std::cout << "before loop outer namespace " << outer_namespace << " name " << namespace_name << std::endl;
                iterator = std::find(iterator_old, name.end(), '.');
              }
-           all_names[outer_namespace].insert({iterator_old, iterator});
+           // last identifier is the class name
+           std::string class_name {iterator_old, iterator};
+           fix_name(class_name);
+           class_map[outer_namespace].insert(class_name);
+           // outer_namespace is still a namespace
+           namespace_map[outer_namespace]; // namespace
          }
 
        // os << "typedef efl::eo::js::namespace_object"
-       for(auto&& item : all_names)
+       for(auto&& item : namespace_map)
          {
-           std::vector<std::string> classes;
+           std::set<std::string> classes;
 
-           std::cout << "namespace " << item.first << std::endl;
-
-           for(auto&& object : item.second)
-             {
-               std::string ns = item.first;
-               if(!ns.empty())
-                 ns += '.';
-               if(all_names.find(ns + object) == all_names.end()) // class name
-                 classes.push_back(object);
-             }
+           auto mirrored_iterator = class_map.find(item.first);
+           if(mirrored_iterator != class_map.end())
+             classes = mirrored_iterator->second;
 
            std::cout << "generating classes structs" << std::endl;
-           //if(!classes.empty())
+
              {
                std::string classes_struct_name = item.first;
-               std::transform(classes_struct_name.begin()
-                              , classes_struct_name.end()
-                              , classes_struct_name.begin()
-                              , [] (char c)
-                              {
-                                c = ::tolower(c);
-                                if(c == '.')
-                                  c = '_';
-                                return c;
-                              });
+               fix_name(classes_struct_name);
                os << "struct " << classes_struct_name << "_classes\n"
                   << "{\n"
                   << "    typedef efl::eo::js::list\n"
@@ -726,7 +891,9 @@ int main(int argc, char** argv)
                          os << ", ";
                        ++char_iterator;
                      }
-                   os << ">, std::false_type>";
+                   std::string full_name = (item.first == "" ? "" : item.first + '.') + cls;
+                   fix_name(full_name);
+                   os << ">, ::efl::js::binding::register_" << full_name << "_functor>";
                    cls_iterator++;
                    if(cls_iterator != classes.end())
                      os << ", ";
@@ -737,27 +904,17 @@ int main(int argc, char** argv)
              }
          }
        
-       for(auto item_iterator = all_names.rbegin()
-             , last_item_iterator = all_names.rend()
+       for(auto item_iterator = namespace_map.rbegin()
+             , last_item_iterator = namespace_map.rend()
              ;item_iterator != last_item_iterator
              ;++item_iterator)
          {
            auto&& item = *item_iterator;
            
-           std::vector<std::string> namespaces;
+           std::set<std::string> namespaces = item.second;
            //bool is_there_classes = false;
 
            std::cout << "namespace " << item.first << std::endl;
-
-           for(auto&& object : item.second)
-             {
-               std::cout << "searching if " << object << " is a namespace" << std::endl;
-               std::string ns = item.first;
-               if(!ns.empty())
-                 ns += '.';
-               if(all_names.find(ns + object) != all_names.end()) // namespace name
-                 namespaces.push_back(object);
-             }
 
            //if(!namespaces.empty())
              {

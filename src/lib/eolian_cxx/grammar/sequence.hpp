@@ -13,7 +13,7 @@ struct sequence_size : std::integral_constant<int, 0> {};
 
 template <typename L, typename R>
 struct sequence_size<sequence_generator<L, R>> : std::integral_constant<int, 1 + sequence_size<L>::value> {};
-      
+
 template <typename L, typename R, typename OutputIterator, typename Attribute, typename Context>
 bool generate_sequence(L const& l, R const& r
                        , OutputIterator sink, Attribute const& attr, Context const& context
@@ -23,9 +23,10 @@ bool generate_sequence(L const& l, R const& r
    bool b = attributes::generate(gen_left, sink, attr, context);
    if(b)
      {
-        return attributes::generate(as_generator(r), sink
-                                    , attributes::pop_front_n<type_traits::attributes_needed<decltype(gen_left)>::value>
-                                    (attr), context);
+        return attributes::generate
+          (as_generator(r), sink
+           , attributes::pop_front_n<type_traits::attributes_needed<decltype(gen_left)>::value>
+           (attr), context);
      }
    else
      return false;

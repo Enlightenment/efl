@@ -95,6 +95,8 @@ struct is_generator<parameter_as_argument_generator> : std::true_type {};
 namespace type_traits {
 template <>
 struct attributes_needed<parameter_as_argument_generator> : std::integral_constant<int, 1> {};
+template <>
+struct accepts_specific_tuple<parameter_as_argument_generator, attributes::parameter_def> : std::true_type {};
 }
 parameter_as_argument_generator const parameter_as_argument = {};
       
