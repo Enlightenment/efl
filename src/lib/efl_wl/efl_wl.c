@@ -1861,7 +1861,19 @@ comp_surface_impl_destroy(struct wl_resource *resource)
      {
         if (s->kbd.enter == cs) s->kbd.enter = NULL;
         if (s->ptr.enter == cs) s->ptr.enter = NULL;
-        if (s->ptr.cursor.surface == cs) s->ptr.cursor.surface = NULL;
+        if (s->ptr.cursor.surface == cs)
+          {
+             if (s->ptr.in)
+               {
+                  const Eina_List *l;
+                  Eo *dev;
+                  Ecore_Evas *ee = ecore_evas_ecore_evas_get(s->c->evas);
+                  EINA_LIST_FOREACH(evas_device_list(s->c->evas, s->dev), l, dev)
+                    if (evas_device_class_get(dev) == EVAS_DEVICE_CLASS_MOUSE)
+                      ecore_evas_cursor_device_unset(ee, dev);
+               }
+             s->ptr.cursor.surface = NULL;
+          }
         if (s->drag.surface == cs) s->drag.surface = NULL;
      }
    eina_hash_list_remove(cs->c->client_surfaces, &client, cs);
