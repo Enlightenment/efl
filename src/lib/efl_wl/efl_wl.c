@@ -1147,12 +1147,12 @@ static void
 shell_surface_activate_recurse(Comp_Surface *cs)
 {
    Comp_Surface *lcs, *parent = cs->parent;
-   Eina_List *l, *parents = NULL;
+   Eina_List *parents = NULL;
    Eina_Inlist *i;
 
    if (parent)
      {
-        /* apply focus to toplevel in case where focus is reverted */
+        /* remove focus from parents */
         while (parent)
           {
              parents = eina_list_append(parents, parent);
@@ -1170,14 +1170,6 @@ shell_surface_activate_recurse(Comp_Surface *cs)
                cs->c->surfaces = eina_inlist_promote(cs->c->surfaces, EINA_INLIST_GET(lcs));
             }
        }
-   /* last item is the toplevel */
-   EINA_LIST_REVERSE_FOREACH(parents, l, lcs)
-     {
-        if (lcs->shell.activated) continue;
-        lcs->shell.activated = 1;
-        if (!lcs->shell.popup)
-          shell_surface_send_configure(lcs);
-     }
    eina_list_free(parents);
 }
 
