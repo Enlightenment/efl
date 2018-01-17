@@ -282,6 +282,25 @@ _tmpinfo_free(Tmp_Info *info)
    return 0;
 }
 
+static inline void
+_drop_target_cbs_del(Efl_Selection_Manager_Data *pd, Sel_Manager_Dropable *dropable, Efl_Object *obj)
+{
+   if (dropable)
+     {
+        Drop_Format *df;
+        while (dropable->format_list)
+          {
+             df = EINA_INLIST_CONTAINER_GET(dropable->format_list, Drop_Format);
+             efl_selection_manager_drop_target_del(pd->sel_man, obj,
+                                                   df->format, dropable->seat);
+             // If drop_target_del() happened to delete dropabale, then
+             // re-fetch it each loop to make sure it didn't
+             dropable = efl_key_data_get(obj, "__elm_dropable");
+             if (!dropable) break;
+          }
+     }
+}
+
 static void
 _all_drop_targets_cbs_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
 {
@@ -290,19 +309,7 @@ _all_drop_targets_cbs_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, voi
 
    if (!pd) return;
    dropable = efl_key_data_get(obj, "__elm_dropable");
-   if (dropable)
-     {
-        Drop_Format *df;
-        while (dropable->format_list)
-          {
-             df = EINA_INLIST_CONTAINER_GET(dropable->format_list, Drop_Format);
-             efl_selection_manager_drop_target_del(pd->sel_man, obj, df->format, dropable->seat);
-             // If drop_target_del() happened to delete dropabale, then
-             // re-fetch it each loop to make sure it didn't
-             dropable = efl_key_data_get(obj, "__elm_dropable");
-             if (!dropable) break;
-          }
-     }
+   _drop_target_cbs_del(pd, dropable, obj);
 }
 
 static void
@@ -370,7 +377,7 @@ _drag_cancel_animate(void *data, double pos)
         Ecore_X_Window xdragwin = _x11_xwin_get(seat_sel->drag_win);
         ecore_x_window_ignore_set(xdragwin, 0);
 #endif
-        ERR("Delete drag_win");
+        sel_debug("Delete drag_win");
         evas_object_del(seat_sel->drag_win);
         seat_sel->drag_win = NULL;
         return ECORE_CALLBACK_CANCEL;
@@ -5214,7 +5221,13 @@ static void
 _efl_selection_manager_efl_object_destructor(Eo *obj, Efl_Selection_Manager_Data *pd)
 {
    Sel_Manager_Seat_Selection *seat_sel;
+   Eina_List *l;
+   Sel_Manager_Dropable *dropable;
 
+   EINA_LIST_FOREACH(pd->drop_list, l, dropable)
+     {
+        _drop_target_cbs_del(pd, dropable, dropable->obj);
+     }
 #ifdef HAVE_ELEMENTARY_X
    ecore_event_handler_del(pd->notify_handler);
    ecore_event_handler_del(pd->clear_handler);
