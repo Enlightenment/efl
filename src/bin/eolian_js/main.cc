@@ -702,17 +702,21 @@ int main(int argc, char** argv)
                }
            };
 
-         os << "extern \"C\" {\n\n";
-     
-         auto includes_fun = [&os] (Eolian_Class const* klass)
+         auto generate_includes =
+           [&]
            {
+             os << "extern \"C\" {\n\n";
+     
+             auto includes_fun = [&os] (Eolian_Class const* klass)
+             {
+               os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
+             };
+             // generate include for all inheritance
+             recurse_inherits(klass, includes_fun);
              os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
-           };
-         // generate include for all inheritance
-         recurse_inherits(klass, includes_fun);
-         os << "#include <" << eolian_class_file_get(klass) << ".h>\n\n";
        
-         os << "}\n\n";
+             os << "}\n\n";
+           };
 
          using efl::eolian::grammar::attributes::unused;
          using efl::eolian::grammar::context_null;
@@ -720,9 +724,26 @@ int main(int argc, char** argv)
          using efl::eolian::grammar::lower_case;
          using efl::eolian::grammar::string;
          using efl::eolian::grammar::as_generator;
+         using efl::eolian::grammar::attribute_reorder;
+         using efl::eolian::grammar::upper_case;
          if(!dummy_generation)
            {
              context_null context;
+
+             // as_generator
+             //   (attribute_reorder<0, 1, 0, 1>
+             //    (
+             //        "#define "
+             //     << *(upper_case[string] << "_")
+             //     << upper_case[string]
+             //     << "_BETA\n"
+             //     "#define "
+             //     << *(upper_case[string] << "_")
+             //     << upper_case[string]
+             //     << "_PROTECTED\n"
+             //    )).generate(iterator, std::make_tuple(klass_def.namespaces, klass_def.eolian_name), context);
+
+             generate_includes();
              
              as_generator("namespace efl { namespace js { namespace binding { namespace {\n")
                .generate(iterator, unused, context);
@@ -753,6 +774,7 @@ int main(int argc, char** argv)
            }
          else
            {
+             generate_includes();
              as_generator
                (
                  "namespace efl { namespace js { namespace binding { namespace {\n"

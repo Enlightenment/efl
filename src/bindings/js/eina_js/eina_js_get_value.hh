@@ -35,6 +35,18 @@ inline int get_value_from_javascript
   return 0;
 }
 
+template <typename T>
+inline T get_value_from_javascript
+  (v8::Local<v8::Value> v
+   , v8::Isolate* isolate
+   , const char*
+   , value_tag<T>
+   , bool throw_js_exception = true
+   , typename std::enable_if<(std::is_pointer<T>::value && std::is_function<typename std::remove_pointer<T>::type>::value)>::type* = 0)
+{
+  return 0;
+}
+      
 inline char* get_value_from_javascript
   (v8::Local<v8::Value> v
    , v8::Isolate* isolate
@@ -262,7 +274,35 @@ inline T get_value_from_javascript
      !std::is_same<T, const Eina_Array*>::value &&
      !std::is_same<T, const Eina_Iterator*>::value &&
      !std::is_same<T, const Eina_Hash*>::value &&
-     !std::is_same<T, const Eina_List*>::value
+     !std::is_same<T, const Eina_List*>::value &&
+     !std::is_function<typename std::remove_pointer<T>::type>::value
+   >::type* = 0)
+{
+  if (throw_js_exception)
+    eina::js::compatibility_throw
+      (isolate, v8::Exception::TypeError
+       (eina::js::compatibility_new<v8::String>(isolate, "Not implemented yet")));
+  throw std::logic_error("");
+}
+
+// TODO:
+template <typename T>
+inline T get_value_from_javascript
+  (v8::Local<v8::Value>, v8::Isolate* isolate, const char*, value_tag<T>
+   , bool throw_js_exception = true
+   , typename std::enable_if<
+     std::is_same<T, Eina_Accessor*>::value ||
+     std::is_same<T, Eina_Array*>::value ||
+     std::is_same<T, Eina_Iterator*>::value ||
+     std::is_same<T, Eina_Hash*>::value ||
+     std::is_same<T, Eina_List*>::value ||
+     std::is_same<T, const Eina_Accessor*>::value ||
+     std::is_same<T, const Eina_Array*>::value ||
+     std::is_same<T, const Eina_Iterator*>::value ||
+     std::is_same<T, const Eina_Hash*>::value ||
+     std::is_same<T, const Eina_List*>::value ||
+     std::is_same<T, Eina_Iterator*>::value ||
+     std::is_same<T, const Eina_Iterator*>::value
    >::type* = 0)
 {
   if (throw_js_exception)

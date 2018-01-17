@@ -5,6 +5,8 @@
 #include <grammar/indentation.hpp>
 #include <grammar/string.hpp>
 #include <grammar/attribute_reorder.hpp>
+#include <eolian/grammar/parameter.hpp>
+#include <eolian/grammar/out_parameter_definition.hpp>
 
 namespace eolian { namespace js { namespace grammar {
 
@@ -20,6 +22,9 @@ struct stub_function_definition_generator
   {
     using namespace efl::eolian::grammar;
     using efl::eolian::grammar::attributes::unused;
+
+    if(f.is_beta || f.is_protected)
+      return true;
 
      // std::string suffix;
      // switch(cls.type)
@@ -45,7 +50,7 @@ struct stub_function_definition_generator
     
     as_generator
       (
-       //attribute_reorder<0, 1, 0, 1, 0, 1>
+       attribute_reorder<0, 1, 2, 3, 4, 3>
        (
         "eina::js::compatibility_return_type stub_function_"
        << lower_case[*(string << "_")]
@@ -54,14 +59,21 @@ struct stub_function_definition_generator
        << lower_case[string]
        << "(eina::js::compatibility_callback_info_type args)\n"
        << "{\n"
-        << scope_tab << "if(/*input_parameters*/" << std::to_string(ins) << " != args.Length())\n"
+        << scope_tab << "if(/*input_parameters*/" << std::to_string(ins) << " == args.Length())\n"
        << scope_tab << "{\n"
+       << scope_tab(2) << "v8::Isolate* isolate = args.GetIsolate(); static_cast<void>(isolate);\n"
        << scope_tab(2) << "v8::Local<v8::Object> self = args.This();\n"
        << scope_tab(2) << "v8::Local<v8::Value> external = self->GetInternalField(0);\n"
        << scope_tab(2) << "Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());\n"
        << scope_tab(2) << "try\n"
        << scope_tab(2) << "{\n"
-       << scope_tab(3) << ";"
+       << *(out_parameter_definition(klass, f.parameters)[scope_tab(3)])
+       << scope_tab(3) << "::" << lower_case[string]
+       << "("
+       << "eo"
+       << *(", " << parameter(klass, f.parameters))
+       << ")"
+       << ";\n"
        << scope_tab(2) << "}\n"
        << scope_tab(2) << "catch(std::logic_error const&)\n"
        << scope_tab(2) << "{\n"
@@ -75,7 +87,8 @@ struct stub_function_definition_generator
        << scope_tab(4) << "(eina::js::compatibility_new<v8::String>(nullptr, \"Expected more arguments for this call\")));\n"
        << scope_tab << "}\n"
        << "}\n"
-       )).generate(sink, std::make_tuple(klass.namespaces, klass.cxx_name, f.name), context);
+        )).generate(sink, std::make_tuple(klass.namespaces, klass.cxx_name, f.name, f.parameters
+                                          , f.c_name), context);
     
     // methods
 
@@ -104,7 +117,16 @@ template <>
 struct is_generator< ::eolian::js::grammar::stub_function_definition_generator> : std::true_type {};
 template <>
 struct is_eager_generator< ::eolian::js::grammar::stub_function_definition_generator> : std::true_type {};
+
+namespace type_traits {
+
+template <>
+struct attributes_needed< ::eolian::js::grammar::stub_function_definition_generator> : std::integral_constant<int, 1> {};
+template <>
+struct accepts_specific_tuple< ::eolian::js::grammar::stub_function_definition_generator
+                               , ::efl::eolian::grammar::attributes::function_def> : std::true_type {};
+
       
-} } }
+} } } }
 
 #endif

@@ -7,6 +7,8 @@
 #include <grammar/attribute_reorder.hpp>
 #include <grammar/attributed.hpp>
 #include <grammar/attribute_replace.hpp>
+#include <grammar/if.hpp>
+#include <grammar/empty_generator.hpp>
 #include <eolian/grammar/stub_function_definition.hpp>
 
 namespace eolian { namespace js { namespace grammar {
@@ -49,12 +51,15 @@ struct class_registration_generator
       (
        attribute_reorder<0, 1, 2, 3, 0, 1, 0, 1>
        (
-         "static void register_prototype_"
+          "static void register_prototype_"
        << lower_case[*(string << "_")]
        << lower_case[string]
        << "(v8::Handle<v8::Object> global, v8::Local<v8::ObjectTemplate> prototype, v8::Isolate* isolate)\n"
        << "{\n"
-       << *attribute_reorder<1, 1, 1, 1>
+       << *
+          if_([] (attributes::function_def const& f) { return !f.is_beta && !f.is_protected; })
+          [
+           attribute_reorder<1, 1, 1, 1>
            (
                scope_tab << "prototype->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
             << attribute_replace(&eolian::js::format::format_method)[string] << "\")\n"
@@ -66,8 +71,9 @@ struct class_registration_generator
                 << lower_case[string] << "_"
                ]
             << lower_case[string]
-       << "));\n"
+            << "));\n"
            )
+          ][empty_generator]           
        << 
         *(
             scope_tab << "register_prototype_"
@@ -88,7 +94,8 @@ struct class_registration_generator
        << lower_case[string]
        << "(global, prototype, isolate);\n"
        << "}\n"
-        )).generate(sink, std::make_tuple(cls.namespaces, cls.cxx_name, cls.functions, cls.immediate_inherits), context);
+        )).generate(sink, std::make_tuple(cls.namespaces, cls.cxx_name, cls.functions, cls.immediate_inherits
+                                          , cls.eolian_name), context);
     
     as_generator
       (
