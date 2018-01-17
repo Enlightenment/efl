@@ -1433,6 +1433,7 @@ _seat_cb_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability 
           wl_touch_destroy(input->wl.touch);
         input->wl.touch = NULL;
      }
+   ecore_wl2_display_flush(input->display);
 
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Seat_Capabilities));
    EINA_SAFETY_ON_NULL_RETURN(ev);
@@ -1511,6 +1512,7 @@ _ecore_wl2_input_cursor_update(void *data)
      wl_pointer_set_cursor(input->wl.pointer, input->pointer.enter_serial,
                            input->cursor.surface,
                            input->cursor.hot_x, input->cursor.hot_y);
+   ecore_wl2_display_flush(input->display);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -1650,6 +1652,7 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
      wl_data_device_manager_get_data_device(display->wl.data_device_manager,
                                             input->wl.seat);
    wl_data_device_add_listener(input->data.device, &_data_listener, input);
+   ecore_wl2_display_flush(input->display);
 }
 
 void

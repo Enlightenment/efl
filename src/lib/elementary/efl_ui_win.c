@@ -4172,7 +4172,9 @@ _elm_win_frame_cb_menu(void *data,
 
    {
       Eina_Iterator *it;
-      it = ecore_wl2_display_inputs_get(ecore_wl2_window_display_get(sd->wl.win));
+      Ecore_Wl2_Display *display = ecore_wl2_window_display_get(sd->wl.win);
+      it = ecore_wl2_display_inputs_get(display);
+      ecore_wl2_display_flush(input->display);
       EINA_ITERATOR_FOREACH(it, input) break;
       eina_iterator_free(it);
    }
