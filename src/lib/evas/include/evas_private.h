@@ -1432,6 +1432,7 @@ struct _Evas_Func
    int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
+   Eina_Bool (*gl_supports_evas_gl)      (void *engine);
    void *(*gl_output_set)                (void *engine, void *output);
    void *(*gl_surface_create)            (void *engine, void *config, int w, int h);
    void *(*gl_pbuffer_surface_create)    (void *engine, void *config, int w, int h, int const *attrib_list);

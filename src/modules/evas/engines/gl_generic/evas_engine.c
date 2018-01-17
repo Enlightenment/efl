@@ -1528,6 +1528,14 @@ evgl_init(Render_Engine_GL_Generic *engine)
 
 #define EVGLINIT(_ret) Render_Output_GL_Generic *re; if ((re = evgl_init(engine)) == NULL) return _ret
 
+static Eina_Bool
+eng_gl_supports_evas_gl(void *engine EINA_UNUSED)
+{
+   // Evas GL should always work... But let's do a full init anyway.
+   EVGLINIT(EINA_FALSE);
+   return EINA_TRUE;
+}
+
 static void *
 eng_gl_output_set(void *eng, void *output)
 {
@@ -3166,6 +3174,7 @@ module_open(Evas_Module *em)
    ORD(font_cache_set);
    ORD(font_cache_get);
 
+   ORD(gl_supports_evas_gl);
    ORD(gl_output_set);
    ORD(gl_surface_create);
    ORD(gl_pbuffer_surface_create);
