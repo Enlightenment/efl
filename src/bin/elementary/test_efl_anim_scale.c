@@ -97,7 +97,7 @@ test_efl_anim_scale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    //Initialize App Data
    ad->scale_double_anim = scale_double_anim;
    ad->scale_half_anim = scale_half_anim;
-   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL,
+   ad->anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
                           efl_animation_player_target_set(efl_added, btn));
 
    //Register callback called when animation starts

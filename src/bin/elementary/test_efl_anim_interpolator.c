@@ -22,42 +22,42 @@ typedef struct _App_Data
 } App_Data;
 
 static Efl_Interpolator *
-_interpolator_create(int index)
+_interpolator_create(int index, Evas_Object *win)
 {
    Efl_Interpolator *interp = NULL;
 
    if (index == 0)
      {
-        interp = efl_add(EFL_INTERPOLATOR_LINEAR_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_LINEAR_CLASS, win);
      }
    else if (index == 1)
      {
-        interp = efl_add(EFL_INTERPOLATOR_SINUSOIDAL_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_SINUSOIDAL_CLASS, win);
         efl_interpolator_sinusoidal_factor_set(interp, 1.0);
      }
    else if (index == 2)
      {
-        interp = efl_add(EFL_INTERPOLATOR_DECELERATE_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_DECELERATE_CLASS, win);
         efl_interpolator_decelerate_factor_set(interp, 1.0);
      }
    else if (index == 3)
      {
-        interp = efl_add(EFL_INTERPOLATOR_ACCELERATE_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_ACCELERATE_CLASS, win);
         efl_interpolator_accelerate_factor_set(interp, 1.0);
      }
    else if (index == 4)
      {
-        interp = efl_add(EFL_INTERPOLATOR_DIVISOR_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_DIVISOR_CLASS, win);
         efl_interpolator_divisor_factors_set(interp, 1.0, 1.0);
      }
    else if (index == 5)
      {
-        interp = efl_add(EFL_INTERPOLATOR_BOUNCE_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_BOUNCE_CLASS, win);
         efl_interpolator_bounce_factors_set(interp, 1.0, 1.0);
      }
    else if (index == 6)
      {
-        interp = efl_add(EFL_INTERPOLATOR_SPRING_CLASS, NULL);
+        interp = efl_add(EFL_INTERPOLATOR_SPRING_CLASS, win);
         efl_interpolator_spring_factors_set(interp, 1.0, 1.0);
      }
 
@@ -189,12 +189,12 @@ test_efl_anim_interpolator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         efl_animation_duration_set(anim, 2.0);
         efl_animation_final_state_keep_set(anim, EINA_FALSE);
 
-        Efl_Interpolator *interp = _interpolator_create(i);
+        Efl_Interpolator *interp = _interpolator_create(i, win);
         efl_animation_interpolator_set(anim, interp);
         ad->anim[i] = anim;
 
         //Create Animation Object from Animation
-        Efl_Animation_Player *anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, NULL,
+        Efl_Animation_Player *anim_obj = efl_add(EFL_ANIMATION_PLAYER_CLASS, win,
                                                  efl_animation_player_animation_set(efl_added, anim),
                                                  efl_animation_player_target_set(efl_added, btn));
         ad->anim_obj[i] = anim_obj;
