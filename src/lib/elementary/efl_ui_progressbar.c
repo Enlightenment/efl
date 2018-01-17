@@ -115,6 +115,8 @@ _units_set(Evas_Object *obj)
         // Keeping this bug since the legacy code was like that.
         if (sd->is_legacy_format_string && !sd->is_legacy_format_cb)
           eina_value_set(&val, 100 * sd->val);
+        else
+          eina_value_set(&val, sd->val);
 
         eina_strbuf_reset(sd->format_strbuf);
         sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
@@ -141,7 +143,8 @@ _val_set(Evas_Object *obj)
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)
      {
-        pos = ps->val;
+        pos = (ps->val - ps->val_min)/(ps->val_max - ps->val_min);
+
         if ((!rtl && _is_inverted(sd->dir)) ||
             (rtl && ((sd->dir == EFL_UI_DIR_UP) ||
                      (sd->dir == EFL_UI_DIR_RIGHT))))
@@ -362,7 +365,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    priv->dir = EFL_UI_DIR_RIGHT;
    priv->val = MIN_RATIO_LVL;
-
+   priv->val_max = 1.0;
    group = _efl_ui_progressbar_theme_group_get(obj, priv);
 
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
@@ -479,14 +482,49 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
 }
 
 static void
-_progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
+_progress_part_min_max_set(Efl_Ui_Progressbar_Data *sd, const char *part_name, double min, double max)
 {
    Efl_Ui_Progress_Status *ps;
    Eina_Bool  existing_ps = EINA_FALSE;
    Eina_List *l;
 
-   if (val < MIN_RATIO_LVL) val = MIN_RATIO_LVL;
-   if (val > MAX_RATIO_LVL) val = MAX_RATIO_LVL;
+   if (!strcmp(part_name, "elm.cur.progressbar"))
+     {
+        sd->val_min = min;
+        sd->val_max = max;
+     }
+
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+     {
+        if (!strcmp(ps->part_name, part_name))
+          {
+             existing_ps = EINA_TRUE;
+             ps->val_min = min;
+             ps->val_max = max;
+             break;
+          }
+     }
+    if (!existing_ps)
+    {
+      ps = _progress_status_new(part_name, min);
+      ps->val_min = min;
+      ps->val_max = max;
+      sd->progress_status = eina_list_append(sd->progress_status, ps);
+    }
+}
+
+static void
+_progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *part_name, double val)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_Bool  existing_ps = EINA_FALSE;
+   Eina_List *l;
+   double min, max;
+
+   efl_ui_range_min_max_get(efl_part(obj, part_name), &min, &max);
+
+   if (val < min) val = min;
+   if (val > max) val = max;
 
    if (!strcmp(part_name, "elm.cur.progressbar"))
      sd->val = val;
@@ -503,6 +541,8 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    if (!existing_ps)
       {
          ps = _progress_status_new(part_name, val);
+         ps->val_min = 0.0;
+         ps->val_max = 1.0;
          sd->progress_status = eina_list_append(sd->progress_status, ps);
       }
    else
@@ -537,9 +577,9 @@ _efl_ui_progressbar_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Progressbar_Dat
 }
 
 EOLIAN static double
-_efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
+_efl_ui_progressbar_efl_ui_range_range_value_get(Eo *obj, Efl_Ui_Progressbar_Data *sd EINA_UNUSED)
 {
-   return sd->val;
+   return efl_ui_range_value_get(efl_part(obj, "elm.cur.progressbar"));
 }
 
 EOLIAN static void
@@ -583,6 +623,19 @@ EOLIAN static Eina_Bool
 _efl_ui_progressbar_pulse_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd)
 {
    return (sd->pulse_state && sd->pulse);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_efl_ui_range_range_min_max_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, double min, double max)
+{
+  _progress_part_min_max_set(sd, "elm.cur.progressbar", min, max);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, double *min, double *max)
+{
+   if (min) *min = sd->val_min;
+   if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
@@ -630,6 +683,34 @@ _efl_ui_progressbar_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Efl
    if (value) *value = _pd->val;
 }
 
+EOLIAN static void
+_efl_ui_progressbar_part_efl_ui_range_range_min_max_set(Eo *obj, void *_pd EINA_UNUSED, double min, double max)
+{
+  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+  Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+
+  _progress_part_min_max_set(sd, pd->part, min, max);
+}
+
+EOLIAN static void
+_efl_ui_progressbar_part_efl_ui_range_range_min_max_get(Eo *obj, void *_pd EINA_UNUSED, double *min, double *max)
+{
+   Efl_Ui_Progress_Status *ps;
+   Eina_List *l;
+
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
+   
+   EINA_LIST_FOREACH(sd->progress_status, l, ps)
+   {
+     if (!strcmp(ps->part_name, pd->part))
+     {
+       if (min) *min = ps->val_min;
+       if (max) *max = ps->val_max;
+       break;
+     }
+   }
+}
 #include "efl_ui_progressbar_part.eo.c"
 
 /* Efl.Part end */

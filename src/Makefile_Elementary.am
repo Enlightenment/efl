@@ -928,6 +928,7 @@ bin/elementary/test_photocam.c \
 bin/elementary/test_popup.c \
 bin/elementary/test_prefs.c \
 bin/elementary/test_progressbar.c \
+bin/elementary/test_ui_progressbar.c \
 bin/elementary/test_radio.c \
 bin/elementary/test_scaling.c \
 bin/elementary/test_scroller.c \
