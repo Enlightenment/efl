@@ -2058,11 +2058,17 @@ comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, ui
         btn = BTN_RIGHT;
         break;
       case 4:
+        btn = BTN_SIDE;
+        break;
       case 5:
+        btn = BTN_EXTRA;
+        break;
       case 6:
+        btn = BTN_FORWARD;
+        break;
       case 7:
-        /* these are supposedly axis events */
-        return;
+        btn = BTN_BACK;
+        break;
       default:
         btn = button_id + BTN_SIDE - 8;
         break;
