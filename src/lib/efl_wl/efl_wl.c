@@ -1249,12 +1249,16 @@ shell_surface_send_configure(Comp_Surface *cs)
      {
         Comp_Surface *ccs;
 
-        comp_seats_redo_enter(cs->c, cs);
+        /* apply activation to already-mapped surface */
+        if (cs->mapped)
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
         EINA_INLIST_FOREACH(cs->children, ccs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
-        shell_surface_aspect_update(cs);
-        shell_surface_minmax_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -1422,6 +1426,13 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
      {
         if (cs->role && (!cs->extracted))
           evas_object_show(cs->obj);
+        /* apply activation to activated surface on map */
+        if (cs->role && cs->shell.surface && cs->shell.activated && (!cs->shell.popup))
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
      }
 
    if (state->attach && state->buffer)
