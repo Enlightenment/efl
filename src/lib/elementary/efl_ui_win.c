@@ -7156,10 +7156,21 @@ _elm_win_standard_init(Eo *obj)
      }
    else
      {
+        Eo *bg;
+
         /* Legacy theme compatibility */
         DBG("Detected legacy theme used for elm_bg. Swallowing object.");
         sd->csd.need_bg_solid = EINA_FALSE;
-        _elm_win_bg_set(sd, efl_add(EFL_UI_BG_WIDGET_CLASS, obj));
+        if (sd->legacy.ctor)
+          bg = elm_bg_add(obj);
+        else
+          {
+             // Note: This code path is probably not necessary (custom legacy
+             // theme but efl_add'ed window -- all efl_add'ed widgets would
+             // use default theme)
+             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, obj);
+          }
+        _elm_win_bg_set(sd, bg);
      }
 
    _elm_win_frame_style_update(sd, 0, 1);
