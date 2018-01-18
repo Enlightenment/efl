@@ -165,8 +165,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
-   eo_prefix: efl_ui_win;
-   event_prefix: efl_ui_win;
    methods {
       @property indicator_mode {
            [[In some environments you may have an indicator that
@@ -485,7 +483,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
            Note: Once set, it cannot be modified afterwards.
          ]]
          set {
-            [[Name can on be set before finalize.]]
+            [[Name can only be set before finalize.]]
             legacy: null;
          }
          get {
@@ -841,7 +839,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       unfullscreen; [[Called when window is no longer set to fullscreen]]
       maximized; [[Called when window is set to maximized]]
       unmaximized; [[Called when window is no longer set to maximized]]
-      ioerr; [[Called on input output error]] /*FIXME Better explanation needed */
       indicator,prop,changed; [[Called when indicator is property changed]]
       rotation,changed; [[Called when window rotation is changed]]
       profile,changed; [[Called when profile is changed]]

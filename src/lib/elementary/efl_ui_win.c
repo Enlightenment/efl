@@ -4599,7 +4599,7 @@ _elm_x_io_err(void *data EINA_UNUSED)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_IOERR, NULL);
+     evas_object_smart_callback_call(obj, "ioerr", NULL);
    elm_exit();
 }
 #endif
