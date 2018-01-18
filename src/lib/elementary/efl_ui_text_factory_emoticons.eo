@@ -5,8 +5,6 @@ class Efl.Ui.Text.Factory.Emoticons (Efl.Object, Efl.Canvas.Text.Factory)
      @since 1.21
    ]]
    implements {
-      Efl.Object.constructor;
-      Efl.Object.destructor;
       Efl.Canvas.Text.Factory.create;
    }
 }

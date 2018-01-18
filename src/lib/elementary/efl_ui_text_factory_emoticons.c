@@ -12,24 +12,7 @@ typedef struct _Efl_Ui_Text_Factory_Emoticons_Data Efl_Ui_Text_Factory_Emoticons
 
 struct _Efl_Ui_Text_Factory_Emoticons_Data
 {
-   const char *name;
 };
-
-EOLIAN static Eo *
-_efl_ui_text_factory_emoticons_efl_object_constructor(Eo *obj,
-     Efl_Ui_Text_Factory_Emoticons_Data *pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   return obj;
-}
-
-EOLIAN static void
-_efl_ui_text_factory_emoticons_efl_object_destructor(Eo *obj,
-     Efl_Ui_Text_Factory_Emoticons_Data *pd EINA_UNUSED)
-{
-   efl_destructor(efl_super(obj, MY_CLASS));
-}
-
 
 EOLIAN static Efl_Canvas_Object
 *_efl_ui_text_factory_emoticons_efl_canvas_text_factory_create(
