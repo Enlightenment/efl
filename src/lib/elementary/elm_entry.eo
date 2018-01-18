@@ -697,7 +697,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       input_panel_imdata_get @const {
          [[Get the specific data of the current input panel.]]
          params {
-            @out data: void; [[The specific data to be got from the input panel.]]
+            @in data: void_ptr; [[The buffer where to write specific data to be got from the input panel.]]
             @out len: int; [[The length of data.]]
          }
       }
