@@ -13,7 +13,6 @@ struct Efl.Ui.Widget.Focus_State {
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
-/* ATTENTION: Rename to Efl.Ui.Widget is imminent. */
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
                         Efl.Ui.Base, Efl.Ui.Cursor, Efl.Ui.Translatable,
