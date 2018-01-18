@@ -12,15 +12,15 @@ extern "C" {
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EFL_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EFL_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -31,7 +31,7 @@ extern "C" {
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define EFL_VERSION_1_18 1
 #define EFL_VERSION_1_19 1
@@ -39,7 +39,7 @@ extern "C" {
 #define EFL_VERSION_1_21 1
 
 /* Add here all the required ifdef for any @protected method */
-#ifdef EFL_EFL_BUILD
+#ifdef EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
 # define EFL_GFX_SIZE_HINT_PROTECTED
 #endif

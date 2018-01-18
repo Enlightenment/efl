@@ -9,15 +9,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ETHUMB_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ETHUMB_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -28,7 +28,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 
@@ -79,5 +79,8 @@ struct _Ethumb
    void *pdata;
    Ethumb_Plugin *plugin;
 };
+
+#undef EAPI
+#define EAPI
 
 #endif /* __ETHUMB_PRIVATE_H__ */

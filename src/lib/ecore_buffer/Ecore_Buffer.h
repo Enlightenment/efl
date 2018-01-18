@@ -6,15 +6,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_BUFFER_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_BUFFER_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -25,7 +25,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 /**
  * @defgroup Ecore_Buffer_Group Ecore_Buffer - Graphics buffer functions
@@ -625,5 +625,8 @@ EAPI unsigned int  ecore_buffer_flags_get(Ecore_Buffer *buf);
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

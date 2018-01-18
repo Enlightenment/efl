@@ -343,15 +343,15 @@ This is the @e only file you need to include.
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EMBRYO_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EMBRYO_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -362,7 +362,7 @@ This is the @e only file you need to include.
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef  __cplusplus
 extern "C" {

@@ -38,10 +38,10 @@
 #   else
 #    error "no DLL_EXPORT"
 #    define EAPI
-#   endif /* ! DLL_EXPORT */
+#   endif
 #  else
 #   define EAPI __declspec(dllimport)
-#  endif /* ! EFL_EVAS_BUILD */
+#  endif
 #  define EAPI_WEAK
 # else
 #  ifdef __GNUC__
@@ -56,7 +56,7 @@
 #   define EAPI
 #   define EAPI_WEAK
 #  endif
-# endif /* ! _WIN32 */
+# endif
 
 # define EWAPI EAPI EAPI_WEAK
 
