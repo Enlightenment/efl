@@ -154,15 +154,15 @@ struct _Cnp_Data_Cb_Wrapper
 static void
 _selection_data_ready_cb(void *data, Efl_Object *obj, Efl_Selection_Data *seldata)
 {
-    printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->data.mem, seldata->data.len);
+    printf("obj: %p, data: %s, length: %zd\n", obj, (char *)seldata->content.mem, seldata->content.len);
     Cnp_Data_Cb_Wrapper *wdata = data;
     if (!wdata) return;
     Elm_Selection_Data ddata;
 
-    ddata.data = calloc(1, seldata->data.len + 1);
+    ddata.data = calloc(1, seldata->content.len + 1);
     if (!ddata.data) return;
-    ddata.data = memcpy(ddata.data, seldata->data.mem, seldata->data.len);
-    ddata.len = seldata->data.len;
+    ddata.data = memcpy(ddata.data, seldata->content.mem, seldata->content.len);
+    ddata.len = seldata->content.len;
     ddata.x = seldata->pos.x;
     ddata.y = seldata->pos.y;
     ddata.format = (Elm_Sel_Format)seldata->format;

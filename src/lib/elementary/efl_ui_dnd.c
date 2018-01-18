@@ -289,10 +289,10 @@ _dnd_drop_cb(void *data, const Efl_Event *event)
    ddata.y = org_ddata->pos.y;
    ddata.format = (Elm_Sel_Format)org_ddata->format;
    ddata.action = (Elm_Xdnd_Action)org_ddata->action;
-   ddata.data = calloc(1, org_ddata->data.len);
+   ddata.data = calloc(1, org_ddata->content.len);
    if (!ddata.data) return;
-   ddata.data = memcpy(ddata.data, org_ddata->data.mem, org_ddata->data.len);
-   ddata.len = org_ddata->data.len;
+   ddata.data = memcpy(ddata.data, org_ddata->content.mem, org_ddata->content.len);
+   ddata.len = org_ddata->content.len;
    if (drop->drop_cb)
      drop->drop_cb(drop->drop_data, event->object, &ddata);
    free(ddata.data);
@@ -553,10 +553,10 @@ _dnd_cont_drop_cb(void *data, const Efl_Event *event)
    ddata.y = org_ddata->pos.y;
    ddata.format = (Elm_Sel_Format)org_ddata->format;
    ddata.action = (Elm_Xdnd_Action)org_ddata->action;
-   ddata.data = calloc(1, org_ddata->data.len);
+   ddata.data = calloc(1, org_ddata->content.len);
    if (!ddata.data) return;
-   ddata.data = memcpy(ddata.data, org_ddata->data.mem, org_ddata->data.len);
-   ddata.len = org_ddata->data.len;
+   ddata.data = memcpy(ddata.data, org_ddata->content.mem, org_ddata->content.len);
+   ddata.len = org_ddata->content.len;
 
    if (drop->item_get_cb)
      {

@@ -575,8 +575,8 @@ _x11_data_preparer_text(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("text data preparer");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_TEXT;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -588,8 +588,8 @@ _x11_data_preparer_markup(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("markup data preparer");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_MARKUP;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -682,8 +682,8 @@ _x11_data_preparer_uri(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selec
    else
      {
         ddata->format = EFL_SELECTION_FORMAT_IMAGE;
-        ddata->data.mem = stripstr;
-        ddata->data.len = strlen(stripstr);
+        ddata->content.mem = stripstr;
+        ddata->content.len = strlen(stripstr);
         seat_sel->saved_types->imgfile = NULL;
      }
    return EINA_TRUE;
@@ -700,8 +700,8 @@ _x11_data_preparer_vcard(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    sel_debug("vcard receive\n");
    Ecore_X_Selection_Data *data = notify->data;
    ddata->format = EFL_SELECTION_FORMAT_VCARD;
-   ddata->data.mem = eina_memdup(data->data, data->length, EINA_TRUE);
-   ddata->data.len = data->length;
+   ddata->content.mem = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->content.len = data->length;
    return EINA_TRUE;
 }
 
@@ -721,8 +721,8 @@ _x11_data_preparer_image(Sel_Manager_Seat_Selection *seat_sel EINA_UNUSED,
    if (!tmp) return EINA_FALSE;
    memcpy(tmp->map, data->data, data->length);
    munmap(tmp->map, data->length);
-   ddata->data.mem = strdup(tmp->filename);
-   ddata->data.len = strlen(tmp->filename);
+   ddata->content.mem = strdup(tmp->filename);
+   ddata->content.len = strlen(tmp->filename);
    *tmp_info = tmp;
    return EINA_TRUE;
 }
@@ -859,7 +859,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                   sel_debug("Found something: %s", pd->atom_list[i].name);
 
                   success = pd->atom_list[i].x_data_preparer(seat_sel, ev, &ddata, &tmp_info);
-                  sel_debug("ddata: %s (%zd)", (const char *)ddata.data.mem, ddata.data.len);
+                  sel_debug("ddata: %s (%zd)", (const char *)ddata.content.mem, ddata.content.len);
                   if ((pd->atom_list[i].format == EFL_SELECTION_FORMAT_IMAGE) &&
                       (seat_sel->saved_types->imgfile))
                     break;
@@ -923,7 +923,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
                        ddata.pos.x = ddata.pos.y = 0;
                        sel->data_func(sel->data_func_data, sel->request_obj, &ddata);
                     }
-                  free((void *)ddata.data.mem);
+                  free((void *)ddata.content.mem);
                   if (tmp_info) _tmpinfo_free(tmp_info);
                }
              else sel_debug("Ignored: No handler!");
@@ -1180,8 +1180,8 @@ _x11_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Mana
              sel_debug("use local data");
              Efl_Selection_Data seldata;
 
-             seldata.data.mem = sel->data.mem;
-             seldata.data.len = sel->data.len;
+             seldata.content.mem = sel->data.mem;
+             seldata.content.len = sel->data.len;
              seldata.pos.x = seldata.pos.y = 0;
              seldata.format = sel->format;
              sel->data_func(sel->data_func_data, sel->request_obj, &seldata);
@@ -1933,8 +1933,8 @@ found:
                     {
                        sel_debug("Doing image insert (%s)\n", seat_sel->saved_types->imgfile);
                        ddata.format = EFL_SELECTION_FORMAT_IMAGE;
-                       ddata.data.mem = (char *)seat_sel->saved_types->imgfile;
-                       ddata.data.len = strlen(ddata.data.mem);
+                       ddata.content.mem = (char *)seat_sel->saved_types->imgfile;
+                       ddata.content.len = strlen(ddata.content.mem);
                        if (df->format & dropable->last.format)
                          efl_event_callback_call(dropable->obj, EFL_UI_DND_EVENT_DRAG_DROP, &ddata);
                     }
@@ -2737,8 +2737,8 @@ _wl_selection_receive(void *data, int type EINA_UNUSED, void *event)
 
         sel_data.pos.x = sel_data.pos.y = 0;
         sel_data.format = sel->format;
-        sel_data.data.mem = ev->data;
-        sel_data.data.len = ev->len;
+        sel_data.content.mem = ev->data;
+        sel_data.content.len = ev->len;
         sel_data.action = _wl_to_elm(ecore_wl2_offer_action_get(sel->sel_offer));
         sel->data_func(sel->data_func_data,
                        sel->request_obj,
@@ -2994,8 +2994,8 @@ _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, 
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_MARKUP;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
@@ -3078,8 +3078,8 @@ _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Eco
      }
    free(seat_sel->saved_types->imgfile);
 
-   ddata->data.mem = stripstr;
-   ddata->data.len = strlen(stripstr);
+   ddata->content.mem = stripstr;
+   ddata->content.len = strlen(stripstr);
    ddata->action = sel->action;
    ddata->format = sel->request_format;
 
@@ -3092,8 +3092,8 @@ _wl_data_preparer_vcard(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, E
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_VCARD;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
@@ -3114,8 +3114,8 @@ _wl_data_preparer_image(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, E
 
    len = strlen(tmp->filename);
    ddata->format = EFL_SELECTION_FORMAT_IMAGE;
-   ddata->data.mem = eina_memdup((unsigned char*)tmp->filename, len, EINA_TRUE);
-   ddata->data.len = len;
+   ddata->content.mem = eina_memdup((unsigned char*)tmp->filename, len, EINA_TRUE);
+   ddata->content.len = len;
    ddata->action = sel->action;
    *tmp_info = tmp;
 
@@ -3128,8 +3128,8 @@ _wl_data_preparer_text(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ec
    sel_debug("In\n");
 
    ddata->format = EFL_SELECTION_FORMAT_TEXT;
-   ddata->data.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
-   ddata->data.len = ev->len;
+   ddata->content.mem = eina_memdup((unsigned char *)ev->data, ev->len, EINA_TRUE);
+   ddata->content.len = ev->len;
    ddata->action = sel->action;
 
    return EINA_TRUE;
