@@ -41,14 +41,14 @@
 
 /**
  * @typedef Eina_Matrix_Type
- * Matrix3 types
+ * Matrix types
  */
 typedef enum _Eina_Matrix_Type
   {
-    EINA_MATRIX_TYPE_IDENTITY, /**< Identity matrix3 type */
-    EINA_MATRIX_TYPE_AFFINE, /**< Affine matrix3 type */
-    EINA_MATRIX_TYPE_PROJECTIVE, /**< Projective matrix3 type */
-    EINA_MATRIX_TYPE_LAST /**< The total number of matrix3 types */
+    EINA_MATRIX_TYPE_IDENTITY, /**< Identity matrix type */
+    EINA_MATRIX_TYPE_AFFINE, /**< Affine matrix type */
+    EINA_MATRIX_TYPE_PROJECTIVE, /**< Projective matrix type */
+    EINA_MATRIX_TYPE_LAST /**< The total number of matrix types */
   } Eina_Matrix_Type;
 
 /**
