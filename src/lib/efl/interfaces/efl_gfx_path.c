@@ -1204,6 +1204,7 @@ _skipcomma(const char *content)
    return (char*) content;
 }
 
+#if 0
 static inline Eina_Bool
 _next_isnumber(const char *content)
 {
@@ -1212,6 +1213,7 @@ _next_isnumber(const char *content)
    (void) strtod(content, &tmp);
    return content != tmp;
 }
+#endif
 
 static inline Eina_Bool
 _parse_number(char **content, double *number)
