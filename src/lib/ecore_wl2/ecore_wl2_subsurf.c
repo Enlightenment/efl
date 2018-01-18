@@ -106,7 +106,6 @@ ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y
    subsurface->y = y;
 
    wl_subsurface_set_position(subsurface->wl.subsurface, x, y);
-   ecore_wl2_display_flush(subsurface->parent->display);
 }
 
 EAPI void
@@ -125,7 +124,6 @@ ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_sur
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    wl_subsurface_place_above(subsurface->wl.subsurface, surface);
-   ecore_wl2_display_flush(subsurface->parent->display);
 }
 
 EAPI void
@@ -135,7 +133,6 @@ ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_sur
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
    wl_subsurface_place_below(subsurface->wl.subsurface, surface);
-   ecore_wl2_display_flush(subsurface->parent->display);
 }
 
 EAPI void
@@ -153,7 +150,6 @@ ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync)
      wl_subsurface_set_sync(subsurface->wl.subsurface);
    else
      wl_subsurface_set_desync(subsurface->wl.subsurface);
-   ecore_wl2_display_flush(subsurface->parent->display);
 }
 
 EAPI void
@@ -186,5 +182,4 @@ ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, 
      }
    else
      wl_surface_set_opaque_region(subsurface->wl.surface, NULL);
-   ecore_wl2_display_flush(subsurface->parent->display);
 }

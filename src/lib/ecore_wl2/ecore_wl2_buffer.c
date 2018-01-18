@@ -749,7 +749,6 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
    zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, ewd);
    zwp_linux_buffer_params_v1_create(dp, buf->w, buf->h,
                                      DRM_FORMAT_ARGB8888, 0);
-   ecore_wl2_display_flush(ewd);
 
    ecore_wl2_buffer_destroy(buf);
 

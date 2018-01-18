@@ -1652,7 +1652,6 @@ _ecore_wl2_input_add(Ecore_Wl2_Display *display, unsigned int id, unsigned int v
      wl_data_device_manager_get_data_device(display->wl.data_device_manager,
                                             input->wl.seat);
    wl_data_device_add_listener(input->data.device, &_data_listener, input);
-   ecore_wl2_display_flush(input->display);
 }
 
 void
