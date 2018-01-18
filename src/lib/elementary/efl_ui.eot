@@ -87,3 +87,6 @@ enum Efl.Ui.Activate
    left, [[Activate left]]
    back, [[Activate back]]
 }
+
+/* Types for A11Y (internal/beta API) */
+type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
