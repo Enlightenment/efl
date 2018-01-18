@@ -155,17 +155,17 @@ _item_min_calc(Efl_Ui_List_Precise_Layouter_Data *pd, Efl_Ui_List_LayoutItem* it
      pd->min.w = min.w;
    else if (pd->min.w == item->min.w)
      {
-        Efl_Ui_List_SegArray_Node *node;
+        Efl_Ui_List_SegArray_Node *node2;
         Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
         pd->min.w = min.w;
 
-        EINA_ACCESSOR_FOREACH(nodes, i, node)
+        EINA_ACCESSOR_FOREACH(nodes, i, node2)
           {
-             Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = node->layout_data;
-             if (pd->min.w < nodedata->min.w)
-               pd->min.w = nodedata->min.w;
+             Efl_Ui_List_Precise_Layouter_Node_Data *nodedata2 = node2->layout_data;
+             if (pd->min.w < nodedata2->min.w)
+               pd->min.w = nodedata2->min.w;
 
-             if (item->min.w == nodedata->min.w)
+             if (item->min.w == nodedata2->min.w)
                break;
           }
        eina_accessor_free(nodes);
@@ -280,17 +280,17 @@ _child_removed_cb(void *data, const Efl_Event *event)
 
    if (pd->min.w == litem->min.w)
      {
-        Efl_Ui_List_SegArray_Node *node;
+        Efl_Ui_List_SegArray_Node *node2;
         Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
         pd->min.w = 0;
 
-        EINA_ACCESSOR_FOREACH(nodes, i, node)
+        EINA_ACCESSOR_FOREACH(nodes, i, node2)
           {
-             Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = node->layout_data;
-             if (pd->min.w < nodedata->min.w)
-               pd->min.w = nodedata->min.w;
+             Efl_Ui_List_Precise_Layouter_Node_Data *nodedata2 = node2->layout_data;
+             if (pd->min.w < nodedata2->min.w)
+               pd->min.w = nodedata2->min.w;
 
-             if (litem->min.w == nodedata->min.w)
+             if (litem->min.w == nodedata2->min.w)
                break;
           }
        eina_accessor_free(nodes);
