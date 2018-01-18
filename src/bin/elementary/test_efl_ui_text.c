@@ -385,15 +385,6 @@ my_efl_ui_text_item_factory_bt_change(void *data, Evas_Object *obj EINA_UNUSED,
 #define FACTORY_IMAGE    1
 #define FACTORY_EMOTICON 2
 
-static void
-_ui_text_factory_del(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eina_File *f = data;
-   eina_file_close(f);
-   efl_del(factories[FACTORY_IMAGE].item_factory);
-   efl_del(factories[FACTORY_EMOTICON].item_factory);
-}
-
 void
 test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -418,11 +409,11 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
    factories[FACTORY_IMAGE].name = "Image Factory";
    factories[FACTORY_IMAGE].item_factory =
-      efl_add(EFL_UI_TEXT_FACTORY_IMAGES_CLASS, win);
+      efl_add(EFL_UI_TEXT_FACTORY_IMAGES_CLASS, en);
 
    factories[FACTORY_EMOTICON].name = "Emoticon Factory";
    factories[FACTORY_EMOTICON].item_factory =
-      efl_add(EFL_UI_TEXT_FACTORY_EMOTICONS_CLASS, win);
+      efl_add(EFL_UI_TEXT_FACTORY_EMOTICONS_CLASS, en);
 
    // Test assigning file path source
    sprintf(buf, "%s/images/sky_01.jpg", elm_app_data_dir_get());
@@ -440,14 +431,13 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    f = eina_file_open(buf, EINA_FALSE);
    if (f)
      {
-        efl_event_callback_add(en, EFL_EVENT_DEL, _ui_text_factory_del, f);
-
         efl_ui_text_factory_images_matches_mmap_add(
               factories[FACTORY_IMAGE].item_factory,
               "eet_rock", f, "rock");
         efl_ui_text_factory_images_matches_mmap_add(
               factories[FACTORY_IMAGE].item_factory,
               "eet_plant", f, "plant");
+        eina_file_close(f);
      }
    else
      {
