@@ -3606,24 +3606,36 @@ _efl_ui_text_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const 
 }
 
 EOLIAN static void
-_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Cnp_Mode cnp_mode)
+_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cnp_mode)
 {
-   Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
+   /* FIXME: CnP format handling really odd... */
 
+   Elm_Sel_Format dnd_format = ELM_SEL_FORMAT_MARKUP;
+   Elm_Sel_Format cnp_format = cnp_mode;
 
-   if (sd->cnp_mode == cnp_mode) return;
-   sd->cnp_mode = cnp_mode;
-   if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
-     format = ELM_SEL_FORMAT_TEXT;
-   else if (cnp_mode == ELM_CNP_MODE_MARKUP)
-     format |= ELM_SEL_FORMAT_IMAGE;
+   if (cnp_mode != EFL_SELECTION_FORMAT_TARGETS)
+     {
+        if (cnp_mode & EFL_SELECTION_FORMAT_VCARD)
+          ERR("VCARD format not supported for copy & paste!");
+        else if (cnp_mode & EFL_SELECTION_FORMAT_HTML)
+          ERR("HTML format not supported for copy & paste!");
+        cnp_mode &= ~EFL_SELECTION_FORMAT_VCARD;
+        cnp_mode &= ~EFL_SELECTION_FORMAT_HTML;
+     }
+
+   if (sd->cnp_mode == cnp_format) return;
+   sd->cnp_mode = cnp_format;
+   if (sd->cnp_mode == EFL_SELECTION_FORMAT_TEXT)
+     dnd_format = ELM_SEL_FORMAT_TEXT;
+   else if (cnp_mode == EFL_SELECTION_FORMAT_IMAGE)
+     dnd_format |= ELM_SEL_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
-   sd->drop_format = format;
+   sd->drop_format = dnd_format;
    elm_drop_target_add(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
@@ -3631,7 +3643,7 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Cnp_Mode cnp_mode)
                        _dnd_drop_cb, NULL);
 }
 
-EOLIAN static Elm_Cnp_Mode
+EOLIAN static Efl_Selection_Format
 _efl_ui_text_cnp_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->cnp_mode;

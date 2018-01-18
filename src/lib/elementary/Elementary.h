@@ -279,6 +279,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
+# include <efl_selection_types.eot.h>
 # include <efl_ui_list_segarray.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
@@ -325,7 +326,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_list_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>
-# include <efl_selection_types.eot.h>
 # include <efl_ui_dnd_types.eot.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_selection.eo.h>

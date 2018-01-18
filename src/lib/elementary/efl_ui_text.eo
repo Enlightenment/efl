@@ -59,6 +59,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          }
       }
       @property cnp_mode {
+         /* FIXME: Efl.Selection.Format does not allow markup without images! */
          set {
             [[Control pasting of text and images for the widget.
 
@@ -77,7 +78,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            cnp_mode: Elm.Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
+            format: Efl.Selection.Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {
