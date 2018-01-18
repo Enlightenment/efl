@@ -27,7 +27,7 @@ _edje_part_invalid_call(Eo *proxy, const char *function)
 EOLIAN static void
 _efl_canvas_layout_part_invalid_efl_canvas_layout_part_state_get(Eo *proxy, void *_pd EINA_UNUSED, const char **state, double *val)
 {
-   if (state) *state = "default";
+   if (state) *state = "";
    if (val) *val = 0.0;
 }
 
