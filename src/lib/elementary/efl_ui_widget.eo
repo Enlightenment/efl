@@ -112,8 +112,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
          return: bool; [[$true on success, $false otherwise]]
          legacy: null;
       }
-      @property orientation_mode_disabled {
-         [[Whether the widget's automatic orientation is disabled or not.
+      @property orientation_mode {
+         [[Whether the widget's automatic orientation is enabled or not.
 
            Orientation mode is used for widgets to change their style or send
            signals based on the canvas rotation (i.e. the window orientation).
@@ -123,11 +123,10 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
            the theme in order to provide a different look for the widget based
            on the canvas orientation.
 
-           By default orientation mode is enabled, which means this property
-           is $false.
+           By default orientation mode is enabled, i.e. this is $true.
          ]]
          values {
-            disabled: bool(false); [[$true if the orientation mode is disabled.]]
+            disabled: bool(true); [[$false if orientation mode is disabled.]]
          }
       }
       // FIXME: focus_allow? can_focus? focusable?
@@ -271,20 +270,18 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
            This method will be called recursively from the top widget (the
            window) to all the children objects whenever the window rotation
            is changed. The given $rotation will be one of 0, 90, 180, 270 or
-           the special value -1 if @.orientation_mode_disabled is $true.
+           the special value -1 if @.orientation_mode is $false.
 
-           If @.orientation_mode_disabled is $false, the default implementation
+           If @.orientation_mode is $true, the default implementation
            will emit the signal "elm,state,orient,$R" will be emitted (where $R
            is the rotation angle in degrees).
 
            Note: This function may be called even if the orientation has not
            actually changed, like when a widget needs to be reconfigured.
-
-           See also @Efl.Orientation.orientation.set.
          ]]
          params {
             rotation: int; [[Orientation in degrees: 0, 90, 180, 270 or -1 if
-               @.orientation_mode_disabled is $true.]]
+               @.orientation_mode is $false.]]
          }
       }
       on_disabled_update @protected {

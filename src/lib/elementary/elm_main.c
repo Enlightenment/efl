@@ -2051,13 +2051,13 @@ elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 EAPI void
 elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
-   elm_widget_orientation_mode_disabled_set(obj, disabled);
+   efl_ui_widget_orientation_mode_set(obj, !disabled);
 }
 
 EAPI Eina_Bool
 elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
 {
-   return elm_widget_orientation_mode_disabled_get(obj);
+   return !efl_ui_widget_orientation_mode_get(obj);
 }
 
 EAPI Elm_Object_Item *

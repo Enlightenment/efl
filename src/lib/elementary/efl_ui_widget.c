@@ -3456,11 +3456,11 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 }
 
 EOLIAN static void
-_efl_ui_widget_orientation_mode_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
+_efl_ui_widget_orientation_mode_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool enabled)
 {
    int orient_mode = -1;
 
-   if (!disabled)
+   if (enabled)
      {
         //Get current orient mode from it's parent otherwise, 0.
         sd->orient_mode = 0;
@@ -3472,10 +3472,10 @@ _efl_ui_widget_orientation_mode_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_widget_orientation_mode_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_orientation_mode_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   if (sd->orient_mode == -1) return EINA_TRUE;
-   else return EINA_FALSE;
+   if (sd->orient_mode == -1) return EINA_FALSE;
+   else return EINA_TRUE;
 }
 
 EOLIAN static void
