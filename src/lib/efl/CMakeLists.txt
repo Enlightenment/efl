@@ -11,7 +11,6 @@ set(PUBLIC_EO_FILES
   interfaces/efl_content.eo
   interfaces/efl_control.eo
   interfaces/efl_file.eo
-  interfaces/efl_flipable.eo
   interfaces/efl_gfx.eo
   interfaces/efl_gfx_buffer.eo
   interfaces/efl_gfx_fill.eo

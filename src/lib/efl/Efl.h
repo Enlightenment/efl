@@ -88,7 +88,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_types.eot.h"
 #include "interfaces/efl_text_properties.eo.h"
 #include "interfaces/efl_orientation.eo.h"
-#include "interfaces/efl_flipable.eo.h"
 #include "interfaces/efl_ui_base.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"

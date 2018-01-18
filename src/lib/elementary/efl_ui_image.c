@@ -1330,19 +1330,19 @@ _efl_ui_image_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_
 
 
 EOLIAN static void
-_efl_ui_image_efl_flipable_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip flip)
+_efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip flip)
 {
    if (sd->edje) return;
    if (sd->flip == flip) return;
 
-   efl_flip_set(sd->img, flip);
+   efl_orientation_flip_set(sd->img, flip);
 
    sd->flip = flip;
    _efl_ui_image_internal_sizing_eval(obj, sd);
 }
 
 EOLIAN static Efl_Flip
-_efl_ui_image_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_orientation_flip_get(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->flip;
 }
@@ -2172,7 +2172,7 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
      }
 
    efl_orientation_set(obj, dir);
-   efl_flip_set(obj, flip);
+   efl_orientation_flip_set(obj, flip);
 }
 
 EAPI Elm_Image_Orient

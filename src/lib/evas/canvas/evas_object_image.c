@@ -471,7 +471,7 @@ _efl_canvas_image_internal_efl_orientation_orientation_get(Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
+_efl_canvas_image_internal_efl_orientation_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
 {
    Evas_Image_Orient orient;
 
@@ -482,7 +482,7 @@ _efl_canvas_image_internal_efl_flipable_flip_set(Eo *obj, Evas_Image_Data *o, Ef
 }
 
 EOLIAN static Efl_Flip
-_efl_canvas_image_internal_efl_flipable_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_orientation_flip_get(Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->flip_value;
 }
