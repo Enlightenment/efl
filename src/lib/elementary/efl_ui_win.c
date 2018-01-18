@@ -4174,16 +4174,21 @@ _elm_win_frame_cb_menu(void *data,
       Eina_Iterator *it;
       Ecore_Wl2_Display *display = ecore_wl2_window_display_get(sd->wl.win);
       it = ecore_wl2_display_inputs_get(display);
-      ecore_wl2_display_flush(input->display);
       EINA_ITERATOR_FOREACH(it, input) break;
       eina_iterator_free(it);
    }
    if (sd->wl.win->xdg_toplevel)
-     xdg_toplevel_show_window_menu(sd->wl.win->xdg_toplevel,
+     {
+        xdg_toplevel_show_window_menu(sd->wl.win->xdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
+        ecore_wl2_display_flush(input->display);
+     }
    else if (sd->wl.win->zxdg_toplevel)
-     zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
+     {
+        zxdg_toplevel_v6_show_window_menu(sd->wl.win->zxdg_toplevel,
                                        ecore_wl2_input_seat_get(input), 0, x, y);
+        ecore_wl2_display_flush(input->display);
+     }
 #else
    (void)sd;
 #endif
