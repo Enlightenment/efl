@@ -117,7 +117,7 @@ struct _Efl_Ui_Win_Data
    } win32;
 #endif
 
-   Efl_Ui_Win_Type                   type;
+   unsigned /* Efl_Ui_Win_Type */    type;
    Efl_Ui_Win_Keyboard_Mode          kbdmode;
    Efl_Ui_Win_Indicator_Mode         indimode;
    struct
