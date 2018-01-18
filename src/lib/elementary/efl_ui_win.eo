@@ -19,7 +19,7 @@ enum Efl.Ui.Win.Type
    dock, [[The window is used as a dock or panel. Usually would be kept on top
            of any other window by the Window Manager.]]
    toolbar, [[The window is used to hold a floating toolbar, or similar.]]
-   menu, [[Similar to #ELM_WIN_TOOLBAR.]]
+   menu, [[Similar to @.toolbar.]]
    utility, [[A persistent utility window, like a toolbox or palette.]]
    splash, [[Splash window for a starting up application.]]
    dropdown_menu, [[The window is a dropdown menu, as when an  entry in a
@@ -27,7 +27,7 @@ enum Efl.Ui.Win.Type
                     This hint exists for completion only, as the EFL way of
                     implementing a menu would not normally use a separate
                     window for its contents.]]
-   popup_menu, [[Like #ELM_WIN_DROPDOWN_MENU, but for the menu triggered by
+   popup_menu, [[Like @.dropdown_menu, but for the menu triggered by
                  right-clicking an object.]]
    tooltip, [[The window is a tooltip. A short piece of explanatory text that
               typically appear after the mouse cursor hovers over an object
@@ -36,9 +36,6 @@ enum Efl.Ui.Win.Type
                    a new E-Mail received.]]
    combo, [[A window holding the contents of a combo box. Not usually used in
             the EFL.]]
-   dnd, [[Used to indicate the window is a representation of an object being
-          dragged across different windows, or even applications. Typically
-          used with elm_win_override_set().]]
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
