@@ -7,7 +7,7 @@ struct Efl.Ui.List.Item_Event
    index: int;
 }
 class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection,
+                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager.Sub,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List.Model)
 {
    methods {
@@ -77,19 +77,10 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
       Efl.Ui.List.Model.min_size { get; set; }
 
       // Widget
-//      Elm.Widget.focus_next_manager_is;
-//      Elm.Widget.focus_direction_manager_is;
-//      Elm.Widget.focus_register;
-//      Elm.Widget.focus_next;
-//      Elm.Widget.on_focus_update;
-//      Elm.Widget.activate;
-//      Elm.Widget.focused_item { get; }
-//      Elm.Widget.focused_object { get; }
       Efl.Ui.Widget.focus_manager_create;
       Efl.Ui.Widget.widget_event;
-
-//      Efl.Ui.Focus.Manager.focus {set; }
-      //Efl.Ui.Layout.sizing_eval;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }
 
       Efl.Ui.Scrollable.Interactive.viewport_geometry { get; }
@@ -101,6 +92,7 @@ class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Ef
 //      Elm.Interface.Atspi_Accessible.children { get; }
 //      Elm.Interface.Atspi_Widget.Action.elm_actions { get; }
 //      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Access.children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;

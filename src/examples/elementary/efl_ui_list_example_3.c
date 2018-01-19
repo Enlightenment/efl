@@ -59,7 +59,10 @@ static void
 _focused(void *data, const Efl_Event *event)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   priv->selected = efl_ui_focus_manager_focus_get(event->object);
+   Evas_Object *focused = efl_ui_focus_manager_focus_get(event->object);
+
+   if (focused)
+     priv->selected = focused;
 }
 
 static void

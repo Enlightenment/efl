@@ -1,15 +1,15 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#define ELM_ACCESS_PROTECTED
-#define ELM_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_UI_SCROLLBAR_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
 #define EFL_UI_LIST_PROTECTED
-
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "efl_ui_list_private.h"
@@ -163,6 +163,24 @@ _efl_model_properties_has(Efl_Model *model, Eina_Stringshare *propfind)
           }
      }
    return ret;
+}
+
+static void
+_list_element_focused(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Eina_Rect geom;
+   Eina_Position2D pos;
+   Efl_Ui_Focus_Object *focused = efl_ui_focus_manager_focus_get(ev->object);
+
+   if (!focused) return;
+
+   EFL_UI_LIST_DATA_GET(ev->object, pd);
+   geom = efl_ui_focus_object_focus_geometry_get(focused);
+   pos = efl_ui_scrollable_content_pos_get(pd->scrl_mgr);
+
+   geom.x += pos.x;
+   geom.y += pos.y;
+   efl_ui_scrollable_scroll(pd->scrl_mgr, geom, EINA_TRUE);
 }
 
 static void
@@ -709,6 +727,11 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd)
    efl_composite_attach(obj, manager);
    _efl_ui_focus_manager_redirect_events_add(manager, obj);
 
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _list_element_focused, NULL);
+
+   efl_ui_focus_composition_custom_manager_set(obj, obj);
+   efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
+
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
    pd->factory = NULL;
@@ -847,7 +870,7 @@ _efl_ui_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Efl_Ui_Lis
 static Eina_Bool
 _key_action_move(Evas_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 {
-     return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -862,8 +885,6 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
    efl_ui_focus_manager_reset_history(obj);
    return EINA_TRUE;
 }
-
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_list, Efl_Ui_List_Data)
 
 void
 _efl_ui_list_item_select_set(Efl_Ui_List_LayoutItem *item, Eina_Bool selected)
@@ -944,6 +965,30 @@ _efl_ui_list_efl_ui_list_model_min_size_set(Eo *obj, Efl_Ui_List_Data *pd, Eina_
    efl_event_callback_call(pd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
 }
 
+EOLIAN static void
+_efl_ui_list_efl_ui_focus_composition_prepare(Eo *obj, Efl_Ui_List_Data *pd)
+{
+   Eina_List *order = efl_ui_list_relayout_elements_get(pd->relayout);
+   efl_ui_focus_composition_elements_set(obj, order);
+}
+
+EOLIAN Eina_List*
+_efl_ui_list_efl_access_children_get(Eo *obj, Efl_Ui_List_Data *pd)
+{
+   Eina_List *ret = NULL, *ret2 = NULL;
+
+   ret = efl_ui_list_relayout_elements_get(pd->relayout);
+   ret2 = efl_access_children_get(efl_super(obj, EFL_UI_LIST_CLASS));
+
+   return eina_list_merge(ret, ret2);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_list_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+{
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+}
+
 EOLIAN static Efl_Ui_List_LayoutItem *
 _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_List_LayoutItem *item)
 {
@@ -954,10 +999,17 @@ _efl_ui_list_efl_ui_list_model_realize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Lis
    evas_object_smart_member_add(item->layout, pd->pan_obj);
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
+   if (_elm_config->atspi_mode)
+     {
+        efl_access_added(item->layout);
+        efl_access_children_changed_added_signal_emit(obj, item->layout);
+     }
+
    evt.child = item->children;
    evt.layout = item->layout;
    evt.index = efl_ui_list_item_index_get((Efl_Ui_List_Item *)item);
    efl_event_callback_call(obj, EFL_UI_LIST_EVENT_ITEM_REALIZED, &evt);
+   efl_ui_focus_composition_dirty(obj);
 
    evas_object_show(item->layout);
    return item;
@@ -970,6 +1022,12 @@ _efl_ui_list_efl_ui_list_model_unrealize(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_L
    EINA_SAFETY_ON_NULL_RETURN(item->layout);
 
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
+   if (elm_object_focus_allow_get(item->layout))
+     {
+        if (elm_object_focus_get(item->layout))
+          elm_object_focus_set(item->layout, EINA_FALSE);
+        efl_ui_focus_manager_calc_unregister(obj, item->layout);
+     }
    evas_object_hide(item->layout);
    evas_object_move(item->layout, -9999, -9999);
 
@@ -1000,6 +1058,8 @@ _efl_ui_list_efl_ui_list_model_size_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *p
 {
     return pd->item_count;
 }
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_list, Efl_Ui_List_Data)
 
 /* Internal EO APIs and hidden overrides */
 

@@ -414,7 +414,7 @@ static void
 _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
 {
    Efl_Ui_List_SegArray_Node *node;
-   Evas_Coord ch;
+   Evas_Coord ch, ny;
    Eina_Rect vgmt;
    Eina_Position2D spos;
    Efl_Ui_List_Precise_Layouter_Node_Data *nodedata;
@@ -422,6 +422,11 @@ _calc_range(Efl_Ui_List_Precise_Layouter_Data *pd)
 
    vgmt = efl_ui_scrollable_viewport_geometry_get(pd->modeler);
    spos = efl_ui_scrollable_content_pos_get(pd->modeler);
+
+   ny = spos.y - (vgmt.h / 2);
+   if (ny < 0) spos.y = 0;
+   else spos.y = ny;
+   vgmt.h *= 2;
 
    ch = 0;
    Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
@@ -516,6 +521,32 @@ _efl_ui_list_precise_layouter_efl_object_constructor(Eo *obj EINA_UNUSED, Efl_Ui
    pd->count_future = NULL;
 
    return obj;
+}
+
+EOLIAN static Eina_List *
+_efl_ui_list_precise_layouter_efl_ui_list_relayout_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Precise_Layouter_Data *pd)
+{
+   Eina_List *elements_order = NULL;
+   Efl_Ui_List_LayoutItem* layout_item;
+   Efl_Ui_List_SegArray_Node *items_node;
+   int i, j = 0;
+
+   Eina_Accessor *nodes = efl_ui_list_segarray_node_accessor_get(pd->segarray);
+   EINA_ACCESSOR_FOREACH(nodes, i, items_node)
+     {
+        Efl_Ui_List_Precise_Layouter_Node_Data *nodedata = items_node->layout_data;
+        if (!nodedata || !nodedata->realized)
+            continue;
+
+        for(j = 0; j != items_node->length;++j)
+          {
+             layout_item = (Efl_Ui_List_LayoutItem *)items_node->pointers[j];
+             if (layout_item->layout)
+               elements_order = eina_list_append(elements_order, layout_item->layout);
+          }
+     }
+
+    return elements_order;
 }
 
 EOLIAN static void
