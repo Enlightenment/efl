@@ -42,8 +42,9 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       params {
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
+	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File.Direct.Info]]
       }
-      return: future<uint64, const(array<ptr(Eina.File.Direct.Info)>)>; [[List of entries in path]]
+      return: ptr(Eina.Future) @owned; [[Amount of files found during the listing of the directory]]
     }
 
     stat_ls {
