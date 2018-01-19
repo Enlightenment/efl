@@ -4128,7 +4128,7 @@ _win32_efl_sel_manager_selection_get(const Efl_Object *request,
    int size;
 
    if (type != EFL_SELECTION_TYPE_CLIPBOARD)
-     return;
+     return EINA_FALSE;
 
    seat_sel = _sel_manager_seat_selection_init(pd, seat);
    sel = seat_sel->sel_list + type;
@@ -4177,8 +4177,8 @@ _win32_efl_sel_manager_selection_get(const Efl_Object *request,
 
         sdata.pos.x = sdata.pos.y = 0;
         sdata.format = EFL_SELECTION_FORMAT_TEXT;
-        sdata.data.mem = data;
-        sdata.data.len = size;
+        sdata.content.mem = data;
+        sdata.content.len = size;
         sdata.action = sel->action;
         sel->data_func(sel->data_func_data, sel->request_obj, &sdata);
      }
