@@ -72,6 +72,13 @@ get_function_count(grammar::attributes::klass_def const& cls)
      });
 }
 
+template<typename Context>
+static bool
+is_inherit_context(Context const& context)
+{
+   return context_find_tag<class_context>(context).current_wrapper_kind == class_context::inherit;
+}
+
 struct get_csharp_type_visitor
 {
     typedef get_csharp_type_visitor visitor_type;
@@ -281,7 +288,7 @@ struct klass
              << scope_tab << scope_tab << "Dispose(false);\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
-             << scope_tab << "protected void Dispose(bool disposing)\n"
+             << scope_tab << "internal void Dispose(bool disposing)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "efl.eo.Globals.efl_unref(handle);\n"
@@ -550,6 +557,8 @@ struct klass
      if (!has_events(cls))
          return true;
 
+     std::string visibility = is_inherit_context(context) ? "protected" : "private";
+
      if (!as_generator(scope_tab << "private readonly object eventLock = new object();\n"
              << scope_tab << "private Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
              .generate(sink, NULL, context))
@@ -627,9 +636,9 @@ struct klass
             return false;
 
           if(!as_generator(
-                scope_tab << "protected event EventHandler" << wrapper_args_template << " " << upper_name << ";\n"
+                scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << upper_name << ";\n"
                 << scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
-                << scope_tab << "protected void On_" << event_name << "(" << wrapper_args_type << " e)\n"
+                << scope_tab << visibility << " void On_" << event_name << "(" << wrapper_args_type << " e)\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
                 << scope_tab << scope_tab << "lock (eventLock) {\n"
@@ -717,9 +726,9 @@ struct klass
                  return false;
 
                if (!as_generator(
-                     scope_tab << "protected event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
+                     scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
                     << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
-                     << scope_tab << "protected void On_" << wrapper_evt_name << "(" << wrapper_args_type.str() << " e)\n"
+                     << scope_tab << visibility << " void On_" << wrapper_evt_name << "(" << wrapper_args_type.str() << " e)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
                      << scope_tab << scope_tab << "lock (eventLock) {\n"

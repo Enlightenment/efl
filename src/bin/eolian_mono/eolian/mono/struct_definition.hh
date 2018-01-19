@@ -67,7 +67,7 @@ struct struct_definition_generator
      // those 'mini-amd64.c condition fields not met' crashes.
      if (struct_.fields.size() == 0)
        {
-           if (!as_generator("public IntPtr field;\n").generate(sink, nullptr, context))
+           if (!as_generator("///<summary>Placeholder field</summary>\npublic IntPtr field;\n").generate(sink, nullptr, context))
              return false;
        }
 
