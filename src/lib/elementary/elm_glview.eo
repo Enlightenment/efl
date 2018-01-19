@@ -190,7 +190,7 @@ class Elm.Glview (Efl.Ui.Widget, Efl.Gfx.View)
       class.constructor;
       Efl.Object.finalize;
       Efl.Gfx.size { set; }
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Gfx.View.view_size { get; set; }
    }
    events {

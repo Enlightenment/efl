@@ -437,7 +437,7 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.on_disabled_update;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;

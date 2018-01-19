@@ -784,7 +784,7 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Wind
       Efl.Ui.Widget.focus_highlight_style { get; set; }
       Efl.Ui.Widget.focus_highlight_enabled { get; set; }
       Efl.Ui.Widget.focus_highlight_animate { get; set; }
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_manager_create;
       Efl.Access.parent { get; }

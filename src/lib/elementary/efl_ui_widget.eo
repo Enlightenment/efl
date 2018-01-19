@@ -313,10 +313,6 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
          return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
-      on_focus_update @protected {
-         [[Virtual function handling focus in/out events on the widget]]
-         return: bool; [[$true if this widget can handle focus, $false otherwise]]
-      }
 
       /* Scroll API. */
       @property on_show_region_hook @protected {

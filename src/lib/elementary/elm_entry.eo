@@ -847,7 +847,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Layout.Signal.signal_emit;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_focus_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Widget.widget_sub_object_del;
