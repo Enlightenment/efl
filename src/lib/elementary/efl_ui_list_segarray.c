@@ -129,8 +129,6 @@ efl_ui_list_segarray_remove(Efl_Ui_List_SegArray* segarray, int index)
    segarray->count--;
    node->length--;
 
-   if (offset >= node->length) return NULL;
-
    while (offset < node->length)
      {
        node->pointers[offset] = node->pointers[offset+1];
