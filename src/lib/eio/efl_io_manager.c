@@ -384,7 +384,7 @@ _efl_io_manager_stat(Eo *obj,
 
    h = eio_file_direct_stat(path,
                             _file_stat_done_cb,
-                            _file_error_cb,
+                            _future_file_error_cb,
                             p);
    if (!h) goto end;
    eina_promise_data_set(p, h);
