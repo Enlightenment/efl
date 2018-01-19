@@ -273,44 +273,47 @@ _efl_io_manager_direct_ls(Eo *obj,
    return future;
 }
 
-static Efl_Future *
+static Eina_Future *
 _efl_io_manager_stat_ls(Eo *obj,
                         Efl_Io_Manager_Data *pd EINA_UNUSED,
                         const char *path,
-                        Eina_Bool recursive)
+                        Eina_Bool recursive,
+                        void *info_data, EflIoDirectInfo info, Eina_Free_Cb info_free_cb)
 {
-   Efl_Promise *p;
+   Eina_Promise *p;
+   Eina_Future *future;
    Eio_File *h;
 
-   Eo *loop = efl_loop_get(obj);
-   p = efl_add(EFL_PROMISE_CLASS, loop);
+   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
+   future = eina_future_new(p);
 
    if (!recursive)
      {
         h = _eio_file_stat_ls(path,
-                              _file_info_cb,
-                              _file_done_cb,
-                              _file_error_cb,
+                              _future_file_info_cb,
+                              _future_file_done_cb,
+                              _future_file_error_cb,
                               p);
      }
    else
      {
         h = _eio_dir_stat_ls(path,
-                             _file_info_cb,
-                             _file_done_cb,
-                             _file_error_cb,
+                             _future_file_info_cb,
+                             _future_file_done_cb,
+                             _future_file_error_cb,
                              p);
      }
-
    if (!h) goto end;
 
-   efl_event_callback_array_add(p, promise_progress_handling(), h);
-   return efl_promise_future_get(p);
+   ecore_thread_local_data_add(h->thread, ".info", info, NULL, EINA_TRUE);
+   ecore_thread_local_data_add(h->thread, ".info_data", info_data, info_free_cb, EINA_TRUE);
+   eina_promise_data_set(p, h);
+
+   return efl_future_Eina_FutureXXX_then(obj, future);
 
  end:
-   efl_del(p);
-   return NULL;
+   return future;
 }
 
 static Eina_Future *
