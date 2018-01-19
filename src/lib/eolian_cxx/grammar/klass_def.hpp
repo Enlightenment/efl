@@ -1072,7 +1072,7 @@ struct enum_value_def
   std::string c_name;
   documentation_def documentation;
 
-  enum_value_def(Eolian_Enum_Type_Field const* enum_field, Eolian_Unit const* unit)
+  enum_value_def(Eolian_Enum_Type_Field const* enum_field, Eolian_Unit const*)
   {
       name = eolian_typedecl_enum_field_name_get(enum_field);
       c_name = eolian_typedecl_enum_field_c_name_get(enum_field);
