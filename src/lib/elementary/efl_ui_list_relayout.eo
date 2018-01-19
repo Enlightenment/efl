@@ -19,5 +19,11 @@ interface Efl.Ui.List.Relayout (Efl.Interface)
             model: Efl.Model; [[Efl model]]
          }
       }
+      @property elements {
+         get {}
+         values {
+            elements: list<Efl.Gfx>; [[The order to use]]
+         }
+      }
    }
 }
