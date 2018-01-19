@@ -69,89 +69,7 @@ _future_file_error_cb(void *data,
    eina_promise_reject(p, error);
 }
 
-static void
-_no_future(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eio_File *h = data;
-
-   eio_file_cancel(h);
-}
-
-static void
-_forced_shutdown(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eio_File *h = data;
-
-   eio_file_cancel(h);
-   // FIXME: handle memory lock here !
-   // Acceptable strategy will be to unlock all thread as
-   // if we were freeing some memory
-   // FIXME: Handle long to finish thread
-   ecore_thread_wait(h->thread, 1.0);
-}
-
-static void
-_progress(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   efl_key_data_set(ev->object, "_eio.progress", (void*) EINA_TRUE);
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(promise_progress_handling,
-                           { EFL_PROMISE_EVENT_FUTURE_PROGRESS_SET, _progress },
-                           { EFL_PROMISE_EVENT_FUTURE_NONE, _no_future },
-                           { EFL_EVENT_DEL, _forced_shutdown });
-
-EFL_CALLBACKS_ARRAY_DEFINE(promise_handling,
-                           { EFL_PROMISE_EVENT_FUTURE_NONE, _no_future },
-                           { EFL_EVENT_DEL, _forced_shutdown });
-
-static void
-_file_error_cb(void *data, Eio_File *handler, int error)
-{
-   Efl_Promise *p = data;
-
-   efl_event_callback_array_del(p, promise_handling(), handler);
-
-   efl_promise_failed_set(p, error);
-
-   efl_del(p);
-}
-
-static void
-_file_done_cb(void *data, Eio_File *handler)
-{
-   Efl_Promise *p = data;
-   uint64_t *v = calloc(1, sizeof (uint64_t));
-
-   efl_event_callback_array_del(p, promise_handling(), handler);
-
-   if (!v)
-     {
-        efl_promise_failed_set(p, ENOMEM);
-        goto end;
-     }
-
-   *v = handler->length;
-   efl_promise_value_set(p, v, free);
-
- end:
-   efl_del(p);
-}
-
 /* Basic listing callbacks */
-static void
-_cleanup_info_progress(void *data)
-{
-   Eina_Array *existing = data;
-   Eio_File_Direct_Info *d; // This is a trick because we use the head of the structure
-   Eina_Array_Iterator it;
-   unsigned int i;
-
-   EINA_ARRAY_ITER_NEXT(existing, i, d, it)
-     eio_direct_info_free(d);
-   eina_array_free(existing);
-}
-
 static void
 _future_string_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gather)
 {
@@ -186,47 +104,6 @@ _future_file_info_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gath
    while ((d = eina_array_pop(gather)))
      eio_direct_info_free(d);
    eina_array_free(gather);
-}
-
-static void
-_file_info_cb(void *data, Eio_File *handler, Eina_Array *gather)
-{
-   Efl_Promise *p = data;
-   Eina_Array *existing = efl_key_data_get(p, "_eio.stored");
-   void **tmp;
-
-   // If a future is set, but without progress, we should assume
-   // that we should discard all future progress. [[FIXME]]
-   if (existing)
-     {
-        tmp = realloc(existing->data, sizeof (void*) * (existing->count + gather->count));
-        if (!tmp)
-          {
-             eina_array_free(gather);
-             eina_array_free(existing);
-             efl_key_data_set(p, "_eio.stored", NULL);
-             handler->error = ENOMEM;
-             eio_file_cancel(handler);
-             return ;
-          }
-        existing->data = tmp;
-        memcpy(existing->data + existing->count, gather->data, gather->count * sizeof (void*));
-        existing->count += gather->count;
-        existing->total = existing->count;
-        eina_array_free(gather);
-     }
-   else
-     {
-        existing = gather;
-     }
-   if (!efl_key_data_get(p, "_eio.progress"))
-     {
-        efl_key_data_set(p, "_eio.stored", existing);
-        return ;
-     }
-   efl_promise_progress_set(p, existing);
-   efl_key_data_set(p, "_eio.stored", NULL);
-   _cleanup_info_progress(existing);
 }
 
 /* Method implementations */
