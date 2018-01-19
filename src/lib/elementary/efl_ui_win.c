@@ -1666,9 +1666,9 @@ _elm_win_state_change(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_win_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   if (!efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL))
+   if (!efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS)))
      return EINA_TRUE;
 
    if (sd->img_obj)

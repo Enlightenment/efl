@@ -930,11 +930,11 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_efl_ui_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_spinner_efl_ui_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (!efl_ui_focus_object_focus_get(obj))

@@ -1128,7 +1128,7 @@ _return_key_enabled_check(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_text_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;

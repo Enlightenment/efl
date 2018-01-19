@@ -315,10 +315,6 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access,
       }
       on_focus_update @protected {
          [[Virtual function handling focus in/out events on the widget]]
-         params {
-            /* FIXME: EO API is not supposed to have any widget item!!! */
-            @in item: Elm.Widget.Item @nullable; [[Widget]]
-         }
          return: bool; [[$true if this widget can handle focus, $false otherwise]]
       }
 
