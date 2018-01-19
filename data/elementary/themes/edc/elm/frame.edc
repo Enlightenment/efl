@@ -55,11 +55,8 @@ group { name: "elm/frame/base/default";
             rel1.to_x: "base";
             rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 0;
             rel2.to: "base";
-            rel2.offset: -1 -1;
             color: 64 64 64 255;
-            offscale;
          }
       }
       part { name: "clip"; type: RECT;
