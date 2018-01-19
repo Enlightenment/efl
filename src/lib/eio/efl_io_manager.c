@@ -157,23 +157,16 @@ _future_string_cb(void *data EINA_UNUSED, Eio_File *handler, Eina_Array *gather)
 {
    EflIoPath paths = ecore_thread_local_data_find(handler->thread, ".paths");
    void *paths_data = ecore_thread_local_data_find(handler->thread, ".paths_data");
-   Eina_Accessor *access;
-   unsigned int count;
    Eina_Stringshare *s;
 
-   if (!paths)
-     {
-        eina_array_free(gather);
-        return ;
-     }
+   if (!paths) goto end;
 
-   access = eina_array_accessor_new(gather);
-   paths(paths_data, access);
+   paths(paths_data, gather);
 
    // Cleanup strings, accessor and array
-   EINA_ACCESSOR_FOREACH(access, count, s)
+ end:
+   while ((s = eina_array_pop(gather)))
      eina_stringshare_del(s);
-   eina_accessor_free(access);
    eina_array_free(gather);
 }
 
