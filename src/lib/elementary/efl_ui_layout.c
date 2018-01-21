@@ -643,14 +643,17 @@ _efl_ui_layout_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    Efl_Ui_Layout_Sub_Connect *sc;
    Edje_Signal_Data *esd;
    Evas_Object *child;
-   Eina_List *l, *ll;
+   Eina_List *l;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_layout_freeze(obj);
 
-   EINA_LIST_FOREACH_SAFE(sd->subs, l, ll, sub_d)
-     efl_ui_widget_sub_object_del(obj, sub_d->obj);
+   EINA_LIST_FREE(sd->subs, sub_d)
+     {
+        eina_stringshare_del(sub_d->part);
+        free(sub_d);
+     }
 
    EINA_LIST_FREE(sd->parts_cursors, pc)
      _part_cursor_free(pc);
