@@ -93,6 +93,8 @@ void efl_ui_list_segarray_flush(Efl_Ui_List_SegArray* segarray)
 {
    eina_rbtree_delete(EINA_RBTREE_GET(segarray->root), EINA_RBTREE_FREE_CB(_free_node), NULL);
    segarray->root = NULL;
+   segarray->node_count = 0;
+   segarray->count = 0;
 }
 
 static Efl_Ui_List_Item* _create_item_partial(Efl_Model* model)
