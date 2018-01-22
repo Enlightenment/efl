@@ -1455,9 +1455,42 @@ class Test.Testing (Efl.Object) {
       // struct_complex_ptr_return_own {
       //    return: ptr(Test.StructComplex) @owned;
       // }
+
+      emit_event_with_string {
+         params {
+            @in data: string;
+         }
+      }
+      emit_event_with_int {
+         params {
+            @in data: int;
+         }
+      }
+      emit_event_with_uint {
+         params {
+            @in data: uint;
+         }
+      }
+      emit_event_with_float {
+         params {
+            @in data: float;
+         }
+      }
+      emit_event_with_obj {
+         params {
+            @in data: Test.Testing;
+         }
+      }
    }
    implements {
       class.constructor;
       class.destructor;
+   }
+   events {
+      evt,with,string @hot: string;
+      evt,with,int @hot: int;
+      evt,with,uint @hot: uint;
+      evt,with,float @hot: float;
+      evt,with,obj @hot: Test.Testing;
    }
 }

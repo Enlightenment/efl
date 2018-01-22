@@ -116,6 +116,10 @@ struct get_event_args_visitor
     typedef std::string result_type;
     std::string operator()(grammar::attributes::regular_type_def const&) const
     {
+        if (arg_type == "string")
+          {
+             return "eina.StringConversion.NativeUtf8ToManagedString(evt.Info)";
+          }
         return "(" + arg_type + ")Marshal.PtrToStructure(evt.Info, typeof(" + arg_type + "))";
     }
     std::string operator()(grammar::attributes::klass_name const&) const
