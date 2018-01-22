@@ -598,7 +598,7 @@ _ecore_wl2_input_symbol_rep_find(xkb_keysym_t keysym, char *buffer, int size, un
 
     /* check if we are a control code */
     if (n > 0 && !(
-        (buffer[0] > 0x0 && buffer[0] < 0x20) || /* others 0x0 to 0x1F control codes */
+        (buffer[0] > 0x0 && buffer[0] <= 0x20) || /* others 0x0 to 0x20 control codes */
         buffer[0] == 0x7F)) /*delete control code */
       return;
 
